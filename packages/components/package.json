@@ -9,7 +9,7 @@
     "./*": "./src/*"
   },
   "scripts": {
-    "prepare": "vp config",
+    "generate:config": "vp config",
     "dev": "astro dev"
   },
   "dependencies": {
