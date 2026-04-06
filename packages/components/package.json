@@ -6,11 +6,26 @@
   "author": "Daniel Marchi",
   "type": "module",
   "exports": {
-    "./config": "./src/config/index.ts",
-    "./domain": "./src/domain/index.ts",
-    "./lib": "./src/lib/index.ts",
-    "./utils": "./src/utils/index.ts",
-    "./*": "./src/*"
+    "./config": {
+      "types": "./src/config/index.ts",
+      "default": "./src/config/index.ts"
+    },
+    "./domain": {
+      "types": "./src/domain/index.ts",
+      "default": "./src/domain/index.ts"
+    },
+    "./lib": {
+      "types": "./src/lib/index.ts",
+      "default": "./src/lib/index.ts"
+    },
+    "./utils": {
+      "types": "./src/utils/index.ts",
+      "default": "./src/utils/index.ts"
+    },
+    "./*": {
+      "types": "./src/*",
+      "default": "./src/*"
+    }
   },
   "scripts": {
     "generate:config": "vp config",
