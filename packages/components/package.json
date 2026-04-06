@@ -6,6 +6,10 @@
   "author": "Daniel Marchi",
   "type": "module",
   "exports": {
+    "./config": "./src/config/index.ts",
+    "./domain": "./src/domain/index.ts",
+    "./lib": "./src/lib/index.ts",
+    "./utils": "./src/utils/index.ts",
     "./*": "./src/*"
   },
   "scripts": {
