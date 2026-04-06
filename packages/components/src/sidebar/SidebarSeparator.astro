@@ -1,0 +1,25 @@
+---
+import type { ComponentProps } from "astro/types";
+import { cv } from "css-variants";
+
+// eslint-disable-next-line typescript/consistent-type-imports
+import Separator from "@/separator/Separator.astro";
+
+const sidebarSeparator = cv({
+  base: "bg-sidebar-border mx-5xs w-auto",
+});
+
+export interface SidebarSeparatorProps extends ComponentProps<typeof Separator> {}
+type Props = SidebarSeparatorProps;
+
+const { orientation = "horizontal", class: className, ...rest } = Astro.props;
+---
+
+<Separator
+  orientation={orientation}
+  class:list={[sidebarSeparator(), className]}
+  data-sidebar="separator"
+  {...rest}
+  data-slot="sidebar-separator"
+/>
+

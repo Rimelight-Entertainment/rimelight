@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type Props = HTMLAttributes<"div">;
+
+export const tabsList = cv({
+  base: [
+    "bg-muted text-muted-foreground inline-flex h-3xl items-center justify-start gap-5xs rounded-lg p-5xs",
+  ],
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={[tabsList(), className]}
+  role="tablist"
+  {...rest}
+  data-slot="tabs-list"
+>
+  <slot />
+</div>

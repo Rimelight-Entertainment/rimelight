@@ -1,0 +1,24 @@
+{
+  "title": "Editor",
+  "description": "Collaborative real-time document editor",
+  "collaborative_editor": "Collaborative Editor",
+  "status": {
+    "connecting": "Connecting…",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
+  },
+  "history": "History",
+  "version_history": "Version History",
+  "no_versions": "No versions yet.",
+  "placeholder": "Start typing… your changes are synced in real-time.",
+  "word_count": {
+    "word": "word",
+    "words": "words",
+    "character": "character",
+    "characters": "characters"
+  },
+  "save": {
+    "saved": "Saved"
+  },
+  "restore_confirm": "Restore this version? Current content will be replaced."
+}

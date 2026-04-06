@@ -1,0 +1,10 @@
+---
+import IconLoader from "~icons/lucide/loader";
+---
+
+<div class="starwind-loading-indicator hidden" data-slot="dropzone-loading-indicator">
+  <slot>
+    <IconLoader class="mx-auto size-10 animate-spin" aria-hidden="true" />
+    <p class="mt-1 text-sm">Uploading file(s)...</p>
+  </slot>
+</div>

@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export interface SidebarHeaderProps extends HTMLAttributes<"div"> {}
+type Props = SidebarHeaderProps;
+
+export const sidebarHeader = cv({
+  base: "flex flex-col gap-5xs p-5xs",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={[sidebarHeader(), className]}
+  data-sidebar="header"
+  {...rest}
+  data-slot="sidebar-header"
+>
+  <slot />
+</div>

@@ -1,0 +1,145 @@
+---
+import '../styles/globals.css';
+import Button from '@rimelight/components/button/Button.astro';
+import Badge from '@rimelight/components/badge/Badge.astro';
+import Separator from '@rimelight/components/separator/Separator.astro';
+import ThemeToggle from '@rimelight/components/theme-toggle/ThemeToggle.astro';
+
+// Icons (using unplugin-icons)
+import Rocket from '~icons/lucide/rocket';
+import Github from '~icons/lucide/github';
+import ExternalLink from '~icons/lucide/external-link';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Rimelight Starter & Showcase</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+		
+		{/* Theme Initialization Script */}
+		<script is:inline>
+			function initTheme() {
+				const colorTheme = localStorage.getItem("colorTheme");
+				if (!colorTheme) {
+					if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+						document.documentElement.classList.add("dark");
+						localStorage.setItem("colorTheme", "dark");
+					} else {
+						document.documentElement.classList.remove("dark");
+						localStorage.setItem("colorTheme", "light");
+					}
+				} else {
+					if (colorTheme === "dark") {
+						document.documentElement.classList.add("dark");
+					} else if (colorTheme === "light") {
+						document.documentElement.classList.remove("dark");
+					} else if (colorTheme === "system") {
+						const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+						document.documentElement.classList.toggle("dark", prefersDark);
+					}
+				}
+			}
+			initTheme();
+			document.addEventListener("astro:after-swap", initTheme);
+		</script>
+	</head>
+	<body class="mesh-gradient min-h-screen">
+		<nav class="sticky top-0 z-50 glass border-b border-white/10 px-6 py-3xs flex justify-between items-center">
+			<div class="flex items-center gap-xs">
+				<img src="/logo.png" alt="Rimelight Logo" class="h-xl w-xl object-contain drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+				<span class="text-xl font-bold tracking-tight">Rimelight <span class="text-primary/80">Starter</span></span>
+			</div>
+			<div class="flex items-center gap-sm">
+				<Button variant="ghost" size="sm" href="https://github.com/rimelight" target="_blank">
+					<Github class="mr-2" /> GitHub
+				</Button>
+				<ThemeToggle size="lg" variant="ghost" />
+			</div>
+		</nav>
+
+		<main class="container py-12 md:py-24">
+			<section class="space-y-6 text-center mb-16">
+				<Badge variant="primary" size="lg" class="animate-bounce">New Library</Badge>
+				<h1 class="text-5xl md:text-7xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white via-primary to-primary-foreground">
+					The Playground for Creators.
+				</h1>
+				<p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+					Explore and test all standard components from <code>@rimelight/components</code> in this dedicated starter app.
+				</p>
+				<div class="flex gap-4 justify-center pt-4">
+					<Button size="lg" variant="primary" class="rounded-full px-8 shadow-[0_0_20px_rgba(var(--primary),0.3)]">
+						Get Started <Rocket class="ml-2" />
+					</Button>
+					<Button size="lg" variant="outline" class="rounded-full px-8 backdrop-blur-sm">
+						View Docs <ExternalLink class="ml-2" />
+					</Button>
+				</div>
+			</section>
+
+			<Separator class="my-12 opacity-20" />
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+				{/* Buttons Section */}
+				<div class="glass p-8 rounded-2xl space-y-6 border border-white/10">
+					<h2 class="text-2xl font-semibold flex items-center gap-2">
+						Buttons
+					</h2>
+					<div class="flex flex-wrap gap-4">
+						<Button variant="default">Default</Button>
+						<Button variant="primary">Primary</Button>
+						<Button variant="secondary">Secondary</Button>
+						<Button variant="outline">Outline</Button>
+						<Button variant="ghost">Ghost</Button>
+					</div>
+					<div class="flex flex-wrap gap-4">
+						<Button variant="success">Success</Button>
+						<Button variant="warning">Warning</Button>
+						<Button variant="error">Error</Button>
+						<Button variant="info">Info</Button>
+					</div>
+					<div class="flex flex-wrap items-end gap-4">
+						<Button size="xs">XS</Button>
+						<Button size="sm">SM</Button>
+						<Button size="md">MD</Button>
+						<Button size="lg">LG</Button>
+						<Button size="xl">XL</Button>
+					</div>
+				</div>
+
+				{/* Badges Section */}
+				<div class="glass p-8 rounded-2xl space-y-6 border border-white/10">
+					<h2 class="text-2xl font-semibold flex items-center gap-2">
+						Badges
+					</h2>
+					<div class="flex flex-wrap gap-4">
+						<Badge variant="default">Default</Badge>
+						<Badge variant="primary">Primary</Badge>
+						<Badge variant="secondary">Secondary</Badge>
+						<Badge variant="outline">Outline</Badge>
+					</div>
+					<div class="flex flex-wrap gap-4">
+						<Badge variant="success">Success</Badge>
+						<Badge variant="warning">Warning</Badge>
+						<Badge variant="error">Error</Badge>
+						<Badge variant="info">Info</Badge>
+					</div>
+					<div class="flex flex-wrap items-center gap-4">
+						<Badge size="sm">Small</Badge>
+						<Badge size="md">Medium</Badge>
+						<Badge size="lg">Large</Badge>
+					</div>
+				</div>
+			</div>
+
+			<footer class="mt-24 text-center text-muted-foreground text-sm border-t border-white/10 pt-8">
+				&copy; 2026 Rimelight Components - Built with Astro & UnoCSS
+			</footer>
+		</main>
+	</body>
+</html>

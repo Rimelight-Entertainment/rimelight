@@ -1,0 +1,39 @@
+---
+import type { ComponentProps } from "astro/types";
+import { cv } from "css-variants";
+import IconArrowRight from "~icons/lucide/arrow-right";
+
+// eslint-disable-next-line typescript/consistent-type-imports
+import Button from "@/button/Button.astro";
+
+export const carouselNext = cv({
+  base: [
+    "starwind-carousel-next absolute size-8 rounded-full",
+    // Horizontal positioning
+    "group-data-[axis=x]/carousel:top-1/2 group-data-[axis=x]/carousel:-right-12 group-data-[axis=x]/carousel:-translate-y-1/2",
+    // Vertical positioning
+    "group-data-[axis=y]/carousel:-bottom-12 group-data-[axis=y]/carousel:left-1/2 group-data-[axis=y]/carousel:-translate-x-1/2 group-data-[axis=y]/carousel:rotate-90",
+  ],
+});
+
+type Props = ComponentProps<typeof Button> & { orientation?: "horizontal" | "vertical" };
+
+const { class: className = "", variant = "outline", size = "icon", orientation = "horizontal", ...rest } = Astro.props;
+---
+
+<Button
+  variant={variant}
+  size={size}
+  class:list={[carouselNext({ orientation }), className]}
+  aria-label="Next slide"
+  {...rest}
+  data-slot="carousel-next"
+>
+  <slot name="icon">
+    <IconArrowRight />
+  </slot>
+  <slot>
+    <span class="sr-only">Next slide</span>
+  </slot>
+</Button>
+

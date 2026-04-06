@@ -1,0 +1,59 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+import IconCircleCheck from "~icons/lucide/circle-check";
+import IconCircleX from "~icons/lucide/circle-x";
+import IconAlertTriangle from "~icons/lucide/alert-triangle";
+import IconInfo from "~icons/lucide/info";
+import IconLoader2 from "~icons/lucide/loader-2";
+
+export const toastTitle = cv({
+  base: "starwind-toast-title flex items-center gap-5xs text-sm font-semibold [&_svg]:size-4",
+  variants: {
+    variant: {
+      default: "",
+      success: "[&_svg]:text-success",
+      error: "[&_svg]:text-error",
+      warning: "[&_svg]:text-warning",
+      info: "[&_svg]:text-info",
+      loading: "[&_svg]:text-muted-foreground",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+type Variant = "default" | "success" | "error" | "warning" | "info" | "loading";
+
+export interface ToastTitleProps extends HTMLAttributes<"div"> {
+  variant?: Variant;
+}
+
+type Props = ToastTitleProps;
+
+const { class: className, variant = "default", ...rest } = Astro.props;
+
+const icons: Record<string, any> = {
+  success: IconCircleCheck,
+  error: IconCircleX,
+  warning: IconAlertTriangle,
+  info: IconInfo,
+  loading: IconLoader2,
+};
+
+const Icon = icons[variant];
+---
+
+<div
+  class:list={[toastTitle({ variant }), className]}
+  data-slot="toast-title"
+  data-toast-title
+  {...rest}
+>
+  <slot name="icon">
+    {Icon && <Icon class={variant === "loading" ? "animate-spin" : ""} />}
+  </slot>
+  <span data-toast-title-text><slot /></span>
+</div>

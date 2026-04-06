@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+import IconChevronRight from "~icons/lucide/chevron-right";
+
+export interface BreadcrumbSeparatorProps extends HTMLAttributes<"li"> {}
+type Props = BreadcrumbSeparatorProps;
+
+export const breadcrumbSeparator = cv({ base: "[&>svg]:size-4" });
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<li
+  role="presentation"
+  aria-hidden="true"
+  class:list={[breadcrumbSeparator(), className]}
+  {...rest}
+  data-slot="breadcrumb-separator"
+>
+  <slot>
+    <IconChevronRight />
+  </slot>
+</li>

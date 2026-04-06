@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export const avatarFallback = cv({
+  base: "absolute inset-0.5 flex items-center justify-center rounded-full font-medium",
+});
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div class:list={[avatarFallback(), className]} {...rest} data-slot="avatar-fallback">
+  <slot />
+</div>

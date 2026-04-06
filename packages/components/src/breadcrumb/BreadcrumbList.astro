@@ -1,0 +1,17 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export interface BreadcrumbListProps extends HTMLAttributes<"ol"> {}
+type Props = BreadcrumbListProps;
+
+export const breadcrumbList = cv({
+  base: "text-muted-foreground flex flex-wrap items-center gap-xs break-words text-sm",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<ol class:list={[breadcrumbList(), className]} {...rest} data-slot="breadcrumb-list">
+  <slot />
+</ol>

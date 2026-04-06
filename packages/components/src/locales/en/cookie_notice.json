@@ -1,0 +1,11 @@
+{
+  "title": "Cookie Policy",
+  "description": "This website does not use cookies, this is a sample of how it could work in your website as per your",
+  "privacy_policy": "Privacy Policy",
+  "reject_all": "Reject All",
+  "accept_all": "Accept All",
+  "accepted_toast": "Cookies Accepted",
+  "accepted_description": "You have accepted all cookies.",
+  "rejected_toast": "Cookies Rejected",
+  "rejected_description": "You have rejected all cookies."
+}

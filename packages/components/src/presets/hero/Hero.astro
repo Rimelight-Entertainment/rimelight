@@ -1,0 +1,168 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+import type { button } from "@/button/Button.astro";
+import Button from "@/button/Button.astro";
+
+
+
+export interface HeroAction {
+  text: string;
+  href: string;
+  variant?: NonNullable<Parameters<typeof button>[0]>["variant"];
+  icon?: any;
+}
+
+export interface HeroProps extends HTMLAttributes<"section">, NonNullable<Parameters<typeof heroVariants>[0]> {
+  /** Main title text */
+  title?: string;
+  /** Description text */
+  description?: string;
+  /** Action buttons */
+  actions?: HeroAction[];
+}
+
+type Props = HeroProps;
+
+const heroVariants = cv({
+  base: "container py-5xl",
+
+  variants: {
+    orientation: {
+      vertical: "flex flex-col gap-2xl items-center",
+      horizontal: "flex flex-col gap-2xl items-center lg:grid lg:grid-cols-2 lg:items-center lg:gap-4xl",
+    },
+    alignment: {
+      left: "text-start items-start",
+      center: "text-center items-center",
+      right: "text-end items-end",
+    },
+    inverted: {
+      true: "",
+      false: "",
+    },
+  },
+  compoundVariants: [
+    {
+      orientation: "vertical",
+      inverted: false,
+      className: "flex-col-reverse",
+    },
+    {
+      orientation: "vertical",
+      inverted: true,
+      className: "flex-col",
+    },
+    {
+      orientation: "horizontal",
+      inverted: false,
+      className: "lg:[&_.hero-content-wrapper]:order-1 lg:[&_.hero-content]:order-2",
+    },
+    {
+      orientation: "horizontal",
+      inverted: true,
+      className: "lg:[&_.hero-content]:order-1 lg:[&_.hero-content-wrapper]:order-2",
+    },
+    {
+      orientation: "horizontal",
+      className: "[&_.hero-content]:text-start [&_.hero-content]:items-start lg:text-start lg:items-start",
+    },
+  ],
+  defaultVariants: {
+    orientation: "vertical",
+    alignment: "center",
+    inverted: false,
+  },
+});
+
+const {
+  title,
+  description,
+  actions = [],
+  orientation = "vertical",
+  alignment = "center",
+  inverted = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const effectiveAlignment = orientation === "horizontal" ? "left" : alignment;
+---
+
+<section class="relative w-full overflow-hidden" {...rest}>
+  <div class="absolute inset-0 -z-10" aria-hidden="true">
+    <slot name="bg" />
+  </div>
+
+  <div class:list={[heroVariants({ orientation, alignment, inverted }), className]}>
+    <div
+      class:list={[
+        "hero-content-wrapper flex flex-col w-full",
+        orientation === "vertical" && [
+          effectiveAlignment === "center" && "mx-auto",
+          effectiveAlignment === "left" && "mr-auto",
+          effectiveAlignment === "right" && "ml-auto",
+        ],
+        effectiveAlignment === "center" && "text-center items-center",
+        effectiveAlignment === "left" && "text-start items-start",
+        effectiveAlignment === "right" && "text-end items-end",
+      ]}
+      data-slot="main"
+    >
+      {
+        title && (
+          <h1 class="font-heading text-4xl font-bold tracking-tight text-pretty lg:text-5xl xl:text-6xl">
+            {title}
+          </h1>
+        )
+      }
+      {
+        description && (
+          <p class="text-muted-foreground mt-xl text-pretty lg:text-lg">
+            {description}
+          </p>
+        )
+      }
+      {
+        actions.length > 0 && (
+          <div
+            class:list={[
+              "mt-2xl flex w-full flex-wrap gap-xs md:w-fit",
+              effectiveAlignment === "center" && "justify-center mx-auto",
+              effectiveAlignment === "left" && "justify-start",
+              effectiveAlignment === "right" && "justify-end md:ml-auto",
+            ]}
+          >
+            {actions.map(({ text, href, variant, icon: Icon }) => (
+              <Button variant={variant} class="group w-full md:w-auto" href={href}>
+                {text}
+                {Icon && (
+                  <Icon class="transition-transform group-hover:translate-x-5xs" />
+                )}
+              </Button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    {
+      Astro.slots.has("content") && (
+        <div 
+          class:list={[
+            "hero-content w-full flex",
+            effectiveAlignment === "center" && "justify-center",
+            effectiveAlignment === "left" && "justify-start",
+            effectiveAlignment === "right" && "justify-end",
+          ]} 
+          data-slot="content"
+        >
+          <slot name="content" />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+

@@ -1,0 +1,29 @@
+{
+  "title": "Entrar em uma Sala de Chat",
+  "description": "Entre em uma sala para começar a conversar",
+  "heading": "Chat em Tempo Real",
+  "intro": "Entre em um nome de sala abaixo para participar de uma conversa. Cada sala é uma instância única de Durable Object!",
+  "label": "Nome da Sala",
+  "placeholder": "ex: geral, ajuda, cafe",
+  "button": "Entrar na Sala",
+  "room": {
+    "title": "Sala de Chat",
+    "connecting": "Conectando…",
+    "connected": "Conectado",
+    "disconnected": "Desconectado",
+    "placeholder": "Digite uma mensagem…",
+    "send": "Enviar",
+    "system": {
+      "joining": "Entrando na sala…",
+      "error": "Erro de conexão",
+      "joined": "entrou na sala",
+      "left": "saiu da sala",
+      "reconnecting": "Reconectando em {delay} segundos... (tentativa {attempt}/{max})",
+      "fail_reconnect": "Falha ao reconectar. Por favor, atualize a página.",
+      "no_connect": "Não é possível enviar mensagem: não conectado",
+      "prompt_user": "Digite seu nome de usuário:",
+      "you": "(Você)",
+      "online_users": "Usuários Online:"
+    }
+  }
+}

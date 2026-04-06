@@ -1,0 +1,18 @@
+---
+import type { ComponentProps } from "astro/types";
+import { cv } from "css-variants";
+
+// eslint-disable-next-line typescript/consistent-type-imports
+import Input from "@/input/Input.astro";
+
+type Props = ComponentProps<typeof Input>;
+
+export const inputGroupInput = cv({
+  base: "h-full flex-1 rounded-none border-0 shadow-none ring-0 outline-none focus-visible:ring-0 disabled:bg-transparent aria-invalid:ring-0 dark:bg-transparent dark:disabled:bg-transparent",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<Input class:list={[inputGroupInput(), className]} {...rest} data-slot="input-group-control" />
+

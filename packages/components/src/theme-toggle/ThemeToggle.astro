@@ -1,0 +1,202 @@
+---
+// put the following script in the <head> of each page of your site
+// this ensures it is run early to eliminate any flashes of incorrect color theme
+
+/* 
+<script is:inline>
+  function initTheme() {
+    const colorTheme = localStorage.getItem("colorTheme");
+    if (!colorTheme) {
+      // if no color theme yet, use the users preferences
+      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("colorTheme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("colorTheme", "light");
+      }
+    } else {
+      // assign the theme based on the value in local storage
+      if (colorTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else if (colorTheme === "light") {
+        document.documentElement.classList.remove("dark");
+      } else if (colorTheme === "system") {
+        // use system preference
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", prefersDark);
+      }
+    }
+  }
+
+  // runs on initial page load
+  initTheme();
+
+  // runs on view transitions navigation
+  document.addEventListener("astro:after-swap", initTheme);
+</script>
+*/
+
+import { cv } from "css-variants";
+
+import type { toggle } from "@/toggle/Toggle.astro";
+import Toggle from "@/toggle/Toggle.astro";
+import IconSun from "~icons/lucide/sun";
+import IconMoon from "~icons/lucide/moon";
+
+export const themeToggle = cv({
+  base: [
+    "starwind-theme-toggle",
+    "group hover:border-muted-foreground hover:bg-transparent data-[state=on]:bg-transparent",
+  ],
+});
+
+type Props = NonNullable<Parameters<typeof toggle>[0]> & {
+  /**
+   * The ARIA label for the toggle
+   */
+  ariaLabel?: string;
+  /**
+   * Additional classes for the toggle
+   */
+  class?: string;
+};
+
+const {
+  class: className = "",
+  variant = "outline",
+  size = "md",
+  ariaLabel = "Toggle theme",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Toggle
+  class:list={[themeToggle(), className]}
+  variant={variant}
+  size={size}
+  aria-label={ariaLabel}
+  {...rest}
+  data-slot="theme-toggle"
+>
+  <slot>
+    <span class="size-5 flex items-center justify-center pointer-events-none" data-theme-icon-wrapper>
+      <slot name="light-icon">
+        <IconSun class="size-5 sun-icon" data-theme-icon="light" />
+      </slot>
+      <slot name="dark-icon">
+        <IconMoon class="size-5 moon-icon" data-theme-icon="dark" />
+      </slot>
+    </span>
+  </slot>
+</Toggle>
+
+<style>
+  [data-theme-icon] {
+    display: none;
+  }
+
+  /* Only show once JS has initialized state and icons are ready */
+  [data-ready][data-theme-icon] {
+    display: none; 
+  }
+
+  [data-ready][data-state="off"] [data-theme-icon="light"] {
+    display: block;
+  }
+  
+  [data-ready][data-state="on"] [data-theme-icon="dark"] {
+    display: block;
+  }
+</style>
+
+<script>
+  import type { ToggleChangeEvent } from "@/toggle/ToggleTypes";
+
+  class ThemeToggleHandler {
+    private toggle: HTMLButtonElement;
+    private isInitializing = true;
+
+    constructor(toggle: HTMLButtonElement) {
+      this.toggle = toggle;
+
+      this.initializeState();
+      this.setupEventListeners();
+
+      // Mark initialization complete after a microtask
+      queueMicrotask(() => {
+        this.isInitializing = false;
+      });
+    }
+
+    private initializeState(): void {
+      const isDark = document.documentElement.classList.contains("dark");
+      this.toggle.setAttribute("data-state", isDark ? "on" : "off");
+      this.toggle.setAttribute("aria-pressed", isDark.toString());
+
+      // Mark toggle itself as ready so CSS can pick it up
+      this.toggle.setAttribute("data-ready", "");
+    }
+
+    private setupEventListeners(): void {
+      this.toggle.addEventListener("starwind-toggle:change", (event: Event) =>
+        this.handleToggleChange(event),
+      );
+    }
+
+    private handleToggleChange(event: Event): void {
+      if (this.isInitializing) return;
+
+      const { pressed } = (event as ToggleChangeEvent).detail;
+      const newTheme = pressed ? "dark" : "light";
+
+      document.documentElement.classList.toggle("dark", pressed);
+      localStorage.setItem("colorTheme", newTheme);
+
+      document.dispatchEvent(
+        new CustomEvent("theme:change", {
+          detail: { theme: newTheme },
+        }),
+      );
+    }
+
+    public syncState(theme: string): void {
+      let shouldBeOn: boolean;
+      if (theme === "system") {
+        shouldBeOn = document.documentElement.classList.contains("dark");
+      } else {
+        shouldBeOn = theme === "dark";
+      }
+
+      const newState = shouldBeOn ? "on" : "off";
+      if (this.toggle.getAttribute("data-state") !== newState) {
+        this.toggle.setAttribute("data-state", newState);
+        this.toggle.setAttribute("aria-pressed", shouldBeOn.toString());
+      }
+    }
+  }
+
+  const themeToggleInstances = new WeakMap<HTMLElement, ThemeToggleHandler>();
+  const activeToggles = new Set<HTMLButtonElement>();
+
+  const setupThemeToggles = (clearExisting = false) => {
+    if (clearExisting) activeToggles.clear();
+    document.querySelectorAll<HTMLButtonElement>(".starwind-theme-toggle").forEach((toggle) => {
+      if (!themeToggleInstances.has(toggle)) {
+        themeToggleInstances.set(toggle, new ThemeToggleHandler(toggle));
+      }
+      activeToggles.add(toggle);
+    });
+  };
+
+  document.addEventListener("theme:change", (event) => {
+    const { theme } = (event as CustomEvent).detail;
+    activeToggles.forEach((toggle) => {
+      themeToggleInstances.get(toggle)?.syncState(theme);
+    });
+  });
+
+  setupThemeToggles();
+  document.addEventListener("astro:after-swap", () => setupThemeToggles(true));
+  document.addEventListener("starwind:init", () => setupThemeToggles());
+</script>

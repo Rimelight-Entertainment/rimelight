@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export interface SidebarMenuBadgeProps extends HTMLAttributes<"div"> {}
+type Props = SidebarMenuBadgeProps;
+
+export const sidebarMenuBadge = cv({
+  base: [
+    "text-sidebar-foreground pointer-events-none absolute right-2xs flex h-2xs min-w-2xs",
+    "items-center justify-center rounded-md px-2xs text-xs font-medium tabular-nums select-none",
+    "peer-hover/menu-button:text-sidebar-accent-foreground",
+    "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
+    "peer-data-[size=sm]/menu-button:top-2xs",
+    "peer-data-[size=default]/menu-button:top-xs",
+    "peer-data-[size=lg]/menu-button:top-sm",
+    "group-data-[collapsible=icon]:hidden",
+  ],
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={[sidebarMenuBadge(), className]}
+  data-sidebar="menu-badge"
+  {...rest}
+  data-slot="sidebar-menu-badge"
+>
+  <slot />
+</div>

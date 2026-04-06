@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type VariantProps<T extends (...args: any) => any> = NonNullable<Parameters<T>[0]>;
+
+type Props = HTMLAttributes<"textarea"> & VariantProps<typeof textarea>;
+
+export const textarea = cv({
+  base: [
+    "border-input dark:bg-input/30 text-foreground ring-offset-background min-h-3xl w-full rounded-md b bg-transparent shadow-xs",
+    "focus-visible:border-outline focus-visible:ring-outline/50 transition-[color,box-shadow] focus-visible:ring-3",
+    "file:text-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium",
+    "disabled:cursor-not-allowed disabled:op-50",
+    "aria-invalid:border-error aria-invalid:focus-visible:ring-error/40",
+    "peer placeholder:text-muted-foreground",
+  ],
+  variants: {
+    size: {
+      sm: "min-h-2xl px-3xs py-6xs text-sm",
+      md: "min-h-3xl px-xs py-5xs text-base",
+      lg: "min-h-3xl px-2xl py-xs text-lg",
+    },
+  },
+  defaultVariants: { size: "md" },
+});
+
+const { size, class: className, ...rest } = Astro.props;
+---
+
+<textarea class:list={[textarea({ size }), className]} {...rest} data-slot="textarea"></textarea>

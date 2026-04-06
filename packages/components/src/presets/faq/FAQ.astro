@@ -1,0 +1,68 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+import Tabs from "@/tabs/Tabs.astro";
+import TabsContent from "@/tabs/TabsContent.astro";
+import TabsList from "@/tabs/TabsList.astro";
+import TabsTrigger from "@/tabs/TabsTrigger.astro";
+import Accordion from "@/accordion/Accordion.astro";
+import AccordionContent from "@/accordion/AccordionContent.astro";
+import AccordionItem from "@/accordion/AccordionItem.astro";
+import AccordionTrigger from "@/accordion/AccordionTrigger.astro";
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface FAQCategory {
+  title: string;
+  items: FAQItem[];
+}
+
+export interface FAQProps extends HTMLAttributes<"div"> {
+  categories: FAQCategory[];
+}
+
+type Props = FAQProps;
+
+const faqVariants = cv({
+  base: "w-full",
+});
+
+const { 
+  categories, 
+  class: className,
+  ...rest 
+} = Astro.props;
+---
+
+<div class:list={[faqVariants(), className]} {...rest}>
+  <Tabs defaultValue={categories[0]?.title ?? ""} class="w-full">
+    <TabsList class="w-full mb-10 grid grid-cols-2 md:grid-cols-4 lg:flex">
+      {categories.map((category) => (
+        <TabsTrigger value={category.title} class="grow min-w-0">
+          {category.title}
+        </TabsTrigger>
+      ))}
+    </TabsList>
+
+    {categories.map((category) => (
+      <TabsContent value={category.title} class="w-full">
+        <Accordion type="single" defaultValue={`${category.title}-item-0`} class="text-left">
+          {category.items.map((item, index) => (
+            <AccordionItem value={`${category.title}-item-${index}`}>
+              <AccordionTrigger>
+                {item.question}
+              </AccordionTrigger>
+              <AccordionContent>
+                {item.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </TabsContent>
+    ))}
+  </Tabs>
+</div>
+

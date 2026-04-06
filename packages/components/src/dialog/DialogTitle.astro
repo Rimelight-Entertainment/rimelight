@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type Props = Omit<HTMLAttributes<"h2">, "id"> & {
+  id?: string;
+};
+
+export const dialogTitle = cv({
+  base: "text-lg font-semibold leading-none tracking-tight",
+});
+
+const { class: className, id, ...rest } = Astro.props;
+---
+
+<h2 class:list={[dialogTitle(), className]} id={id} {...rest} data-slot="dialog-title">
+  <slot />
+</h2>

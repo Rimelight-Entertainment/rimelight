@@ -1,0 +1,6 @@
+{
+  "404_title": "Seite nicht gefunden",
+  "404_description": "Die gesuchte Seite existiert nicht.",
+  "500_title": "Interner Serverfehler",
+  "500_description": "Auf unserer Seite ist etwas schiefgelaufen. Bitte versuchen Sie es später noch einmal."
+}

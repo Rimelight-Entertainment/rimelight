@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type Props = HTMLAttributes<"div">;
+
+export const dropdownSeparator = cv({
+  base: "bg-border -mx-5xs my-5xs h-6xs",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={[dropdownSeparator(), className]}
+  role="separator"
+  aria-orientation="horizontal"
+  {...rest}
+  data-slot="dropdown-separator"
+>
+</div>

@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export interface SidebarMenuProps extends HTMLAttributes<"ul"> {}
+type Props = SidebarMenuProps;
+
+export const sidebarMenu = cv({
+  base: "flex w-full min-w-0 flex-col gap-5xs",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<ul
+  class:list={[sidebarMenu(), className]}
+  data-sidebar="menu"
+  {...rest}
+  data-slot="sidebar-menu"
+>
+  <slot />
+</ul>

@@ -1,0 +1,26 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type Props = HTMLAttributes<"div">;
+
+const { class: className, ...rest } = Astro.props;
+
+export const dropzoneFilesList = cv({
+  base: [
+    "starwind-files-list",
+    "mt-2xs -mb-3xs min-h-3xs",
+    "bg-muted invisible flex flex-col items-center justify-center gap-2xs rounded-md px-2 py-1 text-sm",
+    "[&_div]:flex [&_div]:items-center [&_div]:gap-1 [&_svg]:size-3.5",
+  ],
+});
+---
+
+<div
+  class:list={[dropzoneFilesList(), className]}
+  aria-live="polite"
+  aria-label="Uploaded files"
+  {...rest}
+  data-slot="dropzone-files-list"
+>
+</div>

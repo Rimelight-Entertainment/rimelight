@@ -1,0 +1,25 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+import IconMinus from "~icons/lucide/minus";
+
+type Props = HTMLAttributes<"div">;
+
+export const inputOtpSeparator = cv({
+  base: "text-muted-foreground",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div
+  aria-hidden="true"
+  class:list={[inputOtpSeparator(), className]}
+  role="separator"
+  {...rest}
+  data-slot="input-otp-separator"
+>
+  <slot name="icon">
+    <IconMinus class="size-6" />
+  </slot>
+</div>

@@ -1,0 +1,22 @@
+---
+export interface FormattedDateProps {
+	date?: Date | undefined;
+}
+type Props = FormattedDateProps;
+
+const { date } = Astro.props;
+---
+
+{
+	date && (
+		<time datetime={date.toISOString()}>
+			{
+				date.toLocaleDateString('en-us', {
+					year: 'numeric',
+					month: 'short',
+					day: 'numeric',
+				})
+			}
+		</time>
+	)
+}

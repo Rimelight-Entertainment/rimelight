@@ -1,0 +1,29 @@
+{
+  "title": "Join a Chat Room",
+  "description": "Enter a room name to start chatting",
+  "heading": "Real-time Chat",
+  "intro": "Enter a room name below to join a conversation. Each room is a unique Durable Object instance!",
+  "label": "Room Name",
+  "placeholder": "e.g. general, help, coffee-break",
+  "button": "Join Room",
+  "room": {
+    "title": "Chat Room",
+    "connecting": "Connecting…",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "placeholder": "Type a message…",
+    "send": "Send",
+    "system": {
+      "joining": "Joining room…",
+      "error": "Connection error",
+      "joined": "joined the room",
+      "left": "left the room",
+      "reconnecting": "Reconnecting in {delay} seconds... (attempt {attempt}/{max})",
+      "fail_reconnect": "Failed to reconnect. Please refresh the page.",
+      "no_connect": "Cannot send message: not connected",
+      "prompt_user": "Enter your username:",
+      "you": "(You)",
+      "online_users": "Online Users:"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export const toastDescription = cv({
+  base: "starwind-toast-description text-muted-foreground text-sm",
+});
+
+export interface ToastDescriptionProps extends HTMLAttributes<"div"> {}
+type Props = ToastDescriptionProps;
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={[toastDescription(), className]}
+  data-toast-description
+  {...rest}
+  data-slot="toast-description"
+>
+  <slot />
+</div>

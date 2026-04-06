@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export interface SidebarFooterProps extends HTMLAttributes<"div"> {}
+type Props = SidebarFooterProps;
+
+export const sidebarFooter = cv({
+  base: "flex flex-col gap-5xs p-5xs",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={[sidebarFooter(), className]}
+  data-sidebar="footer"
+  {...rest}
+  data-slot="sidebar-footer"
+>
+  <slot />
+</div>

@@ -1,0 +1,14 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type Props = HTMLAttributes<"p">;
+
+export const dialogDescription = cv({ base: "text-muted-foreground text-sm" });
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<p class:list={[dialogDescription(), className]} {...rest} data-slot="dialog-description">
+  <slot />
+</p>

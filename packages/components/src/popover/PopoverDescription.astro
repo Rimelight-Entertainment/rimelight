@@ -1,0 +1,14 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type Props = HTMLAttributes<"p">;
+
+export const popoverDescription = cv({ base: "text-muted-foreground" });
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<p class:list={[popoverDescription(), className]} {...rest} data-slot="popover-description">
+  <slot />
+</p>

@@ -1,0 +1,19 @@
+{
+  "seo": {
+    "title": "Cloudflare Workers 用 Zero-JS i18n Astro スターター",
+    "description": "ハイドレーションの肥大化なしで、多言語アプリをより速く提供します。Cloudflare Workers & KV との完全な統合、自動化された TypeScript 生成、およびエッジキャッシングを標準装備しています。"
+  },
+  "nav": {
+    "home": "Astro コンポーネント & アイランド",
+    "blog": "Markdown による i18n の例",
+    "mobileButton": "メニュー"
+  },
+  "footer": {
+    "license": "MIT ライセンスの下で提供されています。"
+  },
+  "notFound": {
+    "title": "404 — ページが見つかりません",
+    "message": "お探しのページは存在しないか、移動されました。",
+    "backToHome": "ホームページに戻る"
+  }
+}

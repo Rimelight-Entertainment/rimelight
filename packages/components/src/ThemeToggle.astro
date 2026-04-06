@@ -1,0 +1,69 @@
+---
+import IconSun from "~icons/lucide/sun"
+import IconMoon from "~icons/lucide/moon"
+import Toggle from "@/toggle/Toggle.astro";
+
+export interface ThemeToggleProps {
+  class?: string;
+  size?: "sm" | "md" | "lg";
+}
+type Props = ThemeToggleProps;
+
+const { class: className, size = "md" } = Astro.props as Props;
+---
+
+<Toggle
+  id="theme-toggle"
+  size={size}
+  class:list={[
+    "group text-muted-foreground hover:text-foreground rounded-full hover:bg-transparent",
+    className,
+  ]}
+  aria-label="Toggle theme"
+>
+    <IconSun class="sun-wrapper" />
+    <IconMoon class="moon-wrapper" />
+</Toggle>
+
+<style>
+  #theme-toggle[data-state="on"] .sun-wrapper {
+    display: none;
+  }
+  #theme-toggle[data-state="off"] .sun-wrapper {
+    display: flex;
+  }
+  #theme-toggle[data-state="on"] .moon-wrapper {
+    display: flex;
+  }
+  #theme-toggle[data-state="off"] .moon-wrapper {
+    display: none;
+  }
+</style>
+
+<script>
+  function setupThemeToggle() {
+    const button = document.getElementById('theme-toggle');
+    if (!button) return;
+
+    // Use current document class to set initial button state
+    const isDark = document.documentElement.classList.contains('dark');
+    button.setAttribute('data-state', isDark ? 'on' : 'off');
+    button.setAttribute('aria-pressed', isDark.toString());
+
+    button.addEventListener('click', () => {
+      // Toggle the class on the <html> tag
+      const newDark = document.documentElement.classList.toggle('dark');
+      
+      // Update button state visually
+      button.setAttribute('data-state', newDark ? 'on' : 'off');
+      button.setAttribute('aria-pressed', newDark.toString());
+      
+      // Save the user's choice
+      localStorage.setItem('theme', newDark ? 'dark' : 'light');
+    });
+  }
+
+  // Runs on initial load AND after each navigation (View Transitions)
+  document.addEventListener('astro:page-load', setupThemeToggle);
+</script>
+

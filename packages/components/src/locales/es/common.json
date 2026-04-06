@@ -1,0 +1,19 @@
+{
+  "seo": {
+    "title": "Zero-JS i18n Astro Starter para Cloudflare Workers",
+    "description": "Lance aplicaciones multilingües más rápido sin el peso de la hidratación. Integración total con Cloudflare Workers & KV, generación TypeScript automatizada y caché en el edge configurado."
+  },
+  "nav": {
+    "home": "Componentes e islas de Astro",
+    "blog": "Ejemplos de i18n con Markdown",
+    "mobileButton": "Menú"
+  },
+  "footer": {
+    "license": "Bajo la licencia MIT."
+  },
+  "notFound": {
+    "title": "404 — Página no encontrada",
+    "message": "La página que buscas no existe o ha sido movida.",
+    "backToHome": "Volver a la página de inicio"
+  }
+}

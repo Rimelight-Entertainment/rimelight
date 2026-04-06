@@ -1,0 +1,17 @@
+{
+  "name": "rimelight-starter",
+  "compatibility_date": "2026-03-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "TRANSLATIONS",
+      "id": "0463354ef4e443f2bbfc7aaee5277bce"
+    }
+  ],
+  "vars": {
+    "I18N_CACHE": "on",
+    "DEBUG_I18N": "off",
+    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA"
+  }
+}
+// Cache invalidation comment

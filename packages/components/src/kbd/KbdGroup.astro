@@ -1,0 +1,16 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type Props = HTMLAttributes<"kbd">;
+
+export const kbdGroup = cv({
+  base: "inline-flex items-center gap-2xs",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<kbd class:list={[kbdGroup(), className]} {...rest} data-slot="kbd-group">
+  <slot />
+</kbd>

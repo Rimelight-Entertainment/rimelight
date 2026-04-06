@@ -1,0 +1,15 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+export const alertDescription = cv({ base: "leading-relaxed" });
+
+export interface AlertDescriptionProps extends HTMLAttributes<"p"> {}
+type Props = AlertDescriptionProps;
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<p class:list={[alertDescription(), className]} {...rest} data-slot="alert-description">
+  <slot />
+</p>

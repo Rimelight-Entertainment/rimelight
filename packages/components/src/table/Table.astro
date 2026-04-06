@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv } from "css-variants";
+
+type VariantProps<T extends (...args: any) => any> = NonNullable<Parameters<T>[0]>;
+
+type Props = HTMLAttributes<"table"> & VariantProps<typeof table>;
+
+export const table = cv({
+  base: "w-full caption-bottom text-sm",
+});
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<div data-slot="table-container" class="relative w-full overflow-x-auto">
+  <table class:list={[table(), className]} {...rest} data-slot="table">
+    <slot />
+  </table>
+</div>
