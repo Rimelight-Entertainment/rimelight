@@ -1,4 +1,4 @@
-import type { Locale } from "@/domain/i18n/schema"
+import type { Locale } from "./schema"
 
 // Explicit locale → flag mapping
 export const FLAG_CODES = {
@@ -12,5 +12,5 @@ export const FLAG_CODES = {
 export type FlagCode = (typeof FLAG_CODES)[keyof typeof FLAG_CODES]
 
 export const localeToFlagCode = (locale: Locale): FlagCode | null => {
-  return FLAG_CODES[locale] || null
+  return locale in FLAG_CODES ? FLAG_CODES[locale] : null
 }

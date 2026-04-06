@@ -1,7 +1,7 @@
 import { getCollection } from "astro:content"
 import { SITE_CONFIG } from "@/config"
 import { DEFAULT_LOCALE } from "@/domain/i18n/constants"
-import { SEO_DEFAULTS } from "@/domain/seo/constants"
+import { SEO_DEFAULTS } from "../constants"
 import { isBaseCMSContentEntry, type BaseCMSContentEntry } from "@/domain/cms"
 
 // Helper for the core project details

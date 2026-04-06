@@ -1,9 +1,9 @@
 import type { MiddlewareHandler } from "astro"
-import { LocaleSchema, type Locale } from "@/domain/i18n/schema"
-import { DEFAULT_LOCALE } from "@/domain/i18n/constants"
-import { getCookieLang, setCookieLang } from "@/domain/i18n/cookie-storage"
-import { mapCountryToLocale } from "@/domain/i18n/country-to-locale-map"
-import { resolveLocaleForTranslations } from "@/domain/i18n/resolve-locale"
+import { LocaleSchema, type Locale } from "../schema"
+import { DEFAULT_LOCALE } from "../constants"
+import { getCookieLang, setCookieLang } from "../cookie-storage"
+import { mapCountryToLocale } from "../country-to-locale-map"
+import { resolveLocaleForTranslations } from "../resolve-locale"
 
 // Regex to identify public static assets (images, fonts, scripts, etc.)
 // These files should bypass i18n routing and locale detection.
