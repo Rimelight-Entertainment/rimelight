@@ -5,7 +5,7 @@
  *
  * @example
  *   ;```ts
- *   import { toast } from "@/toast/toast-manager"
+ *   import { toast } from "@rimelight/components/toast/toast-manager"
  *
  *   // Simple usage
  *   toast("Hello world")

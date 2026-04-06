@@ -39,8 +39,8 @@
 
 import { cv } from "css-variants";
 
-import type { toggle } from "@/toggle/Toggle.astro";
-import Toggle from "@/toggle/Toggle.astro";
+import type { toggle } from "@rimelight/components/toggle/Toggle.astro";
+import Toggle from "@rimelight/components/toggle/Toggle.astro";
 import IconSun from "~icons/lucide/sun";
 import IconMoon from "~icons/lucide/moon";
 
@@ -111,7 +111,7 @@ const {
 </style>
 
 <script>
-  import type { ToggleChangeEvent } from "@/toggle/ToggleTypes";
+  import type { ToggleChangeEvent } from "@rimelight/components/toggle/ToggleTypes";
 
   class ThemeToggleHandler {
     private toggle: HTMLButtonElement;

@@ -1,7 +1,7 @@
 import type { AstroCookies } from "astro"
 import { z } from "astro/zod"
 
-import { COOKIE_TTL } from "@/config"
+import { COOKIE_TTL } from "@rimelight/components/config"
 
 type AstroCookieOptions = NonNullable<Parameters<AstroCookies["set"]>[2]>
 

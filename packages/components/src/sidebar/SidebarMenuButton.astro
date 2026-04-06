@@ -4,9 +4,9 @@ import { cv } from "css-variants";
 
 type VariantProps<T extends (...args: any) => any> = NonNullable<Parameters<T>[0]>;
 
-import Tooltip from "@/tooltip/Tooltip.astro";
-import TooltipContent from "@/tooltip/TooltipContent.astro";
-import TooltipTrigger from "@/tooltip/TooltipTrigger.astro";
+import Tooltip from "@rimelight/components/tooltip/Tooltip.astro";
+import TooltipContent from "@rimelight/components/tooltip/TooltipContent.astro";
+import TooltipTrigger from "@rimelight/components/tooltip/TooltipTrigger.astro";
 
 export interface SidebarMenuButtonProps
   extends HTMLAttributes<"button">,

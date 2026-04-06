@@ -2,11 +2,11 @@
 import { Image } from "astro:assets";
 import { scv } from "css-variants";
 import type { CollectionEntry } from "astro:content";
-import Separator from "@/separator/Separator.astro";
-import Avatar from "@/avatar/Avatar.astro";
-import AvatarImage from "@/avatar/AvatarImage.astro";
-import avatarAsset from "@/assets/team/Daniel-Marchi_0000_00.webp";
-import { fetchTranslations } from "@/domain/i18n/fetcher";
+import Separator from "@rimelight/components/separator/Separator.astro";
+import Avatar from "@rimelight/components/avatar/Avatar.astro";
+import AvatarImage from "@rimelight/components/avatar/AvatarImage.astro";
+import avatarAsset from "@rimelight/components/assets/team/Daniel-Marchi_0000_00.webp";
+import { fetchTranslations } from "@rimelight/components/domain/i18n/fetcher";
 
 const { translationLocale, cfContext } = Astro.locals;
 const runtime = { cf: Astro.request.cf, cfContext };

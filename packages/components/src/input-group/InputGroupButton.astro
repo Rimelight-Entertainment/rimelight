@@ -5,7 +5,7 @@ import { cv } from "css-variants";
 type VariantProps<T extends (...args: any) => any> = NonNullable<Parameters<T>[0]>;
 
 // eslint-disable-next-line typescript/consistent-type-imports
-import Button from "@/button/Button.astro";
+import Button from "@rimelight/components/button/Button.astro";
 
 type Props = Omit<ComponentProps<typeof Button>, "size"> & VariantProps<typeof inputGroupButton>;
 
