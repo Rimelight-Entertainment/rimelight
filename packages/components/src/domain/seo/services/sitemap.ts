@@ -1,6 +1,6 @@
 import { getCollection } from "astro:content"
-import { SUPPORTED_LOCALES } from "@/domain/i18n/constants"
-import { isBaseCMSContentEntry } from "@/domain/cms"
+import { SUPPORTED_LOCALES } from "../../i18n/constants"
+import { isBaseCMSContentEntry } from "../../cms"
 
 // 1. Strong typing for sitemap elements
 export interface SitemapEntry {

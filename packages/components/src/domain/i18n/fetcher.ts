@@ -1,9 +1,9 @@
-import { SITE_CONFIG } from "@/config"
+import { SITE_CONFIG } from "../../config"
 import { TRANSLATIONS_VERSION } from "./runtime-constants"
 import { env } from "cloudflare:workers"
 import type { Locale, Namespace, PickSchema } from "./schema"
-import { deepMerge } from "@/utils/shared/deep-merge"
-import { parseBooleanFlag } from "@/utils/shared/parse-boolean"
+import { deepMerge } from "../../utils/shared/deep-merge"
+import { parseBooleanFlag } from "../../utils/shared/parse-boolean"
 
 // Optional fallbacks (auto-loaded if generated)
 let FALLBACKS: Record<string, unknown> | null = null

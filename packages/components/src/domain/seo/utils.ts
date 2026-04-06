@@ -1,5 +1,5 @@
 import { SEO_DEFAULTS } from "./constants"
-import { replaceLocaleInPath } from "@/domain/i18n/format"
+import { replaceLocaleInPath } from "../i18n/format"
 
 /**
  * Generates absolute URLs for hreflang tags
