@@ -10,23 +10,14 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      "audit": {
-        command: "pnpm audit --audit-level=moderate"
-      },
-      "typegen": {
+      typegen: {
         command: "wrangler types",
         input: [{ auto: true }, "wrangler.jsonc", "!worker-configuration.d.ts"]
       },
-      "check:vp": {
-        command: "vp check"
-      },
-      "check": {
-        dependsOn: ["audit", "typegen", "check:vp"],
+      check: {
+        dependsOn: ["typegen"],
         command: "astro check",
         input: [{ auto: true }, "!.wrangler/**", "!.astro/**"]
-      },
-      "fix": {
-        command: "pnpm audit fix && vp check --fix && vp run check"
       }
     }
   }

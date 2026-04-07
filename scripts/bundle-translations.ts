@@ -2,8 +2,8 @@ import fs from "node:fs"
 import path from "node:path"
 import crypto from "node:crypto"
 
-import { SITE_CONFIG } from "../packages/components/src/config"
-import { DEFAULT_LOCALE } from "../packages/components/src/domain/i18n/constants"
+import { SITE_CONFIG } from "../packages/ui/src/config"
+import { DEFAULT_LOCALE } from "../packages/ui/src/domain/i18n/constants"
 
 const ROOT = process.cwd()
 const LOCALES_DIR = path.join(ROOT, "src", "locales")

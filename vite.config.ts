@@ -93,7 +93,7 @@ export default defineConfig({
         command: "pnpm -r exec vp run check"
       },
       "fix": {
-        command: "pnpm audit fix && vp check --fix && pnpm -r exec vp run fix"
+        command: "pnpm audit fix && vp check --fix"
       }
     }
   }
