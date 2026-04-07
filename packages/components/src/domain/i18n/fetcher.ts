@@ -1,6 +1,13 @@
 import { SITE_CONFIG } from "../../config"
 import { TRANSLATIONS_VERSION } from "./runtime-constants"
-import { env } from "cloudflare:workers"
+let env: any = {}
+try {
+  // @ts-ignore
+  env = (await import("cloudflare:workers")).env
+} catch {
+  // Safe fallback for Node.js environments (Astro config, local scripts)
+  env = {}
+}
 import type { Locale, Namespace, PickSchema } from "./schema"
 import { deepMerge } from "../../utils/shared/deep-merge"
 import { parseBooleanFlag } from "../../utils/shared/parse-boolean"
