@@ -60,7 +60,8 @@ function resolveFallbackLocale(context: I18nMiddlewareContext): Locale {
     if (parsed.success) return parsed.data
   } else {
     // Cloudflare Geo-IP Strategy
-    const country = context.request.cf?.country
+    const request = context.request as Request & { cf?: { country?: string } }
+    const country = request.cf?.country
     let parsed = LocaleSchema.safeParse(mapCountryToLocale(country ?? ""))
     if (parsed.success) return parsed.data
   }

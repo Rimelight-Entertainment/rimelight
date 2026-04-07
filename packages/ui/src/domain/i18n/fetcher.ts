@@ -1,4 +1,3 @@
-import { SITE_CONFIG } from "../../config"
 import { TRANSLATIONS_VERSION } from "./runtime-constants"
 let env: any = {}
 try {
@@ -12,6 +11,17 @@ try {
 import type { Locale, Namespace, PickSchema } from "./schema"
 import { deepMerge } from "../../utils/shared/deep-merge"
 import { parseBooleanFlag } from "../../utils/shared/parse-boolean"
+
+/**
+ * Minimal environment interface for i18n operations. Usually provided by Cloudflare Workers.
+ */
+interface Env {
+  TRANSLATIONS: {
+    get: (keys: string[], options: { type: "json"; cacheTtl?: number }) => Promise<Map<string, any>>
+  }
+  I18N_CACHE?: string
+  DEBUG_I18N?: string
+}
 
 // Optional fallbacks (auto-loaded if generated)
 let FALLBACKS: Record<string, unknown> | null = null
@@ -56,7 +66,7 @@ export interface Runtime {
  *
  * Responsibilities:
  *
- * - Build KV keys using SITE_CONFIG.id, namespace and locale
+ * - Build KV keys using namespace and locale (isolated by KV namespace binding)
  * - Optionally use edge cache (controlled by env flag I18N_CACHE)
  * - On cache miss, read from KV and merge with optional FALLBACK_* dictionaries
  * - Persist the merged payload back to the edge cache
@@ -75,7 +85,7 @@ export async function fetchTranslations<N extends Namespace>(
 
   const { cache, waitUntil } = useCache ? getEdgeCache(runtime) : { cache: null, waitUntil: null }
 
-  const keys = namespaces.map((ns) => `${SITE_CONFIG.id}:${ns}:${lang}`)
+  const keys = namespaces.map((ns) => `${ns}:${lang}`)
 
   const { cacheRequest } = buildCacheKey(lang, namespaces)
 
@@ -174,7 +184,7 @@ function buildCacheKey<N extends Namespace>(
   lang: Locale,
   namespaces: readonly N[]
 ): { cacheId: string; cacheRequest: Request } {
-  const cacheId = `${SITE_CONFIG.id}:i18n:v${TRANSLATIONS_VERSION}:${lang}:${namespaces.join(",")}`
+  const cacheId = `i18n:v${TRANSLATIONS_VERSION}:${lang}:${namespaces.join(",")}`
 
   const cacheRequest = new Request(`https://i18n-cache/${encodeURIComponent(cacheId)}`)
 

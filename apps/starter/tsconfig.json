@@ -1,11 +1,6 @@
 {
   "extends": "astro/tsconfigs/strictest",
-  "include": [
-    "src/**/*",
-    "../../packages/components/src/**/*",
-    "../../packages/components/worker-configuration.d.ts",
-    "worker-configuration.d.ts"
-  ],
+  "include": ["src/**/*", "../../packages/ui/src/**/*", "worker-configuration.d.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
@@ -13,8 +8,8 @@
     "types": ["astro/client", "vite/client", "node"],
     "plugins": [{ "name": "@astrojs/ts-plugin" }],
     "paths": {
-      "@/*": ["../../packages/components/src/*", "./src/*"],
-      "@rimelight/components/*": ["../../packages/components/src/*", "../../packages/components/*"]
+      "@/*": ["../../packages/ui/src/*", "./src/*"],
+      "@rimelight/ui/*": ["../../packages/ui/src/*", "../../packages/ui/*"]
     }
   }
 }

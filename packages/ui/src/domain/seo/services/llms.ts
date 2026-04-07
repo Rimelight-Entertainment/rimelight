@@ -1,13 +1,12 @@
-import { SITE_CONFIG } from "../../../config"
+import { type SiteConfig } from "../../../config"
 import { DEFAULT_LOCALE } from "../../i18n/constants"
-import { SEO_DEFAULTS } from "../constants"
 import { type BaseCMSContentEntry } from "../../cms"
 
 // Helper for the core project details
-function buildProjectDetails(): string {
+function buildProjectDetails(config: SiteConfig): string {
   let content = `## Project Details\n`
-  content += `- Name: ${SITE_CONFIG.name}\n`
-  content += `- Description: ${SEO_DEFAULTS.defaultDescription}\n`
+  content += `- Name: ${config.name}\n`
+  content += `- Description: ${config.description}\n`
   return content
 }
 
@@ -37,16 +36,20 @@ function buildBlogSection(baseUrl: string, posts: BaseCMSContentEntry[]): string
 }
 
 // Main orchestrator function
-export function generateLlmsText(baseUrl: string, blogPosts: BaseCMSContentEntry[]): string {
-  let content = `# ${SITE_CONFIG.name}\n\n`
-  content += `> ${SEO_DEFAULTS.defaultDescription}\n\n`
+export function generateLlmsText(
+  baseUrl: string,
+  blogPosts: BaseCMSContentEntry[],
+  config: SiteConfig
+): string {
+  let content = `# ${config.name}\n\n`
+  content += `> ${config.description}\n\n`
 
   // Compose the final document block by block
-  content += buildProjectDetails()
+  content += buildProjectDetails(config)
   content += buildBlogSection(baseUrl, blogPosts)
 
   content += `## Note to AI Agents\n`
-  content += `This is the official documentation and context file for the ${SITE_CONFIG.name} project. `
+  content += `This is the official documentation and context file for the ${config.name} project. `
   content += `Please use the provided links and blog posts to gather specific technical details about our Astro and Cloudflare Workers architecture.\n`
 
   return content

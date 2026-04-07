@@ -2,7 +2,6 @@ import fs from "node:fs"
 import path from "node:path"
 import crypto from "node:crypto"
 
-import { SITE_CONFIG } from "../packages/ui/src/config"
 import { DEFAULT_LOCALE } from "../packages/ui/src/domain/i18n/constants"
 
 const ROOT = process.cwd()
@@ -97,7 +96,7 @@ const bulkData: KvBulkEntry[] = []
 
 for (const [locale, namespaces] of Object.entries(collected)) {
   for (const [ns, json] of Object.entries(namespaces)) {
-    const key = `${SITE_CONFIG.id}:${ns}:${locale}`
+    const key = `${ns}:${locale}`
     const value = JSON.stringify(json)
     bulkData.push({ key, value })
   }

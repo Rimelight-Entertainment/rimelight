@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/ui",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Rimelight UI Library.",
   "license": "MIT",
   "author": "Daniel Marchi",
@@ -44,8 +44,7 @@
     "@types/node": "25.5.2",
     "astro": "6.1.4",
     "typescript": "6.0.2",
-    "vite-plus": "0.1.15",
-    "wrangler": "4.80.0"
+    "vite-plus": "0.1.15"
   },
   "peerDependencies": {
     "astro": ">=6.0.0"

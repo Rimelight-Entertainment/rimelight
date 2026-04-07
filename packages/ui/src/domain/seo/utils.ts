@@ -1,4 +1,3 @@
-import { SEO_DEFAULTS } from "./constants"
 import { replaceLocaleInPath } from "../i18n/format"
 
 /**
@@ -25,9 +24,9 @@ export function buildAlternateUrl(
   return href
 }
 
-export function truncateDescription(text: string): string {
-  if (text.length <= SEO_DEFAULTS.maxDescriptionLength) return text
-  return text.substring(0, SEO_DEFAULTS.maxDescriptionLength - 3) + "..."
+export function truncateDescription(text: string, maxLength: number = 160): string {
+  if (text.length <= maxLength) return text
+  return text.substring(0, maxLength - 3) + "..."
 }
 
 export function buildCanonicalUrl(path: string, siteOrigin: string): string {

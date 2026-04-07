@@ -72,11 +72,11 @@ export function sri(): AstroIntegration {
             plugins: [
               {
                 name: "vite-plugin-sri-manifest",
-                resolveId(id) {
+                resolveId(id: string) {
                   if (id === virtualModuleId) return resolvedVirtualModuleId
                   return null
                 },
-                load(id) {
+                load(id: string) {
                   if (id === resolvedVirtualModuleId) {
                     return `export const manifest = ${JSON.stringify(sriManifest)};`
                   }
