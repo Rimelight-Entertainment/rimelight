@@ -14,9 +14,17 @@
       "types": "./src/domain/index.ts",
       "default": "./src/domain/index.ts"
     },
+    "./domain/*": {
+      "types": "./src/domain/*",
+      "default": "./src/domain/*"
+    },
     "./lib": {
       "types": "./src/lib/index.ts",
       "default": "./src/lib/index.ts"
+    },
+    "./lib/*": {
+      "types": "./src/lib/*",
+      "default": "./src/lib/*"
     },
     "./utils": {
       "types": "./src/utils/index.ts",
