@@ -1,57 +1,35 @@
 {
   "name": "@rimelight/components",
   "version": "0.0.1",
-  "description": "Premium Astro components from Rimelight.",
+  "description": "Rimelight Component Library.",
   "license": "MIT",
   "author": "Daniel Marchi",
   "type": "module",
   "exports": {
-    "./config": {
-      "types": "./src/config/index.ts",
-      "default": "./src/config/index.ts"
-    },
-    "./domain": {
-      "types": "./src/domain/index.ts",
-      "default": "./src/domain/index.ts"
-    },
-    "./domain/*": {
-      "types": "./src/domain/*",
-      "default": "./src/domain/*"
-    },
-    "./lib": {
-      "types": "./src/lib/index.ts",
-      "default": "./src/lib/index.ts"
-    },
-    "./lib/*": {
-      "types": "./src/lib/*",
-      "default": "./src/lib/*"
-    },
-    "./utils": {
-      "types": "./src/utils/index.ts",
-      "default": "./src/utils/index.ts"
-    },
-    "./*": {
-      "types": "./src/*",
-      "default": "./src/*"
-    }
+    "./*": "./src/*",
+    "./components/*": "./src/components/*",
+    "./config/*": "./src/config/*",
+    "./domain/*": "./src/domain/*",
+    "./lib/*": "./src/lib/*",
+    "./utils/*": "./src/utils/*"
   },
   "scripts": {
     "generate:config": "vp config",
     "dev": "astro dev"
   },
   "dependencies": {
-    "css-variants": "^2.3.5",
+    "css-variants": "2.3.5",
     "embla-carousel": "8.6.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.8",
-    "@types/node": "^25.5.2",
+    "@types/node": "25.5.2",
     "astro": "6.1.4",
     "typescript": "6.0.2",
     "vite-plus": "0.1.15",
     "wrangler": "4.80.0"
   },
   "peerDependencies": {
-    "astro": ">=4.0.0"
+    "astro": ">=6.0.0"
   }
 }

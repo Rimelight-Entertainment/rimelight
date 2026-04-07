@@ -1,14 +1,13 @@
 ---
 import '../styles/globals.css';
-import Button from '@rimelight/components/button/Button.astro';
-import Badge from '@rimelight/components/badge/Badge.astro';
-import Separator from '@rimelight/components/separator/Separator.astro';
-import ThemeToggle from '@rimelight/components/theme-toggle/ThemeToggle.astro';
+import Button from '@rimelight/components/components/button/Button.astro';
+import Badge from '@rimelight/components/components/badge/Badge.astro';
+import Separator from '@rimelight/components/components/separator/Separator.astro';
+import ThemeToggle from '@rimelight/components/components/ThemeToggle.astro';
 
-// Icons (using unplugin-icons)
-import Rocket from '~icons/lucide/rocket';
-import Github from '~icons/lucide/github';
-import ExternalLink from '~icons/lucide/external-link';
+import RocketIcon from '~icons/lucide/rocket';
+import GithubIcon from '~icons/lucide/github';
+import ExternalLinkIcon from '~icons/lucide/external-link';
 ---
 
 <html lang="en">
@@ -57,9 +56,9 @@ import ExternalLink from '~icons/lucide/external-link';
 			</div>
 			<div class="flex items-center gap-sm">
 				<Button variant="ghost" size="sm" href="https://github.com/rimelight" target="_blank">
-					<Github class="mr-2" /> GitHub
+					<GithubIcon class="mr-2" /> GitHub
 				</Button>
-				<ThemeToggle size="lg" variant="ghost" />
+				<ThemeToggle size="lg" />
 			</div>
 		</nav>
 
@@ -74,10 +73,10 @@ import ExternalLink from '~icons/lucide/external-link';
 				</p>
 				<div class="flex gap-4 justify-center pt-4">
 					<Button size="lg" variant="primary" class="rounded-full px-8 shadow-[0_0_20px_rgba(var(--primary),0.3)]">
-						Get Started <Rocket class="ml-2" />
+						Get Started <RocketIcon class="ml-2" />
 					</Button>
 					<Button size="lg" variant="outline" class="rounded-full px-8 backdrop-blur-sm">
-						View Docs <ExternalLink class="ml-2" />
+						View Docs <ExternalLinkIcon class="ml-2" />
 					</Button>
 				</div>
 			</section>

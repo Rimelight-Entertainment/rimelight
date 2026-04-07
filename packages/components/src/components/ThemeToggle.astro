@@ -1,7 +1,7 @@
 ---
 import IconSun from "~icons/lucide/sun"
 import IconMoon from "~icons/lucide/moon"
-import Toggle from "@rimelight/components/toggle/Toggle.astro";
+import Toggle from "./toggle/Toggle.astro";
 
 export interface ThemeToggleProps {
   class?: string;
@@ -19,6 +19,8 @@ const { class: className, size = "md" } = Astro.props as Props;
     "group text-muted-foreground hover:text-foreground rounded-full hover:bg-transparent",
     className,
   ]}
+  variant="ghost"
+  className={className}
   aria-label="Toggle theme"
 >
     <IconSun class="sun-wrapper" />

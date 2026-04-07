@@ -8,13 +8,13 @@ export interface BaseCMSContentEntry {
     title?: string | undefined | null
     description?: string | undefined | null
     publishedDate?: Date | undefined | null
-    [key: string]: any
+    [key: string]: unknown
   }
 }
 
 /**
  * Type guard to safely identify a content entry that satisfies the base library requirements.
  */
-export function isBaseCMSContentEntry(entry: any): entry is BaseCMSContentEntry {
-  return entry && typeof entry === "object" && "id" in entry && "data" in entry
+export function isBaseCMSContentEntry(entry: unknown): entry is BaseCMSContentEntry {
+  return !!entry && typeof entry === "object" && entry !== null && "id" in entry && "data" in entry
 }

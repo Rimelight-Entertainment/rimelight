@@ -2,10 +2,6 @@ import { defineConfig } from "vite-plus"
 
 const KV_ID = "0463354ef4e443f2bbfc7aaee5277bce"
 
-/**
- * @module @rimelight/components Vite+ Configuration
- * This configures the package-specific toolchain and tasks.
- */
 export default defineConfig({
   fmt: {
     ignorePatterns: ["**/worker-configuration.d.ts"]

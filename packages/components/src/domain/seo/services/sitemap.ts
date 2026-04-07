@@ -1,6 +1,5 @@
-import { getCollection } from "astro:content"
 import { SUPPORTED_LOCALES } from "../../i18n/constants"
-import { isBaseCMSContentEntry } from "../../cms"
+import { type BaseCMSContentEntry } from "../../cms"
 
 // 1. Strong typing for sitemap elements
 export interface SitemapEntry {
@@ -10,9 +9,7 @@ export interface SitemapEntry {
   priority?: number
 }
 
-export async function generateSitemapXml(siteUrl: string): Promise<string> {
-  const collection = await getCollection("blog")
-  const posts = collection.filter(isBaseCMSContentEntry)
+export function generateSitemapXml(siteUrl: string, posts: BaseCMSContentEntry[]): string {
   const staticRoutes = ["", "/blog"]
   const entries: SitemapEntry[] = []
 

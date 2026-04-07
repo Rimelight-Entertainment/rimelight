@@ -1,8 +1,7 @@
-import { getCollection } from "astro:content"
 import { SITE_CONFIG } from "../../../config"
 import { DEFAULT_LOCALE } from "../../i18n/constants"
 import { SEO_DEFAULTS } from "../constants"
-import { isBaseCMSContentEntry, type BaseCMSContentEntry } from "../../cms"
+import { type BaseCMSContentEntry } from "../../cms"
 
 // Helper for the core project details
 function buildProjectDetails(): string {
@@ -12,12 +11,11 @@ function buildProjectDetails(): string {
   return content
 }
 
-// Helper for the blog (kept async because of getCollection)
-async function buildBlogSection(baseUrl: string): Promise<string> {
-  const collection = await getCollection("blog")
-  const basePosts = collection
-    .filter(isBaseCMSContentEntry)
-    .filter((post: BaseCMSContentEntry) => post.id.startsWith(`${DEFAULT_LOCALE}/`))
+// Helper for the blog (now purely synchronous as getCollection moved to caller)
+function buildBlogSection(baseUrl: string, posts: BaseCMSContentEntry[]): string {
+  const basePosts = posts.filter((post: BaseCMSContentEntry) =>
+    post.id.startsWith(`${DEFAULT_LOCALE}/`)
+  )
 
   const recentPosts = basePosts
     .toSorted(
@@ -39,13 +37,13 @@ async function buildBlogSection(baseUrl: string): Promise<string> {
 }
 
 // Main orchestrator function
-export async function generateLlmsText(baseUrl: string): Promise<string> {
+export function generateLlmsText(baseUrl: string, blogPosts: BaseCMSContentEntry[]): string {
   let content = `# ${SITE_CONFIG.name}\n\n`
   content += `> ${SEO_DEFAULTS.defaultDescription}\n\n`
 
   // Compose the final document block by block
   content += buildProjectDetails()
-  content += await buildBlogSection(baseUrl)
+  content += buildBlogSection(baseUrl, blogPosts)
 
   content += `## Note to AI Agents\n`
   content += `This is the official documentation and context file for the ${SITE_CONFIG.name} project. `
