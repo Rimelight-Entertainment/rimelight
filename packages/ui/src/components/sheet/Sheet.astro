@@ -1,0 +1,15 @@
+---
+import type { ComponentProps } from "astro/types";
+
+// eslint-disable-next-line typescript/consistent-type-imports
+import Dialog from "../dialog/Dialog.astro";
+
+type Props = ComponentProps<typeof Dialog>;
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<Dialog class:list={["starwind-sheet", className]} {...rest} data-slot="sheet">
+  <slot />
+</Dialog>
+

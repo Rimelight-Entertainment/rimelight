@@ -1,0 +1,36 @@
+---
+import type { ComponentProps } from "astro/types";
+import { cv } from "css-variants";
+
+type VariantProps<T extends (...args: any) => any> = NonNullable<Parameters<T>[0]>;
+
+// eslint-disable-next-line typescript/consistent-type-imports
+import Button from "../button/Button.astro";
+
+type Props = Omit<ComponentProps<typeof Button>, "size"> & VariantProps<typeof inputGroupButton>;
+
+export const inputGroupButton = cv({
+  base: "gap-3xs rounded-sm shadow-none",
+  variants: {
+    size: {
+      sm: "h-8 px-2",
+      "icon-sm": "size-8 p-0 has-[>svg]:p-0",
+    },
+  },
+  defaultVariants: {
+    size: "sm",
+  },
+});
+
+const { type = "button", variant = "ghost", size, class: className, ...rest } = Astro.props;
+---
+
+<Button
+  type={type}
+  data-size={size}
+  class:list={[inputGroupButton({ size: size as "sm" }), className]}
+  {...rest}
+>
+  <slot />
+</Button>
+

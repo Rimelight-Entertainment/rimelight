@@ -1,0 +1,41 @@
+---
+import type { ComponentProps } from "astro/types";
+import { cv } from "css-variants";
+import IconArrowLeft from "~icons/lucide/arrow-left";
+
+// eslint-disable-next-line typescript/consistent-type-imports
+import Button from "../button/Button.astro";
+
+export const carouselPrevious = cv({
+  base: [
+    "starwind-carousel-previous absolute size-8 rounded-full",
+    // Horizontal positioning
+    "group-data-[axis=x]/carousel:top-1/2 group-data-[axis=x]/carousel:-left-12 group-data-[axis=x]/carousel:-translate-y-1/2",
+    // Vertical positioning
+    "group-data-[axis=y]/carousel:-top-12 group-data-[axis=y]/carousel:left-1/2 group-data-[axis=y]/carousel:-translate-x-1/2 group-data-[axis=y]/carousel:rotate-90",
+  ],
+});
+
+type Props = ComponentProps<typeof Button> & {
+  orientation?: "horizontal" | "vertical";
+};
+
+const { class: className = "", variant = "outline", size = "icon", orientation = "horizontal", ...rest } = Astro.props;
+---
+
+<Button
+  variant={variant}
+  size={size}
+  class:list={[carouselPrevious({ orientation }), className]}
+  aria-label="Previous slide"
+  {...rest}
+  data-slot="carousel-previous"
+>
+  <slot name="icon">
+    <IconArrowLeft />
+  </slot>
+  <slot>
+    <span class="sr-only">Previous slide</span>
+  </slot>
+</Button>
+

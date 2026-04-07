@@ -1,0 +1,24 @@
+---
+import type { ComponentProps } from "astro/types";
+import { cv } from "css-variants";
+
+// eslint-disable-next-line typescript/consistent-type-imports
+import Input from "../input/Input.astro";
+
+const sidebarInput = cv({
+  base: "bg-background focus-visible:ring-sidebar-outline h-10 w-full shadow-none focus-visible:ring-2",
+});
+
+type Props = ComponentProps<typeof Input>;
+
+const { size = "md", class: className, ...rest } = Astro.props;
+---
+
+<Input
+  size={size}
+  class:list={[sidebarInput(), className]}
+  data-sidebar="input"
+  {...rest}
+  data-slot="sidebar-input"
+/>
+
