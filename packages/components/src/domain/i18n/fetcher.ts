@@ -3,7 +3,8 @@ import { TRANSLATIONS_VERSION } from "./runtime-constants"
 let env: any = {}
 try {
   // @ts-ignore
-  env = (await import("cloudflare:workers")).env
+  const workers = await import(/* @vite-ignore */ "cloudflare:workers")
+  env = workers.env
 } catch {
   // Safe fallback for Node.js environments (Astro config, local scripts)
   env = {}

@@ -4,7 +4,14 @@ import Input from "@rimelight/components/input/Input.astro";
 import Textarea from "@rimelight/components/textarea/Textarea.astro";
 import Separator from "@rimelight/components/separator/Separator.astro";
 import { getCollection } from "astro:content";
-import { env } from "cloudflare:workers";
+let env: any = {};
+try {
+  // @ts-ignore
+  const workers = await import(/* @vite-ignore */ "cloudflare:workers");
+  env = workers.env;
+} catch {
+  env = {};
+}
 
 import LucideMail from "~icons/lucide/mail";
 import MdiWhatsapp from "~icons/mdi/whatsapp";
