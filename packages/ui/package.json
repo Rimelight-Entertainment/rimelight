@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/ui",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Rimelight UI Library.",
   "license": "MIT",
   "author": "Daniel Marchi",
@@ -13,6 +13,7 @@
   ],
   "type": "module",
   "exports": {
+    ".": "./src/integrations/index.ts",
     "./components/*": "./src/components/*",
     "./components/astro/*": "./src/components/astro/*",
     "./components/vue/*": "./src/components/vue/*",
