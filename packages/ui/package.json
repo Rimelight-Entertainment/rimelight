@@ -53,13 +53,13 @@
     "@astrojs/ts-plugin": "1.10.7",
     "@e18e/eslint-plugin": "0.3.0",
     "@types/node": "25.5.2",
-    "@unocss/eslint-plugin": "66.6.7",
+    "@unocss/eslint-plugin": "66.6.8",
     "astro": "6.1.4",
     "eslint-plugin-regexp": "3.1.0",
     "typescript": "6.0.2",
-    "unocss": "66.6.7",
+    "unocss": "66.6.8",
     "unplugin-icons": "23.0.1",
-    "vite-plus": "0.1.15"
+    "vite-plus": "0.1.16"
   },
   "peerDependencies": {
     "astro": ">=6.0.0",
