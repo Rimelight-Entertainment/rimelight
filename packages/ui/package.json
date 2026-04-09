@@ -1,9 +1,17 @@
 {
   "name": "@rimelight/ui",
   "version": "0.0.5",
-  "description": "Rimelight UI Library.",
+  "private": false,
+  "description": "Rimelight Entertainment UI Library.",
+  "homepage": "https://rimelight.com/docs",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
   "license": "MIT",
-  "author": "Daniel Marchi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
+  },
   "files": [
     "src",
     "i18n-data.json",
