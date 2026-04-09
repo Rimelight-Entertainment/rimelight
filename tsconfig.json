@@ -16,8 +16,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "paths": {
-      "@/*": ["./packages/components/src/*"],
-      "@rimelight/components/*": ["./packages/components/src/*"]
+      "@/*": ["./packages/components/src/*"]
     }
   }
 }

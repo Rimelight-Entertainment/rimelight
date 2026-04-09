@@ -14,6 +14,12 @@
   "type": "module",
   "exports": {
     "./components/*": "./src/components/*",
+    "./components/astro/*": "./src/components/astro/*",
+    "./components/vue/*": "./src/components/vue/*",
+    "./themes": "./src/themes/index.ts",
+    "./themes/*": "./src/themes/*",
+    "./composables": "./src/composables/index.ts",
+    "./composables/*": "./src/composables/*",
     "./config": "./src/config/index.ts",
     "./config/*": "./src/config/*",
     "./domain": "./src/domain/index.ts",
@@ -37,16 +43,38 @@
   },
   "dependencies": {
     "css-variants": "2.3.5",
-    "embla-carousel": "8.6.0"
+    "defu": "6.1.6",
+    "embla-carousel": "8.6.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.8",
+    "@astrojs/ts-plugin": "1.10.7",
+    "@e18e/eslint-plugin": "0.3.0",
     "@types/node": "25.5.2",
+    "@unocss/eslint-plugin": "66.6.7",
     "astro": "6.1.4",
+    "eslint-plugin-regexp": "3.1.0",
     "typescript": "6.0.2",
+    "unocss": "66.6.7",
+    "unplugin-icons": "23.0.1",
     "vite-plus": "0.1.15"
   },
   "peerDependencies": {
-    "astro": ">=6.0.0"
+    "astro": ">=6.0.0",
+    "vue": ">=3.4.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    }
+  },
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "defu": "6.1.6",
+      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+    }
   }
 }

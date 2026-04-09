@@ -16,3 +16,13 @@ declare module "~icons/*" {
   const component: AstroComponentFactory
   export default component
 }
+
+declare module "virtual:rimelight-ui" {
+  export function getUIConfig(): Record<string, unknown>
+}
+
+declare module "*.vue" {
+  import type { DefineComponent } from "vue"
+  const component: DefineComponent<object, object, unknown>
+  export default component
+}

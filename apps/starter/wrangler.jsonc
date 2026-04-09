@@ -1,17 +1,42 @@
 {
-  "name": "rimelight-starter",
-  "compatibility_date": "2026-03-17",
-  "compatibility_flags": ["nodejs_compat"],
-  "kv_namespaces": [
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "starter-dot-rimelight-dot-com",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-04-08",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "routes": [
     {
-      "binding": "TRANSLATIONS",
-      "id": "0463354ef4e443f2bbfc7aaee5277bce"
+      "pattern": "starter.rimelight.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.starter.rimelight.com",
+      "custom_domain": true
     }
   ],
-  "vars": {
-    "I18N_CACHE": "on",
-    "DEBUG_I18N": "off",
-    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA"
-  }
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true
+    }
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "ratelimits": [
+    {
+      "namespace_id": "1001",
+      "name": "RATE_LIMITER",
+      "simple": {
+        "limit": 100,
+        "period": 60
+      }
+    }
+  ]
 }
-// Cache invalidation comment
