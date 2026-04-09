@@ -1,0 +1,110 @@
+---
+import '../styles/globals.css';
+import RLAButton from '@rimelight/ui/components/astro/RLAButton.astro';
+import RLVButton from '@rimelight/ui/components/vue/RLVButton.vue';
+
+import RocketIcon from '~icons/lucide/rocket';
+import GithubIcon from '~icons/lucide/github';
+import ExternalLinkIcon from '~icons/lucide/external-link';
+---
+
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>Button Test</title>
+</head>
+<body class="min-h-screen bg-background text-foreground p-8 space-y-12">
+	<h1 class="text-3xl font-bold">RLAButton (Astro)</h1>
+
+	<div class="space-y-6">
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">Variants</p>
+			<div class="flex gap-3 flex-wrap">
+				<RLAButton variant="default">Default</RLAButton>
+				<RLAButton variant="primary">Primary</RLAButton>
+				<RLAButton variant="outline">Outline</RLAButton>
+			</div>
+		</div>
+
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">Sizes</p>
+			<div class="flex gap-3 flex-wrap items-end">
+				<RLAButton size="xs">XS</RLAButton>
+				<RLAButton size="sm">SM</RLAButton>
+				<RLAButton size="md">MD</RLAButton>
+				<RLAButton size="lg">LG</RLAButton>
+			</div>
+		</div>
+
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">With Icons</p>
+			<div class="flex gap-3 flex-wrap">
+				<RLAButton variant="primary" size="lg">
+					<RocketIcon class="size-5" /> Deploy
+				</RLAButton>
+				<RLAButton variant="outline">
+					<GithubIcon class="size-4" /> GitHub
+				</RLAButton>
+				<RLAButton variant="outline" size="icon">
+					<ExternalLinkIcon class="size-4" />
+				</RLAButton>
+			</div>
+		</div>
+
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">ui Prop — Glowing Ring</p>
+			<RLAButton variant="primary" ui={{ base: 'ring-4 ring-primary/50 shadow-xl shadow-primary/20' }}>
+				Glowing Ring
+			</RLAButton>
+		</div>
+	</div>
+
+	<hr class="border-white/10" />
+
+	<h1 class="text-3xl font-bold">RLVButton (Vue)</h1>
+
+	<div class="space-y-6">
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">Variants</p>
+			<div class="flex gap-3 flex-wrap">
+				<RLVButton client:load variant="default">Default</RLVButton>
+				<RLVButton client:load variant="primary">Primary</RLVButton>
+				<RLVButton client:load variant="outline">Outline</RLVButton>
+			</div>
+		</div>
+
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">Sizes</p>
+			<div class="flex gap-3 flex-wrap items-end">
+				<RLVButton client:load size="xs">XS</RLVButton>
+				<RLVButton client:load size="sm">SM</RLVButton>
+				<RLVButton client:load size="md">MD</RLVButton>
+				<RLVButton client:load size="lg">LG</RLVButton>
+			</div>
+		</div>
+
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">With Icons</p>
+			<div class="flex gap-3 flex-wrap">
+				<RLVButton client:load variant="primary" size="lg">
+					<RocketIcon class="size-5" /> Deploy
+				</RLVButton>
+				<RLVButton client:load variant="outline">
+					<GithubIcon class="size-4" /> GitHub
+				</RLVButton>
+				<RLVButton client:load variant="outline" size="icon">
+					<ExternalLinkIcon class="size-4" />
+				</RLVButton>
+			</div>
+		</div>
+
+		<div>
+			<p class="text-xs text-muted-foreground mb-2">ui Prop — Glowing Ring</p>
+			<RLVButton client:load variant="primary" ui={{ base: 'ring-4 ring-primary/50 shadow-xl shadow-primary/20' }}>
+				Glowing Ring
+			</RLVButton>
+		</div>
+	</div>
+</body>
+</html>

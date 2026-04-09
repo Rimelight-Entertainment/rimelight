@@ -1,0 +1,60 @@
+{
+  "name": "@rimelight/docs",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "13.1.8",
+    "@astrojs/compiler-rs": "0.1.6",
+    "@astrojs/mdx": "5.0.3",
+    "@astrojs/prism": "4.0.1",
+    "@astrojs/rss": "4.0.18",
+    "@astrojs/sitemap": "3.7.2",
+    "@astrojs/starlight": "0.41.3",
+    "@rimelight/ui": "0.0.4",
+    "@types/node": "25.5.2",
+    "astro": "6.1.5",
+    "typescript": "6.0.2",
+    "wrangler": "4.81.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.8",
+    "@astrojs/ts-plugin": "1.10.7",
+    "@e18e/eslint-plugin": "0.3.0",
+    "@iconify-json/flag": "1.2.11",
+    "@iconify-json/logos": "1.2.11",
+    "@iconify-json/lucide": "1.2.101",
+    "@iconify-json/mdi": "1.2.3",
+    "@types/better-sqlite3": "7.6.13",
+    "@unocss/astro": "66.6.7",
+    "@unocss/eslint-plugin": "66.6.7",
+    "eslint-plugin-regexp": "3.1.0",
+    "tsx": "4.21.0",
+    "unocss": "66.6.7",
+    "unplugin-icons": "23.0.1",
+    "vite-plus": "0.1.15"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "defu": "6.1.6",
+      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@latest",
+      "yaml": "2.8.3",
+      "esbuild": "^0.25.0"
+    },
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild",
+      "sharp",
+      "workerd"
+    ]
+  }
+}

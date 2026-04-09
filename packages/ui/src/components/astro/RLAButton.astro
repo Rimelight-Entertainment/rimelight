@@ -1,0 +1,95 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cv, cx } from "css-variants";
+import { twMerge } from "tailwind-merge";
+import defu from "defu";
+import { buttonTheme } from "../../themes/button.theme";
+import { getUIConfig } from "virtual:rimelight-ui";
+
+// Create the variant resolver with tailwind-merge for conflict resolution
+const button = cv({
+  ...buttonTheme,
+  classNameResolver: (...args) => twMerge(cx(...args)),
+});
+
+/**
+ * UI prop interface for overriding the base class.
+ * For multi-slot components (scv), this would have keys per slot.
+ */
+export interface RLAButtonUI {
+  base?: string;
+}
+
+/**
+ * Button props — uses indexed access types on the theme config
+ * (same pattern as Nuxt UI's Button['variants']['color'])
+ */
+export interface RLAButtonProps {
+  /**
+   * Button variant style.
+   * @default "default"
+   */
+  variant?: keyof typeof buttonTheme.variants.variant;
+  /**
+   * Button size.
+   * @default "md"
+   */
+  size?: keyof typeof buttonTheme.variants.size;
+  /**
+   * Per-instance UI override. Merged with global config via `defu`.
+   * Higher priority than integration-level config.
+   */
+  ui?: RLAButtonUI;
+  /**
+   * External class — applied after all internal classes.
+   */
+  class?: string;
+  /**
+   * When provided, renders as <a> instead of <button>.
+   */
+  href?: string;
+  /**
+   * Standard HTML attributes for <button>
+   */
+  [key: string]: unknown;
+}
+
+type Props = RLAButtonProps;
+
+const {
+  variant,
+  size,
+  class: className,
+  ui: uiProp,
+  href,
+  ...rest
+} = Astro.props;
+
+// Get global config from the virtual module (populated by the Astro integration)
+const globalConfig = getUIConfig();
+
+// Merge: uiProp > globalConfig.button (uiProp wins)
+const mergedUI = defu<Record<string, unknown>[], [Record<string, unknown>]>(
+  uiProp ?? {},
+  (globalConfig.button as Record<string, unknown>) ?? {},
+);
+
+// Resolve classes: cv() returns a string, className prop merges overrides
+const classes = button({
+  variant,
+  size,
+  className: mergedUI.base as string | undefined,
+});
+
+// Determine whether to render <a> or <button>
+const Tag = href ? "a" : "button";
+---
+
+<Tag
+  class:list={[classes, className]}
+  data-slot="rla-button"
+  {...(Tag === "a" ? { href } : {})}
+  {...rest}
+>
+  <slot />
+</Tag>

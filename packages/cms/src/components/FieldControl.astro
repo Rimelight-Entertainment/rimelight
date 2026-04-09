@@ -1,0 +1,375 @@
+---
+import type { FieldConfig } from "../../cms/core/define";
+import { serializeFieldValue } from "../../cms/core/values";
+import { humanize } from "../../cms/core/admin";
+import ImagePicker from "@/components/ImagePicker.vue";
+import TreeItemsEditor from "@/components/TreeItemsEditor.vue";
+import RichTextEditor from "@/components/RichTextEditor.vue";
+import SelectField from "@/components/SelectField.vue";
+import RelationField from "@/components/RelationField.vue";
+import BlockEditor from "@/components/BlockEditor.vue";
+import type { SubFieldMeta } from "@/components/BlockEditor.vue";
+import SlugField from "@/components/SlugField.vue";
+import CheckboxField from "@/components/CheckboxField.vue";
+import TaxonomySelect from "@/components/TaxonomySelect.vue";
+import { Input } from "@/components/ui/input.vue";
+import { Label } from "@/components/ui/label.vue";
+import { Textarea } from "@/components/ui/textarea.vue";
+import { cn } from "@/lib/utils";
+
+type RelationOption = {
+  value: string;
+  label: string;
+};
+
+type RelationMeta = {
+  collectionSlug: string;
+  collectionLabel: string;
+  hasMany: boolean;
+  labelField?: string;
+};
+
+type LinkOptionGroup = {
+  collection: string;
+  label: string;
+  items: Array<{ id: string; label: string; href: string }>;
+};
+
+const {
+  name,
+  field,
+  value,
+  relationOptions = [],
+  relationMeta,
+  readOnly = false,
+  menuLinkOptions = [],
+  blockRelationOptions = {},
+} = Astro.props as {
+  name: string;
+  field: FieldConfig;
+  value?: unknown;
+  relationOptions?: RelationOption[];
+  relationMeta?: RelationMeta;
+  readOnly?: boolean;
+  menuLinkOptions?: LinkOptionGroup[];
+  blockRelationOptions?: Record<string, RelationOption[]>;
+};
+
+const label = field.label ?? humanize(name);
+const placeholder = field.admin?.placeholder ?? "";
+const serializedValue = serializeFieldValue(field, value);
+const rows =
+  field.admin?.rows ?? (field.type === "richText" ? 10 : field.type === "json" || field.type === "blocks" ? 12 : 5);
+const inputMode = field.type === "number" ? "decimal" : undefined;
+const controlClass = cn("w-full shadow-none", readOnly && "cursor-not-allowed bg-muted text-muted-foreground");
+const isTreeEditor =
+  field.type === "json" && (field.admin?.component === "menu-items" || field.admin?.component === "taxonomy-terms");
+
+// Build serializable block types metadata for BlockEditor
+const blockTypesMeta =
+  field.type === "blocks" && field.types
+    ? Object.fromEntries(
+        Object.entries(field.types).map(([typeName, typeFields]) => [
+          typeName,
+          Object.fromEntries(
+            Object.entries(typeFields).map(([fieldName, subField]) => {
+              const entry: SubFieldMeta = {
+                type: subField.type,
+              };
+              if (subField.label !== undefined) entry.label = subField.label;
+              if (subField.required !== undefined) entry.required = subField.required;
+              if ("options" in subField) entry.options = subField.options;
+              if ("from" in subField) entry.from = subField.from;
+              if (subField.admin !== undefined) entry.admin = subField.admin;
+              if (subField.defaultValue !== undefined) entry.defaultValue = subField.defaultValue;
+              if ("of" in subField && subField.of) entry.of = { type: subField.of.type };
+              if ("collection" in subField) entry.collection = subField.collection;
+              if ("hasMany" in subField) entry.hasMany = subField.hasMany;
+              return [fieldName, entry];
+            }),
+          ),
+        ]),
+      )
+    : {};
+---
+
+<div
+  class="grid gap-2"
+  data-field-name={name}
+  {...field.condition
+    ? {
+        "data-condition-field": field.condition.field,
+        "data-condition-value": JSON.stringify(field.condition.value),
+      }
+    : {}}
+>
+  {
+    !isTreeEditor && (
+      <Label htmlFor={name}>
+        {label}
+        {field.required ? " *" : ""}
+      </Label>
+    )
+  }
+  {field.description && <p class="text-muted-foreground -mt-1 text-xs leading-5">{field.description}</p>}
+  {field.admin?.help && <p class="text-muted-foreground -mt-1 -mb-0.5 text-xs leading-5">{field.admin.help}</p>}
+
+  {
+    field.type === "image" && !readOnly && (
+      <ImagePicker client:load name={name} value={serializedValue} placeholder={placeholder} />
+    )
+  }
+
+  {
+    field.type === "image" && readOnly && (
+      <Input
+        className={controlClass}
+        type="text"
+        id={name}
+        name={name}
+        defaultValue={serializedValue}
+        placeholder={placeholder}
+        readOnly={readOnly}
+      />
+    )
+  }
+
+  {
+    field.type === "text" && field.admin?.component === "taxonomy-select" && !readOnly && (
+      <TaxonomySelect client:load name={name} value={serializedValue} taxonomySlug={field.admin?.placeholder ?? ""} />
+    )
+  }
+
+  {
+    (field.type === "text" || field.type === "email" || field.type === "date") &&
+      field.admin?.component !== "taxonomy-select" &&
+      (field.type === "text" && field.admin?.rows ? (
+        <Textarea
+          className={controlClass}
+          id={name}
+          name={name}
+          rows={field.admin.rows}
+          defaultValue={serializedValue}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          required={field.required}
+        />
+      ) : (
+        <Input
+          className={controlClass}
+          type={field.type === "email" ? "email" : field.type === "date" ? "date" : "text"}
+          id={name}
+          name={name}
+          defaultValue={serializedValue}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          required={field.required}
+        />
+      ))
+  }
+
+  {
+    field.type === "slug" && (
+      <SlugField
+        client:load
+        name={name}
+        value={serializedValue}
+        from={field.from}
+        readOnly={readOnly}
+        required={field.required}
+        placeholder={placeholder || "auto-generated-slug"}
+        className={controlClass}
+      />
+    )
+  }
+
+  {
+    field.type === "number" && (
+      <Input
+        className={controlClass}
+        type="number"
+        id={name}
+        name={name}
+        defaultValue={serializedValue}
+        inputMode={inputMode}
+        readOnly={readOnly}
+        required={field.required}
+      />
+    )
+  }
+
+  {field.type === "boolean" && <CheckboxField client:load name={name} checked={Boolean(value)} disabled={readOnly} />}
+
+  {
+    field.type === "select" && field.admin?.component !== "radio" && (
+      <SelectField
+        client:load
+        name={name}
+        value={String(value ?? "")}
+        placeholder="Select an option"
+        disabled={readOnly}
+        items={field.options.map((option) => ({ value: option, label: option }))}
+      />
+    )
+  }
+
+  {
+    field.type === "select" && field.admin?.component === "radio" && (
+      <div class="flex flex-wrap gap-x-5 gap-y-2 has-[:disabled]:opacity-50">
+        {field.options.map((option) => (
+          <label class="hover:text-foreground flex items-center gap-2 text-sm transition-colors has-[:disabled]:cursor-not-allowed has-[:disabled]:hover:text-current">
+            <input
+              class="border-input hover:border-primary/60 checked:border-primary checked:hover:border-primary focus-visible:ring-ring/50 disabled:hover:border-input size-4 shrink-0 appearance-none rounded-full border transition-all checked:border-[5px] focus-visible:ring-3 focus-visible:outline-none disabled:cursor-not-allowed"
+              type="radio"
+              name={name}
+              value={option}
+              checked={String(value ?? "") === option}
+              disabled={readOnly}
+            />
+            <span class="select-none">{option}</span>
+          </label>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    field.type === "relation" && !readOnly && relationMeta && (
+      <RelationField
+        client:load
+        name={name}
+        value={Array.isArray(value) ? JSON.stringify(value) : String(value ?? "")}
+        hasMany={relationMeta.hasMany}
+        options={relationOptions}
+        collectionSlug={relationMeta.collectionSlug}
+        collectionLabel={relationMeta.collectionLabel}
+        labelField={relationMeta.labelField}
+      />
+    )
+  }
+
+  {
+    field.type === "relation" && (readOnly || !relationMeta) && (
+      <SelectField
+        client:load
+        name={name}
+        value={String(value ?? "")}
+        placeholder="Select a document"
+        disabled={readOnly}
+        items={relationOptions}
+      />
+    )
+  }
+
+  {
+    field.type === "richText" && !readOnly && (
+      <RichTextEditor client:load name={name} initialValue={value ? JSON.stringify(value) : ""} rows={rows} />
+    )
+  }
+
+  {
+    field.type === "richText" && readOnly && (
+      <Textarea
+        className={controlClass}
+        id={name}
+        name={name}
+        rows={rows}
+        readOnly={readOnly}
+        defaultValue={serializedValue}
+      />
+    )
+  }
+
+  {
+    field.type === "json" && field.admin?.component === "menu-items" && !readOnly && (
+      <TreeItemsEditor
+        client:load
+        name={name}
+        value={serializedValue}
+        variant="menu"
+        label={label}
+        linkOptions={menuLinkOptions}
+      />
+    )
+  }
+
+  {
+    field.type === "json" && field.admin?.component === "taxonomy-terms" && !readOnly && (
+      <TreeItemsEditor client:load name={name} value={serializedValue} variant="taxonomy" label={label} />
+    )
+  }
+
+  {
+    field.type === "json" &&
+      (field.admin?.component === "menu-items" || field.admin?.component === "taxonomy-terms") &&
+      readOnly && (
+        <Textarea
+          className={controlClass}
+          id={name}
+          name={name}
+          rows={rows}
+          readOnly={readOnly}
+          defaultValue={serializedValue}
+        />
+      )
+  }
+
+  {
+    field.type === "blocks" && !readOnly && (
+      <BlockEditor
+        client:load
+        name={name}
+        value={serializedValue}
+        types={blockTypesMeta}
+        blockRelationOptions={blockRelationOptions}
+      />
+    )
+  }
+
+  {
+    field.type === "blocks" && readOnly && (
+      <Textarea
+        className={controlClass}
+        id={name}
+        name={name}
+        rows={rows}
+        readOnly={readOnly}
+        defaultValue={serializedValue}
+      />
+    )
+  }
+
+  {
+    field.type === "array" && "of" in field && field.of?.type === "text" && (
+      <Input
+        className={controlClass}
+        id={name}
+        name={name}
+        placeholder={placeholder || "item1, item2, item3"}
+        readOnly={readOnly}
+        required={field.required}
+        defaultValue={serializedValue}
+      />
+    )
+  }
+
+  {
+    ((field.type === "array" && !("of" in field && field.of?.type === "text")) ||
+      (field.type === "json" &&
+        field.admin?.component !== "menu-items" &&
+        field.admin?.component !== "taxonomy-terms")) && (
+      <Textarea
+        className={controlClass}
+        id={name}
+        name={name}
+        rows={rows}
+        placeholder={placeholder}
+        readOnly={readOnly}
+        required={field.required}
+        defaultValue={serializedValue}
+      />
+    )
+  }
+</div>
+
+

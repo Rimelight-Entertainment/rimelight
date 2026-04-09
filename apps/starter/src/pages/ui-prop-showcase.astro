@@ -1,0 +1,225 @@
+---
+import '../styles/globals.css';
+import RLAButton from '@rimelight/ui/components/astro/RLAButton.astro';
+import RLVButton from '@rimelight/ui/components/vue/RLVButton.vue';
+import ThemeToggle from '@rimelight/ui/components/ThemeToggle.astro';
+
+import GithubIcon from '~icons/lucide/github';
+import RocketIcon from '~icons/lucide/rocket';
+import ExternalLinkIcon from '~icons/lucide/external-link';
+import SparklesIcon from '~icons/lucide/sparkles';
+import CodeIcon from '~icons/lucide/code-2';
+import PaletteIcon from '~icons/lucide/palette';
+import LayersIcon from '~icons/lucide/layers';
+---
+
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>RLA/RLV Button Showcase</title>
+	
+	<script is:inline>
+		function initTheme() {
+			const t = localStorage.getItem("colorTheme");
+			if (!t) { const d = window.matchMedia?.("(prefers-color-scheme: dark)").matches; document.documentElement.classList.toggle("dark", d); localStorage.setItem("colorTheme", d ? "dark" : "light"); }
+			else if (t === "dark") document.documentElement.classList.add("dark");
+			else if (t === "light") document.documentElement.classList.remove("dark");
+			else if (t === "system") document.documentElement.classList.toggle("dark", window.matchMedia?.("(prefers-color-scheme: dark)").matches);
+		}
+		initTheme();
+		document.addEventListener("astro:after-swap", initTheme);
+	</script>
+</head>
+<body class="min-h-screen bg-background text-foreground">
+	<nav class="sticky top-0 z-50 flex justify-between items-center px-6 py-3 glass border-b border-white/10">
+		<div class="flex items-center gap-2">
+			<LayersIcon class="size-5 text-primary" />
+			<span class="text-lg font-semibold">RLA/RLV Showcase</span>
+		</div>
+		<div class="flex items-center gap-2">
+			<RLAButton variant="ghost" size="sm" href="https://github.com/rimelight" target="_blank">
+				<GithubIcon class="size-4 mr-1" /> GitHub
+			</RLAButton>
+			<ThemeToggle size="lg" />
+		</div>
+	</nav>
+
+	<main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+		{/* Header */}
+		<section class="text-center space-y-4">
+			<h1 class="text-4xl font-bold">UI Prop Pattern Demo</h1>
+			<p class="text-muted-foreground max-w-2xl mx-auto">
+				Testing the <code class="px-1.5 py-0.5 rounded bg-muted/50 text-primary text-sm font-mono">ui</code> prop pattern across Astro (RLA) and Vue (RLV) components.
+			</p>
+		</section>
+
+		{/* How It Works */}
+		<section class="glass rounded-xl p-6 border border-white/10 space-y-4">
+			<h2 class="text-xl font-semibold flex items-center gap-2">
+				<LayersIcon class="size-5 text-primary" /> How It Works
+			</h2>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+				<div class="space-y-1">
+					<p class="font-medium text-primary">1. Shared Theme</p>
+					<p class="text-muted-foreground">Both RLA and RLV use <code class="px-1 py-0.5 rounded bg-muted/50 font-mono text-xs">button.theme.ts</code>.</p>
+				</div>
+				<div class="space-y-1">
+					<p class="font-medium text-primary">2. Global Config</p>
+					<p class="text-muted-foreground">Astro integration merges overrides via <code class="px-1 py-0.5 rounded bg-muted/50 font-mono text-xs">virtual:rimelight-ui</code>.</p>
+				</div>
+				<div class="space-y-1">
+					<p class="font-medium text-primary">3. Per-Component ui Prop</p>
+					<p class="text-muted-foreground">Each component accepts <code class="px-1 py-0.5 rounded bg-muted/50 font-mono text-xs">ui</code> for one-off overrides via <code class="px-1 py-0.5 rounded bg-muted/50 font-mono text-xs">defu</code>.</p>
+				</div>
+			</div>
+		</section>
+
+		{/* RLAButton Variants */}
+		<section class="glass rounded-xl p-6 border border-white/10 space-y-6">
+			<h2 class="text-xl font-semibold flex items-center gap-2">
+				<CodeIcon class="size-5 text-primary" /> RLAButton (Astro)
+			</h2>
+			<div class="space-y-4">
+				<div>
+					<p class="text-xs text-muted-foreground mb-2">Variants</p>
+					<div class="flex flex-wrap gap-3">
+						<RLAButton variant="default">Default</RLAButton>
+						<RLAButton variant="primary">Primary</RLAButton>
+						<RLAButton variant="secondary">Secondary</RLAButton>
+						<RLAButton variant="outline">Outline</RLAButton>
+						<RLAButton variant="ghost">Ghost</RLAButton>
+						<RLAButton variant="success">Success</RLAButton>
+						<RLAButton variant="warning">Warning</RLAButton>
+						<RLAButton variant="error">Error</RLAButton>
+					</div>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2">Sizes</p>
+					<div class="flex flex-wrap items-end gap-3">
+						<RLAButton size="xs">XS</RLAButton>
+						<RLAButton size="sm">SM</RLAButton>
+						<RLAButton size="md">MD</RLAButton>
+						<RLAButton size="lg">LG</RLAButton>
+						<RLAButton size="xl">XL</RLAButton>
+					</div>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2">With Icons</p>
+					<div class="flex flex-wrap gap-3">
+						<RLAButton variant="primary" size="lg">
+							<RocketIcon class="size-5" /> Deploy
+						</RLAButton>
+						<RLAButton variant="outline">
+							<GithubIcon class="size-4" /> GitHub
+						</RLAButton>
+						<RLAButton variant="outline" size="icon">
+							<ExternalLinkIcon class="size-4" />
+						</RLAButton>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* RLAButton ui Prop Overrides */}
+		<section class="glass rounded-xl p-6 border border-white/10 space-y-6">
+			<h2 class="text-xl font-semibold flex items-center gap-2">
+				<PaletteIcon class="size-5 text-primary" /> RLAButton — ui Prop Overrides
+			</h2>
+			<div class="space-y-4">
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'font-bold rounded-full' &#125;</p>
+					<RLAButton variant="primary" ui={{ base: 'font-bold rounded-full' }}>Bold + Rounded Full</RLAButton>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'text-lg uppercase tracking-widest' &#125;</p>
+					<RLAButton variant="outline" ui={{ base: 'text-lg uppercase tracking-widest' }}>Large + Uppercase</RLAButton>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'ring-4 ring-primary/50 shadow-xl shadow-primary/20' &#125;</p>
+					<RLAButton variant="primary" ui={{ base: 'ring-4 ring-primary/50 shadow-xl shadow-primary/20' }}>Glowing Ring</RLAButton>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'animate-pulse' &#125; + class="px-12"</p>
+					<RLAButton variant="error" ui={{ base: 'animate-pulse' }} class="px-12">Pulsing + External Class</RLAButton>
+				</div>
+			</div>
+		</section>
+
+		{/* RLVButton Variants */}
+		<section class="glass rounded-xl p-6 border border-white/10 space-y-6">
+			<h2 class="text-xl font-semibold flex items-center gap-2">
+				<SparklesIcon class="size-5 text-violet-400" /> RLVButton (Vue)
+			</h2>
+			<div class="space-y-4">
+				<div>
+					<p class="text-xs text-muted-foreground mb-2">Variants</p>
+					<div class="flex flex-wrap gap-3">
+						<RLVButton client:load variant="default">Default</RLVButton>
+						<RLVButton client:load variant="primary">Primary</RLVButton>
+						<RLVButton client:load variant="secondary">Secondary</RLVButton>
+						<RLVButton client:load variant="outline">Outline</RLVButton>
+						<RLVButton client:load variant="ghost">Ghost</RLVButton>
+						<RLVButton client:load variant="success">Success</RLVButton>
+						<RLVButton client:load variant="warning">Warning</RLVButton>
+						<RLVButton client:load variant="error">Error</RLVButton>
+					</div>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2">Sizes</p>
+					<div class="flex flex-wrap items-end gap-3">
+						<RLVButton client:load size="xs">XS</RLVButton>
+						<RLVButton client:load size="sm">SM</RLVButton>
+						<RLVButton client:load size="md">MD</RLVButton>
+						<RLVButton client:load size="lg">LG</RLVButton>
+						<RLVButton client:load size="xl">XL</RLVButton>
+					</div>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2">With Icons</p>
+					<div class="flex flex-wrap gap-3">
+						<RLVButton client:load variant="primary" size="lg">
+							<RocketIcon class="size-5" /> Deploy
+						</RLVButton>
+						<RLVButton client:load variant="outline">
+							<GithubIcon class="size-4" /> GitHub
+						</RLVButton>
+						<RLVButton client:load variant="outline" size="icon">
+							<ExternalLinkIcon class="size-4" />
+						</RLVButton>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* RLVButton ui Prop Overrides */}
+		<section class="glass rounded-xl p-6 border border-white/10 space-y-6">
+			<h2 class="text-xl font-semibold flex items-center gap-2">
+				<PaletteIcon class="size-5 text-violet-400" /> RLVButton — ui Prop Overrides
+			</h2>
+			<div class="space-y-4">
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'font-bold rounded-full' &#125;</p>
+					<RLVButton client:load variant="primary" ui={{ base: 'font-bold rounded-full' }}>Bold + Rounded Full</RLVButton>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'text-lg uppercase tracking-widest' &#125;</p>
+					<RLVButton client:load variant="outline" ui={{ base: 'text-lg uppercase tracking-widest' }}>Large + Uppercase</RLVButton>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'ring-4 ring-primary/50 shadow-xl shadow-primary/20' &#125;</p>
+					<RLVButton client:load variant="primary" ui={{ base: 'ring-4 ring-primary/50 shadow-xl shadow-primary/20' }}>Glowing Ring</RLVButton>
+				</div>
+				<div>
+					<p class="text-xs text-muted-foreground mb-2 font-mono">ui=&#123; base: 'animate-pulse' &#125; + class="px-12"</p>
+					<RLVButton client:load variant="error" ui={{ base: 'animate-pulse' }} class="px-12">Pulsing + External Class</RLVButton>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="text-center text-muted-foreground text-sm py-8 border-t border-white/10">
+		&copy; 2026 Rimelight UI — Nuxt UI-inspired <code class="px-1.5 py-0.5 rounded bg-muted/50 font-mono text-xs">ui</code> prop pattern
+	</footer>
+</body>
+</html>
