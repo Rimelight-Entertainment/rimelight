@@ -6,11 +6,6 @@ import Separator from "@rimelight/ui/components/separator/Separator.astro";
 import Avatar from "@rimelight/ui/components/avatar/Avatar.astro";
 import AvatarImage from "@rimelight/ui/components/avatar/AvatarImage.astro";
 import avatarAsset from "../assets/team/Daniel-Marchi_0000_00.webp";
-import { fetchTranslations } from "@rimelight/ui/domain";
-
-const { translationLocale, cfContext } = Astro.locals;
-const runtime = { cf: Astro.request.cf, cfContext };
-const { projects: t } = await fetchTranslations(runtime, translationLocale, ["projects"]);
 
 // Support both Astro content collections and CMS documents
 export type CMSProjectDocument = {
@@ -31,6 +26,13 @@ export interface ProjectPostProps extends NonNullable<Parameters<typeof projectP
   class?: string;
   showImage?: boolean;
   separator?: boolean;
+  /** Translations for the component */
+  t?: {
+    latest_badge?: string;
+    view_project?: string;
+  };
+  /** The current locale for formatting and links */
+  locale?: string;
 }
 
 type Props = ProjectPostProps;
@@ -86,23 +88,36 @@ const projectPostVariants = scv({
   },
 });
 
-const { project, variant, class: className, showImage = true, separator = false } = Astro.props;
+const { 
+  project, 
+  variant, 
+  class: className, 
+  showImage = true, 
+  separator = false,
+  t: tProp,
+  locale = Astro.locals.astroI18n?.locale || "en"
+} = Astro.props;
+
+const t = {
+  latest_badge: tProp?.latest_badge || (Astro.locals.astroI18n ? Astro.locals.astroI18n.t("projects.latest_badge") : "Latest"),
+  view_project: tProp?.view_project || (Astro.locals.astroI18n ? Astro.locals.astroI18n.t("projects.view_project") : "View Project"),
+};
 
 // Detect if this is a CMS document or Astro content entry
 const isCMSDocument = "_id" in project && !("id" in project);
 
 // Extract fields based on source type
-const projectTitle = isCMSDocument ? project.title : project.data.title;
-const projectDescription = isCMSDocument ? project.description : project.data.description;
-const projectImage = isCMSDocument ? project.heroImage : project.data.heroImage;
-const projectFeatured = isCMSDocument ? (project.featured ?? false) : project.data.featured;
-const projectTags = isCMSDocument ? (project.tags || []) : (project.data.tags || []);
+const projectTitle = isCMSDocument ? project.title : (project as CollectionEntry<"projects">).data.title;
+const projectDescription = isCMSDocument ? project.description : (project as CollectionEntry<"projects">).data.description;
+const projectImage = isCMSDocument ? project.heroImage : (project as CollectionEntry<"projects">).data.heroImage;
+const projectFeatured = isCMSDocument ? (project.featured ?? false) : (project as CollectionEntry<"projects">).data.featured;
+const projectTags = isCMSDocument ? (project.tags || []) : ((project as CollectionEntry<"projects">).data.tags || []);
 
 // Handle date formatting
-const rawDate = isCMSDocument ? (project.publishedDate || project._createdAt) : project.data.publishedDate;
+const rawDate = isCMSDocument ? (project.publishedDate || project._createdAt) : (project as CollectionEntry<"projects">).data.publishedDate;
 const d = rawDate ? new Date(rawDate) : null;
 const formattedDate = d && !isNaN(d.getTime())
-  ? new Intl.DateTimeFormat(translationLocale, {
+  ? new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
     }).format(d)
   : "";
@@ -110,13 +125,13 @@ const formattedDate = d && !isNaN(d.getTime())
 // Get slug from CMS or Astro content
 const projectSlug = isCMSDocument 
   ? (project.slug || "")
-  : project.id.replace(/^(en|pt|de|es|ja)\//, "");
+  : (project as CollectionEntry<"projects">).id.replace(/^(en|pt|de|es|ja)\//, "");
 
 const { root, imageWrapper, image, content, title, description, footer, authorGroup, author, link, badge, featuredBadge } = projectPostVariants({ variant });
 ---
 
 <div class="flex flex-col w-full">
-  <a href={`/${translationLocale}/projects/${projectSlug}`} class:list={[root, className]}>
+  <a href={Astro.locals.astroI18n ? Astro.locals.astroI18n.l(`/projects/${projectSlug}`) : `/${locale}/projects/${projectSlug}`} class:list={[root, className]}>
     {showImage && (
       <div class={imageWrapper}>
         {projectFeatured && (
@@ -180,4 +195,3 @@ const { root, imageWrapper, image, content, title, description, footer, authorGr
     </div>
   )}
 </div>
-

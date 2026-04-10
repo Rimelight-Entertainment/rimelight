@@ -6,11 +6,6 @@ import Separator from "@rimelight/ui/components/separator/Separator.astro";
 import Avatar from "@rimelight/ui/components/avatar/Avatar.astro";
 import AvatarImage from "@rimelight/ui/components/avatar/AvatarImage.astro";
 import avatarAsset from "../assets/team/Daniel-Marchi_0000_00.webp";
-import { fetchTranslations } from "@rimelight/ui/domain";
-
-const { translationLocale, cfContext } = Astro.locals;
-const runtime = { cf: Astro.request.cf, cfContext };
-const { blog: t } = await fetchTranslations(runtime, translationLocale, ["blog"]);
 
 // Support both Astro content collections and CMS documents
 export type CMSPostDocument = {
@@ -31,6 +26,13 @@ export interface BlogPostProps extends NonNullable<Parameters<typeof blogPostVar
   class?: string;
   showImage?: boolean;
   separator?: boolean;
+  /** Translations for the component */
+  t?: {
+    latest?: string;
+    read_article?: string;
+  };
+  /** The current locale for formatting and links */
+  locale?: string;
 }
 
 type Props = BlogPostProps;
@@ -86,22 +88,35 @@ const blogPostVariants = scv({
   },
 });
 
-const { post, variant, class: className, showImage = true, separator = false } = Astro.props;
+const { 
+  post, 
+  variant, 
+  class: className, 
+  showImage = true, 
+  separator = false,
+  t: tProp,
+  locale = Astro.locals.astroI18n?.locale || "en"
+} = Astro.props;
+
+const t = {
+  latest: tProp?.latest || (Astro.locals.astroI18n ? Astro.locals.astroI18n.t("blog.latest") : "Latest"),
+  read_article: tProp?.read_article || (Astro.locals.astroI18n ? Astro.locals.astroI18n.t("blog.read_article") : "Read Article"),
+};
 
 // Detect if this is a CMS document or Astro content entry
 const isCMSDocument = "_id" in post && !("id" in post);
 
 // Extract fields based on source type
-const postTitle = isCMSDocument ? post.title : post.data.title;
-const postDescription = isCMSDocument ? (post.description || post.excerpt) : post.data.description;
-const postImage = isCMSDocument ? post.image : post.data.heroImage;
-const postFeatured = isCMSDocument ? (post.featured ?? false) : post.data.featured;
+const postTitle = isCMSDocument ? post.title : (post as CollectionEntry<"blog">).data.title;
+const postDescription = isCMSDocument ? (post.description || post.excerpt) : (post as CollectionEntry<"blog">).data.description;
+const postImage = isCMSDocument ? post.image : (post as CollectionEntry<"blog">).data.heroImage;
+const postFeatured = isCMSDocument ? (post.featured ?? false) : (post as CollectionEntry<"blog">).data.featured;
 
 // Handle date formatting
-const rawDate = isCMSDocument ? (post.publishedDate || post._createdAt) : post.data.publishedDate;
+const rawDate = isCMSDocument ? (post.publishedDate || post._createdAt) : (post as CollectionEntry<"blog">).data.publishedDate;
 const d = rawDate ? new Date(rawDate) : null;
 const formattedDate = d && !isNaN(d.getTime())
-  ? new Intl.DateTimeFormat(translationLocale, {
+  ? new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
     }).format(d)
   : "";
@@ -109,13 +124,13 @@ const formattedDate = d && !isNaN(d.getTime())
 // Get slug from CMS or Astro content
 const postSlug = isCMSDocument 
   ? (post.slug || "")
-  : post.id.replace(/^(en|pt|de|es|ja)\//, "");
+  : (post as CollectionEntry<"blog">).id.replace(/^(en|pt|de|es|ja)\//, "");
 
 const { root, imageWrapper, image, content, title, description, footer, authorGroup, author, link, badge, featuredBadge } = blogPostVariants({ variant });
 ---
 
 <div class="flex flex-col w-full">
-  <a href={`/${translationLocale}/blog/${postSlug}`} class:list={[root, className]}>
+  <a href={Astro.locals.astroI18n ? Astro.locals.astroI18n.l(`/blog/${postSlug}`) : `/${locale}/blog/${postSlug}`} class:list={[root, className]}>
     {showImage && (
       <div class={imageWrapper}>
         {postFeatured && (
@@ -178,4 +193,3 @@ const { root, imageWrapper, image, content, title, description, footer, authorGr
     </div>
   )}
 </div>
-

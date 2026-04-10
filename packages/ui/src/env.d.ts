@@ -8,9 +8,6 @@ declare module "virtual:rimelight-ui" {
 
 declare namespace App {
   interface Locals {
-    uiLocale?: string
-    translationLocale?: string
-    isMissingContent?: boolean
     cfContext?: Record<string, unknown>
   }
 }

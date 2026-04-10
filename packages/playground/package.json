@@ -6,13 +6,18 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "i18n:extract": "astro-i18n extract",
+    "i18n:generate:pages": "astro-i18n generate:pages --purge",
+    "i18n:generate:types": "astro-i18n generate:types",
+    "i18n:sync": "npm run i18n:generate:pages && npm run i18n:generate:types"
   },
   "dependencies": {
     "@astrojs/vue": "^6.0.1",
     "@rimelight/ui": "workspace:*",
     "@unocss/astro": "^66.6.8",
     "astro": "^6.1.5",
+    "astro-i18n": "^2.2.4",
     "unplugin-icons": "^23.0.1",
     "vue": "^3.5.32"
   },
