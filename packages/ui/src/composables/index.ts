@@ -1,1 +1,1 @@
-export { useComponentUI } from "./useComponentUI"
+export { useUi } from "./useUi"

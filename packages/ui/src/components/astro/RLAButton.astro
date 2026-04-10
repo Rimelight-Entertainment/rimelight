@@ -1,84 +1,76 @@
 ---
-import type { HTMLAttributes } from "astro/types";
-import { cv, cx } from "css-variants";
-import { twMerge } from "tailwind-merge";
-import defu from "defu";
-import { buttonTheme } from "../../themes/button.theme";
-import { getUIConfig } from "virtual:rimelight-ui";
+import { scv, cx } from "css-variants"
+import { twMerge } from "tailwind-merge"
+import defu from "defu"
+import { buttonTheme } from "@/themes/button.theme.ts"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-// Create the variant resolver with tailwind-merge for conflict resolution
-const button = cv({
-  ...buttonTheme,
+const button = scv({
+  slots: [...buttonTheme.slots],
+  base: buttonTheme.base,
+  variants: buttonTheme.variants,
+  compoundVariants: [...buttonTheme.compoundVariants],
+  defaultVariants: buttonTheme.defaultVariants,
   classNameResolver: (...args) => twMerge(cx(...args)),
 });
 
-/**
- * UI prop interface for overriding the base class.
- * For multi-slot components (scv), this would have keys per slot.
- */
-export interface RLAButtonUI {
-  base?: string;
-}
-
-/**
- * Button props — uses indexed access types on the theme config
- * (same pattern as Nuxt UI's Button['variants']['color'])
- */
 export interface RLAButtonProps {
   /**
    * Button variant style.
-   * @default "default"
+   * @default "solid"
    */
   variant?: keyof typeof buttonTheme.variants.variant;
+  /**
+   * Button color.
+   * @default "primary"
+   */
+  color?: keyof typeof buttonTheme.variants.color;
   /**
    * Button size.
    * @default "md"
    */
   size?: keyof typeof buttonTheme.variants.size;
   /**
-   * Per-instance UI override. Merged with global config via `defu`.
-   * Higher priority than integration-level config.
-   */
-  ui?: RLAButtonUI;
-  /**
-   * External class — applied after all internal classes.
-   */
-  class?: string;
-  /**
    * When provided, renders as <a> instead of <button>.
    */
   href?: string;
+  /**
+   * UI overrides for individual slots, derived from the button theme.
+   */
+  ui?: Partial<Record<keyof typeof buttonTheme.base, string>>;
+  /**
+   * External class — applied to the root element.
+   */
+  class?: string;
   /**
    * Standard HTML attributes for <button>
    */
   [key: string]: unknown;
 }
 
-type Props = RLAButtonProps;
+export type Props = RLAButtonProps;
 
 const {
-  variant,
-  size,
+  variant = "solid",
+  color = "primary",
+  size = "md",
   class: className,
   ui: uiProp,
   href,
   ...rest
 } = Astro.props;
 
-// Get global config from the virtual module (populated by the Astro integration)
 const globalConfig = getUIConfig();
 
-// Merge: uiProp > globalConfig.button (uiProp wins)
-const mergedUI = defu<Record<string, unknown>[], [Record<string, unknown>]>(
+const mergedUI = defu(
   uiProp ?? {},
   (globalConfig.button as Record<string, unknown>) ?? {},
-);
+) as Record<keyof typeof buttonTheme.base, string | undefined>;
 
-// Resolve classes: cv() returns a string, className prop merges overrides
-const classes = button({
+const { root } = button({
   variant,
+  color,
   size,
-  className: mergedUI.base as string | undefined,
 });
 
 // Determine whether to render <a> or <button>
@@ -86,7 +78,7 @@ const Tag = href ? "a" : "button";
 ---
 
 <Tag
-  class:list={[classes, className]}
+  class={twMerge(root, mergedUI.root, className)}
   data-slot="rla-button"
   {...(Tag === "a" ? { href } : {})}
   {...rest}

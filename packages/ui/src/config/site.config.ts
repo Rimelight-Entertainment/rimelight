@@ -22,6 +22,6 @@ export interface SiteConfig {
     titleTemplate: string
     ogImageFallback: string
     maxDescriptionLength: number
-    authorHandle?: string // e.g., @danielmarchi
+    authorHandle?: string
   }
 }

@@ -1,0 +1,181 @@
+---
+import { Image } from "astro:assets";
+import { scv } from "css-variants";
+import type { CollectionEntry } from "astro:content";
+import Separator from "@rimelight/ui/components/separator/Separator.astro";
+import Avatar from "@rimelight/ui/components/avatar/Avatar.astro";
+import AvatarImage from "@rimelight/ui/components/avatar/AvatarImage.astro";
+import avatarAsset from "../assets/team/Daniel-Marchi_0000_00.webp";
+import { fetchTranslations } from "@rimelight/ui/domain";
+
+const { translationLocale, cfContext } = Astro.locals;
+const runtime = { cf: Astro.request.cf, cfContext };
+const { blog: t } = await fetchTranslations(runtime, translationLocale, ["blog"]);
+
+// Support both Astro content collections and CMS documents
+export type CMSPostDocument = {
+  _id: string;
+  slug?: string;
+  title: string;
+  excerpt?: string;
+  description?: string;
+  image?: string;
+  publishedDate?: string | Date | null;
+  featured?: boolean;
+  _updatedAt?: string;
+  _createdAt?: string;
+};
+
+export interface BlogPostProps extends NonNullable<Parameters<typeof blogPostVariants>[0]> {
+  post: CollectionEntry<"blog"> | CMSPostDocument;
+  class?: string;
+  showImage?: boolean;
+  separator?: boolean;
+}
+
+type Props = BlogPostProps;
+
+const blogPostVariants = scv({
+  slots: [
+    "root",
+    "imageWrapper",
+    "image",
+    "content",
+    "title",
+    "description",
+    "footer",
+    "authorGroup",
+    "author",
+    "link",
+    "badge",
+    "featuredBadge"
+  ],
+  base: {
+    root: "group flex transition-all duration-300 w-full",
+    imageWrapper: "relative overflow-hidden ring-1 ring-border shadow-sm shrink-0 bg-muted isolate",
+    image: "absolute inset-0 h-full w-full !object-cover transition-transform duration-500 group-hover:scale-105 block",
+    content: "flex flex-col flex-1",
+    title: "font-heading font-bold tracking-tight text-pretty group-hover:text-primary transition-colors",
+    description: "text-muted-foreground line-clamp-2 text-base text-pretty",
+    footer: "mt-auto flex items-end justify-end w-full",
+    authorGroup: "flex flex-col gap-5xs text-xs font-medium text-muted-foreground",
+    author: "font-bold text-foreground",
+    link: "inline-flex items-center gap-5xs text-sm font-semibold hover:underline decoration-primary underline-offset-4",
+    badge: "px-2xs py-6xs rounded-full bg-muted text-muted-foreground text-[10px] font-bold uppercase tracking-wider",
+    featuredBadge: "absolute top-3 left-3 z-20 flex items-center gap-5xs px-3xs py-5xs rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider shadow-lg ring-1 ring-white/20",
+  },
+  variants: {
+    variant: {
+      flat: {
+        root: "flex-col md:flex-row gap-3xl md:gap-4xl items-stretch py-4xl first:pt-0 last:pb-0 text-left",
+        imageWrapper: "w-full md:w-5/12 aspect-video self-stretch rounded-3xl shrink-0 shadow-none ring-0",
+        content: "gap-2xl justify-center items-start text-left",
+        title: "text-xl",
+        description: "text-base",
+      },
+      card: {
+        root: "flex-col bg-muted/20 p-2xl rounded-3xl border border-border/50 hover:bg-muted/40 hover:shadow-2xl hover:-translate-y-1 gap-2xl text-left items-stretch",
+        imageWrapper: "w-full aspect-video rounded-2xl shadow-lg",
+        title: "text-xl",
+        content: "gap-2xl text-left items-start",
+      },
+    },
+  },
+  defaultVariants: {
+    variant: "flat",
+  },
+});
+
+const { post, variant, class: className, showImage = true, separator = false } = Astro.props;
+
+// Detect if this is a CMS document or Astro content entry
+const isCMSDocument = "_id" in post && !("id" in post);
+
+// Extract fields based on source type
+const postTitle = isCMSDocument ? post.title : post.data.title;
+const postDescription = isCMSDocument ? (post.description || post.excerpt) : post.data.description;
+const postImage = isCMSDocument ? post.image : post.data.heroImage;
+const postFeatured = isCMSDocument ? (post.featured ?? false) : post.data.featured;
+
+// Handle date formatting
+const rawDate = isCMSDocument ? (post.publishedDate || post._createdAt) : post.data.publishedDate;
+const d = rawDate ? new Date(rawDate) : null;
+const formattedDate = d && !isNaN(d.getTime())
+  ? new Intl.DateTimeFormat(translationLocale, {
+      dateStyle: "medium",
+    }).format(d)
+  : "";
+
+// Get slug from CMS or Astro content
+const postSlug = isCMSDocument 
+  ? (post.slug || "")
+  : post.id.replace(/^(en|pt|de|es|ja)\//, "");
+
+const { root, imageWrapper, image, content, title, description, footer, authorGroup, author, link, badge, featuredBadge } = blogPostVariants({ variant });
+---
+
+<div class="flex flex-col w-full">
+  <a href={`/${translationLocale}/blog/${postSlug}`} class:list={[root, className]}>
+    {showImage && (
+      <div class={imageWrapper}>
+        {postFeatured && (
+          <div class={featuredBadge}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            {t.latest}
+          </div>
+        )}
+        {postImage && (
+          <Image
+            src={postImage as any}
+            alt={postTitle}
+            width={800}
+            height={450}
+            class={image}
+            loading="lazy"
+            decoding="async"
+          />
+        )}
+      </div>
+    )}
+
+    <div class={content}>
+      <h3 class={title}>
+        {postTitle}
+      </h3>
+
+      <div class="flex items-center gap-3xs mt-3xs">
+        <Avatar size="sm" variant="primary">
+          <AvatarImage image={avatarAsset} alt="Daniel Marchi" />
+        </Avatar>
+        <div class={authorGroup}>
+          <span class={author}>Daniel Marchi</span>
+          <div class="flex items-center gap-3xs">
+            <span>{formattedDate}</span>
+            <div class="flex flex-wrap gap-5xs ml-3xs">
+              <span class={badge}>Engineering</span>
+              <span class={badge}>Astro</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class={description}>
+        {postDescription}
+      </p>
+
+      <div class={footer}>
+        <span class={link}>
+          {t.read_article}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </span>
+      </div>
+    </div>
+  </a>
+
+  {separator && (
+    <div class="py-4xl last:hidden">
+      <Separator />
+    </div>
+  )}
+</div>
+

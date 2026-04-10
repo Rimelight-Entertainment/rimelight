@@ -1,0 +1,128 @@
+---
+/**
+ * Language Switcher Component (Extension)
+ *
+ * Variants:
+ * - 'full': Shows language icon, current flag, name, and chevron
+ * - 'label' (default): Shows language icon and current flag only
+ *
+ * Uses Starwind components for consistency.
+ * Built using native Astro i18n features.
+ */
+
+import Dropdown from "@rimelight/ui/components/dropdown/Dropdown.astro";
+import DropdownTrigger from "@rimelight/ui/components/dropdown/DropdownTrigger.astro";
+import DropdownContent from "@rimelight/ui/components/dropdown/DropdownContent.astro";
+import DropdownItem from "@rimelight/ui/components/dropdown/DropdownItem.astro";
+import Button from "@rimelight/ui/components/button/Button.astro";
+import Flag from "@rimelight/ui/components/icons/Flag.astro";
+
+import { SUPPORTED_LOCALES, LANGUAGES } from "@rimelight/ui/domain";
+import { localeToFlagCode } from "@rimelight/ui/domain";
+import { replaceLocaleInPath } from "@rimelight/ui/domain";
+import type { Locale } from "@rimelight/ui/domain";
+
+export interface LanguageSwitcherProps {
+  variant?: 'full' | 'label';
+  class?: string;
+}
+type Props = LanguageSwitcherProps;
+
+const { variant = 'label', class: className } = Astro.props;
+const { uiLocale: currentLocale } = Astro.locals;
+const currentPath = Astro.url.pathname;
+
+/**
+ * Utility to compute the target URL for a locale switch
+ * Handles standard Astro routing by replacing the locale prefix in the URL.
+ */
+function getSwitchUrl(targetLocale: string) {
+  return replaceLocaleInPath(currentPath, currentLocale as string, targetLocale);
+}
+
+const currentFlagCode = localeToFlagCode(currentLocale as Locale);
+const currentLabel = LANGUAGES[(currentLocale as Locale) as keyof typeof LANGUAGES] || currentLocale;
+---
+
+<Dropdown class={className}>
+  <DropdownTrigger asChild>
+    <Button
+      variant="outline"
+      size="sm"
+      class:list={[
+        "rounded-full border-border/50 bg-background/50 hover:bg-background transition-all h-9 shadow-none",
+        variant === 'full' ? "px-3xs" : "px-5xs",
+      ]}
+      aria-label="Select Language"
+    >
+      <div class="flex items-center gap-5xs">
+        <div class="flex items-center justify-center shrink-0 opacity-70 size-4.5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="text-current size-4.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7" /><path d="M9 3v2c0 4.418 -2.239 8 -5 8" /><path d="M5 9c0 2.144 2.952 3.908 6.7 4" /><path d="M12 20l4 -9l4 9" /><path d="M19.1 18h-6.2" />
+          </svg>
+        </div>
+
+        <div class="flex items-center -translate-y-[0.5px]">
+          <Flag code={currentFlagCode} size={18} class="rounded-sm shadow-sm border border-border/20" />
+        </div>
+
+        {variant === 'full' && (
+          <div class="flex items-center gap-5xs border-l border-border/30 pl-5xs ml-3xs">
+            <span class="text-xs font-medium text-muted-foreground whitespace-nowrap leading-none flex items-center translate-y-[0.5px]">
+              {currentLabel}
+            </span>
+            <div class="flex items-center justify-center opacity-50 -translate-y-[0.5px]">
+              <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+    </Button>
+  </DropdownTrigger>
+
+  <DropdownContent align="end" class="w-6xl border-border/50 bg-background/95 backdrop-blur-md p-5xs">
+    {SUPPORTED_LOCALES.map((locale) => {
+      const isActive = locale === currentLocale;
+      const href = getSwitchUrl(locale);
+      const flagCode = localeToFlagCode(locale as Locale);
+      const label = LANGUAGES[(locale as Locale) as keyof typeof LANGUAGES] || locale;
+
+      return (
+        <DropdownItem
+          as="a"
+          href={href}
+          class:list={[
+            "flex items-center h-10 px-3xs gap-3xs transition-colors rounded-lg",
+            isActive ? "bg-accent/70 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"
+          ]}
+        >
+          <div class="flex items-center shrink-0 -translate-y-[0.5px]">
+            <Flag code={flagCode} size={18} class="rounded-sm shadow-sm border border-border/20" />
+          </div>
+          <span class="text-sm leading-none flex items-center translate-y-[0.5px]">{label}</span>
+          {isActive && (
+            <div class="ml-auto flex items-center justify-center h-full text-primary">
+              <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          )}
+        </DropdownItem>
+      );
+    })}
+
+  </DropdownContent>
+</Dropdown>
+
+

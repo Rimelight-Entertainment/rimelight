@@ -1,26 +1,32 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { cv, cx } from "css-variants"
+import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
-import { buttonTheme } from "../../themes/button.theme"
+import defu from "defu"
+import { buttonTheme } from "@/themes/button.theme.ts"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-// Create the variant resolver with tailwind-merge for conflict resolution
-const button = cv({
-  ...buttonTheme,
+const button = scv({
+  slots: [...buttonTheme.slots],
+  base: buttonTheme.base,
+  variants: buttonTheme.variants,
+  compoundVariants: [...buttonTheme.compoundVariants],
+  defaultVariants: buttonTheme.defaultVariants,
   classNameResolver: (...args) => twMerge(cx(...args))
 })
 
-/**
- * Button props — uses indexed access types on the theme config (same pattern as Nuxt UI's
- * Button['variants']['color'])
- */
 export interface RLVButtonProps {
   /**
-   * Button variant style.
+   * Button variant.
    *
-   * @default "default"
+   * @default "solid"
    */
   variant?: keyof typeof buttonTheme.variants.variant
+  /**
+   * Button color.
+   *
+   * @default "primary"
+   */
+  color?: keyof typeof buttonTheme.variants.color
   /**
    * Button size.
    *
@@ -28,49 +34,56 @@ export interface RLVButtonProps {
    */
   size?: keyof typeof buttonTheme.variants.size
   /**
-   * Per-instance UI override for the base class string. Merged with variant/size classes via
-   * css-variants.
-   */
-  ui?: { base?: string }
-  /**
-   * External class — applied after all internal classes.
-   */
-  class?: string
-  /**
    * When provided, renders as <a> instead of <button>.
    */
   href?: string
+  /**
+   * UI overrides for individual slots, derived from the button theme.
+   */
+  ui?: Partial<Record<keyof typeof buttonTheme.base, string>>
+  /**
+   * External class — applied to the root element.
+   */
+  class?: string
+  /**
+   * Standard HTML attributes for <button>
+   */
+  [key: string]: unknown
 }
 
-const props = withDefaults(defineProps<RLVButtonProps>(), {
-  variant: "default",
-  size: "md",
-  class: undefined,
-  ui: undefined,
-  href: undefined
-})
+const {
+  variant = "solid",
+  color = "primary",
+  size = "md",
+  class: className,
+  ui: uiProp,
+  href
+} = defineProps<RLVButtonProps>()
 
-// Resolve classes — exactly like Astro: cv() with className param
-const resolvedClasses = computed(() => {
-  const classes = button({
-    variant: props.variant,
-    size: props.size,
-    className: props.ui?.base
-  })
-  return classes
+const globalConfig = getUIConfig()
+
+const mergedUI = defu(
+  uiProp ?? {},
+  (globalConfig.button as Record<string, unknown>) ?? {}
+) as Record<keyof typeof buttonTheme.base, string | undefined>
+
+const { root } = button({
+  variant,
+  color,
+  size
 })
 
 // Determine whether to render <a> or <button>
-const tag = computed(() => (props.href ? "a" : "button"))
+const Tag = href ? "a" : "button"
 </script>
 
 <template>
   <component
-    :is="tag"
-    :href="href"
-    :class="[resolvedClasses, props.class]"
-    data-slot="rlv-button"
     v-bind="$attrs"
+    :is="Tag"
+    :href="href"
+    :class="twMerge(root, mergedUI.root, className)"
+    data-slot="rlv-button"
   >
     <slot />
   </component>
