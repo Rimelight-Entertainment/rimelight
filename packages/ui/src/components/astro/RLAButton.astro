@@ -48,8 +48,6 @@ export interface RLAButtonProps {
   [key: string]: unknown;
 }
 
-export type Props = RLAButtonProps;
-
 const {
   variant = "solid",
   color = "primary",
@@ -58,7 +56,7 @@ const {
   ui: uiProp,
   href,
   ...rest
-} = Astro.props;
+} = Astro.props as RLAButtonProps
 
 const globalConfig = getUIConfig();
 

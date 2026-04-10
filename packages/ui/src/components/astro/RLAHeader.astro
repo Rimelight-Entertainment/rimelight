@@ -1,0 +1,75 @@
+---
+import { scv, cx } from "css-variants";
+import { twMerge } from "tailwind-merge";
+import defu from "defu";
+import { headerTheme } from "@/themes/header.theme.ts";
+import { getUIConfig } from "virtual:rimelight-ui";
+
+const header = scv({
+  slots: [...headerTheme.slots],
+  base: headerTheme.base,
+  variants: headerTheme.variants,
+  defaultVariants: headerTheme.defaultVariants,
+  classNameResolver: (...args) => twMerge(cx(...args)),
+});
+
+export interface RLAHeaderProps {
+  /**
+   * Whether to contain the header content in a max-width container.
+   * @default true
+   */
+  contain?: boolean;
+  /**
+   * Whether the header should be sticky at the top.
+   * @default true
+   */
+  sticky?: boolean;
+  /**
+   * UI overrides for individual slots, derived from the header theme.
+   */
+  ui?: Partial<Record<keyof typeof headerTheme.base, string>>;
+  /**
+   * External class — applied to the root element.
+   */
+  class?: string;
+  /**
+   * Standard HTML attributes for <header>
+   */
+  [key: string]: unknown;
+}
+
+const {
+  contain = true,
+  sticky = true,
+  class: className,
+  ui: uiProp,
+  ...rest
+} = Astro.props as RLAHeaderProps
+
+const globalConfig = getUIConfig();
+
+const mergedUI = defu(
+  uiProp ?? {},
+  (globalConfig.header as Record<string, unknown>) ?? {},
+) as Record<keyof typeof headerTheme.base, string | undefined>;
+
+const { root, container, left, center, right } = header({ contain, sticky });
+---
+
+<header
+  class:list={[twMerge(root, mergedUI.root, className)]}
+  data-slot="rla-header"
+  {...rest}
+>
+  <div class:list={[twMerge(container, mergedUI.container)]}>
+    <div class:list={[twMerge(left, mergedUI.left)]} data-slot="header-left">
+      <slot name="left" />
+    </div>
+    <div class:list={[twMerge(center, mergedUI.center)]} data-slot="header-center">
+      <slot name="center" />
+    </div>
+    <div class:list={[twMerge(right, mergedUI.right)]} data-slot="header-right">
+      <slot name="right" />
+    </div>
+  </div>
+</header>

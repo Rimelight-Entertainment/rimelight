@@ -51,10 +51,12 @@
     "dev": "astro dev"
   },
   "dependencies": {
+    "@iconify-json/lucide": "^1.2.102",
     "css-variants": "2.3.5",
     "defu": "6.1.6",
     "embla-carousel": "8.6.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "unplugin-icons": "23.0.1"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.8",
@@ -66,7 +68,6 @@
     "eslint-plugin-regexp": "3.1.0",
     "typescript": "6.0.2",
     "unocss": "66.6.8",
-    "unplugin-icons": "23.0.1",
     "vite-plus": "0.1.16"
   },
   "peerDependencies": {

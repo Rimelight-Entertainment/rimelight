@@ -1,5 +1,6 @@
 import type { AstroIntegration } from "astro"
 import defu from "defu"
+import Icons from "unplugin-icons/vite"
 import { defaultUIConfig } from "../themes"
 
 /**
@@ -57,6 +58,10 @@ export function ui(options: UIOptions = {}): AstroIntegration {
         updateConfig({
           vite: {
             plugins: [
+              Icons({
+                compiler: "astro",
+                autoInstall: true
+              }),
               {
                 name: "vite-plugin-rimelight-ui-config",
                 enforce: "pre",
