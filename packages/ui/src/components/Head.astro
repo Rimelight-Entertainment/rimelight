@@ -1,6 +1,120 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+import type { SiteConfig } from '@/config';
+
+export interface HeadProps {
+  /** Page title */
+  title?: string;
+  /** Page description */
+  description?: string;
+  /** Open Graph image URL */
+  ogImage?: string;
+  /** Whether to prevent indexing */
+  noindex?: boolean;
+  /** Whether this is a 404 page */
+  is404?: boolean;
+  /** Robots metadata (overrides noindex/is404 logic if provided) */
+  robots?: string;
+  /** Canonical URL */
+  canonical?: string;
+  /** Language alternates for i18n */
+  languageAlternates?: Array<{ hreflang: string; href: string }>;
+  /** Site configuration for defaults */
+  config?: SiteConfig;
+  /** Whether to enable View Transitions (ClientRouter) */
+  transitions?: boolean;
+  /** Meta charset */
+  charset?: string;
+  /** Meta viewport */
+  viewport?: string;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  noindex = false,
+  is404 = false,
+  robots,
+  canonical,
+  languageAlternates = [],
+  config,
+  transitions = true,
+  charset = "utf-8",
+  viewport = "width=device-width,initial-scale=1",
+} = Astro.props as HeadProps
+
+// Resolve defaults from config if available
+const siteName = config?.name || "Rimelight";
+const siteUrl = config?.url || "";
+const siteDescription = config?.description || "";
+const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || "";
+const themeColor = config?.branding?.colors?.themeColor;
+const favicon = config?.branding?.favicon?.svg || "/favicon.svg";
+const twitterHandle = config?.seo?.authorHandle;
+const titleTemplate = config?.seo?.titleTemplate || `%s | ${siteName}`;
+
+// Calculated Values
+const displayTitle = is404 
+  ? `404 - Not Found | ${siteName}` 
+  : title 
+    ? titleTemplate.replace('%s', title) 
+    : siteName;
+
+const finalDescription = description || siteDescription;
+const safeDescription = finalDescription && config?.seo?.maxDescriptionLength
+  ? (finalDescription.length > config.seo.maxDescriptionLength 
+      ? finalDescription.slice(0, config.seo.maxDescriptionLength - 3) + "..." 
+      : finalDescription)
+  : finalDescription;
+
+const finalOgImage = ogImage || ogImageFallback;
+const absoluteOgImage = finalOgImage 
+  ? (finalOgImage.startsWith('http') ? finalOgImage : `${siteUrl}${finalOgImage}`)
+  : undefined;
+
+const finalCanonical = canonical || (!is404 ? Astro.url.href : undefined);
 ---
-<!-- Theme Script -->
+
+<!-- Basic Metadata -->
+<meta charset={charset} />
+<meta name="viewport" content={viewport} />
+<meta name="generator" content={Astro.generator} />
+
+<!-- SEO -->
+<title>{displayTitle}</title>
+{safeDescription && <meta name="description" content={safeDescription} />}
+{robots ? <meta name="robots" content={robots} /> : (noindex || is404) && <meta name="robots" content="noindex, nofollow" />}
+{finalCanonical && <link rel="canonical" href={finalCanonical} />}
+
+<!-- i18n Alternates -->
+{languageAlternates.map((alt) => (
+  <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+))}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url.href} />
+<meta property="og:title" content={title || siteName} />
+{safeDescription && <meta property="og:description" content={safeDescription} />}
+{absoluteOgImage && <meta property="og:image" content={absoluteOgImage} />}
+<meta property="og:site_name" content={siteName} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url.href} />
+<meta property="twitter:title" content={title || siteName} />
+{safeDescription && <meta property="twitter:description" content={safeDescription} />}
+{absoluteOgImage && <meta property="twitter:image" content={absoluteOgImage} />}
+{twitterHandle && <meta property="twitter:site" content={twitterHandle} />}
+{twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
+
+<!-- Icons -->
+<link rel="icon" type="image/svg+xml" href={favicon} />
+
+<!-- Theme -->
+{themeColor && <meta name="theme-color" content={themeColor} />}
+
 <script is:inline>
   const theme = (() => {
     if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -20,4 +134,17 @@
 
   window.localStorage.setItem('theme', theme);
 </script>
+
+<script>
+  document.addEventListener('astro:after-swap', () => {
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  });
+</script>
+
+{transitions && <ClientRouter />}
+
 <slot />
