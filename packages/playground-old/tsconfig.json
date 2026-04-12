@@ -11,10 +11,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": [
-      "./worker-configuration.d.ts",
-      "unplugin-icons/types/astro"
-    ],
+    "types": ["./worker-configuration.d.ts", "unplugin-icons/types/astro"],
     "jsx": "preserve"
   }
 }

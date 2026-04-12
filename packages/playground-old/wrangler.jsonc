@@ -16,16 +16,16 @@
       "invocation_logs": true
     }
   },
-//  "routes": [
-//    {
-//      "pattern": "playground.rimelight.com",
-//      "custom_domain": true
-//    },
-//    {
-//      "pattern": "www.playground.rimelight.com",
-//      "custom_domain": true
-//    }
-//  ],
+  //  "routes": [
+  //    {
+  //      "pattern": "playground.rimelight.com",
+  //      "custom_domain": true
+  //    },
+  //    {
+  //      "pattern": "www.playground.rimelight.com",
+  //      "custom_domain": true
+  //    }
+  //  ],
   "browser": {
     "binding": "BROWSER"
   },
