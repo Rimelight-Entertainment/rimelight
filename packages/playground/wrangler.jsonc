@@ -1,14 +1,30 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "playground-dot-rimelight-dot-com",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-04-12",
   "compatibility_flags": ["global_fetch_strictly_public", "nodejs_compat"],
   "main": "@astrojs/cloudflare/entrypoints/server",
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true
+    }
+  },
+  "routes": [
+    {
+      "pattern": "playground.rimelight.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.playground.rimelight.com",
+      "custom_domain": true
+    }
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
-  },
-  "observability": {
-    "enabled": true
   }
 }
