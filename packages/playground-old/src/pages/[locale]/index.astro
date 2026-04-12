@@ -1,0 +1,25 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { l } from 'astro-i18n';
+import { SITE_CONFIG } from '@/config';
+---
+
+<AppLayout title={SITE_CONFIG.name}>
+  <p class="subtitle">Testing <code>@rimelight/ui</code> components — Astro and Vue versions side by side.</p>
+
+  <section>
+    <h2>Available Showcases</h2>
+    <div class="grid">
+      <a href={l("/button")} class="item" style="text-decoration:none; color:inherit;">
+        <strong>Button</strong>
+        <code>RLAButton / RLVButton</code>
+        <code style="color: var(--muted);">Variants × Colors matrix</code>
+      </a>
+      <a href={l("/header")} class="item" style="text-decoration:none; color:inherit;">
+        <strong>Header</strong>
+        <code>RLAHeader / RLVHeader</code>
+        <code style="color: var(--muted);">Variants × Colors + slot layouts</code>
+      </a>
+    </div>
+  </section>
+</AppLayout>

@@ -40,10 +40,6 @@ CURSOR.md
 .cursorrules
 .qwen/
 
-# Auto-generated
-src/i18n.generated.d.ts
-i18n-data.json
-
 # Outputs
 dist/
 .output/

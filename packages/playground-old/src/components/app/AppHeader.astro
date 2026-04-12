@@ -2,11 +2,12 @@
 import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import ThemeToggle from "@rimelight/ui/components/ThemeToggle.astro";
+import { l } from "astro-i18n";
 ---
 
 <RLAHeader class="bg-black">
   <div slot="left">
-    <a href="/" class="flex items-center gap-2">
+    <a href={l("/")} class="flex items-center gap-2">
       <div class="size-8 rounded-lg bg-primary-600 flex items-center justify-center text-white font-bold">
         R
       </div>
@@ -15,9 +16,9 @@ import ThemeToggle from "@rimelight/ui/components/ThemeToggle.astro";
   </div>
 
   <nav class="flex items-center gap-6">
-    <a href="/" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documentation</a>
-    <a href="/" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Components</a>
-    <a href="/" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Showcase</a>
+    <a href={l("/")} class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documentation</a>
+    <a href={l("/")} class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Components</a>
+    <a href={l("/")} class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Showcase</a>
   </nav>
 
   <div slot="right" class="flex items-center gap-3">

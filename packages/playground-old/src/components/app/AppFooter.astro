@@ -1,0 +1,72 @@
+---
+export interface AppFooterProps {}
+type Props = AppFooterProps;
+
+import { t, l } from "astro-i18n";
+import { SITE_CONFIG } from "@/config";
+import Button from "@rimelight/ui/components/astro/RLAButton.astro";
+
+import { getCollection } from "astro:content";
+
+import MdiInstagram from "~icons/mdi/instagram";
+import MdiLinkedin from "~icons/mdi/linkedin";
+import MdiGithub from "~icons/mdi/github";
+
+const iconMap: Record<string, any> = {
+  instagram: MdiInstagram,
+  linkedin: MdiLinkedin,
+  github: MdiGithub,
+};
+
+const socialLinks = await getCollection("socialLinks");
+
+---
+
+<footer
+  class="container py-5xl text-center text-muted-foreground border-t border-border mt-5xl"
+>
+  <div class="flex flex-col items-center gap-3xl">
+    <div
+      class="flex flex-wrap justify-center gap-x-3xl gap-y-2xl text-sm font-medium"
+    >
+      <a href={l("/components")} class="hover:text-foreground transition-colors"
+        >{t("nav.components")}</a
+      >
+      <a href={l("/legal/privacy-policy")} class="hover:text-foreground transition-colors"
+        >{t("nav.privacy_policy")}</a
+      >
+      <a
+        href={l("/legal/terms-of-service")}
+        class="hover:text-foreground transition-colors">{t("nav.terms_of_service")}</a
+      >
+      <a href={l("/legal/cookie-policy")} class="hover:text-foreground transition-colors"
+        >{t("nav.cookie_policy")}</a
+      >
+    </div>
+
+
+    <div class="flex justify-center gap-3xs">
+      {socialLinks.map(({ data }) => {
+        const Icon = iconMap[data.icon];
+        if (!Icon) return null;
+        return (
+          <Button
+            href={data.url}
+            target="_blank"
+            variant="ghost"
+            size="xs"
+            class="text-muted-foreground hover:text-foreground rounded-full"
+            aria-label={data.label}
+          >
+            <Icon class="size-5 text-current" />
+          </Button>
+        );
+      })}
+    </div>
+
+    <p class="text-xs">
+      &copy; {new Date().getFullYear()}
+      {SITE_CONFIG.name}
+    </p>
+  </div>
+</footer>

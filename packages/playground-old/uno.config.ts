@@ -13,13 +13,13 @@ export default defineConfig<PresetWind4Theme>({
     presetTypography({
       cssExtend: {
         "h1,h2,h3,h4,h5,h6": {
-          "font-family": "system-ui, sans-serif"
+          "font-family": "var(--font-sans), system-ui, sans-serif"
         },
         "p,li,blockquote,code": {
-          "font-family": "system-ui, sans-serif"
+          "font-family": "var(--font-sans), system-ui, sans-serif"
         },
         "pre,code": {
-          "font-family": "monospace"
+          "font-family": "var(--font-mono), monospace"
         }
       }
     })
@@ -57,6 +57,15 @@ export default defineConfig<PresetWind4Theme>({
     [
       /^clip-rect-(\d+)-(\d+)-(\d+)-(\d+)$/,
       ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
+    ],
+    [
+      /^([hw])-((?:6xs|5xs|4xs|3xs|2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl))$/,
+      ([, prop, s], { theme }) => {
+        if (!s) return
+        const val = theme.spacing?.[s]
+        if (!val) return
+        return prop === "h" ? { height: val } : { width: val }
+      }
     ]
   ],
 
@@ -283,6 +292,9 @@ export default defineConfig<PresetWind4Theme>({
           --color-hover: #f3f4f6;
           --color-destructive-subtle: #fef2f2;
           --color-accent-subtle: #eff6ff;
+          --font-sans: "Noto Sans", sans-serif;
+          --font-serif: "Noto Serif", serif;
+          --font-mono: "Noto Sans Mono", monospace;
         }
 
         .dark {
@@ -353,7 +365,7 @@ export default defineConfig<PresetWind4Theme>({
         body {
           background-color: var(--background);
           color: var(--foreground);
-          font-family: system-ui, sans-serif;
+          font-family: var(--font-sans);
         }
 
         button {
@@ -364,7 +376,33 @@ export default defineConfig<PresetWind4Theme>({
           background-color: var(--primary);
           color: var(--primary-foreground);
         }
+
+        @view-transition {
+          navigation: auto;
+        }
       `
     }
-  ]
+  ],
+
+  async configResolved(config) {
+    // Only log in dev mode and only once per process
+    if (process.env.NODE_ENV === "development" && !process.env.UNO_CONFIG_LOGGED) {
+      process.env.UNO_CONFIG_LOGGED = "true"
+
+      console.log(
+        `[UnoCSS] Config resolved. Presets: ${config.presets.map((p) => p.name).join(", ")}`
+      )
+      console.log(`[UnoCSS] Total rules: ${config.rules.length}`)
+      console.log(`[UnoCSS] Total shortcuts: ${Object.keys(config.shortcuts).length}`)
+
+      // Collision Detection: Identify potential conflicting regex rules
+      const ruleNames = config.rules.map((r) => (Array.isArray(r) ? r[0].toString() : "dynamic"))
+      const duplicates = ruleNames.filter((item, index) => ruleNames.indexOf(item) !== index)
+      const filteredDuplicates = duplicates.filter((d) => d !== "/^(.+?)-(\\$.+)$/")
+
+      if (filteredDuplicates.length > 0) {
+        console.warn(`[UnoCSS] Potential Rule Collisions: ${filteredDuplicates.join(", ")}`)
+      }
+    }
+  }
 })

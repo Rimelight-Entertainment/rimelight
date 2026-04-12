@@ -1,0 +1,73 @@
+---
+import { astroI18n } from "astro-i18n";
+import Head from "@rimelight/ui/components/Head.astro";
+import AppHeader from "@/components/app/AppHeader.astro";
+import AppFooter from "@/components/app/AppFooter.astro";
+import { SITE_CONFIG } from "@/config";
+
+interface Props {
+  title: string;
+  description?: string | undefined
+  ogImage?: string | undefined
+  noindex?: boolean
+  is404?: boolean
+}
+
+const { title, description, ogImage, noindex, is404 } = Astro.props;
+
+const currentOrigin = import.meta.env.PROD
+  ? SITE_CONFIG.url
+  : Astro.url.origin
+
+const rssUrl = `${currentOrigin}${astroI18n.l('/rss.xml')}`
+
+// Prepare language alternates for i18n
+const languageAlternates: Array<{ hreflang: string; href: string }> = !is404 ? astroI18n.locales.map((locale) => ({
+  hreflang: locale,
+  href: currentOrigin + astroI18n.l(Astro.url.pathname, {}, { targetLocale: locale })
+})) : [];
+
+// Add x-default
+if (languageAlternates.length > 0) {
+  languageAlternates.push({
+    hreflang: 'x-default',
+    href: currentOrigin + astroI18n.l(Astro.url.pathname, {}, { targetLocale: astroI18n.primaryLocale })
+  });
+}
+
+---
+
+<!DOCTYPE html>
+<html lang={astroI18n.locale}>
+  <head>
+    <Head
+      {title}
+      {description}
+      {ogImage}
+      {noindex}
+      {is404}
+      config={SITE_CONFIG}
+      {languageAlternates}
+    >
+      <link
+        rel='alternate'
+        type='application/rss+xml'
+        title={`${SITE_CONFIG.name} RSS Feed (${astroI18n.locale?.toUpperCase()})`}
+        href={rssUrl}
+      />
+      <link rel="sitemap" href="/sitemap-index.xml">
+      <link href="/themes/prism-darcula.css" rel="stylesheet" />
+      
+      <!--Analytics -->
+      <script is:inline async src="https://betterlytics.io/analytics.js" data-site-id="danielmarchi-mncrn55z"/>
+    </Head>
+  </head>
+  <body>
+    <AppHeader />
+    <main>
+      <slot />
+    </main>
+    <AppFooter />
+  </body>
+</html>
+

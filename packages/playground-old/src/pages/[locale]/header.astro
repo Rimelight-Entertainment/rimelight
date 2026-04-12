@@ -1,10 +1,11 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import AppLayout from '../../layouts/AppLayout.astro';
+
 import RLAHeader from '@rimelight/ui/components/astro/RLAHeader.astro';
 import RLVHeader from '@rimelight/ui/components/vue/RLVHeader.vue';
 ---
 
-<Layout title="Header Showcase — Rimelight UI">
+<AppLayout title="Header Showcase — Rimelight UI">
   <p class="subtitle"><code>RLAHeader</code> (Astro) vs <code>RLVHeader</code> (Vue) — slot-based structural component.</p>
 
   <div class="tabs" id="hdr-tabs">
@@ -75,7 +76,7 @@ import RLVHeader from '@rimelight/ui/components/vue/RLVHeader.vue';
       </div>
     </div>
   </div>
-</Layout>
+</AppLayout>
 
 <style>
   .tabs {

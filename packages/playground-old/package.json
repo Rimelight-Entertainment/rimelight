@@ -1,0 +1,60 @@
+{
+  "name": "@rimelight/playground",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "prepare": "vp config",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "i18n:extract": "astro-i18n extract",
+    "i18n:generate:pages": "astro-i18n generate:pages --purge",
+    "i18n:generate:types": "astro-i18n generate:types",
+    "i18n:sync": "npm run i18n:generate:pages && npm run i18n:generate:types"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "13.1.8",
+    "@astrojs/compiler-rs": "0.1.6",
+    "@astrojs/mdx": "5.0.3",
+    "@astrojs/prism": "4.0.1",
+    "@astrojs/rss": "4.0.18",
+    "@astrojs/sitemap": "3.7.2",
+    "@astrojs/vue": "^6.0.1",
+    "@rimelight/ui": "workspace:*",
+    "@types/node": "25.5.2",
+    "@unocss/astro": "^66.6.8",
+    "astro": "^6.1.5",
+    "astro-i18n": "^2.2.4",
+    "typescript": "6.0.2",
+    "unplugin-icons": "^23.0.1",
+    "vue": "^3.5.32",
+    "wrangler": "4.81.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.8",
+    "@astrojs/ts-plugin": "1.10.7",
+    "@e18e/eslint-plugin": "0.3.0",
+    "@iconify-json/logos": "1.2.11",
+    "@iconify-json/lucide": "^1.2.102",
+    "@iconify-json/mdi": "1.2.3",
+    "@types/better-sqlite3": "7.6.13",
+    "@unocss/eslint-plugin": "66.6.8",
+    "drizzle-kit": "0.31.10",
+    "eslint-plugin-regexp": "3.1.0",
+    "tsx": "4.21.0",
+    "unocss": "66.6.8",
+    "vite-plus": "0.1.16"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "defu": "6.1.6",
+      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+    }
+  }
+}

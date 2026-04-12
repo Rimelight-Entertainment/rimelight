@@ -13,6 +13,7 @@ export default defineConfig({
       "**/runtime-constants.ts",
       "**/fallbacks.generated.ts",
       "**/worker-configuration.d.ts",
+      "**/env.d.ts",
       "i18n-data.json"
     ],
     options: {
@@ -68,6 +69,7 @@ export default defineConfig({
       "**/runtime-constants.ts",
       "**/fallbacks.generated.ts",
       "**/worker-configuration.d.ts",
+      "**/env.d.ts",
       "i18n-data.json"
     ],
     jsdoc: {

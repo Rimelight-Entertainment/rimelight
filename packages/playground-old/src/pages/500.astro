@@ -1,0 +1,31 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { t, l } from "astro-i18n";
+
+interface Props {
+  error?: unknown;
+}
+
+const { error } = Astro.props;
+---
+
+<AppLayout title={`500 | ${t("errors.500_title")}`}>
+  <div class="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
+    <h1 class="text-6xl font-bold font-heading text-destructive mb-4">500</h1>
+    <p class="text-2xl font-semibold mb-8">{t("errors.500_title")}</p>
+    <div class="max-w-md bg-card p-6 rounded-xl border border-border">
+      <p class="text-muted-foreground mb-6">
+        {t("errors.500_description")}
+      </p>
+      <pre class="text-xs text-left bg-muted p-md rounded overflow-auto max-h-40 mb-6">
+        {error instanceof Error ? error.message : "Internal Server Error"}
+      </pre>
+      <a
+        href={l("/")}
+        class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      >
+        {t("nav.home")}
+      </a>
+    </div>
+  </div>
+</AppLayout>

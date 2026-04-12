@@ -1,0 +1,29 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro'
+import { t, l } from 'astro-i18n'
+---
+
+<AppLayout
+  title={t("seo.title")}
+  noindex={true}
+  is404={true}
+>
+  <main
+    class='mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center text-center px-4'
+  >
+    <h1 class='mb-4 text-4xl font-bold tracking-tight'>
+      {t("notFound.title")}
+    </h1>
+
+    <p class='mb-6 text-base text-slate-500 dark:text-slate-400'>
+      {t("notFound.message")}
+    </p>
+
+    <a
+      href={l("/")}
+      class='rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300'
+    >
+      {t("notFound.backToHome")}
+    </a>
+  </main>
+</AppLayout>
