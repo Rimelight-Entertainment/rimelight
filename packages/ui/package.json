@@ -61,9 +61,8 @@
     "@unocss/eslint-plugin": "66.6.8",
     "astro": "6.1.4",
     "eslint-plugin-regexp": "3.1.0",
-    "typescript": "6.0.2",
     "unocss": "66.6.8",
-    "vite-plus": "0.1.16"
+    "vite-plus": "0.1.18"
   },
   "peerDependencies": {
     "astro": ">=6.0.0",
