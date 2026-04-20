@@ -59,14 +59,14 @@ export const sri = defineMiddleware(async (_, next) => {
     const scriptRegex = new RegExp(`(<script[^>]+src=["']${url}["'][^>]*)(/?>)`, "g")
     modifiedHtml = modifiedHtml.replace(
       scriptRegex,
-      `$1 integrity="${String(hash)}" crossorigin="anonymous"$2`
+      `$1 integrity="${hash}" crossorigin="anonymous"$2`
     )
 
     // Look for link tags with the specific URL
     const linkRegex = new RegExp(`(<link[^>]+href=["']${url}["'][^>]*)(/?>)`, "g")
     modifiedHtml = modifiedHtml.replace(
       linkRegex,
-      `$1 integrity="${String(hash)}" crossorigin="anonymous"$2`
+      `$1 integrity="${hash}" crossorigin="anonymous"$2`
     )
   }
 

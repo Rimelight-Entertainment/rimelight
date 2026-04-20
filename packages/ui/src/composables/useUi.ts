@@ -13,8 +13,8 @@ import type { DefaultUIConfig } from "@/themes"
  * @param uiProp - The local `ui` prop from defineProps
  * @returns ComputedRef of merged UI overrides
  */
-export function useUi<T extends keyof DefaultUIConfig>(
-  componentName: T,
+export function useUi(
+  componentName: keyof DefaultUIConfig,
   uiProp: Record<string, unknown> | undefined
 ): ComputedRef<Record<string, unknown>> {
   const globalConfig = getUIConfig()

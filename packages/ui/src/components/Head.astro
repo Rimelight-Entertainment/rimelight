@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import type { SiteConfig } from '@/config';
+import UApp from './nuxt/App.vue';
 
 export interface HeadProps {
   /** Page title */
@@ -147,4 +148,6 @@ const finalCanonical = canonical || (!is404 ? Astro.url.href : undefined);
 
 {transitions && <ClientRouter />}
 
-<slot />
+<UApp client:load>
+  <slot />
+</UApp>

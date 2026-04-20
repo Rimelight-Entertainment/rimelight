@@ -1,11 +1,17 @@
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 import type { AstroIntegration } from "astro"
+import vue from "@astrojs/vue"
+import uiPlugin from "@nuxt/ui/vite"
 import defu from "defu"
 import Icons from "unplugin-icons/vite"
 import { defaultUIConfig } from "../themes"
 
+const nuxtUIEntry = fileURLToPath(import.meta.resolve("@nuxt/ui"))
+const nuxtUIComponentsPath = path.join(path.dirname(nuxtUIEntry), "runtime/components")
+
 /**
- * Shape of the `ui` config that can be passed to the integration. Keys are component names, values
- * are partial theme configs.
+ * Shape of the `ui` config that can be passed to the integration.
  */
 export type UIConfigOverrides = {
   button?: Partial<(typeof defaultUIConfig)["button"]>
@@ -42,22 +48,30 @@ export interface UIOptions {
  *     ]
  *   })
  */
-export function ui(options: UIOptions = {}): AstroIntegration {
-  // Merge user overrides with defaults (user-provided values win)
+export function ui(options: UIOptions = {}): AstroIntegration[] {
   const resolvedConfig = defu(options.ui ?? {}, defaultUIConfig)
 
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId
 
-  return {
+  const rimelightUIIntegration: AstroIntegration = {
     name: "@rimelight/ui",
     hooks: {
       "astro:config:setup": ({ updateConfig, logger }) => {
-        logger.info("Initializing @rimelight/ui configuration")
+        logger.info("Initializing @rimelight/ui core")
 
         updateConfig({
           vite: {
+            resolve: {
+              alias: {
+                "@rimelight/ui/components/nuxt/": `${nuxtUIComponentsPath}/`
+              }
+            },
             plugins: [
+              uiPlugin({
+                router: false,
+                scanPackages: ["@rimelight/ui"]
+              }),
               Icons({
                 compiler: "astro",
                 autoInstall: true
@@ -66,9 +80,7 @@ export function ui(options: UIOptions = {}): AstroIntegration {
                 name: "vite-plugin-rimelight-ui-config",
                 enforce: "pre",
                 resolveId(id: string) {
-                  if (id === virtualModuleId) {
-                    return resolvedVirtualModuleId
-                  }
+                  if (id === virtualModuleId) return resolvedVirtualModuleId
                   return null
                 },
                 load(id: string) {
@@ -84,4 +96,11 @@ export function ui(options: UIOptions = {}): AstroIntegration {
       }
     }
   }
+
+  return [
+    vue({
+      appEntrypoint: "@rimelight/ui/integrations/vue-entrypoint"
+    }),
+    rimelightUIIntegration
+  ]
 }
