@@ -2,7 +2,6 @@ import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
 import starlight from "@astrojs/starlight"
 import starlightImageZoom from "starlight-image-zoom"
-import starlightPackageManagers from "starlight-package-managers"
 import { ui } from "@rimelight/ui"
 import { defineConfig, fontProviders, memoryCache } from "astro/config"
 
