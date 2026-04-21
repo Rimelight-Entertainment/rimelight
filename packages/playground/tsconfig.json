@@ -20,6 +20,6 @@
       "#build/ui/*": ["./node_modules/.nuxt-ui/ui/*"]
     },
     "types": ["unplugin-icons/types/astro"],
-    "jsx": "preserve"
+    "jsx": "preserve",
   }
 }

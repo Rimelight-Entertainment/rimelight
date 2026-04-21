@@ -25,7 +25,6 @@
     "./components/*": "./src/components/*",
     "./components/astro/*": "./src/components/astro/*",
     "./components/vue/*": "./src/components/vue/*",
-    "./components/nuxt/*": "./src/components/nuxt/*",
     "./themes": "./src/themes/index.ts",
     "./themes/*": "./src/themes/*",
     "./composables": "./src/composables/index.ts",
@@ -35,9 +34,11 @@
     "./utils": "./src/utils/index.ts",
     "./utils/*": "./src/utils/*",
     "./integrations": "./src/integrations/index.ts",
+    "./integrations/vue-entrypoint": "./src/integrations/vue-entrypoint.ts",
     "./integrations/*": "./src/integrations/*",
     "./middleware": "./src/middleware/index.ts",
     "./middleware/*": "./src/middleware/*",
+    "./nuxt": "./src/nuxt.ts",
     "./*": "./src/*"
   },
   "publishConfig": {
@@ -51,11 +52,12 @@
     "@astrojs/vue": "6.0.1",
     "@iconify-json/lucide": "^1.2.102",
     "@nuxt/ui": "4.6.1",
+    "@tailwindcss/vite": "^4.2.3",
     "css-variants": "2.3.5",
     "defu": "6.1.6",
     "embla-carousel": "8.6.0",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "4.2.2",
+    "tailwindcss": "^4.2.3",
     "unplugin-icons": "23.0.1"
   },
   "devDependencies": {

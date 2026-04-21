@@ -1,14 +1,10 @@
-import path from "node:path"
-import { fileURLToPath } from "node:url"
 import type { AstroIntegration } from "astro"
 import vue from "@astrojs/vue"
 import uiPlugin from "@nuxt/ui/vite"
 import defu from "defu"
 import Icons from "unplugin-icons/vite"
+import tailwindcss from '@tailwindcss/vite'
 import { defaultUIConfig } from "../themes"
-
-const nuxtUIEntry = fileURLToPath(import.meta.resolve("@nuxt/ui"))
-const nuxtUIComponentsPath = path.join(path.dirname(nuxtUIEntry), "runtime/components")
 
 /**
  * Shape of the `ui` config that can be passed to the integration.
@@ -62,11 +58,6 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
 
         updateConfig({
           vite: {
-            resolve: {
-              alias: {
-                "@rimelight/ui/components/nuxt/": `${nuxtUIComponentsPath}/`
-              }
-            },
             plugins: [
               uiPlugin({
                 router: false,
@@ -76,6 +67,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
                 compiler: "astro",
                 autoInstall: true
               }),
+              tailwindcss(),
               {
                 name: "vite-plugin-rimelight-ui-config",
                 enforce: "pre",
