@@ -47,7 +47,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "rimelight/playground",
-      plugins: [starlightImageZoom(), starlightPackageManagers()],
+      plugins: [starlightImageZoom()],
       sidebar: [
         { label: "Home", link: "/docs/" },
         {
