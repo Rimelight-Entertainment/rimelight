@@ -82,7 +82,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
                   return null
                 }
               }
-            ]
+            ] as any
           }
         })
       }
