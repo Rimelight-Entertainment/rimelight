@@ -6,9 +6,11 @@ import {
   transformerVariantGroup,
   type PresetWind4Theme
 } from "unocss"
+import rimelightUiPreset from "@rimelight/ui/preset"
 
 export default defineConfig<PresetWind4Theme>({
   presets: [
+    rimelightUiPreset(),
     presetWind4(),
     presetTypography({
       cssExtend: {
