@@ -2,7 +2,7 @@
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import defu from "defu"
-import { buttonTheme } from "@/themes/button.theme.ts"
+import { buttonTheme } from "../../themes/button.theme.ts"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const button = scv({
