@@ -51,7 +51,7 @@ export default defineConfig<PresetWind4Theme>({
     // Layout & Components
     "container": "mx-auto w-full max-w-90rem px-md",
     "sr-only":
-      "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
+        "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
   },
   rules: [
     [
@@ -209,9 +209,9 @@ export default defineConfig<PresetWind4Theme>({
     animation: {
       keyframes: {
         "accordion-down":
-          "{ from { height: 0; } to { height: var(--starwind-accordion-content-height); } }",
+            "{ from { height: 0; } to { height: var(--starwind-accordion-content-height); } }",
         "accordion-up":
-          "{ from { height: var(--starwind-accordion-content-height); } to { height: 0; } }",
+            "{ from { height: var(--starwind-accordion-content-height); } to { height: 0; } }",
         "marquee": "{ from { transform: translateX(0); } to { transform: translateX(-100%); } }"
       },
       durations: {
@@ -390,7 +390,7 @@ export default defineConfig<PresetWind4Theme>({
       process.env.UNO_CONFIG_LOGGED = "true"
 
       console.log(
-        `[UnoCSS] Config resolved. Presets: ${config.presets.map((p) => p.name).join(", ")}`
+          `[UnoCSS] Config resolved. Presets: ${config.presets.map((p) => p.name).join(", ")}`
       )
       console.log(`[UnoCSS] Total rules: ${config.rules.length}`)
       console.log(`[UnoCSS] Total shortcuts: ${Object.keys(config.shortcuts).length}`)

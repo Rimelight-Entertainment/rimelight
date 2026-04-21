@@ -1,4 +1,5 @@
 import type { AstroIntegration } from "astro"
+import UnoCSS from "unocss/astro"
 import vue from "@astrojs/vue"
 import uiPlugin from "@nuxt/ui/vite"
 import defu from "defu"
@@ -104,6 +105,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   }
 
   return [
+    UnoCSS(),
     vue({
       appEntrypoint: "@rimelight/ui/integrations/vue-entrypoint"
     }),
