@@ -3,7 +3,7 @@ import vue from "@astrojs/vue"
 import uiPlugin from "@nuxt/ui/vite"
 import defu from "defu"
 import Icons from "unplugin-icons/vite"
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite"
 import { defaultUIConfig } from "../themes"
 
 /**
@@ -58,6 +58,20 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
 
         updateConfig({
           vite: {
+            optimizeDeps: {
+              exclude: [
+                "@rimelight/ui",
+                "@rimelight/ui/vue-plugin",
+                "@rimelight/ui/integrations/vue-entrypoint",
+                "@nuxt/ui"
+              ]
+            },
+            ssr: {
+              noExternal: ["@rimelight/ui", "@nuxt/ui"],
+              optimizeDeps: {
+                exclude: ["@rimelight/ui/vue-plugin", "@rimelight/ui/integrations/vue-entrypoint"]
+              }
+            },
             plugins: [
               uiPlugin({
                 router: false,
