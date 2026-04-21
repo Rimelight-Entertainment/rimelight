@@ -1,3 +1,7 @@
+/**
+ * Theme configuration for the Button component.
+ * Defines the slots, base styles, and an extensive set of variants including color logic.
+ */
 export const buttonTheme = {
   slots: ["root"],
   base: {

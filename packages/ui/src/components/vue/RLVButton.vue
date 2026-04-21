@@ -60,6 +60,14 @@ const {
   href
 } = defineProps<RLVButtonProps>()
 
+defineSlots<{
+  /**
+   * The default slot for the button content (e.g., text, icons).
+   */
+  default(props: {}): any
+}>()
+
+
 const globalConfig = getUIConfig()
 
 const mergedUI = defu(

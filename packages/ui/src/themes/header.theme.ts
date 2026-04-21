@@ -1,3 +1,7 @@
+/**
+ * Theme configuration for the Header component.
+ * Defines the slots, base styles, and variants for layout management.
+ */
 export const headerTheme = {
   slots: ["root", "container", "left", "center", "right"],
   base: {

@@ -44,8 +44,17 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      title: "rimelight/playground"
+      title: "rimelight/playground",
+      sidebar: [
+        { label: "Home", link: "/docs/" },
+        {
+          label: "Documentation",
+          autogenerate: { directory: "docs" }
+        }
+      ]
     }),
+
+
     mdx(),
     sitemap(),
     ui()

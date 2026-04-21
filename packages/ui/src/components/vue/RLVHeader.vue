@@ -43,6 +43,22 @@ const {
   ui: uiProp
 } = defineProps<RLVHeaderProps>()
 
+defineSlots<{
+  /**
+   * Content to display on the left side of the header (e.g., Logo).
+   */
+  left(props: {}): any
+  /**
+   * Content to display in the center of the header (e.g., Navigation Links).
+   */
+  center(props: {}): any
+  /**
+   * Content to display on the right side of the header (e.g., User Menu, Theme Toggle).
+   */
+  right(props: {}): any
+}>()
+
+
 const mergedUI = useUi("header", uiProp as Record<string, unknown> | undefined)
 
 const resolvedClasses = computed(() => {
