@@ -60,7 +60,7 @@ export default definePreset(() => {
         ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
       ],
       [
-        /^([hw])-((?:6xs|5xs|4xs|3xs|2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl))$/,
+        /^([hw])-(6xs|5xs|4xs|3xs|2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl)$/,
         ([, prop, s], { theme }) => {
           if (!s) return
           const val = (theme as { spacing?: Record<string, string> }).spacing?.[s]

@@ -2,7 +2,8 @@ import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
 import starlight from "@astrojs/starlight"
 import starlightImageZoom from "starlight-image-zoom"
-import { ui } from "@rimelight/ui"
+import { ui } from "@rimelight/ui/integrations"
+import { starlightAddons } from "@rimelight/ui/plugins"
 import { defineConfig, fontProviders, memoryCache } from "astro/config"
 
 import cloudflare from "@astrojs/cloudflare"
@@ -45,7 +46,10 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      plugins: [starlightImageZoom()],
+      plugins: [
+        starlightImageZoom(),
+        starlightAddons()
+      ],
       prerender: false,
       lastUpdated: true,
       disable404Route: true,

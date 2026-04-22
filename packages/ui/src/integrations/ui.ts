@@ -51,55 +51,58 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId
 
+  function setViteConfig(updateConfig: (config: Record<string, unknown>) => void) {
+    updateConfig({
+      vite: {
+        optimizeDeps: {
+          exclude: [
+            "@rimelight/ui",
+            "@rimelight/ui/vue-plugin",
+            "@rimelight/ui/integrations/vue-entrypoint",
+            "@nuxt/ui"
+          ]
+        },
+        ssr: {
+          noExternal: ["@rimelight/ui", "@nuxt/ui"],
+          optimizeDeps: {
+            exclude: ["@rimelight/ui/vue-plugin", "@rimelight/ui/integrations/vue-entrypoint"]
+          }
+        },
+        plugins: [
+          uiPlugin({
+            router: false,
+            scanPackages: ["@rimelight/ui"]
+          }),
+          Icons({
+            compiler: "astro",
+            autoInstall: true
+          }),
+          tailwindcss(),
+          {
+            name: "vite-plugin-rimelight-ui-config",
+            enforce: "pre",
+            resolveId(id: string) {
+              if (id === virtualModuleId) return resolvedVirtualModuleId
+              return null
+            },
+            load(id: string) {
+              if (id === resolvedVirtualModuleId) {
+                return `export const getUIConfig = () => (${JSON.stringify(resolvedConfig)});`
+              }
+              return null
+            }
+          }
+        ]
+      }
+    })
+  }
+
   const rimelightUIIntegration: AstroIntegration = {
     name: "@rimelight/ui",
     hooks: {
       "astro:config:setup": ({ updateConfig, logger }) => {
         logger.info("Initializing @rimelight/ui core")
-
-        updateConfig({
-          vite: {
-            optimizeDeps: {
-              exclude: [
-                "@rimelight/ui",
-                "@rimelight/ui/vue-plugin",
-                "@rimelight/ui/integrations/vue-entrypoint",
-                "@nuxt/ui"
-              ]
-            },
-            ssr: {
-              noExternal: ["@rimelight/ui", "@nuxt/ui"],
-              optimizeDeps: {
-                exclude: ["@rimelight/ui/vue-plugin", "@rimelight/ui/integrations/vue-entrypoint"]
-              }
-            },
-            plugins: [
-              uiPlugin({
-                router: false,
-                scanPackages: ["@rimelight/ui"]
-              }),
-              Icons({
-                compiler: "astro",
-                autoInstall: true
-              }),
-              tailwindcss(),
-              {
-                name: "vite-plugin-rimelight-ui-config",
-                enforce: "pre",
-                resolveId(id: string) {
-                  if (id === virtualModuleId) return resolvedVirtualModuleId
-                  return null
-                },
-                load(id: string) {
-                  if (id === resolvedVirtualModuleId) {
-                    return `export const getUIConfig = () => (${JSON.stringify(resolvedConfig)});`
-                  }
-                  return null
-                }
-              }
-            ] as any
-          }
-        })
+        setViteConfig(updateConfig)
       }
     }
   }
