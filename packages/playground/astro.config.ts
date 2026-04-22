@@ -46,10 +46,7 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      plugins: [
-        starlightImageZoom(),
-        starlightAddons()
-      ],
+      plugins: [starlightImageZoom(), starlightAddons()],
       lastUpdated: true,
       disable404Route: true,
       locales: {
