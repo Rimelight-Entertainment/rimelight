@@ -8,16 +8,19 @@ description: How to contribute to rimelight/playground
 To start contributing to this project, follow these steps from the monorepo root:
 
 1. **Clone the repository**:
+
    ```bash
    git clone <repository-url>
    ```
 
 2. **Install dependencies**:
+
    ```bash
    pnpm install
    ```
 
 3. **Start the development server for playground**:
+
    ```bash
    pnpm --filter playground dev
    ```

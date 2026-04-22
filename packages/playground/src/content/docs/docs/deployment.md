@@ -15,6 +15,7 @@ This website is configured to be deployed on **Cloudflare Pages**.
 ## Configuration
 
 The deployment is configured via:
+
 - `astro.config.ts`: Uses the `@astrojs/cloudflare` adapter.
 - `wrangler.jsonc`: Cloudflare-specific configurations.
 

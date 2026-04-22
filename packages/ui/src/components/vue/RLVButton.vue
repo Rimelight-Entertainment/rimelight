@@ -67,7 +67,6 @@ defineSlots<{
   default(props: {}): any
 }>()
 
-
 const globalConfig = getUIConfig()
 
 const mergedUI = defu(

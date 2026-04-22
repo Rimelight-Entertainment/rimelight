@@ -58,7 +58,6 @@ defineSlots<{
   right(props: {}): any
 }>()
 
-
 const mergedUI = useUi("header", uiProp as Record<string, unknown> | undefined)
 
 const resolvedClasses = computed(() => {
