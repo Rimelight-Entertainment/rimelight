@@ -8,12 +8,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export interface StarlightAddonsConfig {
   copy?: boolean
   share?: boolean
+  packageManagers?: string[]
 }
 
 export default function starlightAddons(userConfig?: StarlightAddonsConfig): StarlightPlugin {
   const defaultConfig: StarlightAddonsConfig = {
     copy: true,
-    share: true
+    share: true,
+    packageManagers: ["npm"]
   }
 
   const config: StarlightAddonsConfig = {
@@ -25,7 +27,11 @@ export default function starlightAddons(userConfig?: StarlightAddonsConfig): Sta
     name: "rimelight-ui-starlight-addons",
     hooks: {
       "config:setup"({ addIntegration, updateConfig, logger }) {
-        if (!config.copy && !config.share) {
+        if (
+          !config.copy &&
+          !config.share &&
+          (!config.packageManagers || config.packageManagers.length === 0)
+        ) {
           logger.warn("StarlightAddons: Nothing enabled.")
         }
 

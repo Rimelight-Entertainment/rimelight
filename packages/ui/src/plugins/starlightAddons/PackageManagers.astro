@@ -1,0 +1,45 @@
+---
+import { Tabs, TabItem } from "@astrojs/starlight/components"
+import { Code as AstroCode } from "astro:components"
+
+interface Props {
+  pkg: string
+  type?: "add" | "create" | "install" | "remove" | "run"
+  dev?: boolean
+}
+
+const { pkg, type = "add", dev = false } = Astro.props
+
+const commands: Record<string, Record<string, string>> = {
+  npm: { add: "npm i", create: "npm create", install: "npm install", remove: "npm uninstall", run: "npm run", devOption: "-D" },
+  yarn: { add: "yarn add", create: "yarn create", install: "yarn install", remove: "yarn remove", run: "yarn run", devOption: "-D" },
+  pnpm: { add: "pnpm add", create: "pnpm create", install: "pnpm install", remove: "pnpm remove", run: "pnpm run", devOption: "-D" },
+  bun: { add: "bun add", create: "bun create", install: "bun install", remove: "bun remove", run: "bun run", devOption: "-d" },
+}
+
+function getCommand(manager: string, cmdType: string, pkgName: string, devFlag: boolean): string {
+  const mgrCmds = commands[manager]
+  if (!mgrCmds) return ""
+  let cmd = mgrCmds[cmdType]
+  if (!cmd) return ""
+  if (cmdType === "add" && devFlag && mgrCmds.devOption) cmd += " " + mgrCmds.devOption
+  if (pkgName && cmdType !== "install") cmd += " " + pkgName
+  return cmd
+}
+
+const managers = ["npm", "pnpm", "yarn", "bun"] as const
+const singleManager = managers[0] as string
+const command = getCommand(singleManager, type, pkg, dev)
+---
+
+{(managers.length as number) === 1 ? (
+  <AstroCode code={command} lang="sh" />
+) : (
+  <Tabs syncKey="package-managers">
+    {managers.map((manager) => (
+      <TabItem label={manager}>
+        <AstroCode code={getCommand(manager, type, pkg, dev)} lang="sh" />
+      </TabItem>
+    ))}
+  </Tabs>
+)}
