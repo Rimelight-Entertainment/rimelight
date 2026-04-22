@@ -12,6 +12,29 @@ declare module "virtual:rimelight-ui" {
   export function getUIConfig(): DefaultUIConfig
 }
 
+interface StarlightAddonsConfig {
+  copy?: boolean
+  share?: boolean
+}
+
+declare module "virtual:rimelight-starlight-addons-config" {
+  const config: StarlightAddonsConfig
+  export default config
+}
+
+declare module "turndown" {
+  class TurndownService {
+    constructor(options?: Record<string, unknown>)
+    turndown(html: Node | string): string
+    use(plugin: () => void): void
+  }
+  export default TurndownService
+}
+
+declare module "turndown-plugin-gfm" {
+  export function gfm(): void
+}
+
 declare namespace App {
   interface Locals {
     cfContext?: Record<string, unknown>

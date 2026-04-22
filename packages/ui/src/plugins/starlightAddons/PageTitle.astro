@@ -3,9 +3,6 @@ import DefaultPageTitle from "@astrojs/starlight/components/PageTitle.astro";
 import config from "virtual:rimelight-starlight-addons-config";
 
 const { copy = true, share = true } = config ?? {};
-
-const currentUrl = Astro.url.href;
-const currentTitle = (Astro.locals as any).starlightRoute?.entry?.data?.title || "";
 ---
 
 <DefaultPageTitle />
@@ -67,7 +64,7 @@ const currentTitle = (Astro.locals as any).starlightRoute?.entry?.data?.title ||
   });
   turndown.use(gfm);
 
-  const copyBtn = document.getElementById("rl-copy-markdown");
+  const copyBtn = document.getElementById("rl-copy-markdown") as HTMLButtonElement | null;
   const shareBtn = document.getElementById("rl-share");
 
   if (copyBtn) {
@@ -78,8 +75,8 @@ const currentTitle = (Astro.locals as any).starlightRoute?.entry?.data?.title ||
         if (!contentEl) {
           throw new Error("Content not found");
         }
-        const clone = contentEl.cloneNode(true);
-        clone.querySelectorAll("script, style, noscript, .sl-anchor-link, [data-pagefind-ignore]").forEach(el => el.remove());
+        const clone = contentEl.cloneNode(true) as Element;
+        clone.querySelectorAll("script, style, noscript, .sl-anchor-link, [data-pagefind-ignore]").forEach((el: Element) => el.remove());
         const markdown = turndown.turndown(clone as HTMLElement);
         await navigator.clipboard.writeText(markdown);
         copyBtn.classList.add("copied");
@@ -92,13 +89,15 @@ const currentTitle = (Astro.locals as any).starlightRoute?.entry?.data?.title ||
     });
   }
 
-  if (shareBtn) {
-    shareBtn.addEventListener("click", async () => {
+  const typedShareBtn = shareBtn as HTMLButtonElement | null;
+  if (typedShareBtn) {
+    typedShareBtn.addEventListener("click", async () => {
       if (navigator.share) {
         try {
           await navigator.share({ title: document.title, url: window.location.href });
         } catch (err) {
-          if (err.name !== "AbortError") {
+          const error = err as { name?: string };
+          if (error.name !== "AbortError") {
             console.error("Share failed:", err);
           }
         }
