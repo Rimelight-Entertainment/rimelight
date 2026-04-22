@@ -61,48 +61,33 @@ export default definePreset(() => {
       ],
       [
         /^([hw])-(6xs|5xs|4xs|3xs|2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl)$/,
-        ([, prop, s], { theme }) => {
-          if (!s) return
-          const val = (theme as { spacing?: Record<string, string> }).spacing?.[s]
-          if (!val) return
+        ([, prop, s]) => {
+          if (!s) return false
+          const spacing: Record<string, string> = {
+            "6xs": "0.125rem",
+            "5xs": "0.25rem",
+            "4xs": "0.375rem",
+            "3xs": "0.5rem",
+            "2xs": "0.625rem",
+            "xs": "0.75rem",
+            "sm": "0.875rem",
+            "md": "1rem",
+            "lg": "1.25rem",
+            "xl": "1.5rem",
+            "2xl": "2rem",
+            "3xl": "3rem",
+            "4xl": "4rem",
+            "5xl": "6rem",
+            "6xl": "8rem"
+          }
+          const val = spacing[s]
+          if (!val) return false
           return prop === "h" ? { height: val } : { width: val }
         }
       ]
     ],
 
     theme: {
-      spacing: {
-        // 2px
-        "6xs": "0.125rem",
-        // 4px
-        "5xs": "0.25rem",
-        // 6px
-        "4xs": "0.375rem",
-        // 8px
-        "3xs": "0.5rem",
-        // 10px
-        "2xs": "0.625rem",
-        // 12px
-        "xs": "0.75rem",
-        // 14px
-        "sm": "0.875rem",
-        // 16px
-        "md": "1rem",
-        // 20px
-        "lg": "1.25rem",
-        // 24px
-        "xl": "1.5rem",
-        // 32px
-        "2xl": "2rem",
-        // 48px
-        "3xl": "3rem",
-        // 64px
-        "4xl": "4rem",
-        // 96px
-        "5xl": "6rem",
-        // 128px
-        "6xl": "8rem"
-      },
       colors: {
         "background": "var(--background)",
         "foreground": "var(--foreground)",
