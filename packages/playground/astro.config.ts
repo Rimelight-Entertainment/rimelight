@@ -50,7 +50,6 @@ export default defineConfig({
         starlightImageZoom(),
         starlightAddons()
       ],
-      prerender: false,
       lastUpdated: true,
       disable404Route: true,
       locales: {
