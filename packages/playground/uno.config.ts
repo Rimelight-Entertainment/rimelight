@@ -6,7 +6,7 @@ import {
   transformerVariantGroup,
   type PresetWind4Theme
 } from "unocss"
-import rimelightUiPreset from "@rimelight/ui/preset"
+import rimelightUiPreset from "@rimelight/ui/presets"
 
 export default defineConfig<PresetWind4Theme>({
   presets: [
@@ -53,184 +53,14 @@ export default defineConfig<PresetWind4Theme>({
     // Layout & Components
     "container": "mx-auto w-full max-w-90rem px-md",
     "sr-only":
-      "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
+        "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
   },
   rules: [
     [
       /^clip-rect-(\d+)-(\d+)-(\d+)-(\d+)$/,
       ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
-    ],
-    [
-      /^([hw])-((?:6xs|5xs|4xs|3xs|2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl))$/,
-      ([, prop, s], { theme }) => {
-        if (!s) return
-        const val = theme.spacing?.[s]
-        if (!val) return
-        return prop === "h" ? { height: val } : { width: val }
-      }
     ]
   ],
-
-  theme: {
-    spacing: {
-      // 2px
-      "6xs": "0.125rem",
-      // 4px
-      "5xs": "0.25rem",
-      // 6px
-      "4xs": "0.375rem",
-      // 8px
-      "3xs": "0.5rem",
-      // 10px
-      "2xs": "0.625rem",
-      // 12px
-      "xs": "0.75rem",
-      // 14px
-      "sm": "0.875rem",
-      // 16px
-      "md": "1rem",
-      // 20px
-      "lg": "1.25rem",
-      // 24px
-      "xl": "1.5rem",
-      // 32px
-      "2xl": "2rem",
-      // 48px
-      "3xl": "3rem",
-      // 64px
-      "4xl": "4rem",
-      // 96px
-      "5xl": "6rem",
-      // 128px
-      "6xl": "8rem"
-    },
-    colors: {
-      "background": "var(--background)",
-      "foreground": "var(--foreground)",
-      "card": {
-        DEFAULT: "var(--card)",
-        foreground: "var(--card-foreground)"
-      },
-      "popover": {
-        DEFAULT: "var(--popover)",
-        foreground: "var(--popover-foreground)"
-      },
-      "primary": {
-        DEFAULT: "var(--primary)",
-        foreground: "var(--primary-foreground)",
-        accent: "var(--primary-accent)"
-      },
-      "secondary": {
-        DEFAULT: "var(--secondary)",
-        foreground: "var(--secondary-foreground)",
-        accent: "var(--secondary-accent)"
-      },
-      "muted": {
-        DEFAULT: "var(--muted)",
-        foreground: "var(--muted-foreground)"
-      },
-      "accent": {
-        DEFAULT: "var(--accent)",
-        foreground: "var(--accent-foreground)"
-      },
-      "info": {
-        DEFAULT: "var(--info)",
-        foreground: "var(--info-foreground)"
-      },
-      "success": {
-        DEFAULT: "var(--success)",
-        foreground: "var(--success-foreground)"
-      },
-      "warning": {
-        DEFAULT: "var(--warning)",
-        foreground: "var(--warning-foreground)"
-      },
-      "error": {
-        DEFAULT: "var(--error)",
-        foreground: "var(--error-foreground)"
-      },
-      "commentary": {
-        DEFAULT: "var(--commentary)",
-        foreground: "var(--commentary-foreground)"
-      },
-      "ideation": {
-        DEFAULT: "var(--ideation)",
-        foreground: "var(--ideation-foreground)"
-      },
-      "source": {
-        DEFAULT: "var(--source)",
-        foreground: "var(--source-foreground)"
-      },
-      "border": "var(--border)",
-      "input": "var(--input)",
-      "outline": "var(--outline)",
-      "ring": "var(--ring)",
-      "destructive": {
-        DEFAULT: "var(--destructive)",
-        subtle: "var(--color-destructive-subtle)"
-      },
-      "sidebar": {
-        DEFAULT: "var(--sidebar)",
-        foreground: "var(--sidebar-foreground)",
-        primary: {
-          DEFAULT: "var(--sidebar-primary)",
-          foreground: "var(--sidebar-primary-foreground)"
-        },
-        accent: {
-          DEFAULT: "var(--sidebar-accent)",
-          foreground: "var(--sidebar-accent-foreground)"
-        },
-        border: "var(--sidebar-border)",
-        ring: "var(--sidebar-ring)"
-      },
-      "chart": {
-        "1": "var(--chart-1)",
-        "2": "var(--chart-2)",
-        "3": "var(--chart-3)",
-        "4": "var(--chart-4)",
-        "5": "var(--chart-5)"
-      },
-      "hover": "var(--color-hover)",
-      "surface": "var(--color-surface)",
-      "muted-strong": "var(--color-muted-strong)",
-      "foreground-secondary": "var(--color-foreground-secondary)",
-      "foreground-tertiary": "var(--color-foreground-tertiary)",
-      "placeholder": "var(--color-placeholder)",
-      "input-border": "var(--color-input-border)",
-      "accent-subtle": "var(--color-accent-subtle)"
-    },
-    radius: {
-      "xs": "calc(var(--radius) - 0.375rem)",
-      "sm": "calc(var(--radius) - 0.25rem)",
-      "md": "calc(var(--radius) - 0.125rem)",
-      "lg": "var(--radius)",
-      "xl": "calc(var(--radius) + 0.25rem)",
-      "2xl": "calc(var(--radius) + 0.5rem)",
-      "3xl": "calc(var(--radius) + 1rem)"
-    },
-    animation: {
-      keyframes: {
-        "accordion-down":
-          "{ from { height: 0; } to { height: var(--starwind-accordion-content-height); } }",
-        "accordion-up":
-          "{ from { height: var(--starwind-accordion-content-height); } to { height: 0; } }",
-        "marquee": "{ from { transform: translateX(0); } to { transform: translateX(-100%); } }"
-      },
-      durations: {
-        "accordion-down": "0.2s",
-        "accordion-up": "0.2s",
-        "marquee": "30s"
-      },
-      timingFns: {
-        "accordion-down": "ease-out",
-        "accordion-up": "ease-out",
-        "marquee": "linear"
-      },
-      counts: {
-        marquee: "infinite"
-      }
-    }
-  },
 
   preflights: [
     {
@@ -392,7 +222,7 @@ export default defineConfig<PresetWind4Theme>({
       process.env.UNO_CONFIG_LOGGED = "true"
 
       console.log(
-        `[UnoCSS] Config resolved. Presets: ${config.presets.map((p) => p.name).join(", ")}`
+          `[UnoCSS] Config resolved. Presets: ${config.presets.map((p) => p.name).join(", ")}`
       )
       console.log(`[UnoCSS] Total rules: ${config.rules.length}`)
       console.log(`[UnoCSS] Total shortcuts: ${Object.keys(config.shortcuts).length}`)

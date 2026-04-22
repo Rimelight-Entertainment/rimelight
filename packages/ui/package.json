@@ -39,8 +39,8 @@
     "./middleware": "./src/middleware/index.ts",
     "./middleware/*": "./src/middleware/*",
     "./nuxt": "./src/nuxt.ts",
-    "./preset": "./src/preset.ts",
-    "./preset/*": "./src/preset/*",
+    "./presets": "./src/presets/index.ts",
+    "./presets/*": "./src/presets/*",
     "./*": "./src/*"
   },
   "publishConfig": {
