@@ -51,8 +51,8 @@ export default defineConfig({
       disable404Route: true,
       locales: {
         root: {
-          label: 'English',
-          lang: 'en',
+          label: "English",
+          lang: "en"
         },
         pt: {
           label: "Português",
@@ -60,11 +60,11 @@ export default defineConfig({
         }
       },
       title: {
-        en: 'Website Docs',
+        en: "Website Docs"
       },
       description: "Rimelight Entertainment Documentation",
       social: [
-        { icon: 'github', label: 'GitHub', href: 'https://github.com/Rimelight-Entertainment' },
+        { icon: "github", label: "GitHub", href: "https://github.com/Rimelight-Entertainment" }
       ],
       sidebar: [
         { label: "Home", link: "/docs/" },
@@ -74,7 +74,6 @@ export default defineConfig({
         }
       ]
     }),
-
 
     mdx(),
     sitemap(),
