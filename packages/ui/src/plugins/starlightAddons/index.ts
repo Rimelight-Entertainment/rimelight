@@ -63,7 +63,6 @@ export default function starlightAddons(userConfig?: StarlightAddonsConfig): Sta
         addIntegration,
         updateConfig,
         logger,
-        addRouteMiddleware,
         command,
         config: starlightConfig
       }) {
