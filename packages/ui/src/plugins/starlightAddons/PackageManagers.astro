@@ -1,6 +1,6 @@
 ---
 import { Tabs, TabItem } from "@astrojs/starlight/components"
-import { Code as AstroCode } from "astro:components"
+import { Code } from "astro:components"
 
 interface Props {
   pkg: string
@@ -17,6 +17,8 @@ const commands: Record<string, Record<string, string>> = {
   bun: { add: "bun add", create: "bun create", install: "bun install", remove: "bun remove", run: "bun run", devOption: "-d" },
 }
 
+const managers = ["npm", "pnpm", "yarn", "bun"] as const
+
 function getCommand(manager: string, cmdType: string, pkgName: string, devFlag: boolean): string {
   const mgrCmds = commands[manager]
   if (!mgrCmds) return ""
@@ -26,20 +28,12 @@ function getCommand(manager: string, cmdType: string, pkgName: string, devFlag: 
   if (pkgName && cmdType !== "install") cmd += " " + pkgName
   return cmd
 }
-
-const managers = ["npm", "pnpm", "yarn", "bun"] as const
-const singleManager = managers[0] as string
-const command = getCommand(singleManager, type, pkg, dev)
 ---
 
-{(managers.length as number) === 1 ? (
-  <AstroCode code={command} lang="sh" />
-) : (
-  <Tabs syncKey="package-managers">
-    {managers.map((manager) => (
+<Tabs syncKey="package-managers">
+  {managers.map((manager) => (
       <TabItem label={manager}>
-        <AstroCode code={getCommand(manager, type, pkg, dev)} lang="sh" />
+        <Code code={getCommand(manager, type, pkg, dev)} lang="sh" />
       </TabItem>
-    ))}
-  </Tabs>
-)}
+  ))}
+</Tabs>
