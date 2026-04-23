@@ -43,6 +43,7 @@ export default defineConfig({
   },
 
   site: "https://playground.rimelight.com",
+  output: "server",
 
   integrations: [
     starlight({
@@ -71,6 +72,7 @@ export default defineConfig({
             }
           ]
         })],
+      prerender: false,
       lastUpdated: true,
       disable404Route: true,
       locales: {
