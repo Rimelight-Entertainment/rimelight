@@ -39,26 +39,28 @@ export const security = defineMiddleware(async (context, next) => {
   }
 
   if (typeof HTMLRewriter !== "undefined") {
-    return new HTMLRewriter()
-      .on("script[src]", {
-        element(el: any) {
-          const src = el.getAttribute("src")
-          if (src && manifest[src]) {
-            el.setAttribute("integrity", manifest[src])
-            el.setAttribute("crossorigin", "anonymous")
+    return addSecurityHeaders(
+      new HTMLRewriter()
+        .on("script[src]", {
+          element(el: any) {
+            const src = el.getAttribute("src")
+            if (src && manifest[src]) {
+              el.setAttribute("integrity", manifest[src])
+              el.setAttribute("crossorigin", "anonymous")
+            }
           }
-        }
-      })
-      .on('link[rel="stylesheet"][href]', {
-        element(el: any) {
-          const href = el.getAttribute("href")
-          if (href && manifest[href]) {
-            el.setAttribute("integrity", manifest[href])
-            el.setAttribute("crossorigin", "anonymous")
+        })
+        .on('link[rel="stylesheet"][href]', {
+          element(el: any) {
+            const href = el.getAttribute("href")
+            if (href && manifest[href]) {
+              el.setAttribute("integrity", manifest[href])
+              el.setAttribute("crossorigin", "anonymous")
+            }
           }
-        }
-      })
-      .transform(response)
+        })
+        .transform(response)
+    )
   }
 
   let modifiedHtml = await response.text()
