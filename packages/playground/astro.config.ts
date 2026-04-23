@@ -50,25 +50,21 @@ export default defineConfig({
       plugins: [
         starlightImageZoom(),
         starlightAddons({
-          packageManagers: ["npm", "pnpm", "yarn", "bun"],
           topics: [
             {
               label: "Topic 1",
               link: "/docs/docs/topic-1/",
               icon: "open-book",
-              items: ["category-1/page-1"]
             },
             {
               label: "Topic 2",
               link: "/docs/docs/topic-2/",
               icon: "open-book",
-              items: ["category-2/page-1", "category-2/page-2"]
             },
             {
               label: "Topic 3",
               link: "/docs/docs/topic-3/",
               icon: "open-book",
-              items: ["category-2/page-1"]
             }
           ]
         })],

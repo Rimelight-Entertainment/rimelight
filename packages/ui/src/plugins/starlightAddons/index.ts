@@ -26,7 +26,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export interface StarlightAddonsConfig {
   copy?: boolean
   share?: boolean
-  packageManagers?: string[]
   // Merged config for Topics
   topics?: StarlightSidebarTopicsUserConfig
   topicOptions?: StarlightSidebarTopicsUserOptions
@@ -36,8 +35,7 @@ export default function starlightAddons(userConfig?: StarlightAddonsConfig): Sta
   // 1. Setup default and merged config for Addons
   const defaultAddonConfig: StarlightAddonsConfig = {
     copy: true,
-    share: true,
-    packageManagers: ["npm"]
+    share: true
   }
 
   const addonConfig = { ...defaultAddonConfig, ...userConfig }
@@ -92,11 +90,7 @@ export default function starlightAddons(userConfig?: StarlightAddonsConfig): Sta
         }
 
         // --- Addons Logic ---
-        if (
-          !addonConfig.copy &&
-          !addonConfig.share &&
-          (!addonConfig.packageManagers || addonConfig.packageManagers.length === 0)
-        ) {
+        if (!addonConfig.copy && !addonConfig.share) {
           logger.warn("StarlightAddons: No features enabled.")
         }
 
