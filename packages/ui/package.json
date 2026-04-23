@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/ui",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "private": false,
   "description": "Rimelight Entertainment UI Library.",
   "homepage": "https://rimelight.com/docs",
@@ -53,6 +53,7 @@
     "dev": "astro dev"
   },
   "dependencies": {
+    "@astrojs/prism": "^4.0.1",
     "@astrojs/vue": "6.0.1",
     "@iconify-json/lucide": "^1.2.102",
     "@nuxt/ui": "4.6.1",
