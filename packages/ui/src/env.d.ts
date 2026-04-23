@@ -38,5 +38,8 @@ declare module "turndown-plugin-gfm" {
 declare namespace App {
   interface Locals {
     cfContext?: Record<string, unknown>
+    // Extended locals used by Starlight Addons for richer type safety
+    starlightSidebarTopics?: any
+    starlightRoute?: any
   }
 }

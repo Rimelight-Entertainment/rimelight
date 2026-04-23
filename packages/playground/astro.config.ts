@@ -46,7 +46,31 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      plugins: [starlightImageZoom(), starlightAddons({ packageManagers: ["npm", "pnpm", "yarn", "bun"] })],
+      plugins: [
+        starlightImageZoom(),
+        starlightAddons({
+          packageManagers: ["npm", "pnpm", "yarn", "bun"],
+          topics: [
+            {
+              label: "Topic 1",
+              link: "/docs/docs/topic-1/",
+              icon: "open-book",
+              items: ["category-1/page-1"]
+            },
+            {
+              label: "Topic 2",
+              link: "/docs/docs/topic-2/",
+              icon: "open-book",
+              items: ["category-2/page-1", "category-2/page-2"]
+            },
+            {
+              label: "Topic 3",
+              link: "/docs/docs/topic-3/",
+              icon: "open-book",
+              items: ["category-2/page-1"]
+            }
+          ]
+        })],
       lastUpdated: true,
       disable404Route: true,
       locales: {
@@ -66,13 +90,6 @@ export default defineConfig({
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/Rimelight-Entertainment" }
       ],
-      sidebar: [
-        { label: "Home", link: "/docs/" },
-        {
-          label: "Documentation",
-          autogenerate: { directory: "docs" }
-        }
-      ]
     }),
 
     mdx(),
