@@ -43,10 +43,13 @@ export default defineConfig({
   },
 
   site: "https://playground.rimelight.com",
+  base: "/",
+  trailingSlash: "never",
   output: "server",
 
   integrations: [
     starlight({
+      customCss: ["./src/styles/starlight.css"],
       plugins: [
         starlightImageZoom(),
         starlightAddons({

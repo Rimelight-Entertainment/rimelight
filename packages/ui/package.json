@@ -49,8 +49,8 @@
     "access": "public"
   },
   "scripts": {
-    "generate:config": "vp config",
-    "dev": "astro dev"
+    "prepare": "vp config",
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/prism": "^4.0.1",
