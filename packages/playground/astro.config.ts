@@ -120,7 +120,7 @@ export default defineConfig({
     }
   ],
 
-  adapter: cloudflare()
+  adapter: cloudflare(),
 
   // security: {
   //   checkOrigin: true,
@@ -154,5 +154,9 @@ export default defineConfig({
   //       resources: ["'self'"]
   //     }
   //   }
-  // }
+  // },
+
+  markdown: {
+    syntaxHighlight: "prism"
+  }
 })
