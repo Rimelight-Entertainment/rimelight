@@ -129,20 +129,21 @@ export default defineConfig({
             {
               label: "Topic 1",
               link: "/docs/docs/topic-1/",
-              icon: "open-book",
+              icon: "open-book"
             },
             {
               label: "Topic 2",
               link: "/docs/docs/topic-2/",
-              icon: "open-book",
+              icon: "open-book"
             },
             {
               label: "Topic 3",
               link: "/docs/docs/topic-3/",
-              icon: "open-book",
+              icon: "open-book"
             }
           ]
-        })],
+        })
+      ],
       prerender: false,
       lastUpdated: true,
       disable404Route: true,
@@ -152,7 +153,7 @@ export default defineConfig({
       description: "Rimelight Entertainment Documentation",
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/Rimelight-Entertainment" }
-      ],
+      ]
     }),
 
     sitemap(),
