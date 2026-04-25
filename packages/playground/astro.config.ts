@@ -84,10 +84,7 @@ export default defineConfig({
   i18n: {
     locales: ["en", "pt-br"],
     defaultLocale: "en",
-    routing: {
-      prefixDefaultLocale: true,
-      redirectToDefaultLocale: true
-    }
+    routing: "manual"
   },
 
   fonts: [
@@ -124,27 +121,9 @@ export default defineConfig({
       customCss: ["./src/styles/starlight.css"],
       plugins: [
         starlightImageZoom(),
-        starlightAddons({
-          topics: [
-            {
-              label: "Topic 1",
-              link: "/docs/docs/topic-1/",
-              icon: "open-book"
-            },
-            {
-              label: "Topic 2",
-              link: "/docs/docs/topic-2/",
-              icon: "open-book"
-            },
-            {
-              label: "Topic 3",
-              link: "/docs/docs/topic-3/",
-              icon: "open-book"
-            }
-          ]
-        })
+        starlightAddons()
       ],
-      prerender: false,
+      //prerender: false,
       lastUpdated: true,
       disable404Route: true,
       title: {
