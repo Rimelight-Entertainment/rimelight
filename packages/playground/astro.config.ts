@@ -85,7 +85,7 @@ export default defineConfig({
   // },
 
   i18n: {
-    locales: ["en", "pt-br"],
+    locales: ["en", "pt"],
     defaultLocale: "en",
     routing: {
       prefixDefaultLocale: true,
@@ -123,6 +123,16 @@ export default defineConfig({
   },
 
   integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: "en",
+        locales: {
+          en: "en-US",
+          "pt": "pt-BR"
+        }
+      }
+    }),
+
     starlight({
       customCss: ["./src/styles/starlight.css"],
       plugins: [starlightImageZoom(), starlightAddons()],
@@ -139,8 +149,8 @@ export default defineConfig({
       ]
     }),
 
-    sitemap(),
     ui(),
+
     sri()
   ]
 })
