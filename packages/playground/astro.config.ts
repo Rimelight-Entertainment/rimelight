@@ -44,6 +44,9 @@ export default defineConfig({
 
   site: "https://playground.rimelight.com",
   output: "server",
+  prefetch: {
+    prefetchAll: true
+  },
 
   adapter: cloudflare(),
 
