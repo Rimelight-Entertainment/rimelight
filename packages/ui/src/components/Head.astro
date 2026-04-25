@@ -82,6 +82,9 @@ const finalCanonical = canonical || (!is404 ? Astro.url.href : undefined);
 <meta name="viewport" content={viewport} />
 <meta name="generator" content={Astro.generator} />
 
+<!-- Sitemap -->
+<link rel="sitemap" href="/sitemap-index.xml" />
+
 <!-- SEO -->
 <title>{displayTitle}</title>
 {safeDescription && <meta name="description" content={safeDescription} />}
