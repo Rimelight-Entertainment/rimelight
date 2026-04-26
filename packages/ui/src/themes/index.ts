@@ -1,5 +1,6 @@
 import { buttonTheme } from "./button.theme"
 import { headerTheme } from "./header.theme"
+import { scrollToTopTheme } from "./scroll-to-top.theme"
 
 /**
  * Default UI configuration for all components. This is the baseline that gets merged with
@@ -7,7 +8,8 @@ import { headerTheme } from "./header.theme"
  */
 export const defaultUIConfig = {
   button: buttonTheme,
-  header: headerTheme
+  header: headerTheme,
+  "scroll-to-top": scrollToTopTheme
 } as const
 
 export type DefaultUIConfig = typeof defaultUIConfig

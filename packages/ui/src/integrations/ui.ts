@@ -13,6 +13,7 @@ import { defaultUIConfig } from "../themes"
 export type UIConfigOverrides = {
   button?: Partial<(typeof defaultUIConfig)["button"]>
   header?: Partial<(typeof defaultUIConfig)["header"]>
+  "scroll-to-top"?: Partial<(typeof defaultUIConfig)["scroll-to-top"]>
 }
 
 export interface UIOptions {
