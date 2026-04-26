@@ -1,0 +1,185 @@
+---
+export interface RLAScrollToTopProps {
+  color?: "primary" | "secondary"
+  circleStrokeWidth?: number
+  duration?: number
+  threshold?: number
+  ui?: Record<string, string>
+  class?: string
+  [key: string]: unknown
+}
+
+const {
+  circleStrokeWidth = 4,
+  duration = 0.1,
+  threshold = 200,
+  class: className,
+  ...rest
+} = Astro.props as RLAScrollToTopProps
+
+const circumference = 2 * Math.PI * 45
+const percentPx = circumference / 100
+---
+
+  <div
+  class:list={["rla-scroll-to-top", "fixed bottom-6 right-6 z-50", className]}
+  data-threshold={threshold}
+  data-duration={duration}
+  data-circle-stroke-width={circleStrokeWidth}
+  style={`--circumference: ${circumference}; --percent-to-px: ${percentPx}px;`}
+  {...rest}
+>
+  <button
+    type="button"
+    class="size-14 lg:size-12 p-0 rounded-full hover:scale-110 transition-transform"
+    aria-label="Scroll to top"
+    data-scroll-to-top-button
+  >
+    <div class="progress-circle-base size-full">
+      <svg class="size-full" viewBox="0 0 100 100">
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="var(--color-primary-950)"
+          stroke-width={circleStrokeWidth}
+          stroke-dashoffset="0"
+          stroke-linecap="round"
+          class="gauge-secondary-stroke opacity-100"
+        />
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="transparent"
+          stroke-width={circleStrokeWidth}
+          stroke-dashoffset="0"
+          stroke-linecap="round"
+          class="gauge-primary-stroke opacity-100"
+          data-progress-circle
+        />
+      </svg>
+      <div class="absolute inset-0 flex items-center justify-center text-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="size-6 text-white"
+        >
+          <path d="m5 12 7-7 7 7" />
+          <path d="M12 19V5" />
+        </svg>
+      </div>
+    </div>
+  </button>
+</div>
+
+<script>
+  interface ScrollToTopConfig {
+    threshold: number
+    duration: number
+    circleStrokeWidth: number
+  }
+
+  class ScrollToTop {
+    private element: HTMLElement
+    private button: HTMLButtonElement
+    private progressCircle: SVGCircleElement
+    private threshold: number
+    private circumference: number
+    private percentPx: number
+
+    constructor(element: HTMLElement) {
+      this.element = element
+      const button = element.querySelector('[data-scroll-to-top-button]') as HTMLButtonElement
+      const progressCircle = element.querySelector('[data-progress-circle]') as SVGCircleElement
+
+      if (!button || !progressCircle) return
+
+      this.button = button
+      this.progressCircle = progressCircle
+
+      const config: ScrollToTopConfig = {
+        threshold: Number(element.dataset.threshold) || 200,
+        duration: Number(element.dataset.duration) || 0.1,
+        circleStrokeWidth: Number(element.dataset.circleStrokeWidth) || 4
+      }
+
+      this.threshold = config.threshold
+      this.circumference = 2 * Math.PI * 45
+      this.percentPx = this.circumference / 100
+
+      this.init()
+    }
+
+    private init() {
+      this.button.addEventListener('click', () => this.scrollToTop())
+      window.addEventListener('scroll', () => this.updateScrollState(), { passive: true })
+      this.updateScrollState()
+    }
+
+    private scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    }
+
+    private updateScrollState() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
+      const scrollPercentage = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
+
+      if (scrollTop > this.threshold) {
+        this.element.classList.add('visible')
+      } else {
+        this.element.classList.remove('visible')
+      }
+
+      const strokeDasharray = `${(scrollPercentage * this.percentPx)} ${this.circumference}`
+      this.progressCircle.setAttribute('stroke-dasharray', strokeDasharray)
+    }
+  }
+
+  document.querySelectorAll('.rla-scroll-to-top').forEach((el) => {
+    new ScrollToTop(el as HTMLElement)
+  })
+</script>
+
+<style>
+  .rla-scroll-to-top {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .rla-scroll-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .progress-circle-base {
+    --circle-size: 100px;
+    transform: translateZ(0);
+  }
+
+  .gauge-primary-stroke {
+    stroke: var(--color-primary-500);
+    transition: stroke-dasharray 0.1s ease, stroke 0.1s ease;
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
+
+  .gauge-secondary-stroke {
+    stroke: var(--color-primary-900);
+    stroke-dasharray: var(--circumference);
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
+</style>
