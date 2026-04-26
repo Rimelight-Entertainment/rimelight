@@ -1,51 +1,53 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue"
+import { scv, cx } from "css-variants"
+import { twMerge } from "tailwind-merge"
+import { scrollToTopTheme } from "../../themes/scroll-to-top.theme.ts"
+import { useScrollToTop } from "../../composables/useScrollToTop"
+
+const scrollToTop = scv({
+  slots: [...scrollToTopTheme.slots],
+  base: scrollToTopTheme.base,
+  variants: scrollToTopTheme.variants,
+  compoundVariants: [...scrollToTopTheme.compoundVariants],
+  defaultVariants: scrollToTopTheme.defaultVariants,
+  classNameResolver: (...args) => twMerge(cx(...args))
+})
 
 export interface RLVScrollToTopProps {
-  color?: "primary" | "secondary"
+  color?: keyof typeof scrollToTopTheme.variants.color
   circleStrokeWidth?: number
   duration?: number
   threshold?: number
-  ui?: Record<string, string>
   class?: string
 }
 
 const {
+  color = "primary",
   circleStrokeWidth = 4,
   duration = 0.1,
   threshold = 200,
   class: className,
 } = defineProps<RLVScrollToTopProps>()
 
-const isVisible = ref(false)
-const scrollPercentage = ref(0)
+defineSlots<{
+  default(props: {}): any
+}>()
+
+const { root, button, progressBase, svg, iconContainer, icon } = scrollToTop({
+  color
+})
+
+const { isVisible, scrollPercentage, scrollToTop: scrollToTopFn } = useScrollToTop({
+  threshold
+})
 
 const circumference = 2 * Math.PI * 45
 const percentPx = circumference / 100
 
-function updateScrollState() {
-  const scrollTop = window.scrollY || document.documentElement.scrollTop
-  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
-
-  isVisible.value = scrollTop > threshold
-  scrollPercentage.value = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
-}
-
-function scrollToTop() {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  })
-}
-
-onMounted(() => {
-  window.addEventListener("scroll", updateScrollState, { passive: true })
-  updateScrollState()
-})
-
-onUnmounted(() => {
-  window.removeEventListener("scroll", updateScrollState)
-})
+const currentPercent = computed(() => scrollPercentage.value)
+const percentageInPx = computed(() => `${percentPx}px`)
+const durationInSeconds = computed(() => `${duration}s`)
 </script>
 
 <template>
@@ -56,15 +58,15 @@ onUnmounted(() => {
     enter-from-class="opacity-0"
     leave-to-class="opacity-0"
   >
-    <div v-if="isVisible" class="fixed bottom-6 right-6 z-50">
+    <div v-if="isVisible" :class="twMerge(root, className)">
       <button
         type="button"
-        class="size-14 lg:size-12 p-0 rounded-full hover:scale-110 transition-transform"
+        :class="twMerge(button, 'hover:scale-110 transition-transform')"
         aria-label="Scroll to top"
-        @click="scrollToTop"
+        @click="scrollToTopFn"
       >
-        <div class="size-full relative">
-          <svg class="size-full" viewBox="0 0 100 100">
+        <div :class="progressBase">
+          <svg :class="svg" viewBox="0 0 100 100">
             <circle
               cx="50"
               cy="50"
@@ -73,8 +75,7 @@ onUnmounted(() => {
               :stroke-width="circleStrokeWidth"
               stroke-dashoffset="0"
               stroke-linecap="round"
-              class="stroke-secondary opacity-100"
-              style="stroke: var(--color-primary-900); stroke-dasharray: var(--circumference); transform: rotate(-90deg); transform-origin: center;"
+              class="gauge-secondary-stroke opacity-100"
             />
             <circle
               cx="50"
@@ -84,11 +85,10 @@ onUnmounted(() => {
               :stroke-width="circleStrokeWidth"
               stroke-dashoffset="0"
               stroke-linecap="round"
-              class="stroke-primary opacity-100"
-              :style="`stroke: var(--color-primary-500); stroke-dasharray: ${(scrollPercentage / 100) * percentPx}px ${circumference}px; transform: rotate(-90deg); transform-origin: center; transition: stroke-dasharray ${duration}s ease, stroke ${duration}s ease;`"
+              class="gauge-primary-stroke opacity-100"
             />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-center">
+          <div :class="iconContainer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -99,7 +99,7 @@ onUnmounted(() => {
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="size-6 text-white"
+              :class="icon"
             >
               <path d="m5 12 7-7 7 7" />
               <path d="M12 19V5" />
@@ -112,6 +112,31 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.progress-circle-base {
+  --circle-size: 100px;
+  --circumference: v-bind(circumference);
+  --percent-to-px: v-bind(percentageInPx);
+  transform: translateZ(0);
+}
+
+.gauge-primary-stroke {
+  stroke: var(--color-primary-500);
+  --stroke-percent: v-bind(currentPercent);
+  stroke-dasharray: calc(var(--stroke-percent) * var(--percent-to-px)) var(--circumference);
+  transition:
+    stroke-dasharray v-bind(durationInSeconds) ease,
+    stroke v-bind(durationInSeconds) ease;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.gauge-secondary-stroke {
+  stroke: var(--color-primary-900);
+  stroke-dasharray: var(--circumference);
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
