@@ -2,8 +2,20 @@
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
+import defu from "defu"
 import { scrollToTopTheme } from "../../themes/scroll-to-top.theme.ts"
 import { useScrollToTop } from "../../composables/useScrollToTop"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+export interface RLVScrollToTopProps {
+  color?: keyof typeof scrollToTopTheme.variants.color
+  circleStrokeWidth?: number
+  duration?: number
+  threshold?: number
+  ui?: Partial<Record<keyof typeof scrollToTopTheme.base, string>>
+  class?: string
+  [key: string]: unknown
+}
 
 const scrollToTop = scv({
   slots: [...scrollToTopTheme.slots],
@@ -14,27 +26,27 @@ const scrollToTop = scv({
   classNameResolver: (...args) => twMerge(cx(...args))
 })
 
-export interface RLVScrollToTopProps {
-  color?: keyof typeof scrollToTopTheme.variants.color
-  circleStrokeWidth?: number
-  duration?: number
-  threshold?: number
-  class?: string
-}
-
 const {
   color = "primary",
   circleStrokeWidth = 4,
   duration = 0.1,
   threshold = 200,
+  ui: uiProp,
   class: className,
 } = defineProps<RLVScrollToTopProps>()
+
+const globalConfig = getUIConfig()
+
+const mergedUI = defu(
+    uiProp ?? {},
+    (globalConfig["scroll-to-top"] as Record<string, unknown>) ?? {}
+) as Record<keyof typeof scrollToTopTheme.base, string | undefined>
 
 defineSlots<{
   default(props: {}): any
 }>()
 
-const { root, button, progressBase, svg, iconContainer, icon } = scrollToTop({
+const { root, button, progressBase, svg: svgClass, iconContainer, icon } = scrollToTop({
   color
 })
 
@@ -58,15 +70,15 @@ const durationInSeconds = computed(() => `${duration}s`)
     enter-from-class="opacity-0"
     leave-to-class="opacity-0"
   >
-    <div v-if="isVisible" :class="twMerge(root, className)">
+    <div v-if="isVisible" :class="twMerge(root, mergedUI.root, className)">
       <button
         type="button"
-        :class="twMerge(button, 'hover:scale-110 transition-transform')"
+        :class="twMerge(button, mergedUI.button)"
         aria-label="Scroll to top"
         @click="scrollToTopFn"
       >
-        <div :class="progressBase">
-          <svg :class="svg" viewBox="0 0 100 100">
+        <div :class="twMerge(progressBase, mergedUI.progressBase)">
+          <svg :class="twMerge(svgClass, mergedUI.svg)" viewBox="0 0 100 100">
             <circle
               cx="50"
               cy="50"
@@ -88,7 +100,7 @@ const durationInSeconds = computed(() => `${duration}s`)
               class="gauge-primary-stroke opacity-100"
             />
           </svg>
-          <div :class="iconContainer">
+          <div :class="twMerge(iconContainer, mergedUI.iconContainer)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -99,7 +111,7 @@ const durationInSeconds = computed(() => `${duration}s`)
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              :class="icon"
+              :class="twMerge(icon, mergedUI.icon)"
             >
               <path d="m5 12 7-7 7 7" />
               <path d="M12 19V5" />
