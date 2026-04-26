@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue"
+import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import { scrollToTopTheme } from "../../themes/scroll-to-top.theme.ts"

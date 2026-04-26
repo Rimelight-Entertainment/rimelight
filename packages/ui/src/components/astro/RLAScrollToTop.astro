@@ -1,7 +1,19 @@
 ---
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
+import defu from "defu"
 import { scrollToTopTheme } from "../../themes/scroll-to-top.theme.ts"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+export interface RLAScrollToTopProps {
+  color?: keyof typeof scrollToTopTheme.variants.color
+  circleStrokeWidth?: number
+  duration?: number
+  threshold?: number
+  ui?: Partial<Record<keyof typeof scrollToTopTheme.base, string>>
+  class?: string
+  [key: string]: unknown
+}
 
 const scrollToTop = scv({
   slots: [...scrollToTopTheme.slots],
@@ -16,8 +28,18 @@ const {
   color = "primary",
   circleStrokeWidth = 4,
   duration = 0.1,
-  threshold = 200
-} = Astro.props
+  threshold = 200,
+  class: className,
+  ui: uiProp,
+  ...rest
+} = Astro.props as RLAScrollToTopProps
+
+const globalConfig = getUIConfig()
+
+const mergedUI = defu(
+  uiProp ?? {},
+  (globalConfig["scroll-to-top"] as Record<string, unknown>) ?? {}
+) as Record<keyof typeof scrollToTopTheme.base, string | undefined>
 
 const { root, button, progressBase, svg: svgClass, iconContainer, icon } = scrollToTop({
   color
@@ -28,19 +50,20 @@ const percentPx = circumference / 100
 ---
 
 <div
-  class:list={["rla-scroll-to-top", "fixed bottom-6 right-6 z-50", root]}
+  class:list={["rla-scroll-to-top", "fixed bottom-6 right-6 z-50", twMerge(root, mergedUI.root, className)]}
   data-threshold={threshold}
   data-duration={duration}
   data-circle-stroke-width={circleStrokeWidth}
+  {...rest}
 >
   <button
     type="button"
-    class={button}
+    class={twMerge(button, mergedUI.button)}
     aria-label="Scroll to top"
     data-scroll-to-top-button
   >
-    <div class={progressBase}>
-      <svg class={svgClass} viewBox="0 0 100 100">
+    <div class={twMerge(progressBase, mergedUI.progressBase)}>
+      <svg class={twMerge(svgClass, mergedUI.svg)} viewBox="0 0 100 100">
         <circle
           cx="50"
           cy="50"
@@ -63,7 +86,7 @@ const percentPx = circumference / 100
           data-progress-circle
         />
       </svg>
-      <div class={iconContainer}>
+      <div class={twMerge(iconContainer, mergedUI.iconContainer)}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -74,7 +97,7 @@ const percentPx = circumference / 100
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class={icon}
+          class={twMerge(icon, mergedUI.icon)}
         >
           <path d="m5 12 7-7 7 7" />
           <path d="M12 19V5" />
