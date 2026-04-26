@@ -43,11 +43,11 @@ export default defineConfig({
   },
 
   site: "https://playground.rimelight.com",
-  output: "server",
   prefetch: {
     prefetchAll: true
   },
 
+  output: "server",
   adapter: cloudflare(),
 
   // security: {
