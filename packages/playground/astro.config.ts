@@ -15,6 +15,7 @@ export default defineConfig({
       enabled: true,
       contentCache: true
     },
+    preserveScriptOrder: true,
     cache: {
       provider: memoryCache()
     },
