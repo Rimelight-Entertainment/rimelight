@@ -63,23 +63,23 @@ const durationInSeconds = computed(() => `${duration}s`)
 </script>
 
 <template>
-  <Transition
-    name="fade"
-    enter-active-class="transition-opacity duration-300 ease-in"
-    leave-active-class="transition-opacity duration-300 ease-out"
-    enter-from-class="opacity-0"
-    leave-to-class="opacity-0"
+  <div
+      :class="[
+      'rla-scroll-to-top fixed bottom-6 right-6 z-50',
+      { 'visible': isVisible },
+      twMerge(root, mergedUI.root, className)
+    ]"
+      v-bind="$attrs"
   >
-    <div v-if="isVisible" :class="twMerge(root, mergedUI.root, className)">
-      <button
+    <button
         type="button"
         :class="twMerge(button, mergedUI.button)"
         aria-label="Scroll to top"
         @click="scrollToTopFn"
-      >
-        <div :class="twMerge(progressBase, mergedUI.progressBase)">
-          <svg :class="twMerge(svgClass, mergedUI.svg)" viewBox="0 0 100 100">
-            <circle
+    >
+      <div :class="twMerge(progressBase, mergedUI.progressBase)">
+        <svg :class="twMerge(svgClass, mergedUI.svg)" viewBox="0 0 100 100">
+          <circle
               cx="50"
               cy="50"
               r="45"
@@ -88,20 +88,20 @@ const durationInSeconds = computed(() => `${duration}s`)
               stroke-dashoffset="0"
               stroke-linecap="round"
               class="gauge-secondary-stroke opacity-100"
-            />
-            <circle
+          />
+          <circle
               cx="50"
               cy="50"
               r="45"
               fill="transparent"
               :stroke-width="circleStrokeWidth"
-              stroke-dashoffset="0"
               stroke-linecap="round"
               class="gauge-primary-stroke opacity-100"
-            />
-          </svg>
-          <div :class="twMerge(iconContainer, mergedUI.iconContainer)">
-            <svg
+              :style="{ strokeDasharray: `${(currentPercent / 100) * circumference} ${circumference}` }"
+          />
+        </svg>
+        <div :class="twMerge(iconContainer, mergedUI.iconContainer)">
+          <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -112,50 +112,43 @@ const durationInSeconds = computed(() => `${duration}s`)
               stroke-linecap="round"
               stroke-linejoin="round"
               :class="twMerge(icon, mergedUI.icon)"
-            >
-              <path d="m5 12 7-7 7 7" />
-              <path d="M12 19V5" />
-            </svg>
-          </div>
+          >
+            <path d="m5 12 7-7 7 7" />
+            <path d="M12 19V5" />
+          </svg>
         </div>
-      </button>
-    </div>
-  </Transition>
+      </div>
+    </button>
+  </div>
 </template>
 
 <style scoped>
+.rla-scroll-to-top {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.rla-scroll-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .progress-circle-base {
-  --circle-size: 100px;
-  --circumference: v-bind(circumference);
-  --percent-to-px: v-bind(percentageInPx);
   transform: translateZ(0);
 }
 
 .gauge-primary-stroke {
   stroke: var(--color-primary-500);
-  --stroke-percent: v-bind(currentPercent);
-  stroke-dasharray: calc(var(--stroke-percent) * var(--percent-to-px)) var(--circumference);
-  transition:
-    stroke-dasharray v-bind(durationInSeconds) ease,
-    stroke v-bind(durationInSeconds) ease;
+  transition: stroke-dasharray 0.1s ease, stroke 0.1s ease;
   transform: rotate(-90deg);
   transform-origin: center;
 }
 
 .gauge-secondary-stroke {
   stroke: var(--color-primary-900);
-  stroke-dasharray: var(--circumference);
+  stroke-dasharray: 282.6;
   transform: rotate(-90deg);
   transform-origin: center;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>
