@@ -13,6 +13,7 @@ We collect information you provide directly to us, such as when you create an ac
 ## How We Use Your Information
 
 We use the information we collect to:
+
 - Provide, maintain, and improve our services
 - Send you technical notices, updates, and administrative messages
 - Respond to your comments, questions, and requests
