@@ -11,7 +11,7 @@ export const defaultUIConfig = {
   "header": headerTheme,
   "footer": footerTheme,
   "scroll-to-top": scrollToTopTheme,
-  "button": buttonTheme,
+  "button": buttonTheme
 } as const
 
 export type DefaultUIConfig = typeof defaultUIConfig

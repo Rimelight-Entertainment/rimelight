@@ -30,11 +30,7 @@ export interface RLVFooterProps {
   class?: string
 }
 
-const {
-  contain = false,
-  class: className,
-  ui: uiProp
-} = defineProps<RLVFooterProps>()
+const { contain = false, class: className, ui: uiProp } = defineProps<RLVFooterProps>()
 
 defineSlots<{
   /**

@@ -2,7 +2,7 @@
 import { scv, cx } from "css-variants";
 import { twMerge } from "tailwind-merge";
 import defu from "defu";
-import { headerTheme } from "@/themes/header.theme.ts";
+import { headerTheme } from "../../themes/header.theme.ts";
 import { getUIConfig } from "virtual:rimelight-ui";
 
 const header = scv({
@@ -20,10 +20,29 @@ export interface RLAHeaderProps {
    */
   contain?: boolean;
   /**
-   * Whether the header should be sticky at the top.
+   * Sticky positioning when `fixed` is false.
    * @default true
    */
   sticky?: boolean;
+  /**
+   * Switches to `position: fixed; left: 0; right: 0` (layer mode).
+   * When true, `stackIndex` controls the exact position and layer order.
+   * A module `<script>` is emitted to apply styles and attach scroll listeners.
+   * @default false
+   */
+  fixed?: boolean;
+  /**
+   * Controls z-index when `fixed` is true: `z-index = 100 - stackIndex`.
+   * @default 0
+   */
+  stackIndex?: number;
+  /**
+   * When true, hides the header on scroll-down and shows it on scroll-up.
+   * Implemented via a bundled Astro `<script>` — no Vue hydration needed.
+   * Only meaningful when `fixed` is true.
+   * @default false
+   */
+  hideOnScroll?: boolean;
   /**
    * UI overrides for individual slots, derived from the header theme.
    */
@@ -33,7 +52,7 @@ export interface RLAHeaderProps {
    */
   class?: string;
   /**
-   * Standard HTML attributes for <header>
+   * Standard HTML attributes for <header>.
    */
   [key: string]: unknown;
 }
@@ -41,10 +60,13 @@ export interface RLAHeaderProps {
 const {
   contain = true,
   sticky = true,
+  fixed = false,
+  stackIndex = 0,
+  hideOnScroll = false,
   class: className,
   ui: uiProp,
   ...rest
-} = Astro.props as RLAHeaderProps
+} = Astro.props as RLAHeaderProps;
 
 const globalConfig = getUIConfig();
 
@@ -53,23 +75,104 @@ const mergedUI = defu(
   (globalConfig.header as Record<string, unknown>) ?? {},
 ) as Record<keyof typeof headerTheme.base, string | undefined>;
 
-const { root, container, left, center, right } = header({ contain, sticky });
+// Resolve classes — note: sticky variant is suppressed when fixed is true,
+// since the fixed variant's classes replace it.
+const { root, content, container, left, center, right } = header({
+  contain,
+  sticky: fixed ? false : sticky,
+  fixed,
+});
+
+// Build a unique ID so the script can target this specific header element.
+const headerId = `rla-header-${Math.random().toString(36).slice(2, 8)}`;
+const zIndex = 100 - stackIndex;
 ---
 
 <header
+  id={headerId}
   class:list={[twMerge(root, mergedUI.root, className)]}
-  data-slot="rla-header"
+  data-rla-header={fixed ? "true" : undefined}
+  data-stack-index={stackIndex}
+  data-hide-on-scroll={String(hideOnScroll)}
+  style={fixed ? `z-index: ${zIndex};` : undefined}
   {...rest}
 >
-  <div class:list={[twMerge(container, mergedUI.container)]}>
-    <div class:list={[twMerge(left, mergedUI.left)]} data-slot="header-left">
-      <slot name="left" />
-    </div>
-    <div class:list={[twMerge(center, mergedUI.center)]} data-slot="header-center">
-      <slot name="center" />
-    </div>
-    <div class:list={[twMerge(right, mergedUI.right)]} data-slot="header-right">
-      <slot name="right" />
+  <!--
+    content wrapper: present in all modes; in fixed+hideOnScroll mode the inline
+    script observes this element's offsetHeight for accurate measurement.
+  -->
+  <div class:list={[twMerge(content, mergedUI.content)]} data-header-content>
+    <div class:list={[twMerge(container, mergedUI.container)]}>
+      <div class:list={[twMerge(left, mergedUI.left)]} data-slot="header-left">
+        <slot name="left" />
+      </div>
+      <div class:list={[twMerge(center, mergedUI.center)]} data-slot="header-center">
+        <slot name="center" />
+      </div>
+      <div class:list={[twMerge(right, mergedUI.right)]} data-slot="header-right">
+        <slot name="right" />
+      </div>
     </div>
   </div>
 </header>
+
+{/*
+  Astro Module Script — automatically hydrates all static Astro headers 
+  with the global Vanilla JS stack manager. It only executes once per page 
+  load, managing all headers efficiently.
+*/}
+{fixed && (
+  <script>
+    import { getHeaderStack } from "../../utils/headerStack";
+
+    // This script runs exactly once per page load, managing all Astro headers
+    const stack = getHeaderStack();
+    const headers = document.querySelectorAll("[data-rla-header='true']");
+
+    headers.forEach(header => {
+      // Prevent double-initialization
+      if ((header as any)._rl_initialized) return;
+      (header as any)._rl_initialized = true;
+
+      const id = header.id;
+      const stackIndex = parseInt(header.getAttribute("data-stack-index") || "0", 10);
+      const hideOnScroll = header.getAttribute("data-hide-on-scroll") === "true";
+      const contentEl = header.querySelector("[data-header-content]") as HTMLElement;
+
+      let naturalHeight = contentEl ? contentEl.offsetHeight : 0;
+      let isVisible = true;
+
+      const updateStack = () => {
+        stack.register(id, stackIndex, naturalHeight, isVisible, header as HTMLElement);
+      };
+
+      if (typeof ResizeObserver !== "undefined" && contentEl) {
+        new ResizeObserver(entries => {
+          const h = entries[0]?.contentRect.height;
+          if (h && h > 0) {
+            naturalHeight = h;
+            updateStack();
+          }
+        }).observe(contentEl);
+      }
+
+      if (hideOnScroll) {
+        let localLastScrollY = window.scrollY;
+        window.addEventListener("scroll", () => {
+          const current = window.scrollY;
+          const diff = current - localLastScrollY;
+          if (Math.abs(diff) >= 10) {
+            const newVisible = current <= 50 ? true : diff <= 0;
+            if (newVisible !== isVisible) {
+              isVisible = newVisible;
+              updateStack();
+            }
+            localLastScrollY = current;
+          }
+        }, { passive: true });
+      }
+
+      updateStack();
+    });
+  </script>
+)}
