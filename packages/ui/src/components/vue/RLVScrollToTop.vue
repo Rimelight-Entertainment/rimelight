@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import defu from "defu"
 import { scrollToTopTheme } from "../../themes/scroll-to-top.theme.ts"
 import { useScrollToTop } from "../../composables/useScrollToTop"
+import { computed } from "vue"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 export interface RLVScrollToTopProps {
   color?: keyof typeof scrollToTopTheme.variants.color
-  circleStrokeWidth?: number
+  progressWidth?: number
   duration?: number
   threshold?: number
   ui?: Partial<Record<keyof typeof scrollToTopTheme.base, string>>
@@ -28,7 +28,7 @@ const scrollToTop = scv({
 
 const {
   color = "primary",
-  circleStrokeWidth = 4,
+  progressWidth = 6,
   duration = 0.1,
   threshold = 200,
   ui: uiProp,
@@ -41,10 +41,6 @@ const mergedUI = defu(
     uiProp ?? {},
     (globalConfig["scroll-to-top"] as Record<string, unknown>) ?? {}
 ) as Record<keyof typeof scrollToTopTheme.base, string | undefined>
-
-defineSlots<{
-  default(props: {}): any
-}>()
 
 const { root, button, progressBase, svg: svgClass, iconContainer, icon } = scrollToTop({
   color
@@ -84,7 +80,7 @@ const durationInSeconds = computed(() => `${duration}s`)
               cy="50"
               r="45"
               fill="var(--color-primary-950)"
-              :stroke-width="circleStrokeWidth"
+              :stroke-width="progressWidth"
               stroke-dashoffset="0"
               stroke-linecap="round"
               class="gauge-secondary-stroke opacity-100"
@@ -94,10 +90,15 @@ const durationInSeconds = computed(() => `${duration}s`)
               cy="50"
               r="45"
               fill="transparent"
-              :stroke-width="circleStrokeWidth"
+              :stroke-width="progressWidth"
               stroke-linecap="round"
               class="gauge-primary-stroke opacity-100"
-              :style="{ strokeDasharray: `${(currentPercent / 100) * circumference} ${circumference}` }"
+              :style="{
+                '--stroke-percent': currentPercent,
+                '--percent-to-px': percentageInPx,
+                '--circumference': circumference,
+                '--duration': durationInSeconds
+              }"
           />
         </svg>
         <div :class="twMerge(iconContainer, mergedUI.iconContainer)">
@@ -140,7 +141,11 @@ const durationInSeconds = computed(() => `${duration}s`)
 
 .gauge-primary-stroke {
   stroke: var(--color-primary-500);
-  transition: stroke-dasharray 0.1s ease, stroke 0.1s ease;
+  --stroke-percent: v-bind(currentPercent);
+  --percent-to-px: v-bind(percentageInPx);
+  --circumference: v-bind(circumference);
+  stroke-dasharray: calc(var(--stroke-percent) * var(--percent-to-px)) var(--circumference);
+  transition: stroke-dasharray v-bind(durationInSeconds) ease, stroke v-bind(durationInSeconds) ease;
   transform: rotate(-90deg);
   transform-origin: center;
 }

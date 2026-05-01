@@ -7,7 +7,7 @@ import { getUIConfig } from "virtual:rimelight-ui"
 
 export interface RLAScrollToTopProps {
   color?: keyof typeof scrollToTopTheme.variants.color
-  circleStrokeWidth?: number
+  progressWidth?: number
   duration?: number
   threshold?: number
   ui?: Partial<Record<keyof typeof scrollToTopTheme.base, string>>
@@ -26,7 +26,7 @@ const scrollToTop = scv({
 
 const {
   color = "primary",
-  circleStrokeWidth = 4,
+  progressWidth = 6,
   duration = 0.1,
   threshold = 200,
   ui: uiProp,
@@ -53,7 +53,7 @@ const percentPx = circumference / 100
   class:list={["rla-scroll-to-top", "fixed bottom-6 right-6 z-50", twMerge(root, mergedUI.root, className)]}
   data-threshold={threshold}
   data-duration={duration}
-  data-circle-stroke-width={circleStrokeWidth}
+  data-circle-stroke-width={progressWidth}
   {...rest}
 >
   <button
@@ -69,7 +69,7 @@ const percentPx = circumference / 100
           cy="50"
           r="45"
           fill="var(--color-primary-950)"
-          stroke-width={circleStrokeWidth}
+          stroke-width={progressWidth}
           stroke-dashoffset="0"
           stroke-linecap="round"
           class="gauge-secondary-stroke opacity-100"
@@ -79,11 +79,12 @@ const percentPx = circumference / 100
           cy="50"
           r="45"
           fill="transparent"
-          stroke-width={circleStrokeWidth}
+          stroke-width={progressWidth}
           stroke-dashoffset="0"
           stroke-linecap="round"
           class="gauge-primary-stroke opacity-100"
           data-progress-circle
+          style={`--stroke-percent: 0; --percent-to-px: ${percentPx}px; --circumference: ${circumference}; --duration: ${duration}s`}
         />
       </svg>
       <div class={twMerge(iconContainer, mergedUI.iconContainer)}>
@@ -130,8 +131,11 @@ const percentPx = circumference / 100
 
       const circumference = 2 * Math.PI * 45
       const percentPx = circumference / 100
-      const strokeDasharray = `${(scrollPercentage * percentPx)} ${circumference}`
-      progressCircle.setAttribute('stroke-dasharray', strokeDasharray)
+      const duration = element.dataset.duration || '0.1'
+      progressCircle.style.setProperty('--stroke-percent', scrollPercentage.toString())
+      progressCircle.style.setProperty('--percent-to-px', `${percentPx}px`)
+      progressCircle.style.setProperty('--circumference', circumference.toString())
+      progressCircle.style.setProperty('--duration', `${duration}s`)
     }
 
     button.addEventListener('click', () => {
@@ -161,7 +165,8 @@ const percentPx = circumference / 100
 
   .gauge-primary-stroke {
     stroke: var(--color-primary-500);
-    transition: stroke-dasharray 0.1s ease, stroke 0.1s ease;
+    stroke-dasharray: calc(var(--stroke-percent, 0) * var(--percent-to-px, 2.826px)) var(--circumference, 282.6);
+    transition: stroke-dasharray var(--duration, 0.1s) ease, stroke var(--duration, 0.1s) ease;
     transform: rotate(-90deg);
     transform-origin: center;
   }
