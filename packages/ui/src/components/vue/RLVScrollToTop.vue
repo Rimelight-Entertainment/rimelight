@@ -8,12 +8,47 @@ import { computed } from "vue"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 export interface RLVScrollToTopProps {
+  /**
+   * Button color.
+   *
+   * @default "primary"
+   */
   color?: keyof typeof scrollToTopTheme.variants.color
-  progressWidth?: number
+  /**
+   * Transition duration for the progress circle (in seconds).
+   *
+   * @default 0.1
+   */
   duration?: number
+  /**
+   * Scroll threshold (in pixels) before the button becomes visible.
+   *
+   * @default 200
+   */
   threshold?: number
+  /**
+   * Whether to show the scroll progress indicator.
+   *
+   * @default false
+   */
+  showProgress?: boolean
+  /**
+   * Stroke width of the progress circle.
+   *
+   * @default 6
+   */
+  progressWidth?: number
+  /**
+   * UI overrides for individual slots, derived from the scroll-to-top theme.
+   */
   ui?: Partial<Record<keyof typeof scrollToTopTheme.base, string>>
+  /**
+   * External class — applied to the root element.
+   */
   class?: string
+  /**
+   * Standard HTML attributes.
+   */
   [key: string]: unknown
 }
 
@@ -31,6 +66,7 @@ const {
   progressWidth = 6,
   duration = 0.1,
   threshold = 200,
+  showProgress = false,
   ui: uiProp,
   class: className,
 } = defineProps<RLVScrollToTopProps>()
@@ -74,7 +110,7 @@ const durationInSeconds = computed(() => `${duration}s`)
         @click="scrollToTopFn"
     >
       <div :class="twMerge(progressBase, mergedUI.progressBase)">
-        <svg :class="twMerge(svgClass, mergedUI.svg)" viewBox="0 0 100 100">
+        <svg :class="twMerge(svgClass, mergedUI.svg)" viewBox="0 0 100 100" shape-rendering="geometricPrecision">
           <circle
               cx="50"
               cy="50"
@@ -86,6 +122,7 @@ const durationInSeconds = computed(() => `${duration}s`)
               class="gauge-secondary-stroke opacity-100"
           />
           <circle
+              v-if="showProgress"
               cx="50"
               cy="50"
               r="45"
@@ -148,6 +185,7 @@ const durationInSeconds = computed(() => `${duration}s`)
   transition: stroke-dasharray v-bind(durationInSeconds) ease, stroke v-bind(durationInSeconds) ease;
   transform: rotate(-90deg);
   transform-origin: center;
+  shape-rendering: geometricPrecision;
 }
 
 .gauge-secondary-stroke {

@@ -6,12 +6,47 @@ import { scrollToTopTheme } from "../../themes/scroll-to-top.theme.ts"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 export interface RLAScrollToTopProps {
+  /**
+   * Button color.
+   *
+   * @default "primary"
+   */
   color?: keyof typeof scrollToTopTheme.variants.color
-  progressWidth?: number
+  /**
+   * Transition duration for the progress circle (in seconds).
+   *
+   * @default 0.1
+   */
   duration?: number
+  /**
+   * Scroll threshold (in pixels) before the button becomes visible.
+   *
+   * @default 200
+   */
   threshold?: number
+  /**
+   * Whether to show the scroll progress indicator.
+   *
+   * @default false
+   */
+  showProgress?: boolean
+  /**
+   * Stroke width of the progress circle.
+   *
+   * @default 6
+   */
+  progressWidth?: number
+  /**
+   * UI overrides for individual slots, derived from the scroll-to-top theme.
+   */
   ui?: Partial<Record<keyof typeof scrollToTopTheme.base, string>>
+  /**
+   * External class — applied to the root element.
+   */
   class?: string
+  /**
+   * Standard HTML attributes.
+   */
   [key: string]: unknown
 }
 
@@ -29,6 +64,7 @@ const {
   progressWidth = 6,
   duration = 0.1,
   threshold = 200,
+  showProgress = false,
   ui: uiProp,
   class: className,
   ...rest
@@ -63,7 +99,7 @@ const percentPx = circumference / 100
     data-scroll-to-top-button
   >
     <div class={twMerge(progressBase, mergedUI.progressBase)}>
-      <svg class={twMerge(svgClass, mergedUI.svg)} viewBox="0 0 100 100">
+      <svg class={twMerge(svgClass, mergedUI.svg)} viewBox="0 0 100 100" shape-rendering="geometricPrecision">
         <circle
           cx="50"
           cy="50"
@@ -74,6 +110,7 @@ const percentPx = circumference / 100
           stroke-linecap="round"
           class="gauge-secondary-stroke opacity-100"
         />
+        {showProgress && (
         <circle
           cx="50"
           cy="50"
@@ -86,6 +123,7 @@ const percentPx = circumference / 100
           data-progress-circle
           style={`--stroke-percent: 0; --percent-to-px: ${percentPx}px; --circumference: ${circumference}; --duration: ${duration}s`}
         />
+        )}
       </svg>
       <div class={twMerge(iconContainer, mergedUI.iconContainer)}>
         <svg
@@ -114,7 +152,7 @@ const percentPx = circumference / 100
     const button = element.querySelector('[data-scroll-to-top-button]')
     const progressCircle = element.querySelector('[data-progress-circle]')
 
-    if (!button || !progressCircle) return
+    if (!button) return
 
     const threshold = Number(element.dataset.threshold) || 200
 
@@ -129,13 +167,15 @@ const percentPx = circumference / 100
         element.classList.remove('visible')
       }
 
-      const circumference = 2 * Math.PI * 45
-      const percentPx = circumference / 100
-      const duration = element.dataset.duration || '0.1'
-      progressCircle.style.setProperty('--stroke-percent', scrollPercentage.toString())
-      progressCircle.style.setProperty('--percent-to-px', `${percentPx}px`)
-      progressCircle.style.setProperty('--circumference', circumference.toString())
-      progressCircle.style.setProperty('--duration', `${duration}s`)
+      if (progressCircle) {
+        const circumference = 2 * Math.PI * 45
+        const percentPx = circumference / 100
+        const duration = element.dataset.duration || '0.1'
+        progressCircle.style.setProperty('--stroke-percent', scrollPercentage.toString())
+        progressCircle.style.setProperty('--percent-to-px', `${percentPx}px`)
+        progressCircle.style.setProperty('--circumference', circumference.toString())
+        progressCircle.style.setProperty('--duration', `${duration}s`)
+      }
     }
 
     button.addEventListener('click', () => {
@@ -169,6 +209,7 @@ const percentPx = circumference / 100
     transition: stroke-dasharray var(--duration, 0.1s) ease, stroke var(--duration, 0.1s) ease;
     transform: rotate(-90deg);
     transform-origin: center;
+    shape-rendering: geometricPrecision;
   }
 
   .gauge-secondary-stroke {
