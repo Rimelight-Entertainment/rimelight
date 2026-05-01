@@ -148,9 +148,9 @@ const percentPx = circumference / 100
 
 <script>
   document.querySelectorAll('.rla-scroll-to-top').forEach((el) => {
-    const element = el
-    const button = element.querySelector('[data-scroll-to-top-button]')
-    const progressCircle = element.querySelector('[data-progress-circle]')
+    const element = el as HTMLElement
+    const button = element.querySelector('[data-scroll-to-top-button]') as HTMLButtonElement | null
+    const progressCircle = element.querySelector('[data-progress-circle]') as SVGCircleElement | null
 
     if (!button) return
 

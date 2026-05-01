@@ -59,13 +59,7 @@ export default function starlightAddons(userConfig?: StarlightAddonsConfig): Sta
   return {
     name: "rimelight-ui-starlight-addons",
     hooks: {
-      "config:setup"({
-        addIntegration,
-        updateConfig,
-        logger,
-        command,
-        config: starlightConfig
-      }) {
+      "config:setup"({ addIntegration, updateConfig, logger, command, config: starlightConfig }) {
         // --- Sidebar Topics Logic ---
         if ((command === "dev" || command === "build") && topicsData.length > 0) {
           if (starlightConfig.sidebar) {

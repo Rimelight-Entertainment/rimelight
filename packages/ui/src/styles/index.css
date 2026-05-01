@@ -4,153 +4,153 @@
 
 /* Keyboard Component Styles */
 .keyboard-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 16px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 100%;
-    margin: 16px 0;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 100%;
+  margin: 16px 0;
+  box-sizing: border-box;
 }
 .keyboard-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .keyboard-svg {
-    width: 100%;
-    height: auto;
-    max-width: 900px;
+  width: 100%;
+  height: auto;
+  max-width: 900px;
 }
 .kb-key-label {
-    font-family: var(--font-mono, monospace);
-    font-size: 10px;
-    font-weight: 600;
-    pointer-events: none;
-    user-select: none;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
 }
 .kb-legend {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px 24px;
-    margin-top: 24px;
-    width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 24px;
+  margin-top: 24px;
+  width: 100%;
 }
 .keyboard-wrapper .legend-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px;
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 10px;
-    color: #a0a0b0;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 500;
-    white-space: nowrap;
-    line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 10px;
+  color: #a0a0b0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1 !important;
 }
 .legend-color-svg {
-    flex-shrink: 0;
-    display: block;
+  flex-shrink: 0;
+  display: block;
 }
 .keyboard-wrapper .legend-label {
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1 !important;
-    display: inline-block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  display: inline-block !important;
 }
 
 /* Gamepad Component Styles */
 .gamepad-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 48px;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 100%;
-    margin: 24px 0;
-    box-sizing: border-box;
-    container-type: inline-size;
-    border: 1px solid #1a1a2e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 100%;
+  margin: 24px 0;
+  box-sizing: border-box;
+  container-type: inline-size;
+  border: 1px solid #1a1a2e;
 }
 .gamepad-container {
-    width: 100%;
-    max-width: 440px;
+  width: 100%;
+  max-width: 440px;
 }
 .gamepad-svg {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
 }
 .gp-btn rect,
 .gp-btn circle {
-    fill: #1e1e30;
-    stroke: #33334d;
-    stroke-width: 1;
-    transition: all 0.2s ease;
+  fill: #1e1e30;
+  stroke: #33334d;
+  stroke-width: 1;
+  transition: all 0.2s ease;
 }
 .btn-label {
-    fill: #555570;
-    font-size: 10px;
-    font-family: var(--font-sans, system-ui);
-    font-weight: 800;
-    pointer-events: none;
-    line-height: 1;
+  fill: #555570;
+  font-size: 10px;
+  font-family: var(--font-sans, system-ui);
+  font-weight: 800;
+  pointer-events: none;
+  line-height: 1;
 }
 .gp-btn.active rect,
 .gp-btn.active circle {
-    fill: var(--hl-color, #00c16a);
-    stroke: #ffffff33;
-    stroke-width: 1.5;
+  fill: var(--hl-color, #00c16a);
+  stroke: #ffffff33;
+  stroke-width: 1.5;
 }
 .gp-btn.active .btn-label {
-    fill: #fff;
+  fill: #fff;
 }
 .gamepad-legend {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px 24px;
-    margin-top: 40px;
-    width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 24px;
+  margin-top: 40px;
+  width: 100%;
 }
 .gamepad-wrapper .legend-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px;
-    height: 10px !important;
-    font-size: 10px;
-    color: #777790;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-    line-height: 10px !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px;
+  height: 10px !important;
+  font-size: 10px;
+  color: #777790;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  line-height: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 .gamepad-wrapper .legend-label {
-    display: inline-block !important;
-    height: 10px !important;
-    line-height: 10px !important;
-    margin: 0 !important;
-    padding: 0 !important;
+  display: inline-block !important;
+  height: 10px !important;
+  line-height: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .kb-legend-label {
-    font-family: var(--font-sans, system-ui);
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  font-family: var(--font-sans, system-ui);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 .gp-legend-label {
-    font-family: var(--font-sans, system-ui);
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+  font-family: var(--font-sans, system-ui);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }

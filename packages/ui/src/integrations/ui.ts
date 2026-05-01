@@ -11,8 +11,8 @@ import { defaultUIConfig } from "../themes"
  * Shape of the `ui` config that can be passed to the integration.
  */
 export type UIConfigOverrides = {
-  button?: Partial<(typeof defaultUIConfig)["button"]>
-  header?: Partial<(typeof defaultUIConfig)["header"]>
+  "button"?: Partial<(typeof defaultUIConfig)["button"]>
+  "header"?: Partial<(typeof defaultUIConfig)["header"]>
   "scroll-to-top"?: Partial<(typeof defaultUIConfig)["scroll-to-top"]>
 }
 

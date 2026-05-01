@@ -7,8 +7,8 @@ import { scrollToTopTheme } from "./scroll-to-top.theme"
  * user-provided overrides via the Astro integration options.
  */
 export const defaultUIConfig = {
-  button: buttonTheme,
-  header: headerTheme,
+  "button": buttonTheme,
+  "header": headerTheme,
   "scroll-to-top": scrollToTopTheme
 } as const
 
