@@ -1,15 +1,17 @@
-import { buttonTheme } from "./button.theme"
 import { headerTheme } from "./header.theme"
+import { footerTheme } from "./footer.theme"
 import { scrollToTopTheme } from "./scroll-to-top.theme"
+import { buttonTheme } from "./button.theme"
 
 /**
  * Default UI configuration for all components. This is the baseline that gets merged with
  * user-provided overrides via the Astro integration options.
  */
 export const defaultUIConfig = {
-  "button": buttonTheme,
   "header": headerTheme,
-  "scroll-to-top": scrollToTopTheme
+  "footer": footerTheme,
+  "scroll-to-top": scrollToTopTheme,
+  "button": buttonTheme,
 } as const
 
 export type DefaultUIConfig = typeof defaultUIConfig
