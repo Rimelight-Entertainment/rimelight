@@ -14,9 +14,14 @@ export type UIConfigOverrides = {
   "button"?: Partial<(typeof defaultUIConfig)["button"]>
   "header"?: Partial<(typeof defaultUIConfig)["header"]>
   "scroll-to-top"?: Partial<(typeof defaultUIConfig)["scroll-to-top"]>
+  "logo"?: Partial<(typeof defaultUIConfig)["logo"]>
 }
 
 export interface UIOptions {
+  /**
+   * Configuration for the Logo component variants.
+   */
+  logos?: Record<string, string | { light?: string; dark?: string; color?: string; white?: string; black?: string; [key: string]: string | undefined }>
   /**
    * Global UI overrides applied to all components. Merged with defaults via `defu` (first arg
    * wins).
@@ -47,7 +52,8 @@ export interface UIOptions {
  *   })
  */
 export function ui(options: UIOptions = {}): AstroIntegration[] {
-  const resolvedConfig = defu(options.ui ?? {}, defaultUIConfig)
+  const resolvedUI = defu(options.ui ?? {}, defaultUIConfig)
+  const resolvedConfig = { ...resolvedUI, logos: options.logos ?? {} }
 
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId

@@ -1,0 +1,100 @@
+---
+import { scv, cx } from "css-variants"
+import { twMerge } from "tailwind-merge"
+import defu from "defu"
+import { logoTheme } from "../../themes/logo.theme.ts"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const logo = scv({
+  slots: [...logoTheme.slots],
+  base: logoTheme.base,
+  variants: logoTheme.variants,
+  defaultVariants: logoTheme.defaultVariants,
+  classNameResolver: (...args) => twMerge(cx(...args)),
+});
+
+export interface RLALogoProps {
+  /**
+   * The variant of the logo to display.
+   * @default "logomark"
+   */
+  variant?: string;
+  /**
+   * Override the color mode.
+   */
+  mode?: "color" | "white" | "black";
+  /**
+   * The URL to link to.
+   * @default "/"
+   */
+  href?: string;
+  /**
+   * UI overrides for individual slots, derived from the logo theme.
+   */
+  ui?: Partial<Record<keyof typeof logoTheme.base, string>>;
+  /**
+   * External class — applied to the root element.
+   */
+  class?: string;
+  /**
+   * The alt text for the logo image.
+   */
+  alt?: string;
+  /**
+   * Standard HTML attributes for <a>
+   */
+  [key: string]: unknown;
+}
+
+const {
+  variant = "logomark",
+  mode,
+  href = "/",
+  class: className,
+  ui: uiProp,
+  alt,
+  ...rest
+} = Astro.props as RLALogoProps;
+
+const globalConfig = getUIConfig();
+
+const mergedUI = defu(
+  uiProp ?? {},
+  (globalConfig.logo as Record<string, unknown>) ?? {},
+) as Record<keyof typeof logoTheme.base, string | undefined>;
+
+const { root } = logo();
+
+const rcLogos = globalConfig.logos as Record<string, any>;
+let logoSrc: string | null = null;
+
+if (rcLogos && typeof rcLogos === "object") {
+  let src = rcLogos[variant];
+  if (src && typeof src === "object") {
+    logoSrc = src[mode || "color"] || src.black || src.color;
+  } else if (typeof src === "string") {
+    logoSrc = src;
+  }
+}
+
+// Support for UnoCSS icons (e.g. `i-heroicons-home`)
+const isIcon = logoSrc && (logoSrc.includes(":") || logoSrc.startsWith("i-"));
+---
+
+<a
+  class={twMerge(root, mergedUI.root, className)}
+  href={href}
+  aria-label={alt || variant}
+  data-slot="rla-logo"
+  {...rest}
+>
+  {logoSrc ? (
+    isIcon ? (
+      <span class:list={[logoSrc, "size-full block shrink-0"]} aria-hidden="true" />
+    ) : (
+      <img src={logoSrc} alt={alt || ""} class="size-full block object-contain shrink-0" />
+    )
+  ) : (
+    <slot />
+  )}
+</a>

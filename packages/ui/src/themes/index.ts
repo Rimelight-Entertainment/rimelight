@@ -2,6 +2,7 @@ import { headerTheme } from "./header.theme"
 import { footerTheme } from "./footer.theme"
 import { scrollToTopTheme } from "./scroll-to-top.theme"
 import { buttonTheme } from "./button.theme"
+import { logoTheme } from "./logo.theme"
 
 /**
  * Default UI configuration for all components. This is the baseline that gets merged with
@@ -10,8 +11,9 @@ import { buttonTheme } from "./button.theme"
 export const defaultUIConfig = {
   "header": headerTheme,
   "footer": footerTheme,
+  "logo": logoTheme,
   "scroll-to-top": scrollToTopTheme,
-  "button": buttonTheme
+  "button": buttonTheme,
 } as const
 
 export type DefaultUIConfig = typeof defaultUIConfig
