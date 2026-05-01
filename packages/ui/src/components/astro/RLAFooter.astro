@@ -1,0 +1,69 @@
+---
+import { scv, cx } from "css-variants";
+import { twMerge } from "tailwind-merge";
+import defu from "defu";
+import { footerTheme } from "../../themes/footer.theme.ts";
+import { getUIConfig } from "virtual:rimelight-ui";
+
+const footer = scv({
+  slots: [...footerTheme.slots],
+  base: footerTheme.base,
+  variants: footerTheme.variants,
+  defaultVariants: footerTheme.defaultVariants,
+  classNameResolver: (...args) => twMerge(cx(...args)),
+});
+
+export interface RLAFooterProps {
+  /**
+   * Whether to contain the footer content in a max-width container.
+   * @default false
+   */
+  contain?: boolean;
+  /**
+   * UI overrides for individual slots, derived from the footer theme.
+   */
+  ui?: Partial<Record<keyof typeof footerTheme.base, string>>;
+  /**
+   * External class — applied to the root element.
+   */
+  class?: string;
+  /**
+   * Standard HTML attributes for <footer>
+   */
+  [key: string]: unknown;
+}
+
+const {
+  contain = false,
+  class: className,
+  ui: uiProp,
+  ...rest
+} = Astro.props as RLAFooterProps
+
+const globalConfig = getUIConfig();
+
+const mergedUI = defu(
+  uiProp ?? {},
+  (globalConfig.footer as Record<string, unknown>) ?? {},
+) as Record<keyof typeof footerTheme.base, string | undefined>;
+
+const { root, container, left, center, right } = footer({ contain });
+---
+
+<footer
+  class:list={[twMerge(root, mergedUI.root, className)]}
+  data-slot="rla-footer"
+  {...rest}
+>
+  <div class:list={[twMerge(container, mergedUI.container)]}>
+    <div class:list={[twMerge(left, mergedUI.left)]} data-slot="footer-left">
+      <slot name="left" />
+    </div>
+    <div class:list={[twMerge(center, mergedUI.center)]} data-slot="footer-center">
+      <slot name="center" />
+    </div>
+    <div class:list={[twMerge(right, mergedUI.right)]} data-slot="footer-right">
+      <slot name="right" />
+    </div>
+  </div>
+</footer>
