@@ -12,7 +12,6 @@
       "@/*": ["./src/*"]
     },
     "allowArbitraryExtensions": true,
-    "types": ["unplugin-icons/types/astro"],
     "jsx": "preserve"
   }
 }

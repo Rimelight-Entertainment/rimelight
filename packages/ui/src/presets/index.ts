@@ -2,6 +2,7 @@ import {
   definePreset,
   presetTypography,
   presetWind4,
+  presetIcons,
   transformerDirectives,
   transformerVariantGroup
 } from "unocss"
@@ -22,6 +23,12 @@ export default definePreset(() => {
           "pre,code": {
             "font-family": "var(--font-mono), monospace"
           }
+        }
+      }),
+      presetIcons({
+        extraProperties: {
+          "display": "inline-block",
+          "vertical-align": "middle"
         }
       })
     ],

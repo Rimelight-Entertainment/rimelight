@@ -3,7 +3,6 @@ import UnoCSS from "unocss/astro"
 import vue from "@astrojs/vue"
 import uiPlugin from "@nuxt/ui/vite"
 import defu from "defu"
-import Icons from "unplugin-icons/vite"
 import tailwindcss from "@tailwindcss/vite"
 import { defaultUIConfig } from "../themes"
 
@@ -21,7 +20,18 @@ export interface UIOptions {
   /**
    * Configuration for the Logo component variants.
    */
-  logos?: Record<string, string | { light?: string; dark?: string; color?: string; white?: string; black?: string; [key: string]: string | undefined }>
+  logos?: Record<
+    string,
+    | string
+    | {
+        light?: string
+        dark?: string
+        color?: string
+        white?: string
+        black?: string
+        [key: string]: string | undefined
+      }
+  >
   /**
    * Global UI overrides applied to all components. Merged with defaults via `defu` (first arg
    * wins).
@@ -79,10 +89,6 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
           uiPlugin({
             router: false,
             scanPackages: ["@rimelight/ui"]
-          }),
-          Icons({
-            compiler: "astro",
-            autoInstall: true
           }),
           tailwindcss(),
           {

@@ -1,7 +1,5 @@
 ---
 import RLAButton from "./astro/RLAButton.astro";
-import IconSun from "~icons/lucide/sun"
-import IconMoon from "~icons/lucide/moon"
 
 export interface ThemeToggleProps {
   class?: string;
@@ -23,8 +21,8 @@ const { class: className, size = "md" } = Astro.props as Props
   variant="ghost"
   aria-label="Toggle theme"
 >
-    <IconSun class="sun-wrapper block dark:hidden" />
-    <IconMoon class="moon-wrapper hidden dark:block" />
+    <span class="sun-wrapper block dark:hidden i-lucide-sun" />
+    <span class="moon-wrapper hidden dark:block i-lucide-moon" />
 </RLAButton>
 
 <script>

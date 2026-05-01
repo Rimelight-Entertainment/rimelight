@@ -63,10 +63,13 @@ defineSlots<{
 
 const globalConfig = getUIConfig()
 
-const mergedUI = computed(() => defu(
-  props.ui ?? {},
-  (globalConfig.logo as Record<string, unknown>) ?? {}
-) as Record<keyof typeof logoTheme.base, string | undefined>)
+const mergedUI = computed(
+  () =>
+    defu(props.ui ?? {}, (globalConfig.logo as Record<string, unknown>) ?? {}) as Record<
+      keyof typeof logoTheme.base,
+      string | undefined
+    >
+)
 
 const resolvedClasses = computed(() => {
   const { root } = logo()
@@ -98,7 +101,7 @@ const isIcon = computed(() => {
   return src.includes(":") || src.startsWith("i-")
 })
 
-const Tag = computed(() => props.href ? "a" : "div")
+const Tag = computed(() => (props.href ? "a" : "div"))
 </script>
 
 <template>
