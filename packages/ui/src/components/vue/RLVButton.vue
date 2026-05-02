@@ -55,7 +55,9 @@ const {
 const slots = useSlots()
 
 const isLeading = computed(() => !!(leadingIcon || slots.leading) || loading)
-const isTrailing = computed(() => !!(trailingIcon || slots.trailing) || (loading && !isLeading.value))
+const isTrailing = computed(
+  () => !!(trailingIcon || slots.trailing) || (loading && !isLeading.value)
+)
 
 const showLeadingIcon = computed(() => {
   if (loading) return "i-lucide-loader-circle"
@@ -88,17 +90,19 @@ const mergedUI = defu(
   (globalConfig.button as Record<string, unknown>) ?? {}
 ) as Record<string, string | undefined>
 
-const resolved = computed(() => button({
-  variant: active && activeVariant ? activeVariant : variant,
-  color: active && activeColor ? activeColor : color,
-  size,
-  block,
-  square: square || (!label && !slots.default),
-  leading: isLeading.value,
-  trailing: isTrailing.value,
-  loading,
-  active
-}))
+const resolved = computed(() =>
+  button({
+    variant: active && activeVariant ? activeVariant : variant,
+    color: active && activeColor ? activeColor : color,
+    size,
+    block,
+    square: square || (!label && !slots.default),
+    leading: isLeading.value,
+    trailing: isTrailing.value,
+    loading,
+    active
+  })
+)
 
 const Tag = href ? "a" : "button"
 </script>
@@ -121,7 +125,11 @@ const Tag = href ? "a" : "button"
       </span>
     </slot>
 
-    <span v-if="label !== undefined && label !== null" :class="twMerge(resolved.label, mergedUI.label)" data-slot="label">
+    <span
+      v-if="label !== undefined && label !== null"
+      :class="twMerge(resolved.label, mergedUI.label)"
+      data-slot="label"
+    >
       {{ label }}
     </span>
     <slot v-else />
