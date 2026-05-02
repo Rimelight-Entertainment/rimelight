@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, useSlots } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import defu from "defu"
@@ -15,39 +16,21 @@ const button = scv({
 })
 
 export interface RLVButtonProps {
-  /**
-   * Button variant.
-   *
-   * @default "solid"
-   */
   variant?: keyof typeof buttonTheme.variants.variant
-  /**
-   * Button color.
-   *
-   * @default "primary"
-   */
   color?: keyof typeof buttonTheme.variants.color
-  /**
-   * Button size.
-   *
-   * @default "md"
-   */
   size?: keyof typeof buttonTheme.variants.size
-  /**
-   * When provided, renders as <a> instead of <button>.
-   */
   href?: string
-  /**
-   * UI overrides for individual slots, derived from the button theme.
-   */
-  ui?: Partial<Record<keyof typeof buttonTheme.base, string>>
-  /**
-   * External class — applied to the root element.
-   */
+  label?: string
+  leadingIcon?: string
+  trailingIcon?: string
+  loading?: boolean
+  square?: boolean
+  block?: boolean
+  active?: boolean
+  activeColor?: keyof typeof buttonTheme.variants.color
+  activeVariant?: keyof typeof buttonTheme.variants.variant
+  ui?: Partial<Record<string, string>>
   class?: string
-  /**
-   * Standard HTML attributes for <button>
-   */
   [key: string]: unknown
 }
 
@@ -57,14 +40,45 @@ const {
   size = "md",
   class: className,
   ui: uiProp,
-  href
+  href,
+  label,
+  leadingIcon,
+  trailingIcon,
+  loading = false,
+  square = false,
+  block = false,
+  active = false,
+  activeColor,
+  activeVariant
 } = defineProps<RLVButtonProps>()
 
+const slots = useSlots()
+
+const isLeading = computed(() => !!(leadingIcon || slots.leading))
+const isTrailing = computed(() => !!(trailingIcon || slots.trailing))
+
+const showLeadingIcon = computed(() => {
+  if (loading) return "i-lucide-loader-circle"
+  return leadingIcon
+})
+
+const showTrailingIcon = computed(() => {
+  if (loading) return "i-lucide-loader-circle"
+  return trailingIcon
+})
+
+const leadingIconClass = computed(() => {
+  return loading && isLeading.value ? "animate-spin" : ""
+})
+
+const trailingIconClass = computed(() => {
+  return loading && isTrailing.value ? "animate-spin" : ""
+})
+
 defineSlots<{
-  /**
-   * The default slot for the button content (e.g., text, icons).
-   */
   default(props: {}): any
+  leading(props: { ui: Record<string, string> }): any
+  trailing(props: { ui: Record<string, string> }): any
 }>()
 
 const globalConfig = getUIConfig()
@@ -72,15 +86,20 @@ const globalConfig = getUIConfig()
 const mergedUI = defu(
   uiProp ?? {},
   (globalConfig.button as Record<string, unknown>) ?? {}
-) as Record<keyof typeof buttonTheme.base, string | undefined>
+) as Record<string, string | undefined>
 
-const { root } = button({
-  variant,
-  color,
-  size
-})
+const resolved = computed(() => button({
+  variant: active && activeVariant ? activeVariant : variant,
+  color: active && activeColor ? activeColor : color,
+  size,
+  block,
+  square: square || (!label && !slots.default),
+  leading: isLeading.value,
+  trailing: isTrailing.value,
+  loading,
+  active
+}))
 
-// Determine whether to render <a> or <button>
 const Tag = href ? "a" : "button"
 </script>
 
@@ -89,9 +108,32 @@ const Tag = href ? "a" : "button"
     v-bind="$attrs"
     :is="Tag"
     :href="href"
-    :class="twMerge(root, mergedUI.root, className)"
+    :class="twMerge(resolved.root, mergedUI.root, className)"
     data-slot="rlv-button"
   >
-    <slot />
+    <slot name="leading" :ui="resolved">
+      <span
+        v-if="isLeading"
+        :class="twMerge(resolved.leadingIcon, mergedUI.leadingIcon)"
+        data-slot="leading-icon"
+      >
+        <span :class="[showLeadingIcon, leadingIconClass]" aria-hidden="true" />
+      </span>
+    </slot>
+
+    <span v-if="label !== undefined && label !== null" :class="twMerge(resolved.label, mergedUI.label)" data-slot="label">
+      {{ label }}
+    </span>
+    <slot v-else />
+
+    <slot name="trailing" :ui="resolved">
+      <span
+        v-if="isTrailing"
+        :class="twMerge(resolved.trailingIcon, mergedUI.trailingIcon)"
+        data-slot="trailing-icon"
+      >
+        <span :class="[showTrailingIcon, trailingIconClass]" aria-hidden="true" />
+      </span>
+    </slot>
   </component>
 </template>

@@ -15,36 +15,21 @@ const button = scv({
 });
 
 export interface RLAButtonProps {
-  /**
-   * Button variant style.
-   * @default "solid"
-   */
   variant?: keyof typeof buttonTheme.variants.variant;
-  /**
-   * Button color.
-   * @default "primary"
-   */
   color?: keyof typeof buttonTheme.variants.color;
-  /**
-   * Button size.
-   * @default "md"
-   */
   size?: keyof typeof buttonTheme.variants.size;
-  /**
-   * When provided, renders as <a> instead of <button>.
-   */
   href?: string;
-  /**
-   * UI overrides for individual slots, derived from the button theme.
-   */
-  ui?: Partial<Record<keyof typeof buttonTheme.base, string>>;
-  /**
-   * External class — applied to the root element.
-   */
+  label?: string;
+  leadingIcon?: string;
+  trailingIcon?: string;
+  loading?: boolean;
+  square?: boolean;
+  block?: boolean;
+  active?: boolean;
+  activeColor?: keyof typeof buttonTheme.variants.color;
+  activeVariant?: keyof typeof buttonTheme.variants.variant;
+  ui?: Partial<Record<string, string>>;
   class?: string;
-  /**
-   * Standard HTML attributes for <button>
-   */
   [key: string]: unknown;
 }
 
@@ -55,6 +40,15 @@ const {
   class: className,
   ui: uiProp,
   href,
+  label,
+  leadingIcon,
+  trailingIcon,
+  loading = false,
+  square = false,
+  block = false,
+  active = false,
+  activeColor,
+  activeVariant,
   ...rest
 } = Astro.props as RLAButtonProps
 
@@ -63,23 +57,62 @@ const globalConfig = getUIConfig();
 const mergedUI = defu(
   uiProp ?? {},
   (globalConfig.button as Record<string, unknown>) ?? {},
-) as Record<keyof typeof buttonTheme.base, string | undefined>;
+) as Record<string, string | undefined>;
 
-const { root } = button({
-  variant,
-  color,
+const isLeading = leadingIcon || Astro.slots.has("leading")
+const isTrailing = trailingIcon || Astro.slots.has("trailing")
+
+const showLeadingIcon = loading
+  ? "i-lucide-loader-circle"
+  : leadingIcon
+
+const showTrailingIcon = loading
+  ? "i-lucide-loader-circle"
+  : trailingIcon
+
+const leadingClasses = loading ? "animate-spin" : ""
+const trailingClasses = loading ? "animate-spin" : ""
+
+const resolved = button({
+  variant: active && activeVariant ? activeVariant : variant,
+  color: active && activeColor ? activeColor : color,
   size,
+  block,
+  square: square || (!label && !Astro.slots.has("default")),
+  leading: isLeading,
+  trailing: isTrailing,
+  loading,
+  active
 });
 
-// Determine whether to render <a> or <button>
 const Tag = href ? "a" : "button";
 ---
-
 <Tag
-  class={twMerge(root, mergedUI.root, className)}
+  class={twMerge(resolved.root, mergedUI.root, className)}
   data-slot="rla-button"
   {...(Tag === "a" ? { href } : {})}
   {...rest}
 >
-  <slot />
+  <slot name="leading" {...{ ui: resolved }}>
+    {isLeading && (
+      <span class={twMerge(resolved.leadingIcon, mergedUI.leadingIcon)} data-slot="leading-icon">
+        <span class={showLeadingIcon} aria-hidden="true" />
+      </span>
+    )}
+  </slot>
+
+  {label !== undefined && label !== null && (
+    <span class={twMerge(resolved.label, mergedUI.label)} data-slot="label">
+      {label}
+    </span>
+  )}
+  {!label && <slot />}
+
+  <slot name="trailing" {...{ ui: resolved }}>
+    {isTrailing && (
+      <span class={twMerge(resolved.trailingIcon, mergedUI.trailingIcon)} data-slot="trailing-icon">
+        <span class={showTrailingIcon} aria-hidden="true" />
+      </span>
+    )}
+  </slot>
 </Tag>

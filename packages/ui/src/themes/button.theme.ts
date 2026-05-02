@@ -3,7 +3,7 @@
  * set of variants including color logic.
  */
 export const buttonTheme = {
-  slots: ["root"],
+  slots: ["root", "label", "leadingIcon", "trailingIcon"],
   base: {
     root: [
       "inline-flex items-center justify-center gap-4xs rounded-md font-medium ws-nowrap",
@@ -11,12 +11,16 @@ export const buttonTheme = {
       "transition-all outline-none focus-visible:ring-3",
       "disabled:pointer-events-none disabled:op-50",
       "aria-invalid:border-error-500 aria-invalid:ring-error-500/20"
-    ]
+    ],
+    label: "truncate",
+    leadingIcon: "shrink-0",
+    trailingIcon: "shrink-0"
   },
   variants: {
     variant: {
       solid: { root: "b shadow-xs" },
-      outlined: { root: "b shadow-xs border" },
+      outline: { root: "b shadow-xs border" },
+      soft: { root: "" },
       subtle: { root: "" },
       ghost: { root: "" },
       link: { root: "p-0 h-auto" }
@@ -33,11 +37,24 @@ export const buttonTheme = {
       source: { root: "" }
     },
     size: {
-      xs: { root: "h-7 px-2xs text-xs [&_svg]:size-3.5" },
-      sm: { root: "h-8 px-xs text-sm [&_svg]:size-4" },
-      md: { root: "h-9 px-sm text-sm [&_svg]:size-4" },
-      lg: { root: "h-10 px-md text-base [&_svg]:size-4.5" },
-      xl: { root: "h-11 px-lg text-base [&_svg]:size-5" }
+      xs: { root: "h-7 px-2xs text-xs [&_svg]:size-3.5", leadingIcon: "[&_svg]:size-3.5", trailingIcon: "[&_svg]:size-3.5" },
+      sm: { root: "h-8 px-xs text-sm [&_svg]:size-4", leadingIcon: "[&_svg]:size-4", trailingIcon: "[&_svg]:size-4" },
+      md: { root: "h-9 px-sm text-sm [&_svg]:size-4", leadingIcon: "[&_svg]:size-4", trailingIcon: "[&_svg]:size-4" },
+      lg: { root: "h-10 px-md text-base [&_svg]:size-4.5", leadingIcon: "[&_svg]:size-4.5", trailingIcon: "[&_svg]:size-4.5" },
+      xl: { root: "h-11 px-lg text-base [&_svg]:size-5", leadingIcon: "[&_svg]:size-5", trailingIcon: "[&_svg]:size-5" }
+    },
+    block: {
+      true: { root: "w-full justify-center", trailingIcon: "ms-auto" }
+    },
+    square: {
+      true: { root: "" }
+    },
+    leading: { true: {} },
+    trailing: { true: {} },
+    loading: { true: {} },
+    active: {
+      true: { root: "" },
+      false: { root: "" }
     }
   },
   compoundVariants: [
@@ -105,63 +122,63 @@ export const buttonTheme = {
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "primary",
       classNames: {
         root: "border-primary/20 text-primary-600 bg-primary/5 hover:bg-primary/10 hover:border-primary/30 focus-visible:ring-primary/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "secondary",
       classNames: {
         root: "border-secondary/20 text-secondary-600 bg-secondary/5 hover:bg-secondary/10 hover:border-secondary/30 focus-visible:ring-secondary/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "info",
       classNames: {
         root: "border-info/20 text-info-600 bg-info/5 hover:bg-info/10 hover:border-info/30 focus-visible:ring-info/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "success",
       classNames: {
         root: "border-success/20 text-success-600 bg-success/5 hover:bg-success/10 hover:border-success/30 focus-visible:ring-success/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "warning",
       classNames: {
         root: "border-warning/20 text-warning-600 bg-warning/5 hover:bg-warning/10 hover:border-warning/30 focus-visible:ring-warning/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "error",
       classNames: {
         root: "border-error/20 text-error-600 bg-error/5 hover:bg-error/10 hover:border-error/30 focus-visible:ring-error/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "commentary",
       classNames: {
         root: "border-commentary/20 text-commentary-600 bg-commentary/5 hover:bg-commentary/10 hover:border-commentary/30 focus-visible:ring-commentary/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "ideation",
       classNames: {
         root: "border-ideation/20 text-ideation-600 bg-ideation/5 hover:bg-ideation/10 hover:border-ideation/30 focus-visible:ring-ideation/40"
       }
     },
     {
-      variant: "outlined",
+      variant: "outline",
       color: "source",
       classNames: {
         root: "border-source/20 text-source-600 bg-source/5 hover:bg-source/10 hover:border-source/30 focus-visible:ring-source/40"
@@ -354,6 +371,130 @@ export const buttonTheme = {
       color: "source",
       classNames: {
         root: "text-source-600 hover:underline hover:decoration-source/30"
+      }
+    },
+    // soft variant compound variants
+    {
+      variant: "soft",
+      color: "primary",
+      classNames: {
+        root: "text-primary-600 bg-primary/10 hover:bg-primary/20 focus-visible:ring-primary/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "secondary",
+      classNames: {
+        root: "text-secondary-600 bg-secondary/10 hover:bg-secondary/20 focus-visible:ring-secondary/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "info",
+      classNames: {
+        root: "text-info-600 bg-info/10 hover:bg-info/20 focus-visible:ring-info/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "success",
+      classNames: {
+        root: "text-success-600 bg-success/10 hover:bg-success/20 focus-visible:ring-success/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "warning",
+      classNames: {
+        root: "text-warning-600 bg-warning/10 hover:bg-warning/20 focus-visible:ring-warning/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "error",
+      classNames: {
+        root: "text-error-600 bg-error/10 hover:bg-error/20 focus-visible:ring-error/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "commentary",
+      classNames: {
+        root: "text-commentary-600 bg-commentary/10 hover:bg-commentary/20 focus-visible:ring-commentary/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "ideation",
+      classNames: {
+        root: "text-ideation-600 bg-ideation/10 hover:bg-ideation/20 focus-visible:ring-ideation/40"
+      }
+    },
+    {
+      variant: "soft",
+      color: "source",
+      classNames: {
+        root: "text-source-600 bg-source/10 hover:bg-source/20 focus-visible:ring-source/40"
+      }
+    },
+    // square + size compound variants (explicit width to match height)
+    {
+      square: true,
+      size: "xs",
+      classNames: {
+        root: "p-1 w-7"
+      }
+    },
+    {
+      square: true,
+      size: "sm",
+      classNames: {
+        root: "p-1.5 w-8"
+      }
+    },
+    {
+      square: true,
+      size: "md",
+      classNames: {
+        root: "p-1.5 w-9"
+      }
+    },
+    {
+      square: true,
+      size: "lg",
+      classNames: {
+        root: "p-2 w-10"
+      }
+    },
+    {
+      square: true,
+      size: "xl",
+      classNames: {
+        root: "p-2 w-11"
+      }
+    },
+    // loading compound variants
+    {
+      loading: true,
+      leading: true,
+      classNames: {
+        leadingIcon: "animate-spin"
+      }
+    },
+    {
+      loading: true,
+      leading: false,
+      trailing: true,
+      classNames: {
+        trailingIcon: "animate-spin"
+      }
+    },
+    {
+      loading: true,
+      leading: false,
+      trailing: false,
+      classNames: {
+        trailingIcon: "animate-spin"
       }
     }
   ],
