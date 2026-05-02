@@ -1,6 +1,6 @@
 /**
- * Theme configuration for the Placeholder component. Defines the slots, base styles for
- * a placeholder container with a decorative SVG pattern overlay.
+ * Theme configuration for the Placeholder component. Defines the slots, base styles for a
+ * placeholder container with a decorative SVG pattern overlay.
  */
 export const placeholderTheme = {
   slots: ["base", "svg"],

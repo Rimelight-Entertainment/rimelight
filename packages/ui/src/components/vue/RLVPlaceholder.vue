@@ -29,10 +29,7 @@ export interface RLVPlaceholderProps {
   [key: string]: unknown
 }
 
-const {
-  class: className,
-  ui: uiProp
-} = defineProps<RLVPlaceholderProps>()
+const { class: className, ui: uiProp } = defineProps<RLVPlaceholderProps>()
 
 defineSlots<{
   /**
