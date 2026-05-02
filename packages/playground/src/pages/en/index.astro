@@ -1,11 +1,38 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '@/consts';
+import RLAPlaceholder from "@rimelight/ui/components/astro/RLAPlaceholder.astro";
+import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue";
 ---
 
 <AppLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
 	<main>
 		<h1>🧑‍🚀 Hello, Astronaut!</h1>
+
+		<!-- Astro Component Example -->
+		<section class="mb-8">
+			<h2>RLAPlaceholder (Astro Component)</h2>
+			<RLAPlaceholder>
+				<p class="relative z-10">Astro Placeholder - Coming soon...</p>
+			</RLAPlaceholder>
+
+			<RLAPlaceholder ui={{ base: 'h-32 border-primary-500/50', svg: 'stroke-primary-500/20' }}>
+				<p class="relative z-10">Custom styled Astro Placeholder</p>
+			</RLAPlaceholder>
+		</section>
+
+		<!-- Vue Component Example -->
+		<section class="mb-8">
+			<h2>RLVPlaceholder (Vue Component)</h2>
+			<RLVPlaceholder client:load class="h-48">
+				<p class="relative z-10">Vue Placeholder - Coming soon...</p>
+			</RLVPlaceholder>
+
+			<RLVPlaceholder client:load ui={{ base: 'h-32 border-secondary-500/50', svg: 'stroke-secondary-500/20' }}>
+				<p class="relative z-10">Custom styled Vue Placeholder</p>
+			</RLVPlaceholder>
+		</section>
+
 		<p>
 			Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
 			serves as a lightweight, minimally-styled starting point for anyone looking to build a personal

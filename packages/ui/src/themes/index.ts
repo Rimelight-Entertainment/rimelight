@@ -4,6 +4,7 @@ import { scrollToTopTheme } from "./scroll-to-top.theme"
 import { buttonTheme } from "./button.theme"
 import { logoTheme } from "./logo.theme"
 import { iconTheme } from "./icon.theme"
+import { placeholderTheme } from "./placeholder.theme"
 
 /**
  * Default UI configuration for all components. This is the baseline that gets merged with
@@ -15,7 +16,8 @@ export const defaultUIConfig = {
   "logo": logoTheme,
   "scroll-to-top": scrollToTopTheme,
   "button": buttonTheme,
-  "icon": iconTheme
+  "icon": iconTheme,
+  "placeholder": placeholderTheme
 } as const
 
 export type DefaultUIConfig = typeof defaultUIConfig
