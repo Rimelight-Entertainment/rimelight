@@ -1,0 +1,61 @@
+---
+import { scv, cx } from "css-variants"
+import { twMerge } from "tailwind-merge"
+import defu from "defu"
+import { iconTheme } from "../../themes/icon.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const icon = scv({
+  slots: [...iconTheme.slots],
+  base: iconTheme.base,
+  variants: iconTheme.variants,
+  defaultVariants: iconTheme.defaultVariants,
+  classNameResolver: (...args) => twMerge(cx(...args))
+})
+
+export interface RLAIconProps {
+  /**
+   * Icon name following the UnoCSS icons format.
+   * @example "i-lucide-home"
+   */
+  name: string
+  /**
+   * Size variant for the icon.
+   */
+  size?: keyof typeof iconTheme.variants.size
+  /**
+   * External class applied to the root element.
+   */
+  class?: string
+  /**
+   * UI overrides for individual slots.
+   */
+  ui?: Partial<Record<keyof typeof iconTheme.base, string>>
+  [key: string]: unknown
+}
+
+const {
+  name,
+  size = "md",
+  class: className,
+  ui: uiProp,
+  ...rest
+} = Astro.props as RLAIconProps
+
+const globalConfig = getUIConfig()
+
+const mergedUI = defu(
+  uiProp ?? {},
+  (globalConfig.icon as Record<string, unknown>) ?? {}
+) as Record<keyof typeof iconTheme.base, string | undefined>
+
+const { root } = icon({ size })
+---
+
+<span
+  class={twMerge(root, mergedUI.root, className, name)}
+  data-slot="rla-icon"
+  aria-hidden="true"
+  {...rest}
+>
+</span>
