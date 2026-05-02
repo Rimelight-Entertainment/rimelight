@@ -1,0 +1,217 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
+import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue";
+---
+
+<AppLayout title="Icon Component" description="Icon Component Showcase">
+  <main class="max-w-6xl mx-auto p-8">
+    <a href={getRelativeLocaleUrl(Astro.currentLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+      <span class="i-lucide-arrow-left"></span>
+      Back to Components
+    </a>
+
+    <h1 class="text-3xl font-bold mb-8">Icon</h1>
+
+    <!-- Tab Navigation -->
+    <div class="flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-700">
+      <button id="tab-astro" class="tab-btn px-4 py-2 font-medium border-b-2 border-primary-500 text-primary-500" data-tab="astro">
+        Astro (RLAIcon)
+      </button>
+      <button id="tab-vue" class="tab-btn px-4 py-2 font-medium border-b-2 border-transparent hover:text-primary-500" data-tab="vue">
+        Vue (RLVIcon)
+      </button>
+    </div>
+
+    <!-- Astro Tab Content -->
+    <div id="content-astro" class="tab-content space-y-12">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Basic Usage</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Icons using UnoCSS icon format (e.g., i-lucide-home).</p>
+        <div class="flex flex-wrap gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <RLAIcon name="i-lucide-home" size="md" />
+          <RLAIcon name="i-lucide-user" size="md" />
+          <RLAIcon name="i-lucide-settings" size="md" />
+          <RLAIcon name="i-lucide-mail" size="md" />
+          <RLAIcon name="i-lucide-search" size="md" />
+          <RLAIcon name="i-lucide-heart" size="md" />
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Sizes</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Different icon sizes from xs to xl.</p>
+        <div class="flex flex-wrap items-center gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex flex-col items-center gap-1">
+            <RLAIcon name="i-lucide-home" size="xs" />
+            <span class="text-xs text-gray-500">xs</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLAIcon name="i-lucide-home" size="sm" />
+            <span class="text-xs text-gray-500">sm</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLAIcon name="i-lucide-home" size="md" />
+            <span class="text-xs text-gray-500">md</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLAIcon name="i-lucide-home" size="lg" />
+            <span class="text-xs text-gray-500">lg</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLAIcon name="i-lucide-home" size="xl" />
+            <span class="text-xs text-gray-500">xl</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Popular Icons</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">A collection of commonly used icons.</p>
+        <div class="grid grid-cols-4 md:grid-cols-8 gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-home" size="lg" />
+            <span class="text-xs text-gray-500">home</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-search" size="lg" />
+            <span class="text-xs text-gray-500">search</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-menu" size="lg" />
+            <span class="text-xs text-gray-500">menu</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-x" size="lg" />
+            <span class="text-xs text-gray-500">close</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-chevron-down" size="lg" />
+            <span class="text-xs text-gray-500">chevron</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-arrow-right" size="lg" />
+            <span class="text-xs text-gray-500">arrow</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-check" size="lg" />
+            <span class="text-xs text-gray-500">check</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLAIcon name="i-lucide-alert-circle" size="lg" />
+            <span class="text-xs text-gray-500">alert</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Vue Tab Content -->
+    <div id="content-vue" class="tab-content space-y-12 hidden">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Basic Usage</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Icons using UnoCSS icon format (e.g., i-lucide-home).</p>
+        <div class="flex flex-wrap gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <RLVIcon client:load name="i-lucide-home" size="md" />
+          <RLVIcon client:load name="i-lucide-user" size="md" />
+          <RLVIcon client:load name="i-lucide-settings" size="md" />
+          <RLVIcon client:load name="i-lucide-mail" size="md" />
+          <RLVIcon client:load name="i-lucide-search" size="md" />
+          <RLVIcon client:load name="i-lucide-heart" size="md" />
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Sizes</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Different icon sizes from xs to xl.</p>
+        <div class="flex flex-wrap items-center gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex flex-col items-center gap-1">
+            <RLVIcon client:load name="i-lucide-home" size="xs" />
+            <span class="text-xs text-gray-500">xs</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLVIcon client:load name="i-lucide-home" size="sm" />
+            <span class="text-xs text-gray-500">sm</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLVIcon client:load name="i-lucide-home" size="md" />
+            <span class="text-xs text-gray-500">md</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLVIcon client:load name="i-lucide-home" size="lg" />
+            <span class="text-xs text-gray-500">lg</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <RLVIcon client:load name="i-lucide-home" size="xl" />
+            <span class="text-xs text-gray-500">xl</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Popular Icons</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">A collection of commonly used icons.</p>
+        <div class="grid grid-cols-4 md:grid-cols-8 gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-home" size="lg" />
+            <span class="text-xs text-gray-500">home</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-search" size="lg" />
+            <span class="text-xs text-gray-500">search</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-menu" size="lg" />
+            <span class="text-xs text-gray-500">menu</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-x" size="lg" />
+            <span class="text-xs text-gray-500">close</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-chevron-down" size="lg" />
+            <span class="text-xs text-gray-500">chevron</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-arrow-right" size="lg" />
+            <span class="text-xs text-gray-500">arrow</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-check" size="lg" />
+            <span class="text-xs text-gray-500">check</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <RLVIcon client:load name="i-lucide-alert-circle" size="lg" />
+            <span class="text-xs text-gray-500">alert</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function initTabs() {
+      var tabBtns = document.querySelectorAll('.tab-btn');
+      var tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var tab = btn.getAttribute('data-tab');
+
+          tabBtns.forEach(function(b) {
+            b.classList.remove('border-primary-500', 'text-primary-500');
+            b.classList.add('border-transparent');
+          });
+          btn.classList.add('border-primary-500', 'text-primary-500');
+          btn.classList.remove('border-transparent');
+
+          tabContents.forEach(function(content) {
+            content.classList.add('hidden');
+          });
+          document.getElementById('content-' + tab).classList.remove('hidden');
+        });
+      });
+    }
+    initTabs();
+  </script>
+</AppLayout>

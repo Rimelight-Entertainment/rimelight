@@ -1,0 +1,271 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+---
+
+<AppLayout title="Button Component" description="Button Component Showcase">
+  <main class="max-w-6xl mx-auto p-8">
+    <a href={getRelativeLocaleUrl(Astro.currentLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+      <span class="i-lucide-arrow-left"></span>
+      Back to Components
+    </a>
+
+    <h1 class="text-3xl font-bold mb-8">Button</h1>
+
+    <!-- Tab Navigation -->
+    <div class="flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-700">
+      <button id="tab-astro" class="tab-btn px-4 py-2 font-medium border-b-2 border-primary-500 text-primary-500" data-tab="astro">
+        Astro (RLAButton)
+      </button>
+      <button id="tab-vue" class="tab-btn px-4 py-2 font-medium border-b-2 border-transparent hover:text-primary-500" data-tab="vue">
+        Vue (RLVButton)
+      </button>
+    </div>
+
+    <!-- Astro Tab Content -->
+    <div id="content-astro" class="tab-content space-y-12">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Variants</h2>
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Default</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLAButton variant="solid">Solid</RLAButton>
+            <RLAButton variant="outline">Outline</RLAButton>
+            <RLAButton variant="soft">Soft</RLAButton>
+            <RLAButton variant="subtle">Subtle</RLAButton>
+            <RLAButton variant="ghost">Ghost</RLAButton>
+            <RLAButton variant="link">Link</RLAButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Colors</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLAButton color="primary">Primary</RLAButton>
+            <RLAButton color="secondary">Secondary</RLAButton>
+            <RLAButton color="info">Info</RLAButton>
+            <RLAButton color="success">Success</RLAButton>
+            <RLAButton color="warning">Warning</RLAButton>
+            <RLAButton color="error">Error</RLAButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Sizes</h3>
+          <div class="flex flex-wrap items-center gap-4">
+            <RLAButton size="xs">Extra Small</RLAButton>
+            <RLAButton size="sm">Small</RLAButton>
+            <RLAButton size="md">Medium</RLAButton>
+            <RLAButton size="lg">Large</RLAButton>
+            <RLAButton size="xl">Extra Large</RLAButton>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Icons</h2>
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Leading Icon</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLAButton leadingIcon="i-lucide-home">Home</RLAButton>
+            <RLAButton leadingIcon="i-lucide-mail" variant="outline">Mail</RLAButton>
+            <RLAButton leadingIcon="i-lucide-user" variant="soft">Profile</RLAButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Trailing Icon</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLAButton trailingIcon="i-lucide-arrow-right">Next</RLAButton>
+            <RLAButton trailingIcon="i-lucide-external-link" variant="outline">Open</RLAButton>
+            <RLAButton trailingIcon="i-lucide-download" variant="soft">Download</RLAButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Both Icons</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLAButton leadingIcon="i-lucide-mail" trailingIcon="i-lucide-send">Send</RLAButton>
+            <RLAButton leadingIcon="i-lucide-shopping-cart" trailingIcon="i-lucide-arrow-right" variant="outline">Checkout</RLAButton>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">States</h2>
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Loading</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLAButton loading>Loading</RLAButton>
+            <RLAButton loading variant="outline">Saving...</RLAButton>
+            <RLAButton loading variant="soft">Processing</RLAButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Disabled</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLAButton disabled>Disabled</RLAButton>
+            <RLAButton disabled variant="outline">Disabled</RLAButton>
+            <RLAButton disabled variant="soft">Disabled</RLAButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Square (Icon Only)</h3>
+          <div class="flex flex-wrap items-center gap-4">
+            <RLAButton square leadingIcon="i-lucide-home" aria-label="Home" />
+            <RLAButton square leadingIcon="i-lucide-settings" variant="outline" aria-label="Settings" />
+            <RLAButton square leadingIcon="i-lucide-user" variant="soft" aria-label="Profile" />
+            <RLAButton square leadingIcon="i-lucide-search" variant="ghost" aria-label="Search" />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Block (Full Width)</h3>
+          <div class="flex flex-col gap-4 max-w-md">
+            <RLAButton block>Block Button</RLAButton>
+            <RLAButton block variant="outline">Block Outline</RLAButton>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Vue Tab Content -->
+    <div id="content-vue" class="tab-content hidden space-y-12">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Variants</h2>
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Default</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLVButton client:load variant="solid">Solid</RLVButton>
+            <RLVButton client:load variant="outline">Outline</RLVButton>
+            <RLVButton client:load variant="soft">Soft</RLVButton>
+            <RLVButton client:load variant="subtle">Subtle</RLVButton>
+            <RLVButton client:load variant="ghost">Ghost</RLVButton>
+            <RLVButton client:load variant="link">Link</RLVButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Colors</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLVButton client:load color="primary">Primary</RLVButton>
+            <RLVButton client:load color="secondary">Secondary</RLVButton>
+            <RLVButton client:load color="info">Info</RLVButton>
+            <RLVButton client:load color="success">Success</RLVButton>
+            <RLVButton client:load color="warning">Warning</RLVButton>
+            <RLVButton client:load color="error">Error</RLVButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Sizes</h3>
+          <div class="flex flex-wrap items-center gap-4">
+            <RLVButton client:load size="xs">Extra Small</RLVButton>
+            <RLVButton client:load size="sm">Small</RLVButton>
+            <RLVButton client:load size="md">Medium</RLVButton>
+            <RLVButton client:load size="lg">Large</RLVButton>
+            <RLVButton client:load size="xl">Extra Large</RLVButton>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Icons</h2>
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Leading Icon</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLVButton client:load leadingIcon="i-lucide-home">Home</RLVButton>
+            <RLVButton client:load leadingIcon="i-lucide-mail" variant="outline">Mail</RLVButton>
+            <RLVButton client:load leadingIcon="i-lucide-user" variant="soft">Profile</RLVButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Trailing Icon</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLVButton client:load trailingIcon="i-lucide-arrow-right">Next</RLVButton>
+            <RLVButton client:load trailingIcon="i-lucide-external-link" variant="outline">Open</RLVButton>
+            <RLVButton client:load trailingIcon="i-lucide-download" variant="soft">Download</RLVButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Both Icons</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLVButton client:load leadingIcon="i-lucide-mail" trailingIcon="i-lucide-send">Send</RLVButton>
+            <RLVButton client:load leadingIcon="i-lucide-shopping-cart" trailingIcon="i-lucide-arrow-right" variant="outline">Checkout</RLVButton>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">States</h2>
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Loading</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLVButton client:load loading>Loading</RLVButton>
+            <RLVButton client:load loading variant="outline">Saving...</RLVButton>
+            <RLVButton client:load loading variant="soft">Processing</RLVButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Disabled</h3>
+          <div class="flex flex-wrap gap-4">
+            <RLVButton client:load disabled>Disabled</RLVButton>
+            <RLVButton client:load disabled variant="outline">Disabled</RLVButton>
+            <RLVButton client:load disabled variant="soft">Disabled</RLVButton>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Square (Icon Only)</h3>
+          <div class="flex flex-wrap items-center gap-4">
+            <RLVButton client:load square leadingIcon="i-lucide-home" aria-label="Home" />
+            <RLVButton client:load square leadingIcon="i-lucide-settings" variant="outline" aria-label="Settings" />
+            <RLVButton client:load square leadingIcon="i-lucide-user" variant="soft" aria-label="Profile" />
+            <RLVButton client:load square leadingIcon="i-lucide-search" variant="ghost" aria-label="Search" />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium">Block (Full Width)</h3>
+          <div class="flex flex-col gap-4 max-w-md">
+            <RLVButton client:load block>Block Button</RLVButton>
+            <RLVButton client:load block variant="outline">Block Outline</RLVButton>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function initTabs() {
+      var tabBtns = document.querySelectorAll('.tab-btn');
+      var tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var tab = btn.getAttribute('data-tab');
+
+          tabBtns.forEach(function(b) {
+            b.classList.remove('border-primary-500', 'text-primary-500');
+            b.classList.add('border-transparent');
+          });
+          btn.classList.add('border-primary-500', 'text-primary-500');
+          btn.classList.remove('border-transparent');
+
+          tabContents.forEach(function(content) {
+            content.classList.add('hidden');
+          });
+          document.getElementById('content-' + tab).classList.remove('hidden');
+        });
+      });
+    }
+    initTabs();
+  </script>
+</AppLayout>

@@ -1,0 +1,177 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import RLAFooter from "@rimelight/ui/components/astro/RLAFooter.astro";
+import RLVFooter from "@rimelight/ui/components/vue/RLVFooter.vue";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+---
+
+<AppLayout title="Footer Component" description="Footer Component Showcase">
+  <main class="max-w-6xl mx-auto p-8">
+    <a href={getRelativeLocaleUrl(Astro.currentLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+      <span class="i-lucide-arrow-left"></span>
+      Back to Components
+    </a>
+
+    <h1 class="text-3xl font-bold mb-8">Footer</h1>
+
+    <!-- Tab Navigation -->
+    <div class="flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-700">
+      <button id="tab-astro" class="tab-btn px-4 py-2 font-medium border-b-2 border-primary-500 text-primary-500" data-tab="astro">
+        Astro (RLAFooter)
+      </button>
+      <button id="tab-vue" class="tab-btn px-4 py-2 font-medium border-b-2 border-transparent hover:text-primary-500" data-tab="vue">
+        Vue (RLVFooter)
+      </button>
+    </div>
+
+    <!-- Astro Tab Content -->
+    <div id="content-astro" class="tab-content space-y-12">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Default</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">A footer with left, center, and right slots.</p>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+          <RLAFooter>
+            <slot name="left">
+              <span class="font-bold text-lg">© 2026 Rimelight</span>
+            </slot>
+            <slot name="center">
+              <nav class="flex gap-4">
+                <a href="#" class="hover:text-primary-500">Privacy</a>
+                <a href="#" class="hover:text-primary-500">Terms</a>
+                <a href="#" class="hover:text-primary-500">Support</a>
+              </nav>
+            </slot>
+            <slot name="right">
+              <div class="flex gap-2">
+                <RLAButton size="sm" square leadingIcon="i-lucide-twitter" variant="ghost" aria-label="Twitter" />
+                <RLAButton size="sm" square leadingIcon="i-lucide-github" variant="ghost" aria-label="GitHub" />
+              </div>
+            </slot>
+          </RLAFooter>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Container</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Footer with contain=true for centered content.</p>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+          <RLAFooter contain>
+            <slot name="left">
+              <span class="font-bold">© 2026 Rimelight</span>
+            </slot>
+            <slot name="center">
+              <span class="text-sm text-gray-500">Built with Rimelight UI</span>
+            </slot>
+            <slot name="right">
+              <RLAButton size="sm" variant="outline">Contact</RLAButton>
+            </slot>
+          </RLAFooter>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Simple Footer</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">A simple footer with centered content only.</p>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+          <RLAFooter>
+            <slot name="center">
+              <p class="text-sm text-gray-500">© 2026 Rimelight UI. All rights reserved.</p>
+            </slot>
+          </RLAFooter>
+        </div>
+      </section>
+    </div>
+
+    <!-- Vue Tab Content -->
+    <div id="content-vue" class="tab-content space-y-12 hidden">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Default</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">A footer with left, center, and right slots.</p>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+          <RLVFooter client:load>
+            <template #left>
+              <span class="font-bold text-lg">© 2026 Rimelight</span>
+            </template>
+            <template #center>
+              <nav class="flex gap-4">
+                <a href="#" class="hover:text-primary-500">Privacy</a>
+                <a href="#" class="hover:text-primary-500">Terms</a>
+                <a href="#" class="hover:text-primary-500">Support</a>
+              </nav>
+            </template>
+            <template #right>
+              <div class="flex gap-2">
+                <RLVButton client:load size="sm" square leadingIcon="i-lucide-twitter" variant="ghost" aria-label="Twitter" />
+                <RLVButton client:load size="sm" square leadingIcon="i-lucide-github" variant="ghost" aria-label="GitHub" />
+              </div>
+            </template>
+          </RLVFooter>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Container</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Footer with contain=true for centered content.</p>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+          <RLVFooter client:load contain>
+            <template #left>
+              <span class="font-bold">© 2026 Rimelight</span>
+            </template>
+            <template #center>
+              <span class="text-sm text-gray-500">Built with Rimelight UI</span>
+            </template>
+            <template #right>
+              <RLVButton client:load size="sm" variant="outline">Contact</RLVButton>
+            </template>
+          </RLVFooter>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Simple Footer</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">A simple footer with centered content only.</p>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+          <RLVFooter client:load>
+            <template #center>
+              <p class="text-sm text-gray-500">© 2026 Rimelight UI. All rights reserved.</p>
+            </template>
+          </RLVFooter>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function initTabs() {
+      var tabBtns = document.querySelectorAll('.tab-btn');
+      var tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var tab = btn.getAttribute('data-tab');
+
+          tabBtns.forEach(function(b) {
+            b.classList.remove('border-primary-500', 'text-primary-500');
+            b.classList.add('border-transparent');
+          });
+          btn.classList.add('border-primary-500', 'text-primary-500');
+          btn.classList.remove('border-transparent');
+
+          tabContents.forEach(function(content) {
+            content.classList.add('hidden');
+          });
+          document.getElementById('content-' + tab).classList.remove('hidden');
+        });
+      });
+    }
+    initTabs();
+  </script>
+</AppLayout>

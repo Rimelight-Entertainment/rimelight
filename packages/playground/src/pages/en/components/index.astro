@@ -1,0 +1,42 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+---
+
+<AppLayout title="Components" description="Rimelight UI Components">
+  <main class="max-w-6xl mx-auto">
+    <div class="py-24">
+    <h1>Components</h1>
+    <p>
+      Browse all available components in the Rimelight UI library.
+    </p>
+
+     <div class="space-y-8">
+       <section>
+         <h2>App</h2>
+         <ul class="space-y-2">
+           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/footer')}>Footer</a></li>
+           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/header')}>Header</a></li>
+           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/logo')}>Logo</a></li>
+         </ul>
+       </section>
+
+       <section>
+         <h2>Utility</h2>
+         <ul class="space-y-2">
+           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/placeholder')}>Placeholder</a></li>
+           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/scroll-to-top')}>Scroll to Top</a></li>
+         </ul>
+       </section>
+
+       <section>
+         <h2>Elements</h2>
+         <ul class="space-y-2">
+           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/button')}>Button</a></li>
+           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/icon')}>Icon</a></li>
+         </ul>
+       </section>
+      </div>
+     </div>
+  </main>
+</AppLayout>
