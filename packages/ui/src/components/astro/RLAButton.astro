@@ -59,8 +59,8 @@ const mergedUI = defu(
   (globalConfig.button as Record<string, unknown>) ?? {},
 ) as Record<string, string | undefined>;
 
-const isLeading = leadingIcon || Astro.slots.has("leading")
-const isTrailing = trailingIcon || Astro.slots.has("trailing")
+const isLeading = (leadingIcon || Astro.slots.has("leading")) || loading
+const isTrailing = (trailingIcon || Astro.slots.has("trailing")) || (loading && !isLeading)
 
 const showLeadingIcon = loading
   ? "i-lucide-loader-circle"
@@ -96,7 +96,7 @@ const Tag = href ? "a" : "button";
   <slot name="leading" {...{ ui: resolved }}>
     {isLeading && (
       <span class={twMerge(resolved.leadingIcon, mergedUI.leadingIcon)} data-slot="leading-icon">
-        <span class={showLeadingIcon} aria-hidden="true" />
+        <span class={twMerge(showLeadingIcon, leadingClasses)} aria-hidden="true" />
       </span>
     )}
   </slot>
@@ -111,7 +111,7 @@ const Tag = href ? "a" : "button";
   <slot name="trailing" {...{ ui: resolved }}>
     {isTrailing && (
       <span class={twMerge(resolved.trailingIcon, mergedUI.trailingIcon)} data-slot="trailing-icon">
-        <span class={showTrailingIcon} aria-hidden="true" />
+        <span class={twMerge(showTrailingIcon, trailingClasses)} aria-hidden="true" />
       </span>
     )}
   </slot>

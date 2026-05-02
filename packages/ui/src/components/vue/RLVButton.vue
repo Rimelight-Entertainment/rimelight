@@ -54,8 +54,8 @@ const {
 
 const slots = useSlots()
 
-const isLeading = computed(() => !!(leadingIcon || slots.leading))
-const isTrailing = computed(() => !!(trailingIcon || slots.trailing))
+const isLeading = computed(() => !!(leadingIcon || slots.leading) || loading)
+const isTrailing = computed(() => !!(trailingIcon || slots.trailing) || (loading && !isLeading.value))
 
 const showLeadingIcon = computed(() => {
   if (loading) return "i-lucide-loader-circle"
