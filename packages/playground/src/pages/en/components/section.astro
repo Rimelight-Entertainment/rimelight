@@ -1,0 +1,223 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import RLASection from "@rimelight/ui/components/astro/RLASection.astro";
+import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
+---
+
+<AppLayout title="Section Component" description="Section Component Showcase">
+  <main class="max-w-6xl mx-auto p-8">
+    <a href={getRelativeLocaleUrl(Astro.currentLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+      <span class="i-lucide-arrow-left"></span>
+      Back to Components
+    </a>
+
+    <h1 class="text-3xl font-bold mb-8">Section</h1>
+
+    <!-- Tab Navigation -->
+    <div class="flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-700">
+      <button id="tab-astro" class="tab-btn px-4 py-2 font-medium border-b-2 border-primary-500 text-primary-500" data-tab="astro">
+        Astro (RLASection)
+      </button>
+      <button id="tab-vue" class="tab-btn px-4 py-2 font-medium border-b-2 border-transparent hover:text-primary-500" data-tab="vue">
+        Vue (RLVSection)
+      </button>
+    </div>
+
+    <!-- Astro Tab Content -->
+    <div id="content-astro" class="tab-content space-y-12">
+
+      <!-- Default Variant -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Default Variant</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
+        <RLASection title="Default Section" description="This is a default section with a title and description.">
+          <Fragment slot="links">
+            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Get Started</a>
+            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Learn More</a>
+          </Fragment>
+        </RLASection>
+      </section>
+
+      <!-- Hero Variant -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Hero Variant</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding.</p>
+        <RLASection
+          variant="hero"
+          headline="Introducing Rimelight"
+          title="Build Faster with Our Component Library"
+          description="A modern, accessible component library built for performance and developer experience."
+        >
+          <Fragment slot="links">
+            <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg text-lg hover:bg-primary-600 transition-colors">Start Building</a>
+            <a href="#" class="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Documentation</a>
+          </Fragment>
+        </RLASection>
+      </section>
+
+      <!-- CTA Variant -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">CTA Variant</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Call-to-action sections with style variants.</p>
+
+        <div class="space-y-8">
+          <div>
+            <h3 class="text-lg font-medium mb-2">Outline (default)</h3>
+            <RLASection
+              variant="cta"
+              title="Ready to Get Started?"
+              description="Join thousands of developers building with Rimelight."
+            >
+              <Fragment slot="links">
+                <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Sign Up Free</a>
+              </Fragment>
+            </RLASection>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-medium mb-2">Solid</h3>
+            <RLASection
+              variant="cta"
+              ctaVariant="solid"
+              title="Upgrade to Pro"
+              description="Get access to all premium components and features."
+            >
+              <Fragment slot="links">
+                <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors">Upgrade Now</a>
+              </Fragment>
+            </RLASection>
+          </div>
+        </div>
+      </section>
+
+      <!-- With Background Slot -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Background Slot</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Add background content like gradients behind your content.</p>
+        <RLASection
+          title="Beautiful Backgrounds"
+          description="Use the background slot to add gradients or other effects."
+        >
+          <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10"></div>
+          <Fragment slot="links">
+            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Learn More</a>
+          </Fragment>
+        </RLASection>
+      </section>
+
+    </div>
+
+    <!-- Vue Tab Content -->
+    <div id="content-vue" class="tab-content hidden space-y-12">
+
+      <!-- Default Variant -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Default Variant</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
+        <RLVSection client:load title="Default Section" description="This is a default section with a title and description.">
+          <template #links>
+            <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Get Started</button>
+            <button class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Learn More</button>
+          </template>
+        </RLVSection>
+      </section>
+
+      <!-- Hero Variant -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Hero Variant</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding.</p>
+        <RLVSection client:load
+          variant="hero"
+          headline="Introducing Rimelight"
+          title="Build Faster with Our Component Library"
+          description="A modern, accessible component library built for performance and developer experience."
+        >
+          <template #links>
+            <button class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg text-lg hover:bg-primary-600 transition-colors">Start Building</button>
+            <button class="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Documentation</button>
+          </template>
+        </RLVSection>
+      </section>
+
+      <!-- CTA Variant -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">CTA Variant</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Call-to-action sections with style variants.</p>
+
+        <div class="space-y-8">
+          <div>
+            <h3 class="text-lg font-medium mb-2">Outline (default)</h3>
+            <RLVSection client:load
+              variant="cta"
+              title="Ready to Get Started?"
+              description="Join thousands of developers building with Rimelight."
+            >
+              <template #links>
+                <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Sign Up Free</button>
+              </template>
+            </RLVSection>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-medium mb-2">Solid</h3>
+            <RLVSection client:load
+              variant="cta"
+              ctaVariant="solid"
+              title="Upgrade to Pro"
+              description="Get access to all premium components and features."
+            >
+              <template #links>
+                <button class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors">Upgrade Now</button>
+              </template>
+            </RLVSection>
+          </div>
+        </div>
+      </section>
+
+      <!-- With Background Slot -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Background Slot</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Add background content like gradients behind your content.</p>
+        <RLVSection client:load
+          title="Beautiful Backgrounds"
+          description="Use the background slot to add gradients or other effects."
+        >
+          <template #background>
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10"></div>
+          </template>
+          <template #links>
+            <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Learn More</button>
+          </template>
+        </RLVSection>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    function initTabs() {
+      var tabBtns = document.querySelectorAll('.tab-btn');
+      var tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var tab = btn.getAttribute('data-tab');
+
+          tabBtns.forEach(function(b) {
+            b.classList.remove('border-primary-500', 'text-primary-500');
+            b.classList.add('border-transparent');
+          });
+          btn.classList.add('border-primary-500', 'text-primary-500');
+          btn.classList.remove('border-transparent');
+
+          tabContents.forEach(function(content) {
+            content.classList.add('hidden');
+          });
+          document.getElementById('content-' + tab).classList.remove('hidden');
+        });
+      });
+    }
+    initTabs();
+  </script>
+</AppLayout>

@@ -1,0 +1,234 @@
+---
+import { scv, cx } from "css-variants"
+import { twMerge } from "tailwind-merge"
+import defu from "defu"
+import { sectionTheme } from "../../themes/section.theme.ts"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const section = scv({
+  slots: [...sectionTheme.slots],
+  base: sectionTheme.base,
+  variants: sectionTheme.variants,
+  compoundVariants: [...sectionTheme.compoundVariants],
+  defaultVariants: sectionTheme.defaultVariants,
+  classNameResolver: (...args) => twMerge(cx(...args)),
+});
+
+export interface RLASectionProps {
+  /**
+   * The element or component this component should render as.
+   *
+   * @default 'section'
+   */
+  as?: string;
+  /**
+   * The variant of the section.
+   * - `default` — standard page section
+   * - `hero` — hero section with larger text
+   * - `cta` — call-to-action section with style variants
+   *
+   * @default 'default'
+   */
+  variant?: "default" | "hero" | "cta";
+  /**
+   * The headline displayed above the title.
+   */
+  headline?: string;
+  /**
+   * The icon displayed above the title.
+   */
+  icon?: string;
+  title?: string;
+  description?: string;
+  /**
+   * The orientation of the section.
+   *
+   * @default 'vertical'
+   */
+  orientation?: "horizontal" | "vertical";
+  /**
+   * Reverse the order of the default slot.
+   *
+   * @default false
+   */
+  reverse?: boolean;
+  /**
+   * The style variant when variant is 'cta'.
+   *
+   * @default 'outline'
+   */
+  ctaVariant?: "solid" | "outline" | "soft" | "subtle" | "naked";
+  ui?: Partial<Record<string, string>>;
+  class?: string;
+  /**
+   * Standard HTML attributes for the root element.
+   */
+  [key: string]: unknown;
+}
+
+const {
+  as = "section",
+  variant = "default",
+  orientation = "vertical",
+  reverse = false,
+  ctaVariant = "outline",
+  class: className,
+  ui: uiProp,
+  ...rest
+} = Astro.props as RLASectionProps;
+
+const globalConfig = getUIConfig();
+
+const mergedUI = defu(
+  uiProp ?? {},
+  (globalConfig.section as Record<string, unknown>) ?? {},
+) as Record<string, string | undefined>;
+
+const resolved = section({
+  variant,
+  orientation,
+  reverse,
+  ctaVariant: variant === "cta" ? ctaVariant : undefined,
+  headline: Astro.slots.has("headline") || Astro.props.headline,
+  title: Astro.slots.has("title") || Astro.props.title,
+  description: Astro.slots.has("description") || Astro.props.description,
+  body: Astro.slots.has("body") || Astro.slots.has("features")
+});
+
+const Tag = as;
+
+const titleTag = variant === "hero" ? "h1" : "h2";
+---
+
+<Tag
+  data-orientation={orientation}
+  data-slot="rla-section"
+  class:list={[twMerge(resolved.root, mergedUI.root, className)]}
+  {...rest}
+>
+  <slot name="background">
+    {Astro.slots.has("background") && (
+      <div class:list={[twMerge(resolved.background, mergedUI.background)]} data-slot="background">
+        <slot name="background" />
+      </div>
+    )}
+  </slot>
+
+  <slot name="top" />
+
+  <div
+    data-slot="container"
+    class:list={[twMerge(resolved.container, mergedUI.container)]}
+  >
+    {(Astro.slots.has("header") || Astro.props.icon || Astro.props.headline || Astro.props.title || Astro.props.description || Astro.slots.has("body") || Astro.slots.has("footer") || Astro.slots.has("links") || Astro.slots.has("features")) && (
+      <div
+        data-slot="wrapper"
+        class:list={[twMerge(resolved.wrapper, mergedUI.wrapper)]}
+      >
+        {(Astro.slots.has("header") || Astro.props.icon || Astro.props.headline || Astro.props.title || Astro.props.description) && (
+          <div
+            data-slot="header"
+            class:list={[twMerge(resolved.header, mergedUI.header)]}
+          >
+            <slot name="header">
+              {(Astro.props.icon || Astro.slots.has("leading")) && (
+                <div
+                  data-slot="leading"
+                  class:list={[twMerge(resolved.leading, mergedUI.leading)]}
+                >
+                  <slot name="leading" {...{ ui: resolved }}>
+                    {Astro.props.icon && (
+                      <span
+                        class:list={[resolved.leadingIcon, mergedUI.leadingIcon]}
+                        data-slot="leading-icon"
+                      >
+                        <span class={Astro.props.icon} aria-hidden="true" />
+                      </span>
+                    )}
+                  </slot>
+                </div>
+              )}
+
+              {(Astro.props.headline || Astro.slots.has("headline")) && (
+                <div
+                  data-slot="headline"
+                  class:list={[twMerge(resolved.headline, mergedUI.headline)]}
+                >
+                  <slot name="headline">
+                    {Astro.props.headline}
+                  </slot>
+                </div>
+              )}
+
+              {(Astro.props.title || Astro.slots.has("title")) && (
+                <component
+                  is={titleTag}
+                  data-slot="title"
+                  class:list={[twMerge(resolved.title, mergedUI.title)]}
+                >
+                  <slot name="title">
+                    {Astro.props.title}
+                  </slot>
+                </component>
+              )}
+
+              {(Astro.props.description || Astro.slots.has("description")) && (
+                <div
+                  data-slot="description"
+                  class:list={[twMerge(resolved.description, mergedUI.description)]}
+                >
+                  <slot name="description">
+                    {Astro.props.description}
+                  </slot>
+                </div>
+              )}
+            </slot>
+          </div>
+        )}
+
+        {(Astro.slots.has("body") || Astro.slots.has("features")) && (
+          <div
+            data-slot="body"
+            class:list={[twMerge(resolved.body, mergedUI.body)]}
+          >
+            <slot name="body">
+              {Astro.slots.has("features") && (
+                <ul
+                  data-slot="features"
+                  class:list={[twMerge(resolved.features, mergedUI.features)]}
+                >
+                  <slot name="features" />
+                </ul>
+              )}
+            </slot>
+          </div>
+        )}
+
+        {(Astro.slots.has("footer") || Astro.slots.has("links")) && (
+          <div
+            data-slot="footer"
+            class:list={[twMerge(resolved.footer, mergedUI.footer)]}
+          >
+            <slot name="footer">
+              {Astro.slots.has("links") && (
+                <div
+                  data-slot="links"
+                  class:list={[twMerge(resolved.links, mergedUI.links)]}
+                >
+                  <slot name="links" />
+                </div>
+              )}
+            </slot>
+          </div>
+        )}
+      </div>
+    )}
+
+    <slot />
+    {orientation === "horizontal" && (
+      <div class="hidden lg:block" />
+    )}
+  </div>
+
+  <slot name="bottom" />
+</Tag>

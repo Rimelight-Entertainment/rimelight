@@ -12,14 +12,15 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
     </p>
 
      <div class="space-y-8">
-       <section>
-         <h2>App</h2>
-         <ul class="space-y-2">
-           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/footer')}>Footer</a></li>
-           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/header')}>Header</a></li>
-           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/logo')}>Logo</a></li>
-         </ul>
-       </section>
+        <section>
+          <h2>App</h2>
+          <ul class="space-y-2">
+            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/footer')}>Footer</a></li>
+            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/header')}>Header</a></li>
+            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/logo')}>Logo</a></li>
+            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/section')}>Section</a></li>
+          </ul>
+        </section>
 
        <section>
          <h2>Utility</h2>
