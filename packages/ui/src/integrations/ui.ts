@@ -14,6 +14,7 @@ export type UIConfigOverrides = {
   "header"?: Partial<(typeof defaultUIConfig)["header"]>
   "scroll-to-top"?: Partial<(typeof defaultUIConfig)["scroll-to-top"]>
   "logo"?: Partial<(typeof defaultUIConfig)["logo"]>
+  "section"?: Partial<(typeof defaultUIConfig)["section"]>
 }
 
 export interface UIOptions {
