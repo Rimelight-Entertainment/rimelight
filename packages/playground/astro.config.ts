@@ -140,6 +140,13 @@ export default defineConfig({
       description: "Rimelight Entertainment Documentation",
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/Rimelight-Entertainment" }
+      ],
+      sidebar: [
+        { label: "Home", link: "/docs/" },
+        {
+          label: "Documentation",
+          items: [{ autogenerate: { directory: "docs" } }]
+        }
       ]
     }),
 
