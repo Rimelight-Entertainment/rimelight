@@ -1,10 +1,13 @@
-import type { TranslationLoader } from "@nanostores/i18n";
+import type { TranslationLoader, ComponentsJSON } from "@nanostores/i18n";
 
-const translationModules = import.meta.glob("../translations/*.json", { eager: true }) as Record<string, { default: Record<string, unknown> }>;
+const translationModules = import.meta.glob<{ default: ComponentsJSON }>("../translations/*.json", { eager: true });
 
 const loader: TranslationLoader = async (locale, _components) => {
-  const key = Object.keys(translationModules).find(k => k.includes(`/${locale}.json`));
-  return key ? translationModules[key].default : {};
+  const key = Object.keys(translationModules).find((k) => k.includes(`/${locale}.json`));
+  if (!key) return {};
+  const mod = translationModules[key];
+  if (!mod) return {};
+  return mod.default;
 };
 
 export default loader;
