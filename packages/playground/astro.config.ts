@@ -1,5 +1,5 @@
 import { visualizer } from "rollup-plugin-visualizer"
-import nanostoresI18n from 'astro-nanostores-i18n'
+import nanostoresI18n from "astro-nanostores-i18n"
 import sitemap from "@astrojs/sitemap"
 import starlight from "@astrojs/starlight"
 import { ui } from "@rimelight/ui/integrations"
@@ -44,10 +44,12 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [visualizer({
-      emitFile: true,
-      filename: "stats.html",
-    })]
+    plugins: [
+      visualizer({
+        emitFile: true,
+        filename: "stats.html"
+      })
+    ]
   },
 
   site: "https://playground.rimelight.com",
