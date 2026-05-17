@@ -1,11 +1,11 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '@/consts';
+import { siteConfig } from '@/site.config';
 import RLAPlaceholder from "@rimelight/ui/components/astro/RLAPlaceholder.astro";
 import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue";
 ---
 
-<AppLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<AppLayout title={siteConfig.name} description={siteConfig.description}>
 	<main>
 		<h1>🧑‍🚀 Hello, Astronaut!</h1>
 		<p>
