@@ -1,25 +1,20 @@
-import headerTheme from "./header.theme"
-import footerTheme from "./footer.theme"
-import scrollToTopTheme from "./scroll-to-top.theme"
-import buttonTheme from "./button.theme"
-import logoTheme from "./logo.theme"
-import iconTheme from "./icon.theme"
-import placeholderTheme from "./placeholder.theme"
-import sectionTheme from "./section.theme"
+import type { ComponentTheme } from "../utils"
 
-/**
- * Default UI configuration for all components. This is the baseline that gets merged with
- * user-provided overrides via the Astro integration options.
- */
-export const defaultUIConfig = {
-  "header": headerTheme,
-  "footer": footerTheme,
-  "logo": logoTheme,
-  "scroll-to-top": scrollToTopTheme,
-  "button": buttonTheme,
-  "icon": iconTheme,
-  "placeholder": placeholderTheme,
-  "section": sectionTheme
-} as const
+const themeModules = import.meta.glob<
+  { default: ComponentTheme }
+>("./*.theme.ts", { eager: true })
+
+function kebabToCamel(str: string): string {
+  return str.replace(/-([a-z])/g, (_, char) => char.toUpperCase())
+}
+
+function themeNameFromFile(path: string): string {
+  const fileName = path.replace(/^\.\/|\.theme\.ts$/g, "")
+  return kebabToCamel(fileName)
+}
+
+export const defaultUIConfig: Record<string, ComponentTheme> = Object.fromEntries(
+  Object.entries(themeModules).map(([path, module]) => [themeNameFromFile(path), module.default])
+)
 
 export type DefaultUIConfig = typeof defaultUIConfig

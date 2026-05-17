@@ -29,7 +29,7 @@ const {
   class: className
 } = defineProps<RLVScrollToTopProps>()
 
-const classes = resolveClasses(scrollToTop, { color }, useUi("scroll-to-top", uiProp), className)
+const classes = resolveClasses(scrollToTop, { color }, useUi("scrollToTop", uiProp), className)
 
 const {
   isVisible,

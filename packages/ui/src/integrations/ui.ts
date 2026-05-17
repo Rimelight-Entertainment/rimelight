@@ -5,17 +5,12 @@ import uiPlugin from "@nuxt/ui/vite"
 import defu from "defu"
 import tailwindcss from "@tailwindcss/vite"
 import { defaultUIConfig } from "../themes"
+import type { ComponentTheme } from "../utils"
 
 /**
  * Shape of the `ui` config that can be passed to the integration.
  */
-export type UIConfigOverrides = {
-  "button"?: Partial<(typeof defaultUIConfig)["button"]>
-  "header"?: Partial<(typeof defaultUIConfig)["header"]>
-  "scroll-to-top"?: Partial<(typeof defaultUIConfig)["scroll-to-top"]>
-  "logo"?: Partial<(typeof defaultUIConfig)["logo"]>
-  "section"?: Partial<(typeof defaultUIConfig)["section"]>
-}
+export type UIConfigOverrides = Record<string, Partial<ComponentTheme>>
 
 export interface UIOptions {
   /**

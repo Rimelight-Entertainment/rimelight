@@ -29,7 +29,7 @@ const {
   ...rest
 } = Astro.props as RLAScrollToTopProps
 
-const classes = resolveClasses(scrollToTop, { color }, useUi("scroll-to-top", uiProp), className)
+const classes = resolveClasses(scrollToTop, { color }, useUi("scrollToTop", uiProp), className)
 
 const circumference = 2 * Math.PI * 45
 const percentPx = circumference / 100
