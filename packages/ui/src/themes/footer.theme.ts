@@ -1,4 +1,4 @@
-import { defineTheme } from "../utils"
+import { defineTheme } from "../utils/defineTheme"
 
 export default defineTheme({
   slots: ["root", "container", "left", "center", "right"],

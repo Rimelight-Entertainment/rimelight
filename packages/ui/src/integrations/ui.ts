@@ -5,7 +5,7 @@ import uiPlugin from "@nuxt/ui/vite"
 import defu from "defu"
 import tailwindcss from "@tailwindcss/vite"
 import { defaultUIConfig } from "../themes"
-import type { ComponentTheme } from "../utils"
+import type { ComponentTheme } from "../utils/defineTheme"
 
 /**
  * Shape of the `ui` config that can be passed to the integration.

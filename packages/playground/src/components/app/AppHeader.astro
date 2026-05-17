@@ -29,9 +29,9 @@ const items: NavigationMenuItem[] = [
     active: pathname.startsWith(getRelativeLocaleUrl(Astro.currentLocale ?? 'en', '/about').replace(/\/+$/, ''))
   },
   {
-    label: 'Legal',
-    to: getRelativeLocaleUrl(Astro.currentLocale ?? 'en', '/legal'),
-    active: pathname.startsWith(getRelativeLocaleUrl(Astro.currentLocale ?? 'en', '/legal').replace(/\/+$/, ''))
+    label: 'Components',
+    to: getRelativeLocaleUrl(Astro.currentLocale ?? 'en', '/components'),
+    active: pathname.startsWith(getRelativeLocaleUrl(Astro.currentLocale ?? 'en', '/components').replace(/\/+$/, ''))
   }
 ];
 ---

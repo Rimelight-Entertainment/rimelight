@@ -1,8 +1,6 @@
-import type { ComponentTheme } from "../utils"
+import type { ComponentTheme } from "../utils/defineTheme"
 
-const themeModules = import.meta.glob<
-  { default: ComponentTheme }
->("./*.theme.ts", { eager: true })
+const themeModules = import.meta.glob<{ default: ComponentTheme }>("./*.theme.ts", { eager: true })
 
 function kebabToCamel(str: string): string {
   return str.replace(/-([a-z])/g, (_, char) => char.toUpperCase())

@@ -1,0 +1,46 @@
+---
+import type { ComponentMetaMap, EmitMeta } from "../types"
+import meta from "virtual:rimelight-ui-docs-meta"
+
+interface Props {
+  component: string
+}
+
+const { component } = Astro.props
+
+const allMeta = meta as unknown as ComponentMetaMap
+const compMeta = allMeta[component]
+
+const emits = compMeta?.emits ?? []
+---
+
+{emits.length === 0 ? (
+  <p class="text-sm italic text-gray-500">No events emitted by this component.</p>
+) : (
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="border-b border-gray-200 dark:border-gray-700">
+          <th class="text-left py-2 px-3 font-semibold">Event</th>
+          <th class="text-left py-2 px-3 font-semibold">Payload</th>
+        </tr>
+      </thead>
+      <tbody>
+        {emits.map((emit: EmitMeta) => (
+          <tr class="border-b border-gray-100 dark:border-gray-800">
+            <td class="py-2 px-3">
+              <code class="text-sm bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+                {emit.name}
+              </code>
+            </td>
+            <td class="py-2 px-3">
+              <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded font-mono">
+                {emit.type}
+              </code>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}

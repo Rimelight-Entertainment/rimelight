@@ -5,7 +5,8 @@
     "**/*",
     "./worker-configuration.d.ts",
     "auto-imports.d.ts",
-    "components.d.ts"
+    "components.d.ts",
+    "src/env.d.ts"
   ],
   "exclude": ["dist"],
   "compilerOptions": {

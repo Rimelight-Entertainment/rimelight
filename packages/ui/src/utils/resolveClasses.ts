@@ -1,10 +1,10 @@
 import { cx } from "css-variants"
 
 export function resolveClasses<T extends (...args: never[]) => Record<string, string>>(
-    themeFn: T,
-    variants: Parameters<T>[0],
-    mergedUI: Record<string, string | undefined>,
-    rootClass?: string
+  themeFn: T,
+  variants: Parameters<T>[0],
+  mergedUI: Record<string, string | undefined>,
+  rootClass?: string
 ): Record<string, string> {
   const resolved = themeFn(variants)
   const result: Record<string, string> = {}

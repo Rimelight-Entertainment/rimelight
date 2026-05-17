@@ -1,0 +1,27 @@
+---
+import type { ComponentMetaMap } from "../types"
+import { generateThemeCode } from "../utils"
+import meta from "virtual:rimelight-ui-docs-meta"
+
+interface Props {
+  component: string
+}
+
+const { component } = Astro.props
+
+const allMeta = meta as unknown as ComponentMetaMap
+const compMeta = allMeta[component]
+
+const theme = compMeta?.theme ?? null
+const themeCode = theme ? generateThemeCode(component, theme) : null
+---
+
+{themeCode ? (
+  <div class="expressive-code">
+    <figure class="frame">
+      <pre class="language-ts overflow-x-auto"><code class="language-ts">{themeCode}</code></pre>
+    </figure>
+  </div>
+) : (
+  <p class="text-sm italic text-gray-500">No theme data available.</p>
+)}

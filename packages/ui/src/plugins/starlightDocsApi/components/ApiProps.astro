@@ -1,0 +1,47 @@
+---
+import type { ComponentMetaMap, PropMeta } from "../types"
+import { filterProps } from "../utils"
+import meta from "virtual:rimelight-ui-docs-meta"
+
+interface Props {
+  component: string
+  hide?: string[]
+  show?: string[]
+}
+
+const { component, hide = ["class"], show } = Astro.props
+
+const allMeta = meta as unknown as ComponentMetaMap
+const compMeta = allMeta[component]
+
+const filterOpts: { hide?: string[]; show?: string[] } = { hide }
+if (show !== undefined) filterOpts.show = show
+const props = filterProps(compMeta?.props ?? [], filterOpts)
+---
+
+{props.length > 0 ? (
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Required</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {props.map((prop: PropMeta) => (
+        <tr>
+          <td><code>{prop.name}</code></td>
+          <td><code>{prop.type}</code></td>
+          <td>{prop.required ? "Yes" : "No"}</td>
+          <td>{prop.default !== undefined ? <code>{prop.default}</code> : "—"}</td>
+          <td>{prop.description || "—"}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+) : (
+  <p>No props to display.</p>
+)}

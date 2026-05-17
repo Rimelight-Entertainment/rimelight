@@ -22,6 +22,11 @@ declare module "virtual:rimelight-starlight-addons-config" {
   export default config
 }
 
+declare module "virtual:rimelight-ui-docs-meta" {
+  const meta: Record<string, unknown>
+  export default meta
+}
+
 declare module "turndown" {
   class TurndownService {
     constructor(options?: Record<string, unknown>)

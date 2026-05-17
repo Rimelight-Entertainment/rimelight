@@ -59,7 +59,8 @@
   "scripts": {
     "prepare": "vp config",
     "knip": "knip",
-    "astro": "astro"
+    "astro": "astro",
+    "docs:meta": "tsx scripts/extract-meta.ts"
   },
   "dependencies": {
     "@astrojs/prism": "^4.0.1",
