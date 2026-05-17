@@ -2,7 +2,7 @@
  * Theme configuration for the Button component. Defines the slots, base styles, and an extensive
  * set of variants including color logic.
  */
-export const buttonTheme = {
+export default {
   slots: ["root", "label", "leadingIcon", "trailingIcon"],
   base: {
     root: [
@@ -393,7 +393,6 @@ export const buttonTheme = {
         root: "text-source-600 hover:underline hover:decoration-source/30"
       }
     },
-    // soft variant compound variants
     {
       variant: "soft",
       color: "primary",
@@ -457,7 +456,6 @@ export const buttonTheme = {
         root: "text-source-600 bg-source/10 hover:bg-source/20 focus-visible:ring-source/40"
       }
     },
-    // square + size compound variants (explicit width to match height)
     {
       square: true,
       size: "xs",
@@ -493,7 +491,6 @@ export const buttonTheme = {
         root: "p-2 w-11"
       }
     },
-    // loading compound variants
     {
       loading: true,
       leading: true,

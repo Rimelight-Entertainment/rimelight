@@ -2,8 +2,8 @@
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
-import { useUi } from "../../composables"
-import { iconTheme } from "../../themes/icon.theme"
+import { useUi } from "@/composables"
+import iconTheme from "@/themes/icon.theme"
 
 const icon = scv({
   slots: [...iconTheme.slots],

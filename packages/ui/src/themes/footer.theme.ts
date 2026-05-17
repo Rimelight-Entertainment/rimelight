@@ -2,7 +2,7 @@
  * Theme configuration for the Footer component. Defines the slots, base styles, and variants for
  * layout management.
  */
-export const footerTheme = {
+export default {
   slots: ["root", "container", "left", "center", "right"],
   base: {
     root: "py-8 lg:py-12",

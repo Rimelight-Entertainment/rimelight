@@ -1,30 +1,4 @@
-/**
- * Theme configuration for the Section component. Combines PageSection, PageHero, and PageCTA
- * into a single component with variants.
- *
- * Variants:
- * - `default` — standard page section (like Nuxt UI PageSection)
- * - `hero` — hero section with larger text (like Nuxt UI PageHero)
- * - `cta` — call-to-action section with style variants (like Nuxt UI PageCTA)
- *
- * Slots:
- * - `root` — the root element
- * - `background` — background content (image/video) that covers the section
- * - `container` — inner container
- * - `wrapper` — content wrapper
- * - `header` — header section with leading, headline, title, description
- * - `leading` — leading icon container
- * - `leadingIcon` — leading icon
- * - `headline` — headline text
- * - `title` — title heading
- * - `description` — description text
- * - `body` — body content (features, etc.)
- * - `features` — features list
- * - `footer` — footer section
- * - `links` — links/buttons container
- */
-
-export const sectionTheme = {
+export default {
   slots: [
     "root",
     "background",
@@ -71,8 +45,6 @@ export const sectionTheme = {
         description: "text-lg sm:text-xl/8",
         headline: "mb-4",
         leading: "mb-6",
-        title: "text-5xl sm:text-7xl",
-        description: "text-lg sm:text-xl/8",
         body: "mt-10",
         footer: "mt-10",
         links: "mt-10"

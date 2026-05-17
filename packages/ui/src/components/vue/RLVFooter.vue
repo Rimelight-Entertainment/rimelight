@@ -2,8 +2,8 @@
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
-import { useUi } from "../../composables"
-import { footerTheme } from "../../themes/footer.theme.ts"
+import { useUi } from "@/composables"
+import footerTheme from "@/themes/footer.theme"
 
 const footer = scv({
   slots: [...footerTheme.slots],

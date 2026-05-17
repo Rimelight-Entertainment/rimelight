@@ -2,7 +2,7 @@
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import defu from "defu"
-import { placeholderTheme } from "../../themes/placeholder.theme.ts"
+import placeholderTheme from "@/themes/placeholder.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const placeholder = scv({

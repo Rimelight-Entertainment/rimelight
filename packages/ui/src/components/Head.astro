@@ -3,13 +3,31 @@ import { ClientRouter } from 'astro:transitions';
 import type { SiteConfig } from '@/config';
 import { App } from '../nuxt.ts';
 
+export interface OGImage {
+  /** Image URL (relative or absolute) */
+  src: string;
+  /** Alt text for the image */
+  alt: string;
+}
+
+export interface RSSFeed {
+  /** RSS feed URL */
+  href: string;
+  /** Feed title (defaults to "RSS") */
+  title?: string;
+}
+
 export interface HeadProps {
   /** Page title */
   title?: string;
   /** Page description */
   description?: string;
-  /** Open Graph image URL */
-  ogImage?: string;
+  /** Open Graph image with alt text */
+  ogImage?: OGImage;
+  /** Open Graph type (e.g., "website", "article") */
+  ogType?: string;
+  /** Open Graph locale (defaults to "en_US") */
+  ogLocale?: string;
   /** Whether to prevent indexing */
   noindex?: boolean;
   /** Whether this is a 404 page */
@@ -28,12 +46,16 @@ export interface HeadProps {
   charset?: string;
   /** Meta viewport */
   viewport?: string;
+  /** RSS feed configuration */
+  rssFeed?: RSSFeed;
 }
 
 const {
   title,
   description,
   ogImage,
+  ogType = 'website',
+  ogLocale = 'en_US',
   noindex = false,
   is404 = false,
   robots,
@@ -41,40 +63,55 @@ const {
   languageAlternates = [],
   config,
   transitions = true,
-  charset = "utf-8",
-  viewport = "width=device-width,initial-scale=1",
-} = Astro.props as HeadProps
+  charset = 'utf-8',
+  viewport = 'width=device-width,initial-scale=1',
+  rssFeed,
+} = Astro.props as HeadProps;
 
 // Resolve defaults from config if available
-const siteName = config?.name || "Rimelight";
-const siteUrl = config?.url || "";
-const siteDescription = config?.description || "";
-const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || "";
+const siteName = config?.name || 'Rimelight';
+const siteDescription = config?.description || '';
+const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || '';
 const themeColor = config?.branding?.colors?.themeColor;
-const favicon = config?.branding?.favicon?.svg || "/favicon.svg";
+const favicon = config?.branding?.favicon?.svg || '/favicon.svg';
 const twitterHandle = config?.seo?.authorHandle;
 const titleTemplate = config?.seo?.titleTemplate || `%s | ${siteName}`;
 
 // Calculated Values
-const displayTitle = is404 
-  ? `404 - Not Found | ${siteName}` 
-  : title 
-    ? titleTemplate.replace('%s', title) 
+const displayTitle = is404
+  ? `404 - Not Found | ${siteName}`
+  : title
+    ? titleTemplate.replace('%s', title)
     : siteName;
 
 const finalDescription = description || siteDescription;
 const safeDescription = finalDescription && config?.seo?.maxDescriptionLength
-  ? (finalDescription.length > config.seo.maxDescriptionLength 
-      ? finalDescription.slice(0, config.seo.maxDescriptionLength - 3) + "..." 
+  ? (finalDescription.length > config.seo.maxDescriptionLength
+      ? finalDescription.slice(0, config.seo.maxDescriptionLength - 3) + '...'
       : finalDescription)
   : finalDescription;
 
-const finalOgImage = ogImage || ogImageFallback;
-const absoluteOgImage = finalOgImage 
-  ? (finalOgImage.startsWith('http') ? finalOgImage : `${siteUrl}${finalOgImage}`)
+const finalOgImage = ogImage || (ogImageFallback ? { src: ogImageFallback, alt: siteName } : undefined);
+const absoluteOgImage = finalOgImage
+  ? new URL(finalOgImage.src, Astro.site).toString()
   : undefined;
 
-const finalCanonical = canonical || (!is404 ? Astro.url.href : undefined);
+function formatCanonicalURL(url: string | URL) {
+  const resolved = new URL(url, Astro.site);
+  const path = resolved.toString();
+  const hasQueryParams = path.includes('?');
+  if (hasQueryParams) {
+    return path.replace(/\/?$/, '');
+  }
+  return path.replace(/\/?$/, '/');
+}
+
+const finalCanonical = canonical
+  ? formatCanonicalURL(canonical)
+  : (!is404 ? formatCanonicalURL(Astro.url) : undefined);
+
+const isIndexable = !noindex && !is404;
+const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow';
 ---
 
 <!-- Basic Metadata -->
@@ -85,10 +122,13 @@ const finalCanonical = canonical || (!is404 ? Astro.url.href : undefined);
 <!-- Sitemap -->
 <link rel="sitemap" href="/sitemap-index.xml" />
 
+<!-- RSS Feed -->
+{rssFeed && <link rel="alternate" type="application/rss+xml" href={rssFeed.href} title={rssFeed.title || 'RSS'} />}
+
 <!-- SEO -->
 <title>{displayTitle}</title>
 {safeDescription && <meta name="description" content={safeDescription} />}
-{robots ? <meta name="robots" content={robots} /> : (noindex || is404) && <meta name="robots" content="noindex, nofollow" />}
+<meta name="robots" content={robots || defaultRobots} />
 {finalCanonical && <link rel="canonical" href={finalCanonical} />}
 
 <!-- i18n Alternates -->
@@ -97,11 +137,13 @@ const finalCanonical = canonical || (!is404 ? Astro.url.href : undefined);
 ))}
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
+<meta property="og:locale" content={ogLocale} />
 <meta property="og:url" content={Astro.url.href} />
 <meta property="og:title" content={title || siteName} />
 {safeDescription && <meta property="og:description" content={safeDescription} />}
 {absoluteOgImage && <meta property="og:image" content={absoluteOgImage} />}
+{finalOgImage && <meta property="og:image:alt" content={finalOgImage.alt} />}
 <meta property="og:site_name" content={siteName} />
 
 <!-- Twitter -->
@@ -110,6 +152,7 @@ const finalCanonical = canonical || (!is404 ? Astro.url.href : undefined);
 <meta property="twitter:title" content={title || siteName} />
 {safeDescription && <meta property="twitter:description" content={safeDescription} />}
 {absoluteOgImage && <meta property="twitter:image" content={absoluteOgImage} />}
+{finalOgImage && <meta property="twitter:image:alt" content={finalOgImage.alt} />}
 {twitterHandle && <meta property="twitter:site" content={twitterHandle} />}
 {twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
 

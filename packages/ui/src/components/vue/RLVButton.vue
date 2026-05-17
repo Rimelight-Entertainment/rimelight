@@ -3,7 +3,7 @@ import { computed, useSlots } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import defu from "defu"
-import { buttonTheme } from "../../themes/button.theme.ts"
+import buttonTheme from "@/themes/button.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const button = scv({

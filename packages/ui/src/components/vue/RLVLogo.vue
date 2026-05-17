@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import defu from "defu"
-import { logoTheme } from "../../themes/logo.theme.ts"
+import logoTheme from "@/themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const logo = scv({

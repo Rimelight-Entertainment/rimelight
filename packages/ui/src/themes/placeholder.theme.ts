@@ -2,7 +2,7 @@
  * Theme configuration for the Placeholder component. Defines the slots, base styles for a
  * placeholder container with a decorative SVG pattern overlay.
  */
-export const placeholderTheme = {
+export default {
   slots: ["base", "svg"],
   base: {
     base: "relative flex items-center justify-center overflow-hidden rounded-sm border-1 border-dashed border-primary px-4 opacity-75",

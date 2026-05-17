@@ -2,7 +2,7 @@
  * Theme configuration for the ScrollToTop component. Defines the slots, base styles, and variants
  * for the scroll-to-top button with progress indicator.
  */
-export const scrollToTopTheme = {
+export default {
   slots: ["root", "button", "progressBase", "svg", "iconContainer", "icon"],
   base: {
     root: "fixed bottom-6 right-6 z-50",

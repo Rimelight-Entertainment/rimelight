@@ -2,9 +2,9 @@
 import { computed, onMounted, onUnmounted, ref } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
-import { useUi } from "../../composables"
-import { headerTheme } from "../../themes/header.theme.ts"
-import { getHeaderStack } from "../../utils/headerStack.ts"
+import { useUi } from "@/composables"
+import headerTheme from "@/themes/header.theme"
+import { getHeaderStack } from "@/utils/headerStack"
 
 // ── Style engine ─────────────────────────────────────────────────────────────
 

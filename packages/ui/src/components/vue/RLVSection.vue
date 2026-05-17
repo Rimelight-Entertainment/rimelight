@@ -2,8 +2,8 @@
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
-import { useUi } from "../../composables"
-import { sectionTheme } from "../../themes/section.theme.ts"
+import { useUi } from "@/composables"
+import sectionTheme from "@/themes/section.theme"
 
 const section = scv({
   slots: [...sectionTheme.slots],
@@ -16,10 +16,8 @@ const section = scv({
 
 export interface RLVSectionProps {
   /**
-   * The variant of the section.
-   * - `default` — standard page section
-   * - `hero` — hero section with larger text
-   * - `cta` — call-to-action section with style variants
+   * The variant of the section. - `default` — standard page section - `hero` — hero section with
+   * larger text - `cta` — call-to-action section with style variants
    *
    * @default "default"
    */
@@ -99,11 +97,7 @@ const resolvedClasses = computed(() => {
 </script>
 
 <template>
-  <div
-      data-slot="rlv-section"
-      :class="[resolvedClasses.root, className]"
-      v-bind="$attrs"
-  >
+  <div data-slot="rlv-section" :class="[resolvedClasses.root, className]" v-bind="$attrs">
     <slot name="background">
       <div :class="resolvedClasses.background" data-slot="background">
         <slot name="background" />

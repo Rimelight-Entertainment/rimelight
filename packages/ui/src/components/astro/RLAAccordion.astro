@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import { Icon } from 'astro-icon/components';
+
+export type Props = HTMLAttributes<'details'> & {
+    summary: string;
+};
+
+const { summary, class: className, ...attrs } = Astro.props;
+---
+
+<details class:list={['group', className]} {...attrs}>
+    <summary
+            class="accordion code flex cursor-pointer list-none items-center justify-between text-astro-gray-200"
+    >
+        <span>{summary}</span>
+        <span class="i-lucide-chevron s-4 rotate-0 transition-transform duration-300 ease-in-out group-open:-rotate-180" />
+    </summary>
+
+    <div class="pt-4">
+        <slot />
+    </div>
+</details>

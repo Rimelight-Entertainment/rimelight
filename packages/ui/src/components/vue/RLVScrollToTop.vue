@@ -2,8 +2,8 @@
 import { scv, cx } from "css-variants"
 import { twMerge } from "tailwind-merge"
 import defu from "defu"
-import { scrollToTopTheme } from "../../themes/scroll-to-top.theme.ts"
-import { useScrollToTop } from "../../composables/useScrollToTop"
+import scrollToTopTheme from "@/themes/scroll-to-top.theme"
+import { useScrollToTop } from "@/composables/useScrollToTop"
 import { computed } from "vue"
 import { getUIConfig } from "virtual:rimelight-ui"
 

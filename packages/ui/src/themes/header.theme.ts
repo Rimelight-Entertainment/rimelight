@@ -19,7 +19,7 @@
  *   header layers. Top offset and z-index are applied via inline style (top prop + stackIndex prop)
  *   rather than theme classes.
  */
-export const headerTheme = {
+export default {
   slots: ["root", "content", "container", "left", "center", "right"],
   base: {
     root: "w-full",

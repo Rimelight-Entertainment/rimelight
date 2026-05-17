@@ -2,7 +2,7 @@
 import { scv, cx } from "css-variants";
 import { twMerge } from "tailwind-merge";
 import defu from "defu";
-import { headerTheme } from "../../themes/header.theme.ts";
+import headerTheme from "@/themes/header.theme"
 import { getUIConfig } from "virtual:rimelight-ui";
 
 const header = scv({
@@ -123,7 +123,7 @@ const zIndex = 100 - stackIndex;
 */}
 {fixed && (
   <script>
-    import { getHeaderStack } from "../../utils/headerStack";
+    import { getHeaderStack } from "@/utils/headerStack"
 
     // This script runs exactly once per page load, managing all Astro headers
     const stack = getHeaderStack();

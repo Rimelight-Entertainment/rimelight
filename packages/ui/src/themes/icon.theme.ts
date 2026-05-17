@@ -1,4 +1,4 @@
-export const iconTheme = {
+export default {
   slots: ["root"],
   base: {
     root: ["inline-block", "align-middle"]
