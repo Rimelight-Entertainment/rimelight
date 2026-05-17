@@ -1,71 +1,34 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { scv, cx } from "css-variants"
-import { twMerge } from "tailwind-merge"
-import { useUi } from "@/composables"
-import footerTheme from "@/themes/footer.theme"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ComponentVariants } from "../../types"
+import footerTheme from "../../themes/footer.theme"
 
-const footer = scv({
-  slots: [...footerTheme.slots],
-  base: footerTheme.base,
-  variants: footerTheme.variants,
-  defaultVariants: footerTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args))
-})
+const footer = scv(footerTheme)
+type FooterVariants = ComponentVariants<typeof footerTheme>
 
 export interface RLVFooterProps {
-  /**
-   * Whether to contain the footer content in a max-width container.
-   *
-   * @default false
-   */
-  contain?: boolean
-  /**
-   * UI overrides for individual slots, derived from the footer theme.
-   */
-  ui?: Partial<Record<keyof typeof footerTheme.base, string>>
-  /**
-   * External class — applied to the root element.
-   */
+  contain?: FooterVariants["contain"]
+  ui?: Partial<Record<string, string>>
   class?: string
 }
 
 const { contain = false, class: className, ui: uiProp } = defineProps<RLVFooterProps>()
 
 defineSlots<{
-  /**
-   * Content to display on the left side of the footer.
-   */
   left(props: {}): any
-  /**
-   * Content to display in the center of the footer.
-   */
   center(props: {}): any
-  /**
-   * Content to display on the right side of the footer.
-   */
   right(props: {}): any
 }>()
 
-const mergedUI = useUi("footer", uiProp as Record<string, unknown> | undefined)
-
-const resolvedClasses = computed(() => {
-  const classes = footer({
-    contain
-  })
-
-  return {
-    root: twMerge(classes.root, mergedUI.value.root as string | undefined),
-    container: twMerge(classes.container, mergedUI.value.container as string | undefined),
-    left: twMerge(classes.left, mergedUI.value.left as string | undefined),
-    center: twMerge(classes.center, mergedUI.value.center as string | undefined),
-    right: twMerge(classes.right, mergedUI.value.right as string | undefined)
-  }
-})
+const resolvedClasses = computed(() =>
+  resolveClasses(footer, { contain }, useUi("footer", uiProp), className)
+)
 </script>
 
 <template>
-  <footer :class="[resolvedClasses.root, className]" data-slot="rlv-footer" v-bind="$attrs">
+  <footer :class="[resolvedClasses.root]" data-slot="rlv-footer" v-bind="$attrs">
     <div :class="resolvedClasses.container">
       <div :class="resolvedClasses.left" data-slot="footer-left">
         <slot name="left" />

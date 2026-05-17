@@ -1,8 +1,6 @@
-/**
- * Theme configuration for the Button component. Defines the slots, base styles, and an extensive
- * set of variants including color logic.
- */
-export default {
+import { defineTheme } from "../utils"
+
+export default defineTheme({
   slots: ["root", "label", "leadingIcon", "trailingIcon"],
   base: {
     root: [
@@ -520,4 +518,4 @@ export default {
     color: "primary",
     size: "md"
   }
-} as const
+})

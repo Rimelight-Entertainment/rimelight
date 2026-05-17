@@ -1,48 +1,18 @@
 ---
-import { scv, cx } from "css-variants"
-import { twMerge } from "tailwind-merge"
-import defu from "defu"
-import logoTheme from "@/themes/logo.theme"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import logoTheme from "../../themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
-const logo = scv({
-  slots: [...logoTheme.slots],
-  base: logoTheme.base,
-  variants: logoTheme.variants,
-  defaultVariants: logoTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args)),
-});
+const logo = scv(logoTheme)
 
 export interface RLALogoProps {
-  /**
-   * The variant of the logo to display.
-   * @default "logomark"
-   */
   variant?: string;
-  /**
-   * Override the color mode.
-   */
   mode?: "color" | "white" | "black";
-  /**
-   * The URL to link to.
-   * @default "/"
-   */
   href?: string;
-  /**
-   * UI overrides for individual slots, derived from the logo theme.
-   */
-  ui?: Partial<Record<keyof typeof logoTheme.base, string>>;
-  /**
-   * External class — applied to the root element.
-   */
+  ui?: Partial<Record<string, string>>;
   class?: string;
-  /**
-   * The alt text for the logo image.
-   */
   alt?: string;
-  /**
-   * Standard HTML attributes for <a>
-   */
   [key: string]: unknown;
 }
 
@@ -56,16 +26,11 @@ const {
   ...rest
 } = Astro.props as RLALogoProps;
 
+const classes = resolveClasses(logo, {}, useUi("logo", uiProp), className);
+
 const globalConfig = getUIConfig();
-
-const mergedUI = defu(
-  uiProp ?? {},
-  (globalConfig.logo as Record<string, unknown>) ?? {},
-) as Record<keyof typeof logoTheme.base, string | undefined>;
-
-const { root } = logo();
-
 const rcLogos = globalConfig.logos as Record<string, any>;
+
 let logoSrc: string | null = null;
 
 if (rcLogos && typeof rcLogos === "object") {
@@ -82,7 +47,7 @@ const isIcon = logoSrc && (logoSrc.includes(":") || logoSrc.startsWith("i-"));
 ---
 
 <a
-  class={twMerge(root, mergedUI.root, className)}
+  class={classes.root}
   href={href}
   aria-label={alt || variant}
   data-slot="rla-logo"

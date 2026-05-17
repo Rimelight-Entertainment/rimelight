@@ -1,4 +1,6 @@
-export default {
+import { defineTheme } from "../utils"
+
+export default defineTheme({
   slots: ["root"],
   base: {
     root: ["inline-block", "align-middle"]
@@ -15,4 +17,4 @@ export default {
   defaultVariants: {
     size: "md"
   }
-} as const
+})

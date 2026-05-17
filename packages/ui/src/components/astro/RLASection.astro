@@ -1,68 +1,24 @@
 ---
-import { scv, cx } from "css-variants"
-import { twMerge } from "tailwind-merge"
-import defu from "defu"
-import sectionTheme from "@/themes/section.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ComponentVariants } from "../../types"
+import sectionTheme from "../../themes/section.theme"
 
-const section = scv({
-  slots: [...sectionTheme.slots],
-  base: sectionTheme.base,
-  variants: sectionTheme.variants,
-  compoundVariants: [...sectionTheme.compoundVariants],
-  defaultVariants: sectionTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args)),
-});
+const section = scv(sectionTheme)
+type SectionVariants = ComponentVariants<typeof sectionTheme>
 
 export interface RLASectionProps {
-  /**
-   * The element or component this component should render as.
-   *
-   * @default 'section'
-   */
   as?: string;
-  /**
-   * The variant of the section.
-   * - `default` — standard page section
-   * - `hero` — hero section with larger text
-   * - `cta` — call-to-action section with style variants
-   *
-   * @default 'default'
-   */
-  variant?: "default" | "hero" | "cta";
-  /**
-   * The headline displayed above the title.
-   */
+  variant?: SectionVariants['variant'];
   headline?: string;
-  /**
-   * The icon displayed above the title.
-   */
   icon?: string;
   title?: string;
   description?: string;
-  /**
-   * The orientation of the section.
-   *
-   * @default 'vertical'
-   */
-  orientation?: "horizontal" | "vertical";
-  /**
-   * Reverse the order of the default slot.
-   *
-   * @default false
-   */
+  orientation?: SectionVariants['orientation'];
   reverse?: boolean;
-  /**
-   * The style variant when variant is 'cta'.
-   *
-   * @default 'outline'
-   */
-  ctaVariant?: "solid" | "outline" | "soft" | "subtle" | "naked";
+  ctaVariant?: SectionVariants['ctaVariant'];
   ui?: Partial<Record<string, string>>;
   class?: string;
-  /**
-   * Standard HTML attributes for the root element.
-   */
   [key: string]: unknown;
 }
 
@@ -77,38 +33,29 @@ const {
   ...rest
 } = Astro.props as RLASectionProps;
 
-const globalConfig = getUIConfig();
-
-const mergedUI = defu(
-  uiProp ?? {},
-  (globalConfig.section as Record<string, unknown>) ?? {},
-) as Record<string, string | undefined>;
-
-const resolved = section({
+const classes = resolveClasses(section, {
   variant,
   orientation,
   reverse,
-  ctaVariant: variant === "cta" ? ctaVariant : undefined,
+  ...(variant === "cta" && { ctaVariant }),
   headline: Astro.slots.has("headline") || Astro.props.headline,
   title: Astro.slots.has("title") || Astro.props.title,
   description: Astro.slots.has("description") || Astro.props.description,
   body: Astro.slots.has("body") || Astro.slots.has("features")
-});
+}, useUi("section", uiProp), className);
 
 const Tag = as;
-
-const titleTag = variant === "hero" ? "h1" : "h2";
 ---
 
 <Tag
   data-orientation={orientation}
   data-slot="rla-section"
-  class:list={[twMerge(resolved.root, mergedUI.root, className)]}
+  class:list={[classes.root]}
   {...rest}
 >
   <slot name="background">
     {Astro.slots.has("background") && (
-      <div class:list={[twMerge(resolved.background, mergedUI.background)]} data-slot="background">
+      <div class:list={[classes.background]} data-slot="background">
         <slot name="background" />
       </div>
     )}
@@ -118,28 +65,28 @@ const titleTag = variant === "hero" ? "h1" : "h2";
 
   <div
     data-slot="container"
-    class:list={[twMerge(resolved.container, mergedUI.container)]}
+    class:list={[classes.container]}
   >
     {(Astro.slots.has("header") || Astro.props.icon || Astro.props.headline || Astro.props.title || Astro.props.description || Astro.slots.has("body") || Astro.slots.has("footer") || Astro.slots.has("links") || Astro.slots.has("features")) && (
       <div
         data-slot="wrapper"
-        class:list={[twMerge(resolved.wrapper, mergedUI.wrapper)]}
+        class:list={[classes.wrapper]}
       >
         {(Astro.slots.has("header") || Astro.props.icon || Astro.props.headline || Astro.props.title || Astro.props.description) && (
           <div
             data-slot="header"
-            class:list={[twMerge(resolved.header, mergedUI.header)]}
+            class:list={[classes.header]}
           >
             <slot name="header">
               {(Astro.props.icon || Astro.slots.has("leading")) && (
                 <div
                   data-slot="leading"
-                  class:list={[twMerge(resolved.leading, mergedUI.leading)]}
+                  class:list={[classes.leading]}
                 >
-                  <slot name="leading" {...{ ui: resolved }}>
+                  <slot name="leading" {...{ ui: classes }}>
                     {Astro.props.icon && (
                       <span
-                        class:list={[resolved.leadingIcon, mergedUI.leadingIcon]}
+                        class:list={[classes.leadingIcon]}
                         data-slot="leading-icon"
                       >
                         <span class={Astro.props.icon} aria-hidden="true" />
@@ -152,7 +99,7 @@ const titleTag = variant === "hero" ? "h1" : "h2";
               {(Astro.props.headline || Astro.slots.has("headline")) && (
                 <div
                   data-slot="headline"
-                  class:list={[twMerge(resolved.headline, mergedUI.headline)]}
+                  class:list={[classes.headline]}
                 >
                   <slot name="headline">
                     {Astro.props.headline}
@@ -162,9 +109,9 @@ const titleTag = variant === "hero" ? "h1" : "h2";
 
               {(Astro.props.title || Astro.slots.has("title")) && (
                 <component
-                  is={titleTag}
+                  is={variant === "hero" ? "h1" : "h2"}
                   data-slot="title"
-                  class:list={[twMerge(resolved.title, mergedUI.title)]}
+                  class:list={[classes.title]}
                 >
                   <slot name="title">
                     {Astro.props.title}
@@ -175,7 +122,7 @@ const titleTag = variant === "hero" ? "h1" : "h2";
               {(Astro.props.description || Astro.slots.has("description")) && (
                 <div
                   data-slot="description"
-                  class:list={[twMerge(resolved.description, mergedUI.description)]}
+                  class:list={[classes.description]}
                 >
                   <slot name="description">
                     {Astro.props.description}
@@ -189,13 +136,13 @@ const titleTag = variant === "hero" ? "h1" : "h2";
         {(Astro.slots.has("body") || Astro.slots.has("features")) && (
           <div
             data-slot="body"
-            class:list={[twMerge(resolved.body, mergedUI.body)]}
+            class:list={[classes.body]}
           >
             <slot name="body">
               {Astro.slots.has("features") && (
                 <ul
                   data-slot="features"
-                  class:list={[twMerge(resolved.features, mergedUI.features)]}
+                  class:list={[classes.features]}
                 >
                   <slot name="features" />
                 </ul>
@@ -207,13 +154,13 @@ const titleTag = variant === "hero" ? "h1" : "h2";
         {(Astro.slots.has("footer") || Astro.slots.has("links")) && (
           <div
             data-slot="footer"
-            class:list={[twMerge(resolved.footer, mergedUI.footer)]}
+            class:list={[classes.footer]}
           >
             <slot name="footer">
               {Astro.slots.has("links") && (
                 <div
                   data-slot="links"
-                  class:list={[twMerge(resolved.links, mergedUI.links)]}
+                  class:list={[classes.links]}
                 >
                   <slot name="links" />
                 </div>

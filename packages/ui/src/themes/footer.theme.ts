@@ -1,8 +1,6 @@
-/**
- * Theme configuration for the Footer component. Defines the slots, base styles, and variants for
- * layout management.
- */
-export default {
+import { defineTheme } from "../utils"
+
+export default defineTheme({
   slots: ["root", "container", "left", "center", "right"],
   base: {
     root: "py-8 lg:py-12",
@@ -26,4 +24,4 @@ export default {
   defaultVariants: {
     contain: false
   }
-} as const
+})

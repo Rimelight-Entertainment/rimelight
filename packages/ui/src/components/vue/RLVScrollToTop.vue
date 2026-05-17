@@ -1,65 +1,23 @@
 <script setup lang="ts">
-import { scv, cx } from "css-variants"
-import { twMerge } from "tailwind-merge"
-import defu from "defu"
-import scrollToTopTheme from "@/themes/scroll-to-top.theme"
-import { useScrollToTop } from "@/composables/useScrollToTop"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ComponentVariants } from "../../types"
+import scrollToTopTheme from "../../themes/scroll-to-top.theme"
+import { useScrollToTop } from "../../composables/useScrollToTop"
 import { computed } from "vue"
-import { getUIConfig } from "virtual:rimelight-ui"
+
+const scrollToTop = scv(scrollToTopTheme)
+type ScrollToTopVariants = ComponentVariants<typeof scrollToTopTheme>
 
 export interface RLVScrollToTopProps {
-  /**
-   * Button color.
-   *
-   * @default "primary"
-   */
-  color?: keyof typeof scrollToTopTheme.variants.color
-  /**
-   * Transition duration for the progress circle (in seconds).
-   *
-   * @default 0.1
-   */
-  duration?: number
-  /**
-   * Scroll threshold (in pixels) before the button becomes visible.
-   *
-   * @default 200
-   */
-  threshold?: number
-  /**
-   * Whether to show the scroll progress indicator.
-   *
-   * @default false
-   */
-  showProgress?: boolean
-  /**
-   * Stroke width of the progress circle.
-   *
-   * @default 6
-   */
+  color?: ScrollToTopVariants["color"]
   progressWidth?: number
-  /**
-   * UI overrides for individual slots, derived from the scroll-to-top theme.
-   */
-  ui?: Partial<Record<keyof typeof scrollToTopTheme.base, string>>
-  /**
-   * External class — applied to the root element.
-   */
+  duration?: number
+  threshold?: number
+  showProgress?: boolean
+  ui?: Partial<Record<string, string>>
   class?: string
-  /**
-   * Standard HTML attributes.
-   */
-  [key: string]: unknown
 }
-
-const scrollToTop = scv({
-  slots: [...scrollToTopTheme.slots],
-  base: scrollToTopTheme.base,
-  variants: scrollToTopTheme.variants,
-  compoundVariants: [...scrollToTopTheme.compoundVariants],
-  defaultVariants: scrollToTopTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args))
-})
 
 const {
   color = "primary",
@@ -71,23 +29,7 @@ const {
   class: className
 } = defineProps<RLVScrollToTopProps>()
 
-const globalConfig = getUIConfig()
-
-const mergedUI = defu(
-  uiProp ?? {},
-  (globalConfig["scroll-to-top"] as Record<string, unknown>) ?? {}
-) as Record<keyof typeof scrollToTopTheme.base, string | undefined>
-
-const {
-  root,
-  button,
-  progressBase,
-  svg: svgClass,
-  iconContainer,
-  icon
-} = scrollToTop({
-  color
-})
+const classes = resolveClasses(scrollToTop, { color }, useUi("scroll-to-top", uiProp), className)
 
 const {
   isVisible,
@@ -107,25 +49,12 @@ const durationInSeconds = computed(() => `${duration}s`)
 
 <template>
   <div
-    :class="[
-      'rla-scroll-to-top fixed bottom-6 right-6 z-50',
-      { visible: isVisible },
-      twMerge(root, mergedUI.root, className)
-    ]"
+    :class="['rla-scroll-to-top fixed bottom-6 right-6 z-50', { visible: isVisible }, classes.root]"
     v-bind="$attrs"
   >
-    <button
-      type="button"
-      :class="twMerge(button, mergedUI.button)"
-      aria-label="Scroll to top"
-      @click="scrollToTopFn"
-    >
-      <div :class="twMerge(progressBase, mergedUI.progressBase)">
-        <svg
-          :class="twMerge(svgClass, mergedUI.svg)"
-          viewBox="0 0 100 100"
-          shape-rendering="geometricPrecision"
-        >
+    <button type="button" :class="classes.button" aria-label="Scroll to top" @click="scrollToTopFn">
+      <div :class="classes.progressBase">
+        <svg :class="classes.svg" viewBox="0 0 100 100" shape-rendering="geometricPrecision">
           <circle
             cx="50"
             cy="50"
@@ -153,7 +82,7 @@ const durationInSeconds = computed(() => `${duration}s`)
             }"
           />
         </svg>
-        <div :class="twMerge(iconContainer, mergedUI.iconContainer)">
+        <div :class="classes.iconContainer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -164,7 +93,7 @@ const durationInSeconds = computed(() => `${duration}s`)
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-            :class="twMerge(icon, mergedUI.icon)"
+            :class="classes.icon"
           >
             <path d="m5 12 7-7 7 7" />
             <path d="M12 19V5" />

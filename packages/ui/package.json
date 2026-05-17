@@ -72,7 +72,6 @@
     "defu": "6.1.6",
     "embla-carousel": "8.6.0",
     "picomatch": "^4.0.4",
-    "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.2.3",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2",

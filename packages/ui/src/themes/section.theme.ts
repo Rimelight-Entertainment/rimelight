@@ -1,4 +1,6 @@
-export default {
+import { defineTheme } from "../utils"
+
+export default defineTheme({
   slots: [
     "root",
     "background",
@@ -108,6 +110,12 @@ export default {
       true: {
         description: "mt-6"
       }
+    },
+    description: {
+      true: {}
+    },
+    body: {
+      true: {}
     }
   },
   compoundVariants: [
@@ -174,4 +182,4 @@ export default {
     orientation: "vertical",
     ctaVariant: "outline"
   }
-} as const
+})

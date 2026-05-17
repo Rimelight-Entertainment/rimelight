@@ -1,35 +1,16 @@
 ---
-import { scv, cx } from "css-variants";
-import { twMerge } from "tailwind-merge";
-import defu from "defu";
-import footerTheme from "@/themes/footer.theme"
-import { getUIConfig } from "virtual:rimelight-ui";
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ComponentVariants } from "../../types"
+import footerTheme from "../../themes/footer.theme"
 
-const footer = scv({
-  slots: [...footerTheme.slots],
-  base: footerTheme.base,
-  variants: footerTheme.variants,
-  defaultVariants: footerTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args)),
-});
+const footer = scv(footerTheme)
+type FooterVariants = ComponentVariants<typeof footerTheme>
 
 export interface RLAFooterProps {
-  /**
-   * Whether to contain the footer content in a max-width container.
-   * @default false
-   */
-  contain?: boolean;
-  /**
-   * UI overrides for individual slots, derived from the footer theme.
-   */
-  ui?: Partial<Record<keyof typeof footerTheme.base, string>>;
-  /**
-   * External class — applied to the root element.
-   */
+  contain?: FooterVariants['contain'];
+  ui?: Partial<Record<string, string>>;
   class?: string;
-  /**
-   * Standard HTML attributes for <footer>
-   */
   [key: string]: unknown;
 }
 
@@ -40,29 +21,22 @@ const {
   ...rest
 } = Astro.props as RLAFooterProps
 
-const globalConfig = getUIConfig();
-
-const mergedUI = defu(
-  uiProp ?? {},
-  (globalConfig.footer as Record<string, unknown>) ?? {},
-) as Record<keyof typeof footerTheme.base, string | undefined>;
-
-const { root, container, left, center, right } = footer({ contain });
+const classes = resolveClasses(footer, { contain }, useUi("footer", uiProp), className)
 ---
 
 <footer
-  class:list={[twMerge(root, mergedUI.root, className)]}
+  class:list={[classes.root]}
   data-slot="rla-footer"
   {...rest}
 >
-  <div class:list={[twMerge(container, mergedUI.container)]}>
-    <div class:list={[twMerge(left, mergedUI.left)]} data-slot="footer-left">
+  <div class:list={[classes.container]}>
+    <div class:list={[classes.left]} data-slot="footer-left">
       <slot name="left" />
     </div>
-    <div class:list={[twMerge(center, mergedUI.center)]} data-slot="footer-center">
+    <div class:list={[classes.center]} data-slot="footer-center">
       <slot name="center" />
     </div>
-    <div class:list={[twMerge(right, mergedUI.right)]} data-slot="footer-right">
+    <div class:list={[classes.right]} data-slot="footer-right">
       <slot name="right" />
     </div>
   </div>

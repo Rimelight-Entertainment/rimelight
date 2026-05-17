@@ -1,31 +1,14 @@
 <script setup lang="ts">
-import { scv, cx } from "css-variants"
-import { twMerge } from "tailwind-merge"
-import defu from "defu"
-import placeholderTheme from "@/themes/placeholder.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import { computed } from "vue"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import placeholderTheme from "../../themes/placeholder.theme"
 
-const placeholder = scv({
-  slots: [...placeholderTheme.slots],
-  base: placeholderTheme.base,
-  variants: placeholderTheme.variants,
-  compoundVariants: [...placeholderTheme.compoundVariants],
-  defaultVariants: placeholderTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args))
-})
+const placeholder = scv(placeholderTheme)
 
 export interface RLVPlaceholderProps {
-  /**
-   * UI overrides for individual slots, derived from the placeholder theme.
-   */
-  ui?: Partial<Record<keyof typeof placeholderTheme.base, string>>
-  /**
-   * External class — applied to the root element.
-   */
+  ui?: Partial<Record<string, string>>
   class?: string
-  /**
-   * Standard HTML attributes.
-   */
   [key: string]: unknown
 }
 
@@ -38,19 +21,14 @@ defineSlots<{
   default(props: {}): any
 }>()
 
-const globalConfig = getUIConfig()
-
-const mergedUI = defu(
-  uiProp ?? {},
-  (globalConfig.placeholder as Record<string, unknown>) ?? {}
-) as Record<keyof typeof placeholderTheme.base, string | undefined>
-
-const { base, svg } = placeholder()
+const resolvedClasses = computed(() =>
+  resolveClasses(placeholder, {}, useUi("placeholder", uiProp), className)
+)
 </script>
 
 <template>
-  <div :class="twMerge(base, mergedUI.base, className)" v-bind="$attrs">
-    <svg :class="twMerge(svg, mergedUI.svg)">
+  <div :class="resolvedClasses.base" v-bind="$attrs">
+    <svg :class="resolvedClasses.svg">
       <defs>
         <pattern
           id="pattern-5c1e4f0e-62d5-498b-8ff0-cf77bb448c8e"

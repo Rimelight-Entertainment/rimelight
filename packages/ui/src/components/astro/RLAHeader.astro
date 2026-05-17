@@ -1,59 +1,20 @@
 ---
-import { scv, cx } from "css-variants";
-import { twMerge } from "tailwind-merge";
-import defu from "defu";
-import headerTheme from "@/themes/header.theme"
-import { getUIConfig } from "virtual:rimelight-ui";
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ComponentVariants } from "../../types"
+import headerTheme from "../../themes/header.theme"
 
-const header = scv({
-  slots: [...headerTheme.slots],
-  base: headerTheme.base,
-  variants: headerTheme.variants,
-  defaultVariants: headerTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args)),
-});
+const header = scv(headerTheme)
+type HeaderVariants = ComponentVariants<typeof headerTheme>
 
 export interface RLAHeaderProps {
-  /**
-   * Whether to contain the header content in a max-width container.
-   * @default true
-   */
-  contain?: boolean;
-  /**
-   * Sticky positioning when `fixed` is false.
-   * @default true
-   */
-  sticky?: boolean;
-  /**
-   * Switches to `position: fixed; left: 0; right: 0` (layer mode).
-   * When true, `stackIndex` controls the exact position and layer order.
-   * A module `<script>` is emitted to apply styles and attach scroll listeners.
-   * @default false
-   */
-  fixed?: boolean;
-  /**
-   * Controls z-index when `fixed` is true: `z-index = 100 - stackIndex`.
-   * @default 0
-   */
+  contain?: HeaderVariants['contain'];
+  sticky?: HeaderVariants['sticky'];
+  fixed?: HeaderVariants['fixed'];
   stackIndex?: number;
-  /**
-   * When true, hides the header on scroll-down and shows it on scroll-up.
-   * Implemented via a bundled Astro `<script>` — no Vue hydration needed.
-   * Only meaningful when `fixed` is true.
-   * @default false
-   */
   hideOnScroll?: boolean;
-  /**
-   * UI overrides for individual slots, derived from the header theme.
-   */
-  ui?: Partial<Record<keyof typeof headerTheme.base, string>>;
-  /**
-   * External class — applied to the root element.
-   */
+  ui?: Partial<Record<string, string>>;
   class?: string;
-  /**
-   * Standard HTML attributes for <header>.
-   */
   [key: string]: unknown;
 }
 
@@ -68,69 +29,48 @@ const {
   ...rest
 } = Astro.props as RLAHeaderProps;
 
-const globalConfig = getUIConfig();
-
-const mergedUI = defu(
-  uiProp ?? {},
-  (globalConfig.header as Record<string, unknown>) ?? {},
-) as Record<keyof typeof headerTheme.base, string | undefined>;
-
-// Resolve classes — note: sticky variant is suppressed when fixed is true,
-// since the fixed variant's classes replace it.
-const { root, content, container, left, center, right } = header({
+const classes = resolveClasses(header, {
   contain,
   sticky: fixed ? false : sticky,
   fixed,
-});
+}, useUi("header", uiProp), className);
 
-// Build a unique ID so the script can target this specific header element.
 const headerId = `rla-header-${Math.random().toString(36).slice(2, 8)}`;
 const zIndex = 100 - stackIndex;
 ---
 
 <header
   id={headerId}
-  class:list={[twMerge(root, mergedUI.root, className)]}
+  class:list={[classes.root]}
   data-rla-header={fixed ? "true" : undefined}
   data-stack-index={stackIndex}
   data-hide-on-scroll={String(hideOnScroll)}
   style={fixed ? `z-index: ${zIndex};` : undefined}
   {...rest}
 >
-  <!--
-    content wrapper: present in all modes; in fixed+hideOnScroll mode the inline
-    script observes this element's offsetHeight for accurate measurement.
-  -->
-  <div class:list={[twMerge(content, mergedUI.content)]} data-header-content>
-    <div class:list={[twMerge(container, mergedUI.container)]}>
-      <div class:list={[twMerge(left, mergedUI.left)]} data-slot="header-left">
+  <div class:list={[classes.content]} data-header-content>
+    <div class:list={[classes.container]}>
+      <div class:list={[classes.left]} data-slot="header-left">
         <slot name="left" />
       </div>
-      <div class:list={[twMerge(center, mergedUI.center)]} data-slot="header-center">
+      <div class:list={[classes.center]} data-slot="header-center">
         <slot name="center" />
       </div>
-      <div class:list={[twMerge(right, mergedUI.right)]} data-slot="header-right">
+      <div class:list={[classes.right]} data-slot="header-right">
         <slot name="right" />
       </div>
     </div>
   </div>
 </header>
 
-{/*
-  Astro Module Script — automatically hydrates all static Astro headers 
-  with the global Vanilla JS stack manager. It only executes once per page 
-  load, managing all headers efficiently.
-*/}
 {fixed && (
   <script>
-    import { getHeaderStack } from "@/utils/headerStack"
+    import { getHeaderStack } from "../../utils/headerStack";
 
-    // This script runs exactly once per page load, managing all Astro headers
     const stack = getHeaderStack();
     const headers = document.querySelectorAll("[data-rla-header='true']");
 
     headers.forEach(header => {
-      // Prevent double-initialization
       if ((header as any)._rl_initialized) return;
       (header as any)._rl_initialized = true;
 

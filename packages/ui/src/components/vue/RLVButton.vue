@@ -1,24 +1,17 @@
 <script setup lang="ts">
 import { computed, useSlots } from "vue"
-import { scv, cx } from "css-variants"
-import { twMerge } from "tailwind-merge"
-import defu from "defu"
-import buttonTheme from "@/themes/button.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ComponentVariants } from "../../types"
+import buttonTheme from "../../themes/button.theme"
 
-const button = scv({
-  slots: [...buttonTheme.slots],
-  base: buttonTheme.base,
-  variants: buttonTheme.variants,
-  compoundVariants: [...buttonTheme.compoundVariants],
-  defaultVariants: buttonTheme.defaultVariants,
-  classNameResolver: (...args) => twMerge(cx(...args))
-})
+const button = scv(buttonTheme)
+type ButtonVariants = ComponentVariants<typeof buttonTheme>
 
 export interface RLVButtonProps {
-  variant?: keyof typeof buttonTheme.variants.variant
-  color?: keyof typeof buttonTheme.variants.color
-  size?: keyof typeof buttonTheme.variants.size
+  variant?: ButtonVariants["variant"]
+  color?: ButtonVariants["color"]
+  size?: ButtonVariants["size"]
   href?: string
   label?: string
   leadingIcon?: string
@@ -27,8 +20,8 @@ export interface RLVButtonProps {
   square?: boolean
   block?: boolean
   active?: boolean
-  activeColor?: keyof typeof buttonTheme.variants.color
-  activeVariant?: keyof typeof buttonTheme.variants.variant
+  activeColor?: ButtonVariants["color"]
+  activeVariant?: ButtonVariants["variant"]
   ui?: Partial<Record<string, string>>
   class?: string
   [key: string]: unknown
@@ -83,25 +76,23 @@ defineSlots<{
   trailing(props: { ui: Record<string, string> }): any
 }>()
 
-const globalConfig = getUIConfig()
-
-const mergedUI = defu(
-  uiProp ?? {},
-  (globalConfig.button as Record<string, unknown>) ?? {}
-) as Record<string, string | undefined>
-
-const resolved = computed(() =>
-  button({
-    variant: active && activeVariant ? activeVariant : variant,
-    color: active && activeColor ? activeColor : color,
-    size,
-    block,
-    square: square || (!label && !slots.default),
-    leading: isLeading.value,
-    trailing: isTrailing.value,
-    loading,
-    active
-  })
+const resolvedClasses = computed(() =>
+  resolveClasses(
+    button,
+    {
+      variant: active && activeVariant ? activeVariant : variant,
+      color: active && activeColor ? activeColor : color,
+      size,
+      block,
+      square: square || (!label && !slots.default),
+      leading: isLeading.value,
+      trailing: isTrailing.value,
+      loading,
+      active
+    },
+    useUi("button", uiProp),
+    className
+  )
 )
 
 const Tag = href ? "a" : "button"
@@ -112,34 +103,26 @@ const Tag = href ? "a" : "button"
     v-bind="$attrs"
     :is="Tag"
     :href="href"
-    :class="twMerge(resolved.root, mergedUI.root, className)"
+    :class="resolvedClasses.root"
     data-slot="rlv-button"
   >
-    <slot name="leading" :ui="resolved">
-      <span
-        v-if="isLeading"
-        :class="twMerge(resolved.leadingIcon, mergedUI.leadingIcon)"
-        data-slot="leading-icon"
-      >
+    <slot name="leading" :ui="resolvedClasses">
+      <span v-if="isLeading" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
         <span :class="[showLeadingIcon, leadingIconClass]" aria-hidden="true" />
       </span>
     </slot>
 
     <span
       v-if="label !== undefined && label !== null"
-      :class="twMerge(resolved.label, mergedUI.label)"
+      :class="resolvedClasses.label"
       data-slot="label"
     >
       {{ label }}
     </span>
     <slot v-else />
 
-    <slot name="trailing" :ui="resolved">
-      <span
-        v-if="isTrailing"
-        :class="twMerge(resolved.trailingIcon, mergedUI.trailingIcon)"
-        data-slot="trailing-icon"
-      >
+    <slot name="trailing" :ui="resolvedClasses">
+      <span v-if="isTrailing" :class="resolvedClasses.trailingIcon" data-slot="trailing-icon">
         <span :class="[showTrailingIcon, trailingIconClass]" aria-hidden="true" />
       </span>
     </slot>

@@ -1,25 +1,6 @@
-/**
- * Theme configuration for the Header component. Defines the slots, base styles, and variants for
- * layout management.
- *
- * Slots:
- *
- * - `root` — the `<header>` element
- * - `content` — inner wrapper div used for height measurement (fixed/hideOnScroll mode)
- * - `container` — max-width flex row
- * - `left` — left region
- * - `center` — center region
- * - `right` — right region
- *
- * Variants:
- *
- * - `contain` — constrains container to max-w-7xl
- * - `sticky` — sticky positioning (ignored when `fixed` variant is true)
- * - `fixed` — position: fixed with left/right 0 and smooth top/opacity transition; used for stacked
- *   header layers. Top offset and z-index are applied via inline style (top prop + stackIndex prop)
- *   rather than theme classes.
- */
-export default {
+import { defineTheme } from "../utils"
+
+export default defineTheme({
   slots: ["root", "content", "container", "left", "center", "right"],
   base: {
     root: "w-full",
@@ -47,11 +28,6 @@ export default {
         root: "relative"
       }
     },
-    /**
-     * Fixed-layer mode. When true, overrides sticky/relative positioning with `position: fixed` and
-     * enables smooth transitions. `top` and `z-index` are applied via inline `:style` on the
-     * component.
-     */
     fixed: {
       true: {
         root: "fixed left-0 right-0 transition-[top,opacity] duration-200 ease-in-out"
@@ -64,4 +40,4 @@ export default {
     sticky: true,
     fixed: false
   }
-} as const
+})
