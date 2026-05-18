@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import headerTheme from "../../themes/header.theme"
 import { getHeaderStack } from "../../utils/headerStack"
 
@@ -15,8 +15,8 @@ export interface RLVHeaderProps {
   fixed?: HeaderVariants["fixed"]
   stackIndex?: number
   hideOnScroll?: boolean
-  ui?: Partial<Record<string, string>>
-  class?: string
+  ui?: ComponentSlots<typeof headerTheme>
+  class?: any
 }
 
 const {
@@ -25,8 +25,8 @@ const {
   fixed = false,
   stackIndex = 0,
   hideOnScroll = false,
-  class: className,
-  ui: uiProp
+  ui: uiProp,
+  class: className
 } = defineProps<RLVHeaderProps>()
 
 defineSlots<{
@@ -112,18 +112,18 @@ onUnmounted(() => {
     :id="id"
     :class="[resolvedClasses.root]"
     :style="fixedStyle"
-    data-slot="rlv-header"
+    data-slot="root"
     v-bind="$attrs"
   >
     <div ref="contentRef" :class="resolvedClasses.content">
       <div :class="resolvedClasses.container">
-        <div :class="resolvedClasses.left" data-slot="header-left">
+        <div :class="resolvedClasses.left" data-slot="left">
           <slot name="left" />
         </div>
-        <div :class="resolvedClasses.center" data-slot="header-center">
+        <div :class="resolvedClasses.center" data-slot="center">
           <slot name="center" />
         </div>
-        <div :class="resolvedClasses.right" data-slot="header-right">
+        <div :class="resolvedClasses.right" data-slot="right">
           <slot name="right" />
         </div>
       </div>

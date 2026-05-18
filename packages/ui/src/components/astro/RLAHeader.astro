@@ -1,7 +1,7 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import headerTheme from "../../themes/header.theme"
 
 const header = scv(headerTheme)
@@ -13,8 +13,8 @@ export interface RLAHeaderProps {
   fixed?: HeaderVariants['fixed'];
   stackIndex?: number;
   hideOnScroll?: boolean;
-  ui?: Partial<Record<string, string>>;
-  class?: string;
+  ui?: ComponentSlots<typeof headerTheme>;
+  class?: any;
   [key: string]: unknown;
 }
 
@@ -24,8 +24,8 @@ const {
   fixed = false,
   stackIndex = 0,
   hideOnScroll = false,
-  class: className,
   ui: uiProp,
+  class: className,
   ...rest
 } = Astro.props as RLAHeaderProps;
 
@@ -41,6 +41,7 @@ const zIndex = 100 - stackIndex;
 
 <header
   id={headerId}
+  data-slot="root"
   class:list={[classes.root]}
   data-rla-header={fixed ? "true" : undefined}
   data-stack-index={stackIndex}
@@ -50,13 +51,13 @@ const zIndex = 100 - stackIndex;
 >
   <div class:list={[classes.content]} data-header-content>
     <div class:list={[classes.container]}>
-      <div class:list={[classes.left]} data-slot="header-left">
+      <div class:list={[classes.left]} data-slot="left">
         <slot name="left" />
       </div>
-      <div class:list={[classes.center]} data-slot="header-center">
+      <div class:list={[classes.center]} data-slot="center">
         <slot name="center" />
       </div>
-      <div class:list={[classes.right]} data-slot="header-right">
+      <div class:list={[classes.right]} data-slot="right">
         <slot name="right" />
       </div>
     </div>

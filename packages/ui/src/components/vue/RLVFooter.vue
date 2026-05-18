@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import footerTheme from "../../themes/footer.theme"
 
 const footer = scv(footerTheme)
@@ -10,11 +10,11 @@ type FooterVariants = ComponentVariants<typeof footerTheme>
 
 export interface RLVFooterProps {
   contain?: FooterVariants["contain"]
-  ui?: Partial<Record<string, string>>
-  class?: string
+  ui?: ComponentSlots<typeof footerTheme>
+  class?: any
 }
 
-const { contain = false, class: className, ui: uiProp } = defineProps<RLVFooterProps>()
+const { contain = false, ui: uiProp, class: className } = defineProps<RLVFooterProps>()
 
 defineSlots<{
   left(props: {}): any
@@ -28,15 +28,15 @@ const resolvedClasses = computed(() =>
 </script>
 
 <template>
-  <footer :class="[resolvedClasses.root]" data-slot="rlv-footer" v-bind="$attrs">
+  <footer :class="[resolvedClasses.root]" data-slot="root" v-bind="$attrs">
     <div :class="resolvedClasses.container">
-      <div :class="resolvedClasses.left" data-slot="footer-left">
+      <div :class="resolvedClasses.left" data-slot="left">
         <slot name="left" />
       </div>
-      <div :class="resolvedClasses.center" data-slot="footer-center">
+      <div :class="resolvedClasses.center" data-slot="center">
         <slot name="center" />
       </div>
-      <div :class="resolvedClasses.right" data-slot="footer-right">
+      <div :class="resolvedClasses.right" data-slot="right">
         <slot name="right" />
       </div>
     </div>

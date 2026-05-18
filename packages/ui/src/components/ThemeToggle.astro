@@ -2,13 +2,13 @@
 import RLAButton from "./astro/RLAButton.astro";
 
 export interface ThemeToggleProps {
-  class?: string;
   size?: "sm" | "md" | "lg";
+  class?: any;
 }
 
 type Props = ThemeToggleProps;
 
-const { class: className, size = "md" } = Astro.props as Props
+const { size = "md", class: className } = Astro.props as Props
 ---
 
 <RLAButton

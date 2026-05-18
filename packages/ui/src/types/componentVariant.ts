@@ -8,3 +8,7 @@ export type ComponentVariants<T extends { variants?: Record<string, Record<strin
             : keyof T["variants"][K]
       }
     : never
+
+export type ComponentSlots<T extends { slots: readonly string[] }> = Partial<
+  Record<T["slots"][number], string>
+>

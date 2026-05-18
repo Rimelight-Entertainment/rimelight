@@ -2,7 +2,7 @@
 import { computed, useSlots } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import buttonTheme from "../../themes/button.theme"
 
 const button = scv(buttonTheme)
@@ -64,8 +64,8 @@ export interface RLVButtonProps {
   /**
    * Component-specific CSS class overrides
    */
-  ui?: Partial<Record<string, string>>
-  class?: string
+  ui?: ComponentSlots<typeof buttonTheme>
+  class?: any
   [key: string]: unknown
 }
 
@@ -73,8 +73,6 @@ const {
   variant = "solid",
   color = "primary",
   size = "md",
-  class: className,
-  ui: uiProp,
   href,
   label,
   leadingIcon,
@@ -84,7 +82,9 @@ const {
   block = false,
   active = false,
   activeColor,
-  activeVariant
+  activeVariant,
+  ui: uiProp,
+  class: className
 } = defineProps<RLVButtonProps>()
 
 const slots = useSlots()
@@ -141,13 +141,7 @@ const Tag = href ? "a" : "button"
 </script>
 
 <template>
-  <component
-    v-bind="$attrs"
-    :is="Tag"
-    :href="href"
-    :class="resolvedClasses.root"
-    data-slot="rlv-button"
-  >
+  <component v-bind="$attrs" :is="Tag" :href="href" :class="resolvedClasses.root" data-slot="root">
     <slot name="leading" :ui="resolvedClasses">
       <span v-if="isLeading" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
         <span :class="[showLeadingIcon, leadingIconClass]" aria-hidden="true" />

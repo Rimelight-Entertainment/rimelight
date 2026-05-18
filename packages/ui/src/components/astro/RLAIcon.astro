@@ -1,7 +1,7 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import iconTheme from "../../themes/icon.theme"
 
 const icon = scv(iconTheme)
@@ -10,16 +10,16 @@ type IconVariants = ComponentVariants<typeof iconTheme>
 export interface RLAIconProps {
   name: string
   size?: IconVariants['size']
-  class?: string
-  ui?: Partial<Record<string, string>>
+  ui?: ComponentSlots<typeof iconTheme>
+  class?: any
   [key: string]: unknown
 }
 
 const {
   name,
   size = "md",
-  class: className,
   ui: uiProp,
+  class: className,
   ...rest
 } = Astro.props as RLAIconProps
 
@@ -28,7 +28,7 @@ const classes = resolveClasses(icon, { size }, useUi("icon", uiProp), className)
 
 <span
   class={classes.root}
-  data-slot="rla-icon"
+  data-slot="root"
   aria-hidden="true"
   {...rest}
 >

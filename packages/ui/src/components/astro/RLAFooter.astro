@@ -1,7 +1,7 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import footerTheme from "../../themes/footer.theme"
 
 const footer = scv(footerTheme)
@@ -9,15 +9,15 @@ type FooterVariants = ComponentVariants<typeof footerTheme>
 
 export interface RLAFooterProps {
   contain?: FooterVariants['contain'];
-  ui?: Partial<Record<string, string>>;
-  class?: string;
+  ui?: ComponentSlots<typeof footerTheme>;
+  class?: any;
   [key: string]: unknown;
 }
 
 const {
   contain = false,
-  class: className,
   ui: uiProp,
+  class: className,
   ...rest
 } = Astro.props as RLAFooterProps
 
@@ -26,17 +26,17 @@ const classes = resolveClasses(footer, { contain }, useUi("footer", uiProp), cla
 
 <footer
   class:list={[classes.root]}
-  data-slot="rla-footer"
+  data-slot="root"
   {...rest}
 >
   <div class:list={[classes.container]}>
-    <div class:list={[classes.left]} data-slot="footer-left">
+    <div class:list={[classes.left]} data-slot="left">
       <slot name="left" />
     </div>
-    <div class:list={[classes.center]} data-slot="footer-center">
+    <div class:list={[classes.center]} data-slot="center">
       <slot name="center" />
     </div>
-    <div class:list={[classes.right]} data-slot="footer-right">
+    <div class:list={[classes.right]} data-slot="right">
       <slot name="right" />
     </div>
   </div>

@@ -5,11 +5,13 @@ import RLAFooter from "@rimelight/ui/components/astro/RLAFooter.astro";
 import RLVFooter from "@rimelight/ui/components/vue/RLVFooter.vue";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+
+const locale = Astro.currentLocale ?? 'en';
 ---
 
 <AppLayout title="Footer Component" description="Footer Component Showcase">
   <main class="max-w-6xl mx-auto p-8">
-    <a href={getRelativeLocaleUrl(Astro.currentLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+    <a href={getRelativeLocaleUrl(locale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
       Back to Components
     </a>

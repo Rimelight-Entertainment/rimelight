@@ -3,11 +3,13 @@ import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
 import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue";
+
+const locale = Astro.currentLocale ?? 'en';
 ---
 
 <AppLayout title="Icon Component" description="Icon Component Showcase">
   <main class="max-w-6xl mx-auto p-8">
-    <a href={getRelativeLocaleUrl(Astro.currentLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+    <a href={getRelativeLocaleUrl(locale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
       Back to Components
     </a>

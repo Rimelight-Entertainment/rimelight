@@ -1,19 +1,20 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
+import type { ComponentSlots } from "../../types"
 import placeholderTheme from "../../themes/placeholder.theme"
 
 const placeholder = scv(placeholderTheme)
 
 export interface RLAPlaceholderProps {
-  ui?: Partial<Record<string, string>>
-  class?: string
+  ui?: ComponentSlots<typeof placeholderTheme>
+  class?: any
   [key: string]: unknown
 }
 
 const {
-  class: className,
   ui: uiProp,
+  class: className,
   ...rest
 } = Astro.props as RLAPlaceholderProps
 

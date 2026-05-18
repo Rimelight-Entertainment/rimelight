@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
+import type { ComponentSlots } from "../../types"
 import logoTheme from "../../themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -11,9 +12,9 @@ export interface RLVLogoProps {
   variant?: string
   mode?: "color" | "white" | "black"
   href?: string
-  ui?: Partial<Record<string, string>>
-  class?: string
   alt?: string
+  ui?: ComponentSlots<typeof logoTheme>
+  class?: any
   [key: string]: unknown
 }
 
@@ -64,7 +65,7 @@ const Tag = computed(() => (props.href ? "a" : "div"))
     :href="Tag === 'a' ? href : undefined"
     :aria-label="alt || variant"
     :class="resolvedClasses.root"
-    data-slot="rlv-logo"
+    data-slot="root"
   >
     <template v-if="logoSrc">
       <span v-if="isIcon" :class="[logoSrc, 'size-full block shrink-0']" aria-hidden="true" />

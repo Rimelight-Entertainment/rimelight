@@ -2,17 +2,18 @@
 import { computed } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
+import type { ComponentSlots } from "../../types"
 import placeholderTheme from "../../themes/placeholder.theme"
 
 const placeholder = scv(placeholderTheme)
 
 export interface RLVPlaceholderProps {
-  ui?: Partial<Record<string, string>>
-  class?: string
+  ui?: ComponentSlots<typeof placeholderTheme>
+  class?: any
   [key: string]: unknown
 }
 
-const { class: className, ui: uiProp } = defineProps<RLVPlaceholderProps>()
+const { ui: uiProp, class: className } = defineProps<RLVPlaceholderProps>()
 
 defineSlots<{
   /**

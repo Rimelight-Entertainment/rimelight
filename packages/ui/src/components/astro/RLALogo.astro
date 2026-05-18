@@ -1,6 +1,7 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
+import type { ComponentSlots } from "../../types"
 import logoTheme from "../../themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -10,9 +11,9 @@ export interface RLALogoProps {
   variant?: string;
   mode?: "color" | "white" | "black";
   href?: string;
-  ui?: Partial<Record<string, string>>;
-  class?: string;
   alt?: string;
+  ui?: ComponentSlots<typeof logoTheme>;
+  class?: any;
   [key: string]: unknown;
 }
 
@@ -20,9 +21,9 @@ const {
   variant = "logomark",
   mode,
   href = "/",
-  class: className,
-  ui: uiProp,
   alt,
+  ui: uiProp,
+  class: className,
   ...rest
 } = Astro.props as RLALogoProps;
 
@@ -50,7 +51,7 @@ const isIcon = logoSrc && (logoSrc.includes(":") || logoSrc.startsWith("i-"));
   class={classes.root}
   href={href}
   aria-label={alt || variant}
-  data-slot="rla-logo"
+  data-slot="root"
   {...rest}
 >
   {logoSrc ? (

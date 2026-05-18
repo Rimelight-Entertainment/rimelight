@@ -1,7 +1,7 @@
 ---
 import { scv, cx } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import buttonTheme from "../../themes/button.theme"
 
 const button = scv(buttonTheme)
@@ -21,8 +21,8 @@ export interface RLAButtonProps {
   active?: boolean;
   activeColor?: ButtonVariants['color'];
   activeVariant?: ButtonVariants['variant'];
-  ui?: Partial<Record<string, string>>;
-  class?: string;
+  ui?: ComponentSlots<typeof buttonTheme>;
+  class?: any;
   [key: string]: unknown;
 }
 
@@ -30,8 +30,6 @@ const {
   variant = "solid",
   color = "primary",
   size = "md",
-  class: className,
-  ui: uiProp,
   href,
   label,
   leadingIcon,
@@ -42,6 +40,8 @@ const {
   active = false,
   activeColor,
   activeVariant,
+  ui: uiProp,
+  class: className,
   ...rest
 } = Astro.props as RLAButtonProps
 
@@ -75,7 +75,7 @@ const Tag = href ? "a" : "button";
 ---
 <Tag
   class={classes.root}
-  data-slot="rla-button"
+  data-slot="root"
   {...(Tag === "a" ? { href } : {})}
   {...rest}
 >

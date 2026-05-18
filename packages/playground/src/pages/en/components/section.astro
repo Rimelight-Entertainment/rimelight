@@ -2,12 +2,15 @@
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import RLASection from "@rimelight/ui/components/astro/RLASection.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
+
+const locale = Astro.currentLocale ?? 'en';
 ---
 
 <AppLayout title="Section Component" description="Section Component Showcase">
   <main class="max-w-6xl mx-auto p-8">
-    <a href={getRelativeLocaleUrl(Astro.currentLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+    <a href={getRelativeLocaleUrl(locale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
       Back to Components
     </a>
@@ -31,29 +34,44 @@ import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default Variant</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
-        <RLASection title="Default Section" description="This is a default section with a title and description.">
-          <Fragment slot="links">
-            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Get Started</a>
-            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Learn More</a>
-          </Fragment>
-        </RLASection>
+        <RLASection
+          title="Default Section"
+          description="This is a default section with a title and description."
+          links={[
+            { label: "Get Started", variant: "solid", color: "primary" },
+            { label: "Learn More", variant: "outline", color: "primary" }
+          ]}
+        />
       </section>
 
       <!-- Hero Variant -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Hero Variant</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding.</p>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding. Renders as h1.</p>
         <RLASection
           variant="hero"
           headline="Introducing Rimelight"
           title="Build Faster with Our Component Library"
           description="A modern, accessible component library built for performance and developer experience."
-        >
-          <Fragment slot="links">
-            <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg text-lg hover:bg-primary-600 transition-colors">Start Building</a>
-            <a href="#" class="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Documentation</a>
-          </Fragment>
-        </RLASection>
+          links={[
+            { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
+            { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+          ]}
+        />
+      </section>
+
+      <!-- With Icon -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Icon</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Display an icon above the title using the icon prop.</p>
+        <RLASection
+          icon="i-lucide-rocket"
+          title="Launch Your Project"
+          description="Get started quickly with our pre-built components and templates."
+          links={[
+            { label: "Get Started", variant: "solid", color: "primary" }
+          ]}
+        />
       </section>
 
       <!-- CTA Variant -->
@@ -63,32 +81,74 @@ import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
 
         <div class="space-y-8">
           <div>
-            <h3 class="text-lg font-medium mb-2">Outline (default)</h3>
+            <h3 class="text-lg font-medium mb-2">Solid (default)</h3>
             <RLASection
               variant="cta"
               title="Ready to Get Started?"
               description="Join thousands of developers building with Rimelight."
-            >
-              <Fragment slot="links">
-                <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Sign Up Free</a>
-              </Fragment>
-            </RLASection>
+              links={[
+                { label: "Sign Up Free", variant: "solid", color: "primary" }
+              ]}
+            />
           </div>
 
           <div>
-            <h3 class="text-lg font-medium mb-2">Solid</h3>
+            <h3 class="text-lg font-medium mb-2">Outline</h3>
             <RLASection
               variant="cta"
-              ctaVariant="solid"
-              title="Upgrade to Pro"
-              description="Get access to all premium components and features."
-            >
-              <Fragment slot="links">
-                <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors">Upgrade Now</a>
-              </Fragment>
-            </RLASection>
+              ctaVariant="outline"
+              title="Ready to Get Started?"
+              description="Join thousands of developers building with Rimelight."
+              links={[
+                { label: "Sign Up Free", variant: "outline", color: "primary" }
+              ]}
+            />
+          </div>
+
+          <div>
+            <h3 class="text-lg font-medium mb-2">Soft</h3>
+            <RLASection
+              variant="cta"
+              ctaVariant="soft"
+              title="Try It Out"
+              description="Explore our component library with no commitment."
+              links={[
+                { label: "Explore", variant: "soft", color: "primary" }
+              ]}
+            />
           </div>
         </div>
+      </section>
+
+      <!-- Horizontal Orientation -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Horizontal Orientation</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Side-by-side layout with content and default slot.</p>
+        <RLASection
+          orientation="horizontal"
+          title="Two Column Layout"
+          description="Use horizontal orientation for side-by-side content."
+        >
+          <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+            <span class="text-muted text-sm">Default slot content</span>
+          </div>
+        </RLASection>
+      </section>
+
+      <!-- Reversed -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Reversed Order</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Reverse the order of the default slot content.</p>
+        <RLASection
+          orientation="horizontal"
+          reverse
+          title="Reversed Layout"
+          description="The default slot appears before the header content."
+        >
+          <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+            <span class="text-muted text-sm">Default slot content (now first)</span>
+          </div>
+        </RLASection>
       </section>
 
       <!-- With Background Slot -->
@@ -98,10 +158,38 @@ import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
         <RLASection
           title="Beautiful Backgrounds"
           description="Use the background slot to add gradients or other effects."
+          links={[
+            { label: "Learn More", variant: "solid", color: "primary" }
+          ]}
         >
-          <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10"></div>
+          <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10" />
+        </RLASection>
+      </section>
+
+      <!-- Slots Demo -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Named Slots</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Use named slots for full control over content.</p>
+        <RLASection>
+          <Fragment slot="header">
+            <div data-slot="leading" class="flex items-center mb-6">
+              <span class="i-lucide-sparkles size-10 shrink-0 text-primary" />
+            </div>
+            <div data-slot="headline" class="font-semibold text-primary flex items-center gap-1.5 mb-3">
+              Custom Header
+            </div>
+            <h2 data-slot="title" class="text-pretty tracking-tight font-bold text-highlighted text-3xl sm:text-4xl lg:text-5xl">
+              Full Control
+            </h2>
+            <div data-slot="description" class="text-muted text-base sm:text-lg mt-6">
+              Use the header slot to completely customize the header section.
+            </div>
+          </Fragment>
+          <Fragment slot="body">
+            <p class="text-muted">This content goes in the body slot.</p>
+          </Fragment>
           <Fragment slot="links">
-            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Learn More</a>
+            <RLAButton label="Action" variant="solid" color="primary" />
           </Fragment>
         </RLASection>
       </section>
@@ -115,12 +203,14 @@ import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default Variant</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
-        <RLVSection client:load title="Default Section" description="This is a default section with a title and description.">
-          <template #links>
-            <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Get Started</button>
-            <button class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Learn More</button>
-          </template>
-        </RLVSection>
+        <RLVSection client:load
+          title="Default Section"
+          description="This is a default section with a title and description."
+          links={[
+            { label: "Get Started", variant: "solid", color: "primary" },
+            { label: "Learn More", variant: "outline", color: "primary" }
+          ]}
+        />
       </section>
 
       <!-- Hero Variant -->
@@ -132,12 +222,25 @@ import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
           headline="Introducing Rimelight"
           title="Build Faster with Our Component Library"
           description="A modern, accessible component library built for performance and developer experience."
-        >
-          <template #links>
-            <button class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg text-lg hover:bg-primary-600 transition-colors">Start Building</button>
-            <button class="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Documentation</button>
-          </template>
-        </RLVSection>
+          links={[
+            { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
+            { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+          ]}
+        />
+      </section>
+
+      <!-- With Icon -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">With Icon</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Display an icon above the title using the icon prop.</p>
+        <RLVSection client:load
+          icon="i-lucide-rocket"
+          title="Launch Your Project"
+          description="Get started quickly with our pre-built components and templates."
+          links={[
+            { label: "Get Started", variant: "solid", color: "primary" }
+          ]}
+        />
       </section>
 
       <!-- CTA Variant -->
@@ -147,32 +250,58 @@ import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
 
         <div class="space-y-8">
           <div>
-            <h3 class="text-lg font-medium mb-2">Outline (default)</h3>
+            <h3 class="text-lg font-medium mb-2">Solid (default)</h3>
             <RLVSection client:load
               variant="cta"
               title="Ready to Get Started?"
               description="Join thousands of developers building with Rimelight."
-            >
-              <template #links>
-                <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Sign Up Free</button>
-              </template>
-            </RLVSection>
+              links={[
+                { label: "Sign Up Free", variant: "solid", color: "primary" }
+              ]}
+            />
           </div>
 
           <div>
-            <h3 class="text-lg font-medium mb-2">Solid</h3>
+            <h3 class="text-lg font-medium mb-2">Outline</h3>
             <RLVSection client:load
               variant="cta"
-              ctaVariant="solid"
-              title="Upgrade to Pro"
-              description="Get access to all premium components and features."
-            >
-              <template #links>
-                <button class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-colors">Upgrade Now</button>
-              </template>
-            </RLVSection>
+              ctaVariant="outline"
+              title="Ready to Get Started?"
+              description="Join thousands of developers building with Rimelight."
+              links={[
+                { label: "Sign Up Free", variant: "outline", color: "primary" }
+              ]}
+            />
+          </div>
+
+          <div>
+            <h3 class="text-lg font-medium mb-2">Soft</h3>
+            <RLVSection client:load
+              variant="cta"
+              ctaVariant="soft"
+              title="Try It Out"
+              description="Explore our component library with no commitment."
+              links={[
+                { label: "Explore", variant: "soft", color: "primary" }
+              ]}
+            />
           </div>
         </div>
+      </section>
+
+      <!-- Horizontal Orientation -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Horizontal Orientation</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Side-by-side layout with content and default slot.</p>
+        <RLVSection client:load
+          orientation="horizontal"
+          title="Two Column Layout"
+          description="Use horizontal orientation for side-by-side content."
+        >
+          <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+            <span class="text-muted text-sm">Default slot content</span>
+          </div>
+        </RLVSection>
       </section>
 
       <!-- With Background Slot -->
@@ -182,12 +311,12 @@ import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
         <RLVSection client:load
           title="Beautiful Backgrounds"
           description="Use the background slot to add gradients or other effects."
+          links={[
+            { label: "Learn More", variant: "solid", color: "primary" }
+          ]}
         >
           <template #background>
             <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10"></div>
-          </template>
-          <template #links>
-            <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">Learn More</button>
           </template>
         </RLVSection>
       </section>

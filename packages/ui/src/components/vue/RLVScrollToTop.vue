@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants } from "../../types"
+import type { ComponentVariants, ComponentSlots } from "../../types"
 import scrollToTopTheme from "../../themes/scroll-to-top.theme"
 import { useScrollToTop } from "../../composables/useScrollToTop"
 import { computed } from "vue"
@@ -15,8 +15,8 @@ export interface RLVScrollToTopProps {
   duration?: number
   threshold?: number
   showProgress?: boolean
-  ui?: Partial<Record<string, string>>
-  class?: string
+  ui?: ComponentSlots<typeof scrollToTopTheme>
+  class?: any
 }
 
 const {
