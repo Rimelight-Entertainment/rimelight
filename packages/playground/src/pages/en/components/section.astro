@@ -34,44 +34,76 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default Variant</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
-        <RLASection
-          title="Default Section"
-          description="This is a default section with a title and description."
-          links={[
-            { label: "Get Started", variant: "solid", color: "primary" },
-            { label: "Learn More", variant: "outline", color: "primary" }
-          ]}
-        />
+        <div class="border border-black p-md">
+          <RLASection
+              title="Default Section"
+              description="This is a default section with a title and description."
+              links={[
+                { label: "Get Started", variant: "solid", color: "primary" },
+                { label: "Learn More", variant: "outline", color: "primary" }
+              ]}
+          />
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  title="Default Section"
+  description="This is a default section with a title and description."
+  links={[
+    { label: "Get Started", variant: "solid", color: "primary" },
+    { label: "Learn More", variant: "outline", color: "primary" }
+  ]}
+/>`}</code></pre>
       </section>
 
       <!-- Hero Variant -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Hero Variant</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding. Renders as h1.</p>
-        <RLASection
-          variant="hero"
-          headline="Introducing Rimelight"
-          title="Build Faster with Our Component Library"
-          description="A modern, accessible component library built for performance and developer experience."
-          links={[
-            { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
-            { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
-          ]}
-        />
+        <div class="border border-black p-md">
+          <RLASection
+              variant="hero"
+              headline="Introducing Rimelight"
+              title="Build Faster with Our Component Library"
+              description="A modern, accessible component library built for performance and developer experience."
+              links={[
+                { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
+                { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+              ]}
+          />
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  variant="hero"
+  headline="Introducing Rimelight"
+  title="Build Faster with Our Component Library"
+  description="A modern, accessible component library built for performance and developer experience."
+  links={[
+    { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
+    { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+  ]}
+/>`}</code></pre>
       </section>
 
       <!-- With Icon -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Icon</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Display an icon above the title using the icon prop.</p>
-        <RLASection
-          icon="i-lucide-rocket"
-          title="Launch Your Project"
-          description="Get started quickly with our pre-built components and templates."
-          links={[
-            { label: "Get Started", variant: "solid", color: "primary" }
-          ]}
-        />
+        <div class="border border-black p-md">
+          <RLASection
+              icon="i-lucide-rocket"
+              title="Launch Your Project"
+              description="Get started quickly with our pre-built components and templates."
+              links={[
+                { label: "Get Started", variant: "solid", color: "primary" }
+              ]}
+          />
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  icon="i-lucide-rocket"
+  title="Launch Your Project"
+  description="Get started quickly with our pre-built components and templates."
+  links={[
+    { label: "Get Started", variant: "solid", color: "primary" }
+  ]}
+/>`}</code></pre>
       </section>
 
       <!-- CTA Variant -->
@@ -82,40 +114,72 @@ const locale = Astro.currentLocale ?? 'en';
         <div class="space-y-8">
           <div>
             <h3 class="text-lg font-medium mb-2">Solid (default)</h3>
-            <RLASection
-              variant="cta"
-              title="Ready to Get Started?"
-              description="Join thousands of developers building with Rimelight."
-              links={[
-                { label: "Sign Up Free", variant: "solid", color: "primary" }
-              ]}
-            />
+            <div class="border border-black p-md mb-2">
+              <RLASection
+                  variant="cta"
+                  title="Ready to Get Started?"
+                  description="Join thousands of developers building with Rimelight."
+                  links={[
+                    { label: "Sign Up Free", variant: "solid", color: "primary" }
+                  ]}
+              />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  variant="cta"
+  title="Ready to Get Started?"
+  description="Join thousands of developers building with Rimelight."
+  links={[
+    { label: "Sign Up Free", variant: "solid", color: "primary" }
+  ]}
+/>`}</code></pre>
           </div>
 
           <div>
             <h3 class="text-lg font-medium mb-2">Outline</h3>
-            <RLASection
-              variant="cta"
-              ctaVariant="outline"
-              title="Ready to Get Started?"
-              description="Join thousands of developers building with Rimelight."
-              links={[
-                { label: "Sign Up Free", variant: "outline", color: "primary" }
-              ]}
-            />
+            <div class="border border-black p-md mb-2">
+              <RLASection
+                  variant="cta"
+                  ctaVariant="outline"
+                  title="Ready to Get Started?"
+                  description="Join thousands of developers building with Rimelight."
+                  links={[
+                    { label: "Sign Up Free", variant: "outline", color: "primary" }
+                  ]}
+              />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  variant="cta"
+  ctaVariant="outline"
+  title="Ready to Get Started?"
+  description="Join thousands of developers building with Rimelight."
+  links={[
+    { label: "Sign Up Free", variant: "outline", color: "primary" }
+  ]}
+/>`}</code></pre>
           </div>
 
           <div>
             <h3 class="text-lg font-medium mb-2">Soft</h3>
-            <RLASection
-              variant="cta"
-              ctaVariant="soft"
-              title="Try It Out"
-              description="Explore our component library with no commitment."
-              links={[
-                { label: "Explore", variant: "soft", color: "primary" }
-              ]}
-            />
+            <div class="border border-black p-md mb-2">
+              <RLASection
+                  variant="cta"
+                  ctaVariant="soft"
+                  title="Try It Out"
+                  description="Explore our component library with no commitment."
+                  links={[
+                    { label: "Explore", variant: "soft", color: "primary" }
+                  ]}
+              />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  variant="cta"
+  ctaVariant="soft"
+  title="Try It Out"
+  description="Explore our component library with no commitment."
+  links={[
+    { label: "Explore", variant: "soft", color: "primary" }
+  ]}
+/>`}</code></pre>
           </div>
         </div>
       </section>
@@ -124,74 +188,120 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Horizontal Orientation</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Side-by-side layout with content and default slot.</p>
-        <RLASection
-          orientation="horizontal"
-          title="Two Column Layout"
-          description="Use horizontal orientation for side-by-side content."
-        >
-          <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
-            <span class="text-muted text-sm">Default slot content</span>
-          </div>
-        </RLASection>
+        <div class="border border-black p-md">
+          <RLASection
+              orientation="horizontal"
+              title="Two Column Layout"
+              description="Use horizontal orientation for side-by-side content."
+          >
+            <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+              <span class="text-muted text-sm">Default slot content</span>
+            </div>
+          </RLASection>
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  orientation="horizontal"
+  title="Two Column Layout"
+  description="Use horizontal orientation for side-by-side content."
+>
+  <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+    <span class="text-muted text-sm">Default slot content</span>
+  </div>
+</RLASection>`}</code></pre>
       </section>
 
       <!-- Reversed -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Reversed Order</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Reverse the order of the default slot content.</p>
-        <RLASection
-          orientation="horizontal"
-          reverse
-          title="Reversed Layout"
-          description="The default slot appears before the header content."
-        >
-          <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
-            <span class="text-muted text-sm">Default slot content (now first)</span>
-          </div>
-        </RLASection>
+        <div class="border border-black p-md">
+          <RLASection
+              orientation="horizontal"
+              reverse
+              title="Reversed Layout"
+              description="The default slot appears before the header content."
+          >
+            <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+              <span class="text-muted text-sm">Default slot content (now first)</span>
+            </div>
+          </RLASection>
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  orientation="horizontal"
+  reverse
+  title="Reversed Layout"
+  description="The default slot appears before the header content."
+>
+  <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+    <span class="text-muted text-sm">Default slot content (now first)</span>
+  </div>
+</RLASection>`}</code></pre>
       </section>
 
       <!-- With Background Slot -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Background Slot</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Add background content like gradients behind your content.</p>
-        <RLASection
-          title="Beautiful Backgrounds"
-          description="Use the background slot to add gradients or other effects."
-          links={[
-            { label: "Learn More", variant: "solid", color: "primary" }
-          ]}
-        >
-          <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10" />
-        </RLASection>
+        <div class="border border-black p-md">
+          <RLASection
+              title="Beautiful Backgrounds"
+              description="Use the background slot to add gradients or other effects."
+              links={[
+                { label: "Learn More", variant: "solid", color: "primary" }
+              ]}
+          >
+            <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10" />
+          </RLASection>
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+  title="Beautiful Backgrounds"
+  description="Use the background slot to add gradients or other effects."
+  links={[
+    { label: "Learn More", variant: "solid", color: "primary" }
+  ]}
+>
+  <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10" />
+</RLASection>`}</code></pre>
       </section>
 
       <!-- Slots Demo -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Named Slots</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Use named slots for full control over content.</p>
-        <RLASection>
-          <Fragment slot="header">
-            <div data-slot="leading" class="flex items-center mb-6">
+        <div class="border border-black p-md">
+          <RLASection>
+            <div slot="leading" class="flex items-center">
               <span class="i-lucide-sparkles size-10 shrink-0 text-primary" />
             </div>
-            <div data-slot="headline" class="font-semibold text-primary flex items-center gap-1.5 mb-3">
+            <Fragment slot="headline">
               Custom Header
-            </div>
-            <h2 data-slot="title" class="text-pretty tracking-tight font-bold text-highlighted text-3xl sm:text-4xl lg:text-5xl">
+            </Fragment>
+            <Fragment slot="title">
               Full Control
-            </h2>
-            <div data-slot="description" class="text-muted text-base sm:text-lg mt-6">
-              Use the header slot to completely customize the header section.
-            </div>
-          </Fragment>
-          <Fragment slot="body">
-            <p class="text-muted">This content goes in the body slot.</p>
-          </Fragment>
-          <Fragment slot="links">
-            <RLAButton label="Action" variant="solid" color="primary" />
-          </Fragment>
-        </RLASection>
+            </Fragment>
+            <Fragment slot="description">
+              Use individual slots directly for a cleaner, automated layout.
+            </Fragment>
+            <p slot="body" class="text-muted">This content goes in the body slot.</p>
+            <RLAButton slot="links" label="Action" variant="solid" color="primary" />
+          </RLASection>
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection>
+  <div slot="leading" class="flex items-center">
+    <span class="i-lucide-sparkles size-10 shrink-0 text-primary" />
+  </div>
+  <Fragment slot="headline">
+    Custom Header
+  </Fragment>
+  <Fragment slot="title">
+    Full Control
+  </Fragment>
+  <Fragment slot="description">
+    Use individual slots directly for a cleaner, automated layout.
+  </Fragment>
+  <p slot="body" class="text-muted">This content goes in the body slot.</p>
+  <RLAButton slot="links" label="Action" variant="solid" color="primary" />
+</RLASection>`}</code></pre>
       </section>
 
     </div>
@@ -203,44 +313,76 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default Variant</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
-        <RLVSection client:load
-          title="Default Section"
-          description="This is a default section with a title and description."
-          links={[
-            { label: "Get Started", variant: "solid", color: "primary" },
-            { label: "Learn More", variant: "outline", color: "primary" }
-          ]}
-        />
+        <div class="border border-black p-md">
+          <RLVSection client:load
+                      title="Default Section"
+                      description="This is a default section with a title and description."
+                      links={[
+                        { label: "Get Started", variant: "solid", color: "primary" },
+                        { label: "Learn More", variant: "outline", color: "primary" }
+                      ]}
+          />
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  title="Default Section"
+  description="This is a default section with a title and description."
+  links={[
+    { label: "Get Started", variant: "solid", color: "primary" },
+    { label: "Learn More", variant: "outline", color: "primary" }
+  ]}
+/>`}</code></pre>
       </section>
 
       <!-- Hero Variant -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Hero Variant</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding.</p>
-        <RLVSection client:load
-          variant="hero"
-          headline="Introducing Rimelight"
-          title="Build Faster with Our Component Library"
-          description="A modern, accessible component library built for performance and developer experience."
-          links={[
-            { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
-            { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
-          ]}
-        />
+        <div class="border border-black p-md">
+          <RLVSection client:load
+                      variant="hero"
+                      headline="Introducing Rimelight"
+                      title="Build Faster with Our Component Library"
+                      description="A modern, accessible component library built for performance and developer experience."
+                      links={[
+                        { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
+                        { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+                      ]}
+          />
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  variant="hero"
+  headline="Introducing Rimelight"
+  title="Build Faster with Our Component Library"
+  description="A modern, accessible component library built for performance and developer experience."
+  links={[
+    { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
+    { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+  ]}
+/>`}</code></pre>
       </section>
 
       <!-- With Icon -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Icon</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Display an icon above the title using the icon prop.</p>
-        <RLVSection client:load
-          icon="i-lucide-rocket"
-          title="Launch Your Project"
-          description="Get started quickly with our pre-built components and templates."
-          links={[
-            { label: "Get Started", variant: "solid", color: "primary" }
-          ]}
-        />
+        <div class="border border-black p-md">
+          <RLVSection client:load
+                      icon="i-lucide-rocket"
+                      title="Launch Your Project"
+                      description="Get started quickly with our pre-built components and templates."
+                      links={[
+                        { label: "Get Started", variant: "solid", color: "primary" }
+                      ]}
+          />
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  icon="i-lucide-rocket"
+  title="Launch Your Project"
+  description="Get started quickly with our pre-built components and templates."
+  links={[
+    { label: "Get Started", variant: "solid", color: "primary" }
+  ]}
+/>`}</code></pre>
       </section>
 
       <!-- CTA Variant -->
@@ -251,40 +393,72 @@ const locale = Astro.currentLocale ?? 'en';
         <div class="space-y-8">
           <div>
             <h3 class="text-lg font-medium mb-2">Solid (default)</h3>
-            <RLVSection client:load
-              variant="cta"
-              title="Ready to Get Started?"
-              description="Join thousands of developers building with Rimelight."
-              links={[
-                { label: "Sign Up Free", variant: "solid", color: "primary" }
-              ]}
-            />
+            <div class="border border-black p-md mb-2">
+              <RLVSection client:load
+                          variant="cta"
+                          title="Ready to Get Started?"
+                          description="Join thousands of developers building with Rimelight."
+                          links={[
+                            { label: "Sign Up Free", variant: "solid", color: "primary" }
+                          ]}
+              />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  variant="cta"
+  title="Ready to Get Started?"
+  description="Join thousands of developers building with Rimelight."
+  links={[
+    { label: "Sign Up Free", variant: "solid", color: "primary" }
+  ]}
+/>`}</code></pre>
           </div>
 
           <div>
             <h3 class="text-lg font-medium mb-2">Outline</h3>
-            <RLVSection client:load
-              variant="cta"
-              ctaVariant="outline"
-              title="Ready to Get Started?"
-              description="Join thousands of developers building with Rimelight."
-              links={[
-                { label: "Sign Up Free", variant: "outline", color: "primary" }
-              ]}
-            />
+            <div class="border border-black p-md mb-2">
+              <RLVSection client:load
+                          variant="cta"
+                          ctaVariant="outline"
+                          title="Ready to Get Started?"
+                          description="Join thousands of developers building with Rimelight."
+                          links={[
+                            { label: "Sign Up Free", variant: "outline", color: "primary" }
+                          ]}
+              />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  variant="cta"
+  ctaVariant="outline"
+  title="Ready to Get Started?"
+  description="Join thousands of developers building with Rimelight."
+  links={[
+    { label: "Sign Up Free", variant: "outline", color: "primary" }
+  ]}
+/>`}</code></pre>
           </div>
 
           <div>
             <h3 class="text-lg font-medium mb-2">Soft</h3>
-            <RLVSection client:load
-              variant="cta"
-              ctaVariant="soft"
-              title="Try It Out"
-              description="Explore our component library with no commitment."
-              links={[
-                { label: "Explore", variant: "soft", color: "primary" }
-              ]}
-            />
+            <div class="border border-black p-md mb-2">
+              <RLVSection client:load
+                          variant="cta"
+                          ctaVariant="soft"
+                          title="Try It Out"
+                          description="Explore our component library with no commitment."
+                          links={[
+                            { label: "Explore", variant: "soft", color: "primary" }
+                          ]}
+              />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  variant="cta"
+  ctaVariant="soft"
+  title="Try It Out"
+  description="Explore our component library with no commitment."
+  links={[
+    { label: "Explore", variant: "soft", color: "primary" }
+  ]}
+/>`}</code></pre>
           </div>
         </div>
       </section>
@@ -293,32 +467,56 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Horizontal Orientation</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Side-by-side layout with content and default slot.</p>
-        <RLVSection client:load
-          orientation="horizontal"
-          title="Two Column Layout"
-          description="Use horizontal orientation for side-by-side content."
-        >
-          <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
-            <span class="text-muted text-sm">Default slot content</span>
-          </div>
-        </RLVSection>
+        <div class="border border-black p-md">
+          <RLVSection client:load
+                      orientation="horizontal"
+                      title="Two Column Layout"
+                      description="Use horizontal orientation for side-by-side content."
+          >
+            <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+              <span class="text-muted text-sm">Default slot content</span>
+            </div>
+          </RLVSection>
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  orientation="horizontal"
+  title="Two Column Layout"
+  description="Use horizontal orientation for side-by-side content."
+>
+  <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
+    <span class="text-muted text-sm">Default slot content</span>
+  </div>
+</RLVSection>`}</code></pre>
       </section>
 
       <!-- With Background Slot -->
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Background Slot</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Add background content like gradients behind your content.</p>
-        <RLVSection client:load
-          title="Beautiful Backgrounds"
-          description="Use the background slot to add gradients or other effects."
-          links={[
-            { label: "Learn More", variant: "solid", color: "primary" }
-          ]}
-        >
-          <template #background>
-            <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10"></div>
-          </template>
-        </RLVSection>
+        <div class="border border-black p-md">
+          <RLVSection client:load
+                      title="Beautiful Backgrounds"
+                      description="Use the background slot to add gradients or other effects."
+                      links={[
+                        { label: "Learn More", variant: "solid", color: "primary" }
+                      ]}
+          >
+            <template #background>
+              <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10"></div>
+            </template>
+          </RLVSection>
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVSection client:load
+  title="Beautiful Backgrounds"
+  description="Use the background slot to add gradients or other effects."
+  links={[
+    { label: "Learn More", variant: "solid", color: "primary" }
+  ]}
+>
+  <template #background>
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10"></div>
+  </template>
+</RLVSection>`}</code></pre>
       </section>
 
     </div>

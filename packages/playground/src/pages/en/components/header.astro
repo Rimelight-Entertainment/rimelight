@@ -5,8 +5,6 @@ import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
 import RLVHeader from "@rimelight/ui/components/vue/RLVHeader.vue";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
-import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue";
 
 const locale = Astro.currentLocale ?? 'en';
 ---
@@ -35,74 +33,112 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default (Sticky)</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A sticky header with left, center, and right slots.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAHeader>
-            <slot name="left">
+            <div slot="left">
               <span class="font-bold text-lg">Logo</span>
-            </slot>
-            <slot name="center">
+            </div>
+            <div slot="center">
               <nav class="flex gap-4">
                 <a href="#" class="hover:text-primary-500">Home</a>
                 <a href="#" class="hover:text-primary-500">About</a>
                 <a href="#" class="hover:text-primary-500">Contact</a>
               </nav>
-            </slot>
-            <slot name="right">
+            </div>
+            <div slot="right">
               <RLAButton size="sm" variant="outline">Sign In</RLAButton>
-            </slot>
+            </div>
           </RLAHeader>
-          <div class="p-8 h-64 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-            <p class="text-gray-400">Scroll down to see the sticky header in action</p>
-          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAHeader>
+  <div slot="left">
+    <span class="font-bold text-lg">Logo</span>
+  </div>
+  <div slot="center">
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Home</a>
+      <a href="#" class="hover:text-primary-500">About</a>
+      <a href="#" class="hover:text-primary-500">Contact</a>
+    </nav>
+  </div>
+  <div slot="right">
+    <RLAButton size="sm" variant="outline">Sign In</RLAButton>
+  </div>
+</RLAHeader>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Fixed with hideOnScroll</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A fixed header that hides on scroll down and shows on scroll up.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAHeader fixed hideOnScroll>
-            <slot name="left">
+            <div slot="left">
               <span class="font-bold text-lg">Logo</span>
-            </slot>
-            <slot name="center">
+            </div>
+            <div slot="center">
               <nav class="flex gap-4">
                 <a href="#" class="hover:text-primary-500">Home</a>
                 <a href="#" class="hover:text-primary-500">About</a>
                 <a href="#" class="hover:text-primary-500">Contact</a>
               </nav>
-            </slot>
-            <slot name="right">
+            </div>
+            <div slot="right">
               <RLAButton size="sm" variant="outline">Sign In</RLAButton>
-            </slot>
+            </div>
           </RLAHeader>
-          <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-            <p class="text-gray-400">Scroll down to see the header hide, scroll up to see it reappear</p>
-          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAHeader fixed hideOnScroll>
+  <div slot="left">
+    <span class="font-bold text-lg">Logo</span>
+  </div>
+  <div slot="center">
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Home</a>
+      <a href="#" class="hover:text-primary-500">About</a>
+      <a href="#" class="hover:text-primary-500">Contact</a>
+    </nav>
+  </div>
+  <div slot="right">
+    <RLAButton size="sm" variant="outline">Sign In</RLAButton>
+  </div>
+</RLAHeader>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Without Container</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Header with contain=false for full-width content.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAHeader contain={false}>
-            <slot name="left">
+            <div slot="left">
               <span class="font-bold text-lg">Logo</span>
-            </slot>
-            <slot name="center">
+            </div>
+            <div slot="center">
               <nav class="flex gap-4">
                 <a href="#" class="hover:text-primary-500">Home</a>
                 <a href="#" class="hover:text-primary-500">About</a>
                 <a href="#" class="hover:text-primary-500">Contact</a>
               </nav>
-            </slot>
-            <slot name="right">
+            </div>
+            <div slot="right">
               <RLAButton size="sm" variant="outline">Sign In</RLAButton>
-            </slot>
+            </div>
           </RLAHeader>
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAHeader contain={false}>
+  <div slot="left">
+    <span class="font-bold text-lg">Logo</span>
+  </div>
+  <div slot="center">
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Home</a>
+      <a href="#" class="hover:text-primary-500">About</a>
+      <a href="#" class="hover:text-primary-500">Contact</a>
+    </nav>
+  </div>
+  <div slot="right">
+    <RLAButton size="sm" variant="outline">Sign In</RLAButton>
+  </div>
+</RLAHeader>`}</code></pre>
       </section>
     </div>
 
@@ -111,7 +147,7 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default (Sticky)</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A sticky header with left, center, and right slots.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVHeader client:load>
             <template #left>
               <span class="font-bold text-lg">Logo</span>
@@ -127,16 +163,28 @@ const locale = Astro.currentLocale ?? 'en';
               <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
             </template>
           </RLVHeader>
-          <div class="p-8 h-64 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-            <p class="text-gray-400">Scroll down to see the sticky header in action</p>
-          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVHeader client:load>
+  <template #left>
+    <span class="font-bold text-lg">Logo</span>
+  </template>
+  <template #center>
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Home</a>
+      <a href="#" class="hover:text-primary-500">About</a>
+      <a href="#" class="hover:text-primary-500">Contact</a>
+    </nav>
+  </template>
+  <template #right>
+    <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
+  </template>
+</RLVHeader>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Fixed with hideOnScroll</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A fixed header that hides on scroll down and shows on scroll up.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVHeader client:load fixed hideOnScroll>
             <template #left>
               <span class="font-bold text-lg">Logo</span>
@@ -152,16 +200,28 @@ const locale = Astro.currentLocale ?? 'en';
               <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
             </template>
           </RLVHeader>
-          <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-            <p class="text-gray-400">Scroll down to see the header hide, scroll up to see it reappear</p>
-          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVHeader client:load fixed hideOnScroll>
+  <template #left>
+    <span class="font-bold text-lg">Logo</span>
+  </template>
+  <template #center>
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Home</a>
+      <a href="#" class="hover:text-primary-500">About</a>
+      <a href="#" class="hover:text-primary-500">Contact</a>
+    </nav>
+  </template>
+  <template #right>
+    <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
+  </template>
+</RLVHeader>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Without Container</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Header with contain=false for full-width content.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVHeader client:load contain={false}>
             <template #left>
               <span class="font-bold text-lg">Logo</span>
@@ -177,8 +237,22 @@ const locale = Astro.currentLocale ?? 'en';
               <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
             </template>
           </RLVHeader>
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVHeader client:load contain={false}>
+  <template #left>
+    <span class="font-bold text-lg">Logo</span>
+  </template>
+  <template #center>
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Home</a>
+      <a href="#" class="hover:text-primary-500">About</a>
+      <a href="#" class="hover:text-primary-500">Contact</a>
+    </nav>
+  </template>
+  <template #right>
+    <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
+  </template>
+</RLVHeader>`}</code></pre>
       </section>
     </div>
   </main>

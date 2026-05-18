@@ -31,43 +31,57 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A button that appears when scrolling down and scrolls back to top when clicked.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAScrollToTop />
           <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <p class="text-gray-400">Scroll down to see the button appear, then click it to scroll back to top</p>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAScrollToTop />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Progress Indicator</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Shows scroll progress in the circle.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAScrollToTop showProgress />
           <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <p class="text-gray-400">Scroll down to see the progress circle fill up</p>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAScrollToTop showProgress />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Colors</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Different color options.</p>
-        <div class="space-y-4">
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Primary (Default)</p>
-            <RLAScrollToTop color="primary" />
-            <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="space-y-6">
+          <div>
+            <div class="border border-black p-md">
+              <RLAScrollToTop color="primary" />
+              <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                <p class="text-gray-400">Primary (Default)</p>
+              </div>
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAScrollToTop color="primary" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Secondary</p>
-            <RLAScrollToTop color="secondary" />
-            <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900"></div>
+          <div>
+            <div class="border border-black p-md">
+              <RLAScrollToTop color="secondary" />
+              <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                <p class="text-gray-400">Secondary</p>
+              </div>
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAScrollToTop color="secondary" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Success</p>
-            <RLAScrollToTop color="success" />
-            <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900"></div>
+          <div>
+            <div class="border border-black p-md">
+              <RLAScrollToTop color="success" />
+              <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                <p class="text-gray-400">Success</p>
+              </div>
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAScrollToTop color="success" />`}</code></pre>
           </div>
         </div>
       </section>
@@ -75,12 +89,13 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Custom Threshold</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Button appears after scrolling 500px.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAScrollToTop threshold={500} />
           <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <p class="text-gray-400">Scroll past 500px to see the button appear</p>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAScrollToTop threshold={500} />`}</code></pre>
       </section>
     </div>
 
@@ -89,43 +104,57 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A button that appears when scrolling down and scrolls back to top when clicked.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVScrollToTop client:load />
           <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <p class="text-gray-400">Scroll down to see the button appear, then click it to scroll back to top</p>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVScrollToTop client:load />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Progress Indicator</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Shows scroll progress in the circle.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVScrollToTop client:load showProgress />
           <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <p class="text-gray-400">Scroll down to see the progress circle fill up</p>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVScrollToTop client:load showProgress />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Colors</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Different color options.</p>
-        <div class="space-y-4">
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Primary (Default)</p>
-            <RLVScrollToTop client:load color="primary" />
-            <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="space-y-6">
+          <div>
+            <div class="border border-black p-md">
+              <RLVScrollToTop client:load color="primary" />
+              <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                <p class="text-gray-400">Primary (Default)</p>
+              </div>
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVScrollToTop client:load color="primary" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Secondary</p>
-            <RLVScrollToTop client:load color="secondary" />
-            <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900"></div>
+          <div>
+            <div class="border border-black p-md">
+              <RLVScrollToTop client:load color="secondary" />
+              <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                <p class="text-gray-400">Secondary</p>
+              </div>
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVScrollToTop client:load color="secondary" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Success</p>
-            <RLVScrollToTop client:load color="success" />
-            <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900"></div>
+          <div>
+            <div class="border border-black p-md">
+              <RLVScrollToTop client:load color="success" />
+              <div class="p-8 h-48 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                <p class="text-gray-400">Success</p>
+              </div>
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVScrollToTop client:load color="success" />`}</code></pre>
           </div>
         </div>
       </section>
@@ -133,12 +162,13 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Custom Threshold</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Button appears after scrolling 500px.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVScrollToTop client:load threshold={500} />
           <div class="p-8 h-96 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <p class="text-gray-400">Scroll past 500px to see the button appear</p>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVScrollToTop client:load threshold={500} />`}</code></pre>
       </section>
     </div>
   </main>

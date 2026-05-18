@@ -31,71 +31,91 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Logomark</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">The default logo variant (icon only).</p>
-        <div class="flex flex-wrap gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg items-center">
-          <div class="flex flex-col items-center gap-2">
-            <RLALogo variant="logomark" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">Default (color)</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
-            <RLALogo variant="logomark" mode="white" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">White</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
-            <RLALogo variant="logomark" mode="black" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500 text-white">Black</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-8 items-center">
+            <div class="flex flex-col items-center gap-2">
+              <RLALogo variant="logomark" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">Default (color)</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
+              <RLALogo variant="logomark" mode="white" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">White</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
+              <RLALogo variant="logomark" mode="black" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500 text-white">Black</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLALogo variant="logomark" class="h-12 w-auto" />
+<RLALogo variant="logomark" mode="white" class="h-12 w-auto" />
+<RLALogo variant="logomark" mode="black" class="h-12 w-auto" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Logotype</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Full logo with text.</p>
-        <div class="flex flex-wrap gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg items-center">
-          <div class="flex flex-col items-center gap-2">
-            <RLALogo variant="logotype" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">Default (color)</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
-            <RLALogo variant="logotype" mode="white" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">White</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
-            <RLALogo variant="logotype" mode="black" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500 text-white">Black</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-8 items-center">
+            <div class="flex flex-col items-center gap-2">
+              <RLALogo variant="logotype" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">Default (color)</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
+              <RLALogo variant="logotype" mode="white" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">White</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
+              <RLALogo variant="logotype" mode="black" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500 text-white">Black</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLALogo variant="logotype" class="h-12 w-auto" />
+<RLALogo variant="logotype" mode="white" class="h-12 w-auto" />
+<RLALogo variant="logotype" mode="black" class="h-12 w-auto" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">As a Link</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Logos can be wrapped in a link.</p>
-        <div class="flex flex-wrap gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg items-center">
-          <RLALogo href="/" variant="logomark" class="h-10 w-auto" />
-          <RLALogo href="/" variant="logotype" class="h-10 w-auto" />
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-8 items-center">
+            <RLALogo href="/" variant="logomark" class="h-10 w-auto" />
+            <RLALogo href="/" variant="logotype" class="h-10 w-auto" />
+          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLALogo href="/" variant="logomark" class="h-10 w-auto" />
+<RLALogo href="/" variant="logotype" class="h-10 w-auto" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Sizes</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Logos at different sizes.</p>
-        <div class="flex flex-wrap items-end gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <div class="flex flex-col items-center gap-2">
-            <RLALogo variant="logomark" class="h-6 w-auto" />
-            <span class="text-xs text-gray-500">24px</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLALogo variant="logomark" class="h-8 w-auto" />
-            <span class="text-xs text-gray-500">32px</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLALogo variant="logomark" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">48px</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLALogo variant="logomark" class="h-16 w-auto" />
-            <span class="text-xs text-gray-500">64px</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap items-end gap-8">
+            <div class="flex flex-col items-center gap-2">
+              <RLALogo variant="logomark" class="h-6 w-auto" />
+              <span class="text-xs text-gray-500">24px</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLALogo variant="logomark" class="h-8 w-auto" />
+              <span class="text-xs text-gray-500">32px</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLALogo variant="logomark" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">48px</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLALogo variant="logomark" class="h-16 w-auto" />
+              <span class="text-xs text-gray-500">64px</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLALogo variant="logomark" class="h-6 w-auto" />
+<RLALogo variant="logomark" class="h-8 w-auto" />
+<RLALogo variant="logomark" class="h-12 w-auto" />
+<RLALogo variant="logomark" class="h-16 w-auto" />`}</code></pre>
       </section>
     </div>
 
@@ -104,71 +124,91 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Logomark</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">The default logo variant (icon only).</p>
-        <div class="flex flex-wrap gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg items-center">
-          <div class="flex flex-col items-center gap-2">
-            <RLVLogo client:load variant="logomark" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">Default (color)</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
-            <RLVLogo client:load variant="logomark" mode="white" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">White</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
-            <RLVLogo client:load variant="logomark" mode="black" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500 text-white">Black</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-8 items-center">
+            <div class="flex flex-col items-center gap-2">
+              <RLVLogo client:load variant="logomark" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">Default (color)</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
+              <RLVLogo client:load variant="logomark" mode="white" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">White</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
+              <RLVLogo client:load variant="logomark" mode="black" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500 text-white">Black</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVLogo client:load variant="logomark" class="h-12 w-auto" />
+<RLVLogo client:load variant="logomark" mode="white" class="h-12 w-auto" />
+<RLVLogo client:load variant="logomark" mode="black" class="h-12 w-auto" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Logotype</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Full logo with text.</p>
-        <div class="flex flex-wrap gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg items-center">
-          <div class="flex flex-col items-center gap-2">
-            <RLVLogo client:load variant="logotype" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">Default (color)</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
-            <RLVLogo client:load variant="logotype" mode="white" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">White</span>
-          </div>
-          <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
-            <RLVLogo client:load variant="logotype" mode="black" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500 text-white">Black</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-8 items-center">
+            <div class="flex flex-col items-center gap-2">
+              <RLVLogo client:load variant="logotype" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">Default (color)</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 dark:bg-gray-900 p-4 rounded">
+              <RLVLogo client:load variant="logotype" mode="white" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">White</span>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-gray-900 p-4 rounded">
+              <RLVLogo client:load variant="logotype" mode="black" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500 text-white">Black</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVLogo client:load variant="logotype" class="h-12 w-auto" />
+<RLVLogo client:load variant="logotype" mode="white" class="h-12 w-auto" />
+<RLVLogo client:load variant="logotype" mode="black" class="h-12 w-auto" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">As a Link</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Logos can be wrapped in a link.</p>
-        <div class="flex flex-wrap gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg items-center">
-          <RLVLogo client:load href="/" variant="logomark" class="h-10 w-auto" />
-          <RLVLogo client:load href="/" variant="logotype" class="h-10 w-auto" />
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-8 items-center">
+            <RLVLogo client:load href="/" variant="logomark" class="h-10 w-auto" />
+            <RLVLogo client:load href="/" variant="logotype" class="h-10 w-auto" />
+          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVLogo client:load href="/" variant="logomark" class="h-10 w-auto" />
+<RLVLogo client:load href="/" variant="logotype" class="h-10 w-auto" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Sizes</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Logos at different sizes.</p>
-        <div class="flex flex-wrap items-end gap-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <div class="flex flex-col items-center gap-2">
-            <RLVLogo client:load variant="logomark" class="h-6 w-auto" />
-            <span class="text-xs text-gray-500">24px</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVLogo client:load variant="logomark" class="h-8 w-auto" />
-            <span class="text-xs text-gray-500">32px</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVLogo client:load variant="logomark" class="h-12 w-auto" />
-            <span class="text-xs text-gray-500">48px</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVLogo client:load variant="logomark" class="h-16 w-auto" />
-            <span class="text-xs text-gray-500">64px</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap items-end gap-8">
+            <div class="flex flex-col items-center gap-2">
+              <RLVLogo client:load variant="logomark" class="h-6 w-auto" />
+              <span class="text-xs text-gray-500">24px</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVLogo client:load variant="logomark" class="h-8 w-auto" />
+              <span class="text-xs text-gray-500">32px</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVLogo client:load variant="logomark" class="h-12 w-auto" />
+              <span class="text-xs text-gray-500">48px</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVLogo client:load variant="logomark" class="h-16 w-auto" />
+              <span class="text-xs text-gray-500">64px</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVLogo client:load variant="logomark" class="h-6 w-auto" />
+<RLVLogo client:load variant="logomark" class="h-8 w-auto" />
+<RLVLogo client:load variant="logomark" class="h-12 w-auto" />
+<RLVLogo client:load variant="logomark" class="h-16 w-auto" />`}</code></pre>
       </section>
     </div>
   </main>

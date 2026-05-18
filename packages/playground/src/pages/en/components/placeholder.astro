@@ -33,7 +33,7 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A placeholder with decorative SVG pattern for empty states.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAPlaceholder class="h-64">
             <div class="flex items-center justify-center h-full">
               <div class="text-center">
@@ -43,12 +43,20 @@ const locale = Astro.currentLocale ?? 'en';
             </div>
           </RLAPlaceholder>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPlaceholder class="h-64">
+  <div class="flex items-center justify-center h-full">
+    <div class="text-center">
+      <p class="text-gray-500 mb-4">No content available</p>
+      <RLAButton variant="outline">Add Content</RLAButton>
+    </div>
+  </div>
+</RLAPlaceholder>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Custom Content</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Placeholder with custom message and icon.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLAPlaceholder class="h-64">
             <div class="flex items-center justify-center h-full">
               <div class="text-center">
@@ -59,23 +67,38 @@ const locale = Astro.currentLocale ?? 'en';
             </div>
           </RLAPlaceholder>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPlaceholder class="h-64">
+  <div class="flex items-center justify-center h-full">
+    <div class="text-center">
+      <span class="i-lucide-inbox text-4xl text-gray-400 mb-4 block"></span>
+      <p class="text-gray-500 mb-2">Your inbox is empty</p>
+      <p class="text-sm text-gray-400">Messages will appear here</p>
+    </div>
+  </div>
+</RLAPlaceholder>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Sizes</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Placeholders at different sizes.</p>
-        <div class="space-y-4">
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Small (200px)</p>
-            <RLAPlaceholder class="h-48" />
+        <div class="space-y-6">
+          <div>
+            <div class="border border-black p-md">
+              <RLAPlaceholder class="h-32" />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPlaceholder class="h-32" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Medium (300px)</p>
-            <RLAPlaceholder class="h-64" />
+          <div>
+            <div class="border border-black p-md">
+              <RLAPlaceholder class="h-48" />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPlaceholder class="h-48" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Large (400px)</p>
-            <RLAPlaceholder class="h-80" />
+          <div>
+            <div class="border border-black p-md">
+              <RLAPlaceholder class="h-64" />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPlaceholder class="h-64" />`}</code></pre>
           </div>
         </div>
       </section>
@@ -86,7 +109,7 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A placeholder with decorative SVG pattern for empty states.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVPlaceholder client:load class="h-64">
             <div class="flex items-center justify-center h-full">
               <div class="text-center">
@@ -96,12 +119,20 @@ const locale = Astro.currentLocale ?? 'en';
             </div>
           </RLVPlaceholder>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVPlaceholder client:load class="h-64">
+  <div class="flex items-center justify-center h-full">
+    <div class="text-center">
+      <p class="text-gray-500 mb-4">No content available</p>
+      <RLVButton client:load variant="outline">Add Content</RLVButton>
+    </div>
+  </div>
+</RLVPlaceholder>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Custom Content</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Placeholder with custom message and icon.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div class="border border-black p-md">
           <RLVPlaceholder client:load class="h-64">
             <div class="flex items-center justify-center h-full">
               <div class="text-center">
@@ -112,23 +143,38 @@ const locale = Astro.currentLocale ?? 'en';
             </div>
           </RLVPlaceholder>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVPlaceholder client:load class="h-64">
+  <div class="flex items-center justify-center h-full">
+    <div class="text-center">
+      <span class="i-lucide-inbox text-4xl text-gray-400 mb-4 block"></span>
+      <p class="text-gray-500 mb-2">Your inbox is empty</p>
+      <p class="text-sm text-gray-400">Messages will appear here</p>
+    </div>
+  </div>
+</RLVPlaceholder>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Sizes</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Placeholders at different sizes.</p>
-        <div class="space-y-4">
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Small (200px)</p>
-            <RLVPlaceholder client:load class="h-48" />
+        <div class="space-y-6">
+          <div>
+            <div class="border border-black p-md">
+              <RLVPlaceholder client:load class="h-32" />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVPlaceholder client:load class="h-32" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Medium (300px)</p>
-            <RLVPlaceholder client:load class="h-64" />
+          <div>
+            <div class="border border-black p-md">
+              <RLVPlaceholder client:load class="h-48" />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVPlaceholder client:load class="h-48" />`}</code></pre>
           </div>
-          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-            <p class="px-4 py-2 text-sm text-gray-500 border-b">Large (400px)</p>
-            <RLVPlaceholder client:load class="h-80" />
+          <div>
+            <div class="border border-black p-md">
+              <RLVPlaceholder client:load class="h-64" />
+            </div>
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVPlaceholder client:load class="h-64" />`}</code></pre>
           </div>
         </div>
       </section>

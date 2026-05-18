@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, useSlots } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ComponentVariants, ComponentSlots } from "../../types"
@@ -33,8 +33,14 @@ const {
   reverse = false,
   ctaVariant = "solid",
   ui: uiProp,
-  class: className
+  class: className,
+  headline,
+  title,
+  description,
+  links
 } = defineProps<RLVSectionProps>()
+
+const slots = useSlots()
 
 const resolvedClasses = computed(() =>
   resolveClasses(
@@ -44,10 +50,10 @@ const resolvedClasses = computed(() =>
       orientation,
       reverse,
       ...(variant === "cta" && { ctaVariant }),
-      headline: false,
-      title: false,
-      description: false,
-      body: false
+      headline: !!(slots.headline || headline),
+      title: !!(slots.title || title),
+      description: !!(slots.description || description),
+      body: !!slots.body
     },
     useUi("section", uiProp),
     className
@@ -56,7 +62,13 @@ const resolvedClasses = computed(() =>
 </script>
 
 <template>
-  <component :is="as" data-slot="root" :data-orientation="orientation" :class="[resolvedClasses.root]" v-bind="$attrs">
+  <component
+    :is="as"
+    data-slot="root"
+    :data-orientation="orientation"
+    :class="[resolvedClasses.root]"
+    v-bind="$attrs"
+  >
     <slot v-if="$slots.background" name="background">
       <div :class="resolvedClasses.background" data-slot="background">
         <slot name="background" />
@@ -68,7 +80,15 @@ const resolvedClasses = computed(() =>
     <div data-slot="container" :class="resolvedClasses.container">
       <div
         v-if="
-          $slots.header || icon || headline || title || description || $slots.body || $slots.footer || $slots.links || links?.length
+          $slots.header ||
+          icon ||
+          headline ||
+          title ||
+          description ||
+          $slots.body ||
+          $slots.footer ||
+          $slots.links ||
+          links?.length
         "
         data-slot="wrapper"
         :class="resolvedClasses.wrapper"
@@ -81,7 +101,12 @@ const resolvedClasses = computed(() =>
           <slot name="header">
             <div v-if="icon || $slots.leading" data-slot="leading" :class="resolvedClasses.leading">
               <slot name="leading" :ui="resolvedClasses">
-                <RLVIcon v-if="icon" :name="icon" size="md" :ui="{ root: resolvedClasses.leadingIcon }" />
+                <RLVIcon
+                  v-if="icon"
+                  :name="icon"
+                  size="md"
+                  :ui="{ root: resolvedClasses.leadingIcon }"
+                />
               </slot>
             </div>
 
@@ -114,10 +139,18 @@ const resolvedClasses = computed(() =>
           <slot name="body" />
         </div>
 
-        <div v-if="$slots.footer || $slots.links || links?.length" data-slot="footer" :class="resolvedClasses.footer">
+        <div
+          v-if="$slots.footer || $slots.links || links?.length"
+          data-slot="footer"
+          :class="resolvedClasses.footer"
+        >
           <slot name="footer">
-            <RLVButton v-for="(link, index) in links" :key="index" size="lg" v-bind="link" />
-            <div v-if="$slots.links" data-slot="links" :class="resolvedClasses.links">
+            <div
+              v-if="links?.length || $slots.links"
+              data-slot="links"
+              :class="resolvedClasses.links"
+            >
+              <RLVButton v-for="(link, index) in links" :key="index" size="lg" v-bind="link" />
               <slot name="links" />
             </div>
           </slot>

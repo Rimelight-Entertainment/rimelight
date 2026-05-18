@@ -33,59 +33,90 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A footer with left, center, and right slots.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="border border-black p-md">
           <RLAFooter>
-            <slot name="left">
+            <div slot="left">
               <span class="font-bold text-lg">© 2026 Rimelight</span>
-            </slot>
-            <slot name="center">
+            </div>
+            <div slot="center">
               <nav class="flex gap-4">
                 <a href="#" class="hover:text-primary-500">Privacy</a>
                 <a href="#" class="hover:text-primary-500">Terms</a>
                 <a href="#" class="hover:text-primary-500">Support</a>
               </nav>
-            </slot>
-            <slot name="right">
+            </div>
+            <div slot="right">
               <div class="flex gap-2">
                 <RLAButton size="sm" square leadingIcon="i-lucide-twitter" variant="ghost" aria-label="Twitter" />
                 <RLAButton size="sm" square leadingIcon="i-lucide-github" variant="ghost" aria-label="GitHub" />
               </div>
-            </slot>
+            </div>
           </RLAFooter>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAFooter>
+  <div slot="left">
+    <span class="font-bold text-lg">© 2026 Rimelight</span>
+  </div>
+  <div slot="center">
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Privacy</a>
+      <a href="#" class="hover:text-primary-500">Terms</a>
+      <a href="#" class="hover:text-primary-500">Support</a>
+    </nav>
+  </div>
+  <div slot="right">
+    <div class="flex gap-2">
+      <RLAButton size="sm" square leadingIcon="i-lucide-twitter" variant="ghost" aria-label="Twitter" />
+      <RLAButton size="sm" square leadingIcon="i-lucide-github" variant="ghost" aria-label="GitHub" />
+    </div>
+  </div>
+</RLAFooter>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Container</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Footer with contain=true for centered content.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="border border-black p-md">
           <RLAFooter contain>
-            <slot name="left">
+            <div slot="left">
               <span class="font-bold">© 2026 Rimelight</span>
-            </slot>
-            <slot name="center">
+            </div>
+            <div slot="center">
               <span class="text-sm text-gray-500">Built with Rimelight UI</span>
-            </slot>
-            <slot name="right">
+            </div>
+            <div slot="right">
               <RLAButton size="sm" variant="outline">Contact</RLAButton>
-            </slot>
+            </div>
           </RLAFooter>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAFooter contain>
+  <div slot="left">
+    <span class="font-bold">© 2026 Rimelight</span>
+  </div>
+  <div slot="center">
+    <span class="text-sm text-gray-500">Built with Rimelight UI</span>
+  </div>
+  <div slot="right">
+    <RLAButton size="sm" variant="outline">Contact</RLAButton>
+  </div>
+</RLAFooter>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Simple Footer</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A simple footer with centered content only.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="border border-black p-md">
           <RLAFooter>
-            <slot name="center">
+            <div slot="center">
               <p class="text-sm text-gray-500">© 2026 Rimelight UI. All rights reserved.</p>
-            </slot>
+            </div>
           </RLAFooter>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAFooter>
+  <div slot="center">
+    <p class="text-sm text-gray-500">© 2026 Rimelight UI. All rights reserved.</p>
+  </div>
+</RLAFooter>`}</code></pre>
       </section>
     </div>
 
@@ -94,8 +125,7 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Default</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A footer with left, center, and right slots.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="border border-black p-md">
           <RLVFooter client:load>
             <template #left>
               <span class="font-bold text-lg">© 2026 Rimelight</span>
@@ -115,13 +145,30 @@ const locale = Astro.currentLocale ?? 'en';
             </template>
           </RLVFooter>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVFooter client:load>
+  <template #left>
+    <span class="font-bold text-lg">© 2026 Rimelight</span>
+  </template>
+  <template #center>
+    <nav class="flex gap-4">
+      <a href="#" class="hover:text-primary-500">Privacy</a>
+      <a href="#" class="hover:text-primary-500">Terms</a>
+      <a href="#" class="hover:text-primary-500">Support</a>
+    </nav>
+  </template>
+  <template #right>
+    <div class="flex gap-2">
+      <RLVButton size="sm" square leadingIcon="i-lucide-twitter" variant="ghost" aria-label="Twitter" />
+      <RLVButton size="sm" square leadingIcon="i-lucide-github" variant="ghost" aria-label="GitHub" />
+    </div>
+  </template>
+</RLVFooter>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">With Container</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Footer with contain=true for centered content.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="border border-black p-md">
           <RLVFooter client:load contain>
             <template #left>
               <span class="font-bold">© 2026 Rimelight</span>
@@ -134,19 +181,34 @@ const locale = Astro.currentLocale ?? 'en';
             </template>
           </RLVFooter>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVFooter client:load contain>
+  <template #left>
+    <span class="font-bold">© 2026 Rimelight</span>
+  </template>
+  <template #center>
+    <span class="text-sm text-gray-500">Built with Rimelight UI</span>
+  </template>
+  <template #right>
+    <RLVButton size="sm" variant="outline">Contact</RLVButton>
+  </template>
+</RLVFooter>`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Simple Footer</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A simple footer with centered content only.</p>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <div class="p-8 h-32 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="border border-black p-md">
           <RLVFooter client:load>
             <template #center>
               <p class="text-sm text-gray-500">© 2026 Rimelight UI. All rights reserved.</p>
             </template>
           </RLVFooter>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVFooter client:load>
+  <template #center>
+    <p class="text-sm text-gray-500">© 2026 Rimelight UI. All rights reserved.</p>
+  </template>
+</RLVFooter>`}</code></pre>
       </section>
     </div>
   </main>

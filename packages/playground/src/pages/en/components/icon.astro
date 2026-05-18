@@ -31,80 +31,105 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Basic Usage</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Icons using UnoCSS icon format (e.g., i-lucide-home).</p>
-        <div class="flex flex-wrap gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <RLAIcon name="i-lucide-home" size="md" />
-          <RLAIcon name="i-lucide-user" size="md" />
-          <RLAIcon name="i-lucide-settings" size="md" />
-          <RLAIcon name="i-lucide-mail" size="md" />
-          <RLAIcon name="i-lucide-search" size="md" />
-          <RLAIcon name="i-lucide-heart" size="md" />
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-4">
+            <RLAIcon name="i-lucide-home" size="md" />
+            <RLAIcon name="i-lucide-user" size="md" />
+            <RLAIcon name="i-lucide-settings" size="md" />
+            <RLAIcon name="i-lucide-mail" size="md" />
+            <RLAIcon name="i-lucide-search" size="md" />
+            <RLAIcon name="i-lucide-heart" size="md" />
+          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAIcon name="i-lucide-home" size="md" />
+<RLAIcon name="i-lucide-user" size="md" />
+<RLAIcon name="i-lucide-settings" size="md" />
+<RLAIcon name="i-lucide-mail" size="md" />
+<RLAIcon name="i-lucide-search" size="md" />
+<RLAIcon name="i-lucide-heart" size="md" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Sizes</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Different icon sizes from xs to xl.</p>
-        <div class="flex flex-wrap items-center gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <div class="flex flex-col items-center gap-1">
-            <RLAIcon name="i-lucide-home" size="xs" />
-            <span class="text-xs text-gray-500">xs</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLAIcon name="i-lucide-home" size="sm" />
-            <span class="text-xs text-gray-500">sm</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLAIcon name="i-lucide-home" size="md" />
-            <span class="text-xs text-gray-500">md</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLAIcon name="i-lucide-home" size="lg" />
-            <span class="text-xs text-gray-500">lg</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLAIcon name="i-lucide-home" size="xl" />
-            <span class="text-xs text-gray-500">xl</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap items-center gap-4">
+            <div class="flex flex-col items-center gap-1">
+              <RLAIcon name="i-lucide-home" size="xs" />
+              <span class="text-xs text-gray-500">xs</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLAIcon name="i-lucide-home" size="sm" />
+              <span class="text-xs text-gray-500">sm</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLAIcon name="i-lucide-home" size="md" />
+              <span class="text-xs text-gray-500">md</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLAIcon name="i-lucide-home" size="lg" />
+              <span class="text-xs text-gray-500">lg</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLAIcon name="i-lucide-home" size="xl" />
+              <span class="text-xs text-gray-500">xl</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAIcon name="i-lucide-home" size="xs" />
+<RLAIcon name="i-lucide-home" size="sm" />
+<RLAIcon name="i-lucide-home" size="md" />
+<RLAIcon name="i-lucide-home" size="lg" />
+<RLAIcon name="i-lucide-home" size="xl" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Popular Icons</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A collection of commonly used icons.</p>
-        <div class="grid grid-cols-4 md:grid-cols-8 gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-home" size="lg" />
-            <span class="text-xs text-gray-500">home</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-search" size="lg" />
-            <span class="text-xs text-gray-500">search</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-menu" size="lg" />
-            <span class="text-xs text-gray-500">menu</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-x" size="lg" />
-            <span class="text-xs text-gray-500">close</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-chevron-down" size="lg" />
-            <span class="text-xs text-gray-500">chevron</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-arrow-right" size="lg" />
-            <span class="text-xs text-gray-500">arrow</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-check" size="lg" />
-            <span class="text-xs text-gray-500">check</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLAIcon name="i-lucide-alert-circle" size="lg" />
-            <span class="text-xs text-gray-500">alert</span>
+        <div class="border border-black p-md">
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-4">
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-home" size="lg" />
+              <span class="text-xs text-gray-500">home</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-search" size="lg" />
+              <span class="text-xs text-gray-500">search</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-menu" size="lg" />
+              <span class="text-xs text-gray-500">menu</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-x" size="lg" />
+              <span class="text-xs text-gray-500">close</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-chevron-down" size="lg" />
+              <span class="text-xs text-gray-500">chevron</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-arrow-right" size="lg" />
+              <span class="text-xs text-gray-500">arrow</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-check" size="lg" />
+              <span class="text-xs text-gray-500">check</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLAIcon name="i-lucide-alert-circle" size="lg" />
+              <span class="text-xs text-gray-500">alert</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAIcon name="i-lucide-home" size="lg" />
+<RLAIcon name="i-lucide-search" size="lg" />
+<RLAIcon name="i-lucide-menu" size="lg" />
+<RLAIcon name="i-lucide-x" size="lg" />
+<RLAIcon name="i-lucide-chevron-down" size="lg" />
+<RLAIcon name="i-lucide-arrow-right" size="lg" />
+<RLAIcon name="i-lucide-check" size="lg" />
+<RLAIcon name="i-lucide-alert-circle" size="lg" />`}</code></pre>
       </section>
     </div>
 
@@ -113,80 +138,105 @@ const locale = Astro.currentLocale ?? 'en';
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Basic Usage</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Icons using UnoCSS icon format (e.g., i-lucide-home).</p>
-        <div class="flex flex-wrap gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <RLVIcon client:load name="i-lucide-home" size="md" />
-          <RLVIcon client:load name="i-lucide-user" size="md" />
-          <RLVIcon client:load name="i-lucide-settings" size="md" />
-          <RLVIcon client:load name="i-lucide-mail" size="md" />
-          <RLVIcon client:load name="i-lucide-search" size="md" />
-          <RLVIcon client:load name="i-lucide-heart" size="md" />
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap gap-4">
+            <RLVIcon client:load name="i-lucide-home" size="md" />
+            <RLVIcon client:load name="i-lucide-user" size="md" />
+            <RLVIcon client:load name="i-lucide-settings" size="md" />
+            <RLVIcon client:load name="i-lucide-mail" size="md" />
+            <RLVIcon client:load name="i-lucide-search" size="md" />
+            <RLVIcon client:load name="i-lucide-heart" size="md" />
+          </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVIcon client:load name="i-lucide-home" size="md" />
+<RLVIcon client:load name="i-lucide-user" size="md" />
+<RLVIcon client:load name="i-lucide-settings" size="md" />
+<RLVIcon client:load name="i-lucide-mail" size="md" />
+<RLVIcon client:load name="i-lucide-search" size="md" />
+<RLVIcon client:load name="i-lucide-heart" size="md" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Sizes</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">Different icon sizes from xs to xl.</p>
-        <div class="flex flex-wrap items-center gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <div class="flex flex-col items-center gap-1">
-            <RLVIcon client:load name="i-lucide-home" size="xs" />
-            <span class="text-xs text-gray-500">xs</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLVIcon client:load name="i-lucide-home" size="sm" />
-            <span class="text-xs text-gray-500">sm</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLVIcon client:load name="i-lucide-home" size="md" />
-            <span class="text-xs text-gray-500">md</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLVIcon client:load name="i-lucide-home" size="lg" />
-            <span class="text-xs text-gray-500">lg</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <RLVIcon client:load name="i-lucide-home" size="xl" />
-            <span class="text-xs text-gray-500">xl</span>
+        <div class="border border-black p-md">
+          <div class="flex flex-wrap items-center gap-4">
+            <div class="flex flex-col items-center gap-1">
+              <RLVIcon client:load name="i-lucide-home" size="xs" />
+              <span class="text-xs text-gray-500">xs</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLVIcon client:load name="i-lucide-home" size="sm" />
+              <span class="text-xs text-gray-500">sm</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLVIcon client:load name="i-lucide-home" size="md" />
+              <span class="text-xs text-gray-500">md</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLVIcon client:load name="i-lucide-home" size="lg" />
+              <span class="text-xs text-gray-500">lg</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <RLVIcon client:load name="i-lucide-home" size="xl" />
+              <span class="text-xs text-gray-500">xl</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVIcon client:load name="i-lucide-home" size="xs" />
+<RLVIcon client:load name="i-lucide-home" size="sm" />
+<RLVIcon client:load name="i-lucide-home" size="md" />
+<RLVIcon client:load name="i-lucide-home" size="lg" />
+<RLVIcon client:load name="i-lucide-home" size="xl" />`}</code></pre>
       </section>
 
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">Popular Icons</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">A collection of commonly used icons.</p>
-        <div class="grid grid-cols-4 md:grid-cols-8 gap-4 p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-home" size="lg" />
-            <span class="text-xs text-gray-500">home</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-search" size="lg" />
-            <span class="text-xs text-gray-500">search</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-menu" size="lg" />
-            <span class="text-xs text-gray-500">menu</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-x" size="lg" />
-            <span class="text-xs text-gray-500">close</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-chevron-down" size="lg" />
-            <span class="text-xs text-gray-500">chevron</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-arrow-right" size="lg" />
-            <span class="text-xs text-gray-500">arrow</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-check" size="lg" />
-            <span class="text-xs text-gray-500">check</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <RLVIcon client:load name="i-lucide-alert-circle" size="lg" />
-            <span class="text-xs text-gray-500">alert</span>
+        <div class="border border-black p-md">
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-4">
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-home" size="lg" />
+              <span class="text-xs text-gray-500">home</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-search" size="lg" />
+              <span class="text-xs text-gray-500">search</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-menu" size="lg" />
+              <span class="text-xs text-gray-500">menu</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-x" size="lg" />
+              <span class="text-xs text-gray-500">close</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-chevron-down" size="lg" />
+              <span class="text-xs text-gray-500">chevron</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-arrow-right" size="lg" />
+              <span class="text-xs text-gray-500">arrow</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-check" size="lg" />
+              <span class="text-xs text-gray-500">check</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <RLVIcon client:load name="i-lucide-alert-circle" size="lg" />
+              <span class="text-xs text-gray-500">alert</span>
+            </div>
           </div>
         </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVIcon client:load name="i-lucide-home" size="lg" />
+<RLVIcon client:load name="i-lucide-search" size="lg" />
+<RLVIcon client:load name="i-lucide-menu" size="lg" />
+<RLVIcon client:load name="i-lucide-x" size="lg" />
+<RLVIcon client:load name="i-lucide-chevron-down" size="lg" />
+<RLVIcon client:load name="i-lucide-arrow-right" size="lg" />
+<RLVIcon client:load name="i-lucide-check" size="lg" />
+<RLVIcon client:load name="i-lucide-alert-circle" size="lg" />`}</code></pre>
       </section>
     </div>
   </main>
