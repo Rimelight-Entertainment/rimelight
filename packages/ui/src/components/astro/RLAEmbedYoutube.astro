@@ -1,0 +1,188 @@
+---
+const PLACEHOLDER_THUMBNAIL = "/assets/blog-placeholder-1.jpg";
+
+const YOUTUBE_EMBED_BASE = "https://www.youtube.com/embed/";
+
+const VALID_ID_PATTERN = /^[\w-]{11}$/;
+
+const KNOWN_PREFIXES = ["www.", "m.", "music.", "gaming."];
+
+const YOUTUBE_THUMB_BASE = "https://i3.ytimg.com/vi/";
+
+const MAXRES_THUMBNAIL = "maxresdefault.jpg";
+
+const DEFAULT_THUMBNAIL = "hqdefault.jpg";
+
+const thumbnailAvailabilityCache = new Map<string, boolean>();
+
+function normalizeHost(host: string): string {
+  for (const prefix of KNOWN_PREFIXES) {
+    if (host.startsWith(prefix)) {
+      return host.slice(prefix.length);
+    }
+  }
+  return host;
+}
+
+function sanitizeVideoId(id: string | null): string | null {
+  if (!id) return null;
+  return VALID_ID_PATTERN.test(id) ? id : null;
+}
+
+function extractYoutubeVideoId(rawUrl: string): string | null {
+  if (!rawUrl) return null;
+
+  try {
+    const url = new URL(rawUrl);
+    const host = normalizeHost(url.hostname);
+
+    if (host === "youtu.be") {
+      const id = url.pathname.split("/").filter(Boolean)[0] ?? null;
+      return sanitizeVideoId(id);
+    }
+
+    if (host.endsWith("youtube.com")) {
+      const paramsId = sanitizeVideoId(url.searchParams.get("v"));
+      if (paramsId) return paramsId;
+
+      const segments = url.pathname.split("/").filter(Boolean);
+      if (!segments.length) return null;
+
+      if (segments[0] === "embed" || segments[0] === "shorts" || segments[0] === "live") {
+        return sanitizeVideoId(segments[1] ?? null);
+      }
+
+      return sanitizeVideoId(segments[segments.length - 1] ?? null);
+    }
+  } catch {
+    // If it's just an 11-character ID passed directly, return it validated
+    if (VALID_ID_PATTERN.test(rawUrl)) {
+      return rawUrl;
+    }
+    return null;
+  }
+
+  return null;
+}
+
+async function isThumbnailAvailable(url: string): Promise<boolean> {
+  if (thumbnailAvailabilityCache.has(url)) {
+    return thumbnailAvailabilityCache.get(url)!;
+  }
+
+  if (typeof fetch !== "function") {
+    return false;
+  }
+
+  try {
+    const response = await fetch(url, { method: "HEAD" });
+    let available = response.ok;
+
+    if (!available && response.status === 405) {
+      const getResponse = await fetch(url, { method: "GET" });
+      available = getResponse.ok;
+    }
+
+    thumbnailAvailabilityCache.set(url, available);
+    return available;
+  } catch {
+    return false;
+  }
+}
+
+async function getYoutubeThumbnail(rawUrl: string): Promise<string> {
+  const id = extractYoutubeVideoId(rawUrl);
+  if (!id) return PLACEHOLDER_THUMBNAIL;
+
+  const baseUrl = `${YOUTUBE_THUMB_BASE}${id}`;
+  const maxResUrl = `${baseUrl}/${MAXRES_THUMBNAIL}`;
+
+  if (await isThumbnailAvailable(maxResUrl)) {
+    return maxResUrl;
+  }
+
+  return `${baseUrl}/${DEFAULT_THUMBNAIL}`;
+}
+
+function getYoutubeEmbedUrl(rawUrl: string): string | null {
+  const id = extractYoutubeVideoId(rawUrl);
+  return id ? `${YOUTUBE_EMBED_BASE}${id}?autoplay=1` : null;
+}
+
+interface Props {
+  src: string;
+  title?: string;
+  class?: string;
+}
+
+const { src, title = "YouTube video player", class: className } = Astro.props;
+
+const embedUrl = getYoutubeEmbedUrl(src);
+const thumbnail = await getYoutubeThumbnail(src);
+const isPlayable = Boolean(embedUrl);
+const ariaLabel = isPlayable ? "Play YouTube video" : "YouTube video unavailable";
+---
+
+<div class:list={["relative aspect-video h-full w-full cursor-pointer overflow-hidden", className]} data-youtube-video>
+  <button
+    type="button"
+    class="absolute inset-0 aspect-video h-full w-full overflow-hidden group"
+    data-youtube-trigger
+    aria-label={ariaLabel}
+    data-embed-url={isPlayable ? embedUrl : undefined}
+    disabled={!isPlayable}
+    data-video-title={title}
+  >
+    <img
+      src={thumbnail}
+      class="h-full w-full object-cover"
+      alt={title}
+      width="1280"
+      height="720"
+      loading="lazy"
+    />
+
+    <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors">
+      <svg class="h-20 w-20 text-white opacity-85 transition-all transform group-hover:opacity-100 group-hover:scale-110 duration-300" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script is:inline>
+  (() => {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+
+    const trigger = root.querySelector("[data-youtube-trigger]");
+    if (!(trigger instanceof HTMLButtonElement)) return;
+
+    const embedUrl = trigger.dataset.embedUrl;
+    const title = trigger.dataset.videoTitle;
+    if (!embedUrl) return;
+
+    const activate = () => {
+      const iframe = document.createElement("iframe");
+      iframe.src = embedUrl;
+      iframe.title = title;
+      iframe.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      iframe.allowFullscreen = true;
+      iframe.loading = "lazy";
+      iframe.referrerPolicy = "strict-origin-when-cross-origin";
+      iframe.classList.add("w-full", "h-full", "absolute", "inset-0");
+
+      root.replaceChildren(iframe);
+    };
+
+    // click and accessibility activation
+    trigger.addEventListener("click", activate, { once: true });
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        activate();
+      }
+    }, { once: true });
+  })();
+</script>
