@@ -37,28 +37,28 @@ export default defineTheme({
     size: {
       xs: {
         root: "h-7 px-2xs text-xs [&_svg]:size-3.5",
-        leadingIcon: "[&_svg]:size-3.5",
-        trailingIcon: "[&_svg]:size-3.5"
+        leadingIcon: "[&_svg]:size-3.5 [&_span]:size-3.5",
+        trailingIcon: "[&_svg]:size-3.5 [&_span]:size-3.5"
       },
       sm: {
         root: "h-8 px-xs text-sm [&_svg]:size-4",
-        leadingIcon: "[&_svg]:size-4",
-        trailingIcon: "[&_svg]:size-4"
+        leadingIcon: "[&_svg]:size-4 [&_span]:size-4",
+        trailingIcon: "[&_svg]:size-4 [&_span]:size-4"
       },
       md: {
         root: "h-9 px-sm text-sm [&_svg]:size-4",
-        leadingIcon: "[&_svg]:size-4",
-        trailingIcon: "[&_svg]:size-4"
+        leadingIcon: "[&_svg]:size-4 [&_span]:size-4",
+        trailingIcon: "[&_svg]:size-4 [&_span]:size-4"
       },
       lg: {
         root: "h-10 px-md text-base [&_svg]:size-4.5",
-        leadingIcon: "[&_svg]:size-4.5",
-        trailingIcon: "[&_svg]:size-4.5"
+        leadingIcon: "[&_svg]:size-4.5 [&_span]:size-4.5",
+        trailingIcon: "[&_svg]:size-4.5 [&_span]:size-4.5"
       },
       xl: {
         root: "h-11 px-lg text-base [&_svg]:size-5",
-        leadingIcon: "[&_svg]:size-5",
-        trailingIcon: "[&_svg]:size-5"
+        leadingIcon: "[&_svg]:size-5 [&_span]:size-5",
+        trailingIcon: "[&_svg]:size-5 [&_span]:size-5"
       }
     },
     block: {

@@ -19,7 +19,7 @@ export default defineTheme({
   base: {
     root: "relative isolate",
     background: "absolute inset-0 -z-1 overflow-hidden",
-    container: "flex flex-col lg:grid",
+    container: "mx-auto w-full max-w-90rem px-md flex flex-col lg:grid",
     wrapper: "",
     header: "",
     leading: "flex items-center mb-6",
