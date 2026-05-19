@@ -21,7 +21,7 @@ export default defineTheme({
       soft: { root: "" },
       subtle: { root: "" },
       ghost: { root: "" },
-      link: { root: "p-0 h-auto" }
+      link: { root: "p-0 h-auto no-underline" }
     },
     color: {
       primary: { root: "" },
@@ -332,63 +332,63 @@ export default defineTheme({
       variant: "link",
       color: "primary",
       classNames: {
-        root: "text-primary-600 hover:underline hover:decoration-primary/30"
+        root: "text-primary-600 hover:underline hover:decoration-primary-300"
       }
     },
     {
       variant: "link",
       color: "secondary",
       classNames: {
-        root: "text-secondary-600 hover:underline hover:decoration-secondary/30"
+        root: "text-secondary-600 hover:underline hover:decoration-secondary-300"
       }
     },
     {
       variant: "link",
       color: "info",
       classNames: {
-        root: "text-info-600 hover:underline hover:decoration-info/30"
+        root: "text-info-600 hover:underline hover:decoration-info-300"
       }
     },
     {
       variant: "link",
       color: "success",
       classNames: {
-        root: "text-success-600 hover:underline hover:decoration-success/30"
+        root: "text-success-600 hover:underline hover:decoration-success-300"
       }
     },
     {
       variant: "link",
       color: "warning",
       classNames: {
-        root: "text-warning-600 hover:underline hover:decoration-warning/30"
+        root: "text-warning-600 hover:underline hover:decoration-warning-300"
       }
     },
     {
       variant: "link",
       color: "error",
       classNames: {
-        root: "text-error-600 hover:underline hover:decoration-error/30"
+        root: "text-error-600 hover:underline hover:decoration-error-300"
       }
     },
     {
       variant: "link",
       color: "commentary",
       classNames: {
-        root: "text-commentary-600 hover:underline hover:decoration-commentary/30"
+        root: "text-commentary-600 hover:underline hover:decoration-commentary-300"
       }
     },
     {
       variant: "link",
       color: "ideation",
       classNames: {
-        root: "text-ideation-600 hover:underline hover:decoration-ideation/30"
+        root: "text-ideation-600 hover:underline hover:decoration-ideation-300"
       }
     },
     {
       variant: "link",
       color: "source",
       classNames: {
-        root: "text-source-600 hover:underline hover:decoration-source/30"
+        root: "text-source-600 hover:underline hover:decoration-source-300"
       }
     },
     {

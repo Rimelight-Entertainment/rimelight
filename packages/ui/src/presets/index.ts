@@ -1,3 +1,5 @@
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
 import {
   definePreset,
   presetTypography,
@@ -6,6 +8,27 @@ import {
   transformerDirectives,
   transformerVariantGroup
 } from "unocss"
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
+const uiFilesystemGlob = join(__dirname, "../**/*")
+
+const createScale = (colorName: string) => ({
+  DEFAULT: `var(--${colorName})`,
+  foreground: `var(--${colorName}-foreground)`,
+  accent: `var(--${colorName}-accent)`,
+  "50": `var(--color-${colorName}-50)`,
+  "100": `var(--color-${colorName}-100)`,
+  "200": `var(--color-${colorName}-200)`,
+  "300": `var(--color-${colorName}-300)`,
+  "400": `var(--color-${colorName}-400)`,
+  "500": `var(--color-${colorName}-500)`,
+  "600": `var(--color-${colorName}-600)`,
+  "700": `var(--color-${colorName}-700)`,
+  "800": `var(--color-${colorName}-800)`,
+  "900": `var(--color-${colorName}-900)`,
+  "950": `var(--color-${colorName}-950)`
+})
 
 export default definePreset(() => {
   return {
@@ -47,10 +70,11 @@ export default definePreset(() => {
         include: [
           /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
           "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
+          uiSrcGlob,
           "../ui/src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}"
         ]
       },
-      filesystem: ["../ui/src/**/*", "src/components/**/*", "src/pages/**/*"]
+      filesystem: [uiFilesystemGlob, "../ui/src/**/*", "src/components/**/*", "src/pages/**/*"]
     },
 
     shortcuts: {
@@ -94,16 +118,8 @@ export default definePreset(() => {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
-        "primary": {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
-          accent: "var(--primary-accent)"
-        },
-        "secondary": {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
-          accent: "var(--secondary-accent)"
-        },
+        "primary": createScale("primary"),
+        "secondary": createScale("secondary"),
         "muted": {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"
@@ -112,34 +128,13 @@ export default definePreset(() => {
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)"
         },
-        "info": {
-          DEFAULT: "var(--info)",
-          foreground: "var(--info-foreground)"
-        },
-        "success": {
-          DEFAULT: "var(--success)",
-          foreground: "var(--success-foreground)"
-        },
-        "warning": {
-          DEFAULT: "var(--warning)",
-          foreground: "var(--warning-foreground)"
-        },
-        "error": {
-          DEFAULT: "var(--error)",
-          foreground: "var(--error-foreground)"
-        },
-        "commentary": {
-          DEFAULT: "var(--commentary)",
-          foreground: "var(--commentary-foreground)"
-        },
-        "ideation": {
-          DEFAULT: "var(--ideation)",
-          foreground: "var(--ideation-foreground)"
-        },
-        "source": {
-          DEFAULT: "var(--source)",
-          foreground: "var(--source-foreground)"
-        },
+        "info": createScale("info"),
+        "success": createScale("success"),
+        "warning": createScale("warning"),
+        "error": createScale("error"),
+        "commentary": createScale("commentary"),
+        "ideation": createScale("ideation"),
+        "source": createScale("source"),
         "border": "var(--border)",
         "input": "var(--input)",
         "outline": "var(--outline)",
@@ -209,159 +204,7 @@ export default definePreset(() => {
       }
     },
 
-    preflights: [
-      {
-        getCSS: () => `
-          :root {
-            --background: #ffffff;
-            --foreground: #030712;
-            --card: #ffffff;
-            --card-foreground: #030712;
-            --popover: #ffffff;
-            --popover-foreground: #030712;
-            --primary: #f97316;
-            --primary-foreground: #f9fafb;
-            --primary-accent: #ea580c;
-            --secondary: #8b5cf6;
-            --secondary-foreground: #f9fafb;
-            --secondary-accent: #7c3aed;
-            --muted: #f3f4f6;
-            --muted-foreground: #4b5563;
-            --accent: #f3f4f6;
-            --accent-foreground: #111827;
-            --info: #3b82f6;
-            --info-foreground: #ffffff;
-            --success: #22c55e;
-            --success-foreground: #ffffff;
-            --warning: #f59e0b;
-            --warning-foreground: #000000;
-            --error: #ef4444;
-            --error-foreground: #f9fafb;
-            --commentary: #ec4899;
-            --commentary-foreground: #f9fafb;
-            --ideation: #8b5cf6;
-            --ideation-foreground: #f9fafb;
-            --source: #38bdf8;
-            --source-foreground: #0f172a;
-            --border: #e5e7eb;
-            --input: #e5e7eb;
-            --outline: #9ca3af;
-            --ring: #9ca3af;
-            --radius: 0.625rem;
-            --sidebar: #f9fafb;
-            --sidebar-foreground: #030712;
-            --sidebar-primary: #1d4ed8;
-            --sidebar-primary-foreground: #f9fafb;
-            --sidebar-accent: #f3f4f6;
-            --sidebar-accent-foreground: #111827;
-            --sidebar-border: #e5e7eb;
-            --sidebar-ring: #9ca3af;
-            --chart-1: #3b82f6;
-            --chart-2: #6366f1;
-            --chart-3: #8b5cf6;
-            --chart-4: #a855f7;
-            --chart-5: #ec4899;
-            --destructive: #ef4444;
-            --color-surface: #ffffff;
-            --color-muted-strong: #e5e7eb;
-            --color-foreground-secondary: #4b5563;
-            --color-foreground-tertiary: #6b7280;
-            --color-placeholder: #9ca3af;
-            --color-input-border: #d1d5db;
-            --color-hover: #f3f4f6;
-            --color-destructive-subtle: #fef2f2;
-            --color-accent-subtle: #eff6ff;
-            --font-sans: "Noto Sans", sans-serif;
-            --font-serif: "Noto Serif", serif;
-            --font-mono: "Noto Sans Mono", monospace;
-          }
-
-          .dark {
-            --background: #030712;
-            --foreground: #f9fafb;
-            --card: #111827;
-            --card-foreground: #f9fafb;
-            --popover: #1f2937;
-            --popover-foreground: #f9fafb;
-            --primary: #f97316;
-            --primary-foreground: #f9fafb;
-            --primary-accent: #fb923c;
-            --secondary: #8b5cf6;
-            --secondary-foreground: #f9fafb;
-            --secondary-accent: #a78bfa;
-            --muted: #1f2937;
-            --muted-foreground: #9ca3af;
-            --accent: #374151;
-            --accent-foreground: #f3f4f6;
-            --info: #3b82f6;
-            --info-foreground: #ffffff;
-            --success: #22c55e;
-            --success-foreground: #ffffff;
-            --warning: #f59e0b;
-            --warning-foreground: #000000;
-            --error: #ef4444;
-            --error-foreground: #f9fafb;
-            --commentary: #f472b6;
-            --commentary-foreground: #0f172a;
-            --ideation: #a78bfa;
-            --ideation-foreground: #0f172a;
-            --source: #7dd3fc;
-            --source-foreground: #0f172a;
-            --border: rgba(249, 250, 251, 0.1);
-            --input: rgba(249, 250, 251, 0.15);
-            --outline: #6b7280;
-            --ring: #6b7280;
-            --sidebar: #111827;
-            --sidebar-foreground: #f9fafb;
-            --sidebar-primary: #1d4ed8;
-            --sidebar-primary-foreground: #f9fafb;
-            --sidebar-accent: #1f2937;
-            --sidebar-accent-foreground: #f3f4f6;
-            --sidebar-border: #1f2937;
-            --sidebar-ring: #6b7280;
-            --chart-1: #60a5fa;
-            --chart-2: #818cf8;
-            --chart-3: #a78bfa;
-            --chart-4: #c084fc;
-            --chart-5: #f472b6;
-            --destructive: #f87171;
-            --color-surface: #1f2937;
-            --color-muted-strong: #374151;
-            --color-foreground-secondary: #d1d5db;
-            --color-foreground-tertiary: #9ca3af;
-            --color-placeholder: #6b7280;
-            --color-input-border: #4b5563;
-            --color-hover: #374151;
-            --color-destructive-subtle: #451a1a;
-            --color-accent-subtle: #1e293b;
-          }
-
-          * {
-            border-color: var(--border);
-            outline-color: rgba(156, 163, 175, 0.5);
-          }
-
-          body {
-            background-color: var(--background);
-            color: var(--foreground);
-            font-family: var(--font-sans);
-          }
-
-          button {
-            cursor: pointer;
-          }
-
-          ::selection {
-            background-color: var(--primary);
-            color: var(--primary-foreground);
-          }
-
-          @view-transition {
-            navigation: auto;
-          }
-        `
-      }
-    ],
+    preflights: [],
 
     async configResolved(config) {
       if (process.env.NODE_ENV === "development" && !process.env.UNO_CONFIG_LOGGED) {
