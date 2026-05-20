@@ -10,7 +10,7 @@ import rimelightUiPreset from "@rimelight/ui/presets"
 
 export default defineConfig<PresetWind4Theme>({
   presets: [
-    rimelightUiPreset(),
+    rimelightUiPreset({ colors: ["blurple"] }),
     presetWind4(),
     presetTypography({
       cssExtend: {

@@ -30,9 +30,34 @@ const createScale = (colorName: string) => ({
   "950": `var(--color-${colorName}-950)`
 })
 
-export default definePreset(() => {
+export interface RimelightPresetOptions {
+  colors?: string[]
+}
+
+export default definePreset((options?: RimelightPresetOptions) => {
+  const customColors = options?.colors || []
+  const coreColors = ["primary", "secondary", "info", "success", "warning", "error", "commentary", "ideation", "source"]
+  const allColors = [...new Set([...coreColors, ...customColors])]
+
+  const safelist = allColors.flatMap(color => [
+    `bg-${color}-500`,
+    `hover:bg-${color}-600`,
+    `focus-visible:ring-${color}-500/50`,
+    `border-${color}-500/20`,
+    `text-${color}-600`,
+    `bg-${color}-500/5`,
+    `hover:bg-${color}-500/10`,
+    `hover:border-${color}-500/30`,
+    `focus-visible:ring-${color}-500/40`,
+    `bg-${color}-500/10`,
+    `hover:bg-${color}-500/20`,
+    `hover:underline`,
+    `hover:decoration-${color}-300`
+  ])
+
   return {
     name: "rimelight-ui",
+    safelist,
     presets: [
       presetWind4(),
       presetTypography({
@@ -118,8 +143,7 @@ export default definePreset(() => {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
-        "primary": createScale("primary"),
-        "secondary": createScale("secondary"),
+        ...Object.fromEntries(allColors.map(color => [color, createScale(color)])),
         "muted": {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"
@@ -128,13 +152,6 @@ export default definePreset(() => {
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)"
         },
-        "info": createScale("info"),
-        "success": createScale("success"),
-        "warning": createScale("warning"),
-        "error": createScale("error"),
-        "commentary": createScale("commentary"),
-        "ideation": createScale("ideation"),
-        "source": createScale("source"),
         "border": "var(--border)",
         "input": "var(--input)",
         "outline": "var(--outline)",

@@ -33,6 +33,10 @@ export interface UIOptions {
    * wins).
    */
   ui?: UIConfigOverrides
+  /**
+   * Custom color names to dynamically generate variants for.
+   */
+  colors?: string[]
 }
 
 /**
@@ -59,7 +63,9 @@ export interface UIOptions {
  */
 export function ui(options: UIOptions = {}): AstroIntegration[] {
   const resolvedUI = defu(options.ui ?? {}, defaultUIConfig)
-  const resolvedConfig = { ...resolvedUI, logos: options.logos ?? {} }
+  const coreColors = ["primary", "secondary", "info", "success", "warning", "error", "commentary", "ideation", "source"]
+  const mergedColors = [...new Set([...coreColors, ...(options.colors || [])])]
+  const resolvedConfig = { ...resolvedUI, logos: options.logos ?? {}, colors: mergedColors }
 
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId

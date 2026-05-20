@@ -9,7 +9,7 @@ declare module "virtual:nuxt-ui-plugins" {
 declare module "virtual:rimelight-ui" {
   import type { DefaultUIConfig } from "../themes"
 
-  export function getUIConfig(): DefaultUIConfig
+  export function getUIConfig(): DefaultUIConfig & { colors?: string[] }
 }
 
 interface StarlightAddonsConfig {

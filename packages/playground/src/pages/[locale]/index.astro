@@ -1,0 +1,208 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { siteConfig } from "@/site.config";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { getCollection } from "astro:content";
+import RLASection from "@rimelight/ui/components/astro/RLASection.astro";
+import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLAEmbedYoutube from "@rimelight/ui/components/astro/RLAEmbedYoutube.astro";
+import { BlogPosts, BlogPost } from "@rimelight/ui/nuxt";
+import { Image } from "astro:assets";
+
+import { useI18nAsync } from "astro-nanostores-i18n:runtime";
+
+const currentLocale = Astro.currentLocale ?? "en";
+
+// Fetch localized translations for the homepage
+const messages = await useI18nAsync("home", {
+  hero: {
+    title: "We are Rimelight Entertainment",
+    description: "We are creators of Grand Tale.",
+    joinUs: "Join Us",
+    learnMore: "Learn More"
+  },
+  company: {
+    title: "Pushing the boundaries of {interactive}",
+    description: "Founded in 2023, Rimelight Entertainment is independent and player-focused. We don't just create games; we create living, breathing worlds that respect your time and intelligence.",
+    stats: {
+      titles: "Titles in Development",
+      creators: "Global Creators"
+    }
+  },
+  projects: {
+    title: "Our Projects",
+    tags: {
+      franchise: "Franchise",
+      fantasy: "Fantasy",
+      social: "Social"
+    },
+    content: {
+      grandTale: {
+        description: "A high-fantasy social life-sim game which hosts sub-games of multiple genres."
+      }
+    },
+    actions: {
+      discover: "Discover"
+    }
+  },
+  news: {
+    title: "Latest News",
+    description: "Read our latest news, posts, and project updates.",
+    actions: {
+      viewAll: "View All News"
+    }
+  },
+  cta: {
+    title: "Ready to play?",
+    description: "Join us and let's tell our story together.",
+    actions: {
+      createAccount: "Create Account",
+      exploreCareers: "Explore Careers"
+    }
+  }
+});
+
+// Fetch the 3 latest blog posts
+const latestPosts = (await getCollection("blog"))
+  .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// Button configurations using exact UI properties
+const heroLinks = [
+  {
+    label: messages.hero.joinUs,
+    href: getRelativeLocaleUrl(currentLocale, "/auth/sign-up"),
+    color: "blurple" as const,
+    variant: "solid" as const,
+    class: "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
+  },
+  {
+    label: messages.hero.learnMore,
+    href: getRelativeLocaleUrl(currentLocale, "/company/about"),
+    color: "neutral" as const,
+    variant: "outline" as const,
+    trailingIcon: "i-lucide-arrow-right",
+    class: "text-white ring-white bg-transparent hover:bg-white hover:text-black px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
+  }
+];
+
+const ctaLinks = [
+  {
+    label: messages.cta.actions.createAccount,
+    href: getRelativeLocaleUrl(currentLocale, "/auth/sign-up"),
+    color: "primary",
+    variant: "solid",
+  },
+  {
+    label: messages.cta.actions.exploreCareers,
+    href: getRelativeLocaleUrl(currentLocale, "/company/careers"),
+    color: "neutral",
+    variant: "outline"
+  }
+];
+---
+
+<AppLayout title={siteConfig.name} description={siteConfig.description}>
+  <main class="!w-full !max-w-none !m-0 !p-0 min-h-screen bg-black text-white overflow-hidden">
+    <RLASection
+      variant="hero"
+      reverse={true}
+      title={messages.hero.title}
+      description={messages.hero.description}
+      links={heroLinks}
+    >
+      <RLALogo class="pointer-events-none h-64 w-auto text-white" variant="logomark" mode="white" />
+    </RLASection>
+
+    <RLASection
+      orientation="horizontal"
+      title={messages.company.title.replace("{interactive}", "interactive media")}
+      description={messages.company.description}
+    >
+      <div slot="body" class="grid grid-cols-2 gap-lg mt-8 border-t border-neutral-800/50 pt-8 max-w-xl">
+        <div>
+          <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">3+</div>
+          <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
+            {messages.company.stats.titles}
+          </div>
+        </div>
+        <div>
+          <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">50+</div>
+          <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
+            {messages.company.stats.creators}
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center lg:pl-12 w-full mt-10 lg:mt-0">
+        <RLAEmbedYoutube
+          src="https://www.youtube.com/watch?v=uH1Hw6SDI1M"
+          title="We are Rimelight Entertainment"
+          class="aspect-video w-full max-w-2xl overflow-hidden rounded-2xl shadow-2xl border border-neutral-800"
+        />
+      </div>
+    </RLASection>
+
+    <RLASection
+      orientation="vertical"
+      title={messages.news.title}
+      description={messages.news.description}
+    >
+      <div slot="background" class="w-full h-full">
+        <Image
+          src={NewsBg}
+          alt="News Background"
+          class="h-full w-full object-cover opacity-15"
+        />
+        <div class="absolute inset-0 bg-black/85" />
+      </div>
+
+      <div slot="body" class="w-full mt-12 max-w-7xl mx-auto px-4">
+        <BlogPosts client:load class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {
+            latestPosts.map((post) => (
+              <BlogPost
+                client:load
+                title={post.data.title}
+                description={post.data.description}
+                date={post.data.pubDate}
+                image={post.data.heroImage}
+                to={getRelativeLocaleUrl(currentLocale, `/blog/${post.id}/`)}
+                variant="soft"
+                ui={{ 
+                  image: 'object-center object-cover h-48 w-full group-hover:scale-105 transition-transform duration-500', 
+                  title: 'text-black font-semibold text-xl mt-2 line-clamp-2',
+                  description: 'text-neutral-600 text-sm mt-1 line-clamp-3'
+                }}
+                class="bg-white rounded-2xl shadow-xl overflow-hidden border border-neutral-100 group transition-all duration-300 hover:shadow-2xl"
+              />
+            ))
+          }
+        </BlogPosts>
+
+        {latestPosts.length > 0 && (
+          <div class="flex justify-center mt-14">
+            <RLAButton
+              label={messages.news.actions.viewAll}
+              href={getRelativeLocaleUrl(currentLocale, "/blog")}
+              color="primary"
+              variant="link"
+              trailingIcon="i-lucide-arrow-right"
+              class="font-bold uppercase tracking-widest text-primary-500 hover:text-primary-400 transition-colors flex items-center gap-xs"
+            />
+          </div>
+        )}
+      </div>
+    </RLASection>
+
+    <RLASection
+      variant="cta"
+      ctaVariant="solid"
+      title={messages.cta.title}
+      description={messages.cta.description}
+      links={ctaLinks}
+    >
+    </RLASection>
+  </main>
+</AppLayout>

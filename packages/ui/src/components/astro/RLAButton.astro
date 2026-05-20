@@ -2,10 +2,14 @@
 import { scv, cx } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ComponentVariants, ComponentSlots } from "../../types"
-import buttonTheme from "../../themes/button.theme"
+import buttonThemeDefault, { createButtonTheme } from "../../themes/button.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const buttonTheme = uiConfig.colors ? createButtonTheme(uiConfig.colors) : buttonThemeDefault
 
 const button = scv(buttonTheme)
-type ButtonVariants = ComponentVariants<typeof buttonTheme>
+type ButtonVariants = ComponentVariants<typeof buttonThemeDefault>
 
 export interface RLAButtonProps {
   variant?: ButtonVariants['variant'];
