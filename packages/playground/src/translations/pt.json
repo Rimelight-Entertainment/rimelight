@@ -45,5 +45,12 @@
         "exploreCareers": "Explorar Carreiras"
       }
     }
+  },
+  "blog": {
+    "categories": {
+      "company-news": "Notícias da Empresa",
+      "development-log": "Registro de Desenvolvimento",
+      "other": "Outro"
+    }
   }
 }

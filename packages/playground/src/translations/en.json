@@ -45,5 +45,12 @@
         "exploreCareers": "Explore Careers"
       }
     }
+  },
+  "blog": {
+    "categories": {
+      "company-news": "Company News",
+      "development-log": "Development Log",
+      "other": "Other"
+    }
   }
 }
