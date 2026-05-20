@@ -168,6 +168,7 @@ export default defineConfig({
     }),
 
     ui({
+      colors: ["blurple"],
       logos: {
         logomark: "/favicon.svg"
       }
