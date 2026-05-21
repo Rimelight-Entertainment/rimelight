@@ -1,17 +1,30 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("showcase", {
+    title: "Showcase",
+    description: "Component Showcase",
+    movedNotice: "The full component showcase has moved to the {link} page.",
+    componentsLink: "Components",
+    deprecationNote: "This page is deprecated. Please visit the {link} page to see all available components with full Astro and Vue examples.",
+});
 ---
 
-<AppLayout title="Showcase" description="Component Showcase">
+<AppLayout title={messages.title} description={messages.description}>
   <main class="max-w-6xl mx-auto p-8">
-    <h1 class="text-3xl font-bold mb-4">Showcase</h1>
+    <h1 class="text-3xl font-bold mb-4">{messages.title}</h1>
     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
-      The full component showcase has moved to the <a href="/components" class="text-primary-500 hover:underline">Components</a> page.
+      The full component showcase has moved to the <a href={getRelativeLocaleUrl(activeLocale, "/components")} class="text-primary-500 hover:underline">{messages.componentsLink}</a> page.
     </p>
 
     <div class="p-6 border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
       <p class="text-yellow-800 dark:text-yellow-200">
-        <strong>Note:</strong> This page is deprecated. Please visit the <a href="/components" class="underline font-medium">Components</a> page to see all available components with full Astro and Vue examples.
+        <strong>Note:</strong> This page is deprecated. Please visit the <a href={getRelativeLocaleUrl(activeLocale, "/components")} class="underline font-medium">{messages.componentsLink}</a> page to see all available components with full Astro and Vue examples.
       </p>
     </div>
   </main>

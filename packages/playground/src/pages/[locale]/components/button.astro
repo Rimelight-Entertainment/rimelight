@@ -1,37 +1,74 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
 
-const locale = Astro.currentLocale ?? 'en';
+const activeLocale = Astro.currentLocale ?? 'en';
+currentLocale.set(activeLocale);
+
+const nav = useI18n("components", {
+    backToComponents: "Back to Components",
+});
+
+const messages = useI18n("buttonPage", {
+    title: "Button Component",
+    description: "Button Component Showcase",
+    heading: "Button",
+    tabAstro: "Astro (RLAButton)",
+    tabVue: "Vue (RLVButton)",
+    variants: "Variants",
+    default: "Default",
+    colors: "Colors",
+    sizes: "Sizes",
+    withIcons: "With Icons",
+    leadingIcon: "Leading Icon",
+    trailingIcon: "Trailing Icon",
+    bothIcons: "Both Icons",
+    states: "States",
+    loading: "Loading",
+    disabled: "Disabled",
+    squareIconOnly: "Square (Icon Only)",
+    blockFullWidth: "Block (Full Width)",
+    extraSmall: "Extra Small",
+    small: "Small",
+    medium: "Medium",
+    large: "Large",
+    extraLarge: "Extra Large",
+    loadingLabel: "Loading",
+    saving: "Saving...",
+    processing: "Processing",
+    blockButton: "Block Button",
+    blockOutline: "Block Outline",
+});
 ---
 
-<AppLayout title="Button Component" description="Button Component Showcase">
+<AppLayout title={messages.title} description={messages.description}>
   <main class="max-w-6xl mx-auto p-8">
-    <a href={getRelativeLocaleUrl(locale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+    <a href={getRelativeLocaleUrl(activeLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
-      Back to Components
+      {nav.backToComponents}
     </a>
 
-    <h1 class="text-3xl font-bold mb-8">Button</h1>
+    <h1 class="text-3xl font-bold mb-8">{messages.heading}</h1>
 
     <!-- Tab Navigation -->
     <div class="flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-700">
       <button id="tab-astro" class="tab-btn px-4 py-2 font-medium border-b-2 border-primary-500 text-primary-500" data-tab="astro">
-        Astro (RLAButton)
+        {messages.tabAstro}
       </button>
       <button id="tab-vue" class="tab-btn px-4 py-2 font-medium border-b-2 border-transparent hover:text-primary-500" data-tab="vue">
-        Vue (RLVButton)
+        {messages.tabVue}
       </button>
     </div>
 
     <!-- Astro Tab Content -->
     <div id="content-astro" class="tab-content space-y-12">
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Variants</h2>
+        <h2 class="text-2xl font-semibold">{messages.variants}</h2>
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Default</h3>
+          <h3 class="text-lg font-medium">{messages.default}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLAButton variant="solid">Solid</RLAButton>
@@ -51,7 +88,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Colors</h3>
+          <h3 class="text-lg font-medium">{messages.colors}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLAButton color="primary">Primary</RLAButton>
@@ -71,14 +108,14 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Sizes</h3>
+          <h3 class="text-lg font-medium">{messages.sizes}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap items-center gap-4">
-              <RLAButton size="xs">Extra Small</RLAButton>
-              <RLAButton size="sm">Small</RLAButton>
-              <RLAButton size="md">Medium</RLAButton>
-              <RLAButton size="lg">Large</RLAButton>
-              <RLAButton size="xl">Extra Large</RLAButton>
+              <RLAButton size="xs">{messages.extraSmall}</RLAButton>
+              <RLAButton size="sm">{messages.small}</RLAButton>
+              <RLAButton size="md">{messages.medium}</RLAButton>
+              <RLAButton size="lg">{messages.large}</RLAButton>
+              <RLAButton size="xl">{messages.extraLarge}</RLAButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAButton size="xs">Extra Small</RLAButton>
@@ -90,9 +127,9 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">With Icons</h2>
+        <h2 class="text-2xl font-semibold">{messages.withIcons}</h2>
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Leading Icon</h3>
+          <h3 class="text-lg font-medium">{messages.leadingIcon}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLAButton leadingIcon="i-lucide-home">Home</RLAButton>
@@ -106,7 +143,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Trailing Icon</h3>
+          <h3 class="text-lg font-medium">{messages.trailingIcon}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLAButton trailingIcon="i-lucide-arrow-right">Next</RLAButton>
@@ -120,7 +157,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Both Icons</h3>
+          <h3 class="text-lg font-medium">{messages.bothIcons}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLAButton leadingIcon="i-lucide-mail" trailingIcon="i-lucide-send">Send</RLAButton>
@@ -133,14 +170,14 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">States</h2>
+        <h2 class="text-2xl font-semibold">{messages.states}</h2>
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Loading</h3>
+          <h3 class="text-lg font-medium">{messages.loading}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
-              <RLAButton loading>Loading</RLAButton>
-              <RLAButton loading variant="outline">Saving...</RLAButton>
-              <RLAButton loading variant="soft">Processing</RLAButton>
+              <RLAButton loading>{messages.loadingLabel}</RLAButton>
+              <RLAButton loading variant="outline">{messages.saving}</RLAButton>
+              <RLAButton loading variant="soft">{messages.processing}</RLAButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAButton loading>Loading</RLAButton>
@@ -149,12 +186,12 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Disabled</h3>
+          <h3 class="text-lg font-medium">{messages.disabled}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
-              <RLAButton disabled>Disabled</RLAButton>
-              <RLAButton disabled variant="outline">Disabled</RLAButton>
-              <RLAButton disabled variant="soft">Disabled</RLAButton>
+              <RLAButton disabled>{messages.disabled}</RLAButton>
+              <RLAButton disabled variant="outline">{messages.disabled}</RLAButton>
+              <RLAButton disabled variant="soft">{messages.disabled}</RLAButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAButton disabled>Disabled</RLAButton>
@@ -163,7 +200,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Square (Icon Only)</h3>
+          <h3 class="text-lg font-medium">{messages.squareIconOnly}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap items-center gap-4">
               <RLAButton square leadingIcon="i-lucide-home" aria-label="Home" />
@@ -179,11 +216,11 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Block (Full Width)</h3>
+          <h3 class="text-lg font-medium">{messages.blockFullWidth}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-col gap-4 max-w-md">
-              <RLAButton block>Block Button</RLAButton>
-              <RLAButton block variant="outline">Block Outline</RLAButton>
+              <RLAButton block>{messages.blockButton}</RLAButton>
+              <RLAButton block variant="outline">{messages.blockOutline}</RLAButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAButton block>Block Button</RLAButton>
@@ -195,9 +232,9 @@ const locale = Astro.currentLocale ?? 'en';
     <!-- Vue Tab Content -->
     <div id="content-vue" class="tab-content hidden space-y-12">
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Variants</h2>
+        <h2 class="text-2xl font-semibold">{messages.variants}</h2>
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Default</h3>
+          <h3 class="text-lg font-medium">{messages.default}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLVButton client:load variant="solid">Solid</RLVButton>
@@ -217,7 +254,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Colors</h3>
+          <h3 class="text-lg font-medium">{messages.colors}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLVButton client:load color="primary">Primary</RLVButton>
@@ -237,14 +274,14 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Sizes</h3>
+          <h3 class="text-lg font-medium">{messages.sizes}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap items-center gap-4">
-              <RLVButton client:load size="xs">Extra Small</RLVButton>
-              <RLVButton client:load size="sm">Small</RLVButton>
-              <RLVButton client:load size="md">Medium</RLVButton>
-              <RLVButton client:load size="lg">Large</RLVButton>
-              <RLVButton client:load size="xl">Extra Large</RLVButton>
+              <RLVButton client:load size="xs">{messages.extraSmall}</RLVButton>
+              <RLVButton client:load size="sm">{messages.small}</RLVButton>
+              <RLVButton client:load size="md">{messages.medium}</RLVButton>
+              <RLVButton client:load size="lg">{messages.large}</RLVButton>
+              <RLVButton client:load size="xl">{messages.extraLarge}</RLVButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVButton client:load size="xs">Extra Small</RLVButton>
@@ -256,9 +293,9 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">With Icons</h2>
+        <h2 class="text-2xl font-semibold">{messages.withIcons}</h2>
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Leading Icon</h3>
+          <h3 class="text-lg font-medium">{messages.leadingIcon}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLVButton client:load leadingIcon="i-lucide-home">Home</RLVButton>
@@ -272,7 +309,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Trailing Icon</h3>
+          <h3 class="text-lg font-medium">{messages.trailingIcon}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLVButton client:load trailingIcon="i-lucide-arrow-right">Next</RLVButton>
@@ -286,7 +323,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Both Icons</h3>
+          <h3 class="text-lg font-medium">{messages.bothIcons}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
               <RLVButton client:load leadingIcon="i-lucide-mail" trailingIcon="i-lucide-send">Send</RLVButton>
@@ -299,14 +336,14 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">States</h2>
+        <h2 class="text-2xl font-semibold">{messages.states}</h2>
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Loading</h3>
+          <h3 class="text-lg font-medium">{messages.loading}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
-              <RLVButton client:load loading>Loading</RLVButton>
-              <RLVButton client:load loading variant="outline">Saving...</RLVButton>
-              <RLVButton client:load loading variant="soft">Processing</RLVButton>
+              <RLVButton client:load loading>{messages.loadingLabel}</RLVButton>
+              <RLVButton client:load loading variant="outline">{messages.saving}</RLVButton>
+              <RLVButton client:load loading variant="soft">{messages.processing}</RLVButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVButton client:load loading>Loading</RLVButton>
@@ -315,12 +352,12 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Disabled</h3>
+          <h3 class="text-lg font-medium">{messages.disabled}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap gap-4">
-              <RLVButton client:load disabled>Disabled</RLVButton>
-              <RLVButton client:load disabled variant="outline">Disabled</RLVButton>
-              <RLVButton client:load disabled variant="soft">Disabled</RLVButton>
+              <RLVButton client:load disabled>{messages.disabled}</RLVButton>
+              <RLVButton client:load disabled variant="outline">{messages.disabled}</RLVButton>
+              <RLVButton client:load disabled variant="soft">{messages.disabled}</RLVButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVButton client:load disabled>Disabled</RLVButton>
@@ -329,7 +366,7 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Square (Icon Only)</h3>
+          <h3 class="text-lg font-medium">{messages.squareIconOnly}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-wrap items-center gap-4">
               <RLVButton client:load square leadingIcon="i-lucide-home" aria-label="Home" />
@@ -345,11 +382,11 @@ const locale = Astro.currentLocale ?? 'en';
         </div>
 
         <div class="space-y-2">
-          <h3 class="text-lg font-medium">Block (Full Width)</h3>
+          <h3 class="text-lg font-medium">{messages.blockFullWidth}</h3>
           <div class="border border-black p-md">
             <div class="flex flex-col gap-4 max-w-md">
-              <RLVButton client:load block>Block Button</RLVButton>
-              <RLVButton client:load block variant="outline">Block Outline</RLVButton>
+              <RLVButton client:load block>{messages.blockButton}</RLVButton>
+              <RLVButton client:load block variant="outline">{messages.blockOutline}</RLVButton>
             </div>
           </div>
           <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLVButton client:load block>Block Button</RLVButton>
@@ -378,7 +415,8 @@ const locale = Astro.currentLocale ?? 'en';
           tabContents.forEach(function(content) {
             content.classList.add('hidden');
           });
-          document.getElementById('content-' + tab).classList.remove('hidden');
+          var contentEl = document.getElementById('content-' + tab);
+          if (contentEl) contentEl.classList.remove('hidden');
         });
       });
     }

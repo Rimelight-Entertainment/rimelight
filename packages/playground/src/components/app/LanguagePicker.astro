@@ -28,7 +28,8 @@ const localeUrls = [...new Map(getRelativeLocaleUrlList().map(url => {
         const languagePicker = document.getElementById('language-picker');
         if (languagePicker) {
             languagePicker.addEventListener('change', (event) => {
-                const selectedLocale = event.target.value;
+                const target = event.target as HTMLSelectElement;
+                const selectedLocale = target.value;
                 const currentPath = window.location.pathname;
                 const pathWithoutLocale = currentPath.replace(/^\/[^/]+/, '');
                 const newPath = `/${selectedLocale}${pathWithoutLocale}`;

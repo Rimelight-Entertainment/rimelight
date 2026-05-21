@@ -1,40 +1,54 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("components", {
+    title: "Components",
+    description: "Rimelight UI Components",
+    heading: "Components",
+    subtitle: "Browse all available components in the Rimelight UI library.",
+    app: "App",
+    utility: "Utility",
+    elements: "Elements",
+});
 ---
 
-<AppLayout title="Components" description="Rimelight UI Components">
+<AppLayout title={messages.title} description={messages.description}>
   <main class="max-w-6xl mx-auto">
     <div class="py-24">
-    <h1>Components</h1>
+    <h1>{messages.heading}</h1>
     <p>
-      Browse all available components in the Rimelight UI library.
+      {messages.subtitle}
     </p>
 
      <div class="space-y-8">
         <section>
-          <h2>App</h2>
+          <h2>{messages.app}</h2>
           <ul class="space-y-2">
-            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/footer')}>Footer</a></li>
-            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/header')}>Header</a></li>
-            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/logo')}>Logo</a></li>
-            <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/section')}>Section</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/footer')}>Footer</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/header')}>Header</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/logo')}>Logo</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/section')}>Section</a></li>
           </ul>
         </section>
 
        <section>
-         <h2>Utility</h2>
+         <h2>{messages.utility}</h2>
          <ul class="space-y-2">
-           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/placeholder')}>Placeholder</a></li>
-           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/scroll-to-top')}>Scroll to Top</a></li>
+           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/placeholder')}>Placeholder</a></li>
+           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/scroll-to-top')}>Scroll to Top</a></li>
          </ul>
        </section>
 
        <section>
-         <h2>Elements</h2>
+         <h2>{messages.elements}</h2>
          <ul class="space-y-2">
-           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/button')}>Button</a></li>
-           <li><a href={getRelativeLocaleUrl(Astro.currentLocale ?? 'en', 'components/icon')}>Icon</a></li>
+           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/button')}>Button</a></li>
+           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/icon')}>Icon</a></li>
          </ul>
        </section>
       </div>

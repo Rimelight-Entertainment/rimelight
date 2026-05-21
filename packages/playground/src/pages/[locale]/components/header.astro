@@ -1,38 +1,62 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
 import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
 import RLVHeader from "@rimelight/ui/components/vue/RLVHeader.vue";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
 
-const locale = Astro.currentLocale ?? 'en';
+const activeLocale = Astro.currentLocale ?? 'en';
+currentLocale.set(activeLocale);
+
+const nav = useI18n("components", {
+    backToComponents: "Back to Components",
+});
+
+const messages = useI18n("headerPage", {
+    title: "Header Component",
+    description: "Header Component Showcase",
+    heading: "Header",
+    tabAstro: "Astro (RLAHeader)",
+    tabVue: "Vue (RLVHeader)",
+    defaultSticky: "Default (Sticky)",
+    fixedHideOnScroll: "Fixed with hideOnScroll",
+    withoutContainer: "Without Container",
+    defaultStickyDesc: "A sticky header with left, center, and right slots.",
+    fixedHideOnScrollDesc: "A fixed header that hides on scroll down and shows on scroll up.",
+    withoutContainerDesc: "Header with contain=false for full-width content.",
+    home: "Home",
+    about: "About",
+    contact: "Contact",
+    signIn: "Sign In",
+});
 ---
 
-<AppLayout title="Header Component" description="Header Component Showcase">
+<AppLayout title={messages.title} description={messages.description}>
   <main class="max-w-6xl mx-auto p-8">
-    <a href={getRelativeLocaleUrl(locale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+    <a href={getRelativeLocaleUrl(activeLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
-      Back to Components
+      {nav.backToComponents}
     </a>
 
-    <h1 class="text-3xl font-bold mb-8">Header</h1>
+    <h1 class="text-3xl font-bold mb-8">{messages.heading}</h1>
 
     <!-- Tab Navigation -->
     <div class="flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-700">
       <button id="tab-astro" class="tab-btn px-4 py-2 font-medium border-b-2 border-primary-500 text-primary-500" data-tab="astro">
-        Astro (RLAHeader)
+        {messages.tabAstro}
       </button>
       <button id="tab-vue" class="tab-btn px-4 py-2 font-medium border-b-2 border-transparent hover:text-primary-500" data-tab="vue">
-        Vue (RLVHeader)
+        {messages.tabVue}
       </button>
     </div>
 
     <!-- Astro Tab Content -->
     <div id="content-astro" class="tab-content space-y-12">
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Default (Sticky)</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">A sticky header with left, center, and right slots.</p>
+        <h2 class="text-2xl font-semibold">{messages.defaultSticky}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.defaultStickyDesc}</p>
         <div class="border border-black p-md">
           <RLAHeader>
             <div slot="left">
@@ -40,13 +64,13 @@ const locale = Astro.currentLocale ?? 'en';
             </div>
             <div slot="center">
               <nav class="flex gap-4">
-                <a href="#" class="hover:text-primary-500">Home</a>
-                <a href="#" class="hover:text-primary-500">About</a>
-                <a href="#" class="hover:text-primary-500">Contact</a>
+                <a href="#" class="hover:text-primary-500">{messages.home}</a>
+                <a href="#" class="hover:text-primary-500">{messages.about}</a>
+                <a href="#" class="hover:text-primary-500">{messages.contact}</a>
               </nav>
             </div>
             <div slot="right">
-              <RLAButton size="sm" variant="outline">Sign In</RLAButton>
+              <RLAButton size="sm" variant="outline">{messages.signIn}</RLAButton>
             </div>
           </RLAHeader>
         </div>
@@ -68,8 +92,8 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Fixed with hideOnScroll</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">A fixed header that hides on scroll down and shows on scroll up.</p>
+        <h2 class="text-2xl font-semibold">{messages.fixedHideOnScroll}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.fixedHideOnScrollDesc}</p>
         <div class="border border-black p-md">
           <RLAHeader fixed hideOnScroll>
             <div slot="left">
@@ -77,13 +101,13 @@ const locale = Astro.currentLocale ?? 'en';
             </div>
             <div slot="center">
               <nav class="flex gap-4">
-                <a href="#" class="hover:text-primary-500">Home</a>
-                <a href="#" class="hover:text-primary-500">About</a>
-                <a href="#" class="hover:text-primary-500">Contact</a>
+                <a href="#" class="hover:text-primary-500">{messages.home}</a>
+                <a href="#" class="hover:text-primary-500">{messages.about}</a>
+                <a href="#" class="hover:text-primary-500">{messages.contact}</a>
               </nav>
             </div>
             <div slot="right">
-              <RLAButton size="sm" variant="outline">Sign In</RLAButton>
+              <RLAButton size="sm" variant="outline">{messages.signIn}</RLAButton>
             </div>
           </RLAHeader>
         </div>
@@ -105,8 +129,8 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Without Container</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Header with contain=false for full-width content.</p>
+        <h2 class="text-2xl font-semibold">{messages.withoutContainer}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withoutContainerDesc}</p>
         <div class="border border-black p-md">
           <RLAHeader contain={false}>
             <div slot="left">
@@ -114,13 +138,13 @@ const locale = Astro.currentLocale ?? 'en';
             </div>
             <div slot="center">
               <nav class="flex gap-4">
-                <a href="#" class="hover:text-primary-500">Home</a>
-                <a href="#" class="hover:text-primary-500">About</a>
-                <a href="#" class="hover:text-primary-500">Contact</a>
+                <a href="#" class="hover:text-primary-500">{messages.home}</a>
+                <a href="#" class="hover:text-primary-500">{messages.about}</a>
+                <a href="#" class="hover:text-primary-500">{messages.contact}</a>
               </nav>
             </div>
             <div slot="right">
-              <RLAButton size="sm" variant="outline">Sign In</RLAButton>
+              <RLAButton size="sm" variant="outline">{messages.signIn}</RLAButton>
             </div>
           </RLAHeader>
         </div>
@@ -145,8 +169,8 @@ const locale = Astro.currentLocale ?? 'en';
     <!-- Vue Tab Content -->
     <div id="content-vue" class="tab-content space-y-12 hidden">
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Default (Sticky)</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">A sticky header with left, center, and right slots.</p>
+        <h2 class="text-2xl font-semibold">{messages.defaultSticky}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.defaultStickyDesc}</p>
         <div class="border border-black p-md">
           <RLVHeader client:load>
             <template #left>
@@ -154,13 +178,13 @@ const locale = Astro.currentLocale ?? 'en';
             </template>
             <template #center>
               <nav class="flex gap-4">
-                <a href="#" class="hover:text-primary-500">Home</a>
-                <a href="#" class="hover:text-primary-500">About</a>
-                <a href="#" class="hover:text-primary-500">Contact</a>
+                <a href="#" class="hover:text-primary-500">{messages.home}</a>
+                <a href="#" class="hover:text-primary-500">{messages.about}</a>
+                <a href="#" class="hover:text-primary-500">{messages.contact}</a>
               </nav>
             </template>
             <template #right>
-              <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
+              <RLVButton client:load size="sm" variant="outline">{messages.signIn}</RLVButton>
             </template>
           </RLVHeader>
         </div>
@@ -182,8 +206,8 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Fixed with hideOnScroll</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">A fixed header that hides on scroll down and shows on scroll up.</p>
+        <h2 class="text-2xl font-semibold">{messages.fixedHideOnScroll}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.fixedHideOnScrollDesc}</p>
         <div class="border border-black p-md">
           <RLVHeader client:load fixed hideOnScroll>
             <template #left>
@@ -191,13 +215,13 @@ const locale = Astro.currentLocale ?? 'en';
             </template>
             <template #center>
               <nav class="flex gap-4">
-                <a href="#" class="hover:text-primary-500">Home</a>
-                <a href="#" class="hover:text-primary-500">About</a>
-                <a href="#" class="hover:text-primary-500">Contact</a>
+                <a href="#" class="hover:text-primary-500">{messages.home}</a>
+                <a href="#" class="hover:text-primary-500">{messages.about}</a>
+                <a href="#" class="hover:text-primary-500">{messages.contact}</a>
               </nav>
             </template>
             <template #right>
-              <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
+              <RLVButton client:load size="sm" variant="outline">{messages.signIn}</RLVButton>
             </template>
           </RLVHeader>
         </div>
@@ -219,8 +243,8 @@ const locale = Astro.currentLocale ?? 'en';
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Without Container</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Header with contain=false for full-width content.</p>
+        <h2 class="text-2xl font-semibold">{messages.withoutContainer}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withoutContainerDesc}</p>
         <div class="border border-black p-md">
           <RLVHeader client:load contain={false}>
             <template #left>
@@ -228,13 +252,13 @@ const locale = Astro.currentLocale ?? 'en';
             </template>
             <template #center>
               <nav class="flex gap-4">
-                <a href="#" class="hover:text-primary-500">Home</a>
-                <a href="#" class="hover:text-primary-500">About</a>
-                <a href="#" class="hover:text-primary-500">Contact</a>
+                <a href="#" class="hover:text-primary-500">{messages.home}</a>
+                <a href="#" class="hover:text-primary-500">{messages.about}</a>
+                <a href="#" class="hover:text-primary-500">{messages.contact}</a>
               </nav>
             </template>
             <template #right>
-              <RLVButton client:load size="sm" variant="outline">Sign In</RLVButton>
+              <RLVButton client:load size="sm" variant="outline">{messages.signIn}</RLVButton>
             </template>
           </RLVHeader>
         </div>
@@ -276,7 +300,8 @@ const locale = Astro.currentLocale ?? 'en';
           tabContents.forEach(function(content) {
             content.classList.add('hidden');
           });
-          document.getElementById('content-' + tab).classList.remove('hidden');
+          var contentEl = document.getElementById('content-' + tab);
+          if (contentEl) contentEl.classList.remove('hidden');
         });
       });
     }

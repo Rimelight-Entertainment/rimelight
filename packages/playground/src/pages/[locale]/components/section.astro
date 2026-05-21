@@ -1,29 +1,93 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
 import RLASection from "@rimelight/ui/components/astro/RLASection.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
 
-const locale = Astro.currentLocale ?? 'en';
+const activeLocale = Astro.currentLocale ?? 'en';
+currentLocale.set(activeLocale);
+
+const nav = useI18n("components", {
+    backToComponents: "Back to Components",
+});
+
+const messages = useI18n("sectionPage", {
+    title: "Section Component",
+    description: "Section Component Showcase",
+    heading: "Section",
+    tabAstro: "Astro (RLASection)",
+    tabVue: "Vue (RLVSection)",
+    defaultVariant: "Default Variant",
+    heroVariant: "Hero Variant",
+    withIcon: "With Icon",
+    ctaVariant: "CTA Variant",
+    horizontalOrientation: "Horizontal Orientation",
+    reversedOrder: "Reversed Order",
+    withBackgroundSlot: "With Background Slot",
+    namedSlots: "Named Slots",
+    defaultVariantDesc: "Standard page section with title and description.",
+    heroVariantDesc: "Larger text for page heroes with more padding. Renders as h1.",
+    withIconDesc: "Display an icon above the title using the icon prop.",
+    ctaVariantDesc: "Call-to-action sections with style variants.",
+    horizontalOrientationDesc: "Side-by-side layout with content and default slot.",
+    reversedOrderDesc: "Reverse the order of the default slot content.",
+    withBackgroundSlotDesc: "Add background content like gradients behind your content.",
+    namedSlotsDesc: "Use named slots for full control over content.",
+    solidDefault: "Solid (default)",
+    outline: "Outline",
+    soft: "Soft",
+    heroVariantDescVue: "Larger text for page heroes with more padding.",
+    defaultSectionTitle: "Default Section",
+    defaultSectionDesc: "This is a default section with a title and description.",
+    getStarted: "Get Started",
+    learnMore: "Learn More",
+    introducingRimelight: "Introducing Rimelight",
+    heroSectionTitle: "Build Faster with Our Component Library",
+    heroSectionDesc: "A modern, accessible component library built for performance and developer experience.",
+    startBuilding: "Start Building",
+    documentation: "Documentation",
+    launchYourProject: "Launch Your Project",
+    launchDesc: "Get started quickly with our pre-built components and templates.",
+    readyToGetStarted: "Ready to Get Started?",
+    joinThousands: "Join thousands of developers building with Rimelight.",
+    signUpFree: "Sign Up Free",
+    tryItOut: "Try It Out",
+    exploreLibrary: "Explore our component library with no commitment.",
+    explore: "Explore",
+    twoColumnLayout: "Two Column Layout",
+    horizontalDesc: "Use horizontal orientation for side-by-side content.",
+    defaultSlotContent: "Default slot content",
+    reversedLayout: "Reversed Layout",
+    reversedDesc: "The default slot appears before the header content.",
+    defaultSlotContentReversed: "Default slot content (now first)",
+    beautifulBackgrounds: "Beautiful Backgrounds",
+    backgroundDesc: "Use the background slot to add gradients or other effects.",
+    customHeader: "Custom Header",
+    fullControl: "Full Control",
+    namedSlotsDesc2: "Use individual slots directly for a cleaner, automated layout.",
+    bodySlotContent: "This content goes in the body slot.",
+    action: "Action",
+});
 ---
 
-<AppLayout title="Section Component" description="Section Component Showcase">
+<AppLayout title={messages.title} description={messages.description}>
   <main class="max-w-6xl mx-auto p-8">
-    <a href={getRelativeLocaleUrl(locale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+    <a href={getRelativeLocaleUrl(activeLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
-      Back to Components
+      {nav.backToComponents}
     </a>
 
-    <h1 class="text-3xl font-bold mb-8">Section</h1>
+    <h1 class="text-3xl font-bold mb-8">{messages.heading}</h1>
 
     <!-- Tab Navigation -->
     <div class="flex gap-2 mb-8 border-b border-gray-200 dark:border-gray-700">
       <button id="tab-astro" class="tab-btn px-4 py-2 font-medium border-b-2 border-primary-500 text-primary-500" data-tab="astro">
-        Astro (RLASection)
+        {messages.tabAstro}
       </button>
       <button id="tab-vue" class="tab-btn px-4 py-2 font-medium border-b-2 border-transparent hover:text-primary-500" data-tab="vue">
-        Vue (RLVSection)
+        {messages.tabVue}
       </button>
     </div>
 
@@ -32,15 +96,15 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Default Variant -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Default Variant</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
+        <h2 class="text-2xl font-semibold">{messages.defaultVariant}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.defaultVariantDesc}</p>
         <div class="border border-black p-md">
           <RLASection
-              title="Default Section"
-              description="This is a default section with a title and description."
+              title={messages.defaultSectionTitle}
+              description={messages.defaultSectionDesc}
               links={[
-                { label: "Get Started", variant: "solid", color: "primary" },
-                { label: "Learn More", variant: "outline", color: "primary" }
+                { label: messages.getStarted, variant: "solid", color: "primary" },
+                { label: messages.learnMore, variant: "outline", color: "primary" }
               ]}
           />
         </div>
@@ -56,17 +120,17 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Hero Variant -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Hero Variant</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding. Renders as h1.</p>
+        <h2 class="text-2xl font-semibold">{messages.heroVariant}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.heroVariantDesc}</p>
         <div class="border border-black p-md">
           <RLASection
               variant="hero"
-              headline="Introducing Rimelight"
-              title="Build Faster with Our Component Library"
-              description="A modern, accessible component library built for performance and developer experience."
+              headline={messages.introducingRimelight}
+              title={messages.heroSectionTitle}
+              description={messages.heroSectionDesc}
               links={[
-                { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
-                { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+                { label: messages.startBuilding, variant: "solid", color: "primary", size: "lg" },
+                { label: messages.documentation, variant: "outline", color: "primary", size: "lg" }
               ]}
           />
         </div>
@@ -84,15 +148,15 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- With Icon -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">With Icon</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Display an icon above the title using the icon prop.</p>
+        <h2 class="text-2xl font-semibold">{messages.withIcon}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withIconDesc}</p>
         <div class="border border-black p-md">
           <RLASection
               icon="i-lucide-rocket"
-              title="Launch Your Project"
-              description="Get started quickly with our pre-built components and templates."
+              title={messages.launchYourProject}
+              description={messages.launchDesc}
               links={[
-                { label: "Get Started", variant: "solid", color: "primary" }
+                { label: messages.getStarted, variant: "solid", color: "primary" }
               ]}
           />
         </div>
@@ -108,19 +172,19 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- CTA Variant -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">CTA Variant</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Call-to-action sections with style variants.</p>
+        <h2 class="text-2xl font-semibold">{messages.ctaVariant}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.ctaVariantDesc}</p>
 
         <div class="space-y-8">
           <div>
-            <h3 class="text-lg font-medium mb-2">Solid (default)</h3>
+            <h3 class="text-lg font-medium mb-2">{messages.solidDefault}</h3>
             <div class="border border-black p-md mb-2">
               <RLASection
                   variant="cta"
-                  title="Ready to Get Started?"
-                  description="Join thousands of developers building with Rimelight."
+                  title={messages.readyToGetStarted}
+                  description={messages.joinThousands}
                   links={[
-                    { label: "Sign Up Free", variant: "solid", color: "primary" }
+                    { label: messages.signUpFree, variant: "solid", color: "primary" }
                   ]}
               />
             </div>
@@ -135,15 +199,15 @@ const locale = Astro.currentLocale ?? 'en';
           </div>
 
           <div>
-            <h3 class="text-lg font-medium mb-2">Outline</h3>
+            <h3 class="text-lg font-medium mb-2">{messages.outline}</h3>
             <div class="border border-black p-md mb-2">
               <RLASection
                   variant="cta"
                   ctaVariant="outline"
-                  title="Ready to Get Started?"
-                  description="Join thousands of developers building with Rimelight."
+                  title={messages.readyToGetStarted}
+                  description={messages.joinThousands}
                   links={[
-                    { label: "Sign Up Free", variant: "outline", color: "primary" }
+                    { label: messages.signUpFree, variant: "outline", color: "primary" }
                   ]}
               />
             </div>
@@ -159,15 +223,15 @@ const locale = Astro.currentLocale ?? 'en';
           </div>
 
           <div>
-            <h3 class="text-lg font-medium mb-2">Soft</h3>
+            <h3 class="text-lg font-medium mb-2">{messages.soft}</h3>
             <div class="border border-black p-md mb-2">
               <RLASection
                   variant="cta"
                   ctaVariant="soft"
-                  title="Try It Out"
-                  description="Explore our component library with no commitment."
+                  title={messages.tryItOut}
+                  description={messages.exploreLibrary}
                   links={[
-                    { label: "Explore", variant: "soft", color: "primary" }
+                    { label: messages.explore, variant: "soft", color: "primary" }
                   ]}
               />
             </div>
@@ -186,16 +250,16 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Horizontal Orientation -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Horizontal Orientation</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Side-by-side layout with content and default slot.</p>
+        <h2 class="text-2xl font-semibold">{messages.horizontalOrientation}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.horizontalOrientationDesc}</p>
         <div class="border border-black p-md">
           <RLASection
               orientation="horizontal"
-              title="Two Column Layout"
-              description="Use horizontal orientation for side-by-side content."
+              title={messages.twoColumnLayout}
+              description={messages.horizontalDesc}
           >
             <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
-              <span class="text-muted text-sm">Default slot content</span>
+              <span class="text-muted text-sm">{messages.defaultSlotContent}</span>
             </div>
           </RLASection>
         </div>
@@ -212,17 +276,17 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Reversed -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Reversed Order</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Reverse the order of the default slot content.</p>
+        <h2 class="text-2xl font-semibold">{messages.reversedOrder}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.reversedOrderDesc}</p>
         <div class="border border-black p-md">
           <RLASection
               orientation="horizontal"
               reverse
-              title="Reversed Layout"
-              description="The default slot appears before the header content."
+              title={messages.reversedLayout}
+              description={messages.reversedDesc}
           >
             <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
-              <span class="text-muted text-sm">Default slot content (now first)</span>
+              <span class="text-muted text-sm">{messages.defaultSlotContentReversed}</span>
             </div>
           </RLASection>
         </div>
@@ -240,14 +304,14 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- With Background Slot -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">With Background Slot</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Add background content like gradients behind your content.</p>
+        <h2 class="text-2xl font-semibold">{messages.withBackgroundSlot}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withBackgroundSlotDesc}</p>
         <div class="border border-black p-md">
           <RLASection
-              title="Beautiful Backgrounds"
-              description="Use the background slot to add gradients or other effects."
+              title={messages.beautifulBackgrounds}
+              description={messages.backgroundDesc}
               links={[
-                { label: "Learn More", variant: "solid", color: "primary" }
+                { label: messages.learnMore, variant: "solid", color: "primary" }
               ]}
           >
             <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10" />
@@ -266,24 +330,24 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Slots Demo -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Named Slots</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Use named slots for full control over content.</p>
+        <h2 class="text-2xl font-semibold">{messages.namedSlots}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.namedSlotsDesc}</p>
         <div class="border border-black p-md">
           <RLASection>
             <div slot="leading" class="flex items-center">
               <span class="i-lucide-sparkles size-10 shrink-0 text-primary" />
             </div>
             <Fragment slot="headline">
-              Custom Header
+              {messages.customHeader}
             </Fragment>
             <Fragment slot="title">
-              Full Control
+              {messages.fullControl}
             </Fragment>
             <Fragment slot="description">
-              Use individual slots directly for a cleaner, automated layout.
+              {messages.namedSlotsDesc2}
             </Fragment>
-            <p slot="body" class="text-muted">This content goes in the body slot.</p>
-            <RLAButton slot="links" label="Action" variant="solid" color="primary" />
+            <p slot="body" class="text-muted">{messages.bodySlotContent}</p>
+            <RLAButton slot="links" label={messages.action} variant="solid" color="primary" />
           </RLASection>
         </div>
         <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection>
@@ -311,15 +375,15 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Default Variant -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Default Variant</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Standard page section with title and description.</p>
+        <h2 class="text-2xl font-semibold">{messages.defaultVariant}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.defaultVariantDesc}</p>
         <div class="border border-black p-md">
           <RLVSection client:load
-                      title="Default Section"
-                      description="This is a default section with a title and description."
+                      title={messages.defaultSectionTitle}
+                      description={messages.defaultSectionDesc}
                       links={[
-                        { label: "Get Started", variant: "solid", color: "primary" },
-                        { label: "Learn More", variant: "outline", color: "primary" }
+                        { label: messages.getStarted, variant: "solid", color: "primary" },
+                        { label: messages.learnMore, variant: "outline", color: "primary" }
                       ]}
           />
         </div>
@@ -335,17 +399,17 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Hero Variant -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Hero Variant</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Larger text for page heroes with more padding.</p>
+        <h2 class="text-2xl font-semibold">{messages.heroVariant}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.heroVariantDescVue}</p>
         <div class="border border-black p-md">
           <RLVSection client:load
                       variant="hero"
-                      headline="Introducing Rimelight"
-                      title="Build Faster with Our Component Library"
-                      description="A modern, accessible component library built for performance and developer experience."
+                      headline={messages.introducingRimelight}
+                      title={messages.heroSectionTitle}
+                      description={messages.heroSectionDesc}
                       links={[
-                        { label: "Start Building", variant: "solid", color: "primary", size: "lg" },
-                        { label: "Documentation", variant: "outline", color: "primary", size: "lg" }
+                        { label: messages.startBuilding, variant: "solid", color: "primary", size: "lg" },
+                        { label: messages.documentation, variant: "outline", color: "primary", size: "lg" }
                       ]}
           />
         </div>
@@ -363,15 +427,15 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- With Icon -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">With Icon</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Display an icon above the title using the icon prop.</p>
+        <h2 class="text-2xl font-semibold">{messages.withIcon}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withIconDesc}</p>
         <div class="border border-black p-md">
           <RLVSection client:load
                       icon="i-lucide-rocket"
-                      title="Launch Your Project"
-                      description="Get started quickly with our pre-built components and templates."
+                      title={messages.launchYourProject}
+                      description={messages.launchDesc}
                       links={[
-                        { label: "Get Started", variant: "solid", color: "primary" }
+                        { label: messages.getStarted, variant: "solid", color: "primary" }
                       ]}
           />
         </div>
@@ -387,19 +451,19 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- CTA Variant -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">CTA Variant</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Call-to-action sections with style variants.</p>
+        <h2 class="text-2xl font-semibold">{messages.ctaVariant}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.ctaVariantDesc}</p>
 
         <div class="space-y-8">
           <div>
-            <h3 class="text-lg font-medium mb-2">Solid (default)</h3>
+            <h3 class="text-lg font-medium mb-2">{messages.solidDefault}</h3>
             <div class="border border-black p-md mb-2">
               <RLVSection client:load
                           variant="cta"
-                          title="Ready to Get Started?"
-                          description="Join thousands of developers building with Rimelight."
+                          title={messages.readyToGetStarted}
+                          description={messages.joinThousands}
                           links={[
-                            { label: "Sign Up Free", variant: "solid", color: "primary" }
+                            { label: messages.signUpFree, variant: "solid", color: "primary" }
                           ]}
               />
             </div>
@@ -414,15 +478,15 @@ const locale = Astro.currentLocale ?? 'en';
           </div>
 
           <div>
-            <h3 class="text-lg font-medium mb-2">Outline</h3>
+            <h3 class="text-lg font-medium mb-2">{messages.outline}</h3>
             <div class="border border-black p-md mb-2">
               <RLVSection client:load
                           variant="cta"
                           ctaVariant="outline"
-                          title="Ready to Get Started?"
-                          description="Join thousands of developers building with Rimelight."
+                          title={messages.readyToGetStarted}
+                          description={messages.joinThousands}
                           links={[
-                            { label: "Sign Up Free", variant: "outline", color: "primary" }
+                            { label: messages.signUpFree, variant: "outline", color: "primary" }
                           ]}
               />
             </div>
@@ -438,15 +502,15 @@ const locale = Astro.currentLocale ?? 'en';
           </div>
 
           <div>
-            <h3 class="text-lg font-medium mb-2">Soft</h3>
+            <h3 class="text-lg font-medium mb-2">{messages.soft}</h3>
             <div class="border border-black p-md mb-2">
               <RLVSection client:load
                           variant="cta"
                           ctaVariant="soft"
-                          title="Try It Out"
-                          description="Explore our component library with no commitment."
+                          title={messages.tryItOut}
+                          description={messages.exploreLibrary}
                           links={[
-                            { label: "Explore", variant: "soft", color: "primary" }
+                            { label: messages.explore, variant: "soft", color: "primary" }
                           ]}
               />
             </div>
@@ -465,16 +529,16 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- Horizontal Orientation -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Horizontal Orientation</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Side-by-side layout with content and default slot.</p>
+        <h2 class="text-2xl font-semibold">{messages.horizontalOrientation}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.horizontalOrientationDesc}</p>
         <div class="border border-black p-md">
           <RLVSection client:load
                       orientation="horizontal"
-                      title="Two Column Layout"
-                      description="Use horizontal orientation for side-by-side content."
+                      title={messages.twoColumnLayout}
+                      description={messages.horizontalDesc}
           >
             <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
-              <span class="text-muted text-sm">Default slot content</span>
+              <span class="text-muted text-sm">{messages.defaultSlotContent}</span>
             </div>
           </RLVSection>
         </div>
@@ -491,14 +555,14 @@ const locale = Astro.currentLocale ?? 'en';
 
       <!-- With Background Slot -->
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">With Background Slot</h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">Add background content like gradients behind your content.</p>
+        <h2 class="text-2xl font-semibold">{messages.withBackgroundSlot}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withBackgroundSlotDesc}</p>
         <div class="border border-black p-md">
           <RLVSection client:load
-                      title="Beautiful Backgrounds"
-                      description="Use the background slot to add gradients or other effects."
+                      title={messages.beautifulBackgrounds}
+                      description={messages.backgroundDesc}
                       links={[
-                        { label: "Learn More", variant: "solid", color: "primary" }
+                        { label: messages.learnMore, variant: "solid", color: "primary" }
                       ]}
           >
             <template #background>
@@ -541,7 +605,8 @@ const locale = Astro.currentLocale ?? 'en';
           tabContents.forEach(function(content) {
             content.classList.add('hidden');
           });
-          document.getElementById('content-' + tab).classList.remove('hidden');
+          var contentEl = document.getElementById('content-' + tab);
+          if (contentEl) contentEl.classList.remove('hidden');
         });
       });
     }
