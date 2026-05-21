@@ -272,48 +272,46 @@ html:root {
 }
 /* endregion */
 
+p {
+  font-size: var(--text-md);
+  line-height: var(--line-height-md);
+}
 
-  p {
-    font-size: var(--text-md);
-    line-height: var(--line-height-md);
-  }
+h1 {
+  font-size: var(--text-3xl);
+  line-height: var(--line-height-3xl);
+  font-weight: bold;
+}
 
-  h1 {
-    font-size: var(--text-3xl);
-    line-height: var(--line-height-3xl);
-    font-weight: bold;
-  }
+h2 {
+  font-size: var(--text-2xl);
+  line-height: var(--line-height-2xl);
+  font-weight: bold;
+}
 
-  h2 {
-    font-size: var(--text-2xl);
-    line-height: var(--line-height-2xl);
-    font-weight: bold;
-  }
+h3 {
+  font-size: var(--text-xl);
+  line-height: var(--line-height-xl);
+  font-weight: bold;
+}
 
-  h3 {
-    font-size: var(--text-xl);
-    line-height: var(--line-height-xl);
-    font-weight: bold;
-  }
+h4 {
+  font-size: var(--text-lg);
+  line-height: var(--line-height-lg);
+  font-weight: bold;
+}
 
-  h4 {
-    font-size: var(--text-lg);
-    line-height: var(--line-height-lg);
-    font-weight: bold;
-  }
+h5 {
+  font-size: var(--text-md);
+  line-height: var(--line-height-md);
+  font-weight: bold;
+}
 
-  h5 {
-    font-size: var(--text-md);
-    line-height: var(--line-height-md);
-    font-weight: bold;
-  }
-
-  h6 {
-    font-size: var(--text-sm);
-    line-height: var(--line-height-sm);
-    font-weight: bold;
-  }
-
+h6 {
+  font-size: var(--text-sm);
+  line-height: var(--line-height-sm);
+  font-weight: bold;
+}
 
 .bg-dimmed {
   background-color: var(--ui-bg-dimmed);

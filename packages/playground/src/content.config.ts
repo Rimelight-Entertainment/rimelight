@@ -5,35 +5,35 @@ import { docsLoader } from "@astrojs/starlight/loaders"
 import { docsSchema } from "@astrojs/starlight/schema"
 
 const docs = defineCollection({
-    loader: docsLoader(),
-    schema: docsSchema()
+  loader: docsLoader(),
+  schema: docsSchema()
 })
 
 const legal = defineCollection({
-    loader: glob({ base: "./src/content/legal", pattern: "**/*.{md,mdx}" }),
-    schema: z.object({
-        title: z.string(),
-        description: z.string(),
-        pubDate: z.coerce.date(),
-        updatedDate: z.coerce.date().optional()
-    })
+  loader: glob({ base: "./src/content/legal", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional()
+  })
 })
 
 const blog = defineCollection({
-    loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
-    schema: ({ image }) =>
-        z.object({
-            type: z.enum(["development-log", "other"]),
-            title: z.string(),
-            description: z.string(),
-            pubDate: z.coerce.date(),
-            updatedDate: z.coerce.date().optional(),
-            heroImage: z.optional(image())
-        })
+  loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
+  schema: ({ image }) =>
+    z.object({
+      type: z.enum(["development-log", "other"]),
+      title: z.string(),
+      description: z.string(),
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      heroImage: z.optional(image())
+    })
 })
 
 export const collections = {
-    blog,
-    docs,
-    legal
+  blog,
+  docs,
+  legal
 }
