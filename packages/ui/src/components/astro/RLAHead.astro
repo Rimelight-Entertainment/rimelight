@@ -1,7 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import type { SiteConfig } from '@/config';
-import { App } from '../nuxt.ts';
 
 export interface OGImage {
   /** Image URL (relative or absolute) */
@@ -193,7 +192,3 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
 </script>
 
 {transitions && <ClientRouter />}
-
-<App client:load>
-  <slot />
-</App>
