@@ -2,22 +2,11 @@
 import { computed, onMounted, onUnmounted, ref } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { HeaderProps } from "../../types/components/header"
 import headerTheme from "../../themes/header.theme"
 import { getHeaderStack } from "../../utils/headerStack"
 
 const header = scv(headerTheme)
-type HeaderVariants = ComponentVariants<typeof headerTheme>
-
-export interface RLVHeaderProps {
-  contain?: HeaderVariants["contain"]
-  sticky?: HeaderVariants["sticky"]
-  fixed?: HeaderVariants["fixed"]
-  stackIndex?: number
-  hideOnScroll?: boolean
-  ui?: ComponentSlots<typeof headerTheme>
-  class?: any
-}
 
 const {
   contain = true,
@@ -27,7 +16,7 @@ const {
   hideOnScroll = false,
   ui: uiProp,
   class: className
-} = defineProps<RLVHeaderProps>()
+} = defineProps<HeaderProps>()
 
 defineSlots<{
   left(props: {}): any

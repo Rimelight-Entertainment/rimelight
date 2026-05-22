@@ -1,22 +1,16 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentSlots } from "../../types"
+import type { PlaceholderProps } from "../../types"
 import placeholderTheme from "../../themes/placeholder.theme"
 
 const placeholder = scv(placeholderTheme)
-
-export interface RLAPlaceholderProps {
-  ui?: ComponentSlots<typeof placeholderTheme>
-  class?: any
-  [key: string]: unknown
-}
 
 const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLAPlaceholderProps
+} = Astro.props as PlaceholderProps
 
 const classes = resolveClasses(placeholder, {}, useUi("placeholder", uiProp), className)
 ---

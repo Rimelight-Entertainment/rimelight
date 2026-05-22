@@ -14,9 +14,9 @@ const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
 const uiFilesystemGlob = join(__dirname, "../**/*")
 
 const createScale = (colorName: string) => ({
-  DEFAULT: `var(--${colorName})`,
-  foreground: `var(--${colorName}-foreground)`,
-  accent: `var(--${colorName}-accent)`,
+  "DEFAULT": `var(--${colorName})`,
+  "foreground": `var(--${colorName}-foreground)`,
+  "accent": `var(--${colorName}-accent)`,
   "50": `var(--color-${colorName}-50)`,
   "100": `var(--color-${colorName}-100)`,
   "200": `var(--color-${colorName}-200)`,
@@ -36,10 +36,20 @@ export interface RimelightPresetOptions {
 
 export default definePreset((options?: RimelightPresetOptions) => {
   const customColors = options?.colors || []
-  const coreColors = ["primary", "secondary", "info", "success", "warning", "error", "commentary", "ideation", "source"]
+  const coreColors = [
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "commentary",
+    "ideation",
+    "source"
+  ]
   const allColors = [...new Set([...coreColors, ...customColors])]
 
-  const safelist = allColors.flatMap(color => [
+  const safelist = allColors.flatMap((color) => [
     `bg-${color}-500`,
     `hover:bg-${color}-600`,
     `focus-visible:ring-${color}-500/50`,
@@ -143,7 +153,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
-        ...Object.fromEntries(allColors.map(color => [color, createScale(color)])),
+        ...Object.fromEntries(allColors.map((color) => [color, createScale(color)])),
         "muted": {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"

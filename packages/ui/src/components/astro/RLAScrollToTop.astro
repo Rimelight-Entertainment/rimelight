@@ -1,22 +1,10 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { ScrollToTopProps } from "../../types"
 import scrollToTopTheme from "../../themes/scroll-to-top.theme"
 
 const scrollToTop = scv(scrollToTopTheme)
-type ScrollToTopVariants = ComponentVariants<typeof scrollToTopTheme>
-
-export interface RLAScrollToTopProps {
-  color?: ScrollToTopVariants['color'];
-  progressWidth?: number;
-  duration?: number;
-  threshold?: number;
-  showProgress?: boolean;
-  ui?: ComponentSlots<typeof scrollToTopTheme>;
-  class?: any;
-  [key: string]: unknown;
-}
 
 const {
   color = "primary",
@@ -27,7 +15,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLAScrollToTopProps
+} = Astro.props as ScrollToTopProps
 
 const classes = resolveClasses(scrollToTop, { color }, useUi("scrollToTop", uiProp), className)
 

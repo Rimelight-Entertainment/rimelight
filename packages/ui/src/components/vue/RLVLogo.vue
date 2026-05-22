@@ -2,34 +2,26 @@
 import { computed } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentSlots } from "../../types"
+import type { LogoProps } from "../../types/components/logo"
 import logoTheme from "../../themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const logo = scv(logoTheme)
 
-export interface RLVLogoProps {
-  variant?: string
-  mode?: "color" | "white" | "black"
-  href?: string
-  alt?: string
-  ui?: ComponentSlots<typeof logoTheme>
-  class?: any
-  [key: string]: unknown
-}
-
-const props = withDefaults(defineProps<RLVLogoProps>(), {
-  variant: "logomark",
-  href: "/"
-})
+const {
+  variant = "logomark",
+  mode,
+  href = "/",
+  alt,
+  ui: uiProp,
+  class: className
+} = defineProps<LogoProps>()
 
 defineSlots<{
   default(props: {}): any
 }>()
 
-const resolvedClasses = computed(() =>
-  resolveClasses(logo, {}, useUi("logo", props.ui), props.class)
-)
+const resolvedClasses = computed(() => resolveClasses(logo, {}, useUi("logo", uiProp), className))
 
 const logoSrc = computed<string | null>(() => {
   const globalConfig = getUIConfig()
@@ -37,9 +29,9 @@ const logoSrc = computed<string | null>(() => {
   let src: any = null
 
   if (rcLogos && typeof rcLogos === "object") {
-    src = rcLogos[props.variant]
+    src = rcLogos[variant]
     if (src && typeof src === "object") {
-      src = src[props.mode || "color"] || src.black || src.color
+      src = src[mode || "color"] || src.black || src.color
     }
   }
 
@@ -55,7 +47,7 @@ const isIcon = computed(() => {
   return src.includes(":") || src.startsWith("i-")
 })
 
-const Tag = computed(() => (props.href ? "a" : "div"))
+const Tag = computed(() => (href ? "a" : "div"))
 </script>
 
 <template>

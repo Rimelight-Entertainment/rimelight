@@ -2,20 +2,12 @@
 import { computed } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { IconProps } from "../../types/components/icon"
 import iconTheme from "../../themes/icon.theme"
 
 const icon = scv(iconTheme)
-type IconVariants = ComponentVariants<typeof iconTheme>
 
-export interface RLVIconProps {
-  name: string
-  size?: IconVariants["size"]
-  ui?: ComponentSlots<typeof iconTheme>
-  class?: any
-}
-
-const { name, size = "md", ui: uiProp, class: className } = defineProps<RLVIconProps>()
+const { name, size = "md", ui: uiProp, class: className } = defineProps<IconProps>()
 
 const resolvedClasses = computed(() =>
   resolveClasses(icon, { size }, useUi("icon", uiProp), className)

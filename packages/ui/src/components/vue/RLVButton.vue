@@ -2,72 +2,10 @@
 import { computed, useSlots } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { ButtonProps } from "../../types/components/button"
 import buttonTheme from "../../themes/button.theme"
 
 const button = scv(buttonTheme)
-type ButtonVariants = ComponentVariants<typeof buttonTheme>
-
-export interface RLVButtonProps {
-  /**
-   * The visual style variant of the button
-   */
-  variant?: ButtonVariants["variant"]
-  /**
-   * The color scheme applied to the button
-   */
-  color?: ButtonVariants["color"]
-  /**
-   * The size scale of the button
-   */
-  size?: ButtonVariants["size"]
-  /**
-   * When provided, renders the button as an anchor link
-   */
-  href?: string
-  /**
-   * The text label displayed inside the button
-   */
-  label?: string
-  /**
-   * Icon name displayed before the label
-   */
-  leadingIcon?: string
-  /**
-   * Icon name displayed after the label
-   */
-  trailingIcon?: string
-  /**
-   * Shows a loading spinner animation
-   */
-  loading?: boolean
-  /**
-   * Renders a square button with equal padding
-   */
-  square?: boolean
-  /**
-   * Makes the button stretch to full width
-   */
-  block?: boolean
-  /**
-   * Applies active state styling
-   */
-  active?: boolean
-  /**
-   * Color used when button is in active state
-   */
-  activeColor?: ButtonVariants["color"]
-  /**
-   * Variant used when button is in active state
-   */
-  activeVariant?: ButtonVariants["variant"]
-  /**
-   * Component-specific CSS class overrides
-   */
-  ui?: ComponentSlots<typeof buttonTheme>
-  class?: any
-  [key: string]: unknown
-}
 
 const {
   variant = "solid",
@@ -85,7 +23,7 @@ const {
   activeVariant,
   ui: uiProp,
   class: className
-} = defineProps<RLVButtonProps>()
+} = defineProps<ButtonProps>()
 
 const slots = useSlots()
 

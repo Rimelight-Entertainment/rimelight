@@ -1,23 +1,12 @@
 <script setup lang="ts">
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { ScrollToTopProps } from "../../types/components/scroll-to-top"
 import scrollToTopTheme from "../../themes/scroll-to-top.theme"
 import { useScrollToTop } from "../../composables/useScrollToTop"
 import { computed } from "vue"
 
 const scrollToTop = scv(scrollToTopTheme)
-type ScrollToTopVariants = ComponentVariants<typeof scrollToTopTheme>
-
-export interface RLVScrollToTopProps {
-  color?: ScrollToTopVariants["color"]
-  progressWidth?: number
-  duration?: number
-  threshold?: number
-  showProgress?: boolean
-  ui?: ComponentSlots<typeof scrollToTopTheme>
-  class?: any
-}
 
 const {
   color = "primary",
@@ -27,7 +16,7 @@ const {
   showProgress = false,
   ui: uiProp,
   class: className
-} = defineProps<RLVScrollToTopProps>()
+} = defineProps<ScrollToTopProps>()
 
 const classes = resolveClasses(scrollToTop, { color }, useUi("scrollToTop", uiProp), className)
 

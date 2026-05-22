@@ -2,29 +2,12 @@
 import { computed, useSlots } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { SectionProps } from "../../types/components/section"
 import sectionTheme from "../../themes/section.theme"
-import type { RLVButtonProps } from "./RLVButton.vue"
 import RLVIcon from "./RLVIcon.vue"
 import RLVButton from "./RLVButton.vue"
 
 const section = scv(sectionTheme)
-type SectionVariants = ComponentVariants<typeof sectionTheme>
-
-export interface RLVSectionProps {
-  as?: any
-  variant?: SectionVariants["variant"]
-  headline?: string
-  icon?: string
-  title?: string
-  description?: string
-  links?: RLVButtonProps[]
-  orientation?: SectionVariants["orientation"]
-  reverse?: boolean
-  ctaVariant?: SectionVariants["ctaVariant"]
-  ui?: ComponentSlots<typeof sectionTheme>
-  class?: any
-}
 
 const {
   as = "div",
@@ -38,7 +21,7 @@ const {
   title,
   description,
   links
-} = defineProps<RLVSectionProps>()
+} = defineProps<SectionProps>()
 
 const slots = useSlots()
 

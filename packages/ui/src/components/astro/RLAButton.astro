@@ -1,7 +1,7 @@
 ---
 import { scv, cx } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { ButtonProps } from "../../types"
 import buttonThemeDefault, { createButtonTheme } from "../../themes/button.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -9,26 +9,6 @@ const uiConfig = getUIConfig()
 const buttonTheme = uiConfig.colors ? createButtonTheme(uiConfig.colors) : buttonThemeDefault
 
 const button = scv(buttonTheme)
-type ButtonVariants = ComponentVariants<typeof buttonThemeDefault>
-
-export interface RLAButtonProps {
-  variant?: ButtonVariants['variant'];
-  color?: ButtonVariants['color'];
-  size?: ButtonVariants['size'];
-  href?: string;
-  label?: string;
-  leadingIcon?: string;
-  trailingIcon?: string;
-  loading?: boolean;
-  square?: boolean;
-  block?: boolean;
-  active?: boolean;
-  activeColor?: ButtonVariants['color'];
-  activeVariant?: ButtonVariants['variant'];
-  ui?: ComponentSlots<typeof buttonTheme>;
-  class?: any;
-  [key: string]: unknown;
-}
 
 const {
   variant = "solid",
@@ -47,7 +27,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLAButtonProps
+} = Astro.props as ButtonProps
 
 const isLeading = !!(leadingIcon || Astro.slots.has("leading")) || loading
 const isTrailing = !!(trailingIcon || Astro.slots.has("trailing")) || (loading && !isLeading)

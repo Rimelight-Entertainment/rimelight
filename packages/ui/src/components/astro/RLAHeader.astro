@@ -1,22 +1,10 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { HeaderProps } from "../../types"
 import headerTheme from "../../themes/header.theme"
 
 const header = scv(headerTheme)
-type HeaderVariants = ComponentVariants<typeof headerTheme>
-
-export interface RLAHeaderProps {
-  contain?: HeaderVariants['contain'];
-  sticky?: HeaderVariants['sticky'];
-  fixed?: HeaderVariants['fixed'];
-  stackIndex?: number;
-  hideOnScroll?: boolean;
-  ui?: ComponentSlots<typeof headerTheme>;
-  class?: any;
-  [key: string]: unknown;
-}
 
 const {
   contain = true,
@@ -27,7 +15,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLAHeaderProps;
+} = Astro.props as HeaderProps;
 
 const classes = resolveClasses(header, {
   contain,

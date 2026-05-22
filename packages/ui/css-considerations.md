@@ -19,7 +19,19 @@ Move all design token definitions and base styles into UnoCSS **preflights** ins
 ```typescript
 // packages/ui/src/presets/index.ts
 
-const colorShades = ["50","100","200","300","400","500","600","700","800","900","950"] as const
+const colorShades = [
+  "50",
+  "100",
+  "200",
+  "300",
+  "400",
+  "500",
+  "600",
+  "700",
+  "800",
+  "900",
+  "950"
+] as const
 
 export default definePreset((options?: RimelightPresetOptions) => {
   const allColors = [...coreColors, ...(options?.colors ?? [])]
@@ -31,9 +43,10 @@ export default definePreset((options?: RimelightPresetOptions) => {
       {
         // Emit all --color-{name}-{shade} CSS custom properties
         getCSS: () => {
-          const vars = allColors.flatMap(color =>
-            colorShades.map(shade =>
-              `  --color-${color}-${shade}: ${options?.colorValues?.[color]?.[shade] ?? `/* define --color-${color}-${shade} */`};`
+          const vars = allColors.flatMap((color) =>
+            colorShades.map(
+              (shade) =>
+                `  --color-${color}-${shade}: ${options?.colorValues?.[color]?.[shade] ?? `/* define --color-${color}-${shade} */`};`
             )
           )
           return `:root {\n${vars.join("\n")}\n}`
@@ -94,7 +107,7 @@ import { defineRimelightConfig } from "@rimelight/ui/config"
 export default defineRimelightConfig({
   colors: {
     blurple: {
-      50:  "#f4f0ff",
+      50: "#f4f0ff",
       100: "#e9e2ff",
       200: "#d6ccff",
       300: "#b9a8ff",
@@ -104,7 +117,7 @@ export default defineRimelightConfig({
       700: "#5512e9",
       800: "#460ebf",
       900: "#3b0e9c",
-      950: "#220869",
+      950: "#220869"
     }
   }
 })
@@ -159,10 +172,10 @@ Because component theme classes are generated via string interpolation (`` `bg-$
 
 ```typescript
 // Current workaround — fragile and repetitive
-const safelist = allColors.flatMap(color => [
+const safelist = allColors.flatMap((color) => [
   `bg-${color}-500`,
   `hover:bg-${color}-600`,
-  `text-${color}-600`,
+  `text-${color}-600`
   // ...and so on for every variant
 ])
 ```
@@ -174,12 +187,15 @@ Instead of safelisting concrete utility classes, define a **single CSS custom pr
 ```typescript
 // preset: define a rule that maps any --rl-color-* usage
 rules: [
-  [/^rl-color-(.+)$/, ([, color]) => ({
-    "--rl-bg": `var(--color-${color}-500)`,
-    "--rl-bg-hover": `var(--color-${color}-600)`,
-    "--rl-text": `var(--color-${color}-600)`,
-    "--rl-ring": `var(--color-${color}-500)`,
-  })]
+  [
+    /^rl-color-(.+)$/,
+    ([, color]) => ({
+      "--rl-bg": `var(--color-${color}-500)`,
+      "--rl-bg-hover": `var(--color-${color}-600)`,
+      "--rl-text": `var(--color-${color}-600)`,
+      "--rl-ring": `var(--color-${color}-500)`
+    })
+  ]
 ]
 ```
 
@@ -371,14 +387,14 @@ Remove any Tailwind-specific configuration from `uno.config.ts` and the integrat
 
 ### Before / After Comparison
 
-| Concern | With Tailwind | Without Tailwind |
-|---|---|---|
-| Color registration | `@theme` block required | Plain `:root` sufficient |
-| CSS pipeline | Two compilers (Tailwind + UnoCSS) | One compiler (UnoCSS only) |
-| Build time | Longer — two full compiler passes | Faster — single pass |
-| CSS output | Potentially duplicated utilities | Single clean output |
-| `global.css` complexity | `@theme` + `:root` split | Plain `:root` only |
-| Vue dependency | Required (Nuxt UI is Vue) | Eliminated |
+| Concern                 | With Tailwind                     | Without Tailwind           |
+| ----------------------- | --------------------------------- | -------------------------- |
+| Color registration      | `@theme` block required           | Plain `:root` sufficient   |
+| CSS pipeline            | Two compilers (Tailwind + UnoCSS) | One compiler (UnoCSS only) |
+| Build time              | Longer — two full compiler passes | Faster — single pass       |
+| CSS output              | Potentially duplicated utilities  | Single clean output        |
+| `global.css` complexity | `@theme` + `:root` split          | Plain `:root` only         |
+| Vue dependency          | Required (Nuxt UI is Vue)         | Eliminated                 |
 
 ### Pros
 
@@ -397,10 +413,10 @@ Remove any Tailwind-specific configuration from `uno.config.ts` and the integrat
 
 ## Summary Table
 
-| Improvement | Complexity | Impact | Blocks On |
-|---|---|---|---|
-| Preflights instead of stylesheet | Medium | High — zero-import DX | Single config file improvement |
-| Single color definition source | Medium-High | High — eliminates triple registration | Vite config async resolution |
-| CSS variable rules / no safelist | High | Medium — maintenance reduction | Component authoring refactor |
-| Semantic foreground variables | Low-Medium | High — WCAG compliance | Color config schema update |
-| Remove Tailwind | Medium | Very High — simpler pipeline | Full Nuxt UI component replacement |
+| Improvement                      | Complexity  | Impact                                | Blocks On                          |
+| -------------------------------- | ----------- | ------------------------------------- | ---------------------------------- |
+| Preflights instead of stylesheet | Medium      | High — zero-import DX                 | Single config file improvement     |
+| Single color definition source   | Medium-High | High — eliminates triple registration | Vite config async resolution       |
+| CSS variable rules / no safelist | High        | Medium — maintenance reduction        | Component authoring refactor       |
+| Semantic foreground variables    | Low-Medium  | High — WCAG compliance                | Color config schema update         |
+| Remove Tailwind                  | Medium      | Very High — simpler pipeline          | Full Nuxt UI component replacement |

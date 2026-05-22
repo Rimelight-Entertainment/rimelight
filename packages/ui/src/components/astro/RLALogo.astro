@@ -1,21 +1,11 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentSlots } from "../../types"
+import type { LogoProps } from "../../types"
 import logoTheme from "../../themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const logo = scv(logoTheme)
-
-export interface RLALogoProps {
-  variant?: string;
-  mode?: "color" | "white" | "black";
-  href?: string;
-  alt?: string;
-  ui?: ComponentSlots<typeof logoTheme>;
-  class?: any;
-  [key: string]: unknown;
-}
 
 const {
   variant = "logomark",
@@ -25,7 +15,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLALogoProps;
+} = Astro.props as LogoProps;
 
 const classes = resolveClasses(logo, {}, useUi("logo", uiProp), className);
 

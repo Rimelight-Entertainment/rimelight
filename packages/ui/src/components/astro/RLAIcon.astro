@@ -1,19 +1,10 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { IconProps } from "../../types"
 import iconTheme from "../../themes/icon.theme"
 
 const icon = scv(iconTheme)
-type IconVariants = ComponentVariants<typeof iconTheme>
-
-export interface RLAIconProps {
-  name: string
-  size?: IconVariants['size']
-  ui?: ComponentSlots<typeof iconTheme>
-  class?: any
-  [key: string]: unknown
-}
 
 const {
   name,
@@ -21,7 +12,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLAIconProps
+} = Astro.props as IconProps
 
 const classes = resolveClasses(icon, { size }, useUi("icon", uiProp), className)
 ---

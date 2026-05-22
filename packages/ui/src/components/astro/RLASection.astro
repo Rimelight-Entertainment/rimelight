@@ -1,65 +1,12 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { SectionProps } from "../../types"
 import sectionTheme from "../../themes/section.theme"
-import type { RLAIconProps } from "./RLAIcon.astro"
-import type { RLAButtonProps } from "./RLAButton.astro"
 import RLAIcon from "./RLAIcon.astro"
 import RLAButton from "./RLAButton.astro"
 
 const section = scv(sectionTheme)
-type SectionVariants = ComponentVariants<typeof sectionTheme>
-
-export interface RLASectionProps {
-  /**
-   * The element or component this component should render as.
-   * @default 'section'
-   */
-  as?: any;
-  /**
-   * The variant of the section.
-   * @default 'default'
-   */
-  variant?: SectionVariants['variant'];
-  /** The variant of the section when it's a CTA.
-   * @default 'solid'
-   */
-  ctaVariant?: SectionVariants['ctaVariant'];
-  /**
-   * The headline displayed above the title.
-   */
-  headline?: string;
-  /**
-   * The icon displayed above the title.
-   */
-  icon?: RLAIconProps["name"];
-  /**
-   * The section's title, displayed as a <h1> for the hero variant or <h2> otherwise.
-   */
-  title?: string;
-  /**
-   * The section's description, displayed under the title.
-   */
-  description?: string;
-  /**
-   * Display a list of buttons under the description.
-   */
-  links?: RLAButtonProps[]
-  /**
-   * The orientation of the section.
-   * @default 'vertical'
-   */
-  orientation?: SectionVariants['orientation'];
-  /**
-   * Reverse the order of the default slot.
-   * @default false
-   */
-  reverse?: boolean;
-  ui?: ComponentSlots<typeof sectionTheme>;
-  class?: any;
-  [key: string]: unknown;
-}
 
 const {
   as = "section",
@@ -67,19 +14,24 @@ const {
   orientation = "vertical",
   reverse = false,
   ctaVariant = "solid",
+  headline,
+  title,
+  description,
+  icon,
+  links,
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLASectionProps;
+} = Astro.props as SectionProps;
 
 const classes = resolveClasses(section, {
   variant,
   orientation,
   reverse,
   ...(variant === "cta" && { ctaVariant }),
-  headline: !!(Astro.slots.has("headline") || Astro.props.headline),
-  title: !!(Astro.slots.has("title") || Astro.props.title),
-  description: !!(Astro.slots.has("description") || Astro.props.description),
+  headline: !!(Astro.slots.has("headline") || headline),
+  title: !!(Astro.slots.has("title") || title),
+  description: !!(Astro.slots.has("description") || description),
   body: Astro.slots.has("body")
 }, useUi("section", uiProp), className);
 
@@ -106,53 +58,53 @@ const TitleTag = variant === "hero" ? "h1" : "h2";
   <div
     class:list={[classes.container]}
   >
-    {(Astro.slots.has("header") || Astro.props.icon || Astro.props.headline || Astro.props.title || Astro.props.description || Astro.slots.has("body") || Astro.slots.has("footer") || Astro.slots.has("links") || Astro.props.links?.length) && (
+    {(Astro.slots.has("header") || icon || headline || title || description || Astro.slots.has("body") || Astro.slots.has("footer") || Astro.slots.has("links") || links?.length) && (
       <div
         class:list={[classes.wrapper]}
       >
-        {(Astro.slots.has("header") || Astro.props.icon || Astro.props.headline || Astro.props.title || Astro.props.description) && (
+        {(Astro.slots.has("header") || icon || headline || title || description) && (
           <div
             class:list={[classes.header]}
           >
             <slot name="header">
-              {(Astro.props.icon || Astro.slots.has("leading")) && (
+              {(icon || Astro.slots.has("leading")) && (
                 <div
                   class:list={[classes.leading]}
                 >
                   <slot name="leading" {...{ ui: classes }}>
-                    {Astro.props.icon && (
-                      <RLAIcon name={Astro.props.icon} size="md" ui={{ root: classes.leadingIcon }} />
+                    {icon && (
+                      <RLAIcon name={icon} size="md" ui={{ root: classes.leadingIcon }} />
                     )}
                   </slot>
                 </div>
               )}
 
-              {(Astro.props.headline || Astro.slots.has("headline")) && (
+              {(headline || Astro.slots.has("headline")) && (
                 <div
                   class:list={[classes.headline]}
                 >
                   <slot name="headline">
-                    {Astro.props.headline}
+                    {headline}
                   </slot>
                 </div>
               )}
 
-              {(Astro.props.title || Astro.slots.has("title")) && (
+              {(title || Astro.slots.has("title")) && (
                 <TitleTag
                   class:list={[classes.title]}
                 >
                   <slot name="title">
-                    {Astro.props.title}
+                    {title}
                   </slot>
                 </TitleTag>
               )}
 
-              {(Astro.props.description || Astro.slots.has("description")) && (
+              {(description || Astro.slots.has("description")) && (
                 <div
                   class:list={[classes.description]}
                 >
                   <slot name="description">
-                    {Astro.props.description}
+                    {description}
                   </slot>
                 </div>
               )}
@@ -168,16 +120,16 @@ const TitleTag = variant === "hero" ? "h1" : "h2";
           </div>
         )}
 
-        {(Astro.slots.has("footer") || Astro.slots.has("links") || Astro.props.links?.length) && (
+        {(Astro.slots.has("footer") || Astro.slots.has("links") || links?.length) && (
           <div
             class:list={[classes.footer]}
           >
             <slot name="footer">
-              {(Astro.props.links?.length || Astro.slots.has("links")) && (
+              {(links?.length || Astro.slots.has("links")) && (
                 <div
                   class:list={[classes.links]}
                 >
-                  {Astro.props.links?.map((link) => (
+                  {links?.map((link) => (
                     <RLAButton size="lg" {...link} />
                   ))}
                   <slot name="links" />

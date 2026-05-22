@@ -63,7 +63,17 @@ export interface UIOptions {
  */
 export function ui(options: UIOptions = {}): AstroIntegration[] {
   const resolvedUI = defu(options.ui ?? {}, defaultUIConfig)
-  const coreColors = ["primary", "secondary", "info", "success", "warning", "error", "commentary", "ideation", "source"]
+  const coreColors = [
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "commentary",
+    "ideation",
+    "source"
+  ]
   const mergedColors = [...new Set([...coreColors, ...(options.colors || [])])]
   const resolvedConfig = { ...resolvedUI, logos: options.logos ?? {}, colors: mergedColors }
 

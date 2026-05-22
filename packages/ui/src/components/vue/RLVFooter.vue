@@ -2,19 +2,12 @@
 import { computed } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { FooterProps } from "../../types/components/footer"
 import footerTheme from "../../themes/footer.theme"
 
 const footer = scv(footerTheme)
-type FooterVariants = ComponentVariants<typeof footerTheme>
 
-export interface RLVFooterProps {
-  contain?: FooterVariants["contain"]
-  ui?: ComponentSlots<typeof footerTheme>
-  class?: any
-}
-
-const { contain = false, ui: uiProp, class: className } = defineProps<RLVFooterProps>()
+const { contain = false, ui: uiProp, class: className } = defineProps<FooterProps>()
 
 defineSlots<{
   left(props: {}): any

@@ -49,6 +49,8 @@
     "./middleware/*": "./src/middleware/*",
     "./nuxt": "./src/nuxt.ts",
     "./nuxt/types": "./src/nuxt-types.ts",
+    "./types": "./src/types/index.ts",
+    "./types/*": "./src/types/*",
     "./presets": "./src/presets/index.ts",
     "./presets/*": "./src/presets/*",
     "./*": "./src/*"

@@ -1,9 +1,8 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComponentVariants, ComponentSlots } from "../../types"
+import type { EmbedYoutubeProps } from "../../types"
 import embedYoutubeTheme from "../../themes/embedYoutube.theme"
-import type { RLAIconProps } from "./RLAIcon.astro"
 import { Image } from "astro:assets"
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
@@ -111,27 +110,6 @@ function getYoutubeEmbedUrl(rawUrl: string): string | null {
 }
 
 const embedYoutube = scv(embedYoutubeTheme)
-type EmbedYoutubeVariants = ComponentVariants<typeof embedYoutubeTheme>
-
-export interface RLAEmbedYoutubeProps {
-  /**
-   * The URL of the YouTube video to embed.
-   */
-  src: string;
-  /**
-    * The title of the video to display.
-    * @default "YouTube Video Player"
-    */
-  title?: string;
-  /**
-   * The name of the icon to display in the play trigger overlay.
-   * @default "i-lucide-play"
-   */
-  icon?: RLAIconProps["name"];
-  ui?: ComponentSlots<typeof embedYoutubeTheme>;
-  class?: any;
-  [key: string]: unknown;
-}
 
 const {
   src,
@@ -140,11 +118,11 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as RLAEmbedYoutubeProps;
+} = Astro.props as EmbedYoutubeProps
 
 const classes = resolveClasses(embedYoutube, {
-  title: !!(Astro.slots.has("title") || Astro.props.title),
-  icon: !!(Astro.slots.has("icon") || Astro.props.icon),
+  title: !!(Astro.slots.has("title") || title),
+  icon: !!(Astro.slots.has("icon") || icon),
 }, useUi("embedYoutube", uiProp), className);
 
 const embedUrl = getYoutubeEmbedUrl(src);
