@@ -1,0 +1,61 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ThemeSelectorProps } from "../../types"
+import themeSelectorTheme from "../../themes/themeSelector.theme"
+import RLAButton from "./RLAButton.astro"
+
+const themeSelector = scv(themeSelectorTheme)
+
+const {
+    size = "md",
+    ui: uiProp,
+    class: className,
+    ...rest
+} = Astro.props as ThemeSelectorProps
+
+const classes = resolveClasses(themeSelector, {
+    size
+}, useUi("themeSelector", uiProp), className);
+---
+
+<RLAButton
+        size={size}
+        class:list={["theme-toggle-button", classes.root]}
+        variant="ghost"
+        aria-label="Toggle theme"
+        {...rest}
+>
+    <span class:list={[classes.sun]} />
+    <span class:list={[classes.moon]} />
+</RLAButton>
+
+<script>
+    function setupThemeToggle() {
+        const buttons = document.querySelectorAll('.theme-toggle-button');
+
+        const updateButtons = (isDark: boolean) => {
+            buttons.forEach(btn => {
+                btn.setAttribute('data-state', isDark ? 'on' : 'off');
+                btn.setAttribute('aria-pressed', isDark.toString());
+            });
+        };
+
+        // Set initial state
+        const currentIsDark = document.documentElement.classList.contains('dark');
+        updateButtons(currentIsDark);
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateButtons(isDark);
+            });
+        });
+    }
+
+    // Initial setup
+    setupThemeToggle();
+    // Re-run on View Transitions
+    document.addEventListener('astro:page-load', setupThemeToggle);
+</script>
