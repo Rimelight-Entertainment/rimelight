@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/ui",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "private": false,
   "description": "Rimelight Entertainment UI Library.",
   "keywords": [
@@ -48,7 +48,6 @@
     "./middleware": "./src/middleware/index.ts",
     "./middleware/*": "./src/middleware/*",
     "./nuxt": "./src/nuxt.ts",
-    "./nuxt/types": "./src/nuxt-types.ts",
     "./types": "./src/types/index.ts",
     "./types/*": "./src/types/*",
     "./presets": "./src/presets/index.ts",

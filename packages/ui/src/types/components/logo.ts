@@ -2,7 +2,7 @@ export interface LogoProps {
   /**
    * The visual variant of the logo.
    */
-  variant?: "logomark" | "logotype" | "full" | string
+  variant?: "logomark" | "logotype" | "full"
   /**
    * The color mode of the logo.
    */
