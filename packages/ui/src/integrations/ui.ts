@@ -100,6 +100,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
         plugins: [
           uiPlugin({
             router: false,
+            colorMode: false,
             scanPackages: ["@rimelight/ui"]
           }),
           tailwindcss(),

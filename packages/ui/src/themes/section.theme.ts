@@ -181,7 +181,6 @@ export default defineTheme({
   ],
   defaultVariants: {
     variant: "default",
-    orientation: "vertical",
-    ctaVariant: "solid"
+    orientation: "vertical"
   }
 })

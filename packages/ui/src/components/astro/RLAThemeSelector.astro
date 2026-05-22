@@ -31,6 +31,15 @@ const classes = resolveClasses(themeSelector, {
 </RLAButton>
 
 <script>
+    function applyStoredTheme() {
+        const stored = localStorage.getItem('theme');
+        if (stored === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else if (stored === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
     function setupThemeToggle() {
         const buttons = document.querySelectorAll('.theme-toggle-button');
 
@@ -41,7 +50,6 @@ const classes = resolveClasses(themeSelector, {
             });
         };
 
-        // Set initial state
         const currentIsDark = document.documentElement.classList.contains('dark');
         updateButtons(currentIsDark);
 
@@ -54,8 +62,12 @@ const classes = resolveClasses(themeSelector, {
         });
     }
 
-    // Initial setup
+    function onPageLoad() {
+        applyStoredTheme();
+        setupThemeToggle();
+    }
+
+    applyStoredTheme();
     setupThemeToggle();
-    // Re-run on View Transitions
-    document.addEventListener('astro:page-load', setupThemeToggle);
+    document.addEventListener('astro:page-load', onPageLoad);
 </script>
