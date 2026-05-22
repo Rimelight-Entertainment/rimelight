@@ -1,0 +1,88 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { LocaleSelectorProps } from "../../types"
+import localeSelectorTheme from "../../themes/localeSelector.theme"
+import { getRelativeLocaleUrlList } from "astro:i18n";
+
+const localeSelector = scv(localeSelectorTheme)
+
+const {
+    variant = "default",
+    size = "md",
+    ui: uiProp,
+    class: className,
+    ...rest
+} = Astro.props as LocaleSelectorProps;
+
+const classes = resolveClasses(localeSelector, {
+    variant,
+    size
+}, useUi("localeSelector", uiProp), className);
+
+const currentLocale = Astro.currentLocale;
+const localeUrls = [...new Map(getRelativeLocaleUrlList().map(url => {
+    const locale = url.split('/')[1] || 'en';
+    return [locale, url];
+})).values()];
+---
+
+<div class:list={[classes.root]} {...rest}>
+    {Astro.slots.has("label") && (
+            <label for="language-picker" class:list={[classes.label]}>
+                <slot name="label" />
+            </label>
+    )}
+
+    <div class:list={[classes.wrapper]}>
+        <select
+                id="language-picker"
+                class:list={[classes.select]}
+                aria-label="Select language"
+                data-variant={variant}
+                data-size={size}
+        >
+            {localeUrls.map((url) => {
+                const locale = url.split('/')[1] || 'en';
+                return (
+                        <option
+                                value={locale}
+                                selected={currentLocale === locale}
+                                class:list={[classes.option]}
+                        >
+                            {locale.toUpperCase()}
+                        </option>
+                );
+            })}
+        </select>
+
+        {Astro.slots.has("icon") && (
+                <div class:list={[classes.iconWrapper]}>
+                    <slot name="icon" />
+                </div>
+        )}
+    </div>
+</div>
+
+<script>
+    const initializeLanguagePicker = () => {
+        const languagePickers = document.querySelectorAll('#language-picker');
+
+        languagePickers.forEach(picker => {
+            if (picker.hasAttribute('data-initialized')) return;
+            picker.setAttribute('data-initialized', 'true');
+
+            picker.addEventListener('change', (event) => {
+                const target = event.target as HTMLSelectElement;
+                const selectedLocale = target.value;
+                const currentPath = window.location.pathname;
+
+                const pathWithoutLocale = currentPath.replace(/^\/[^/]+/, '');
+                window.location.href = `/${selectedLocale}${pathWithoutLocale}`;
+            });
+        });
+    };
+
+    document.addEventListener('DOMContentLoaded', initializeLanguagePicker);
+    document.addEventListener('astro:page-load', initializeLanguagePicker);
+</script>
