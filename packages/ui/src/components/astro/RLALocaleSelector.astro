@@ -3,11 +3,12 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { LocaleSelectorProps } from "../../types"
 import localeSelectorTheme from "../../themes/localeSelector.theme"
-import { getRelativeLocaleUrlList } from "astro:i18n";
+import { getRelativeLocaleUrlList, getRelativeLocaleUrl } from "astro:i18n";
 
 const localeSelector = scv(localeSelectorTheme)
 
 const {
+    locales,
     variant = "default",
     size = "md",
     ui: uiProp,
@@ -20,11 +21,31 @@ const classes = resolveClasses(localeSelector, {
     size
 }, useUi("localeSelector", uiProp), className);
 
-const currentLocale = Astro.currentLocale;
+const currentLocale = Astro.currentLocale ?? 'en';
 const localeUrls = [...new Map(getRelativeLocaleUrlList().map(url => {
     const locale = url.split('/')[1] || 'en';
     return [locale, url];
 })).values()];
+
+const processedLocales = locales && locales.length > 0
+    ? locales.map(item => typeof item === 'string' ? { code: item, label: item } : item)
+    : [...new Map(getRelativeLocaleUrlList().map(url => {
+        const locale = url.split('/')[1] || 'en';
+        return [locale, { code: locale, label: locale }];
+    })).values()];
+
+function getLocaleDisplayName(localeCode: string): string {
+    try {
+        const formatter = new Intl.DisplayNames([localeCode], { type: 'language' });
+        const nativeName = formatter.of(localeCode);
+
+        return nativeName
+            ? nativeName.charAt(0).toUpperCase() + nativeName.slice(1)
+            : localeCode.toUpperCase();
+    } catch (e) {
+        return localeCode.toUpperCase();
+    }
+}
 ---
 
 <div class:list={[classes.root]} {...rest}>
@@ -42,25 +63,27 @@ const localeUrls = [...new Map(getRelativeLocaleUrlList().map(url => {
                 data-variant={variant}
                 data-size={size}
         >
-            {localeUrls.map((url) => {
-                const locale = url.split('/')[1] || 'en';
+            {processedLocales.map((item) => {
+                const targetUrl = getRelativeLocaleUrl(item.code, Astro.url.pathname.replace(/^\/[^/]+/, ''));
                 return (
                         <option
-                                value={locale}
-                                selected={currentLocale === locale}
+                                value={targetUrl}
+                                selected={currentLocale === item.code}
                                 class:list={[classes.option]}
                         >
-                            {locale.toUpperCase()}
+                            {item.label !== item.code ? item.label : getLocaleDisplayName(item.code)}
                         </option>
                 );
             })}
         </select>
 
-        {Astro.slots.has("icon") && (
-                <div class:list={[classes.iconWrapper]}>
-                    <slot name="icon" />
-                </div>
-        )}
+        <div class:list={[classes.iconWrapper]}>
+            <slot name="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 opacity-70">
+                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                </svg>
+            </slot>
+        </div>
     </div>
 </div>
 
@@ -74,11 +97,10 @@ const localeUrls = [...new Map(getRelativeLocaleUrlList().map(url => {
 
             picker.addEventListener('change', (event) => {
                 const target = event.target as HTMLSelectElement;
-                const selectedLocale = target.value;
-                const currentPath = window.location.pathname;
-
-                const pathWithoutLocale = currentPath.replace(/^\/[^/]+/, '');
-                window.location.href = `/${selectedLocale}${pathWithoutLocale}`;
+                const targetUrl = target.value;
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                }
             });
         });
     };
