@@ -34,7 +34,6 @@ const messages = useI18n("headerPage", {
 ---
 
 <AppLayout title={messages.title} description={messages.description}>
-  <main class="max-w-6xl mx-auto p-8">
     <a href={getRelativeLocaleUrl(activeLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
       {nav.backToComponents}
@@ -279,32 +278,32 @@ const messages = useI18n("headerPage", {
 </RLVHeader>`}</code></pre>
       </section>
     </div>
-  </main>
-
-  <script>
-    function initTabs() {
-      var tabBtns = document.querySelectorAll('.tab-btn');
-      var tabContents = document.querySelectorAll('.tab-content');
-
-      tabBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var tab = btn.getAttribute('data-tab');
-
-          tabBtns.forEach(function(b) {
-            b.classList.remove('border-primary-500', 'text-primary-500');
-            b.classList.add('border-transparent');
-          });
-          btn.classList.add('border-primary-500', 'text-primary-500');
-          btn.classList.remove('border-transparent');
-
-          tabContents.forEach(function(content) {
-            content.classList.add('hidden');
-          });
-          var contentEl = document.getElementById('content-' + tab);
-          if (contentEl) contentEl.classList.remove('hidden');
-        });
-      });
-    }
-    initTabs();
-  </script>
 </AppLayout>
+
+
+<script>
+  function initTabs() {
+    var tabBtns = document.querySelectorAll('.tab-btn');
+    var tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tab = btn.getAttribute('data-tab');
+
+        tabBtns.forEach(function(b) {
+          b.classList.remove('border-primary-500', 'text-primary-500');
+          b.classList.add('border-transparent');
+        });
+        btn.classList.add('border-primary-500', 'text-primary-500');
+        btn.classList.remove('border-transparent');
+
+        tabContents.forEach(function(content) {
+          content.classList.add('hidden');
+        });
+        var contentEl = document.getElementById('content-' + tab);
+        if (contentEl) contentEl.classList.remove('hidden');
+      });
+    });
+  }
+  initTabs();
+</script>

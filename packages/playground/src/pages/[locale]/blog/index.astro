@@ -32,7 +32,6 @@ const messages = await useI18nAsync('blog', {
 ---
 
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
-	<main>
 		{categoryOrder.map((category) => {
 			const categoryPosts = groupedPosts[category];
 			if (!categoryPosts || categoryPosts.length === 0) return null;
@@ -84,5 +83,4 @@ const messages = await useI18nAsync('blog', {
 				</RLASection>
 			);
 		})}
-	</main>
 </AppLayout>

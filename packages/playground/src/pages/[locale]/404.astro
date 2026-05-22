@@ -14,9 +14,5 @@ const messages = useI18n("errors", {
 ---
 
 <AppLayout title={messages.notFound} description={messages.notFoundDesc}>
-    <main class="flex flex-col items-center justify-center py-24">
-        <h1>{messages.notFound}</h1>
-        <p>{messages.notFoundDesc}</p>
-        <a href={getRelativeLocaleUrl(activeLocale, "/")}>{messages.goHome}</a>
-    </main>
+
 </AppLayout>

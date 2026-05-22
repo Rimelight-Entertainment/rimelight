@@ -16,7 +16,6 @@ const messages = useI18n("showcase", {
 ---
 
 <AppLayout title={messages.title} description={messages.description}>
-  <main class="max-w-6xl mx-auto p-8">
     <h1 class="text-3xl font-bold mb-4">{messages.title}</h1>
     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
       The full component showcase has moved to the <a href={getRelativeLocaleUrl(activeLocale, "/components")} class="text-primary-500 hover:underline">{messages.componentsLink}</a> page.
@@ -27,5 +26,4 @@ const messages = useI18n("showcase", {
         <strong>Note:</strong> This page is deprecated. Please visit the <a href={getRelativeLocaleUrl(activeLocale, "/components")} class="underline font-medium">{messages.componentsLink}</a> page to see all available components with full Astro and Vue examples.
       </p>
     </div>
-  </main>
 </AppLayout>

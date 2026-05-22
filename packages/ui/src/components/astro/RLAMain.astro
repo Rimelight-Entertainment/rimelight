@@ -1,0 +1,28 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { MainProps } from "../../types"
+import mainTheme from "../../themes/main.theme"
+
+const main = scv(mainTheme)
+
+const {
+    as = "main",
+    ui: uiProp,
+    class: className,
+    ...rest
+} = Astro.props as MainProps;
+
+const classes = resolveClasses(main, {
+    hasContent: Astro.slots.has("default")
+}, useUi("main", uiProp), className);
+
+const Tag = as;
+---
+
+<Tag
+        class:list={[classes.root]}
+        {...rest}
+>
+    <slot />
+</Tag>
