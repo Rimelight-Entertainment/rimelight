@@ -54,6 +54,8 @@ const classes = resolveClasses(themeSelector, {
         updateButtons(currentIsDark);
 
         buttons.forEach(button => {
+            if (button.hasAttribute('data-initialized')) return;
+            button.setAttribute('data-initialized', '');
             button.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -62,12 +64,10 @@ const classes = resolveClasses(themeSelector, {
         });
     }
 
-    function onPageLoad() {
-        applyStoredTheme();
-        setupThemeToggle();
-    }
-
     applyStoredTheme();
     setupThemeToggle();
-    document.addEventListener('astro:page-load', onPageLoad);
+    document.addEventListener('astro:page-load', () => {
+        applyStoredTheme();
+        setupThemeToggle();
+    });
 </script>
