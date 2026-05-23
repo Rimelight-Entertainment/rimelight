@@ -1,0 +1,39 @@
+export interface DialogProps {
+  /**
+   * Controlled open state.
+   */
+  open?: boolean
+  /**
+   * The trigger label to render a default button.
+   */
+  triggerLabel?: string
+  /**
+   * Whether to close the dialog when clicking the backdrop.
+   */
+  closeOnClickOutside?: boolean
+  /**
+   * Whether to close on pressing the Escape key.
+   */
+  closeOnEscape?: boolean
+  /**
+   * Prevents body scrolling when open.
+   */
+  lockScroll?: boolean
+  /**
+   * Main heading of the dialog.
+   */
+  title?: string
+  /**
+   * Description of the dialog purpose.
+   */
+  description?: string
+  /**
+   * Slot-specific CSS class overrides.
+   */
+  ui?: any
+  /**
+   * Additional CSS classes to apply to the root component.
+   */
+  class?: any
+  [key: string]: unknown
+}

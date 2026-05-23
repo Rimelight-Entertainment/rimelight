@@ -1,0 +1,56 @@
+---
+import { scv, cx } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { AvatarProps } from "../../types"
+import avatarThemeDefault from "../../themes/avatar.theme"
+
+const avatar = scv(avatarThemeDefault)
+
+const {
+  src,
+  alt = "",
+  fallback,
+  size = "md",
+  badge = false,
+  badgeColor = "success",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as AvatarProps
+
+const classes = resolveClasses(avatar, {
+  size,
+  hasBadge: !!badge
+}, useUi("avatar", uiProp), className)
+---
+<span
+  class={classes.root}
+  data-slot="root"
+  {...rest}
+>
+  <slot>
+    {src ? (
+      <img
+        src={src}
+        alt={alt}
+        class={classes.image}
+        data-slot="image"
+      />
+    ) : (
+      <span class={classes.fallback} data-slot="fallback">
+        <slot name="fallback">
+          {fallback}
+        </slot>
+      </span>
+    )}
+  </slot>
+
+  <slot name="badge">
+    {badge && (
+      <span
+        class={cx(classes.badge, badgeColor && `bg-${badgeColor}-500`)}
+        data-slot="badge"
+      />
+    )}
+  </slot>
+</span>

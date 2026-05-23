@@ -1,0 +1,109 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SelectProps } from "../../types"
+import selectThemeDefault, { createSelectTheme } from "../../themes/select.theme"
+
+const selectTheme = selectThemeDefault
+const select = scv(selectTheme)
+
+const {
+  items = [],
+  value = "",
+  placeholder = "Select item...",
+  disabled = false,
+  name,
+  label,
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as SelectProps
+
+const classes = resolveClasses(select, {
+  size
+}, useUi("select", uiProp), className);
+
+const normalizedItems = items.map(item => {
+  if (typeof item === "string") {
+    return { label: item, value: item }
+  }
+  return item
+})
+
+const selectedItem = normalizedItems.find(item => item.value === value)
+const initialLabel = selectedItem ? selectedItem.label : ""
+---
+<div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
+  {label && <label class={classes.label} data-slot="label">{label}</label>}
+  
+  <div class="relative w-full" data-select-wrapper>
+    <button
+      type="button"
+      class={classes.trigger}
+      data-slot="trigger"
+      disabled={disabled}
+      data-select-trigger
+      {...rest}
+    >
+      <span data-select-value>{initialLabel || placeholder}</span>
+      <span class="i-lucide-chevron-down opacity-50" />
+    </button>
+
+    <div class={classes.content + " hidden"} data-select-dropdown data-slot="content">
+      <div class="py-1" data-select-items>
+        {normalizedItems.map(item => (
+          <div
+            class={classes.item}
+            data-slot="item"
+            data-value={item.value}
+            data-label={item.label}
+            data-select-item
+          >
+            <span class={classes.itemText}>{item.label}</span>
+            <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+  <input type="hidden" name={name} value={value} data-select-hidden-input />
+</div>
+
+<script>
+  document.querySelectorAll("[data-select-wrapper]").forEach(wrapper => {
+    const trigger = wrapper.querySelector("[data-select-trigger]") as HTMLButtonElement;
+    const dropdown = wrapper.querySelector("[data-select-dropdown]") as HTMLDivElement;
+    const items = wrapper.querySelectorAll("[data-select-item]");
+    const valueSpan = wrapper.querySelector("[data-select-value]");
+    const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-select-hidden-input]") as HTMLInputElement;
+
+    if (!trigger || !dropdown) return;
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle("hidden");
+    });
+
+    items.forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const val = (item as HTMLElement).dataset.value || "";
+        const label = (item as HTMLElement).dataset.label || "";
+        
+        if (hiddenInput) hiddenInput.value = val;
+        if (valueSpan) valueSpan.textContent = label;
+        
+        items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
+        item.querySelector("[data-check-icon]")?.classList.remove("hidden");
+        
+        dropdown.classList.add("hidden");
+      });
+    });
+
+    document.addEventListener("click", () => {
+      dropdown.classList.add("hidden");
+    });
+  });
+</script>

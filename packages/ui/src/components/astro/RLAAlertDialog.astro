@@ -1,0 +1,86 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { AlertDialogProps } from "../../types"
+import alertDialogTheme from "../../themes/alertDialog.theme"
+import RLAButton from "./RLAButton.astro"
+
+const alertDialog = scv(alertDialogTheme)
+
+const {
+  variant = "default",
+  title,
+  description,
+  actionLabel = "Confirm",
+  cancelLabel = "Cancel",
+  triggerLabel,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as AlertDialogProps
+
+const classes = resolveClasses(alertDialog, {
+  variant
+}, useUi("alertDialog", uiProp), className)
+
+const dialogId = `rla-alert-dialog-${Math.random().toString(36).substring(2, 9)}`
+---
+<div class={classes.root} data-slot="alert-dialog-container">
+  {triggerLabel ? (
+    <RLAButton
+      class={classes.trigger}
+      data-slot="trigger"
+      type="button"
+      onclick={`document.getElementById('${dialogId}').showModal()`}
+    >
+      {triggerLabel}
+    </RLAButton>
+  ) : (
+    <span onclick={`document.getElementById('${dialogId}').showModal()`}>
+      <slot name="trigger" />
+    </span>
+  )}
+
+  <dialog
+    id={dialogId}
+    class={classes.content}
+    data-slot="content"
+    data-lock-scroll="true"
+    data-close-on-escape="false"
+    data-close-on-click-outside="false"
+    {...rest}
+  >
+    <div class={classes.header} data-slot="header">
+      {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
+      <slot name="title" />
+      
+      {description && <p class={classes.description} data-slot="description">{description}</p>}
+      <slot name="description" />
+    </div>
+
+    <slot />
+
+    <div class={classes.footer} data-slot="footer">
+      <slot name="footer">
+        <RLAButton
+          class={classes.cancelButton}
+          data-slot="cancel"
+          variant="outline"
+          type="button"
+          onclick={`document.getElementById('${dialogId}').close()`}
+        >
+          {cancelLabel}
+        </RLAButton>
+        <RLAButton
+          class={classes.actionButton}
+          data-slot="action"
+          color={variant === "destructive" ? "error" : "primary"}
+          type="button"
+          onclick={`document.getElementById('${dialogId}').close()`}
+        >
+          {actionLabel}
+        </RLAButton>
+      </slot>
+    </div>
+  </dialog>
+</div>

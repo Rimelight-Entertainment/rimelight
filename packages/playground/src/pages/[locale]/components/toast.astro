@@ -1,0 +1,42 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+
+const activeLocale = Astro.currentLocale ?? 'en';
+currentLocale.set(activeLocale);
+
+const nav = useI18n("components", {
+    backToComponents: "Back to Components",
+});
+
+const messages = useI18n("toastPage", {
+    title: "Toast Component",
+    description: "Toast Component Showcase",
+    heading: "Toast",
+    default: "Default",
+});
+---
+
+<AppLayout title={messages.title} description={messages.description}>
+    <a href={getRelativeLocaleUrl(activeLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
+      <span class="i-lucide-arrow-left"></span>
+      {nav.backToComponents}
+    </a>
+
+    <h1 class="text-3xl font-bold mb-8">{messages.heading}</h1>
+
+    <div class="space-y-12">
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">{messages.default}</h2>
+        <div class="border border-gray-200 dark:border-gray-800 p-6 rounded-xl bg-white dark:bg-black space-y-4 max-w-xs">
+          <RLAToast title="Notification" description="Your weekly overview report has been generated successfully." duration={0} />
+          <RLAToast title="Success" description="Your changes have been saved." variant="success" duration={0} />
+          <RLAToast title="Account Error" description="There was a payment error. Please resolve billing info." variant="destructive" duration={0} />
+        </div>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAToast title="Notification" description="..." />
+<RLAToast title="Account Error" description="..." variant="destructive" />`}</code></pre>
+      </section>
+    </div>
+</AppLayout>

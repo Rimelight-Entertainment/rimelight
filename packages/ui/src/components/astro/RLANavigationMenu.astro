@@ -1,0 +1,136 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { NavigationMenuProps } from "../../types"
+import navigationMenuThemeDefault, { createNavigationMenuTheme } from "../../themes/navigationMenu.theme"
+
+const navigationMenuTheme = navigationMenuThemeDefault
+const navigationMenu = scv(navigationMenuTheme)
+
+const {
+  items = [],
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as NavigationMenuProps
+
+const classes = resolveClasses(navigationMenu, {}, useUi("navigationMenu", uiProp), className)
+---
+
+<nav class={classes.root} data-slot="root" data-nav-menu {...rest}>
+  <ul class={classes.list} data-slot="list" role="list">
+    {items.map((item, i) => {
+      const hasChildren = item.children && item.children.length > 0
+      return (
+        <li class={classes.item} data-slot="item" data-nav-item>
+          {hasChildren ? (
+            <button
+              type="button"
+              class={classes.trigger}
+              data-slot="trigger"
+              data-nav-trigger
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
+              {item.label}
+              <span class="i-lucide-chevron-down ml-1 size-3.5 transition-transform duration-200" aria-hidden="true" />
+            </button>
+          ) : (
+            <a
+              href={item.href ?? "#"}
+              class={classes.link}
+              data-slot="link"
+            >
+              {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
+              {item.label}
+            </a>
+          )}
+
+          {hasChildren && (
+            <div class={classes.content + " hidden"} data-slot="content" data-nav-content role="region">
+              <ul role="list" class="py-1">
+                {item.children!.map(child => (
+                  <li>
+                    <a
+                      href={child.href ?? "#"}
+                      class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                      {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}
+                      <div>
+                        <div class="font-medium leading-none">{child.label}</div>
+                        {child.description && (
+                          <p class="mt-1 text-xs text-muted-foreground line-clamp-2">{child.description}</p>
+                        )}
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </li>
+      )
+    })}
+  </ul>
+
+  <slot />
+
+  <div class={classes.viewport} data-slot="viewport" />
+</nav>
+
+<script>
+  document.querySelectorAll("[data-nav-menu]").forEach(menu => {
+    const items = menu.querySelectorAll("[data-nav-item]");
+
+    items.forEach(item => {
+      const trigger = item.querySelector("[data-nav-trigger]");
+      const content = item.querySelector("[data-nav-content]");
+
+      if (!trigger || !content) return;
+
+      const open = () => {
+        content.classList.remove("hidden");
+        trigger.setAttribute("aria-expanded", "true");
+        const icon = trigger.querySelector(".i-lucide-chevron-down");
+        if (icon) (icon as HTMLElement).style.transform = "rotate(180deg)";
+      };
+
+      const close = () => {
+        content.classList.add("hidden");
+        trigger.setAttribute("aria-expanded", "false");
+        const icon = trigger.querySelector(".i-lucide-chevron-down");
+        if (icon) (icon as HTMLElement).style.transform = "";
+      };
+
+      trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = !content.classList.contains("hidden");
+        // Close all others
+        items.forEach(other => {
+          const otherContent = other.querySelector("[data-nav-content]");
+          const otherTrigger = other.querySelector("[data-nav-trigger]");
+          if (otherContent && !otherContent.classList.contains("hidden")) {
+            otherContent.classList.add("hidden");
+            otherTrigger?.setAttribute("aria-expanded", "false");
+            const icon = otherTrigger?.querySelector(".i-lucide-chevron-down");
+            if (icon) (icon as HTMLElement).style.transform = "";
+          }
+        });
+        if (!isOpen) open();
+      });
+    });
+
+    document.addEventListener("click", () => {
+      items.forEach(item => {
+        const content = item.querySelector("[data-nav-content]");
+        const trigger = item.querySelector("[data-nav-trigger]");
+        if (content) content.classList.add("hidden");
+        if (trigger) trigger.setAttribute("aria-expanded", "false");
+        const icon = trigger?.querySelector(".i-lucide-chevron-down");
+        if (icon) (icon as HTMLElement).style.transform = "";
+      });
+    });
+  });
+</script>

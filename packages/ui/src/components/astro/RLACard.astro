@@ -1,0 +1,74 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CardProps } from "../../types"
+import cardTheme from "../../themes/card.theme"
+
+const card = scv(cardTheme)
+
+const {
+  title,
+  description,
+  mediaSrc,
+  href,
+  overlay = false,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CardProps
+
+const classes = resolveClasses(card, {
+  interactive: !!href,
+  overlay
+}, useUi("card", uiProp), className)
+
+const Tag = href ? "a" : "div"
+---
+<Tag
+  class={classes.root}
+  data-slot="card-root"
+  {...(Tag === "a" ? { href } : {})}
+  {...rest}
+>
+  <slot name="media">
+    {mediaSrc && (
+      <div class={classes.media} data-slot="media">
+        <img src={mediaSrc} alt={title || ""} class="h-full w-full object-cover" />
+      </div>
+    )}
+  </slot>
+
+  {overlay ? (
+    <div class={classes.overlay} data-slot="overlay">
+      {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
+      {description && <p class={classes.description} data-slot="description">{description}</p>}
+      <slot />
+    </div>
+  ) : (
+    <>
+      <slot name="header">
+        {(title || description || Astro.slots.has("title") || Astro.slots.has("description")) && (
+          <div class={classes.header} data-slot="header">
+            {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
+            <slot name="title" />
+            
+            {description && <p class={classes.description} data-slot="description">{description}</p>}
+            <slot name="description" />
+          </div>
+        )}
+      </slot>
+
+      {Astro.slots.has("default") && (
+        <div class={classes.content} data-slot="content">
+          <slot />
+        </div>
+      )}
+
+      {Astro.slots.has("footer") && (
+        <div class={classes.footer} data-slot="footer">
+          <slot name="footer" />
+        </div>
+      )}
+    </>
+  )}
+</Tag>

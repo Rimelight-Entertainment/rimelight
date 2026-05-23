@@ -1,0 +1,60 @@
+---
+import { scv, cx } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { AlertProps } from "../../types"
+import alertThemeDefault, { createAlertTheme } from "../../themes/alert.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const alertTheme = uiConfig.colors ? createAlertTheme(uiConfig.colors) : alertThemeDefault
+const alert = scv(alertTheme)
+
+const {
+  variant = "default",
+  color = "primary",
+  title,
+  description,
+  icon,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as AlertProps
+
+const isIcon = !!(icon || Astro.slots.has("icon"))
+
+const classes = resolveClasses(alert, {
+  variant,
+  color,
+  hasIcon: isIcon,
+}, useUi("alert", uiProp), className)
+---
+<div
+  class={classes.root}
+  data-slot="root"
+  role="alert"
+  {...rest}
+>
+  <slot name="icon">
+    {icon && (
+      <span class={classes.icon} data-slot="icon">
+        <span class={cx(icon)} aria-hidden="true" />
+      </span>
+    )}
+  </slot>
+
+  <div class={classes.content} data-slot="content">
+    {title && (
+      <h5 class={classes.title} data-slot="title">
+        {title}
+      </h5>
+    )}
+    <slot name="title" />
+
+    {description && (
+      <div class={classes.description} data-slot="description">
+        {description}
+      </div>
+    )}
+    <slot />
+  </div>
+</div>

@@ -1,0 +1,32 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { MarqueeProps } from "../../types"
+import marqueeTheme from "../../themes/marquee.theme"
+
+const marquee = scv(marqueeTheme)
+
+const {
+  direction = "left",
+  speed = 40,
+  pauseOnHover = true,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as MarqueeProps
+
+const classes = resolveClasses(marquee, {
+  direction,
+  pauseOnHover
+}, useUi("marquee", uiProp), className)
+
+const duration = `${speed}s`
+---
+<div class={classes.root} data-slot="marquee-root" {...rest}>
+  <div class={classes.track} data-slot="track" style={{ animationDuration: duration }}>
+    <slot />
+  </div>
+  <div class={classes.track} data-slot="track" aria-hidden="true" style={{ animationDuration: duration }}>
+    <slot />
+  </div>
+</div>

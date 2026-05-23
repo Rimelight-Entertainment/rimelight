@@ -1,0 +1,27 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SeparatorProps } from "../../types"
+import separatorTheme from "../../themes/separator.theme"
+
+const separator = scv(separatorTheme)
+
+const {
+  orientation = "horizontal",
+  decorative = true,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as SeparatorProps
+
+const classes = resolveClasses(separator, {
+  orientation
+}, useUi("separator", uiProp), className)
+---
+<div
+  class={classes.root}
+  data-slot="root"
+  role={decorative ? "none" : "separator"}
+  aria-orientation={decorative ? undefined : orientation}
+  {...rest}
+/>

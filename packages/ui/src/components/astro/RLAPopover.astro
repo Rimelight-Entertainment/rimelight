@@ -1,0 +1,31 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { PopoverProps } from "../../types"
+import popoverTheme from "../../themes/popover.theme"
+
+const popover = scv(popoverTheme)
+
+const {
+  triggerLabel,
+  placement = "bottom",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as PopoverProps
+
+const classes = resolveClasses(popover, {
+  placement
+}, useUi("popover", uiProp), className)
+---
+<div class={classes.root} data-slot="popover-container" {...rest}>
+  <div class={classes.trigger} data-slot="trigger" tabindex="0">
+    <slot name="trigger">
+      {triggerLabel && <button type="button" class="cursor-pointer">{triggerLabel}</button>}
+    </slot>
+  </div>
+
+  <div class={classes.content} data-slot="content">
+    <slot />
+  </div>
+</div>

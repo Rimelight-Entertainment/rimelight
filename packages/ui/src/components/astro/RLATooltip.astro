@@ -1,0 +1,31 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { TooltipProps } from "../../types"
+import tooltipTheme from "../../themes/tooltip.theme"
+
+const tooltip = scv(tooltipTheme)
+
+const {
+  content,
+  placement = "top",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as TooltipProps
+
+const classes = resolveClasses(tooltip, {
+  placement
+}, useUi("tooltip", uiProp), className)
+---
+<div class={classes.root} data-slot="tooltip-container" {...rest}>
+  <div class={classes.trigger} data-slot="trigger" tabindex="0">
+    <slot />
+  </div>
+
+  <div class={classes.content} data-slot="content" role="tooltip">
+    <slot name="content">
+      {content}
+    </slot>
+  </div>
+</div>

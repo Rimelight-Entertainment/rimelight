@@ -1,0 +1,60 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputProps } from "../../types"
+import inputThemeDefault, { createInputTheme } from "../../themes/input.theme"
+
+const inputTheme = inputThemeDefault
+const input = scv(inputTheme)
+
+const {
+  type = "text",
+  value = "",
+  placeholder,
+  disabled = false,
+  readonly = false,
+  name,
+  required = false,
+  error = false,
+  leadingIcon,
+  trailingIcon,
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputProps
+
+const hasLeading = !!leadingIcon
+const hasTrailing = !!trailingIcon
+
+const classes = resolveClasses(input, {
+  size,
+  hasLeading,
+  hasTrailing,
+  error: !!error
+}, useUi("input", uiProp), className);
+---
+<div class={classes.root} data-slot="root">
+  {leadingIcon && (
+    <span class={classes.leading} data-slot="leading-icon">
+      <span class={leadingIcon} />
+    </span>
+  )}
+  <input
+    type={type}
+    class={classes.input}
+    value={value}
+    placeholder={placeholder}
+    disabled={disabled}
+    readonly={readonly}
+    name={name}
+    required={required}
+    {...rest}
+  />
+  {trailingIcon && (
+    <span class={classes.trailing} data-slot="trailing-icon">
+      <span class={trailingIcon} />
+    </span>
+  )}
+</div>

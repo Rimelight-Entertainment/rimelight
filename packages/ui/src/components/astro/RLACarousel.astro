@@ -1,0 +1,71 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CarouselProps } from "../../types"
+import carouselTheme from "../../themes/carousel.theme"
+
+const carousel = scv(carouselTheme)
+
+const {
+  slides,
+  autoplay = false,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CarouselProps
+
+const classes = resolveClasses(carousel, {}, useUi("carousel", uiProp), className)
+const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
+---
+<div id={carouselId} class={classes.root} data-slot="carousel-root" data-autoplay={autoplay ? "true" : "false"} {...rest}>
+  <div class={classes.viewport} data-slot="viewport">
+    <div class={classes.container} data-slot="container">
+      {slides ? (
+        slides.map((slide) => (
+          <div class={classes.slide} data-slot="slide">
+            {slide.imageSrc && <img src={slide.imageSrc} alt={slide.title || ""} class="w-full aspect-video object-cover rounded-lg" />}
+            {(slide.title || slide.description) && (
+              <div class="absolute bottom-4 left-4 right-4 p-4 rounded-lg bg-black/60 backdrop-blur-sm text-white">
+                {slide.title && <h4 class="text-sm font-semibold">{slide.title}</h4>}
+                {slide.description && <p class="text-xs opacity-95 mt-1">{slide.description}</p>}
+              </div>
+            )}
+          </div>
+        ))
+      ) : (
+        <slot />
+      )}
+    </div>
+  </div>
+
+  <button class={classes.buttonPrev} data-slot="prev-button" type="button" aria-label="Previous slide">
+    <span class="i-lucide-chevron-left size-5" aria-hidden="true" />
+  </button>
+  <button class={classes.buttonNext} data-slot="next-button" type="button" aria-label="Next slide">
+    <span class="i-lucide-chevron-right size-5" aria-hidden="true" />
+  </button>
+</div>
+
+<script>
+  import EmblaCarousel from "embla-carousel"
+
+  document.querySelectorAll('[data-slot="carousel-root"]').forEach((carouselEl) => {
+    const viewport = carouselEl.querySelector('[data-slot="viewport"]') as HTMLElement
+    const prevBtn = carouselEl.querySelector('[data-slot="prev-button"]') as HTMLButtonElement
+    const nextBtn = carouselEl.querySelector('[data-slot="next-button"]') as HTMLButtonElement
+
+    if (!viewport) return
+
+    const embla = EmblaCarousel(viewport, { loop: true })
+
+    if (prevBtn) prevBtn.addEventListener("click", () => embla.scrollPrev())
+    if (nextBtn) nextBtn.addEventListener("click", () => embla.scrollNext())
+
+    const autoplay = carouselEl.getAttribute("data-autoplay") === "true"
+    if (autoplay) {
+      setInterval(() => {
+        if (embla) embla.scrollNext()
+      }, 4000)
+    }
+  })
+</script>

@@ -1,0 +1,35 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputGroupProps } from "../../types"
+import inputGroupThemeDefault, { createInputGroupTheme } from "../../themes/inputGroup.theme"
+
+const inputGroupTheme = inputGroupThemeDefault
+const inputGroup = scv(inputGroupTheme)
+
+const {
+  prepend,
+  append,
+  size = "md",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputGroupProps
+
+const classes = resolveClasses(inputGroup, {
+  size
+}, useUi("inputGroup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  {prepend && (
+    <div class={classes.prepend} data-slot="prepend">
+      {prepend}
+    </div>
+  )}
+  <slot />
+  {append && (
+    <div class={classes.append} data-slot="append">
+      {append}
+    </div>
+  )}
+</div>

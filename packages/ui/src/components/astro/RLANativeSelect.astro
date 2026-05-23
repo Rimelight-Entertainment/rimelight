@@ -1,0 +1,51 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { NativeSelectProps } from "../../types"
+import nativeSelectThemeDefault, { createNativeSelectTheme } from "../../themes/nativeSelect.theme"
+
+const nativeSelectTheme = nativeSelectThemeDefault
+const nativeSelect = scv(nativeSelectTheme)
+
+const {
+  items = [],
+  value = "",
+  disabled = false,
+  name,
+  label,
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as NativeSelectProps
+
+const classes = resolveClasses(nativeSelect, {
+  size
+}, useUi("nativeSelect", uiProp), className);
+
+const normalizedItems = items.map(item => {
+  if (typeof item === "string") {
+    return { label: item, value: item }
+  }
+  return item
+})
+---
+<div class={classes.root} data-slot="root">
+  {label && <label class={classes.label} data-slot="label">{label}</label>}
+  <div class="relative w-full">
+    <select
+      class={classes.select}
+      disabled={disabled}
+      name={name}
+      {...rest}
+    >
+      {normalizedItems.map(item => (
+        <option value={item.value} selected={item.value === value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+    <span class={classes.icon + " i-lucide-chevron-down"} />
+  </div>
+</div>

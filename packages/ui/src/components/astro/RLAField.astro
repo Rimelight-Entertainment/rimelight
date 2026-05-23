@@ -1,0 +1,43 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { FieldProps } from "../../types"
+import fieldThemeDefault, { createFieldTheme } from "../../themes/field.theme"
+
+const fieldTheme = fieldThemeDefault
+const field = scv(fieldTheme)
+
+const {
+  label,
+  description,
+  error,
+  required = false,
+  size = "md",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as FieldProps
+
+const classes = resolveClasses(field, {
+  size
+}, useUi("field", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  {label && (
+    <label class={classes.label} data-slot="label">
+      {label}
+      {required && <span class="text-error-500 ml-0.5">*</span>}
+    </label>
+  )}
+  <slot />
+  {description && (
+    <p class={classes.description} data-slot="description">
+      {description}
+    </p>
+  )}
+  {error && (
+    <p class={classes.error} data-slot="error">
+      {error}
+    </p>
+  )}
+</div>

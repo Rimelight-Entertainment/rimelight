@@ -1,0 +1,107 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ToastProps } from "../../types"
+import toastThemeDefault, { createToastTheme } from "../../themes/toast.theme"
+
+const toastTheme = toastThemeDefault
+const toast = scv(toastTheme)
+
+const {
+  title,
+  description,
+  variant = "default",
+  actionLabel,
+  duration = 5000,
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ToastProps
+
+const classes = resolveClasses(toast, {
+  variant
+}, useUi("toast", uiProp), className)
+
+const variantIcons: Record<string, string> = {
+  default: "i-lucide-bell",
+  destructive: "i-lucide-alert-circle",
+  success: "i-lucide-check-circle-2",
+  warning: "i-lucide-alert-triangle",
+  info: "i-lucide-info",
+}
+
+const icon = variantIcons[variant] ?? variantIcons.default!
+---
+
+<div
+  class={classes.root}
+  data-slot="root"
+  data-toast
+  data-duration={duration}
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  {...rest}
+>
+  {/* Icon */}
+  <span class={icon + " size-4 shrink-0 mt-0.5"} aria-hidden="true" />
+
+  {/* Text body */}
+  <div class="flex flex-col gap-0.5 flex-1 min-w-0">
+    {title && (
+      <div class={classes.title} data-slot="title">
+        <slot name="title">{title}</slot>
+      </div>
+    )}
+    {description && (
+      <div class={classes.description} data-slot="description">
+        <slot name="description">{description}</slot>
+      </div>
+    )}
+    <slot />
+  </div>
+
+  {/* Action */}
+  {actionLabel && (
+    <button
+      type="button"
+      class={classes.action}
+      data-slot="action"
+      data-toast-action
+    >
+      {actionLabel}
+    </button>
+  )}
+
+  {/* Close button */}
+  <button
+    type="button"
+    class={classes.close}
+    data-slot="close"
+    data-toast-close
+    aria-label="Dismiss notification"
+  >
+    <span class="i-lucide-x size-3.5" aria-hidden="true" />
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll("[data-toast]").forEach(toast => {
+    const close = toast.querySelector("[data-toast-close]");
+    const duration = parseInt((toast as HTMLElement).dataset.duration ?? "5000", 10);
+
+    const dismiss = () => {
+      toast.classList.add("opacity-0", "translate-y-2", "pointer-events-none");
+      toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+    };
+
+    // Auto-dismiss
+    if (duration > 0) {
+      setTimeout(dismiss, duration);
+    }
+
+    // Manual close
+    close?.addEventListener("click", dismiss);
+  });
+</script>

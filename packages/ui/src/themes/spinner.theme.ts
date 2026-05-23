@@ -1,0 +1,30 @@
+import { defineTheme } from "../utils/defineTheme"
+
+const defaultColors = ["primary", "secondary", "info", "success", "warning", "error"]
+
+export const createSpinnerTheme = (colors: string[] = defaultColors) =>
+  defineTheme({
+    slots: ["root"],
+    base: {
+      root: "animate-spin shrink-0 rounded-full border-2 border-t-transparent border-current"
+    },
+    variants: {
+      size: {
+        xs: { root: "size-3" },
+        sm: { root: "size-4" },
+        md: { root: "size-6" },
+        lg: { root: "size-8" },
+        xl: { root: "size-10" }
+      },
+      color: Object.fromEntries([
+        ["current", { root: "text-current" }],
+        ...colors.map((color) => [color, { root: `text-${color}-500` }])
+      ])
+    },
+    defaultVariants: {
+      size: "md",
+      color: "current"
+    }
+  })
+
+export default createSpinnerTheme()

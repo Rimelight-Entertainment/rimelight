@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { AvatarGroupProps } from "../../types"
+import avatarGroupTheme from "../../themes/avatarGroup.theme"
+
+const avatarGroup = scv(avatarGroupTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as AvatarGroupProps
+
+const classes = resolveClasses(avatarGroup, {}, useUi("avatarGroup", uiProp), className)
+---
+<div class={classes.root} data-slot="avatar-group" {...rest}>
+  <slot />
+</div>

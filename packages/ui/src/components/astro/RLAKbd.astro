@@ -1,0 +1,22 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { KbdProps } from "../../types"
+import kbdTheme from "../../themes/kbd.theme"
+
+const kbd = scv(kbdTheme)
+
+const {
+  size = "md",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as KbdProps
+
+const classes = resolveClasses(kbd, {
+  size
+}, useUi("kbd", uiProp), className)
+---
+<kbd class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</kbd>

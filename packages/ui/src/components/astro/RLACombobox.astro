@@ -1,0 +1,131 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ComboboxProps } from "../../types"
+import comboboxThemeDefault, { createComboboxTheme } from "../../themes/combobox.theme"
+
+const comboboxTheme = comboboxThemeDefault
+const combobox = scv(comboboxTheme)
+
+const {
+  items = [],
+  value = "",
+  placeholder = "Select item...",
+  disabled = false,
+  name,
+  label,
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ComboboxProps
+
+const classes = resolveClasses(combobox, {
+  size
+}, useUi("combobox", uiProp), className);
+
+const normalizedItems = items.map(item => {
+  if (typeof item === "string") {
+    return { label: item, value: item }
+  }
+  return item
+})
+
+const selectedItem = normalizedItems.find(item => item.value === value)
+const initialLabel = selectedItem ? selectedItem.label : ""
+---
+<div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
+  {label && <label class={classes.label} data-slot="label">{label}</label>}
+  
+  <div class="relative w-full" data-combobox-wrapper>
+    <button
+      type="button"
+      class={classes.trigger}
+      data-slot="trigger"
+      disabled={disabled}
+      data-combobox-trigger
+      {...rest}
+    >
+      <span data-combobox-value>{initialLabel || placeholder}</span>
+      <span class="i-lucide-chevrons-up-down opacity-50" />
+    </button>
+
+    <div class={classes.content + " hidden"} data-combobox-dropdown data-slot="content">
+      <input
+        type="text"
+        class={classes.input}
+        placeholder="Search..."
+        data-combobox-search
+      />
+      <div class="py-1" data-combobox-items>
+        {normalizedItems.map(item => (
+          <div
+            class={classes.item}
+            data-slot="item"
+            data-value={item.value}
+            data-label={item.label}
+            data-combobox-item
+          >
+            <span class={classes.itemText}>{item.label}</span>
+            <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+  <input type="hidden" name={name} value={value} data-combobox-hidden-input />
+</div>
+
+<script>
+  document.querySelectorAll("[data-combobox-wrapper]").forEach(wrapper => {
+    const trigger = wrapper.querySelector("[data-combobox-trigger]") as HTMLButtonElement;
+    const dropdown = wrapper.querySelector("[data-combobox-dropdown]") as HTMLDivElement;
+    const search = wrapper.querySelector("[data-combobox-search]") as HTMLInputElement;
+    const items = wrapper.querySelectorAll("[data-combobox-item]");
+    const valueSpan = wrapper.querySelector("[data-combobox-value]");
+    const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-combobox-hidden-input]") as HTMLInputElement;
+
+    if (!trigger || !dropdown) return;
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle("hidden");
+      if (!dropdown.classList.contains("hidden")) {
+        search?.focus();
+      }
+    });
+
+    search?.addEventListener("input", (e) => {
+      const q = (e.target as HTMLInputElement).value.toLowerCase();
+      items.forEach(item => {
+        const label = (item as HTMLElement).dataset.label?.toLowerCase() || "";
+        if (label.includes(q)) {
+          (item as HTMLElement).classList.remove("hidden");
+        } else {
+          (item as HTMLElement).classList.add("hidden");
+        }
+      });
+    });
+
+    items.forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const val = (item as HTMLElement).dataset.value || "";
+        const label = (item as HTMLElement).dataset.label || "";
+        
+        if (hiddenInput) hiddenInput.value = val;
+        if (valueSpan) valueSpan.textContent = label;
+        
+        items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
+        item.querySelector("[data-check-icon]")?.classList.remove("hidden");
+        
+        dropdown.classList.add("hidden");
+      });
+    });
+
+    document.addEventListener("click", () => {
+      dropdown.classList.add("hidden");
+    });
+  });
+</script>

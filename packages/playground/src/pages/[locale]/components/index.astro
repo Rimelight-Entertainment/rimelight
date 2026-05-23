@@ -11,45 +11,123 @@ const messages = useI18n("components", {
     description: "Rimelight UI Components",
     heading: "Components",
     subtitle: "Browse all available components in the Rimelight UI library.",
-    app: "App",
+    app: "App Structure",
     utility: "Utility",
     elements: "Elements",
+    feedback: "Feedback & Alert",
+    form: "Form Controls",
+    data: "Data & Layout",
 });
 ---
 
 <AppLayout title={messages.title} description={messages.description}>
-    <div class="py-24">
-    <h1>{messages.heading}</h1>
-    <p>
-      {messages.subtitle}
-    </p>
+    <div class="py-12 max-w-5xl mx-auto px-4">
+      <h1 class="text-4xl font-extrabold tracking-tight mb-4">{messages.heading}</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400 mb-12">
+        {messages.subtitle}
+      </p>
 
-     <div class="space-y-8">
-        <section>
-          <h2>{messages.app}</h2>
-          <ul class="space-y-2">
-            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/footer')}>Footer</a></li>
-            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/header')}>Header</a></li>
-            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/logo')}>Logo</a></li>
-            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/section')}>Section</a></li>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section class="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-gray-50/50 dark:bg-gray-900/50">
+          <h2 class="text-xl font-bold mb-4 text-primary-500">{messages.app}</h2>
+          <ul class="space-y-2 font-medium">
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/footer')} class="hover:text-primary-500">Footer</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/header')} class="hover:text-primary-500">Header</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/logo')} class="hover:text-primary-500">Logo</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/section')} class="hover:text-primary-500">Section</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/main')} class="hover:text-primary-500">Main</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/sidebar')} class="hover:text-primary-500">Sidebar</a></li>
           </ul>
         </section>
 
-       <section>
-         <h2>{messages.utility}</h2>
-         <ul class="space-y-2">
-           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/placeholder')}>Placeholder</a></li>
-           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/scroll-to-top')}>Scroll to Top</a></li>
-         </ul>
-       </section>
+        <section class="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-gray-50/50 dark:bg-gray-900/50">
+          <h2 class="text-xl font-bold mb-4 text-primary-500">{messages.utility}</h2>
+          <ul class="space-y-2 font-medium">
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/placeholder')} class="hover:text-primary-500">Placeholder</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/scroll-to-top')} class="hover:text-primary-500">Scroll to Top</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/aspect-ratio')} class="hover:text-primary-500">Aspect Ratio</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/locale-selector')} class="hover:text-primary-500">Locale Selector</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/sticky-surface')} class="hover:text-primary-500">Sticky Surface</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/theme-selector')} class="hover:text-primary-500">Theme Selector</a></li>
+          </ul>
+        </section>
 
-       <section>
-         <h2>{messages.elements}</h2>
-         <ul class="space-y-2">
-           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/button')}>Button</a></li>
-           <li><a href={getRelativeLocaleUrl(activeLocale, 'components/icon')}>Icon</a></li>
-         </ul>
-       </section>
+        <section class="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-gray-50/50 dark:bg-gray-900/50">
+          <h2 class="text-xl font-bold mb-4 text-primary-500">{messages.elements}</h2>
+          <ul class="space-y-2 font-medium">
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/button')} class="hover:text-primary-500">Button</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/icon')} class="hover:text-primary-500">Icon</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/badge')} class="hover:text-primary-500">Badge</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/kbd')} class="hover:text-primary-500">Kbd</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/label')} class="hover:text-primary-500">Label</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/separator')} class="hover:text-primary-500">Separator</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/skeleton')} class="hover:text-primary-500">Skeleton</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/spinner')} class="hover:text-primary-500">Spinner</a></li>
+          </ul>
+        </section>
+
+        <section class="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-gray-50/50 dark:bg-gray-900/50">
+          <h2 class="text-xl font-bold mb-4 text-primary-500">{messages.feedback}</h2>
+          <ul class="space-y-2 font-medium">
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/alert')} class="hover:text-primary-500">Alert</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/alert-dialog')} class="hover:text-primary-500">Alert Dialog</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/dialog')} class="hover:text-primary-500">Dialog</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/sheet')} class="hover:text-primary-500">Sheet</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/drawer')} class="hover:text-primary-500">Drawer</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/toast')} class="hover:text-primary-500">Toast</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/tooltip')} class="hover:text-primary-500">Tooltip</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/hover-card')} class="hover:text-primary-500">Hover Card</a></li>
+          </ul>
+        </section>
+
+        <section class="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-gray-50/50 dark:bg-gray-900/50">
+          <h2 class="text-xl font-bold mb-4 text-primary-500">{messages.form}</h2>
+          <ul class="space-y-2 font-medium">
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/checkbox')} class="hover:text-primary-500">Checkbox</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/switch')} class="hover:text-primary-500">Switch</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/toggle')} class="hover:text-primary-500">Toggle</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/toggle-group')} class="hover:text-primary-500">Toggle Group</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/combobox')} class="hover:text-primary-500">Combobox</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/select')} class="hover:text-primary-500">Select</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/native-select')} class="hover:text-primary-500">Native Select</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/input')} class="hover:text-primary-500">Input</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/input-group')} class="hover:text-primary-500">Input Group</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/textarea')} class="hover:text-primary-500">Textarea</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/field')} class="hover:text-primary-500">Field</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/slider')} class="hover:text-primary-500">Slider</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/dropzone')} class="hover:text-primary-500">Dropzone</a></li>
+          </ul>
+        </section>
+
+        <section class="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-gray-50/50 dark:bg-gray-900/50">
+          <h2 class="text-xl font-bold mb-4 text-primary-500">{messages.data}</h2>
+          <ul class="space-y-2 font-medium">
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/accordion')} class="hover:text-primary-500">Accordion</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/avatar')} class="hover:text-primary-500">Avatar</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/avatar-group')} class="hover:text-primary-500">Avatar Group</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/breadcrumb')} class="hover:text-primary-500">Breadcrumb</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/card')} class="hover:text-primary-500">Card</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/carousel')} class="hover:text-primary-500">Carousel</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/chart')} class="hover:text-primary-500">Chart</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/collapsible')} class="hover:text-primary-500">Collapsible</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/dropdown-menu')} class="hover:text-primary-500">Dropdown Menu</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/embed-youtube')} class="hover:text-primary-500">Embed Youtube</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/marquee')} class="hover:text-primary-500">Marquee</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/navigation-menu')} class="hover:text-primary-500">Navigation Menu</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/pagination')} class="hover:text-primary-500">Pagination</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/progress')} class="hover:text-primary-500">Progress</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/quote')} class="hover:text-primary-500">Quote</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/resizable')} class="hover:text-primary-500">Resizable</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/scroll-area')} class="hover:text-primary-500">Scroll Area</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/select')} class="hover:text-primary-500">Select</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/separator')} class="hover:text-primary-500">Separator</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/sheet')} class="hover:text-primary-500">Sheet</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/skeleton')} class="hover:text-primary-500">Skeleton</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/table')} class="hover:text-primary-500">Table</a></li>
+            <li><a href={getRelativeLocaleUrl(activeLocale, 'components/tabs')} class="hover:text-primary-500">Tabs</a></li>
+          </ul>
+        </section>
       </div>
-     </div>
+    </div>
 </AppLayout>
+

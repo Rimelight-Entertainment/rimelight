@@ -1,0 +1,177 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ResizableProps } from "../../types"
+import resizableThemeDefault, { createResizableTheme } from "../../themes/resizable.theme"
+
+const resizableTheme = resizableThemeDefault
+const resizable = scv(resizableTheme)
+
+const {
+  direction = "horizontal",
+  defaultSizes = [50, 50],
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ResizableProps
+
+const classes = resolveClasses(resizable, {
+  direction
+}, useUi("resizable", uiProp), className)
+
+// Normalise sizes so they sum to 100
+const total = defaultSizes.reduce((s, v) => s + v, 0)
+const sizes = defaultSizes.map(s => (s / (total || 100)) * 100)
+
+const panelCount = sizes.length
+---
+
+<div
+  class={classes.root}
+  data-slot="root"
+  data-resizable
+  data-direction={direction}
+  {...rest}
+>
+  {sizes.map((size, i) => (
+    <>
+      <div
+        class={classes.panel}
+        data-slot="panel"
+        data-resizable-panel={i}
+        style={direction === "horizontal" ? `width:${size}%` : `height:${size}%`}
+      >
+        <slot name={`panel-${i}`}>
+          {i === 0
+            ? <slot />
+            : <slot name="panel" />
+          }
+        </slot>
+      </div>
+
+      {/* Render a handle between panels, not after the last one */}
+      {i < panelCount - 1 && (
+        <div
+          class={classes.handle}
+          data-slot="handle"
+          data-resizable-handle={i}
+          role="separator"
+          aria-orientation={direction === "horizontal" ? "vertical" : "horizontal"}
+          tabindex={0}
+          aria-label="Resize panels"
+        >
+          <span
+            class={
+              direction === "horizontal"
+                ? "i-lucide-grip-vertical size-3.5 text-muted-foreground/50"
+                : "i-lucide-grip-horizontal size-3.5 text-muted-foreground/50"
+            }
+            aria-hidden="true"
+          />
+        </div>
+      )}
+    </>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll("[data-resizable]").forEach(container => {
+    const direction = (container as HTMLElement).dataset.direction ?? "horizontal";
+    const isHorizontal = direction === "horizontal";
+
+    const panels = Array.from(
+      container.querySelectorAll("[data-resizable-panel]")
+    ) as HTMLElement[];
+
+    const handles = Array.from(
+      container.querySelectorAll("[data-resizable-handle]")
+    ) as HTMLElement[];
+
+    handles.forEach((handle, idx) => {
+      const panelA = panels[idx];
+      const panelB = panels[idx + 1];
+      if (!panelA || !panelB) return;
+
+      const containerSize = () =>
+        isHorizontal
+          ? (container as HTMLElement).clientWidth
+          : (container as HTMLElement).clientHeight;
+
+      let isDragging = false;
+      let startPos = 0;
+      let startASize = 0;
+      let startBSize = 0;
+
+      const getSize = (el: HTMLElement) =>
+        isHorizontal ? el.offsetWidth : el.offsetHeight;
+
+      const setSize = (el: HTMLElement, px: number) => {
+        const pct = (px / containerSize()) * 100;
+        if (isHorizontal) {
+          el.style.width = `${pct}%`;
+        } else {
+          el.style.height = `${pct}%`;
+        }
+      };
+
+      const onMouseMove = (e: MouseEvent) => {
+        if (!isDragging) return;
+        const delta = isHorizontal
+          ? e.clientX - startPos
+          : e.clientY - startPos;
+
+        const newASize = Math.max(48, startASize + delta);
+        const newBSize = Math.max(48, startBSize - delta);
+
+        // Only resize if both panels have enough space
+        if (startASize + startBSize - newASize < 48) return;
+
+        setSize(panelA, newASize);
+        setSize(panelB, newBSize);
+      };
+
+      const onMouseUp = () => {
+        isDragging = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+        handle.classList.remove("bg-primary/30");
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+      };
+
+      handle.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startPos = isHorizontal ? e.clientX : e.clientY;
+        startASize = getSize(panelA);
+        startBSize = getSize(panelB);
+        document.body.style.cursor = isHorizontal ? "col-resize" : "row-resize";
+        document.body.style.userSelect = "none";
+        handle.classList.add("bg-primary/30");
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+      });
+
+      // Keyboard resize: arrow keys shift by 2%
+      handle.addEventListener("keydown", (e) => {
+        const step = containerSize() * 0.02;
+        const forward = isHorizontal
+          ? e.key === "ArrowRight"
+          : e.key === "ArrowDown";
+        const backward = isHorizontal
+          ? e.key === "ArrowLeft"
+          : e.key === "ArrowUp";
+
+        if (!forward && !backward) return;
+        e.preventDefault();
+
+        const aSize = getSize(panelA);
+        const bSize = getSize(panelB);
+        const delta = forward ? step : -step;
+
+        setSize(panelA, Math.max(48, aSize + delta));
+        setSize(panelB, Math.max(48, bSize - delta));
+      });
+    });
+  });
+</script>

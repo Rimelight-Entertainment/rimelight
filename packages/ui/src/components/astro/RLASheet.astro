@@ -1,0 +1,72 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SheetProps } from "../../types"
+import sheetTheme from "../../themes/sheet.theme"
+
+const sheet = scv(sheetTheme)
+
+const {
+  side = "right",
+  title,
+  description,
+  triggerLabel,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as SheetProps
+
+const classes = resolveClasses(sheet, {
+  side
+}, useUi("sheet", uiProp), className)
+
+const dialogId = `rla-sheet-${Math.random().toString(36).substring(2, 9)}`
+---
+<div class={classes.root} data-slot="sheet-container">
+  {triggerLabel ? (
+    <button
+      class={classes.trigger}
+      data-slot="trigger"
+      type="button"
+      onclick={`document.getElementById('${dialogId}').showModal()`}
+    >
+      {triggerLabel}
+    </button>
+  ) : (
+    <span onclick={`document.getElementById('${dialogId}').showModal()`}>
+      <slot name="trigger" />
+    </span>
+  )}
+
+  <dialog
+    id={dialogId}
+    class={classes.content}
+    data-slot="content"
+    data-close-on-click-outside="true"
+    {...rest}
+  >
+    <button
+      class={classes.closeButton}
+      data-slot="close-button"
+      type="button"
+      onclick={`document.getElementById('${dialogId}').close()`}
+      aria-label="Close sheet"
+    >
+      <span class="i-lucide-x size-4" aria-hidden="true" />
+    </button>
+
+    <div class={classes.header} data-slot="header">
+      {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
+      <slot name="title" />
+      
+      {description && <p class={classes.description} data-slot="description">{description}</p>}
+      <slot name="description" />
+    </div>
+
+    <slot />
+
+    <div class={classes.footer} data-slot="footer">
+      <slot name="footer" />
+    </div>
+  </dialog>
+</div>

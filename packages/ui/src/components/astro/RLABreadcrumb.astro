@@ -1,0 +1,44 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { BreadcrumbProps } from "../../types"
+import breadcrumbTheme from "../../themes/breadcrumb.theme"
+
+const breadcrumb = scv(breadcrumbTheme)
+
+const {
+  items,
+  separatorIcon = "i-lucide-chevron-right",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as BreadcrumbProps
+
+const classes = resolveClasses(breadcrumb, {}, useUi("breadcrumb", uiProp), className)
+---
+<nav class={classes.root} data-slot="breadcrumb-root" {...rest}>
+  <ol class={classes.list} data-slot="list">
+    {items ? (
+      items.map((item, idx) => (
+        <li class={classes.item} data-slot="item">
+          {item.href ? (
+            <a href={item.href} class={classes.link} data-slot="link">
+              {item.label}
+            </a>
+          ) : (
+            <span class={classes.page} data-slot="page">
+              {item.label}
+            </span>
+          )}
+          {idx < items.length - 1 && (
+            <span class={classes.separator} data-slot="separator" aria-hidden="true">
+              <span class={separatorIcon} />
+            </span>
+          )}
+        </li>
+      ))
+    ) : (
+      <slot />
+    )}
+  </ol>
+</nav>
