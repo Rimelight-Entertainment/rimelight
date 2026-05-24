@@ -214,7 +214,12 @@ export default defineConfig({
           "800": "oklch(0.3329 0.0633 71.87)",
           "900": "oklch(0.2209 0.0379 75.04)",
           "950": "oklch(0 0 0)"
-        }
+        },
+        blagenta: {
+          "374": "#ff3366"
+        },
+        "uno-override": {},
+        "css-override": {}
       },
       logos: {
         logomark: "/favicon.svg"

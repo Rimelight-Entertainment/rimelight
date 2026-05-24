@@ -29,6 +29,17 @@ export default defineConfig<PresetWind4Theme>({
     "sr-only":
       "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
   },
+  preflights: [
+    {
+      getCSS: () => `
+        :root {
+          --color-uno-override-500: #aa44ff;
+          --color-uno-override-600: #8833cc;
+        }
+      `
+    }
+  ],
+
   rules: [
     [
       /^clip-rect-(\d+)-(\d+)-(\d+)-(\d+)$/,

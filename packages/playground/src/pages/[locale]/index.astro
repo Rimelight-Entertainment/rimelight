@@ -116,6 +116,25 @@ const ctaLinks = [
     />
 
     <div class="flex justify-center py-xl">
-        <RLAButton label="Blurple Test" color="blurple" variant="solid" trailingIcon="i-lucide-palette" />
+        <div class="flex flex-wrap gap-md items-center justify-center">
+            <RLAButton label="Blurple Test" color="blurple" variant="solid" trailingIcon="i-lucide-palette" />
+
+            <!-- blagenta-374 (single arbitrary shade, defined in astro.config.ts) -->
+            <button class="bg-blagenta-374 text-white px-4 py-2 rounded-md font-medium h-9 text-sm inline-flex items-center justify-center gap-4xs">
+                Blagenta 374 ✓
+            </button>
+
+            <!-- nonexistent (not registered — should be blank/broken) -->
+            <RLAButton label="Nonexistent (expect blank)" color="nonexistent" variant="solid" />
+
+            <!-- grand-tale-primary (custom color from config) -->
+            <RLAButton label="Grand Tale Primary" color="grand-tale-primary" variant="solid" />
+
+            <!-- uno-override (values from uno.config.ts preflight) -->
+            <RLAButton label="Uno Override" color="uno-override" variant="solid" />
+
+            <!-- css-override (values from global.css) -->
+            <RLAButton label="CSS Override" color="css-override" variant="solid" />
+        </div>
     </div>
 </AppLayout>
