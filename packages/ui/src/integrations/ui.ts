@@ -1,4 +1,3 @@
-import { transformerDirectives, transformerVariantGroup } from "unocss"
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import vue from "@astrojs/vue"
@@ -7,7 +6,7 @@ import defu from "defu"
 import tailwindcss from "@tailwindcss/vite"
 import { defaultUIConfig } from "../themes"
 import type { ComponentTheme } from "../utils/defineTheme"
-import rimelightUiPreset from "../presets"
+import rimelightUiPreset, { uiSrcGlob, uiFilesystemGlob } from "../presets"
 
 /**
  * Shape of the `ui` config that can be passed to the integration.
@@ -166,7 +165,40 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   return [
     UnoCSS({
       presets: [rimelightUiPreset({ colors: userColors, autogenerateColorModes: options.autogenerateColorModes })],
-      transformers: [transformerDirectives(), transformerVariantGroup()]
+      content: {
+        pipeline: {
+          include: [
+            /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
+            "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
+            uiSrcGlob,
+            "../ui/src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}"
+          ]
+        },
+        filesystem: [uiFilesystemGlob, "../ui/src/**/*", "src/components/**/*", "src/pages/**/*"]
+      },
+      shortcuts: {
+        "container": "mx-auto w-full max-w-90rem px-md",
+        "sr-only":
+          "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
+      },
+      rules: [
+        [
+          /^clip-rect-(\d+)-(\d+)-(\d+)-(\d+)$/,
+          ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
+        ]
+      ],
+      configResolved(config) {
+        if (process.env.NODE_ENV === "development" && !process.env.UNO_CONFIG_LOGGED) {
+          process.env.UNO_CONFIG_LOGGED = "true"
+          console.log(`[UnoCSS] Presets: ${config.presets.map((p) => p.name).join(", ")}`)
+          console.log(`[UnoCSS] Rules: ${config.rules.length}`)
+          console.log(`[UnoCSS] Shortcuts: ${Object.keys(config.shortcuts).length}`)
+          const ruleNames = config.rules.map((r) => (Array.isArray(r) ? r[0].toString() : "dynamic"))
+          const duplicates = ruleNames.filter((item, index) => ruleNames.indexOf(item) !== index)
+          const filtered = duplicates.filter((d) => d !== "/^(.+?)-(\\$.+)$/")
+          if (filtered.length > 0) console.warn(`[UnoCSS] Rule collisions: ${filtered.join(", ")}`)
+        }
+      }
     }),
     vue({
       appEntrypoint: "@rimelight/ui/integrations/vue-entrypoint"

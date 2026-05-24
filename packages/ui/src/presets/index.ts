@@ -11,8 +11,8 @@ import {
 import { defaultColorScales } from "./defaults"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
-const uiFilesystemGlob = join(__dirname, "../**/*")
+export const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
+export const uiFilesystemGlob = join(__dirname, "../**/*")
 
 type ColorShades = Record<string, string>
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades; flat?: ColorShades }
@@ -557,25 +557,5 @@ ${darkLines}
         }
       }
     ],
-
-    async configResolved(config) {
-      if (process.env.NODE_ENV === "development" && !process.env.UNO_CONFIG_LOGGED) {
-        process.env.UNO_CONFIG_LOGGED = "true"
-
-        console.log(
-          `[UnoCSS] Config resolved. Presets: ${config.presets.map((p) => p.name).join(", ")}`
-        )
-        console.log(`[UnoCSS] Total rules: ${config.rules.length}`)
-        console.log(`[UnoCSS] Total shortcuts: ${Object.keys(config.shortcuts).length}`)
-
-        const ruleNames = config.rules.map((r) => (Array.isArray(r) ? r[0].toString() : "dynamic"))
-        const duplicates = ruleNames.filter((item, index) => ruleNames.indexOf(item) !== index)
-        const filteredDuplicates = duplicates.filter((d) => d !== "/^(.+?)-(\\$.+)$/")
-
-        if (filteredDuplicates.length > 0) {
-          console.warn(`[UnoCSS] Potential Rule Collisions: ${filteredDuplicates.join(", ")}`)
-        }
-      }
-    }
   }
 })
