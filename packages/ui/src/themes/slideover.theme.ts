@@ -1,6 +1,6 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export const sheetTheme = defineTheme({
+export const slideoverTheme = defineTheme({
   slots: ["root", "trigger", "backdrop", "content", "header", "title", "description", "footer", "closeButton"],
   base: {
     root: "relative inline-block",
@@ -40,4 +40,4 @@ export const sheetTheme = defineTheme({
   }
 })
 
-export default sheetTheme
+export default slideoverTheme

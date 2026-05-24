@@ -1,11 +1,11 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { DropzoneProps } from "../../types"
-import dropzoneThemeDefault, { createDropzoneTheme } from "../../themes/dropzone.theme"
+import type { FileUploadProps } from "../../types"
+import fileUploadThemeDefault, { createFileUploadTheme } from "../../themes/file-upload.theme"
 
-const dropzoneTheme = dropzoneThemeDefault
-const dropzone = scv(dropzoneTheme)
+const fileUploadTheme = fileUploadThemeDefault
+const fileUpload = scv(fileUploadTheme)
 
 const {
   accept,
@@ -18,19 +18,19 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as DropzoneProps
+} = Astro.props as FileUploadProps
 
-const classes = resolveClasses(dropzone, {
+const classes = resolveClasses(fileUpload, {
   disabled
-}, useUi("dropzone", uiProp), className)
+}, useUi("fileUpload", uiProp), className)
 
-const inputId = `dropzone-${Math.random().toString(36).slice(2, 9)}`
+const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
 ---
 
 <div
   class={classes.root}
   data-slot="root"
-  data-dropzone
+  data-fileUpload
   data-disabled={disabled ? "true" : undefined}
   role="button"
   tabindex={disabled ? -1 : 0}
@@ -44,7 +44,7 @@ const inputId = `dropzone-${Math.random().toString(36).slice(2, 9)}`
     accept={accept}
     multiple={multiple}
     disabled={disabled}
-    data-dropzone-input
+    data-fileUpload-input
     aria-hidden="true"
     tabindex="-1"
   />
@@ -68,16 +68,16 @@ const inputId = `dropzone-${Math.random().toString(36).slice(2, 9)}`
 
     <div
       class="mt-3 hidden text-xs text-muted-foreground"
-      data-dropzone-filelist
+      data-fileUpload-filelist
       aria-live="polite"
     />
   </div>
 </div>
 
 <script>
-  document.querySelectorAll("[data-dropzone]").forEach(zone => {
-    const input = zone.querySelector("[data-dropzone-input]") as HTMLInputElement | null;
-    const fileList = zone.querySelector("[data-dropzone-filelist]") as HTMLElement | null;
+  document.querySelectorAll("[data-fileUpload]").forEach(zone => {
+    const input = zone.querySelector("[data-fileUpload-input]") as HTMLInputElement | null;
+    const fileList = zone.querySelector("[data-fileUpload-filelist]") as HTMLElement | null;
     if (!input) return;
 
     const isDisabled = zone.dataset.disabled === "true";

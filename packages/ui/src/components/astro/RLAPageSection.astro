@@ -1,12 +1,12 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { SectionProps } from "../../types"
-import sectionTheme from "../../themes/section.theme"
+import type { PageSectionProps } from "../../types"
+import pageSectionTheme from "../../themes/page-section.theme"
 import RLAIcon from "./RLAIcon.astro"
 import RLAButton from "./RLAButton.astro"
 
-const section = scv(sectionTheme)
+const pageSection = scv(pageSectionTheme)
 
 const {
   as = "section",
@@ -22,9 +22,9 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as SectionProps;
+} = Astro.props as PageSectionProps;
 
-const classes = resolveClasses(section, {
+const classes = resolveClasses(pageSection, {
   variant,
   orientation,
   reverse,
@@ -33,7 +33,7 @@ const classes = resolveClasses(section, {
   title: !!(Astro.slots.has("title") || title),
   description: !!(Astro.slots.has("description") || description),
   body: Astro.slots.has("body")
-}, useUi("section", uiProp), className);
+}, useUi("pageSection", uiProp), className);
 
 const hasDefaultSlot = Astro.slots.has("default");
 

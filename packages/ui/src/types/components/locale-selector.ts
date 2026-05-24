@@ -22,11 +22,11 @@ export interface LocaleSelectorProps {
      */
     size?: "sm" | "md" | "lg"
     /**
-     * Slot-specific CSS class overrides for deeper structural modifications.
+     * Slot-specific CSS class overrides.
      */
     ui?: any
     /**
-     * Additional CSS classes to apply to the root wrapper element.
+     * Additional CSS classes to apply to the root element.
      */
     class?: any
     [key: string]: unknown

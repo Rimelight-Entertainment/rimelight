@@ -1,6 +1,6 @@
 import type { ButtonProps } from "./button"
 
-export interface SectionProps {
+export interface PageSectionProps {
   /**
    * The element or component this component should render as.
    *
@@ -56,7 +56,7 @@ export interface SectionProps {
    */
   ui?: any
   /**
-   * Additional CSS classes to apply to the root component.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

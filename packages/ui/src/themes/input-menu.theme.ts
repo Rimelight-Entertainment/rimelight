@@ -1,6 +1,6 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export const createComboboxTheme = () =>
+export const createInputMenuTheme = () =>
   defineTheme({
     slots: ["root", "label", "trigger", "input", "content", "item", "itemText", "itemIcon"],
     base: {
@@ -25,4 +25,4 @@ export const createComboboxTheme = () =>
     }
   })
 
-export default createComboboxTheme()
+export default createInputMenuTheme()

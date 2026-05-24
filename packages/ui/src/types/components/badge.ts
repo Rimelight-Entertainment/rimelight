@@ -16,11 +16,11 @@ export interface BadgeProps {
    */
   shape?: "square" | "rounded" | "pill"
   /**
-   * Custom UI overrides.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Root CSS class name.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

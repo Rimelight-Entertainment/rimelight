@@ -24,23 +24,11 @@ export interface AvatarProps {
    */
   badgeColor?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   /**
-   * UI style slot mapping overrides.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Custom CSS root class.
-   */
-  class?: any
-  [key: string]: unknown
-}
-
-export interface AvatarGroupProps {
-  /**
-   * UI class overrides.
-   */
-  ui?: any
-  /**
-   * Root CSS class override.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

@@ -1,12 +1,16 @@
-export interface NativeSelectProps {
+export interface InputMenuProps {
   /**
-   * List of options.
+   * The list of items in the combobox.
    */
   items?: Array<{ label: string; value: string; [key: string]: any } | string>
   /**
-   * Selected value.
+   * Selected value(s).
    */
-  value?: string
+  value?: string | string[]
+  /**
+   * Placeholder text.
+   */
+  placeholder?: string
   /**
    * Disabled state.
    */
@@ -28,12 +32,13 @@ export interface NativeSelectProps {
    */
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   /**
-   * UI class override map.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Root CSS class override.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown
 }
+

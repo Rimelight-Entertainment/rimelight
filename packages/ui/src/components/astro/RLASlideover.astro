@@ -1,10 +1,10 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { SheetProps } from "../../types"
-import sheetTheme from "../../themes/sheet.theme"
+import type { SlideoverProps } from "../../types"
+import slideoverTheme from "../../themes/slideover.theme.ts"
 
-const sheet = scv(sheetTheme)
+const slideover = scv(slideoverTheme)
 
 const {
   side = "right",
@@ -14,15 +14,15 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as SheetProps
+} = Astro.props as SlideoverProps
 
-const classes = resolveClasses(sheet, {
+const classes = resolveClasses(slideover, {
   side
-}, useUi("sheet", uiProp), className)
+}, useUi("slideover", uiProp), className)
 
-const dialogId = `rla-sheet-${Math.random().toString(36).substring(2, 9)}`
+const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
 ---
-<div class={classes.root} data-slot="sheet-container">
+<div class={classes.root} data-slot="slideover-container">
   {triggerLabel ? (
     <button
       class={classes.trigger}
@@ -50,7 +50,7 @@ const dialogId = `rla-sheet-${Math.random().toString(36).substring(2, 9)}`
       data-slot="close-button"
       type="button"
       onclick={`document.getElementById('${dialogId}').close()`}
-      aria-label="Close sheet"
+      aria-label="Close slideover"
     >
       <span class="i-lucide-x size-4" aria-hidden="true" />
     </button>

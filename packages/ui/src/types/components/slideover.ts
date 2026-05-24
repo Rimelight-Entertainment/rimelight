@@ -1,4 +1,4 @@
-export interface SheetProps {
+export interface SlideoverProps {
   /**
    * The edge the sheet slides in from.
    */
@@ -20,12 +20,13 @@ export interface SheetProps {
    */
   triggerLabel?: string
   /**
-   * Slot-specific CSS overrides.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Root class override.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown
 }
+

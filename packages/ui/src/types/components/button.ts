@@ -64,7 +64,7 @@ export interface ButtonProps {
    */
   ui?: any
   /**
-   * Additional CSS classes to apply to the root component.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

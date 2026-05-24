@@ -1,8 +1,8 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { EmbedYoutubeProps } from "../../types"
-import embedYoutubeTheme from "../../themes/embedYoutube.theme"
+import type { VideoProps } from "../../types"
+import videoTheme from "../../themes/video.theme"
 import { Image } from "astro:assets"
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
@@ -109,7 +109,7 @@ function getYoutubeEmbedUrl(rawUrl: string): string | null {
   return id ? `${YOUTUBE_EMBED_BASE}${id}?autoplay=1` : null;
 }
 
-const embedYoutube = scv(embedYoutubeTheme)
+const video = scv(videoTheme)
 
 const {
   src,
@@ -118,12 +118,12 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as EmbedYoutubeProps
+} = Astro.props as VideoProps
 
-const classes = resolveClasses(embedYoutube, {
+const classes = resolveClasses(video, {
   title: !!(Astro.slots.has("title") || title),
   icon: !!(Astro.slots.has("icon") || icon),
-}, useUi("embedYoutube", uiProp), className);
+}, useUi("video", uiProp), className);
 
 const embedUrl = getYoutubeEmbedUrl(src);
 const thumbnail = await getYoutubeThumbnail(src);

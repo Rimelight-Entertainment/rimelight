@@ -8,12 +8,13 @@ export interface SeparatorProps {
    */
   decorative?: boolean
   /**
-   * UI slot custom overrides.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Custom CSS class name.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown
 }
+

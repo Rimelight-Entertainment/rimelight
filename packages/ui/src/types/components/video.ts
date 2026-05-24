@@ -1,4 +1,4 @@
-export interface EmbedYoutubeProps {
+export interface VideoProps {
   /**
    * The URL of the YouTube video to embed.
    */
@@ -20,7 +20,7 @@ export interface EmbedYoutubeProps {
    */
   ui?: any
   /**
-   * Additional CSS classes to apply to the root component.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

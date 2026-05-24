@@ -1,11 +1,11 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ComboboxProps } from "../../types"
-import comboboxThemeDefault, { createComboboxTheme } from "../../themes/combobox.theme"
+import type { InputMenuProps } from "../../types"
+import inputMenuThemeDefault, { createInputMenuTheme } from "../../themes/input-menu.theme"
 
-const comboboxTheme = comboboxThemeDefault
-const combobox = scv(comboboxTheme)
+const inputMenuTheme = inputMenuThemeDefault
+const inputMenu = scv(inputMenuTheme)
 
 const {
   items = [],
@@ -19,11 +19,11 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ComboboxProps
+} = Astro.props as InputMenuProps
 
-const classes = resolveClasses(combobox, {
+const classes = resolveClasses(inputMenu, {
   size
-}, useUi("combobox", uiProp), className);
+}, useUi("inputMenu", uiProp), className);
 
 const normalizedItems = items.map(item => {
   if (typeof item === "string") {
@@ -38,34 +38,34 @@ const initialLabel = selectedItem ? selectedItem.label : ""
 <div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
   {label && <label class={classes.label} data-slot="label">{label}</label>}
   
-  <div class="relative w-full" data-combobox-wrapper>
+  <div class="relative w-full" data-inputMenu-wrapper>
     <button
       type="button"
       class={classes.trigger}
       data-slot="trigger"
       disabled={disabled}
-      data-combobox-trigger
+      data-inputMenu-trigger
       {...rest}
     >
-      <span data-combobox-value>{initialLabel || placeholder}</span>
+      <span data-inputMenu-value>{initialLabel || placeholder}</span>
       <span class="i-lucide-chevrons-up-down opacity-50" />
     </button>
 
-    <div class={classes.content + " hidden"} data-combobox-dropdown data-slot="content">
+    <div class={classes.content + " hidden"} data-inputMenu-dropdown data-slot="content">
       <input
         type="text"
         class={classes.input}
         placeholder="Search..."
-        data-combobox-search
+        data-inputMenu-search
       />
-      <div class="py-1" data-combobox-items>
+      <div class="py-1" data-inputMenu-items>
         {normalizedItems.map(item => (
           <div
             class={classes.item}
             data-slot="item"
             data-value={item.value}
             data-label={item.label}
-            data-combobox-item
+            data-inputMenu-item
           >
             <span class={classes.itemText}>{item.label}</span>
             <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
@@ -74,17 +74,17 @@ const initialLabel = selectedItem ? selectedItem.label : ""
       </div>
     </div>
   </div>
-  <input type="hidden" name={name} value={value} data-combobox-hidden-input />
+  <input type="hidden" name={name} value={value} data-inputMenu-hidden-input />
 </div>
 
 <script>
-  document.querySelectorAll("[data-combobox-wrapper]").forEach(wrapper => {
-    const trigger = wrapper.querySelector("[data-combobox-trigger]") as HTMLButtonElement;
-    const dropdown = wrapper.querySelector("[data-combobox-dropdown]") as HTMLDivElement;
-    const search = wrapper.querySelector("[data-combobox-search]") as HTMLInputElement;
-    const items = wrapper.querySelectorAll("[data-combobox-item]");
-    const valueSpan = wrapper.querySelector("[data-combobox-value]");
-    const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-combobox-hidden-input]") as HTMLInputElement;
+  document.querySelectorAll("[data-inputMenu-wrapper]").forEach(wrapper => {
+    const trigger = wrapper.querySelector("[data-inputMenu-trigger]") as HTMLButtonElement;
+    const dropdown = wrapper.querySelector("[data-inputMenu-dropdown]") as HTMLDivElement;
+    const search = wrapper.querySelector("[data-inputMenu-search]") as HTMLInputElement;
+    const items = wrapper.querySelectorAll("[data-inputMenu-item]");
+    const valueSpan = wrapper.querySelector("[data-inputMenu-value]");
+    const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-inputMenu-hidden-input]") as HTMLInputElement;
 
     if (!trigger || !dropdown) return;
 

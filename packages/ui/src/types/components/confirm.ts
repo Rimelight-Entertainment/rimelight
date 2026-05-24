@@ -1,4 +1,4 @@
-export interface AlertDialogProps {
+export interface ConfirmProps {
   /**
    * Title of the alert confirmation dialog.
    */
@@ -28,7 +28,7 @@ export interface AlertDialogProps {
    */
   ui?: any
   /**
-   * Additional CSS classes to apply to the root.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

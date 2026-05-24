@@ -1,4 +1,4 @@
-export interface DialogProps {
+export interface ModalProps {
   /**
    * Controlled open state.
    */
@@ -32,8 +32,9 @@ export interface DialogProps {
    */
   ui?: any
   /**
-   * Additional CSS classes to apply to the root component.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown
 }
+

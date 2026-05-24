@@ -1,11 +1,11 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ResizableProps } from "../../types"
-import resizableThemeDefault, { createResizableTheme } from "../../themes/resizable.theme"
+import type { SplitterProps } from "../../types"
+import splitterThemeDefault, { createSplitterTheme } from "../../themes/splitter.theme"
 
-const resizableTheme = resizableThemeDefault
-const resizable = scv(resizableTheme)
+const splitterTheme = splitterThemeDefault
+const splitter = scv(splitterTheme)
 
 const {
   direction = "horizontal",
@@ -13,11 +13,11 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ResizableProps
+} = Astro.props as SplitterProps
 
-const classes = resolveClasses(resizable, {
+const classes = resolveClasses(splitter, {
   direction
-}, useUi("resizable", uiProp), className)
+}, useUi("splitter", uiProp), className)
 
 // Normalise sizes so they sum to 100
 const total = defaultSizes.reduce((s, v) => s + v, 0)

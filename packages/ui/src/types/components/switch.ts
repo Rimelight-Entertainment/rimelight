@@ -24,12 +24,13 @@ export interface SwitchProps {
    */
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   /**
-   * UI class override map.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Root CSS class override.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown
 }
+

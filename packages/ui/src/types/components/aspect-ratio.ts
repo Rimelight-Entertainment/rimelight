@@ -4,11 +4,11 @@ export interface AspectRatioProps {
    */
   ratio?: number
   /**
-   * UI class override map.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Root CSS class overrides.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

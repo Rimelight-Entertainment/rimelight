@@ -13,11 +13,11 @@ export interface BreadcrumbProps {
    */
   separatorIcon?: string
   /**
-   * UI style slot overrides.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Root CSS class override.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown

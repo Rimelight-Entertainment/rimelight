@@ -12,12 +12,13 @@ export interface PopoverProps {
    */
   placement?: "top" | "bottom" | "left" | "right"
   /**
-   * UI mapping override.
+   * Slot-specific CSS class overrides.
    */
   ui?: any
   /**
-   * Root CSS class.
+   * Additional CSS classes to apply to the root element.
    */
   class?: any
   [key: string]: unknown
 }
+

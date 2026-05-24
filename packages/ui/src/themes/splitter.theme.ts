@@ -1,6 +1,6 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export const createResizableTheme = () =>
+export const createSplitterTheme = () =>
   defineTheme({
     slots: ["root", "panel", "handle"],
     base: {
@@ -19,4 +19,4 @@ export const createResizableTheme = () =>
     }
   })
 
-export default createResizableTheme()
+export default createSplitterTheme()

@@ -1,10 +1,10 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { DialogProps } from "../../types"
-import dialogTheme from "../../themes/dialog.theme"
+import type { ModalProps } from "../../types"
+import modalTheme from "../../themes/modal.theme"
 
-const dialog = scv(dialogTheme)
+const modal = scv(modalTheme)
 
 const {
   open = false,
@@ -18,32 +18,32 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as DialogProps
+} = Astro.props as ModalProps
 
-const classes = resolveClasses(dialog, {
+const classes = resolveClasses(modal, {
   size
-}, useUi("dialog", uiProp), className)
+}, useUi("modal", uiProp), className)
 
-const dialogId = `rla-dialog-${Math.random().toString(36).substring(2, 9)}`
+const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
 ---
-<div class={classes.root} data-slot="dialog-container">
+<div class={classes.root} data-slot="modal-container">
   {triggerLabel ? (
     <button
       class={classes.trigger}
       data-slot="trigger"
       type="button"
-      onclick={`document.getElementById('${dialogId}').showModal()`}
+      onclick={`document.getElementById('${modalId}').showmodal()`}
     >
       {triggerLabel}
     </button>
   ) : (
-    <span onclick={`document.getElementById('${dialogId}').showModal()`}>
+    <span onclick={`document.getElementById('${modalId}').showmodal()`}>
       <slot name="trigger" />
     </span>
   )}
 
   <dialog
-    id={dialogId}
+    id={modalId}
     class={classes.content}
     data-slot="content"
     data-lock-scroll={lockScroll ? "true" : "false"}
@@ -55,8 +55,8 @@ const dialogId = `rla-dialog-${Math.random().toString(36).substring(2, 9)}`
       class={classes.closeButton}
       data-slot="close-button"
       type="button"
-      onclick={`document.getElementById('${dialogId}').close()`}
-      aria-label="Close dialog"
+      onclick={`document.getElementById('${modalId}').close()`}
+      aria-label="Close modal"
     >
       <span class="i-lucide-x size-4" aria-hidden="true" />
     </button>
@@ -81,13 +81,13 @@ const dialogId = `rla-dialog-${Math.random().toString(36).substring(2, 9)}`
   document.addEventListener('click', (e) => {
     if (e.target && e.target.tagName === 'DIALOG' && e.target.getAttribute('data-close-on-click-outside') === 'true') {
       const rect = e.target.getBoundingClientRect();
-      const isInDialog = (
+      const isInModal = (
         rect.top <= e.clientY &&
         e.clientY <= rect.top + rect.height &&
         rect.left <= e.clientX &&
         e.clientX <= rect.left + rect.width
       );
-      if (!isInDialog) {
+      if (!isInModal) {
         e.target.close();
       }
     }

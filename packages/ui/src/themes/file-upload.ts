@@ -1,6 +1,6 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export const createDropzoneTheme = () =>
+export const createFileUploadTheme = () =>
   defineTheme({
     slots: ["root", "input", "content", "icon", "title", "description"],
     base: {
@@ -21,4 +21,4 @@ export const createDropzoneTheme = () =>
     }
   })
 
-export default createDropzoneTheme()
+export default createFileUploadTheme()
