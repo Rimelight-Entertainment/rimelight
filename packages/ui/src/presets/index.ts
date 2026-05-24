@@ -8,56 +8,38 @@ import {
   transformerDirectives,
   transformerVariantGroup
 } from "unocss"
+import { defaultColorScales } from "./defaults"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
 const uiFilesystemGlob = join(__dirname, "../**/*")
 
-const colorShades = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"] as const
-
-const createScale = (colorName: string) => ({
+const createScale = (colorName: string, shadeKeys: string[]) => ({
   "DEFAULT": `var(--${colorName})`,
   "foreground": `var(--${colorName}-foreground)`,
   "accent": `var(--${colorName}-accent)`,
-  "50": `var(--color-${colorName}-50)`,
-  "100": `var(--color-${colorName}-100)`,
-  "200": `var(--color-${colorName}-200)`,
-  "300": `var(--color-${colorName}-300)`,
-  "400": `var(--color-${colorName}-400)`,
-  "500": `var(--color-${colorName}-500)`,
-  "600": `var(--color-${colorName}-600)`,
-  "700": `var(--color-${colorName}-700)`,
-  "800": `var(--color-${colorName}-800)`,
-  "900": `var(--color-${colorName}-900)`,
-  "950": `var(--color-${colorName}-950)`
+  ...Object.fromEntries(shadeKeys.map((shade) => [shade, `var(--color-${colorName}-${shade})`]))
 })
 
 export interface RimelightPresetOptions {
-  colors?: string[]
-  colorValues?: Record<string, Record<string, string>>
-}
-
-interface ColorConfig {
-  colors: string[]
-  colorValues?: Record<string, Record<string, string>>
+  colors?: Record<string, Record<string, string>>
 }
 
 declare global {
-  var __rimelightColorConfig: ColorConfig | undefined
+  var __rimelightColorConfig: RimelightPresetOptions | undefined
 }
 
-export function setColorConfig(config: ColorConfig) {
+export function setColorConfig(config: RimelightPresetOptions) {
   globalThis.__rimelightColorConfig = config
 }
 
-function getColorConfig(): ColorConfig {
-  return globalThis.__rimelightColorConfig ?? { colors: [] }
+function getColorConfig(): RimelightPresetOptions {
+  return globalThis.__rimelightColorConfig ?? {}
 }
 
 export default definePreset((options?: RimelightPresetOptions) => {
   const shared = getColorConfig()
-  const customColors = options?.colors ?? shared.colors ?? []
-  const colorValues = options?.colorValues ?? shared.colorValues ?? {}
+  const userColors = options?.colors ?? shared.colors ?? {}
   const coreColors = [
     "primary",
     "secondary",
@@ -67,24 +49,14 @@ export default definePreset((options?: RimelightPresetOptions) => {
     "error",
     "commentary",
     "ideation",
-    "source"
+    "source",
+    "neutral"
   ]
-  const allColors = [...new Set([...coreColors, ...customColors])]
+  const mergedColorScales = { ...defaultColorScales, ...userColors }
+  const allColors = [...new Set([...coreColors, ...Object.keys(userColors)])]
 
   const safelist = allColors.flatMap((color) => [
-    `bg-${color}-500`,
-    `hover:bg-${color}-600`,
-    `focus-visible:ring-${color}-500/50`,
-    `border-${color}-500/20`,
-    `text-${color}-600`,
-    `bg-${color}-500/5`,
-    `hover:bg-${color}-500/10`,
-    `hover:border-${color}-500/30`,
-    `focus-visible:ring-${color}-500/40`,
-    `bg-${color}-500/10`,
-    `hover:bg-${color}-500/20`,
-    `hover:underline`,
-    `hover:decoration-${color}-300`
+    `rl-color-${color}`
   ])
 
   return {
@@ -143,6 +115,16 @@ export default definePreset((options?: RimelightPresetOptions) => {
       [
         /^clip-rect-(\d+)-(\d+)-(\d+)-(\d+)$/,
         ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
+      ],
+      [
+        /^rl-color-(.+)$/,
+        ([, color]) => ({
+          "--rl-bg": `var(--color-${color}-500)`,
+          "--rl-bg-hover": `var(--color-${color}-600)`,
+          "--rl-text": `var(--color-${color}-600)`,
+          "--rl-ring": `var(--color-${color}-500)`,
+          "--rl-border": `var(--color-${color}-500)`,
+        })
       ]
     ],
 
@@ -175,7 +157,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
-        ...Object.fromEntries(allColors.map((color) => [color, createScale(color)])),
+        ...Object.fromEntries(allColors.map((color) => [color, createScale(color, Object.keys(mergedColorScales[color] ?? {}))])),
         "muted": {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"
@@ -256,14 +238,11 @@ export default definePreset((options?: RimelightPresetOptions) => {
     preflights: [
       {
         getCSS: () => {
-          const shadeLines = Object.entries(colorValues).length > 0
-            ? Object.entries(colorValues).flatMap(([color, shades]) =>
-                colorShades.map((shade) => {
-                  const value = shades[shade]
-                  return value !== undefined ? `            --color-${color}-${shade}: ${value};` : undefined
-                }).filter(Boolean)
-              ).join("\n")
-            : ""
+          const shadeLines = Object.entries(mergedColorScales).flatMap(([color, shades]) =>
+              Object.entries(shades).map(([shade, value]) =>
+                `            --color-${color}-${shade}: ${value};`
+              )
+            ).join("\n")
 
           return `
           :root {
@@ -335,7 +314,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
             --font-sans: "Noto Sans", sans-serif;
             --font-serif: "Noto Serif", serif;
             --font-mono: "Noto Sans Mono", monospace;
-${shadeLines ? "\n" + shadeLines : ""}
+${shadeLines}
           }
 
           .dark {

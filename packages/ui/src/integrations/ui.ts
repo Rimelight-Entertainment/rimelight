@@ -35,14 +35,13 @@ export interface UIOptions {
    */
   ui?: UIConfigOverrides
   /**
-   * Custom color names to dynamically generate variants for.
+   * Custom colors as `{ name: { shade: value } }`. Keys are the color names,
+   * values are the per-shade hex/oklch values. The preset's preflight emits
+   * `--color-{name}-{shade}` variables automatically.
+   *
+   * @example { blurple: { "50": "#f4f0ff", "500": "#7146ff", "950": "#220869" } }
    */
-  colors?: string[]
-  /**
-   * Hex/oklch values for each shade of each custom color. The preset's preflight emits
-   * `--color-{name}-{shade}` variables automatically from these values.
-   */
-  colorValues?: Record<string, Record<string, string>>
+  colors?: Record<string, Record<string, string>>
 }
 
 /**
@@ -80,15 +79,16 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     "ideation",
     "source"
   ]
-  const mergedColors = [...new Set([...coreColors, ...(options.colors || [])])]
+  const userColors = options.colors ?? {}
+  const userColorNames = Object.keys(userColors)
+  const mergedColors = [...new Set([...coreColors, ...userColorNames])]
   const resolvedConfig = {
     ...resolvedUI,
     logos: options.logos ?? {},
-    colors: mergedColors,
-    colorValues: options.colorValues ?? {}
+    colors: mergedColors
   }
 
-  setColorConfig({ colors: mergedColors, colorValues: options.colorValues })
+  setColorConfig({ colors: userColors })
 
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId
