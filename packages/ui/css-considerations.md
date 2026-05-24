@@ -1,48 +1,70 @@
-# CSS Architecture
+# CSS Architecture (Current State)
 
-## What Has Been Done
+## CSS Import Chain
 
-### Phase 1 — Consolidate Presets & Move Base CSS to Preflights ✅
+The UI package's `src/styles/index.css` bundles:
 
-- Merged orphaned `src/preset.ts` into `src/presets/index.ts`
-- Moved hardcoded `:root` + `.dark` CSS variables (background, foreground, primary, sidebar, chart, etc.) into the active preset's preflight
-- Added missing `--{name}-accent` variables for info, success, warning, error, commentary, ideation, source in both modes
+```css
+@import "tailwindcss";     /* transitive dep of @nuxt/ui (transitional) */
+@import "@nuxt/ui";        /* Nuxt UI base styles (re-export passthrough) */
+@import "./prism.css";     /* Prism.js syntax highlighting theme */
+```
 
-### Phase 2 — Single Source of Truth for Colors ✅
+Consuming projects import it in their `global.css`:
 
-- `ui()` in `astro.config.ts` accepts a `colors` record: `{ name: { shade: value } }`
-- Integration passes colors directly to `UnoCSS({ presets: [rimelightUiPreset({ colors })] })` — no separate `uno.config.ts`, no shared mutable state
-- All UnoCSS config (presets, transformers, content, shortcuts, rules) lives in one place in the integration
-- Preflight emits `--color-{name}-{shade}` for all registered colors in `:root` and `.dark`
-- `createScale()` maps UnoCSS theme colors to `var(--color-{name}-{shade})`
+```css
+@import "@rimelight/ui/styles/index.css";
+```
 
-### Phase 3 — rl-color-{name} CSS Variable Rule ✅
-
-- Added `rl-color-{name}` UnoCSS rule (regex): sets `--rl-bg`, `--rl-text`, `--rl-ring`, `--rl-border`, `--rl-bg-hover`
-- Refactored button compound variants: all 6 variants use `rl-color-{color}` + `bg-[var(--rl-bg)]` etc.
-- Safelist reduced from ~13 entries per color to 1 (`rl-color-{color}`)
-- Added default 50–950 shade scales (`defaults.ts`) for all 10 built-in colors
-
-### Phase 4 — Theme-Aware Colors with Light/Dark/Flat Modes ✅
-
-- Colors can define `light`, `dark`, `flat` mode buckets (or plain flat string values at root)
-- `resolveColorModes()` resolves each shade per-mode with per-shade fallback cascade
-- Preflight emits three pinned variable sets in `:root` (never overridden in `.dark`):
-  - `-f` (flat pinned), `-l` (light pinned), `-d` (dark pinned)
-- Three override CSS rules:
-  - `rl-flat` — swaps `--rl-*` to `-f` pinned vars
-  - `rl-light` — swaps `--rl-*` to `-l` pinned vars
-  - `rl-dark` — swaps `--rl-*` to `-d` pinned vars
-- Component `theme` prop: `<Button theme="flat" />`, `theme="light"`, `theme="dark"`
-- Only the button component has the `theme` prop implemented so far
+Projects should **not** import `tailwindcss` directly or include it in their own `package.json`—it's managed transitively through `@nuxt/ui` and will be removed when the re-export is no longer needed.
 
 ---
 
-## How It Works Now
+## Integration: `ui()` in `astro.config.ts`
 
-### Color Config Formats
+The `ui()` integration (from `@rimelight/ui/integrations`) handles all build tooling:
 
-Colors accept two formats, mixable per entry:
+```ts
+import { ui } from "@rimelight/ui/integrations"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      logos: { logomark: "/favicon.svg" },
+      colors: { primary: { "500": "#0064d7", /* ... */ } },
+      ui: { button: { defaultVariants: { variant: "primary" } } }
+    })
+  ]
+})
+```
+
+Internally it returns:
+1. **UnoCSS** (`@unocss/astro`) — with `rimelightUiPreset({ colors })` — generates component variant classes from theme files
+2. **Vue** (`@astrojs/vue`) — required for `@nuxt/ui` re-exported components
+3. **`@nuxt/ui/vite` plugin** — processes Nuxt UI components in the re-export
+4. **`@tailwindcss/vite`** — processes `@import "tailwindcss"` (transitional, goes when `@nuxt/ui` goes)
+5. **Virtual module** (`virtual:rimelight-ui`) — provides merged UI config to components
+6. **SSR / optimizeDeps config** — ensures `@rimelight/ui` and `@nuxt/ui` are properly handled
+
+No `uno.config.ts` needed in consuming projects — the integration configures everything.
+
+---
+
+## Component Styling (css-variants + UnoCSS)
+
+Components use theme files (`*.theme.ts`) that export variant-based class configurations via `defineTheme()`. The `resolveClasses()` utility from `css-variants` merges component props with the theme config and outputs UnoCSS utility classes:
+
+```
+RLAButton.astro → reads theme from button.theme.ts → resolveClasses() → UnoCSS utility classes
+```
+
+The UnoCSS scanner picks up these classes from theme files (including from the UI package's own `src/`) and generates the corresponding CSS at build time.
+
+---
+
+## Color System
+
+Colors are defined in `astro.config.ts` via `ui({ colors })`. Two formats:
 
 **Flat format** — string values at root, used in all modes:
 ```ts
@@ -55,29 +77,17 @@ colors: {
 ```ts
 colors: {
   blurple: {
-    "500": "#7146ff",               // flat base
-    light: { "600": "#7a55ff" },     // light-only override
+    "500": "#7146ff",
+    light: { "600": "#7a55ff" },
     dark: { "500": "#9b7aff", "600": "#b096ff" },
-    flat: { "500": "#7146ff" }       // mode-independent pinned value
+    flat: { "500": "#7146ff" }
   }
 }
 ```
 
-### Per-Shade Cascade
-
-Each shade resolves independently per mode:
-
-| Mode       | Resolution order                           |
-| ---------- | ------------------------------------------ |
-| Light      | `light` bucket → flat keys → `flat` bucket → `dark` bucket |
-| Dark       | `dark` bucket → flat keys → `flat` bucket → `light` bucket |
-| Flat/theme | `flat` bucket → flat keys → `light` bucket → `dark` bucket |
-
-If a shade is missing from all sources, it is not emitted. Defining a single value in `dark` bucket propagates to all modes through the chain.
-
 ### CSS Variable Emission
 
-For every color/shade, the preflight emits in `:root`:
+For every color/shade, the UnoCSS preflight emits in `:root`:
 - `--color-{name}-{shade}` — themed var (light mode value, overridden in `.dark`)
 - `--color-{name}-{shade}-f` — flat pinned (never overridden)
 - `--color-{name}-{shade}-l` — light pinned (never overridden)
@@ -88,34 +98,19 @@ Then in `.dark`:
 
 ### rl-color-{name} Rule
 
-The regex rule `/^rl-color-(.+)$/` sets per-color CSS variable groups. Themed values (change with mode) plus all three pinned sets:
+The regex rule `/^rl-color-(.+)$/` sets per-color CSS variable groups:
 
 ```
---rl-bg: var(--color-{name}-500)
---rl-bg-f: var(--color-{name}-500-f)
---rl-bg-l: var(--color-{name}-500-l)
---rl-bg-d: var(--color-{name}-500-d)
---rl-bg-hover: var(--color-{name}-600)
---rl-bg-hover-f: var(--color-{name}-600-f)
---rl-bg-hover-l: var(--color-{name}-600-l)
---rl-bg-hover-d: var(--color-{name}-600-d)
---rl-text: var(--color-{name}-600)
---rl-text-f: var(--color-{name}-600-f)
---rl-text-l: var(--color-{name}-600-l)
---rl-text-d: var(--color-{name}-600-d)
---rl-ring: var(--color-{name}-500)
---rl-ring-f: var(--color-{name}-500-f)
---rl-ring-l: var(--color-{name}-500-l)
---rl-ring-d: var(--color-{name}-500-d)
---rl-border: var(--color-{name}-500)
---rl-border-f: var(--color-{name}-500-f)
---rl-border-l: var(--color-{name}-500-l)
---rl-border-d: var(--color-{name}-500-d)
+--rl-bg: var(--color-{name}-500)           --rl-bg-f: var(--color-{name}-500-f)
+--rl-bg-hover: var(--color-{name}-600)     --rl-bg-hover-f: var(--color-{name}-600-f)
+--rl-text: var(--color-{name}-600)         --rl-text-f: var(--color-{name}-600-f)
+--rl-ring: var(--color-{name}-500)         --rl-ring-f: var(--color-{name}-500-f)
+--rl-border: var(--color-{name}-500)       --rl-border-f: var(--color-{name}-500-f)
 ```
+
+Each variable also has pinned `-l` and `-d` variants for light/dark mode targeting.
 
 ### Override Classes
-
-Each class swaps the themed `--rl-*` chain to a pinned set:
 
 ```css
 .rl-flat  { --rl-bg: var(--rl-bg-f); --rl-bg-hover: var(--rl-bg-hover-f); ... }
@@ -123,100 +118,105 @@ Each class swaps the themed `--rl-*` chain to a pinned set:
 .rl-dark  { --rl-bg: var(--rl-bg-d); --rl-bg-hover: var(--rl-bg-hover-d); ... }
 ```
 
-Since every compound variant references `bg-[var(--rl-bg)]`, `text-[var(--rl-text)]`, etc., overriding the `--rl-*` chain pins all color-driven styling at once.
+Component compound variants reference `bg-[var(--rl-bg)]`, `text-[var(--rl-text)]` etc., so overriding `--rl-*` pins all color-driven styling at once. The `theme` prop on components (currently only button) applies these classes.
 
-### Component Integration
+---
 
-Button theme (`button.theme.ts`):
-```ts
-theme: {
-  flat: { root: "rl-flat" },
-  light: { root: "rl-light" },
-  dark: { root: "rl-dark" }
+## Consuming Project Setup
+
+### `global.css`
+
+```css
+@import "@rimelight/ui/styles/index.css";
+
+:root {
+  --color-primary-50: #ffffff;
+  /* project-specific overrides */
+  --font-sans: "Noto Sans", sans-serif;
+  --ui-container: 90rem;
 }
 ```
 
-Usage in Astro:
-```astro
-<RLAButton theme="flat">Stays same in all modes</RLAButton>
-<RLAButton theme="light">Always light mode colors</RLAButton>
-<RLAButton theme="dark">Always dark mode colors</RLAButton>
-<RLAButton>Responds to mode normally</RLAButton>
+No `@import "tailwindcss"`.
+
+### `astro.config.ts`
+
+```ts
+import { ui } from "@rimelight/ui/integrations"
+
+export default defineConfig({
+  integrations: [
+    ui({ logos: { logomark: "/favicon.svg" }, colors: { /* optional */ } })
+  ]
+})
 ```
 
-### UnoCSS Rule Generation
+No `uno.config.ts`, no `@unocss/astro`, no `@tailwindcss/vite` in the project itself.
 
-- `rl-color-{name}` is a **regex rule** — generated on-demand. Must be in the `safelist` for each registered color name.
-- `rl-flat`, `rl-light`, `rl-dark` are **static rules** — detected by the scanner when referenced in source files (the theme config in `*.theme.ts`). No safelist entry needed.
-- Safelist = 1 entry per color: `rl-color-{color}`
+### `package.json`
 
----
+```json
+{
+  "dependencies": {
+    "@rimelight/ui": "^0.0.32",
+    "@astrojs/vue": "..."
+  }
+}
+```
 
-## Remaining Steps
+No `tailwindcss`, `@nuxt/ui`, `unocss`, or `@tailwindcss/vite` — all managed by `@rimelight/ui`.
 
-### Step 1 — Add `theme` Prop to All Themeable Components
+### Component Imports
 
-Follow the same pattern as the button:
-
-1. In each component's `*.theme.ts`, add a `theme` variant:
-   ```ts
-   theme: {
-     flat: { root: "rl-flat" },
-     light: { root: "rl-light" },
-     dark: { root: "rl-dark" }
-   }
-   ```
-
-2. In each component's `*.astro`, destructure `theme` and pass it to `resolveClasses`:
-   ```astro
-   const { theme, ...rest } = Astro.props
-   const classes = resolveClasses(themeConfig, { theme, ...rest }, ...)
-   ```
-
-3. Update the component's type file to declare `theme?: "flat" | "light" | "dark"` (or use `[key: string]: unknown` index signature).
-
-**Components needing this** (typical list):
-- `RLAAlert`
-- `RLABadge`
-- `RLAInput` and other form controls
-- `RLATag`
-- `RLAChip`
-- Any other component with `color`-based compound variants
-
-### Step 2 — Remove Tailwind / Nuxt UI Dependency
-
-- Audit and replace all remaining Nuxt UI components with `@rimelight/ui` equivalents
-- Remove `tailwindcss`, `@tailwindcss/vite`, `@nuxt/ui` dependencies from `package.json`
-- Remove `tailwindcss/vite` plugin from integration `ui.ts`
-- Convert any remaining `@theme` blocks in `global.css` to plain `:root`
-- Single compiler (UnoCSS only), faster builds, no Vue dependency for most consumers
-
-### Step 3 — CSP Compliance
-
-- Rewrite remaining inline styles (`style=""`) in RLAChart, RLASlider, scroll-to-top components to CSS variable + class approach
-- All styling should go through `<style>` tags (CSP-safe) or UnoCSS classes
+```astro
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+import { NavigationMenu } from "@rimelight/ui/nuxt"  /* transitional */
+import type { ButtonProps } from "@rimelight/ui/types"
+```
 
 ---
 
-## Further Considerations
+## Component Renames
 
-### GlobalThis Timing
+The following components were renamed (old files removed, imports will break):
 
-No `uno.config.ts` exists in the project. The `UnoCSS()` Astro integration receives the full config inline — including `rimelightUiPreset({ colors })` — so `loadConfig` from `@unocss/config` finds no file-based config and uses only the inline config. Colors flow through a single closure scope, eliminating the need for any cross-context state sharing.
+| Old Name | New Name |
+|----------|----------|
+| `RLAAlertDialog` | `RLAConfirm` |
+| `RLADropzone` | `RLAFileUpload` |
+| `RLAField` | `RLAFormField` |
+| `RLACombobox` | `RLAInputMenu` |
+| `RLADialog` | `RLAModal` |
+| `RLASection` | `RLAPageSection` |
+| `RLASheet` | `RLASlideover` |
+| `RLAResizable` | `RLASplitter` |
+| `RLAEmbedYoutube` | `RLAVideo` |
+| `RLAInputGroup` | `RLAFieldGroup` |
 
-### Debugging Generated CSS
+Theme files were also renamed from camelCase to kebab-case (e.g. `aspectRatio.theme.ts` → `aspect-ratio.theme.ts`). These are consumed internally by UnoCSS scanning — no project should import them directly.
 
-When inspecting in DevTools:
-- Themed `--color-{name}-{shade}` variables appear in `:root` and `.dark`
-- Pinned `-f`, `-l`, `-d` variables only appear in `:root`
-- `rl-color-{name}` classes set `--rl-bg` etc. as intermediates
-- Compound variants apply `bg-[var(--rl-bg)]` which resolves through the chain
+---
 
-### Potential Future Improvements
+## Remaining Work
 
-- **`theme="light"` and `theme="dark"` for other elements** — currently the CSS rules exist but only button has the component variant. Easy to extend.
-- **Simplified color config** — auto-generate light/dark shades from a single base value using oklch lightness adjustments, reducing config surface.
-- **Foreground system** — extend `rl-color-{name}` to also set `--rl-text` dynamically (currently hardcoded to shade 600). Could use an algorithmic approach based on luminance.
-- **Semantic `--primary` etc.** — the base CSS custom properties (`--background`, `--foreground`, `--primary`, `--primary-foreground`, `--primary-accent`) remain hardcoded in the preflight. Could be made configurable via the integration.
-- **Default `flat` for colors without modes** — flat-only colors (like the built-in defaults) emit `-f`, `-l`, `-d` all with the same value, adding CSS bloat. An optimization could skip redundant pinned emissions.
-- **Safelist optimization** — `rl-color-{color}` is safelisted once per color. If a color is never used in any component, it still generates the rule. Could be migrated to dynamic detection if the scanner improves.
+### Final Step — Remove Tailwind / Nuxt UI
+
+Single atomic change once functional parity is reached:
+
+1. Replace all remaining Nuxt UI components with `@rimelight/ui` equivalents
+2. Remove `tailwindcss`, `@tailwindcss/vite`, `@nuxt/ui` from `@rimelight/ui`'s `package.json`
+3. Remove `@import "tailwindcss"` and `@import "@nuxt/ui"` from `src/styles/index.css`
+4. Remove `@nuxt/ui/vite` and `@tailwindcss/vite` plugins from `ui.ts`
+5. Remove `./nuxt` export from `package.json`
+6. Remove `@astrojs/vue` from integration
+7. Result: single compiler (UnoCSS), no Tailwind, no Vue dependency for consumers
+
+---
+
+## Future Considerations
+
+- **`theme` prop for all components** — currently only button has it; the CSS rules exist for all (`.rl-flat`, `.rl-light`, `.rl-dark`), just need component variants
+- **Simplified color config** — auto-generate light/dark shades from a single base value via oklch
+- **Dynamic foreground** — `rl-color-{name}` currently hardcodes text to shade 600; could use luminance-based selection
+- **Configurable semantic vars** — `--primary`, `--background`, etc. are currently hardcoded in the preflight; could be made configurable
+- **Emissions optimization** — flat-only colors emit redundant `-f`, `-l`, `-d` sets; could be skipped for non-mode colors
