@@ -27,9 +27,7 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 const circumference = 2 * Math.PI * 45
 const percentPx = circumference / 100
 
-const gaugeStroke = `var(--color-${color}-500)`
-const gaugeSecondaryStroke = `var(--color-${color}-900)`
-const gaugeFill = `var(--color-${color}-950)`
+
 ---
 
 <div
@@ -51,6 +49,8 @@ const gaugeFill = `var(--color-${color}-950)`
           cx="50"
           cy="50"
           r="45"
+          stroke={`var(--color-${color}-900)`}
+          fill={`var(--color-${color}-950)`}
           stroke-width={progressWidth}
           stroke-dashoffset="0"
           stroke-linecap="round"
@@ -62,6 +62,7 @@ const gaugeFill = `var(--color-${color}-950)`
           cy="50"
           r="45"
           fill="transparent"
+          stroke={`var(--color-${color}-500)`}
           stroke-width={progressWidth}
           stroke-dashoffset="0"
           stroke-linecap="round"
@@ -132,7 +133,7 @@ const gaugeFill = `var(--color-${color}-950)`
   })
 </script>
 
-<style define:vars={{ gaugeStroke, gaugeSecondaryStroke, gaugeFill }}>
+<style>
   .rla-scroll-to-top {
     opacity: 0;
     pointer-events: none;
@@ -149,7 +150,6 @@ const gaugeFill = `var(--color-${color}-950)`
   }
 
   .gauge-primary-stroke {
-    stroke: var(--gauge-stroke);
     stroke-dasharray: calc(var(--stroke-percent, 0) * var(--percent-to-px, 2.826px)) var(--circumference, 282.6);
     transition: stroke-dasharray var(--duration, 0.1s) ease, stroke var(--duration, 0.1s) ease;
     transform: rotate(-90deg);
@@ -158,14 +158,9 @@ const gaugeFill = `var(--color-${color}-950)`
   }
 
   .gauge-secondary-stroke {
-    stroke: var(--gauge-secondary-stroke);
     stroke-dasharray: 282.6;
     transform: rotate(-90deg);
     transform-origin: center;
-  }
-
-  circle[r="45"]:first-child {
-    fill: var(--gauge-fill);
   }
 
   [data-progress-circle] {
