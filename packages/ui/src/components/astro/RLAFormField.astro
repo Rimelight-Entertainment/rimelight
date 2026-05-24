@@ -1,11 +1,11 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { FieldProps } from "../../types"
-import fieldThemeDefault, { createFieldTheme } from "../../themes/field.theme"
+import type { FormFieldProps } from "../../types"
+import formFieldThemeDefault, { createFormFieldTheme } from "../../themes/form-field.theme"
 
-const fieldTheme = fieldThemeDefault
-const field = scv(fieldTheme)
+const formFieldTheme = formFieldThemeDefault
+const formField = scv(formFieldTheme)
 
 const {
   label,
@@ -16,11 +16,11 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as FieldProps
+} = Astro.props as FormFieldProps
 
-const classes = resolveClasses(field, {
+const classes = resolveClasses(formField, {
   size
-}, useUi("field", uiProp), className);
+}, useUi("formField", uiProp), className);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   {label && (

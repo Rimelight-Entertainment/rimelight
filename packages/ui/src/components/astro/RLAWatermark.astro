@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { WatermarkProps } from "../../types"
+import watermarkThemeDefault from "../../themes/watermark.theme"
+
+const watermark = scv(watermarkThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as WatermarkProps
+
+const classes = resolveClasses(watermark, {}, useUi("watermark", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

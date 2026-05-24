@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { GalleryProps } from "../../types"
+import galleryThemeDefault from "../../themes/gallery.theme"
+
+const gallery = scv(galleryThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as GalleryProps
+
+const classes = resolveClasses(gallery, {}, useUi("gallery", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

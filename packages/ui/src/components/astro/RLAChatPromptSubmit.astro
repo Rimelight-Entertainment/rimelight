@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChatPromptSubmitProps } from "../../types"
+import chatPromptSubmitThemeDefault from "../../themes/chat-prompt-submit.theme"
+
+const chatPromptSubmit = scv(chatPromptSubmitThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChatPromptSubmitProps
+
+const classes = resolveClasses(chatPromptSubmit, {}, useUi("chatPromptSubmit", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

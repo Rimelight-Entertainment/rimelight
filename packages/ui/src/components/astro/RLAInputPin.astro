@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputPinProps } from "../../types"
+import inputPinThemeDefault from "../../themes/input-pin.theme"
+
+const inputPin = scv(inputPinThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputPinProps
+
+const classes = resolveClasses(inputPin, {}, useUi("inputPin", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

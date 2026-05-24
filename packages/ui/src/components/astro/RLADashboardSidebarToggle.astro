@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardSidebarToggleProps } from "../../types"
+import dashboardSidebarToggleThemeDefault from "../../themes/dashboard-sidebar-toggle.theme"
+
+const dashboardSidebarToggle = scv(dashboardSidebarToggleThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardSidebarToggleProps
+
+const classes = resolveClasses(dashboardSidebarToggle, {}, useUi("dashboardSidebarToggle", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

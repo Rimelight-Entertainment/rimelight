@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputTagsProps } from "../../types"
+import inputTagsThemeDefault from "../../themes/input-tags.theme"
+
+const inputTags = scv(inputTagsThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputTagsProps
+
+const classes = resolveClasses(inputTags, {}, useUi("inputTags", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

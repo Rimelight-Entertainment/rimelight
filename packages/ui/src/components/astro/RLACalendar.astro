@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CalendarProps } from "../../types"
+import calendarThemeDefault from "../../themes/calendar.theme"
+
+const calendar = scv(calendarThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CalendarProps
+
+const classes = resolveClasses(calendar, {}, useUi("calendar", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

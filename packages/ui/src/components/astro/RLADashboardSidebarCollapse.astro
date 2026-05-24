@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardSidebarCollapseProps } from "../../types"
+import dashboardSidebarCollapseThemeDefault from "../../themes/dashboard-sidebar-collapse.theme"
+
+const dashboardSidebarCollapse = scv(dashboardSidebarCollapseThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardSidebarCollapseProps
+
+const classes = resolveClasses(dashboardSidebarCollapse, {}, useUi("dashboardSidebarCollapse", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

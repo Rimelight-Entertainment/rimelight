@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChatPromptProps } from "../../types"
+import chatPromptThemeDefault from "../../themes/chat-prompt.theme"
+
+const chatPrompt = scv(chatPromptThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChatPromptProps
+
+const classes = resolveClasses(chatPrompt, {}, useUi("chatPrompt", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

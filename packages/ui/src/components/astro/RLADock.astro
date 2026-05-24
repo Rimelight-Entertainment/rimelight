@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DockProps } from "../../types"
+import dockThemeDefault from "../../themes/dock.theme"
+
+const dock = scv(dockThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DockProps
+
+const classes = resolveClasses(dock, {}, useUi("dock", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

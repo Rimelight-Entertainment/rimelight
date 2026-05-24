@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardResizeHandleProps } from "../../types"
+import dashboardResizeHandleThemeDefault from "../../themes/dashboard-resize-handle.theme"
+
+const dashboardResizeHandle = scv(dashboardResizeHandleThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardResizeHandleProps
+
+const classes = resolveClasses(dashboardResizeHandle, {}, useUi("dashboardResizeHandle", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

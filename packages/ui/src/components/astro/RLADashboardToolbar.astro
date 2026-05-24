@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardToolbarProps } from "../../types"
+import dashboardToolbarThemeDefault from "../../themes/dashboard-toolbar.theme"
+
+const dashboardToolbar = scv(dashboardToolbarThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardToolbarProps
+
+const classes = resolveClasses(dashboardToolbar, {}, useUi("dashboardToolbar", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

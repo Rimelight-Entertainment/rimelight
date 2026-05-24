@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { RadioGroupProps } from "../../types"
+import radioGroupThemeDefault from "../../themes/radio-group.theme"
+
+const radioGroup = scv(radioGroupThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as RadioGroupProps
+
+const classes = resolveClasses(radioGroup, {}, useUi("radioGroup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

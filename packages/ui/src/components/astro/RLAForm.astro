@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { FormProps } from "../../types"
+import formThemeDefault from "../../themes/form.theme"
+
+const form = scv(formThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as FormProps
+
+const classes = resolveClasses(form, {}, useUi("form", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

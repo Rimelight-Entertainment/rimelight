@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { MeterProps } from "../../types"
+import meterThemeDefault from "../../themes/meter.theme"
+
+const meter = scv(meterThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as MeterProps
+
+const classes = resolveClasses(meter, {}, useUi("meter", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

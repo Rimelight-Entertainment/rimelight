@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardPanelProps } from "../../types"
+import dashboardPanelThemeDefault from "../../themes/dashboard-panel.theme"
+
+const dashboardPanel = scv(dashboardPanelThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardPanelProps
+
+const classes = resolveClasses(dashboardPanel, {}, useUi("dashboardPanel", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

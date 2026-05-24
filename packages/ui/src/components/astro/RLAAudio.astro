@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { AudioProps } from "../../types"
+import audioThemeDefault from "../../themes/audio.theme"
+
+const audio = scv(audioThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as AudioProps
+
+const classes = resolveClasses(audio, {}, useUi("audio", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

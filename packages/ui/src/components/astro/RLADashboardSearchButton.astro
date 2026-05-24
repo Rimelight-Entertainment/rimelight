@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardSearchButtonProps } from "../../types"
+import dashboardSearchButtonThemeDefault from "../../themes/dashboard-search-button.theme"
+
+const dashboardSearchButton = scv(dashboardSearchButtonThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardSearchButtonProps
+
+const classes = resolveClasses(dashboardSearchButton, {}, useUi("dashboardSearchButton", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

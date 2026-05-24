@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { KnobProps } from "../../types"
+import knobThemeDefault from "../../themes/knob.theme"
+
+const knob = scv(knobThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as KnobProps
+
+const classes = resolveClasses(knob, {}, useUi("knob", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

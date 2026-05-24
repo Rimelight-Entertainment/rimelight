@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { TableOfContentsProps } from "../../types"
+import tableOfContentsThemeDefault from "../../themes/table-of-contents.theme"
+
+const tableOfContents = scv(tableOfContentsThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as TableOfContentsProps
+
+const classes = resolveClasses(tableOfContents, {}, useUi("tableOfContents", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

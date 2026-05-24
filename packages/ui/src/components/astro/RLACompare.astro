@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CompareProps } from "../../types"
+import compareThemeDefault from "../../themes/compare.theme"
+
+const compare = scv(compareThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CompareProps
+
+const classes = resolveClasses(compare, {}, useUi("compare", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

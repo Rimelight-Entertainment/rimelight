@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardGroupProps } from "../../types"
+import dashboardGroupThemeDefault from "../../themes/dashboard-group.theme"
+
+const dashboardGroup = scv(dashboardGroupThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardGroupProps
+
+const classes = resolveClasses(dashboardGroup, {}, useUi("dashboardGroup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

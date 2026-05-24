@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { LinkProps } from "../../types"
+import linkThemeDefault from "../../themes/link.theme"
+
+const link = scv(linkThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as LinkProps
+
+const classes = resolveClasses(link, {}, useUi("link", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

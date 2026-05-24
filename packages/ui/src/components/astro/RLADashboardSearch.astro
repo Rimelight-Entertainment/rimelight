@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardSearchProps } from "../../types"
+import dashboardSearchThemeDefault from "../../themes/dashboard-search.theme"
+
+const dashboardSearch = scv(dashboardSearchThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardSearchProps
+
+const classes = resolveClasses(dashboardSearch, {}, useUi("dashboardSearch", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

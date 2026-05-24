@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChipProps } from "../../types"
+import chipThemeDefault from "../../themes/chip.theme"
+
+const chip = scv(chipThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChipProps
+
+const classes = resolveClasses(chip, {}, useUi("chip", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

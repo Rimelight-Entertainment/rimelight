@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChangelogProps } from "../../types"
+import changelogThemeDefault from "../../themes/changelog.theme"
+
+const changelog = scv(changelogThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChangelogProps
+
+const classes = resolveClasses(changelog, {}, useUi("changelog", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

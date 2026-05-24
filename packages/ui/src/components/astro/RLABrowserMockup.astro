@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { BrowserMockupProps } from "../../types"
+import browserMockupThemeDefault from "../../themes/browser-mockup.theme"
+
+const browserMockup = scv(browserMockupThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as BrowserMockupProps
+
+const classes = resolveClasses(browserMockup, {}, useUi("browserMockup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

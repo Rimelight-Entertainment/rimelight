@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SpeedDialProps } from "../../types"
+import speedDialThemeDefault from "../../themes/speed-dial.theme"
+
+const speedDial = scv(speedDialThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as SpeedDialProps
+
+const classes = resolveClasses(speedDial, {}, useUi("speedDial", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

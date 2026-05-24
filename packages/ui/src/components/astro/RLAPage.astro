@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { PageProps } from "../../types"
+import pageThemeDefault from "../../themes/page.theme"
+
+const page = scv(pageThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as PageProps
+
+const classes = resolveClasses(page, {}, useUi("page", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

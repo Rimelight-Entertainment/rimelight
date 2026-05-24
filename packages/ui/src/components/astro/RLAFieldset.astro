@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { FieldsetProps } from "../../types"
+import fieldsetThemeDefault from "../../themes/fieldset.theme"
+
+const fieldset = scv(fieldsetThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as FieldsetProps
+
+const classes = resolveClasses(fieldset, {}, useUi("fieldset", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

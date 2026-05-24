@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ThreeDHoverProps } from "../../types"
+import 3dHoverThemeDefault from "../../themes/3d-hover.theme"
+
+const 3dHover = scv(3dHoverThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ThreeDHoverProps
+
+const classes = resolveClasses(3dHover, {}, useUi("3dHover", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { BannerProps } from "../../types"
+import bannerThemeDefault from "../../themes/banner.theme"
+
+const banner = scv(bannerThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as BannerProps
+
+const classes = resolveClasses(banner, {}, useUi("banner", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

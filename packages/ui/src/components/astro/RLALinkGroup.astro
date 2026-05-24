@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { LinkGroupProps } from "../../types"
+import linkGroupThemeDefault from "../../themes/link-group.theme"
+
+const linkGroup = scv(linkGroupThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as LinkGroupProps
+
+const classes = resolveClasses(linkGroup, {}, useUi("linkGroup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

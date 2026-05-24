@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { PostProps } from "../../types"
+import postThemeDefault from "../../themes/post.theme"
+
+const post = scv(postThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as PostProps
+
+const classes = resolveClasses(post, {}, useUi("post", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

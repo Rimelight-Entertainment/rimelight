@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ContainerProps } from "../../types"
+import containerThemeDefault from "../../themes/container.theme"
+
+const container = scv(containerThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ContainerProps
+
+const classes = resolveClasses(container, {}, useUi("container", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

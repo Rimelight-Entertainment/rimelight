@@ -1,0 +1,19 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SpoilerProps } from "../../types"
+import spoilerThemeDefault from "../../themes/spoiler.theme"
+
+const spoiler = scv(spoilerThemeDefault)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as SpoilerProps
+
+const classes = resolveClasses(spoiler, {}, useUi("spoiler", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>
