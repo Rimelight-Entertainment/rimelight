@@ -6,6 +6,7 @@ import defu from "defu"
 import tailwindcss from "@tailwindcss/vite"
 import { defaultUIConfig } from "../themes"
 import type { ComponentTheme } from "../utils/defineTheme"
+import { setColorConfig } from "../presets"
 
 /**
  * Shape of the `ui` config that can be passed to the integration.
@@ -37,6 +38,11 @@ export interface UIOptions {
    * Custom color names to dynamically generate variants for.
    */
   colors?: string[]
+  /**
+   * Hex/oklch values for each shade of each custom color. The preset's preflight emits
+   * `--color-{name}-{shade}` variables automatically from these values.
+   */
+  colorValues?: Record<string, Record<string, string>>
 }
 
 /**
@@ -75,7 +81,14 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     "source"
   ]
   const mergedColors = [...new Set([...coreColors, ...(options.colors || [])])]
-  const resolvedConfig = { ...resolvedUI, logos: options.logos ?? {}, colors: mergedColors }
+  const resolvedConfig = {
+    ...resolvedUI,
+    logos: options.logos ?? {},
+    colors: mergedColors,
+    colorValues: options.colorValues ?? {}
+  }
+
+  setColorConfig({ colors: mergedColors, colorValues: options.colorValues })
 
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId

@@ -420,3 +420,244 @@ Remove any Tailwind-specific configuration from `uno.config.ts` and the integrat
 | CSS variable rules / no safelist | High        | Medium — maintenance reduction        | Component authoring refactor       |
 | Semantic foreground variables    | Low-Medium  | High — WCAG compliance                | Color config schema update         |
 | Remove Tailwind                  | Medium      | Very High — simpler pipeline          | Full Nuxt UI component replacement |
+
+---
+
+## Implementation Plan (Decided 2026-05-23)
+
+Archived from conversation with the following constraint: **no `rimelight.config.ts`**. The Astro integration config (`astro.config.ts`) is the single source of truth. The UnoCSS preset reads from it via a shared module-level state (`setColorConfig()` / `getColorConfig()` in `src/presets/index.ts`).
+
+### Phase 1 — Consolidate Presets & Move Base CSS to Preflights ✅ *Done*
+
+**Files touched**: `src/presets/index.ts`, deleted `src/preset.ts`
+
+Moved the hardcoded base CSS custom properties (`:root` + `.dark` variables for `--background`, `--primary`, `--foreground`, `--sidebar`, `--chart`, etc.) from the orphaned `src/preset.ts` into the active preset's `preflights`.
+
+Also added `--{name}-accent` variables for `info`, `success`, `warning`, `error`, `commentary`, `ideation`, `source` (both light and dark modes) to match what `createScale()` expects — these were missing before.
+
+The playground was unchanged (no visual diff) because the same values were already coming from Nuxt UI's theme. This establishes **preflights as the delivery mechanism** for Phase 2+.
+
+### Phase 2 — Single Source of Colors via Integration Config ✅ *Done*
+
+**The Problem**: Adding a custom color (e.g. "blurple") required touching three files:
+1. `astro.config.ts` — `ui({ colors: ["blurple"] })`
+2. `uno.config.ts` — `rimelightUiPreset({ colors: ["blurple"] })`
+3. `global.css` — `@theme { --color-blurple-50: ... }`
+
+**The Solution**: The integration calls `setColorConfig({ colors, colorValues })` which stores the config in module-level shared state. The UnoCSS preset reads this state via `getColorConfig()` at factory time.
+
+```
+astro.config.ts
+  └── ui({ colors: ["blurple"], colorValues: { blurple: {50: "...", ...} } })
+        ├── setColorConfig({ colors: [...core, "blurple"], colorValues: {blurple: ...} })
+        │     └── stored in module-level shared state (_sharedColorConfig)
+        │
+        └── Virtual module stores merged config for component variants
+
+uno.config.ts  (no color args needed)
+  └── rimelightUiPreset()  ← reads getColorConfig() internally
+        ├── Preflight emits --color-blurple-50 through --color-blurple-950
+        ├── createScale("blurple") maps to var(--color-blurple-*)
+        └── Safelist includes bg-blurple-500, text-blurple-600, etc.
+```
+
+A custom color now only requires one declaration (`colorValues` in `ui()` options). The `uno.config.ts` loses the `colors` argument but keeps its project-specific config (shortcuts, rules, transformers). The `global.css` `@theme` block is removed for that color.
+
+### Phase 3 — CSS Variable Rules Instead of Safelist *(Planned)*
+
+Replace string-interpolated compound variants (`bg-${color}-500`, `text-${color}-600`) with a single CSS variable rule (`rl-color-${color}`). Add a UnoCSS rule:
+
+```ts
+rules: [
+  [/^rl-color-(.+)$/, ([, color]) => ({
+    "--rl-bg": `var(--color-${color}-500)`,
+    "--rl-bg-hover": `var(--color-${color}-600)`,
+    "--rl-text": `var(--color-${color}-600)`,
+    "--rl-ring": `var(--color-${color}-500)`
+  })]
+]
+```
+
+Compound variants reduce to one class per color. The safelist shrinks dramatically. Theme files (134) need updating incrementally — start with highest-traffic components (button, badge, alert) and work down.
+
+### Phase 4 — Semantic Foreground Variables *(Planned)*
+
+Extend the color config schema with `foreground` and `darkForeground` per color. The preflight emits `--color-{name}-foreground` in both `:root` and `.dark`. Theme files use `text-{name}-foreground` instead of hardcoded `text-white`. Enables WCAG compliance for custom colors automatically.
+
+### Phase 5 — Remove Tailwind *(Planned)*
+
+Replace all remaining Nuxt UI components with `@rimelight/ui` equivalents (per `next-steps.md` ranking). Remove `tailwindcss`, `@tailwindcss/vite`, `@nuxt/ui` dependencies. Convert remaining `@theme` blocks to plain `:root`. Single compiler, faster builds, no Vue dependency for most consumers.
+
+### Phase 6 — Dark Mode via Preflight *(Planned)*
+
+Once Tailwind is gone and preflights are the sole delivery, the `.dark` block in the preflight is the single source of truth for dark mode. No separate CSS file overrides needed.
+
+### Dependency Graph
+
+```
+Phase 1 (Preflights)
+  └── Phase 2 (Single color source via integration)
+        ├── Phase 3 (CSS var rules)
+        ├── Phase 4 (Semantic foreground)
+        └── Phase 5 (Nuxt UI replacement)
+              └── Phase 5 completes (remove Tailwind)
+                    └── Phase 6 (Dark mode cleanup)
+```
+
+---
+
+## CSS Cascade & Override Model
+
+This section describes how styles flow from the library to the final rendered page, and at what point each layer can be overridden.
+
+### The Full Override Ladder
+
+From lowest to highest priority:
+
+| Priority | Source | What it controls | How to override |
+|----------|--------|------------------|-----------------|
+| 1 (lowest) | **Preflight base tokens** | `--background`, `--foreground`, `--primary`, `--color-{name}-{shade}` for custom colors | Not intended for direct override — these are defaults |
+| 2 | **Preflight element styles** | `* { border-color }`, `body { background }`, `button { cursor }` | Override in `global.css` or component-level CSS |
+| 3 | **UnoCSS theme utilities** | `bg-primary-500`, `text-muted`, `gap-md`, `rounded-lg` | Generated on-demand by UnoCSS from class strings |
+| 4 | **Component theme base** | `.btn-root`, `.btn-label` — structural classes from `defineTheme()` | Via `ui` prop slot or `ui` integration config |
+| 5 | **Component theme variants** | `.btn-solid`, `.btn-outline`, compound variant classes | Via `variant`, `color`, `size` props on `<RLAButton>` |
+| 6 | **global.css (project level)** | Any `:root` declarations, page-level layout, font imports | Write directly in `global.css` — unlayered beats layered |
+| 7 | **Component style overrides** | `class="..."` or `<style>` in the consumer's Astro/Vue file | Standard CSS specificity |
+| 8 (highest) | **Inline styles / utility classes** | Direct `style=""` or high-specificity UnoCSS utilities | Use sparingly |
+
+### Why Layers Matter
+
+The preset enables `outputToCssLayers: true` with this layer order:
+
+```
+theme (1)  →  preflights (2)  →  shortcuts (3)  →  default (4)
+```
+
+The `global.css` file is imported as a **regular, unlayered** stylesheet. In CSS, **unlayered styles always beat layered styles** regardless of specificity. This means:
+
+- A rule in `global.css`'s `:root` block overrides the same variable in the preflight's `:root`
+- A utility like `.bg-primary-500` in `global.css` overrides the same utility in the `default` layer
+- This is intentional: it gives the consumer project the final say
+
+### What Goes Where (User's Decision Guide)
+
+#### In `astro.config.ts` (the `ui()` call)
+
+This is where **all colors and design tokens are configured**. Not just color names — the actual shade values.
+
+```ts
+ui({
+  colors: ["blurple"],
+  colorValues: {
+    blurple: { "50": "#f4f0ff", ... "500": "#7146ff", ... }
+  }
+})
+```
+
+The `colorValues` option is for the library's own custom colors. Here you define:
+- New custom colors (like `blurple`, `brand`, `accent`)
+- Overrides for existing core color shades
+
+Everything that goes in here becomes CSS variables emitted by the preflight, UnoCSS theme entries via `createScale()`, and available as component variant colors.
+
+#### In `uno.config.ts`
+
+This is for **non-color project-specific UnoCSS configuration**:
+
+- Custom **shortcuts** (composite utility classes like `.card`)
+- Custom **rules** (regex-based dynamic utilities)
+- Additional **presets** (typography, icons, etc.)
+- **Transformers** (directives, variant groups)
+- **Content scanning paths** (if your project has unusual file locations)
+
+You should **not** repeat `colors` here — the integration handles it.
+
+#### In `global.css`
+
+This is for **everything that isn't a design token or a utility class**:
+
+- **Font-face declarations** (from `astro:fonts` or manual `@font-face`)
+- **Project-specific element styles** (`h1 { font-size: ... }`)
+- **Animations** specific to this project
+- **Scrollbar styling**
+- **Third-party CSS overrides**
+
+You should **not** define design tokens here — they belong in the integration config. You CAN override them here if needed (unlayered beats layered).
+
+### How to Change Padding on a Button
+
+If you want to override `RLAButton`'s padding:
+
+1. **For one instance**: Use the `class` prop or `style` attribute directly on `<RLAButton>`
+2. **For all buttons globally**: Use the `ui` integration option:
+   ```ts
+   ui({
+     ui: {
+       button: {
+         defaultVariants: { size: "lg" }
+       }
+     }
+   })
+   ```
+   Or override the theme in an `.astro` file's style section.
+3. **For this project only**: Define a custom utility in `uno.config.ts` shortcuts:
+   ```ts
+   shortcuts: {
+     "btn-custom": "px-4xl py-sm"
+   }
+   ```
+
+### How to Change the Primary Color
+
+1. In `astro.config.ts`, pass `colorValues` for the core color:
+   ```ts
+   ui({
+     colorValues: {
+       primary: {
+         "50": "...",
+         "500": "#0064d7",
+         "600": "#0050ac",
+         ...
+       }
+     }
+   })
+   ```
+2. The preflight emits `--color-primary-500: #0064d7` etc.
+3. All components using `color="primary"` automatically use the new shade
+4. If you also need to change `--primary` (the DEFAULT semantic variable), add that in `global.css`'s `:root`:
+   ```css
+   :root {
+     --primary: #0064d7;
+   }
+   ```
+
+### The Flow Illustrated
+
+```
+User writes in astro.config.ts:
+  ui({ colorValues: { blurple: { 500: "#7146ff" } } })
+             │
+             ▼
+    setColorConfig() stores in module state
+             │
+             ▼
+    rimelightUiPreset() reads from state
+      ├─ preflight.getCSS() → emits --color-blurple-500: #7146ff in :root
+      ├─ createScale("blurple") → maps bg-blurple-500 to var(--color-blurple-500)
+      └─ safelist → includes bg-blurple-500, text-blurple-600, etc.
+
+User writes in global.css:
+  :root { --color-blurple-500: #ff0000; }
+             │  (unlayered, beats layered preflight)
+             ▼
+    --color-blurple-500 resolves to #ff0000 despite the preflight value
+
+User writes in astro component:
+  <RLAButton color="blurple" />
+             │
+             ▼
+    RLAButton theme compound variant applies bg-blurple-500
+    Which reads var(--color-blurple-500) → #ff0000
+```
+
+The key principle: **integration config defines defaults; CSS overrides win via cascade; component props win via specificity**. No single config file intermediary.

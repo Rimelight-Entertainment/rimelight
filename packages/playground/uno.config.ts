@@ -1,7 +1,5 @@
 import {
   defineConfig,
-  presetTypography,
-  presetWind4,
   transformerDirectives,
   transformerVariantGroup,
   type PresetWind4Theme
@@ -10,34 +8,10 @@ import rimelightUiPreset from "@rimelight/ui/presets"
 
 export default defineConfig<PresetWind4Theme>({
   presets: [
-    rimelightUiPreset({ colors: ["blurple"] }),
-    presetWind4(),
-    presetTypography({
-      cssExtend: {
-        "h1,h2,h3,h4,h5,h6": {
-          "font-family": "var(--font-sans), system-ui, sans-serif"
-        },
-        "p,li,blockquote,code": {
-          "font-family": "var(--font-sans), system-ui, sans-serif"
-        },
-        "pre,code": {
-          "font-family": "var(--font-mono), monospace"
-        }
-      }
-    })
+    rimelightUiPreset()
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
 
-  // Enable CSS Cascade Layers for better specificity control
-  outputToCssLayers: true,
-  layers: {
-    theme: 1,
-    preflights: 2,
-    shortcuts: 3,
-    default: 4
-  },
-
-  // Tighten content scanning for better performance
   content: {
     pipeline: {
       include: [
@@ -61,8 +35,6 @@ export default defineConfig<PresetWind4Theme>({
       ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
     ]
   ],
-
-  preflights: [],
 
   async configResolved(config) {
     // Only log in dev mode and only once per process

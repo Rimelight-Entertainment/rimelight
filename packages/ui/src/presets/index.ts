@@ -13,6 +13,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
 const uiFilesystemGlob = join(__dirname, "../**/*")
 
+const colorShades = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"] as const
+
 const createScale = (colorName: string) => ({
   "DEFAULT": `var(--${colorName})`,
   "foreground": `var(--${colorName}-foreground)`,
@@ -32,10 +34,30 @@ const createScale = (colorName: string) => ({
 
 export interface RimelightPresetOptions {
   colors?: string[]
+  colorValues?: Record<string, Record<string, string>>
+}
+
+interface ColorConfig {
+  colors: string[]
+  colorValues?: Record<string, Record<string, string>>
+}
+
+declare global {
+  var __rimelightColorConfig: ColorConfig | undefined
+}
+
+export function setColorConfig(config: ColorConfig) {
+  globalThis.__rimelightColorConfig = config
+}
+
+function getColorConfig(): ColorConfig {
+  return globalThis.__rimelightColorConfig ?? { colors: [] }
 }
 
 export default definePreset((options?: RimelightPresetOptions) => {
-  const customColors = options?.colors || []
+  const shared = getColorConfig()
+  const customColors = options?.colors ?? shared.colors ?? []
+  const colorValues = options?.colorValues ?? shared.colorValues ?? {}
   const coreColors = [
     "primary",
     "secondary",
@@ -233,7 +255,17 @@ export default definePreset((options?: RimelightPresetOptions) => {
 
     preflights: [
       {
-        getCSS: () => `
+        getCSS: () => {
+          const shadeLines = Object.entries(colorValues).length > 0
+            ? Object.entries(colorValues).flatMap(([color, shades]) =>
+                colorShades.map((shade) => {
+                  const value = shades[shade]
+                  return value !== undefined ? `            --color-${color}-${shade}: ${value};` : undefined
+                }).filter(Boolean)
+              ).join("\n")
+            : ""
+
+          return `
           :root {
             --background: #ffffff;
             --foreground: #030712;
@@ -303,6 +335,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
             --font-sans: "Noto Sans", sans-serif;
             --font-serif: "Noto Serif", serif;
             --font-mono: "Noto Sans Mono", monospace;
+${shadeLines ? "\n" + shadeLines : ""}
           }
 
           .dark {
@@ -396,6 +429,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
             navigation: auto;
           }
         `
+        }
       }
     ],
 

@@ -176,6 +176,21 @@ export default defineConfig({
 
     ui({
       colors: ["blurple"],
+      colorValues: {
+        blurple: {
+          "50": "#f4f0ff",
+          "100": "#e9e2ff",
+          "200": "#d6ccff",
+          "300": "#b9a8ff",
+          "400": "#967aff",
+          "500": "#7146ff",
+          "600": "#6222ff",
+          "700": "#5512e9",
+          "800": "#460ebf",
+          "900": "#3b0e9c",
+          "950": "#220869"
+        }
+      },
       logos: {
         logomark: "/favicon.svg"
       }

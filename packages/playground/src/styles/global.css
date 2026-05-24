@@ -197,20 +197,6 @@
   --color-source-900: oklch(39.8% 0.07 227.392);
   --color-source-950: oklch(30.2% 0.056 229.695);
   /* endregion */
-
-  /* region Blurple */
-  --color-blurple-50: #f4f0ff;
-  --color-blurple-100: #e9e2ff;
-  --color-blurple-200: #d6ccff;
-  --color-blurple-300: #b9a8ff;
-  --color-blurple-400: #967aff;
-  --color-blurple-500: #7146ff;
-  --color-blurple-600: #6222ff;
-  --color-blurple-700: #5512e9;
-  --color-blurple-800: #460ebf;
-  --color-blurple-900: #3b0e9c;
-  --color-blurple-950: #220869;
-  /* endregion */
 }
 
 :root {
