@@ -139,26 +139,32 @@ const ctaLinks = [
         <div class="flex flex-wrap gap-md items-center justify-center">
             <span class="text-sm font-bold w-full text-center opacity-60">Phase 4 — Theme Awareness</span>
 
-            <!-- flat-test: flat format, same everywhere -->
-            <RLAButton label="Flat (same in both)" color="flat-test" variant="solid" />
-
-            <!-- mode-aware: light + dark defined, adapts -->
+            <!-- mode-aware: light + dark defined, adapts natively -->
             <RLAButton label="Mode Aware" color="mode-aware" variant="solid" />
+            <RLAButton label="MA light" color="mode-aware" variant="solid" theme="light" />
+            <RLAButton label="MA dark" color="mode-aware" variant="solid" theme="dark" />
+            <RLAButton label="MA flat" color="mode-aware" variant="solid" theme="flat" />
 
-            <!-- mode-aware + theme flat: pinned to light -->
-            <RLAButton label="Mode Aware (flat)" color="mode-aware" variant="solid" theme="flat" />
-
-            <!-- mode-pinned: has explicit flat value -->
+            <!-- mode-pinned: has explicit flat bucket -->
             <RLAButton label="Mode Pinned" color="mode-pinned" variant="solid" />
+            <RLAButton label="MP light" color="mode-pinned" variant="solid" theme="light" />
+            <RLAButton label="MP dark" color="mode-pinned" variant="solid" theme="dark" />
+            <RLAButton label="MP flat" color="mode-pinned" variant="solid" theme="flat" />
 
-            <!-- mode-pinned + flat: uses explicit flat value -->
-            <RLAButton label="Mode Pinned (flat)" color="mode-pinned" variant="solid" theme="flat" />
+            <!-- flat-test: flat format, same everywhere -->
+            <RLAButton label="Flat Test" color="flat-test" variant="solid" />
+            <RLAButton label="FT light" color="flat-test" variant="solid" theme="light" />
+            <RLAButton label="FT dark" color="flat-test" variant="solid" theme="dark" />
+            <RLAButton label="FT flat" color="flat-test" variant="solid" theme="flat" />
 
-            <!-- no-dark: only light defined, dark falls back to light -->
-            <RLAButton label="No Dark (falls back)" color="no-dark" variant="solid" />
+            <!-- no-dark: only light defined -->
+            <RLAButton label="No Dark" color="no-dark" variant="solid" />
+            <RLAButton label="ND light" color="no-dark" variant="solid" theme="light" />
+            <RLAButton label="ND dark" color="no-dark" variant="solid" theme="dark" />
 
-            <!-- no-light: only dark defined, no flat → blank in light mode -->
-            <RLAButton label="No Light (blank in light)" color="no-light" variant="solid" />
+            <!-- no-light: only dark defined -->
+            <RLAButton label="No Light" color="no-light" variant="solid" />
+            <RLAButton label="NL dark" color="no-light" variant="solid" theme="dark" />
         </div>
     </div>
 </AppLayout>
