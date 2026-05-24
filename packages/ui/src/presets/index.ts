@@ -18,7 +18,21 @@ type ColorShades = Record<string, string>
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades; flat?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades
 
-function resolveColorModes(entry: ColorConfigValue): { light: ColorShades; dark: ColorShades; flat: ColorShades } {
+function generateLightShade(shade: string, value: string): string {
+  const num = Number(shade)
+  if (isNaN(num)) return value
+  const mixPct = Math.min(60, ((950 - num) / 950) * 60)
+  return `color-mix(in oklch, ${value}, white ${mixPct.toFixed(0)}%)`
+}
+
+function generateDarkShade(shade: string, value: string): string {
+  const num = Number(shade)
+  if (isNaN(num)) return value
+  const mixPct = Math.min(60, ((num - 50) / 900) * 60)
+  return `color-mix(in oklch, ${value}, black ${mixPct.toFixed(0)}%)`
+}
+
+function resolveColorModes(entry: ColorConfigValue, autogenerate?: boolean): { light: ColorShades; dark: ColorShades; flat: ColorShades } {
   const raw = entry as Record<string, unknown>
 
   const modeLight = typeof raw.light === "object" && raw.light !== null ? raw.light as ColorShades : {}
@@ -39,6 +53,21 @@ function resolveColorModes(entry: ColorConfigValue): { light: ColorShades; dark:
     ...Object.keys(modeFlat),
     ...Object.keys(flatShades)
   ])]
+
+  if (autogenerate) {
+    if (Object.keys(modeLight).length === 0) {
+      for (const shade of allShades) {
+        const value = flatShades[shade] ?? modeFlat[shade] ?? modeDark[shade]
+        if (value) modeLight[shade] = generateLightShade(shade, value)
+      }
+    }
+    if (Object.keys(modeDark).length === 0) {
+      for (const shade of allShades) {
+        const value = flatShades[shade] ?? modeFlat[shade] ?? modeLight[shade]
+        if (value) modeDark[shade] = generateDarkShade(shade, value)
+      }
+    }
+  }
 
   const light: ColorShades = {}
   const dark: ColorShades = {}
@@ -72,6 +101,7 @@ const createScale = (colorName: string, shadeKeys: string[]) => ({
 
 export interface RimelightPresetOptions {
   colors?: Record<string, ColorConfigValue>
+  autogenerateColorModes?: boolean
 }
 
 declare global {
@@ -89,6 +119,7 @@ function getColorConfig(): RimelightPresetOptions {
 export default definePreset((options?: RimelightPresetOptions) => {
   const shared = getColorConfig()
   const userColors = options?.colors ?? shared.colors ?? {}
+  const autoGen = options?.autogenerateColorModes ?? shared.autogenerateColorModes ?? true
   const coreColors = [
     "primary",
     "secondary",
@@ -105,7 +136,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
   const allColors = [...new Set([...coreColors, ...Object.keys(userColors)])]
 
   const resolvedColors = Object.fromEntries(
-    Object.entries(mergedColorScales).map(([name, entry]) => [name, resolveColorModes(entry)])
+    Object.entries(mergedColorScales).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
   )
 
   const safelist = allColors.flatMap((color) => [

@@ -54,6 +54,12 @@ export interface UIOptions {
    *   the flat bucket regardless of current mode.
    */
   colors?: Record<string, Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string>; flat?: Record<string, string> }>
+  /**
+   * When `true`, auto-generates missing `light`/`dark` mode buckets from flat color values
+   * using `color-mix(in oklch, ...)`. Explicitly provided buckets always take precedence.
+   * Defaults to `true`.
+   */
+  autogenerateColorModes?: boolean
 }
 
 /**
@@ -100,7 +106,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     colors: mergedColors
   }
 
-  setColorConfig({ colors: userColors })
+  setColorConfig({ colors: userColors, autogenerateColorModes: options.autogenerateColorModes })
 
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId

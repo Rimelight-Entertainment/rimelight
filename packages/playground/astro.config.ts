@@ -285,6 +285,13 @@ export default defineConfig({
             "600": "#ec4899"
           }
           // light/fallback: no flat, no light → undefined (blank in light mode)
+        },
+        "auto-gen": {
+          // Flat only — autogenerateColorModes: true will create light/dark buckets
+          "500": "#ff6600",
+          "600": "#cc5500",
+          "700": "#aa4400",
+          "800": "#882200"
         }
       },
       logos: {
