@@ -76,6 +76,10 @@ export const createButtonTheme = (colors: string[] = defaultColors) =>
       active: {
         true: { root: "" },
         false: { root: "" }
+      },
+      unthemed: {
+        true: { root: "rl-fixed" },
+        false: {}
       }
     },
     compoundVariants: [

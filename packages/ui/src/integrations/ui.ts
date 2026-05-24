@@ -35,13 +35,22 @@ export interface UIOptions {
    */
   ui?: UIConfigOverrides
   /**
-   * Custom colors as `{ name: { shade: value } }`. Keys are the color names,
-   * values are the per-shade hex/oklch values. The preset's preflight emits
-   * `--color-{name}-{shade}` variables automatically.
+   * Custom colors. Each color can be:
    *
-   * @example { blurple: { "50": "#f4f0ff", "500": "#7146ff", "950": "#220869" } }
+   * - **Flat format**: `{ "500": "#7146ff", "600": "#6222ff" }` — used in all modes.
+   *   No mode-specific buckets needed.
+   *
+   * - **Mode format**: flat shades at root define the base; `light`, `dark`,
+   *   `unthemed` buckets layer on top:
+   *
+   *   ```ts
+   *   { "500": "base", light: { "600": "light-blue" }, dark: { "500": "dark-blue" } }
+   *   ```
+   *
+   *   Each shade falls back through: **mode → flat → unthemed → light → dark**.
+   *   Defining a single source (e.g. only `dark`) propagates to all modes.
    */
-  colors?: Record<string, Record<string, string>>
+  colors?: Record<string, Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string>; unthemed?: Record<string, string> }>
 }
 
 /**

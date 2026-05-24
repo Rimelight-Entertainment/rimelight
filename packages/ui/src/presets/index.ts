@@ -14,15 +14,64 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
 const uiFilesystemGlob = join(__dirname, "../**/*")
 
+type ColorShades = Record<string, string>
+type ColorModeShades = { light?: ColorShades; dark?: ColorShades; unthemed?: ColorShades }
+export type ColorConfigValue = ColorShades | ColorModeShades
+
+function resolveColorModes(entry: ColorConfigValue): { light: ColorShades; dark: ColorShades; unthemed: ColorShades } {
+  const raw = entry as Record<string, unknown>
+
+  const modeLight = typeof raw.light === "object" && raw.light !== null ? raw.light as ColorShades : {}
+  const modeDark = typeof raw.dark === "object" && raw.dark !== null ? raw.dark as ColorShades : {}
+  const modeUnthemed = typeof raw.unthemed === "object" && raw.unthemed !== null ? raw.unthemed as ColorShades : {}
+
+  const modeKeys = new Set(["light", "dark", "unthemed"])
+  const flatShades: ColorShades = {}
+  for (const [k, v] of Object.entries(raw)) {
+    if (!modeKeys.has(k) && typeof v === "string") {
+      flatShades[k] = v
+    }
+  }
+
+  const allShades = [...new Set([
+    ...Object.keys(modeLight),
+    ...Object.keys(modeDark),
+    ...Object.keys(modeUnthemed),
+    ...Object.keys(flatShades)
+  ])]
+
+  const light: ColorShades = {}
+  const dark: ColorShades = {}
+  const unthemed: ColorShades = {}
+
+  for (const shade of allShades) {
+    const lv = modeLight[shade] ?? flatShades[shade] ?? modeUnthemed[shade] ?? modeDark[shade]
+    if (lv !== undefined) light[shade] = lv
+
+    const dv = modeDark[shade] ?? flatShades[shade] ?? modeUnthemed[shade] ?? modeLight[shade]
+    if (dv !== undefined) dark[shade] = dv
+
+    const uv = modeUnthemed[shade] ?? flatShades[shade] ?? modeLight[shade] ?? modeDark[shade]
+    if (uv !== undefined) unthemed[shade] = uv
+  }
+
+  return { light, dark, unthemed }
+}
+
 const createScale = (colorName: string, shadeKeys: string[]) => ({
   "DEFAULT": `var(--${colorName})`,
   "foreground": `var(--${colorName}-foreground)`,
   "accent": `var(--${colorName}-accent)`,
-  ...Object.fromEntries(shadeKeys.map((shade) => [shade, `var(--color-${colorName}-${shade})`]))
+  ...Object.fromEntries(shadeKeys.flatMap((shade) => [
+    [shade, `var(--color-${colorName}-${shade})`],
+    [`${shade}-l`, `var(--color-${colorName}-${shade}-l)`]
+  ]))
 })
 
+export type { ColorConfigValue }
+
 export interface RimelightPresetOptions {
-  colors?: Record<string, Record<string, string>>
+  colors?: Record<string, ColorConfigValue>
 }
 
 declare global {
@@ -54,6 +103,10 @@ export default definePreset((options?: RimelightPresetOptions) => {
   ]
   const mergedColorScales = { ...defaultColorScales, ...userColors }
   const allColors = [...new Set([...coreColors, ...Object.keys(userColors)])]
+
+  const resolvedColors = Object.fromEntries(
+    Object.entries(mergedColorScales).map(([name, entry]) => [name, resolveColorModes(entry)])
+  )
 
   const safelist = allColors.flatMap((color) => [
     `rl-color-${color}`
@@ -124,8 +177,20 @@ export default definePreset((options?: RimelightPresetOptions) => {
           "--rl-text": `var(--color-${color}-600)`,
           "--rl-ring": `var(--color-${color}-500)`,
           "--rl-border": `var(--color-${color}-500)`,
+          "--rl-bg-l": `var(--color-${color}-500-l)`,
+          "--rl-bg-hover-l": `var(--color-${color}-600-l)`,
+          "--rl-text-l": `var(--color-${color}-600-l)`,
+          "--rl-ring-l": `var(--color-${color}-500-l)`,
+          "--rl-border-l": `var(--color-${color}-500-l)`,
         })
-      ]
+      ],
+      ["rl-fixed", {
+        "--rl-bg": "var(--rl-bg-l)",
+        "--rl-bg-hover": "var(--rl-bg-hover-l)",
+        "--rl-text": "var(--rl-text-l)",
+        "--rl-ring": "var(--rl-ring-l)",
+        "--rl-border": "var(--rl-border-l)",
+      }]
     ],
 
     theme: {
@@ -157,7 +222,11 @@ export default definePreset((options?: RimelightPresetOptions) => {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
-        ...Object.fromEntries(allColors.map((color) => [color, createScale(color, Object.keys(mergedColorScales[color] ?? {}))])),
+        ...Object.fromEntries(allColors.map((color) => {
+          const m = resolvedColors[color]
+          const shadeKeys = [...new Set([...Object.keys(m.light), ...Object.keys(m.dark), ...Object.keys(m.unthemed)])]
+          return [color, createScale(color, shadeKeys)]
+        })),
         "muted": {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"
@@ -238,8 +307,23 @@ export default definePreset((options?: RimelightPresetOptions) => {
     preflights: [
       {
         getCSS: () => {
-          const shadeLines = Object.entries(mergedColorScales).flatMap(([color, shades]) =>
-              Object.entries(shades).map(([shade, value]) =>
+          const lightLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
+              Object.entries(modes.light).map(([shade, value]) =>
+                `            --color-${color}-${shade}: ${value};`
+              )
+            ).join("\n")
+
+          const unthemedLines = Object.entries(resolvedColors).flatMap(([color, modes]) => {
+            const u = modes.unthemed
+            return Object.entries(u).map(([shade, value]) =>
+              `            --color-${color}-${shade}-l: ${value};`
+            )
+          }).join("\n")
+
+          const darkLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
+              Object.entries(modes.dark).filter(([shade, value]) =>
+                modes.light[shade] !== value
+              ).map(([shade, value]) =>
                 `            --color-${color}-${shade}: ${value};`
               )
             ).join("\n")
@@ -314,7 +398,8 @@ export default definePreset((options?: RimelightPresetOptions) => {
             --font-sans: "Noto Sans", sans-serif;
             --font-serif: "Noto Serif", serif;
             --font-mono: "Noto Sans Mono", monospace;
-${shadeLines}
+${lightLines}
+${unthemedLines}
           }
 
           .dark {
@@ -382,6 +467,7 @@ ${shadeLines}
             --color-hover: #374151;
             --color-destructive-subtle: #451a1a;
             --color-accent-subtle: #1e293b;
+${darkLines}
           }
 
           * {

@@ -45,9 +45,6 @@
 
   --text-white: #f5f5f5;
   --text-black: #0a0a0a;
-
-  --color-css-override-500: #00cc88;
-  --color-css-override-600: #009966;
 }
 
 html:root {

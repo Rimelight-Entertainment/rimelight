@@ -117,24 +117,48 @@ const ctaLinks = [
 
     <div class="flex justify-center py-xl">
         <div class="flex flex-wrap gap-md items-center justify-center">
-            <RLAButton label="Blurple Test" color="blurple" variant="solid" trailingIcon="i-lucide-palette" />
+            <span class="text-sm font-bold w-full text-center opacity-60">Phase 3 — Color Registration</span>
 
-            <!-- blagenta-374 (single arbitrary shade, defined in astro.config.ts) -->
-            <button class="bg-blagenta-374 text-white px-4 py-2 rounded-md font-medium h-9 text-sm inline-flex items-center justify-center gap-4xs">
-                Blagenta 374 ✓
-            </button>
+            <!-- blurple (mode-aware: different in light vs dark) -->
+            <RLAButton label="Blurple" color="blurple" variant="solid" />
 
-            <!-- nonexistent (not registered — should be blank/broken) -->
-            <RLAButton label="Nonexistent (expect blank)" color="nonexistent" variant="solid" />
-
-            <!-- grand-tale-primary (custom color from config) -->
+            <!-- grand-tale-primary (mode-aware with dark values) -->
             <RLAButton label="Grand Tale Primary" color="grand-tale-primary" variant="solid" />
 
-            <!-- uno-override (values from uno.config.ts preflight) -->
-            <RLAButton label="Uno Override" color="uno-override" variant="solid" />
+            <!-- blagenta-374 (single arbitrary shade) -->
+            <button class="bg-blagenta-374 text-white px-4 py-2 rounded-md font-medium h-9 text-sm inline-flex items-center justify-center gap-4xs">
+                Blagenta 374
+            </button>
 
-            <!-- css-override (values from global.css) -->
-            <RLAButton label="CSS Override" color="css-override" variant="solid" />
+            <!-- nonexistent (not registered — expect blank/broken) -->
+            <RLAButton label="Nonexistent" color="nonexistent" variant="solid" />
+        </div>
+    </div>
+
+    <div class="flex justify-center py-xl">
+        <div class="flex flex-wrap gap-md items-center justify-center">
+            <span class="text-sm font-bold w-full text-center opacity-60">Phase 4 — Theme Awareness</span>
+
+            <!-- flat-test: flat format, same everywhere -->
+            <RLAButton label="Flat (same in both)" color="flat-test" variant="solid" />
+
+            <!-- mode-aware: light + dark defined, adapts -->
+            <RLAButton label="Mode Aware" color="mode-aware" variant="solid" />
+
+            <!-- mode-aware + unthemed: pinned to light -->
+            <RLAButton label="Mode Aware (unthemed)" color="mode-aware" variant="solid" unthemed={true} />
+
+            <!-- mode-pinned: has explicit unthemed value -->
+            <RLAButton label="Mode Pinned" color="mode-pinned" variant="solid" />
+
+            <!-- mode-pinned + unthemed: uses explicit unthemed value -->
+            <RLAButton label="Mode Pinned (unthemed)" color="mode-pinned" variant="solid" unthemed={true} />
+
+            <!-- no-dark: only light defined, dark falls back to light -->
+            <RLAButton label="No Dark (falls back)" color="no-dark" variant="solid" />
+
+            <!-- no-light: only dark defined, no flat → blank in light mode -->
+            <RLAButton label="No Light (blank in light)" color="no-light" variant="solid" />
         </div>
     </div>
 </AppLayout>
