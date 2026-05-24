@@ -10,11 +10,22 @@ export const createProgressTheme = (colors: string[] = defaultColors) =>
       indicator: "h-full w-full flex-1 transition-all duration-300 ease-in-out"
     },
     variants: {
-      color: Object.fromEntries(colors.map((color) => [color, { indicator: `bg-${color}-500` }])),
+      color: Object.fromEntries(colors.map((color) => [
+        color,
+        {
+          root: `rl-color-${color}`,
+          indicator: `bg-[var(--rl-bg)]`
+        }
+      ])),
       size: {
         sm: { root: "h-1.5" },
         md: { root: "h-3" },
         lg: { root: "h-5" }
+      },
+      theme: {
+        flat: { root: "rl-flat" },
+        light: { root: "rl-light" },
+        dark: { root: "rl-dark" }
       }
     },
     defaultVariants: {

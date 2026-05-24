@@ -19,7 +19,8 @@ export const createCheckboxTheme = (colors: string[] = defaultColors) =>
       color: Object.fromEntries(colors.map((color) => [
         color,
         {
-          box: `peer-checked:bg-${color}-500 peer-checked:border-${color}-500 focus-within:ring-${color}-500/50`
+          root: `rl-color-${color}`,
+          box: `peer-checked:bg-[var(--rl-bg)] peer-checked:border-[var(--rl-border)] focus-within:ring-[var(--rl-ring)]/50`
         }
       ])),
       size: {
@@ -30,6 +31,11 @@ export const createCheckboxTheme = (colors: string[] = defaultColors) =>
       checked: {
         true: { indicator: "scale-100" },
         false: { indicator: "scale-0" }
+      },
+      theme: {
+        flat: { root: "rl-flat" },
+        light: { root: "rl-light" },
+        dark: { root: "rl-dark" }
       }
     },
     defaultVariants: {

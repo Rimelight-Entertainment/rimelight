@@ -19,7 +19,8 @@ export const createSwitchTheme = (colors: string[] = defaultColors) =>
       color: Object.fromEntries(colors.map((color) => [
         color,
         {
-          track: `peer-checked:bg-${color}-500 focus-within:ring-${color}-500/50`
+          root: `rl-color-${color}`,
+          track: `peer-checked:bg-[var(--rl-bg)] focus-within:ring-[var(--rl-ring)]/50`
         }
       ])),
       size: {
@@ -30,6 +31,11 @@ export const createSwitchTheme = (colors: string[] = defaultColors) =>
       checked: {
         true: { thumb: "translate-x-full" },
         false: { thumb: "translate-x-0" }
+      },
+      theme: {
+        flat: { root: "rl-flat" },
+        light: { root: "rl-light" },
+        dark: { root: "rl-dark" }
       }
     },
     compoundVariants: [

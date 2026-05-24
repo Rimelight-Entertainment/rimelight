@@ -20,6 +20,10 @@ export interface AlertProps {
    */
   icon?: string
   /**
+   * Theme mode override — pins colors to flat, light, or dark mode.
+   */
+  theme?: "flat" | "light" | "dark"
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

@@ -15,6 +15,7 @@ const {
   title,
   description,
   icon,
+  theme,
   ui: uiProp,
   class: className,
   ...rest
@@ -26,6 +27,7 @@ const classes = resolveClasses(alert, {
   variant,
   color,
   hasIcon: isIcon,
+  theme
 }, useUi("alert", uiProp), className)
 ---
 <div

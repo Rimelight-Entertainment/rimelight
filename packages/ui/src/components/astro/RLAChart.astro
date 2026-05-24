@@ -20,6 +20,9 @@ const {
 
 const classes = resolveClasses(chart, {}, useUi("chart", uiProp), className)
 
+// Unique instance ID to prevent CSS collisions between multiple charts
+const instanceId = Math.random().toString(36).substring(2, 8)
+
 // Compute derived values on the server so we don't do heavy JS on the client
 const max = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1
 const total = data.reduce((sum, d) => sum + d.value, 0)
@@ -36,6 +39,21 @@ const palette = [
 
 const getColor = (item: ChartDataPoint, index: number) =>
   item.color ?? palette[index % palette.length]
+
+// Strip angle brackets from color values to prevent XSS via </style> breakout
+const cssColor = (item: ChartDataPoint, index: number) =>
+  getColor(item, index).replace(/[<>]/g, "")
+
+// Build per-item CSS rules to avoid inline styles (CSP compliance)
+const itemCssRules: string[] = []
+data.forEach((item, i) => {
+  if (type === "bar") {
+    const pct = max > 0 ? (item.value / max) * 100 : 0
+    itemCssRules.push(`.rlc-${instanceId}-b-${i}{height:${pct}%;background:${cssColor(item, i)};min-height:4px;width:100%}`)
+  }
+  itemCssRules.push(`.rlc-${instanceId}-s-${i}{background:${cssColor(item, i)}}`)
+})
+const chartItemStyles = itemCssRules.join("")
 
 // Build pie/donut SVG path segments
 const PIE_R = 80
@@ -83,12 +101,20 @@ const areaPath = linePoints.length > 0
   : ""
 ---
 
-<div class={classes.root} data-slot="root" style={`min-height:${height}px`} {...rest}>
+<style define:vars={{ chartH: `${height}px`, chartInnerH: `${height - 60}px` }}>
+  [data-slot="root"] { min-height: var(--chart-h); }
+  [data-slot="container"] { height: var(--chart-inner-h); gap: 6px; align-items: flex-end; }
+  .rla-chart-line-wrap { height: var(--chart-inner-h); }
+  .rla-chart-pie-wrap { height: var(--chart-inner-h); }
+</style>
+<style set:html={chartItemStyles}></style>
+
+<div class={classes.root} data-slot="root" {...rest}>
   {title && <div class={classes.title} data-slot="title">{title}</div>}
 
   {/* Bar Chart */}
   {type === "bar" && (
-    <div class={classes.container} data-slot="container" style={`height:${height - 60}px;gap:6px;align-items:flex-end`}>
+    <div class={classes.container} data-slot="container">
       {data.map((item, i) => {
         const pct = max > 0 ? (item.value / max) * 100 : 0
         return (
@@ -97,8 +123,7 @@ const areaPath = linePoints.length > 0
               {item.value}
             </span>
             <div
-              class={classes.bar}
-              style={`height:${pct}%;background:${getColor(item, i)};min-height:4px;width:100%;`}
+              class={`${classes.bar} rlc-${instanceId}-b-${i}`}
               title={`${item.label}: ${item.value}`}
             />
             <span class={classes.axis}>{item.label}</span>
@@ -110,7 +135,7 @@ const areaPath = linePoints.length > 0
 
   {/* Line / Area Chart */}
   {(type === "line" || type === "area") && (
-    <div class="relative w-full" style={`height:${height - 60}px`}>
+    <div class="relative w-full rla-chart-line-wrap">
       <svg
         class={classes.svg}
         viewBox={`0 0 ${LINE_W} ${LINE_H}`}
@@ -155,7 +180,7 @@ const areaPath = linePoints.length > 0
 
   {/* Pie / Donut Chart */}
   {(type === "pie" || type === "donut") && (
-    <div class="flex items-center gap-6 justify-center" style={`height:${height - 60}px`}>
+    <div class="flex items-center gap-6 justify-center rla-chart-pie-wrap">
       <svg
         viewBox="0 0 200 200"
         class="h-full w-auto max-h-48"
@@ -187,8 +212,7 @@ const areaPath = linePoints.length > 0
         {data.map((item, i) => (
           <div class="flex items-center gap-2 text-xs text-muted-foreground">
             <span
-              class="size-3 rounded-sm shrink-0"
-              style={`background:${getColor(item, i)}`}
+              class={`size-3 rounded-sm shrink-0 rlc-${instanceId}-s-${i}`}
             />
             <span>{item.label}</span>
             <span class="ml-1 font-mono text-foreground">{item.value}</span>
@@ -206,7 +230,7 @@ const areaPath = linePoints.length > 0
     <div class={classes.legend} data-slot="legend">
       {data.map((item, i) => (
         <div class="flex items-center gap-1.5">
-          <span class="size-2.5 rounded-full shrink-0" style={`background:${getColor(item, i)}`} />
+          <span class={`size-2.5 rounded-full shrink-0 rlc-${instanceId}-s-${i}`} />
           <span>{item.label}</span>
         </div>
       ))}

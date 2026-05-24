@@ -23,6 +23,11 @@ export const createAlertTheme = (colors: string[] = defaultColors) =>
       hasIcon: {
         true: { icon: "block" },
         false: { icon: "hidden" }
+      },
+      theme: {
+        flat: { root: "rl-flat" },
+        light: { root: "rl-light" },
+        dark: { root: "rl-dark" }
       }
     },
     compoundVariants: [
@@ -30,14 +35,14 @@ export const createAlertTheme = (colors: string[] = defaultColors) =>
         variant: "solid" as const,
         color,
         classNames: {
-          root: `bg-${color}-500 text-white border-transparent`
+          root: `rl-color-${color} bg-[var(--rl-bg)] text-white border-transparent`
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
         color,
         classNames: {
-          root: `border-${color}-500/20 text-${color}-600 bg-${color}-500/5`
+          root: `rl-color-${color} border-[var(--rl-border)]/20 text-[var(--rl-text)] bg-[var(--rl-bg)]/5`
         }
       }))
     ],

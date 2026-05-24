@@ -8,6 +8,10 @@ export interface SpinnerProps {
    */
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "current"
   /**
+   * Theme mode override — pins colors to flat, light, or dark mode.
+   */
+  theme?: "flat" | "light" | "dark"
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

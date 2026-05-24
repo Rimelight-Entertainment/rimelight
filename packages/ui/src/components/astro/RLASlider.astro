@@ -16,23 +16,29 @@ const {
   step = 1,
   name,
   color = "primary",
+  theme,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as SliderProps
 
 const classes = resolveClasses(slider, {
-  color
+  color,
+  theme
 }, useUi("slider", uiProp), className)
 
 const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100))
 ---
+<style define:vars={{ sliderPct: `${percentage}%` }}>
+  [data-slot="range"] { left: 0%; right: calc(100% - var(--slider-pct)); }
+  [data-slot="thumb"] { left: calc(var(--slider-pct) - 9px); }
+</style>
+
 <div class={classes.root} data-slot="slider-root" {...rest}>
   <div class={classes.track} data-slot="track">
     <div
       class={classes.range}
       data-slot="range"
-      style={{ left: "0%", right: `${100 - percentage}%` }}
     />
   </div>
   <input
@@ -48,6 +54,5 @@ const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100
   <div
     class={classes.thumb}
     data-slot="thumb"
-    style={{ left: `calc(${percentage}% - 9px)` }}
   />
 </div>

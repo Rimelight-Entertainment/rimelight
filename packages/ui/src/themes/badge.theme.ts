@@ -25,6 +25,11 @@ export const createBadgeTheme = (colors: string[] = defaultColors) =>
         square: { root: "rounded-sm" },
         rounded: { root: "rounded-md" },
         pill: { root: "rounded-full" }
+      },
+      theme: {
+        flat: { root: "rl-flat" },
+        light: { root: "rl-light" },
+        dark: { root: "rl-dark" }
       }
     },
     compoundVariants: [
@@ -32,21 +37,21 @@ export const createBadgeTheme = (colors: string[] = defaultColors) =>
         variant: "solid" as const,
         color,
         classNames: {
-          root: `bg-${color}-500 text-white hover:bg-${color}-600`
+          root: `rl-color-${color} bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)]`
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
         color,
         classNames: {
-          root: `border-${color}-500/20 text-${color}-600 bg-transparent hover:bg-${color}-500/5`
+          root: `rl-color-${color} border-[var(--rl-border)]/20 text-[var(--rl-text)] bg-transparent hover:bg-[var(--rl-bg)]/5`
         }
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
         color,
         classNames: {
-          root: `text-${color}-600 bg-${color}-500/10 hover:bg-${color}-500/20`
+          root: `rl-color-${color} text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/20`
         }
       }))
     ],

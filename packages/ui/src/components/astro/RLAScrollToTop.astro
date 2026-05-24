@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ScrollToTopProps } from "../../types"
-import scrollToTopTheme from "../../themes/scroll-to-top.theme"
+import scrollToTopThemeDefault, { createScrollToTopTheme } from "../../themes/scroll-to-top.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const scrollToTopTheme = uiConfig.colors ? createScrollToTopTheme(uiConfig.colors) : scrollToTopThemeDefault
 
 const scrollToTop = scv(scrollToTopTheme)
 
@@ -12,15 +16,20 @@ const {
   duration = 0.1,
   threshold = 200,
   showProgress = false,
+  theme,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as ScrollToTopProps
 
-const classes = resolveClasses(scrollToTop, { color }, useUi("scrollToTop", uiProp), className)
+const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop", uiProp), className)
 
 const circumference = 2 * Math.PI * 45
 const percentPx = circumference / 100
+
+const gaugeStroke = `var(--color-${color}-500)`
+const gaugeSecondaryStroke = `var(--color-${color}-900)`
+const gaugeFill = `var(--color-${color}-950)`
 ---
 
 <div
@@ -42,7 +51,6 @@ const percentPx = circumference / 100
           cx="50"
           cy="50"
           r="45"
-          fill="var(--color-primary-950)"
           stroke-width={progressWidth}
           stroke-dashoffset="0"
           stroke-linecap="round"
@@ -59,7 +67,6 @@ const percentPx = circumference / 100
           stroke-linecap="round"
           class="gauge-primary-stroke opacity-100"
           data-progress-circle
-          style={`--stroke-percent: 0; --percent-to-px: ${percentPx}px; --circumference: ${circumference}; --duration: ${duration}s`}
         />
         )}
       </svg>
@@ -125,7 +132,7 @@ const percentPx = circumference / 100
   })
 </script>
 
-<style>
+<style define:vars={{ gaugeStroke, gaugeSecondaryStroke, gaugeFill }}>
   .rla-scroll-to-top {
     opacity: 0;
     pointer-events: none;
@@ -142,7 +149,7 @@ const percentPx = circumference / 100
   }
 
   .gauge-primary-stroke {
-    stroke: var(--color-primary-500);
+    stroke: var(--gauge-stroke);
     stroke-dasharray: calc(var(--stroke-percent, 0) * var(--percent-to-px, 2.826px)) var(--circumference, 282.6);
     transition: stroke-dasharray var(--duration, 0.1s) ease, stroke var(--duration, 0.1s) ease;
     transform: rotate(-90deg);
@@ -151,9 +158,20 @@ const percentPx = circumference / 100
   }
 
   .gauge-secondary-stroke {
-    stroke: var(--color-primary-900);
+    stroke: var(--gauge-secondary-stroke);
     stroke-dasharray: 282.6;
     transform: rotate(-90deg);
     transform-origin: center;
+  }
+
+  circle[r="45"]:first-child {
+    fill: var(--gauge-fill);
+  }
+
+  [data-progress-circle] {
+    --stroke-percent: 0;
+    --percent-to-px: 2.826px;
+    --circumference: 282.6;
+    --duration: 0.1s;
   }
 </style>

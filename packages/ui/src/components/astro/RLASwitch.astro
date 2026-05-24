@@ -17,6 +17,7 @@ const {
   label,
   color = "primary",
   size = "md",
+  theme,
   ui: uiProp,
   class: className,
   ...rest
@@ -25,7 +26,8 @@ const {
 const classes = resolveClasses(switchFn, {
   color,
   size,
-  checked
+  checked,
+  theme
 }, useUi("switch", uiProp), className);
 ---
 <label class={classes.root} data-slot="root">

@@ -5,6 +5,12 @@ export default defineTheme({
   base: {
     root: ""
   },
-  variants: {},
+  variants: {
+    theme: {
+      flat: { root: "rl-flat" },
+      light: { root: "rl-light" },
+      dark: { root: "rl-dark" }
+    }
+  },
   defaultVariants: {}
 })

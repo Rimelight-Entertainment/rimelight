@@ -202,18 +202,18 @@ export default definePreset((options?: RimelightPresetOptions) => {
         "--rl-border": "var(--rl-border-f)",
       }],
       ["rl-light", {
-        "--rl-bg": "var(--rl-bg-l)",
-        "--rl-bg-hover": "var(--rl-bg-hover-l)",
-        "--rl-text": "var(--rl-text-l)",
-        "--rl-ring": "var(--rl-ring-l)",
-        "--rl-border": "var(--rl-border-l)",
+        "--rl-bg": "var(--rl-bg-l, var(--rl-bg-f))",
+        "--rl-bg-hover": "var(--rl-bg-hover-l, var(--rl-bg-hover-f))",
+        "--rl-text": "var(--rl-text-l, var(--rl-text-f))",
+        "--rl-ring": "var(--rl-ring-l, var(--rl-ring-f))",
+        "--rl-border": "var(--rl-border-l, var(--rl-border-f))",
       }],
       ["rl-dark", {
-        "--rl-bg": "var(--rl-bg-d)",
-        "--rl-bg-hover": "var(--rl-bg-hover-d)",
-        "--rl-text": "var(--rl-text-d)",
-        "--rl-ring": "var(--rl-ring-d)",
-        "--rl-border": "var(--rl-border-d)",
+        "--rl-bg": "var(--rl-bg-d, var(--rl-bg-f))",
+        "--rl-bg-hover": "var(--rl-bg-hover-d, var(--rl-bg-hover-f))",
+        "--rl-text": "var(--rl-text-d, var(--rl-text-f))",
+        "--rl-ring": "var(--rl-ring-d, var(--rl-ring-f))",
+        "--rl-border": "var(--rl-border-d, var(--rl-border-f))",
       }]
     ],
 
@@ -345,15 +345,19 @@ export default definePreset((options?: RimelightPresetOptions) => {
           }).join("\n")
 
           const lightPinnedLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
-              Object.entries(modes.light).map(([shade, value]) =>
-                `            --color-${color}-${shade}-l: ${value};`
-              )
+              Object.entries(modes.light)
+                .filter(([shade, value]) => value !== modes.flat[shade])
+                .map(([shade, value]) =>
+                  `            --color-${color}-${shade}-l: ${value};`
+                )
             ).join("\n")
 
           const darkPinnedLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
-              Object.entries(modes.dark).map(([shade, value]) =>
-                `            --color-${color}-${shade}-d: ${value};`
-              )
+              Object.entries(modes.dark)
+                .filter(([shade, value]) => value !== modes.flat[shade])
+                .map(([shade, value]) =>
+                  `            --color-${color}-${shade}-d: ${value};`
+                )
             ).join("\n")
 
           const darkLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>

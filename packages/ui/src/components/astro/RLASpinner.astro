@@ -12,6 +12,7 @@ const spinner = scv(spinnerTheme)
 const {
   size = "md",
   color = "current",
+  theme,
   ui: uiProp,
   class: className,
   ...rest
@@ -19,7 +20,8 @@ const {
 
 const classes = resolveClasses(spinner, {
   size,
-  color
+  color,
+  theme
 }, useUi("spinner", uiProp), className)
 ---
 <div class={classes.root} data-slot="root" {...rest} />

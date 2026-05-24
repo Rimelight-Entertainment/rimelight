@@ -15,10 +15,16 @@ export const createSliderTheme = (colors: string[] = defaultColors) =>
       color: Object.fromEntries(colors.map((color) => [
         color,
         {
-          range: `bg-${color}-500`,
-          thumb: `focus-visible:ring-${color}-500/50 hover:border-${color}-500`
+          root: `rl-color-${color}`,
+          range: `bg-[var(--rl-bg)]`,
+          thumb: `focus-visible:ring-[var(--rl-ring)]/50 hover:border-[var(--rl-border)]`
         }
-      ]))
+      ])),
+      theme: {
+        flat: { root: "rl-flat" },
+        light: { root: "rl-light" },
+        dark: { root: "rl-dark" }
+      }
     },
     defaultVariants: {
       color: "primary"
