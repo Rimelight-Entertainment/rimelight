@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { siteConfig } from '@/site.config';
 import { useI18nAsync } from 'astro-nanostores-i18n:runtime';
-import RLASection from "@rimelight/ui/components/astro/RLASection.astro"
+import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro"
 import { Image } from 'astro:assets';
 
 const posts = (await getCollection('blog')).toSorted(
@@ -36,7 +36,7 @@ const messages = await useI18nAsync('blog', {
 			const categoryPosts = groupedPosts[category];
 			if (!categoryPosts || categoryPosts.length === 0) return null;
 			return (
-				<RLASection title={(messages.categories as unknown as Record<string, string>)[category]}>
+				<RLAPageSection title={(messages.categories as unknown as Record<string, string>)[category]}>
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{
 							categoryPosts.map((post) => (
@@ -80,7 +80,7 @@ const messages = await useI18nAsync('blog', {
 							))
 						}
 					</div>
-				</RLASection>
+				</RLAPageSection>
 			);
 		})}
 </AppLayout>

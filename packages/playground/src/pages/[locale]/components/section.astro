@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
-import RLASection from "@rimelight/ui/components/astro/RLASection.astro";
+import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
 
@@ -17,7 +17,7 @@ const messages = useI18n("sectionPage", {
     title: "Section Component",
     description: "Section Component Showcase",
     heading: "Section",
-    tabAstro: "Astro (RLASection)",
+    tabAstro: "Astro (RLAPageSection)",
     tabVue: "Vue (RLVSection)",
     defaultVariant: "Default Variant",
     heroVariant: "Hero Variant",
@@ -98,7 +98,7 @@ const messages = useI18n("sectionPage", {
         <h2 class="text-2xl font-semibold">{messages.defaultVariant}</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.defaultVariantDesc}</p>
         <div class="border border-black p-md">
-          <RLASection
+          <RLAPageSection
               title={messages.defaultSectionTitle}
               description={messages.defaultSectionDesc}
               links={[
@@ -107,7 +107,7 @@ const messages = useI18n("sectionPage", {
               ]}
           />
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   title="Default Section"
   description="This is a default section with a title and description."
   links={[
@@ -122,7 +122,7 @@ const messages = useI18n("sectionPage", {
         <h2 class="text-2xl font-semibold">{messages.heroVariant}</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.heroVariantDesc}</p>
         <div class="border border-black p-md">
-          <RLASection
+          <RLAPageSection
               variant="hero"
               headline={messages.introducingRimelight}
               title={messages.heroSectionTitle}
@@ -133,7 +133,7 @@ const messages = useI18n("sectionPage", {
               ]}
           />
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   variant="hero"
   headline="Introducing Rimelight"
   title="Build Faster with Our Component Library"
@@ -150,7 +150,7 @@ const messages = useI18n("sectionPage", {
         <h2 class="text-2xl font-semibold">{messages.withIcon}</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withIconDesc}</p>
         <div class="border border-black p-md">
-          <RLASection
+          <RLAPageSection
               icon="i-lucide-rocket"
               title={messages.launchYourProject}
               description={messages.launchDesc}
@@ -159,7 +159,7 @@ const messages = useI18n("sectionPage", {
               ]}
           />
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   icon="i-lucide-rocket"
   title="Launch Your Project"
   description="Get started quickly with our pre-built components and templates."
@@ -178,7 +178,7 @@ const messages = useI18n("sectionPage", {
           <div>
             <h3 class="text-lg font-medium mb-2">{messages.solidDefault}</h3>
             <div class="border border-black p-md mb-2">
-              <RLASection
+              <RLAPageSection
                   variant="cta"
                   title={messages.readyToGetStarted}
                   description={messages.joinThousands}
@@ -187,7 +187,7 @@ const messages = useI18n("sectionPage", {
                   ]}
               />
             </div>
-            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   variant="cta"
   title="Ready to Get Started?"
   description="Join thousands of developers building with Rimelight."
@@ -200,7 +200,7 @@ const messages = useI18n("sectionPage", {
           <div>
             <h3 class="text-lg font-medium mb-2">{messages.outline}</h3>
             <div class="border border-black p-md mb-2">
-              <RLASection
+              <RLAPageSection
                   variant="cta"
                   ctaVariant="outline"
                   title={messages.readyToGetStarted}
@@ -210,7 +210,7 @@ const messages = useI18n("sectionPage", {
                   ]}
               />
             </div>
-            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   variant="cta"
   ctaVariant="outline"
   title="Ready to Get Started?"
@@ -224,7 +224,7 @@ const messages = useI18n("sectionPage", {
           <div>
             <h3 class="text-lg font-medium mb-2">{messages.soft}</h3>
             <div class="border border-black p-md mb-2">
-              <RLASection
+              <RLAPageSection
                   variant="cta"
                   ctaVariant="soft"
                   title={messages.tryItOut}
@@ -234,7 +234,7 @@ const messages = useI18n("sectionPage", {
                   ]}
               />
             </div>
-            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+            <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   variant="cta"
   ctaVariant="soft"
   title="Try It Out"
@@ -252,7 +252,7 @@ const messages = useI18n("sectionPage", {
         <h2 class="text-2xl font-semibold">{messages.horizontalOrientation}</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.horizontalOrientationDesc}</p>
         <div class="border border-black p-md">
-          <RLASection
+          <RLAPageSection
               orientation="horizontal"
               title={messages.twoColumnLayout}
               description={messages.horizontalDesc}
@@ -260,9 +260,9 @@ const messages = useI18n("sectionPage", {
             <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
               <span class="text-muted text-sm">{messages.defaultSlotContent}</span>
             </div>
-          </RLASection>
+          </RLAPageSection>
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   orientation="horizontal"
   title="Two Column Layout"
   description="Use horizontal orientation for side-by-side content."
@@ -270,7 +270,7 @@ const messages = useI18n("sectionPage", {
   <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
     <span class="text-muted text-sm">Default slot content</span>
   </div>
-</RLASection>`}</code></pre>
+</RLAPageSection>`}</code></pre>
       </section>
 
       <!-- Reversed -->
@@ -278,7 +278,7 @@ const messages = useI18n("sectionPage", {
         <h2 class="text-2xl font-semibold">{messages.reversedOrder}</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.reversedOrderDesc}</p>
         <div class="border border-black p-md">
-          <RLASection
+          <RLAPageSection
               orientation="horizontal"
               reverse
               title={messages.reversedLayout}
@@ -287,9 +287,9 @@ const messages = useI18n("sectionPage", {
             <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
               <span class="text-muted text-sm">{messages.defaultSlotContentReversed}</span>
             </div>
-          </RLASection>
+          </RLAPageSection>
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   orientation="horizontal"
   reverse
   title="Reversed Layout"
@@ -298,7 +298,7 @@ const messages = useI18n("sectionPage", {
   <div class="bg-elevated rounded-lg p-8 flex items-center justify-center">
     <span class="text-muted text-sm">Default slot content (now first)</span>
   </div>
-</RLASection>`}</code></pre>
+</RLAPageSection>`}</code></pre>
       </section>
 
       <!-- With Background Slot -->
@@ -306,7 +306,7 @@ const messages = useI18n("sectionPage", {
         <h2 class="text-2xl font-semibold">{messages.withBackgroundSlot}</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.withBackgroundSlotDesc}</p>
         <div class="border border-black p-md">
-          <RLASection
+          <RLAPageSection
               title={messages.beautifulBackgrounds}
               description={messages.backgroundDesc}
               links={[
@@ -314,9 +314,9 @@ const messages = useI18n("sectionPage", {
               ]}
           >
             <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10" />
-          </RLASection>
+          </RLAPageSection>
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection
   title="Beautiful Backgrounds"
   description="Use the background slot to add gradients or other effects."
   links={[
@@ -324,7 +324,7 @@ const messages = useI18n("sectionPage", {
   ]}
 >
   <div slot="background" class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20 -z-10" />
-</RLASection>`}</code></pre>
+</RLAPageSection>`}</code></pre>
       </section>
 
       <!-- Slots Demo -->
@@ -332,7 +332,7 @@ const messages = useI18n("sectionPage", {
         <h2 class="text-2xl font-semibold">{messages.namedSlots}</h2>
         <p class="text-gray-600 dark:text-gray-400 mb-4">{messages.namedSlotsDesc}</p>
         <div class="border border-black p-md">
-          <RLASection>
+          <RLAPageSection>
             <div slot="leading" class="flex items-center">
               <span class="i-lucide-sparkles size-10 shrink-0 text-primary" />
             </div>
@@ -347,9 +347,9 @@ const messages = useI18n("sectionPage", {
             </Fragment>
             <p slot="body" class="text-muted">{messages.bodySlotContent}</p>
             <RLAButton slot="links" label={messages.action} variant="solid" color="primary" />
-          </RLASection>
+          </RLAPageSection>
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLASection>
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAPageSection>
   <div slot="leading" class="flex items-center">
     <span class="i-lucide-sparkles size-10 shrink-0 text-primary" />
   </div>
@@ -364,7 +364,7 @@ const messages = useI18n("sectionPage", {
   </Fragment>
   <p slot="body" class="text-muted">This content goes in the body slot.</p>
   <RLAButton slot="links" label="Action" variant="solid" color="primary" />
-</RLASection>`}</code></pre>
+</RLAPageSection>`}</code></pre>
       </section>
 
     </div>

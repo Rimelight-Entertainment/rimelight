@@ -4,7 +4,7 @@ import { siteConfig } from "@/site.config";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
 import { getCollection } from "astro:content";
-import RLASection from "@rimelight/ui/components/astro/RLASection.astro";
+import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
 import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import { BlogPosts, BlogPost } from "@rimelight/ui/nuxt";
@@ -56,7 +56,7 @@ const ctaLinks = [
 ---
 
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
-    <RLASection
+    <RLAPageSection
             variant="hero"
             reverse={true}
             title={messages.heroTitle}
@@ -64,9 +64,9 @@ const ctaLinks = [
             links={heroLinks}
     >
         <RLALogo class="pointer-events-none h-64 w-auto text-white" variant="logomark" mode="white" />
-    </RLASection>
+    </RLAPageSection>
 
-    <RLASection
+    <RLAPageSection
             orientation="vertical"
             title={messages.postsTitle}
             description={messages.postsDesc}
@@ -105,9 +105,9 @@ const ctaLinks = [
                     />
             )}
         </div>
-    </RLASection>
+    </RLAPageSection>
 
-    <RLASection
+    <RLAPageSection
             variant="cta"
             ctaVariant="solid"
             title={messages.ctaTitle}
