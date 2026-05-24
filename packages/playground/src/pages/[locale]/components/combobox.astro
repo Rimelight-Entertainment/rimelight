@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
-import RLACombobox from "@rimelight/ui/components/astro/RLACombobox.astro";
+import RLAInputMenu from "@rimelight/ui/components/astro/RLAInputMenu.astro";
 
 const activeLocale = Astro.currentLocale ?? 'en';
 currentLocale.set(activeLocale);
@@ -31,7 +31,7 @@ const messages = useI18n("comboboxPage", {
       <section class="space-y-4">
         <h2 class="text-2xl font-semibold">{messages.default}</h2>
         <div class="border border-gray-200 dark:border-gray-800 p-6 rounded-xl bg-white dark:bg-black max-w-xs">
-          <RLACombobox items={[
+          <RLAInputMenu items={[
             { value: "astro", label: "Astro" },
             { value: "nextjs", label: "Next.js" },
             { value: "nuxt", label: "Nuxt" },
@@ -39,7 +39,7 @@ const messages = useI18n("comboboxPage", {
             { value: "svelte", label: "Svelte" }
           ]} placeholder="Select framework..." />
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLACombobox items={[
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAInputMenu items={[
   { value: "astro", label: "Astro" },
   { value: "nextjs", label: "Next.js" }
 ]} placeholder="Select framework..." />`}</code></pre>

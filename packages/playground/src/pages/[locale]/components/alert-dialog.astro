@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
-import RLAAlertDialog from "@rimelight/ui/components/astro/RLAAlertDialog.astro";
+import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 
 const activeLocale = Astro.currentLocale ?? 'en';
@@ -33,32 +33,32 @@ const messages = useI18n("alertdialogPage", {
         <h2 class="text-2xl font-semibold">{messages.default}</h2>
         <div class="border border-gray-200 dark:border-gray-800 p-6 rounded-xl bg-white dark:bg-black">
           <div class="flex flex-wrap gap-4">
-            <RLAAlertDialog
+            <RLAConfirm
               title="Are you absolutely sure?"
               description="This action cannot be undone. This will permanently delete your account and remove your data from our servers."
               actionLabel="Continue"
               cancelLabel="Cancel"
             >
               <RLAButton slot="trigger" variant="solid" color="error">Delete Account</RLAButton>
-            </RLAAlertDialog>
-            <RLAAlertDialog
+            </RLAConfirm>
+            <RLAConfirm
               title="Discard changes?"
               description="All unsaved changes will be lost."
               actionLabel="Discard"
               cancelLabel="Keep editing"
             >
               <RLAButton slot="trigger" variant="outline">Discard Changes</RLAButton>
-            </RLAAlertDialog>
+            </RLAConfirm>
           </div>
         </div>
-        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAAlertDialog
+        <pre class="bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono border border-gray-800 my-4"><code>{`<RLAConfirm
   title="Are you absolutely sure?"
   description="This action cannot be undone."
   actionLabel="Continue"
   cancelLabel="Cancel"
 >
   <RLAButton slot="trigger" color="error">Delete Account</RLAButton>
-</RLAAlertDialog>`}</code></pre>
+</RLAConfirm>`}</code></pre>
       </section>
     </div>
 </AppLayout>

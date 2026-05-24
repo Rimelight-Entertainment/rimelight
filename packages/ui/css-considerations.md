@@ -5,10 +5,14 @@
 The UI package's `src/styles/index.css` bundles:
 
 ```css
-@import "tailwindcss";     /* transitive dep of @nuxt/ui (transitional) */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);     /* Tailwind theme vars */
+@import "tailwindcss/utilities.css" layer(utilities); /* Tailwind utilities */
 @import "@nuxt/ui";        /* Nuxt UI base styles (re-export passthrough) */
 @import "./prism.css";     /* Prism.js syntax highlighting theme */
 ```
+
+Note: Tailwind's preflight (`preflight.css`) is **intentionally omitted** — it conflicts with Starlight's CSS reset on bare HTML elements. Only theme variables and utility classes are imported, which all `@nuxt/ui` components need.
 
 Consuming projects import it in their `global.css`:
 
@@ -42,7 +46,7 @@ Internally it returns:
 1. **UnoCSS** (`@unocss/astro`) — with `rimelightUiPreset({ colors })` — generates component variant classes from theme files
 2. **Vue** (`@astrojs/vue`) — required for `@nuxt/ui` re-exported components
 3. **`@nuxt/ui/vite` plugin** — processes Nuxt UI components in the re-export
-4. **`@tailwindcss/vite`** — processes `@import "tailwindcss"` (transitional, goes when `@nuxt/ui` goes)
+4. **`@tailwindcss/vite`** — processes `@import "tailwindcss/..."` imports (preflight skipped for Starlight compat; transitional, goes when `@nuxt/ui` goes)
 5. **Virtual module** (`virtual:rimelight-ui`) — provides merged UI config to components
 6. **SSR / optimizeDeps config** — ensures `@rimelight/ui` and `@nuxt/ui` are properly handled
 
@@ -205,7 +209,7 @@ Single atomic change once functional parity is reached:
 
 1. Replace all remaining Nuxt UI components with `@rimelight/ui` equivalents
 2. Remove `tailwindcss`, `@tailwindcss/vite`, `@nuxt/ui` from `@rimelight/ui`'s `package.json`
-3. Remove `@import "tailwindcss"` and `@import "@nuxt/ui"` from `src/styles/index.css`
+3. Remove `@import "tailwindcss/theme.css"`, `@import "tailwindcss/utilities.css"`, and `@import "@nuxt/ui"` from `src/styles/index.css`
 4. Remove `@nuxt/ui/vite` and `@tailwindcss/vite` plugins from `ui.ts`
 5. Remove `./nuxt` export from `package.json`
 6. Remove `@astrojs/vue` from integration
