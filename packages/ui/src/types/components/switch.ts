@@ -1,3 +1,5 @@
+import type { Theme } from "../theme"
+
 export interface SwitchProps {
   /**
    * Controlled checked state.
@@ -26,7 +28,7 @@ export interface SwitchProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: Theme
   /**
    * Slot-specific CSS class overrides.
    */

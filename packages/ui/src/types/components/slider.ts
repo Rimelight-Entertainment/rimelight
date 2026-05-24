@@ -1,3 +1,5 @@
+import type { Theme } from "../theme"
+
 export interface SliderProps {
   /**
    * The value of the range input.
@@ -26,7 +28,7 @@ export interface SliderProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: Theme
   /**
    * Slot-specific CSS class overrides.
    */

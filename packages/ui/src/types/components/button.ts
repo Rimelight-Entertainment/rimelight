@@ -1,3 +1,5 @@
+import type { Theme } from "../theme"
+
 export interface ButtonProps {
   /**
    * The visual style variant of the button
@@ -62,7 +64,7 @@ export interface ButtonProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: Theme
   /**
    * Slot-specific CSS class overrides.
    */

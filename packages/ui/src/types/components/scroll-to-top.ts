@@ -1,3 +1,5 @@
+import type { Theme } from "../theme"
+
 export interface ScrollToTopProps {
   /**
    * The color scheme applied to the scroll-to-top button.
@@ -22,7 +24,7 @@ export interface ScrollToTopProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: Theme
   /**
    * Slot-specific CSS class overrides.
    */

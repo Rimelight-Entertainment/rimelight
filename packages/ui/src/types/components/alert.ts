@@ -1,3 +1,5 @@
+import type { Theme } from "../theme"
+
 export interface AlertProps {
   /**
    * The visual variant of the alert.
@@ -22,7 +24,7 @@ export interface AlertProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: Theme
   /**
    * Slot-specific CSS class overrides.
    */

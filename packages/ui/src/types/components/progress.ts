@@ -1,3 +1,5 @@
+import type { Theme } from "../theme"
+
 export interface ProgressProps {
   /**
    * Current value of progress (0 to max).
@@ -18,7 +20,7 @@ export interface ProgressProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: Theme
   /**
    * Slot-specific CSS class overrides.
    */

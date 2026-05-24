@@ -1,3 +1,5 @@
+import type { Theme } from "../theme"
+
 export interface SpinnerProps {
   /**
    * The size scale of the spinner.
@@ -10,7 +12,7 @@ export interface SpinnerProps {
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: Theme
   /**
    * Slot-specific CSS class overrides.
    */
