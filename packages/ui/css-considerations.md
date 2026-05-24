@@ -52,7 +52,7 @@ Internally it returns:
 5. **Virtual module** (`virtual:rimelight-ui`) — provides merged UI config to components
 6. **SSR / optimizeDeps config** — ensures `@rimelight/ui` and `@nuxt/ui` are properly handled
 
-No `uno.config.ts` needed in consuming projects — the integration configures everything.
+An optional `uno.config.ts` in consuming projects can override any theme value — it merges on top of the integration's inline config. An empty file is fine; it signals where overrides go.
 
 ---
 
@@ -145,6 +145,16 @@ Component compound variants reference `bg-[var(--rl-bg)]`, `text-[var(--rl-text)
 
 No `@import "tailwindcss"`.
 
+### `uno.config.ts` (optional — for overrides)
+
+```ts
+import { defineConfig } from "unocss"
+
+export default defineConfig({})
+```
+
+File can exist empty or with custom theme overrides. It merges on top of the integration's inline config — file values win.
+
 ### `astro.config.ts`
 
 ```ts
@@ -157,7 +167,7 @@ export default defineConfig({
 })
 ```
 
-No `uno.config.ts`, no `@unocss/astro`, no `@tailwindcss/vite` in the project itself.
+No `@unocss/astro` or `@tailwindcss/vite` in the project itself — all handled by the integration.
 
 ### `package.json`
 
@@ -213,10 +223,15 @@ Not all consuming projects have been updated to the latest patterns yet. Verify 
 - [ ] No `tailwindcss`, `unocss`, `@nuxt/ui`, `@tailwindcss/vite` in direct dependencies
 - [ ] `@astrojs/vue` present (needed for Nuxt UI re-exports)
 
+### `uno.config.ts` (project root)
+
+- [ ] Exists (even if empty) — makes it discoverable that UnoCSS overrides go here
+- [ ] Imports `defineConfig` from `"unocss"`
+
 ### `astro.config.ts`
 
 - [ ] Uses `ui()` integration from `@rimelight/ui/integrations`
-- [ ] No `uno.config.ts` import, no standalone `@unocss/astro` or `@tailwindcss/vite`
+- [ ] No standalone `@unocss/astro` or `@tailwindcss/vite`
 - [ ] Starlight config has `customCss: ["./src/styles/starlight.css"]` (not `global.css`)
 - [ ] Component imports updated to new names (see Component Renames table)
 
