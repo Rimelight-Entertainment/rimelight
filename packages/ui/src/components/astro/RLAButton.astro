@@ -22,7 +22,7 @@ const {
   square = false,
   block = false,
   active = false,
-  unthemed = false,
+  theme,
   activeColor,
   activeVariant,
   ui: uiProp,
@@ -54,7 +54,7 @@ const classes = resolveClasses(button, {
   trailing: isTrailing,
   loading,
   active,
-  unthemed
+  theme
 }, useUi("button", uiProp), className);
 
 const Tag = href ? "a" : "button";

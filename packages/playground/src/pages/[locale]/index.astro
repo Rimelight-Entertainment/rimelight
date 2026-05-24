@@ -145,14 +145,14 @@ const ctaLinks = [
             <!-- mode-aware: light + dark defined, adapts -->
             <RLAButton label="Mode Aware" color="mode-aware" variant="solid" />
 
-            <!-- mode-aware + unthemed: pinned to light -->
-            <RLAButton label="Mode Aware (unthemed)" color="mode-aware" variant="solid" unthemed={true} />
+            <!-- mode-aware + theme flat: pinned to light -->
+            <RLAButton label="Mode Aware (flat)" color="mode-aware" variant="solid" theme="flat" />
 
-            <!-- mode-pinned: has explicit unthemed value -->
+            <!-- mode-pinned: has explicit flat value -->
             <RLAButton label="Mode Pinned" color="mode-pinned" variant="solid" />
 
-            <!-- mode-pinned + unthemed: uses explicit unthemed value -->
-            <RLAButton label="Mode Pinned (unthemed)" color="mode-pinned" variant="solid" unthemed={true} />
+            <!-- mode-pinned + flat: uses explicit flat value -->
+            <RLAButton label="Mode Pinned (flat)" color="mode-pinned" variant="solid" theme="flat" />
 
             <!-- no-dark: only light defined, dark falls back to light -->
             <RLAButton label="No Dark (falls back)" color="no-dark" variant="solid" />

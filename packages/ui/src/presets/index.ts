@@ -15,17 +15,17 @@ const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
 const uiFilesystemGlob = join(__dirname, "../**/*")
 
 type ColorShades = Record<string, string>
-type ColorModeShades = { light?: ColorShades; dark?: ColorShades; unthemed?: ColorShades }
+type ColorModeShades = { light?: ColorShades; dark?: ColorShades; flat?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades
 
-function resolveColorModes(entry: ColorConfigValue): { light: ColorShades; dark: ColorShades; unthemed: ColorShades } {
+function resolveColorModes(entry: ColorConfigValue): { light: ColorShades; dark: ColorShades; flat: ColorShades } {
   const raw = entry as Record<string, unknown>
 
   const modeLight = typeof raw.light === "object" && raw.light !== null ? raw.light as ColorShades : {}
   const modeDark = typeof raw.dark === "object" && raw.dark !== null ? raw.dark as ColorShades : {}
-  const modeUnthemed = typeof raw.unthemed === "object" && raw.unthemed !== null ? raw.unthemed as ColorShades : {}
+  const modeFlat = typeof raw.flat === "object" && raw.flat !== null ? raw.flat as ColorShades : {}
 
-  const modeKeys = new Set(["light", "dark", "unthemed"])
+  const modeKeys = new Set(["light", "dark", "flat"])
   const flatShades: ColorShades = {}
   for (const [k, v] of Object.entries(raw)) {
     if (!modeKeys.has(k) && typeof v === "string") {
@@ -36,26 +36,26 @@ function resolveColorModes(entry: ColorConfigValue): { light: ColorShades; dark:
   const allShades = [...new Set([
     ...Object.keys(modeLight),
     ...Object.keys(modeDark),
-    ...Object.keys(modeUnthemed),
+    ...Object.keys(modeFlat),
     ...Object.keys(flatShades)
   ])]
 
   const light: ColorShades = {}
   const dark: ColorShades = {}
-  const unthemed: ColorShades = {}
+  const flat: ColorShades = {}
 
   for (const shade of allShades) {
-    const lv = modeLight[shade] ?? flatShades[shade] ?? modeUnthemed[shade] ?? modeDark[shade]
+    const lv = modeLight[shade] ?? flatShades[shade] ?? modeFlat[shade] ?? modeDark[shade]
     if (lv !== undefined) light[shade] = lv
 
-    const dv = modeDark[shade] ?? flatShades[shade] ?? modeUnthemed[shade] ?? modeLight[shade]
+    const dv = modeDark[shade] ?? flatShades[shade] ?? modeFlat[shade] ?? modeLight[shade]
     if (dv !== undefined) dark[shade] = dv
 
-    const uv = modeUnthemed[shade] ?? flatShades[shade] ?? modeLight[shade] ?? modeDark[shade]
-    if (uv !== undefined) unthemed[shade] = uv
+    const fv = modeFlat[shade] ?? flatShades[shade] ?? modeLight[shade] ?? modeDark[shade]
+    if (fv !== undefined) flat[shade] = fv
   }
 
-  return { light, dark, unthemed }
+  return { light, dark, flat }
 }
 
 const createScale = (colorName: string, shadeKeys: string[]) => ({
@@ -64,11 +64,11 @@ const createScale = (colorName: string, shadeKeys: string[]) => ({
   "accent": `var(--${colorName}-accent)`,
   ...Object.fromEntries(shadeKeys.flatMap((shade) => [
     [shade, `var(--color-${colorName}-${shade})`],
-    [`${shade}-l`, `var(--color-${colorName}-${shade}-l)`]
+    [`${shade}-f`, `var(--color-${colorName}-${shade}-f)`],
+    [`${shade}-l`, `var(--color-${colorName}-${shade}-l)`],
+    [`${shade}-d`, `var(--color-${colorName}-${shade}-d)`]
   ]))
 })
-
-export type { ColorConfigValue }
 
 export interface RimelightPresetOptions {
   colors?: Record<string, ColorConfigValue>
@@ -177,19 +177,43 @@ export default definePreset((options?: RimelightPresetOptions) => {
           "--rl-text": `var(--color-${color}-600)`,
           "--rl-ring": `var(--color-${color}-500)`,
           "--rl-border": `var(--color-${color}-500)`,
+          "--rl-bg-f": `var(--color-${color}-500-f)`,
+          "--rl-bg-hover-f": `var(--color-${color}-600-f)`,
+          "--rl-text-f": `var(--color-${color}-600-f)`,
+          "--rl-ring-f": `var(--color-${color}-500-f)`,
+          "--rl-border-f": `var(--color-${color}-500-f)`,
           "--rl-bg-l": `var(--color-${color}-500-l)`,
           "--rl-bg-hover-l": `var(--color-${color}-600-l)`,
           "--rl-text-l": `var(--color-${color}-600-l)`,
           "--rl-ring-l": `var(--color-${color}-500-l)`,
           "--rl-border-l": `var(--color-${color}-500-l)`,
+          "--rl-bg-d": `var(--color-${color}-500-d)`,
+          "--rl-bg-hover-d": `var(--color-${color}-600-d)`,
+          "--rl-text-d": `var(--color-${color}-600-d)`,
+          "--rl-ring-d": `var(--color-${color}-500-d)`,
+          "--rl-border-d": `var(--color-${color}-500-d)`,
         })
       ],
-      ["rl-fixed", {
+      ["rl-flat", {
+        "--rl-bg": "var(--rl-bg-f)",
+        "--rl-bg-hover": "var(--rl-bg-hover-f)",
+        "--rl-text": "var(--rl-text-f)",
+        "--rl-ring": "var(--rl-ring-f)",
+        "--rl-border": "var(--rl-border-f)",
+      }],
+      ["rl-light", {
         "--rl-bg": "var(--rl-bg-l)",
         "--rl-bg-hover": "var(--rl-bg-hover-l)",
         "--rl-text": "var(--rl-text-l)",
         "--rl-ring": "var(--rl-ring-l)",
         "--rl-border": "var(--rl-border-l)",
+      }],
+      ["rl-dark", {
+        "--rl-bg": "var(--rl-bg-d)",
+        "--rl-bg-hover": "var(--rl-bg-hover-d)",
+        "--rl-text": "var(--rl-text-d)",
+        "--rl-ring": "var(--rl-ring-d)",
+        "--rl-border": "var(--rl-border-d)",
       }]
     ],
 
@@ -223,8 +247,8 @@ export default definePreset((options?: RimelightPresetOptions) => {
           foreground: "var(--popover-foreground)"
         },
         ...Object.fromEntries(allColors.map((color) => {
-          const m = resolvedColors[color]
-          const shadeKeys = [...new Set([...Object.keys(m.light), ...Object.keys(m.dark), ...Object.keys(m.unthemed)])]
+          const m = resolvedColors[color]!
+          const shadeKeys = [...new Set([...Object.keys(m.light), ...Object.keys(m.dark), ...Object.keys(m.flat)])]
           return [color, createScale(color, shadeKeys)]
         })),
         "muted": {
@@ -313,12 +337,24 @@ export default definePreset((options?: RimelightPresetOptions) => {
               )
             ).join("\n")
 
-          const unthemedLines = Object.entries(resolvedColors).flatMap(([color, modes]) => {
-            const u = modes.unthemed
+          const flatLines = Object.entries(resolvedColors).flatMap(([color, modes]) => {
+            const u = modes.flat
             return Object.entries(u).map(([shade, value]) =>
-              `            --color-${color}-${shade}-l: ${value};`
+              `            --color-${color}-${shade}-f: ${value};`
             )
           }).join("\n")
+
+          const lightPinnedLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
+              Object.entries(modes.light).map(([shade, value]) =>
+                `            --color-${color}-${shade}-l: ${value};`
+              )
+            ).join("\n")
+
+          const darkPinnedLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
+              Object.entries(modes.dark).map(([shade, value]) =>
+                `            --color-${color}-${shade}-d: ${value};`
+              )
+            ).join("\n")
 
           const darkLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
               Object.entries(modes.dark).filter(([shade, value]) =>
@@ -399,7 +435,9 @@ export default definePreset((options?: RimelightPresetOptions) => {
             --font-serif: "Noto Serif", serif;
             --font-mono: "Noto Sans Mono", monospace;
 ${lightLines}
-${unthemedLines}
+${flatLines}
+${lightPinnedLines}
+${darkPinnedLines}
           }
 
           .dark {

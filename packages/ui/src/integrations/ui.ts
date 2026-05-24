@@ -41,16 +41,19 @@ export interface UIOptions {
    *   No mode-specific buckets needed.
    *
    * - **Mode format**: flat shades at root define the base; `light`, `dark`,
-   *   `unthemed` buckets layer on top:
+   *   `flat` buckets layer on top:
    *
    *   ```ts
    *   { "500": "base", light: { "600": "light-blue" }, dark: { "500": "dark-blue" } }
    *   ```
    *
-   *   Each shade falls back through: **mode → flat → unthemed → light → dark**.
+   *   Each shade falls back through: **mode bucket → flat → unthemed → light → dark**.
    *   Defining a single source (e.g. only `dark`) propagates to all modes.
+   *
+   *   Use the `theme` prop on components to pin colors: `<Button theme="flat">` forces
+   *   the flat bucket regardless of current mode.
    */
-  colors?: Record<string, Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string>; unthemed?: Record<string, string> }>
+  colors?: Record<string, Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string>; flat?: Record<string, string> }>
 }
 
 /**

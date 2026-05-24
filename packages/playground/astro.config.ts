@@ -267,7 +267,7 @@ export default defineConfig({
             "500": "#22c55e",
             "600": "#16a34a"
           },
-          unthemed: {
+          flat: {
             "500": "#166534",
             "600": "#14532d"
           }
