@@ -5,14 +5,16 @@
 The UI package's `src/styles/index.css` bundles:
 
 ```css
-@layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme);     /* Tailwind theme vars */
-@import "tailwindcss/utilities.css" layer(utilities); /* Tailwind utilities */
-@import "@nuxt/ui";        /* Nuxt UI base styles (re-export passthrough) */
-@import "./prism.css";     /* Prism.js syntax highlighting theme */
-```
+@import "tailwindcss";      /* Tailwind v4 theme + preflight + utilities */
+@import "@nuxt/ui";         /* Nuxt UI base styles */
+@import "./prism.css";      /* Prism.js syntax highlighting theme */
 
-Note: Tailwind's preflight (`preflight.css`) is **intentionally omitted** — it conflicts with Starlight's CSS reset on bare HTML elements. Only theme variables and utility classes are imported, which all `@nuxt/ui` components need.
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+```
 
 Consuming projects import it in their `global.css`:
 
@@ -20,7 +22,7 @@ Consuming projects import it in their `global.css`:
 @import "@rimelight/ui/styles/index.css";
 ```
 
-Projects should **not** import `tailwindcss` directly or include it in their own `package.json`—it's managed transitively through `@nuxt/ui` and will be removed when the re-export is no longer needed.
+Projects should **not** import `tailwindcss` directly or include it in their own `package.json`—it's managed through `@rimelight/ui`.
 
 ---
 
@@ -201,15 +203,42 @@ Theme files were also renamed from camelCase to kebab-case (e.g. `aspectRatio.th
 
 ---
 
-## Remaining Work
+## Project Migration Checklist
 
-### Final Step — Remove Tailwind / Nuxt UI
+Not all consuming projects have been updated to the latest patterns yet. Verify each:
+
+### `package.json`
+
+- [ ] Dep `@rimelight/ui` is at `^0.0.32`
+- [ ] No `tailwindcss`, `unocss`, `@nuxt/ui`, `@tailwindcss/vite` in direct dependencies
+- [ ] `@astrojs/vue` present (needed for Nuxt UI re-exports)
+
+### `astro.config.ts`
+
+- [ ] Uses `ui()` integration from `@rimelight/ui/integrations`
+- [ ] No `uno.config.ts` import, no standalone `@unocss/astro` or `@tailwindcss/vite`
+- [ ] Starlight config has `customCss: ["./src/styles/starlight.css"]` (not `global.css`)
+- [ ] Component imports updated to new names (see Component Renames table)
+
+### `src/styles/global.css`
+
+- [ ] Imports `@import "@rimelight/ui/styles/index.css"` at the top
+- [ ] No `@import "tailwindcss"` (managed by `@rimelight/ui`)
+- [ ] Project-level `--font-sans`, `--primary`, `--ui-container` overrides present
+
+### `src/styles/starlight.css` (if Starlight is used)
+
+- [ ] Exists and is referenced in Starlight's `customCss`
+- [ ] Defines `--sl-*` color variables for light/dark mode
+- [ ] Does NOT import `global.css` or `@rimelight/ui/styles/index.css`
+
+## Final Step — Remove Tailwind / Nuxt UI
 
 Single atomic change once functional parity is reached:
 
 1. Replace all remaining Nuxt UI components with `@rimelight/ui` equivalents
 2. Remove `tailwindcss`, `@tailwindcss/vite`, `@nuxt/ui` from `@rimelight/ui`'s `package.json`
-3. Remove `@import "tailwindcss/theme.css"`, `@import "tailwindcss/utilities.css"`, and `@import "@nuxt/ui"` from `src/styles/index.css`
+3. Remove `@import "tailwindcss"` and `@import "@nuxt/ui"` from `src/styles/index.css`
 4. Remove `@nuxt/ui/vite` and `@tailwindcss/vite` plugins from `ui.ts`
 5. Remove `./nuxt` export from `package.json`
 6. Remove `@astrojs/vue` from integration
