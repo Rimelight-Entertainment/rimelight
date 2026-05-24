@@ -11,8 +11,8 @@
 ### Phase 2 — Single Source of Truth for Colors ✅
 
 - `ui()` in `astro.config.ts` accepts a `colors` record: `{ name: { shade: value } }`
-- Integration calls `setColorConfig()` which stores config in `globalThis.__rimelightColorConfig`
-- Preset factory reads from `globalThis` when called without arguments — `uno.config.ts` is just `rimelightUiPreset()` with no color args
+- Integration passes colors directly to `UnoCSS({ presets: [rimelightUiPreset({ colors })] })` — no separate `uno.config.ts`, no shared mutable state
+- All UnoCSS config (presets, transformers, content, shortcuts, rules) lives in one place in the integration
 - Preflight emits `--color-{name}-{shade}` for all registered colors in `:root` and `.dark`
 - `createScale()` maps UnoCSS theme colors to `var(--color-{name}-{shade})`
 
@@ -202,13 +202,7 @@ Follow the same pattern as the button:
 
 ### GlobalThis Timing
 
-The `setColorConfig` → `getColorConfig` pipeline relies on `globalThis.__rimelightColorConfig` because pnpm's `packageImportMethod: copy` causes different ES module instances in Node.js vs Vite contexts. `globalThis` is the same object across all contexts. Timing order:
-
-```
-Astro config loading → setColorConfig() → Vite startup → uno.config.ts → rimelightUiPreset() → getColorConfig()
-```
-
-This order is guaranteed by Astro's lifecycle. The `setColorConfig` is called during `astro:config:setup`, before Vite plugins (including UnoCSS) are initialized.
+No `uno.config.ts` exists in the project. The `UnoCSS()` Astro integration receives the full config inline — including `rimelightUiPreset({ colors })` — so `loadConfig` from `@unocss/config` finds no file-based config and uses only the inline config. Colors flow through a single closure scope, eliminating the need for any cross-context state sharing.
 
 ### Debugging Generated CSS
 

@@ -1,3 +1,4 @@
+import { transformerDirectives, transformerVariantGroup } from "unocss"
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import vue from "@astrojs/vue"
@@ -6,7 +7,7 @@ import defu from "defu"
 import tailwindcss from "@tailwindcss/vite"
 import { defaultUIConfig } from "../themes"
 import type { ComponentTheme } from "../utils/defineTheme"
-import { setColorConfig } from "../presets"
+import rimelightUiPreset from "../presets"
 
 /**
  * Shape of the `ui` config that can be passed to the integration.
@@ -106,8 +107,6 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     colors: mergedColors
   }
 
-  setColorConfig({ colors: userColors, autogenerateColorModes: options.autogenerateColorModes })
-
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId
 
@@ -165,7 +164,10 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   }
 
   return [
-    UnoCSS(),
+    UnoCSS({
+      presets: [rimelightUiPreset({ colors: userColors, autogenerateColorModes: options.autogenerateColorModes })],
+      transformers: [transformerDirectives(), transformerVariantGroup()]
+    }),
     vue({
       appEntrypoint: "@rimelight/ui/integrations/vue-entrypoint"
     }),

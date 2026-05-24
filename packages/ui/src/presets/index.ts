@@ -104,22 +104,9 @@ export interface RimelightPresetOptions {
   autogenerateColorModes?: boolean
 }
 
-declare global {
-  var __rimelightColorConfig: RimelightPresetOptions | undefined
-}
-
-export function setColorConfig(config: RimelightPresetOptions) {
-  globalThis.__rimelightColorConfig = config
-}
-
-function getColorConfig(): RimelightPresetOptions {
-  return globalThis.__rimelightColorConfig ?? {}
-}
-
 export default definePreset((options?: RimelightPresetOptions) => {
-  const shared = getColorConfig()
-  const userColors = options?.colors ?? shared.colors ?? {}
-  const autoGen = options?.autogenerateColorModes ?? shared.autogenerateColorModes ?? true
+  const userColors = options?.colors ?? {}
+  const autoGen = options?.autogenerateColorModes ?? true
   const coreColors = [
     "primary",
     "secondary",
