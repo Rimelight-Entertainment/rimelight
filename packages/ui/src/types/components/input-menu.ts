@@ -1,6 +1,6 @@
 export interface InputMenuProps {
   /**
-   * The list of items in the combobox.
+   * The list of items in the input menu.
    */
   items?: Array<{ label: string; value: string; [key: string]: any } | string>
   /**

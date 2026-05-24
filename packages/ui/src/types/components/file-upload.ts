@@ -12,7 +12,7 @@ export interface FileUploadProps {
    */
   disabled?: boolean
   /**
-   * Title text shown inside the dropzone.
+   * Title text shown inside the file upload area.
    */
   title?: string
   /**

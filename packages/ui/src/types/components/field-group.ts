@@ -1,4 +1,4 @@
-export interface InputGroupProps {
+export interface FieldGroupProps {
   /**
    * Text/icon to prepend.
    */

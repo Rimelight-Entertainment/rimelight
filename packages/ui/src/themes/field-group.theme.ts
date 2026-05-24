@@ -1,6 +1,6 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export const createInputGroupTheme = () =>
+export const createFieldGroupTheme = () =>
   defineTheme({
     slots: ["root", "prepend", "append"],
     base: {
@@ -20,4 +20,4 @@ export const createInputGroupTheme = () =>
     }
   })
 
-export default createInputGroupTheme()
+export default createFieldGroupTheme()

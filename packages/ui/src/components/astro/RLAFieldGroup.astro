@@ -1,11 +1,11 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { InputGroupProps } from "../../types"
-import inputGroupThemeDefault, { createInputGroupTheme } from "../../themes/inputGroup.theme"
+import type { FieldGroupProps } from "../../types"
+import fieldGroupThemeDefault, { createFieldGroupTheme } from "../../themes/field-group.theme"
 
-const inputGroupTheme = inputGroupThemeDefault
-const inputGroup = scv(inputGroupTheme)
+const fieldGroupTheme = fieldGroupThemeDefault
+const fieldGroup = scv(fieldGroupTheme)
 
 const {
   prepend,
@@ -14,11 +14,11 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as InputGroupProps
+} = Astro.props as FieldGroupProps
 
-const classes = resolveClasses(inputGroup, {
+const classes = resolveClasses(fieldGroup, {
   size
-}, useUi("inputGroup", uiProp), className);
+}, useUi("fieldGroup", uiProp), className);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   {prepend && (
