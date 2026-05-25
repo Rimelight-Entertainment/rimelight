@@ -14,11 +14,15 @@ Modal component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLAModal />
+  <RLAModal triggerLabel="Open modal">
+    <p class="text-sm">Modal content goes here.</p>
+  </RLAModal>
   
   <Fragment slot="code-astro">
   ```astro
-  <RLAModal />
+  <RLAModal triggerLabel="Open modal">
+    <p>Modal content goes here.</p>
+  </RLAModal>
   ```
   </Fragment>
 

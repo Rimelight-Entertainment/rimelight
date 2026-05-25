@@ -9,22 +9,22 @@ interface Props {
 const { component, slots = [], props = {}, class: className } = Astro.props;
 ---
 
-<div class={`component-showcase border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden bg-white dark:bg-gray-950 ${className}`}>
-  <div class="preview-area p-6 flex items-center justify-center min-h-[200px] border-b border-gray-200 dark:border-gray-800 relative group">
+<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground ${className}`}>
+  <div class="preview-area p-4 sm:p-6 flex items-center justify-center min-h-[120px] border-b border-border relative group">
     <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <div class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700">Preview</div>
+        <div class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded border border-border">Preview</div>
     </div>
     <slot />
   </div>
 
-  <div class="controls-area px-4 py-2 bg-gray-50/50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between gap-4">
+  <div class="controls-area px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between gap-4">
     <div class="flex items-center gap-2">
-       <button class="showcase-tab active px-3 py-1 text-xs font-medium rounded-md bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700" data-lang="astro">Astro</button>
-       <button class="showcase-tab px-3 py-1 text-xs font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-lang="vue">Vue</button>
+       <button class="showcase-tab active px-3 py-1 text-xs font-medium rounded-md bg-background text-foreground shadow-sm border border-border" data-lang="astro">Astro</button>
+       <button class="showcase-tab px-3 py-1 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" data-lang="vue">Vue</button>
     </div>
-    
+
     <div class="flex items-center gap-2">
-         <button class="copy-code p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Copy code">
+         <button class="copy-code p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Copy code">
             <span class="i-lucide-copy size-4"></span>
          </button>
     </div>
@@ -42,14 +42,10 @@ const { component, slots = [], props = {}, class: className } = Astro.props;
 
 <style>
   .showcase-tab.active {
-    color: var(--color-primary-600);
+    color: var(--color-primary-500);
   }
-  
-  :global(.dark) .showcase-tab.active {
-    color: var(--color-primary-400);
-  }
-  
-  :global(.code-area pre) {
+
+  .code-area pre {
     background-color: transparent !important;
     margin: 0 !important;
     padding: 1rem !important;
@@ -68,14 +64,14 @@ const { component, slots = [], props = {}, class: className } = Astro.props;
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
           const lang = tab.getAttribute('data-lang');
-          
+
           tabs.forEach(t => {
-            t.classList.remove('active', 'bg-white', 'dark:bg-gray-800', 'shadow-sm', 'border', 'border-gray-200', 'dark:border-gray-700');
-            t.classList.add('hover:bg-gray-100', 'dark:hover:bg-gray-800');
+            t.classList.remove('active', 'bg-background', 'text-foreground', 'shadow-sm', 'border', 'border-border');
+            t.classList.add('text-muted-foreground');
           });
-          
-          tab.classList.add('active', 'bg-white', 'dark:bg-gray-800', 'shadow-sm', 'border', 'border-gray-200', 'dark:border-gray-700');
-          tab.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-800');
+
+          tab.classList.add('active', 'bg-background', 'text-foreground', 'shadow-sm', 'border', 'border-border');
+          tab.classList.remove('text-muted-foreground');
 
           codeBlocks.forEach(block => {
             if (block.getAttribute('data-lang') === lang) {

@@ -14,11 +14,18 @@ Select component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLASelect />
+  <RLASelect items={[
+    { value: "apple", label: "Apple" },
+    { value: "banana", label: "Banana" },
+    { value: "cherry", label: "Cherry" }
+  ]} placeholder="Choose a fruit..." />
   
   <Fragment slot="code-astro">
   ```astro
-  <RLASelect />
+  <RLASelect items={[
+    { value: "apple", label: "Apple" },
+    { value: "banana", label: "Banana" }
+  ]} placeholder="Choose a fruit..." />
   ```
   </Fragment>
 

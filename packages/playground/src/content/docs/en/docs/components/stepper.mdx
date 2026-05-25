@@ -14,11 +14,21 @@ Stepper component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLAStepper />
+  <RLAStepper steps={[
+    { label: "Cart", completed: true },
+    { label: "Shipping", completed: true },
+    { label: "Payment", active: true },
+    { label: "Confirmation" }
+  ]} />
   
   <Fragment slot="code-astro">
   ```astro
-  <RLAStepper />
+  <RLAStepper steps={[
+    { label: "Cart", completed: true },
+    { label: "Shipping", completed: true },
+    { label: "Payment", active: true },
+    { label: "Confirmation" }
+  ]} />
   ```
   </Fragment>
 

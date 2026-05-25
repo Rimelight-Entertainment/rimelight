@@ -14,11 +14,25 @@ Tabs component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLATabs />
+  <RLATabs items={[
+    { value: "tab1", label: "Details" },
+    { value: "tab2", label: "Settings" },
+    { value: "tab3", label: "Activity" }
+  ]}>
+    <div slot="tab1">Details content goes here.</div>
+    <div slot="tab2">Settings content goes here.</div>
+    <div slot="tab3">Activity content goes here.</div>
+  </RLATabs>
   
   <Fragment slot="code-astro">
   ```astro
-  <RLATabs />
+  <RLATabs items={[
+    { value: "tab1", label: "Details" },
+    { value: "tab2", label: "Settings" }
+  ]}>
+    <div slot="tab1">Details content</div>
+    <div slot="tab2">Settings content</div>
+  </RLATabs>
   ```
   </Fragment>
 

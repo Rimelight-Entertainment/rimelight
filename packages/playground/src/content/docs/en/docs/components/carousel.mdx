@@ -14,11 +14,18 @@ Carousel component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLACarousel />
+  <RLACarousel slides={[
+    { title: "Slide 1", description: "First slide content" },
+    { title: "Slide 2", description: "Second slide content" },
+    { title: "Slide 3", description: "Third slide content" }
+  ]} />
   
   <Fragment slot="code-astro">
   ```astro
-  <RLACarousel />
+  <RLACarousel slides={[
+    { title: "Slide 1", description: "First slide" },
+    { title: "Slide 2", description: "Second slide" }
+  ]} />
   ```
   </Fragment>
 

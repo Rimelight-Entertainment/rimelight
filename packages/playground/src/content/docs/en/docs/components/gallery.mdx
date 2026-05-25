@@ -14,11 +14,17 @@ Gallery component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLAGallery />
+  <RLAGallery>
+    <img src="/assets/placeholder.webp" alt="Gallery image 1" class="w-full h-48 object-cover rounded-lg" />
+    <img src="/assets/placeholder.webp" alt="Gallery image 2" class="w-full h-48 object-cover rounded-lg" />
+  </RLAGallery>
   
   <Fragment slot="code-astro">
   ```astro
-  <RLAGallery />
+  <RLAGallery>
+    <img src="/assets/placeholder.webp" alt="Image 1" />
+    <img src="/assets/placeholder.webp" alt="Image 2" />
+  </RLAGallery>
   ```
   </Fragment>
 

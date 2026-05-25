@@ -14,11 +14,19 @@ Timeline component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLATimeline />
+  <RLATimeline items={[
+    { title: "Planning", description: "Define project scope and goals." },
+    { title: "Development", description: "Build and iterate on features." },
+    { title: "Launch", description: "Deploy to production." }
+  ]} />
   
   <Fragment slot="code-astro">
   ```astro
-  <RLATimeline />
+  <RLATimeline items={[
+    { title: "Planning", description: "Define project scope." },
+    { title: "Development", description: "Build features." },
+    { title: "Launch", description: "Deploy to production." }
+  ]} />
   ```
   </Fragment>
 

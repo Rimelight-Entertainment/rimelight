@@ -14,11 +14,18 @@ Table component documentation.
 ## Usage
 
 <ComponentShowcase>
-  <RLATable />
+  <RLATable headers={["Name", "Role", "Status"]} rows={[
+    ["Alice Johnson", "Developer", "Active"],
+    ["Bob Smith", "Designer", "Away"],
+    ["Carol Davis", "Manager", "Active"]
+  ]} />
   
   <Fragment slot="code-astro">
   ```astro
-  <RLATable />
+  <RLATable headers={["Name", "Role", "Status"]} rows={[
+    ["Alice Johnson", "Developer", "Active"],
+    ["Bob Smith", "Designer", "Away"]
+  ]} />
   ```
   </Fragment>
 
