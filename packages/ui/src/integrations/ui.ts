@@ -178,17 +178,6 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
         },
         filesystem: [uiFilesystemGlob, "../ui/src/**/*", "src/components/**/*", "src/pages/**/*"]
       },
-      shortcuts: {
-        "container": "mx-auto w-full max-w-90rem px-md",
-        "sr-only":
-          "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
-      },
-      rules: [
-        [
-          /^clip-rect-(\d+)-(\d+)-(\d+)-(\d+)$/,
-          ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
-        ]
-      ],
       configResolved(config) {
         if (process.env.NODE_ENV === "development" && !process.env.UNO_CONFIG_LOGGED) {
           process.env.UNO_CONFIG_LOGGED = "true"
