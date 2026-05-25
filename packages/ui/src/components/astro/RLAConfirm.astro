@@ -1,13 +1,9 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { AlertDialogProps } from "../../types"
-import confirmThemeDefault, { createConfirmTheme } from "../../themes/confirm.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import type { ConfirmProps } from "../../types"
+import confirmTheme from "../../themes/confirm.theme"
 import RLAButton from "./RLAButton.astro"
-
-const uiConfig = getUIConfig()
-const confirmTheme = uiConfig.colors ? createConfirmTheme() : confirmThemeDefault
 
 const alertDialog = scv(confirmTheme)
 
@@ -21,14 +17,16 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as AlertDialogProps
+} = Astro.props as ConfirmProps
 
 const classes = resolveClasses(alertDialog, {
   variant
 }, useUi("alertDialog", uiProp), className)
 
 const dialogId = `rla-alert-dialog-${Math.random().toString(36).substring(2, 9)}`
+const isDestructive = variant === "destructive"
 ---
+
 <div class={classes.root} data-slot="alert-dialog-container">
   {triggerLabel ? (
     <RLAButton
@@ -50,8 +48,6 @@ const dialogId = `rla-alert-dialog-${Math.random().toString(36).substring(2, 9)}
     class={classes.content}
     data-slot="content"
     data-lock-scroll="true"
-    data-close-on-escape="false"
-    data-close-on-click-outside="false"
     {...rest}
   >
     <div class={classes.header} data-slot="header">
@@ -70,6 +66,7 @@ const dialogId = `rla-alert-dialog-${Math.random().toString(36).substring(2, 9)}
           class={classes.cancelButton}
           data-slot="cancel"
           variant="outline"
+          color={isDestructive ? "error" : "neutral"}
           type="button"
           onclick={`document.getElementById('${dialogId}').close()`}
         >
@@ -78,7 +75,8 @@ const dialogId = `rla-alert-dialog-${Math.random().toString(36).substring(2, 9)}
         <RLAButton
           class={classes.actionButton}
           data-slot="action"
-          color={variant === "destructive" ? "error" : "primary"}
+          color={isDestructive ? "error" : "primary"}
+          variant={isDestructive ? "subtle" : "solid"}
           type="button"
           onclick={`document.getElementById('${dialogId}').close()`}
         >
@@ -88,3 +86,32 @@ const dialogId = `rla-alert-dialog-${Math.random().toString(36).substring(2, 9)}
     </div>
   </dialog>
 </div>
+
+<script>
+(function() {
+  if (window.__rlConfirm) return;
+  var pendingResolve = null;
+
+  document.addEventListener("click", function(e) {
+    var btn = e.target.closest("[data-slot='cancel'], [data-slot='action']");
+    if (!btn || !pendingResolve) return;
+    pendingResolve(btn.getAttribute("data-slot") === "action");
+    pendingResolve = null;
+  }, true);
+
+  window.__rlConfirm = function() {
+    return new Promise(function(resolve) {
+      var dialog = document.querySelector("[data-slot='alert-dialog-container'] dialog");
+      if (!dialog) { resolve(false); return; }
+      pendingResolve = resolve;
+      dialog.addEventListener("close", function() {
+        if (pendingResolve) {
+          pendingResolve(false);
+          pendingResolve = null;
+        }
+      }, { once: true });
+      dialog.showModal();
+    });
+  };
+})();
+</script>
