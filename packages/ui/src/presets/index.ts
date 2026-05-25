@@ -33,23 +33,23 @@ function generateDarkShade(shade: string, value: string): string {
 }
 
 function resolveColorModes(
-  entry: ColorConfigValue,
-  autogenerate?: boolean
+    entry: ColorConfigValue,
+    autogenerate?: boolean
 ): { light: Record<string, string>; dark: Record<string, string>; flat: Record<string, string> } {
   const raw = entry as Record<string, unknown>
 
   const modeLight =
-    typeof raw.light === "object" && raw.light !== null
-      ? ({ ...raw.light } as ColorShades)
-      : ({} as ColorShades)
+      typeof raw.light === "object" && raw.light !== null
+          ? ({ ...raw.light } as ColorShades)
+          : ({} as ColorShades)
   const modeDark =
-    typeof raw.dark === "object" && raw.dark !== null
-      ? ({ ...raw.dark } as ColorShades)
-      : ({} as ColorShades)
+      typeof raw.dark === "object" && raw.dark !== null
+          ? ({ ...raw.dark } as ColorShades)
+          : ({} as ColorShades)
   const modeFlat =
-    typeof raw.flat === "object" && raw.flat !== null
-      ? ({ ...raw.flat } as ColorShades)
-      : ({} as ColorShades)
+      typeof raw.flat === "object" && raw.flat !== null
+          ? ({ ...raw.flat } as ColorShades)
+          : ({} as ColorShades)
 
   const modeKeys = new Set(["light", "dark", "flat"])
   const flatShades: ColorShades = {}
@@ -106,12 +106,12 @@ const createScale = (colorName: string, shadeKeys: string[]) => ({
   foreground: `var(--${colorName}-foreground)`,
   accent: `var(--${colorName}-accent)`,
   ...Object.fromEntries(
-    shadeKeys.flatMap((shade) => [
-      [shade, `var(--color-${colorName}-${shade})`],
-      [`${shade}-f`, `var(--color-${colorName}-${shade}-f)`],
-      [`${shade}-l`, `var(--color-${colorName}-${shade}-l)`],
-      [`${shade}-d`, `var(--color-${colorName}-${shade}-d)`]
-    ])
+      shadeKeys.flatMap((shade) => [
+        [shade, `var(--color-${colorName}-${shade})`],
+        [`${shade}-f`, `var(--color-${colorName}-${shade}-f)`],
+        [`${shade}-l`, `var(--color-${colorName}-${shade}-l)`],
+        [`${shade}-d`, `var(--color-${colorName}-${shade}-d)`]
+      ])
   )
 })
 
@@ -128,16 +128,13 @@ export default definePreset((options?: RimelightPresetOptions) => {
   const allColors = [...new Set([...coreColors, ...Object.keys(userColors)])]
 
   const resolvedColors = Object.fromEntries(
-    Object.entries(mergedColorScales).map(([name, entry]) => [
-      name,
-      resolveColorModes(entry, autoGen)
-    ])
+      Object.entries(mergedColorScales).map(([name, entry]) => [
+        name,
+        resolveColorModes(entry, autoGen)
+      ])
   )
 
-  const safelist = [
-    ...allColors.flatMap((color) => [`rl-color-${color}`]),
-    "space-x-1"
-  ]
+  const safelist = allColors.flatMap((color) => [`rl-color-${color}`])
 
   return {
     name: "rimelight-ui",
@@ -189,7 +186,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
     shortcuts: {
       "container": "mx-auto w-full max-w-90rem px-md",
       "sr-only":
-        "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
+          "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
     },
     rules: [
       [
@@ -290,13 +287,13 @@ export default definePreset((options?: RimelightPresetOptions) => {
           foreground: "var(--popover-foreground)"
         },
         ...Object.fromEntries(
-          allColors.map((color) => {
-            const m = resolvedColors[color]!
-            const shadeKeys = [
-              ...new Set([...Object.keys(m.light), ...Object.keys(m.dark), ...Object.keys(m.flat)])
-            ]
-            return [color, createScale(color, shadeKeys)]
-          })
+            allColors.map((color) => {
+              const m = resolvedColors[color]!
+              const shadeKeys = [
+                ...new Set([...Object.keys(m.light), ...Object.keys(m.dark), ...Object.keys(m.flat)])
+              ]
+              return [color, createScale(color, shadeKeys)]
+            })
         ),
         "muted": {
           DEFAULT: "var(--muted)",
@@ -362,9 +359,9 @@ export default definePreset((options?: RimelightPresetOptions) => {
       animation: {
         keyframes: {
           "accordion-down":
-            "{ from { height: 0; } to { height: var(--starwind-accordion-content-height); } }",
+              "{ from { height: 0; } to { height: var(--starwind-accordion-content-height); } }",
           "accordion-up":
-            "{ from { height: var(--starwind-accordion-content-height); } to { height: 0; } }",
+              "{ from { height: var(--starwind-accordion-content-height); } to { height: 0; } }",
           "marquee": "{ from { transform: translateX(0); } to { transform: translateX(-100%); } }"
         },
         durations: {
@@ -385,45 +382,45 @@ export default definePreset((options?: RimelightPresetOptions) => {
       {
         getCSS: () => {
           const lightLines = Object.entries(resolvedColors)
-            .flatMap(([color, modes]) =>
-              Object.entries(modes.light).map(
-                ([shade, value]) => `            --color-${color}-${shade}: ${value};`
+              .flatMap(([color, modes]) =>
+                  Object.entries(modes.light).map(
+                      ([shade, value]) => `            --color-${color}-${shade}: ${value};`
+                  )
               )
-            )
-            .join("\n")
+              .join("\n")
 
           const flatLines = Object.entries(resolvedColors)
-            .flatMap(([color, modes]) => {
-              const u = modes.flat
-              return Object.entries(u).map(
-                ([shade, value]) => `            --color-${color}-${shade}-f: ${value};`
-              )
-            })
-            .join("\n")
+              .flatMap(([color, modes]) => {
+                const u = modes.flat
+                return Object.entries(u).map(
+                    ([shade, value]) => `            --color-${color}-${shade}-f: ${value};`
+                )
+              })
+              .join("\n")
 
           const lightPinnedLines = Object.entries(resolvedColors)
-            .flatMap(([color, modes]) =>
-              Object.entries(modes.light)
-                .filter(([shade, value]) => value !== modes.flat[shade])
-                .map(([shade, value]) => `            --color-${color}-${shade}-l: ${value};`)
-            )
-            .join("\n")
+              .flatMap(([color, modes]) =>
+                  Object.entries(modes.light)
+                      .filter(([shade, value]) => value !== modes.flat[shade])
+                      .map(([shade, value]) => `            --color-${color}-${shade}-l: ${value};`)
+              )
+              .join("\n")
 
           const darkPinnedLines = Object.entries(resolvedColors)
-            .flatMap(([color, modes]) =>
-              Object.entries(modes.dark)
-                .filter(([shade, value]) => value !== modes.flat[shade])
-                .map(([shade, value]) => `            --color-${color}-${shade}-d: ${value};`)
-            )
-            .join("\n")
+              .flatMap(([color, modes]) =>
+                  Object.entries(modes.dark)
+                      .filter(([shade, value]) => value !== modes.flat[shade])
+                      .map(([shade, value]) => `            --color-${color}-${shade}-d: ${value};`)
+              )
+              .join("\n")
 
           const darkLines = Object.entries(resolvedColors)
-            .flatMap(([color, modes]) =>
-              Object.entries(modes.dark)
-                .filter(([shade, value]) => modes.light[shade] !== value)
-                .map(([shade, value]) => `            --color-${color}-${shade}: ${value};`)
-            )
-            .join("\n")
+              .flatMap(([color, modes]) =>
+                  Object.entries(modes.dark)
+                      .filter(([shade, value]) => modes.light[shade] !== value)
+                      .map(([shade, value]) => `            --color-${color}-${shade}: ${value};`)
+              )
+              .join("\n")
 
           return `
         :root {
