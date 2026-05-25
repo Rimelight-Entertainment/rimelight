@@ -16,6 +16,12 @@ export interface ImageProps {
   fit?: "cover" | "contain" | "fill" | "inside" | "outside"
   metadata?: ImageMetadataInfo
   open?: boolean
+  metaSource?: boolean
+  metaFormat?: boolean
+  metaDimensions?: boolean
+  metaSize?: boolean
+  metaAlt?: boolean
+  metaDownload?: boolean
   ui?: any
   class?: any
   [key: string]: unknown

@@ -22,6 +22,12 @@ const {
   open,
   ui: uiProp,
   class: className,
+  metaSource = true,
+  metaFormat = true,
+  metaDimensions = true,
+  metaSize = true,
+  metaAlt = true,
+  metaDownload = true,
   ...rest
 } = Astro.props as ImageProps
 
@@ -66,41 +72,65 @@ const initialSize = preMetadata?.size ?? undefined
 
       <div class={classes.fileInfo}>
         <div class="flex flex-col gap-xs text-sm">
-          <div class="flex flex-row gap-xs items-center">
-            <span class="i-lucide-image size-4 shrink-0 text-muted-foreground" />
-            <span class="text-muted-foreground">Source:</span>
-            <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
-          </div>
-          <div class="flex flex-row gap-xs items-center">
-            <span class="i-lucide-file-question-mark size-4 shrink-0 text-muted-foreground" />
-            <span class="text-muted-foreground">Format:</span>
-            <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
-          </div>
-          <div class="flex flex-row gap-xs items-center">
-            <span class="i-lucide-image-upscale size-4 shrink-0 text-muted-foreground" />
-            <span class="text-muted-foreground">Dimensions:</span>
-            <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
-          </div>
-          <div class="flex flex-row gap-xs items-center">
-            <span class="i-lucide-hard-drive size-4 shrink-0 text-muted-foreground" />
-            <span class="text-muted-foreground">Size:</span>
-            <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
-          </div>
-          <div class="flex flex-row gap-xs items-center">
-            <span class="i-lucide-align-left size-4 shrink-0 text-muted-foreground" />
-            <span class="text-muted-foreground">Alt:</span>
-            <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
-          </div>
+          {
+            metaSource && (
+              <div class="flex flex-row gap-xs items-center">
+                <span class="i-lucide-image size-4 shrink-0 text-muted-foreground" />
+                <span class="text-muted-foreground">Source:</span>
+                <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
+              </div>
+            )
+          }
+          {
+            metaFormat && (
+              <div class="flex flex-row gap-xs items-center">
+                <span class="i-lucide-file-question-mark size-4 shrink-0 text-muted-foreground" />
+                <span class="text-muted-foreground">Format:</span>
+                <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
+              </div>
+            )
+          }
+          {
+            metaDimensions && (
+              <div class="flex flex-row gap-xs items-center">
+                <span class="i-lucide-image-upscale size-4 shrink-0 text-muted-foreground" />
+                <span class="text-muted-foreground">Dimensions:</span>
+                <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
+              </div>
+            )
+          }
+          {
+            metaSize && (
+              <div class="flex flex-row gap-xs items-center">
+                <span class="i-lucide-hard-drive size-4 shrink-0 text-muted-foreground" />
+                <span class="text-muted-foreground">Size:</span>
+                <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
+              </div>
+            )
+          }
+          {
+            metaAlt && (
+              <div class="flex flex-row gap-xs items-center">
+                <span class="i-lucide-align-left size-4 shrink-0 text-muted-foreground" />
+                <span class="text-muted-foreground">Alt:</span>
+                <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
+              </div>
+            )
+          }
         </div>
 
-        <button
-          type="button"
-          class={classes.download}
-          data-image-download
-        >
-          <span class="i-lucide-download size-4 shrink-0" />
-          Download Original
-        </button>
+        {
+          metaDownload && (
+            <button
+              type="button"
+              class={classes.download}
+              data-image-download
+            >
+              <span class="i-lucide-download size-4 shrink-0" />
+              Download Original
+            </button>
+          )
+        }
       </div>
 
       <form method="dialog" class="absolute top-2 right-2">
