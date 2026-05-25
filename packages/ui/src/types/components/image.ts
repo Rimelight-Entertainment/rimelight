@@ -1,11 +1,22 @@
+import type { ImageMetadata } from "astro"
+
+export interface ImageMetadataInfo {
+  width?: number
+  height?: number
+  size?: number
+  format?: string
+}
+
 export interface ImageProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
+  src: string | ImageMetadata
+  alt?: string
+  height?: string | number
+  width?: string | number
+  loading?: "lazy" | "eager"
+  fit?: "cover" | "contain" | "fill" | "inside" | "outside"
+  metadata?: ImageMetadataInfo
+  open?: boolean
   ui?: any
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any
   [key: string]: unknown
 }

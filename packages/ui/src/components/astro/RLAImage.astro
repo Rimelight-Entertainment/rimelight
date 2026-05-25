@@ -1,23 +1,179 @@
 ---
+import { Image } from "astro:assets"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ImageProps } from "../../types"
+import type { ImageProps, ImageMetadataInfo } from "../../types"
 import imageThemeDefault, { createImageTheme } from "../../themes/image.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const uiConfig = getUIConfig()
 const imageTheme = uiConfig.colors ? createImageTheme() : imageThemeDefault
 
-const image = scv(imageTheme)
+const imgc = scv(imageTheme)
 
 const {
+  src,
+  alt = "",
+  height,
+  width,
+  loading = "lazy",
+  fit = "cover",
+  metadata: preMetadata,
+  open,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as ImageProps
 
-const classes = resolveClasses(image, {}, useUi("image", uiProp), className);
+const classes = resolveClasses(imgc, {}, useUi("image", uiProp), className)
+
+const isMetadata = typeof src !== "string"
+const imgWidth = width ?? (isMetadata ? src.width : undefined)
+const imgHeight = height ?? (isMetadata ? src.height : undefined)
+const imgFormat = isMetadata ? src.format : (preMetadata?.format ?? undefined)
+const rawName = typeof src === "string" ? src.split("/").pop() || "image" : src.src.split("/").pop() || "image"
+const fileName = rawName.split("?")[0]
+const fileExtension = imgFormat?.toUpperCase() || (fileName.includes(".") ? fileName.split(".").pop()?.toUpperCase() : "IMG")
+const initialSize = preMetadata?.size ?? undefined
 ---
+
 <div class={classes.root} data-slot="root" {...rest}>
-  <slot />
+  <slot name="trigger">
+    <button
+      type="button"
+      class={classes.trigger}
+      data-image-trigger
+    >
+      <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} fit={fit} />
+    </button>
+  </slot>
+
+  <dialog
+    class={classes.dialog}
+    data-image-dialog
+  >
+    <div class="flex flex-col bg-background text-foreground max-h-[90vh]">
+      <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
+        <img
+          src={typeof src === "string" ? src : src.src}
+          alt={alt}
+          class={classes.image}
+          data-modal-img
+        />
+      </div>
+
+      <hr class="border-border mx-4 mb-3 shrink-0" />
+
+      <div class={classes.fileInfo}>
+        <div class="flex flex-col gap-xs text-sm">
+          <div class="flex flex-row gap-xs items-center">
+            <span class="i-lucide-image size-4 shrink-0 text-muted-foreground" />
+            <span class="text-muted-foreground">Source:</span>
+            <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
+          </div>
+          <div class="flex flex-row gap-xs items-center">
+            <span class="i-lucide-file-question-mark size-4 shrink-0 text-muted-foreground" />
+            <span class="text-muted-foreground">Format:</span>
+            <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
+          </div>
+          <div class="flex flex-row gap-xs items-center">
+            <span class="i-lucide-image-upscale size-4 shrink-0 text-muted-foreground" />
+            <span class="text-muted-foreground">Dimensions:</span>
+            <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
+          </div>
+          <div class="flex flex-row gap-xs items-center">
+            <span class="i-lucide-hard-drive size-4 shrink-0 text-muted-foreground" />
+            <span class="text-muted-foreground">Size:</span>
+            <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
+          </div>
+          <div class="flex flex-row gap-xs items-center">
+            <span class="i-lucide-align-left size-4 shrink-0 text-muted-foreground" />
+            <span class="text-muted-foreground">Alt:</span>
+            <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class={classes.download}
+          data-image-download
+        >
+          <span class="i-lucide-download size-4 shrink-0" />
+          Download Original
+        </button>
+      </div>
+
+      <form method="dialog" class="absolute top-2 right-2">
+        <button
+          type="submit"
+          class={classes.closeButton}
+          aria-label="Close"
+        >
+          <span class="i-lucide-x size-4" />
+        </button>
+      </form>
+    </div>
+  </dialog>
 </div>
+
+<script>
+  const triggers = document.querySelectorAll("[data-image-trigger]")
+  for (const trigger of triggers) {
+    const parent = trigger.closest(".group\\/image") || trigger.parentElement
+    const dialog = parent?.querySelector("[data-image-dialog]")
+    if (!dialog) continue
+
+    const sizeEl = parent?.querySelector("[data-metadata-size]")
+    const formatEl = parent?.querySelector("[data-metadata-format]")
+    let fetched = false
+
+    trigger.addEventListener("click", () => {
+      if (!fetched) {
+        fetched = true
+        const imgEl = dialog.querySelector("[data-modal-img]")
+        if (imgEl) {
+          const src = imgEl.getAttribute("src")
+          if (src) {
+            fetch(src).then(r => r.blob()).then(blob => {
+              if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB"
+              if (formatEl && blob.type) {
+                const mime = blob.type.split("/").pop().toUpperCase()
+                if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime
+              }
+            }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable" })
+          }
+        }
+      }
+      dialog.showModal()
+    })
+
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close()
+    })
+
+    const downloadBtn = dialog.querySelector("[data-image-download]")
+    if (downloadBtn) {
+      downloadBtn.addEventListener("click", async () => {
+        const img = dialog.querySelector("img")
+        const imgSrc = img?.getAttribute("src")
+        if (!imgSrc) return
+        try {
+          const response = await fetch(imgSrc)
+          const blob = await response.blob()
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement("a")
+          link.href = url
+          const srcAttr = (trigger.querySelector("img") || {}).getAttribute("src") || ""
+          const name = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`
+          link.download = name
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } catch (err) {
+          console.error("Download failed", err)
+        }
+      })
+    }
+  }
+</script>
