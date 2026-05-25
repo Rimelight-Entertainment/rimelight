@@ -134,7 +134,10 @@ export default definePreset((options?: RimelightPresetOptions) => {
     ])
   )
 
-  const safelist = allColors.flatMap((color) => [`rl-color-${color}`])
+  const safelist = [
+    ...allColors.flatMap((color) => [`rl-color-${color}`]),
+    "space-x-1"
+  ]
 
   return {
     name: "rimelight-ui",
