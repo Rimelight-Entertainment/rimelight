@@ -1,3 +1,5 @@
 {
-  "app_header": {}
+  "app_header": {
+    "links_tests_label": "Pruebas"
+  }
 }

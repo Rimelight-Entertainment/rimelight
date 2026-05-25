@@ -7,10 +7,6 @@
   --primary-accent: #0050ac;
   --ui-container: 90rem;
 
-  --font-sans: "JetBrains Mono", monospace;
-  --font-serif: "Noto Sans", serif;
-  --font-mono: "JetBrains Mono", monospace;
-
   --text-base: var(--text-md);
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;

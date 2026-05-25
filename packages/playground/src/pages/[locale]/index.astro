@@ -9,9 +9,6 @@ import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLABlogPosts from "@rimelight/ui/components/astro/RLABlogPosts.astro";
 import RLABlogPost from "@rimelight/ui/components/astro/RLABlogPost.astro";
-import TestImage from "@/components/TestImage.astro";
-import placeholderImage from "@/assets/placeholder.webp";
-
 
 const activeLocale = Astro.currentLocale ?? "en";
 currentLocale.set(activeLocale);
@@ -67,19 +64,7 @@ const ctaLinks = [
             description={messages.heroDesc}
             links={heroLinks}
     >
-        <RLALogo class="pointer-events-none h-64 w-auto text-white" variant="logomark" mode="white" />
-    </RLAPageSection>
-
-    <RLAPageSection
-            orientation="vertical"
-            title="Image Test"
-            description="Testing the Astro Image component"
-    >
-      <div slot="body" class="flex flex-wrap gap-md justify-center">
-        <TestImage src={placeholderImage} alt="A placeholder image used for testing the image component with imported assets" width={400} height={200} />
-        <TestImage src={placeholderImage} alt="A square cropped placeholder for testing different aspect ratios" width={200} height={200} />
-        <TestImage src="/og/placeholder.webp" alt="A public folder placeholder served directly without processing" width={400} height={200} />
-      </div>
+        <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
     </RLAPageSection>
 
     <RLAPageSection
@@ -122,57 +107,4 @@ const ctaLinks = [
             description={messages.ctaDesc}
             links={ctaLinks}
     />
-
-    <div class="flex justify-center py-xl">
-        <div class="flex flex-wrap gap-md items-center justify-center">
-            <span class="text-sm font-bold w-full text-center opacity-60">Phase 3 — Color Registration</span>
-
-            <!-- blurple (mode-aware: different in light vs dark) -->
-            <RLAButton label="Blurple" color="blurple" variant="solid" />
-
-            <!-- grand-tale-primary (mode-aware with dark values) -->
-            <RLAButton label="Grand Tale Primary" color="grand-tale-primary" variant="solid" />
-
-            <!-- blagenta-374 (single arbitrary shade) -->
-            <button class="bg-blagenta-374 text-white px-4 py-2 rounded-md font-medium h-9 text-sm inline-flex items-center justify-center gap-4xs">
-                Blagenta 374
-            </button>
-
-            <!-- nonexistent (not registered — expect blank/broken) -->
-            <RLAButton label="Nonexistent" color="nonexistent" variant="solid" />
-        </div>
-    </div>
-
-    <div class="flex justify-center py-xl">
-        <div class="flex flex-wrap gap-md items-center justify-center">
-            <span class="text-sm font-bold w-full text-center opacity-60">Phase 4 — Theme Awareness</span>
-
-            <!-- mode-aware: light + dark defined, adapts natively -->
-            <RLAButton label="Mode Aware" color="mode-aware" variant="solid" />
-            <RLAButton label="MA light" color="mode-aware" variant="solid" theme="light" />
-            <RLAButton label="MA dark" color="mode-aware" variant="solid" theme="dark" />
-            <RLAButton label="MA flat" color="mode-aware" variant="solid" theme="flat" />
-
-            <!-- mode-pinned: has explicit flat bucket -->
-            <RLAButton label="Mode Pinned" color="mode-pinned" variant="solid" />
-            <RLAButton label="MP light" color="mode-pinned" variant="solid" theme="light" />
-            <RLAButton label="MP dark" color="mode-pinned" variant="solid" theme="dark" />
-            <RLAButton label="MP flat" color="mode-pinned" variant="solid" theme="flat" />
-
-            <!-- flat-test: flat format, same everywhere -->
-            <RLAButton label="Flat Test" color="flat-test" variant="solid" />
-            <RLAButton label="FT light" color="flat-test" variant="solid" theme="light" />
-            <RLAButton label="FT dark" color="flat-test" variant="solid" theme="dark" />
-            <RLAButton label="FT flat" color="flat-test" variant="solid" theme="flat" />
-
-            <!-- no-dark: only light defined -->
-            <RLAButton label="No Dark" color="no-dark" variant="solid" />
-            <RLAButton label="ND light" color="no-dark" variant="solid" theme="light" />
-            <RLAButton label="ND dark" color="no-dark" variant="solid" theme="dark" />
-
-            <!-- no-light: only dark defined -->
-            <RLAButton label="No Light" color="no-light" variant="solid" />
-            <RLAButton label="NL dark" color="no-light" variant="solid" theme="dark" />
-        </div>
-    </div>
 </AppLayout>

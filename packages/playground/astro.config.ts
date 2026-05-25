@@ -295,7 +295,11 @@ export default defineConfig({
         }
       },
       logos: {
-        logomark: "/favicon.svg"
+        logomark: {
+          color: "/favicon.svg",
+          white: "/favicon-white.svg",
+          black: "/favicon-black.svg"
+        }
       }
     }),
 

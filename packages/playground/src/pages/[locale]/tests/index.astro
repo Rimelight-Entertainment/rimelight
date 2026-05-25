@@ -12,7 +12,9 @@ const messages = useI18n("testsPage", {
   title: "Component Tests",
   description: "Internal test pages for Rimelight UI components",
   logoTest: "Logo Component Test",
-  logoDesc: "RLALogo auto mode detection and theme override"
+  logoDesc: "RLALogo auto mode detection and theme override",
+  headerTest: "Header Layer Test",
+  headerDesc: "RLAHeader stacking with multiple fixed layers"
 });
 ---
 
@@ -28,6 +30,14 @@ const messages = useI18n("testsPage", {
       >
         <h2 class="text-xl font-semibold mb-1">{messages.logoTest}</h2>
         <p class="text-sm text-muted-foreground">{messages.logoDesc}</p>
+      </a>
+
+      <a
+        href={getRelativeLocaleUrl(activeLocale, "/tests/header")}
+        class="block border border-border rounded-xl p-6 hover:border-primary-500 transition-colors"
+      >
+        <h2 class="text-xl font-semibold mb-1">{messages.headerTest}</h2>
+        <p class="text-sm text-muted-foreground">{messages.headerDesc}</p>
       </a>
     </div>
   </div>

@@ -4,6 +4,7 @@
     "links_blog_label": "Blog",
     "links_docs_label": "Docs",
     "links_about_label": "About",
-    "links_components_label": "Components"
+    "links_components_label": "Components",
+    "links_tests_label": "Tests"
   }
 }

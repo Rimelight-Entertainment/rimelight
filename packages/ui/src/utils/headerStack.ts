@@ -85,10 +85,8 @@ export function getHeaderStack(): HeaderStackManager {
             currentTop += layer.naturalHeight
           }
         }
-        document.documentElement.style.setProperty("--rl-total-header-height", `${currentTop}px`)
-        const mainEl = document.querySelector("main, [data-slot='main']")
-        if (mainEl) {
-          (mainEl as HTMLElement).style.paddingTop = `${currentTop}px`
+        if (currentTop > 0) {
+          document.documentElement.style.setProperty("--rl-total-header-height", `${currentTop}px`)
         }
       }
     }
