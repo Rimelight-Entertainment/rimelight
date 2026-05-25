@@ -26,7 +26,7 @@ export const createHeaderTheme = () =>
           root: "sticky top-0 inset-x-0 z-50"
         },
         false: {
-          root: "relative"
+          root: ""
         }
       },
       fixed: {

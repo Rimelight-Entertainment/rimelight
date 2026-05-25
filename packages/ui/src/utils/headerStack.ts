@@ -86,6 +86,10 @@ export function getHeaderStack(): HeaderStackManager {
           }
         }
         document.documentElement.style.setProperty("--rl-total-header-height", `${currentTop}px`)
+        const mainEl = document.querySelector("main, [data-slot='main']")
+        if (mainEl) {
+          (mainEl as HTMLElement).style.paddingTop = `${currentTop}px`
+        }
       }
     }
   }

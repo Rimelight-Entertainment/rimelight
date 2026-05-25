@@ -38,6 +38,7 @@ const zIndex = 100 - stackIndex;
   data-rla-header={fixed ? "true" : undefined}
   data-stack-index={stackIndex}
   data-hide-on-scroll={String(hideOnScroll)}
+  data-header-layer-id={headerId}
   style={fixed ? `z-index: ${zIndex};` : undefined}
   {...rest}
 >
@@ -59,6 +60,7 @@ const zIndex = 100 - stackIndex;
 {fixed && (
   <script>
     import { getHeaderStack } from "../../utils/headerStack";
+    import { headerLayersStore } from "../../composables/useHeaderStore";
 
     const stack = getHeaderStack();
     const headers = document.querySelectorAll("[data-rla-header='true']");
@@ -75,8 +77,17 @@ const zIndex = 100 - stackIndex;
       let naturalHeight = contentEl ? contentEl.offsetHeight : 0;
       let isVisible = true;
 
+      const syncStore = () => {
+        headerLayersStore.setKey(id, {
+          order: stackIndex,
+          isVisible,
+          height: naturalHeight
+        });
+      };
+
       const updateStack = () => {
         stack.register(id, stackIndex, naturalHeight, isVisible, header as HTMLElement);
+        syncStore();
       };
 
       if (typeof ResizeObserver !== "undefined" && contentEl) {
@@ -106,6 +117,16 @@ const zIndex = 100 - stackIndex;
       }
 
       updateStack();
+
+      // Cleanup on disconnect
+      const observer = new MutationObserver(() => {
+        if (!document.body.contains(header)) {
+          stack.unregister(id);
+          headerLayersStore.setKey(id, undefined as any);
+          observer.disconnect();
+        }
+      });
+      observer.observe(header.parentNode || document.body, { childList: true, subtree: true });
     });
   </script>
 )}
