@@ -21,4 +21,3 @@ export interface TooltipProps {
   class?: any
   [key: string]: unknown
 }
-

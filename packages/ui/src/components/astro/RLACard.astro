@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { CardProps } from "../../types"
-import cardTheme from "../../themes/card.theme"
+import cardThemeDefault, { createCardTheme } from "../../themes/card.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const cardTheme = uiConfig.colors ? createCardTheme() : cardThemeDefault
 
 const card = scv(cardTheme)
 

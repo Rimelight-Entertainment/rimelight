@@ -2,12 +2,25 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { SeparatorProps } from "../../types"
-import separatorTheme from "../../themes/separator.theme"
+import separatorThemeDefault, { createSeparatorTheme } from "../../themes/separator.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import RLAAvatar from "./RLAAvatar.astro"
+import { cx } from "css-variants"
+
+const uiConfig = getUIConfig()
+const separatorTheme = uiConfig.colors ? createSeparatorTheme() : separatorThemeDefault
 
 const separator = scv(separatorTheme)
 
 const {
   orientation = "horizontal",
+  color = "neutral",
+  size = "xs",
+  type = "solid",
+  label,
+  icon,
+  avatar,
+  position = "center",
   decorative = true,
   ui: uiProp,
   class: className,
@@ -15,7 +28,11 @@ const {
 } = Astro.props as SeparatorProps
 
 const classes = resolveClasses(separator, {
-  orientation
+  orientation,
+  color,
+  size,
+  type,
+  position
 }, useUi("separator", uiProp), className)
 ---
 <div
@@ -24,4 +41,38 @@ const classes = resolveClasses(separator, {
   role={decorative ? "none" : "separator"}
   aria-orientation={decorative ? undefined : orientation}
   {...rest}
-/>
+>
+  <div class={classes.border} />
+
+  {(label || icon || avatar || Astro.slots.has("default")) && (
+    <>
+      <div class={classes.container} data-slot="container">
+        <slot name="avatar">
+          {avatar && (
+            <RLAAvatar 
+              {...(typeof avatar === 'string' ? { src: avatar } : avatar)} 
+              size={classes.avatarSize as any} 
+              class={classes.avatar} 
+              data-slot="avatar" 
+            />
+          )}
+        </slot>
+        
+        <slot name="icon">
+          {icon && (
+            <span class={classes.icon} data-slot="icon">
+              <span class={cx(icon)} aria-hidden="true" />
+            </span>
+          )}
+        </slot>
+
+        <span class={classes.label} data-slot="label">
+          {label}
+          <slot />
+        </span>
+      </div>
+
+      <div class={classes.border} />
+    </>
+  )}
+</div>

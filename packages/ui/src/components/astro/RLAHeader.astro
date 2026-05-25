@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { HeaderProps } from "../../types"
-import headerTheme from "../../themes/header.theme"
+import headerThemeDefault, { createHeaderTheme } from "../../themes/header.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const headerTheme = uiConfig.colors ? createHeaderTheme() : headerThemeDefault
 
 const header = scv(headerTheme)
 
@@ -60,8 +64,8 @@ const zIndex = 100 - stackIndex;
     const headers = document.querySelectorAll("[data-rla-header='true']");
 
     headers.forEach(header => {
-      if ((header as any)._rl_initialized) return;
-      (header as any)._rl_initialized = true;
+      if ((header as any).rlInitialized) return;
+      (header as any).rlInitialized = true;
 
       const id = header.id;
       const stackIndex = parseInt(header.getAttribute("data-stack-index") || "0", 10);

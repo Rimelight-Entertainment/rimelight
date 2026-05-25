@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { EditorProps } from "../../types"
-import editorThemeDefault from "../../themes/editor.theme"
+import editorThemeDefault, { createEditorTheme } from "../../themes/editor.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const editor = scv(editorThemeDefault)
+const uiConfig = getUIConfig()
+const editorTheme = uiConfig.colors ? createEditorTheme() : editorThemeDefault
+
+const editor = scv(editorTheme)
 
 const {
   ui: uiProp,

@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { InputNumberProps } from "../../types"
-import inputNumberThemeDefault from "../../themes/input-number.theme"
+import inputNumberThemeDefault, { createInputNumberTheme } from "../../themes/input-number.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const inputNumber = scv(inputNumberThemeDefault)
+const uiConfig = getUIConfig()
+const inputNumberTheme = uiConfig.colors ? createInputNumberTheme() : inputNumberThemeDefault
+
+const inputNumber = scv(inputNumberTheme)
 
 const {
   ui: uiProp,

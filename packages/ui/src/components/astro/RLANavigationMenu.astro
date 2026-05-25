@@ -10,12 +10,13 @@ const navigationMenu = scv(navigationMenuTheme)
 const {
   items = [],
   color = "primary",
+  theme,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as NavigationMenuProps
 
-const classes = resolveClasses(navigationMenu, {}, useUi("navigationMenu", uiProp), className)
+const classes = resolveClasses(navigationMenu, { theme }, useUi("navigationMenu", uiProp), className)
 ---
 
 <nav class={classes.root} data-slot="root" data-nav-menu {...rest}>
@@ -39,7 +40,7 @@ const classes = resolveClasses(navigationMenu, {}, useUi("navigationMenu", uiPro
             </button>
           ) : (
             <a
-              href={item.href ?? "#"}
+              href={item.href ?? item.to ?? "#"}
               class={classes.link}
               data-slot="link"
             >
@@ -54,7 +55,7 @@ const classes = resolveClasses(navigationMenu, {}, useUi("navigationMenu", uiPro
                 {item.children!.map(child => (
                   <li>
                     <a
-                      href={child.href ?? "#"}
+                      href={child.href ?? child.to ?? "#"}
                       class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
                     >
                       {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}

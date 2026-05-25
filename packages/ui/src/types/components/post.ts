@@ -1,5 +1,29 @@
 export interface PostProps {
   /**
+   * The title of the post.
+   */
+  title?: string
+  /**
+   * The description of the post.
+   */
+  description?: string
+  /**
+   * The date of the post.
+   */
+  date?: string | Date
+  /**
+   * The image of the post.
+   */
+  image?: string | Record<string, any>
+  /**
+   * The link to the post.
+   */
+  to?: string
+  /**
+   * The variant of the post.
+   */
+  variant?: "soft" | "ghost"
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

@@ -1,74 +1,72 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
-
-const defaultColors = [
-  "primary",
-  "secondary",
-  "info",
-  "success",
-  "warning",
-  "error",
-  "commentary",
-  "ideation",
-  "source"
-]
 
 export const createButtonTheme = (colors: string[] = defaultColors) =>
   defineTheme({
-    slots: ["root", "label", "leadingIcon", "trailingIcon"],
+    slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
       root: [
-        "inline-flex items-center justify-center gap-4xs rounded-md font-medium ws-nowrap",
-        "[&_svg]:pointer-events-none [&_svg]:shrink-0",
-        "transition-all outline-none focus-visible:ring-3",
-        "disabled:pointer-events-none disabled:op-50",
+        "group inline-flex items-center justify-center rounded-md font-medium ws-nowrap disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+        "transition-colors outline-none",
         "aria-invalid:border-error-500 aria-invalid:ring-error-500/20"
       ],
       label: "truncate",
-      leadingIcon: "shrink-0",
+      leadingIcon: "shrink-0 flex items-center justify-center",
+      leadingAvatar: "shrink-0",
+      leadingAvatarSize: "",
       trailingIcon: "shrink-0"
     },
     variants: {
       variant: {
-        solid: { root: "shadow-sm border border-transparent" },
-        outline: { root: "b shadow-sm border" },
+        solid: { root: "" },
+        outline: { root: "" },
         soft: { root: "" },
         subtle: { root: "" },
         ghost: { root: "" },
-        link: { root: "p-0 h-auto no-underline" }
+        link: { root: "" }
       },
-      color: Object.fromEntries(colors.map((color) => [color, { root: "" }])),
+      color: {
+        ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
+        neutral: { root: "" }
+      },
       size: {
         xs: {
-          root: "h-7 px-2xs text-xs [&_svg]:size-3.5",
-          leadingIcon: "[&_svg]:size-3.5 [&_span]:size-3.5",
-          trailingIcon: "[&_svg]:size-3.5 [&_span]:size-3.5"
+          root: "text-xs gap-1 [&_svg]:size-4",
+          leadingIcon: "size-4",
+          leadingAvatarSize: "3xs",
+          trailingIcon: "size-4"
         },
         sm: {
-          root: "h-8 px-xs text-sm [&_svg]:size-4",
-          leadingIcon: "[&_svg]:size-4 [&_span]:size-4",
-          trailingIcon: "[&_svg]:size-4 [&_span]:size-4"
+          root: "text-xs gap-1.5 [&_svg]:size-4",
+          leadingIcon: "size-4",
+          leadingAvatarSize: "3xs",
+          trailingIcon: "size-4"
         },
         md: {
-          root: "h-9 px-sm text-sm [&_svg]:size-4",
-          leadingIcon: "[&_svg]:size-4 [&_span]:size-4",
-          trailingIcon: "[&_svg]:size-4 [&_span]:size-4"
+          root: "text-sm gap-1.5 [&_svg]:size-5",
+          leadingIcon: "size-5",
+          leadingAvatarSize: "2xs",
+          trailingIcon: "size-5"
         },
         lg: {
-          root: "h-10 px-md text-base [&_svg]:size-4.5",
-          leadingIcon: "[&_svg]:size-4.5 [&_span]:size-4.5",
-          trailingIcon: "[&_svg]:size-4.5 [&_span]:size-4.5"
+          root: "text-sm gap-2 [&_svg]:size-5",
+          leadingIcon: "size-5",
+          leadingAvatarSize: "2xs",
+          trailingIcon: "size-5"
         },
         xl: {
-          root: "h-11 px-lg text-base [&_svg]:size-5",
-          leadingIcon: "[&_svg]:size-5 [&_span]:size-5",
-          trailingIcon: "[&_svg]:size-5 [&_span]:size-5"
+          root: "text-base gap-2 [&_svg]:size-6",
+          leadingIcon: "size-6",
+          leadingAvatarSize: "xs",
+          trailingIcon: "size-6"
         }
       },
       block: {
         true: { root: "w-full justify-center", trailingIcon: "ms-auto" }
       },
       square: {
-        true: { root: "" }
+        true: {},
+        false: {}
       },
       leading: { true: {} },
       trailing: { true: {} },
@@ -88,79 +86,96 @@ export const createButtonTheme = (colors: string[] = defaultColors) =>
         variant: "solid" as const,
         color,
         classNames: {
-          root: `rl-color-${color} bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] focus-visible:ring-[var(--rl-ring)]/50`
+          root: `rl-color-${color} bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] disabled:bg-[var(--rl-bg)] aria-disabled:bg-[var(--rl-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]`
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
         color,
         classNames: {
-          root: `rl-color-${color} border-[var(--rl-border)]/20 text-[var(--rl-text)] bg-[var(--rl-bg)]/5 hover:bg-[var(--rl-bg)]/10 hover:border-[var(--rl-border)]/30 focus-visible:ring-[var(--rl-ring)]/40`
+          root: `rl-color-${color} ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]`
         }
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
         color,
         classNames: {
-          root: `rl-color-${color} text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/20 focus-visible:ring-[var(--rl-ring)]/40`
+          root: `rl-color-${color} text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 focus:outline-none focus-visible:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10`
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
         color,
         classNames: {
-          root: `rl-color-${color} text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/20 focus-visible:ring-[var(--rl-ring)]/40`
+          root: `rl-color-${color} text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]`
         }
       })),
       ...colors.map((color) => ({
         variant: "ghost" as const,
         color,
         classNames: {
-          root: `rl-color-${color} text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 focus-visible:ring-[var(--rl-ring)]/40`
+          root: `rl-color-${color} text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent`
         }
       })),
       ...colors.map((color) => ({
         variant: "link" as const,
         color,
         classNames: {
-          root: `rl-color-${color} text-[var(--rl-text)] hover:underline hover:decoration-current`
+          root: `rl-color-${color} text-[var(--rl-text)] hover:text-[var(--rl-text)]/75 active:text-[var(--rl-text)]/75 disabled:text-[var(--rl-text)] aria-disabled:text-[var(--rl-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--rl-ring)]`
         }
       })),
       {
-        square: true,
-        size: "xs",
+        color: "neutral",
+        variant: "solid",
         classNames: {
-          root: "p-1 w-7"
+          root: "text-inverted bg-inverted hover:bg-inverted/90 active:bg-inverted/90 disabled:bg-inverted aria-disabled:bg-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-inverted"
         }
       },
       {
-        square: true,
-        size: "sm",
+        color: "neutral",
+        variant: "outline",
         classNames: {
-          root: "p-1.5 w-8"
+          root: "ring ring-inset ring-accented text-default bg-default hover:bg-elevated active:bg-elevated disabled:bg-default aria-disabled:bg-default focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted"
         }
       },
       {
-        square: true,
-        size: "md",
+        color: "neutral",
+        variant: "soft",
         classNames: {
-          root: "p-1.5 w-9"
+          root: "text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 focus:outline-none focus-visible:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated"
         }
       },
       {
-        square: true,
-        size: "lg",
+        color: "neutral",
+        variant: "subtle",
         classNames: {
-          root: "p-2 w-10"
+          root: "ring ring-inset ring-accented text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted"
         }
       },
       {
-        square: true,
-        size: "xl",
+        color: "neutral",
+        variant: "ghost",
         classNames: {
-          root: "p-2 w-11"
+          root: "text-default hover:bg-elevated/10 active:bg-elevated/10 focus:outline-none focus-visible:bg-elevated/10 hover:disabled:bg-transparent hover:aria-disabled:bg-transparent"
         }
       },
+      {
+        color: "neutral",
+        variant: "link",
+        classNames: {
+          root: "text-muted hover:text-default active:text-default disabled:text-muted aria-disabled:text-muted focus:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-inverted"
+        }
+      },
+      { square: false, size: "xs", classNames: { root: "px-2 py-1" } },
+      { square: true,  size: "xs", classNames: { root: "p-1" } },
+      { square: false, size: "sm", classNames: { root: "px-2.5 py-1.5" } },
+      { square: true,  size: "sm", classNames: { root: "p-1.5" } },
+      { square: false, size: "md", classNames: { root: "px-2.5 py-1.5" } },
+      { square: true,  size: "md", classNames: { root: "p-1.5" } },
+      { square: false, size: "lg", classNames: { root: "px-3 py-2" } },
+      { square: true,  size: "lg", classNames: { root: "p-2" } },
+      { square: false, size: "xl", classNames: { root: "px-3 py-2" } },
+      { square: true,  size: "xl", classNames: { root: "p-2" } },
       {
         loading: true,
         leading: true,
@@ -172,14 +187,6 @@ export const createButtonTheme = (colors: string[] = defaultColors) =>
         loading: true,
         leading: false,
         trailing: true,
-        classNames: {
-          trailingIcon: "animate-spin"
-        }
-      },
-      {
-        loading: true,
-        leading: false,
-        trailing: false,
         classNames: {
           trailingIcon: "animate-spin"
         }

@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { EmptyProps } from "../../types"
-import emptyThemeDefault from "../../themes/empty.theme"
+import emptyThemeDefault, { createEmptyTheme } from "../../themes/empty.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const empty = scv(emptyThemeDefault)
+const uiConfig = getUIConfig()
+const emptyTheme = uiConfig.colors ? createEmptyTheme() : emptyThemeDefault
+
+const empty = scv(emptyTheme)
 
 const {
   ui: uiProp,

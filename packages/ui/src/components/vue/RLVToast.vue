@@ -1,0 +1,68 @@
+<script setup lang="ts">
+import { computed } from "vue"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ToastProps } from "../../types/components/toast"
+import toastTheme from "../../themes/toast.theme"
+
+const toast = scv(toastTheme)
+
+const props = withDefaults(defineProps<ToastProps & { id?: string | number }>(), {
+  variant: "default",
+  duration: 5000
+})
+
+const emit = defineEmits<{
+  (e: "close", id: string | number | undefined): void
+}>()
+
+const resolvedClasses = computed(() =>
+  resolveClasses(toast, { variant: props.variant }, useUi("toast", props.ui), props.class)
+)
+
+const variantIcons: Record<string, string> = {
+  default: "i-lucide-bell",
+  destructive: "i-lucide-alert-circle",
+  success: "i-lucide-check-circle-2",
+  warning: "i-lucide-alert-triangle",
+  info: "i-lucide-info"
+}
+
+const icon = computed(() => variantIcons[props.variant] ?? variantIcons.default!)
+</script>
+
+<template>
+  <div
+    :class="resolvedClasses.root"
+    data-slot="root"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <span :class="[icon, 'size-4 shrink-0 mt-0.5']" aria-hidden="true" />
+
+    <div class="flex flex-col gap-0.5 flex-1 min-w-0">
+      <div v-if="title" :class="resolvedClasses.title" data-slot="title">
+        {{ title }}
+      </div>
+      <div v-if="description" :class="resolvedClasses.description" data-slot="description">
+        {{ description }}
+      </div>
+      <slot />
+    </div>
+
+    <button v-if="actionLabel" type="button" :class="resolvedClasses.action" data-slot="action">
+      {{ actionLabel }}
+    </button>
+
+    <button
+      type="button"
+      :class="resolvedClasses.close"
+      data-slot="close"
+      aria-label="Dismiss notification"
+      @click="emit('close', id)"
+    >
+      <span class="i-lucide-x size-3.5" aria-hidden="true" />
+    </button>
+  </div>
+</template>

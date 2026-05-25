@@ -24,6 +24,13 @@ export interface UseScrollToTopReturn {
   scrollToTop: () => void
 }
 
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  })
+}
+
 export function useScrollToTop(options: UseScrollToTopOptions = {}): UseScrollToTopReturn {
   const { threshold = 200 } = options
 
@@ -36,13 +43,6 @@ export function useScrollToTop(options: UseScrollToTopOptions = {}): UseScrollTo
 
     isVisible.value = scrollTop > threshold
     scrollPercentage.value = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
-  }
-
-  function scrollToTop() {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    })
   }
 
   onMounted(() => {

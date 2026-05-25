@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { SpeedDialProps } from "../../types"
-import speedDialThemeDefault from "../../themes/speed-dial.theme"
+import speedDialThemeDefault, { createSpeedDialTheme } from "../../themes/speed-dial.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const speedDial = scv(speedDialThemeDefault)
+const uiConfig = getUIConfig()
+const speedDialTheme = uiConfig.colors ? createSpeedDialTheme() : speedDialThemeDefault
+
+const speedDial = scv(speedDialTheme)
 
 const {
   ui: uiProp,

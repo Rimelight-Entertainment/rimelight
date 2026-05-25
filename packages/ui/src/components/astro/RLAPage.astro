@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PageProps } from "../../types"
-import pageThemeDefault from "../../themes/page.theme"
+import pageThemeDefault, { createPageTheme } from "../../themes/page.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const page = scv(pageThemeDefault)
+const uiConfig = getUIConfig()
+const pageTheme = uiConfig.colors ? createPageTheme() : pageThemeDefault
+
+const page = scv(pageTheme)
 
 const {
   ui: uiProp,

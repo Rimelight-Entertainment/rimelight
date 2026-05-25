@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { QrCodeProps } from "../../types"
-import qrCodeThemeDefault from "../../themes/qr-code.theme"
+import qrCodeThemeDefault, { createQrCodeTheme } from "../../themes/qr-code.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const qrCode = scv(qrCodeThemeDefault)
+const uiConfig = getUIConfig()
+const qrCodeTheme = uiConfig.colors ? createQrCodeTheme() : qrCodeThemeDefault
+
+const qrCode = scv(qrCodeTheme)
 
 const {
   ui: uiProp,

@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { FloatingActionProps } from "../../types"
-import floatingActionThemeDefault from "../../themes/floating-action.theme"
+import floatingActionThemeDefault, { createFloatingActionTheme } from "../../themes/floating-action.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const floatingAction = scv(floatingActionThemeDefault)
+const uiConfig = getUIConfig()
+const floatingActionTheme = uiConfig.colors ? createFloatingActionTheme() : floatingActionThemeDefault
+
+const floatingAction = scv(floatingActionTheme)
 
 const {
   ui: uiProp,

@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ChatMessagesProps } from "../../types"
-import chatMessagesThemeDefault from "../../themes/chat-messages.theme"
+import chatMessagesThemeDefault, { createChatMessagesTheme } from "../../themes/chat-messages.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const chatMessages = scv(chatMessagesThemeDefault)
+const uiConfig = getUIConfig()
+const chatMessagesTheme = uiConfig.colors ? createChatMessagesTheme() : chatMessagesThemeDefault
+
+const chatMessages = scv(chatMessagesTheme)
 
 const {
   ui: uiProp,

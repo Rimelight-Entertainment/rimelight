@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { DashboardSearchButtonProps } from "../../types"
-import dashboardSearchButtonThemeDefault from "../../themes/dashboard-search-button.theme"
+import dashboardSearchButtonThemeDefault, { createDashboardSearchButtonTheme } from "../../themes/dashboard-search-button.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const dashboardSearchButton = scv(dashboardSearchButtonThemeDefault)
+const uiConfig = getUIConfig()
+const dashboardSearchButtonTheme = uiConfig.colors ? createDashboardSearchButtonTheme() : dashboardSearchButtonThemeDefault
+
+const dashboardSearchButton = scv(dashboardSearchButtonTheme)
 
 const {
   ui: uiProp,

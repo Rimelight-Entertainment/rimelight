@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { TourProps } from "../../types"
-import tourThemeDefault from "../../themes/tour.theme"
+import tourThemeDefault, { createTourTheme } from "../../themes/tour.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const tour = scv(tourThemeDefault)
+const uiConfig = getUIConfig()
+const tourTheme = uiConfig.colors ? createTourTheme() : tourThemeDefault
+
+const tour = scv(tourTheme)
 
 const {
   ui: uiProp,

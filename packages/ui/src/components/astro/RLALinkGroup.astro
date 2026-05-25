@@ -2,18 +2,37 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { LinkGroupProps } from "../../types"
-import linkGroupThemeDefault from "../../themes/link-group.theme"
+import linkGroupThemeDefault, { createLinkGroupTheme } from "../../themes/link-group.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const linkGroup = scv(linkGroupThemeDefault)
+const uiConfig = getUIConfig()
+const linkGroupTheme = uiConfig.colors ? createLinkGroupTheme() : linkGroupThemeDefault
+
+const linkGroup = scv(linkGroupTheme)
 
 const {
+  title,
+  links = [],
+  theme,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as LinkGroupProps
 
-const classes = resolveClasses(linkGroup, {}, useUi("linkGroup", uiProp), className);
+const classes = resolveClasses(linkGroup, { theme }, useUi("linkGroup", uiProp), className);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
-  <slot />
+  {title && <h4 class={classes.title} data-slot="title">{title}</h4>}
+  
+  <ul class={classes.list} data-slot="list">
+    <slot>
+      {links.map((link) => (
+        <li class={classes.item} data-slot="item">
+          <a href={link.href} class={classes.link} data-slot="link" {...link}>
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </slot>
+  </ul>
 </div>

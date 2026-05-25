@@ -17,4 +17,3 @@ export interface SeparatorProps {
   class?: any
   [key: string]: unknown
 }
-

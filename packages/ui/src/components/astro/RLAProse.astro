@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ProseProps } from "../../types"
-import proseThemeDefault from "../../themes/prose.theme"
+import proseThemeDefault, { createProseTheme } from "../../themes/prose.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const prose = scv(proseThemeDefault)
+const uiConfig = getUIConfig()
+const proseTheme = uiConfig.colors ? createProseTheme() : proseThemeDefault
+
+const prose = scv(proseTheme)
 
 const {
   ui: uiProp,

@@ -34,6 +34,10 @@ export interface ButtonProps {
    */
   loading?: boolean
   /**
+   * Automatically toggles loading state when an async onClick handler is executed
+   */
+  loadingAuto?: boolean
+  /**
    * Renders a square button with equal padding
    */
   square?: boolean

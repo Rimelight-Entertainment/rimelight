@@ -1,7 +1,17 @@
 import { defineTheme } from "../utils/defineTheme"
 
 export const modalTheme = defineTheme({
-  slots: ["root", "trigger", "backdrop", "content", "header", "title", "description", "footer", "closeButton"],
+  slots: [
+    "root",
+    "trigger",
+    "backdrop",
+    "content",
+    "header",
+    "title",
+    "description",
+    "footer",
+    "closeButton"
+  ],
   base: {
     root: "relative inline-block",
     trigger: "",

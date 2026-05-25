@@ -17,4 +17,3 @@ export interface IconProps {
   class?: any
   [key: string]: unknown
 }
-

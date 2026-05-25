@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { CommandPaletteProps } from "../../types"
-import commandPaletteThemeDefault from "../../themes/command-palette.theme"
+import commandPaletteThemeDefault, { createCommandPaletteTheme } from "../../themes/command-palette.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const commandPalette = scv(commandPaletteThemeDefault)
+const uiConfig = getUIConfig()
+const commandPaletteTheme = uiConfig.colors ? createCommandPaletteTheme() : commandPaletteThemeDefault
+
+const commandPalette = scv(commandPaletteTheme)
 
 const {
   ui: uiProp,

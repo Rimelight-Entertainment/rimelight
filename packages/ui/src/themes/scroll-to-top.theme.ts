@@ -12,16 +12,18 @@ export const createScrollToTopTheme = (colors: string[] = ["primary", "secondary
       icon: "size-6 text-white"
     },
     variants: {
-      color: Object.fromEntries(colors.map((color) => [
-        color,
-        {
-          root: `rl-color-${color}`,
-          progressBase: "",
-          svg: "",
-          iconContainer: "",
-          icon: ""
-        }
-      ])),
+      color: Object.fromEntries(
+        colors.map((color) => [
+          color,
+          {
+            root: `rl-color-${color}`,
+            progressBase: "",
+            svg: "",
+            iconContainer: "",
+            icon: ""
+          }
+        ])
+      ),
       theme: {
         flat: { root: "rl-flat" },
         light: { root: "rl-light" },

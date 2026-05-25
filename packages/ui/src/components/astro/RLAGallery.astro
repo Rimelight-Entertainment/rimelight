@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { GalleryProps } from "../../types"
-import galleryThemeDefault from "../../themes/gallery.theme"
+import galleryThemeDefault, { createGalleryTheme } from "../../themes/gallery.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const gallery = scv(galleryThemeDefault)
+const uiConfig = getUIConfig()
+const galleryTheme = uiConfig.colors ? createGalleryTheme() : galleryThemeDefault
+
+const gallery = scv(galleryTheme)
 
 const {
   ui: uiProp,

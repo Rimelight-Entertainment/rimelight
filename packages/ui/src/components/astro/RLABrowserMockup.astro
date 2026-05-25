@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { BrowserMockupProps } from "../../types"
-import browserMockupThemeDefault from "../../themes/browser-mockup.theme"
+import browserMockupThemeDefault, { createBrowserMockupTheme } from "../../themes/browser-mockup.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const browserMockup = scv(browserMockupThemeDefault)
+const uiConfig = getUIConfig()
+const browserMockupTheme = uiConfig.colors ? createBrowserMockupTheme() : browserMockupThemeDefault
+
+const browserMockup = scv(browserMockupTheme)
 
 const {
   ui: uiProp,

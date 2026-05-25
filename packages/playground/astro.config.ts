@@ -7,7 +7,7 @@ import sitemap from "@astrojs/sitemap"
 import starlight from "@astrojs/starlight"
 import { ui } from "@rimelight/ui/integrations"
 import { sri } from "@rimelight/ui/integrations"
-import { starlightAddons } from "@rimelight/ui/plugins"
+import { starlightAddons, starlightDocsApi } from "@rimelight/ui/plugins"
 import lunaria from "@lunariajs/starlight"
 import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
 import cloudflare from "@astrojs/cloudflare"
@@ -153,7 +153,7 @@ export default defineConfig({
 
     starlight({
       customCss: ["./src/styles/starlight.css"],
-      plugins: [starlightAddons(), lunaria({ route: "/i18n" })],
+      plugins: [starlightAddons(), starlightDocsApi(), lunaria({ route: "/i18n" })],
       //TODO Temporarily true while issue gets resolved: https://github.com/withastro/starlight/issues/3859
       //prerender: false,
       lastUpdated: true,
@@ -176,7 +176,7 @@ export default defineConfig({
 
     ui({
       colors: {
-        blurple: {
+        "blurple": {
           light: {
             "50": "#f4f0ff",
             "100": "#e9e2ff",
@@ -245,7 +245,7 @@ export default defineConfig({
           "900": "oklch(0.2209 0.0379 75.04)",
           "950": "oklch(0 0 0)"
         },
-        blagenta: {
+        "blagenta": {
           "374": "#ff3366"
         },
         "flat-test": {

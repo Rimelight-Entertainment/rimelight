@@ -21,4 +21,3 @@ export interface PopoverProps {
   class?: any
   [key: string]: unknown
 }
-

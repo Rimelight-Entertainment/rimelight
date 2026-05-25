@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ErrorProps } from "../../types"
-import errorThemeDefault from "../../themes/error.theme"
+import errorThemeDefault, { createErrorTheme } from "../../themes/error.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const error = scv(errorThemeDefault)
+const uiConfig = getUIConfig()
+const errorTheme = uiConfig.colors ? createErrorTheme() : errorThemeDefault
+
+const error = scv(errorTheme)
 
 const {
   ui: uiProp,

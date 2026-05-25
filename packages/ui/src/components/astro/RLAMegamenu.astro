@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { MegamenuProps } from "../../types"
-import megamenuThemeDefault from "../../themes/megamenu.theme"
+import megamenuThemeDefault, { createMegamenuTheme } from "../../themes/megamenu.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const megamenu = scv(megamenuThemeDefault)
+const uiConfig = getUIConfig()
+const megamenuTheme = uiConfig.colors ? createMegamenuTheme() : megamenuThemeDefault
+
+const megamenu = scv(megamenuTheme)
 
 const {
   ui: uiProp,

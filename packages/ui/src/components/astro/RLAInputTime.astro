@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { InputTimeProps } from "../../types"
-import inputTimeThemeDefault from "../../themes/input-time.theme"
+import inputTimeThemeDefault, { createInputTimeTheme } from "../../themes/input-time.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const inputTime = scv(inputTimeThemeDefault)
+const uiConfig = getUIConfig()
+const inputTimeTheme = uiConfig.colors ? createInputTimeTheme() : inputTimeThemeDefault
+
+const inputTime = scv(inputTimeTheme)
 
 const {
   ui: uiProp,

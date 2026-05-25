@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { InputDateProps } from "../../types"
-import inputDateThemeDefault from "../../themes/input-date.theme"
+import inputDateThemeDefault, { createInputDateTheme } from "../../themes/input-date.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const inputDate = scv(inputDateThemeDefault)
+const uiConfig = getUIConfig()
+const inputDateTheme = uiConfig.colors ? createInputDateTheme() : inputDateThemeDefault
+
+const inputDate = scv(inputDateTheme)
 
 const {
   ui: uiProp,

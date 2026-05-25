@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { DashboardGroupProps } from "../../types"
-import dashboardGroupThemeDefault from "../../themes/dashboard-group.theme"
+import dashboardGroupThemeDefault, { createDashboardGroupTheme } from "../../themes/dashboard-group.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const dashboardGroup = scv(dashboardGroupThemeDefault)
+const uiConfig = getUIConfig()
+const dashboardGroupTheme = uiConfig.colors ? createDashboardGroupTheme() : dashboardGroupThemeDefault
+
+const dashboardGroup = scv(dashboardGroupTheme)
 
 const {
   ui: uiProp,

@@ -8,11 +8,11 @@ import {
   transformerDirectives,
   transformerVariantGroup
 } from "unocss"
-import { defaultColorScales } from "./defaults"
+import { defaultColorScales, defaultColors } from "./defaults"
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-export const uiSrcGlob = join(__dirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
-export const uiFilesystemGlob = join(__dirname, "../**/*")
+const pathDirname = dirname(fileURLToPath(import.meta.url))
+export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
+export const uiFilesystemGlob = join(pathDirname, "../**/*")
 
 type ColorShades = Record<string, string>
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades; flat?: ColorShades }
@@ -32,12 +32,24 @@ function generateDarkShade(shade: string, value: string): string {
   return `color-mix(in oklch, ${value}, black ${mixPct.toFixed(0)}%)`
 }
 
-function resolveColorModes(entry: ColorConfigValue, autogenerate?: boolean): { light: Record<string, string>; dark: Record<string, string>; flat: Record<string, string> } {
+function resolveColorModes(
+  entry: ColorConfigValue,
+  autogenerate?: boolean
+): { light: Record<string, string>; dark: Record<string, string>; flat: Record<string, string> } {
   const raw = entry as Record<string, unknown>
 
-  const modeLight = typeof raw.light === "object" && raw.light !== null ? raw.light as ColorShades : {}
-  const modeDark = typeof raw.dark === "object" && raw.dark !== null ? raw.dark as ColorShades : {}
-  const modeFlat = typeof raw.flat === "object" && raw.flat !== null ? raw.flat as ColorShades : {}
+  const modeLight =
+    typeof raw.light === "object" && raw.light !== null
+      ? ({ ...raw.light } as ColorShades)
+      : ({} as ColorShades)
+  const modeDark =
+    typeof raw.dark === "object" && raw.dark !== null
+      ? ({ ...raw.dark } as ColorShades)
+      : ({} as ColorShades)
+  const modeFlat =
+    typeof raw.flat === "object" && raw.flat !== null
+      ? ({ ...raw.flat } as ColorShades)
+      : ({} as ColorShades)
 
   const modeKeys = new Set(["light", "dark", "flat"])
   const flatShades: ColorShades = {}
@@ -47,12 +59,14 @@ function resolveColorModes(entry: ColorConfigValue, autogenerate?: boolean): { l
     }
   }
 
-  const allShades = [...new Set([
-    ...Object.keys(modeLight),
-    ...Object.keys(modeDark),
-    ...Object.keys(modeFlat),
-    ...Object.keys(flatShades)
-  ])]
+  const allShades = [
+    ...new Set([
+      ...Object.keys(modeLight),
+      ...Object.keys(modeDark),
+      ...Object.keys(modeFlat),
+      ...Object.keys(flatShades)
+    ])
+  ]
 
   if (autogenerate) {
     if (Object.keys(modeLight).length === 0) {
@@ -88,15 +102,17 @@ function resolveColorModes(entry: ColorConfigValue, autogenerate?: boolean): { l
 }
 
 const createScale = (colorName: string, shadeKeys: string[]) => ({
-  "DEFAULT": `var(--${colorName})`,
-  "foreground": `var(--${colorName}-foreground)`,
-  "accent": `var(--${colorName}-accent)`,
-  ...Object.fromEntries(shadeKeys.flatMap((shade) => [
-    [shade, `var(--color-${colorName}-${shade})`],
-    [`${shade}-f`, `var(--color-${colorName}-${shade}-f)`],
-    [`${shade}-l`, `var(--color-${colorName}-${shade}-l)`],
-    [`${shade}-d`, `var(--color-${colorName}-${shade}-d)`]
-  ]))
+  DEFAULT: `var(--${colorName})`,
+  foreground: `var(--${colorName}-foreground)`,
+  accent: `var(--${colorName}-accent)`,
+  ...Object.fromEntries(
+    shadeKeys.flatMap((shade) => [
+      [shade, `var(--color-${colorName}-${shade})`],
+      [`${shade}-f`, `var(--color-${colorName}-${shade}-f)`],
+      [`${shade}-l`, `var(--color-${colorName}-${shade}-l)`],
+      [`${shade}-d`, `var(--color-${colorName}-${shade}-d)`]
+    ])
+  )
 })
 
 export interface RimelightPresetOptions {
@@ -107,28 +123,18 @@ export interface RimelightPresetOptions {
 export default definePreset((options?: RimelightPresetOptions) => {
   const userColors = options?.colors ?? {}
   const autoGen = options?.autogenerateColorModes ?? true
-  const coreColors = [
-    "primary",
-    "secondary",
-    "info",
-    "success",
-    "warning",
-    "error",
-    "commentary",
-    "ideation",
-    "source",
-    "neutral"
-  ]
+  const coreColors = [...defaultColors, "neutral"]
   const mergedColorScales = { ...defaultColorScales, ...userColors }
   const allColors = [...new Set([...coreColors, ...Object.keys(userColors)])]
 
   const resolvedColors = Object.fromEntries(
-    Object.entries(mergedColorScales).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
+    Object.entries(mergedColorScales).map(([name, entry]) => [
+      name,
+      resolveColorModes(entry, autoGen)
+    ])
   )
 
-  const safelist = allColors.flatMap((color) => [
-    `rl-color-${color}`
-  ])
+  const safelist = allColors.flatMap((color) => [`rl-color-${color}`])
 
   return {
     name: "rimelight-ui",
@@ -209,30 +215,46 @@ export default definePreset((options?: RimelightPresetOptions) => {
           "--rl-bg-hover-d": `var(--color-${color}-600-d)`,
           "--rl-text-d": `var(--color-${color}-600-d)`,
           "--rl-ring-d": `var(--color-${color}-500-d)`,
-          "--rl-border-d": `var(--color-${color}-500-d)`,
+          "--rl-border-d": `var(--color-${color}-500-d)`
         })
       ],
-      ["rl-flat", {
-        "--rl-bg": "var(--rl-bg-f)",
-        "--rl-bg-hover": "var(--rl-bg-hover-f)",
-        "--rl-text": "var(--rl-text-f)",
-        "--rl-ring": "var(--rl-ring-f)",
-        "--rl-border": "var(--rl-border-f)",
-      }],
-      ["rl-light", {
-        "--rl-bg": "var(--rl-bg-l, var(--rl-bg-f))",
-        "--rl-bg-hover": "var(--rl-bg-hover-l, var(--rl-bg-hover-f))",
-        "--rl-text": "var(--rl-text-l, var(--rl-text-f))",
-        "--rl-ring": "var(--rl-ring-l, var(--rl-ring-f))",
-        "--rl-border": "var(--rl-border-l, var(--rl-border-f))",
-      }],
-      ["rl-dark", {
-        "--rl-bg": "var(--rl-bg-d, var(--rl-bg-f))",
-        "--rl-bg-hover": "var(--rl-bg-hover-d, var(--rl-bg-hover-f))",
-        "--rl-text": "var(--rl-text-d, var(--rl-text-f))",
-        "--rl-ring": "var(--rl-ring-d, var(--rl-ring-f))",
-        "--rl-border": "var(--rl-border-d, var(--rl-border-f))",
-      }]
+      [
+        "rl-flat",
+        {
+          "--rl-bg": "var(--rl-bg-f)",
+          "--rl-bg-hover": "var(--rl-bg-hover-f)",
+          "--rl-text": "var(--rl-text-f)",
+          "--rl-ring": "var(--rl-ring-f)",
+          "--rl-border": "var(--rl-border-f)"
+        }
+      ],
+      [
+        "rl-light",
+        {
+          "--rl-bg": "var(--rl-bg-l, var(--rl-bg-f))",
+          "--rl-bg-hover": "var(--rl-bg-hover-l, var(--rl-bg-hover-f))",
+          "--rl-text": "var(--rl-text-l, var(--rl-text-f))",
+          "--rl-ring": "var(--rl-ring-l, var(--rl-ring-f))",
+          "--rl-border": "var(--rl-border-l, var(--rl-border-f))"
+        }
+      ],
+      [
+        "rl-dark",
+        {
+          "--rl-bg": "var(--rl-bg-d, var(--rl-bg-f))",
+          "--rl-bg-hover": "var(--rl-bg-hover-d, var(--rl-bg-hover-f))",
+          "--rl-text": "var(--rl-text-d, var(--rl-text-f))",
+          "--rl-ring": "var(--rl-ring-d, var(--rl-ring-f))",
+          "--rl-border": "var(--rl-border-d, var(--rl-border-f))"
+        }
+      ],
+      /* Nuxt UI semantic utility resolve */
+      [/^(text)-(default|inverted)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { color: `color-mix(in srgb, var(--text-color-${name}) ${opacity}%, transparent)` } : { color: `var(--text-color-${name})` }],
+      [/^(bg)-(default|inverted)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { "background-color": `color-mix(in srgb, var(--background-color-${name}) ${opacity}%, transparent)` } : { "background-color": `var(--background-color-${name})` }],
+      [/^(ring)-(default|inverted)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { "--un-ring-color": `color-mix(in srgb, var(--ring-color-${name}) ${opacity}%, transparent)` } : { "--un-ring-color": `var(--ring-color-${name})` }],
+      [/^(divide)-(default)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { "border-color": `color-mix(in srgb, var(--divide-color-${name}) ${opacity}%, transparent)` } : { "border-color": `var(--divide-color-${name})` }],
+      [/^(border)-(default)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { "border-color": `color-mix(in srgb, var(--border-color-${name}) ${opacity}%, transparent)` } : { "border-color": `var(--border-color-${name})` }],
+      [/^(outline)-(inverted)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { "outline-color": `color-mix(in srgb, var(--ring-color-${name}) ${opacity}%, transparent)` } : { "outline-color": `var(--ring-color-${name})` }]
     ],
 
     theme: {
@@ -264,11 +286,15 @@ export default definePreset((options?: RimelightPresetOptions) => {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
-        ...Object.fromEntries(allColors.map((color) => {
-          const m = resolvedColors[color]!
-          const shadeKeys = [...new Set([...Object.keys(m.light), ...Object.keys(m.dark), ...Object.keys(m.flat)])]
-          return [color, createScale(color, shadeKeys)]
-        })),
+        ...Object.fromEntries(
+          allColors.map((color) => {
+            const m = resolvedColors[color]!
+            const shadeKeys = [
+              ...new Set([...Object.keys(m.light), ...Object.keys(m.dark), ...Object.keys(m.flat)])
+            ]
+            return [color, createScale(color, shadeKeys)]
+          })
+        ),
         "muted": {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"
@@ -313,7 +339,13 @@ export default definePreset((options?: RimelightPresetOptions) => {
         "foreground-tertiary": "var(--color-foreground-tertiary)",
         "placeholder": "var(--color-placeholder)",
         "input-border": "var(--color-input-border)",
-        "accent-subtle": "var(--color-accent-subtle)"
+        "accent-subtle": "var(--color-accent-subtle)",
+        /* Nuxt UI semantic utility parity — mapped to Rimelight CSS vars */
+        "elevated": "var(--background-color-elevated)",
+        "accented": "var(--ring-color-accented)",
+        "dimmed": "var(--text-color-dimmed)",
+        "toned": "var(--text-color-toned)",
+        "highlighted": "var(--text-color-highlighted)"
       },
       radius: {
         "xs": "calc(var(--radius) - 0.375rem)",
@@ -349,42 +381,46 @@ export default definePreset((options?: RimelightPresetOptions) => {
     preflights: [
       {
         getCSS: () => {
-          const lightLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
-              Object.entries(modes.light).map(([shade, value]) =>
-                `            --color-${color}-${shade}: ${value};`
+          const lightLines = Object.entries(resolvedColors)
+            .flatMap(([color, modes]) =>
+              Object.entries(modes.light).map(
+                ([shade, value]) => `            --color-${color}-${shade}: ${value};`
               )
-            ).join("\n")
-
-          const flatLines = Object.entries(resolvedColors).flatMap(([color, modes]) => {
-            const u = modes.flat
-            return Object.entries(u).map(([shade, value]) =>
-              `            --color-${color}-${shade}-f: ${value};`
             )
-          }).join("\n")
+            .join("\n")
 
-          const lightPinnedLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
+          const flatLines = Object.entries(resolvedColors)
+            .flatMap(([color, modes]) => {
+              const u = modes.flat
+              return Object.entries(u).map(
+                ([shade, value]) => `            --color-${color}-${shade}-f: ${value};`
+              )
+            })
+            .join("\n")
+
+          const lightPinnedLines = Object.entries(resolvedColors)
+            .flatMap(([color, modes]) =>
               Object.entries(modes.light)
                 .filter(([shade, value]) => value !== modes.flat[shade])
-                .map(([shade, value]) =>
-                  `            --color-${color}-${shade}-l: ${value};`
-                )
-            ).join("\n")
+                .map(([shade, value]) => `            --color-${color}-${shade}-l: ${value};`)
+            )
+            .join("\n")
 
-          const darkPinnedLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
+          const darkPinnedLines = Object.entries(resolvedColors)
+            .flatMap(([color, modes]) =>
               Object.entries(modes.dark)
                 .filter(([shade, value]) => value !== modes.flat[shade])
-                .map(([shade, value]) =>
-                  `            --color-${color}-${shade}-d: ${value};`
-                )
-            ).join("\n")
+                .map(([shade, value]) => `            --color-${color}-${shade}-d: ${value};`)
+            )
+            .join("\n")
 
-          const darkLines = Object.entries(resolvedColors).flatMap(([color, modes]) =>
-              Object.entries(modes.dark).filter(([shade, value]) =>
-                modes.light[shade] !== value
-              ).map(([shade, value]) =>
-                `            --color-${color}-${shade}: ${value};`
-              )
-            ).join("\n")
+          const darkLines = Object.entries(resolvedColors)
+            .flatMap(([color, modes]) =>
+              Object.entries(modes.dark)
+                .filter(([shade, value]) => modes.light[shade] !== value)
+                .map(([shade, value]) => `            --color-${color}-${shade}: ${value};`)
+            )
+            .join("\n")
 
           return `
         :root {
@@ -456,6 +492,30 @@ export default definePreset((options?: RimelightPresetOptions) => {
           --font-sans: "Noto Sans", sans-serif;
           --font-serif: "Noto Serif", serif;
           --font-mono: "Noto Sans Mono", monospace;
+
+          /* Nuxt UI semantic variable parity — mapped to Rimelight color scale */
+          --ui-header-height: 4rem;
+          --ui-container: 80rem;
+          --text-color-default: var(--color-neutral-700);
+          --text-color-muted: var(--color-neutral-500);
+          --text-color-dimmed: var(--color-neutral-400);
+          --text-color-toned: var(--color-neutral-600);
+          --text-color-highlighted: var(--color-neutral-900);
+          --text-color-inverted: #ffffff;
+          --background-color-default: #ffffff;
+          --background-color-muted: var(--color-neutral-50);
+          --background-color-elevated: var(--color-neutral-100);
+          --background-color-accented: var(--color-neutral-200);
+          --background-color-inverted: var(--color-neutral-900);
+          --border-color-default: var(--color-neutral-200);
+          --border-color-muted: var(--color-neutral-200);
+          --border-color-accented: var(--color-neutral-300);
+          --border-color-inverted: var(--color-neutral-900);
+          --ring-color-default: var(--color-neutral-200);
+          --ring-color-muted: var(--color-neutral-200);
+          --ring-color-accented: var(--color-neutral-300);
+          --ring-color-inverted: var(--color-neutral-900);
+          --divide-color-default: var(--color-neutral-200);
 ${lightLines}
 ${flatLines}
 ${lightPinnedLines}
@@ -527,11 +587,33 @@ ${darkPinnedLines}
           --color-hover: #374151;
           --color-destructive-subtle: #451a1a;
           --color-accent-subtle: #1e293b;
+
+          /* Nuxt UI semantic variable parity — dark mode */
+          --text-color-default: var(--color-neutral-200);
+          --text-color-muted: var(--color-neutral-400);
+          --text-color-dimmed: var(--color-neutral-500);
+          --text-color-toned: var(--color-neutral-300);
+          --text-color-highlighted: #ffffff;
+          --text-color-inverted: #030712;
+          --background-color-default: var(--color-neutral-900);
+          --background-color-muted: var(--color-neutral-800);
+          --background-color-elevated: var(--color-neutral-800);
+          --background-color-accented: var(--color-neutral-700);
+          --background-color-inverted: #ffffff;
+          --border-color-default: var(--color-neutral-800);
+          --border-color-muted: var(--color-neutral-700);
+          --border-color-accented: var(--color-neutral-700);
+          --border-color-inverted: #ffffff;
+          --ring-color-default: var(--color-neutral-800);
+          --ring-color-muted: var(--color-neutral-700);
+          --ring-color-accented: var(--color-neutral-700);
+          --ring-color-inverted: #ffffff;
+          --divide-color-default: var(--color-neutral-800);
 ${darkLines}
         }
         `
         }
       }
-    ],
+    ]
   }
 })

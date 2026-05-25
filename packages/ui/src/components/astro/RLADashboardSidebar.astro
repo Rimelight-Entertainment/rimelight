@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { DashboardSidebarProps } from "../../types"
-import dashboardSidebarThemeDefault from "../../themes/dashboard-sidebar.theme"
+import dashboardSidebarThemeDefault, { createDashboardSidebarTheme } from "../../themes/dashboard-sidebar.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const dashboardSidebar = scv(dashboardSidebarThemeDefault)
+const uiConfig = getUIConfig()
+const dashboardSidebarTheme = uiConfig.colors ? createDashboardSidebarTheme() : dashboardSidebarThemeDefault
+
+const dashboardSidebar = scv(dashboardSidebarTheme)
 
 const {
   ui: uiProp,

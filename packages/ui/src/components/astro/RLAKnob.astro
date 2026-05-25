@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { KnobProps } from "../../types"
-import knobThemeDefault from "../../themes/knob.theme"
+import knobThemeDefault, { createKnobTheme } from "../../themes/knob.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const knob = scv(knobThemeDefault)
+const uiConfig = getUIConfig()
+const knobTheme = uiConfig.colors ? createKnobTheme() : knobThemeDefault
+
+const knob = scv(knobTheme)
 
 const {
   ui: uiProp,

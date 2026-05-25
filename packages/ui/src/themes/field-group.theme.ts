@@ -5,7 +5,8 @@ export const createFieldGroupTheme = () =>
     slots: ["root", "prepend", "append"],
     base: {
       root: "relative flex items-stretch w-full rounded-md border border-input bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 overflow-hidden",
-      prepend: "flex items-center bg-muted px-3 text-sm text-muted-foreground border-r border-input",
+      prepend:
+        "flex items-center bg-muted px-3 text-sm text-muted-foreground border-r border-input",
       append: "flex items-center bg-muted px-3 text-sm text-muted-foreground border-l border-input"
     },
     variants: {

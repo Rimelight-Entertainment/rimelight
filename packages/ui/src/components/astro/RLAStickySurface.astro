@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { StickySurfaceProps } from "../../types"
-import stickySurfaceTheme from "../../themes/sticky-surface.theme"
+import stickySurfaceThemeDefault, { createStickySurfaceTheme } from "../../themes/sticky-surface.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const stickySurfaceTheme = uiConfig.colors ? createStickySurfaceTheme() : stickySurfaceThemeDefault
 
 const stickySurface = scv(stickySurfaceTheme)
 

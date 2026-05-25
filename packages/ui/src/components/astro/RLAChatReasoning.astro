@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ChatReasoningProps } from "../../types"
-import chatReasoningThemeDefault from "../../themes/chat-reasoning.theme"
+import chatReasoningThemeDefault, { createChatReasoningTheme } from "../../themes/chat-reasoning.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const chatReasoning = scv(chatReasoningThemeDefault)
+const uiConfig = getUIConfig()
+const chatReasoningTheme = uiConfig.colors ? createChatReasoningTheme() : chatReasoningThemeDefault
+
+const chatReasoning = scv(chatReasoningTheme)
 
 const {
   ui: uiProp,

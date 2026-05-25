@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PageAsideProps } from "../../types"
-import pageAsideThemeDefault from "../../themes/page-aside.theme"
+import pageAsideThemeDefault, { createPageAsideTheme } from "../../themes/page-aside.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const pageAside = scv(pageAsideThemeDefault)
+const uiConfig = getUIConfig()
+const pageAsideTheme = uiConfig.colors ? createPageAsideTheme() : pageAsideThemeDefault
+
+const pageAside = scv(pageAsideTheme)
 
 const {
   ui: uiProp,

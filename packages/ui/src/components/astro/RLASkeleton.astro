@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { SkeletonProps } from "../../types"
-import skeletonTheme from "../../themes/skeleton.theme"
+import skeletonThemeDefault, { createSkeletonTheme } from "../../themes/skeleton.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const skeletonTheme = uiConfig.colors ? createSkeletonTheme() : skeletonThemeDefault
 
 const skeleton = scv(skeletonTheme)
 

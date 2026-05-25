@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { DashboardSidebarCollapseProps } from "../../types"
-import dashboardSidebarCollapseThemeDefault from "../../themes/dashboard-sidebar-collapse.theme"
+import dashboardSidebarCollapseThemeDefault, { createDashboardSidebarCollapseTheme } from "../../themes/dashboard-sidebar-collapse.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const dashboardSidebarCollapse = scv(dashboardSidebarCollapseThemeDefault)
+const uiConfig = getUIConfig()
+const dashboardSidebarCollapseTheme = uiConfig.colors ? createDashboardSidebarCollapseTheme() : dashboardSidebarCollapseThemeDefault
+
+const dashboardSidebarCollapse = scv(dashboardSidebarCollapseTheme)
 
 const {
   ui: uiProp,

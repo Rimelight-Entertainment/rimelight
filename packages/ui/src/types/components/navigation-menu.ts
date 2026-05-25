@@ -1,13 +1,13 @@
 import type { LinkProps } from "./link"
 
-export interface NavigationMenuItem extends Omit<LinkProps, 'type' | 'raw' | 'custom'> {
+export interface NavigationMenuItem extends Omit<LinkProps, "type" | "raw" | "custom"> {
   label?: string
   icon?: string
-  badge?: string | number | any
-  avatar?: any
-  chip?: boolean | any
-  tooltip?: boolean | any
-  popover?: boolean | any
+  badge?: string | number
+  avatar?: Record<string, any>
+  chip?: boolean | Record<string, any>
+  tooltip?: boolean | string | Record<string, any>
+  popover?: boolean | Record<string, any>
   trailingIcon?: string
   type?: "label" | "trigger" | "link"
   slot?: string

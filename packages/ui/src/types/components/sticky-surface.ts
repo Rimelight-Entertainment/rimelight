@@ -17,4 +17,3 @@ export interface StickySurfaceProps {
   class?: any
   [key: string]: unknown
 }
-

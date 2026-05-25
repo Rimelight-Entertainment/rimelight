@@ -5,7 +5,8 @@ export const createInputTheme = () =>
     slots: ["root", "input", "leading", "trailing"],
     base: {
       root: "relative flex items-center w-full rounded-md border border-input bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-      input: "w-full bg-transparent px-3 py-1.5 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+      input:
+        "w-full bg-transparent px-3 py-1.5 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
       leading: "absolute left-3 flex items-center justify-center text-muted-foreground",
       trailing: "absolute right-3 flex items-center justify-center text-muted-foreground"
     },

@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { AvatarGroupProps } from "../../types"
-import avatarGroupTheme from "../../themes/avatar-group.theme"
+import avatarGroupThemeDefault, { createAvatarGroupTheme } from "../../themes/avatar-group.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const avatarGroupTheme = uiConfig.colors ? createAvatarGroupTheme() : avatarGroupThemeDefault
 
 const avatarGroup = scv(avatarGroupTheme)
 

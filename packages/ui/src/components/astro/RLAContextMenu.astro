@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ContextMenuProps } from "../../types"
-import contextMenuThemeDefault from "../../themes/context-menu.theme"
+import contextMenuThemeDefault, { createContextMenuTheme } from "../../themes/context-menu.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const contextMenu = scv(contextMenuThemeDefault)
+const uiConfig = getUIConfig()
+const contextMenuTheme = uiConfig.colors ? createContextMenuTheme() : contextMenuThemeDefault
+
+const contextMenu = scv(contextMenuTheme)
 
 const {
   ui: uiProp,

@@ -2,18 +2,64 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PostProps } from "../../types"
-import postThemeDefault from "../../themes/post.theme"
+import postThemeDefault, { createPostTheme } from "../../themes/post.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import Image from "astro/components/Image.astro"
 
-const post = scv(postThemeDefault)
+const uiConfig = getUIConfig()
+const postTheme = uiConfig.colors ? createPostTheme() : postThemeDefault
+
+const post = scv(postTheme)
 
 const {
+  title,
+  description,
+  date,
+  image,
+  to,
+  variant = "soft",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as PostProps
 
-const classes = resolveClasses(post, {}, useUi("post", uiProp), className);
+const classes = resolveClasses(post, { variant }, useUi("post", uiProp), className);
+
+const Tag = to ? "a" : "div";
+const formattedDate = date ? (date instanceof Date ? date.toLocaleDateString() : date) : null;
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+<Tag class={classes.root} data-slot="root" {...(to ? { href: to } : {})} {...rest}>
+  <slot name="image" {...{ ui: classes }}>
+    {image && (
+      <div class={classes.imageWrapper} data-slot="image-wrapper">
+        {typeof image === 'string' ? (
+           <img src={image} alt={title} class={classes.image} data-slot="image" />
+        ) : (
+           <Image src={image} alt={title || ""} class={classes.image} data-slot="image" />
+        )}
+      </div>
+    )}
+  </slot>
+
+  <div class={classes.content} data-slot="content">
+    <slot name="title" {...{ ui: classes }}>
+      {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
+    </slot>
+
+    <slot name="description" {...{ ui: classes }}>
+      {description && <p class={classes.description} data-slot="description">{description}</p>}
+    </slot>
+
+    <slot name="date" {...{ ui: classes }}>
+      {formattedDate && <time class={classes.date} data-slot="date">{formattedDate}</time>}
+    </slot>
+
+    <slot />
+  </div>
+
+  {Astro.slots.has("footer") && (
+    <div class={classes.footer} data-slot="footer">
+      <slot name="footer" {...{ ui: classes }} />
+    </div>
+  )}
+</Tag>

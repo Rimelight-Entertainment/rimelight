@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ThreeDHoverProps } from "../../types"
-import 3dHoverThemeDefault from "../../themes/3d-hover.theme"
+import hover3dThemeDefault, { create3dHoverTheme } from "../../themes/3d-hover.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const 3dHover = scv(3dHoverThemeDefault)
+const uiConfig = getUIConfig()
+const hover3dTheme = uiConfig.colors ? create3dHoverTheme() : hover3dThemeDefault
+
+const hover3d = scv(hover3dTheme)
 
 const {
   ui: uiProp,
@@ -12,7 +16,7 @@ const {
   ...rest
 } = Astro.props as ThreeDHoverProps
 
-const classes = resolveClasses(3dHover, {}, useUi("3dHover", uiProp), className);
+const classes = resolveClasses(hover3d, {}, useUi("3dHover", uiProp), className);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

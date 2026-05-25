@@ -2,8 +2,12 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { LocaleSelectorProps } from "../../types"
-import localeSelectorTheme from "../../themes/locale-selector.theme"
+import localeSelectorThemeDefault, { createLocaleSelectorTheme } from "../../themes/locale-selector.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 import { getRelativeLocaleUrlList, getRelativeLocaleUrl } from "astro:i18n";
+
+const uiConfig = getUIConfig()
+const localeSelectorTheme = uiConfig.colors ? createLocaleSelectorTheme() : localeSelectorThemeDefault
 
 const localeSelector = scv(localeSelectorTheme)
 

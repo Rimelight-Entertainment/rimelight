@@ -19,6 +19,12 @@ export interface HeaderStackManager {
   update: () => void
 }
 
+declare global {
+  interface Window {
+    RLHeaderStack?: HeaderStackManager
+  }
+}
+
 /**
  * Initializes and returns a global vanilla JS header stack manager. This ensures Vue and Astro
  * components share the exact same layer state and can dynamically push each other up/down when
@@ -35,9 +41,8 @@ export function getHeaderStack(): HeaderStackManager {
     }
   }
 
-  const win = window as any
-  if (!win.RLHeaderStack) {
-    win.RLHeaderStack = {
+  if (!window.RLHeaderStack) {
+    window.RLHeaderStack = {
       layers: [] as HeaderLayer[],
       register(
         id: string,
@@ -84,5 +89,5 @@ export function getHeaderStack(): HeaderStackManager {
       }
     }
   }
-  return win.RLHeaderStack
+  return window.RLHeaderStack
 }

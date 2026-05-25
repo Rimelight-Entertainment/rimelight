@@ -21,4 +21,3 @@ export interface ScrollAreaProps {
   class?: any
   [key: string]: unknown
 }
-

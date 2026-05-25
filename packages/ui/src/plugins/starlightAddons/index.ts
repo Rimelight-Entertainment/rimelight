@@ -3,7 +3,7 @@ import virtual from "vite-plugin-virtual"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const pathDirname = path.dirname(fileURLToPath(import.meta.url))
 
 export interface StarlightAddonsConfig {
   copy?: boolean
@@ -31,7 +31,7 @@ export default function starlightAddons(userConfig?: StarlightAddonsConfig): Sta
         updateConfig({
           components: {
             // This will merge with the Sidebar override if both exist
-            PageTitle: path.join(__dirname, "PageTitle.astro")
+            PageTitle: path.join(pathDirname, "PageTitle.astro")
           }
         })
 

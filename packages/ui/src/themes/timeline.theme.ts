@@ -1,10 +1,13 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export default defineTheme({
-  slots: ["root"],
-  base: {
-    root: ""
-  },
-  variants: {},
-  defaultVariants: {}
-})
+export const createTimelineTheme = () =>
+  defineTheme({
+    slots: ["root"],
+    base: {
+      root: ""
+    },
+    variants: {},
+    defaultVariants: {}
+  })
+
+export default createTimelineTheme()

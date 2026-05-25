@@ -1,6 +1,18 @@
 type ColorShades = Record<string, string>
 type ColorModeEntry = { light: ColorShades; dark: ColorShades }
 
+export const defaultColors = [
+  "primary",
+  "secondary",
+  "info",
+  "success",
+  "warning",
+  "error",
+  "commentary",
+  "ideation",
+  "source"
+]
+
 export const defaultColorScales: Record<string, ColorShades | ColorModeEntry> = {
   neutral: {
     light: {

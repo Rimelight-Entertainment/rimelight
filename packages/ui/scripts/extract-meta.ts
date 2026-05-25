@@ -3,8 +3,8 @@ import { join, resolve, dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 import ts from "typescript"
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const uiRoot = resolve(__dirname, "..")
+const pathDirname = dirname(fileURLToPath(import.meta.url))
+const uiRoot = resolve(pathDirname, "..")
 const componentsDir = join(uiRoot, "src", "components")
 const themesDir = join(uiRoot, "src", "themes")
 const outputDir = join(uiRoot, "docs", "meta")

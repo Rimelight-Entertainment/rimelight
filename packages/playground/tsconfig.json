@@ -4,8 +4,7 @@
     ".astro/types.d.ts",
     "**/*",
     "./worker-configuration.d.ts",
-    "auto-imports.d.ts",
-    "components.d.ts",
+    // "auto-imports.d.ts",  /* removed — stale nuxt-ui auto-imports */    "components.d.ts",
     "src/env.d.ts"
   ],
   "exclude": ["dist"],
@@ -16,9 +15,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "#build/ui": ["./node_modules/.nuxt-ui/ui"],
-      "#build/ui/*": ["./node_modules/.nuxt-ui/ui/*"]
+      "@/*": ["./src/*"]
     },
     "jsx": "preserve"
   }

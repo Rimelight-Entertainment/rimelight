@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PlaceholderProps } from "../../types"
-import placeholderTheme from "../../themes/placeholder.theme"
+import placeholderThemeDefault, { createPlaceholderTheme } from "../../themes/placeholder.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const placeholderTheme = uiConfig.colors ? createPlaceholderTheme() : placeholderThemeDefault
 
 const placeholder = scv(placeholderTheme)
 

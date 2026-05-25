@@ -5,7 +5,8 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import { siteConfig } from '@/site.config';
 import { useI18nAsync } from 'astro-nanostores-i18n:runtime';
 import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro"
-import { Image } from 'astro:assets';
+import RLABlogPosts from "@rimelight/ui/components/astro/RLABlogPosts.astro"
+import RLABlogPost from "@rimelight/ui/components/astro/RLABlogPost.astro"
 
 const posts = (await getCollection('blog')).toSorted(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -37,49 +38,20 @@ const messages = await useI18nAsync('blog', {
 			if (!categoryPosts || categoryPosts.length === 0) return null;
 			return (
 				<RLAPageSection title={(messages.categories as unknown as Record<string, string>)[category]}>
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					<RLABlogPosts class="grid md:grid-cols-2 lg:grid-cols-3 gap-md">
 						{
 							categoryPosts.map((post) => (
-								<a
-									href={getRelativeLocaleUrl(currentLocale, `/blog/${post.id}/`)}
-									class="flex flex-col group overflow-hidden"
-								>
-									{/* Image Header Area */}
-									<div class="w-full aspect-video overflow-hidden  relative flex items-center justify-center">
-										{post.data.heroImage ? (
-                                  <Image
-												src={post.data.heroImage}
-												alt={post.data.title}
-												class="w-full h-full object-cover group-hover:scale-102 transition duration-300"
-											/>
-										) : (
-											<div class="absolute inset-0 flex items-center justify-center text-xl">
-												{post.data.title}
-											</div>
-										)}
-									</div>
-
-									<div class="flex flex-col p-6 flex-1">
-										<p>
-											{new Date(post.data.pubDate).toLocaleDateString(currentLocale, {
-												year: 'numeric',
-												month: 'short',
-												day: 'numeric'
-											})}
-										</p>
-
-										<h3>
-											{post.data.title}
-										</h3>
-
-										<p>
-											{post.data.description}
-										</p>
-									</div>
-								</a>
+								<RLABlogPost
+									variant="ghost"
+									image={post.data.heroImage}
+									date={post.data.pubDate}
+									title={post.data.title}
+									description={post.data.description}
+									to={getRelativeLocaleUrl(currentLocale, `/blog/${post.id}/`)}
+								/>
 							))
 						}
-					</div>
+					</RLABlogPosts>
 				</RLAPageSection>
 			);
 		})}

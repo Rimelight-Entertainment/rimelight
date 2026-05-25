@@ -31,4 +31,3 @@ export interface ProgressProps {
   class?: any
   [key: string]: unknown
 }
-

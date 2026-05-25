@@ -41,4 +41,3 @@ export interface InputMenuProps {
   class?: any
   [key: string]: unknown
 }
-

@@ -1,5 +1,11 @@
 export interface TableOfContentsProps {
   /**
+   * The component the root element should render as.
+   *
+   * @default "div"
+   */
+  as?: any
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

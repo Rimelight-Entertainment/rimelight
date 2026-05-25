@@ -39,4 +39,3 @@ export interface SwitchProps {
   class?: any
   [key: string]: unknown
 }
-

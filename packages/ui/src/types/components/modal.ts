@@ -37,4 +37,3 @@ export interface ModalProps {
   class?: any
   [key: string]: unknown
 }
-

@@ -7,7 +7,11 @@ import { getCollection } from "astro:content";
 import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
 import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
-import { BlogPosts, BlogPost } from "@rimelight/ui/nuxt";
+import RLABlogPosts from "@rimelight/ui/components/astro/RLABlogPosts.astro";
+import RLABlogPost from "@rimelight/ui/components/astro/RLABlogPost.astro";
+import TestImage from "@/components/TestImage.astro";
+import placeholderImage from "@/assets/placeholder.webp";
+
 
 const activeLocale = Astro.currentLocale ?? "en";
 currentLocale.set(activeLocale);
@@ -68,32 +72,36 @@ const ctaLinks = [
 
     <RLAPageSection
             orientation="vertical"
+            title="Image Test"
+            description="Testing the Astro Image component"
+    >
+      <div slot="body" class="flex flex-wrap gap-md justify-center">
+        <TestImage src={placeholderImage} alt="A placeholder image used for testing the image component with imported assets" width={400} height={200} />
+        <TestImage src={placeholderImage} alt="A square cropped placeholder for testing different aspect ratios" width={200} height={200} />
+        <TestImage src="/og/placeholder.webp" alt="A public folder placeholder served directly without processing" width={400} height={200} />
+      </div>
+    </RLAPageSection>
+
+    <RLAPageSection
+            orientation="vertical"
             title={messages.postsTitle}
             description={messages.postsDesc}
     >
         <div slot="body" class="flex flex-col gap-xl">
-            <BlogPosts client:load class="grid md:grid-cols-2 lg:grid-cols-3 gap-md">
+            <RLABlogPosts class="grid md:grid-cols-2 lg:grid-cols-3 gap-md">
                 {
                     latestPosts.map((post) => (
-                            <BlogPost
-                                    client:load
-                                    variant="ghost"
-                                    image={post.data.heroImage}
-                                    badge={
-                                        {
-                                            label: post.data.type,
-                                            variant: "solid",
-                                            color: "primary"
-                                        }
-                                    }
-                                    date={post.data.pubDate}
-                                    title={post.data.title}
-                                    description={post.data.description}
-                                    to={getRelativeLocaleUrl(activeLocale, `/blog/${post.id}/`)}
-                            />
+                        <RLABlogPost
+                            variant="ghost"
+                            image={post.data.heroImage}
+                            date={post.data.pubDate}
+                            title={post.data.title}
+                            description={post.data.description}
+                            to={getRelativeLocaleUrl(activeLocale, `/blog/${post.id}/`)}
+                        />
                     ))
                 }
-            </BlogPosts>
+            </RLABlogPosts>
 
             {latestPosts.length > 0 && (
                     <RLAButton

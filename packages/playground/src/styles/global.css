@@ -1,4 +1,5 @@
 @import "@rimelight/ui/styles/index.css";
+@import "./reset.css";
 
 :root {
   --primary: #0064d7;
@@ -47,10 +48,6 @@
   --text-black: #0a0a0a;
 }
 
-html:root {
-  --ui-header-height: 4rem;
-}
-
 /* region Scrollbar */
 *::-webkit-scrollbar {
   width: 4px;
@@ -66,8 +63,8 @@ html:root {
 /* endregion */
 
 ::selection {
-  background-color: var(--ui-bg-accented);
-  color: var(--ui-text-highlighted);
+  background-color: var(--background-color-accented);
+  color: var(--text-color-highlighted);
 }
 /* endregion */
 
@@ -113,5 +110,5 @@ h6 {
 }
 
 .bg-dimmed {
-  background-color: var(--ui-bg-dimmed);
+  background-color: var(--background-color-elevated);
 }

@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { AppProps } from "../../types"
-import appThemeDefault from "../../themes/app.theme"
+import appThemeDefault, { createAppTheme } from "../../themes/app.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const app = scv(appThemeDefault)
+const uiConfig = getUIConfig()
+const appTheme = uiConfig.colors ? createAppTheme() : appThemeDefault
+
+const app = scv(appTheme)
 
 const {
   ui: uiProp,

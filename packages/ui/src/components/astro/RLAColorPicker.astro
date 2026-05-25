@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ColorPickerProps } from "../../types"
-import colorPickerThemeDefault from "../../themes/color-picker.theme"
+import colorPickerThemeDefault, { createColorPickerTheme } from "../../themes/color-picker.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const colorPicker = scv(colorPickerThemeDefault)
+const uiConfig = getUIConfig()
+const colorPickerTheme = uiConfig.colors ? createColorPickerTheme() : colorPickerThemeDefault
+
+const colorPicker = scv(colorPickerTheme)
 
 const {
   ui: uiProp,

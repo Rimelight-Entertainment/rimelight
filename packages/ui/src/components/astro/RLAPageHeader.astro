@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PageHeaderProps } from "../../types"
-import pageHeaderThemeDefault from "../../themes/page-header.theme"
+import pageHeaderThemeDefault, { createPageHeaderTheme } from "../../themes/page-header.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const pageHeader = scv(pageHeaderThemeDefault)
+const uiConfig = getUIConfig()
+const pageHeaderTheme = uiConfig.colors ? createPageHeaderTheme() : pageHeaderThemeDefault
+
+const pageHeader = scv(pageHeaderTheme)
 
 const {
   ui: uiProp,

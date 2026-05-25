@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PopoverProps } from "../../types"
-import popoverTheme from "../../themes/popover.theme"
+import popoverThemeDefault, { createPopoverTheme } from "../../themes/popover.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const popoverTheme = uiConfig.colors ? createPopoverTheme() : popoverThemeDefault
 
 const popover = scv(popoverTheme)
 

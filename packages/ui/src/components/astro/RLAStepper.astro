@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { StepperProps } from "../../types"
-import stepperThemeDefault from "../../themes/stepper.theme"
+import stepperThemeDefault, { createStepperTheme } from "../../themes/stepper.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const stepper = scv(stepperThemeDefault)
+const uiConfig = getUIConfig()
+const stepperTheme = uiConfig.colors ? createStepperTheme() : stepperThemeDefault
+
+const stepper = scv(stepperTheme)
 
 const {
   ui: uiProp,

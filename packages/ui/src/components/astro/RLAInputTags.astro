@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { InputTagsProps } from "../../types"
-import inputTagsThemeDefault from "../../themes/input-tags.theme"
+import inputTagsThemeDefault, { createInputTagsTheme } from "../../themes/input-tags.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const inputTags = scv(inputTagsThemeDefault)
+const uiConfig = getUIConfig()
+const inputTagsTheme = uiConfig.colors ? createInputTagsTheme() : inputTagsThemeDefault
+
+const inputTags = scv(inputTagsTheme)
 
 const {
   ui: uiProp,

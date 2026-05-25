@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { IconProps } from "../../types"
-import iconTheme from "../../themes/icon.theme"
+import iconThemeDefault, { createIconTheme } from "../../themes/icon.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const iconTheme = uiConfig.colors ? createIconTheme() : iconThemeDefault
 
 const icon = scv(iconTheme)
 

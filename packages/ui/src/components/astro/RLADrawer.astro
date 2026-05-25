@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { DrawerProps } from "../../types"
-import drawerTheme from "../../themes/drawer.theme"
+import drawerThemeDefault, { createDrawerTheme } from "../../themes/drawer.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const drawerTheme = uiConfig.colors ? createDrawerTheme() : drawerThemeDefault
 
 const drawer = scv(drawerTheme)
 

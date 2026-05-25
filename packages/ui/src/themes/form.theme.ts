@@ -1,10 +1,13 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export default defineTheme({
-  slots: ["root"],
-  base: {
-    root: ""
-  },
-  variants: {},
-  defaultVariants: {}
-})
+export const createFormTheme = () =>
+  defineTheme({
+    slots: ["root"],
+    base: {
+      root: "space-y-6"
+    },
+    variants: {},
+    defaultVariants: {}
+  })
+
+export default createFormTheme()

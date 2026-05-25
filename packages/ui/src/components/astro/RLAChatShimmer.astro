@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ChatShimmerProps } from "../../types"
-import chatShimmerThemeDefault from "../../themes/chat-shimmer.theme"
+import chatShimmerThemeDefault, { createChatShimmerTheme } from "../../themes/chat-shimmer.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const chatShimmer = scv(chatShimmerThemeDefault)
+const uiConfig = getUIConfig()
+const chatShimmerTheme = uiConfig.colors ? createChatShimmerTheme() : chatShimmerThemeDefault
+
+const chatShimmer = scv(chatShimmerTheme)
 
 const {
   ui: uiProp,

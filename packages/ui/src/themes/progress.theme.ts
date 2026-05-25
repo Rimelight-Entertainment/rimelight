@@ -1,6 +1,5 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
-
-const defaultColors = ["primary", "secondary", "info", "success", "warning", "error"]
 
 export const createProgressTheme = (colors: string[] = defaultColors) =>
   defineTheme({
@@ -10,13 +9,15 @@ export const createProgressTheme = (colors: string[] = defaultColors) =>
       indicator: "h-full w-full flex-1 transition-all duration-300 ease-in-out"
     },
     variants: {
-      color: Object.fromEntries(colors.map((color) => [
-        color,
-        {
-          root: `rl-color-${color}`,
-          indicator: `bg-[var(--rl-bg)]`
-        }
-      ])),
+      color: Object.fromEntries(
+        colors.map((color) => [
+          color,
+          {
+            root: `rl-color-${color}`,
+            indicator: `bg-[var(--rl-bg)]`
+          }
+        ])
+      ),
       size: {
         sm: { root: "h-1.5" },
         md: { root: "h-3" },

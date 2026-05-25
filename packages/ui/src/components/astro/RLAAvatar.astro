@@ -2,9 +2,13 @@
 import { scv, cx } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { AvatarProps } from "../../types"
-import avatarThemeDefault from "../../themes/avatar.theme"
+import avatarThemeDefault, { createAvatarTheme } from "../../themes/avatar.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const avatar = scv(avatarThemeDefault)
+const uiConfig = getUIConfig()
+const avatarTheme = uiConfig.colors ? createAvatarTheme(uiConfig.colors) : avatarThemeDefault
+
+const avatar = scv(avatarTheme)
 
 const {
   src,
@@ -13,6 +17,7 @@ const {
   size = "md",
   badge = false,
   badgeColor = "success",
+  badgePosition = "bottom-right",
   ui: uiProp,
   class: className,
   ...rest
@@ -20,6 +25,8 @@ const {
 
 const classes = resolveClasses(avatar, {
   size,
+  color: Astro.props.color || "neutral",
+  badgePosition,
   hasBadge: !!badge
 }, useUi("avatar", uiProp), className)
 ---
@@ -41,6 +48,9 @@ const classes = resolveClasses(avatar, {
         <slot name="fallback">
           {fallback}
         </slot>
+        {!fallback && !Astro.slots.has("fallback") && (
+          <span class={cx(classes.icon, "i-lucide-user")} aria-hidden="true" />
+        )}
       </span>
     )}
   </slot>
@@ -48,9 +58,11 @@ const classes = resolveClasses(avatar, {
   <slot name="badge">
     {badge && (
       <span
-        class={cx(classes.badge, badgeColor && `bg-${badgeColor}-500`)}
+        class={cx(classes.badge, badgeColor && (badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
         data-slot="badge"
-      />
+      >
+        {typeof badge === 'string' || typeof badge === 'number' ? badge : null}
+      </span>
     )}
   </slot>
 </span>

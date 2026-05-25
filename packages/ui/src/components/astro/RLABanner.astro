@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { BannerProps } from "../../types"
-import bannerThemeDefault from "../../themes/banner.theme"
+import bannerThemeDefault, { createBannerTheme } from "../../themes/banner.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const banner = scv(bannerThemeDefault)
+const uiConfig = getUIConfig()
+const bannerTheme = uiConfig.colors ? createBannerTheme() : bannerThemeDefault
+
+const banner = scv(bannerTheme)
 
 const {
   ui: uiProp,

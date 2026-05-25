@@ -1,4 +1,4 @@
-import type { AstroIntegration } from "astro"
+import type { StarlightPlugin } from "@astrojs/starlight/types"
 import virtual from "vite-plugin-virtual"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
@@ -7,8 +7,8 @@ import ts from "typescript"
 import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta, ThemeMeta } from "./types"
 import { extractVueMetaDirect } from "./extract-vue"
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const uiRoot = path.resolve(__dirname, "..", "..", "..")
+const pathDirname = path.dirname(fileURLToPath(import.meta.url))
+const uiRoot = path.resolve(pathDirname, "..", "..", "..")
 
 function pascalToKebab(name: string): string {
   return name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()
@@ -241,24 +241,31 @@ function extractAllMeta(): Record<string, ComponentMeta> {
 
 export interface StarlightDocsApiConfig {}
 
-export default function starlightDocsApi(_config?: StarlightDocsApiConfig): AstroIntegration {
+export default function starlightDocsApi(_config?: StarlightDocsApiConfig): StarlightPlugin {
   return {
     name: "rimelight-ui-starlight-docs-api",
     hooks: {
-      "astro:config:setup": ({ updateConfig, logger }) => {
+      "config:setup"({ addIntegration, logger }) {
         logger.info("Initializing @rimelight/ui docs API")
 
         const meta = extractAllMeta()
 
-        updateConfig({
-          vite: {
-            plugins: [
-              virtual({
-                "virtual:rimelight-ui-docs-meta": `export default ${JSON.stringify(meta)}`
-              })
-            ]
+        addIntegration({
+          name: "rimelight-ui-starlight-docs-api-integration",
+          hooks: {
+            "astro:config:setup": ({ updateConfig }) => {
+              updateConfig({
+                vite: {
+                  plugins: [
+                    virtual({
+                      "virtual:rimelight-ui-docs-meta": `export default ${JSON.stringify(meta)}`
+                    })
+                  ]
+                }
+              } as Record<string, unknown>)
+            }
           }
-        } as Record<string, unknown>)
+        })
       }
     }
   }

@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { MainProps } from "../../types"
-import mainTheme from "../../themes/main.theme"
+import mainThemeDefault, { createMainTheme } from "../../themes/main.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const mainTheme = uiConfig.colors ? createMainTheme() : mainThemeDefault
 
 const main = scv(mainTheme)
 

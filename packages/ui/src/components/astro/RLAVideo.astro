@@ -2,8 +2,9 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { VideoProps } from "../../types"
-import videoTheme from "../../themes/video.theme"
-import { Image } from "astro:assets"
+import videoThemeDefault, { createVideoTheme } from "../../themes/video.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import Image from "astro/components/Image.astro"
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
 const YOUTUBE_EMBED_BASE = "https://www.youtube.com/embed/";
@@ -37,7 +38,7 @@ function extractYoutubeVideoId(rawUrl: string): string | null {
     const host = normalizeHost(url.hostname);
 
     if (host === "youtu.be") {
-      const id = url.pathname.split("/").filter(Boolean)[0] ?? null;
+      const id = url.pathname.split("/").find(Boolean) ?? null;
       return sanitizeVideoId(id);
     }
 
@@ -108,6 +109,9 @@ function getYoutubeEmbedUrl(rawUrl: string): string | null {
   const id = extractYoutubeVideoId(rawUrl);
   return id ? `${YOUTUBE_EMBED_BASE}${id}?autoplay=1` : null;
 }
+
+const uiConfig = getUIConfig()
+const videoTheme = uiConfig.colors ? createVideoTheme() : videoThemeDefault
 
 const video = scv(videoTheme)
 

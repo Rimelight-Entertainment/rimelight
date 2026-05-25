@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PricingTableProps } from "../../types"
-import pricingTableThemeDefault from "../../themes/pricing-table.theme"
+import pricingTableThemeDefault, { createPricingTableTheme } from "../../themes/pricing-table.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const pricingTable = scv(pricingTableThemeDefault)
+const uiConfig = getUIConfig()
+const pricingTableTheme = uiConfig.colors ? createPricingTableTheme() : pricingTableThemeDefault
+
+const pricingTable = scv(pricingTableTheme)
 
 const {
   ui: uiProp,

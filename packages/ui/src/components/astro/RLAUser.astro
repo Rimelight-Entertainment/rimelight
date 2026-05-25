@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { UserProps } from "../../types"
-import userThemeDefault from "../../themes/user.theme"
+import userThemeDefault, { createUserTheme } from "../../themes/user.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const user = scv(userThemeDefault)
+const uiConfig = getUIConfig()
+const userTheme = uiConfig.colors ? createUserTheme() : userThemeDefault
+
+const user = scv(userTheme)
 
 const {
   ui: uiProp,

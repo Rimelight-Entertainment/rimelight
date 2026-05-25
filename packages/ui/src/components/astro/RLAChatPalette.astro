@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ChatPaletteProps } from "../../types"
-import chatPaletteThemeDefault from "../../themes/chat-palette.theme"
+import chatPaletteThemeDefault, { createChatPaletteTheme } from "../../themes/chat-palette.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const chatPalette = scv(chatPaletteThemeDefault)
+const uiConfig = getUIConfig()
+const chatPaletteTheme = uiConfig.colors ? createChatPaletteTheme() : chatPaletteThemeDefault
+
+const chatPalette = scv(chatPaletteTheme)
 
 const {
   ui: uiProp,

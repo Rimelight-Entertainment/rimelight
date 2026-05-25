@@ -4,17 +4,22 @@ import { useUi, resolveClasses } from "../../utils"
 import type { AlertProps } from "../../types"
 import alertThemeDefault, { createAlertTheme } from "../../themes/alert.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAAvatar from "./RLAAvatar.astro"
 
 const uiConfig = getUIConfig()
 const alertTheme = uiConfig.colors ? createAlertTheme(uiConfig.colors) : alertThemeDefault
 const alert = scv(alertTheme)
 
 const {
-  variant = "default",
+  variant = "solid",
   color = "primary",
   title,
   description,
   icon,
+  avatar,
+  actions,
+  close,
+  orientation = "horizontal",
   theme,
   ui: uiProp,
   class: className,
@@ -26,7 +31,8 @@ const isIcon = !!(icon || Astro.slots.has("icon"))
 const classes = resolveClasses(alert, {
   variant,
   color,
-  hasIcon: isIcon,
+  orientation,
+  title: !!(title || Astro.slots.has("title")),
   theme
 }, useUi("alert", uiProp), className)
 ---
@@ -44,19 +50,44 @@ const classes = resolveClasses(alert, {
     )}
   </slot>
 
-  <div class={classes.content} data-slot="content">
-    {title && (
+  <slot name="avatar" {...{ ui: classes }}>
+    {avatar && (
+      <RLAAvatar 
+        {...(typeof avatar === 'string' ? { src: avatar } : avatar)} 
+        size={classes.avatarSize as any} 
+        class={classes.avatar} 
+        data-slot="avatar" 
+      />
+    )}
+  </slot>
+
+  <div class={classes.wrapper} data-slot="wrapper">
+    {(title || Astro.slots.has("title")) && (
       <h5 class={classes.title} data-slot="title">
         {title}
+        <slot name="title" />
       </h5>
     )}
-    <slot name="title" />
 
-    {description && (
+    {(description || Astro.slots.has("default")) && (
       <div class={classes.description} data-slot="description">
         {description}
+        <slot />
       </div>
     )}
-    <slot />
+
+    {(actions || Astro.slots.has("actions")) && (
+      <div class={classes.actions} data-slot="actions">
+        <slot name="actions" />
+      </div>
+    )}
   </div>
+
+  <slot name="close" {...{ ui: classes }}>
+    {close && (
+      <button class={classes.close} data-slot="close">
+        <span class="i-lucide-x size-4" />
+      </button>
+    )}
+  </slot>
 </div>

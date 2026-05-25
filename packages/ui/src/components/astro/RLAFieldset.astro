@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { FieldsetProps } from "../../types"
-import fieldsetThemeDefault from "../../themes/fieldset.theme"
+import fieldsetThemeDefault, { createFieldsetTheme } from "../../themes/fieldset.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const fieldset = scv(fieldsetThemeDefault)
+const uiConfig = getUIConfig()
+const fieldsetTheme = uiConfig.colors ? createFieldsetTheme() : fieldsetThemeDefault
+
+const fieldset = scv(fieldsetTheme)
 
 const {
   ui: uiProp,

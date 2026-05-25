@@ -1,5 +1,13 @@
 export interface FormProps {
   /**
+   * Validation schema (Zod or similar).
+   */
+  schema?: any
+  /**
+   * Form state.
+   */
+  state?: any
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

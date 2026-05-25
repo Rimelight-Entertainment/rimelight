@@ -1,6 +1,5 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
-
-const defaultColors = ["primary", "secondary", "info", "success", "warning", "error"]
 
 export const createSpinnerTheme = (colors: string[] = defaultColors) =>
   defineTheme({

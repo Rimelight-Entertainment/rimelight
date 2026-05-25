@@ -5,9 +5,9 @@
 The UI package's `src/styles/index.css` bundles:
 
 ```css
-@import "tailwindcss";      /* Tailwind v4 theme + preflight + utilities */
-@import "@nuxt/ui";         /* Nuxt UI base styles */
-@import "./prism.css";      /* Prism.js syntax highlighting theme */
+@import "tailwindcss"; /* Tailwind v4 theme + preflight + utilities */
+@import "@nuxt/ui"; /* Nuxt UI base styles */
+@import "./prism.css"; /* Prism.js syntax highlighting theme */
 
 body {
   background-color: var(--background);
@@ -37,7 +37,7 @@ export default defineConfig({
   integrations: [
     ui({
       logos: { logomark: "/favicon.svg" },
-      colors: { primary: { "500": "#0064d7", /* ... */ } },
+      colors: { primary: { "500": "#0064d7" /* ... */ } },
       ui: { button: { defaultVariants: { variant: "primary" } } }
     })
   ]
@@ -45,12 +45,11 @@ export default defineConfig({
 ```
 
 Internally it returns:
+
 1. **UnoCSS** (`@unocss/astro`) — with `rimelightUiPreset({ colors })` — generates component variant classes from theme files
-2. **Vue** (`@astrojs/vue`) — required for `@nuxt/ui` re-exported components
-3. **`@nuxt/ui/vite` plugin** — processes Nuxt UI components in the re-export
-4. **`@tailwindcss/vite`** — processes `@import "tailwindcss/..."` imports (preflight skipped for Starlight compat; transitional, goes when `@nuxt/ui` goes)
-5. **Virtual module** (`virtual:rimelight-ui`) — provides merged UI config to components
-6. **SSR / optimizeDeps config** — ensures `@rimelight/ui` and `@nuxt/ui` are properly handled
+2. **Vue** (`@astrojs/vue`) — required for native Rimelight UI Vue components
+3. **Virtual module** (`virtual:rimelight-ui`) — provides merged UI config to components
+4. **SSR / optimizeDeps config** — ensures `@rimelight/ui` is properly handled
 
 An optional `uno.config.ts` in consuming projects can override any theme value — it merges on top of the integration's inline config. An empty file is fine; it signals where overrides go.
 
@@ -73,6 +72,7 @@ The UnoCSS scanner picks up these classes from theme files (including from the U
 Colors are defined in `astro.config.ts` via `ui({ colors })`. Two formats:
 
 **Flat format** — string values at root, used in all modes:
+
 ```ts
 colors: {
   blurple: { "500": "#7146ff", "600": "#6222ff" }
@@ -80,6 +80,7 @@ colors: {
 ```
 
 **Mode format** — root string keys serve as flat base; `light`, `dark`, `flat` buckets override per-mode:
+
 ```ts
 colors: {
   blurple: {
@@ -94,12 +95,14 @@ colors: {
 ### CSS Variable Emission
 
 For every color/shade, the UnoCSS preflight emits in `:root`:
+
 - `--color-{name}-{shade}` — themed var (light mode value, overridden in `.dark`)
 - `--color-{name}-{shade}-f` — flat pinned (never overridden)
 - `--color-{name}-{shade}-l` — light pinned (never overridden)
 - `--color-{name}-{shade}-d` — dark pinned (never overridden)
 
 Then in `.dark`:
+
 - `--color-{name}-{shade}` overridden to dark value (only when differs from light)
 
 ### rl-color-{name} Rule
@@ -162,7 +165,12 @@ import { ui } from "@rimelight/ui/integrations"
 
 export default defineConfig({
   integrations: [
-    ui({ logos: { logomark: "/favicon.svg" }, colors: { /* optional */ } })
+    ui({
+      logos: { logomark: "/favicon.svg" },
+      colors: {
+        /* optional */
+      }
+    })
   ]
 })
 ```
@@ -185,8 +193,6 @@ No `tailwindcss`, `@nuxt/ui`, `unocss`, or `@tailwindcss/vite` — all managed b
 ### Component Imports
 
 ```astro
-import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
-import { NavigationMenu } from "@rimelight/ui/nuxt"  /* transitional */
 import type { ButtonProps } from "@rimelight/ui/types"
 ```
 
@@ -196,18 +202,18 @@ import type { ButtonProps } from "@rimelight/ui/types"
 
 The following components were renamed (old files removed, imports will break):
 
-| Old Name | New Name |
-|----------|----------|
-| `RLAAlertDialog` | `RLAConfirm` |
-| `RLADropzone` | `RLAFileUpload` |
-| `RLAField` | `RLAFormField` |
-| `RLACombobox` | `RLAInputMenu` |
-| `RLADialog` | `RLAModal` |
-| `RLASection` | `RLAPageSection` |
-| `RLASheet` | `RLASlideover` |
-| `RLAResizable` | `RLASplitter` |
-| `RLAEmbedYoutube` | `RLAVideo` |
-| `RLAInputGroup` | `RLAFieldGroup` |
+| Old Name          | New Name         |
+| ----------------- | ---------------- |
+| `RLAAlertDialog`  | `RLAConfirm`     |
+| `RLADropzone`     | `RLAFileUpload`  |
+| `RLAField`        | `RLAFormField`   |
+| `RLACombobox`     | `RLAInputMenu`   |
+| `RLADialog`       | `RLAModal`       |
+| `RLASection`      | `RLAPageSection` |
+| `RLASheet`        | `RLASlideover`   |
+| `RLAResizable`    | `RLASplitter`    |
+| `RLAEmbedYoutube` | `RLAVideo`       |
+| `RLAInputGroup`   | `RLAFieldGroup`  |
 
 Theme files were also renamed from camelCase to kebab-case (e.g. `aspectRatio.theme.ts` → `aspect-ratio.theme.ts`). These are consumed internally by UnoCSS scanning — no project should import them directly.
 
@@ -221,7 +227,7 @@ Not all consuming projects have been updated to the latest patterns yet. Verify 
 
 - [ ] Dep `@rimelight/ui` is at `^0.0.32`
 - [ ] No `tailwindcss`, `unocss`, `@nuxt/ui`, `@tailwindcss/vite` in direct dependencies
-- [ ] `@astrojs/vue` present (needed for Nuxt UI re-exports)
+- [ ] `@astrojs/vue` present (needed for native Vue components)
 
 ### `uno.config.ts` (project root)
 
@@ -247,17 +253,16 @@ Not all consuming projects have been updated to the latest patterns yet. Verify 
 - [ ] Defines `--sl-*` color variables for light/dark mode
 - [ ] Does NOT import `global.css` or `@rimelight/ui/styles/index.css`
 
-## Final Step — Remove Tailwind / Nuxt UI
+## Final Step — Remove Tailwind / Nuxt UI (COMPLETED)
 
-Single atomic change once functional parity is reached:
+Functional parity reached. All references removed:
 
-1. Replace all remaining Nuxt UI components with `@rimelight/ui` equivalents
-2. Remove `tailwindcss`, `@tailwindcss/vite`, `@nuxt/ui` from `@rimelight/ui`'s `package.json`
-3. Remove `@import "tailwindcss"` and `@import "@nuxt/ui"` from `src/styles/index.css`
-4. Remove `@nuxt/ui/vite` and `@tailwindcss/vite` plugins from `ui.ts`
-5. Remove `./nuxt` export from `package.json`
-6. Remove `@astrojs/vue` from integration
-7. Result: single compiler (UnoCSS), no Tailwind, no Vue dependency for consumers
+1. Replaced all remaining Nuxt UI components with `@rimelight/ui` equivalents
+2. Removed `tailwindcss`, `@tailwindcss/vite`, `@nuxt/ui` from `@rimelight/ui`'s `package.json`
+3. Removed `@import "tailwindcss"` and `@import "@nuxt/ui"` from `src/styles/index.css`
+4. Removed `@nuxt/ui/vite` and `@tailwindcss/vite` plugins from `ui.ts`
+5. Removed `./nuxt` export from `package.json`
+6. Result: single compiler (UnoCSS), no Tailwind, native Vue support without Nuxt UI dependency.
 
 ---
 

@@ -1,0 +1,61 @@
+---
+import type { ComponentMetaMap, SlotMeta } from "./types"
+import meta from "virtual:rimelight-ui-docs-meta"
+
+interface Props {
+  component: string
+}
+
+const { component } = Astro.props
+
+const allMeta = meta as unknown as ComponentMetaMap
+const compMeta = allMeta[component]
+
+const slots = compMeta?.slots ?? []
+---
+
+{slots.length === 0 ? (
+  <p class="text-sm italic text-gray-500">No slots to display.</p>
+) : (
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="border-b border-gray-200 dark:border-gray-700">
+          <th class="text-left py-2 px-3 font-semibold">Slot</th>
+          <th class="text-left py-2 px-3 font-semibold">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {slots.map((slot: SlotMeta) => (
+          <tr class="border-b border-gray-100 dark:border-gray-800">
+            <td class="py-2 px-3">
+              <code class="text-sm px-1.5 py-0.5 rounded api-code-label">
+                {slot.name}
+              </code>
+            </td>
+            <td class="py-2 px-3">
+              {Object.keys(slot.bindings || {}).length > 0 ? (
+                <code class="text-xs px-1.5 py-0.5 rounded font-mono api-code-label">
+                  {Object.values(slot.bindings)[0]}
+                </code>
+              ) : (
+                <span class="text-gray-400">-</span>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+<style>
+  .api-code-label {
+    background-color: #f3f4f6;
+    color: #1f2937;
+  }
+  :global(.dark) .api-code-label {
+    background-color: #1f2937;
+    color: #f3f4f6;
+  }
+</style>

@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ImageProps } from "../../types"
-import imageThemeDefault from "../../themes/image.theme"
+import imageThemeDefault, { createImageTheme } from "../../themes/image.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const image = scv(imageThemeDefault)
+const uiConfig = getUIConfig()
+const imageTheme = uiConfig.colors ? createImageTheme() : imageThemeDefault
+
+const image = scv(imageTheme)
 
 const {
   ui: uiProp,

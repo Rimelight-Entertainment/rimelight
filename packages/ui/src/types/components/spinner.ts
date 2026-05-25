@@ -23,4 +23,3 @@ export interface SpinnerProps {
   class?: any
   [key: string]: unknown
 }
-

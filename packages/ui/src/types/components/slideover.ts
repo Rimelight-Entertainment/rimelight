@@ -29,4 +29,3 @@ export interface SlideoverProps {
   class?: any
   [key: string]: unknown
 }
-

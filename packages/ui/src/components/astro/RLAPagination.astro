@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PaginationProps } from "../../types"
-import paginationTheme from "../../themes/pagination.theme"
+import paginationThemeDefault, { createPaginationTheme } from "../../themes/pagination.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const paginationTheme = uiConfig.colors ? createPaginationTheme() : paginationThemeDefault
 
 const pagination = scv(paginationTheme)
 

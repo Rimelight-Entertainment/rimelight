@@ -2,10 +2,14 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { AlertDialogProps } from "../../types"
-import alertDialogTheme from "../../themes/confirm.theme"
+import confirmThemeDefault, { createConfirmTheme } from "../../themes/confirm.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 import RLAButton from "./RLAButton.astro"
 
-const alertDialog = scv(alertDialogTheme)
+const uiConfig = getUIConfig()
+const confirmTheme = uiConfig.colors ? createConfirmTheme() : confirmThemeDefault
+
+const alertDialog = scv(confirmTheme)
 
 const {
   variant = "default",

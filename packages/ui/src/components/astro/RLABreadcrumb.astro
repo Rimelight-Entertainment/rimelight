@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { BreadcrumbProps } from "../../types"
-import breadcrumbTheme from "../../themes/breadcrumb.theme"
+import breadcrumbThemeDefault, { createBreadcrumbTheme } from "../../themes/breadcrumb.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const breadcrumbTheme = uiConfig.colors ? createBreadcrumbTheme() : breadcrumbThemeDefault
 
 const breadcrumb = scv(breadcrumbTheme)
 

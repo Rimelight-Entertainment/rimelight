@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { TableOfContentsProps } from "../../types"
-import tableOfContentsThemeDefault from "../../themes/table-of-contents.theme"
+import tableOfContentsThemeDefault, { createTableOfContentsTheme } from "../../themes/table-of-contents.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const tableOfContents = scv(tableOfContentsThemeDefault)
+const uiConfig = getUIConfig()
+const tableOfContentsTheme = uiConfig.colors ? createTableOfContentsTheme() : tableOfContentsThemeDefault
+
+const tableOfContents = scv(tableOfContentsTheme)
 
 const {
   ui: uiProp,

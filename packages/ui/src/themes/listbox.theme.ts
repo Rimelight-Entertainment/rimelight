@@ -1,10 +1,13 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export default defineTheme({
-  slots: ["root"],
-  base: {
-    root: ""
-  },
-  variants: {},
-  defaultVariants: {}
-})
+export const createListboxTheme = () =>
+  defineTheme({
+    slots: ["root"],
+    base: {
+      root: ""
+    },
+    variants: {},
+    defaultVariants: {}
+  })
+
+export default createListboxTheme()

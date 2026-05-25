@@ -2,19 +2,50 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ChipProps } from "../../types"
-import chipThemeDefault from "../../themes/chip.theme"
+import chipThemeDefault, { createChipTheme } from "../../themes/chip.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const chip = scv(chipThemeDefault)
+const uiConfig = getUIConfig()
+const chipTheme = uiConfig.colors ? createChipTheme() : chipThemeDefault
+
+const chip = scv(chipTheme)
 
 const {
+  text,
+  color = "primary",
+  size = "md",
+  position = "top-right",
+  inset = false,
+  standalone = false,
+  show = true,
   theme,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as ChipProps
 
-const classes = resolveClasses(chip, { theme }, useUi("chip", uiProp), className);
+const classes = resolveClasses(chip, {
+  color,
+  size,
+  position,
+  inset,
+  standalone,
+  theme
+}, useUi("chip", uiProp), className)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+{standalone ? (
+  show && (
+    <span class={classes.base} data-slot="base">
+      <slot>{text}</slot>
+    </span>
+  )
+) : (
+  <div class={classes.root} data-slot="root" {...rest}>
+    <slot />
+    {show && (
+      <span class={classes.base} data-slot="base">
+        <slot name="content">{text}</slot>
+      </span>
+    )}
+  </div>
+)}

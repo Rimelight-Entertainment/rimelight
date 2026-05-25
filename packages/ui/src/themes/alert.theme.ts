@@ -1,28 +1,55 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
-
-const defaultColors = ["primary", "secondary", "info", "success", "warning", "error"]
 
 export const createAlertTheme = (colors: string[] = defaultColors) =>
   defineTheme({
-    slots: ["root", "icon", "content", "title", "description"],
+    slots: [
+      "root",
+      "wrapper",
+      "title",
+      "description",
+      "icon",
+      "avatar",
+      "avatarSize",
+      "actions",
+      "close"
+    ],
     base: {
-      root: "relative w-full rounded-lg border p-4 flex gap-3 text-sm transition-all shadow-sm",
-      icon: "shrink-0 size-5 text-current",
-      content: "flex flex-col gap-1 w-full",
-      title: "font-semibold leading-none tracking-tight text-foreground",
-      description: "text-xs opacity-90 leading-relaxed"
+      root: "relative overflow-hidden w-full rounded-lg p-4 flex gap-2.5",
+      wrapper: "min-w-0 flex-1 flex flex-col",
+      title: "text-sm font-medium",
+      description: "text-sm opacity-90",
+      icon: "shrink-0 size-5",
+      avatar: "shrink-0",
+      avatarSize: "2xl",
+      actions: "flex flex-wrap gap-1.5 shrink-0",
+      close: "p-0"
     },
     variants: {
       variant: {
-        default: { root: "bg-background text-foreground border-border" },
-        destructive: { root: "bg-error-500/10 text-error-700 border-error-500/20 dark:text-error-400" },
-        outline: { root: "border bg-transparent" },
-        solid: { root: "border-transparent text-white" }
+        solid: { root: "" },
+        outline: { root: "" },
+        soft: { root: "" },
+        subtle: { root: "" }
       },
-      color: Object.fromEntries(colors.map((color) => [color, { root: "" }])),
-      hasIcon: {
-        true: { icon: "block" },
-        false: { icon: "hidden" }
+      color: {
+        ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
+        neutral: { root: "" }
+      },
+      orientation: {
+        horizontal: {
+          root: "items-center",
+          actions: "items-center"
+        },
+        vertical: {
+          root: "items-start",
+          actions: "items-start mt-2.5"
+        }
+      },
+      title: {
+        true: {
+          description: "mt-1"
+        }
       },
       theme: {
         flat: { root: "rl-flat" },
@@ -35,21 +62,63 @@ export const createAlertTheme = (colors: string[] = defaultColors) =>
         variant: "solid" as const,
         color,
         classNames: {
-          root: `rl-color-${color} bg-[var(--rl-bg)] text-white border-transparent`
+          root: `rl-color-${color} bg-[var(--rl-bg)] text-white`
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
         color,
         classNames: {
-          root: `rl-color-${color} border-[var(--rl-border)]/20 text-[var(--rl-text)] bg-[var(--rl-bg)]/5`
+          root: `rl-color-${color} text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25`
         }
-      }))
+      })),
+      ...colors.map((color) => ({
+        variant: "soft" as const,
+        color,
+        classNames: {
+          root: `rl-color-${color} bg-[var(--rl-bg)]/10 text-[var(--rl-text)]`
+        }
+      })),
+      ...colors.map((color) => ({
+        variant: "subtle" as const,
+        color,
+        classNames: {
+          root: `rl-color-${color} bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25`
+        }
+      })),
+      {
+        color: "neutral",
+        variant: "solid",
+        classNames: {
+          root: "text-inverted bg-inverted"
+        }
+      },
+      {
+        color: "neutral",
+        variant: "outline",
+        classNames: {
+          root: "text-highlighted bg-default ring ring-inset ring-default"
+        }
+      },
+      {
+        color: "neutral",
+        variant: "soft",
+        classNames: {
+          root: "text-highlighted bg-elevated/50"
+        }
+      },
+      {
+        color: "neutral",
+        variant: "subtle",
+        classNames: {
+          root: "text-highlighted bg-elevated/50 ring ring-inset ring-accented"
+        }
+      }
     ],
     defaultVariants: {
-      variant: "default",
       color: "primary",
-      hasIcon: false
+      variant: "solid",
+      orientation: "horizontal"
     }
   })
 

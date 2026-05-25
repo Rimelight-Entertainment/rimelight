@@ -1,28 +1,53 @@
+import type { ChipProps } from "./chip"
+
 export interface AvatarProps {
   /**
-   * The source URL of the avatar image.
+   * The component the root element should render as.
+   *
+   * @default "span"
    */
+  as?: any
   src?: string
-  /**
-   * Alt description for screen readers.
-   */
   alt?: string
+  icon?: any
+  text?: string
   /**
-   * Two-letter fallback initials when src fails to load.
+   * @default "md"
    */
-  fallback?: string
+  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"
   /**
-   * The avatar dimensions scale.
+   * @default "neutral"
    */
-  size?: "sm" | "md" | "lg"
-  /**
-   * Displays a status badge circle on the avatar.
-   */
-  badge?: boolean
-  /**
-   * The color of the status badge.
-   */
-  badgeColor?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?:
+    | "neutral"
+    | "primary"
+    | "secondary"
+    | "info"
+    | "success"
+    | "warning"
+    | "error"
+    | "commentary"
+    | "ideation"
+    | "source"
+  chip?: boolean | ChipProps
+  loading?: "lazy" | "eager"
+  referrerpolicy?:
+    | ""
+    | "no-referrer"
+    | "no-referrer-when-downgrade"
+    | "origin"
+    | "origin-when-cross-origin"
+    | "same-origin"
+    | "strict-origin"
+    | "strict-origin-when-cross-origin"
+    | "unsafe-url"
+  crossorigin?: "" | "anonymous" | "use-credentials"
+  decoding?: "async" | "auto" | "sync"
+  height?: string | number
+  width?: string | number
+  sizes?: string
+  srcset?: string
+  usemap?: string
   /**
    * Slot-specific CSS class overrides.
    */

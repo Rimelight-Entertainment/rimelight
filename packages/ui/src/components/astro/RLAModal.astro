@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ModalProps } from "../../types"
-import modalTheme from "../../themes/modal.theme"
+import modalThemeDefault, { createModalTheme } from "../../themes/modal.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const modalTheme = uiConfig.colors ? createModalTheme() : modalThemeDefault
 
 const modal = scv(modalTheme)
 

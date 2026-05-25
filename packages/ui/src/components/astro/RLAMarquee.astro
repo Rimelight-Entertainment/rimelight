@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { MarqueeProps } from "../../types"
-import marqueeTheme from "../../themes/marquee.theme"
+import marqueeThemeDefault, { createMarqueeTheme } from "../../themes/marquee.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const marqueeTheme = uiConfig.colors ? createMarqueeTheme() : marqueeThemeDefault
 
 const marquee = scv(marqueeTheme)
 

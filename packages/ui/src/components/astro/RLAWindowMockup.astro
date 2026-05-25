@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { WindowMockupProps } from "../../types"
-import windowMockupThemeDefault from "../../themes/window-mockup.theme"
+import windowMockupThemeDefault, { createWindowMockupTheme } from "../../themes/window-mockup.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const windowMockup = scv(windowMockupThemeDefault)
+const uiConfig = getUIConfig()
+const windowMockupTheme = uiConfig.colors ? createWindowMockupTheme() : windowMockupThemeDefault
+
+const windowMockup = scv(windowMockupTheme)
 
 const {
   ui: uiProp,

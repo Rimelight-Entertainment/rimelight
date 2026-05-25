@@ -1,7 +1,18 @@
 import { defineTheme } from "../utils/defineTheme"
 
 export const confirmTheme = defineTheme({
-  slots: ["root", "trigger", "backdrop", "content", "header", "title", "description", "footer", "cancelButton", "actionButton"],
+  slots: [
+    "root",
+    "trigger",
+    "backdrop",
+    "content",
+    "header",
+    "title",
+    "description",
+    "footer",
+    "cancelButton",
+    "actionButton"
+  ],
   base: {
     root: "relative inline-block",
     trigger: "",
@@ -22,7 +33,9 @@ export const confirmTheme = defineTheme({
   variants: {
     variant: {
       default: { actionButton: "" },
-      destructive: { actionButton: "bg-error-500 hover:bg-error-600 focus-visible:ring-error-500/50" }
+      destructive: {
+        actionButton: "bg-error-500 hover:bg-error-600 focus-visible:ring-error-500/50"
+      }
     }
   },
   defaultVariants: {

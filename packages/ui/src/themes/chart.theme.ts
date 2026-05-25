@@ -11,7 +11,8 @@ export const createChartTheme = () =>
       axis: "text-[10px] text-muted-foreground",
       bar: "rounded-t transition-all hover:opacity-85",
       line: "stroke-2 fill-none",
-      tooltip: "absolute z-50 bg-background text-foreground border border-border rounded shadow p-2 text-xs",
+      tooltip:
+        "absolute z-50 bg-background text-foreground border border-border rounded shadow p-2 text-xs",
       legend: "flex items-center justify-center gap-4 text-xs text-muted-foreground"
     },
     variants: {},

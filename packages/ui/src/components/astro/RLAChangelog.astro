@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ChangelogProps } from "../../types"
-import changelogThemeDefault from "../../themes/changelog.theme"
+import changelogThemeDefault, { createChangelogTheme } from "../../themes/changelog.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const changelog = scv(changelogThemeDefault)
+const uiConfig = getUIConfig()
+const changelogTheme = uiConfig.colors ? createChangelogTheme() : changelogThemeDefault
+
+const changelog = scv(changelogTheme)
 
 const {
   ui: uiProp,

@@ -2,8 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { LogoProps } from "../../types"
-import logoTheme from "../../themes/logo.theme"
+import logoThemeDefault, { createLogoTheme } from "../../themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const logoTheme = uiConfig.colors ? createLogoTheme() : logoThemeDefault
 
 const logo = scv(logoTheme)
 

@@ -1,34 +1,42 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export const cardTheme = defineTheme({
-  slots: ["root", "media", "header", "title", "description", "content", "footer", "overlay"],
-  base: {
-    root: [
-      "rounded-xl border border-border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col transition-all duration-300",
-      "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
-    ],
-    media: "relative w-full aspect-video overflow-hidden shrink-0 bg-muted",
-    header: "flex flex-col gap-1.5 p-6 shrink-0",
-    title: "text-lg font-semibold leading-none tracking-tight text-foreground",
-    description: "text-sm text-muted-foreground leading-relaxed",
-    content: "p-6 pt-0 flex-1 leading-relaxed text-sm",
-    footer: "flex items-center p-6 pt-0 mt-auto shrink-0",
-    overlay: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 flex flex-col justify-end text-white"
-  },
-  variants: {
-    interactive: {
-      true: { root: "hover:shadow-md hover:-translate-y-0.5 cursor-pointer hover:border-primary/30" },
-      false: { root: "" }
+export const createCardTheme = () =>
+  defineTheme({
+    slots: ["root", "header", "title", "description", "body", "footer"],
+    base: {
+      root: "rounded-lg overflow-hidden transition-all duration-300",
+      header: "p-4 sm:px-6",
+      title: "text-highlighted font-semibold",
+      description: "mt-1 text-muted text-sm",
+      body: "p-4 sm:p-6",
+      footer: "p-4 sm:px-6"
     },
-    overlay: {
-      true: { root: "relative aspect-square", content: "absolute inset-0 z-10" },
-      false: { root: "" }
+    variants: {
+      variant: {
+        solid: {
+          root: "bg-inverted text-inverted",
+          title: "text-inverted",
+          description: "text-dimmed"
+        },
+        outline: {
+          root: "bg-default ring ring-default divide-y divide-default"
+        },
+        soft: {
+          root: "bg-elevated/50 divide-y divide-default"
+        },
+        subtle: {
+          root: "bg-elevated/50 ring ring-default divide-y divide-default"
+        }
+      },
+      interactive: {
+        true: { root: "hover:shadow-md cursor-pointer" },
+        false: { root: "" }
+      }
+    },
+    defaultVariants: {
+      variant: "outline",
+      interactive: false
     }
-  },
-  defaultVariants: {
-    interactive: false,
-    overlay: false
-  }
-})
+  })
 
-export default cardTheme
+export default createCardTheme()

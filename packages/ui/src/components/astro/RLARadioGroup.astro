@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { RadioGroupProps } from "../../types"
-import radioGroupThemeDefault from "../../themes/radio-group.theme"
+import radioGroupThemeDefault, { createRadioGroupTheme } from "../../themes/radio-group.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const radioGroup = scv(radioGroupThemeDefault)
+const uiConfig = getUIConfig()
+const radioGroupTheme = uiConfig.colors ? createRadioGroupTheme() : radioGroupThemeDefault
+
+const radioGroup = scv(radioGroupTheme)
 
 const {
   ui: uiProp,

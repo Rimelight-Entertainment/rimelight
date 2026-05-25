@@ -1,6 +1,5 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
-
-const defaultColors = ["primary", "secondary", "info", "success", "warning", "error"]
 
 export const createSwitchTheme = (colors: string[] = defaultColors) =>
   defineTheme({
@@ -12,17 +11,20 @@ export const createSwitchTheme = (colors: string[] = defaultColors) =>
         "inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent bg-muted transition-all focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
         "peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       ],
-      thumb: "pointer-events-none block size-4 rounded-full bg-background shadow-lg ring-0 transition-transform duration-200 translate-x-0",
+      thumb:
+        "pointer-events-none block size-4 rounded-full bg-background shadow-lg ring-0 transition-transform duration-200 translate-x-0",
       label: "text-sm text-foreground leading-none"
     },
     variants: {
-      color: Object.fromEntries(colors.map((color) => [
-        color,
-        {
-          root: `rl-color-${color}`,
-          track: `peer-checked:bg-[var(--rl-bg)] focus-within:ring-[var(--rl-ring)]/50`
-        }
-      ])),
+      color: Object.fromEntries(
+        colors.map((color) => [
+          color,
+          {
+            root: `rl-color-${color}`,
+            track: `peer-checked:bg-[var(--rl-bg)] focus-within:ring-[var(--rl-ring)]/50`
+          }
+        ])
+      ),
       size: {
         sm: { track: "h-4 w-7", thumb: "size-3", label: "text-xs" },
         md: { track: "h-5 w-9", thumb: "size-4", label: "text-sm" },

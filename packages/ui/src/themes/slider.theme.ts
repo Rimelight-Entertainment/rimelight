@@ -1,6 +1,5 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
-
-const defaultColors = ["primary", "secondary", "info", "success", "warning", "error"]
 
 export const createSliderTheme = (colors: string[] = defaultColors) =>
   defineTheme({
@@ -9,17 +8,20 @@ export const createSliderTheme = (colors: string[] = defaultColors) =>
       root: "relative flex w-full touch-none select-none items-center",
       track: "relative h-1.5 w-full grow overflow-hidden rounded-full bg-muted",
       range: "absolute h-full",
-      thumb: "block size-4.5 rounded-full border border-border bg-background shadow transition-all focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
+      thumb:
+        "block size-4.5 rounded-full border border-border bg-background shadow transition-all focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
     },
     variants: {
-      color: Object.fromEntries(colors.map((color) => [
-        color,
-        {
-          root: `rl-color-${color}`,
-          range: `bg-[var(--rl-bg)]`,
-          thumb: `focus-visible:ring-[var(--rl-ring)]/50 hover:border-[var(--rl-border)]`
-        }
-      ])),
+      color: Object.fromEntries(
+        colors.map((color) => [
+          color,
+          {
+            root: `rl-color-${color}`,
+            range: `bg-[var(--rl-bg)]`,
+            thumb: `focus-visible:ring-[var(--rl-ring)]/50 hover:border-[var(--rl-border)]`
+          }
+        ])
+      ),
       theme: {
         flat: { root: "rl-flat" },
         light: { root: "rl-light" },

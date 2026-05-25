@@ -2,9 +2,13 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PageSectionProps } from "../../types"
-import pageSectionTheme from "../../themes/page-section.theme"
+import pageSectionThemeDefault, { createPageSectionTheme } from "../../themes/page-section.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 import RLAIcon from "./RLAIcon.astro"
 import RLAButton from "./RLAButton.astro"
+
+const uiConfig = getUIConfig()
+const pageSectionTheme = uiConfig.colors ? createPageSectionTheme() : pageSectionThemeDefault
 
 const pageSection = scv(pageSectionTheme)
 

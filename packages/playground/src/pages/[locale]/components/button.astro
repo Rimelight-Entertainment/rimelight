@@ -45,6 +45,7 @@ const messages = useI18n("buttonPage", {
 ---
 
 <AppLayout title={messages.title} description={messages.description}>
+    <div class="max-w-7xl mx-auto px-4">
     <a href={getRelativeLocaleUrl(activeLocale, 'components')} class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-500 mb-8">
       <span class="i-lucide-arrow-left"></span>
       {nav.backToComponents}
@@ -393,6 +394,7 @@ const messages = useI18n("buttonPage", {
         </div>
       </section>
     </div>
+</div>
 </AppLayout>
 
 <script>

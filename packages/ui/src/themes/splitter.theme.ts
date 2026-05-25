@@ -6,7 +6,8 @@ export const createSplitterTheme = () =>
     base: {
       root: "flex w-full h-full",
       panel: "overflow-auto transition-all",
-      handle: "flex items-center justify-center bg-border hover:bg-primary/50 transition-colors cursor-col-resize select-none"
+      handle:
+        "flex items-center justify-center bg-border hover:bg-primary/50 transition-colors cursor-col-resize select-none"
     },
     variants: {
       direction: {

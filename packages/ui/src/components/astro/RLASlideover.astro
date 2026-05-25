@@ -2,7 +2,11 @@
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { SlideoverProps } from "../../types"
-import slideoverTheme from "../../themes/slideover.theme"
+import slideoverThemeDefault, { createSlideoverTheme } from "../../themes/slideover.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const slideoverTheme = uiConfig.colors ? createSlideoverTheme() : slideoverThemeDefault
 
 const slideover = scv(slideoverTheme)
 
