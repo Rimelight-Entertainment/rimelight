@@ -16,7 +16,7 @@ const messages = useI18n("app_footer", {
   "links_resources_branding": "Branding",
   "links_legal_label": "Legal",
   "links_legal_privacy-policy": "Privacy Policy",
-  "links_legal_other_documents": "Other Documents",
+  "links_legal_other-documents": "Other Documents"
 });
 
 const columns = [
@@ -37,7 +37,7 @@ const columns = [
         to: getRelativeLocaleUrl(activeLocale, "/legal/privacy-policy")
       },
       {
-        label: messages["links_legal_other_documents"],
+        label: messages["links_legal_other-documents"],
         to: getRelativeLocaleUrl(activeLocale, "/legal")
       }
     ]
@@ -74,7 +74,7 @@ const targetLanguages = [
 ];
 ---
 
-<RLAFooter contain={false} class="bg-black">
+<RLAFooter contain={false} class="bg-black z-50">
   <div slot="left" class="flex flex-col items-center gap-xs lg:items-start">
     <RLALogo variant="logotype" class="h-6 w-auto" />
     <p class="text-sm text-white">Accessing me.</p>
