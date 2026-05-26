@@ -49,9 +49,11 @@ export interface EditLinkConfig {
 }
 
 export interface DocsConfig {
-  sidebar: (SidebarItem | SidebarScope)[] | {
-    scopes: SidebarScope[]
-  }
+  sidebar:
+    | (SidebarItem | SidebarScope)[]
+    | {
+        scopes: SidebarScope[]
+      }
   editLink?: EditLinkConfig
   tableOfContents?: false | TableOfContentsConfig
 }

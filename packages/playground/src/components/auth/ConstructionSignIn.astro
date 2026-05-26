@@ -91,10 +91,7 @@ const { allowAuth = true } = Astro.props
     errorEl.classList.add('hidden');
     submitBtn.setAttribute('data-loading', 'true');
 
-    const formData = new FormData(form);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const rememberMe = formData.get('rememberMe') === 'on';
+    // const formData = new FormData(form);
 
     try {
       // const { authClient } = await import('@/auth/auth-client');

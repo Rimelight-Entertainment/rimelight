@@ -54,8 +54,10 @@ export async function getDocsSidebar(
   const docsBase = `/${locale}/docs`
 
   const sidebarScopes: import("../types").SidebarScope[] = Array.isArray(config.sidebar)
-    ? config.sidebar.filter((item): item is import("../types").SidebarScope => ("id" in item || "scopes" in item))
-    : ((config.sidebar as any)?.scopes || [])
+    ? config.sidebar.filter(
+        (item): item is import("../types").SidebarScope => "id" in item || "scopes" in item
+      )
+    : (config.sidebar as any)?.scopes || []
 
   const scopes: ResolvedScope[] = sidebarScopes.map((scope) => {
     const id = scope.id || scope.label
