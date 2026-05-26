@@ -7,8 +7,8 @@ import sitemap from "@astrojs/sitemap"
 import mdx from "@astrojs/mdx"
 import { ui } from "@rimelight/ui/integrations"
 import { sri } from "@rimelight/ui/integrations"
-import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
 import cloudflare from "@astrojs/cloudflare"
+import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
 
 export default defineConfig({
   experimental: {
