@@ -1,0 +1,45 @@
+---
+import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
+import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.astro";
+import type { NavigationMenuItem } from "@rimelight/ui/types";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { useI18n } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+
+const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const messages = useI18n("app_header", {
+	"links_home_label": "Home",
+	"links_docs_label": "Docs",
+	"links_blog_label": "Blog"
+});
+
+const items: NavigationMenuItem[] = [
+	{
+		label: messages["links_docs_label"],
+		to: getRelativeLocaleUrl(activeLocale, '/docs'),
+		active: pathname.startsWith(getRelativeLocaleUrl(activeLocale, '/docs').replace(/\/+$/, ''))
+	},
+  {
+    label: messages["links_blog_label"],
+    to: getRelativeLocaleUrl(activeLocale, '/blog'),
+    active: pathname.startsWith(getRelativeLocaleUrl(activeLocale, '/blog').replace(/\/+$/, ''))
+  }
+];
+---
+
+<RLAHeader contain={false} fixed={true} stackIndex={0} class="bg-black">
+	<div slot="left" class="flex flex-row items-center gap-md">
+		<RLALogo variant="logomark" class="h-10 w-auto" mode="white" />
+		<RLANavigationMenu
+			items={items}
+			variant="link"
+			theme="flat"
+			ui={{
+				link: 'text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
+			}}
+		/>
+	</div>
+</RLAHeader>
