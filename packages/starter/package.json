@@ -1,0 +1,31 @@
+{
+  "name": "@rimelight/starter",
+  "description": "Rimelight Starter Template",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "astro": "astro",
+    "prepare": "vp config",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@rimelight/ui": "workspace:*",
+    "astro": "7.0.0-alpha.0",
+    "vue": "3.5.34"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:",
+    "@astrojs/check": "0.9.9",
+    "@astrojs/ts-plugin": "1.10.8",
+    "@types/node": "25.8.0",
+    "typescript": "6.0.3",
+    "unocss": "66.6.8"
+  },
+  "packageManager": "pnpm@11.3.0"
+}
