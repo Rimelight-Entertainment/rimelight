@@ -151,8 +151,6 @@ export default defineConfig({
       }
     }),
 
-    mdx(),
-
     astroExpressiveCode({
       emitExternalStylesheet: true,
       themes: [
@@ -164,6 +162,8 @@ export default defineConfig({
       ],
       themeCssRoot: ":root"
     }),
+
+    mdx(),
 
     ui({
       colors: {
