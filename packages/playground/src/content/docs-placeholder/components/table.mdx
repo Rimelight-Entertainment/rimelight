@@ -1,0 +1,51 @@
+---
+title: Table
+description: Table component documentation.
+---
+
+import ComponentShowcase from "@/components/docs/ComponentShowcase.astro"
+import RLATable from "@rimelight/ui/components/astro/RLATable.astro"
+import ApiProps from "@/components/docs/ApiProps.astro"
+import ApiSlots from "@/components/docs/ApiSlots.astro"
+import ApiTheme from "@/components/docs/ApiTheme.astro"
+
+Table component documentation.
+
+## Usage
+
+<ComponentShowcase>
+  <RLATable headers={["Name", "Role", "Status"]} rows={[
+    ["Alice Johnson", "Developer", "Active"],
+    ["Bob Smith", "Designer", "Away"],
+    ["Carol Davis", "Manager", "Active"]
+  ]} />
+  
+  <Fragment slot="code-astro">
+  ```astro
+  <RLATable headers={["Name", "Role", "Status"]} rows={[
+    ["Alice Johnson", "Developer", "Active"],
+    ["Bob Smith", "Designer", "Away"]
+  ]} />
+  ```
+  </Fragment>
+
+  <Fragment slot="code-vue">
+  ```vue
+  <!-- Vue version coming soon -->
+  ```
+  </Fragment>
+</ComponentShowcase>
+
+## API
+
+### Props
+
+<ApiProps component="table" />
+
+### Slots
+
+<ApiSlots component="table" />
+
+### Theme
+
+<ApiTheme component="table" />

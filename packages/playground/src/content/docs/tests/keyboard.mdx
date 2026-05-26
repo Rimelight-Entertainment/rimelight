@@ -1,0 +1,24 @@
+---
+title: Keyboard Component Test
+description: Testing the Keyboard visual component from starlightAddons
+---
+
+import Keyboard from "@rimelight/ui/components/astro/RLADocsKeyboard.astro"
+
+Below is the Keyboard component rendering with custom highlighted keys.
+
+## Full Keyboard
+
+<Keyboard 
+  highlightedKeys={["W", "A", "S", "D", "Escape", "Space"]} 
+  highlightColor="#7146ff"
+/>
+
+## Custom Color Groups
+
+<Keyboard 
+  groups={[
+    { keys: ["W", "A", "S", "D"], color: "#7146ff", label: "Movement" },
+    { keys: ["Space", "ShiftLeft"], color: "#ff6600", label: "Actions" }
+  ]} 
+/>
