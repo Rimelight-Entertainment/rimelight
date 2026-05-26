@@ -1,7 +1,6 @@
 # Rimelight UI (@rimelight/ui)
 
 [![Built with Astro](https://astro.badg.es/v2/built-with-astro/small.svg)](https://astro.build) &nbsp;
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/small.svg)](https://starlight.astro.build) &nbsp;
 
 [![PLAYGROUND](https://img.shields.io/badge/PLAYGROUND-A682FF?style=for-the-badge&logo=astro&logoColor=white)](https://playground.rimelight.com/ui) &nbsp;
 [![DOCUMENTATION](https://img.shields.io/badge/DOCUMENTATION-A682FF?style=for-the-badge&logo=astro&logoColor=white)](https://rimelight.com/company/docs/packages/rimelight-ui/) &nbsp;

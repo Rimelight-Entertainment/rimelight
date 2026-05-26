@@ -248,7 +248,6 @@ export default definePreset((options?: RimelightPresetOptions) => {
           "--rl-border": "var(--rl-border-d, var(--rl-border-f))"
         }
       ],
-      /* Nuxt UI semantic utility resolve */
       [/^(text)-(default|inverted)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { color: `color-mix(in srgb, var(--text-color-${name}) ${opacity}%, transparent)` } : { color: `var(--text-color-${name})` }],
       [/^(bg)-(default|inverted)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { "background-color": `color-mix(in srgb, var(--background-color-${name}) ${opacity}%, transparent)` } : { "background-color": `var(--background-color-${name})` }],
       [/^(ring)-(default|inverted)(?:\/(\d+))?$/, ([, , name, opacity]) => opacity ? { "--un-ring-color": `color-mix(in srgb, var(--ring-color-${name}) ${opacity}%, transparent)` } : { "--un-ring-color": `var(--ring-color-${name})` }],
@@ -340,7 +339,6 @@ export default definePreset((options?: RimelightPresetOptions) => {
         "placeholder": "var(--color-placeholder)",
         "input-border": "var(--color-input-border)",
         "accent-subtle": "var(--color-accent-subtle)",
-        /* Nuxt UI semantic utility parity — mapped to Rimelight CSS vars */
         "elevated": "var(--background-color-elevated)",
         "accented": "var(--ring-color-accented)",
         "dimmed": "var(--text-color-dimmed)",
@@ -493,7 +491,6 @@ export default definePreset((options?: RimelightPresetOptions) => {
           --font-serif: "Noto Serif", serif;
           --font-mono: "Noto Sans Mono", monospace;
 
-          /* Nuxt UI semantic variable parity — mapped to Rimelight color scale */
           --ui-header-height: 4rem;
           --ui-container: 80rem;
           --text-color-default: var(--color-neutral-700);
@@ -588,7 +585,6 @@ ${darkPinnedLines}
           --color-destructive-subtle: #451a1a;
           --color-accent-subtle: #1e293b;
 
-          /* Nuxt UI semantic variable parity — dark mode */
           --text-color-default: var(--color-neutral-200);
           --text-color-muted: var(--color-neutral-400);
           --text-color-dimmed: var(--color-neutral-500);

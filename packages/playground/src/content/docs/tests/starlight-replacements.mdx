@@ -1,9 +1,15 @@
 ---
 title: Starlight Component Replacements
 description: Testing native @rimelight/ui library replacements for standard Starlight components
+sidebar:
+  badge:
+    text: "Refined"
+    color: "success"
+    variant: "soft"
 ---
 
 import RLACard from "@rimelight/ui/components/astro/RLACard.astro"
+import RLACardGrid from "@rimelight/ui/components/astro/RLACardGrid.astro"
 import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
 import RLABadge from "@rimelight/ui/components/astro/RLABadge.astro"
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
@@ -13,16 +19,18 @@ import RLATree from "@rimelight/ui/components/astro/RLATree.astro"
 
 This page renders our native `@rimelight/ui` library components that replace Starlight's standard items.
 
-## 1. Cards (Starlight: Card)
+## 1. Cards (Starlight: Card & CardGrid & LinkCard)
 
-<div class="grid md:grid-cols-2 gap-4 my-4">
-  <RLACard title="Interactive Card 1" description="A clean, modern, interactive card component with smooth hover animations.">
-    <div class="text-xs text-base-500 mt-2">Card footer information</div>
+Our `<RLACardGrid>` acts as a singular grid layout container. By passing an `href` prop to `<RLACard>`, the entire card automatically transforms into a premium, interactive link card!
+
+<RLACardGrid stagger class="my-4">
+  <RLACard title="Interactive Card 1" description="A clean, modern, interactive card component with smooth hover animations." href="/en/docs/contributing">
+    <div class="text-xs text-base-500 mt-2">Clicking this card navigates to the Contributing docs page.</div>
   </RLACard>
-  <RLACard title="Interactive Card 2" description="Fully dynamic and themed using our HSL tailored color palette.">
-    <div class="text-xs text-base-500 mt-2">Card footer information</div>
+  <RLACard title="Interactive Card 2" description="Fully dynamic and themed using our HSL tailored color palette." href="/en/docs/deployment">
+    <div class="text-xs text-base-500 mt-2">Clicking this card navigates to the Deployment docs page.</div>
   </RLACard>
-</div>
+</RLACardGrid>
 
 ## 2. Asides (Starlight: Aside)
 

@@ -3,12 +3,55 @@ import AppLayout from "./AppLayout.astro";
 import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
 import TableOfContents from "@rimelight/ui/components/TableOfContents.astro";
 import RLASurround from "@/components/docs/RLASurround.astro";
+import RLABadge from "@rimelight/ui/components/astro/RLABadge.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/ui/utils";
 import type { ResolvedSidebarItem, ResolvedScope } from "@rimelight/ui/utils";
 import { getCollection } from "astro:content";
 import docsConfig from "@/config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/TableOfContents.astro";
 import type { SurroundOverride } from "@/components/docs/RLASurround.astro";
+
+function normalizeBadge(badge: any) {
+  if (!badge) return null
+  if (typeof badge === "string") {
+    return {
+      text: badge,
+      color: "primary",
+      variant: "soft" as const,
+      class: ""
+    }
+  }
+  
+  let color = badge.color || "primary"
+  let variant = badge.variant || "soft"
+  
+  if (badge.variant) {
+    const v = badge.variant.toLowerCase()
+    if (v === "tip" || v === "success") {
+      color = "success"
+      variant = "soft"
+    } else if (v === "caution" || v === "warning") {
+      color = "warning"
+      variant = "soft"
+    } else if (v === "danger") {
+      color = "danger"
+      variant = "soft"
+    } else if (v === "note") {
+      color = "primary"
+      variant = "soft"
+    } else if (v === "default") {
+      color = "primary"
+      variant = "soft"
+    }
+  }
+  
+  return {
+    text: badge.text || "",
+    color,
+    variant: variant as "solid" | "outline" | "soft",
+    class: badge.class || ""
+  }
+}
 
 interface Props {
   title: string;
@@ -129,14 +172,27 @@ const tocHeadings = hasToc
                         <a
                           href={child.href ?? "#"}
                           class:list={[
-                            "block px-3 py-1.5 text-sm rounded-md transition-colors no-underline",
+                            "flex items-center justify-between px-3 py-1.5 text-sm rounded-md transition-colors no-underline",
                             child.active
                               ? "bg-primary/10 text-primary font-medium"
                               : "text-foreground hover:bg-muted"
                           ]}
                           data-docs-nav-link
                         >
-                          {child.label}
+                          <span class="truncate">{child.label}</span>
+                          {(() => {
+                            const b = normalizeBadge(child.badge);
+                            return b && (
+                              <RLABadge
+                                variant={b.variant}
+                                color={b.color}
+                                size="xs"
+                                class={"select-none " + b.class}
+                              >
+                                {b.text}
+                              </RLABadge>
+                            );
+                          })()}
                         </a>
                       </li>
                     ))}
@@ -146,14 +202,27 @@ const tocHeadings = hasToc
                 <a
                   href={item.href ?? "#"}
                   class:list={[
-                    "block px-3 py-1.5 text-sm rounded-md transition-colors no-underline",
+                    "flex items-center justify-between px-3 py-1.5 text-sm rounded-md transition-colors no-underline",
                     item.active
                       ? "bg-primary/10 text-primary font-medium"
                       : "text-foreground hover:bg-muted"
                   ]}
                   data-docs-nav-link
                 >
-                  {item.label}
+                  <span class="truncate">{item.label}</span>
+                  {(() => {
+                    const b = normalizeBadge(item.badge);
+                    return b && (
+                      <RLABadge
+                        variant={b.variant}
+                        color={b.color}
+                        size="xs"
+                        class={"select-none " + b.class}
+                      >
+                        {b.text}
+                      </RLABadge>
+                    );
+                  })()}
                 </a>
               )}
             </li>

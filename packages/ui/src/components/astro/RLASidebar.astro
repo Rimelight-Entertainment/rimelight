@@ -3,6 +3,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { SidebarProps, SidebarItem } from "../../types"
 import sidebarThemeDefault, { createSidebarTheme } from "../../themes/sidebar.theme"
+import RLABadge from "./RLABadge.astro"
 
 const sidebarTheme = sidebarThemeDefault
 const sidebar = scv(sidebarTheme)
@@ -27,6 +28,48 @@ const classes = resolveClasses(sidebar, {
 const hasActiveChild = (item: SidebarItem): boolean => {
   if (item.active) return true
   return (item.children ?? []).some(c => hasActiveChild(c))
+}
+
+function normalizeBadge(badge: any) {
+  if (!badge) return null
+  if (typeof badge === "string") {
+    return {
+      text: badge,
+      color: "primary",
+      variant: "soft" as const,
+      class: ""
+    }
+  }
+  
+  let color = badge.color || "primary"
+  let variant = badge.variant || "soft"
+  
+  if (badge.variant) {
+    const v = badge.variant.toLowerCase()
+    if (v === "tip" || v === "success") {
+      color = "success"
+      variant = "soft"
+    } else if (v === "caution" || v === "warning") {
+      color = "warning"
+      variant = "soft"
+    } else if (v === "danger") {
+      color = "danger"
+      variant = "soft"
+    } else if (v === "note") {
+      color = "primary"
+      variant = "soft"
+    } else if (v === "default") {
+      color = "primary"
+      variant = "soft"
+    }
+  }
+  
+  return {
+    text: badge.text || "",
+    color,
+    variant: variant as "solid" | "outline" | "soft",
+    class: badge.class || ""
+  }
 }
 ---
 
@@ -64,9 +107,20 @@ const hasActiveChild = (item: SidebarItem): boolean => {
                     />
                   )}
                   <span data-slot="item-text" class="truncate flex-1">{t(item.label)}</span>
-                  {item.badge !== undefined && (
-                    <span class={classes.itemBadge} data-slot="item-badge">{t(String(item.badge))}</span>
-                  )}
+                  {(() => {
+                    const b = normalizeBadge(item.badge);
+                    return b && (
+                      <RLABadge
+                        variant={b.variant}
+                        color={b.color}
+                        size="xs"
+                        class={"ml-auto select-none " + b.class}
+                        data-slot="item-badge"
+                      >
+                        {t(b.text)}
+                      </RLABadge>
+                    );
+                  })()}
                   <span class="i-lucide-chevron-right size-3.5 ml-auto transition-transform group-open/details:rotate-90" />
                 </summary>
                 <div class="mt-0.5 ml-6 flex flex-col gap-0.5">
@@ -77,9 +131,20 @@ const hasActiveChild = (item: SidebarItem): boolean => {
                     >
                       {child.icon && <span class={classes.itemIcon + " " + child.icon} aria-hidden="true" />}
                       <span data-slot="item-text" class="truncate flex-1">{t(child.label)}</span>
-                      {child.badge !== undefined && (
-                        <span class={classes.itemBadge} data-slot="item-badge">{t(String(child.badge))}</span>
-                      )}
+                      {(() => {
+                        const b = normalizeBadge(child.badge);
+                        return b && (
+                          <RLABadge
+                            variant={b.variant}
+                            color={b.color}
+                            size="xs"
+                            class={"ml-auto select-none " + b.class}
+                            data-slot="item-badge"
+                          >
+                            {t(b.text)}
+                          </RLABadge>
+                        );
+                      })()}
                     </a>
                   ))}
                 </div>
@@ -97,9 +162,20 @@ const hasActiveChild = (item: SidebarItem): boolean => {
                   />
                 )}
                 <span data-slot="item-text" class="truncate flex-1">{t(item.label)}</span>
-                {item.badge !== undefined && (
-                  <span class={classes.itemBadge} data-slot="item-badge">{t(String(item.badge))}</span>
-                )}
+                {(() => {
+                  const b = normalizeBadge(item.badge);
+                  return b && (
+                    <RLABadge
+                      variant={b.variant}
+                      color={b.color}
+                      size="xs"
+                      class={"ml-auto select-none " + b.class}
+                      data-slot="item-badge"
+                    >
+                      {t(b.text)}
+                    </RLABadge>
+                  );
+                })()}
               </a>
             )}
           </div>

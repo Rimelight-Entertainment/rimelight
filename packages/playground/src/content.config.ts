@@ -31,7 +31,11 @@ const BadgeConfigSchema = z.union([
   z.string(),
   z.object({
     text: z.string(),
-    variant: z.enum(["note", "tip", "caution", "danger", "success", "default"]).optional().default("default"),
+    color: z.string().optional(),
+    variant: z.union([
+      z.enum(["solid", "outline", "soft"]),
+      z.enum(["note", "tip", "caution", "danger", "success", "default"])
+    ]).optional().default("soft"),
     class: z.string().optional()
   })
 ])
@@ -69,6 +73,15 @@ const docs = defineCollection({
 
     // Sidebar badge for this page
     badge: BadgeConfigSchema.optional(),
+
+    // Starlight-compatible sidebar options
+    sidebar: z.object({
+      label: z.string().optional(),
+      order: z.number().optional(),
+      hidden: z.boolean().optional(),
+      badge: BadgeConfigSchema.optional(),
+      attrs: z.record(z.union([z.string(), z.number(), z.boolean()])).optional()
+    }).optional(),
 
     // Per-page TOC override: false to disable, or config object
     tableOfContents: TableOfContentsSchema,

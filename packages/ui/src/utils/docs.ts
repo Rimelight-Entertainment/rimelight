@@ -78,24 +78,27 @@ export async function getDocsSidebar(
       // Match docs whose id starts with the directory
       const prefix = dir.replace(/\/$/, "")
       const filteredDocs = docs.filter(d => {
+        if (d.data.sidebar?.hidden === true) return false
         if (prefix === "") return !d.id.includes("/")
         return d.id.startsWith(prefix + "/") || d.id === prefix
       })
 
       filteredDocs.sort((a, b) => {
         // 1. Frontmatter `order` takes priority
-        const aOrder = a.data.order ?? numericPrefixOrder(a.id)
-        const bOrder = b.data.order ?? numericPrefixOrder(b.id)
+        const aOrder = a.data.sidebar?.order ?? a.data.order ?? numericPrefixOrder(a.id)
+        const bOrder = b.data.sidebar?.order ?? b.data.order ?? numericPrefixOrder(b.id)
         if (aOrder !== bOrder) return aOrder - bOrder
         // 2. Fall back to alphabetical by stripped label
-        return stripNumericPrefix(a.id).localeCompare(stripNumericPrefix(b.id))
+        const aLabel = a.data.sidebar?.label ?? a.data.title
+        const bLabel = b.data.sidebar?.label ?? b.data.title
+        return stripNumericPrefix(aLabel).localeCompare(stripNumericPrefix(bLabel))
       })
 
       return filteredDocs.map(doc => {
         const href = `${docsBase}/${doc.id}/`
-        const badge = doc.data.badge as string | BadgeConfig | undefined
+        const badge = doc.data.sidebar?.badge ?? doc.data.badge as string | BadgeConfig | undefined
         return {
-          label: doc.data.title,
+          label: doc.data.sidebar?.label ?? doc.data.title,
           href,
           badge,
           active: normPath === href.replace(/\/$/, "").toLowerCase()

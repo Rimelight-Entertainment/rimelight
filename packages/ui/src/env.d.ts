@@ -12,11 +12,6 @@ interface StarlightAddonsConfig {
   share?: boolean
 }
 
-declare module "virtual:rimelight-starlight-addons-config" {
-  const config: StarlightAddonsConfig
-  export default config
-}
-
 declare module "virtual:rimelight-ui-docs-meta" {
   const meta: Record<string, unknown>
   export default meta
@@ -38,8 +33,5 @@ declare module "turndown-plugin-gfm" {
 declare namespace App {
   interface Locals {
     cfContext?: Record<string, unknown>
-    // Extended locals used by Starlight Addons for richer type safety
-    starlightSidebarTopics?: any
-    starlightRoute?: any
   }
 }
