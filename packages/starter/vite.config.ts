@@ -13,9 +13,9 @@ export default defineConfig({
     },
     jsPlugins: [
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
-      { name: "@e18e/eslint-plugin", specifier: "@e18e/eslint-plugin" },
-      { name: "eslint-plugin-regexp", specifier: "eslint-plugin-regexp" },
-      { name: "@unocss/eslint-plugin", specifier: "@unocss/eslint-plugin" }
+      { name: "e18e", specifier: "@e18e/eslint-plugin" },
+      { name: "regexp", specifier: "eslint-plugin-regexp" },
+      { name: "@unocss", specifier: "@unocss/eslint-plugin" }
     ],
     categories: {
       correctness: "error",

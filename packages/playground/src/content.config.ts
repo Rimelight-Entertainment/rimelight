@@ -86,7 +86,7 @@ const docs = defineCollection({
         order: z.number().optional(),
         hidden: z.boolean().optional(),
         badge: BadgeConfigSchema.optional(),
-        attrs: z.record(z.union([z.string(), z.number(), z.boolean()])).optional()
+        attrs: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional()
       })
       .optional(),
 
