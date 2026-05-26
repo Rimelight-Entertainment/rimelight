@@ -33,7 +33,7 @@ const latestPosts = (await getCollection("blog"))
 const heroLinks = [
     {
         label: messages.heroLink,
-        href: "https://rimelight.com/en/docs/packages/overview/introduction/",
+        href: getRelativeLocaleUrl(activeLocale, "docs/packages/overview/introduction/"),
         color: "primary",
         variant: "solid",
     }
@@ -42,13 +42,13 @@ const heroLinks = [
 const ctaLinks = [
     {
         label: messages.ctaStart,
-        href: "https://rimelight.com/en/docs/packages/overview/introduction/",
+        href: getRelativeLocaleUrl(activeLocale, "docs/packages/overview/introduction/"),
         color: "primary",
         variant: "solid"
     },
     {
         label: messages.ctaContribute,
-        href: "https://rimelight.com/en/docs/overview/contributing/",
+        href: getRelativeLocaleUrl(activeLocale, "docs/overview/contributing/"),
         color: "primary",
         variant: "outline",
         trailingIcon: "i-lucide-arrow-right"
