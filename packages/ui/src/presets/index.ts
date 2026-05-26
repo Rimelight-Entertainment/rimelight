@@ -430,9 +430,9 @@ export default definePreset((options?: RimelightPresetOptions) => {
           --card-foreground: #030712;
           --popover: #ffffff;
           --popover-foreground: #030712;
-          --primary: #f97316;
-          --primary-foreground: #f9fafb;
-          --primary-accent: #ea580c;
+          --primary: #0064d7;
+          --primary-foreground: #ffffff;
+          --primary-accent: #0050ac;
           --secondary: #8b5cf6;
           --secondary-foreground: #f9fafb;
           --secondary-accent: #7c3aed;
@@ -529,9 +529,9 @@ ${darkPinnedLines}
           --card-foreground: #f9fafb;
           --popover: #1f2937;
           --popover-foreground: #f9fafb;
-          --primary: #f97316;
-          --primary-foreground: #f9fafb;
-          --primary-accent: #fb923c;
+          --primary: #3b82f6;
+          --primary-foreground: #ffffff;
+          --primary-accent: #60a5fa;
           --secondary: #8b5cf6;
           --secondary-foreground: #f9fafb;
           --secondary-accent: #a78bfa;

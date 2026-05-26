@@ -64,6 +64,7 @@
   "dependencies": {
     "@astrojs/prism": "^4.0.2",
     "@astrojs/vue": "6.0.1",
+    "prismjs": "^1.29.0",
     "@iconify-json/lucide": "^1.2.108",
     "@unocss/astro": "^66.6.8",
     "css-variants": "2.3.5",

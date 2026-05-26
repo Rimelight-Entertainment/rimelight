@@ -2,9 +2,6 @@
 @import "./reset.css";
 
 :root {
-  --primary: #0064d7;
-  --primary-foreground: #ffffff;
-  --primary-accent: #0050ac;
   --ui-container: 90rem;
 
   --text-base: var(--text-md);
