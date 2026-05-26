@@ -14,7 +14,9 @@ const messages = useI18n("testsPage", {
   logoTest: "Logo Component Test",
   logoDesc: "RLALogo auto mode detection and theme override",
   headerTest: "Header Layer Test",
-  headerDesc: "RLAHeader stacking with multiple fixed layers"
+  headerDesc: "RLAHeader stacking with multiple fixed layers",
+  cspTest: "Expressive Code CSP Test",
+  cspDesc: "Verify Shiki syntax highlighting compliance under strict CSP rules"
 });
 ---
 
@@ -38,6 +40,14 @@ const messages = useI18n("testsPage", {
       >
         <h2 class="text-xl font-semibold mb-1">{messages.headerTest}</h2>
         <p class="text-sm text-muted-foreground">{messages.headerDesc}</p>
+      </a>
+
+      <a
+        href={getRelativeLocaleUrl(activeLocale, "/tests/csp-test")}
+        class="block border border-border rounded-xl p-6 hover:border-primary-500 transition-colors"
+      >
+        <h2 class="text-xl font-semibold mb-1">{messages.cspTest}</h2>
+        <p class="text-sm text-muted-foreground">{messages.cspDesc}</p>
       </a>
     </div>
   </div>

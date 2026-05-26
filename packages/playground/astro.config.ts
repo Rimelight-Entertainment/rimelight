@@ -5,6 +5,8 @@ import es from "./src/translations/es.json"
 import pt from "./src/translations/pt.json"
 import sitemap from "@astrojs/sitemap"
 import mdx from "@astrojs/mdx"
+import astroExpressiveCode from "astro-expressive-code"
+import { createCssVariablesTheme } from "shiki/core"
 import { ui } from "@rimelight/ui/integrations"
 import { sri } from "@rimelight/ui/integrations"
 import cloudflare from "@astrojs/cloudflare"
@@ -125,7 +127,7 @@ export default defineConfig({
   ],
 
   markdown: {
-    syntaxHighlight: "prism"
+    syntaxHighlight: false
   },
 
   integrations: [
@@ -150,6 +152,18 @@ export default defineConfig({
     }),
 
     mdx(),
+
+    astroExpressiveCode({
+      emitExternalStylesheet: true,
+      themes: [
+        createCssVariablesTheme({
+          name: "shiki-theme",
+          variablePrefix: "--shiki-",
+          fontStyle: true
+        })
+      ],
+      themeCssRoot: ":root"
+    }),
 
     ui({
       colors: {

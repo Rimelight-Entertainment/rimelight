@@ -517,6 +517,17 @@ ${lightLines}
 ${flatLines}
 ${lightPinnedLines}
 ${darkPinnedLines}
+
+          /* Shiki / Expressive Code */
+          --shiki-foreground: #e1e4e8;
+          --shiki-background: #1f2428;
+          --shiki-token-keyword: #f97583;
+          --shiki-token-string: #9ecbff;
+          --shiki-token-comment: #6a737d;
+          --shiki-token-function: #b392f0;
+          --shiki-token-constant: #79b8ff;
+          --shiki-token-parameter: #ffab70;
+          --shiki-token-punctuation: #e1e4e8;
         }
 
         .dark {
@@ -606,6 +617,17 @@ ${darkPinnedLines}
           --ring-color-inverted: #ffffff;
           --divide-color-default: var(--color-neutral-800);
 ${darkLines}
+
+          /* Shiki / Expressive Code */
+          --shiki-foreground: #e1e4e8;
+          --shiki-background: #1f2428;
+          --shiki-token-keyword: #f97583;
+          --shiki-token-string: #9ecbff;
+          --shiki-token-comment: #6a737d;
+          --shiki-token-function: #b392f0;
+          --shiki-token-constant: #79b8ff;
+          --shiki-token-parameter: #ffab70;
+          --shiki-token-punctuation: #e1e4e8;
         }
         `
         }
