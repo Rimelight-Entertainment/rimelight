@@ -14,16 +14,16 @@ const activeLocale = Astro.currentLocale ?? "en";
 currentLocale.set(activeLocale);
 
 const messages = useI18n("playground", {
-    heroTitle: "Welcome to the Rimelight Entertainment Playground",
-    heroDesc: "Look around, test, and play with some of our internal tooling.",
-    heroLink: "Learn More",
+    heroTitle: "Welcome to the Rimelight Entertainment",
+    heroDesc: "Look around, test, and play with some of our interactive technologies.",
+    heroLink: "Explore Now",
     postsTitle: "Latest Posts",
-    postsDesc: "Read the latest updates to our libraries.",
+    postsDesc: "Read the latest updates to our projects.",
     viewAllPosts: "View All Posts",
-    ctaTitle: "Wish to contribute?",
-    ctaDesc: "Contribute to our open-source project today.",
+    ctaTitle: "Wish to join us?",
+    ctaDesc: "Explore our latest projects and get in touch.",
     ctaStart: "Get Started",
-    ctaContribute: "Contribute",
+    ctaContribute: "Join Us",
 });
 
 const latestPosts = (await getCollection("blog"))
@@ -33,7 +33,7 @@ const latestPosts = (await getCollection("blog"))
 const heroLinks = [
     {
         label: messages.heroLink,
-        href: getRelativeLocaleUrl(activeLocale, "docs/packages/overview/introduction/"),
+        href: getRelativeLocaleUrl(activeLocale, "/blog"),
         color: "primary",
         variant: "solid",
     }
@@ -42,13 +42,13 @@ const heroLinks = [
 const ctaLinks = [
     {
         label: messages.ctaStart,
-        href: getRelativeLocaleUrl(activeLocale, "docs/packages/overview/introduction/"),
+        href: getRelativeLocaleUrl(activeLocale, "/blog"),
         color: "primary",
         variant: "solid"
     },
     {
         label: messages.ctaContribute,
-        href: getRelativeLocaleUrl(activeLocale, "docs/overview/contributing/"),
+        href: getRelativeLocaleUrl(activeLocale, "/"),
         color: "primary",
         variant: "outline",
         trailingIcon: "i-lucide-arrow-right"

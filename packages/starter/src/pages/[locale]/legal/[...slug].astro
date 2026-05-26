@@ -1,0 +1,46 @@
+---
+import { getEntry, render } from 'astro:content';
+import AppLayout from '@/layouts/AppLayout.astro';
+import FormattedDate from '@/components/FormattedDate.astro';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("legal", {
+    lastUpdatedOn: "Last updated on",
+});
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/404');
+const post = await getEntry('legal', slug);
+
+if (!post) {
+	return Astro.redirect('/404');
+}
+
+const { Content } = await render(post);
+const { title, description, pubDate, updatedDate } = post.data;
+---
+
+<AppLayout title={title} description={description}>
+		<article>
+			<div class="prose">
+				<div class="title">
+					<div class="date">
+						<FormattedDate date={pubDate} />
+						{
+							updatedDate && (
+								<div class="last-updated-on">
+									{messages.lastUpdatedOn} <FormattedDate date={updatedDate} />
+								</div>
+							)
+						}
+					</div>
+					<h1>{title}</h1>
+					<hr />
+				</div>
+				<Content />
+			</div>
+		</article>
+</AppLayout>

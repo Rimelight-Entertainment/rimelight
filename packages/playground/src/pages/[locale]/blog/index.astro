@@ -19,16 +19,15 @@ const groupedPosts = posts.reduce<Record<string, typeof posts>>((acc, post) => {
 	return acc;
 }, {});
 
-const categoryOrder = ['development-log', 'company-news', 'other'] as const;
+const categoryOrder = ["development-log", "other"] as const;
 
 const currentLocale = Astro.currentLocale ?? 'en';
 
 const messages = await useI18nAsync('blog', {
 	categories: {
-		'development-log': 'Development Log',
-		'company-news': 'Company News',
-		'other': 'Other'
-	} as any
+  "development-log": "Development Log",
+  "other": "Other"
+} as any
 });
 ---
 
