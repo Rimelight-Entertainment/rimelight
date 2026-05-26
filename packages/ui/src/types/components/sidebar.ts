@@ -1,10 +1,45 @@
+export interface BadgeConfig {
+  text: string
+  variant?: 'note' | 'tip' | 'caution' | 'danger' | 'success' | 'default'
+  class?: string
+}
+
 export interface SidebarItem {
   label: string
   href?: string
   icon?: string
-  badge?: string | number
+  badge?: string | BadgeConfig
   active?: boolean
   children?: SidebarItem[]
+  order?: number
+  autogenerate?: {
+    directory: string
+    collapsed?: boolean
+  }
+  collapsed?: boolean
+}
+
+export interface SidebarScope {
+  id: string
+  label: string
+  href: string
+  icon?: string
+  items?: SidebarItem[]
+}
+
+export interface TableOfContentsConfig {
+  minHeadingLevel?: number
+  maxHeadingLevel?: number
+}
+
+export interface EditLinkConfig {
+  baseUrl: string
+}
+
+export interface DocsConfig {
+  sidebar: (SidebarItem | SidebarScope)[]
+  editLink?: EditLinkConfig
+  tableOfContents?: false | TableOfContentsConfig
 }
 
 export interface SidebarProps {

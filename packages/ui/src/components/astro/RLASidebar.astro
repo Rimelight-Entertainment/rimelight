@@ -14,8 +14,9 @@ const {
   logo,
   ui: uiProp,
   class: className,
+  t = (key: string) => key,
   ...rest
-} = Astro.props as SidebarProps
+} = Astro.props as SidebarProps & { t?: (key: string) => string }
 
 const classes = resolveClasses(sidebar, {
   side,
@@ -62,9 +63,9 @@ const hasActiveChild = (item: SidebarItem): boolean => {
                       aria-hidden="true"
                     />
                   )}
-                  <span data-slot="item-text" class="truncate flex-1">{item.label}</span>
+                  <span data-slot="item-text" class="truncate flex-1">{t(item.label)}</span>
                   {item.badge !== undefined && (
-                    <span class={classes.itemBadge} data-slot="item-badge">{item.badge}</span>
+                    <span class={classes.itemBadge} data-slot="item-badge">{t(String(item.badge))}</span>
                   )}
                   <span class="i-lucide-chevron-right size-3.5 ml-auto transition-transform group-open/details:rotate-90" />
                 </summary>
@@ -75,9 +76,9 @@ const hasActiveChild = (item: SidebarItem): boolean => {
                       class={classes.itemLink + (child.active ? " text-foreground bg-muted" : "") + " text-xs pl-2"}
                     >
                       {child.icon && <span class={classes.itemIcon + " " + child.icon} aria-hidden="true" />}
-                      <span data-slot="item-text" class="truncate flex-1">{child.label}</span>
+                      <span data-slot="item-text" class="truncate flex-1">{t(child.label)}</span>
                       {child.badge !== undefined && (
-                        <span class={classes.itemBadge} data-slot="item-badge">{child.badge}</span>
+                        <span class={classes.itemBadge} data-slot="item-badge">{t(String(child.badge))}</span>
                       )}
                     </a>
                   ))}
@@ -95,9 +96,9 @@ const hasActiveChild = (item: SidebarItem): boolean => {
                     aria-hidden="true"
                   />
                 )}
-                <span data-slot="item-text" class="truncate flex-1">{item.label}</span>
+                <span data-slot="item-text" class="truncate flex-1">{t(item.label)}</span>
                 {item.badge !== undefined && (
-                  <span class={classes.itemBadge} data-slot="item-badge">{item.badge}</span>
+                  <span class={classes.itemBadge} data-slot="item-badge">{t(String(item.badge))}</span>
                 )}
               </a>
             )}
