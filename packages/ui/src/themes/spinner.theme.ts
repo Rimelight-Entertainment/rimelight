@@ -17,7 +17,7 @@ export const createSpinnerTheme = (colors: string[] = defaultColors) =>
       },
       color: Object.fromEntries([
         ["current", { root: "text-current" }],
-        ...colors.map((color) => [color, { root: `rl-color-${color} text-[var(--rl-text)]` }])
+        ...colors.map((color) => [color, { root: "rl-color-" + color + " text-[var(--rl-text)]" }])
       ]),
       theme: {
         flat: { root: "rl-flat" },

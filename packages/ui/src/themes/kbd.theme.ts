@@ -34,28 +34,28 @@ export const createKbdTheme = (colors: string[] = defaultColors) =>
         variant: "solid" as const,
         color,
         classNames: {
-          root: `rl-color-${color} bg-[var(--rl-bg)] text-white`
+          root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
         color,
         classNames: {
-          root: `rl-color-${color} ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]`
+          root: "rl-color-" + color + " ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]"
         }
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
         color,
         classNames: {
-          root: `rl-color-${color} text-[var(--rl-text)] bg-[var(--rl-bg)]/10`
+          root: "rl-color-" + color + " text-[var(--rl-text)] bg-[var(--rl-bg)]/10"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
         color,
         classNames: {
-          root: `rl-color-${color} text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10`
+          root: "rl-color-" + color + " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10"
         }
       })),
       {
