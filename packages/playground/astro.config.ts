@@ -160,11 +160,11 @@ export default defineConfig({
             variablePrefix: "--shiki-",
             fontStyle: true
           });
-          t.colors = {
-            ...t.colors,
-            "editor.background": "#1f2428",
-            "editor.foreground": "#e1e4e8"
-          };
+          t.colors = Object.fromEntries(
+            Object.entries(t.colors || {}).filter(([_, val]) =>
+              typeof val === "string" && val.startsWith("#")
+            )
+          );
           return t;
         })()
       ],
