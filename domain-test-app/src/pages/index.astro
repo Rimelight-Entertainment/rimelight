@@ -1,0 +1,58 @@
+---
+import Layout from "../layouts/Layout.astro"
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+import RLACard from "@rimelight/ui/components/astro/RLACard.astro"
+import RLABadge from "@rimelight/ui/components/astro/RLABadge.astro"
+---
+
+<Layout title="Welcome to Rimelight">
+  <div class="relative py-24 sm:py-32 overflow-hidden bg-gradient-to-b from-purple-500/10 via-transparent to-transparent">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+      <div class="flex justify-center mb-6">
+        <RLABadge variant="subtle" color="primary" class="px-3 py-1 text-sm font-semibold rounded-full">
+          Scaffolded Successfully
+        </RLABadge>
+      </div>
+      
+      <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-purple-600 via-indigo-500 to-pink-500 bg-clip-text text-transparent mb-6">
+        Your Rimelight Adventure Begins Here
+      </h1>
+      
+      <p class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-600 dark:text-zinc-400 mb-10 leading-relaxed">
+        A premium boilerplate engineered with Astro, UnoCSS, and the fully-loaded Rimelight UI component library.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-4 mb-20">
+        <RLAButton href="https://rimelight.com/docs" size="lg" color="primary">
+          Explore components
+        </RLAButton>
+        <RLAButton href="https://astro.build" size="lg" variant="outline" color="secondary">
+          Astro documentation
+        </RLAButton>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left max-w-5xl mx-auto">
+        <RLACard class="p-6 transition-all duration-300 hover:shadow-lg dark:bg-zinc-900 border dark:border-zinc-800">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-zinc-100 mb-2">⚡ Vite+ Powered</h3>
+          <p class="text-gray-600 dark:text-zinc-400 text-sm">
+            Instant hot module replacement (HMR) and lightning-fast compilation times.
+          </p>
+        </RLACard>
+
+        <RLACard class="p-6 transition-all duration-300 hover:shadow-lg dark:bg-zinc-900 border dark:border-zinc-800">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-zinc-100 mb-2">🎨 Premium UI Library</h3>
+          <p class="text-gray-600 dark:text-zinc-400 text-sm">
+            Access over 140 state-of-the-art interactive UI elements built for production.
+          </p>
+        </RLACard>
+
+        <RLACard class="p-6 transition-all duration-300 hover:shadow-lg dark:bg-zinc-900 border dark:border-zinc-800">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-zinc-100 mb-2">🚀 Optimized by Default</h3>
+          <p class="text-gray-600 dark:text-zinc-400 text-sm">
+            Perfect SEO, zero-runtime CSS footprints, and responsive layouts baked right in.
+          </p>
+        </RLACard>
+      </div>
+    </div>
+  </div>
+</Layout>

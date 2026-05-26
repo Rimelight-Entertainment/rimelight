@@ -10,10 +10,11 @@ async function main() {
       h: "help",
       v: "version",
       g: "git",
-      i: "install"
+      i: "install",
+      d: "domain"
     },
     boolean: ["help", "version", "git", "install"],
-    string: ["package-manager"]
+    string: ["package-manager", "domain"]
   });
 
   if (parsed.version) {
@@ -29,6 +30,7 @@ Usage:
   rimelight create [project-name] [options]
 
 Options:
+  -d, --domain          Specify website domain (e.g. example.com)
   -g, --git             Initialize a Git repository (default: auto)
   -i, --install         Automatically install dependencies (default: auto)
   --package-manager     Force a package manager (npm, pnpm, yarn, bun)
@@ -45,6 +47,7 @@ Options:
     const projectName = parsed._[0] === "create" ? parsed._[1] : parsed._[0];
     await runCreate({
       projectName,
+      domain: parsed.domain,
       git: parsed.git,
       install: parsed.install,
       packageManager: parsed["package-manager"]

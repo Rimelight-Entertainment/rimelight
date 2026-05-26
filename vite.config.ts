@@ -14,7 +14,6 @@ export default defineConfig({
       "**/fallbacks.generated.ts",
       "**/worker-configuration.d.ts",
       "**/env.d.ts",
-      "i18n-data.json"
     ],
     options: {
       typeAware: true,

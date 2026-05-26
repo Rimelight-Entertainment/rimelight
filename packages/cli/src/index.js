@@ -37,6 +37,40 @@ async function copyDir(src, dest) {
   }
 }
 
+// Helper to update astro.config.ts and wrangler.jsonc with the chosen domain
+async function updateDomainConfigs(resolvedTargetDir, domain, displayProjectName) {
+  // Update astro.config.ts
+  const astroConfigPath = path.join(resolvedTargetDir, "astro.config.ts");
+  if (existsSync(astroConfigPath) && domain) {
+    let content = await fs.readFile(astroConfigPath, "utf-8");
+    content = content.replace(/site:\s*["'][^"']*["']/g, `site: "https://${domain}"`);
+    await fs.writeFile(astroConfigPath, content, "utf-8");
+  }
+
+  // Update wrangler.jsonc
+  const wranglerPath = path.join(resolvedTargetDir, "wrangler.jsonc");
+  if (existsSync(wranglerPath)) {
+    const content = await fs.readFile(wranglerPath, "utf-8");
+    // Parse safely
+    const wrangler = JSON.parse(content);
+    
+    if (domain) {
+      // Derive wrangler name (e.g. my-app-dot-com)
+      const baseName = domain.replace(/\./g, "-dot-");
+      wrangler.name = baseName.toLowerCase().replace(/[^a-z0-9-]/g, "-");
+      wrangler.routes = [
+        { pattern: domain, custom_domain: true },
+        { pattern: `www.${domain}`, custom_domain: true }
+      ];
+    } else {
+      // If no domain is passed, just update name to project name without touching routes
+      wrangler.name = displayProjectName.toLowerCase().replace(/[^a-z0-9-]/g, "-");
+    }
+    
+    await fs.writeFile(wranglerPath, JSON.stringify(wrangler, null, 2), "utf-8");
+  }
+}
+
 export async function runCreate(options) {
   const isInteractive = process.stdout.isTTY && !process.env.CI;
 
@@ -66,6 +100,28 @@ export async function runCreate(options) {
 
     const resolvedTargetDir = path.resolve(targetDir);
     const displayProjectName = path.basename(resolvedTargetDir);
+
+    // Prompt for website domain (optionally)
+    let domain = options.domain;
+    if (domain === undefined) {
+      const response = await prompts.text({
+        message: "What is the website domain for this project? (Optional)",
+        placeholder: "e.g. example.com",
+        validate: (value) => {
+          if (!value || !value.trim()) return;
+          // Simple domain check
+          if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(value.trim())) {
+            return "Please enter a valid domain name (e.g. example.com)";
+          }
+        }
+      });
+
+      if (prompts.isCancel(response)) {
+        prompts.cancel("Scaffolding cancelled.");
+        process.exit(0);
+      }
+      domain = response ? response.trim() : "";
+    }
 
     // Check if directory exists and is not empty
     if (existsSync(resolvedTargetDir)) {
@@ -162,6 +218,9 @@ export async function runCreate(options) {
         await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), "utf-8");
       }
 
+      // Update astro.config.ts and wrangler.jsonc with custom domain
+      await updateDomainConfigs(resolvedTargetDir, domain, displayProjectName);
+
       spinner.stop(pc.green("✔ Scaffolding complete!"));
     } catch (error) {
       spinner.stop(pc.red("✖ Scaffolding failed."));
@@ -211,6 +270,7 @@ export async function runCreate(options) {
     const targetDir = options.projectName || "./my-rimelight-app";
     const resolvedTargetDir = path.resolve(targetDir);
     const displayProjectName = path.basename(resolvedTargetDir);
+    const domain = options.domain || "";
     const packageManager = options.packageManager || "pnpm";
     const initGit = options.git !== false;
     const installDeps = options.install !== false;
@@ -239,6 +299,10 @@ export async function runCreate(options) {
       packageJson.private = true;
       await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), "utf-8");
     }
+
+    // Update astro.config.ts and wrangler.jsonc with custom domain
+    await updateDomainConfigs(resolvedTargetDir, domain, displayProjectName);
+
     console.log(pc.green("✔ Scaffolding complete!"));
 
     if (initGit) {
