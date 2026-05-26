@@ -414,6 +414,53 @@ function injectIntoArray(targetArr, starterArr, value) {
   return targetArr;
 }
 
+// Inject a missing line cleanly at its semantic index inside targetLines based on starterLines order
+function injectIntoLines(targetLines, starterLines, value) {
+  const cleanLine = (l) => l.trim().replace(/\s+/g, "");
+  const valueClean = cleanLine(value);
+  
+  const sIdx = starterLines.findIndex(x => cleanLine(x) === valueClean);
+  if (sIdx === -1) {
+    targetLines.push(value);
+    return targetLines;
+  }
+  
+  let inserted = false;
+  // Look for preceding neighbor in starterLines that exists in targetLines
+  for (let i = sIdx - 1; i >= 0; i--) {
+    const precedingVal = starterLines[i];
+    const precedingValClean = cleanLine(precedingVal);
+    if (!precedingValClean) continue;
+    const tIdx = targetLines.findIndex(x => cleanLine(x) === precedingValClean);
+    if (tIdx !== -1) {
+      targetLines.splice(tIdx + 1, 0, value);
+      inserted = true;
+      break;
+    }
+  }
+  
+  if (!inserted) {
+    // Look for succeeding neighbor in starterLines that exists in targetLines
+    for (let i = sIdx + 1; i < starterLines.length; i++) {
+      const succeedingVal = starterLines[i];
+      const succeedingValClean = cleanLine(succeedingVal);
+      if (!succeedingValClean) continue;
+      const tIdx = targetLines.findIndex(x => cleanLine(x) === succeedingValClean);
+      if (tIdx !== -1) {
+        targetLines.splice(tIdx, 0, value);
+        inserted = true;
+        break;
+      }
+    }
+  }
+  
+  if (!inserted) {
+    targetLines.push(value);
+  }
+  
+  return targetLines;
+}
+
 // Reorder target object keys to cleanly match starter template order, preserving custom keys
 function reorderKeys(targetObj, starterObj) {
   const ordered = {};
@@ -432,6 +479,18 @@ function reorderKeys(targetObj, starterObj) {
     }
   }
   return ordered;
+}
+
+// Resolve domains in injected lines specifically for astro.config.ts
+function resolveDomainInLine(line, targetContent) {
+  const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/);
+  const targetDomain = siteMatch ? siteMatch[1] : "";
+  if (targetDomain) {
+    return line
+      .replace(/starter\.rimelight\.com/g, targetDomain)
+      .replace(/starter-dot-rimelight-dot-com/g, targetDomain.replace(/\./g, "-dot-"));
+  }
+  return line;
 }
 
 // Helper to structurally diff JSON/JSONC
@@ -526,13 +585,34 @@ function getStructuredJsonDiffs(starterContent, targetContent, file) {
 }
 
 // Helper to diff files line-by-line
-function getStructuredLineDiffs(starterContent, targetContent) {
+function getStructuredLineDiffs(starterContent, targetContent, file, targetDir) {
+  let normalizedTarget = targetContent;
+  let normalizedStarter = starterContent;
+
+  if (file === "astro.config.ts") {
+    // Normalize both reference and target domains to example.com to avoid stagged mismatch loops
+    normalizedStarter = normalizedStarter
+      .replace(/starter\.rimelight\.com/g, "example.com")
+      .replace(/starter-dot-rimelight-dot-com/g, "example-dot-com");
+
+    const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/);
+    if (siteMatch) {
+      const domain = siteMatch[1];
+      normalizedTarget = normalizedTarget
+        .replace(new RegExp(domain, "g"), "example.com")
+        .replace(/starter-dot-rimelight-dot-com/g, "example-dot-com");
+    }
+    if (targetDir && targetDir.includes("marcelocfilho.com")) {
+      normalizedTarget = normalizedTarget.replace(/\/\/ /g, "");
+    }
+  }
+
   const cleanLines = (c) => c.split("\n")
     .map(l => l.trim())
     .filter(Boolean);
 
-  const starterLines = cleanLines(starterContent);
-  const targetLines = cleanLines(targetContent);
+  const starterLines = cleanLines(normalizedStarter);
+  const targetLines = cleanLines(normalizedTarget);
 
   const diffs = [];
   for (const line of starterLines) {
@@ -552,24 +632,6 @@ function getStructuredLineDiffs(starterContent, targetContent) {
 
 // Helper to dynamically calculate line-level differences between config files
 function getDiffLines(starterContent, targetContent, file, targetDir) {
-  let normalizedTarget = targetContent;
-  let normalizedStarter = starterContent;
-
-  // Normalize astro.config.ts domains and secure commented states for portfolios
-  if (file === "astro.config.ts") {
-    const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/);
-    if (siteMatch) {
-      const domain = siteMatch[1];
-      normalizedTarget = normalizedTarget
-        .replace(new RegExp(domain, "g"), "example.com")
-        .replace(/starter-dot-rimelight-dot-com/g, "example-dot-com");
-    }
-    if (targetDir.includes("marcelocfilho.com")) {
-      // Treat commented security CSP block as standard uncommented layout for matching
-      normalizedTarget = normalizedTarget.replace(/\/\/ /g, "");
-    }
-  }
-
   // Parse JSONC config structurally (tsconfig, wrangler, knip, lunaria, etc.)
   if (file.endsWith(".json") || file.endsWith(".jsonc")) {
     try {
@@ -580,7 +642,7 @@ function getDiffLines(starterContent, targetContent, file, targetDir) {
     }
   }
 
-  const diffs = getStructuredLineDiffs(normalizedStarter, normalizedTarget);
+  const diffs = getStructuredLineDiffs(starterContent, targetContent, file, targetDir);
   return diffs.map(d => d.message);
 }
 
@@ -864,12 +926,20 @@ export async function runUpdate(options) {
             console.log(pc.green(`✔ Scheduled batch updates for "${file}".`));
           }
 
-        } else if (file === ".gitignore" || file === ".env.example" || file === "pnpm-workspace.yaml" || file === ".node-version") {
+        } else if (
+          file === ".gitignore" ||
+          file === ".env.example" ||
+          file === "pnpm-workspace.yaml" ||
+          file === ".node-version" ||
+          file === "astro.config.ts" ||
+          file === "vite.config.ts" ||
+          file === "uno.config.ts"
+        ) {
           let currentTargetContent = targetContent;
           let loop = true;
 
           while (loop) {
-            const diffs = getStructuredLineDiffs(starterContent, currentTargetContent);
+            const diffs = getStructuredLineDiffs(starterContent, currentTargetContent, file, targetDir);
             if (diffs.length === 0) break;
 
             console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`);
@@ -901,17 +971,20 @@ export async function runUpdate(options) {
               break;
             }
 
-            let newContent = currentTargetContent;
+            let starterLines = starterContent.split("\n");
+            let targetLines = currentTargetContent.split("\n");
+
             for (const diff of diffs) {
               if (selectedLines.includes(diff.line)) {
-                if (newContent && !newContent.endsWith("\n")) {
-                  newContent += "\n";
+                let resolvedLine = diff.line;
+                if (file === "astro.config.ts") {
+                  resolvedLine = resolveDomainInLine(diff.line, targetContent);
                 }
-                newContent += diff.line + "\n";
+                targetLines = injectIntoLines(targetLines, starterLines, resolvedLine);
               }
             }
 
-            currentTargetContent = newContent;
+            currentTargetContent = targetLines.join("\n");
             console.log(pc.green(`✔ Staged ${selectedLines.length} entries for "${file}" in memory.\n`));
 
             if (!isInteractive) break;
@@ -926,59 +999,6 @@ export async function runUpdate(options) {
             console.log(pc.green(`✔ Scheduled batch updates for "${file}".`));
           }
 
-        } else {
-          // Complex TS config files: astro.config.ts, vite.config.ts, uno.config.ts
-          const diffs = getStructuredLineDiffs(starterContent, targetContent);
-
-          if (diffs.length > 0) {
-            console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`);
-            for (const diff of diffs) {
-              console.log(`  └─ ${pc.dim(diff.message)}`);
-            }
-
-            let shouldApply = true;
-            if (isInteractive) {
-              shouldApply = await prompts.confirm({
-                message: `Update entire file "${file}" to match template starter?`,
-                initialValue: true
-              });
-              if (prompts.isCancel(shouldApply)) {
-                prompts.cancel("Update cancelled.");
-                process.exit(0);
-              }
-            }
-
-            if (shouldApply) {
-              let newContent = "";
-              if (file === "astro.config.ts") {
-                const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/);
-                const domain = siteMatch ? siteMatch[1] : "";
-                if (domain) {
-                  let template = await fs.readFile(starterFilePath, "utf-8");
-                  template = template.replace(/site:\s*["'][^"']*["']/g, `site: "https://${domain}"`);
-                  template = template.replace(/hostname:\s*["'][^"']*["']/g, `hostname: "**.${domain}"`);
-                  template = template.replace(/img-src 'self' https:\/\/cdn\.[^"']*/g, `img-src 'self' https://cdn.${domain}`);
-                  if (targetDir.includes("marcelocfilho.com")) {
-                    template = template.replace(/security:\s*\{[\s\S]*?\}\s*,\s*\n\s*\n\s*i18n:/, `// security: {\n  //   checkOrigin: true,\n  //   allowedDomains: [\n  //     {\n  //       hostname: "**.${domain}",\n  //       protocol: "https"\n  //     }\n  //   ],\n  //   csp: {\n  //     algorithm: "SHA-384",\n  //     directives: [\n  //       "default-src 'none'",\n  //       "img-src 'self' https://cdn.${domain} https://i3.ytimg.com https://www.youtube.com https://www.youtube-nocookie.com",\n  //       "font-src 'self'",\n  //       "connect-src 'self'",\n  //       "frame-ancestors 'none'",\n  //       "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com",\n  //       "upgrade-insecure-requests",\n  //       "base-uri 'self'",\n  //       "form-action 'self'"\n  //     ],\n  //     scriptDirective: {\n  //       resources: [\n  //         "'self'",\n  //         "https://challenges.cloudflare.com",\n  //         "https://betterlytics.io/analytics.js"\n  //       ]\n  //     },\n  //     styleDirective: {\n  //       resources: ["'self'"]\n  //     }\n  //   }\n  // },\n\n  i18n:`);
-                  }
-                  newContent = template;
-                } else {
-                  newContent = starterContent;
-                }
-              } else {
-                newContent = starterContent;
-              }
-
-              pendingWrites.push({
-                filePath: targetFilePath,
-                content: newContent,
-                actionDescription: `Standardize file "${file}"`
-              });
-              console.log(pc.green(`✔ Scheduled updates for "${file}".`));
-            } else {
-              console.log(pc.yellow(`ℹ Skipped file "${file}".`));
-            }
-          }
         }
       }
     }
