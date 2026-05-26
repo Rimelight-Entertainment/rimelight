@@ -1,19 +1,33 @@
 ---
-# src/pages/[locale]/tests/csp-test.mdx
 import AppLayout from "@/layouts/AppLayout.astro";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { currentLocale } from "astro-nanostores-i18n:runtime";
+import { Code } from "astro-expressive-code/components";
 
-export const activeLocale = "en"; // will be set dynamically in script if needed, or fallback
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
 
-// Since MDX compiles to a component, we can use standard frontmatter variables or logic.
-// Let's set current locale:
-// (Note: Astro page frontmatter in MDX runs on render)
+const title = "Expressive Code CSP Verification Suite";
+const description = "Verify Shiki + Expressive Code CSP compliance in Rimelight playground";
+
+const jsCode = `// This sample verifies frame creation, line highlight, and variable highlighting
+function calculateTotal(subtotal, tax) {
+  const total = subtotal * (1 + tax);
+  return total;
+}
+console.log(calculateTotal(100, 0.08));`;
+
+const cssCode = `@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--shiki-background);
+    color: var(--shiki-foreground);
+  }
+}`;
 ---
 
-<AppLayout title="Expressive Code CSP Verification Suite" description="Verify Shiki + Expressive Code CSP compliance in Rimelight playground">
+<AppLayout title={title} description={description}>
   <div class="max-w-2xl mx-auto px-4 py-xl space-y-lg">
-    <a href="/en/tests" class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary-500 mb-4">
+    <a href={getRelativeLocaleUrl(activeLocale, "/tests")} class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary-500 mb-4">
       <span class="i-lucide-arrow-left"></span>
       Back to Tests
     </a>
@@ -21,27 +35,15 @@ export const activeLocale = "en"; // will be set dynamically in script if needed
     <h1 class="text-3xl font-bold">Expressive Code + Shiki CSP Diagnostic Page</h1>
     <p class="text-muted-foreground">Use this page to verify compliance with strict <code>style-src 'self'</code> layers.</p>
 
-    <h2 class="text-xl font-semibold mt-6 mb-2">Test Block 1: Basic JavaScript Fenced Code Block</h2>
-
-```javascript title="src/utils/math.js" {2}
-// This sample verifies frame creation, line highlight, and variable highlighting
-function calculateTotal(subtotal, tax) {
-  const total = subtotal * (1 + tax);
-  return total;
-}
-console.log(calculateTotal(100, 0.08));
-```
+    <h2 class="text-xl font-semibold mt-6 mb-2">Test Block 1: Basic JavaScript Code Block</h2>
+    <div class="not-prose">
+      <Code code={jsCode} lang="javascript" title="src/utils/math.js" mark={[{ range: '3' }]} />
+    </div>
 
     <h2 class="text-xl font-semibold mt-6 mb-2">Test Block 2: CSS Token Diagnostics</h2>
-
-```css title="src/styles/theme.css"
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: var(--shiki-background);
-    color: var(--shiki-foreground);
-  }
-}
-```
+    <div class="not-prose">
+      <Code code={cssCode} lang="css" title="src/styles/theme.css" />
+    </div>
 
     <div class="mt-8 p-6 border border-border rounded-xl bg-dimmed">
       <h3 class="text-lg font-semibold mb-2">Automated Integration Check List</h3>
