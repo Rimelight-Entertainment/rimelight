@@ -1,10 +1,12 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const stickySurfaceTheme = defineTheme({
-  slots: ["root"],
-  base: {
-    root: "sticky top-0 self-start transition-all duration-300"
-  }
-})
+export const createStickySurfaceTheme = (colors: string[] = defaultColors) =>
+  defineTheme({
+    slots: ["root"],
+    base: {
+      root: "sticky top-0 self-start transition-all duration-300"
+    }
+  })
 
-export default stickySurfaceTheme
+export default createStickySurfaceTheme()
