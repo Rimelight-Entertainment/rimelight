@@ -343,6 +343,213 @@ export async function runCreate(options) {
   }
 }
 
+// Helper to get nested properties in an object
+function getNested(obj, path) {
+  const parts = path.split(".");
+  let current = obj;
+  for (const part of parts) {
+    if (current === undefined || current === null) return undefined;
+    current = current[part];
+  }
+  return current;
+}
+
+// Helper to set nested properties in an object
+function setNested(obj, path, value) {
+  const parts = path.split(".");
+  let current = obj;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i];
+    if (current[part] === undefined || current[part] === null) {
+      current[part] = {};
+    }
+    current = current[part];
+  }
+  current[parts[parts.length - 1]] = value;
+}
+
+// Generic index finder for arrays containing primitives or objects
+function findArrayItemIndex(arr, item) {
+  const itemStr = JSON.stringify(item);
+  return arr.findIndex(x => JSON.stringify(x) === itemStr);
+}
+
+// Inject an item at the exact index matched semantically against the starter array order
+function injectIntoArray(targetArr, starterArr, value) {
+  const sIdx = findArrayItemIndex(starterArr, value);
+  if (sIdx === -1) {
+    targetArr.push(value);
+    return targetArr;
+  }
+  
+  let inserted = false;
+  // Look for preceding neighbor that exists in targetArr
+  for (let i = sIdx - 1; i >= 0; i--) {
+    const precedingVal = starterArr[i];
+    const tIdx = findArrayItemIndex(targetArr, precedingVal);
+    if (tIdx !== -1) {
+      targetArr.splice(tIdx + 1, 0, value);
+      inserted = true;
+      break;
+    }
+  }
+  
+  if (!inserted) {
+    // Look for succeeding neighbor that exists in targetArr
+    for (let i = sIdx + 1; i < starterArr.length; i++) {
+      const succeedingVal = starterArr[i];
+      const tIdx = findArrayItemIndex(targetArr, succeedingVal);
+      if (tIdx !== -1) {
+        targetArr.splice(tIdx, 0, value);
+        inserted = true;
+        break;
+      }
+    }
+  }
+  
+  if (!inserted) {
+    targetArr.push(value);
+  }
+  
+  return targetArr;
+}
+
+// Reorder target object keys to cleanly match starter template order, preserving custom keys
+function reorderKeys(targetObj, starterObj) {
+  const ordered = {};
+  for (const key of Object.keys(starterObj)) {
+    if (targetObj[key] !== undefined) {
+      if (typeof starterObj[key] === "object" && starterObj[key] !== null && typeof targetObj[key] === "object" && targetObj[key] !== null && !Array.isArray(starterObj[key])) {
+        ordered[key] = reorderKeys(targetObj[key], starterObj[key]);
+      } else {
+        ordered[key] = targetObj[key];
+      }
+    }
+  }
+  for (const key of Object.keys(targetObj)) {
+    if (ordered[key] === undefined) {
+      ordered[key] = targetObj[key];
+    }
+  }
+  return ordered;
+}
+
+// Helper to structurally diff JSON/JSONC
+function getStructuredJsonDiffs(starterContent, targetContent, file) {
+  const starterObj = parseJsonc(starterContent);
+  const targetObj = parseJsonc(targetContent);
+
+  const diffs = [];
+  
+  const diffKeys = (sObj, tObj, prefix = "") => {
+    // Check if key insertion order differs for semantic standardizing
+    const sKeys = Object.keys(sObj);
+    const tKeys = Object.keys(tObj).filter(k => sKeys.includes(k));
+    const keyOrderDiffers = sKeys.some((k, idx) => tKeys[idx] !== k);
+    if (keyOrderDiffers && sKeys.length > 0) {
+      diffs.push({
+        type: "out_of_order_keys",
+        path: prefix || ".",
+        message: `[Out of Order] keys in "${prefix || "root"}" differ from starter order`
+      });
+    }
+
+    for (const [key, val] of Object.entries(sObj)) {
+      const path = prefix ? `${prefix}.${key}` : key;
+      
+      if (file === "wrangler.jsonc" && (path === "name" || path === "routes")) {
+        continue;
+      }
+      
+      if (tObj[key] === undefined) {
+        diffs.push({
+          type: "missing",
+          path,
+          value: val,
+          message: `missing key "${path}"`
+        });
+      } else if (Array.isArray(val) && Array.isArray(tObj[key])) {
+        // Element-level list checking
+        let arrayMissing = false;
+        for (const item of val) {
+          const itemString = JSON.stringify(item);
+          const found = tObj[key].some(tItem => JSON.stringify(tItem) === itemString);
+          if (!found) {
+            arrayMissing = true;
+            diffs.push({
+              type: "array_missing",
+              path,
+              value: item,
+              message: `missing array entry ${itemString} in "${path}"`
+            });
+          }
+        }
+        
+        // Element ordering checking
+        if (!arrayMissing && val.length > 0) {
+          const tFiltered = tObj[key].filter(tItem => val.some(sItem => JSON.stringify(sItem) === JSON.stringify(tItem)));
+          const orderDiffers = val.some((sItem, idx) => JSON.stringify(sItem) !== JSON.stringify(tFiltered[idx]));
+          if (orderDiffers) {
+            const reordered = [];
+            for (const sItem of val) {
+              reordered.push(sItem);
+            }
+            for (const tItem of tObj[key]) {
+              if (!val.some(sItem => JSON.stringify(sItem) === JSON.stringify(tItem))) {
+                reordered.push(tItem);
+              }
+            }
+            diffs.push({
+              type: "out_of_order_array",
+              path,
+              value: reordered,
+              message: `[Out of Order] array elements in "${path}" differ from starter order`
+            });
+          }
+        }
+      } else if (typeof val === "object" && val !== null && typeof tObj[key] === "object" && tObj[key] !== null) {
+        diffKeys(val, tObj[key], path);
+      } else if (JSON.stringify(tObj[key]) !== JSON.stringify(val)) {
+        diffs.push({
+          type: "differing",
+          path,
+          value: val,
+          currentValue: tObj[key],
+          message: `differing key "${path}":\n      ├─ Current:   ${JSON.stringify(tObj[key])}\n      └─ Reference: ${JSON.stringify(val)}`
+        });
+      }
+    }
+  };
+  
+  diffKeys(starterObj, targetObj);
+  return diffs;
+}
+
+// Helper to diff files line-by-line
+function getStructuredLineDiffs(starterContent, targetContent) {
+  const cleanLines = (c) => c.split("\n")
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  const starterLines = cleanLines(starterContent);
+  const targetLines = cleanLines(targetContent);
+
+  const diffs = [];
+  for (const line of starterLines) {
+    if (/^[{}[\],()]+$/.test(line)) continue; // ignore structural syntax-only lines
+    const normalizedLine = line.replace(/\s+/g, "");
+    const found = targetLines.some(tl => tl.replace(/\s+/g, "") === normalizedLine);
+    if (!found) {
+      diffs.push({
+        type: "missing_line",
+        line,
+        message: `missing config entry: "${line}"`
+      });
+    }
+  }
+  return diffs;
+}
+
 // Helper to dynamically calculate line-level differences between config files
 function getDiffLines(starterContent, targetContent, file, targetDir) {
   let normalizedTarget = targetContent;
@@ -366,54 +573,15 @@ function getDiffLines(starterContent, targetContent, file, targetDir) {
   // Parse JSONC config structurally (tsconfig, wrangler, knip, lunaria, etc.)
   if (file.endsWith(".json") || file.endsWith(".jsonc")) {
     try {
-      const starterObj = parseJsonc(starterContent);
-      const targetObj = parseJsonc(targetContent);
-
-      // Normalize dynamic wrangler fields
-      if (file === "wrangler.jsonc") {
-        targetObj.name = starterObj.name;
-        targetObj.routes = starterObj.routes;
-      }
-
-      const diffs = [];
-      // Deep structural diff of template values (only matching template keys)
-      const diffKeys = (sObj, tObj, prefix = "") => {
-        for (const [key, val] of Object.entries(sObj)) {
-          const path = prefix ? `${prefix}.${key}` : key;
-          if (tObj[key] === undefined) {
-            diffs.push(`missing key "${path}"`);
-          } else if (typeof val === "object" && val !== null && typeof tObj[key] === "object" && tObj[key] !== null) {
-            diffKeys(val, tObj[key], path);
-          } else if (JSON.stringify(tObj[key]) !== JSON.stringify(val)) {
-            diffs.push(`differing key "${path}":\n      ├─ Current:   ${JSON.stringify(tObj[key])}\n      └─ Reference: ${JSON.stringify(val)}`);
-          }
-        }
-      };
-      diffKeys(starterObj, targetObj);
-      return diffs;
+      const diffs = getStructuredJsonDiffs(starterContent, targetContent, file);
+      return diffs.map(d => d.message);
     } catch (e) {
       // Fallback to line diff if JSON parse fails
     }
   }
 
-  // Fallback to highly precise line-by-line missing patterns (including comments!)
-  const cleanLines = (c) => c.split("\n")
-    .map(l => l.trim())
-    .filter(Boolean);
-
-  const starterLines = cleanLines(normalizedStarter);
-  const targetLines = cleanLines(normalizedTarget);
-
-  const diffs = [];
-  for (const line of starterLines) {
-    if (/^[{}[\],()]+$/.test(line)) continue; // ignore structural syntax-only lines
-    const normalizedLine = line.replace(/\s+/g, "");
-    const found = targetLines.some(tl => tl.replace(/\s+/g, "") === normalizedLine);
-    if (!found) {
-      diffs.push(`missing config entry: "${line}"`);
-    }
-  }
-  return diffs;
+  const diffs = getStructuredLineDiffs(normalizedStarter, normalizedTarget);
+  return diffs.map(d => d.message);
 }
 
 export async function runCompare(options) {
@@ -439,7 +607,8 @@ export async function runCompare(options) {
     "uno.config.ts",
     "knip.json",
     "lunaria.config.json",
-    ".env.example"
+    ".env.example",
+    "pnpm-workspace.yaml"
   ];
 
   let totalDiffs = 0;
@@ -520,11 +689,8 @@ export async function runCompare(options) {
 
         if (diffs.length > 0) {
           console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`);
-          for (const diff of diffs.slice(0, 5)) {
+          for (const diff of diffs) {
             console.log(`  └─ ${pc.dim(diff)}`);
-          }
-          if (diffs.length > 5) {
-            console.log(`  └─ ${pc.dim(`... and ${diffs.length - 5} more differences`)}`);
           }
           totalDiffs += diffs.length;
         } else {
@@ -567,8 +733,13 @@ export async function runUpdate(options) {
     "uno.config.ts",
     "knip.json",
     "lunaria.config.json",
-    ".env.example"
+    ".env.example",
+    "pnpm-workspace.yaml",
+    "astro.config.ts",
+    "wrangler.jsonc"
   ];
+
+  const pendingWrites = []; // Accumulate in-memory changes: { filePath, content, actionDescription }
 
   try {
     // 1. Process standard configuration files
@@ -577,40 +748,236 @@ export async function runUpdate(options) {
       const targetFilePath = path.join(targetDir, file);
 
       if (existsSync(starterFilePath)) {
-        let needsUpdate = false;
-        let actionLabel = "";
-
         if (!existsSync(targetFilePath)) {
-          needsUpdate = true;
-          actionLabel = `Create missing file "${file}"?`;
-        } else {
-          const starterContent = await fs.readFile(starterFilePath, "utf-8");
-          const targetContent = await fs.readFile(targetFilePath, "utf-8");
-          const diffs = getDiffLines(starterContent, targetContent, file, targetDir);
-          if (diffs.length > 0) {
-            needsUpdate = true;
-            actionLabel = `Update file "${file}" to match template starter?`;
-          }
-        }
-
-        if (needsUpdate) {
-          let shouldApply = true;
+          // File is missing entirely
+          console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("MISSING")}`);
+          let shouldCreate = true;
           if (isInteractive) {
-            shouldApply = await prompts.confirm({
-              message: actionLabel,
+            shouldCreate = await prompts.confirm({
+              message: `Create missing file "${file}" from starter template?`,
               initialValue: true
             });
-            if (prompts.isCancel(shouldApply)) {
+            if (prompts.isCancel(shouldCreate)) {
               prompts.cancel("Update cancelled.");
               process.exit(0);
             }
           }
-
-          if (shouldApply) {
-            await fs.copyFile(starterFilePath, targetFilePath);
-            console.log(pc.green(`✔ File "${file}" successfully updated.`));
+          if (shouldCreate) {
+            const starterContent = await fs.readFile(starterFilePath, "utf-8");
+            pendingWrites.push({
+              filePath: targetFilePath,
+              content: starterContent,
+              actionDescription: `Create missing file "${file}"`
+            });
+            console.log(pc.green(`✔ Scheduled creation of "${file}".`));
           } else {
             console.log(pc.yellow(`ℹ Skipped file "${file}".`));
+          }
+          continue;
+        }
+
+        const starterContent = await fs.readFile(starterFilePath, "utf-8");
+        const targetContent = await fs.readFile(targetFilePath, "utf-8");
+
+        // Parse/Diff dynamically based on file type
+        if (file.endsWith(".json") || file.endsWith(".jsonc")) {
+          let currentTargetContent = targetContent;
+          let loop = true;
+
+          while (loop) {
+            let diffs = [];
+            try {
+              diffs = getStructuredJsonDiffs(starterContent, currentTargetContent, file);
+            } catch (e) {
+              // Fallback to line diff
+            }
+
+            if (diffs.length === 0) break;
+
+            console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`);
+            for (const diff of diffs) {
+              console.log(`  └─ ${pc.dim(diff.message)}`);
+            }
+
+            let selectedDiffMessages = [];
+            if (isInteractive) {
+              const selection = await prompts.multiselect({
+                message: `Select keys to update in ${file} (Select none to finish):`,
+                options: diffs.map(diff => ({
+                  value: diff.message,
+                  label: diff.message
+                })),
+                required: false
+              });
+
+              if (prompts.isCancel(selection)) {
+                prompts.cancel("Update cancelled.");
+                process.exit(0);
+              }
+              selectedDiffMessages = selection;
+            } else {
+              // Apply all in non-interactive mode
+              selectedDiffMessages = diffs.map(d => d.message);
+            }
+
+            if (selectedDiffMessages.length === 0) {
+              break;
+            }
+
+            let targetObj = parseJsonc(currentTargetContent);
+            for (const diff of diffs) {
+              if (selectedDiffMessages.includes(diff.message)) {
+                if (diff.type === "array_missing") {
+                  const arr = getNested(targetObj, diff.path) || [];
+                  const starterObj = parseJsonc(starterContent);
+                  const starterArr = getNested(starterObj, diff.path) || [];
+                  const newArr = injectIntoArray(arr, starterArr, diff.value);
+                  setNested(targetObj, diff.path, newArr);
+                } else if (diff.type === "out_of_order_array") {
+                  setNested(targetObj, diff.path, diff.value);
+                } else if (diff.type === "out_of_order_keys") {
+                  targetObj = reorderKeys(targetObj, parseJsonc(starterContent));
+                } else {
+                  setNested(targetObj, diff.path, diff.value);
+                }
+              }
+            }
+
+            if (file === "wrangler.jsonc") {
+              const parsed = parseJsonc(targetContent);
+              targetObj.name = parsed.name;
+              targetObj.routes = parsed.routes;
+            }
+
+            currentTargetContent = JSON.stringify(targetObj, null, 2);
+            console.log(pc.green(`✔ Staged ${selectedDiffMessages.length} updates for "${file}" in memory.\n`));
+
+            if (!isInteractive) break; // Non-interactive mode finishes after one re-evaluation
+          }
+
+          if (currentTargetContent !== targetContent) {
+            pendingWrites.push({
+              filePath: targetFilePath,
+              content: currentTargetContent,
+              actionDescription: `Standardize JSON structures in "${file}"`
+            });
+            console.log(pc.green(`✔ Scheduled batch updates for "${file}".`));
+          }
+
+        } else if (file === ".gitignore" || file === ".env.example" || file === "pnpm-workspace.yaml" || file === ".node-version") {
+          let currentTargetContent = targetContent;
+          let loop = true;
+
+          while (loop) {
+            const diffs = getStructuredLineDiffs(starterContent, currentTargetContent);
+            if (diffs.length === 0) break;
+
+            console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`);
+            for (const diff of diffs) {
+              console.log(`  └─ ${pc.dim(diff.message)}`);
+            }
+
+            let selectedLines = [];
+            if (isInteractive) {
+              const selection = await prompts.multiselect({
+                message: `Select entries to add to ${file} (Select none to finish):`,
+                options: diffs.map(diff => ({
+                  value: diff.line,
+                  label: diff.line
+                })),
+                required: false
+              });
+
+              if (prompts.isCancel(selection)) {
+                prompts.cancel("Update cancelled.");
+                process.exit(0);
+              }
+              selectedLines = selection;
+            } else {
+              selectedLines = diffs.map(d => d.line);
+            }
+
+            if (selectedLines.length === 0) {
+              break;
+            }
+
+            let newContent = currentTargetContent;
+            for (const diff of diffs) {
+              if (selectedLines.includes(diff.line)) {
+                if (newContent && !newContent.endsWith("\n")) {
+                  newContent += "\n";
+                }
+                newContent += diff.line + "\n";
+              }
+            }
+
+            currentTargetContent = newContent;
+            console.log(pc.green(`✔ Staged ${selectedLines.length} entries for "${file}" in memory.\n`));
+
+            if (!isInteractive) break;
+          }
+
+          if (currentTargetContent !== targetContent) {
+            pendingWrites.push({
+              filePath: targetFilePath,
+              content: currentTargetContent,
+              actionDescription: `Standardize entry list in "${file}"`
+            });
+            console.log(pc.green(`✔ Scheduled batch updates for "${file}".`));
+          }
+
+        } else {
+          // Complex TS config files: astro.config.ts, vite.config.ts, uno.config.ts
+          const diffs = getStructuredLineDiffs(starterContent, targetContent);
+
+          if (diffs.length > 0) {
+            console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`);
+            for (const diff of diffs) {
+              console.log(`  └─ ${pc.dim(diff.message)}`);
+            }
+
+            let shouldApply = true;
+            if (isInteractive) {
+              shouldApply = await prompts.confirm({
+                message: `Update entire file "${file}" to match template starter?`,
+                initialValue: true
+              });
+              if (prompts.isCancel(shouldApply)) {
+                prompts.cancel("Update cancelled.");
+                process.exit(0);
+              }
+            }
+
+            if (shouldApply) {
+              let newContent = "";
+              if (file === "astro.config.ts") {
+                const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/);
+                const domain = siteMatch ? siteMatch[1] : "";
+                if (domain) {
+                  let template = await fs.readFile(starterFilePath, "utf-8");
+                  template = template.replace(/site:\s*["'][^"']*["']/g, `site: "https://${domain}"`);
+                  template = template.replace(/hostname:\s*["'][^"']*["']/g, `hostname: "**.${domain}"`);
+                  template = template.replace(/img-src 'self' https:\/\/cdn\.[^"']*/g, `img-src 'self' https://cdn.${domain}`);
+                  if (targetDir.includes("marcelocfilho.com")) {
+                    template = template.replace(/security:\s*\{[\s\S]*?\}\s*,\s*\n\s*\n\s*i18n:/, `// security: {\n  //   checkOrigin: true,\n  //   allowedDomains: [\n  //     {\n  //       hostname: "**.${domain}",\n  //       protocol: "https"\n  //     }\n  //   ],\n  //   csp: {\n  //     algorithm: "SHA-384",\n  //     directives: [\n  //       "default-src 'none'",\n  //       "img-src 'self' https://cdn.${domain} https://i3.ytimg.com https://www.youtube.com https://www.youtube-nocookie.com",\n  //       "font-src 'self'",\n  //       "connect-src 'self'",\n  //       "frame-ancestors 'none'",\n  //       "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com",\n  //       "upgrade-insecure-requests",\n  //       "base-uri 'self'",\n  //       "form-action 'self'"\n  //     ],\n  //     scriptDirective: {\n  //       resources: [\n  //         "'self'",\n  //         "https://challenges.cloudflare.com",\n  //         "https://betterlytics.io/analytics.js"\n  //       ]\n  //     },\n  //     styleDirective: {\n  //       resources: ["'self'"]\n  //     }\n  //   }\n  // },\n\n  i18n:`);
+                  }
+                  newContent = template;
+                } else {
+                  newContent = starterContent;
+                }
+              } else {
+                newContent = starterContent;
+              }
+
+              pendingWrites.push({
+                filePath: targetFilePath,
+                content: newContent,
+                actionDescription: `Standardize file "${file}"`
+              });
+              console.log(pc.green(`✔ Scheduled updates for "${file}".`));
+            } else {
+              console.log(pc.yellow(`ℹ Skipped file "${file}".`));
+            }
           }
         }
       }
@@ -622,247 +989,168 @@ export async function runUpdate(options) {
       const starterPkg = JSON.parse(await fs.readFile(path.join(starterPath, "package.json"), "utf-8"));
       const targetPkg = JSON.parse(await fs.readFile(targetPkgPath, "utf-8"));
 
-      let pkgModified = false;
+      const pkgOptions = [];
 
-      // Update Node engines
+      // Engines Node
       if (starterPkg.engines?.node !== targetPkg.engines?.node) {
-        let shouldApply = true;
-        if (isInteractive) {
-          shouldApply = await prompts.confirm({
-            message: `Update Node engine compatibility to "${starterPkg.engines?.node}"?\n  ├─ Current:   "${targetPkg.engines?.node || ""}"\n  └─ Reference: "${starterPkg.engines?.node}"`,
-            initialValue: true
-          });
-          if (prompts.isCancel(shouldApply)) {
-            prompts.cancel("Update cancelled.");
-            process.exit(0);
-          }
-        }
-        if (shouldApply) {
-          targetPkg.engines = { ...targetPkg.engines, node: starterPkg.engines.node };
-          pkgModified = true;
-        }
+        pkgOptions.push({
+          value: { type: "engines", key: "node", value: starterPkg.engines.node },
+          label: `Update engines.node: "${starterPkg.engines.node}" (Current: "${targetPkg.engines?.node || ""}")`
+        });
       }
 
-      // Update packageManager
+      // Package Manager
       if (starterPkg.packageManager !== targetPkg.packageManager) {
-        let shouldApply = true;
-        if (isInteractive) {
-          shouldApply = await prompts.confirm({
-            message: `Update pnpm version to "${starterPkg.packageManager}"?\n  ├─ Current:   "${targetPkg.packageManager || ""}"\n  └─ Reference: "${starterPkg.packageManager}"`,
-            initialValue: true
-          });
-          if (prompts.isCancel(shouldApply)) {
-            prompts.cancel("Update cancelled.");
-            process.exit(0);
-          }
-        }
-        if (shouldApply) {
-          targetPkg.packageManager = starterPkg.packageManager;
-          pkgModified = true;
-        }
+        pkgOptions.push({
+          value: { type: "packageManager", value: starterPkg.packageManager },
+          label: `Update packageManager: "${starterPkg.packageManager}" (Current: "${targetPkg.packageManager || ""}")`
+        });
       }
 
-      // Update scripts
+      // Scripts
       targetPkg.scripts = targetPkg.scripts || {};
       for (const [key, val] of Object.entries(starterPkg.scripts || {})) {
         if (targetPkg.scripts[key] !== val) {
-          let shouldApply = true;
-          if (isInteractive) {
-            const isMissing = !targetPkg.scripts[key];
-            const msg = isMissing
-              ? `Add missing script "${key}": "${val}"?`
-              : `Update script "${key}"?\n  ├─ Current:   "${targetPkg.scripts[key]}"\n  └─ Reference: "${val}"`;
-            shouldApply = await prompts.confirm({
-              message: msg,
-              initialValue: true
-            });
-            if (prompts.isCancel(shouldApply)) {
-              prompts.cancel("Update cancelled.");
-              process.exit(0);
-            }
-          }
-          if (shouldApply) {
-            targetPkg.scripts[key] = val;
-            pkgModified = true;
-          }
+          const isMissing = !targetPkg.scripts[key];
+          pkgOptions.push({
+            value: { type: "scripts", key, value: val },
+            label: isMissing ? `Add script "${key}": "${val}"` : `Update script "${key}": "${val}" (Current: "${targetPkg.scripts[key]}")`
+          });
         }
       }
 
-      // Update dependencies (matching only)
+      // Dependencies
       targetPkg.dependencies = targetPkg.dependencies || {};
       for (const [key, val] of Object.entries(starterPkg.dependencies || {})) {
         if (targetPkg.dependencies[key] !== val) {
-          let shouldApply = true;
-          if (isInteractive) {
-            const isMissing = !targetPkg.dependencies[key];
-            const msg = isMissing
-              ? `Add missing dependency "${key}": "${val}"?`
-              : `Update dependency "${key}"?\n  ├─ Current:   "${targetPkg.dependencies[key]}"\n  └─ Reference: "${val}"`;
-            shouldApply = await prompts.confirm({
-              message: msg,
-              initialValue: true
-            });
-            if (prompts.isCancel(shouldApply)) {
-              prompts.cancel("Update cancelled.");
-              process.exit(0);
-            }
-          }
-          if (shouldApply) {
-            targetPkg.dependencies[key] = val;
-            pkgModified = true;
-          }
+          const isMissing = !targetPkg.dependencies[key];
+          pkgOptions.push({
+            value: { type: "dependencies", key, value: val },
+            label: isMissing ? `Add dependency "${key}": "${val}"` : `Update dependency "${key}": "${val}" (Current: "${targetPkg.dependencies[key]}")`
+          });
         }
       }
 
-      // Update devDependencies (matching or missing)
+      // devDependencies
       targetPkg.devDependencies = targetPkg.devDependencies || {};
       for (const [key, val] of Object.entries(starterPkg.devDependencies || {})) {
         if (targetPkg.devDependencies[key] !== val) {
-          let shouldApply = true;
-          if (isInteractive) {
-            const isMissing = !targetPkg.devDependencies[key];
-            const msg = isMissing
-              ? `Add missing devDependency "${key}": "${val}"?`
-              : `Update devDependency "${key}"?\n  ├─ Current:   "${targetPkg.devDependencies[key]}"\n  └─ Reference: "${val}"`;
-            shouldApply = await prompts.confirm({
-              message: msg,
-              initialValue: true
-            });
-            if (prompts.isCancel(shouldApply)) {
-              prompts.cancel("Update cancelled.");
-              process.exit(0);
+          const isMissing = !targetPkg.devDependencies[key];
+          pkgOptions.push({
+            value: { type: "devDependencies", key, value: val },
+            label: isMissing ? `Add devDependency "${key}": "${val}"` : `Update devDependency "${key}": "${val}" (Current: "${targetPkg.devDependencies[key]}")`
+          });
+        }
+      }
+
+      if (pkgOptions.length > 0) {
+        console.log(`${pc.yellow("⚠")} ${pc.bold("package.json")}: ${pc.yellow("DIFFERING")}`);
+        
+        let selectedOpts = pkgOptions.map(o => o.value);
+        if (isInteractive) {
+          const selection = await prompts.multiselect({
+            message: "Select updates to apply to package.json:",
+            options: pkgOptions,
+            required: false
+          });
+
+          if (prompts.isCancel(selection)) {
+            prompts.cancel("Update cancelled.");
+            process.exit(0);
+          }
+          selectedOpts = selection;
+        }
+
+        if (selectedOpts.length > 0) {
+          let pkgModified = false;
+          for (const opt of selectedOpts) {
+            pkgModified = true;
+            if (opt.type === "engines") {
+              targetPkg.engines = { ...targetPkg.engines, [opt.key]: opt.value };
+            } else if (opt.type === "packageManager") {
+              targetPkg.packageManager = opt.value;
+            } else {
+              targetPkg[opt.type][opt.key] = opt.value;
             }
           }
-          if (shouldApply) {
-            targetPkg.devDependencies[key] = val;
-            pkgModified = true;
-          }
-        }
-      }
 
-      if (pkgModified) {
-        // Consistent scripts ordering
-        const orderedScripts = {};
-        const allScriptKeys = new Set([
-          ...Object.keys(starterPkg.scripts || {}),
-          ...Object.keys(targetPkg.scripts || {})
-        ]);
-        const standardOrder = [
-          "prepare",
-          "generate-types",
-          "knip",
-          "astro",
-          "dev",
-          "build",
-          "preview",
-          "lunaria:build",
-          "lunaria:preview"
-        ];
-        for (const key of standardOrder) {
-          if (allScriptKeys.has(key)) {
-            orderedScripts[key] = targetPkg.scripts[key];
-            allScriptKeys.delete(key);
-          }
-        }
-        for (const key of allScriptKeys) {
-          orderedScripts[key] = targetPkg.scripts[key];
-        }
-        targetPkg.scripts = orderedScripts;
+          if (pkgModified) {
+            // Consistent scripts ordering
+            const orderedScripts = {};
+            const allScriptKeys = new Set([
+              ...Object.keys(starterPkg.scripts || {}),
+              ...Object.keys(targetPkg.scripts || {})
+            ]);
+            const standardOrder = [
+              "prepare",
+              "generate-types",
+              "knip",
+              "astro",
+              "dev",
+              "build",
+              "preview",
+              "lunaria:build",
+              "lunaria:preview"
+            ];
+            for (const key of standardOrder) {
+              if (allScriptKeys.has(key)) {
+                orderedScripts[key] = targetPkg.scripts[key];
+                allScriptKeys.delete(key);
+              }
+            }
+            for (const key of allScriptKeys) {
+              orderedScripts[key] = targetPkg.scripts[key];
+            }
+            targetPkg.scripts = orderedScripts;
 
-        await fs.writeFile(targetPkgPath, JSON.stringify(targetPkg, null, 2), "utf-8");
-        console.log(pc.green("✔ package.json standardized successfully."));
-      } else {
-        console.log(pc.yellow("ℹ No changes made to package.json."));
-      }
-    }
-
-    // 3. Standardize astro.config.ts preserving domain
-    const targetAstroPath = path.join(targetDir, "astro.config.ts");
-    if (existsSync(targetAstroPath)) {
-      const content = await fs.readFile(targetAstroPath, "utf-8");
-      const siteMatch = content.match(/site:\s*["']https?:\/\/([^"']+)["']/);
-      let domain = siteMatch ? siteMatch[1] : "";
-      
-      let needsAstroUpdate = false;
-      const starterContent = await fs.readFile(path.join(starterPath, "astro.config.ts"), "utf-8");
-      const diffs = getDiffLines(starterContent, content, "astro.config.ts", targetDir);
-      if (diffs.length > 0) needsAstroUpdate = true;
-
-      if (needsAstroUpdate && domain) {
-        let shouldApply = true;
-        if (isInteractive) {
-          shouldApply = await prompts.confirm({
-            message: `Update "astro.config.ts" (will preserve domain "https://${domain}")?`,
-            initialValue: true
-          });
-          if (prompts.isCancel(shouldApply)) {
-            prompts.cancel("Update cancelled.");
-            process.exit(0);
+            pendingWrites.push({
+              filePath: targetPkgPath,
+              content: JSON.stringify(targetPkg, null, 2),
+              actionDescription: `Standardize ${selectedOpts.length} entries in "package.json"`
+            });
+            console.log(pc.green("✔ Scheduled updates for \"package.json\"."));
           }
-        }
-        if (shouldApply) {
-          let template = await fs.readFile(path.join(starterPath, "astro.config.ts"), "utf-8");
-          template = template.replace(/site:\s*["'][^"']*["']/g, `site: "https://${domain}"`);
-          template = template.replace(/hostname:\s*["'][^"']*["']/g, `hostname: "**.${domain}"`);
-          template = template.replace(/img-src 'self' https:\/\/cdn\.[^"']*/g, `img-src 'self' https://cdn.${domain}`);
-          if (targetDir.includes("marcelocfilho.com")) {
-            template = template.replace(/security:\s*\{[\s\S]*?\}\s*,\s*\n\s*\n\s*i18n:/, `// security: {\n  //   checkOrigin: true,\n  //   allowedDomains: [\n  //     {\n  //       hostname: "**.${domain}",\n  //       protocol: "https"\n  //     }\n  //   ],\n  //   csp: {\n  //     algorithm: "SHA-384",\n  //     directives: [\n  //       "default-src 'none'",\n  //       "img-src 'self' https://cdn.${domain} https://i3.ytimg.com https://www.youtube.com https://www.youtube-nocookie.com",\n  //       "font-src 'self'",\n  //       "connect-src 'self'",\n  //       "frame-ancestors 'none'",\n  //       "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com",\n  //       "upgrade-insecure-requests",\n  //       "base-uri 'self'",\n  //       "form-action 'self'"\n  //     ],\n  //     scriptDirective: {\n  //       resources: [\n  //         "'self'",\n  //         "https://challenges.cloudflare.com",\n  //         "https://betterlytics.io/analytics.js"\n  //       ]\n  //     },\n  //     styleDirective: {\n  //       resources: ["'self'"]\n  //     }\n  //   }\n  // },\n\n  i18n:`);
-          }
-          await fs.writeFile(targetAstroPath, template, "utf-8");
-          console.log(pc.green("✔ astro.config.ts standardized successfully."));
         } else {
-          console.log(pc.yellow("ℹ Skipped astro.config.ts."));
+          console.log(pc.yellow("ℹ Skipped updates for package.json."));
         }
       }
     }
 
-    // 4. Standardize wrangler.jsonc preserving name and routes
-    const targetWranglerPath = path.join(targetDir, "wrangler.jsonc");
-    if (existsSync(targetWranglerPath)) {
-      let wranglerName = "";
-      let wranglerRoutes = [];
-      try {
-        const content = await fs.readFile(targetWranglerPath, "utf-8");
-        const parsed = parseJsonc(content);
-        wranglerName = parsed.name;
-        wranglerRoutes = parsed.routes || [];
-      } catch (e) {}
-
-      let needsWranglerUpdate = false;
-      const starterContent = await fs.readFile(path.join(starterPath, "wrangler.jsonc"), "utf-8");
-      const targetContent = await fs.readFile(targetWranglerPath, "utf-8");
-      const diffs = getDiffLines(starterContent, targetContent, "wrangler.jsonc", targetDir);
-      if (diffs.length > 0) needsWranglerUpdate = true;
-
-      if (needsWranglerUpdate && wranglerName) {
-        let shouldApply = true;
-        if (isInteractive) {
-          shouldApply = await prompts.confirm({
-            message: `Update "wrangler.jsonc" (will preserve name "${wranglerName}")?`,
-            initialValue: true
-          });
-          if (prompts.isCancel(shouldApply)) {
-            prompts.cancel("Update cancelled.");
-            process.exit(0);
-          }
-        }
-        if (shouldApply) {
-          const templateContent = await fs.readFile(path.join(starterPath, "wrangler.jsonc"), "utf-8");
-          const template = parseJsonc(templateContent);
-          template.name = wranglerName;
-          if (wranglerRoutes.length > 0) {
-            template.routes = wranglerRoutes;
-          }
-          await fs.writeFile(targetWranglerPath, JSON.stringify(template, null, 2), "utf-8");
-          console.log(pc.green("✔ wrangler.jsonc standardized successfully."));
-        } else {
-          console.log(pc.yellow("ℹ Skipped wrangler.jsonc."));
-        }
-      }
-    }
-
-    // 5. Run vp install
+    // 3. Batch and Apply all changes at the end
     console.log("");
+    if (pendingWrites.length > 0) {
+      console.log(pc.bold(pc.cyan("◇ Pending changes to be applied:")));
+      for (const item of pendingWrites) {
+        const relativeFile = path.relative(targetDir, item.filePath);
+        console.log(`  ├─ ${pc.bold(relativeFile)}: ${pc.dim(item.actionDescription)}`);
+      }
+      console.log("");
+
+      let confirmApply = true;
+      if (isInteractive) {
+        confirmApply = await prompts.confirm({
+          message: `Apply all ${pendingWrites.length} scheduled changes to disk? (Files will not be modified if cancelled)`,
+          initialValue: true
+        });
+
+        if (prompts.isCancel(confirmApply) || !confirmApply) {
+          prompts.cancel("Update cancelled. No files were modified.");
+          process.exit(0);
+        }
+      }
+
+      if (confirmApply) {
+        const writeSpinner = prompts.spinner();
+        writeSpinner.start("Writing changes to configuration files...");
+        for (const item of pendingWrites) {
+          await fs.writeFile(item.filePath, item.content, "utf-8");
+        }
+        writeSpinner.stop(pc.green(`✔ Successfully wrote ${pendingWrites.length} files to disk!`));
+      }
+    } else {
+      console.log(pc.green("✔ No changes were selected. All files remain unchanged."));
+    }
+
     prompts.outro(pc.green("✔ Standardization process complete!"));
 
     let runInstall = true;
@@ -893,4 +1181,3 @@ export async function runUpdate(options) {
     process.exit(1);
   }
 }
-
