@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/accessible-astro-components" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/idantity.me" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/idantity.me-changes" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/marcelocfilho.com" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/queerkit.com" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rimelight" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rimelight.com" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rimelight.com-changes" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/starlight" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ui" vcs="Git" />
+  </component>
+</project>

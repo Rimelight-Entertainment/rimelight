@@ -1,0 +1,1176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2acc132a-b7df-4947-88d2-f61305485131" name="Changes" comment="fix: general library improvements">
+      <change afterPath="$PROJECT_DIR$/accessible-astro-components/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rimelight.com/src/assets/images/auth_background_desktop.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rimelight.com/src/assets/images/auth_background_mobile.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starlight/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starlight/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starlight/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starlight/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starlight/.idea/prettier.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starlight/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/0000_awesome_human_cannonball.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/0001_free_the_initiative.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/0002_narrow_sharon_carter.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/0003_cool_paibok.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/meta/0000_snapshot.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/meta/0001_snapshot.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/meta/0002_snapshot.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/meta/0003_snapshot.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.drizzle/migrations/meta/_journal.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.env.example" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/CODEOWNERS" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/auth/auth-client.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/auth/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/drizzle.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/nuxt.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/pnpm-lock.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/pnpm-workspace.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/_robots.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-BoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraLight.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraLightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-Light.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-LightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-Medium.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-MediumItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-SemiBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-SemiBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-Thin.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMono-ThinItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-BoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraLight.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraLightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Light.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-LightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Medium.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-MediumItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-SemiBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-SemiBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Thin.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ThinItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/groceries/groceries.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/habits/habits.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/health/fasting.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/health/measurements.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/health/workout.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/housing/pets.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/housing/wishlist.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/music/music.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/pages/page_versions.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/pages/pages.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/projects/boards.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/projects/cards.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/projects/custom_fields.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/projects/lists.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/db/schema/watchlist/watchlist.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/middleware/cors.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/routes/ws/visitors.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/tasks/cleanup-notes-trash.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/server/tasks/cleanup-todos-archived.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me-changes/wrangler.jsonc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/idantity.me/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/astro.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/idantity.me/astro.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/idantity.me/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/idantity.me/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/src/content.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/idantity.me/src/content.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/src/content/docs/en/docs/contributing.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/src/content/docs/en/docs/index.mdx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/idantity.me/src/styles/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/src/styles/starlight.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/idantity.me/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/idantity.me/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/marcelocfilho.com/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/astro.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marcelocfilho.com/astro.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/marcelocfilho.com/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/marcelocfilho.com/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/src/content.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/marcelocfilho.com/src/content.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/src/content/docs/en/docs/contributing.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/src/content/docs/en/docs/deployment.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/src/content/docs/en/docs/index.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/src/content/docs/en/docs/structure.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/marcelocfilho.com/src/styles/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/src/styles/starlight.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/marcelocfilho.com/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/marcelocfilho.com/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/astro.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/astro.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/Intersex.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/Intersex.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/agender.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/agender.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/bigender.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/bigender.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/cisgender.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/cisgender.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/female.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/female.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/genderfluid.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/genderfluid.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/male.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/male.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/non-binary.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/non-binary.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/overview.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/overview.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/gender-identity/transgender.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/gender-identity/transgender.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/index.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/index.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/relationship-identity/monogamous.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/relationship-identity/monogamous.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/relationship-identity/overview.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/relationship-identity/overview.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/relationship-identity/polygamous.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/relationship-identity/polygamous.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/abroromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/abroromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/aromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/aromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/biromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/biromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/demiromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/demiromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/heteroromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/heteroromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/homoromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/homoromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/overview.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/overview.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/panromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/panromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/romantic-identity/polyromantic.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/romantic-identity/polyromantic.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/abrosexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/abrosexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/asexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/asexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/bisexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/bisexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/demisexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/demisexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/gay.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/gay.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/heterosexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/heterosexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/homosexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/homosexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/lesbian.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/lesbian.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/overview.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/overview.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/pansexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/pansexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/content/docs/en/docs/sexual-identity/polysexual.md" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/content/docs/sexual-identity/polysexual.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/src/styles/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/src/styles/starlight.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/queerkit.com/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/queerkit.com/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/.env.example" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/css/main.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logomark-white.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_COMBOMARK_HORIZONTAL_BLACK.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_COMBOMARK_HORIZONTAL_COLOR.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_COMBOMARK_HORIZONTAL_WHITE.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_COMBOMARK_VERTICAL_BLACK.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_COMBOMARK_VERTICAL_COLOR.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_COMBOMARK_VERTICAL_WHITE.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_LOGOMARK_BLACK.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_LOGOMARK_COLOR.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_LOGOMARK_WHITE.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_LOGOTYPE_BLACK.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_LOGOTYPE_COLOR.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logos/RIMELIGHT_LOGOTYPE_WHITE.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/assets/icons/first-party/logotype-white.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/components/app/Header.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/components/app/HeaderLayer.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/components/app/Image.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/components/app/Logo.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/app/components/app/ScrollToTop.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/drizzle.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/pnpm-lock.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/pnpm-workspace.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/_robots.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/favicon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-BoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraLight.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-ExtraLightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-Light.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-LightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-Medium.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-MediumItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-SemiBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-SemiBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-Thin.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMono-ThinItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-BoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraLight.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ExtraLightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Light.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-LightItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Medium.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-MediumItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-SemiBold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-SemiBoldItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-Thin.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/fonts/jetbrains-mono/JetBrainsMonoNL-ThinItalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/auth_background_desktop.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/auth_background_mobile.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/Showcase.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/StepInside_BG.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/bg_class_selector_tile-ed65a642d.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/faq_bg.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_header_community.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_header_company.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_header_grand-tale.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_header_store.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_home_company_background.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_home_cta_background.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_home_hero_background.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_home_news_background.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_home_projects_background.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/public/images/placeholders/placeholder_home_projects_grand-tale.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/scripts/defaults.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/scripts/migrate-pages.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/schema/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/schema/pages/page_versions.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/schema/pages/pages.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/schema/projects/boards.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/schema/projects/cards.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/schema/projects/custom_fields.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/server/db/schema/projects/lists.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/shared/auth/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/shared/auth/permissions.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/shared/auth/restricted-usernames.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/shared/auth/statements.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/shared/auth/utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/shared/types/db.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com-changes/wrangler.jsonc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/astro.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/astro.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/components/app/AppFooter.astro" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/components/app/AppFooter.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/components/app/AppHeader.astro" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/components/app/AppHeader.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/components/app/AppHeaderNavigationMenu.vue" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/components/app/AppHeaderNavigationMenu.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/components/auth/ConstructionSignIn.vue" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/components/auth/ConstructionSignIn.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/api/overview/introduction.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/api/overview/introduction.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/api/reference/grand-tale.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/api/reference/grand-tale.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/api/reference/rimelight-account.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/api/reference/rimelight-account.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/overview/contributing.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/overview/contributing.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/overview/getting-started.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/overview/getting-started.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/overview/introduction.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/overview/introduction.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/agents/llms-txt.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/agents/llms-txt.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/agents/mcp-server.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/agents/mcp-server.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/agents/skills.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/agents/skills.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/architecture/color-mode.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/architecture/color-mode.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/architecture/colors.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/architecture/colors.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/architecture/design-system.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/architecture/design-system.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/architecture/i18n.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/architecture/i18n.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/architecture/icons.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/architecture/icons.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/architecture/ssr.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/architecture/ssr.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/architecture/variants.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/architecture/variants.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-message.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-message.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-messages.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-messages.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-palette.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-palette.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-prompt-submit.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-prompt-submit.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-prompt.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-prompt.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-reasoning.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-reasoning.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-shimmer.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-shimmer.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat-tool.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat-tool.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/ai/chat.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/ai/chat.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/app/app.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/app/app.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/app/error.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/app/error.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/app/footer.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/app/footer.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/app/head.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/app/head.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/app/header.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/app/header.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/app/logo.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/app/logo.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/app/main.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/app/main.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-group.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-group.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-navbar.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-navbar.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-panel.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-panel.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-resize-handle.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-resize-handle.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-search-button.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-search-button.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-search.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-search.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-sidebar-collapse.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-sidebar-collapse.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-sidebar-toggle.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-sidebar-toggle.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-sidebar.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-sidebar.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/dashboard/dashboard-toolbar.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/dashboard/dashboard-toolbar.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/accordion.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/accordion.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/carousel.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/carousel.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/chart.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/chart.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/empty.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/empty.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/gallery.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/gallery.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/marquee.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/marquee.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/meter.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/meter.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/progress.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/progress.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/quote.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/quote.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/rating.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/rating.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/scroll-area.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/scroll-area.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/skeleton.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/skeleton.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/spinner.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/spinner.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/spoiler.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/spoiler.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/table.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/table.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/timeline.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/timeline.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/tree.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/tree.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/data/user.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/data/user.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/editor/editor.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/editor/editor.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/effect/3d-hover.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/effect/3d-hover.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/alert.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/alert.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/avatar-group.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/avatar-group.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/avatar.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/avatar.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/badge.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/badge.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/banner.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/banner.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/button.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/button.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/calendar.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/calendar.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/card.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/card.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/chip.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/chip.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/collapsible.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/collapsible.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/field-group.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/field-group.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/fieldset.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/fieldset.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/hover-card.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/hover-card.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/kbd.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/kbd.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/label.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/label.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/progress.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/progress.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/separator.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/separator.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/elements/speed-dial.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/elements/speed-dial.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/checkbox.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/checkbox.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/color-picker.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/color-picker.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/file-upload.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/file-upload.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/form-field.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/form-field.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/form.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/form.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/input-date.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/input-date.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/input-menu.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/input-menu.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/input-number.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/input-number.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/input-pin.mdx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/input-tags.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/input-tags.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/input-time.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/input-time.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/input.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/input.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/knob.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/knob.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/listbox.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/listbox.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/password.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/password.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/radio-group.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/radio-group.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/select.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/select.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/slider.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/slider.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/switch.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/switch.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/form/textarea.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/form/textarea.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/index.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/index.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/layout/container.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/layout/container.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/layout/sidebar.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/layout/sidebar.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/layout/splitter.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/layout/splitter.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/media/audio.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/media/audio.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/media/icon.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/media/icon.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/media/image.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/media/image.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/media/video.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/media/video.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/mockup/browser-mockup.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/mockup/browser-mockup.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/mockup/phone-mockup.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/mockup/phone-mockup.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/mockup/window-mockup.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/mockup/window-mockup.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/breadcrumb.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/breadcrumb.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/command-palette.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/command-palette.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/link-group.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/link-group.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/link.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/link.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/megamenu.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/megamenu.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/navigation-menu.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/navigation-menu.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/pagination.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/pagination.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/stepper.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/stepper.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/table-of-contents.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/table-of-contents.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/navigation/tabs.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/navigation/tabs.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/confirm.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/confirm.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/context-menu.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/context-menu.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/dock.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/dock.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/drawer.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/drawer.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/dropdown-menu.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/dropdown-menu.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/floating-action.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/floating-action.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/modal.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/modal.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/popover.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/popover.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/slideover.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/slideover.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/toast.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/toast.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/overlay/tooltip.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/overlay/tooltip.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/changelog.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/changelog.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/page-aside.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/page-aside.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/page-body.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/page-body.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/page-header.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/page-header.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/page-section.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/page-section.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/page.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/page.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/post.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/post.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/pricing-plan.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/pricing-plan.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/page/pricing-table.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/page/pricing-table.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/aspect-ratio.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/aspect-ratio.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/compare.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/compare.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/locale-selector.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/locale-selector.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/placeholder.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/placeholder.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/prose.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/prose.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/qr-code.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/qr-code.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/scroll-to-top.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/scroll-to-top.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/sticky-surface.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/sticky-surface.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/theme-selector.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/theme-selector.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/tour.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/tour.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/components/utility/watermark.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/components/utility/watermark.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/composables/usehotkeys.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/composables/usehotkeys.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/composables/useoverlay.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/composables/useoverlay.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/composables/usetoast.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/composables/usetoast.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/composables/useui.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/composables/useui.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/overview/installation.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/overview/installation.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/overview/introduction.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/overview/introduction.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/plugins/starlight-addons.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-ui/plugins/starlight-addons.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/packages/rimelight-unreal/overview/introduction.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/packages/rimelight-unreal/overview/introduction.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/art/file-specifications.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/art/file-specifications.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/art/overview.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/art/overview.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/art/references.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/art/references.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/code/overview.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/code/overview.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/core/control-scheme.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/core/control-scheme.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/ar.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/ar.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/en.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/en.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/es.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/es.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/fr.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/fr.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/ja.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/ja.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/ko.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/ko.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/overview.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/overview.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/pt.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/pt.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/ro.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/ro.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/internationalization/zh_cn.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/internationalization/zh_cn.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/overview/introduction.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/overview/introduction.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/sound/file-specifications.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/sound/file-specifications.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/sound/overview.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/sound/overview.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/sound/references.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/sound/references.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/grand-tale/writing/overview.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/grand-tale/writing/overview.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/products/overview/introduction.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/products/overview/introduction.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/website/overview/deployment.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/website/overview/deployment.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/website/overview/introduction.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/website/overview/introduction.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/website/overview/localization.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/website/overview/localization.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/company/docs/website/overview/structure.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/content/docs/en/website/overview/structure.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/pages/[locale]/auth/sign-in.astro" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/pages/[locale]/auth/sign-in.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/pages/[locale]/auth/sign-up.astro" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/pages/[locale]/auth/sign-up.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/pages/[locale]/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/pages/[locale]/index.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/styles/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/styles/global.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/styles/starlight.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/src/translations/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/src/translations/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight.com/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight.com/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/playground/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/playground/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/playground/src/content.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/playground/src/content.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/playground/src/content/docs/tests/starlight-replacements.mdx" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/playground/src/content/docs/tests/starlight-replacements.mdx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/playground/src/layouts/DocsLayout.astro" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/playground/src/layouts/DocsLayout.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/ui/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/ui/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/ui/src/components/astro/RLASidebar.astro" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/ui/src/components/astro/RLASidebar.astro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/ui/src/env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/ui/src/env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/ui/src/presets/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/ui/src/presets/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/ui/src/types/components/sidebar.ts" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/ui/src/types/components/sidebar.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rimelight/packages/ui/src/utils/docs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/rimelight/packages/ui/src/utils/docs.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="4736" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="tsconfig.json" />
+        <option value="TypeScript File" />
+        <option value="Astro Component" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/rimelight" value="test-current" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/rimelight" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.1940273590405786" />
+      <entry key="MS500" value="4.002264711202759" />
+      <entry key="S2" value="6.6194736082378" />
+      <entry key="S5" value="7.406972621437686" />
+      <entry key="S10" value="7.696193569065149" />
+      <entry key="S30" value="7.897062190604609" />
+      <entry key="S60" value="7.948319367535039" />
+      <entry key="M2" value="7.974106516099021" />
+      <entry key="M5" value="7.98963525479062" />
+      <entry key="M10" value="8.01201633984091" />
+      <entry key="M15" value="8.308647296040752" />
+      <entry key="M30" value="15.280668264362154" />
+      <entry key="H1" value="55.48102701310965" />
+      <entry key="H2" value="189.559335227571" />
+      <entry key="H4" value="497.31757561011244" />
+      <entry key="D1" value="1408.5927251503763" />
+      <entry key="W1" value="1717.4257098499704" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="2.0486138484820911E-196" />
+      <entry key="S30" value="1.2236561422536767E-65" />
+      <entry key="S60" value="6.0572677844599646E-33" />
+      <entry key="M2" value="1.3483562960910319E-16" />
+      <entry key="M5" value="9.05619364467492E-7" />
+      <entry key="M10" value="0.0020388143349788406" />
+      <entry key="M15" value="0.02945988104515011" />
+      <entry key="M30" value="0.4627765724344922" />
+      <entry key="H1" value="1.9231027660861182" />
+      <entry key="H2" value="4.407825259108641" />
+      <entry key="H4" value="8.284189123329792" />
+      <entry key="D1" value="18.763663809770662" />
+      <entry key="W1" value="22.322626609119034" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.43964723056709126" />
+      <entry key="MS500" value="3.7280161606685445" />
+      <entry key="S2" value="6.536818707629573" />
+      <entry key="S5" value="7.372425008660553" />
+      <entry key="S10" value="7.678654508495243" />
+      <entry key="S30" value="7.891155129696339" />
+      <entry key="S60" value="7.945358135170644" />
+      <entry key="M2" value="7.972623965798301" />
+      <entry key="M5" value="7.989042671940443" />
+      <entry key="M10" value="8.013754717713187" />
+      <entry key="M15" value="8.337874068039579" />
+      <entry key="M30" value="15.743047188706726" />
+      <entry key="H1" value="57.40331044984556" />
+      <entry key="H2" value="193.9657495515778" />
+      <entry key="H4" value="505.5997028739113" />
+      <entry key="D1" value="1427.3552703619487" />
+      <entry key="W1" value="1739.7481367857713" />
+    </decayedShown>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3CcrbotBA5lfmRfSWKa09XWq6sN" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JavaScript Debug.localhost:4321.executor": "Debug",
+    "JavaScript Debug.localhost:4322.executor": "Debug",
+    "JavaScript Debug.stats.html.executor": "Debug",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "docs",
+    "ignore.virus.scanning.warn.message": "true",
+    "javascript.preferred.runtime.type.id": "node",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/idant/WebstormProjects/rimelight.com/src/assets/images",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "C:\\Users\\idant\\WebstormProjects\\rimelight\\packages\\ui\\node_modules\\typescript\\lib",
+    "two.files.diff.last.used.file": "C:/Users/idant/WebstormProjects/rimelight.com/astro.config.ts",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\idant\WebstormProjects\rimelight.com\src\assets\images" />
+      <recent name="C:\Users\idant\WebstormProjects\idantity.me\src\assets\images" />
+      <recent name="C:\Users\idant\WebstormProjects\rimelight.com\src\content\docs\en\company\docs\website\overview" />
+      <recent name="C:\Users\idant\WebstormProjects\rimelight.com\src\content\docs\en\company\docs" />
+      <recent name="C:\Users\idant\WebstormProjects\marcelocfilho.com\src\assets" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\idant\WebstormProjects\rimelight.com\src\content\docs\en" />
+      <recent name="C:\Users\idant\WebstormProjects\rimelight.com\src\content\docs" />
+      <recent name="C:\Users\idant\WebstormProjects\queerkit.com\src\content\docs" />
+      <recent name="C:\Users\idant\WebstormProjects\idantity.me\src\content\docs" />
+      <recent name="C:\Users\idant\WebstormProjects\rimelight\packages\playground\src\content\docs" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JavaScript Debug.stats.html">
+    <configuration name="localhost:4321" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:4321/">
+      <method v="2" />
+    </configuration>
+    <configuration name="localhost:4322" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:4322/">
+      <method v="2" />
+    </configuration>
+    <configuration name="stats.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/WebstormProjects/idantity.me/dist/server/stats.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.stats.html" />
+        <item itemvalue="JavaScript Debug.localhost:4321" />
+        <item itemvalue="JavaScript Debug.localhost:4322" />
+        <item itemvalue="JavaScript Debug.localhost:4322" />
+        <item itemvalue="JavaScript Debug.localhost:4322" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-WS-261.24374.125" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2acc132a-b7df-4947-88d2-f61305485131" name="Changes" comment="" />
+      <created>1776695773847</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1776695773847</updated>
+      <workItem from="1776695774962" duration="186000" />
+      <workItem from="1776696115153" duration="255000" />
+      <workItem from="1776696394477" duration="10115000" />
+      <workItem from="1776707211370" duration="9676000" />
+      <workItem from="1776717561263" duration="748000" />
+      <workItem from="1776719859174" duration="26755000" />
+      <workItem from="1776793041973" duration="12429000" />
+      <workItem from="1776805938403" duration="1175000" />
+      <workItem from="1776807261536" duration="2569000" />
+      <workItem from="1776810869638" duration="3220000" />
+      <workItem from="1776814195111" duration="11089000" />
+      <workItem from="1776825384623" duration="16813000" />
+      <workItem from="1776844230950" duration="6783000" />
+      <workItem from="1776881447462" duration="19429000" />
+      <workItem from="1776901529711" duration="23136000" />
+      <workItem from="1776924825201" duration="4000" />
+      <workItem from="1776928103156" duration="1423000" />
+      <workItem from="1776953201886" duration="17863000" />
+      <workItem from="1776971480992" duration="15120000" />
+      <workItem from="1777046004626" duration="20593000" />
+      <workItem from="1777079168154" duration="789000" />
+      <workItem from="1777080506291" duration="253000" />
+      <workItem from="1777080809573" duration="4394000" />
+      <workItem from="1777085288868" duration="7300000" />
+      <workItem from="1777092793168" duration="303000" />
+      <workItem from="1777093280535" duration="779000" />
+      <workItem from="1777145561574" duration="34177000" />
+      <workItem from="1777218903504" duration="26181000" />
+      <workItem from="1777393979923" duration="4182000" />
+      <workItem from="1777435110637" duration="11524000" />
+      <workItem from="1777449597517" duration="260000" />
+      <workItem from="1777485107167" duration="8922000" />
+      <workItem from="1777498683681" duration="8823000" />
+      <workItem from="1777572816325" duration="3333000" />
+      <workItem from="1777661229573" duration="22158000" />
+      <workItem from="1777685708104" duration="16779000" />
+      <workItem from="1777766814652" duration="4057000" />
+      <workItem from="1777781837023" duration="1306000" />
+      <workItem from="1777960912156" duration="4111000" />
+      <workItem from="1778020137021" duration="8318000" />
+      <workItem from="1778028511037" duration="15586000" />
+      <workItem from="1778092414058" duration="4229000" />
+      <workItem from="1778174474391" duration="5189000" />
+      <workItem from="1778201268402" duration="6633000" />
+      <workItem from="1778208631288" duration="15045000" />
+      <workItem from="1778546049627" duration="6566000" />
+      <workItem from="1778553550531" duration="58000" />
+      <workItem from="1778553841084" duration="221000" />
+      <workItem from="1778554569198" duration="15024000" />
+      <workItem from="1778617541158" duration="6701000" />
+      <workItem from="1778625733799" duration="7043000" />
+      <workItem from="1778641579905" duration="22798000" />
+      <workItem from="1778944514416" duration="6867000" />
+      <workItem from="1778954027828" duration="24950000" />
+      <workItem from="1778991586162" duration="23166000" />
+      <workItem from="1779129997619" duration="14960000" />
+      <workItem from="1779151527993" duration="14034000" />
+      <workItem from="1779235908948" duration="9884000" />
+      <workItem from="1779306150122" duration="6450000" />
+      <workItem from="1779312968315" duration="3946000" />
+      <workItem from="1779330946634" duration="6974000" />
+      <workItem from="1779344546963" duration="15653000" />
+      <workItem from="1779391763196" duration="42669000" />
+      <workItem from="1779470676325" duration="47345000" />
+      <workItem from="1779599109047" duration="16279000" />
+      <workItem from="1779654670570" duration="4049000" />
+      <workItem from="1779658947875" duration="9257000" />
+      <workItem from="1779681826501" duration="4435000" />
+      <workItem from="1779731370595" duration="28647000" />
+    </task>
+    <task id="LOCAL-00354" summary="refactor: updates header and footer">
+      <option name="closed" value="true" />
+      <created>1779431418905</created>
+      <option name="number" value="00354" />
+      <option name="presentableId" value="LOCAL-00354" />
+      <option name="project" value="LOCAL" />
+      <updated>1779431418905</updated>
+    </task>
+    <task id="LOCAL-00355" summary="feat: adds locale selector component">
+      <option name="closed" value="true" />
+      <created>1779433697859</created>
+      <option name="number" value="00355" />
+      <option name="presentableId" value="LOCAL-00355" />
+      <option name="project" value="LOCAL" />
+      <updated>1779433697859</updated>
+    </task>
+    <task id="LOCAL-00356" summary="refactor: updates i18n selector">
+      <option name="closed" value="true" />
+      <created>1779436581973</created>
+      <option name="number" value="00356" />
+      <option name="presentableId" value="LOCAL-00356" />
+      <option name="project" value="LOCAL" />
+      <updated>1779436581974</updated>
+    </task>
+    <task id="LOCAL-00357" summary="refactor: updates theme selector">
+      <option name="closed" value="true" />
+      <created>1779472340405</created>
+      <option name="number" value="00357" />
+      <option name="presentableId" value="LOCAL-00357" />
+      <option name="project" value="LOCAL" />
+      <updated>1779472340406</updated>
+    </task>
+    <task id="LOCAL-00358" summary="refactor: updates theme selector">
+      <option name="closed" value="true" />
+      <created>1779479745881</created>
+      <option name="number" value="00358" />
+      <option name="presentableId" value="LOCAL-00358" />
+      <option name="project" value="LOCAL" />
+      <updated>1779479745881</updated>
+    </task>
+    <task id="LOCAL-00359" summary="refactor: updates theme selector">
+      <option name="closed" value="true" />
+      <created>1779480932050</created>
+      <option name="number" value="00359" />
+      <option name="presentableId" value="LOCAL-00359" />
+      <option name="project" value="LOCAL" />
+      <updated>1779480932050</updated>
+    </task>
+    <task id="LOCAL-00360" summary="refactor: updates footer and headers">
+      <option name="closed" value="true" />
+      <created>1779564039283</created>
+      <option name="number" value="00360" />
+      <option name="presentableId" value="LOCAL-00360" />
+      <option name="project" value="LOCAL" />
+      <updated>1779564039284</updated>
+    </task>
+    <task id="LOCAL-00361" summary="feat: adds many components in rudimentary state">
+      <option name="closed" value="true" />
+      <created>1779564926920</created>
+      <option name="number" value="00361" />
+      <option name="presentableId" value="LOCAL-00361" />
+      <option name="project" value="LOCAL" />
+      <updated>1779564926920</updated>
+    </task>
+    <task id="LOCAL-00362" summary="chore: version bump to 0.0.31">
+      <option name="closed" value="true" />
+      <created>1779564974679</created>
+      <option name="number" value="00362" />
+      <option name="presentableId" value="LOCAL-00362" />
+      <option name="project" value="LOCAL" />
+      <updated>1779564974679</updated>
+    </task>
+    <task id="LOCAL-00363" summary="chore: updates rimelight ui">
+      <option name="closed" value="true" />
+      <created>1779565735502</created>
+      <option name="number" value="00363" />
+      <option name="presentableId" value="LOCAL-00363" />
+      <option name="project" value="LOCAL" />
+      <updated>1779565735503</updated>
+    </task>
+    <task id="LOCAL-00364" summary="feat: adds construction mode blocker">
+      <option name="closed" value="true" />
+      <created>1779567550415</created>
+      <option name="number" value="00364" />
+      <option name="presentableId" value="LOCAL-00364" />
+      <option name="project" value="LOCAL" />
+      <updated>1779567550415</updated>
+    </task>
+    <task id="LOCAL-00365" summary="fix: fixes rerouting in construction mode blocker">
+      <option name="closed" value="true" />
+      <created>1779568768160</created>
+      <option name="number" value="00365" />
+      <option name="presentableId" value="LOCAL-00365" />
+      <option name="project" value="LOCAL" />
+      <updated>1779568768160</updated>
+    </task>
+    <task id="LOCAL-00366" summary="fix: escapes &lt;main&gt; element in doc">
+      <option name="closed" value="true" />
+      <created>1779570725672</created>
+      <option name="number" value="00366" />
+      <option name="presentableId" value="LOCAL-00366" />
+      <option name="project" value="LOCAL" />
+      <updated>1779570725672</updated>
+    </task>
+    <task id="LOCAL-00367" summary="fix: changes construction env to access process instead of meta">
+      <option name="closed" value="true" />
+      <created>1779571524653</created>
+      <option name="number" value="00367" />
+      <option name="presentableId" value="LOCAL-00367" />
+      <option name="project" value="LOCAL" />
+      <updated>1779571524653</updated>
+    </task>
+    <task id="LOCAL-00368" summary="refactor: renames components and reorganizes">
+      <option name="closed" value="true" />
+      <created>1779581400778</created>
+      <option name="number" value="00368" />
+      <option name="presentableId" value="LOCAL-00368" />
+      <option name="project" value="LOCAL" />
+      <updated>1779581400778</updated>
+    </task>
+    <task id="LOCAL-00369" summary="refactor: renames components and reorganizes">
+      <option name="closed" value="true" />
+      <created>1779582030652</created>
+      <option name="number" value="00369" />
+      <option name="presentableId" value="LOCAL-00369" />
+      <option name="project" value="LOCAL" />
+      <updated>1779582030653</updated>
+    </task>
+    <task id="LOCAL-00370" summary="feat: adds all planned component stubs">
+      <option name="closed" value="true" />
+      <created>1779583159225</created>
+      <option name="number" value="00370" />
+      <option name="presentableId" value="LOCAL-00370" />
+      <option name="project" value="LOCAL" />
+      <updated>1779583159225</updated>
+    </task>
+    <task id="LOCAL-00371" summary="feat: adds construction mode var to wrangler config">
+      <option name="closed" value="true" />
+      <created>1779583999067</created>
+      <option name="number" value="00371" />
+      <option name="presentableId" value="LOCAL-00371" />
+      <option name="project" value="LOCAL" />
+      <updated>1779583999067</updated>
+    </task>
+    <task id="LOCAL-00372" summary="refactor: updates component usages to new names">
+      <option name="closed" value="true" />
+      <created>1779585311226</created>
+      <option name="number" value="00372" />
+      <option name="presentableId" value="LOCAL-00372" />
+      <option name="project" value="LOCAL" />
+      <updated>1779585311226</updated>
+    </task>
+    <task id="LOCAL-00373" summary="refactor: updates css setup">
+      <option name="closed" value="true" />
+      <created>1779585906840</created>
+      <option name="number" value="00373" />
+      <option name="presentableId" value="LOCAL-00373" />
+      <option name="project" value="LOCAL" />
+      <updated>1779585906841</updated>
+    </task>
+    <task id="LOCAL-00374" summary="refactor: updates css setup">
+      <option name="closed" value="true" />
+      <created>1779586780630</created>
+      <option name="number" value="00374" />
+      <option name="presentableId" value="LOCAL-00374" />
+      <option name="project" value="LOCAL" />
+      <updated>1779586780631</updated>
+    </task>
+    <task id="LOCAL-00375" summary="refactor: updates css setup">
+      <option name="closed" value="true" />
+      <created>1779588522612</created>
+      <option name="number" value="00375" />
+      <option name="presentableId" value="LOCAL-00375" />
+      <option name="project" value="LOCAL" />
+      <updated>1779588522612</updated>
+    </task>
+    <task id="LOCAL-00376" summary="refactor: updates css setup">
+      <option name="closed" value="true" />
+      <created>1779589332454</created>
+      <option name="number" value="00376" />
+      <option name="presentableId" value="LOCAL-00376" />
+      <option name="project" value="LOCAL" />
+      <updated>1779589332454</updated>
+    </task>
+    <task id="LOCAL-00377" summary="refactor: updates css setup">
+      <option name="closed" value="true" />
+      <created>1779589342187</created>
+      <option name="number" value="00377" />
+      <option name="presentableId" value="LOCAL-00377" />
+      <option name="project" value="LOCAL" />
+      <updated>1779589342187</updated>
+    </task>
+    <task id="LOCAL-00378" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779592611410</created>
+      <option name="number" value="00378" />
+      <option name="presentableId" value="LOCAL-00378" />
+      <option name="project" value="LOCAL" />
+      <updated>1779592611410</updated>
+    </task>
+    <task id="LOCAL-00379" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779593138414</created>
+      <option name="number" value="00379" />
+      <option name="presentableId" value="LOCAL-00379" />
+      <option name="project" value="LOCAL" />
+      <updated>1779593138414</updated>
+    </task>
+    <task id="LOCAL-00380" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779593187312</created>
+      <option name="number" value="00380" />
+      <option name="presentableId" value="LOCAL-00380" />
+      <option name="project" value="LOCAL" />
+      <updated>1779593187312</updated>
+    </task>
+    <task id="LOCAL-00381" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779593945053</created>
+      <option name="number" value="00381" />
+      <option name="presentableId" value="LOCAL-00381" />
+      <option name="project" value="LOCAL" />
+      <updated>1779593945053</updated>
+    </task>
+    <task id="LOCAL-00382" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779593990752</created>
+      <option name="number" value="00382" />
+      <option name="presentableId" value="LOCAL-00382" />
+      <option name="project" value="LOCAL" />
+      <updated>1779593990752</updated>
+    </task>
+    <task id="LOCAL-00383" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779594676535</created>
+      <option name="number" value="00383" />
+      <option name="presentableId" value="LOCAL-00383" />
+      <option name="project" value="LOCAL" />
+      <updated>1779594676535</updated>
+    </task>
+    <task id="LOCAL-00384" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779596792945</created>
+      <option name="number" value="00384" />
+      <option name="presentableId" value="LOCAL-00384" />
+      <option name="project" value="LOCAL" />
+      <updated>1779596792945</updated>
+    </task>
+    <task id="LOCAL-00385" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779597011170</created>
+      <option name="number" value="00385" />
+      <option name="presentableId" value="LOCAL-00385" />
+      <option name="project" value="LOCAL" />
+      <updated>1779597011171</updated>
+    </task>
+    <task id="LOCAL-00386" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779597054481</created>
+      <option name="number" value="00386" />
+      <option name="presentableId" value="LOCAL-00386" />
+      <option name="project" value="LOCAL" />
+      <updated>1779597054481</updated>
+    </task>
+    <task id="LOCAL-00387" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779600171904</created>
+      <option name="number" value="00387" />
+      <option name="presentableId" value="LOCAL-00387" />
+      <option name="project" value="LOCAL" />
+      <updated>1779600171904</updated>
+    </task>
+    <task id="LOCAL-00388" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779600554022</created>
+      <option name="number" value="00388" />
+      <option name="presentableId" value="LOCAL-00388" />
+      <option name="project" value="LOCAL" />
+      <updated>1779600554022</updated>
+    </task>
+    <task id="LOCAL-00389" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779604561191</created>
+      <option name="number" value="00389" />
+      <option name="presentableId" value="LOCAL-00389" />
+      <option name="project" value="LOCAL" />
+      <updated>1779604561191</updated>
+    </task>
+    <task id="LOCAL-00390" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779608646064</created>
+      <option name="number" value="00390" />
+      <option name="presentableId" value="LOCAL-00390" />
+      <option name="project" value="LOCAL" />
+      <updated>1779608646064</updated>
+    </task>
+    <task id="LOCAL-00391" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779609280672</created>
+      <option name="number" value="00391" />
+      <option name="presentableId" value="LOCAL-00391" />
+      <option name="project" value="LOCAL" />
+      <updated>1779609280672</updated>
+    </task>
+    <task id="LOCAL-00392" summary="refactor: updates css implementation">
+      <option name="closed" value="true" />
+      <created>1779609962282</created>
+      <option name="number" value="00392" />
+      <option name="presentableId" value="LOCAL-00392" />
+      <option name="project" value="LOCAL" />
+      <updated>1779609962284</updated>
+    </task>
+    <task id="LOCAL-00393" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779742929903</created>
+      <option name="number" value="00393" />
+      <option name="presentableId" value="LOCAL-00393" />
+      <option name="project" value="LOCAL" />
+      <updated>1779742929905</updated>
+    </task>
+    <task id="LOCAL-00394" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779744009609</created>
+      <option name="number" value="00394" />
+      <option name="presentableId" value="LOCAL-00394" />
+      <option name="project" value="LOCAL" />
+      <updated>1779744009609</updated>
+    </task>
+    <task id="LOCAL-00395" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779744098372</created>
+      <option name="number" value="00395" />
+      <option name="presentableId" value="LOCAL-00395" />
+      <option name="project" value="LOCAL" />
+      <updated>1779744098372</updated>
+    </task>
+    <task id="LOCAL-00396" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779745252648</created>
+      <option name="number" value="00396" />
+      <option name="presentableId" value="LOCAL-00396" />
+      <option name="project" value="LOCAL" />
+      <updated>1779745252648</updated>
+    </task>
+    <task id="LOCAL-00397" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779747813934</created>
+      <option name="number" value="00397" />
+      <option name="presentableId" value="LOCAL-00397" />
+      <option name="project" value="LOCAL" />
+      <updated>1779747813934</updated>
+    </task>
+    <task id="LOCAL-00398" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779749804789</created>
+      <option name="number" value="00398" />
+      <option name="presentableId" value="LOCAL-00398" />
+      <option name="project" value="LOCAL" />
+      <updated>1779749804789</updated>
+    </task>
+    <task id="LOCAL-00399" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779755144890</created>
+      <option name="number" value="00399" />
+      <option name="presentableId" value="LOCAL-00399" />
+      <option name="project" value="LOCAL" />
+      <updated>1779755144890</updated>
+    </task>
+    <task id="LOCAL-00400" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779755449992</created>
+      <option name="number" value="00400" />
+      <option name="presentableId" value="LOCAL-00400" />
+      <option name="project" value="LOCAL" />
+      <updated>1779755449992</updated>
+    </task>
+    <task id="LOCAL-00401" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779756341816</created>
+      <option name="number" value="00401" />
+      <option name="presentableId" value="LOCAL-00401" />
+      <option name="project" value="LOCAL" />
+      <updated>1779756341816</updated>
+    </task>
+    <task id="LOCAL-00402" summary="fix: general library improvements">
+      <option name="closed" value="true" />
+      <created>1779759279944</created>
+      <option name="number" value="00402" />
+      <option name="presentableId" value="LOCAL-00402" />
+      <option name="project" value="LOCAL" />
+      <updated>1779759279944</updated>
+    </task>
+    <option name="localTasksCounter" value="403" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="javascript:npm:react" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:prettier" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:tailwindcss" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:unocss" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:vite" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:graphql" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:astro" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:vue" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:nuxt" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName="astro.config.ts" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:postcss" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="chore: bump version" />
+    <MESSAGE value="refactor: updates layout component" />
+    <MESSAGE value="refactor: adds main component" />
+    <MESSAGE value="chore: version bump" />
+    <MESSAGE value="chore: updates dependencies" />
+    <MESSAGE value="refactor: removes nuxt ui app from head component" />
+    <MESSAGE value="refactor: updates header and footer" />
+    <MESSAGE value="feat: adds locale selector component" />
+    <MESSAGE value="refactor: updates i18n selector" />
+    <MESSAGE value="refactor: updates theme selector" />
+    <MESSAGE value="refactor: updates footer and headers" />
+    <MESSAGE value="feat: adds many components in rudimentary state" />
+    <MESSAGE value="chore: version bump to 0.0.31" />
+    <MESSAGE value="chore: updates rimelight ui" />
+    <MESSAGE value="feat: adds construction mode blocker" />
+    <MESSAGE value="fix: fixes rerouting in construction mode blocker" />
+    <MESSAGE value="fix: escapes &lt;main&gt; element in doc" />
+    <MESSAGE value="fix: changes construction env to access process instead of meta" />
+    <MESSAGE value="refactor: renames components and reorganizes" />
+    <MESSAGE value="feat: adds all planned component stubs" />
+    <MESSAGE value="feat: adds construction mode var to wrangler config" />
+    <MESSAGE value="refactor: updates component usages to new names" />
+    <MESSAGE value="refactor: updates css setup" />
+    <MESSAGE value="refactor: updates css implementation" />
+    <MESSAGE value="fix: general library improvements" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: general library improvements" />
+    <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
+  </component>
+</project>
