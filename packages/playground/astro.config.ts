@@ -154,11 +154,19 @@ export default defineConfig({
     astroExpressiveCode({
       emitExternalStylesheet: true,
       themes: [
-        createCssVariablesTheme({
-          name: "shiki-theme",
-          variablePrefix: "--shiki-",
-          fontStyle: true
-        })
+        (() => {
+          const t = createCssVariablesTheme({
+            name: "shiki-theme",
+            variablePrefix: "--shiki-",
+            fontStyle: true
+          });
+          t.colors = {
+            ...t.colors,
+            "editor.background": "#1f2428",
+            "editor.foreground": "#e1e4e8"
+          };
+          return t;
+        })()
       ],
       themeCssRoot: ":root"
     }),
