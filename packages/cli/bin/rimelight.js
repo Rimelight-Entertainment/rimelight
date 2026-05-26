@@ -24,10 +24,17 @@ async function main() {
 
   if (parsed.help) {
     console.log(`
-Rimelight CLI - Scaffold premium Rimelight applications.
+Rimelight CLI - Manage and scaffold premium Rimelight projects.
 
 Usage:
   rimelight create [project-name] [options]
+  rimelight compare [project-path]
+  rimelight update [project-path]
+
+Commands:
+  create              Scaffold a new project from the reference template
+  compare             Compare target project configurations against starter baseline
+  update              Standardize target project configs to match starter baseline
 
 Options:
   -d, --domain          Specify website domain (e.g. example.com)
@@ -42,9 +49,16 @@ Options:
 
   const command = parsed._[0];
 
-  // Default to 'create' command or handle 'create' specifically
-  if (!command || command === "create") {
-    const projectName = parsed._[0] === "create" ? parsed._[1] : parsed._[0];
+  if (command === "compare") {
+    const targetDir = parsed._[1] || ".";
+    const { runCompare } = await import("../src/index.js");
+    await runCompare({ targetDir });
+  } else if (command === "update") {
+    const targetDir = parsed._[1] || ".";
+    const { runUpdate } = await import("../src/index.js");
+    await runUpdate({ targetDir });
+  } else if (!command || command === "create") {
+    const projectName = command === "create" ? parsed._[1] : parsed._[0];
     await runCreate({
       projectName,
       domain: parsed.domain,

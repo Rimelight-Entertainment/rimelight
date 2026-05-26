@@ -1,0 +1,10 @@
+{
+  "app_header": {
+    "links_home_label": "Início",
+    "links_blog_label": "Blog",
+    "links_docs_label": "Documentação",
+    "links_about_label": "Sobre",
+    "links_components_label": "Componentes",
+    "links_tests_label": "Testes"
+  }
+}
