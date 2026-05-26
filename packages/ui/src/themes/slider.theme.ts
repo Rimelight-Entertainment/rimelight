@@ -16,7 +16,7 @@ export const createSliderTheme = (colors: string[] = defaultColors) =>
         colors.map((color) => [
           color,
           {
-            root: `rl-color-${color}`,
+            root: "rl-color-" + color,
             range: `bg-[var(--rl-bg)]`,
             thumb: `focus-visible:ring-[var(--rl-ring)]/50 hover:border-[var(--rl-border)]`
           }

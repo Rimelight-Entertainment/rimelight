@@ -16,7 +16,7 @@ export const createScrollToTopTheme = (colors: string[] = ["primary", "secondary
         colors.map((color) => [
           color,
           {
-            root: `rl-color-${color}`,
+            root: "rl-color-" + color,
             progressBase: "",
             svg: "",
             iconContainer: "",

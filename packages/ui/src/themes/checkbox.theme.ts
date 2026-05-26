@@ -20,7 +20,7 @@ export const createCheckboxTheme = (colors: string[] = defaultColors) =>
         colors.map((color) => [
           color,
           {
-            root: `rl-color-${color}`,
+            root: "rl-color-" + color,
             box: `peer-checked:bg-[var(--rl-bg)] peer-checked:border-[var(--rl-border)] focus-within:ring-[var(--rl-ring)]/50`
           }
         ])

@@ -20,7 +20,7 @@ export const createSwitchTheme = (colors: string[] = defaultColors) =>
         colors.map((color) => [
           color,
           {
-            root: `rl-color-${color}`,
+            root: "rl-color-" + color,
             track: `peer-checked:bg-[var(--rl-bg)] focus-within:ring-[var(--rl-ring)]/50`
           }
         ])

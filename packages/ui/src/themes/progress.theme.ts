@@ -13,7 +13,7 @@ export const createProgressTheme = (colors: string[] = defaultColors) =>
         colors.map((color) => [
           color,
           {
-            root: `rl-color-${color}`,
+            root: "rl-color-" + color,
             indicator: `bg-[var(--rl-bg)]`
           }
         ])
