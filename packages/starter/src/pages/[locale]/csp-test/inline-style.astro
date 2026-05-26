@@ -1,0 +1,38 @@
+---
+// TEST 5: RLAHeader fixed z-index inline style attr — isolate
+import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro"
+---
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CSP Test: Inline Style</title>
+<style>body{font-family:sans-serif;padding:2rem;margin-top:4rem}section{margin:2rem 0;padding:1rem;border:1px solid #ddd;border-radius:8px}h2{margin:0 0 .5rem}</style>
+</head>
+<body>
+<h1>Test 5 — RLAHeader inline style (z-index)</h1>
+<p><strong>Expected:</strong> style-src violation from <code>style="z-index: 100"</code> emitted by RLAHeader when <code>fixed=true</code></p>
+<p><strong>Not expected:</strong> any violation from the non-fixed header</p>
+
+<section>
+  <h2>fixed=true, stackIndex=0 → emits style="z-index: 100"</h2>
+  <RLAHeader fixed={true} stackIndex={0}>
+    <span slot="left">Fixed Header (stackIndex 0)</span>
+  </RLAHeader>
+</section>
+
+<section>
+  <h2>fixed=true, stackIndex=1 → emits style="z-index: 99"</h2>
+  <RLAHeader fixed={true} stackIndex={1}>
+    <span slot="left">Fixed Header (stackIndex 1)</span>
+  </RLAHeader>
+</section>
+
+<section>
+  <h2>fixed=false → no inline style emitted</h2>
+  <RLAHeader fixed={false}>
+    <span slot="left">Static Header</span>
+  </RLAHeader>
+</section>
+
+<a href="/en/csp-test">← Back</a>
+</body>
+</html>

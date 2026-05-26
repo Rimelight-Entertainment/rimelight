@@ -1,0 +1,35 @@
+---
+// TEST 1: Scripts from RLAThemeSelector, RLALocaleSelector, RLAScrollToTop
+// These all use regular <script> (no is:inline) — should be CSP-safe if Astro bundles them
+import RLAThemeSelector from "@rimelight/ui/components/astro/RLAThemeSelector.astro"
+import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro"
+import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro"
+---
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CSP Test: Component Scripts</title>
+<style>body{font-family:sans-serif;padding:2rem}section{margin:1.5rem 0;padding:1rem;border:1px solid #ddd;border-radius:8px}h2{margin:0 0 .5rem}</style>
+</head>
+<body>
+<h1>Test 1 — Component Scripts</h1>
+<p><strong>Expected:</strong> No script-src violations (these use regular &lt;script&gt;, not is:inline)</p>
+
+<section>
+  <h2>RLAThemeSelector</h2>
+  <RLAThemeSelector />
+</section>
+
+<section>
+  <h2>RLALocaleSelector</h2>
+  <RLALocaleSelector locales={[{code:'en',label:'English'},{code:'es',label:'Español'},{code:'pt',label:'Português'}]} />
+</section>
+
+<section>
+  <h2>RLAScrollToTop</h2>
+  <p>(button appears when you scroll down)</p>
+  <RLAScrollToTop showProgress={true} />
+</section>
+
+<a href="/en/csp-test">← Back</a>
+</body>
+</html>

@@ -1,0 +1,19 @@
+---
+// Hub page — no layout, no middleware interference
+---
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CSP Tests</title>
+<style>body{font-family:sans-serif;padding:2rem;max-width:500px}h1{margin-bottom:1rem}a{display:block;padding:.4rem 0;font-size:1rem}</style>
+</head>
+<body>
+<h1>CSP Test Pages</h1>
+<p>Open devtools → Console before navigating to each page.</p>
+<a href="/en/csp-test/inline-scripts">1. Inline Scripts (ThemeSelector, LocaleSelector, ScrollToTop)</a>
+<a href="/en/csp-test/inline-script-head">2. Head theme init script (RLAHead is:inline)</a>
+<a href="/en/csp-test/inline-script-layout">3. AppLayout header-stack script (is:inline data-astro-rerun)</a>
+<a href="/en/csp-test/inline-script-button">4. RLAButton loadingAuto conditional script</a>
+<a href="/en/csp-test/inline-style">5. Inline style attr (RLAHeader fixed z-index)</a>
+<a href="/en/csp-test/icons">6. UnoCSS icons — data:image/svg+xml violations</a>
+</body>
+</html>

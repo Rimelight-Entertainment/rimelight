@@ -1,0 +1,19 @@
+---
+// TEST 2: RLAHead theme init script (is:inline) — isolate this alone
+import RLAHead from "@rimelight/ui/components/astro/RLAHead.astro"
+import { siteConfig } from '@/site.config'
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <RLAHead title="CSP Test: Head Script" config={siteConfig} transitions={false} />
+</head>
+<body style="font-family:sans-serif;padding:2rem">
+<h1>Test 2 — RLAHead theme init (is:inline)</h1>
+<p><strong>Expected:</strong> script-src violation from the is:inline theme script in RLAHead</p>
+<p>This page includes ONLY RLAHead, nothing else.</p>
+<p>Current html class: <code id="cls">loading…</code></p>
+<script>document.getElementById('cls').textContent = document.documentElement.className || '(none)'</script>
+<a href="/en/csp-test">← Back</a>
+</body>
+</html>

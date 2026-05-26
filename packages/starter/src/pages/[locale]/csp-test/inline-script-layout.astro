@@ -1,0 +1,13 @@
+---
+// TEST 3: AppLayout header-stack script (is:inline data-astro-rerun) — isolate
+// Uses the full AppLayout which contains the is:inline header-stack script
+import AppLayout from '@/layouts/AppLayout.astro'
+---
+<AppLayout title="CSP Test: Layout Script" description="Test">
+  <div style="padding:2rem">
+    <h1>Test 3 — AppLayout header-stack script</h1>
+    <p><strong>Expected:</strong> script-src violation from the <code>is:inline data-astro-rerun</code> script in AppLayout</p>
+    <p>This page uses AppLayout (header + footer + scroll-to-top) to trigger the header stack script.</p>
+    <a href="/en/csp-test">← Back</a>
+  </div>
+</AppLayout>
