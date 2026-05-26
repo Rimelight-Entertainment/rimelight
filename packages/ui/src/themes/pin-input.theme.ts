@@ -1,6 +1,7 @@
+import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createInputPinTheme = () =>
+export const createPinInputTheme = (colors: string[] = defaultColors) =>
   defineTheme({
     slots: ["root"],
     base: {
@@ -10,4 +11,4 @@ export const createInputPinTheme = () =>
     defaultVariants: {}
   })
 
-export default createInputPinTheme()
+export default createPinInputTheme()
