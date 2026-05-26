@@ -15,12 +15,13 @@ export interface BadgeConfig {
 }
 
 export interface SidebarItem {
-  label: string
+  label?: string
   href?: string
   icon?: string
   badge?: string | BadgeConfig
   active?: boolean
   children?: SidebarItem[]
+  items?: SidebarItem[]
   order?: number
   autogenerate?: {
     directory: string
@@ -30,11 +31,12 @@ export interface SidebarItem {
 }
 
 export interface SidebarScope {
-  id: string
+  id?: string
   label: string
-  href: string
+  href?: string
   icon?: string
   items?: SidebarItem[]
+  collapsed?: boolean
 }
 
 export interface TableOfContentsConfig {
@@ -47,7 +49,9 @@ export interface EditLinkConfig {
 }
 
 export interface DocsConfig {
-  sidebar: (SidebarItem | SidebarScope)[]
+  sidebar: (SidebarItem | SidebarScope)[] | {
+    scopes: SidebarScope[]
+  }
   editLink?: EditLinkConfig
   tableOfContents?: false | TableOfContentsConfig
 }

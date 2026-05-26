@@ -53,14 +53,23 @@ export async function getDocsSidebar(
   const normPath = currentPath.replace(/\/$/, "").toLowerCase()
   const docsBase = `/${locale}/docs`
 
-  const scopes: ResolvedScope[] = config.sidebar
-    .filter((item): item is import("../types").SidebarScope => "id" in item)
-    .map((scope) => ({
-      id: scope.id,
+  const sidebarScopes: import("../types").SidebarScope[] = Array.isArray(config.sidebar)
+    ? config.sidebar.filter((item): item is import("../types").SidebarScope => ("id" in item || "scopes" in item))
+    : ((config.sidebar as any)?.scopes || [])
+
+  const scopes: ResolvedScope[] = sidebarScopes.map((scope) => {
+    const id = scope.id || scope.label
+    let href = scope.href || ""
+    if (!href && scope.items && scope.items.length > 0) {
+      href = scope.items[0].href || ""
+    }
+    return {
+      id,
       label: scope.label,
-      href: scope.href.replace("{locale}", locale),
+      href: href.replace("{locale}", locale),
       icon: scope.icon
-    }))
+    }
+  })
 
   function isDocInItems(
     items: import("../types").SidebarItem[],
@@ -77,7 +86,8 @@ export async function getDocsSidebar(
           return true
         }
       }
-      if (item.children && isDocInItems(item.children, docId, href)) return true
+      const childItems = item.children || item.items
+      if (childItems && isDocInItems(childItems, docId, href)) return true
     }
     return false
   }
@@ -86,13 +96,13 @@ export async function getDocsSidebar(
   let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase())
   if (!activeScope) {
     const currentDoc = docs.find((d) => `${docsBase}/${d.id}`.toLowerCase() === normPath)
-    const scopeMatch = config.sidebar.find((s) => {
-      if (!("id" in s)) return false
+    const scopeMatch = sidebarScopes.find((s) => {
       return isDocInItems(s.items || [], currentDoc?.id, normPath)
-    }) as import("../types").SidebarScope | undefined
+    })
 
     if (scopeMatch) {
-      activeScope = scopes.find((s) => s.id === scopeMatch.id)
+      const matchId = scopeMatch.id || scopeMatch.label
+      activeScope = scopes.find((s) => s.id === matchId)
     }
   }
   if (!activeScope) {
@@ -102,9 +112,9 @@ export async function getDocsSidebar(
   }
   if (activeScope) activeScope.active = true
 
-  const sidebarConfig = config.sidebar.find(
-    (item) => "id" in item && activeScope && item.id === activeScope.id
-  ) as import("../types").SidebarScope | undefined
+  const sidebarConfig = sidebarScopes.find(
+    (item) => activeScope && (item.id === activeScope.id || item.label === activeScope.id)
+  )
 
   const items = sidebarConfig?.items || []
 
@@ -155,9 +165,10 @@ export async function getDocsSidebar(
       resolved.active = normPath === resolved.href.replace(/\/$/, "").toLowerCase()
     }
 
-    if (item.children) {
+    const childItems = item.children || item.items
+    if (childItems) {
       const children: ResolvedSidebarItem[] = []
-      for (const child of item.children) {
+      for (const child of childItems) {
         children.push(...(await resolveItem(child)))
       }
       resolved.children = children
