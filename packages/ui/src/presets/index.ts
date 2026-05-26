@@ -140,7 +140,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
     name: "rimelight-ui",
     safelist,
     presets: [
-      presetWind4({ preflights: { reset: false } }),
+      presetWind4(),
       presetTypography({
         cssExtend: {
           "h1,h2,h3,h4,h5,h6": {
