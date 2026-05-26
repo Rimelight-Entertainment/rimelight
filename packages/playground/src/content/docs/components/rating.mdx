@@ -1,0 +1,44 @@
+---
+title: Rating
+description: Rating component documentation.
+---
+
+import ComponentShowcase from "@/components/docs/ComponentShowcase.astro"
+import RLARating from "@rimelight/ui/components/astro/RLARating.astro"
+import ApiProps from "@/components/docs/ApiProps.astro"
+import ApiSlots from "@/components/docs/ApiSlots.astro"
+import ApiTheme from "@/components/docs/ApiTheme.astro"
+
+Rating component documentation.
+
+## Usage
+
+<ComponentShowcase>
+  <RLARating value={4} max={5} />
+  
+  <Fragment slot="code-astro">
+  ```astro
+  <RLARating value={4} max={5} />
+  ```
+  </Fragment>
+
+  <Fragment slot="code-vue">
+  ```vue
+  <!-- Vue version coming soon -->
+  ```
+  </Fragment>
+</ComponentShowcase>
+
+## API
+
+### Props
+
+<ApiProps component="rating" />
+
+### Slots
+
+<ApiSlots component="rating" />
+
+### Theme
+
+<ApiTheme component="rating" />

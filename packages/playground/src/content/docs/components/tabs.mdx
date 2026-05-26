@@ -1,0 +1,58 @@
+---
+title: Tabs
+description: Tabs component documentation.
+---
+
+import ComponentShowcase from "@/components/docs/ComponentShowcase.astro"
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
+import ApiProps from "@/components/docs/ApiProps.astro"
+import ApiSlots from "@/components/docs/ApiSlots.astro"
+import ApiTheme from "@/components/docs/ApiTheme.astro"
+
+Tabs component documentation.
+
+## Usage
+
+<ComponentShowcase>
+  <RLATabs items={[
+    { value: "tab1", label: "Details" },
+    { value: "tab2", label: "Settings" },
+    { value: "tab3", label: "Activity" }
+  ]}>
+    <div slot="tab1">Details content goes here.</div>
+    <div slot="tab2">Settings content goes here.</div>
+    <div slot="tab3">Activity content goes here.</div>
+  </RLATabs>
+  
+  <Fragment slot="code-astro">
+  ```astro
+  <RLATabs items={[
+    { value: "tab1", label: "Details" },
+    { value: "tab2", label: "Settings" }
+  ]}>
+    <div slot="tab1">Details content</div>
+    <div slot="tab2">Settings content</div>
+  </RLATabs>
+  ```
+  </Fragment>
+
+  <Fragment slot="code-vue">
+  ```vue
+  <!-- Vue version coming soon -->
+  ```
+  </Fragment>
+</ComponentShowcase>
+
+## API
+
+### Props
+
+<ApiProps component="tabs" />
+
+### Slots
+
+<ApiSlots component="tabs" />
+
+### Theme
+
+<ApiTheme component="tabs" />

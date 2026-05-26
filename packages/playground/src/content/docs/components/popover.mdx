@@ -1,0 +1,48 @@
+---
+title: Popover
+description: Popover component documentation.
+---
+
+import ComponentShowcase from "@/components/docs/ComponentShowcase.astro"
+import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro"
+import ApiProps from "@/components/docs/ApiProps.astro"
+import ApiSlots from "@/components/docs/ApiSlots.astro"
+import ApiTheme from "@/components/docs/ApiTheme.astro"
+
+Popover component documentation.
+
+## Usage
+
+<ComponentShowcase>
+  <RLAPopover triggerLabel="Open popover">
+    <p class="text-sm">Popover content goes here.</p>
+  </RLAPopover>
+  
+  <Fragment slot="code-astro">
+  ```astro
+  <RLAPopover triggerLabel="Open popover">
+    <p>Popover content goes here.</p>
+  </RLAPopover>
+  ```
+  </Fragment>
+
+  <Fragment slot="code-vue">
+  ```vue
+  <!-- Vue version coming soon -->
+  ```
+  </Fragment>
+</ComponentShowcase>
+
+## API
+
+### Props
+
+<ApiProps component="popover" />
+
+### Slots
+
+<ApiSlots component="popover" />
+
+### Theme
+
+<ApiTheme component="popover" />
