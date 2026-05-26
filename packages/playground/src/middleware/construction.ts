@@ -17,12 +17,11 @@ export const construction = defineMiddleware(async (context, next) => {
     return next()
   }
 
-  // @ts-ignore - auth is not used in playground yet
-  const { auth } = await import("@/auth/auth")
-  const session = await auth.api.getSession({ headers: context.request.headers })
-  if (session) {
-    return next()
-  }
+  // const { auth } = await import("@/auth/auth")
+  // const session = await auth.api.getSession({ headers: context.request.headers })
+  // if (session) {
+  //   return next()
+  // }
 
   const localePrefix = LOCALES.find((loc) => context.url.pathname.startsWith(`/${loc}/`)) ?? "en"
   const redirectTo = encodeURIComponent(context.url.pathname + context.url.search)
