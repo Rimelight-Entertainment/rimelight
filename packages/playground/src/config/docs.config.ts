@@ -4,12 +4,6 @@ export default defineDocsConfig({
   editLink: {
     baseUrl: "https://github.com/rimelight/rimelight/edit/main/packages/playground/src/content/docs/"
   },
-
-  tableOfContents: {
-    minHeadingLevel: 2,
-    maxHeadingLevel: 3
-  },
-
   sidebar: [
     {
       id: "overview",
