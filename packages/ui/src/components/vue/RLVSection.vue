@@ -2,12 +2,12 @@
 import { computed, useSlots } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { SectionProps } from "../../types/components/section"
-import sectionTheme from "../../themes/section.theme"
+import type { PageSectionProps } from "../../types/components/page-section"
+import pageSectionTheme from "../../themes/page-section.theme"
 import RLVIcon from "./RLVIcon.vue"
 import RLVButton from "./RLVButton.vue"
 
-const section = scv(sectionTheme)
+const section = scv(pageSectionTheme)
 
 const {
   as = "div",
@@ -18,10 +18,11 @@ const {
   ui: uiProp,
   class: className,
   headline,
+  icon,
   title,
   description,
   links
-} = defineProps<SectionProps>()
+} = defineProps<PageSectionProps>()
 
 const slots = useSlots()
 
