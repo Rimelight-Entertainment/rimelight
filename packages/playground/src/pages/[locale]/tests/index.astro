@@ -1,9 +1,6 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
-// import { siteConfig } from "@/site.config";
-import { getRelativeLocaleUrl } from "astro:i18n";
 import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
-// import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 
 const activeLocale = Astro.currentLocale ?? "en";
 currentLocale.set(activeLocale);
@@ -11,12 +8,6 @@ currentLocale.set(activeLocale);
 const messages = useI18n("testsPage", {
   title: "Component Tests",
   description: "Internal test pages for Rimelight UI components",
-  logoTest: "Logo Component Test",
-  logoDesc: "RLALogo auto mode detection and theme override",
-  headerTest: "Header Layer Test",
-  headerDesc: "RLAHeader stacking with multiple fixed layers",
-  cspTest: "Expressive Code CSP Test",
-  cspDesc: "Verify Shiki syntax highlighting compliance under strict CSP rules"
 });
 ---
 
@@ -26,29 +17,7 @@ const messages = useI18n("testsPage", {
     <p class="text-muted-foreground">{messages.description}</p>
 
     <div class="grid gap-md">
-      <a
-        href={getRelativeLocaleUrl(activeLocale, "/tests/logo")}
-        class="block border border-border rounded-xl p-6 hover:border-primary-500 transition-colors"
-      >
-        <h2 class="text-xl font-semibold mb-1">{messages.logoTest}</h2>
-        <p class="text-sm text-muted-foreground">{messages.logoDesc}</p>
-      </a>
 
-      <a
-        href={getRelativeLocaleUrl(activeLocale, "/tests/header")}
-        class="block border border-border rounded-xl p-6 hover:border-primary-500 transition-colors"
-      >
-        <h2 class="text-xl font-semibold mb-1">{messages.headerTest}</h2>
-        <p class="text-sm text-muted-foreground">{messages.headerDesc}</p>
-      </a>
-
-      <a
-        href={getRelativeLocaleUrl(activeLocale, "/tests/csp-test")}
-        class="block border border-border rounded-xl p-6 hover:border-primary-500 transition-colors"
-      >
-        <h2 class="text-xl font-semibold mb-1">{messages.cspTest}</h2>
-        <p class="text-sm text-muted-foreground">{messages.cspDesc}</p>
-      </a>
     </div>
   </div>
 </AppLayout>
