@@ -7,23 +7,23 @@ interface Props {
 const { stagger = false, class: className = "", ...rest } = Astro.props
 ---
 
-<div class:list={["rl-card-grid", { stagger }, className]} {...rest}>
+<div class:list={["rl-grid", { stagger }, className]} {...rest}>
   <slot />
 </div>
 
 <style>
-  .rl-card-grid {
+  .rl-grid {
     display: grid;
     grid-template-columns: 100%;
     gap: 1rem;
   }
 
-  .rl-card-grid > :global(*) {
+  .rl-grid > :global(*) {
     margin-top: 0 !important;
   }
 
   @media (min-width: 50rem) {
-    .rl-card-grid {
+    .rl-grid {
       grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
     }

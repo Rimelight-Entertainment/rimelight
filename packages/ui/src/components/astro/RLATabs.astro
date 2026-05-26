@@ -67,26 +67,67 @@ const initialValue = value || (items.length > 0 ? items[0].value : "")
 </div>
 
 <script>
-  document.querySelectorAll("[data-tabs-container]").forEach(container => {
-    const triggers = container.querySelectorAll("[role=tab]");
-    const panels = container.querySelectorAll("[role=tabpanel]");
+  function initTabs() {
+    document.querySelectorAll("[data-tabs-container]").forEach(container => {
+      const containerValue = (container as HTMLElement).dataset.value;
+      const triggers = container.querySelectorAll("[role=tab]");
+      const panels = container.querySelectorAll("[role=tabpanel]");
 
-    triggers.forEach(trigger => {
-      trigger.addEventListener("click", () => {
-        const targetValue = (trigger as HTMLButtonElement).dataset.value;
+      triggers.forEach(trigger => {
+        const val = (trigger as HTMLButtonElement).dataset.value;
+        trigger.setAttribute("data-state", val === containerValue ? "active" : "inactive");
+      });
 
-        triggers.forEach(t => {
-          t.setAttribute("data-state", t.dataset.value === targetValue ? "active" : "inactive");
-        });
+      panels.forEach(panel => {
+        const val = (panel as HTMLElement).dataset.value;
+        if (val === containerValue) {
+          panel.classList.remove("hidden");
+          (panel as HTMLElement).style.display = "";
+        } else {
+          panel.classList.add("hidden");
+          (panel as HTMLElement).style.display = "none";
+        }
+      });
+    });
+  }
 
-        panels.forEach(panel => {
-          if ((panel as HTMLElement).dataset.value === targetValue) {
-            panel.classList.remove("hidden");
-          } else {
-            panel.classList.add("hidden");
-          }
+  // Setup click listeners
+  function setupTabsListeners() {
+    document.querySelectorAll("[data-tabs-container]").forEach(container => {
+      const triggers = container.querySelectorAll("[role=tab]");
+      const panels = container.querySelectorAll("[role=tabpanel]");
+
+      triggers.forEach(trigger => {
+        // Prevent duplicate listener registration
+        if ((trigger as any).__tabsListenerAttached) return;
+        (trigger as any).__tabsListenerAttached = true;
+
+        trigger.addEventListener("click", () => {
+          const targetValue = (trigger as HTMLButtonElement).dataset.value;
+
+          triggers.forEach(t => {
+            t.setAttribute("data-state", t.dataset.value === targetValue ? "active" : "inactive");
+          });
+
+          panels.forEach(panel => {
+            if ((panel as HTMLElement).dataset.value === targetValue) {
+              panel.classList.remove("hidden");
+              (panel as HTMLElement).style.display = "";
+            } else {
+              panel.classList.add("hidden");
+              (panel as HTMLElement).style.display = "none";
+            }
+          });
         });
       });
     });
+  }
+
+  initTabs();
+  setupTabsListeners();
+
+  document.addEventListener("astro:after-swap", () => {
+    initTabs();
+    setupTabsListeners();
   });
 </script>

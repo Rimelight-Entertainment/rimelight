@@ -9,11 +9,11 @@ sidebar:
 ---
 
 import RLACard from "@rimelight/ui/components/astro/RLACard.astro"
-import RLACardGrid from "@rimelight/ui/components/astro/RLACardGrid.astro"
+import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro"
 import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
 import RLABadge from "@rimelight/ui/components/astro/RLABadge.astro"
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
-import RLAStepper from "@rimelight/ui/components/astro/RLAStepper.astro"
+import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
 import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 import RLATree from "@rimelight/ui/components/astro/RLATree.astro"
 
@@ -21,16 +21,16 @@ This page renders our native `@rimelight/ui` library components that replace Sta
 
 ## 1. Cards (Starlight: Card & CardGrid & LinkCard)
 
-Our `<RLACardGrid>` acts as a singular grid layout container. By passing an `href` prop to `<RLACard>`, the entire card automatically transforms into a premium, interactive link card!
+Our generic `<RLAGrid>` acts as a highly flexible responsive grid container. By passing an `href` prop to `<RLACard>`, the entire card automatically transforms into a premium, interactive link card!
 
-<RLACardGrid stagger class="my-4">
+<RLAGrid stagger class="my-4">
   <RLACard title="Interactive Card 1" description="A clean, modern, interactive card component with smooth hover animations." href="/en/docs/contributing">
     <div class="text-xs text-base-500 mt-2">Clicking this card navigates to the Contributing docs page.</div>
   </RLACard>
   <RLACard title="Interactive Card 2" description="Fully dynamic and themed using our HSL tailored color palette." href="/en/docs/deployment">
     <div class="text-xs text-base-500 mt-2">Clicking this card navigates to the Deployment docs page.</div>
   </RLACard>
-</RLACardGrid>
+</RLAGrid>
 
 ## 2. Asides (Starlight: Aside)
 
@@ -60,14 +60,14 @@ Our `<RLACardGrid>` acts as a singular grid layout container. By passing an `hre
 
 ## 5. Steps (Starlight: Steps)
 
-<RLAStepper
-  items={[
-    { title: "Initialize Project", description: "Run pnpm install to fetch dependencies." },
-    { title: "Configure Theming", description: "Set up modes in uno.config.ts." },
-    { title: "Build for Production", description: "Run pnpm build to compile Astro pages." }
-  ]}
-  orientation="vertical"
-/>
+<RLASteps>
+1. ### Initialize Project
+   Run `pnpm install` to fetch dependencies.
+2. ### Configure Theming
+   Set up HSL modes and themes.
+3. ### Build for Production
+   Run `pnpm build` to compile Astro pages.
+</RLASteps>
 
 ## 6. Tabs (Starlight: Tabs)
 

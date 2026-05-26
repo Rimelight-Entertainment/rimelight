@@ -57,8 +57,35 @@ export async function getDocsSidebar(
       icon: scope.icon
     }))
 
-  // Find active scope — most-specific prefix match
+  function isDocInItems(items: import("../types").SidebarItem[], docId: string | undefined, href: string): boolean {
+    for (const item of items) {
+      if (item.href && item.href.toLowerCase().replace(/\/$/, "") === href) return true
+      if (item.autogenerate && docId) {
+        const dir = item.autogenerate.directory.replace(/\/$/, "")
+        if (dir === "") {
+          if (!docId.includes("/")) return true
+        } else if (docId.startsWith(dir + "/") || docId === dir) {
+          return true
+        }
+      }
+      if (item.children && isDocInItems(item.children, docId, href)) return true
+    }
+    return false
+  }
+
+  // Find active scope — most-specific prefix match, fallback to scanning scope items
   let activeScope = scopes.find(s => normPath === s.href.replace(/\/$/, "").toLowerCase())
+  if (!activeScope) {
+    const currentDoc = docs.find(d => `${docsBase}/${d.id}`.toLowerCase() === normPath)
+    const scopeMatch = config.sidebar.find(s => {
+      if (!("id" in s)) return false
+      return isDocInItems(s.items || [], currentDoc?.id, normPath)
+    }) as import("../types").SidebarScope | undefined
+
+    if (scopeMatch) {
+      activeScope = scopes.find(s => s.id === scopeMatch.id)
+    }
+  }
   if (!activeScope) {
     activeScope = [...scopes]
       .sort((a, b) => b.href.length - a.href.length)

@@ -14,11 +14,12 @@ const {
   color = "primary",
   size = "md",
   shape = "pill",
+  label,
   theme,
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as BadgeProps
+} = Astro.props as BadgeProps & { label?: string }
 
 const classes = resolveClasses(badge, {
   variant,
@@ -29,5 +30,5 @@ const classes = resolveClasses(badge, {
 }, useUi("badge", uiProp), className)
 ---
 <span class={classes.root} data-slot="root" {...rest}>
-  <slot />
+  <slot>{label}</slot>
 </span>
