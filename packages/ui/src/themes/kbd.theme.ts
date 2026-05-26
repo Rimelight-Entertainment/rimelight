@@ -41,7 +41,10 @@ export const createKbdTheme = (colors: string[] = defaultColors) =>
         variant: "outline" as const,
         color,
         classNames: {
-          root: "rl-color-" + color + " ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]"
+          root:
+            "rl-color-" +
+            color +
+            " ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]"
         }
       })),
       ...colors.map((color) => ({
@@ -55,7 +58,10 @@ export const createKbdTheme = (colors: string[] = defaultColors) =>
         variant: "subtle" as const,
         color,
         classNames: {
-          root: "rl-color-" + color + " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10"
+          root:
+            "rl-color-" +
+            color +
+            " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10"
         }
       })),
       {

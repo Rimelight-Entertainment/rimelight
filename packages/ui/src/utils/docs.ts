@@ -4,12 +4,17 @@ export function defineDocsConfig(config: DocsConfig): DocsConfig {
   return config
 }
 
-/** Strip a leading numeric sort prefix from a filename id, e.g. "01.getting-started" → "getting-started" */
+/**
+ * Strip a leading numeric sort prefix from a filename id, e.g. "01.getting-started" →
+ * "getting-started"
+ */
 function stripNumericPrefix(id: string): string {
   return id.replace(/^(\d+\.)+/, "")
 }
 
-/** Extract a numeric sort key from a doc id for numeric-prefix sorting */
+/**
+ * Extract a numeric sort key from a doc id for numeric-prefix sorting
+ */
 function numericPrefixOrder(id: string): number {
   const segment = id.split("/").pop() ?? id
   const m = segment.match(/^(\d+)\./)
@@ -50,14 +55,18 @@ export async function getDocsSidebar(
 
   const scopes: ResolvedScope[] = config.sidebar
     .filter((item): item is import("../types").SidebarScope => "id" in item)
-    .map(scope => ({
+    .map((scope) => ({
       id: scope.id,
       label: scope.label,
       href: scope.href.replace("{locale}", locale),
       icon: scope.icon
     }))
 
-  function isDocInItems(items: import("../types").SidebarItem[], docId: string | undefined, href: string): boolean {
+  function isDocInItems(
+    items: import("../types").SidebarItem[],
+    docId: string | undefined,
+    href: string
+  ): boolean {
     for (const item of items) {
       if (item.href && item.href.toLowerCase().replace(/\/$/, "") === href) return true
       if (item.autogenerate && docId) {
@@ -74,27 +83,27 @@ export async function getDocsSidebar(
   }
 
   // Find active scope — most-specific prefix match, fallback to scanning scope items
-  let activeScope = scopes.find(s => normPath === s.href.replace(/\/$/, "").toLowerCase())
+  let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase())
   if (!activeScope) {
-    const currentDoc = docs.find(d => `${docsBase}/${d.id}`.toLowerCase() === normPath)
-    const scopeMatch = config.sidebar.find(s => {
+    const currentDoc = docs.find((d) => `${docsBase}/${d.id}`.toLowerCase() === normPath)
+    const scopeMatch = config.sidebar.find((s) => {
       if (!("id" in s)) return false
       return isDocInItems(s.items || [], currentDoc?.id, normPath)
     }) as import("../types").SidebarScope | undefined
 
     if (scopeMatch) {
-      activeScope = scopes.find(s => s.id === scopeMatch.id)
+      activeScope = scopes.find((s) => s.id === scopeMatch.id)
     }
   }
   if (!activeScope) {
     activeScope = [...scopes]
-      .sort((a, b) => b.href.length - a.href.length)
-      .find(s => normPath.startsWith(s.href.toLowerCase()))
+      .toSorted((a, b) => b.href.length - a.href.length)
+      .find((s) => normPath.startsWith(s.href.toLowerCase()))
   }
   if (activeScope) activeScope.active = true
 
-  const sidebarConfig = config.sidebar.find(item =>
-    "id" in item && activeScope && item.id === activeScope.id
+  const sidebarConfig = config.sidebar.find(
+    (item) => "id" in item && activeScope && item.id === activeScope.id
   ) as import("../types").SidebarScope | undefined
 
   const items = sidebarConfig?.items || []
@@ -104,7 +113,7 @@ export async function getDocsSidebar(
       const dir = item.autogenerate.directory
       // Match docs whose id starts with the directory
       const prefix = dir.replace(/\/$/, "")
-      const filteredDocs = docs.filter(d => {
+      const filteredDocs = docs.filter((d) => {
         if (d.data.sidebar?.hidden === true) return false
         if (prefix === "") return !d.id.includes("/")
         return d.id.startsWith(prefix + "/") || d.id === prefix
@@ -121,9 +130,10 @@ export async function getDocsSidebar(
         return stripNumericPrefix(aLabel).localeCompare(stripNumericPrefix(bLabel))
       })
 
-      return filteredDocs.map(doc => {
+      return filteredDocs.map((doc) => {
         const href = `${docsBase}/${doc.id}/`
-        const badge = doc.data.sidebar?.badge ?? doc.data.badge as string | BadgeConfig | undefined
+        const badge =
+          doc.data.sidebar?.badge ?? (doc.data.badge as string | BadgeConfig | undefined)
         return {
           label: doc.data.sidebar?.label ?? doc.data.title,
           href,
@@ -152,7 +162,7 @@ export async function getDocsSidebar(
       }
       resolved.children = children
       if (!resolved.active) {
-        resolved.active = children.some(c => c.active)
+        resolved.active = children.some((c) => c.active)
       }
     }
 
@@ -168,7 +178,7 @@ export async function getDocsSidebar(
 }
 
 export function getSurroundItems(sidebar: ResolvedSidebarItem[], currentPath: string) {
-  const flatItems: { label: string, href: string }[] = []
+  const flatItems: { label: string; href: string }[] = []
 
   function flatten(items: ResolvedSidebarItem[]) {
     for (const item of items) {
@@ -180,10 +190,13 @@ export function getSurroundItems(sidebar: ResolvedSidebarItem[], currentPath: st
   flatten(sidebar)
 
   const normPath = currentPath.replace(/\/$/, "").toLowerCase()
-  const currentIndex = flatItems.findIndex(item => item.href.replace(/\/$/, "").toLowerCase() === normPath)
+  const currentIndex = flatItems.findIndex(
+    (item) => item.href.replace(/\/$/, "").toLowerCase() === normPath
+  )
 
   return {
     prev: currentIndex > 0 ? flatItems[currentIndex - 1] : null,
-    next: currentIndex >= 0 && currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null
+    next:
+      currentIndex >= 0 && currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null
   }
 }

@@ -159,13 +159,13 @@ export default defineConfig({
             name: "shiki-theme",
             variablePrefix: "--shiki-",
             fontStyle: true
-          });
+          })
           t.colors = Object.fromEntries(
-            Object.entries(t.colors || {}).filter(([_, val]) =>
-              typeof val === "string" && val.startsWith("#")
+            Object.entries(t.colors || {}).filter(
+              ([_, val]) => typeof val === "string" && val.startsWith("#")
             )
-          );
-          return t;
+          )
+          return t
         })()
       ],
       themeCssRoot: ":root"

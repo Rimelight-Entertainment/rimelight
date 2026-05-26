@@ -1,25 +1,25 @@
 {
   "name": "playground-dot-rimelight-dot-com",
-  "description": "Rimelight Playground",
-  "homepage": "https://playground.rimelight.com",
-  "author": {
-    "name": "Daniel Marchi"
-  },
   "version": "0.0.1",
   "private": true,
-  "type": "module",
-  "license": "MIT",
+  "description": "Rimelight Playground",
   "keywords": [
     "astro",
     "typescript"
   ],
+  "homepage": "https://playground.rimelight.com",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Marchi"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
-  "bugs": {
-    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
-  },
+  "type": "module",
   "scripts": {
     "prepare": "vp config",
     "generate-types": "wrangler types",

@@ -7,8 +7,7 @@ export interface HeaderLayerInfo {
 }
 
 /**
- * Global store tracking all registered header layers.
- * This allows child components to subscribe to header layer changes
- * even across Vue/Astro boundaries, since nanostores is framework-agnostic.
+ * Global store tracking all registered header layers. This allows child components to subscribe to
+ * header layer changes even across Vue/Astro boundaries, since nanostores is framework-agnostic.
  */
 export const headerLayersStore = map<Record<string, HeaderLayerInfo>>({})

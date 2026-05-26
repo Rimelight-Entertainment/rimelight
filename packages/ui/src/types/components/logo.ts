@@ -8,7 +8,8 @@ export interface LogoProps {
    */
   mode?: "color" | "white" | "black"
   /**
-   * Theme override for color mode detection. Use "flat" to pin to the configured flat variant and skip auto-detection.
+   * Theme override for color mode detection. Use "flat" to pin to the configured flat variant and
+   * skip auto-detection.
    */
   theme?: "flat" | "light" | "dark"
   /**

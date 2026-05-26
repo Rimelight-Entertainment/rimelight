@@ -1,7 +1,16 @@
 export interface BadgeConfig {
   text: string
   color?: string
-  variant?: 'solid' | 'outline' | 'soft' | 'note' | 'tip' | 'caution' | 'danger' | 'success' | 'default'
+  variant?:
+    | "solid"
+    | "outline"
+    | "soft"
+    | "note"
+    | "tip"
+    | "caution"
+    | "danger"
+    | "success"
+    | "default"
   class?: string
 }
 

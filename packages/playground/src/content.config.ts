@@ -32,10 +32,13 @@ const BadgeConfigSchema = z.union([
   z.object({
     text: z.string(),
     color: z.string().optional(),
-    variant: z.union([
-      z.enum(["solid", "outline", "soft"]),
-      z.enum(["note", "tip", "caution", "danger", "success", "default"])
-    ]).optional().default("soft"),
+    variant: z
+      .union([
+        z.enum(["solid", "outline", "soft"]),
+        z.enum(["note", "tip", "caution", "danger", "success", "default"])
+      ])
+      .optional()
+      .default("soft"),
     class: z.string().optional()
   })
 ])
@@ -52,13 +55,15 @@ const SurroundOverrideSchema = z.union([
   })
 ])
 
-const TableOfContentsSchema = z.union([
-  z.literal(false),
-  z.object({
-    minHeadingLevel: z.number().int().min(1).max(6).optional(),
-    maxHeadingLevel: z.number().int().min(1).max(6).optional()
-  })
-]).optional()
+const TableOfContentsSchema = z
+  .union([
+    z.literal(false),
+    z.object({
+      minHeadingLevel: z.number().int().min(1).max(6).optional(),
+      maxHeadingLevel: z.number().int().min(1).max(6).optional()
+    })
+  ])
+  .optional()
 
 // ── Docs collection ───────────────────────────────────────────────────────────
 
@@ -75,13 +80,15 @@ const docs = defineCollection({
     badge: BadgeConfigSchema.optional(),
 
     // Starlight-compatible sidebar options
-    sidebar: z.object({
-      label: z.string().optional(),
-      order: z.number().optional(),
-      hidden: z.boolean().optional(),
-      badge: BadgeConfigSchema.optional(),
-      attrs: z.record(z.union([z.string(), z.number(), z.boolean()])).optional()
-    }).optional(),
+    sidebar: z
+      .object({
+        label: z.string().optional(),
+        order: z.number().optional(),
+        hidden: z.boolean().optional(),
+        badge: BadgeConfigSchema.optional(),
+        attrs: z.record(z.union([z.string(), z.number(), z.boolean()])).optional()
+      })
+      .optional(),
 
     // Per-page TOC override: false to disable, or config object
     tableOfContents: TableOfContentsSchema,

@@ -81,7 +81,10 @@ export const createBadgeTheme = (colors: string[] = defaultColors) =>
         variant: "outline" as const,
         color,
         classNames: {
-          root: "rl-color-" + color + " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/50"
+          root:
+            "rl-color-" +
+            color +
+            " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/50"
         }
       })),
       ...colors.map((color) => ({
@@ -95,7 +98,10 @@ export const createBadgeTheme = (colors: string[] = defaultColors) =>
         variant: "subtle" as const,
         color,
         classNames: {
-          root: "rl-color-" + color + " bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25"
+          root:
+            "rl-color-" +
+            color +
+            " bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25"
         }
       })),
       {
