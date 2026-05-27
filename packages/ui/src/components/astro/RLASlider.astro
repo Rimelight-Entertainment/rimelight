@@ -29,17 +29,11 @@ const classes = resolveClasses(slider, {
 
 const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100))
 ---
-<style define:vars={{ sliderPct: `${percentage}%` }}>
-  [data-slot="range"] { left: 0%; right: calc(100% - var(--slider-pct)); }
-  [data-slot="thumb"] { left: calc(var(--slider-pct) - 9px); }
-</style>
-
 <div class={classes.root} data-slot="slider-root" {...rest}>
   <div class={classes.track} data-slot="track">
-    <div
-      class={classes.range}
-      data-slot="range"
-    />
+    <svg class="h-full w-full overflow-visible pointer-events-none">
+      <rect class:list={[classes.range, "h-full"]} width={`${percentage}%`} fill="currentColor" rx="2" />
+    </svg>
   </div>
   <input
     type="range"
@@ -48,11 +42,17 @@ const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100
     step={step}
     value={value}
     name={name}
-    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
     data-slot="input"
   />
-  <div
-    class={classes.thumb}
-    data-slot="thumb"
-  />
+  <svg class="absolute inset-0 h-full w-full overflow-visible pointer-events-none">
+    <circle
+      cx={`${percentage}%`}
+      cy="50%"
+      r="8"
+      class:list={[classes.thumb, "pointer-events-auto border-none"]}
+      data-slot="thumb"
+      fill="currentColor"
+    />
+  </svg>
 </div>

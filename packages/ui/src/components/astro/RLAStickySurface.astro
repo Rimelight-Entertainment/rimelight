@@ -22,10 +22,16 @@ const classes = resolveClasses(stickySurface, {}, useUi("stickySurface", uiProp)
 const topOffset = `${offsetTop}px`
 ---
 <div
-  class={classes.root}
+  class:list={[classes.root, "rla-sticky-surface"]}
   data-slot="root"
-  style={{ top: topOffset, zIndex }}
   {...rest}
 >
   <slot />
 </div>
+
+<style define:vars={{ topOffset, zIndex }}>
+  .rla-sticky-surface {
+    top: var(--topOffset);
+    z-index: var(--zIndex);
+  }
+</style>

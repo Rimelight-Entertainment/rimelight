@@ -39,7 +39,6 @@ const panelCount = sizes.length
         class={classes.panel}
         data-slot="panel"
         data-resizable-panel={i}
-        style={direction === "horizontal" ? `width:${size}%` : `height:${size}%`}
       >
         <slot name={`panel-${i}`}>
           {i === 0
@@ -175,3 +174,20 @@ const panelCount = sizes.length
     });
   });
 </script>
+
+<style define:vars={{
+  size0: `${sizes[0] ?? 50}%`,
+  size1: `${sizes[1] ?? 50}%`,
+  size2: `${sizes[2] ?? 0}%`,
+  size3: `${sizes[3] ?? 0}%`
+}}>
+  [data-direction="horizontal"] [data-resizable-panel="0"] { width: var(--size0); }
+  [data-direction="horizontal"] [data-resizable-panel="1"] { width: var(--size1); }
+  [data-direction="horizontal"] [data-resizable-panel="2"] { width: var(--size2); }
+  [data-direction="horizontal"] [data-resizable-panel="3"] { width: var(--size3); }
+
+  [data-direction="vertical"] [data-resizable-panel="0"] { height: var(--size0); }
+  [data-direction="vertical"] [data-resizable-panel="1"] { height: var(--size1); }
+  [data-direction="vertical"] [data-resizable-panel="2"] { height: var(--size2); }
+  [data-direction="vertical"] [data-resizable-panel="3"] { height: var(--size3); }
+</style>

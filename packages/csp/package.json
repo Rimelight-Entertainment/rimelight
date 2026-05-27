@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.0.0-alpha.0",
@@ -20,6 +21,8 @@
     "node": ">=22.12.0"
   },
   "devDependencies": {
-    "unocss": "66.7.0"
+    "playwright": "1.60.0",
+    "unocss": "66.7.0",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@0.1.22"
   }
 }
