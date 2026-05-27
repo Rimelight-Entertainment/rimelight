@@ -49,6 +49,11 @@ export const security = defineMiddleware(async (context, next) => {
     } else {
       newCsp = newCsp + `; script-src 'nonce-${nonceValue}'`
     }
+    if (newCsp.includes("style-src ")) {
+      newCsp = newCsp.replace("style-src ", `style-src 'nonce-${nonceValue}' `)
+    } else {
+      newCsp = newCsp + `; style-src 'nonce-${nonceValue}'`
+    }
     newHeaders.set("content-security-policy", newCsp)
   }
 
@@ -74,11 +79,17 @@ export const security = defineMiddleware(async (context, next) => {
       })
 
     if (nonceValue) {
-      rewriter = rewriter.on("script:not([src])", {
-        element(el: any) {
-          el.setAttribute("nonce", nonceValue)
-        }
-      })
+      rewriter = rewriter
+        .on("script:not([src])", {
+          element(el: any) {
+            el.setAttribute("nonce", nonceValue)
+          }
+        })
+        .on("style", {
+          element(el: any) {
+            el.setAttribute("nonce", nonceValue)
+          }
+        })
     }
 
     return addSecurityHeaders(
@@ -117,6 +128,10 @@ export const security = defineMiddleware(async (context, next) => {
     modifiedHtml = modifiedHtml.replace(
       /<script(?![^>]*src=)(?![^>]*nonce=)([^>]*)>/gi,
       `<script$1 nonce="${nonceValue}">`
+    )
+    modifiedHtml = modifiedHtml.replace(
+      /<style(?![^>]*nonce=)([^>]*)>/gi,
+      `<style$1 nonce="${nonceValue}">`
     )
   }
 
