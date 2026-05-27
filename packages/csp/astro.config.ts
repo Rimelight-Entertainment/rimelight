@@ -59,7 +59,8 @@ export default defineConfig({
         resources: [
           "'self'",
           "https://static.cloudflareinsights.com",
-          "https://betterlytics.io/analytics.js"
+          "https://betterlytics.io/analytics.js",
+          "'inline-speculation-rules'"
         ]
       },
       styleDirective: {

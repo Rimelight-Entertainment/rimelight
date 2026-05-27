@@ -88,11 +88,15 @@ export default defineConfig({
           "'self'",
           "https://challenges.cloudflare.com",
           "https://static.cloudflareinsights.com",
-          "https://betterlytics.io/analytics.js"
+          "https://betterlytics.io/analytics.js",
+          "'inline-speculation-rules'"
         ]
       },
       styleDirective: {
-        resources: ["'self'"]
+        resources: [
+          "'self'",
+          "'sha256-SKuaOGnks7NAUq37nvw1PfGEE0lOAs5ERbiYRbGFIbw='"
+        ]
       }
     }
   },
