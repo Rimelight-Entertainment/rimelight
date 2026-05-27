@@ -12,7 +12,6 @@ export default defineConfig({
     cache: {
       provider: memoryCache()
     },
-    clientPrerender: true,
     svgOptimizer: svgoOptimizer({
       plugins: [
         "preset-default",
