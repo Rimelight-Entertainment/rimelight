@@ -81,16 +81,17 @@ const areaPath = linePoints.length > 0
     ` L ${linePoints[linePoints.length - 1]!.x} ${LINE_H - LINE_PAD}` +
     ` L ${linePoints[0]!.x} ${LINE_H - LINE_PAD} Z`
   : ""
+const id = `chart-${Math.random().toString(36).substring(2, 9)}`
 ---
 
-<style define:vars={{ chartH: `${height}px`, chartInnerH: `${height - 60}px` }}>
-  [data-slot="root"] { min-height: var(--chart-h); }
-  [data-slot="container"] { height: var(--chart-inner-h); gap: 6px; align-items: flex-end; }
-  .rla-chart-line-wrap { height: var(--chart-inner-h); }
-  .rla-chart-pie-wrap { height: var(--chart-inner-h); }
-</style>
+<style is:inline set:html={`
+  .${id} { min-height: ${height}px; }
+  .${id} [data-slot="container"] { height: ${height - 60}px; gap: 6px; align-items: flex-end; }
+  .${id} .rla-chart-line-wrap { height: ${height - 60}px; }
+  .${id} .rla-chart-pie-wrap { height: ${height - 60}px; }
+`} />
 
-<div class={classes.root} data-slot="root" {...rest}>
+<div class:list={[classes.root, id]} data-slot="root" {...rest}>
   {title && <div class={classes.title} data-slot="title">{title}</div>}
 
   {/* Bar Chart */}

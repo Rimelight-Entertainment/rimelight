@@ -18,16 +18,10 @@ const {
 } = Astro.props as AspectRatioProps
 
 const classes = resolveClasses(aspectRatio, {}, useUi("aspectRatio", uiProp), className)
-const paddingBottom = `${(1 / ratio) * 100}%`
 ---
-<div class:list={[classes.root, "aspect-ratio-wrapper"]} data-slot="root" {...rest}>
+<div class:list={[classes.root]} data-slot="root" {...rest}>
+  <svg viewBox={`0 0 100 ${(1 / ratio) * 100}`} class="w-full h-auto pointer-events-none block" aria-hidden="true"></svg>
   <div class={classes.content} data-slot="content">
     <slot />
   </div>
 </div>
-
-<style define:vars={{ paddingBottom }}>
-  .aspect-ratio-wrapper {
-    padding-bottom: var(--paddingBottom);
-  }
-</style>

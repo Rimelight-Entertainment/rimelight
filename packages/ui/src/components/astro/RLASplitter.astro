@@ -24,10 +24,11 @@ const total = defaultSizes.reduce((s, v) => s + v, 0)
 const sizes = defaultSizes.map(s => (s / (total || 100)) * 100)
 
 const panelCount = sizes.length
+const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
 ---
 
 <div
-  class={classes.root}
+  class:list={[classes.root, id]}
   data-slot="root"
   data-resizable
   data-direction={direction}
@@ -175,19 +176,14 @@ const panelCount = sizes.length
   });
 </script>
 
-<style define:vars={{
-  size0: `${sizes[0] ?? 50}%`,
-  size1: `${sizes[1] ?? 50}%`,
-  size2: `${sizes[2] ?? 0}%`,
-  size3: `${sizes[3] ?? 0}%`
-}}>
-  [data-direction="horizontal"] [data-resizable-panel="0"] { width: var(--size0); }
-  [data-direction="horizontal"] [data-resizable-panel="1"] { width: var(--size1); }
-  [data-direction="horizontal"] [data-resizable-panel="2"] { width: var(--size2); }
-  [data-direction="horizontal"] [data-resizable-panel="3"] { width: var(--size3); }
+<style is:inline set:html={`
+  .${id}[data-direction="horizontal"] > [data-resizable-panel="0"] { width: ${sizes[0] ?? 50}%; }
+  .${id}[data-direction="horizontal"] > [data-resizable-panel="1"] { width: ${sizes[1] ?? 50}%; }
+  .${id}[data-direction="horizontal"] > [data-resizable-panel="2"] { width: ${sizes[2] ?? 0}%; }
+  .${id}[data-direction="horizontal"] > [data-resizable-panel="3"] { width: ${sizes[3] ?? 0}%; }
 
-  [data-direction="vertical"] [data-resizable-panel="0"] { height: var(--size0); }
-  [data-direction="vertical"] [data-resizable-panel="1"] { height: var(--size1); }
-  [data-direction="vertical"] [data-resizable-panel="2"] { height: var(--size2); }
-  [data-direction="vertical"] [data-resizable-panel="3"] { height: var(--size3); }
-</style>
+  .${id}[data-direction="vertical"] > [data-resizable-panel="0"] { height: ${sizes[0] ?? 50}%; }
+  .${id}[data-direction="vertical"] > [data-resizable-panel="1"] { height: ${sizes[1] ?? 50}%; }
+  .${id}[data-direction="vertical"] > [data-resizable-panel="2"] { height: ${sizes[2] ?? 0}%; }
+  .${id}[data-direction="vertical"] > [data-resizable-panel="3"] { height: ${sizes[3] ?? 0}%; }
+`} />

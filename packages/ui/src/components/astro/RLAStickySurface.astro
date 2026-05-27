@@ -20,18 +20,19 @@ const {
 
 const classes = resolveClasses(stickySurface, {}, useUi("stickySurface", uiProp), className)
 const topOffset = `${offsetTop}px`
+const id = `sticky-${Math.random().toString(36).substring(2, 9)}`
 ---
 <div
-  class:list={[classes.root, "rla-sticky-surface"]}
+  class:list={[classes.root, id]}
   data-slot="root"
   {...rest}
 >
   <slot />
 </div>
 
-<style define:vars={{ topOffset, zIndex }}>
-  .rla-sticky-surface {
-    top: var(--topOffset);
-    z-index: var(--zIndex);
+<style is:inline set:html={`
+  .${id} {
+    top: ${topOffset} !important;
+    z-index: ${zIndex} !important;
   }
-</style>
+`} />

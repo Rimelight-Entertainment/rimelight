@@ -25,18 +25,19 @@ const classes = resolveClasses(marquee, {
 }, useUi("marquee", uiProp), className)
 
 const duration = `${speed}s`
+const id = `marquee-${Math.random().toString(36).substring(2, 9)}`
 ---
 <div class={classes.root} data-slot="marquee-root" {...rest}>
-  <div class:list={[classes.track, "rla-marquee-track"]} data-slot="track">
+  <div class:list={[classes.track, id]} data-slot="track">
     <slot />
   </div>
-  <div class:list={[classes.track, "rla-marquee-track"]} data-slot="track" aria-hidden="true">
+  <div class:list={[classes.track, id]} data-slot="track" aria-hidden="true">
     <slot />
   </div>
 </div>
 
-<style define:vars={{ duration }}>
-  .rla-marquee-track {
-    animation-duration: var(--duration);
+<style is:inline set:html={`
+  .${id} {
+    animation-duration: ${duration} !important;
   }
-</style>
+`} />
