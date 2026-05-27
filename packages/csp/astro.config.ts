@@ -1,5 +1,6 @@
-import {sri, ui} from "@rimelight/ui/integrations"
-import {defineConfig, memoryCache, svgoOptimizer} from "astro/config"
+import { sri, ui } from "@rimelight/ui/integrations"
+import cloudflare from "@astrojs/cloudflare"
+import { defineConfig, memoryCache, svgoOptimizer } from "astro/config"
 
 export default defineConfig({
   experimental: {
@@ -27,6 +28,12 @@ export default defineConfig({
   },
 
   site: "https://csp.rimelight.com",
+  prefetch: {
+    prefetchAll: true
+  },
+
+  output: "server",
+  adapter: cloudflare(),
 
   security: {
     checkOrigin: true,
