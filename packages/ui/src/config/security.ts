@@ -144,6 +144,7 @@ export function defineSecurity(options: SecurityConfigOptions): AstroSecurityCon
       "https://static.cloudflareinsights.com",
       "https://betterlytics.io/analytics.js",
       "'inline-speculation-rules'",
+      // Astro ClientRouter (View Transitions)
       "'sha256-ZuMSxilKU+4KIM8LWna4lqBEKzd6WaiAjz6gamhm7zM='",
       ...(options.scriptResources || [])
     ])
