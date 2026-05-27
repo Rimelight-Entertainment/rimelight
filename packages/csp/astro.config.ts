@@ -64,7 +64,10 @@ export default defineConfig({
         ]
       },
       styleDirective: {
-        resources: ["'self'"]
+        resources: [
+          "'self'",
+          "'sha256-SKuaOGnks7NAUq37nvw1PfGEE0lOAs5ERbiYRbGFIbw='"
+        ]
       }
     }
   },
