@@ -1,0 +1,353 @@
+---
+import RLAHead from '@rimelight/ui/components/astro/RLAHead.astro';
+import RLAMain from "@rimelight/ui/components/astro/RLAMain.astro";
+import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
+import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.astro";
+import RLAFooter from "@rimelight/ui/components/astro/RLAFooter.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
+import RLAThemeSelector from "@rimelight/ui/components/astro/RLAThemeSelector.astro";
+import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro";
+import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
+import RLABlogPosts from "@rimelight/ui/components/astro/RLABlogPosts.astro";
+import RLABlogPost from "@rimelight/ui/components/astro/RLABlogPost.astro";
+import type { NavigationMenuItem, ButtonProps } from "@rimelight/ui/types";
+
+// Standard configurations
+const siteConfig = {
+  name: "Rimelight Starter Test",
+  description: "Replicating starter layout for clean CSP E2E diagnostics"
+};
+
+const items: NavigationMenuItem[] = [
+  { label: "Home", to: "#", active: true },
+  { label: "Docs", to: "#" },
+  { label: "Blog", to: "#" }
+];
+
+const columns = [
+  {
+    label: "Resources",
+    children: [
+      { label: "Branding", to: "#" }
+    ]
+  },
+  {
+    label: "Legal",
+    children: [
+      { label: "Privacy Policy", to: "#" },
+      { label: "Other Documents", to: "#" }
+    ]
+  }
+];
+
+const socials: ButtonProps[] = [
+  {
+    leadingIcon: "i-logos-instagram-icon?mask text-white group-hover:text-primary-500",
+    href: "https://www.instagram.com/idantity.me"
+  },
+  {
+    leadingIcon: "i-logos-discord-icon?mask text-white group-hover:text-primary-500",
+    href: "https://discord.com/users/682049695173836979"
+  },
+  {
+    leadingIcon: "i-logos-spotify-icon?mask text-white group-hover:text-primary-500",
+    href: "https://open.spotify.com/user/v5m4qoc9j35ccc6nbzqcookvj?si=d795f9bc1cb34222"
+  },
+  {
+    leadingIcon: "i-logos-github-icon?mask text-white group-hover:text-primary-500",
+    href: "https://www.github.com/idantitydotme"
+  },
+  {
+    leadingIcon: "i-logos-linkedin-icon?mask text-white group-hover:text-primary-500",
+    href: "https://www.linkedin.com/daniel-marchi"
+  }
+];
+
+const targetLanguages = [
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+  { code: 'pt', label: "Português" }
+];
+
+const heroLinks = [
+  {
+    label: "Explore Now",
+    href: "#",
+    color: "primary",
+    variant: "solid",
+  }
+];
+
+const ctaLinks = [
+  {
+    label: "Get Started",
+    href: "#",
+    color: "primary",
+    variant: "solid"
+  },
+  {
+    label: "Join Us",
+    href: "#",
+    color: "primary",
+    variant: "outline",
+    trailingIcon: "i-lucide-arrow-right"
+  }
+];
+
+const mockPosts = [
+  {
+    id: "post-1",
+    title: "Understanding Content Security Policies",
+    description: "A deep dive into setting up strict, production-grade security headers without breaking styling.",
+    pubDate: new Date(),
+    heroImage: "/_astro/placeholder.CZZyCf7p.webp"
+  },
+  {
+    id: "post-2",
+    title: "Modern Monorepo Tooling",
+    description: "Designing Astro monorepos with reusable packages and components.",
+    pubDate: new Date(),
+    heroImage: "/_astro/placeholder.CZZyCf7p.webp"
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <RLAHead title={siteConfig.name} description={siteConfig.description} config={siteConfig as any} ogLocale="en_US">
+  </RLAHead>
+  <body class="isolate">
+    {/* Replicated Header */}
+    <RLAHeader contain={false} fixed={true} stackIndex={0} class="bg-black">
+      <div slot="left" class="flex flex-row items-center gap-md">
+        <RLALogo variant="logomark" class="h-10 w-auto" mode="white" />
+        <RLANavigationMenu
+          items={items}
+          variant="link"
+          theme="flat"
+          ui={{
+            link: 'text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
+          }}
+        />
+      </div>
+    </RLAHeader>
+
+    <RLAMain>
+      {/* Replicated Hero Section */}
+      <RLAPageSection
+        variant="hero"
+        reverse={true}
+        title="Welcome to the Rimelight Entertainment"
+        description="Look around, test, and play with some of our interactive technologies."
+        links={heroLinks as any}
+      >
+        <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
+      </RLAPageSection>
+
+      {/* Replicated Blog Section */}
+      <RLAPageSection
+        orientation="vertical"
+        title="Latest Posts"
+        description="Read the latest updates to our projects."
+      >
+        <div slot="body" class="flex flex-col gap-xl">
+          <RLABlogPosts class="grid md:grid-cols-2 gap-md">
+            {
+              mockPosts.map((post) => (
+                <RLABlogPost
+                  variant="ghost"
+                  image={post.heroImage}
+                  date={post.pubDate}
+                  title={post.title}
+                  description={post.description}
+                  to="#"
+                />
+              ))
+            }
+          </RLABlogPosts>
+        </div>
+      </RLAPageSection>
+
+      {/* Replicated CTA Section */}
+      <RLAPageSection
+        variant="cta"
+        ctaVariant="solid"
+        title="Wish to join us?"
+        description="Explore our latest projects and get in touch."
+        links={ctaLinks as any}
+      />
+    </RLAMain>
+
+    {/* Replicated Footer */}
+    <RLAFooter contain={false} class="bg-black z-50">
+      <div slot="left" class="flex flex-col items-center gap-xs lg:items-start">
+        <RLALogo variant="logotype" class="h-6 w-auto" />
+        <p class="text-sm text-white">Rimelight Starter Test</p>
+        <span class="text-sm text-white">© {new Date().getFullYear()} starter.rimelight.com</span>
+      </div>
+      <div slot="center" class="flex gap-12">
+        {columns.map(column => (
+          <RLALinkGroup 
+            title={column.label} 
+            links={column.children.map(child => ({ label: child.label, href: child.to }))}
+            theme="flat"
+          />
+        ))}
+      </div>
+      <div slot="right" class="flex flex-col gap-sm lg:items-end">
+        <RLAThemeSelector />
+        <RLALocaleSelector locales={targetLanguages} />
+        <div class="flex flex-row flex-wrap gap-sm lg:items-end">
+          {socials.map((social) => (
+              <RLAButton
+                  size="xl"
+                  color="neutral"
+                  variant="ghost"
+                  {...social}
+              />
+          ))}
+        </div>
+      </div>
+    </RLAFooter>
+
+    <RLAScrollToTop showProgress={true} />
+
+    {/* Replicated AppLayout Inline Observer Script */}
+    <script is:inline data-astro-rerun>
+      (function() {
+        'use strict';
+        if (window.rlHeaderObserver) window.rlHeaderObserver.disconnect();
+
+        if (!window.RLHeaderStack) {
+          window.RLHeaderStack = {
+            layers: [],
+            register: function(id, order, naturalHeight, isVisible, el) {
+              let layer = this.layers.find(function(l) { return l.id === id; });
+              if (!layer) {
+                layer = { id: id, order: order, naturalHeight: naturalHeight, isVisible: isVisible, el: el };
+                this.layers.push(layer);
+                this.layers.sort(function(a, b) { return a.order - b.order; });
+              } else {
+                layer.naturalHeight = naturalHeight;
+                layer.isVisible = isVisible;
+                layer.el = el;
+              }
+              this.update();
+            },
+            unregister: function(id) {
+              this.layers = this.layers.filter(function(l) { return l.id !== id; });
+              this.update();
+            },
+            update: function() {
+              let currentTop = 0;
+              for (let i = 0; i < this.layers.length; i++) {
+                const layer = this.layers[i];
+                if (layer.el) {
+                  const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
+                  layer.el.style.top = topPx;
+                  layer.el.style.opacity = layer.isVisible ? '1' : '0';
+                  layer.el.style.pointerEvents = layer.isVisible ? 'auto' : 'none';
+                  layer.el.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
+                }
+                if (layer.isVisible) currentTop += layer.naturalHeight;
+              }
+              if (currentTop > 0) {
+                document.documentElement.style.setProperty('--rl-total-header-height', currentTop + 'px');
+              }
+            }
+          };
+        }
+        const RL = window.RLHeaderStack;
+        RL.layers = [];
+
+        function getHeight(el) {
+          if (!el) return 64;
+          const h = el.offsetHeight;
+          return h > 0 ? h : 64;
+        }
+
+        function initHeader(header) {
+          if (header.rlManaged) return;
+          header.rlManaged = true;
+
+          const id = header.id;
+          const stackIndex = parseInt(header.getAttribute('data-stack-index') || '0', 10);
+          const hideOnScroll = header.getAttribute('data-hide-on-scroll') === 'true';
+          const contentEl = header.querySelector('[data-header-content]');
+          let naturalHeight = getHeight(contentEl);
+          let isVisible = true;
+
+          RL.register(id, stackIndex, naturalHeight, isVisible, header);
+
+          if (typeof ResizeObserver !== 'undefined' && contentEl) {
+            new ResizeObserver(function(entries) {
+              const h = entries[0] && entries[0].contentRect.height;
+              if (h && h > 0) {
+                naturalHeight = h;
+                RL.update();
+              }
+            }).observe(contentEl);
+          }
+
+          if (hideOnScroll) {
+            let lastScrollY = window.scrollY;
+            window.addEventListener('scroll', function() {
+              const current = window.scrollY;
+              const diff = current - lastScrollY;
+              if (Math.abs(diff) >= 10) {
+                const newVisible = current <= 50 ? true : diff <= 0;
+                if (newVisible !== isVisible) {
+                  isVisible = newVisible;
+                  RL.register(id, stackIndex, naturalHeight, isVisible, header);
+                }
+                lastScrollY = current;
+              }
+            }, { passive: true });
+          }
+
+          (function retry() {
+            const h = getHeight(contentEl);
+            if (h !== naturalHeight) {
+              naturalHeight = h;
+              RL.update();
+            }
+            if (h > 0 && h !== 64 && contentEl && contentEl.offsetHeight > 0) return;
+            requestAnimationFrame(retry);
+          })();
+        }
+
+        const headers = document.querySelectorAll("[data-rla-header='true']");
+        for (let i = 0; i < headers.length; i++) initHeader(headers[i]);
+
+        window.rlHeaderObserver = new MutationObserver(function(mutations) {
+          for (let i = 0; i < mutations.length; i++) {
+            const added = mutations[i].addedNodes;
+            for (let j = 0; j < added.length; j++) {
+              const node = added[j];
+              if (node.nodeType !== 1) continue;
+              if (node.matches && node.matches("[data-rla-header='true']")) initHeader(node);
+              if (node.querySelectorAll) {
+                const nested = node.querySelectorAll("[data-rla-header='true']");
+                for (let k = 0; k < nested.length; k++) initHeader(nested[k]);
+              }
+            }
+            const removed = mutations[i].removedNodes;
+            for (let j = 0; j < removed.length; j++) {
+              const node = removed[j];
+              if (node.nodeType !== 1) continue;
+              if (node.matches && node.matches("[data-rla-header='true']")) RL.unregister(node.id);
+              if (node.querySelectorAll) {
+                const nested = node.querySelectorAll("[data-rla-header='true']");
+                for (let k = 0; k < nested.length; k++) RL.unregister(nested[k].id);
+              }
+            }
+          }
+        });
+        window.rlHeaderObserver.observe(document.body, { childList: true, subtree: true });
+      })();
+    </script>
+  </body>
+</html>
