@@ -163,6 +163,23 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
 
 <script is:inline>
   (function() {
+    var orig = document.createElement;
+    document.createElement = function(tag, opts) {
+      var el = orig.call(document, tag, opts);
+      var lowTag = tag.toLowerCase();
+      if (lowTag === 'script' || lowTag === 'style') {
+        var nonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+                      Array.from(document.querySelectorAll('script')).find(function(s) { return s.nonce; })?.nonce ||
+                      document.querySelector('script[nonce]')?.nonce ||
+                      document.querySelector('style[nonce]')?.nonce;
+        if (nonce) {
+          el.setAttribute('nonce', nonce);
+          el.nonce = nonce;
+        }
+      }
+      return el;
+    };
+
     function getThemeClass() {
       var stored = localStorage.getItem('theme');
       if (stored === 'dark') return 'dark';
