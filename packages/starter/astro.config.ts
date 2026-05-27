@@ -74,7 +74,7 @@ export default defineConfig({
       algorithm: "SHA-384",
       directives: [
         "default-src 'none'",
-        "img-src 'self' https://cdn.starter.rimelight.com https://i3.ytimg.com https://www.youtube.com https://www.youtube-nocookie.com",
+        "img-src 'self' data: https://cdn.starter.rimelight.com https://i3.ytimg.com https://www.youtube.com https://www.youtube-nocookie.com",
         "font-src 'self'",
         "connect-src 'self' https://cloudflareinsights.com",
         "frame-ancestors 'none'",
