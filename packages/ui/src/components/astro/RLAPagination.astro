@@ -47,10 +47,9 @@ const pages = getPageNumbers()
     <li class={classes.item}>
       <a
         href={currentPage > 1 ? `${baseUrl}${currentPage - 1}` : undefined}
-        class={classes.link}
+        class:list={[classes.link, currentPage === 1 && "pointer-events-none opacity-50"]}
         aria-label="Go to previous page"
         aria-disabled={currentPage === 1}
-        style={currentPage === 1 ? "pointer-events: none; opacity: 0.5;" : ""}
       >
         <span class="i-lucide-chevron-left size-4" aria-hidden="true" />
       </a>
@@ -86,10 +85,9 @@ const pages = getPageNumbers()
     <li class={classes.item}>
       <a
         href={currentPage < totalPages ? `${baseUrl}${currentPage + 1}` : undefined}
-        class={classes.link}
+        class:list={[classes.link, currentPage === totalPages && "pointer-events-none opacity-50"]}
         aria-label="Go to next page"
         aria-disabled={currentPage === totalPages}
-        style={currentPage === totalPages ? "pointer-events: none; opacity: 0.5;" : ""}
       >
         <span class="i-lucide-chevron-right size-4" aria-hidden="true" />
       </a>

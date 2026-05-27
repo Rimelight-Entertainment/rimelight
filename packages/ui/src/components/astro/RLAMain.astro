@@ -25,10 +25,15 @@ const Tag = as;
 ---
 
 <Tag
-        class:list={[classes.root]}
+        class:list={[classes.root, "rla-main-container"]}
         data-slot="main"
-        style="padding-top: var(--rl-total-header-height, 4rem)"
         {...rest}
     >
     <slot />
 </Tag>
+
+<style>
+  .rla-main-container {
+    padding-top: var(--rl-total-header-height, 4rem);
+  }
+</style>

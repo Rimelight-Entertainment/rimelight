@@ -20,8 +20,14 @@ const {
 const classes = resolveClasses(aspectRatio, {}, useUi("aspectRatio", uiProp), className)
 const paddingBottom = `${(1 / ratio) * 100}%`
 ---
-<div class={classes.root} data-slot="root" style={{ paddingBottom }} {...rest}>
+<div class:list={[classes.root, "aspect-ratio-wrapper"]} data-slot="root" {...rest}>
   <div class={classes.content} data-slot="content">
     <slot />
   </div>
 </div>
+
+<style define:vars={{ paddingBottom }}>
+  .aspect-ratio-wrapper {
+    padding-bottom: var(--paddingBottom);
+  }
+</style>

@@ -27,10 +27,16 @@ const classes = resolveClasses(marquee, {
 const duration = `${speed}s`
 ---
 <div class={classes.root} data-slot="marquee-root" {...rest}>
-  <div class={classes.track} data-slot="track" style={{ animationDuration: duration }}>
+  <div class:list={[classes.track, "rla-marquee-track"]} data-slot="track">
     <slot />
   </div>
-  <div class={classes.track} data-slot="track" aria-hidden="true" style={{ animationDuration: duration }}>
+  <div class:list={[classes.track, "rla-marquee-track"]} data-slot="track" aria-hidden="true">
     <slot />
   </div>
 </div>
+
+<style define:vars={{ duration }}>
+  .rla-marquee-track {
+    animation-duration: var(--duration);
+  }
+</style>
