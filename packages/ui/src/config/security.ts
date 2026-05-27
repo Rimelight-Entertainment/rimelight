@@ -153,6 +153,7 @@ export function defineSecurity(options: SecurityConfigOptions): AstroSecurityCon
   const styleResources = Array.from(
     new Set([
       "'self'",
+      // Astro ClientRouter (View Transitions)
       "'sha256-SKuaOGnks7NAUq37nvw1PfGEE0lOAs5ERbiYRbGFIbw='",
       ...(options.styleResources || [])
     ])
