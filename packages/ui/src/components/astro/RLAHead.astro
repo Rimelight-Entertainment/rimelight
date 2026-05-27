@@ -185,12 +185,163 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
     // Apply to incoming document BEFORE the swap — eliminates the flash
     document.addEventListener('astro:before-swap', function(e) {
       applyTheme(e.newDocument);
+      var nonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content');
+      if (nonce) {
+        e.newDocument.querySelectorAll('script').forEach(function(s) {
+          s.setAttribute('nonce', nonce);
+        });
+        e.newDocument.querySelectorAll('style').forEach(function(s) {
+          s.setAttribute('nonce', nonce);
+        });
+      }
     });
 
     // Safety net: re-apply after swap in case anything overrides it
     document.addEventListener('astro:after-swap', function() {
       applyTheme(document);
     });
+  })();
+</script>
+
+<script is:inline data-astro-rerun>
+  (function() {
+    'use strict';
+    if (window.rlHeaderObserver) window.rlHeaderObserver.disconnect();
+
+    if (!window.RLHeaderStack) {
+      window.RLHeaderStack = {
+        layers: [],
+        register: function(id, order, naturalHeight, isVisible, el) {
+          let layer = this.layers.find(function(l) { return l.id === id; });
+          if (!layer) {
+            layer = { id: id, order: order, naturalHeight: naturalHeight, isVisible: isVisible, el: el };
+            this.layers.push(layer);
+            this.layers.sort(function(a, b) { return a.order - b.order; });
+          } else {
+            layer.naturalHeight = naturalHeight;
+            layer.isVisible = isVisible;
+            layer.el = el;
+          }
+          this.update();
+        },
+        unregister: function(id) {
+          this.layers = this.layers.filter(function(l) { return l.id !== id; });
+          this.update();
+        },
+        update: function() {
+          let currentTop = 0;
+          for (let i = 0; i < this.layers.length; i++) {
+            const layer = this.layers[i];
+            if (layer.el) {
+              const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
+              layer.el.style.top = topPx;
+              layer.el.style.opacity = layer.isVisible ? '1' : '0';
+              layer.el.style.pointerEvents = layer.isVisible ? 'auto' : 'none';
+              layer.el.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
+            }
+            if (layer.isVisible) currentTop += layer.naturalHeight;
+          }
+          if (currentTop > 0) {
+            document.documentElement.style.setProperty('--rl-total-header-height', currentTop + 'px');
+          }
+        }
+      };
+    }
+    const RL = window.RLHeaderStack;
+    RL.layers = [];
+
+    function getHeight(el) {
+      if (!el) return 64;
+      const h = el.offsetHeight;
+      return h > 0 ? h : 64;
+    }
+
+    function initHeader(header) {
+      if (header.rlManaged) return;
+      header.rlManaged = true;
+
+      const id = header.id;
+      const stackIndex = parseInt(header.getAttribute('data-stack-index') || '0', 10);
+      const hideOnScroll = header.getAttribute('data-hide-on-scroll') === 'true';
+      const contentEl = header.querySelector('[data-header-content]');
+      let naturalHeight = getHeight(contentEl);
+      let isVisible = true;
+
+      RL.register(id, stackIndex, naturalHeight, isVisible, header);
+
+      if (typeof ResizeObserver !== 'undefined' && contentEl) {
+        new ResizeObserver(function(entries) {
+          const h = entries[0] && entries[0].contentRect.height;
+          if (h && h > 0) {
+            naturalHeight = h;
+            RL.update();
+          }
+        }).observe(contentEl);
+      }
+
+      if (hideOnScroll) {
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', function() {
+          const current = window.scrollY;
+          const diff = current - lastScrollY;
+          if (Math.abs(diff) >= 10) {
+            const newVisible = current <= 50 ? true : diff <= 0;
+            if (newVisible !== isVisible) {
+              isVisible = newVisible;
+              RL.register(id, stackIndex, naturalHeight, isVisible, header);
+            }
+            lastScrollY = current;
+          }
+        }, { passive: true });
+      }
+
+      (function retry() {
+        const h = getHeight(contentEl);
+        if (h !== naturalHeight) {
+          naturalHeight = h;
+          RL.update();
+        }
+        if (h > 0 && h !== 64 && contentEl && contentEl.offsetHeight > 0) return;
+        requestAnimationFrame(retry);
+      })();
+    }
+
+    function startObserver() {
+      if (document.body) {
+        const headers = document.querySelectorAll("[data-rla-header='true']");
+        for (let i = 0; i < headers.length; i++) initHeader(headers[i]);
+
+        window.rlHeaderObserver = new MutationObserver(function(mutations) {
+          for (let i = 0; i < mutations.length; i++) {
+            const added = mutations[i].addedNodes;
+            for (let j = 0; j < added.length; j++) {
+              const node = added[j];
+              if (node.nodeType !== 1) continue;
+              if (node.matches && node.matches("[data-rla-header='true']")) initHeader(node);
+              if (node.querySelectorAll) {
+                const nested = node.querySelectorAll("[data-rla-header='true']");
+                for (let k = 0; k < nested.length; k++) initHeader(nested[k]);
+              }
+            }
+            const removed = mutations[i].removedNodes;
+            for (let j = 0; j < removed.length; j++) {
+              const node = removed[j];
+              if (node.nodeType !== 1) continue;
+              if (node.matches && node.matches("[data-rla-header='true']")) RL.unregister(node.id);
+              if (node.querySelectorAll) {
+                const nested = node.querySelectorAll("[data-rla-header='true']");
+                for (let k = 0; k < nested.length; k++) RL.unregister(nested[k].id);
+              }
+            }
+          }
+        });
+        window.rlHeaderObserver.observe(document.body, { childList: true, subtree: true });
+      } else {
+        document.addEventListener('DOMContentLoaded', startObserver);
+      }
+    }
+
+    startObserver();
   })();
 </script>
 
