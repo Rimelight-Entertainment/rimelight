@@ -69,6 +69,11 @@ export default defineConfig({
     }
   },
 
+  i18n: {
+    locales: ["en"],
+    defaultLocale: "en",
+  },
+
   integrations:[
     ui({
       logos: {
