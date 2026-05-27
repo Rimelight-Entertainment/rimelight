@@ -141,7 +141,7 @@ const mockPosts = [
     </script>
   </RLAHead>
   <body class="isolate bg-black text-white">
-    {/* Replicated Header */}
+    <!-- Replicated Header -->
     <RLAHeader contain={false} fixed={true} stackIndex={0} class="bg-black">
       <div slot="left" class="flex flex-row items-center gap-md">
         <RLALogo variant="logomark" class="h-10 w-auto" mode="white" />
@@ -157,7 +157,7 @@ const mockPosts = [
     </RLAHeader>
 
     <RLAMain>
-      {/* Replicated Hero Section */}
+      <!-- Replicated Hero Section -->
       <RLAPageSection
         variant="hero"
         reverse={true}
@@ -168,7 +168,7 @@ const mockPosts = [
         <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
       </RLAPageSection>
 
-      {/* Replicated Blog Section */}
+      <!-- Replicated Blog Section -->
       <RLAPageSection
         orientation="vertical"
         title="Latest Posts"
@@ -192,7 +192,7 @@ const mockPosts = [
         </div>
       </RLAPageSection>
 
-      {/* Replicated CTA Section */}
+      <!-- Replicated CTA Section -->
       <RLAPageSection
         variant="cta"
         ctaVariant="solid"
@@ -202,7 +202,7 @@ const mockPosts = [
       />
     </RLAMain>
 
-    {/* Replicated Footer */}
+    <!-- Replicated Footer -->
     <RLAFooter contain={false} class="bg-black z-50">
       <div slot="left" class="flex flex-col items-center gap-xs lg:items-start">
         <RLALogo variant="logotype" class="h-6 w-auto" />
@@ -236,7 +236,7 @@ const mockPosts = [
 
     <RLAScrollToTop showProgress={true} />
 
-    {/* Replicated AppLayout Inline Observer Script */}
+    <!-- Replicated AppLayout Inline Observer Script -->
     <script is:inline data-astro-rerun>
       (function() {
         'use strict';
