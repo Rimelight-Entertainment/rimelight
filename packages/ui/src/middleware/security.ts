@@ -80,6 +80,11 @@ export const security = defineMiddleware(async (context, next) => {
 
     if (nonceValue) {
       rewriter = rewriter
+        .on("head", {
+          element(el: any) {
+            el.append(`<meta name="csp-nonce" content="${nonceValue}">`, { html: true })
+          }
+        })
         .on("script:not([src])", {
           element(el: any) {
             el.setAttribute("nonce", nonceValue)
@@ -125,6 +130,7 @@ export const security = defineMiddleware(async (context, next) => {
   }
 
   if (nonceValue) {
+    modifiedHtml = modifiedHtml.replace(/<head([^>]*)>/i, `<head$1>\n<meta name="csp-nonce" content="${nonceValue}">`)
     modifiedHtml = modifiedHtml.replace(
       /<script(?![^>]*src=)(?![^>]*nonce=)([^>]*)>/gi,
       `<script$1 nonce="${nonceValue}">`

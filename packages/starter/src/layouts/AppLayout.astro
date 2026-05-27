@@ -33,7 +33,9 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 					const el = orig.call(document, tag, opts);
 					const lowTag = tag.toLowerCase();
 					if (lowTag === 'script' || lowTag === 'style') {
-						const nonce = document.querySelector('script[nonce]')?.nonce || 
+						const nonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+						              Array.from(document.querySelectorAll('script')).find(s => s.nonce)?.nonce ||
+						              document.querySelector('script[nonce]')?.nonce || 
 						              document.querySelector('style[nonce]')?.nonce;
 						if (nonce) {
 							el.setAttribute('nonce', nonce);
