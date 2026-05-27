@@ -1,4 +1,4 @@
-import { ui } from "@rimelight/ui/integrations"
+import {sri, ui} from "@rimelight/ui/integrations"
 import {defineConfig, memoryCache, svgoOptimizer} from "astro/config"
 
 export default defineConfig({
@@ -10,14 +10,6 @@ export default defineConfig({
     },
     cache: {
       provider: memoryCache()
-    },
-    routeRules: {
-      "/api/[...path]": {
-        swr: 600 // 10 minutes stale-while-revalidate
-      },
-      "/[...path]": {
-        maxAge: 300 // 5 minutes cache
-      }
     },
     clientPrerender: true,
     svgOptimizer: svgoOptimizer({
@@ -69,4 +61,14 @@ export default defineConfig({
       }
     }
   },
+
+  integrations:[
+    ui({
+      logos: {
+        logomark: "/favicon.svg"
+      }
+    }),
+
+    sri()
+  ]
 })
