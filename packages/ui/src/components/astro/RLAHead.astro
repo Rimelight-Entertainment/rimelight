@@ -163,15 +163,19 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
 
 <script is:inline>
   (function() {
+    if (!window.initialCspNonce) {
+      window.initialCspNonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+                               Array.from(document.querySelectorAll('script')).find(function(s) { return s.nonce; })?.nonce ||
+                               document.querySelector('script[nonce]')?.nonce ||
+                               document.querySelector('style[nonce]')?.nonce;
+    }
+
     var orig = document.createElement;
     document.createElement = function(tag, opts) {
       var el = orig.call(document, tag, opts);
       var lowTag = tag.toLowerCase();
       if (lowTag === 'script' || lowTag === 'style') {
-        var nonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
-                      Array.from(document.querySelectorAll('script')).find(function(s) { return s.nonce; })?.nonce ||
-                      document.querySelector('script[nonce]')?.nonce ||
-                      document.querySelector('style[nonce]')?.nonce;
+        var nonce = window.initialCspNonce;
         if (nonce) {
           el.setAttribute('nonce', nonce);
           el.nonce = nonce;
@@ -202,7 +206,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
     // Apply to incoming document BEFORE the swap — eliminates the flash
     document.addEventListener('astro:before-swap', function(e) {
       applyTheme(e.newDocument);
-      var nonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content');
+      var nonce = window.initialCspNonce;
       if (nonce) {
         e.newDocument.querySelectorAll('script').forEach(function(s) {
           s.setAttribute('nonce', nonce);
