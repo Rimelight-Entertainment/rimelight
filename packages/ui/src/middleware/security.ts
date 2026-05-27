@@ -38,28 +38,57 @@ export const security = defineMiddleware(async (context, next) => {
     return addSecurityHeaders(response)
   }
 
+  const cspHeader = response.headers.get("content-security-policy")
+  const nonceValue = cspHeader ? crypto.randomUUID().replace(/-/g, "") : null
+  const newHeaders = new Headers(response.headers)
+
+  if (cspHeader && nonceValue) {
+    let newCsp = cspHeader
+    if (newCsp.includes("script-src ")) {
+      newCsp = newCsp.replace("script-src ", `script-src 'nonce-${nonceValue}' `)
+    } else {
+      newCsp = newCsp + `; script-src 'nonce-${nonceValue}'`
+    }
+    newHeaders.set("content-security-policy", newCsp)
+  }
+
   if (typeof HTMLRewriter !== "undefined") {
+    let rewriter = new HTMLRewriter()
+      .on("script[src]", {
+        element(el: any) {
+          const src = el.getAttribute("src")
+          if (src && manifest[src]) {
+            el.setAttribute("integrity", manifest[src])
+            el.setAttribute("crossorigin", "anonymous")
+          }
+        }
+      })
+      .on('link[rel="stylesheet"][href]', {
+        element(el: any) {
+          const href = el.getAttribute("href")
+          if (href && manifest[href]) {
+            el.setAttribute("integrity", manifest[href])
+            el.setAttribute("crossorigin", "anonymous")
+          }
+        }
+      })
+
+    if (nonceValue) {
+      rewriter = rewriter.on("script:not([src])", {
+        element(el: any) {
+          el.setAttribute("nonce", nonceValue)
+        }
+      })
+    }
+
     return addSecurityHeaders(
-      new HTMLRewriter()
-        .on("script[src]", {
-          element(el: any) {
-            const src = el.getAttribute("src")
-            if (src && manifest[src]) {
-              el.setAttribute("integrity", manifest[src])
-              el.setAttribute("crossorigin", "anonymous")
-            }
-          }
+      rewriter.transform(
+        new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: newHeaders
         })
-        .on('link[rel="stylesheet"][href]', {
-          element(el: any) {
-            const href = el.getAttribute("href")
-            if (href && manifest[href]) {
-              el.setAttribute("integrity", manifest[href])
-              el.setAttribute("crossorigin", "anonymous")
-            }
-          }
-        })
-        .transform(response)
+      )
     )
   }
 
@@ -84,11 +113,19 @@ export const security = defineMiddleware(async (context, next) => {
     )
   }
 
+  if (nonceValue) {
+    modifiedHtml = modifiedHtml.replace(
+      /<script(?![^>]*src=)(?![^>]*nonce=)([^>]*)>/gi,
+      `<script$1 nonce="${nonceValue}">`
+    )
+  }
+
   return addSecurityHeaders(
     new Response(modifiedHtml, {
       status: response.status,
       statusText: response.statusText,
-      headers: new Headers(response.headers)
+      headers: newHeaders
     })
   )
 })
+
