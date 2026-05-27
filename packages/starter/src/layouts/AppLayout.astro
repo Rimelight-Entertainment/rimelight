@@ -26,6 +26,24 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
 	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }}>
+		<script is:inline>
+			(function() {
+				const orig = document.createElement;
+				document.createElement = function(tag, opts) {
+					const el = orig.call(document, tag, opts);
+					const lowTag = tag.toLowerCase();
+					if (lowTag === 'script' || lowTag === 'style') {
+						const nonce = document.querySelector('script[nonce]')?.nonce || 
+						              document.querySelector('style[nonce]')?.nonce;
+						if (nonce) {
+							el.setAttribute('nonce', nonce);
+							el.nonce = nonce;
+						}
+					}
+					return el;
+				};
+			})();
+		</script>
 		<slot name="head" slot="head" />
 		<Font cssVariable="--font-sans" preload={true} slot="head" />
 		<Font cssVariable="--font-serif" preload={true} slot="head" />
