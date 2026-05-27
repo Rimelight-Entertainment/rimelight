@@ -1,32 +1,6 @@
 ---
-import AppLayout from "../layouts/AppLayout.astro";
+import AppLayout from "@/layouts/AppLayout.astro";
 import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
-import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
-
-const heroLinks = [
-  {
-    label: "Explore Diagnostics",
-    href: "/csp-test",
-    color: "primary",
-    variant: "solid",
-  }
-];
-
-const ctaLinks = [
-  {
-    label: "Get Started",
-    href: "#",
-    color: "primary",
-    variant: "solid"
-  },
-  {
-    label: "Join Us",
-    href: "#",
-    color: "primary",
-    variant: "outline",
-    trailingIcon: "i-lucide-arrow-right"
-  }
-];
 ---
 
 <AppLayout title="Rimelight Content Security Policy Test" description="Verify content security policy compliance across interactive UI components.">
@@ -35,16 +9,5 @@ const ctaLinks = [
     reverse={true}
     title="Welcome to the Rimelight Entertainment"
     description="Look around, test, and play with some of our interactive technologies under strict Content Security Policies."
-    links={heroLinks as any}
-  >
-    <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
-  </RLAPageSection>
-
-  <RLAPageSection
-    variant="cta"
-    ctaVariant="solid"
-    title="Wish to join us?"
-    description="Explore our latest security architectures and interactive components."
-    links={ctaLinks as any}
   />
 </AppLayout>
