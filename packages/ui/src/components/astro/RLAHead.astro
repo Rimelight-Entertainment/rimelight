@@ -184,6 +184,65 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
       return el;
     };
 
+    // Synchronous DOM insertion overrides to catch cloned, imported, or createElementNS tags
+    var origAppend = Element.prototype.appendChild;
+    Element.prototype.appendChild = function(child) {
+      if (child && (child.tagName === 'SCRIPT' || child.tagName === 'STYLE')) {
+        var nonce = window.initialCspNonce;
+        if (nonce && !child.getAttribute('nonce')) {
+          child.setAttribute('nonce', nonce);
+          child.nonce = nonce;
+        }
+      }
+      return origAppend.apply(this, arguments);
+    };
+
+    var origInsert = Element.prototype.insertBefore;
+    Element.prototype.insertBefore = function(newChild, refChild) {
+      if (newChild && (newChild.tagName === 'SCRIPT' || newChild.tagName === 'STYLE')) {
+        var nonce = window.initialCspNonce;
+        if (nonce && !newChild.getAttribute('nonce')) {
+          newChild.setAttribute('nonce', nonce);
+          newChild.nonce = nonce;
+        }
+      }
+      return origInsert.apply(this, arguments);
+    };
+
+    var origAppendMethod = Element.prototype.append;
+    if (origAppendMethod) {
+      Element.prototype.append = function() {
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
+            var nonce = window.initialCspNonce;
+            if (nonce && !arg.getAttribute('nonce')) {
+              arg.setAttribute('nonce', nonce);
+              arg.nonce = nonce;
+            }
+          }
+        }
+        return origAppendMethod.apply(this, arguments);
+      };
+    }
+
+    var origPrependMethod = Element.prototype.prepend;
+    if (origPrependMethod) {
+      Element.prototype.prepend = function() {
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
+            var nonce = window.initialCspNonce;
+            if (nonce && !arg.getAttribute('nonce')) {
+              arg.setAttribute('nonce', nonce);
+              arg.nonce = nonce;
+            }
+          }
+        }
+        return origPrependMethod.apply(this, arguments);
+      };
+    }
+
     function getThemeClass() {
       var stored = localStorage.getItem('theme');
       if (stored === 'dark') return 'dark';
