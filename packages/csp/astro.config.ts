@@ -70,7 +70,7 @@ export default defineConfig({
   },
 
   i18n: {
-    locales: ["en"],
+    locales: ["en", "pt", "es"],
     defaultLocale: "en",
   },
 
