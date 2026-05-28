@@ -72,38 +72,52 @@ const initialLabel = selectedItem ? selectedItem.label : ""
 </div>
 
 <script>
-  document.querySelectorAll("[data-select-wrapper]").forEach(wrapper => {
-    const trigger = wrapper.querySelector("[data-select-trigger]") as HTMLButtonElement;
-    const dropdown = wrapper.querySelector("[data-select-dropdown]") as HTMLDivElement;
-    const items = wrapper.querySelectorAll("[data-select-item]");
-    const valueSpan = wrapper.querySelector("[data-select-value]");
-    const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-select-hidden-input]") as HTMLInputElement;
+  const initializeSelects = () => {
+    document.querySelectorAll("[data-select-wrapper]").forEach(wrapper => {
+      if (wrapper.hasAttribute("data-initialized")) return;
+      wrapper.setAttribute("data-initialized", "true");
 
-    if (!trigger || !dropdown) return;
+      const trigger = wrapper.querySelector("[data-select-trigger]") as HTMLButtonElement;
+      const dropdown = wrapper.querySelector("[data-select-dropdown]") as HTMLDivElement;
+      const items = wrapper.querySelectorAll("[data-select-item]");
+      const valueSpan = wrapper.querySelector("[data-select-value]");
+      const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-select-hidden-input]") as HTMLInputElement;
 
-    trigger.addEventListener("click", (e) => {
-      e.stopPropagation();
-      dropdown.classList.toggle("hidden");
-    });
+      if (!trigger || !dropdown) return;
 
-    items.forEach(item => {
-      item.addEventListener("click", (e) => {
+      trigger.addEventListener("click", (e) => {
         e.stopPropagation();
-        const val = (item as HTMLElement).dataset.value || "";
-        const label = (item as HTMLElement).dataset.label || "";
-        
-        if (hiddenInput) hiddenInput.value = val;
-        if (valueSpan) valueSpan.textContent = label;
-        
-        items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
-        item.querySelector("[data-check-icon]")?.classList.remove("hidden");
-        
-        dropdown.classList.add("hidden");
+        dropdown.classList.toggle("hidden");
+      });
+
+      items.forEach(item => {
+        item.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const val = (item as HTMLElement).dataset.value || "";
+          const label = (item as HTMLElement).dataset.label || "";
+          
+          if (hiddenInput) {
+            hiddenInput.value = val;
+            hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          if (valueSpan) valueSpan.textContent = label;
+          
+          items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
+          item.querySelector("[data-check-icon]")?.classList.remove("hidden");
+          
+          dropdown.classList.add("hidden");
+        });
       });
     });
+  };
 
-    document.addEventListener("click", () => {
+  // Close all dropdowns when clicking outside
+  document.addEventListener("click", () => {
+    document.querySelectorAll("[data-select-dropdown]").forEach(dropdown => {
       dropdown.classList.add("hidden");
     });
   });
+
+  document.addEventListener("DOMContentLoaded", initializeSelects);
+  document.addEventListener("astro:page-load", initializeSelects);
 </script>
