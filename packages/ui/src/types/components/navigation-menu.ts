@@ -43,6 +43,10 @@ export interface NavigationMenuProps {
    */
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   /**
+   * Orientation of the menu.
+   */
+  orientation?: "horizontal" | "vertical"
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

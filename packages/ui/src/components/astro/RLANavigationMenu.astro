@@ -11,12 +11,13 @@ const {
   items = [],
   color = "primary",
   theme,
+  orientation = "horizontal",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as NavigationMenuProps
 
-const classes = resolveClasses(navigationMenu, { theme }, useUi("navigationMenu", uiProp), className)
+const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("navigationMenu", uiProp), className)
 ---
 
 <nav class={classes.root} data-slot="root" data-nav-menu {...rest}>

@@ -43,16 +43,16 @@ export const createSlideoverTheme = (colors: string[] = defaultColors) =>
         },
         left: {
           content:
-            "inset-y-0 left-0 h-full w-3/4 max-w-sm border-r data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left"
+            "inset-y-0 left-0 right-auto h-full w-2/3 max-w-sm border-r m-0 max-h-none data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left"
         },
         right: {
           content:
-            "inset-y-0 right-0 h-full w-3/4 max-w-sm border-l data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
+            "inset-y-0 right-0 left-auto h-full w-2/3 max-w-sm border-l m-0 max-h-none data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
         }
       }
     },
     defaultVariants: {
-      side: "right"
+      side: "left"
     }
   })
 

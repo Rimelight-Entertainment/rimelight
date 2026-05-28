@@ -6,6 +6,7 @@ import type { NavigationMenuItem, ButtonProps } from "@rimelight/ui/types";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { useI18n } from "astro-nanostores-i18n:runtime";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
@@ -64,29 +65,83 @@ const actions: ButtonProps[] = [
   stackIndex={0}
   class="bg-black"
 >
-	<div slot="left" class="flex flex-row gap-md">
-		<RLALogo
-      variant="logomark"
-      class="h-10 w-auto"
-      mode="white"
-    />
-		<RLANavigationMenu
-      slot="left"
-      items={items}
-			variant="link"
-			theme="flat"
-			ui={{
-				link: 'text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
-			}}
-		/>
-	</div>
+  <div slot="left" class="w-full flex items-center justify-between">
+    <div class="hidden md:flex flex-row gap-md">
+      <RLALogo
+        variant="logomark"
+        class="h-10 w-auto"
+        mode="white"
+      />
+      <RLANavigationMenu
+        items={items}
+        variant="link"
+        theme="flat"
+        ui={{
+          link: 'text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
+        }}
+      />
+    </div>
 
-  <div
-    slot="right"
-    class="flex flex-row gap-md"
-  >
-    {actions.map((buttonProps) => (
-      <RLAButton {...buttonProps} />
-    ))}
+    <div class="block md:hidden">
+      <RLASlideover side="left" title="Menu">
+        <button
+          slot="trigger"
+          type="button"
+          class="flex items-center justify-center p-2 rounded-md hover:bg-neutral-800 transition-colors"
+          aria-label="Open menu"
+        >
+          <span class="i-lucide-menu size-6 text-white" aria-hidden="true" />
+        </button>
+
+        <div class="flex flex-col gap-4 mt-6">
+          <RLANavigationMenu
+            items={items}
+            orientation="vertical"
+            variant="link"
+            theme="flat"
+            ui={{
+              link: 'text-white block py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
+            }}
+          />
+        </div>
+      </RLASlideover>
+    </div>
+  </div>
+
+  <div slot="center" class="flex items-center justify-center">
+    <div class="block md:hidden">
+      <RLALogo
+        variant="logomark"
+        class="h-10 w-auto"
+        mode="white"
+      />
+    </div>
+  </div>
+
+  <div slot="right" class="flex items-center gap-md">
+    <div class="hidden md:flex flex-row gap-md">
+      {actions.map((buttonProps) => (
+        <RLAButton {...buttonProps} />
+      ))}
+    </div>
+
+    <div class="block md:hidden">
+      <RLASlideover side="right" title="Actions">
+        <button
+          slot="trigger"
+          type="button"
+          class="flex items-center justify-center p-2 rounded-md hover:bg-neutral-800 transition-colors"
+          aria-label="Open actions"
+        >
+          <span class="i-lucide-ellipsis-vertical size-6 text-white" aria-hidden="true" />
+        </button>
+
+        <div class="flex flex-col gap-4 mt-6">
+          {actions.map((buttonProps) => (
+            <RLAButton {...buttonProps} class="w-full justify-center" />
+          ))}
+        </div>
+      </RLASlideover>
+    </div>
   </div>
 </RLAHeader>

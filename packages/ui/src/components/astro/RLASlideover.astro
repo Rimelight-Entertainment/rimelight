@@ -11,7 +11,7 @@ const slideoverTheme = uiConfig.colors ? createSlideoverTheme() : slideoverTheme
 const slideover = scv(slideoverTheme)
 
 const {
-  side = "right",
+  side = "left",
   title,
   description,
   triggerLabel,
@@ -74,3 +74,68 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
     </div>
   </dialog>
 </div>
+
+<style is:global>
+  /* Transition/Animation support for native <dialog> slideovers */
+  dialog[data-slot="content"] {
+    transition: transform 0.3s ease, opacity 0.3s ease, display 0.3s allow-discrete, overlay 0.3s allow-discrete !important;
+    opacity: 0;
+  }
+  
+  /* Left side slideover */
+  dialog[data-slot="content"].left-0 {
+    transform: translateX(-100%);
+  }
+  
+  /* Right side slideover */
+  dialog[data-slot="content"].right-0 {
+    transform: translateX(100%);
+  }
+  
+  /* Open states */
+  dialog[data-slot="content"][open] {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+  }
+  
+  /* Starting styles for enter transitions */
+  @starting-style {
+    dialog[data-slot="content"][open].left-0 {
+      opacity: 0 !important;
+      transform: translateX(-100%) !important;
+    }
+    dialog[data-slot="content"][open].right-0 {
+      opacity: 0 !important;
+      transform: translateX(100%) !important;
+    }
+    dialog[data-slot="content"][open]::backdrop {
+      background-color: rgba(0, 0, 0, 0) !important;
+      backdrop-filter: blur(0px) !important;
+    }
+  }
+
+  /* Backdrop transition */
+  dialog[data-slot="content"]::backdrop {
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, display 0.3s allow-discrete, overlay 0.3s allow-discrete !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.tagName === 'DIALOG' && e.target.getAttribute('data-close-on-click-outside') === 'true') {
+      const rect = e.target.getBoundingClientRect();
+      const isInModal = (
+        rect.top <= e.clientY &&
+        e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.left + rect.width
+      );
+      if (!isInModal) {
+        e.target.close();
+      }
+    }
+  });
+</script>
+
