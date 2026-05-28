@@ -80,7 +80,7 @@ const targetLanguages = [
     <p class="text-sm text-white">Rimelight Starter</p>
     <span class="text-sm text-white">© {new Date().getFullYear()} starter.rimelight.com</span>
   </div>
-  <div slot="center" class="flex gap-12">
+  <div slot="center" class="flex flex-col md:flex-row gap-md">
     {columns.map(column => (
       <RLALinkGroup 
         title={column.label} 

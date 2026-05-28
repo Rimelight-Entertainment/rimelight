@@ -153,7 +153,7 @@ export const createButtonTheme = (colors: string[] = defaultColors) =>
         color: "neutral",
         variant: "outline",
         classNames: {
-          root: "ring ring-inset ring-accented text-default bg-default hover:bg-elevated active:bg-elevated disabled:bg-default aria-disabled:bg-default focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted"
+          root: "ring ring-inset ring-current text-default bg-transparent hover:bg-elevated active:bg-elevated disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted"
         }
       },
       {
