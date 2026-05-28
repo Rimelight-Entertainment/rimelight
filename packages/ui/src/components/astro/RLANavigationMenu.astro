@@ -20,7 +20,7 @@ const {
 const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("navigationMenu", uiProp), className)
 ---
 
-<nav class={classes.root} data-slot="root" data-nav-menu {...rest}>
+<nav class={classes.root} data-slot="root" data-nav-menu data-orientation={orientation} {...rest}>
   <ul class={classes.list} data-slot="list" role="list">
     {items.map((item, i) => {
       const hasChildren = item.children && item.children.length > 0
@@ -36,11 +36,11 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
       )
       
       return (
-        <li class={classes.item} data-slot="item" data-nav-item>
+        <li class={classes.item} data-slot="item" data-nav-item data-index={i}>
           {hasChildren ? (
             <button
               type="button"
-              class={classes.trigger}
+              class={classes.link}
               data-slot="trigger"
               data-nav-trigger
               aria-expanded="false"
@@ -63,25 +63,35 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
           )}
 
           {hasChildren && (
-            <div class={classes.content + " hidden"} data-slot="content" data-nav-content role="region">
-              <ul role="list" class="py-1">
-                {item.children!.map(child => (
-                  <li>
-                    <a
-                      href={child.href ?? child.to ?? "#"}
-                      class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-                    >
-                      {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}
-                      <div>
-                        <div class="font-medium leading-none">{child.label}</div>
-                        {child.description && (
-                          <p class="mt-1 text-xs text-muted-foreground line-clamp-2">{child.description}</p>
-                        )}
-                      </div>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+            <div 
+              class={classes.content + " hidden"} 
+              data-slot="content" 
+              data-nav-content 
+              data-item-index={i}
+              role="region"
+            >
+              {item.slot && Astro.slots.has(`${item.slot}-content`) ? (
+                <slot name={`${item.slot}-content`} />
+              ) : (
+                <ul role="list" class="py-1">
+                  {item.children!.map(child => (
+                    <li>
+                      <a
+                        href={child.href ?? child.to ?? "#"}
+                        class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                      >
+                        {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}
+                        <div>
+                          <div class="font-medium leading-none">{child.label}</div>
+                          {child.description && (
+                            <p class="mt-1 text-xs text-muted-foreground line-clamp-2">{child.description}</p>
+                          )}
+                        </div>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
         </li>
@@ -91,60 +101,222 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
 
   <slot />
 
-  <div class={classes.viewport} data-slot="viewport" />
+  <div class={classes.viewportWrapper + " hidden"} data-slot="viewport-wrapper" data-nav-viewport-wrapper>
+    <div class={classes.viewport} data-slot="viewport" data-nav-viewport />
+  </div>
 </nav>
 
 <script>
   document.querySelectorAll("[data-nav-menu]").forEach(menu => {
+    const orientation = menu.getAttribute("data-orientation") || "horizontal";
     const items = menu.querySelectorAll("[data-nav-item]");
+    const viewportWrapper = orientation === "horizontal" ? menu.querySelector("[data-nav-viewport-wrapper]") : null as HTMLElement | null;
+    const viewport = orientation === "horizontal" ? menu.querySelector("[data-nav-viewport]") : null;
 
-    items.forEach(item => {
-      const trigger = item.querySelector("[data-nav-trigger]");
-      const content = item.querySelector("[data-nav-content]");
+    // Teleport viewport wrapper to body to escape parent transforms (e.g. translate-x on header)
+    if (viewportWrapper && viewportWrapper.parentNode !== document.body) {
+      document.body.appendChild(viewportWrapper);
+    }
+
+    let activeItem = null as HTMLElement | null;
+    let hoverTimeout = null as any;
+
+    const updatePosition = () => {
+      if (viewportWrapper && activeItem) {
+        const header = menu.closest("header") || document.querySelector("header");
+        if (header) {
+          const headerRect = header.getBoundingClientRect();
+          viewportWrapper.style.top = `${headerRect.bottom}px`;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", updatePosition, { passive: true });
+    window.addEventListener("resize", updatePosition, { passive: true });
+
+    const open = (item: HTMLElement, trigger: HTMLElement, content: HTMLElement) => {
+      clearTimeout(hoverTimeout);
+      
+      // If there's another active item, close it first
+      if (activeItem && activeItem !== item) {
+        close(activeItem);
+      }
+
+      activeItem = item;
+      updatePosition();
+
+      if (viewport) {
+        viewport.innerHTML = "";
+        viewport.appendChild(content);
+        content.classList.remove("hidden");
+        if (viewportWrapper) {
+          viewportWrapper.classList.remove("hidden");
+          viewportWrapper.setAttribute("data-state", "open");
+        }
+      } else {
+        content.classList.remove("hidden");
+      }
+
+      trigger.setAttribute("aria-expanded", "true");
+      trigger.setAttribute("data-state", "open");
+      const icon = trigger.querySelector(".i-lucide-chevron-down");
+      if (icon) (icon as HTMLElement).style.transform = "rotate(180deg)";
+    };
+
+    const close = (item: HTMLElement) => {
+      const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
+      const itemIndex = item.getAttribute("data-index");
+      
+      // Find content - either inside viewport or inside the item
+      let content = item.querySelector("[data-nav-content]") as HTMLElement | null;
+      if (!content && viewport) {
+        content = viewport.querySelector(`[data-nav-content][data-item-index="${itemIndex}"]`) as HTMLElement | null;
+      }
+
+      if (content) {
+        content.classList.add("hidden");
+        // Move back to item
+        if (viewport && viewport.contains(content)) {
+          item.appendChild(content);
+        }
+      }
+
+      if (trigger) {
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.setAttribute("data-state", "closed");
+        const icon = trigger.querySelector(".i-lucide-chevron-down");
+        if (icon) (icon as HTMLElement).style.transform = "";
+      }
+
+      if (activeItem === item) {
+        activeItem = null;
+      }
+
+      // If no item is active, hide viewport
+      if (!activeItem && viewportWrapper) {
+        viewportWrapper.classList.add("hidden");
+        viewportWrapper.setAttribute("data-state", "closed");
+        if (viewport) viewport.innerHTML = "";
+      }
+    };
+
+    const closeAll = () => {
+      items.forEach(item => {
+        close(item as HTMLElement);
+      });
+    };
+
+    items.forEach(itemNode => {
+      const item = itemNode as HTMLElement;
+      const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
+      const content = item.querySelector("[data-nav-content]") as HTMLElement | null;
 
       if (!trigger || !content) return;
 
-      const open = () => {
-        content.classList.remove("hidden");
-        trigger.setAttribute("aria-expanded", "true");
-        const icon = trigger.querySelector(".i-lucide-chevron-down");
-        if (icon) (icon as HTMLElement).style.transform = "rotate(180deg)";
-      };
-
-      const close = () => {
-        content.classList.add("hidden");
-        trigger.setAttribute("aria-expanded", "false");
-        const icon = trigger.querySelector(".i-lucide-chevron-down");
-        if (icon) (icon as HTMLElement).style.transform = "";
-      };
-
+      // Click behavior (works everywhere, including mobile)
       trigger.addEventListener("click", (e) => {
         e.stopPropagation();
-        const isOpen = !content.classList.contains("hidden");
-        // Close all others
-        items.forEach(other => {
-          const otherContent = other.querySelector("[data-nav-content]");
-          const otherTrigger = other.querySelector("[data-nav-trigger]");
-          if (otherContent && !otherContent.classList.contains("hidden")) {
-            otherContent.classList.add("hidden");
-            otherTrigger?.setAttribute("aria-expanded", "false");
-            const icon = otherTrigger?.querySelector(".i-lucide-chevron-down");
-            if (icon) (icon as HTMLElement).style.transform = "";
+        const isOpen = activeItem === item;
+        if (isOpen) {
+          close(item);
+        } else {
+          open(item, trigger, content);
+        }
+      });
+
+      // Hover behavior
+      item.addEventListener("mouseenter", () => {
+        clearTimeout(hoverTimeout);
+        open(item, trigger, content);
+      });
+
+      item.addEventListener("mouseleave", () => {
+        hoverTimeout = setTimeout(() => {
+          if (activeItem === item) {
+            close(item);
           }
-        });
-        if (!isOpen) open();
+        }, 150);
       });
     });
 
-    document.addEventListener("click", () => {
-      items.forEach(item => {
-        const content = item.querySelector("[data-nav-content]");
-        const trigger = item.querySelector("[data-nav-trigger]");
-        if (content) content.classList.add("hidden");
-        if (trigger) trigger.setAttribute("aria-expanded", "false");
-        const icon = trigger?.querySelector(".i-lucide-chevron-down");
-        if (icon) (icon as HTMLElement).style.transform = "";
+    // Handle viewport wrapper hover so menu stays open when hovering the mega menu itself
+    if (viewportWrapper) {
+      viewportWrapper.addEventListener("mouseenter", () => {
+        clearTimeout(hoverTimeout);
       });
+
+      viewportWrapper.addEventListener("mouseleave", () => {
+        hoverTimeout = setTimeout(() => {
+          if (activeItem) {
+            close(activeItem);
+          }
+        }, 150);
+      });
+    }
+
+    // Close on clicking outside
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (!menu.contains(target) && (!viewportWrapper || !viewportWrapper.contains(target))) {
+        closeAll();
+      }
     });
   });
 </script>
+
+<style is:global>
+  /* Reset margins, borders, rounding, and rings on the main viewport container */
+  [data-nav-viewport] {
+    margin-top: 0 !important;
+    border: none !important;
+    border-width: 0px !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    outline: none !important;
+    outline-width: 0px !important;
+    outline-color: transparent !important;
+    
+    /* Wiping out any UnoCSS/Tailwind rings on the viewport container */
+    --un-ring-width: 0px !important;
+    --tw-ring-width: 0px !important;
+    --un-ring-offset-width: 0px !important;
+    --tw-ring-offset-width: 0px !important;
+    --un-ring-color: transparent !important;
+    --tw-ring-color: transparent !important;
+    --un-ring-shadow: none !important;
+    --tw-ring-shadow: none !important;
+    --un-ring-offset-shadow: none !important;
+    --tw-ring-offset-shadow: none !important;
+    
+    /* Premium card shadow */
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.35), 0 8px 10px -6px rgb(0 0 0 / 0.35) !important; /* Premium shadow-xl */
+  }
+
+  /* Reset layout and strip standard dropdown styling (borders/shadows/padding) from teleported content nodes */
+  [data-nav-viewport] [data-nav-content] {
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+    border: none !important;
+    border-width: 0px !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    
+    /* Wiping out any UnoCSS/Tailwind rings on content */
+    --un-ring-width: 0px !important;
+    --tw-ring-width: 0px !important;
+    --un-ring-offset-width: 0px !important;
+    --tw-ring-offset-width: 0px !important;
+    --un-ring-color: transparent !important;
+    --tw-ring-color: transparent !important;
+    --un-ring-shadow: none !important;
+    --tw-ring-shadow: none !important;
+    --un-ring-offset-shadow: none !important;
+    --tw-ring-offset-shadow: none !important;
+    --un-shadow: none !important;
+    --tw-shadow: none !important;
+  }
+</style>
