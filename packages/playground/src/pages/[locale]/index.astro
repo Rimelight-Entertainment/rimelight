@@ -13,17 +13,20 @@ import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro";
 const activeLocale = Astro.currentLocale ?? "en";
 currentLocale.set(activeLocale);
 
-const messages = useI18n("playground", {
-    heroTitle: "Welcome to the Rimelight Entertainment",
-    heroDesc: "Look around, test, and play with some of our interactive technologies.",
-    heroLink: "Explore Now",
-    postsTitle: "Latest Posts",
-    postsDesc: "Read the latest updates to our projects.",
-    viewAllPosts: "View All Posts",
-    ctaTitle: "Wish to join us?",
-    ctaDesc: "Explore our latest projects and get in touch.",
-    ctaStart: "Get Started",
-    ctaContribute: "Join Us",
+const messages = useI18n("page_home", {
+  "section_hero_title": "Rimelight Starter Template",
+  "section_hero_description": "Look around, test, and play with some of our interactive technologies.",
+  "section_hero_link_github_label": "View on GitHub",
+  "section_hero_link_use-template_label": "Use Template",
+  "section_features_title": "One template for all your needs.",
+  "section_features_description": "We only maintain a single template including all features. Strip out what you don't need (or hide it to keep the option open) instead of browsing a multitude of options.",
+  "section_posts_title": "Latest Posts",
+  "section_posts_description": "Read the latest updates to our projects.",
+  "section_posts_view_all": "View All Posts",
+  "section_cta_title": "Wish to join us?",
+  "section_cta_description": "Explore our latest projects and get in touch.",
+  "section_cta_start": "Get Started",
+  "section_cta_contribute": "Join Us",
 });
 
 const latestPosts = (await getCollection("blog"))
@@ -56,55 +59,64 @@ const ctaLinks = [
 ];
 ---
 
+
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
-    <RLAPageSection
-            variant="hero"
-            reverse={true}
-            title={messages.heroTitle}
-            description={messages.heroDesc}
-            links={heroLinks}
-    >
-        <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
-    </RLAPageSection>
+  <RLAPageSection
+    variant="hero"
+    reverse={true}
+    title={messages["section_hero_title"]}
+    description={messages["section_hero_description"]}
+    links={heroLinks}
+  >
+    <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
+  </RLAPageSection>
 
-    <RLAPageSection
-            orientation="vertical"
-            title={messages.postsTitle}
-            description={messages.postsDesc}
-    >
-        <div slot="body" class="flex flex-col gap-xl">
-            <RLAGrid>
-                {
-                    latestPosts.map((post) => (
-                        <RLAPost
-                            variant="ghost"
-                            image={post.data.heroImage}
-                            date={post.data.pubDate}
-                            title={post.data.title}
-                            description={post.data.description}
-                            to={getRelativeLocaleUrl(activeLocale, `/blog/${post.id}/`)}
-                        />
-                    ))
-                }
-            </RLAGrid>
+  <RLAPageSection
+    title={messages["section_features_title"]}
+    description={messages["section_features_description"]}
+    links={heroLinks}
+  >
+    <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
+  </RLAPageSection>
 
-            {latestPosts.length > 0 && (
-                    <RLAButton
-                            label={messages.viewAllPosts}
-                            href={getRelativeLocaleUrl(activeLocale, "/blog")}
-                            color="primary"
-                            variant="link"
-                            trailingIcon="i-lucide-arrow-right"
-                    />
-            )}
-        </div>
-    </RLAPageSection>
+  <RLAPageSection
+    orientation="vertical"
+    title={messages["section_posts_title"]}
+    description={messages["section_posts_description"]}
+  >
+    <div slot="body" class="flex flex-col gap-xl">
+      <RLAGrid>
+        {
+          latestPosts.map((post) => (
+            <RLAPost
+              variant="ghost"
+              image={post.data.heroImage}
+              date={post.data.pubDate}
+              title={post.data.title}
+              description={post.data.description}
+              to={getRelativeLocaleUrl(activeLocale, `/blog/${post.id}/`)}
+            />
+          ))
+        }
+      </RLAGrid>
 
-    <RLAPageSection
-            variant="cta"
-            ctaVariant="solid"
-            title={messages.ctaTitle}
-            description={messages.ctaDesc}
-            links={ctaLinks}
-    />
+      {latestPosts.length > 0 && (
+        <RLAButton
+          label={messages["section_posts_view_all"]}
+          href={getRelativeLocaleUrl(activeLocale, "/blog")}
+          color="primary"
+          variant="link"
+          trailingIcon="i-lucide-arrow-right"
+        />
+      )}
+    </div>
+  </RLAPageSection>
+
+  <RLAPageSection
+    variant="cta"
+    ctaVariant="solid"
+    title={messages["section_cta_title"]}
+    description={messages["section_cta_description"]}
+    links={ctaLinks}
+  />
 </AppLayout>
