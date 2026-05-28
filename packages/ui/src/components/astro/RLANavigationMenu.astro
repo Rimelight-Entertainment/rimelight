@@ -137,13 +137,15 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
     const open = (item: HTMLElement, trigger: HTMLElement, content: HTMLElement) => {
       clearTimeout(hoverTimeout);
       
-      // If there's another active item, close it first
-      if (activeItem && activeItem !== item) {
+      // If there's another active item, close it first (horizontal viewport mode only)
+      if (orientation === "horizontal" && activeItem && activeItem !== item) {
         close(activeItem);
       }
 
-      activeItem = item;
-      updatePosition();
+      if (orientation === "horizontal") {
+        activeItem = item;
+        updatePosition();
+      }
 
       if (viewport) {
         viewport.innerHTML = "";
@@ -188,12 +190,12 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
         if (icon) (icon as HTMLElement).style.transform = "";
       }
 
-      if (activeItem === item) {
+      if (orientation === "horizontal" && activeItem === item) {
         activeItem = null;
       }
 
-      // If no item is active, hide viewport
-      if (!activeItem && viewportWrapper) {
+      // If no item is active, hide viewport (horizontal viewport mode only)
+      if (orientation === "horizontal" && !activeItem && viewportWrapper) {
         viewportWrapper.classList.add("hidden");
         viewportWrapper.setAttribute("data-state", "closed");
         if (viewport) viewport.innerHTML = "";
@@ -216,7 +218,7 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
       // Click behavior (works everywhere, including mobile)
       trigger.addEventListener("click", (e) => {
         e.stopPropagation();
-        const isOpen = activeItem === item;
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
         if (isOpen) {
           close(item);
         } else {
