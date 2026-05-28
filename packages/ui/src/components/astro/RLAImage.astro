@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets"
+import { Image, Picture, getImage } from "astro:assets"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ImageProps, ImageMetadataInfo } from "../../types"
@@ -9,10 +9,14 @@ import { getUIConfig } from "virtual:rimelight-ui"
 const uiConfig = getUIConfig()
 const imageTheme = uiConfig.colors ? createImageTheme() : imageThemeDefault
 
-const imgc = scv(imageTheme)
+const img = scv(imageTheme)
 
 const {
   src,
+  mobileSrc,
+  desktopSrc,
+  breakpoint,
+  formats,
   alt = "",
   height,
   width,
@@ -31,13 +35,34 @@ const {
   ...rest
 } = Astro.props as ImageProps
 
-const classes = resolveClasses(imgc, {}, useUi("image", uiProp), className)
+const classes = resolveClasses(img, {}, useUi("image", uiProp), className)
 
-const isMetadata = typeof src !== "string"
-const imgWidth = width ?? (isMetadata ? src.width : undefined)
-const imgHeight = height ?? (isMetadata ? src.height : undefined)
-const imgFormat = isMetadata ? src.format : (preMetadata?.format ?? undefined)
-const rawName = typeof src === "string" ? src.split("/").pop() || "image" : src.src.split("/").pop() || "image"
+const isResponsive = !!(mobileSrc && desktopSrc)
+const isFormatFallback = !isResponsive && !!(formats && formats.length > 0)
+const breakpointVal = breakpoint ?? 768
+
+let mobileImg = null
+let desktopImg = null
+
+if (isResponsive) {
+  mobileImg = await getImage({
+    src: mobileSrc!,
+    format: "webp",
+  })
+  desktopImg = await getImage({
+    src: desktopSrc!,
+    format: "webp",
+  })
+}
+
+const activeSrc = isResponsive ? desktopSrc : src
+const isMetadata = typeof activeSrc !== "string" && activeSrc !== undefined
+const imgWidth = width ?? (isMetadata ? (activeSrc as any).width : undefined)
+const imgHeight = height ?? (isMetadata ? (activeSrc as any).height : undefined)
+const imgFormat = isMetadata ? (activeSrc as any).format : (preMetadata?.format ?? undefined)
+const rawName = activeSrc
+  ? (typeof activeSrc === "string" ? activeSrc.split("/").pop() || "image" : (activeSrc as any).src.split("/").pop() || "image")
+  : "image"
 const fileName = rawName.split("?")[0]
 const fileExtension = imgFormat?.toUpperCase() || (fileName.includes(".") ? fileName.split(".").pop()?.toUpperCase() : "IMG")
 const initialSize = preMetadata?.size ?? undefined
@@ -50,7 +75,17 @@ const initialSize = preMetadata?.size ?? undefined
       class={classes.trigger}
       data-image-trigger
     >
-      <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} fit={fit} />
+      {isResponsive && mobileImg && desktopImg ? (
+        <picture>
+          <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+          <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+          <img src={desktopImg.src} alt={alt} loading={loading} class="w-full h-full object-cover rounded-lg" />
+        </picture>
+      ) : isFormatFallback ? (
+        <Picture src={src!} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
+      ) : (
+        <Image src={src!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} fit={fit} />
+      )}
     </button>
   </slot>
 
@@ -60,12 +95,20 @@ const initialSize = preMetadata?.size ?? undefined
   >
     <div class="flex flex-col bg-background text-foreground max-h-[90vh]">
       <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
-        <img
-          src={typeof src === "string" ? src : src.src}
-          alt={alt}
-          class={classes.image}
-          data-modal-img
-        />
+        {isResponsive && mobileImg && desktopImg ? (
+          <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
+            <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+            <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+            <img src={desktopImg.src} alt={alt} class={classes.image} data-modal-img />
+          </picture>
+        ) : (
+          <img
+            src={typeof src === "string" ? src : src!.src}
+            alt={alt}
+            class={classes.image}
+            data-modal-img
+          />
+        )}
       </div>
 
       <hr class="border-border mx-4 mb-3 shrink-0" />
@@ -194,8 +237,7 @@ const initialSize = preMetadata?.size ?? undefined
           const link = document.createElement("a")
           link.href = url
           const srcAttr = (trigger.querySelector("img") || {}).getAttribute("src") || ""
-          const name = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`
-          link.download = name
+          link.download = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

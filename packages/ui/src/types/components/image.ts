@@ -8,7 +8,11 @@ export interface ImageMetadataInfo {
 }
 
 export interface ImageProps {
-  src: string | ImageMetadata
+  src?: string | ImageMetadata
+  mobileSrc?: string | ImageMetadata
+  desktopSrc?: string | ImageMetadata
+  breakpoint?: number
+  formats?: ("avif" | "webp" | "png" | "jpg" | "jpeg" | "svg")[]
   alt?: string
   height?: string | number
   width?: string | number
