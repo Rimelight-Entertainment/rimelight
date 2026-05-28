@@ -4,7 +4,7 @@ export interface ScrollToTopProps {
   /**
    * The color scheme applied to the scroll-to-top button.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "white" | "black"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
   /**
    * The width of the progress indicator line.
    */

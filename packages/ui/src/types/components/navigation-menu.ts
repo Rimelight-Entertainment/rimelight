@@ -41,7 +41,7 @@ export interface NavigationMenuProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
   /**
    * Orientation of the menu.
    */

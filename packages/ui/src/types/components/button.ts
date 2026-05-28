@@ -8,7 +8,7 @@ export interface ButtonProps {
   /**
    * The color scheme applied to the button
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "white" | "black"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
   /**
    * The size scale of the button
    */
@@ -53,14 +53,7 @@ export interface ButtonProps {
    * Color used when button is in active state
    */
   activeColor?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "error"
-    | "info"
-    | "white"
-    | "black"
+    | "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
   /**
    * Variant used when button is in active state
    */

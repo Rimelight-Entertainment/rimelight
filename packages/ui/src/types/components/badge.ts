@@ -8,7 +8,7 @@ export interface BadgeProps {
   /**
    * Color scheme applied.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
   /**
    * The size scale of the badge.
    */

@@ -8,7 +8,7 @@ export interface SpinnerProps {
   /**
    * The color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "current"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {}) | "current"
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */

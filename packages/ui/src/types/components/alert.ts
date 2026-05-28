@@ -8,7 +8,7 @@ export interface AlertProps {
   /**
    * The color scheme of the alert.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
   /**
    * The main title text of the alert.
    */

@@ -12,7 +12,7 @@ export interface ProgressProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
   /**
    * The height size category.
    */
