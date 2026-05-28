@@ -7,7 +7,7 @@ export const createNavigationMenuTheme = () =>
       root: "relative z-10 flex w-full",
       list: "group flex flex-1 list-none",
       item: "relative",
-      link: "inline-flex items-center px-4 py-2 text-sm font-medium transition-colors hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+      link: "text-foreground inline-flex items-center px-4 py-2 text-sm font-medium transition-colors hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
       trigger:
         "group inline-flex h-10 items-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 gap-1",
       content:

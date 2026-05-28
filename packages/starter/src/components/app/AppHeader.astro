@@ -83,17 +83,11 @@ const actions: ButtonProps[] = [
           aria-label="Open Menu"
         />
 
-        <div class="flex flex-col gap-4 mt-6">
-          <RLANavigationMenu
-            items={items}
-            orientation="vertical"
-            variant="link"
-            theme="flat"
-            ui={{
-              link: 'text-white block py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
-            }}
-          />
-        </div>
+        <RLANavigationMenu
+          items={items}
+          orientation="vertical"
+          variant="link"
+        />
       </RLASlideover>
     </div>
   </div>
@@ -104,9 +98,6 @@ const actions: ButtonProps[] = [
         items={items}
         variant="link"
         theme="flat"
-        ui={{
-          link: 'text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
-        }}
       />
     </div>
 
@@ -128,18 +119,18 @@ const actions: ButtonProps[] = [
 
     <div class="block md:hidden">
       <RLASlideover side="right" title="Actions">
-        <button
+        <RLAButton
           slot="trigger"
-          type="button"
-          class="flex items-center justify-center p-2 rounded-md hover:bg-neutral-800 transition-colors"
-          aria-label="Open actions"
-        >
-          <span class="i-lucide-ellipsis-vertical size-6 text-white" aria-hidden="true" />
-        </button>
+          color="neutral"
+          variant="ghost"
+          rounded={true}
+          leadingIcon="i-ellipsis-vertical"
+          aria-label="Open Actions"
+        />
 
-        <div class="flex flex-col gap-4 mt-6">
+        <div class="flex flex-col gap-md">
           {actions.map((buttonProps) => (
-            <RLAButton {...buttonProps} class="w-full justify-center" />
+            <RLAButton {...buttonProps} block={true} />
           ))}
         </div>
       </RLASlideover>
@@ -157,7 +148,6 @@ const actions: ButtonProps[] = [
     to {
       margin-top: 16px;
       width: calc(100% - 32px);
-      max-width: 80rem;
       border-radius: 9999px;
     }
   }
