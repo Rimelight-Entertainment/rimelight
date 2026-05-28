@@ -27,7 +27,7 @@ export const createSlideoverTheme = (colors: string[] = defaultColors) =>
       description: "text-sm text-muted-foreground leading-relaxed",
       footer: "flex flex-col sm:flex-row sm:justify-end gap-2 mt-6",
       closeButton: [
-        "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
+        "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 text-foreground",
         "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
       ]
     },
