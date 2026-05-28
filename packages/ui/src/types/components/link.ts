@@ -1,3 +1,5 @@
+import type { ThemeColor } from "../theme"
+
 export interface LinkProps {
   to?: string | object
   href?: string
@@ -11,6 +13,8 @@ export interface LinkProps {
   exactHash?: boolean
   inactiveClass?: string
   activeClass?: string
+  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link"
+  color?: ThemeColor
   /**
    * Slot-specific CSS class overrides.
    */

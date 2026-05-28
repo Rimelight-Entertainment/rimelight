@@ -1,12 +1,34 @@
+import type { LinkProps } from "./link"
+
 export interface LinkGroupProps {
   /**
-   * The title of the link group.
+   * Backward compatible title property.
    */
-  title?: string
+  title?: string | { label: string; leadingIcon?: string; trailingIcon?: string; href?: string }
   /**
-   * The links in the group.
+   * The direct text label of the group heading.
    */
-  links?: { label: string; href: string; [key: string]: any }[]
+  label?: string
+  /**
+   * Leading icon of the group heading.
+   */
+  leadingIcon?: string
+  /**
+   * Trailing icon of the group heading.
+   */
+  trailingIcon?: string
+  /**
+   * Hyperlink target URL for the group heading.
+   */
+  href?: string
+  /**
+   * Router/locale link target for the group heading.
+   */
+  to?: string | object
+  /**
+   * The links in the group. Supports full button/link properties.
+   */
+  links?: LinkProps | LinkProps[]
   /**
    * Slot-specific CSS class overrides.
    */

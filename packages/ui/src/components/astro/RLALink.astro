@@ -1,23 +1,22 @@
 ---
-import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils"
+import RLAButton from "./RLAButton.astro"
 import type { LinkProps } from "../../types"
-import linkThemeDefault, { createLinkTheme } from "../../themes/link.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
-
-const uiConfig = getUIConfig()
-const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
-
-const link = scv(linkTheme)
 
 const {
-  ui: uiProp,
-  class: className,
+  to,
+  href,
+  variant = "link",
+  color = "neutral",
   ...rest
 } = Astro.props as LinkProps
 
-const classes = resolveClasses(link, {}, useUi("link", uiProp), className);
+const linkHref = href || (typeof to === 'string' ? to : undefined);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<RLAButton
+  variant={variant as any}
+  color={color as any}
+  href={linkHref}
+  {...rest}
+>
   <slot />
-</div>
+</RLAButton>

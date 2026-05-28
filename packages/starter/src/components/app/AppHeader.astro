@@ -4,7 +4,8 @@ import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
 import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
-import type { NavigationMenuItem, ButtonProps } from "@rimelight/ui/types";
+import type { NavigationMenuItem, ButtonProps, LinkGroupProps } from "@rimelight/ui/types";
+import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { useI18n } from "astro-nanostores-i18n:runtime";
 import placeholderImage from "../../assets/placeholder.webp";
@@ -19,7 +20,18 @@ const messages = useI18n("app_header", {
 	"links_docs_label": "Docs",
   "links_dashboard_label": "Dashboard",
   "links_github_label": "View on GitHub",
-  "links_use-template_label": "Use Template"
+  "links_use-template_label": "Use Template",
+  "link-groups_foundations_label": "Foundation",
+  "link-groups_foundations_links_tokens": "Design Tokens",
+  "link-groups_foundations_links_colors": "Color Palettes",
+  "link-groups_foundations_links_typography": "Fluid Typography",
+  "link-groups_components_label": "Components",
+  "link-groups_components_links_astro": "Astro Elements",
+  "link-groups_components_links_vue": "Vue Components",
+  "link-groups_components_links_integrations": "Integrations",
+  "link-groups_resources_label": "Resources",
+  "link-groups_resources_links_docs": "Documentation",
+  "link-groups_resources_links_github": "GitHub Repository"
 });
 
 const items: NavigationMenuItem[] = [
@@ -64,6 +76,35 @@ const actions: ButtonProps[] = [
     to: getRelativeLocaleUrl(activeLocale, '/docs/usage')
   }
 ];
+
+const foundationGroup: LinkGroupProps = {
+  label: messages["link-groups_foundations_label"],
+  leadingIcon: "i-lucide-layout size-4",
+  links: [
+    { label: messages["link-groups_foundations_links_tokens"], href: "/features/tokens" },
+    { label: messages["link-groups_foundations_links_colors"], href: "/features/colors" },
+    { label: messages["link-groups_foundations_links_typography"], href: "/features/typography" }
+  ]
+};
+
+const componentsGroup: LinkGroupProps = {
+  label: messages["link-groups_components_label"],
+  leadingIcon: "i-lucide-blocks size-4",
+  links: [
+    { label: messages["link-groups_components_links_astro"], href: "/features/astro" },
+    { label: messages["link-groups_components_links_vue"], href: "/features/vue" },
+    { label: messages["link-groups_components_links_integrations"], href: "/features/integrations" }
+  ]
+};
+
+const resourcesGroup: LinkGroupProps = {
+  label: messages["link-groups_resources_label"],
+  leadingIcon: "i-lucide-library size-4",
+  links: [
+    { label: messages["link-groups_resources_links_docs"], href: "/docs", leadingIcon: "i-lucide-file-text size-4" },
+    { label: messages["link-groups_resources_links_github"], href: "https://github.com/Rimelight-Entertainment/rimelight", leadingIcon: "i-logos-github-icon size-4" }
+  ]
+};
 ---
 
 <RLAHeader
@@ -108,37 +149,14 @@ const actions: ButtonProps[] = [
 
               <div class="flex flex-col gap-sm flex-2">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                  <!-- Column 1 -->
-                  <div class="flex flex-col gap-1">
-                    <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
-                      Foundation
-                    </span>
-                    <a href="/features/tokens" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Design Tokens</a>
-                    <a href="/features/colors" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Color Palettes</a>
-                    <a href="/features/typography" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Fluid Typography</a>
-                  </div>
-
-                  <!-- Column 2 -->
-                  <div class="flex flex-col gap-1">
-                    <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
-                      Components
-                    </span>
-                    <a href="/features/astro" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Astro Elements</a>
-                    <a href="/features/vue" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Vue Components</a>
-                    <a href="/features/integrations" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Integrations</a>
-                  </div>
+                  <RLALinkGroup {...foundationGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...componentsGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
               </div>
             </div>
 
-            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
-              <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
-                Resources
-              </span>
-              <div class="grid grid-cols-1 gap-1">
-                <a href="/docs" class="flex items-center gap-2 px-3 py-2 text-sm rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 font-medium"><span class="i-lucide-file-text size-4"></span> Documentation</a>
-                <a href="https://github.com/Rimelight-Entertainment/rimelight" class="flex items-center gap-2 px-3 py-2 text-sm rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 font-medium"><span class="i-logos-github-icon size-4"></span> GitHub Repository</a>
-              </div>
+            <div class="p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+              <RLALinkGroup {...resourcesGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
         </RLANavigationMenu>
@@ -167,38 +185,13 @@ const actions: ButtonProps[] = [
             />
 
             <div class="flex flex-col gap-sm flex-2">
-              <div class="grid grid-cols-2 gap-xl gap-y-4">
-                <!-- Column 1 -->
-                <div class="flex flex-col gap-1">
-                  <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
-                    Foundation
-                  </span>
-                  <a href="/features/tokens" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Design Tokens</a>
-                  <a href="/features/colors" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Color Palettes</a>
-                  <a href="/features/typography" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Fluid Typography</a>
-                </div>
-
-                <!-- Column 2 -->
-                <div class="flex flex-col gap-1">
-                  <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
-                    Components
-                  </span>
-                  <a href="/features/astro" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Astro Elements</a>
-                  <a href="/features/vue" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Vue Components</a>
-                  <a href="/features/integrations" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Integrations</a>
-                </div>
-              </div>
+              <RLALinkGroup {...foundationGroup} ui={{ title: "!text-primary-500" }} />
+              <RLALinkGroup {...componentsGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
-          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
-            <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
-              Resources
-            </span>
-            <div class="grid grid-cols-1 gap-1">
-              <a href="/docs" class="flex items-center gap-2 px-3 py-2 text-sm rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 font-medium"><span class="i-lucide-file-text size-4"></span> Documentation</a>
-              <a href="https://github.com/Rimelight-Entertainment/rimelight" class="flex items-center gap-2 px-3 py-2 text-sm rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 font-medium"><span class="i-logos-github-icon size-4"></span> GitHub Repository</a>
-            </div>
+          <div class="p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+            <RLALinkGroup {...resourcesGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
       </RLANavigationMenu>
