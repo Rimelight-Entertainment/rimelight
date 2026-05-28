@@ -26,8 +26,8 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
       const hasChildren = item.children && item.children.length > 0
       
       const itemPath = (item.href ?? item.to ?? "#") as string
-      const normalizedPath = itemPath.replace(/\/+$/, '')
-      const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/'
+      const normalizedPath = itemPath.replace(/^\/[a-z]{2}(?=\/|$)/, '').replace(/\/+$/, '') || '/'
+      const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '').replace(/\/+$/, '') || '/'
       
       const isActive = item.active ?? (
         normalizedPath !== '' && normalizedPath !== '/' 
