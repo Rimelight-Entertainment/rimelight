@@ -8,10 +8,9 @@ export const createHeaderTheme = () =>
       content: "w-full",
       container:
         "flex flex-row items-center justify-between gap-4xs h-16 md:h-18 px-4 md:px-6 lg:px-8",
-      left: "flex flex-none items-center justify-start",
-      center: "flex items-center justify-center",
-      right: "flex flex-none items-center justify-end"
-    },
+      left: "flex-1 min-w-0 flex items-center justify-start truncate",
+      center: "flex-none flex items-center justify-center mx-4",
+      right: "flex-1 min-w-0 flex items-center justify-end truncate"    },
     variants: {
       contain: {
         true: {

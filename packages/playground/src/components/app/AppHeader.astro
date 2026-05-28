@@ -5,6 +5,7 @@ import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.
 import type { NavigationMenuItem } from "@rimelight/ui/types"
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { useI18n } from "astro-nanostores-i18n:runtime";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
@@ -15,7 +16,8 @@ const messages = useI18n("app_header", {
 	"links_docs_label": "Docs",
 	"links_blog_label": "Blog",
 	"links_components_label": "Components",
-	"links_tests_label": "Tests"
+	"links_tests_label": "Tests",
+  "links_github_label": "View on GitHub"
 });
 
 const items: NavigationMenuItem[] = [
@@ -43,10 +45,15 @@ const items: NavigationMenuItem[] = [
 ---
 
 <RLAHeader contain={false} fixed={true} stackIndex={0} class="bg-black">
-	<div slot="left" class="flex flex-row items-center gap-md">
-		<RLALogo variant="logomark" class="h-10 w-auto" mode="white" />
+	<div slot="left" class="flex flex-row gap-md">
+		<RLALogo
+      variant="logomark"
+      class="h-10 w-auto"
+      mode="white"
+    />
 		<RLANavigationMenu
-			items={items}
+      slot="left"
+      items={items}
 			variant="link"
 			theme="flat"
 			ui={{
@@ -54,4 +61,11 @@ const items: NavigationMenuItem[] = [
 			}}
 		/>
 	</div>
+
+  <RLAButton
+    variant="outline"
+    leadingIcon="i-logos-github-icon?mask text-white group-hover:text-primary-500"
+    label={messages.links_github_label}
+    to="https://github.com/Rimelight-Entertainment/rimelight"
+  />
 </RLAHeader>
