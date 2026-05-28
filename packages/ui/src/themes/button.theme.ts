@@ -6,7 +6,7 @@ export const createButtonTheme = (colors: string[] = defaultColors) =>
     slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
       root: [
-        "group inline-flex items-center justify-center rounded-md font-medium ws-nowrap disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+        "group inline-flex items-center justify-center font-medium ws-nowrap disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
         "transition-colors outline-none",
         "aria-invalid:border-error-500 aria-invalid:ring-error-500/20"
       ],
@@ -67,6 +67,10 @@ export const createButtonTheme = (colors: string[] = defaultColors) =>
       square: {
         true: {},
         false: {}
+      },
+      rounded: {
+        true: { root: "rounded-full" },
+        false: { root: "rounded-md" }
       },
       leading: { true: {} },
       trailing: { true: {} },

@@ -59,7 +59,7 @@ const actions: ButtonProps[] = [
   fixed={true}
   class="bg-black dark"
 >
-  <div slot="left" class="w-full flex items-center justify-between">
+  <div slot="left" class="flex items-center gap-md">
     <div class="hidden md:flex flex-row gap-md">
       <RLALogo
         variant="logomark"
@@ -78,14 +78,13 @@ const actions: ButtonProps[] = [
 
     <div class="block md:hidden">
       <RLASlideover side="left" title="Menu">
-        <button
+        <RLAButton
           slot="trigger"
-          type="button"
           class="flex items-center justify-center p-2 rounded-md hover:bg-neutral-800 transition-colors"
-          aria-label="Open menu"
+          aria-label="Open Menu"
         >
           <span class="i-lucide-menu size-6 text-white" aria-hidden="true" />
-        </button>
+        </RLAButton>
 
         <div class="flex flex-col gap-4 mt-6">
           <RLANavigationMenu
@@ -102,7 +101,7 @@ const actions: ButtonProps[] = [
     </div>
   </div>
 
-  <div slot="center" class="flex items-center justify-center">
+  <div slot="center" class="flex items-center gap-md">
     <div class="block md:hidden">
       <RLALogo
         variant="logomark"

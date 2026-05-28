@@ -63,8 +63,8 @@ const actions: ButtonProps[] = [
   contain={false}
   fixed={true}
   class="scroll-header bg-black left-1/2 -translate-x-1/2 duration-300">
-  <div slot="left" class="w-full flex items-center justify-between">
-    <div class="hidden md:block">
+  <div slot="left" class="flex items-center gap-md">
+    <div class="hidden md:flex flex-row gap-md">
       <RLALogo
         variant="logomark"
         class="h-10 w-auto"
@@ -74,14 +74,14 @@ const actions: ButtonProps[] = [
 
     <div class="block md:hidden">
       <RLASlideover side="left" title="Menu">
-        <button
+        <RLAButton
           slot="trigger"
-          type="button"
-          class="flex items-center justify-center p-2 rounded-md hover:bg-neutral-800 transition-colors"
-          aria-label="Open menu"
-        >
-          <span class="i-lucide-menu size-6 text-white" aria-hidden="true" />
-        </button>
+          color="neutral"
+          variant="ghost"
+          rounded={true}
+          leadingIcon="i-lucide-menu"
+          aria-label="Open Menu"
+        />
 
         <div class="flex flex-col gap-4 mt-6">
           <RLANavigationMenu
@@ -98,7 +98,7 @@ const actions: ButtonProps[] = [
     </div>
   </div>
 
-  <div slot="center" class="flex items-center justify-center">
+  <div slot="center" class="flex items-center gap-md">
     <div class="hidden md:block">
       <RLANavigationMenu
         items={items}
