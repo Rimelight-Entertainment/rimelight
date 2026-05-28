@@ -1,4 +1,4 @@
-import type { Theme } from "../theme"
+import type { Theme, ThemeColor } from "../theme"
 
 export interface SpinnerProps {
   /**
@@ -8,7 +8,7 @@ export interface SpinnerProps {
   /**
    * The color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {}) | "current"
+  color?: ThemeColor | "current"
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */

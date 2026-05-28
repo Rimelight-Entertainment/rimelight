@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../theme"
 export interface CollapsibleProps {
   /**
    * Controlled open state.
@@ -18,7 +19,7 @@ export interface CollapsibleProps {
   /**
    * Color theme of the trigger.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * Slot-specific CSS class overrides.
    */

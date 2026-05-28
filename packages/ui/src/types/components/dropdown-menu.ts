@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../theme"
 export interface DropdownMenuItem {
   label: string
   value?: string
@@ -29,7 +30,7 @@ export interface DropdownMenuProps {
   /**
    * Color theme of the trigger.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * Slot-specific CSS class overrides.
    */

@@ -1,4 +1,4 @@
-import type { Theme } from "../theme"
+import type { Theme, ThemeColor } from "../theme"
 
 export interface AlertProps {
   /**
@@ -8,7 +8,7 @@ export interface AlertProps {
   /**
    * The color scheme of the alert.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * The main title text of the alert.
    */

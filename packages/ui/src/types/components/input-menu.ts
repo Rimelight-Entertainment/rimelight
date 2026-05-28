@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../theme"
 export interface InputMenuProps {
   /**
    * The list of items in the input menu.
@@ -30,7 +31,7 @@ export interface InputMenuProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * Slot-specific CSS class overrides.
    */

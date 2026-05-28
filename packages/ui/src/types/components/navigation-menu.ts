@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../theme"
 import type { LinkProps } from "./link"
 
 export interface NavigationMenuItem extends Omit<LinkProps, "type" | "raw" | "custom"> {
@@ -41,7 +42,7 @@ export interface NavigationMenuProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * Orientation of the menu.
    */

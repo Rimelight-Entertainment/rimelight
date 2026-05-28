@@ -1,4 +1,4 @@
-import type { Theme } from "../theme"
+import type { Theme, ThemeColor } from "../theme"
 
 export interface ButtonProps {
   /**
@@ -8,7 +8,7 @@ export interface ButtonProps {
   /**
    * The color scheme applied to the button
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * The size scale of the button
    */
@@ -53,7 +53,7 @@ export interface ButtonProps {
    * Color used when button is in active state
    */
   activeColor?:
-    | "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+    | ThemeColor
   /**
    * Variant used when button is in active state
    */

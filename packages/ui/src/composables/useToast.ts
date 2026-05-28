@@ -1,11 +1,12 @@
 import { reactive } from "vue"
+import type { ThemeColor } from "../types"
 
 export interface Toast {
   id?: string | number
   title?: string
   description?: string
   icon?: string
-  color?: "primary" | "success" | "warning" | "error" | "info" | "neutral"
+  color?: ThemeColor
   timeout?: number
   callback?: () => void
 }

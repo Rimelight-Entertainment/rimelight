@@ -11,7 +11,7 @@ export const defaultColors = [
   "commentary",
   "ideation",
   "source"
-]
+] as const
 
 export const defaultColorScales: Record<string, ColorShades | ColorModeEntry> = {
   neutral: {

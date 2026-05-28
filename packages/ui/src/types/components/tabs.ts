@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../theme"
 export interface TabItem {
   label: string
   value: string
@@ -30,7 +31,7 @@ export interface TabsProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * Slot-specific CSS class overrides.
    */

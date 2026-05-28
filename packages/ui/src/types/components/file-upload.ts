@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../theme"
 export interface FileUploadProps {
   /**
    * Accepted file types (e.g. 'image/*', 'application/pdf').
@@ -26,7 +27,7 @@ export interface FileUploadProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * Slot-specific CSS class overrides.
    */

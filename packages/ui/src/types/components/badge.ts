@@ -1,4 +1,4 @@
-import type { Theme } from "../theme"
+import type { Theme, ThemeColor } from "../theme"
 
 export interface BadgeProps {
   /**
@@ -8,7 +8,7 @@ export interface BadgeProps {
   /**
    * Color scheme applied.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * The size scale of the badge.
    */

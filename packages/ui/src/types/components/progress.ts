@@ -1,4 +1,4 @@
-import type { Theme } from "../theme"
+import type { Theme, ThemeColor } from "../theme"
 
 export interface ProgressProps {
   /**
@@ -12,7 +12,7 @@ export interface ProgressProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * The height size category.
    */

@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../theme"
 export interface InputPinProps {
   /**
    * Number of pins.
@@ -22,7 +23,7 @@ export interface InputPinProps {
   /**
    * Color theme.
    */
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info" | "neutral" | "commentary" | "ideation" | "source" | (string & {})
+  color?: ThemeColor
   /**
    * Slot-specific CSS class overrides.
    */
