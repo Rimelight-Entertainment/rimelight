@@ -51,7 +51,11 @@ const items: NavigationMenuItem[] = [
 ];
 ---
 
-<RLAHeader contain={false} fixed={true} stackIndex={0} class="bg-black">
+<RLAHeader
+  contain={false}
+  fixed={true}
+  stackIndex={0}
+  class="scroll-header left-1/2 -translate-x-1/2 w-full max-w-full md:max-w-7xl backdrop-blur-md transition-shadow duration-300 border">
   <RLALogo
     slot="left"
     variant="logomark"
@@ -84,3 +88,30 @@ const items: NavigationMenuItem[] = [
     />
   </div>
 </RLAHeader>
+
+<style is:global>
+  @keyframes shrinkHeader {
+    from {
+      margin-top: 0;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 0;
+      border-color: transparent;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+    to {
+      margin-top: 12px;
+      width: calc(100% - 32px);
+      max-width: 80rem;
+      border-radius: 9999px;
+      border-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  .scroll-header {
+    animation: shrinkHeader linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 90px;
+  }
+</style>
