@@ -224,19 +224,21 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
         }
       });
 
-      // Hover behavior
-      item.addEventListener("mouseenter", () => {
-        clearTimeout(hoverTimeout);
-        open(item, trigger, content);
-      });
+      // Hover behavior (horizontal desktop only)
+      if (orientation === "horizontal") {
+        item.addEventListener("mouseenter", () => {
+          clearTimeout(hoverTimeout);
+          open(item, trigger, content);
+        });
 
-      item.addEventListener("mouseleave", () => {
-        hoverTimeout = setTimeout(() => {
-          if (activeItem === item) {
-            close(item);
-          }
-        }, 150);
-      });
+        item.addEventListener("mouseleave", () => {
+          hoverTimeout = setTimeout(() => {
+            if (activeItem === item) {
+              close(item);
+            }
+          }, 150);
+        });
+      }
     });
 
     // Handle viewport wrapper hover so menu stays open when hovering the mega menu itself

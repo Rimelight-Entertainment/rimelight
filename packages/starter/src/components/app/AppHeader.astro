@@ -95,9 +95,53 @@ const actions: ButtonProps[] = [
           orientation="vertical"
           variant="link"
           ui={{
-            link: "text-white block py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
+            link: "text-black dark:text-white flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
           }}
-        />
+        >
+          <!-- Features Mega Menu (Mobile/Vertical) -->
+          <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <img
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                src={placeholderImage.src}
+              />
+
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                  <!-- Column 1 -->
+                  <div class="flex flex-col gap-1">
+                    <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
+                      Foundation
+                    </span>
+                    <a href="/features/tokens" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Design Tokens</a>
+                    <a href="/features/colors" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Color Palettes</a>
+                    <a href="/features/typography" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Fluid Typography</a>
+                  </div>
+
+                  <!-- Column 2 -->
+                  <div class="flex flex-col gap-1">
+                    <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
+                      Components
+                    </span>
+                    <a href="/features/astro" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Astro Elements</a>
+                    <a href="/features/vue" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Vue Components</a>
+                    <a href="/features/integrations" class="px-2 py-1.5 text-sm rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left font-medium">Integrations</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+              <span class="pl-xs text-xs font-bold uppercase tracking-wider text-primary-500">
+                Resources
+              </span>
+              <div class="grid grid-cols-1 gap-1">
+                <a href="/docs" class="flex items-center gap-2 px-3 py-2 text-sm rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 font-medium"><span class="i-lucide-file-text size-4"></span> Documentation</a>
+                <a href="https://github.com/Rimelight-Entertainment/rimelight" class="flex items-center gap-2 px-3 py-2 text-sm rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 font-medium"><span class="i-logos-github-icon size-4"></span> GitHub Repository</a>
+              </div>
+            </div>
+          </div>
+        </RLANavigationMenu>
       </RLASlideover>
     </div>
   </div>
@@ -250,5 +294,39 @@ const actions: ButtonProps[] = [
     animation: shrinkViewport linear both;
     animation-timeline: scroll(root);
     animation-range: 0 90px;
+  }
+
+  /* Vertical mega menu content static override */
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 8px 0 0 0 !important;
+    display: block !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content].hidden {
+    display: none !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] [slot="features-content"] {
+    background: transparent !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] .p-lg,
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] .p-xl {
+    padding: 12px 4px !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] .w-64 {
+    width: 100% !important;
+    background: transparent !important;
+    padding: 12px 4px !important;
   }
 </style>
