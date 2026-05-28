@@ -10,8 +10,6 @@ import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
-const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
-
 const messages = useI18n("app_header", {
 	"links_home_label": "Home",
 	"links_docs_label": "Docs",
@@ -24,23 +22,19 @@ const messages = useI18n("app_header", {
 const items: NavigationMenuItem[] = [
 	{
 		label: messages["links_docs_label"],
-		to: getRelativeLocaleUrl(activeLocale, '/docs'),
-		active: pathname.startsWith(getRelativeLocaleUrl(activeLocale, '/docs').replace(/\/+$/, ''))
+		to: getRelativeLocaleUrl(activeLocale, '/docs')
 	},
   {
     label: messages["links_blog_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/blog'),
-    active: pathname.startsWith(getRelativeLocaleUrl(activeLocale, '/blog').replace(/\/+$/, ''))
+    to: getRelativeLocaleUrl(activeLocale, '/blog')
   },
   {
     label: messages["links_components_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/components'),
-    active: pathname.startsWith(getRelativeLocaleUrl(activeLocale, '/components').replace(/\/+$/, ''))
+    to: getRelativeLocaleUrl(activeLocale, '/components')
   },
   {
     label: messages["links_tests_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/tests'),
-    active: pathname.startsWith(getRelativeLocaleUrl(activeLocale, '/tests').replace(/\/+$/, ''))
+    to: getRelativeLocaleUrl(activeLocale, '/tests')
   }
 ];
 

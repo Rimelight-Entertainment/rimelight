@@ -24,6 +24,17 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
   <ul class={classes.list} data-slot="list" role="list">
     {items.map((item, i) => {
       const hasChildren = item.children && item.children.length > 0
+      
+      const itemPath = (item.href ?? item.to ?? "#") as string
+      const normalizedPath = itemPath.replace(/\/+$/, '')
+      const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/'
+      
+      const isActive = item.active ?? (
+        normalizedPath !== '' && normalizedPath !== '/' 
+          ? currentPath.startsWith(normalizedPath)
+          : currentPath === '/'
+      )
+      
       return (
         <li class={classes.item} data-slot="item" data-nav-item>
           {hasChildren ? (
@@ -44,6 +55,7 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
               href={item.href ?? item.to ?? "#"}
               class={classes.link}
               data-slot="link"
+              aria-current={isActive ? "page" : undefined}
             >
               {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
               {item.label}
