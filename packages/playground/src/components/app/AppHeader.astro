@@ -2,11 +2,11 @@
 import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
 import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
 import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.astro"
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 import type { NavigationMenuItem, ButtonProps } from "@rimelight/ui/types";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { useI18n } from "astro-nanostores-i18n:runtime";
-import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
-import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
@@ -16,7 +16,8 @@ const messages = useI18n("app_header", {
 	"links_blog_label": "Blog",
 	"links_components_label": "Components",
 	"links_tests_label": "Tests",
-  "links_github_label": "View on GitHub"
+  "links_github_label": "View on GitHub",
+  "links_use-template_label": "Use Template"
 });
 
 const items: NavigationMenuItem[] = [
@@ -56,7 +57,6 @@ const actions: ButtonProps[] = [
 <RLAHeader
   contain={false}
   fixed={true}
-  stackIndex={0}
   class="bg-black dark"
 >
   <div slot="left" class="w-full flex items-center justify-between">
