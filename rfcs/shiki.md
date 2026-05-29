@@ -1,19 +1,26 @@
-You can copy and save the content below as migration-expressive-code.md at the root of your project directory. This document is formatted exactly for an automated agent or developer to execute the migration safely without breaking your strict CSP.
+# RFC: Migrating from Prism to CSP-Compliant Expressive Code & Shiki
 
-Markdown
-# Implementation Plan: Migrate from Prism to CSP-Compliant Expressive Code + Shiki
-
-This document details the migration path from Prism to `astro-expressive-code` utilizing Shiki's CSS variables theme engine. This configuration guarantees full compatibility with the existing strict Content Security Policy (`style-src 'self'` without `unsafe-inline`).
+* **Title**: Migrating from Prism to CSP-Compliant Expressive Code & Shiki
+* **Author**: Daniel Marchi & Rimelight Team
+* **Status**: Implemented
+* **Created**: 2026-05-27
 
 ---
 
-## Step 1: Install Dependencies
+## 1. Abstract
+
+This document details the migration path from Prism to `astro-expressive-code` utilizing Shiki's CSS variables theme engine. This configuration guarantees full compatibility with the existing strict Content Security Policy (`style-src 'self'` without `unsafe-inline`) by completely eliminating inline styles.
+
+
+---
+
+## 2. Step 1: Install Dependencies
 
 Execute the installation command within the repository root:
 
 ```bash
 npm install astro-expressive-code shiki
-Step 2: Update astro.config.mjs
+## 3. Step 2: Update astro.config.mjs
 Below is the rewritten, full configuration.
 
 Critical Changes Made:
@@ -209,7 +216,7 @@ export default defineConfig({
     sri()
   ]
 })
-Step 3: Global Stylesheet Definition
+## 4. Step 3: Global Stylesheet Definition
 Because the CSS Variables theme emits raw tokens rather than static hex color strings, you must explicitly configure your global theme values inside your existing style layer (e.g., src/styles/global.css or equivalent). Since this stylesheet is bundled into a static .css file on your domain, it fulfills style-src 'self'.
 
 Append the following lines to your global CSS bundle:
@@ -229,7 +236,7 @@ CSS
   --shiki-token-parameter: #ffab70;     /* functional parameters passed down */
   --shiki-token-punctuation: #e1e4e8;   /* operational scopes, brackets, endings */
 }
-Step 4: Add a Search Sandbox Verification Page
+## 5. Step 4: Add a Search Sandbox Verification Page
 To confirm that the integration operates properly and does not throw browser console exceptions due to the strict Content Security Policy, construct a test suite route.
 
 Create a new file at src/pages/csp-test.astro:

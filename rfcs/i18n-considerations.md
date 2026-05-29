@@ -1,8 +1,17 @@
-# I18n Architecture: Nano Stores vs. Paraglide
+# RFC: I18n Architecture — Nano Stores vs. Paraglide JS
 
-This document summarizes the comparison between @nanostores/i18n and Paraglide JS, specifically for a Cloudflare Workers SSR environment using Astro.
+* **Title**: I18n Architecture — Nano Stores vs. Paraglide JS
+* **Author**: Daniel Marchi & Rimelight Team
+* **Status**: Implemented
+* **Created**: 2026-05-24
 
-## 1. Executive Comparison
+---
+
+## 1. Abstract
+
+This document details the architectural selection and comparison between `@nanostores/i18n` and Paraglide JS, specifically targeted for a Cloudflare Workers Server-Side Rendering (SSR) environment using Astro.
+
+## 2. Executive Comparison
 
 | Feature            | Nano Stores I18n                        | Paraglide JS                                 |
 | :----------------- | :-------------------------------------- | :------------------------------------------- |
@@ -13,7 +22,7 @@ This document summarizes the comparison between @nanostores/i18n and Paraglide J
 | **Multi-Platform** | Easy (KV acts as a Universal API).      | Moderate (Requires build-step in every app). |
 | **Best For**       | Flexible, Multi-Island Astro apps.      | High-performance, Type-critical apps.        |
 
-## 2. Cloudflare KV Setup (Universal Truth)
+## 3. Cloudflare KV Setup (Universal Truth)
 
 To share translations across Web, Apps, and Games, use Cloudflare KV as your central database.
 
@@ -42,4 +51,28 @@ export const i18n = createI18n(locale, {
 })
 ```
 
-3. The Multi-Platform WorkflowTo make your English "Code-First" strings available to other platforms: Extract: Run npm run i18n:extract to generate en.json. Sync: Push the JSON to KV. Consume: Other apps fetch from a simple API endpoint. Universal API Endpoint (Astro/Worker)[CODE_FENCE]javascript// src/pages/api/v1/translations/[lang]/[id].jsexport async function GET({ params, locals }) {const { lang, id } = params;const { env } = locals.runtime;const data = await env.TRANSLATIONS_KV.get(locale:${lang}:${id});return new Response(data, {headers: {'Content-Type': 'application/json','Access-Control-Allow-Origin': '\*'}});}
+## 4. The Multi-Platform Workflow
+
+To make your English "Code-First" strings available to other platforms:
+
+1. **Extract**: Run `npm run i18n:extract` to generate `en.json`.
+2. **Sync**: Push the JSON to KV.
+3. **Consume**: Other apps fetch from a simple API endpoint.
+
+### Universal API Endpoint (Astro/Worker)
+
+```javascript
+// src/pages/api/v1/translations/[lang]/[id].js
+export async function GET({ params, locals }) {
+  const { lang, id } = params;
+  const { env } = locals.runtime;
+  
+  const data = await env.TRANSLATIONS_KV.get(`locale:${lang}:${id}`);
+  return new Response(data, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+}
+```

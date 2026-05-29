@@ -1,12 +1,21 @@
-# Nuxt UI to Rimelight UI Migration Guide
+# RFC: Nuxt UI to Rimelight UI Migration Guide
 
-This document outlines the usage of Nuxt UI components (imported from `@rimelight/ui/nuxt`) within the `rimelight.com` project and the required substitutions to transition to native Rimelight UI components.
+* **Title**: Nuxt UI to Rimelight UI Migration Guide
+* **Author**: Daniel Marchi & Rimelight Team
+* **Status**: Implemented
+* **Created**: 2026-05-25
 
-## Overview
+---
+
+## 1. Abstract
+
+This document details the usage of Nuxt UI components (imported from `@rimelight/ui/nuxt`) within the `rimelight.com` project and specifies the required substitutions to transition entirely to native, high-performance Rimelight UI components.
+
+## 2. Overview
 
 The goal is to completely remove Nuxt UI from the project and library, replacing it with the locally developed Rimelight UI components located in `packages/ui`.
 
-## Component Mapping & Instances
+## 3. Component Mapping & Instances
 
 ### 1. Blog Components
 Currently used in `src/pages/[locale]/index.astro`.
@@ -81,7 +90,7 @@ Used for UI interactions.
 **Instances:**
 - `rimelight.com/src/content/docs/en/company/docs/packages/rimelight-ui/composables/usetoast.mdx`
 
-## Action Items for Library Development
+## 4. Action Items for Library Development
 
 1.  **Develop Vue Components (`RLV*`)**: Many core components (`Input`, `Form`, `Checkbox`, `NavigationMenu`) only exist as Astro components (`RLA*`). For use in `.vue` files (especially Auth forms), Vue versions need to be created in `packages/ui/src/components/vue`.
 2.  **Blog Components**: Create `RLABlogPosts` and `RLABlogPost` in Astro to replace the ones currently re-exported from Nuxt UI.

@@ -1,6 +1,17 @@
-# CSS Architecture (Current State)
+# RFC: CSS Architecture & Component Styling System
 
-## CSS Import Chain
+* **Title**: CSS Architecture & Component Styling System
+* **Author**: Daniel Marchi & Rimelight Team
+* **Status**: Implemented
+* **Created**: 2026-05-26
+
+---
+
+## 1. Abstract
+
+This document details the CSS import chain, integration layers, component styling via variants and UnoCSS, and the custom color system used in `@rimelight/ui`.
+
+## 2. CSS Import Chain
 
 The UI package's `src/styles/index.css` bundles:
 
@@ -26,7 +37,7 @@ Projects should **not** import `tailwindcss` directly or include it in their own
 
 ---
 
-## Integration: `ui()` in `astro.config.ts`
+## 3. Integration: `ui()` in `astro.config.ts`
 
 The `ui()` integration (from `@rimelight/ui/integrations`) handles all build tooling:
 
@@ -55,7 +66,7 @@ An optional `uno.config.ts` in consuming projects can override any theme value �
 
 ---
 
-## Component Styling (css-variants + UnoCSS)
+## 4. Component Styling (css-variants + UnoCSS)
 
 Components use theme files (`*.theme.ts`) that export variant-based class configurations via `defineTheme()`. The `resolveClasses()` utility from `css-variants` merges component props with the theme config and outputs UnoCSS utility classes:
 
@@ -67,7 +78,7 @@ The UnoCSS scanner picks up these classes from theme files (including from the U
 
 ---
 
-## Color System
+## 5. Color System
 
 Colors are defined in `astro.config.ts` via `ui({ colors })`. Two formats:
 
@@ -131,7 +142,7 @@ Component compound variants reference `bg-[var(--rl-bg)]`, `text-[var(--rl-text)
 
 ---
 
-## Consuming Project Setup
+## 6. Consuming Project Setup
 
 ### `global.css`
 
@@ -198,7 +209,7 @@ import type { ButtonProps } from "@rimelight/ui/types"
 
 ---
 
-## Component Renames
+## 7. Component Renames
 
 The following components were renamed (old files removed, imports will break):
 
@@ -219,7 +230,7 @@ Theme files were also renamed from camelCase to kebab-case (e.g. `aspectRatio.th
 
 ---
 
-## Project Migration Checklist
+## 8. Project Migration Checklist
 
 Not all consuming projects have been updated to the latest patterns yet. Verify each:
 
@@ -253,7 +264,7 @@ Not all consuming projects have been updated to the latest patterns yet. Verify 
 - [ ] Defines `--sl-*` color variables for light/dark mode
 - [ ] Does NOT import `global.css` or `@rimelight/ui/styles/index.css`
 
-## Final Step — Remove Tailwind / Nuxt UI (COMPLETED)
+## 9. Final Step — Remove Tailwind / Nuxt UI (Completed)
 
 Functional parity reached. All references removed:
 
@@ -266,7 +277,7 @@ Functional parity reached. All references removed:
 
 ---
 
-## Future Considerations
+## 10. Future Considerations
 
 - **`theme` prop for all components** — currently only button has it; the CSS rules exist for all (`.rl-flat`, `.rl-light`, `.rl-dark`), just need component variants
 - **Simplified color config** — auto-generate light/dark shades from a single base value via oklch
