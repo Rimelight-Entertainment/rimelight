@@ -13,7 +13,7 @@ const activeLocale = Astro.currentLocale ?? "en";
 const messages = useI18n("app_header", {
 	"left-links_home_label": "Home",
 	"left-links_components_label": "Components",
-	"left-links_tests_label": "Tests",
+	"left-links_ui_label": "UI",
   "actions_github_label": "View on GitHub",
   "actions_read-documentation_label": "Use Template"
 });
@@ -28,8 +28,8 @@ const leftLinks: NavigationMenuItem[] = [
     to: getRelativeLocaleUrl(activeLocale, '/blog')
   },
   {
-    label: messages["left-links_tests_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/components')
+    label: messages["left-links_ui_label"],
+    to: getRelativeLocaleUrl(activeLocale, '/ui')
   }
 ];
 

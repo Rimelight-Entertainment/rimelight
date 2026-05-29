@@ -1,18 +1,94 @@
 ---
-import type { AccordionProps } from "../../types";
+import { scv, cx } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { AccordionProps } from "../../types"
+import accordionThemeDefault, { createAccordionTheme } from "../../themes/accordion.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const { summary, class: className, ...attrs } = Astro.props as AccordionProps;
+const uiConfig = getUIConfig()
+const accordionTheme = uiConfig.colors ? createAccordionTheme(uiConfig.colors) : accordionThemeDefault
+const accordion = scv(accordionTheme)
+
+const {
+  items,
+  summary,
+  multiple = false,
+  trailingIcon = "i-lucide-chevron-down",
+  disabled = false,
+  name,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as AccordionProps
+
+const classes = resolveClasses(accordion, {
+  disabled
+}, useUi("accordion", uiProp), className)
+
+// Generate a unique name for HTML details grouping if single-open mode (multiple=false) is active
+const groupName = name || (!multiple ? `accordion-${Math.random().toString(36).substring(2, 9)}` : undefined)
 ---
 
-<details class:list={['group', className]} {...attrs}>
-    <summary
-            class="accordion code flex cursor-pointer list-none items-center justify-between text-astro-gray-200"
+{items ? (
+  <div class={classes.root} data-slot="root" {...rest}>
+    {items.map((item) => {
+      const itemDisabled = disabled || item.disabled
+      const itemTrailingIcon = item.trailingIcon || trailingIcon
+      
+      return (
+        <details 
+          class={classes.item} 
+          data-slot="item" 
+          name={groupName}
+        >
+          <summary 
+            class={cx(classes.trigger, itemDisabled && "pointer-events-none opacity-50 select-none")} 
+            data-slot="trigger"
+          >
+            {item.icon && (
+              <span class={classes.leadingIcon} data-slot="leading-icon">
+                <span class={cx(item.icon)} aria-hidden="true" />
+              </span>
+            )}
+            
+            <span class={classes.label} data-slot="label">
+              {item.label}
+            </span>
+
+            {itemTrailingIcon && (
+              <span class={classes.trailingIcon} data-slot="trailing-icon">
+                <span class={cx(itemTrailingIcon)} aria-hidden="true" />
+              </span>
+            )}
+          </summary>
+
+          <div class={classes.content} data-slot="content">
+            <div class={classes.body} data-slot="body">
+              {item.content}
+            </div>
+          </div>
+        </details>
+      )
+    })}
+  </div>
+) : (
+  <details class:list={[classes.root, classes.item]} data-slot="root" name={name} {...rest}>
+    <summary 
+      class={cx(classes.trigger, disabled && "pointer-events-none opacity-50 select-none")} 
+      data-slot="trigger"
     >
-        <span>{summary}</span>
-        <span class="i-lucide-chevron s-4 rotate-0 transition-transform duration-300 ease-in-out group-open:-rotate-180" />
+      <span class={classes.label} data-slot="label">{summary}</span>
+      {trailingIcon && (
+        <span class={classes.trailingIcon} data-slot="trailing-icon">
+          <span class={cx(trailingIcon)} aria-hidden="true" />
+        </span>
+      )}
     </summary>
 
-    <div class="pt-4">
+    <div class={classes.content} data-slot="content">
+      <div class={classes.body} data-slot="body">
         <slot />
+      </div>
     </div>
-</details>
+  </details>
+)}
