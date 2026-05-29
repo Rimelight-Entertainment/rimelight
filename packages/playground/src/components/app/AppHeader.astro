@@ -11,31 +11,25 @@ import { useI18n } from "astro-nanostores-i18n:runtime";
 const activeLocale = Astro.currentLocale ?? "en";
 
 const messages = useI18n("app_header", {
-	"links_home_label": "Home",
-	"links_docs_label": "Docs",
-	"links_blog_label": "Blog",
-	"links_components_label": "Components",
-	"links_tests_label": "Tests",
-  "links_github_label": "View on GitHub",
-  "links_use-template_label": "Use Template"
+	"left-links_home_label": "Home",
+	"left-links_components_label": "Components",
+	"left-links_tests_label": "Tests",
+  "actions_github_label": "View on GitHub",
+  "actions_read-documentation_label": "Use Template"
 });
 
-const items: NavigationMenuItem[] = [
+const leftLinks: NavigationMenuItem[] = [
 	{
-		label: messages["links_docs_label"],
+		label: messages["left-links_home_label"],
 		to: getRelativeLocaleUrl(activeLocale, '/docs')
 	},
   {
-    label: messages["links_blog_label"],
+    label: messages["left-links_components_label"],
     to: getRelativeLocaleUrl(activeLocale, '/blog')
   },
   {
-    label: messages["links_components_label"],
+    label: messages["left-links_tests_label"],
     to: getRelativeLocaleUrl(activeLocale, '/components')
-  },
-  {
-    label: messages["links_tests_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/tests')
   }
 ];
 
@@ -44,12 +38,12 @@ const actions: ButtonProps[] = [
     color: "neutral",
     variant: "outline",
     leadingIcon: "i-logos-github-icon?mask text-[var(--rl-text)] group-hover:text-[var(--rl-text-hover)]",
-    label: messages.links_github_label,
+    label: messages["actions_github_label"],
     to: "https://github.com/Rimelight-Entertainment/rimelight"
   },
   {
-    label: messages["links_use-template_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/docs/usage')
+    label: messages["actions_read-documentation_label"],
+    to: "https://rimelight.com/company/docs"
   }
 ];
 ---
@@ -67,7 +61,7 @@ const actions: ButtonProps[] = [
         mode="white"
       />
       <RLANavigationMenu
-        items={items}
+        items={leftLinks}
         variant="link"
         theme="flat"
         ui={{
@@ -88,7 +82,7 @@ const actions: ButtonProps[] = [
         />
 
         <RLANavigationMenu
-          items={items}
+          items={leftLinks}
           orientation="vertical"
           variant="link"
         />
