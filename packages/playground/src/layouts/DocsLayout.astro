@@ -2,56 +2,15 @@
 import AppLayout from "./AppLayout.astro";
 import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
 import TableOfContents from "@rimelight/ui/components/TableOfContents.astro";
-import RLASurround from "@/components/docs/RLASurround.astro";
-import RLABadge from "@rimelight/ui/components/astro/RLABadge.astro";
+import RLASurround from "@rimelight/ui/components/astro/RLASurround.astro";
+import RLACopyMarkdown from "@rimelight/ui/components/astro/RLACopyMarkdown.astro";
+import RLAShare from "@rimelight/ui/components/astro/RLAShare.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/ui/utils";
-import type { ResolvedSidebarItem } from "@rimelight/ui/utils";
 import { getCollection } from "astro:content";
 import docsConfig from "@/config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/TableOfContents.astro";
-import type { SurroundOverride } from "@/components/docs/RLASurround.astro";
-
-function normalizeBadge(badge: any) {
-  if (!badge) return null
-  if (typeof badge === "string") {
-    return {
-      text: badge,
-      color: "primary",
-      variant: "soft" as const,
-      class: ""
-    }
-  }
-  
-  let color = badge.color || "primary"
-  let variant = badge.variant || "soft"
-  
-  if (badge.variant) {
-    const v = badge.variant.toLowerCase()
-    if (v === "tip" || v === "success") {
-      color = "success"
-      variant = "soft"
-    } else if (v === "caution" || v === "warning") {
-      color = "warning"
-      variant = "soft"
-    } else if (v === "danger") {
-      color = "danger"
-      variant = "soft"
-    } else if (v === "note") {
-      color = "primary"
-      variant = "soft"
-    } else if (v === "default") {
-      color = "primary"
-      variant = "soft"
-    }
-  }
-  
-  return {
-    text: badge.text || "",
-    color,
-    variant: variant as "solid" | "outline" | "soft",
-    class: badge.class || ""
-  }
-}
+import type { SurroundOverride } from "@rimelight/ui/components/astro/RLASurround.astro";
+import { useI18n } from "astro-nanostores-i18n:runtime";
 
 interface Props {
   title: string;
@@ -70,6 +29,53 @@ const { title, description = "", headings = [], tableOfContents: tocOverride, pr
 
 const locale = Astro.currentLocale ?? "en";
 const currentPath = Astro.url.pathname;
+
+// Load translations for docs sidebar keys
+const messages = useI18n("docs", {
+  "docs_sidebar_scopes_overview": "Overview",
+  "docs_sidebar_page_getting-started": "Getting Started",
+  "docs_sidebar_page_contributing": "Contributing",
+  "docs_sidebar_scopes_website": "Website",
+  "docs_sidebar_group_overview": "Overview",
+  "docs_sidebar_scopes_products": "Products",
+  "docs_sidebar_group_grand-tale": "Grand Tale",
+  "docs_sidebar_group_core": "Core",
+  "docs_sidebar_group_code": "Code",
+  "docs_sidebar_group_writing": "Writing",
+  "docs_sidebar_group_art": "Art",
+  "docs_sidebar_group_sound": "Sound",
+  "docs_sidebar_group_internationalization": "Internationalization",
+  "docs_sidebar_scopes_packages": "Packages",
+  "docs_sidebar_group_rimelight-ui": "Rimelight UI",
+  "docs_sidebar_group_architecture": "Architecture",
+  "docs_sidebar_group_components": "Components",
+  "docs_sidebar_group_component_app": "App Components",
+  "docs_sidebar_group_component_utility": "Utility Components",
+  "docs_sidebar_group_component_layout": "Layout Components",
+  "docs_sidebar_group_component_elements": "Element Components",
+  "docs_sidebar_group_component_media": "Media Components",
+  "docs_sidebar_group_component_form": "Form Components",
+  "docs_sidebar_group_component_data": "Data Components",
+  "docs_sidebar_group_component_navigation": "Navigation Components",
+  "docs_sidebar_group_component_overlay": "Overlay Components",
+  "docs_sidebar_group_component_page": "Page Components",
+  "docs_sidebar_group_component_dashboard": "Dashboard Components",
+  "docs_sidebar_group_component_editor": "Editor Components",
+  "docs_sidebar_group_component_ai": "AI Components",
+  "docs_sidebar_group_component_effects": "Effect Components",
+  "docs_sidebar_group_component_mockup": "Mockup Components",
+  "docs_sidebar_group_composables": "Composables",
+  "docs_sidebar_group_plugins": "Plugins",
+  "docs_sidebar_group_agents": "Agents",
+  "docs_sidebar_group_rimelight-unreal": "Rimelight Unreal",
+  "docs_sidebar_scopes_api": "API",
+  "docs_sidebar_group_reference": "Reference"
+});
+
+const t = (key: string | undefined) => {
+  if (!key) return "";
+  return messages[key] || key;
+};
 
 const { items: sidebarItems, scopes, activeScope } = await getDocsSidebar(
   docsConfig,
@@ -105,7 +111,7 @@ const tocHeadings = hasToc
   : [];
 ---
 
-<AppLayout title={title} description={description}>
+<AppLayout title={t(title) || title} description={description}>
 
   {/*
     ── Sticky mobile bars ─────────────────────────────────────────────────────
@@ -123,10 +129,10 @@ const tocHeadings = hasToc
       <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-foreground cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
         <span class="flex items-center gap-2 min-w-0">
           <span class:list={[
-            activeScope?.id === "tests" ? "i-lucide-terminal" : "i-lucide-book-open",
+            activeScope?.icon || "i-lucide-book-open",
             "size-4 text-primary shrink-0"
           ]} />
-          <span class="font-semibold shrink-0">{activeScope?.label ?? "Navigation"}</span>
+          <span class="font-semibold shrink-0">{t(activeScope?.label) ?? "Navigation"}</span>
           <span class="text-muted-foreground font-normal truncate hidden sm:inline">— {title}</span>
         </span>
         <span class="docs-nav-chevron i-lucide-chevron-down size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
@@ -149,85 +155,18 @@ const tocHeadings = hasToc
                 data-docs-nav-link
               >
                 <span class:list={[
-                  scope.id === "overview" ? "i-lucide-book-open" : "i-lucide-terminal",
+                  scope.icon || "i-lucide-book-open",
                   "size-3.5"
                 ]} />
-                {scope.label}
+                {t(scope.label)}
               </a>
             );
           })}
         </div>
-        {/* Nav items — preserve groups */}
-        <ul class="flex flex-col gap-0.5 p-3">
-          {sidebarItems.map((item: ResolvedSidebarItem) => (
-            <li>
-              {item.children && item.children.length > 0 ? (
-                <div>
-                  <span class="block px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-2 first:mt-0">
-                    {item.label}
-                  </span>
-                  <ul class="flex flex-col gap-0.5 ml-2">
-                    {item.children.map((child: ResolvedSidebarItem) => (
-                      <li>
-                        <a
-                          href={child.href ?? "#"}
-                          class:list={[
-                            "flex items-center justify-between px-3 py-1.5 text-sm rounded-md transition-colors no-underline",
-                            child.active
-                              ? "bg-primary/10 text-primary font-medium"
-                              : "text-foreground hover:bg-muted"
-                          ]}
-                          data-docs-nav-link
-                        >
-                          <span class="truncate">{child.label}</span>
-                          {(() => {
-                            const b = normalizeBadge(child.badge);
-                            return b && (
-                              <RLABadge
-                                variant={b.variant}
-                                color={b.color}
-                                size="xs"
-                                class={"select-none " + b.class}
-                              >
-                                {b.text}
-                              </RLABadge>
-                            );
-                          })()}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <a
-                  href={item.href ?? "#"}
-                  class:list={[
-                    "flex items-center justify-between px-3 py-1.5 text-sm rounded-md transition-colors no-underline",
-                    item.active
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-foreground hover:bg-muted"
-                  ]}
-                  data-docs-nav-link
-                >
-                  <span class="truncate">{item.label}</span>
-                  {(() => {
-                    const b = normalizeBadge(item.badge);
-                    return b && (
-                      <RLABadge
-                        variant={b.variant}
-                        color={b.color}
-                        size="xs"
-                        class={"select-none " + b.class}
-                      >
-                        {b.text}
-                      </RLABadge>
-                    );
-                  })()}
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
+        {/* Nav items — recursive via RLASidebar */}
+        <div class="p-3">
+          <RLASidebar items={sidebarItems} t={t} collapsible="none" class="docs-nav-sidebar" />
+        </div>
       </div>
     </details>
 
@@ -283,15 +222,15 @@ const tocHeadings = hasToc
               ]}
             >
               <span class:list={[
-                scope.id === "overview" ? "i-lucide-book-open" : "i-lucide-terminal",
+                scope.icon || "i-lucide-book-open",
                 "size-4"
               ]} />
-              {scope.label}
+              {t(scope.label)}
             </a>
           );
         })}
       </div>
-      <RLASidebar items={sidebarItems} collapsible="none" class="docs-nav-sidebar" />
+      <RLASidebar items={sidebarItems} t={t} collapsible="none" class="docs-nav-sidebar" />
     </div>
 
     {/* Main content */}
@@ -299,6 +238,10 @@ const tocHeadings = hasToc
       <div class="border-b border-border pb-4 mb-6">
         <h1 class="text-3xl font-extrabold text-foreground tracking-tight">{title}</h1>
         {description && <p class="mt-2 text-base text-muted-foreground">{description}</p>}
+        <div class="flex gap-2 items-center justify-end my-4">
+          <RLACopyMarkdown />
+          <RLAShare />
+        </div>
       </div>
       <article class="markdown-content prose max-w-none prose-base dark:prose-invert">
         <slot />

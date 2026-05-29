@@ -1,0 +1,132 @@
+---
+title: Logo
+description: A component to display the site logo with different variants and color modes.
+sidebar:
+  badge:
+    text: New
+    variant: tip
+---
+
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
+
+import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro"
+import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue"
+import ApiProps from "@rimelight/ui/plugins/starlightDocsApi/components/ApiProps.astro"
+import ApiSlots from "@rimelight/ui/plugins/starlightDocsApi/components/ApiSlots.astro"
+import ApiTheme from "@rimelight/ui/plugins/starlightDocsApi/components/ApiTheme.astro"
+
+A versatile logo component that renders a site logo from your configuration, supporting multiple variants, color modes, and icon classes.
+
+## Usage
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+```astro
+---
+import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro"
+---
+
+<RLALogo variant="logomark" />
+```
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+```vue
+<script setup lang="ts">
+import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue"
+</script>
+
+<template>
+  <RLVLogo client:load variant="logomark" />
+</template>
+```
+
+</div>
+</RLATabs>
+
+## Examples
+
+### Variants
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+<RLALogo variant="logomark" />
+<RLALogo variant="logotype" />
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+<RLVLogo client:load variant="logomark" />
+<RLVLogo client:load variant="logotype" />
+
+</div>
+</RLATabs>
+
+### Modes
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+<RLALogo variant="logomark" mode="color" />
+<div class="bg-black p-2 inline-block">
+  <RLALogo variant="logomark" mode="white" />
+</div>
+<RLALogo variant="logomark" mode="black" />
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+<RLVLogo client:load variant="logomark" mode="color" />
+<div class="bg-black p-2 inline-block">
+  <RLVLogo client:load variant="logomark" mode="white" />
+</div>
+<RLVLogo client:load variant="logomark" mode="black" />
+
+</div>
+</RLATabs>
+
+### Configuration
+
+The logo component fetches its image sources from the `@rimelight/ui` global configuration. You can configure your logos in your `astro.config.mjs`:
+
+```typescript
+import { ui } from "@rimelight/ui/integrations"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      ui: {
+        logos: {
+          logomark: {
+            color: "/images/logo-color.svg",
+            white: "/images/logo-white.svg",
+            black: "/images/logo-black.svg"
+          },
+          logotype: "/images/logotype.png",
+          // You can also use an UnoCSS icon class directly:
+          icon: "i-heroicons-home"
+        }
+      }
+    })
+  ]
+})
+```
+
+## API
+
+### Props
+
+<ApiProps component="logo" />
+
+### Slots
+
+<ApiSlots component="logo" />
+
+## Theme
+
+<ApiTheme component="logo" />
+
+## Changelog

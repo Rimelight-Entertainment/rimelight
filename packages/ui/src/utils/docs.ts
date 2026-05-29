@@ -1,4 +1,4 @@
-import type { DocsConfig, BadgeConfig } from "../types"
+import type { DocsConfig, BadgeConfig, PropMeta, ThemeMeta } from "../types"
 
 export function defineDocsConfig(config: DocsConfig): DocsConfig {
   return config
@@ -39,6 +39,82 @@ export interface ResolvedScope {
   active?: boolean
 }
 
+function getDocHref(docId: string, locale: string, docsBase: string): string {
+  let cleanId = docId
+  if (cleanId.startsWith(locale + "/")) {
+    cleanId = cleanId.substring(locale.length + 1)
+  }
+  
+  const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
+  const normCleanId = cleanId.replace(/^\/+|\/+$/g, "")
+  
+  let parts: string[]
+  if (normCleanId.startsWith(cleanDocsBase + "/") || normCleanId === cleanDocsBase) {
+    parts = [locale, normCleanId]
+  } else {
+    parts = [locale, cleanDocsBase, normCleanId]
+  }
+  
+  const finalParts = parts.map(p => p.replace(/^\/+|\/+$/g, "")).filter(Boolean)
+  return "/" + finalParts.join("/") + "/"
+}
+
+function findFirstHref(
+  items: import("../types").SidebarItem[],
+  locale: string,
+  docs: any[],
+  docsBase: string
+): string | undefined {
+  for (const item of items) {
+    if (item.href) {
+      return item.href.replace("{locale}", locale)
+    }
+    if (item.autogenerate) {
+      const dir = item.autogenerate.directory.replace(/\/$/, "")
+      
+      const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
+      let prefix = dir
+      if (cleanDocsBase && (prefix.startsWith(cleanDocsBase + "/") || prefix === cleanDocsBase)) {
+        prefix = prefix.substring(cleanDocsBase.length).replace(/^\/|\/$/g, "")
+      }
+
+      const filteredDocs = docs.filter((d) => {
+        if (d.data.sidebar?.hidden === true) return false
+        
+        let relId = d.id
+        if (d.id.startsWith(locale + "/")) {
+          relId = d.id.substring(locale.length + 1)
+        } else if (d.id.includes("/")) {
+          const firstSeg = d.id.split("/")[0]
+          if (firstSeg.length === 2 && firstSeg !== locale) {
+            return false
+          }
+        }
+        
+        if (prefix === "") return !relId.includes("/")
+        return relId.startsWith(prefix + "/") || relId === prefix
+      })
+      if (filteredDocs.length > 0) {
+        filteredDocs.sort((a, b) => {
+          const aOrder = a.data.sidebar?.order ?? a.data.order ?? numericPrefixOrder(a.id)
+          const bOrder = b.data.sidebar?.order ?? b.data.order ?? numericPrefixOrder(b.id)
+          if (aOrder !== bOrder) return aOrder - bOrder
+          const aLabel = a.data.sidebar?.label ?? a.data.title
+          const bLabel = b.data.sidebar?.label ?? b.data.title
+          return stripNumericPrefix(aLabel).localeCompare(stripNumericPrefix(bLabel))
+        })
+        return getDocHref(filteredDocs[0].id, locale, docsBase)
+      }
+    }
+    const childItems = item.children || item.items
+    if (childItems) {
+      const found = findFirstHref(childItems, locale, docs, docsBase)
+      if (found) return found
+    }
+  }
+  return undefined
+}
+
 export async function getDocsSidebar(
   config: DocsConfig,
   locale: string,
@@ -51,7 +127,12 @@ export async function getDocsSidebar(
 }> {
   const docs = await getCollection("docs")
   const normPath = currentPath.replace(/\/$/, "").toLowerCase()
-  const docsBase = `/${locale}/docs`
+  
+  let docsBase = config.basePath ? config.basePath.replace("{locale}", "").replace(/^\/|\/$/g, "") : ""
+  if (!docsBase) {
+    const docsMatch = currentPath.toLowerCase().match(/^\/[^/]+\/(?:[^/]+\/)*docs/)
+    docsBase = docsMatch ? currentPath.slice(0, docsMatch[0].length).replace(/^\/[^/]+/, "").replace(/^\/|\/$/g, "") : "docs"
+  }
 
   const sidebarScopes: import("../types").SidebarScope[] = Array.isArray(config.sidebar)
     ? config.sidebar.filter(
@@ -63,7 +144,7 @@ export async function getDocsSidebar(
     const id = scope.id || scope.label
     let href = scope.href || ""
     if (!href && scope.items && scope.items.length > 0) {
-      href = scope.items[0].href || ""
+      href = findFirstHref(scope.items, locale, docs, docsBase) || ""
     }
     return {
       id,
@@ -82,9 +163,20 @@ export async function getDocsSidebar(
       if (item.href && item.href.toLowerCase().replace(/\/$/, "") === href) return true
       if (item.autogenerate && docId) {
         const dir = item.autogenerate.directory.replace(/\/$/, "")
-        if (dir === "") {
-          if (!docId.includes("/")) return true
-        } else if (docId.startsWith(dir + "/") || docId === dir) {
+        let relDocId = docId
+        if (docId.startsWith(locale + "/")) {
+          relDocId = docId.substring(locale.length + 1)
+        }
+        
+        const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
+        let prefix = dir
+        if (cleanDocsBase && (prefix.startsWith(cleanDocsBase + "/") || prefix === cleanDocsBase)) {
+          prefix = prefix.substring(cleanDocsBase.length).replace(/^\/|\/$/g, "")
+        }
+
+        if (prefix === "") {
+          if (!relDocId.includes("/")) return true
+        } else if (relDocId.startsWith(prefix + "/") || relDocId === prefix) {
           return true
         }
       }
@@ -97,7 +189,10 @@ export async function getDocsSidebar(
   // Find active scope — most-specific prefix match, fallback to scanning scope items
   let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase())
   if (!activeScope) {
-    const currentDoc = docs.find((d) => `${docsBase}/${d.id}`.toLowerCase() === normPath)
+    const currentDoc = docs.find((d) => {
+      const href = getDocHref(d.id, locale, docsBase)
+      return href.toLowerCase().replace(/\/$/, "") === normPath
+    })
     const scopeMatch = sidebarScopes.find((s) => {
       return isDocInItems(s.items || [], currentDoc?.id, normPath)
     })
@@ -112,6 +207,9 @@ export async function getDocsSidebar(
       .toSorted((a, b) => b.href.length - a.href.length)
       .find((s) => normPath.startsWith(s.href.toLowerCase()))
   }
+  if (!activeScope && scopes.length > 0) {
+    activeScope = scopes[0]
+  }
   if (activeScope) activeScope.active = true
 
   const sidebarConfig = sidebarScopes.find(
@@ -123,27 +221,41 @@ export async function getDocsSidebar(
   async function resolveItem(item: import("../types").SidebarItem): Promise<ResolvedSidebarItem[]> {
     if (item.autogenerate) {
       const dir = item.autogenerate.directory
-      // Match docs whose id starts with the directory
-      const prefix = dir.replace(/\/$/, "")
+      
+      const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
+      let prefix = dir.replace(/\/$/, "")
+      if (cleanDocsBase && (prefix.startsWith(cleanDocsBase + "/") || prefix === cleanDocsBase)) {
+        prefix = prefix.substring(cleanDocsBase.length).replace(/^\/|\/$/g, "")
+      }
+
       const filteredDocs = docs.filter((d) => {
         if (d.data.sidebar?.hidden === true) return false
-        if (prefix === "") return !d.id.includes("/")
-        return d.id.startsWith(prefix + "/") || d.id === prefix
+        
+        let relId = d.id
+        if (d.id.startsWith(locale + "/")) {
+          relId = d.id.substring(locale.length + 1)
+        } else if (d.id.includes("/")) {
+          const firstSeg = d.id.split("/")[0]
+          if (firstSeg.length === 2 && firstSeg !== locale) {
+            return false
+          }
+        }
+        
+        if (prefix === "") return !relId.includes("/")
+        return relId.startsWith(prefix + "/") || relId === prefix
       })
 
       filteredDocs.sort((a, b) => {
-        // 1. Frontmatter `order` takes priority
         const aOrder = a.data.sidebar?.order ?? a.data.order ?? numericPrefixOrder(a.id)
         const bOrder = b.data.sidebar?.order ?? b.data.order ?? numericPrefixOrder(b.id)
         if (aOrder !== bOrder) return aOrder - bOrder
-        // 2. Fall back to alphabetical by stripped label
         const aLabel = a.data.sidebar?.label ?? a.data.title
         const bLabel = b.data.sidebar?.label ?? b.data.title
         return stripNumericPrefix(aLabel).localeCompare(stripNumericPrefix(bLabel))
       })
 
       return filteredDocs.map((doc) => {
-        const href = `${docsBase}/${doc.id}/`
+        const href = getDocHref(doc.id, locale, docsBase)
         const badge =
           doc.data.sidebar?.badge ?? (doc.data.badge as string | BadgeConfig | undefined)
         return {
@@ -156,7 +268,7 @@ export async function getDocsSidebar(
     }
 
     const resolved: ResolvedSidebarItem = {
-      label: item.label,
+      label: item.label || "",
       href: item.href ? item.href.replace("{locale}", locale) : undefined,
       icon: item.icon,
       badge: item.badge,
@@ -212,4 +324,48 @@ export function getSurroundItems(sidebar: ResolvedSidebarItem[], currentPath: st
     next:
       currentIndex >= 0 && currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null
   }
+}
+
+export function kebabToPascal(name: string): string {
+  return name
+    .split("-")
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join("")
+}
+
+export function filterProps(
+  props: PropMeta[],
+  options: { hide?: string[]; show?: string[] }
+): PropMeta[] {
+  if (options.show?.length) {
+    return props.filter((p) => options.show!.includes(p.name))
+  }
+  if (options.hide?.length) {
+    return props.filter((p) => !options.hide!.includes(p.name))
+  }
+  return props
+}
+
+export function generateThemeCode(componentName: string, theme: ThemeMeta): string {
+  const componentConfig: Record<string, unknown> = {
+    ...(theme.slots.length ? { slots: theme.slots } : {}),
+    ...(Object.keys(theme.base).length ? { base: theme.base } : {}),
+    ...(Object.keys(theme.variants).length ? { variants: theme.variants } : {}),
+    ...(theme.compoundVariants.length ? { compoundVariants: theme.compoundVariants } : {}),
+    ...(Object.keys(theme.defaultVariants).length ? { defaultVariants: theme.defaultVariants } : {})
+  }
+
+  return `// astro.config.ts
+import { ui } from "@rimelight/ui"
+import { defineConfig } from "astro/config"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      components: {
+        ${componentName}: ${JSON.stringify(componentConfig, null, 6).replace(/\n/g, "\n        ")}
+      }
+    })
+  ]
+})`
 }

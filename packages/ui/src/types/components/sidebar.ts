@@ -49,6 +49,7 @@ export interface EditLinkConfig {
 }
 
 export interface DocsConfig {
+  basePath?: string
   sidebar:
     | (SidebarItem | SidebarScope)[]
     | {

@@ -1,0 +1,134 @@
+---
+title: Localization
+description: Rimelight UI is a high-performance Astro component library for building modern web applications.
+sidebar:
+  order: 3
+---
+
+import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+
+Localization in rimelight.com is managed through a combination of Astro's native [i18n routing](https://docs.astro.build/en/guides/internationalization/) and [Nanostores i18n](https://github.com/nanostores/i18n).
+
+## Directory Routing Structure
+
+All localized pages must be placed within the dynamic `src/pages/[locale]` directory.
+
+```text
+├── src/
+│   └── pages/
+│       ├── [locale]/
+│       │   ├── index.astro       # Localized Page
+│       │   └── company/
+│       │       └── careers.astro # Localized Page
+│       └── index.astro           # Empty i18n Routing Page
+```
+
+<RLAAlert color="warning" variant="soft">
+  The empty root file `src/pages/index.astro` is required by Astro for redirecting to the correct
+  locale path.
+</RLAAlert>
+
+## Translation Files
+
+Translation files live in the `src/translations` directory, and are named after the locale code.
+
+```text
+├── src/
+│   └── translations/
+│       ├── ar.json
+│       ├── en.json
+│       ├── es.json
+│       ├── fr.json
+│       ├── ja.json
+│       ├── ko.json
+│       ├── pt.json
+│       ├── ro.json
+│       └── zh_cn.json
+```
+
+<RLAAlert color="warning" variant="soft">
+    Any instances of user-facing locale options must be displayed each language's native writing.
+
+    Reference:
+    - العربية (ar)
+    - English (en)
+    - Español (es)
+    - Français (fr)
+    - 日本語 (ja)
+    - 한국어 (ko)
+    - Português (pt)
+    - Română (ro)
+    - 简体中文 (zh_cn)
+
+</RLAAlert>
+
+Keys within translation files must be flat under their root objects and not deeply nested. Use underscores to convey hierarchy and hyphens to contain multiple words within a scope.
+
+```json
+{
+  // Correct
+  "page_example": {
+    "meta_title": "Example Page",
+    "section_hero_title": "Título Exemplo",
+    "section_hero_description": "Essa é uma descrição de exemplo.",
+    "section_hero_actions_join-us": "Junte-se à Equipe"
+  },
+
+  // Incorrect
+  "page_example": {
+    "meta": {
+      "title": "Example Page"
+    },
+    "section": {
+      "hero": {
+        "title": "Título Exemplo",
+        "description": "Essa é uma descrição de exemplo.",
+        "actions": {
+          "join-us": "Junte-se à Equipe"
+        }
+      }
+    }
+  }
+}
+```
+
+## Sample Usage
+
+```astro
+// src/pages/[locale]/example.astro
+---
+import { useI18n, currentLocale as localeStore } from "astro-nanostores-i18n:runtime";
+import { getRelativeLocaleUrl } from "astro:i18n";
+
+const activeLocale = Astro.currentLocale ?? "en";
+localeStore.set(activeLocale);
+
+const messages = useI18n("page_example", {
+  "meta_title": "Example Page",
+  "section_hero_title": "Example Title",
+  "section_hero_description": "This is an example description.",
+  "section_hero_actions_join-us": "Join the Team",
+});
+---
+
+<html lang={activeLocale}>
+  <title>{messages["meta_title"]}</title>
+  <h1>{messages["section_hero_title"]}</h1>
+  <p>{messages["section_hero_description"]}</p>
+  <a href={getRelativeLocaleUrl(activeLocale, "/company/careers")}>
+    {messages["section_hero_actions_join-us"]}
+  </a>
+</html>
+```
+
+```json
+// src/translations/pt.json
+{
+  "page_example": {
+    "meta_title": "Example Page",
+    "section_hero_title": "Título Exemplo",
+    "section_hero_description": "Essa é uma descrição de exemplo.",
+    "section_hero_actions_join-us": "Junte-se à Equipe"
+  }
+}
+```

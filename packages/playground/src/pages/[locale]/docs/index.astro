@@ -6,7 +6,7 @@ import { currentLocale } from "astro-nanostores-i18n:runtime";
 const activeLocale = Astro.currentLocale ?? "en";
 currentLocale.set(activeLocale);
 
-const entry = await getEntry("docs", "index");
+const entry = await getEntry("docs", `${activeLocale}/index`);
 
 if (!entry) {
   return Astro.redirect(`/${activeLocale}/404`);

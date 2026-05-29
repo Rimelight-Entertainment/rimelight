@@ -1,0 +1,60 @@
+---
+import RLAButton from "./RLAButton.astro"
+import type { ButtonProps } from "../../types"
+
+interface Props extends Omit<ButtonProps, "href" | "label" | "leadingIcon" | "trailingIcon" | "loading" | "loadingAuto" | "square" | "active" | "activeColor" | "activeVariant"> {}
+
+const {
+  ...rest
+} = Astro.props
+---
+
+<RLAButton
+  id="rl-share"
+  color="neutral"
+  variant="outline"
+  size="sm"
+  leadingIcon="i-lucide-share-2"
+  label="Share"
+  {...rest}
+/>
+
+<script>
+  function setupShare() {
+    const shareBtn = document.getElementById("rl-share") as HTMLButtonElement | null;
+    if (!shareBtn) return;
+
+    if ((shareBtn as any)._rlShareRegistered) return;
+    (shareBtn as any)._rlShareRegistered = true;
+
+    shareBtn.addEventListener("click", async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: document.title, url: window.location.href });
+        } catch (err) {
+          const error = err as { name?: string };
+          if (error.name !== "AbortError") {
+            console.error("Share failed:", err);
+          }
+        }
+      } else {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          const labelEl = shareBtn.querySelector('[data-slot="label"]');
+          if (labelEl) {
+            const origText = labelEl.textContent;
+            labelEl.textContent = "Link Copied!";
+            setTimeout(() => {
+              labelEl.textContent = origText;
+            }, 2000);
+          }
+        } catch (err) {
+          console.error("Failed to copy link:", err);
+        }
+      }
+    });
+  }
+
+  setupShare();
+  document.addEventListener("astro:after-swap", setupShare);
+</script>

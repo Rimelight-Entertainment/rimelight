@@ -1,0 +1,59 @@
+---
+title: Installation
+description: How to install and configure Rimelight UI in your project.
+sidebar:
+  order: 2
+---
+
+import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
+
+To use Rimelight UI in an Astro project, you need to install the package and add the integration.
+
+## Installation
+
+<RLASteps>
+
+    1. Install the package into your project:
+
+        ```bash
+        # vp
+        vp install @rimelight/ui
+
+        # npm
+        npm install @rimelight/ui
+
+        # pnpm
+        pnpm add @rimelight/ui
+
+        # yarn
+        yarn add @rimelight/ui
+
+        # deno
+        deno add npm:@rimelight/ui
+
+        # bun
+        bun add @rimelight/ui
+        ```
+
+    2. Add the Rimelight UI Astro integration to your Astro configuration:
+
+        ```typescript
+        // astro.config.ts
+        import { ui } from "@rimelight/ui/integrations"
+        import { defineConfig } from "astro/config"
+
+        export default defineConfig({
+          integrations: [
+            ui({
+              // Optional: Provide global UI overrides
+              ui: {
+                button: {
+                  defaultVariants: { color: "secondary" }
+                }
+              }
+            })
+          ]
+        })
+        ```
+
+</RLASteps>

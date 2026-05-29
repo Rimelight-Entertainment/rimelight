@@ -1,0 +1,89 @@
+﻿---
+title: useUi
+description: A powerful Vue composable for resolving and merging component UI configuration overrides.
+---
+
+The `useUi` composable is the internal engine that powers the highly flexible styling overrides in Rimelight UI. It is responsible for intelligently merging default theme styles, global integration overrides, and local component props.
+
+If you are building new components for the Rimelight UI ecosystemâ€”or if you simply want to utilize our merging logic in your own custom componentsâ€”you should use this composable to ensure your component respects the global configuration hierarchy.
+
+## The Problem It Solves
+
+When building highly customizable components, you often need to merge classes from multiple sources. A standard `twMerge` is often not enough because components consist of multiple DOM elements (slots), and you need to merge configuration objects deeply without destroying adjacent properties.
+
+The `useUi` composable handles this complex deep merge for you, returning a reactive object of finalized slot classes.
+
+## Usage
+
+Import the composable from `@rimelight/ui/composables`.
+
+```vue
+<script setup lang="ts">
+import { computed } from "vue"
+import { useUi } from "@rimelight/ui/composables"
+import { myCustomTheme } from "./myCustomTheme" // Your base UnoCSS classes
+
+const props = defineProps<{
+  ui?: Record<string, unknown>
+}>()
+
+// 1. "my-component" refers to the key in the global defaultUIConfig (virtual:rimelight-ui)
+// 2. props.ui is the local override passed to this specific instance
+const mergedUI = useUi("my-component", props.ui)
+
+// 3. You can then use mergedUI in your template, often combining it with your base theme
+// using tailwind-merge or css-variants.
+</script>
+
+<template>
+  <div :class="[myCustomTheme.root, mergedUI.root]">
+    <span :class="[myCustomTheme.label, mergedUI.label]">
+      <slot />
+    </span>
+  </div>
+</template>
+```
+
+## Understanding the Merge Priority
+
+The composable returns a Vue `ComputedRef` containing the merged styles. It utilizes `defu` to perform a deep merge.
+
+The merge priority is strictly defined (from highest to lowest priority):
+
+1. **Local Prop**: Styles passed directly via `uiProp` on the component instance (e.g., `<RLVButton ui={{ root: '...' }}>`). This always wins.
+2. **Global Config**: Styles defined globally in the Astro integration within `astro.config.ts` (`ui({ ui: { button: { ... } } })`).
+3. **Theme Defaults**: The base styles defined in the component's `.theme.ts` file.
+
+### Example Merge Scenario
+
+Imagine the following configuration states:
+
+**Global Config (`astro.config.ts`)**:
+
+```typescript
+ui({
+  ui: {
+    header: {
+      container: "px-8",
+      left: "w-64"
+    }
+  }
+})
+```
+
+**Local Prop (`<RLVHeader>`)**:
+
+```vue
+<RLVHeader :ui="{ container: 'px-2' }" />
+```
+
+**Resulting `mergedUI` object**:
+
+```javascript
+{
+  container: 'px-2', // Local prop wins
+  left: 'w-64'       // Inherited from Global Config
+}
+```
+
+By using `useUi`, you guarantee that developers consuming your component get a predictable, consistent experience when overriding styles.

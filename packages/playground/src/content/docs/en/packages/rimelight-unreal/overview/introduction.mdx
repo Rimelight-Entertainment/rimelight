@@ -1,0 +1,67 @@
+---
+title: Introduction
+description: Rimelight UI is a high-performance Astro component library for building modern web applications.
+sidebar:
+  order: 1
+---
+
+import RLACard from "@rimelight/ui/components/astro/RLACard.astro"
+import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro"
+
+## What is Rimelight Unreal?
+
+Rimelight Unreal is an [Unreal Engine Plugin](https://dev.epicgames.com/documentation/unreal-engine/plugins-in-unreal-engine) developed and used internally at Rimelight Entertainment.
+
+<RLAGrid>
+  <RLACard title="Intuitive" icon="document">
+    Simple APIs, comprehensive documentation, and convenient integrations.
+  </RLACard>
+  <RLACard title="Performant" icon="rocket">
+    Fully type-safe, lean bundles, and blazing fast.
+  </RLACard>
+  <RLACard title="Customizable" icon="pen">
+    Create your own design system by overriding styles and variants globally or per instance.
+  </RLACard>
+  <RLACard title="Accessible" icon="approve-check-circle">
+    All components are WAI-ARIA compliant and include keyboard navigation, focus management, and
+    screen reader support.
+  </RLACard>
+</RLAGrid>
+
+<RLAGrid>
+  <RLACard title="View on Fab" href="https://www.fab.com/listings/" />
+  <RLACard
+    title="View on GitHub"
+    href="https://github.com/Rimelight-Entertainment/rimelight-unreal"
+  />
+</RLAGrid>
+
+## Core Technologies
+
+## Frequently Asked Questions
+
+<details>
+  <summary>Is Rimelight Unreal free to use?</summary>
+  Yes. Rimelight UI is a completely free and open source package under the [MIT
+  License](https://opensource.org/license/mit).
+</details>
+
+<details>
+  <summary>Can I use Rimelight Unreal outside of Unreal Engine?</summary>
+  For the time being, no. The library is strictly distributed as an Astro integration, but in theory
+  could be modularized enough to be usable as a Vite plugin, and we are open to contributions on
+  this topic.
+</details>
+
+<details>
+  <summary>Is Rimelight UI customizable?</summary>
+  All components can have their styles overridden per slot and per variant, either globally or per
+  instance, but their basic structure is fixed.
+</details>
+
+<details>
+  <summary>Is Rimelight UI accessible?</summary>
+  All components provide automatic ARIA attributes, keyboard navigation, focus management, and
+  screen reader support. We offer an accessible foundation, but overrides and specific use cases
+  might require additional accessibility considerations.
+</details>

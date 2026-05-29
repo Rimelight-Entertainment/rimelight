@@ -1,0 +1,37 @@
+﻿---
+title: Server-Side Rendering (SSR)
+description: Optimizing Rimelight UI for maximum performance with SSR.
+sidebar:
+  order: 4
+---
+
+Performance is a core pillar of Rimelight UI. We leverage the power of **Astro** and **Vue** to provide a best-in-class SSR experience.
+
+## The Dual-Engine Advantage
+
+Unlike traditional component libraries that require full hydration for every component, Rimelight UI allows you to choose the most efficient rendering strategy for each part of your page.
+
+### Static by Default (Astro)
+
+Most UI elements (Headers, Footers, Buttons, Badges) don't actually need client-side JavaScript to look and function correctly. By using our **RLA** components, you can render these entirely on the server.
+
+- **Zero JS:** No hydration cost.
+- **Instant Load:** CSS is generated and shipped with the HTML.
+- **SEO Friendly:** Search engines see the fully rendered content immediately.
+
+### Selective Hydration (Vue)
+
+For complex interactions (Modals, Dropdowns, Forms), use our **RLV** components with Astro's [client directives](https://docs.astro.build/en/reference/directives-reference/#client-directives).
+
+```astro
+<!-- Hydrates only when the component enters the viewport -->
+<RLVModal client:visible />
+```
+
+## CSS Strategy
+
+Since we use **UnoCSS**, all styles are generated at build-time. Our integration ensures that the minimal required CSS for each page is extracted and injected into the `<head>`, preventing layout shifts and ensuring fast first contentful paints (FCP).
+
+## Hydration Mismatches
+
+Rimelight UI components are designed to produce identical output on the server and client. However, be careful when using browser-only APIs (like `window` or `localStorage`) inside your Vue components. Always wrap these in `onMounted` or use defensive checks.
