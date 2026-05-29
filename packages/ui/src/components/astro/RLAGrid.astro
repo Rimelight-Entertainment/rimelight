@@ -1,39 +1,31 @@
 ---
-interface Props {
-  stagger?: boolean
-  class?: string
-}
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { GridProps } from "../../types"
+import gridThemeDefault, { createGridTheme } from "../../themes/grid.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const { stagger = false, class: className = "", ...rest } = Astro.props
+const uiConfig = getUIConfig()
+const gridTheme = uiConfig.colors ? createGridTheme() : gridThemeDefault
+
+const grid = scv(gridTheme)
+
+const {
+  cols = 2,
+  gap = "md",
+  stagger = false,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as GridProps
+
+const classes = resolveClasses(grid, {
+  cols: cols as any,
+  gap,
+  stagger
+}, useUi("grid", uiProp), className)
 ---
 
-<div class:list={["rl-grid", { stagger }, className]} {...rest}>
+<div class={classes.root} {...rest}>
   <slot />
 </div>
-
-<style>
-  .rl-grid {
-    display: grid;
-    grid-template-columns: 100%;
-    gap: 1rem;
-  }
-
-  .rl-grid > :global(*) {
-    margin-top: 0 !important;
-  }
-
-  @media (min-width: 50rem) {
-    .rl-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-    .stagger {
-      --stagger-height: 5rem;
-      padding-bottom: var(--stagger-height);
-    }
-
-    .stagger > :global(*):nth-child(2n) {
-      transform: translateY(var(--stagger-height));
-    }
-  }
-</style>
