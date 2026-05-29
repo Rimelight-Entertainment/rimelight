@@ -16,17 +16,20 @@ const activeLocale = Astro.currentLocale ?? "en";
 const messages = useI18n("app_header", {
 	"left-links_home_label": "Home",
   "left-links_features_label": "Features",
-  "link-groups_foundations_label": "Foundation",
-  "link-groups_foundations_links_tokens": "Design Tokens",
-  "link-groups_foundations_links_colors": "Color Palettes",
-  "link-groups_foundations_links_typography": "Fluid Typography",
-  "link-groups_components_label": "Components",
-  "link-groups_components_links_astro": "Astro Elements",
-  "link-groups_components_links_vue": "Vue Components",
-  "link-groups_components_links_integrations": "Integrations",
-  "link-groups_resources_label": "Resources",
-  "link-groups_resources_links_docs": "Documentation",
-  "link-groups_resources_links_github": "GitHub Repository",
+  "link-groups_center_foundations_label": "Foundation",
+  "link-groups_center_foundations_description": "Design tokens, color palettes, fluid typography.",
+  "link-groups_center_foundations_links_tokens": "Design Tokens",
+  "link-groups_center_foundations_links_colors": "Color Palettes",
+  "link-groups_center_foundations_links_typography": "Fluid Typography",
+  "link-groups_center_components_label": "Components",
+  "link-groups_center_components_description": "Astro and Vue library elements.",
+  "link-groups_center_components_links_astro": "Astro Elements",
+  "link-groups_center_components_links_vue": "Vue Components",
+  "link-groups_center_components_links_integrations": "Integrations",
+  "link-groups_center_integrations_description": "Vite hooks, PostCSS, Lunaria, Knip.",
+  "link-groups_right_resources_label": "Resources",
+  "link-groups_right_resources_links_docs": "Documentation",
+  "link-groups_right_resources_links_github": "GitHub Repository",
   "left-links_about_label": "About",
   "left-links_blog_label": "Blog",
 	"left-links_docs_label": "Docs",
@@ -36,31 +39,56 @@ const messages = useI18n("app_header", {
 });
 
 const foundationLinkGroup: LinkGroupProps = {
-  label: messages["link-groups_foundations_label"],
+  label: messages["link-groups_center_foundations_label"],
   leadingIcon: "i-lucide-layout",
   links: [
-    { label: messages["link-groups_foundations_links_tokens"], href: "/features/tokens" },
-    { label: messages["link-groups_foundations_links_colors"], href: "/features/colors" },
-    { label: messages["link-groups_foundations_links_typography"], href: "/features/typography" }
+    {
+      label: messages["link-groups_center_foundations_links_tokens"],
+      href: "/features/tokens" },
+    {
+      label: messages["link-groups_center_foundations_links_colors"],
+      href: "/features/colors"
+    },
+    {
+      label: messages["link-groups_center_foundations_links_typography"],
+      href: "/features/typography"
+    }
   ]
 };
 
 const componentsLinkGroup: LinkGroupProps = {
-  label: messages["link-groups_components_label"],
+  label: messages["link-groups_center_components_label"],
   leadingIcon: "i-lucide-blocks",
   links: [
-    { label: messages["link-groups_components_links_astro"], href: "/features/astro" },
-    { label: messages["link-groups_components_links_vue"], href: "/features/vue" },
-    { label: messages["link-groups_components_links_integrations"], href: "/features/integrations" }
+    {
+      label: messages["link-groups_center_components_links_astro"],
+      href: "/features/astro"
+    },
+    {
+      label: messages["link-groups_center_components_links_vue"],
+      href: "/features/vue"
+    },
+    {
+      label: messages["link-groups_center_components_links_integrations"],
+      href: "/features/integrations"
+    }
   ]
 };
 
 const resourcesLinkGroup: LinkGroupProps = {
-  label: messages["link-groups_resources_label"],
+  label: messages["link-groups_right_resources_label"],
   leadingIcon: "i-lucide-library",
   links: [
-    { label: messages["link-groups_resources_links_docs"], href: "/docs", leadingIcon: "i-lucide-file-text size-4" },
-    { label: messages["link-groups_resources_links_github"], href: "https://github.com/Rimelight-Entertainment/rimelight", leadingIcon: "i-logos-github-icon size-4" }
+    {
+      label: messages["link-groups_right_resources_links_docs"],
+      href: "/docs",
+      leadingIcon: "i-lucide-file-text size-4"
+    },
+    {
+      label: messages["link-groups_right_resources_links_github"],
+      href: "https://github.com/Rimelight-Entertainment/rimelight",
+      leadingIcon: "i-logos-github-icon size-4"
+    }
   ]
 };
 
@@ -70,9 +98,18 @@ const leftLinks: NavigationMenuItem[] = [
     to: getRelativeLocaleUrl(activeLocale, '/features'),
     slot: "features" as const,
     children: [
-      { label: "Foundation", description: "Design tokens, color palettes, fluid typography." },
-      { label: "Components", description: "Astro and Vue library elements." },
-      { label: "Integrations", description: "Vite hooks, PostCSS, Lunaria, Knip." }
+      {
+        label: messages["link-groups_center_foundations_label"],
+        description: messages["link-groups_center_foundations_description"]
+      },
+      {
+        label: messages["link-groups_center_components_label"],
+        description: messages["link-groups_center_components_description"]
+      },
+      {
+        label: messages["link-groups_center_integrations_label"],
+        description: messages["link-groups_center_integrations_description"]
+      }
     ]
   },
   {
