@@ -49,8 +49,6 @@
     "nanostores": "1.3.0",
     "sharp": "0.34.5",
     "shiki": "4.1.0",
-    "turndown": "^7.2.4",
-    "turndown-plugin-gfm": "^1.0.2",
     "vue": "3.5.34",
     "vue-router": "5.0.7",
     "wrangler": "4.94.0"

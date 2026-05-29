@@ -23,9 +23,10 @@ interface Props {
   nextOverride?: SurroundOverride;
   /** GitHub edit URL for this page (false = hide, string = full URL) */
   editUrl?: string | false | undefined;
+  rawMarkdown?: string;
 }
 
-const { title, description = "", headings = [], tableOfContents: tocOverride, prevOverride, nextOverride, editUrl } = Astro.props;
+const { title, description = "", headings = [], tableOfContents: tocOverride, prevOverride, nextOverride, editUrl, rawMarkdown } = Astro.props;
 
 const locale = Astro.currentLocale ?? "en";
 const currentPath = Astro.url.pathname;
@@ -239,7 +240,7 @@ const tocHeadings = hasToc
         <h1 class="text-3xl font-extrabold text-foreground tracking-tight">{title}</h1>
         {description && <p class="mt-2 text-base text-muted-foreground">{description}</p>}
         <div class="flex gap-2 items-center justify-end my-4">
-          <RLACopyMarkdown />
+          {rawMarkdown && <RLACopyMarkdown raw={rawMarkdown} />}
           <RLAShare />
         </div>
       </div>

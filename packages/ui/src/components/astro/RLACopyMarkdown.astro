@@ -3,11 +3,11 @@ import RLAButton from "./RLAButton.astro"
 import type { ButtonProps } from "../../types"
 
 interface Props extends Omit<ButtonProps, "href" | "label" | "leadingIcon" | "trailingIcon" | "loading" | "loadingAuto" | "square" | "active" | "activeColor" | "activeVariant"> {
-  targetSelector?: string
+  raw: string
 }
 
 const {
-  targetSelector = ".markdown-content",
+  raw,
   ...rest
 } = Astro.props
 ---
@@ -19,21 +19,11 @@ const {
   size="sm"
   leadingIcon="i-lucide-copy"
   label="Copy Markdown"
-  data-target={targetSelector}
+  data-raw={raw}
   {...rest}
 />
 
 <script>
-  import TurndownService from "turndown";
-  import { gfm } from "turndown-plugin-gfm";
-
-  const turndown = new TurndownService({
-    headingStyle: "atx",
-    codeBlockStyle: "fenced",
-    bulletListMarker: "-",
-  });
-  turndown.use(gfm);
-
   function setupCopy() {
     const copyBtn = document.getElementById("rl-copy-markdown") as HTMLButtonElement | null;
     if (!copyBtn) return;
@@ -44,14 +34,10 @@ const {
     copyBtn.addEventListener("click", async () => {
       try {
         copyBtn.disabled = true;
-        const selector = copyBtn.getAttribute("data-target") || ".markdown-content";
-        const contentEl = document.querySelector(selector);
-        if (!contentEl) {
-          throw new Error(`Content selector "${selector}" not found`);
+        const markdown = copyBtn.getAttribute("data-raw");
+        if (!markdown) {
+          throw new Error("No raw markdown content provided to copy");
         }
-        const clone = contentEl.cloneNode(true) as Element;
-        clone.querySelectorAll("script, style, noscript, .sl-anchor-link, [data-pagefind-ignore]").forEach((el: Element) => el.remove());
-        const markdown = turndown.turndown(clone as HTMLElement);
         await navigator.clipboard.writeText(markdown);
         
         const labelEl = copyBtn.querySelector('[data-slot="label"]');

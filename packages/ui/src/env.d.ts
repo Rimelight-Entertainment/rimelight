@@ -17,18 +17,6 @@ declare module "virtual:rimelight-ui-docs-meta" {
   export default meta
 }
 
-declare module "turndown" {
-  class TurndownService {
-    constructor(options?: Record<string, unknown>)
-    turndown(html: Node | string): string
-    use(plugin: () => void): void
-  }
-  export default TurndownService
-}
-
-declare module "turndown-plugin-gfm" {
-  export function gfm(): void
-}
 
 declare namespace App {
   interface Locals {
