@@ -49,6 +49,22 @@ export interface AvatarProps {
   srcset?: string
   usemap?: string
   /**
+   * Compact initials displayed inside the avatar circle (alias for fallback)
+   */
+  initials?: string
+  /**
+   * Display name rendered adjacent to the avatar (e.g. "Daniel Marchi")
+   */
+  title?: string
+  /**
+   * Secondary description rendered below the title (e.g. "Lead Developer")
+   */
+  subtitle?: string
+  /**
+   * Accessible aria-label fallback for screen readers when avatar is purely visual
+   */
+  label?: string
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any
@@ -58,3 +74,4 @@ export interface AvatarProps {
   class?: any
   [key: string]: unknown
 }
+

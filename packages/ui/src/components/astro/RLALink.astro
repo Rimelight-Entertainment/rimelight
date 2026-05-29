@@ -7,16 +7,38 @@ const {
   href,
   variant = "link",
   color = "neutral",
+  external,
+  isButton = false,
+  ariaLabel,
+  externalIcon,
+  target,
+  rel,
+  trailingIcon,
   ...rest
 } = Astro.props as LinkProps
 
 const linkHref = href || (typeof to === 'string' ? to : undefined);
+
+const isExternal = !!(external || (linkHref && (linkHref.startsWith('http://') || linkHref.startsWith('https://') || linkHref.startsWith('//'))));
+
+const linkVariant = isButton && variant === "link" ? "solid" : variant;
+const linkTarget = target || (isExternal ? "_blank" : undefined);
+const linkRel = rel || (isExternal ? "noopener noreferrer" : undefined);
+
+const showExternalIcon = isExternal && !trailingIcon ? (externalIcon || "i-lucide-external-link") : trailingIcon;
 ---
 <RLAButton
-  variant={variant as any}
+  variant={linkVariant as any}
   color={color as any}
   href={linkHref}
+  target={linkTarget}
+  rel={linkRel}
+  aria-label={ariaLabel}
+  trailingIcon={showExternalIcon}
   {...rest}
 >
   <slot />
+  {isExternal && !ariaLabel && (
+    <span class="sr-only"> (opens in a new tab)</span>
+  )}
 </RLAButton>

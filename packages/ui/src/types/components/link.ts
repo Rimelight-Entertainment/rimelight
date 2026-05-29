@@ -16,6 +16,19 @@ export interface LinkProps {
   variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link"
   color?: ThemeColor
   /**
+   * Styles the link visually as a button
+   * @default false
+   */
+  isButton?: boolean
+  /**
+   * Screen reader accessibility label. Will automatically append " (opens in a new tab)" for external links if not customized
+   */
+  ariaLabel?: string
+  /**
+   * Custom external link icon name
+   */
+  externalIcon?: string
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any
@@ -25,3 +38,4 @@ export interface LinkProps {
   class?: any
   [key: string]: unknown
 }
+
