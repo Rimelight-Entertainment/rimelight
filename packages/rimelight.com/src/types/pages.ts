@@ -82,3 +82,7 @@ export interface PageVersion extends BasePage {
   approvedBy?: string | null;
   approvedAt?: Date | null;
 }
+
+export function definePageDefinition(definition: PageDefinition): PageDefinition {
+  return definition;
+}
