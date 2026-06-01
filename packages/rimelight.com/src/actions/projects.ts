@@ -8,31 +8,35 @@ import { customFieldDefinition } from "@/db/schema/projects/custom_fields"
 import { and, asc, desc, eq, isNull } from "drizzle-orm"
 
 function checkAuth(context: any) {
-  const user = context.locals.user;
+  const user = context.locals.user
   if (!user) {
     throw new ActionError({
       code: "UNAUTHORIZED",
       message: "Authentication required."
-    });
+    })
   }
-  return user;
+  return user
 }
 
 export const projects = {
   getBoards: defineAction({
     handler: async (_input, context) => {
-      const user = checkAuth(context);
+      const user = checkAuth(context)
       try {
         return await db.query.board.findMany({
-          where: and(eq(board.userId, user.id), eq(board.isArchived, false), isNull(board.deletedAt)),
+          where: and(
+            eq(board.userId, user.id),
+            eq(board.isArchived, false),
+            isNull(board.deletedAt)
+          ),
           orderBy: [desc(board.createdAt)]
-        });
+        })
       } catch (error) {
-        console.error("Failed to fetch boards:", error);
+        console.error("Failed to fetch boards:", error)
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not fetch boards."
-        });
+        })
       }
     }
   }),
@@ -42,7 +46,7 @@ export const projects = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      const user = checkAuth(context);
+      const user = checkAuth(context)
       try {
         const result = await db.query.board.findFirst({
           where: and(eq(board.id, input.id), eq(board.userId, user.id), isNull(board.deletedAt)),
@@ -61,22 +65,22 @@ export const projects = {
               where: isNull(customFieldDefinition.deletedAt)
             }
           }
-        });
+        })
 
         if (!result) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "Board not found"
-          });
+          })
         }
 
-        return result;
+        return result
       } catch (error: any) {
-        console.error("Failed to fetch board:", error);
+        console.error("Failed to fetch board:", error)
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Could not fetch board."
-        });
+        })
       }
     }
   }),
@@ -87,7 +91,7 @@ export const projects = {
       description: z.string().optional()
     }),
     handler: async (input, context) => {
-      const user = checkAuth(context);
+      const user = checkAuth(context)
       try {
         const [newBoard] = await db
           .insert(board)
@@ -97,15 +101,15 @@ export const projects = {
             description: input.description,
             isArchived: false
           })
-          .returning();
+          .returning()
 
-        return newBoard;
+        return newBoard
       } catch (error) {
-        console.error("Failed to create board:", error);
+        console.error("Failed to create board:", error)
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create board."
-        });
+        })
       }
     }
   }),
@@ -118,28 +122,28 @@ export const projects = {
       isArchived: z.boolean().optional()
     }),
     handler: async (input, context) => {
-      const user = checkAuth(context);
-      const { id, ...data } = input;
+      const user = checkAuth(context)
+      const { id, ...data } = input
       try {
         const [updatedBoard] = await db
           .update(board)
           .set(data)
           .where(and(eq(board.id, id), eq(board.userId, user.id)))
-          .returning();
+          .returning()
 
         if (!updatedBoard) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "Board not found."
-          });
+          })
         }
 
-        return updatedBoard;
+        return updatedBoard
       } catch (error: any) {
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Failed to update board."
-        });
+        })
       }
     }
   }),
@@ -149,27 +153,27 @@ export const projects = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      const user = checkAuth(context);
+      const user = checkAuth(context)
       try {
         const [deletedBoard] = await db
           .update(board)
           .set({ deletedAt: new Date() })
           .where(and(eq(board.id, input.id), eq(board.userId, user.id)))
-          .returning();
+          .returning()
 
         if (!deletedBoard) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "Board not found."
-          });
+          })
         }
 
-        return { success: true };
+        return { success: true }
       } catch (error: any) {
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Failed to delete board."
-        });
+        })
       }
     }
   }),
@@ -181,7 +185,7 @@ export const projects = {
       order: z.number().optional().default(0)
     }),
     handler: async (input, context) => {
-      checkAuth(context);
+      checkAuth(context)
       try {
         const [newList] = await db
           .insert(list)
@@ -190,14 +194,14 @@ export const projects = {
             title: input.title,
             order: input.order
           })
-          .returning();
+          .returning()
 
-        return newList;
+        return newList
       } catch (error) {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create list."
-        });
+        })
       }
     }
   }),
@@ -209,28 +213,24 @@ export const projects = {
       order: z.number().optional()
     }),
     handler: async (input, context) => {
-      checkAuth(context);
-      const { id, ...data } = input;
+      checkAuth(context)
+      const { id, ...data } = input
       try {
-        const [updatedList] = await db
-          .update(list)
-          .set(data)
-          .where(eq(list.id, id))
-          .returning();
+        const [updatedList] = await db.update(list).set(data).where(eq(list.id, id)).returning()
 
         if (!updatedList) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "List not found."
-          });
+          })
         }
 
-        return updatedList;
+        return updatedList
       } catch (error: any) {
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Failed to update list."
-        });
+        })
       }
     }
   }),
@@ -240,27 +240,27 @@ export const projects = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      checkAuth(context);
+      checkAuth(context)
       try {
         const [deletedList] = await db
           .update(list)
           .set({ deletedAt: new Date() })
           .where(eq(list.id, input.id))
-          .returning();
+          .returning()
 
         if (!deletedList) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "List not found."
-          });
+          })
         }
 
-        return { success: true };
+        return { success: true }
       } catch (error: any) {
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Failed to delete list."
-        });
+        })
       }
     }
   }),
@@ -273,7 +273,7 @@ export const projects = {
       order: z.number().optional().default(0)
     }),
     handler: async (input, context) => {
-      checkAuth(context);
+      checkAuth(context)
       try {
         const [newCard] = await db
           .insert(card)
@@ -284,14 +284,14 @@ export const projects = {
             order: input.order,
             customFields: {}
           })
-          .returning();
+          .returning()
 
-        return newCard;
+        return newCard
       } catch (error) {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create card."
-        });
+        })
       }
     }
   }),
@@ -306,8 +306,8 @@ export const projects = {
       customFields: z.record(z.string(), z.any()).optional()
     }),
     handler: async (input, context) => {
-      checkAuth(context);
-      const { id, dueDate, ...data } = input;
+      checkAuth(context)
+      const { id, dueDate, ...data } = input
       try {
         const [updatedCard] = await db
           .update(card)
@@ -318,21 +318,21 @@ export const projects = {
             })
           })
           .where(eq(card.id, id))
-          .returning();
+          .returning()
 
         if (!updatedCard) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "Card not found."
-          });
+          })
         }
 
-        return updatedCard;
+        return updatedCard
       } catch (error: any) {
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Failed to update card."
-        });
+        })
       }
     }
   }),
@@ -342,27 +342,27 @@ export const projects = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      checkAuth(context);
+      checkAuth(context)
       try {
         const [deletedCard] = await db
           .update(card)
           .set({ deletedAt: new Date() })
           .where(eq(card.id, input.id))
-          .returning();
+          .returning()
 
         if (!deletedCard) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "Card not found."
-          });
+          })
         }
 
-        return { success: true };
+        return { success: true }
       } catch (error: any) {
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Failed to delete card."
-        });
+        })
       }
     }
   }),
@@ -372,14 +372,19 @@ export const projects = {
       boardId: z.string(),
       name: z.string().min(1),
       type: z.enum(["TEXT", "NUMBER", "DATE", "SELECT", "CHECKBOX", "URL"]),
-      options: z.array(z.object({
-        label: z.string(),
-        value: z.string(),
-        color: z.string().optional()
-      })).optional().default([])
+      options: z
+        .array(
+          z.object({
+            label: z.string(),
+            value: z.string(),
+            color: z.string().optional()
+          })
+        )
+        .optional()
+        .default([])
     }),
     handler: async (input, context) => {
-      checkAuth(context);
+      checkAuth(context)
       try {
         const [newField] = await db
           .insert(customFieldDefinition)
@@ -389,14 +394,14 @@ export const projects = {
             type: input.type,
             options: input.options as any
           })
-          .returning();
+          .returning()
 
-        return newField;
+        return newField
       } catch (error) {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create custom field."
-        });
+        })
       }
     }
   }),
@@ -406,27 +411,27 @@ export const projects = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      checkAuth(context);
+      checkAuth(context)
       try {
         const [deletedField] = await db
           .update(customFieldDefinition)
           .set({ deletedAt: new Date() })
           .where(eq(customFieldDefinition.id, input.id))
-          .returning();
+          .returning()
 
         if (!deletedField) {
           throw new ActionError({
             code: "NOT_FOUND",
             message: "Custom field not found."
-          });
+          })
         }
 
-        return { success: true };
+        return { success: true }
       } catch (error: any) {
         throw new ActionError({
           code: error.code || "INTERNAL_SERVER_ERROR",
           message: error.message || "Failed to delete custom field."
-        });
+        })
       }
     }
   })

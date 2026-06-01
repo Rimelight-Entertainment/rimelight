@@ -20,14 +20,12 @@ export interface AccordionProps {
    */
   summary?: string
   /**
-   * Determines whether multiple items can be open at the same time.
-   * If false, uses HTML5 details 'name' attribute to group them.
-   * Defaults to false (single open at a time).
+   * Determines whether multiple items can be open at the same time. If false, uses HTML5 details
+   * 'name' attribute to group them. Defaults to false (single open at a time).
    */
   multiple?: boolean
   /**
-   * The icon displayed on the right side of the trigger.
-   * Defaults to 'i-lucide-chevron-down'.
+   * The icon displayed on the right side of the trigger. Defaults to 'i-lucide-chevron-down'.
    */
   trailingIcon?: string
   /**

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { SectionBlockProps } from "~/types/blocks";
-import { scv, cx } from "css-variants";
-import { useRC } from "~/composables";
-import BlockViewRenderer from "../BlockViewRenderer.vue";
+import { computed } from "vue"
+import type { SectionBlockProps } from "~/types/blocks"
+import { scv, cx } from "css-variants"
+import { useRC } from "~/composables"
+import BlockViewRenderer from "../BlockViewRenderer.vue"
 
 /* region Props */
 export interface SectionBlockRendererProps extends SectionBlockProps {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
 const {
@@ -17,27 +17,27 @@ const {
   title,
   description,
   children = [],
-  rc: rcProp,
-} = defineProps<SectionBlockRendererProps>();
+  rc: rcProp
+} = defineProps<SectionBlockRendererProps>()
 
-const { rc } = useRC("SectionBlockRenderer", rcProp);
+const { rc } = useRC("SectionBlockRenderer", rcProp)
 /* endregion */
 
 /* region Styles */
 const sectionBlockRendererStyles = scv({
   slots: {
-    root: "my-6 scroll-mt-20",
-  },
-});
+    root: "my-6 scroll-mt-20"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = sectionBlockRendererStyles();
-  const result: Record<string, string> = {};
+  const resolved = sectionBlockRendererStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
@@ -48,14 +48,14 @@ function slugify(text: string): string {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "")
-    .replace(/\-\-+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
     .replace(/^-+/, "")
-    .replace(/-+$/, "");
+    .replace(/-+$/, "")
 }
 
-const headingId = computed(() => (title ? slugify(title) : undefined));
-const hasChildren = computed(() => children && children.length > 0);
+const headingId = computed(() => (title ? slugify(title) : undefined))
+const hasChildren = computed(() => children && children.length > 0)
 
 const headingClasses: Record<number, string> = {
   1: "text-4xl font-extrabold text-neutral-900 dark:text-white mt-8 mb-4",
@@ -63,13 +63,13 @@ const headingClasses: Record<number, string> = {
   3: "text-2xl font-semibold text-neutral-900 dark:text-white mt-5 mb-2.5",
   4: "text-xl font-medium text-neutral-900 dark:text-white mt-4 mb-2",
   5: "text-lg font-medium text-neutral-800 dark:text-neutral-200 mt-3 mb-1.5",
-  6: "text-base font-normal text-neutral-700 dark:text-neutral-300 mt-2 mb-1",
-};
+  6: "text-base font-normal text-neutral-700 dark:text-neutral-300 mt-2 mb-1"
+}
 /* endregion */
 
 defineOptions({
-  name: "SectionBlockRenderer",
-});
+  name: "SectionBlockRenderer"
+})
 </script>
 
 <template>

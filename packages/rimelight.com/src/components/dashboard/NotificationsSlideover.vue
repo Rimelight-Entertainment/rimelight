@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
-import { formatTimeAgo } from "@vueuse/core";
-import type { Notification } from "~/types";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useDashboard } from "~/composables";
+import { ref, onMounted, computed } from "vue"
+import { formatTimeAgo } from "@vueuse/core"
+import type { Notification } from "~/types"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useDashboard } from "~/composables"
 
 /* region Props */
 export interface NotificationsSlideoverProps {
   rc?: {
-    root?: string;
-    notificationItem?: string;
-    notificationContent?: string;
-    notificationHeader?: string;
-    senderName?: string;
-    timestamp?: string;
-    notificationBody?: string;
-  };
+    root?: string
+    notificationItem?: string
+    notificationContent?: string
+    notificationHeader?: string
+    senderName?: string
+    timestamp?: string
+    notificationBody?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<NotificationsSlideoverProps>();
+const { rc: rcProp } = defineProps<NotificationsSlideoverProps>()
 
-const { rc } = useRC("NotificationsSlideover", rcProp);
+const { rc } = useRC("NotificationsSlideover", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface NotificationsSlideoverEmits {}
-defineEmits<NotificationsSlideoverEmits>();
+defineEmits<NotificationsSlideoverEmits>()
 /* endregion */
 
 /* region Slots */
 export interface NotificationsSlideoverSlots {}
-defineSlots<NotificationsSlideoverSlots>();
+defineSlots<NotificationsSlideoverSlots>()
 /* endregion */
 
 /* region Styles */
@@ -43,7 +43,7 @@ const notificationsSlideoverStyles = scv({
     "notificationHeader",
     "senderName",
     "timestamp",
-    "notificationBody",
+    "notificationBody"
   ],
   base: {
     root: "",
@@ -53,47 +53,52 @@ const notificationsSlideoverStyles = scv({
     notificationHeader: "flex items-center justify-between mb-0.5",
     senderName: "font-medium text-neutral-900 dark:text-neutral-100 truncate",
     timestamp: "text-xs text-neutral-400 dark:text-neutral-500 shrink-0 ml-2",
-    notificationBody: "text-sm text-neutral-500 dark:text-neutral-400 truncate",
-  },
-});
+    notificationBody: "text-sm text-neutral-500 dark:text-neutral-400 truncate"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = notificationsSlideoverStyles();
-  const result: Record<string, string> = {};
+  const resolved = notificationsSlideoverStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { isNotificationsSlideoverOpen } = useDashboard();
-const notifications = ref<Notification[]>([]);
+const { isNotificationsSlideoverOpen } = useDashboard()
+const notifications = ref<Notification[]>([])
 
 onMounted(async () => {
   try {
-    const res = await fetch("/api/notifications");
+    const res = await fetch("/api/notifications")
     if (res.ok) {
-      notifications.value = await res.json();
+      notifications.value = await res.json()
     }
   } catch (err) {
-    console.error("Failed to load notifications:", err);
+    console.error("Failed to load notifications:", err)
   }
-});
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "NotificationsSlideover",
-});
+  name: "NotificationsSlideover"
+})
 /* endregion */
 </script>
 
 <template>
   <teleport to="body">
     <!-- Outer container to avoid rendering glitches -->
-    <div v-if="isNotificationsSlideoverOpen" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+    <div
+      v-if="isNotificationsSlideoverOpen"
+      class="fixed inset-0 z-50 overflow-hidden"
+      role="dialog"
+      aria-modal="true"
+    >
       <!-- Overlay backdrop -->
       <div
         class="absolute inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity duration-300"
@@ -102,9 +107,13 @@ defineOptions({
 
       <!-- Slide panel -->
       <div class="fixed inset-y-0 right-0 pl-10 max-w-full flex">
-        <div class="w-screen max-w-md bg-white dark:bg-neutral-900 shadow-2xl flex flex-col h-full border-l border-neutral-200 dark:border-neutral-800 transition-transform duration-300">
+        <div
+          class="w-screen max-w-md bg-white dark:bg-neutral-900 shadow-2xl flex flex-col h-full border-l border-neutral-200 dark:border-neutral-800 transition-transform duration-300"
+        >
           <!-- Header -->
-          <div class="px-6 py-5 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+          <div
+            class="px-6 py-5 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between"
+          >
             <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">Notifications</h2>
             <RLVButton
               color="neutral"
@@ -118,7 +127,10 @@ defineOptions({
 
           <!-- Body -->
           <div class="flex-1 overflow-y-auto p-6 space-y-2">
-            <div v-if="notifications.length === 0" class="text-center py-12 text-sm text-neutral-400">
+            <div
+              v-if="notifications.length === 0"
+              class="text-center py-12 text-sm text-neutral-400"
+            >
               No new notifications
             </div>
             <a

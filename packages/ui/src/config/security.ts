@@ -46,46 +46,46 @@ export interface SecurityConfigOptions {
  * support for easy customization and additions per project.
  *
  * @example
- * ```ts
- * // Default returned shape:
- * {
+ *   ;```ts
+ *   // Default returned shape:
+ *   {
  *   checkOrigin: true,
  *   allowedDomains: [
- *     {
- *       hostname: "**.domain.com",
- *       protocol: "https"
- *     }
+ *   {
+ *   hostname: "**.domain.com",
+ *   protocol: "https"
+ *   }
  *   ],
  *   csp: {
- *     algorithm: "SHA-384",
- *     directives: [
- *       "default-src 'none'",
- *       "img-src 'self' data: https://cdn.domain.com https://i3.ytimg.com https://www.youtube.com https://www.youtube-nocookie.com",
- *       "font-src 'self'",
- *       "connect-src 'self' https://cloudflareinsights.com",
- *       "frame-ancestors 'none'",
- *       "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
- *       "upgrade-insecure-requests",
- *       "base-uri 'self'",
- *       "form-action 'self'"
- *     ],
- *     scriptDirective: {
- *       resources: [
- *         "'self'",
- *         "https://static.cloudflareinsights.com",
- *         "https://betterlytics.io/analytics.js",
- *         "'inline-speculation-rules'"
- *       ]
- *     },
- *     styleDirective: {
- *       resources: [
- *         "'self'",
- *         "'sha256-SKuaOGnks7NAUq37nvw1PfGEE0lOAs5ERbiYRbGFIbw='"
- *       ]
- *     }
+ *   algorithm: "SHA-384",
+ *   directives: [
+ *   "default-src 'none'",
+ *   "img-src 'self' data: https://cdn.domain.com https://i3.ytimg.com https://www.youtube.com https://www.youtube-nocookie.com",
+ *   "font-src 'self'",
+ *   "connect-src 'self' https://cloudflareinsights.com",
+ *   "frame-ancestors 'none'",
+ *   "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+ *   "upgrade-insecure-requests",
+ *   "base-uri 'self'",
+ *   "form-action 'self'"
+ *   ],
+ *   scriptDirective: {
+ *   resources: [
+ *   "'self'",
+ *   "https://static.cloudflareinsights.com",
+ *   "https://betterlytics.io/analytics.js",
+ *   "'inline-speculation-rules'"
+ *   ]
+ *   },
+ *   styleDirective: {
+ *   resources: [
+ *   "'self'",
+ *   "'sha256-SKuaOGnks7NAUq37nvw1PfGEE0lOAs5ERbiYRbGFIbw='"
+ *   ]
  *   }
- * }
- * ```
+ *   }
+ *   }
+ *   ```
  */
 export function defineSecurity(options: SecurityConfigOptions): AstroSecurityConfig {
   const { domain, overrides } = options

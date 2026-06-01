@@ -1,47 +1,47 @@
-import { type Component, shallowRef, ref } from "vue";
+import { type Component, shallowRef, ref } from "vue"
 
 export interface FloatingToolDefinition {
-  id: string;
-  title: string;
-  icon: string;
-  component: Component;
-  tooltip?: () => string;
-  onClose?: () => void;
+  id: string
+  title: string
+  icon: string
+  component: Component
+  tooltip?: () => string
+  onClose?: () => void
 }
 
 // Module-level globals safe for client-side interactions in Vue Islands
-const registeredTools = shallowRef(new Map<string, FloatingToolDefinition>());
-const activeToolIds = ref<string[]>([]);
-const expandedTools = ref<Record<string, boolean>>({});
-const isVisible = ref(false);
+const registeredTools = shallowRef(new Map<string, FloatingToolDefinition>())
+const activeToolIds = ref<string[]>([])
+const expandedTools = ref<Record<string, boolean>>({})
+const isVisible = ref(false)
 
 export const useFloatingTools = () => {
   function registerTool(definition: FloatingToolDefinition) {
-    registeredTools.value.set(definition.id, definition);
+    registeredTools.value.set(definition.id, definition)
   }
 
   function openTool(id: string) {
-    if (!registeredTools.value.has(id)) return;
+    if (!registeredTools.value.has(id)) return
 
     if (!activeToolIds.value.includes(id)) {
-      activeToolIds.value.push(id);
+      activeToolIds.value.push(id)
     }
-    expandedTools.value[id] = true;
-    isVisible.value = true;
+    expandedTools.value[id] = true
+    isVisible.value = true
   }
 
   function removeTool(id: string) {
-    const tool = registeredTools.value.get(id);
-    if (tool?.onClose) tool.onClose();
+    const tool = registeredTools.value.get(id)
+    if (tool?.onClose) tool.onClose()
 
-    activeToolIds.value = activeToolIds.value.filter((t) => t !== id);
+    activeToolIds.value = activeToolIds.value.filter((t) => t !== id)
     if (activeToolIds.value.length === 0) {
-      isVisible.value = false;
+      isVisible.value = false
     }
   }
 
   function toggleExpanded(id: string) {
-    expandedTools.value[id] = !expandedTools.value[id];
+    expandedTools.value[id] = !expandedTools.value[id]
   }
 
   return {
@@ -52,6 +52,6 @@ export const useFloatingTools = () => {
     openTool,
     removeTool,
     toggleExpanded,
-    isToolExpanded: (id: string) => expandedTools.value[id] ?? true,
-  };
-};
+    isToolExpanded: (id: string) => expandedTools.value[id] ?? true
+  }
+}

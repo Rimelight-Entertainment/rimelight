@@ -1,20 +1,20 @@
-import { computed, reactive, ref, watch, type Ref } from "vue";
-import type { PageType } from "@/types/pages";
-import { usePaginatedPages } from "./usePaginatedPages";
-import { actions } from "astro:actions";
+import { computed, reactive, ref, watch, type Ref } from "vue"
+import type { PageType } from "@/types/pages"
+import { usePaginatedPages } from "./usePaginatedPages"
+import { actions } from "astro:actions"
 
 export interface NewDocumentState {
-  title: string;
-  slug: string;
+  title: string
+  slug: string
 }
 
 export interface UseDocumentsIndexOptions {
-  draftsInitialLimit?: number;
-  documentsInitialLimit?: number;
-  nextLimit?: number;
-  fetchDraftsImmediate?: boolean;
-  onToast?: (options: { color: "success" | "error"; title: string; description?: string }) => void;
-  onNavigate?: (url: string) => void;
+  draftsInitialLimit?: number
+  documentsInitialLimit?: number
+  nextLimit?: number
+  fetchDraftsImmediate?: boolean
+  onToast?: (options: { color: "success" | "error"; title: string; description?: string }) => void
+  onNavigate?: (url: string) => void
 }
 
 function slugify(text: string): string {
@@ -23,24 +23,28 @@ function slugify(text: string): string {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "")
-    .replace(/\-\-+/g, "-");
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
 }
 
-export function useDocumentsIndex(session: Ref<any>, localeRef = ref("en"), options: UseDocumentsIndexOptions = {}) {
+export function useDocumentsIndex(
+  session: Ref,
+  localeRef = ref("en"),
+  options: UseDocumentsIndexOptions = {}
+) {
   const {
     draftsInitialLimit = 10,
     documentsInitialLimit = 10,
     nextLimit = 9,
     fetchDraftsImmediate,
     onToast,
-    onNavigate,
-  } = options;
+    onNavigate
+  } = options
 
   const isAuthorizedForDrafts = computed(() => {
-    const role = session.value?.user?.role;
-    return role === "owner" || role === "member" || role === "employee";
-  });
+    const role = session.value?.user?.role
+    return role === "owner" || role === "member" || role === "employee"
+  })
 
   const drafts = usePaginatedPages({
     key: "documents-drafts",
@@ -48,8 +52,8 @@ export function useDocumentsIndex(session: Ref<any>, localeRef = ref("en"), opti
     status: "draft",
     initialLimit: draftsInitialLimit,
     nextLimit,
-    immediate: fetchDraftsImmediate ?? isAuthorizedForDrafts.value,
-  });
+    immediate: fetchDraftsImmediate ?? isAuthorizedForDrafts.value
+  })
 
   const documents = usePaginatedPages({
     key: "documents-published",
@@ -57,29 +61,29 @@ export function useDocumentsIndex(session: Ref<any>, localeRef = ref("en"), opti
     status: "published",
     initialLimit: documentsInitialLimit,
     nextLimit,
-    immediate: true,
-  });
+    immediate: true
+  })
 
   const newDocumentState = reactive<NewDocumentState>({
     title: "",
-    slug: "",
-  });
+    slug: ""
+  })
 
-  const isCreateModalOpen = ref(false);
-  const isCreating = ref(false);
+  const isCreateModalOpen = ref(false)
+  const isCreating = ref(false)
 
   watch(
     () => newDocumentState.title,
     (newTitle, oldTitle) => {
-      const oldGeneratedSlug = slugify(oldTitle || "");
+      const oldGeneratedSlug = slugify(oldTitle || "")
       if (!newDocumentState.slug || newDocumentState.slug === oldGeneratedSlug) {
-        newDocumentState.slug = slugify(newTitle);
+        newDocumentState.slug = slugify(newTitle)
       }
-    },
-  );
+    }
+  )
 
   const handleCreateSubmit = async (): Promise<void> => {
-    isCreating.value = true;
+    isCreating.value = true
 
     try {
       const { data, error } = await actions.pages.createPage({
@@ -89,31 +93,31 @@ export function useDocumentsIndex(session: Ref<any>, localeRef = ref("en"), opti
         description: { [localeRef.value]: "" },
         properties: {},
         blocks: []
-      });
+      })
 
       if (error) {
-        throw new Error(error.message || "Failed to create document");
+        throw new Error(error.message || "Failed to create document")
       }
 
       onToast?.({
         color: "success",
         title: "Document created successfully"
-      });
+      })
 
-      isCreateModalOpen.value = false;
+      isCreateModalOpen.value = false
       if (data?.slug && onNavigate) {
-        onNavigate(`/documents/${data.slug}/edit`);
+        onNavigate(`/documents/${data.slug}/edit`)
       }
     } catch (e: any) {
       onToast?.({
         color: "error",
         title: "Failed to create document",
         description: e.message
-      });
+      })
     } finally {
-      isCreating.value = false;
+      isCreating.value = false
     }
-  };
+  }
 
   return {
     isAuthorizedForDrafts,
@@ -122,6 +126,6 @@ export function useDocumentsIndex(session: Ref<any>, localeRef = ref("en"), opti
     newDocumentState,
     isCreateModalOpen,
     isCreating,
-    handleCreateSubmit,
-  };
+    handleCreateSubmit
+  }
 }

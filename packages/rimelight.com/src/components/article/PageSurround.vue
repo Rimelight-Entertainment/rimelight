@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { scv, cx } from "css-variants";
-import { useRC } from "~/composables";
-import { useI18n } from "~/composables/app/useI18n";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed } from "vue"
+import { scv, cx } from "css-variants"
+import { useRC } from "~/composables"
+import { useI18n } from "~/composables/app/useI18n"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface PageSurroundProps {
-  pageType: string;
-  previousTitle?: string;
-  previousDescription?: string;
-  previousTo?: string;
-  nextTitle?: string;
-  nextDescription?: string;
-  nextTo?: string;
+  pageType: string
+  previousTitle?: string
+  previousDescription?: string
+  previousTo?: string
+  nextTitle?: string
+  nextDescription?: string
+  nextTo?: string
   rc?: {
-    grid?: string;
-    card?: string;
-    cardContent?: string;
-    headingGroup?: string;
-    button?: string;
-    typeLabel?: string;
-    infoGroup?: string;
-    title?: string;
-    description?: string;
-  };
+    grid?: string
+    card?: string
+    cardContent?: string
+    headingGroup?: string
+    button?: string
+    typeLabel?: string
+    infoGroup?: string
+    title?: string
+    description?: string
+  }
 }
 
 const {
@@ -35,10 +35,10 @@ const {
   nextTitle,
   nextDescription,
   nextTo,
-  rc: rcProp,
-} = defineProps<PageSurroundProps>();
+  rc: rcProp
+} = defineProps<PageSurroundProps>()
 
-const { rc } = useRC("PageSurround", rcProp);
+const { rc } = useRC("PageSurround", rcProp)
 /* endregion */
 
 /* region Styles */
@@ -58,28 +58,28 @@ const pageSurroundStyles = scv({
     title: "text-primary text-sm font-semibold group-hover:text-highlighted transition-colors",
     titleEnd: "text-right",
     description: "text-toned text-xs line-clamp-2",
-    descriptionEnd: "text-right",
-  },
-});
+    descriptionEnd: "text-right"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = pageSurroundStyles();
-  const result: Record<string, string> = {};
+  const resolved = pageSurroundStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const { t } = useI18n();
+const { t } = useI18n()
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PageSurround",
-});
+  name: "PageSurround"
+})
 /* endregion */
 </script>
 

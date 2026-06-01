@@ -74,4 +74,3 @@ export interface AvatarProps {
   class?: any
   [key: string]: unknown
 }
-

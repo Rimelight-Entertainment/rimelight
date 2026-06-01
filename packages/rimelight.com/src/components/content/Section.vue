@@ -1,46 +1,46 @@
 <script setup lang="ts">
-import { computed, inject, provide } from "vue";
-import { scv, cx } from "css-variants";
-import { useRC } from "~/composables";
-import { SECTION_LEVEL_KEY } from "~/composables/pages/injectionKeys";
-import { useToast } from "@rimelight/ui/composables";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed, inject, provide } from "vue"
+import { scv, cx } from "css-variants"
+import { useRC } from "~/composables"
+import { SECTION_LEVEL_KEY } from "~/composables/pages/injectionKeys"
+import { useToast } from "@rimelight/ui/composables"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
-export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6;
+export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
 
 export interface SectionProps {
-  level?: SectionLevel;
-  title: string;
-  description?: string;
-  isEditing?: boolean;
+  level?: SectionLevel
+  title: string
+  description?: string
+  isEditing?: boolean
   rc?: {
-    section?: string;
-    link?: string;
-    title?: string;
-    description?: string;
-    separator?: string;
-    content?: string;
-  };
+    section?: string
+    link?: string
+    title?: string
+    description?: string
+    separator?: string
+    content?: string
+  }
 }
 
-const { title, description, isEditing = false, rc: rcProp } = defineProps<SectionProps>();
+const { title, description, isEditing = false, rc: rcProp } = defineProps<SectionProps>()
 
-const { rc } = useRC("Section", rcProp);
+const { rc } = useRC("Section", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface SectionEmits {}
-defineEmits<SectionEmits>();
+defineEmits<SectionEmits>()
 /* endregion */
 
 /* region Slots */
 export interface SectionSlots {
-  default: (props: {}) => any;
-  title: (props: {}) => any;
-  description: (props: {}) => any;
+  default: (props: {}) => any
+  title: (props: {}) => any
+  description: (props: {}) => any
 }
-defineSlots<SectionSlots>();
+defineSlots<SectionSlots>()
 /* endregion */
 
 /* region Styles */
@@ -54,7 +54,7 @@ const sectionStyles = scv({
     "content",
     "anchorButtonWrapper",
     "anchorButton",
-    "fallbackAnchor",
+    "fallbackAnchor"
   ],
   base: {
     section: "flex flex-col scroll-mt-24 w-full",
@@ -67,64 +67,64 @@ const sectionStyles = scv({
     anchorButton:
       "absolute top-1/2 -translate-y-1/2 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex",
     fallbackAnchor:
-      "absolute top-1/2 -translate-y-1/2 -ms-8 w-6 h-6 rounded-md p-1 opacity-0 transition lg:flex",
+      "absolute top-1/2 -translate-y-1/2 -ms-8 w-6 h-6 rounded-md p-1 opacity-0 transition lg:flex"
   },
   variants: {
     level: {
       1: {
         section: "gap-2",
-        description: "text-2xl",
+        description: "text-2xl"
       },
       2: {
         section: "gap-1.5",
-        description: "text-xl",
+        description: "text-xl"
       },
       3: {
         section: "gap-1",
-        description: "text-lg",
+        description: "text-lg"
       },
       4: {
         section: "gap-0.5",
-        description: "text-md",
+        description: "text-md"
       },
       5: {
         section: "gap-0.25",
-        description: "text-sm",
+        description: "text-sm"
       },
       6: {
         section: "gap-0.125",
-        description: "text-xs",
-      },
-    },
-  },
-});
+        description: "text-xs"
+      }
+    }
+  }
+})
 
 const parentLevel = inject(
   SECTION_LEVEL_KEY,
-  computed(() => 1),
-);
-const level = computed(() => Math.min(6, parentLevel.value + 1));
-provide(SECTION_LEVEL_KEY, level);
+  computed(() => 1)
+)
+const level = computed(() => Math.min(6, parentLevel.value + 1))
+provide(SECTION_LEVEL_KEY, level)
 
 const styles = computed(() => {
-  const resolved = sectionStyles({ level: level.value as SectionLevel });
-  const result: Record<string, string> = {};
+  const resolved = sectionStyles({ level: level.value as SectionLevel })
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const toast = useToast();
+const toast = useToast()
 
-const sectionId = computed(() => slugify(title));
-const sectionHash = computed(() => `#${sectionId.value}`);
+const sectionId = computed(() => slugify(title))
+const sectionHash = computed(() => `#${sectionId.value}`)
 const fullSectionUrl = computed(() => {
-  if (typeof window === "undefined") return sectionHash.value;
-  return `${window.location.origin}${window.location.pathname}${sectionHash.value}`;
-});
+  if (typeof window === "undefined") return sectionHash.value
+  return `${window.location.origin}${window.location.pathname}${sectionHash.value}`
+})
 /* endregion */
 
 /* region Logic */
@@ -132,39 +132,35 @@ function slugify(text: string): string {
   return text
     .toString()
     .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "")
 }
 
 const copyToClipboard = async (text: string) => {
   try {
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(text)
     toast.add({
       title: "Heading copied to clipboard!",
       description: text,
-      color: "primary",
-    });
+      color: "primary"
+    })
   } catch {
     toast.add({
       title: "Failed to copy heading to clipboard.",
       description: "An unexpected error occurred. Please try again.",
-      color: "danger",
-    });
+      color: "danger"
+    })
   }
-};
+}
 /* endregion */
 </script>
 
 <template>
   <section :id="sectionId" :class="styles.section" v-bind="$attrs">
-    <component
-      :is="`h${level}`"
-      :id="`${sectionId}-title`"
-      :class="styles.title"
-    >
+    <component :is="`h${level}`" :id="`${sectionId}-title`" :class="styles.title">
       <a
         v-if="!isEditing"
         :href="`#${sectionId}`"

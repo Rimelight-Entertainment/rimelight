@@ -13,7 +13,8 @@ export const createNavigationMenuTheme = () =>
       content:
         "absolute left-0 top-full z-50 mt-1.5 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md origin-top-left",
       viewportWrapper: "absolute left-0 top-full flex justify-center w-full",
-      viewport: "relative mt-1.5 h-auto w-full origin-[top_center] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90"
+      viewport:
+        "relative mt-1.5 h-auto w-full origin-[top_center] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90"
     },
     variants: {
       theme: {

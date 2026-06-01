@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useQuickActions } from "~/composables";
+import { ref, onMounted, onUnmounted, computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useQuickActions } from "~/composables"
 
 /* region Props */
 export interface QuickActionsProps {
   rc?: {
-    root?: string;
-    triggerButton?: string;
-    triggerIcon?: string;
-  };
+    root?: string
+    triggerButton?: string
+    triggerIcon?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<QuickActionsProps>();
+const { rc: rcProp } = defineProps<QuickActionsProps>()
 
-const { rc } = useRC("QuickActions", rcProp);
+const { rc } = useRC("QuickActions", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface QuickActionsEmits {}
-defineEmits<QuickActionsEmits>();
+defineEmits<QuickActionsEmits>()
 /* endregion */
 
 /* region Slots */
 export interface QuickActionsSlots {}
-defineSlots<QuickActionsSlots>();
+defineSlots<QuickActionsSlots>()
 /* endregion */
 
 /* region Styles */
@@ -35,63 +35,63 @@ const quickActionsStyles = scv({
     root: "relative inline-block",
     triggerButton:
       "rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform",
-    triggerIcon: "size-6",
-  },
-});
+    triggerIcon: "size-6"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = quickActionsStyles();
-  const result: Record<string, string> = {};
+  const resolved = quickActionsStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { registeredActions } = useQuickActions();
+const { registeredActions } = useQuickActions()
 
 const menuItems = computed(() => {
   const grouped = registeredActions.value.reduce(
     (acc, action) => {
-      const groupId = action.group ?? 0;
-      if (!acc[groupId]) acc[groupId] = [];
+      const groupId = action.group ?? 0
+      if (!acc[groupId]) acc[groupId] = []
       acc[groupId].push({
         label: action.label,
         icon: action.icon,
-        onSelect: action.onSelect,
-      });
-      return acc;
+        onSelect: action.onSelect
+      })
+      return acc
     },
-    {} as Record<number, { label: string; icon?: string; onSelect?: () => void }[]>,
-  );
+    {} as Record<number, { label: string; icon?: string; onSelect?: () => void }[]>
+  )
 
-  return Object.values(grouped);
-});
+  return Object.values(grouped)
+})
 
-const isOpen = ref(false);
-const dropdownRef = ref<HTMLElement | null>(null);
+const isOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
 
 const handleClickOutside = (event: MouseEvent) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
-    isOpen.value = false;
+    isOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
+  document.addEventListener("click", handleClickOutside)
+})
 
 onUnmounted(() => {
-  document.removeEventListener("click", handleClickOutside);
-});
+  document.removeEventListener("click", handleClickOutside)
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "QuickActions",
-});
+  name: "QuickActions"
+})
 /* endregion */
 </script>
 
@@ -133,7 +133,12 @@ defineOptions({
             v-for="item in group"
             :key="item.label"
             class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors"
-            @click="() => { item.onSelect?.(); isOpen = false; }"
+            @click="
+              () => {
+                item.onSelect?.()
+                isOpen = false
+              }
+            "
           >
             <span
               v-if="item.icon"

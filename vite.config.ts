@@ -13,7 +13,7 @@ export default defineConfig({
       "**/runtime-constants.ts",
       "**/fallbacks.generated.ts",
       "**/worker-configuration.d.ts",
-      "**/env.d.ts",
+      "**/env.d.ts"
     ],
     options: {
       typeAware: true,

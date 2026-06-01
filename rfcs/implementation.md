@@ -1,4 +1,5 @@
 Markdown
+
 # Implementation Guide: Dual Search Architecture for Astro SSR on Cloudflare Workers
 
 This document outlines the zero-cost, edge-compatible search strategies for our Astro SSR fleet deployed on Cloudflare Workers/Pages. We avoid external SaaS dependencies and heavy Java/disk-based engines by leveraging two distinct patterns based on the site's data architecture.
@@ -17,6 +18,7 @@ This document outlines the zero-cost, edge-compatible search strategies for our 
 This track turns our existing Neon/PlanetScale PostgreSQL instance into a high-performance search engine. We consolidate content from dynamic tables and static Markdown files into a single optimized search index table.
 
 ### 1.1 Database Schema Setup
+
 Execute the following SQL migration on the Postgres instance. This sets up the central index using a `tsvector` column and a GIN (Generalized Inverted Index) for sub-millisecond execution.
 
 ```sql
@@ -48,13 +50,13 @@ SQL
 -- Example UPSERT pattern when a product or article changes
 INSERT INTO search_index (source_type, source_id, title, url, body_content, searchable_text, updated_at)
 VALUES (
-    'products', 
-    'prod_999', 
-    'Wireless Noise-Cancelling Headphones', 
+    'products',
+    'prod_999',
+    'Wireless Noise-Cancelling Headphones',
     '/shop/products/wireless-headphones',
     'Premium over-ear headphones with 40-hour battery life and active ambient noise cancellation.',
     -- Concatenate and weight title (A) and description (B)
-    setweight(to_tsvector('english', 'Wireless Noise-Cancelling Headphones'), 'A') || 
+    setweight(to_tsvector('english', 'Wireless Noise-Cancelling Headphones'), 'A') ||
     setweight(to_tsvector('english', 'Premium over-ear headphones with 40-hour battery life and active ambient noise cancellation.'), 'B'),
     CURRENT_TIMESTAMP
 )
@@ -92,7 +94,7 @@ async function syncMarkdown() {
       ON CONFLICT (source_type, source_id) DO UPDATE SET
          title = EXCLUDED.title, url = EXCLUDED.url, body_content = EXCLUDED.body_content, searchable_text = EXCLUDED.searchable_text, updated_at = CURRENT_TIMESTAMP;
     `;
-    
+
     await client.query(query, ['markdown', file, data.title, url, content]);
   }
   await client.end();
@@ -120,10 +122,10 @@ export const GET: APIRoute = async ({ request }) => {
 
   // Combine Lexical Text Search Matcher and Fuzzy Trigram Metric for dynamic fallback
   const sqlQuery = `
-    SELECT 
-      title, 
-      url, 
-      source_type, 
+    SELECT
+      title,
+      url,
+      source_type,
       ts_rank(searchable_text, query) as rank,
       ts_headline('english', body_content, query, 'StartSel=<b>, StopSel=</b>, MaxWords=25') as snippet
     FROM search_index, websearch_to_tsquery('english', $1) query
@@ -182,10 +184,10 @@ export const GET: APIRoute = async ({ request }) => {
     // Dynamic import handles the build-time generated module safely inside Cloudflare environment
     // @ts-ignore
     const pagefind = await import(/* @vite-ignore */ '/dist/pagefind/pagefind.js');
-    
+
     // Initialize search execution
     const searchResult = await pagefind.search(query);
-    
+
     // Resolve detailed item fields from index data shards safely (limit to top 10)
     const detailedHits = await Promise.all(
       searchResult.hits.slice(0, 10).map(async (hit: any) => {
@@ -229,3 +231,4 @@ Prior to running the implementation scripts across target repositories, verify s
 Verify Config: Ensure Cloudflare compatibility flags (compatibility_flags = [ "nodejs_compat" ]) are evaluated inside wrangler.toml if any secondary library relies on buffer adjustments.
 
 Key Access: Confirm DATABASE_URL is configured safely via Cloudflare Secret Management dashboard (wrangler secret put DATABASE_URL).
+```

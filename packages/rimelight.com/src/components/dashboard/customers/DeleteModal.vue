@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC } from "~/composables";
+import { ref, computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC } from "~/composables"
 
 /* region Props */
 export interface DeleteModalProps {
-  count?: number;
+  count?: number
   rc?: {
-    root?: string;
-    actions?: string;
-  };
+    root?: string
+    actions?: string
+  }
 }
 
-const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>();
+const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>()
 
-const { rc } = useRC("DeleteModal", rcProp);
+const { rc } = useRC("DeleteModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface DeleteModalEmits {}
-defineEmits<DeleteModalEmits>();
+defineEmits<DeleteModalEmits>()
 /* endregion */
 
 /* region Slots */
 export interface DeleteModalSlots {
-  default: (props: {}) => any;
+  default: (props: {}) => any
 }
-defineSlots<DeleteModalSlots>();
+defineSlots<DeleteModalSlots>()
 /* endregion */
 
 /* region Styles */
@@ -35,37 +35,37 @@ const deleteModalStyles = scv({
   slots: ["root", "actions"],
   base: {
     root: "inline-block",
-    actions: "flex justify-end gap-2 mt-6",
-  },
-});
+    actions: "flex justify-end gap-2 mt-6"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = deleteModalStyles();
-  const result: Record<string, string> = {};
+  const resolved = deleteModalStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const open = ref(false);
-const isLoading = ref(false);
+const open = ref(false)
+const isLoading = ref(false)
 /* endregion */
 
 /* region Logic */
 async function onSubmit() {
-  isLoading.value = true;
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  isLoading.value = false;
-  open.value = false;
+  isLoading.value = true
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  isLoading.value = false
+  open.value = false
 }
 /* endregion */
 
 defineOptions({
-  name: "DeleteModal",
-});
+  name: "DeleteModal"
+})
 </script>
 
 <template>
@@ -77,18 +77,30 @@ defineOptions({
 
     <!-- Teleported Modal -->
     <teleport to="body">
-      <div v-if="open" class="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4" role="dialog" aria-modal="true">
+      <div
+        v-if="open"
+        class="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+      >
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity duration-300" @click="open = false" />
+        <div
+          class="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity duration-300"
+          @click="open = false"
+        />
 
         <!-- Card content -->
-        <div class="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-6 w-full max-w-md relative z-10 transition-transform duration-300">
+        <div
+          class="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-6 w-full max-w-md relative z-10 transition-transform duration-300"
+        >
           <div class="flex justify-between items-start mb-4">
             <div>
               <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">
-                Delete {{ count }} customer{{ count > 1 ? 's' : '' }}
+                Delete {{ count }} customer{{ count > 1 ? "s" : "" }}
               </h3>
-              <p class="text-xs text-neutral-500 mt-1">Are you sure? This action cannot be undone.</p>
+              <p class="text-xs text-neutral-500 mt-1">
+                Are you sure? This action cannot be undone.
+              </p>
             </div>
             <RLVButton
               color="neutral"

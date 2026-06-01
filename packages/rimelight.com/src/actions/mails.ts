@@ -7,8 +7,8 @@ const mockMails = [
       name: "Alex Smith",
       email: "alex.smith@example.com",
       avatar: {
-        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public",
-      },
+        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public"
+      }
     },
     subject: "Meeting Schedule: Q1 Marketing Strategy Review",
     body: `Dear Team,
@@ -27,7 +27,7 @@ Best regards,
 Alex Smith
 Senior Marketing Director
 Tel: (555) 123-4567`,
-    date: new Date().toISOString(),
+    date: new Date().toISOString()
   },
   {
     id: 2,
@@ -36,8 +36,8 @@ Tel: (555) 123-4567`,
       name: "Jordan Brown",
       email: "jordan.brown@example.com",
       avatar: {
-        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public",
-      },
+        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public"
+      }
     },
     subject: "RE: Project Phoenix - Sprint 3 Update",
     body: `Hi team,
@@ -62,7 +62,7 @@ Jordan
 Jordan Brown
 Lead Developer | Tech Solutions
 Mobile: +1 (555) 234-5678`,
-    date: new Date(Date.now() - 7 * 60000).toISOString(),
+    date: new Date(Date.now() - 7 * 60000).toISOString()
   },
   {
     id: 3,
@@ -71,8 +71,8 @@ Mobile: +1 (555) 234-5678`,
       name: "Taylor Green",
       email: "taylor.green@example.com",
       avatar: {
-        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public",
-      },
+        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public"
+      }
     },
     subject: "Lunch Plans",
     body: `Hi there!
@@ -85,7 +85,7 @@ Let me know what you think!
 
 Best,
 Taylor`,
-    date: new Date(Date.now() - 3 * 3600000).toISOString(),
+    date: new Date(Date.now() - 3 * 3600000).toISOString()
   },
   {
     id: 4,
@@ -93,8 +93,8 @@ Taylor`,
       name: "Morgan White",
       email: "morgan.white@example.com",
       avatar: {
-        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public",
-      },
+        src: "https://imagedelivery.net/CIt4DwT04j0re9-AzSsOtQ/1bbb9d00-9764-4a9c-305c-add92d1af900/public"
+      }
     },
     subject: "New Proposal: Project Horizon",
     body: `Hi team,
@@ -116,21 +116,21 @@ Thanks in advance,
 Morgan White
 Senior Project Manager
 Tel: (555) 234-5678`,
-    date: new Date(Date.now() - 24 * 3600000).toISOString(),
+    date: new Date(Date.now() - 24 * 3600000).toISOString()
   }
-];
+]
 
 export const mails = {
   getMails: defineAction({
     handler: async (_input, context) => {
-      const user = context.locals.user;
+      const user = context.locals.user
       if (!user) {
         throw new ActionError({
           code: "UNAUTHORIZED",
           message: "Authentication required."
-        });
+        })
       }
-      return mockMails;
+      return mockMails
     }
   })
 }

@@ -1,19 +1,26 @@
 import { defineAction, ActionError } from "astro:actions"
 import { z } from "astro/zod"
 import { db } from "@/db"
-import { user as userTable, member as memberTable, organization as organizationTable, team as teamTable, teamMember as teamMemberTable, session as sessionTable } from "@/db/schema/auth"
+import {
+  user as userTable,
+  member as memberTable,
+  organization as organizationTable,
+  team as teamTable,
+  teamMember as teamMemberTable,
+  session as sessionTable
+} from "@/db/schema/auth"
 import { desc, eq, count, or, ilike, inArray } from "drizzle-orm"
 
 function checkAdmin(context: any) {
-  const user = context.locals.user;
-  const isAuthorized = user?.role === "owner" || user?.role === "admin";
+  const user = context.locals.user
+  const isAuthorized = user?.role === "owner" || user?.role === "admin"
   if (!isAuthorized) {
     throw new ActionError({
       code: "UNAUTHORIZED",
       message: "Admin or owner authorization required."
-    });
+    })
   }
-  return user;
+  return user
 }
 
 export const admin = {
@@ -24,12 +31,12 @@ export const admin = {
       search: z.string().optional()
     }),
     handler: async (input, context) => {
-      checkAdmin(context);
-      const { limit, offset, search } = input;
+      checkAdmin(context)
+      const { limit, offset, search } = input
 
       const filters = search
         ? or(ilike(userTable.name, `%${search}%`), ilike(userTable.email, `%${search}%`))
-        : undefined;
+        : undefined
 
       try {
         const users = await db
@@ -38,13 +45,13 @@ export const admin = {
           .where(filters)
           .orderBy(desc(userTable.createdAt))
           .limit(limit)
-          .offset(offset);
+          .offset(offset)
 
         if (users.length === 0) {
-          return { users: [], total: 0 };
+          return { users: [], total: 0 }
         }
 
-        const userIds = users.map((u) => u.id);
+        const userIds = users.map((u) => u.id)
 
         const [allMemberships, allTeamMemberships] = await Promise.all([
           db
@@ -75,7 +82,7 @@ export const admin = {
             .from(teamMemberTable)
             .innerJoin(teamTable, eq(teamMemberTable.teamId, teamTable.id))
             .where(inArray(teamMemberTable.userId, userIds))
-        ]);
+        ])
 
         return {
           users: users.map((u) => ({
@@ -89,22 +96,22 @@ export const admin = {
               })),
             teams: allTeamMemberships.filter((m) => m.userId === u.id).map((m) => m.tm)
           }))
-        };
+        }
       } catch (error) {
-        console.error("Failed to fetch users:", error);
+        console.error("Failed to fetch users:", error)
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to list users."
-        });
+        })
       }
     }
   }),
 
   getUsersCount: defineAction({
     handler: async (_input, context) => {
-      checkAdmin(context);
-      const res = await db.select({ count: count() }).from(userTable);
-      return res[0]?.count ?? 0;
+      checkAdmin(context)
+      const res = await db.select({ count: count() }).from(userTable)
+      return res[0]?.count ?? 0
     }
   }),
 
@@ -114,21 +121,21 @@ export const admin = {
       offset: z.number().optional().default(0)
     }),
     handler: async (input, context) => {
-      checkAdmin(context);
+      checkAdmin(context)
       return db
         .select()
         .from(organizationTable)
         .orderBy(desc(organizationTable.createdAt))
         .limit(input.limit)
-        .offset(input.offset);
+        .offset(input.offset)
     }
   }),
 
   getOrganizationsCount: defineAction({
     handler: async (_input, context) => {
-      checkAdmin(context);
-      const res = await db.select({ count: count() }).from(organizationTable);
-      return res[0]?.count ?? 0;
+      checkAdmin(context)
+      const res = await db.select({ count: count() }).from(organizationTable)
+      return res[0]?.count ?? 0
     }
   }),
 
@@ -138,21 +145,21 @@ export const admin = {
       offset: z.number().optional().default(0)
     }),
     handler: async (input, context) => {
-      checkAdmin(context);
+      checkAdmin(context)
       return db
         .select()
         .from(sessionTable)
         .orderBy(desc(sessionTable.createdAt))
         .limit(input.limit)
-        .offset(input.offset);
+        .offset(input.offset)
     }
   }),
 
   getSessionsCount: defineAction({
     handler: async (_input, context) => {
-      checkAdmin(context);
-      const res = await db.select({ count: count() }).from(sessionTable);
-      return res[0]?.count ?? 0;
+      checkAdmin(context)
+      const res = await db.select({ count: count() }).from(sessionTable)
+      return res[0]?.count ?? 0
     }
   }),
 
@@ -162,21 +169,21 @@ export const admin = {
       offset: z.number().optional().default(0)
     }),
     handler: async (input, context) => {
-      checkAdmin(context);
+      checkAdmin(context)
       return db
         .select()
         .from(teamTable)
         .orderBy(desc(teamTable.createdAt))
         .limit(input.limit)
-        .offset(input.offset);
+        .offset(input.offset)
     }
   }),
 
   getTeamsCount: defineAction({
     handler: async (_input, context) => {
-      checkAdmin(context);
-      const res = await db.select({ count: count() }).from(teamTable);
-      return res[0]?.count ?? 0;
+      checkAdmin(context)
+      const res = await db.select({ count: count() }).from(teamTable)
+      return res[0]?.count ?? 0
     }
   })
 }

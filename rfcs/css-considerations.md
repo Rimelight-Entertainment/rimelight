@@ -1,9 +1,9 @@
 # RFC: CSS Architecture & Component Styling System
 
-* **Title**: CSS Architecture & Component Styling System
-* **Author**: Daniel Marchi & Rimelight Team
-* **Status**: Implemented
-* **Created**: 2026-05-26
+- **Title**: CSS Architecture & Component Styling System
+- **Author**: Daniel Marchi & Rimelight Team
+- **Status**: Implemented
+- **Created**: 2026-05-26
 
 ---
 

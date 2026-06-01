@@ -1,2 +1,2 @@
-export * from "./pages.validator";
-export * from "./pages";
+export * from "./pages.validator"
+export * from "./pages"

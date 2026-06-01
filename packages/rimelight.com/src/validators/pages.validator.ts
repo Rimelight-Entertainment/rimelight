@@ -1,3 +1,3 @@
-import { CreateRules, ListRules, ReadRules, UpdateRules, DeleteRules } from "./pages";
+import { CreateRules, ListRules, ReadRules, UpdateRules, DeleteRules } from "./pages"
 
-export { CreateRules, ListRules, ReadRules, UpdateRules, DeleteRules };
+export { CreateRules, ListRules, ReadRules, UpdateRules, DeleteRules }

@@ -4,23 +4,6 @@ export function defineDocsConfig(config: DocsConfig): DocsConfig {
   return config
 }
 
-/**
- * Strip a leading numeric sort prefix from a filename id, e.g. "01.getting-started" →
- * "getting-started"
- */
-function stripNumericPrefix(id: string): string {
-  return id.replace(/^(\d+\.)+/, "")
-}
-
-/**
- * Extract a numeric sort key from a doc id for numeric-prefix sorting
- */
-function numericPrefixOrder(id: string): number {
-  const segment = id.split("/").pop() ?? id
-  const m = segment.match(/^(\d+)\./)
-  return m ? parseInt(m[1], 10) : Infinity
-}
-
 export interface ResolvedSidebarItem {
   label: string
   href?: string
@@ -39,100 +22,38 @@ export interface ResolvedScope {
   active?: boolean
 }
 
-function getDocHref(docId: string, locale: string, docsBase: string): string {
-  let cleanId = docId
-  if (cleanId.startsWith(locale + "/")) {
-    cleanId = cleanId.substring(locale.length + 1)
-  }
-  
-  const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
-  const normCleanId = cleanId.replace(/^\/+|\/+$/g, "")
-  
-  let parts: string[]
-  if (normCleanId.startsWith(cleanDocsBase + "/") || normCleanId === cleanDocsBase) {
-    parts = [locale, normCleanId]
-  } else {
-    parts = [locale, cleanDocsBase, normCleanId]
-  }
-  
-  const finalParts = parts.map(p => p.replace(/^\/+|\/+$/g, "")).filter(Boolean)
-  return "/" + finalParts.join("/") + "/"
-}
+function getCommonHref(items: import("../types").SidebarItem[], locale: string): string {
+  const allHrefs: string[] = []
 
-function findFirstHref(
-  items: import("../types").SidebarItem[],
-  locale: string,
-  docs: any[],
-  docsBase: string
-): string | undefined {
-  for (const item of items) {
-    if (item.href) {
-      return item.href.replace("{locale}", locale)
-    }
-    if (item.autogenerate) {
-      const dir = item.autogenerate.directory.replace(/\/$/, "")
-      
-      const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
-      let prefix = dir
-      if (cleanDocsBase && (prefix.startsWith(cleanDocsBase + "/") || prefix === cleanDocsBase)) {
-        prefix = prefix.substring(cleanDocsBase.length).replace(/^\/|\/$/g, "")
-      }
-
-      const filteredDocs = docs.filter((d) => {
-        if (d.data.sidebar?.hidden === true) return false
-        
-        let relId = d.id
-        if (d.id.startsWith(locale + "/")) {
-          relId = d.id.substring(locale.length + 1)
-        } else if (d.id.includes("/")) {
-          const firstSeg = d.id.split("/")[0]
-          if (firstSeg.length === 2 && firstSeg !== locale) {
-            return false
-          }
-        }
-        
-        if (prefix === "") return !relId.includes("/")
-        return relId.startsWith(prefix + "/") || relId === prefix
-      })
-      if (filteredDocs.length > 0) {
-        filteredDocs.sort((a, b) => {
-          const aOrder = a.data.sidebar?.order ?? a.data.order ?? numericPrefixOrder(a.id)
-          const bOrder = b.data.sidebar?.order ?? b.data.order ?? numericPrefixOrder(b.id)
-          if (aOrder !== bOrder) return aOrder - bOrder
-          const aLabel = a.data.sidebar?.label ?? a.data.title
-          const bLabel = b.data.sidebar?.label ?? b.data.title
-          return stripNumericPrefix(aLabel).localeCompare(stripNumericPrefix(bLabel))
-        })
-        return getDocHref(filteredDocs[0].id, locale, docsBase)
-      }
-    }
+  function collect(item: import("../types").SidebarItem) {
+    if (item.href) allHrefs.push(item.href.replace("{locale}", locale))
     const childItems = item.children || item.items
-    if (childItems) {
-      const found = findFirstHref(childItems, locale, docs, docsBase)
-      if (found) return found
-    }
+    if (childItems) childItems.forEach(collect)
   }
-  return undefined
+
+  items.forEach(collect)
+  if (allHrefs.length === 0) return ""
+
+  const parts = allHrefs.map((h) => h.split("/").filter(Boolean))
+  let commonLen = 0
+  for (let i = 0; i < parts[0].length; i++) {
+    if (parts.every((p) => p[i] === parts[0][i])) commonLen++
+    else break
+  }
+
+  return "/" + parts[0].slice(0, commonLen).join("/") + "/"
 }
 
 export async function getDocsSidebar(
   config: DocsConfig,
   locale: string,
-  currentPath: string,
-  getCollection: (name: string) => Promise<any[]>
+  currentPath: string
 ): Promise<{
   items: ResolvedSidebarItem[]
   scopes: ResolvedScope[]
   activeScope?: ResolvedScope
 }> {
-  const docs = await getCollection("docs")
   const normPath = currentPath.replace(/\/$/, "").toLowerCase()
-  
-  let docsBase = config.basePath ? config.basePath.replace("{locale}", "").replace(/^\/|\/$/g, "") : ""
-  if (!docsBase) {
-    const docsMatch = currentPath.toLowerCase().match(/^\/[^/]+\/(?:[^/]+\/)*docs/)
-    docsBase = docsMatch ? currentPath.slice(0, docsMatch[0].length).replace(/^\/[^/]+/, "").replace(/^\/|\/$/g, "") : "docs"
-  }
 
   const sidebarScopes: import("../types").SidebarScope[] = Array.isArray(config.sidebar)
     ? config.sidebar.filter(
@@ -144,7 +65,7 @@ export async function getDocsSidebar(
     const id = scope.id || scope.label
     let href = scope.href || ""
     if (!href && scope.items && scope.items.length > 0) {
-      href = findFirstHref(scope.items, locale, docs, docsBase) || ""
+      href = getCommonHref(scope.items, locale)
     }
     return {
       id,
@@ -154,54 +75,7 @@ export async function getDocsSidebar(
     }
   })
 
-  function isDocInItems(
-    items: import("../types").SidebarItem[],
-    docId: string | undefined,
-    href: string
-  ): boolean {
-    for (const item of items) {
-      if (item.href && item.href.toLowerCase().replace(/\/$/, "") === href) return true
-      if (item.autogenerate && docId) {
-        const dir = item.autogenerate.directory.replace(/\/$/, "")
-        let relDocId = docId
-        if (docId.startsWith(locale + "/")) {
-          relDocId = docId.substring(locale.length + 1)
-        }
-        
-        const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
-        let prefix = dir
-        if (cleanDocsBase && (prefix.startsWith(cleanDocsBase + "/") || prefix === cleanDocsBase)) {
-          prefix = prefix.substring(cleanDocsBase.length).replace(/^\/|\/$/g, "")
-        }
-
-        if (prefix === "") {
-          if (!relDocId.includes("/")) return true
-        } else if (relDocId.startsWith(prefix + "/") || relDocId === prefix) {
-          return true
-        }
-      }
-      const childItems = item.children || item.items
-      if (childItems && isDocInItems(childItems, docId, href)) return true
-    }
-    return false
-  }
-
-  // Find active scope — most-specific prefix match, fallback to scanning scope items
   let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase())
-  if (!activeScope) {
-    const currentDoc = docs.find((d) => {
-      const href = getDocHref(d.id, locale, docsBase)
-      return href.toLowerCase().replace(/\/$/, "") === normPath
-    })
-    const scopeMatch = sidebarScopes.find((s) => {
-      return isDocInItems(s.items || [], currentDoc?.id, normPath)
-    })
-
-    if (scopeMatch) {
-      const matchId = scopeMatch.id || scopeMatch.label
-      activeScope = scopes.find((s) => s.id === matchId)
-    }
-  }
   if (!activeScope) {
     activeScope = [...scopes]
       .toSorted((a, b) => b.href.length - a.href.length)
@@ -219,54 +93,6 @@ export async function getDocsSidebar(
   const items = sidebarConfig?.items || []
 
   async function resolveItem(item: import("../types").SidebarItem): Promise<ResolvedSidebarItem[]> {
-    if (item.autogenerate) {
-      const dir = item.autogenerate.directory
-      
-      const cleanDocsBase = docsBase.replace(/^\/+|\/+$/g, "")
-      let prefix = dir.replace(/\/$/, "")
-      if (cleanDocsBase && (prefix.startsWith(cleanDocsBase + "/") || prefix === cleanDocsBase)) {
-        prefix = prefix.substring(cleanDocsBase.length).replace(/^\/|\/$/g, "")
-      }
-
-      const filteredDocs = docs.filter((d) => {
-        if (d.data.sidebar?.hidden === true) return false
-        
-        let relId = d.id
-        if (d.id.startsWith(locale + "/")) {
-          relId = d.id.substring(locale.length + 1)
-        } else if (d.id.includes("/")) {
-          const firstSeg = d.id.split("/")[0]
-          if (firstSeg.length === 2 && firstSeg !== locale) {
-            return false
-          }
-        }
-        
-        if (prefix === "") return !relId.includes("/")
-        return relId.startsWith(prefix + "/") || relId === prefix
-      })
-
-      filteredDocs.sort((a, b) => {
-        const aOrder = a.data.sidebar?.order ?? a.data.order ?? numericPrefixOrder(a.id)
-        const bOrder = b.data.sidebar?.order ?? b.data.order ?? numericPrefixOrder(b.id)
-        if (aOrder !== bOrder) return aOrder - bOrder
-        const aLabel = a.data.sidebar?.label ?? a.data.title
-        const bLabel = b.data.sidebar?.label ?? b.data.title
-        return stripNumericPrefix(aLabel).localeCompare(stripNumericPrefix(bLabel))
-      })
-
-      return filteredDocs.map((doc) => {
-        const href = getDocHref(doc.id, locale, docsBase)
-        const badge =
-          doc.data.sidebar?.badge ?? (doc.data.badge as string | BadgeConfig | undefined)
-        return {
-          label: doc.data.sidebar?.label ?? doc.data.title,
-          href,
-          badge,
-          active: normPath === href.replace(/\/$/, "").toLowerCase()
-        }
-      })
-    }
-
     const resolved: ResolvedSidebarItem = {
       label: item.label || "",
       href: item.href ? item.href.replace("{locale}", locale) : undefined,

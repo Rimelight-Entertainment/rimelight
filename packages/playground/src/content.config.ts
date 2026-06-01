@@ -25,80 +25,11 @@ const blog = defineCollection({
     })
 })
 
-// ── Shared schemas ────────────────────────────────────────────────────────────
-
-const BadgeConfigSchema = z.union([
-  z.string(),
-  z.object({
-    text: z.string(),
-    color: z.string().optional(),
-    variant: z
-      .union([
-        z.enum(["solid", "outline", "soft"]),
-        z.enum(["note", "tip", "caution", "danger", "success", "default"])
-      ])
-      .optional()
-      .default("soft"),
-    class: z.string().optional()
-  })
-])
-
-const SurroundOverrideSchema = z.union([
-  // false = hide the surround link entirely
-  z.literal(false),
-  // string shorthand = just a label override (href auto-computed)
-  z.string(),
-  // full override
-  z.object({
-    label: z.string().optional(),
-    link: z.string().optional()
-  })
-])
-
-const TableOfContentsSchema = z
-  .union([
-    z.literal(false),
-    z.object({
-      minHeadingLevel: z.number().int().min(1).max(6).optional(),
-      maxHeadingLevel: z.number().int().min(1).max(6).optional()
-    })
-  ])
-  .optional()
-
-// ── Docs collection ───────────────────────────────────────────────────────────
-
 const docs = defineCollection({
   loader: glob({ base: "./src/content/docs", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
     title: z.string(),
-    description: z.string().optional(),
-
-    // Explicit numeric sort order (overrides filename prefix)
-    order: z.number().optional(),
-
-    // Sidebar badge for this page
-    badge: BadgeConfigSchema.optional(),
-
-    // Starlight-compatible sidebar options
-    sidebar: z
-      .object({
-        label: z.string().optional(),
-        order: z.number().optional(),
-        hidden: z.boolean().optional(),
-        badge: BadgeConfigSchema.optional(),
-        attrs: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional()
-      })
-      .optional(),
-
-    // Per-page TOC override: false to disable, or config object
-    tableOfContents: TableOfContentsSchema,
-
-    // Prev/next surround overrides
-    prev: SurroundOverrideSchema.optional(),
-    next: SurroundOverrideSchema.optional(),
-
-    // GitHub edit link — if not set, falls back to docs config baseUrl
-    editUrl: z.union([z.string().url(), z.literal(false)]).optional()
+    description: z.string().optional()
   })
 })
 

@@ -1,27 +1,27 @@
 {
+  "name": "rimelight",
   "version": "0.1.0",
-  "type": "module",
   "private": true,
+  "description": "Rimelight Entertainment Monorepository",
+  "keywords": [
+    "astro",
+    "typescript"
+  ],
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
   "license": "MIT",
   "author": {
     "name": "Daniel Marchi"
   },
-  "name": "rimelight",
-  "description": "Rimelight Entertainment Monorepository",
-  "keywords": [
-    "typescript",
-    "astro"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
-  "bugs": {
-    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
-  },
   "workspaces": [
     "packages/*"
   ],
+  "type": "module",
   "scripts": {
     "generate:config": "vp config",
     "create-project": "node packages/cli/bin/rimelight.js create",

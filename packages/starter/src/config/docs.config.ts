@@ -11,32 +11,7 @@ export default defineDocsConfig({
       label: "Overview",
       href: "/{locale}/docs/",
       icon: "i-lucide-book-open",
-      items: [
-        {
-          label: "Home",
-          href: "/{locale}/docs/"
-        },
-        {
-          label: "Getting Started",
-          autogenerate: {
-            directory: ""
-          }
-        }
-      ]
-    },
-    {
-      id: "tests",
-      label: "Tests",
-      href: "/{locale}/docs/tests/keyboard/",
-      icon: "i-lucide-terminal",
-      items: [
-        {
-          label: "Testing Suite",
-          autogenerate: {
-            directory: "tests/"
-          }
-        }
-      ]
+      items: [{ label: "Home", href: "/{locale}/docs/" }]
     }
   ]
 })

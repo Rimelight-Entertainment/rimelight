@@ -1,9 +1,9 @@
 # RFC: I18n Architecture — Nano Stores vs. Paraglide JS
 
-* **Title**: I18n Architecture — Nano Stores vs. Paraglide JS
-* **Author**: Daniel Marchi & Rimelight Team
-* **Status**: Implemented
-* **Created**: 2026-05-24
+- **Title**: I18n Architecture — Nano Stores vs. Paraglide JS
+- **Author**: Daniel Marchi & Rimelight Team
+- **Status**: Implemented
+- **Created**: 2026-05-24
 
 ---
 
@@ -64,15 +64,15 @@ To make your English "Code-First" strings available to other platforms:
 ```javascript
 // src/pages/api/v1/translations/[lang]/[id].js
 export async function GET({ params, locals }) {
-  const { lang, id } = params;
-  const { env } = locals.runtime;
-  
-  const data = await env.TRANSLATIONS_KV.get(`locale:${lang}:${id}`);
+  const { lang, id } = params
+  const { env } = locals.runtime
+
+  const data = await env.TRANSLATIONS_KV.get(`locale:${lang}:${id}`)
   return new Response(data, {
     headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
     }
-  });
+  })
 }
 ```

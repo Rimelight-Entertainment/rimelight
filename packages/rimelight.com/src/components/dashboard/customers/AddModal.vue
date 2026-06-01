@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { z } from "astro/zod";
-import { ref, reactive, computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useToast } from "~/composables";
+import { z } from "astro/zod"
+import { ref, reactive, computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useToast } from "~/composables"
 
 /* region Props */
 export interface AddModalProps {
   rc?: {
-    root?: string;
-    form?: string;
-    actions?: string;
-  };
+    root?: string
+    form?: string
+    actions?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<AddModalProps>();
+const { rc: rcProp } = defineProps<AddModalProps>()
 
-const { rc } = useRC("AddModal", rcProp);
+const { rc } = useRC("AddModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface AddModalEmits {}
-defineEmits<AddModalEmits>();
+defineEmits<AddModalEmits>()
 /* endregion */
 
 /* region Slots */
 export interface AddModalSlots {}
-defineSlots<AddModalSlots>();
+defineSlots<AddModalSlots>()
 /* endregion */
 
 /* region Styles */
@@ -38,35 +38,35 @@ const addModalStyles = scv({
   base: {
     root: "",
     form: "space-y-4",
-    actions: "flex justify-end gap-2 mt-6",
-  },
-});
+    actions: "flex justify-end gap-2 mt-6"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = addModalStyles();
-  const result: Record<string, string> = {};
+  const resolved = addModalStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const open = ref(false);
-const toast = useToast();
+const open = ref(false)
+const toast = useToast()
 
 const schema = z.object({
   name: z.string().min(2, "Too short"),
-  email: z.string().email("Invalid email"),
-});
+  email: z.string().email("Invalid email")
+})
 
-type Schema = z.infer<typeof schema>;
+type Schema = z.infer<typeof schema>
 
 const state = reactive<Partial<Schema>>({
   name: "",
-  email: "",
-});
+  email: ""
+})
 /* endregion */
 
 /* region Logic */
@@ -74,37 +74,42 @@ async function onSubmit(event: { data: Schema }) {
   toast.add({
     title: "Success",
     description: `New customer ${event.data.name} added`,
-    color: "success",
-  });
-  open.value = false;
-  state.name = "";
-  state.email = "";
+    color: "success"
+  })
+  open.value = false
+  state.name = ""
+  state.email = ""
 }
 /* endregion */
 
 defineOptions({
-  name: "AddModal",
-});
+  name: "AddModal"
+})
 </script>
 
 <template>
   <div :class="styles.root">
     <!-- Trigger Button -->
-    <RLVButton
-      label="New customer"
-      icon="i-lucide-plus"
-      color="primary"
-      @click="open = true"
-    />
+    <RLVButton label="New customer" icon="i-lucide-plus" color="primary" @click="open = true" />
 
     <!-- Teleported Modal -->
     <teleport to="body">
-      <div v-if="open" class="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4" role="dialog" aria-modal="true">
+      <div
+        v-if="open"
+        class="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+      >
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity duration-300" @click="open = false" />
+        <div
+          class="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity duration-300"
+          @click="open = false"
+        />
 
         <!-- Card content -->
-        <div class="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-6 w-full max-w-md relative z-10 transition-transform duration-300">
+        <div
+          class="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-6 w-full max-w-md relative z-10 transition-transform duration-300"
+        >
           <div class="flex justify-between items-start mb-4">
             <div>
               <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">New customer</h3>

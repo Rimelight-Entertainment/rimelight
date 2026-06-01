@@ -1,37 +1,37 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
-import { useRC, useToast } from "~/composables";
-import { useI18n } from "~/composables/app/useI18n";
-import { scv, cx } from "css-variants";
-import type { PageVersion } from "~/types/pages";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed, ref, watch } from "vue"
+import { useRC, useToast } from "~/composables"
+import { useI18n } from "~/composables/app/useI18n"
+import { scv, cx } from "css-variants"
+import type { PageVersion } from "~/types/pages"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface PageVersionSelectorProps {
-  pageId: string;
-  isAdmin?: boolean;
+  pageId: string
+  isAdmin?: boolean
   rc?: {
-    root?: string;
-    button?: string;
-    popover?: string;
-    versionItem?: string;
-  };
+    root?: string
+    button?: string
+    popover?: string
+    versionItem?: string
+  }
 }
 
-const { pageId, isAdmin = false, rc: rcProp } = defineProps<PageVersionSelectorProps>();
+const { pageId, isAdmin = false, rc: rcProp } = defineProps<PageVersionSelectorProps>()
 
-const { rc } = useRC("PageVersionSelector", rcProp);
+const { rc } = useRC("PageVersionSelector", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface PageVersionSelectorEmits {
-  "version-selected": [version: PageVersion];
-  "version-approved": [version: PageVersion];
-  "version-rejected": [version: PageVersion];
-  "version-reverted": [version: PageVersion];
+  "version-selected": [version: PageVersion]
+  "version-approved": [version: PageVersion]
+  "version-rejected": [version: PageVersion]
+  "version-reverted": [version: PageVersion]
 }
 
-const emit = defineEmits<PageVersionSelectorEmits>();
+const emit = defineEmits<PageVersionSelectorEmits>()
 /* endregion */
 
 /* region Styles */
@@ -39,8 +39,10 @@ const pageVersionSelectorStyles = scv({
   slots: {
     root: "relative inline-block text-left",
     buttonClass: "",
-    popoverClass: "absolute right-0 mt-2 w-80 bg-popover text-popover-foreground border border-default rounded-xl shadow-lg z-50 overflow-hidden p-2 bg-white dark:bg-neutral-900",
-    versionItemClass: "px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer rounded transition-colors",
+    popoverClass:
+      "absolute right-0 mt-2 w-80 bg-popover text-popover-foreground border border-default rounded-xl shadow-lg z-50 overflow-hidden p-2 bg-white dark:bg-neutral-900",
+    versionItemClass:
+      "px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer rounded transition-colors",
     popoverHeader: "px-3 py-2 border-b border-default mb-1",
     popoverTitle: "text-sm font-semibold",
     popoverSubtitle: "text-xs text-dimmed mt-1",
@@ -60,224 +62,227 @@ const pageVersionSelectorStyles = scv({
     versionEntryApproval: "text-xs text-dimmed mt-1",
     versionEntryActions: "shrink-0 flex items-center gap-1",
     pendingFooter: "px-3 py-2 border-t border-default mt-2",
-    pendingText: "text-xs text-dimmed",
-  },
-});
+    pendingText: "text-xs text-dimmed"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = pageVersionSelectorStyles();
-  const result: Record<string, string> = {};
+  const resolved = pageVersionSelectorStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
 const selectedVersionId = defineModel<string | null>("currentVersionId", {
-  default: null,
-});
+  default: null
+})
 
-const versions = ref<PageVersion[]>([]);
-const isLoading = ref(false);
-const isApproving = ref<string | null>(null);
-const isRejecting = ref<string | null>(null);
-const isReverting = ref<string | null>(null);
-const isOpen = ref(false);
+const versions = ref<PageVersion[]>([])
+const isLoading = ref(false)
+const isApproving = ref<string | null>(null)
+const isRejecting = ref<string | null>(null)
+const isReverting = ref<string | null>(null)
+const isOpen = ref(false)
 
-const toast = useToast();
-const { t } = useI18n();
+const toast = useToast()
+const { t } = useI18n()
 
 const pendingVersions = computed(() => {
-  return versions.value.filter((v) => v.status === "pending");
-});
+  return versions.value.filter((v) => v.status === "pending")
+})
 
 const currentVersionStatus = computed(() => {
-  if (!selectedVersionId.value) return "approved";
-  const v = versions.value.find((v) => v.id === selectedVersionId.value);
-  return v?.status || "pending";
-});
+  if (!selectedVersionId.value) return "approved"
+  const v = versions.value.find((v) => v.id === selectedVersionId.value)
+  return v?.status || "pending"
+})
 
-const currentVersion = computed(() => versions.value.find((v) => v.id === selectedVersionId.value));
+const currentVersion = computed(() => versions.value.find((v) => v.id === selectedVersionId.value))
 /* endregion */
 
 /* region Lifecycle */
 watch(
   () => pageId,
   () => {
-    if (pageId) fetchVersions();
+    if (pageId) fetchVersions()
   },
-  { immediate: true },
-);
+  { immediate: true }
+)
 /* endregion */
 
 /* region Logic */
 async function fetchVersions() {
-  if (!pageId) return;
+  if (!pageId) return
 
-  isLoading.value = true;
+  isLoading.value = true
   try {
-    const res = await fetch(`/api/pages/id/${pageId}/versions`);
-    if (!res.ok) throw new Error("Failed to load versions");
-    versions.value = await res.json();
+    const res = await fetch(`/api/pages/id/${pageId}/versions`)
+    if (!res.ok) throw new Error("Failed to load versions")
+    versions.value = await res.json()
   } catch (error) {
-    console.error("Failed to fetch versions:", error);
+    console.error("Failed to fetch versions:", error)
     try {
-      toast.add({ color: "error", title: t("page_version.failed_to_load", "Failed to load versions") });
+      toast.add({
+        color: "error",
+        title: t("page_version.failed_to_load", "Failed to load versions")
+      })
     } catch (e) {}
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
 }
 
 function selectVersion(version: PageVersion) {
-  selectedVersionId.value = version.id;
-  emit("version-selected", version);
-  isOpen.value = false;
+  selectedVersionId.value = version.id
+  emit("version-selected", version)
+  isOpen.value = false
 }
 
 async function approveVersion(version: PageVersion) {
-  if (!isAdmin) return;
+  if (!isAdmin) return
 
-  isApproving.value = version.id;
+  isApproving.value = version.id
   try {
     const res = await fetch(`/api/pages/versions/${version.id}/approve`, {
-      method: "POST",
-    });
-    if (!res.ok) throw new Error("Failed to approve");
-    const result = await res.json();
+      method: "POST"
+    })
+    if (!res.ok) throw new Error("Failed to approve")
+    const result = await res.json()
 
     try {
       toast.add({
         color: "success",
         title: t("page_version.approved_successfully", "Approved successfully"),
-        description: result?.message || "The page has been updated with the approved version",
-      });
+        description: result?.message || "The page has been updated with the approved version"
+      })
     } catch (e) {}
 
-    emit("version-approved", version);
-    await fetchVersions();
+    emit("version-approved", version)
+    await fetchVersions()
 
     if (selectedVersionId.value === version.id) {
-      selectedVersionId.value = null;
+      selectedVersionId.value = null
     }
   } catch (error: any) {
-    console.error("Failed to approve version:", error);
+    console.error("Failed to approve version:", error)
     try {
       toast.add({
         color: "error",
         title: t("page_version.failed_to_approve", "Failed to approve version"),
-        description: error.message || "An error occurred",
-      });
+        description: error.message || "An error occurred"
+      })
     } catch (e) {}
   } finally {
-    isApproving.value = null;
+    isApproving.value = null
   }
 }
 
 async function rejectVersion(version: PageVersion) {
-  if (!isAdmin) return;
+  if (!isAdmin) return
 
-  isRejecting.value = version.id;
+  isRejecting.value = version.id
   try {
     const res = await fetch(`/api/pages/versions/${version.id}/reject`, {
-      method: "POST",
-    });
-    if (!res.ok) throw new Error("Failed to reject");
-    const result = await res.json();
+      method: "POST"
+    })
+    if (!res.ok) throw new Error("Failed to reject")
+    const result = await res.json()
 
     try {
       toast.add({
         color: "success",
         title: t("page_version.rejected_successfully", "Version rejected"),
-        description: result?.message || "The version has been rejected",
-      });
+        description: result?.message || "The version has been rejected"
+      })
     } catch (e) {}
 
-    emit("version-rejected", version);
-    await fetchVersions();
+    emit("version-rejected", version)
+    await fetchVersions()
   } catch (error: any) {
-    console.error("Failed to reject version:", error);
+    console.error("Failed to reject version:", error)
     try {
       toast.add({
         color: "error",
         title: t("page_version.failed_to_reject", "Failed to reject version"),
-        description: error.message || "An error occurred",
-      });
+        description: error.message || "An error occurred"
+      })
     } catch (e) {}
   } finally {
-    isRejecting.value = null;
+    isRejecting.value = null
   }
 }
 
 async function revertVersion(version: PageVersion) {
-  if (!isAdmin) return;
+  if (!isAdmin) return
 
-  isReverting.value = version.id;
+  isReverting.value = version.id
   try {
     const res = await fetch(`/api/pages/versions/${version.id}/revert`, {
-      method: "POST",
-    });
-    if (!res.ok) throw new Error("Failed to revert");
-    const result = await res.json();
+      method: "POST"
+    })
+    if (!res.ok) throw new Error("Failed to revert")
+    const result = await res.json()
 
     try {
       toast.add({
         color: "success",
         title: t("page_version.reverted_successfully", "Reverted successfully"),
-        description: result?.message || "The page has been reverted to this version.",
-      });
+        description: result?.message || "The page has been reverted to this version."
+      })
     } catch (e) {}
 
-    emit("version-reverted", version);
-    await fetchVersions();
-    selectedVersionId.value = null;
+    emit("version-reverted", version)
+    await fetchVersions()
+    selectedVersionId.value = null
   } catch (error: any) {
-    console.error("Failed to revert version:", error);
+    console.error("Failed to revert version:", error)
     try {
       toast.add({
         color: "error",
         title: t("page_version.failed_to_revert", "Failed to revert version"),
-        description: error.message || "An error occurred",
-      });
+        description: error.message || "An error occurred"
+      })
     } catch (e) {}
   } finally {
-    isReverting.value = null;
+    isReverting.value = null
   }
 }
 
 function selectLiveVersion() {
-  selectedVersionId.value = null;
-  isOpen.value = false;
+  selectedVersionId.value = null
+  isOpen.value = false
 }
 
 function formatDate(date: Date | string | null | undefined) {
-  if (!date) return "";
-  const d = typeof date === "string" ? new Date(date) : date;
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHour = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHour / 24);
+  if (!date) return ""
+  const d = typeof date === "string" ? new Date(date) : date
+  const now = new Date()
+  const diffMs = now.getTime() - d.getTime()
+  const diffSec = Math.floor(diffMs / 1000)
+  const diffMin = Math.floor(diffSec / 60)
+  const diffHour = Math.floor(diffMin / 60)
+  const diffDay = Math.floor(diffHour / 24)
 
-  if (diffSec < 60) return "just now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  if (diffHour < 24) return `${diffHour}h ago`;
-  return `${diffDay}d ago`;
+  if (diffSec < 60) return "just now"
+  if (diffMin < 60) return `${diffMin}m ago`
+  if (diffHour < 24) return `${diffHour}h ago`
+  return `${diffDay}d ago`
 }
 
 function getStatusColor(status: string) {
   switch (status) {
     case "approved":
-      return "text-green-600 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800";
+      return "text-green-600 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800"
     case "pending":
-      return "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800";
+      return "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800"
     case "rejected":
-      return "text-red-600 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800";
+      return "text-red-600 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800"
     default:
-      return "text-neutral-600 bg-neutral-50 dark:bg-neutral-950/30 border border-neutral-200 dark:border-neutral-800";
+      return "text-neutral-600 bg-neutral-50 dark:bg-neutral-950/30 border border-neutral-200 dark:border-neutral-800"
   }
 }
 
@@ -287,14 +292,14 @@ defineExpose({
   revertVersion,
   fetchVersions,
   currentVersionStatus,
-  currentVersion,
-});
+  currentVersion
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PageVersionSelector",
-});
+  name: "PageVersionSelector"
+})
 /* endregion */
 </script>
 
@@ -321,14 +326,19 @@ defineOptions({
         <div
           :class="[
             styles.versionItemClass,
-            { 'bg-primary-50 dark:bg-primary-900/20 border-l-2 border-primary-500': !selectedVersionId },
+            {
+              'bg-primary-50 dark:bg-primary-900/20 border-l-2 border-primary-500':
+                !selectedVersionId
+            }
           ]"
           @click="selectLiveVersion"
         >
           <div :class="styles.liveVersionItem">
             <div class="flex-1">
               <div :class="styles.liveBadgeWrapper">
-                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
+                <span
+                  class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800"
+                >
                   Live
                 </span>
                 <span :class="styles.liveVersionTitle">Current Version</span>
@@ -345,9 +355,7 @@ defineOptions({
           </div>
         </div>
 
-        <div v-else-if="versions.length === 0" :class="styles.emptyWrapper">
-          No versions yet
-        </div>
+        <div v-else-if="versions.length === 0" :class="styles.emptyWrapper">No versions yet</div>
 
         <div v-else :class="styles.versionEntries">
           <div
@@ -355,14 +363,20 @@ defineOptions({
             :key="version.id"
             :class="[
               styles.versionItemClass,
-              { 'bg-primary-50 dark:bg-primary-900/20 border-l-2 border-primary-500': selectedVersionId === version.id },
+              {
+                'bg-primary-50 dark:bg-primary-900/20 border-l-2 border-primary-500':
+                  selectedVersionId === version.id
+              }
             ]"
             @click="selectVersion(version)"
           >
             <div :class="styles.versionEntryWrapper">
               <div :class="styles.versionEntryContent()">
                 <div :class="styles.versionEntryHeader">
-                  <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider" :class="getStatusColor(version.status)">
+                  <span
+                    class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                    :class="getStatusColor(version.status)"
+                  >
                     {{ version.status }}
                   </span>
                   <span :class="styles.versionEntryTime">
@@ -401,9 +415,7 @@ defineOptions({
 
       <div v-if="pendingVersions.length > 0 && isAdmin" :class="styles.pendingFooter">
         <p :class="styles.pendingText">
-          {{ pendingVersions.length }} pending version{{
-            pendingVersions.length !== 1 ? "s" : ""
-          }}
+          {{ pendingVersions.length }} pending version{{ pendingVersions.length !== 1 ? "s" : "" }}
           awaiting approval
         </p>
       </div>

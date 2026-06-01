@@ -52,8 +52,7 @@ export interface ButtonProps {
   /**
    * Color used when button is in active state
    */
-  activeColor?:
-    | ThemeColor
+  activeColor?: ThemeColor
   /**
    * Variant used when button is in active state
    */

@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import chroma from "chroma-js";
-import { useRC, useHeaderStack } from "~/composables";
-import { scv, cx } from "css-variants";
+import { computed, ref } from "vue"
+import chroma from "chroma-js"
+import { useRC, useHeaderStack } from "~/composables"
+import { scv, cx } from "css-variants"
 
 /* region Props */
 export interface FontData {
-  name: string;
-  family: string;
+  name: string
+  family: string
 }
 
 export interface ColorData {
-  name: string;
-  fullVarName: string;
-  lightValue: string;
-  lightBg: string;
-  darkValue: string;
-  darkBg: string;
+  name: string
+  fullVarName: string
+  lightValue: string
+  lightBg: string
+  darkValue: string
+  darkBg: string
 }
 
 export interface FontPaletteProps {
   /**
    * Raw CSS content to parse
    */
-  css?: string;
+  css?: string
   /**
    * UI custom classes
    */
   rc?: {
-    root?: string;
-    section?: string;
-    title?: string;
-    grid?: string;
-  };
-  t?: (key: string) => string;
+    root?: string
+    section?: string
+    title?: string
+    grid?: string
+  }
+  t?: (key: string) => string
 }
 
 const {
@@ -53,23 +53,23 @@ const {
       "font_palette.uppercase": "Uppercase",
       "font_palette.lowercase": "Lowercase",
       "font_palette.numbers": "Numbers",
-      "font_palette.symbols": "Symbols",
-    };
-    return map[key] || key;
+      "font_palette.symbols": "Symbols"
+    }
+    return map[key] || key
   }
-} = defineProps<FontPaletteProps>();
+} = defineProps<FontPaletteProps>()
 
-const { rc } = useRC("FontPalette", rcProp);
+const { rc } = useRC("FontPalette", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface FontPaletteEmits {}
-defineEmits<FontPaletteEmits>();
+defineEmits<FontPaletteEmits>()
 /* endregion */
 
 /* region Slots */
 export interface FontPaletteSlots {}
-defineSlots<FontPaletteSlots>();
+defineSlots<FontPaletteSlots>()
 /* endregion */
 
 /* region Styles */
@@ -98,13 +98,14 @@ const fontPaletteStyles = scv({
     "colorComparisonGrid",
     "colorCell",
     "colorPreviewText",
-    "colorValueLabel",
+    "colorValueLabel"
   ],
   base: {
     root: "w-full",
     section: "flex flex-col gap-12",
     tabsRoot: "flex flex-col md:flex-row gap-12 items-start overflow-visible",
-    tabsList: "md:w-64 shrink-0 md:sticky md:top-24 self-start z-10 overflow-visible flex flex-col gap-2",
+    tabsList:
+      "md:w-64 shrink-0 md:sticky md:top-24 self-start z-10 overflow-visible flex flex-col gap-2",
     tabsContent: "flex-1 min-w-0 w-full",
     contentHeader: "flex flex-col gap-8",
     title: "text-3xl font-bold text-highlighted mb-2",
@@ -124,89 +125,89 @@ const fontPaletteStyles = scv({
     colorComparisonGrid: "flex-1 grid grid-cols-2 rounded-lg overflow-hidden h-20",
     colorCell: "flex flex-col items-center justify-center p-2 gap-1",
     colorPreviewText: "text-2xl font-bold",
-    colorValueLabel: "text-[10px] opacity-50 font-mono hidden md:block",
-  },
-});
+    colorValueLabel: "text-[10px] opacity-50 font-mono hidden md:block"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = fontPaletteStyles();
-  const result: Record<string, string> = {};
+  const resolved = fontPaletteStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { totalHeight } = useHeaderStack();
-const stickyTop = computed(() => `${totalHeight.value + 32}px`);
+const { totalHeight } = useHeaderStack()
+const stickyTop = computed(() => `${totalHeight.value + 32}px`)
 
-const activeTabIndex = ref(0);
-const openSections = ref<Record<string, boolean>>({});
+const activeTabIndex = ref(0)
+const openSections = ref<Record<string, boolean>>({})
 
 const parsedData = computed(() => {
-  if (!css) return { fonts: [], colors: [] };
+  if (!css) return { fonts: [], colors: [] }
 
-  const fonts: FontData[] = [];
-  const rootVars = new Map<string, string>();
-  const darkVars = new Map<string, string>();
+  const fonts: FontData[] = []
+  const rootVars = new Map<string, string>()
+  const darkVars = new Map<string, string>()
 
-  const lines = css.split("\n");
-  let currentBlock = "root"; // 'root' or 'dark'
+  const lines = css.split("\n")
+  let currentBlock = "root" // 'root' or 'dark'
 
   lines.forEach((line) => {
     // Detect block context
     if (line.includes(".dark {")) {
-      currentBlock = "dark";
-      return;
+      currentBlock = "dark"
+      return
     }
     if (line.includes("}") && currentBlock === "dark") {
-      currentBlock = "root";
-      return;
+      currentBlock = "root"
+      return
     }
 
     // Parse Variables
-    const varMatch = line.match(/^\s*(--[\w-]+):\s*(.*?);/);
+    const varMatch = line.match(/^\s*(--[\w-]+):\s*(.*?);/)
     if (varMatch && !line.trim().startsWith("/*")) {
-      const key = varMatch[1] ?? "";
-      const value = varMatch[2]?.trim() ?? "";
+      const key = varMatch[1] ?? ""
+      const value = varMatch[2]?.trim() ?? ""
       if (currentBlock === "root") {
-        rootVars.set(key, value);
+        rootVars.set(key, value)
       } else {
-        darkVars.set(key, value);
+        darkVars.set(key, value)
       }
     }
 
     // Parse Fonts (Independent of block, usually root/static)
-    const fontMatch = line.match(/^\s*--font-([\w-]+):\s*(.*?);/);
+    const fontMatch = line.match(/^\s*--font-([\w-]+):\s*(.*?);/)
     if (fontMatch && !line.trim().startsWith("/*")) {
       fonts.push({
         name: fontMatch[1] ?? "",
-        family: fontMatch[2]?.trim() ?? "",
-      });
+        family: fontMatch[2]?.trim() ?? ""
+      })
     }
-  });
+  })
 
   // Collect Text Colors
-  const colors: ColorData[] = [];
-  const keys = new Set([...rootVars.keys(), ...darkVars.keys()]);
+  const colors: ColorData[] = []
+  const keys = new Set([...rootVars.keys(), ...darkVars.keys()])
 
   keys.forEach((key) => {
     // Filter for --text- or --ui-text-
     if (key.startsWith("--text-") || key.startsWith("--ui-text-")) {
-      const name = key.replace(/^--(?:ui-)?text-/, "");
+      const name = key.replace(/^--(?:ui-)?text-/, "")
 
       // Resolve light value
-      const resolvedLight = resolveVariable(key, rootVars);
-      const colorCheck = getColor(resolvedLight);
+      const resolvedLight = resolveVariable(key, rootVars)
+      const colorCheck = getColor(resolvedLight)
 
       if (colorCheck) {
         // Resolve Dark Value
-        const resolvedDark = resolveVariable(key, darkVars, rootVars);
+        const resolvedDark = resolveVariable(key, darkVars, rootVars)
 
-        const lightBg = "bg-white text-black";
-        const darkBg = "bg-black text-white";
+        const lightBg = "bg-white text-black"
+        const darkBg = "bg-black text-white"
 
         colors.push({
           name,
@@ -214,20 +215,20 @@ const parsedData = computed(() => {
           lightValue: resolvedLight,
           lightBg,
           darkValue: resolvedDark,
-          darkBg,
-        });
+          darkBg
+        })
       }
     }
-  });
+  })
 
-  return { fonts, colors };
-});
+  return { fonts, colors }
+})
 
-const sampleText = "The quick brown fox jumps over the lazy dog";
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const alphabetLower = "abcdefghijklmnopqrstuvwxyz";
-const numbers = "0123456789";
-const symbols = "!@#$%^&*()_+-=[]{};':\",./<>?";
+const sampleText = "The quick brown fox jumps over the lazy dog"
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const alphabetLower = "abcdefghijklmnopqrstuvwxyz"
+const numbers = "0123456789"
+const symbols = "!@#$%^&*()_+-=[]{};':\",./<>?"
 
 const headingLevels = [
   { tag: "h1", label: t("font_palette.heading_1") },
@@ -235,82 +236,82 @@ const headingLevels = [
   { tag: "h3", label: t("font_palette.heading_3") },
   { tag: "h4", label: t("font_palette.heading_4") },
   { tag: "h5", label: t("font_palette.heading_5") },
-  { tag: "h6", label: t("font_palette.heading_6") },
-];
+  { tag: "h6", label: t("font_palette.heading_6") }
+]
 
 const tabItems = computed(() => {
   return parsedData.value.fonts.map((f) => ({
     label: f.name.charAt(0).toUpperCase() + f.name.slice(1),
-    font: f,
-  }));
-});
+    font: f
+  }))
+})
 
-const activeTab = computed(() => tabItems.value[activeTabIndex.value] || null);
+const activeTab = computed(() => tabItems.value[activeTabIndex.value] || null)
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "FontPalette",
-});
+  name: "FontPalette"
+})
 /* endregion */
 
 /* region Logic */
 function parseOklch(str: string): [number, number, number] | null {
-  const match = str.match(/oklch\(([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+%?)?\)/);
+  const match = str.match(/oklch\(([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+%?)?\)/)
   if (match) {
-    let l = parseFloat(match[1] ?? "0");
-    if (match[1]?.endsWith("%")) l /= 100;
-    const c = parseFloat(match[2] ?? "0");
-    const h = parseFloat(match[3] ?? "0");
-    return [l, c, h];
+    let l = parseFloat(match[1] ?? "0")
+    if (match[1]?.endsWith("%")) l /= 100
+    const c = parseFloat(match[2] ?? "0")
+    const h = parseFloat(match[3] ?? "0")
+    return [l, c, h]
   }
-  return null;
+  return null
 }
 
 function getColor(value: string): chroma.Color | null {
   try {
     if (value.startsWith("oklch")) {
-      const oklchValues = parseOklch(value);
+      const oklchValues = parseOklch(value)
       if (oklchValues) {
-        return (chroma as any).oklch(...oklchValues);
+        return (chroma as any).oklch(...oklchValues)
       }
     } else if (value.startsWith("#") || value.startsWith("rgb") || value.startsWith("hsl")) {
-      return chroma(value);
+      return chroma(value)
     }
   } catch (e) {
     // ignore
   }
-  return null;
+  return null
 }
 
 function resolveVariable(
   varName: string,
   map: Map<string, string>,
-  fallbackMap?: Map<string, string>,
+  fallbackMap?: Map<string, string>
 ): string {
-  let value = map.get(varName);
+  let value = map.get(varName)
   if (!value && fallbackMap) {
-    value = fallbackMap.get(varName);
+    value = fallbackMap.get(varName)
   }
-  if (!value) return varName;
+  if (!value) return varName
 
-  const varMatch = value.match(/^var\(([\w-]+)\)$/);
+  const varMatch = value.match(/^var\(([\w-]+)\)$/)
   if (varMatch && varMatch[1]) {
-    return resolveVariable(varMatch[1], map, fallbackMap);
+    return resolveVariable(varMatch[1], map, fallbackMap)
   }
-  return value;
+  return value
 }
 
 function getFontStyles(family: string) {
-  return { fontFamily: family };
+  return { fontFamily: family }
 }
 
 function toggleSection(label: string) {
-  openSections.value[label] = !openSections.value[label];
+  openSections.value[label] = !openSections.value[label]
 }
 
 function isSectionOpen(label: string) {
-  return openSections.value[label] !== false; // open by default
+  return openSections.value[label] !== false // open by default
 }
 /* endregion */
 </script>
@@ -352,7 +353,7 @@ function isSectionOpen(label: string) {
                 @click="toggleSection('specimen')"
                 class="w-full flex items-center justify-between text-xl font-bold py-4 text-left hover:text-primary transition-colors"
               >
-                <span>{{ t('font_palette.specimen') }}</span>
+                <span>{{ t("font_palette.specimen") }}</span>
                 <span
                   :class="[
                     'transition-transform duration-200 i-lucide-chevron-down',
@@ -388,7 +389,7 @@ function isSectionOpen(label: string) {
                 @click="toggleSection('hierarchy')"
                 class="w-full flex items-center justify-between text-xl font-bold py-4 text-left hover:text-primary transition-colors"
               >
-                <span>{{ t('font_palette.hierarchy') }}</span>
+                <span>{{ t("font_palette.hierarchy") }}</span>
                 <span
                   :class="[
                     'transition-transform duration-200 i-lucide-chevron-down',
@@ -418,7 +419,7 @@ function isSectionOpen(label: string) {
                 @click="toggleSection('colors')"
                 class="w-full flex items-center justify-between text-xl font-bold py-4 text-left hover:text-primary transition-colors"
               >
-                <span>{{ t('font_palette.color') }}</span>
+                <span>{{ t("font_palette.color") }}</span>
                 <span
                   :class="[
                     'transition-transform duration-200 i-lucide-chevron-down',
@@ -434,12 +435,16 @@ function isSectionOpen(label: string) {
                       <!-- Light Mode -->
                       <div :class="[styles.colorCell, c.lightBg]" :style="{ color: c.lightValue }">
                         <p :class="styles.colorPreviewText">Aa</p>
-                        <span :class="styles.colorValueLabel">{{ c.lightValue.slice(0, 15) }}...</span>
+                        <span :class="styles.colorValueLabel"
+                          >{{ c.lightValue.slice(0, 15) }}...</span
+                        >
                       </div>
                       <!-- Dark Mode -->
                       <div :class="[styles.colorCell, c.darkBg]" :style="{ color: c.darkValue }">
                         <p :class="styles.colorPreviewText">Aa</p>
-                        <span :class="styles.colorValueLabel">{{ c.darkValue.slice(0, 15) }}...</span>
+                        <span :class="styles.colorValueLabel"
+                          >{{ c.darkValue.slice(0, 15) }}...</span
+                        >
                       </div>
                     </div>
                   </div>

@@ -150,7 +150,7 @@ export default defineConfig({
           white: "/favicon-white.svg",
           black: "/favicon-black.svg"
         }
-      },
+      }
     }),
 
     sri()

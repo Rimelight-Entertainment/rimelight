@@ -33,13 +33,7 @@ const docs = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
-    description: z.string().optional(),
-    prev: z
-      .union([z.string(), z.object({ link: z.string(), label: z.string().optional() })])
-      .optional(),
-    next: z
-      .union([z.string(), z.object({ link: z.string(), label: z.string().optional() })])
-      .optional()
+    description: z.string().optional()
   })
 })
 

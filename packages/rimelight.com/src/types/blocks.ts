@@ -1,23 +1,23 @@
-export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 
-export type BlockType = "SectionBlock" | "ParagraphBlock" | "CalloutBlock" | "ImageBlock";
+export type BlockType = "SectionBlock" | "ParagraphBlock" | "CalloutBlock" | "ImageBlock"
 
 export interface BaseBlock {
-  id: string;
-  type: BlockType;
-  isTemplated?: boolean;
-  props: Record<string, any>;
+  id: string
+  type: BlockType
+  isTemplated?: boolean
+  props: Record<string, any>
 }
 
 export interface SectionBlockProps {
-  level: HeadingLevel;
-  title: string;
-  description?: string;
-  children: Block[];
+  level: HeadingLevel
+  title: string
+  description?: string
+  children: Block[]
 }
 
 export interface ParagraphBlockProps {
-  text: RichTextContent;
+  text: RichTextContent
 }
 
 export type CalloutVariant =
@@ -27,74 +27,74 @@ export type CalloutVariant =
   | "error"
   | "commentary"
   | "ideation"
-  | "source";
+  | "source"
 
 export interface CalloutBlockProps {
-  variant: CalloutVariant;
-  children: Block[];
-  to?: string;
-  target?: string;
+  variant: CalloutVariant
+  children: Block[]
+  to?: string
+  target?: string
 }
 
 export interface ImageBlockProps {
-  src: string;
-  alt: string;
-  caption?: string;
+  src: string
+  alt: string
+  caption?: string
 }
 
 export interface SectionBlock extends BaseBlock {
-  type: "SectionBlock";
-  props: SectionBlockProps;
+  type: "SectionBlock"
+  props: SectionBlockProps
 }
 
 export interface ParagraphContentBlock extends BaseBlock {
-  type: "ParagraphBlock";
-  props: ParagraphBlockProps;
+  type: "ParagraphBlock"
+  props: ParagraphBlockProps
 }
 
 export interface CalloutContentBlock extends BaseBlock {
-  type: "CalloutBlock";
-  props: CalloutBlockProps;
+  type: "CalloutBlock"
+  props: CalloutBlockProps
 }
 
 export interface ImageContentBlock extends BaseBlock {
-  type: "ImageBlock";
-  props: ImageBlockProps;
+  type: "ImageBlock"
+  props: ImageBlockProps
 }
 
-export type Block = SectionBlock | ParagraphContentBlock | CalloutContentBlock | ImageContentBlock;
+export type Block = SectionBlock | ParagraphContentBlock | CalloutContentBlock | ImageContentBlock
 
-export type InlineContentType = "text" | "link" | "mention";
+export type InlineContentType = "text" | "link" | "mention"
 
 export interface BaseInlineContent {
-  type: InlineContentType;
-  id: string;
-  props: Record<string, any>;
+  type: InlineContentType
+  id: string
+  props: Record<string, any>
 }
 
 export interface InlineText extends BaseInlineContent {
-  type: "text";
+  type: "text"
   props: {
-    content: string;
-  };
+    content: string
+  }
 }
 
 export interface InlineLink extends BaseInlineContent {
-  type: "link";
+  type: "link"
   props: {
-    href: string;
-    target?: "_blank" | "_self";
-    content: string;
-  };
+    href: string
+    target?: "_blank" | "_self"
+    content: string
+  }
 }
 
 export interface InlineMention extends BaseInlineContent {
-  type: "mention";
+  type: "mention"
   props: {
-    pageId: string;
-  };
+    pageId: string
+  }
 }
 
-export type InlineContent = InlineText | InlineLink | InlineMention;
+export type InlineContent = InlineText | InlineLink | InlineMention
 
-export type RichTextContent = InlineContent[];
+export type RichTextContent = InlineContent[]

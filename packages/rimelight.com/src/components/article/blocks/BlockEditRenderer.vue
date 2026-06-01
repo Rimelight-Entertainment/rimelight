@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { ref, inject, defineAsyncComponent, computed } from "vue";
-import draggable from "vuedraggable";
-import type { Block } from "~/types/blocks";
-import { scv, cx } from "css-variants";
-import { useRC } from "~/composables";
-import { BLOCK_EDITOR_COMPONENT_MAP } from "@/generated/blockEditorMap";
-import BlockComponent from "./Block.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { ref, inject, defineAsyncComponent, computed } from "vue"
+import draggable from "vuedraggable"
+import type { Block } from "~/types/blocks"
+import { scv, cx } from "css-variants"
+import { useRC } from "~/composables"
+import { BLOCK_EDITOR_COMPONENT_MAP } from "@/generated/blockEditorMap"
+import BlockComponent from "./Block.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface BlockEditRendererProps {
-  blocks?: Block[];
-  containerId?: string | null;
+  blocks?: Block[]
+  containerId?: string | null
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
 const {
   blocks: propsBlocks,
   containerId = null,
-  rc: rcProp,
-} = defineProps<BlockEditRendererProps>();
+  rc: rcProp
+} = defineProps<BlockEditRendererProps>()
 
-const { rc } = useRC("BlockEditRenderer", rcProp);
+const { rc } = useRC("BlockEditRenderer", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface BlockEditRendererEmits {
-  start: [];
-  end: [];
-  change: [any];
+  start: []
+  end: []
+  change: [any]
 }
 
-const emit = defineEmits<BlockEditRendererEmits>();
+const emit = defineEmits<BlockEditRendererEmits>()
 /* endregion */
 
 /* region Styles */
@@ -44,91 +44,91 @@ const blockEditRendererStyles = scv({
     emptyContainer:
       "w-full flex items-center justify-center transition-all rounded-lg border-2 border-transparent",
     itemWrapper:
-      "w-full relative [&.ghost]:bg-blue-500 [&.ghost]:h-1 [&.ghost]:min-h-0 [&.ghost]:rounded-sm [&.ghost]:overflow-hidden [&.ghost_>_*]:hidden [&.ghost-hidden]:hidden [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing",
+      "w-full relative [&.ghost]:bg-blue-500 [&.ghost]:h-1 [&.ghost]:min-h-0 [&.ghost]:rounded-sm [&.ghost]:overflow-hidden [&.ghost_>_*]:hidden [&.ghost-hidden]:hidden [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing"
   },
   variants: {
     isDraggingOver: {
       true: {
-        root: "border-l-4 border-primary-500 bg-primary-50/30 ring-1 ring-primary-500/10 z-10",
-      },
-    },
-  },
-});
+        root: "border-l-4 border-primary-500 bg-primary-50/30 ring-1 ring-primary-500/10 z-10"
+      }
+    }
+  }
+})
 
 const styles = (isDragOver: boolean) => {
-  const resolved = blockEditRendererStyles({ isDraggingOver: isDragOver });
-  const result: Record<string, string> = {};
+  const resolved = blockEditRendererStyles({ isDraggingOver: isDragOver })
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
   return result as {
-    root: string;
-    draggableClass: string;
-    emptyContainer: string;
-    itemWrapper: string;
-  };
-};
+    root: string
+    draggableClass: string
+    emptyContainer: string
+    itemWrapper: string
+  }
+}
 /* endregion */
 
 /* region State */
-const blocks = defineModel<Block[]>("blocks", { required: true });
+const blocks = defineModel<Block[]>("blocks", { required: true })
 
-const rendererId = Math.random().toString(36).substring(7);
-const editorApi = inject<any>("block-editor-api");
+const rendererId = Math.random().toString(36).substring(7)
+const editorApi = inject<any>("block-editor-api")
 
-const isDraggingOver = ref(false);
-const dragCounter = ref(0);
+const isDraggingOver = ref(false)
+const dragCounter = ref(0)
 /* endregion */
 
 /* region Logic */
 const onDragEnter = () => {
-  dragCounter.value++;
-  isDraggingOver.value = true;
-};
+  dragCounter.value++
+  isDraggingOver.value = true
+}
 
 const onDragLeave = () => {
-  dragCounter.value--;
+  dragCounter.value--
   if (dragCounter.value <= 0) {
-    isDraggingOver.value = false;
-    dragCounter.value = 0;
+    isDraggingOver.value = false
+    dragCounter.value = 0
   }
-};
+}
 
 const onDrop = () => {
-  dragCounter.value = 0;
-  isDraggingOver.value = false;
-};
+  dragCounter.value = 0
+  isDraggingOver.value = false
+}
 
 const handleStart = () => {
-  emit("start");
-};
+  emit("start")
+}
 
 const handleEnd = () => {
-  emit("end");
-};
+  emit("end")
+}
 
 const handleChange = (event: any) => {
-  emit("change", event);
-};
+  emit("change", event)
+}
 
 const asyncEditorMap = Object.fromEntries(
   Object.entries(BLOCK_EDITOR_COMPONENT_MAP).map(([key, importFn]) => [
     key,
-    defineAsyncComponent(importFn as any),
-  ]),
-);
+    defineAsyncComponent(importFn as any)
+  ])
+)
 
 const resolveBlockEditor = (type?: string) => {
-  if (!type) return "div";
+  if (!type) return "div"
   // Generator strip logic matches
-  const cleanType = type.replace(/Block$/, "");
-  return asyncEditorMap[cleanType] || "div";
-};
+  const cleanType = type.replace(/Block$/, "")
+  return asyncEditorMap[cleanType] || "div"
+}
 /* endregion */
 
 defineOptions({
-  name: "BlockEditRenderer",
-});
+  name: "BlockEditRenderer"
+})
 </script>
 
 <template>
@@ -150,7 +150,7 @@ defineOptions({
       :ghost-class="blocks.length === 0 ? 'ghost-hidden' : 'ghost'"
       :class="[
         styles(isDraggingOver).draggableClass,
-        blocks && blocks.length > 0 ? 'gap-4 min-h-16 pb-32' : 'gap-0 min-h-32',
+        blocks && blocks.length > 0 ? 'gap-4 min-h-16 pb-32' : 'gap-0 min-h-32'
       ]"
       @change="handleChange"
       @start="handleStart"
@@ -161,13 +161,17 @@ defineOptions({
           v-if="!blocks || blocks.length === 0"
           :class="[
             styles(isDraggingOver).emptyContainer,
-            isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : '',
+            isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : ''
           ]"
         >
-          <div class="flex flex-col items-center justify-center p-8 text-center bg-elevated/10 rounded-xl border border-default my-4 w-full">
+          <div
+            class="flex flex-col items-center justify-center p-8 text-center bg-elevated/10 rounded-xl border border-default my-4 w-full"
+          >
             <span class="i-lucide-layers size-10 text-dimmed mb-3" />
             <h4 class="font-bold text-sm text-default">Empty Section</h4>
-            <p class="text-xs text-dimmed mt-1 mb-4">This area has no blocks yet. Drag items here or click to add your first block.</p>
+            <p class="text-xs text-dimmed mt-1 mb-4">
+              This area has no blocks yet. Drag items here or click to add your first block.
+            </p>
             <RLVButton
               label="Add Block"
               leading-icon="i-lucide-plus"

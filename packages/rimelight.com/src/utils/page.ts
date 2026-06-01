@@ -1,181 +1,178 @@
-import { type MaybeRefOrGetter, toValue } from "vue";
+import { type MaybeRefOrGetter, toValue } from "vue"
 import type {
   Localized,
   Page,
   PageVersion,
   BasePageProperties,
   PageDefinition,
-  Property,
-} from "@/types/pages";
-import type { Block } from "@/types/blocks";
+  Property
+} from "@/types/pages"
+import type { Block } from "@/types/blocks"
 
 export const getLocalizedContent = <T = string>(
   field: Localized<T> | T | undefined,
-  currentLocale: MaybeRefOrGetter<string>,
+  currentLocale: MaybeRefOrGetter<string>
 ): T | string => {
-  if (field === undefined || field === null) return "";
+  if (field === undefined || field === null) return ""
 
-  if (typeof field !== "object") return String(field);
+  if (typeof field !== "object") return String(field)
 
-  const locale = toValue(currentLocale);
+  const locale = toValue(currentLocale)
 
   if (typeof field === "object" && field !== null) {
-    if (Object.keys(field).length === 0) return "";
+    if (Object.keys(field).length === 0) return ""
 
-    const val = (field as any)[locale] ?? (field as any)["en"];
+    const val = (field as any)[locale] ?? (field as any)["en"]
     if (val !== undefined && val !== null) {
-      if (typeof val === "string") return val;
+      if (typeof val === "string") return val
 
       if (typeof val === "object") {
-        const innerVal = (val as any)[locale] ?? (val as any)["en"];
-        if (typeof innerVal === "string") return innerVal;
+        const innerVal = val[locale] ?? val["en"]
+        if (typeof innerVal === "string") return innerVal
 
-        const firstString = Object.values(val as object).find((v) => typeof v === "string");
-        if (firstString !== undefined) return String(firstString);
+        const firstString = Object.values(val as object).find((v) => typeof v === "string")
+        if (firstString !== undefined) return String(firstString)
       }
     }
 
     const firstVal = Object.values(field as object).find(
-      (v) => typeof v === "string" && v.trim() !== "",
-    );
-    if (firstVal !== undefined) return String(firstVal);
+      (v) => typeof v === "string" && v.trim() !== ""
+    )
+    if (firstVal !== undefined) return String(firstVal)
 
-    return "";
+    return ""
   }
 
-  const strVal = String(field);
-  return strVal === "[object Object]" ? "" : strVal;
-};
+  const strVal = String(field)
+  return strVal === "[object Object]" ? "" : strVal
+}
 
 /**
- * Ensures a page strictly adheres to its PageDefinition.
- * Syncs properties and templated blocks.
+ * Ensures a page strictly adheres to its PageDefinition. Syncs properties and templated blocks.
  */
 export function syncPageWithDefinition(page: Page, definition?: PageDefinition): Page {
-  if (!definition) return page;
+  if (!definition) return page
 
-  const updatedProperties: BasePageProperties = {};
-  const definitionGroups = definition.properties;
+  const updatedProperties: BasePageProperties = {}
+  const definitionGroups = definition.properties
 
-  const existingProperties = (page.properties || {}) as any;
+  const existingProperties = (page.properties || {}) as any
 
   for (const [groupId, group] of Object.entries(definitionGroups)) {
-    const definitionGroup = group as any;
-    let existingGroup = existingProperties[groupId];
+    const definitionGroup = group as any
+    let existingGroup = existingProperties[groupId]
 
     if (!existingGroup) {
-      const lowerGroupId = groupId.toLowerCase();
+      const lowerGroupId = groupId.toLowerCase()
       const foundGroupKey = Object.keys(existingProperties).find(
-        (k) => k.toLowerCase() === lowerGroupId,
-      );
+        (k) => k.toLowerCase() === lowerGroupId
+      )
       if (foundGroupKey) {
-        existingGroup = existingProperties[foundGroupKey];
+        existingGroup = existingProperties[foundGroupKey]
       }
     }
 
-    const updatedGroupFields: Record<string, Property> = {};
+    const updatedGroupFields: Record<string, Property> = {}
 
-    const definitionFields = definitionGroup.fields || {};
+    const definitionFields = definitionGroup.fields || {}
 
     for (const [fieldId, field] of Object.entries(definitionFields)) {
-      const definitionField = field as any;
-      let value = definitionField.defaultValue;
+      const definitionField = field as any
+      let value = definitionField.defaultValue
 
       if (existingGroup) {
         if (existingGroup.fields?.[fieldId]?.defaultValue !== undefined) {
-          value = existingGroup.fields[fieldId].defaultValue;
-        }
-        else if (existingGroup[fieldId] !== undefined) {
-          value = existingGroup[fieldId];
-        }
-        else {
-          const lowerFieldId = fieldId.toLowerCase();
-          const foundKey = Object.keys(existingGroup).find((k) => k.toLowerCase() === lowerFieldId);
+          value = existingGroup.fields[fieldId].defaultValue
+        } else if (existingGroup[fieldId] !== undefined) {
+          value = existingGroup[fieldId]
+        } else {
+          const lowerFieldId = fieldId.toLowerCase()
+          const foundKey = Object.keys(existingGroup).find((k) => k.toLowerCase() === lowerFieldId)
           if (foundKey && existingGroup[foundKey] !== undefined) {
-            value = existingGroup[foundKey];
+            value = existingGroup[foundKey]
           }
         }
       }
 
       updatedGroupFields[fieldId] = {
-        ...(JSON.parse(JSON.stringify(definitionField)) as any),
-        defaultValue: value,
-      };
+        ...JSON.parse(JSON.stringify(definitionField)),
+        defaultValue: value
+      }
     }
 
     updatedProperties[groupId] = {
       ...definitionGroup,
-      fields: updatedGroupFields,
-    };
+      fields: updatedGroupFields
+    }
   }
 
-  page.properties = updatedProperties as any;
+  page.properties = updatedProperties as any
 
   if (definition.initialBlocks) {
-    const templateBlocks = definition.initialBlocks();
-    const currentBlocks = page.blocks || [];
+    const templateBlocks = definition.initialBlocks()
+    const currentBlocks = page.blocks || []
 
     const isSameBlock = (a: any, b: any) => {
-      if (a.id === b.id) return true;
-      if (a.type !== b.type) return false;
+      if (a.id === b.id) return true
+      if (a.type !== b.type) return false
       if (a.type === "SectionBlock" && b.type === "SectionBlock") {
-        return a.props.title === b.props.title;
+        return a.props.title === b.props.title
       }
-      return false;
-    };
+      return false
+    }
 
-    const definitionTemplatedBlocks = templateBlocks.filter((b) => b.isTemplated);
+    const definitionTemplatedBlocks = templateBlocks.filter((b) => b.isTemplated)
 
     let updatedBlocks = currentBlocks.filter((b: Block) => {
-      if (!b.isTemplated) return true;
-      return definitionTemplatedBlocks.some((db: Block) => isSameBlock(b, db));
-    });
+      if (!b.isTemplated) return true
+      return definitionTemplatedBlocks.some((db: Block) => isSameBlock(b, db))
+    })
 
     for (const db of definitionTemplatedBlocks) {
-      const existingIdx = updatedBlocks.findIndex((b: Block) => isSameBlock(b, db));
-      const dbIndexAtStart = templateBlocks.findIndex((b: Block) => b.id === db.id);
+      const existingIdx = updatedBlocks.findIndex((b: Block) => isSameBlock(b, db))
+      const dbIndexAtStart = templateBlocks.findIndex((b: Block) => b.id === db.id)
 
       if (existingIdx === -1) {
-        updatedBlocks.splice(dbIndexAtStart, 0, { ...db });
+        updatedBlocks.splice(dbIndexAtStart, 0, { ...db })
       } else {
-        const existing = updatedBlocks[existingIdx]!;
+        const existing = updatedBlocks[existingIdx]!
         const updated = {
           ...existing,
           ...db,
           props: {
-            ...db.props,
-          },
-        } as any;
+            ...db.props
+          }
+        } as any
 
         if (existing.type === "SectionBlock" && db.type === "SectionBlock") {
-          updated.props.children = existing.props.children || db.props.children || [];
+          updated.props.children = existing.props.children || db.props.children || []
         }
 
-        updatedBlocks[existingIdx] = updated;
+        updatedBlocks[existingIdx] = updated
       }
     }
 
-    page.blocks = updatedBlocks;
+    page.blocks = updatedBlocks
   }
 
-  return page;
+  return page
 }
 
 export function dehydratePageProperties(properties: BasePageProperties): any {
-  const dehydrated: any = {};
+  const dehydrated: any = {}
   for (const [groupKey, group] of Object.entries(properties)) {
-    if (!group?.fields) continue;
-    dehydrated[groupKey] = {};
+    if (!group?.fields) continue
+    dehydrated[groupKey] = {}
     for (const [fieldKey, field] of Object.entries(group.fields)) {
-      dehydrated[groupKey][fieldKey] = field.defaultValue;
+      dehydrated[groupKey][fieldKey] = field.defaultValue
     }
   }
-  return dehydrated;
+  return dehydrated
 }
 
 export function convertVersionToPage(version: PageVersion): Page {
-  const blocks = version.content?.blocks || version.blocks || [];
-  const properties = version.content?.properties || (version as any).properties;
+  const blocks = version.content?.blocks || version.blocks || []
+  const properties = version.content?.properties || (version as any).properties
 
   return {
     ...version,
@@ -194,8 +191,8 @@ export function convertVersionToPage(version: PageVersion): Page {
     slug: version.slug || "",
     description: version.description || { en: "" },
     tags: version.tags || [],
-    links: version.links || [],
-  } as Page;
+    links: version.links || []
+  } as Page
 }
 
 export function getPageResolutionPath(idOrSlug: string): string {
@@ -205,21 +202,21 @@ export function getPageResolutionPath(idOrSlug: string): string {
     idOrSlug === "null" ||
     idOrSlug === "[object Object]"
   )
-    return "";
+    return ""
 
-  let clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, "");
+  let clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, "")
 
-  clean = clean.replace(/^\/|\/$/g, "");
+  clean = clean.replace(/^\/|\/$/g, "")
 
-  const parts = clean.split("/");
+  const parts = clean.split("/")
   if (parts.length >= 4) {
-    const threePart = parts.slice(0, 3).join("/");
-    const nextThreePart = parts.slice(3, 6).join("/");
+    const threePart = parts.slice(0, 3).join("/")
+    const nextThreePart = parts.slice(3, 6).join("/")
     if (threePart === nextThreePart) {
-      clean = parts.slice(3).join("/");
+      clean = parts.slice(3).join("/")
     }
   }
 
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean);
-  return isUuid ? `/api/pages/id/${clean}` : `/api/pages/find/${clean}`;
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean)
+  return isUuid ? `/api/pages/id/${clean}` : `/api/pages/find/${clean}`
 }

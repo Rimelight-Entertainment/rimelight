@@ -17,11 +17,13 @@ export interface LinkProps {
   color?: ThemeColor
   /**
    * Styles the link visually as a button
+   *
    * @default false
    */
   isButton?: boolean
   /**
-   * Screen reader accessibility label. Will automatically append " (opens in a new tab)" for external links if not customized
+   * Screen reader accessibility label. Will automatically append " (opens in a new tab)" for
+   * external links if not customized
    */
   ariaLabel?: string
   /**
@@ -38,4 +40,3 @@ export interface LinkProps {
   class?: any
   [key: string]: unknown
 }
-

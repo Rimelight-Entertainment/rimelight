@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { ParagraphBlockProps } from "~/types/blocks";
-import TextRenderer from "../TextRenderer.vue";
-import { scv, cx } from "css-variants";
-import { useRC } from "~/composables";
+import { computed } from "vue"
+import type { ParagraphBlockProps } from "~/types/blocks"
+import TextRenderer from "../TextRenderer.vue"
+import { scv, cx } from "css-variants"
+import { useRC } from "~/composables"
 
 /* region Props */
 export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>();
+const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>()
 
-const { rc } = useRC("ParagraphBlockRenderer", rcProp);
+const { rc } = useRC("ParagraphBlockRenderer", rcProp)
 /* endregion */
 
 /* region Styles */
 const paragraphBlockRendererStyles = scv({
   slots: {
-    root: "text-neutral-700 dark:text-neutral-300 leading-relaxed my-2",
-  },
-});
+    root: "text-neutral-700 dark:text-neutral-300 leading-relaxed my-2"
+  }
+})
 
 const styles = computed(() => {
-  const resolved = paragraphBlockRendererStyles();
-  const result: Record<string, string> = {};
+  const resolved = paragraphBlockRendererStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 defineOptions({
-  name: "ParagraphBlockRenderer",
-});
+  name: "ParagraphBlockRenderer"
+})
 </script>
 
 <template>

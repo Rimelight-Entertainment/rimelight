@@ -15,18 +15,13 @@ export interface BadgeConfig {
 }
 
 export interface SidebarItem {
-  label?: string
+  label: string
   href?: string
   icon?: string
   badge?: string | BadgeConfig
   active?: boolean
   children?: SidebarItem[]
   items?: SidebarItem[]
-  order?: number
-  autogenerate?: {
-    directory: string
-    collapsed?: boolean
-  }
   collapsed?: boolean
 }
 

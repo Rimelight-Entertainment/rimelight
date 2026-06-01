@@ -6,10 +6,8 @@ import RLASurround from "@rimelight/ui/components/astro/RLASurround.astro";
 import RLABadge from "@rimelight/ui/components/astro/RLABadge.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/ui/utils";
 import type { ResolvedSidebarItem } from "@rimelight/ui/utils";
-import { getCollection } from "astro:content";
 import docsConfig from "@/config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/TableOfContents.astro";
-import type { SurroundOverride } from "@rimelight/ui/components/astro/RLASurround.astro";
 import { useI18n } from "astro-nanostores-i18n:runtime";
 
 function normalizeBadge(badge: any) {
@@ -60,14 +58,11 @@ interface Props {
   headings?: { depth: number; slug: string; text: string }[];
   /** Per-page TOC override (from frontmatter) */
   tableOfContents?: false | TableOfContentsConfig;
-  /** Frontmatter prev/next surround overrides */
-  prevOverride?: SurroundOverride;
-  nextOverride?: SurroundOverride;
   /** GitHub edit URL for this page (false = hide, string = full URL) */
   editUrl?: string | false | undefined;
 }
 
-const { title, description = "", headings = [], tableOfContents: tocOverride, prevOverride, nextOverride, editUrl } = Astro.props;
+const { title, description = "", headings = [], tableOfContents: tocOverride, editUrl } = Astro.props;
 
 const locale = Astro.currentLocale ?? "en";
 const currentPath = Astro.url.pathname;
@@ -123,8 +118,7 @@ const t = (key: string | undefined) => {
 const { items: sidebarItems, scopes, activeScope } = await getDocsSidebar(
   docsConfig,
   locale,
-  currentPath,
-  getCollection
+  currentPath
 );
 const { prev, next } = getSurroundItems(sidebarItems, currentPath);
 
@@ -285,7 +279,7 @@ const tocHeadings = hasToc
       <article class="markdown-content prose max-w-none prose-base dark:prose-invert">
         <slot />
       </article>
-      <RLASurround prev={prev as any} next={next as any} prevOverride={prevOverride as any} nextOverride={nextOverride as any} />
+      <RLASurround prev={prev as any} next={next as any} />
 
       {/* Edit link */}
       {resolvedEditUrl && (

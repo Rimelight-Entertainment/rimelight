@@ -1,9 +1,9 @@
 # RFC: Migrating from Prism to CSP-Compliant Expressive Code & Shiki
 
-* **Title**: Migrating from Prism to CSP-Compliant Expressive Code & Shiki
-* **Author**: Daniel Marchi & Rimelight Team
-* **Status**: Implemented
-* **Created**: 2026-05-27
+- **Title**: Migrating from Prism to CSP-Compliant Expressive Code & Shiki
+- **Author**: Daniel Marchi & Rimelight Team
+- **Status**: Implemented
+- **Created**: 2026-05-27
 
 ---
 
@@ -11,14 +11,13 @@
 
 This document details the migration path from Prism to `astro-expressive-code` utilizing Shiki's CSS variables theme engine. This configuration guarantees full compatibility with the existing strict Content Security Policy (`style-src 'self'` without `unsafe-inline`) by completely eliminating inline styles.
 
-
 ---
 
 ## 2. Step 1: Install Dependencies
 
 Execute the installation command within the repository root:
 
-```bash
+````bash
 npm install astro-expressive-code shiki
 ## 3. Step 2: Update astro.config.mjs
 Below is the rewritten, full configuration.
@@ -260,7 +259,7 @@ Code snippet
     <p>Use this page to verify compliance with strict <code>style-src 'self'</code> layers.</p>
 
     <h2>Test Block 1: Basic JavaScript Fenced Code Block</h2>
-    
+
     ```javascript title="src/utils/math.js" {2}
     // This sample verifies frame creation, line highlight, and variable highlighting
     function calculateTotal(subtotal, tax) {
@@ -271,7 +270,7 @@ Code snippet
     ```
 
     <h2>Test Block 2: CSS Token Diagnostics</h2>
-    
+
     ```css title="src/styles/theme.css"
     @media (prefers-color-scheme: dark) {
       body {
@@ -293,3 +292,4 @@ Code snippet
   </main>
 </body>
 </html>
+````

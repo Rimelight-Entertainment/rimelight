@@ -1,21 +1,21 @@
-import { ref, watch } from "vue";
+import { ref, watch } from "vue"
 
 export interface ConfirmOptions {
-  title: string;
-  description?: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  danger?: boolean;
+  title: string
+  description?: string
+  confirmLabel?: string
+  cancelLabel?: string
+  danger?: boolean
 }
 
 interface ConfirmState {
-  isVisible: boolean;
-  options: ConfirmOptions;
+  isVisible: boolean
+  options: ConfirmOptions
 }
 
 // Module-level variable to hold the promise resolver and state.
 // This is shared globally for client-side interactions.
-let resolvePromise: ((value: boolean) => void) | null = null;
+let resolvePromise: ((value: boolean) => void) | null = null
 
 const state = ref<ConfirmState>({
   isVisible: false,
@@ -24,9 +24,9 @@ const state = ref<ConfirmState>({
     description: "",
     confirmLabel: "Confirm",
     cancelLabel: "Cancel",
-    danger: false,
-  },
-});
+    danger: false
+  }
+})
 
 export const useConfirm = () => {
   const confirm = (opts: Partial<ConfirmOptions>): Promise<boolean> => {
@@ -35,30 +35,30 @@ export const useConfirm = () => {
       confirmLabel: "Confirm",
       cancelLabel: "Cancel",
       danger: false,
-      ...opts,
-    };
+      ...opts
+    }
 
     // Open the modal
-    state.value.isVisible = true;
+    state.value.isVisible = true
 
     return new Promise((resolve) => {
       // If there was a lingering promise, resolve it false first
-      if (resolvePromise) resolvePromise(false);
-      resolvePromise = resolve;
-    });
-  };
+      if (resolvePromise) resolvePromise(false)
+      resolvePromise = resolve
+    })
+  }
 
   const handleConfirm = () => {
     if (resolvePromise) {
-      resolvePromise(true);
-      resolvePromise = null;
+      resolvePromise(true)
+      resolvePromise = null
     }
-    state.value.isVisible = false;
-  };
+    state.value.isVisible = false
+  }
 
   const handleCancel = () => {
-    state.value.isVisible = false;
-  };
+    state.value.isVisible = false
+  }
 
   // Watchers
   if (typeof window !== "undefined") {
@@ -68,17 +68,17 @@ export const useConfirm = () => {
         // If it becomes hidden and the promise still exists,
         // it means the user dismissed it without clicking a button.
         if (!visible && resolvePromise) {
-          resolvePromise(false);
-          resolvePromise = null;
+          resolvePromise(false)
+          resolvePromise = null
         }
-      },
-    );
+      }
+    )
   }
 
   return {
     state,
     confirm,
     handleConfirm,
-    handleCancel,
-  };
-};
+    handleCancel
+  }
+}
