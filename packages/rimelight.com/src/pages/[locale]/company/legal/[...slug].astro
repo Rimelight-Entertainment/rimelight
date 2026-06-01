@@ -1,0 +1,45 @@
+---
+import { getEntry, render } from 'astro:content';
+import AppLayout from '@/layouts/AppLayout.astro';
+import RLADate from '@rimelight/ui/components/astro/RLADate.astro';
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("legal", {
+    lastUpdatedOn: "Last updated on",
+});
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/404');
+const post = await getEntry('legal', slug);
+
+if (!post) {
+	return Astro.redirect('/404');
+}
+
+const { Content } = await render(post);
+const { title, description, pubDate, updatedDate } = post.data;
+---
+
+<AppLayout title={title} description={description}>
+		<article class="py-24 max-w-4xl mx-auto px-4 text-white">
+			<div class="prose prose-invert max-w-none">
+				<div class="title mb-8 border-b border-neutral-800 pb-8">
+					<div class="date text-neutral-500 text-sm mb-4">
+						<RLADate date={pubDate} />
+						{
+							updatedDate && (
+								<div class="last-updated-on mt-1 text-xs">
+									{messages.lastUpdatedOn} <RLADate date={updatedDate} />
+								</div>
+							)
+						}
+					</div>
+					<h1 class="text-4xl md:text-5xl font-black uppercase tracking-tight text-white">{title}</h1>
+				</div>
+				<Content />
+			</div>
+		</article>
+</AppLayout>

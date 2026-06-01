@@ -1,0 +1,127 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLAVideo from "@rimelight/ui/components/astro/RLAVideo.astro";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("grand_tale_home", {
+  title: "Grand Tale",
+  description: "Experience Grand Tale, an epic journey through a shattered world where every choice resonates through eternity.",
+  hero_title: "An Epic RPG Journey",
+  hero_description: "Immerse yourself in a living, breathing high-fantasy world.",
+  hero_btn: "Play Now",
+  overview_title: "Explore Shattered Realms",
+  overview_description: "Discover deep mechanics, tactical combat, and a rich player-driven economy.",
+  overview_btn: "Learn More",
+  overview_trailer: "Watch Trailer",
+  feature1_title: "Tactical Combat",
+  feature1_desc: "Master diverse class pathways and synergistic abilities in tactical combat.",
+  feature2_title: "Living World",
+  feature2_desc: "Watch the world respond to community events, faction choices, and server achievements.",
+  feature3_title: "Deep Economy",
+  feature3_desc: "Engage in free trade, crafting systems, and player-driven resource markets."
+});
+
+const heroLinks = [
+  {
+    label: messages.hero_btn,
+    href: getRelativeLocaleUrl(activeLocale, "/franchises/grand-tale/download"),
+    color: "primary" as const,
+    variant: "solid" as const,
+    class: "px-8 py-4 text-xl font-bold bg-primary-500 hover:bg-primary-600 rounded-md transition-all uppercase"
+  }
+];
+
+const overviewLinks = [
+  {
+    label: messages.overview_btn,
+    href: getRelativeLocaleUrl(activeLocale, "/franchises/grand-tale/about"),
+    color: "primary" as const,
+    variant: "solid" as const,
+    class: "px-6 py-3 rounded-md font-bold transition-all text-white bg-primary-500 hover:bg-primary-600"
+  }
+];
+---
+
+<AppLayout title={messages.title} description={messages.description}>
+  <!-- Hero Section -->
+  <RLAPageSection
+    variant="hero"
+    title={messages.hero_title}
+    description={messages.hero_description}
+    links={heroLinks}
+    ui={{
+      title: "text-white text-5xl lg:text-7xl font-black uppercase tracking-tight",
+      description: "text-neutral-300 max-w-2xl text-lg md:text-xl"
+    }}
+  >
+    <div slot="background" class="w-full h-full">
+      <video
+        autoplay
+        loop
+        muted
+        playsinline
+        class="h-full w-full object-cover opacity-60"
+      >
+        <source src="https://cdn.rimelight.com/Videos/grandTale_home_hero_bg.mp4" type="video/mp4" />
+      </video>
+      <div class="absolute inset-0 bg-black/40" />
+    </div>
+  </RLAPageSection>
+
+  <!-- Overview Section -->
+  <RLAPageSection
+    orientation="horizontal"
+    title={messages.overview_title}
+    description={messages.overview_description}
+    links={overviewLinks}
+    ui={{
+      title: "text-white text-4xl font-extrabold uppercase",
+      description: "text-neutral-400"
+    }}
+  >
+    <div slot="body" class="grid grid-cols-2 gap-8 mt-8 max-w-xl">
+      <div>
+        <div class="text-4xl font-black text-white">3+</div>
+        <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">Unique Realms</div>
+      </div>
+      <div>
+        <div class="text-4xl font-black text-white">100+</div>
+        <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">Abilities to Master</div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center lg:pl-12 w-full mt-10 lg:mt-0">
+      <RLAVideo
+        src="https://www.youtube.com/watch?v=QdXl3QtutQI"
+        title="Grand Tale Official Trailer"
+        class="aspect-video w-full max-w-2xl overflow-hidden rounded-2xl border border-neutral-800 shadow-2xl"
+      />
+    </div>
+  </RLAPageSection>
+
+  <!-- Features Cards Section -->
+  <section class="py-24 bg-black border-t border-neutral-900">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
+          <h3 class="text-xl font-bold text-white uppercase mb-4">{messages.feature1_title}</h3>
+          <p class="text-neutral-400 text-sm leading-relaxed">{messages.feature1_desc}</p>
+        </div>
+        <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
+          <h3 class="text-xl font-bold text-white uppercase mb-4">{messages.feature2_title}</h3>
+          <p class="text-neutral-400 text-sm leading-relaxed">{messages.feature2_desc}</p>
+        </div>
+        <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
+          <h3 class="text-xl font-bold text-white uppercase mb-4">{messages.feature3_title}</h3>
+          <p class="text-neutral-400 text-sm leading-relaxed">{messages.feature3_desc}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</AppLayout>

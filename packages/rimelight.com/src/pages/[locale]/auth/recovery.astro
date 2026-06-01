@@ -1,0 +1,48 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("auth_recovery", {
+  title: "Account Recovery",
+  description: "Recover your Rimelight Entertainment account.",
+  unavailable: "Password recovery is currently unavailable. Please contact support if you need assistance.",
+  back: "Back to Sign In"
+});
+---
+
+<AppLayout title={messages.title} description={messages.description}>
+  <div class="flex min-h-[80vh] flex-col items-center justify-center bg-black px-4 py-12">
+    <div class="z-10 w-full max-w-md space-y-8 text-center">
+      <div class="flex flex-col items-center gap-4">
+        <RLALogo class="h-16 w-auto text-white" variant="full" mode="white" />
+        <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          {messages.title}
+        </h1>
+        <p class="text-neutral-400 text-sm leading-relaxed max-w-sm mx-auto">
+          {messages.unavailable}
+        </p>
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        <RLAButton
+          label={messages.back}
+          href={getRelativeLocaleUrl(activeLocale, "/auth/sign-in")}
+          color="primary"
+          variant="link"
+          leadingIcon="i-lucide-arrow-left"
+          class="font-semibold text-primary-500 hover:text-primary-400 transition-colors flex items-center gap-xs"
+        />
+      </div>
+
+      <div class="flex justify-center gap-6 pt-4 text-xs text-neutral-500 border-t border-neutral-900">
+        <span>&copy; {new Date().getFullYear()} Rimelight Entertainment</span>
+      </div>
+    </div>
+  </div>
+</AppLayout>

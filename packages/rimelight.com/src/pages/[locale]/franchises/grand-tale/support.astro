@@ -1,0 +1,85 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("grand_tale_support", {
+  title: "Grand Tale Support",
+  description: "Having issues in the world of Grand Tale? Our support team is here to assist you.",
+  heading: "How can we help?",
+  bug_title: "Report a Bug",
+  bug_desc: "Found something broken? Let us know so we can fix it for everyone.",
+  bug_btn: "Submit Report",
+  recovery_title: "Account Recovery",
+  recovery_desc: "Lost access to your account? We'll help you get back into the game.",
+  recovery_btn: "Start Recovery",
+  discord_title: "Join the Community",
+  discord_desc: "Our Discord servers are the fastest way to get help from other players and developers.",
+  discord_btn: "Official Discord"
+});
+---
+
+<AppLayout title={messages.title} description={messages.description}>
+  <div class="py-24 bg-neutral-950 min-h-[80vh]">
+    <div class="max-w-4xl mx-auto px-4 space-y-16">
+      <div class="text-center space-y-4">
+        <h1 class="text-4xl md:text-5xl font-black uppercase tracking-tight text-white">
+          {messages.heading}
+        </h1>
+        <p class="text-neutral-400 max-w-xl mx-auto leading-relaxed text-lg">
+          {messages.description}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Bug Card -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-8 flex flex-col justify-between shadow-lg">
+          <div class="space-y-4 mb-6">
+            <div class="flex items-center gap-3">
+              <span class="i-lucide-bug text-primary-500 text-2xl"></span>
+              <h3 class="text-xl font-bold text-white uppercase">{messages.bug_title}</h3>
+            </div>
+            <p class="text-neutral-400 text-sm leading-relaxed">
+              {messages.bug_desc}
+            </p>
+          </div>
+          <RLAButton label={messages.bug_btn} color="primary" variant="solid" class="w-full justify-center font-bold" />
+        </div>
+
+        <!-- Account Recovery Card -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-8 flex flex-col justify-between shadow-lg">
+          <div class="space-y-4 mb-6">
+            <div class="flex items-center gap-3">
+              <span class="i-lucide-shield-question text-primary-500 text-2xl"></span>
+              <h3 class="text-xl font-bold text-white uppercase">{messages.recovery_title}</h3>
+            </div>
+            <p class="text-neutral-400 text-sm leading-relaxed">
+              {messages.recovery_desc}
+            </p>
+          </div>
+          <RLAButton label={messages.recovery_btn} color="neutral" variant="outline" class="w-full justify-center font-bold text-white ring-white hover:bg-white hover:text-black" />
+        </div>
+      </div>
+
+      <!-- Discord CTA -->
+      <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-8 text-center space-y-6 shadow-lg max-w-2xl mx-auto">
+        <h3 class="text-2xl font-bold text-white uppercase">{messages.discord_title}</h3>
+        <p class="text-neutral-400 leading-relaxed">
+          {messages.discord_desc}
+        </p>
+        <div class="flex justify-center">
+          <RLAButton
+            label={messages.discord_btn}
+            href="https://discord.gg"
+            color="primary"
+            variant="solid"
+            class="bg-[#5865F2] hover:bg-[#4752C4] border-0 text-white font-bold px-8 py-3 rounded-lg"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</AppLayout>
