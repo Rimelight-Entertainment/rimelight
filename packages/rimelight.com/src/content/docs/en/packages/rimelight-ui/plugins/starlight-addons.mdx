@@ -1,0 +1,174 @@
+---
+title: Starlight Addons
+description: Enhancements for Starlight documentation sites.
+sidebar:
+  order: 1
+---
+
+Starlight Addons is a plugin for Starlight documentation sites that provides useful enhancements including copy/share buttons and a package managers component.
+
+## Installation
+
+Install the package:
+
+```bash
+npm install @rimelight/ui
+```
+
+## Configuration
+
+Add the plugin to your Starlight configuration:
+
+```astro
+// astro.config.mjs
+import starlight from '@astrojs/starlight';
+import { starlightAddons } from '@rimelight/ui';
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      plugins: [
+        starlightAddons({
+          copy: true,
+          share: true
+        })
+      ]
+    })
+  ]
+});
+```
+
+## Options
+
+### `copy`
+
+Enables the "Copy Markdown" button that copies the page content as Markdown. Defaults to `true`.
+
+```astro
+starlightAddons({
+  copy: false // disable copy button
+})
+```
+
+### `share`
+
+Enables the "Share" button that uses the native browser share API. Defaults to `true`.
+
+```astro
+starlightAddons({
+  share: false // disable share button
+})
+```
+
+## PackageManagers Component
+
+The PackageManagers component displays installation commands for multiple package managers.
+
+### Usage
+
+Import and use the component in your MDX files:
+
+```mdx
+---
+title: My Page
+---
+
+import PackageManagers from "@rimelight/ui/plugins"
+
+<PackageManagers pkg="astro" />
+```
+
+### Props
+
+- `pkg` (required): The package name to install
+- `type`: The command type - `add` (default), `create`, `install`, `remove`, or `run`
+- `dev`: Whether to install as a dev dependency (only applies to `add` type)
+
+### Examples
+
+Install a package:
+
+```mdx
+<PackageManagers pkg="astro" />
+```
+
+Install as dev dependency:
+
+```mdx
+<PackageManagers pkg="astro" dev />
+```
+
+Remove a package:
+
+```mdx
+<PackageManagers pkg="astro" type="remove" />
+```
+
+Run a script:
+
+```mdx
+<PackageManagers pkg="astro" type="run" />
+```
+
+## Control Visualization
+
+The `Keyboard` and `Gamepad` components allow you to display control schemes in your documentation.
+
+### Keyboard Component
+
+The `Keyboard` component renders a keyboard layout.
+
+#### Usage
+
+```mdx
+import Keyboard from "@rimelight/ui/plugins/starlightAddons/components/Keyboard.astro"
+
+<Keyboard
+  variant="full"
+  highlightedKeys={["W", "A", "S", "D", "Space"]}
+  groups={[{ keys: ["Digit1", "Digit2", "Digit3"], color: "#facc15", label: "Abilities" }]}
+/>
+```
+
+#### Props
+
+- `variant`: `'full'` (default) or `'60'` layout.
+- `keySize`: The base size of a standard key in pixels. Defaults to `40`.
+- `keyGap`: Spacing between keys. Defaults to `8`.
+- `sectionGap`: Spacing between keyboard sections. Defaults to `40`.
+- `highlightedKeys`: Array of key codes or labels to highlight using the default `highlightColor`.
+- `groups`: Array of objects for grouping keys with specific colors and legend labels.
+  - `keys`: Array of codes/labels.
+  - `color`: CSS color for the highlight.
+  - `label`: Label for the legend.
+- `os`: `'windows'` (default) or `'mac'` to toggle command/option labels.
+- `highlightColor`: Default color for `highlightedKeys`.
+- `backgroundColor`: Optional background color for the component container.
+
+---
+
+### Gamepad Component
+
+The `Gamepad` component provides a visual representation of a game controller.
+
+#### Usage
+
+```mdx
+import Gamepad from "@rimelight/ui/plugins/starlightAddons/components/Gamepad.astro"
+
+<Gamepad
+  highlightedButtons={["A", "RT"]}
+  groups={[{ buttons: ["LS", "RS"], color: "#3b82f6", label: "Movement" }]}
+/>
+```
+
+#### Props
+
+- `highlightedButtons`: Array of button IDs (e.g., `'A'`, `'B'`, `'X'`, `'Y'`, `'L1'`, `'L2'`, `'LS'`, `'DPadUp'`, etc.).
+- `groups`: Array of objects for grouping buttons.
+  - `buttons`: Array of button IDs.
+  - `color`: CSS color for the highlight.
+  - `label`: Label for the legend.
+- `highlightColor`: Default color for `highlightedButtons`.
+- `backgroundColor`: Optional background color for the controller area.

@@ -1,0 +1,1055 @@
+---
+import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
+import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.astro"
+import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
+import type { NavigationMenuItem, LinkGroupProps, ButtonProps } from "@rimelight/ui/types";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { useI18n } from "astro-nanostores-i18n:runtime";
+
+import placeholderGrandTale from "../../assets/images/placeholder_header_grand-tale.jpg";
+import placeholderCommunity from "../../assets/images/placeholder_header_community.jpg";
+import placeholderCompany from "../../assets/images/placeholder_header_company.jpg";
+import placeholderStore from "../../assets/images/placeholder_header_store.jpg";
+
+const activeLocale = Astro.currentLocale ?? "en";
+
+const messages = useI18n("app_header", {
+	"left-links_grand-tale_label": "Grand Tale",
+	"link-groups_center_grand-tale_main_title": "Game",
+	"link-groups_center_grand-tale_main_home": "Home",
+	"link-groups_center_grand-tale_main_news": "News",
+	"link-groups_center_grand-tale_main_about": "About",
+	"link-groups_center_grand-tale_main_wiki": "Wiki",
+	"link-groups_center_grand-tale_main_guides": "Guides",
+	"link-groups_center_grand-tale_main_forums": "Forums",
+	"link-groups_center_grand-tale_main_leaderboards": "Leaderboards",
+	"link-groups_center_grand-tale_series_title": "Series",
+	"link-groups_center_grand-tale_series_children-of-the-light": "Children of the Light",
+	"link-groups_center_grand-tale_series_grand-academy": "Grand Academy",
+	"link-groups_center_grand-tale_series_goldy-adventures": "Goldy Adventures",
+	"link-groups_center_grand-tale_books_title": "Books",
+	"link-groups_center_grand-tale_books_the-first-tale": "The First Tale",
+	"link-groups_center_grand-tale_comics_title": "Comics",
+	"link-groups_center_grand-tale_comics_ori-friends": "Ori & Friends",
+	"link-groups_right_grand-tale_resources_title": "Resources",
+	"link-groups_right_grand-tale_resources_download": "Download",
+	"link-groups_right_grand-tale_resources_support": "Support",
+	"link-groups_right_grand-tale_socials_title": "Socials",
+	"link-groups_right_grand-tale_socials_discord": "Discord",
+	"link-groups_right_grand-tale_socials_youtube": "YouTube",
+	"link-groups_right_grand-tale_socials_instagram": "Instagram",
+	"left-links_community_label": "Community",
+	"link-groups_center_community_main_title": "Community",
+	"link-groups_center_community_forums_title": "Forums",
+	"link-groups_center_community_forums_rimelight": "Rimelight Forums",
+	"link-groups_center_community_forums_grand-tale": "Grand Tale Forums",
+	"link-groups_center_community_events_title": "Events",
+	"link-groups_center_community_events_lightcon": "Lightcon",
+  "link-groups_right_community_resources_title": "Socials",
+	"link-groups_right_community_socials_instagram": "Instagram",
+	"link-groups_right_community_socials_discord": "Discord",
+	"link-groups_right_community_socials_spotify": "Spotify",
+	"left-links_company_label": "Company",
+	"link-groups_center_company_main_studio_title": "Studio",
+	"link-groups_center_company_main_studio_about-us": "About Us",
+	"link-groups_center_company_main_studio_partnerships": "Partnerships",
+	"link-groups_center_company_main_careers_title": "Careers",
+	"link-groups_center_company_main_careers_life": "Life at Rimelight",
+	"link-groups_center_company_main_careers_jobs": "Jobs & Internships",
+	"link-groups_center_company_main_news_title": "News & Media",
+	"link-groups_center_company_main_news_blog": "Blog",
+	"links_company_resources_title": "Resources",
+	"link-groups_right_company_resources_docs": "Documentation",
+	"link-groups_right_company_resources_api": "API",
+	"link-groups_right_company_resources_branding": "Branding",
+	"link-groups_right_company_resources_legal": "Legal",
+	"link-groups_right_company_resources_contact": "Contact",
+	"link-groups_right_company_socials_title": "Socials",
+	"link-groups_right_company_socials_linkedin": "LinkedIn",
+	"link-groups_right_company_socials_github": "GitHub",
+	"left-links_store_label": "Store",
+	"link-groups_center_store_main_title": "Shop",
+	"link-groups_center_store_main_digital-goods_title": "Digital Goods",
+	"link-groups_center_store_main_digital-goods_sparks": "Sparks",
+	"link-groups_center_store_main_deals_title": "Deals",
+	"link-groups_center_store_main_deals_new-releases": "New Releases",
+	"link-groups_center_store_main_deals_sales": "Sales",
+	"link-groups_center_store_main_deals_bundles": "Bundles",
+	"link-groups_center_store_main_clothing_title": "Clothing",
+	"link-groups_center_store_main_clothing_headwear": "Headwear",
+	"link-groups_center_store_main_clothing_tops": "Tops",
+	"link-groups_center_store_main_clothing_bottoms": "Bottoms",
+	"link-groups_center_store_main_accessories_title": "Accessories",
+	"link-groups_center_store_main_accessories_jewelry": "Jewelry",
+	"link-groups_center_store_main_accessories_pins-patches": "Pins & Patches",
+	"link-groups_center_store_main_accessories_keychains": "Keychains",
+	"link-groups_center_store_main_apparel_title": "Apparel",
+	"link-groups_center_store_main_apparel_bottles-mugs": "Bottles & Mugs",
+	"link-groups_center_store_main_collectibles_title": "Collectibles",
+	"link-groups_center_store_main_collectibles_figurines-statues": "Figurines & Statues",
+	"link-groups_center_store_main_collectibles_plushies": "Plushies",
+	"link-groups_center_store_main_art_title": "Art",
+	"link-groups_center_store_main_art_posters-prints": "Posters & Prints",
+	"link-groups_center_store_main_art_comics-books": "Comics & Books",
+	"link-groups_center_store_main_art_physical-games": "Physical Games",
+	"link-groups_right_store_assistance_title": "Assistance",
+	"link-groups_right_store_assistance_orders": "Orders",
+	"link-groups_right_store_assistance_customer-support": "Customer Support",
+	"actions_sign-up": "Sign Up",
+	"actions_sign-in": "Sign In",
+	"user_status_placeholder": "Set a custom status...",
+	"user_dropdown_profile": "Profile",
+	"user_dropdown_dashboard": "Dashboard",
+	"user_dropdown_settings": "Settings",
+	"user_dropdown_support": "Support",
+	"user_dropdown_sign-out": "Sign Out"
+});
+
+const leftLinks: NavigationMenuItem[] = [
+	{
+		label: messages["left-links_grand-tale_label"],
+		to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale'),
+		slot: "grand-tale" as const,
+		children: [
+			{
+				label: messages["link-groups_center_grand-tale_main_title"],
+				children: [
+					{
+            label: messages["link-groups_center_grand-tale_main_news"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/news')
+          },
+					{
+            label: messages["link-groups_center_grand-tale_main_about"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/about')
+          },
+					{
+            label: messages["link-groups_center_grand-tale_main_wiki"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki')
+          },
+					{
+            label: messages["link-groups_center_grand-tale_main_guides"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/guides')
+          },
+					{
+            label: messages["link-groups_center_grand-tale_main_forums"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/forums')
+          },
+					{
+            label: messages["link-groups_center_grand-tale_main_leaderboards"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/leaderboards')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_grand-tale_series_title"],
+				children: [
+					{
+            label: messages["link-groups_center_grand-tale_series_children-of-the-light"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/children-of-the-light')
+          },
+					{
+            label: messages["link-groups_center_grand-tale_series_grand-academy"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/grand-academy')
+          },
+					{
+            label: messages["link-groups_center_grand-tale_series_goldy-adventures"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/goldy-adventures')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_grand-tale_books_title"],
+				children: [
+					{
+            label: messages["link-groups_center_grand-tale_books_the-first-tale"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/books/the-first-tale')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_grand-tale_comics_title"],
+				children: [
+					{
+            label: messages["link-groups_center_grand-tale_comics_ori-friends"],
+            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/comics/ori-and-friends')
+          }
+				]
+			}
+		]
+	},
+	{
+		label: messages["left-links_community_label"],
+		slot: "community" as const,
+		children: [
+			{
+				label: messages["link-groups_center_community_forums_title"],
+				children: [
+					{
+            label: messages["link-groups_center_community_forums_rimelight"],
+            to: getRelativeLocaleUrl(activeLocale, '/forums/rimelight')
+          },
+					{
+            label: messages["link-groups_center_community_forums_grand-tale"],
+            to: getRelativeLocaleUrl(activeLocale, '/forums/grand-tale')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_community_events_title"],
+				children: [
+					{
+            label: messages["link-groups_center_community_events_lightcon"],
+            to: getRelativeLocaleUrl(activeLocale, '/events/lightcon')
+          }
+				]
+			}
+		]
+	},
+	{
+		label: messages["left-links_company_label"],
+		to: getRelativeLocaleUrl(activeLocale, '/company'),
+		slot: "company" as const,
+		children: [
+			{
+				label: messages["link-groups_center_company_main_studio_title"],
+				children: [
+					{
+            label: messages["link-groups_center_company_main_studio_about-us"],
+            to: getRelativeLocaleUrl(activeLocale, '/company/about')
+          },
+					{
+            label: messages["link-groups_center_company_main_studio_partnerships"],
+            to: getRelativeLocaleUrl(activeLocale, '/company/studio/partnerships')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_company_main_careers_title"],
+				children: [
+					{
+            label: messages["link-groups_center_company_main_careers_life"],
+            to: getRelativeLocaleUrl(activeLocale, '/company/careers/culture')
+          },
+					{
+            label: messages["link-groups_center_company_main_careers_jobs"],
+            to: getRelativeLocaleUrl(activeLocale, '/company/careers')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_company_main_news_title"],
+				children: [
+					{
+            label: messages["link-groups_center_company_main_news_blog"],
+            to: getRelativeLocaleUrl(activeLocale, '/company/blog')
+          }
+				]
+			},
+			{
+				label: messages["links_company_resources_title"],
+				children: [
+					{
+            label: messages["link-groups_right_company_resources_docs"],
+            to: getRelativeLocaleUrl(activeLocale, '/company/docs')
+          },
+					{
+            label: messages["link-groups_right_company_resources_api"],
+            to: getRelativeLocaleUrl(activeLocale, '/company/docs/api')
+          }
+				]
+			}
+		]
+	},
+	{
+		label: messages["left-links_store_label"],
+		to: getRelativeLocaleUrl(activeLocale, '/store'),
+		slot: "store" as const,
+		children: [
+			{
+        label: messages["link-groups_center_store_main_digital-goods_title"],
+        to: getRelativeLocaleUrl(activeLocale, '/store/digital')
+      },
+			{
+				label: messages["link-groups_center_store_main_deals_title"],
+				children: [
+					{
+            label: messages["link-groups_center_store_main_deals_new-releases"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/deals/new')
+          },
+					{
+            label: messages["link-groups_center_store_main_deals_sales"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/deals/sales')
+          },
+					{
+            label: messages["link-groups_center_store_main_deals_bundles"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/deals/bundles')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_store_main_clothing_title"],
+				children: [
+					{
+            label: messages["link-groups_center_store_main_clothing_headwear"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/clothing/headwear')
+          },
+					{
+            label: messages["link-groups_center_store_main_clothing_tops"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/clothing/tops')
+          },
+					{
+            label: messages["link-groups_center_store_main_clothing_bottoms"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/clothing/bottoms')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_store_main_accessories_title"],
+				children: [
+					{
+            label: messages["link-groups_center_store_main_accessories_jewelry"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/accessories/jewelry')
+          },
+					{
+            label: messages["link-groups_center_store_main_accessories_pins-patches"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/merch/pins')
+          },
+					{
+            label: messages["link-groups_center_store_main_accessories_keychains"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/accessories/keychains')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_store_main_apparel_title"],
+				children: [
+					{
+            label: messages["link-groups_center_store_main_apparel_bottles-mugs"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/apparel/bottles-mugs')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_store_main_collectibles_title"],
+				children: [
+					{
+            label: messages["link-groups_center_store_main_collectibles_figurines-statues"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/collectibles/figurines')
+          },
+					{
+            label: messages["link-groups_center_store_main_collectibles_plushies"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/merch/plushies')
+          }
+				]
+			},
+			{
+				label: messages["link-groups_center_store_main_art_title"],
+				children: [
+					{
+            label: messages["link-groups_center_store_main_art_posters-prints"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/merch/posters')
+          },
+					{
+            label: messages["link-groups_center_store_main_art_comics-books"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/art/books')
+          },
+					{
+            label: messages["link-groups_center_store_main_art_physical-games"],
+            to: getRelativeLocaleUrl(activeLocale, '/store/art/games')
+          }
+				]
+			}
+		]
+	}
+];
+
+const actions: ButtonProps[] = [
+	{
+    color: "neutral",
+		variant: "outline",
+		to: getRelativeLocaleUrl(activeLocale, '/auth/sign-up'),
+		label: messages["actions_sign-up"]
+	},
+	{
+		variant: "solid",
+		color: "primary",
+		to: getRelativeLocaleUrl(activeLocale, '/auth/sign-in'),
+		label: messages["actions_sign-in"]
+	}
+];
+
+const grandTaleLinkGroup: LinkGroupProps = {
+	label: messages["link-groups_center_grand-tale_main_title"],
+	links: [
+		{
+      label: messages["link-groups_center_grand-tale_main_news"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/news')
+    },
+		{
+      label: messages["link-groups_center_grand-tale_main_about"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/about')
+    },
+		{
+      label: messages["link-groups_center_grand-tale_main_wiki"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki')
+    },
+		{
+      label: messages["link-groups_center_grand-tale_main_guides"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/guides')
+    },
+		{
+      label: messages["link-groups_center_grand-tale_main_forums"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/forums')
+    },
+		{
+      label: messages["link-groups_center_grand-tale_main_leaderboards"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/leaderboards')
+    }
+	]
+};
+
+const grandTaleSeriesLinkGroup: LinkGroupProps = {
+	label: messages["link-groups_center_grand-tale_series_title"],
+	links: [
+		{
+      label: messages["link-groups_center_grand-tale_series_children-of-the-light"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/children-of-the-light')
+    },
+		{
+      label: messages["link-groups_center_grand-tale_series_grand-academy"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/grand-academy')
+    },
+		{
+      label: messages["link-groups_center_grand-tale_series_goldy-adventures"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/goldy-adventures')
+    }
+	]
+};
+
+const grandTaleBooksLinkGroup: LinkGroupProps = {
+	label: messages["link-groups_center_grand-tale_books_title"],
+	links: [
+		{
+      label: messages["link-groups_center_grand-tale_books_the-first-tale"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/books/the-first-tale')
+    }
+	]
+};
+
+const grandTaleComicsLinkGroup: LinkGroupProps = {
+	label: messages["link-groups_center_grand-tale_comics_title"],
+	links: [
+		{
+      label: messages["link-groups_center_grand-tale_comics_ori-friends"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/comics/ori-and-friends')
+    }
+	]
+};
+
+const grandTaleResourcesGroup: LinkGroupProps = {
+	label: messages["link-groups_right_grand-tale_resources_title"],
+	links: [
+		{
+      label: messages["link-groups_right_grand-tale_resources_download"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/download'),
+      leadingIcon: "i-lucide-download"
+    },
+		{
+      label: messages["link-groups_right_grand-tale_resources_support"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/support'),
+      leadingIcon: "i-lucide-headset"
+    }
+	]
+};
+
+const grandTaleSocialsGroup: LinkGroupProps = {
+	label: messages["link-groups_right_grand-tale_socials_title"],
+	links: [
+		{
+      label: messages["link-groups_right_grand-tale_socials_discord"],
+      href: "https://discord.com/", leadingIcon: "i-ic-baseline-discord"
+    },
+		{
+      label: messages["link-groups_right_grand-tale_socials_youtube"],
+      href: "https://youtube.com/", leadingIcon: "i-mdi-youtube"
+    },
+		{
+      label: messages["link-groups_right_grand-tale_socials_instagram"],
+      href: "https://instagram.com/", leadingIcon: "i-mdi-instagram"
+    }
+	]
+};
+
+const commForumsGroup: LinkGroupProps = {
+	label: messages["link-groups_center_community_forums_title"],
+	links: [
+		{
+      label: messages["link-groups_center_community_forums_rimelight"],
+      href: getRelativeLocaleUrl(activeLocale, '/forums/rimelight')
+    },
+		{
+      label: messages["link-groups_center_community_forums_grand-tale"],
+      href: getRelativeLocaleUrl(activeLocale, '/forums/grand-tale')
+    }
+	]
+};
+
+const commEventsGroup: LinkGroupProps = {
+	label: messages["link-groups_center_community_events_title"],
+	links: [
+		{
+      label: messages["link-groups_center_community_events_lightcon"],
+      href: getRelativeLocaleUrl(activeLocale, '/events/lightcon')
+    }
+	]
+};
+
+const commSocialsGroup: LinkGroupProps = {
+	label: messages["link-groups_right_grand-tale_socials_title"],
+	links: [
+		{
+      label: messages["link-groups_right_community_socials_instagram"],
+      href: "https://www.instagram.com/",
+      leadingIcon: "i-mdi-instagram" },
+		{
+      label: messages["link-groups_right_community_socials_discord"],
+      href: "https://discord.com/",
+      leadingIcon: "i-ic-baseline-discord"
+    },
+		{
+      label: messages["link-groups_right_community_socials_spotify"],
+      href: "https://open.spotify.com",
+      leadingIcon: "i-mdi-spotify"
+    }
+	]
+};
+
+const compStudioGroup: LinkGroupProps = {
+	label: messages["link-groups_center_company_main_studio_title"],
+	links: [
+		{
+      label: messages["link-groups_center_company_main_studio_about-us"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/about')
+    },
+		{
+      label: messages["link-groups_center_company_main_studio_partnerships"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/studio/partnerships')
+    }
+	]
+};
+
+const compCareersGroup: LinkGroupProps = {
+	label: messages["link-groups_center_company_main_careers_title"],
+	links: [
+		{
+      label: messages["link-groups_center_company_main_careers_life"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/careers/culture')
+    },
+		{
+      label: messages["link-groups_center_company_main_careers_jobs"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/careers')
+    }
+	]
+};
+
+const compNewsGroup: LinkGroupProps = {
+	label: messages["link-groups_center_company_main_news_title"],
+	links: [
+		{
+      label: messages["link-groups_center_company_main_news_blog"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/blog')
+    }
+	]
+};
+
+const compResourcesGroup: LinkGroupProps = {
+	label: messages["links_company_resources_title"],
+	links: [
+		{
+      label: messages["link-groups_right_company_resources_docs"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/docs'),
+      leadingIcon: "i-lucide-file-text"
+    },
+		{
+      label: messages["link-groups_right_company_resources_api"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/docs/api'),
+      leadingIcon: "i-lucide-file-code"
+    },
+		{
+      label: messages["link-groups_right_company_resources_branding"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/branding'),
+      leadingIcon: "i-lucide-image"
+    },
+		{
+      label: messages["link-groups_right_company_resources_legal"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/legal'),
+      leadingIcon: "i-lucide-scale"
+    },
+		{
+      label: messages["link-groups_right_company_resources_contact"],
+      href: getRelativeLocaleUrl(activeLocale, '/company/contact'),
+      leadingIcon: "i-lucide-mail"
+    }
+	]
+};
+
+const compSocialsGroup: LinkGroupProps = {
+	label: messages["link-groups_right_company_socials_title"],
+	links: [
+		{
+      label: messages["link-groups_right_company_socials_linkedin"],
+      href: "https://linkedin.com/",
+      leadingIcon: "i-logos-linkedin-icon"
+    },
+		{
+      label: messages["link-groups_right_company_socials_github"],
+      href: "https://github.com/Rimelight-Entertainment",
+      leadingIcon: "i-logos-github-icon"
+    }
+	]
+};
+
+const storeDealsGroup: LinkGroupProps = {
+	label: messages["link-groups_center_store_main_deals_title"],
+	links: [
+		{
+      label: messages["link-groups_center_store_main_deals_new-releases"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/deals/new')
+    },
+		{
+      label: messages["link-groups_center_store_main_deals_sales"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/deals/sales')
+    },
+		{
+      label: messages["link-groups_center_store_main_deals_bundles"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/deals/bundles')
+    }
+	]
+};
+
+const storeClothingGroup: LinkGroupProps = {
+	label: messages["link-groups_center_store_main_clothing_title"],
+	links: [
+		{
+      label: messages["link-groups_center_store_main_clothing_headwear"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/clothing/headwear')
+    },
+		{
+      label: messages["link-groups_center_store_main_clothing_tops"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/clothing/tops')
+    },
+		{
+      label: messages["link-groups_center_store_main_clothing_bottoms"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/clothing/bottoms')
+    }
+	]
+};
+
+const storeAccessoriesGroup: LinkGroupProps = {
+	label: messages["link-groups_center_store_main_accessories_title"],
+	links: [
+		{
+      label: messages["link-groups_center_store_main_accessories_jewelry"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/accessories/jewelry')
+    },
+		{
+      label: messages["link-groups_center_store_main_accessories_pins-patches"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/merch/pins')
+    },
+		{
+      label: messages["link-groups_center_store_main_accessories_keychains"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/accessories/keychains')
+    }
+	]
+};
+
+const storeApparelGroup: LinkGroupProps = {
+	label: messages["link-groups_center_store_main_apparel_title"],
+	links: [
+		{
+      label: messages["link-groups_center_store_main_apparel_bottles-mugs"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/apparel/bottles-mugs')
+    }
+	]
+};
+
+const storeCollectiblesGroup: LinkGroupProps = {
+	label: messages["link-groups_center_store_main_collectibles_title"],
+	links: [
+		{
+      label: messages["link-groups_center_store_main_collectibles_figurines-statues"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/collectibles/figurines')
+    },
+		{
+      label: messages["link-groups_center_store_main_collectibles_plushies"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/merch/plushies')
+    }
+	]
+};
+
+const storeArtGroup: LinkGroupProps = {
+	label: messages["link-groups_center_store_main_art_title"],
+	links: [
+		{
+      label: messages["link-groups_center_store_main_art_posters-prints"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/merch/posters')
+    },
+		{
+      label: messages["link-groups_center_store_main_art_comics-books"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/art/books')
+    },
+		{
+      label: messages["link-groups_center_store_main_art_physical-games"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/art/games')
+    }
+	]
+};
+
+const storeAssistanceGroup: LinkGroupProps = {
+	label: messages["link-groups_right_store_assistance_title"],
+	links: [
+		{
+      label: messages["link-groups_right_store_assistance_orders"],
+      href: getRelativeLocaleUrl(activeLocale, '/store/orders'),
+      leadingIcon: "i-lucide-shopping-bag"
+    },
+		{
+      label: messages["link-groups_right_store_assistance_customer-support"],
+      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/support'),
+      leadingIcon: "i-lucide-help-circle"
+    }
+	]
+};
+---
+
+<RLAHeader
+	contain={false}
+	fixed={true}
+	class="bg-black"
+>
+  <div slot="left" class="flex items-center gap-md">
+    <div class="hidden md:flex flex-row gap-md">
+      <RLALogo
+        variant="logomark"
+        class="h-10 w-auto"
+        mode="white"
+      />
+      <RLANavigationMenu
+        items={leftLinks}
+        variant="link"
+        theme="flat"
+        ui={{
+          viewportWrapper: 'top-[var(--rl-total-header-height,64px)] flex fixed w-screen left-0 right-0 z-[150] mt-0 bg-transparent',
+          viewport: 'w-screen rounded-none border-none shadow-xl mt-0 pointer-events-auto overflow-hidden',
+          link: 'text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
+        }}
+      >
+        <!-- Grand Tale Mega Menu -->
+        <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+            <img
+              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+              src={placeholderGrandTale.src}
+            />
+
+            <div class="flex flex-col gap-sm flex-2">
+              <div class="grid grid-cols-2 gap-xl gap-y-4">
+                <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
+                <div class="flex flex-col gap-lg">
+                  <RLALinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...grandTaleComicsLinkGroup} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+            <RLALinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
+            <RLALinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
+          </div>
+        </div>
+
+        <!-- Community Mega Menu -->
+        <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+            <img
+              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+              src={placeholderCommunity.src}
+            />
+
+            <div class="flex flex-col gap-sm flex-2">
+              <div class="grid grid-cols-2 gap-1">
+                <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
+                <RLALinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+            <RLALinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
+          </div>
+        </div>
+
+        <!-- Company Mega Menu -->
+        <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+            <img
+              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+              src={placeholderCompany.src}
+            />
+
+            <div class="flex flex-col gap-sm flex-2">
+              <div class="grid grid-cols-3 gap-1">
+                <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
+                <RLALinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
+                <RLALinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+            <RLALinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
+            <RLALinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
+          </div>
+        </div>
+
+        <!-- Store Mega Menu -->
+        <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+            <img
+              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+              src={placeholderStore.src}
+            />
+
+            <div class="flex flex-col gap-sm flex-2">
+              <div class="grid grid-cols-3 gap-xl gap-y-4">
+                <div class="flex flex-col gap-lg">
+                  <RLALinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
+                </div>
+                <div class="flex flex-col gap-lg">
+                  <RLALinkGroup {...storeClothingGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...storeAccessoriesGroup} ui={{ title: "!text-primary-500" }} />
+                </div>
+                <div class="flex flex-col gap-lg">
+                  <RLALinkGroup {...storeApparelGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...storeCollectiblesGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...storeArtGroup} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+            <RLALinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
+          </div>
+        </div>
+      </RLANavigationMenu>
+    </div>
+
+    <div class="block md:hidden">
+      <RLASlideover side="left" title="Menu">
+        <RLAButton
+          slot="trigger"
+          color="neutral"
+          variant="ghost"
+          rounded={true}
+          leadingIcon="i-lucide-menu"
+          class="!text-white"
+          theme="dark"
+          aria-label="Open Menu"
+        />
+
+        <RLANavigationMenu
+          items={leftLinks}
+          orientation="vertical"
+          variant="link"
+          ui={{
+            link: "text-black dark:text-white flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
+          }}
+        >
+          <!-- Grand Tale Mobile Mega Menu -->
+          <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <img
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                src={placeholderGrandTale.src}
+              />
+
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                  <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  <div class="flex flex-col gap-lg">
+                    <RLALinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLALinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLALinkGroup {...grandTaleComicsLinkGroup} ui={{ title: "!text-primary-500" }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+              <RLALinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
+              <RLALinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
+            </div>
+          </div>
+
+          <!-- Community Mobile Mega Menu -->
+          <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <img
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                src={placeholderCommunity.src}
+              />
+
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+              <RLALinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
+            </div>
+          </div>
+
+          <!-- Company Mobile Mega Menu -->
+          <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <img
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                src={placeholderCompany.src}
+              />
+
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
+                  <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
+                  <RLALinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+              <RLALinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
+              <RLALinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
+            </div>
+          </div>
+
+          <!-- Store Mobile Mega Menu -->
+          <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <img
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                src={placeholderStore.src}
+              />
+
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-xl gap-y-4">
+                  <div class="flex flex-col gap-lg">
+                    <RLALinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
+                  </div>
+                  <div class="flex flex-col gap-lg">
+                    <RLALinkGroup {...storeClothingGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLALinkGroup {...storeAccessoriesGroup} ui={{ title: "!text-primary-500" }} />
+                  </div>
+                  <div class="flex flex-col gap-lg">
+                    <RLALinkGroup {...storeApparelGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLALinkGroup {...storeCollectiblesGroup} ui={{ title: "!text-primary-500" }} />
+                    <RLALinkGroup {...storeArtGroup} ui={{ title: "!text-primary-500" }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+              <RLALinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
+            </div>
+          </div>
+        </RLANavigationMenu>
+      </RLASlideover>
+      </div>
+		</div>
+
+    <div slot="center" class="flex items-center gap-md">
+      <div class="block md:hidden">
+        <RLALogo
+          variant="logomark"
+          class="h-10 w-auto"
+          mode="white"
+        />
+      </div>
+    </div>
+
+    <div slot="right" class="flex items-center gap-md">
+      <div class="hidden md:flex flex-row gap-md">
+        {actions.map((act) => (
+          <RLAButton {...act} />
+        ))}
+      </div>
+
+      <div class="block md:hidden">
+        <RLASlideover side="right" title="Actions">
+          <RLAButton
+            slot="trigger"
+            color="neutral"
+            variant="ghost"
+            rounded={true}
+            leadingIcon="i-lucide-ellipsis-vertical"
+            class="!text-white"
+            theme="dark"
+            aria-label="Open Actions"
+          />
+
+          <div class="flex flex-col gap-md">
+            {actions.map((act) => (
+              <RLAButton {...act} block={true} />
+            ))}
+          </div>
+        </RLASlideover>
+    </div>
+	</div>
+</RLAHeader>
+
+<style is:global>
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 8px 0 0 0 !important;
+    display: block !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content].hidden {
+    display: none !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] [slot="grand-tale-content"],
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] [slot="community-content"],
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] [slot="company-content"],
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] [slot="store-content"] {
+    background: transparent !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] .p-lg,
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] .p-xl {
+    padding: 12px 4px !important;
+  }
+
+  html [data-nav-menu][data-orientation="vertical"] [data-nav-content] .w-64 {
+    width: 100% !important;
+    background: transparent !important;
+    padding: 12px 4px !important;
+  }
+</style>

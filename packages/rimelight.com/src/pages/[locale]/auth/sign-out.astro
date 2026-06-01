@@ -1,0 +1,48 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro'
+import { actions } from 'astro:actions'
+import Form from '@/components/Form.astro'
+import { useI18n, currentLocale } from 'astro-nanostores-i18n:runtime'
+
+const activeLocale = Astro.currentLocale ?? 'en'
+currentLocale.set(activeLocale)
+const messages = useI18n('auth', {
+  signInTitle: 'Sign in',
+  signInDescription: 'Sign in to your account',
+  signInNewUserMessage: 'Your account has been created. Please sign in.',
+  signInEmail: 'E-mail',
+  signInPassword: 'Password',
+  signInButton: 'Sign in',
+  signUpTitle: 'Sign up',
+  signUpDescription: 'Create a new account',
+  signUpFirstName: 'First name',
+  signUpLastName: 'Last name',
+  signUpEmail: 'E-mail',
+  signUpPassword: 'Password',
+  signUpButton: 'Sign up',
+  signOutTitle: 'Sign out',
+  signOutDescription: 'Sign out of your account',
+  signOutConfirmMessage: 'Are you sure you want to sign out?',
+  signOutButton: 'Sign out'
+})
+
+const result = Astro.getActionResult(actions.signOut)
+
+if (result && !result.error && result.data.cookies.length > 0) {
+  Astro.response.headers.append('Location', '/')
+  Astro.response.status = 302
+
+  for (const cookie of result.data.cookies) {
+    Astro.response.headers.append('Set-Cookie', cookie)
+  }
+
+  return new Response(null, Astro.response)
+}
+---
+
+<AppLayout title={messages.signOutTitle} description={messages.signOutDescription}>
+  <Form method="POST" action={actions.signOut} error={result?.error}>
+    <p>{messages.signOutConfirmMessage}</p>
+    <button>{messages.signOutButton}</button>
+  </Form>
+</AppLayout>

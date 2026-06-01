@@ -1,0 +1,154 @@
+---
+title: ScrollToTop
+description: A scroll-to-top button with a progress indicator that appears when the user scrolls down the page.
+sidebar:
+  badge:
+    text: New
+    variant: tip
+---
+
+import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
+
+import ApiProps from "@rimelight/ui/plugins/starlightDocsApi/components/ApiProps.astro"
+import ApiSlots from "@rimelight/ui/plugins/starlightDocsApi/components/ApiSlots.astro"
+import ApiEmits from "@rimelight/ui/plugins/starlightDocsApi/components/ApiEmits.astro"
+import ApiTheme from "@rimelight/ui/plugins/starlightDocsApi/components/ApiTheme.astro"
+
+A scroll-to-top button with a circular progress indicator that tracks the user's scroll position. The button appears when the user scrolls past a certain threshold and smoothly scrolls back to the top when clicked.
+
+<RLAAlert color="success" variant="soft">
+  This component uses client-side JavaScript for scroll detection. When using in Astro, the
+  component includes its own script. When using in Vue, make sure to add `client:load` directive.
+</RLAAlert>
+
+## Usage
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+```astro
+---
+import { RLAScrollToTop } from "@rimelight/ui/components/astro"
+---
+
+<RLAScrollToTop />
+```
+
+The component will automatically:
+
+- Show when the user scrolls past 200px (default threshold)
+- Display a progress circle based on scroll position
+- Scroll smoothly to top when clicked
+
+### With Custom Props
+
+```astro
+<RLAScrollToTop color="secondary" :circleStrokeWidth={6} :threshold={500} :duration={0.2} />
+```
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+```vue
+<script setup lang="ts">
+import { RLVScrollToTop } from "@rimelight/ui/components/vue"
+</script>
+
+<template>
+  <RLVScrollToTop client:load />
+</template>
+```
+
+The component will automatically:
+
+- Show when the user scrolls past 200px (default threshold)
+- Display a progress circle based on scroll position
+- Scroll smoothly to top when clicked
+
+### With Custom Props
+
+```vue
+<RLVScrollToTop
+  client:load
+  color="secondary"
+  :circleStrokeWidth="6"
+  :threshold="500"
+  :duration="0.2"
+/>
+```
+
+</div>
+</RLATabs>
+
+### Astro Layout Example
+
+The ScrollToTop component is typically placed in your layout or main page component. It uses a fixed positioning at the bottom-right of the viewport.
+
+```astro
+---
+import { RLAScrollToTop } from "@rimelight/ui/components/astro"
+---
+
+<html>
+  <body>
+    <slot />
+    <RLAScrollToTop />
+  </body>
+</html>
+```
+
+### Vue/Nuxt Layout Example
+
+```vue
+<template>
+  <div>
+    <slot />
+    <RLVScrollToTop client:load />
+  </div>
+</template>
+```
+
+## Examples
+
+### Custom Styling with UI Prop
+
+You can override individual slot styles using the `ui` prop:
+
+```vue
+<RLVScrollToTop
+  client:load
+  :ui="{
+    button: 'size-16',
+    icon: 'size-8 text-primary-500'
+  }"
+/>
+```
+
+## API
+
+### Props
+
+<ApiProps component="scroll-to-top" />
+
+### Slots
+
+<ApiSlots component="scroll-to-top" />
+
+### Emits
+
+<ApiEmits component="scroll-to-top" />
+
+## Theme
+
+<ApiTheme component="scroll-to-top" />
+
+## Changelog
+
+### 1.0.0 (2026-04-26)
+
+- Initial release of the ScrollToTop component
+- Added support for both Astro (`RLAScrollToTop`) and Vue (`RLVScrollToTop`)
+- Circular progress indicator based on scroll position
+- Configurable threshold, duration, and stroke width
+- Theme support via `ui` prop

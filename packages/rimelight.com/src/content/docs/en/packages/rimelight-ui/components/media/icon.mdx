@@ -1,0 +1,196 @@
+---
+title: Icon
+description: Display icons from any Iconify collection using UnoCSS.
+sidebar:
+  order: 1
+---
+
+import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
+
+import ApiProps from "@rimelight/ui/plugins/starlightDocsApi/components/ApiProps.astro"
+import ApiSlots from "@rimelight/ui/plugins/starlightDocsApi/components/ApiSlots.astro"
+import ApiTheme from "@rimelight/ui/plugins/starlightDocsApi/components/ApiTheme.astro"
+
+A component to display any icon from [Iconify](https://iconify.design/) collections using the UnoCSS icons preset.
+
+<RLAAlert color="success" variant="soft">
+  You can browse all available icons at [icones.js.org](https://icones.js.org/).
+</RLAAlert>
+
+## Usage
+
+Use the `name` prop to display an icon following the `i-<collection>-<icon>` format:
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+```astro
+---
+import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
+---
+
+<RLAIcon name="i-lucide-home" />
+```
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+```vue
+<script setup lang="ts">
+import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue"
+</script>
+
+<template>
+  <RLVIcon name="i-lucide-home" />
+</template>
+```
+
+</div>
+</RLATabs>
+
+## Examples
+
+### Sizes
+
+Icons support predefined sizes via the `size` prop:
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+```astro
+<RLAIcon name="i-lucide-home" size="xs" />
+<RLAIcon name="i-lucide-home" size="sm" />
+<RLAIcon name="i-lucide-home" size="md" />
+<RLAIcon name="i-lucide-home" size="lg" />
+<RLAIcon name="i-lucide-home" size="xl" />
+```
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+```vue
+<template>
+  <RLVIcon name="i-lucide-home" size="xs" />
+  <RLVIcon name="i-lucide-home" size="sm" />
+  <RLVIcon name="i-lucide-home" size="md" />
+  <RLVIcon name="i-lucide-home" size="lg" />
+  <RLVIcon name="i-lucide-home" size="xl" />
+</template>
+```
+
+</div>
+</RLATabs>
+
+### Colors
+
+Icons in mask mode use `bg-*` classes for coloring (since they use `currentColor` via background):
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+```astro
+<RLAIcon name="i-lucide-heart" class="bg-red-500 h-6 w-6" />
+<RLAIcon name="i-lucide-star" class="bg-yellow-500 h-6 w-6" />
+<RLAIcon name="i-lucide-check" class="bg-green-500 h-6 w-6" />
+```
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+```vue
+<template>
+  <RLVIcon name="i-lucide-heart" class="bg-red-500 h-6 w-6" />
+  <RLVIcon name="i-lucide-star" class="bg-yellow-500 h-6 w-6" />
+  <RLVIcon name="i-lucide-check" class="bg-green-500 h-6 w-6" />
+</template>
+```
+
+</div>
+</RLATabs>
+
+### Overriding Brand Icon Colors
+
+Brand icons (like `i-logos-*`) are multi-color and render in **background-image mode** by default, which means `bg-*` or `text-*` classes won't affect them.
+
+To override a brand icon's color, force **mask mode** by appending `?mask` to the icon name, then use `text-*` classes:
+
+<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
+<div role="tabpanel" data-value="astro">
+
+```astro
+<RLAIcon name="i-logos-discord-icon?mask" class="text-white h-6 w-6" />
+<RLAIcon name="i-logos-github-icon?mask" class="text-white h-6 w-6" />
+```
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
+
+```vue
+<template>
+  <RLVIcon name="i-logos-discord-icon?mask" class="text-white h-6 w-6" />
+  <RLVIcon name="i-logos-github-icon?mask" class="text-white h-6 w-6" />
+</template>
+```
+
+</div>
+</RLATabs>
+
+<RLAAlert color="primary" variant="soft">
+  When using `?mask` with brand icons, they lose their original colors and become single-color
+  (controlled by `text-*` classes). This is expected behavior.
+</RLAAlert>
+
+### Using with Other Components
+
+When using brand icons in components like buttons, apply `?mask` and `text-*` classes together:
+
+```astro
+<RLAButton
+  leadingIcon="i-logos-discord-icon?mask text-white"
+  variant="ghost"
+  color="neutral"
+>
+  Discord
+</RLAButton>
+```
+
+### Dark Mode Support
+
+Combine with Tailwind's dark mode classes:
+
+```astro
+<RLAIcon name="i-lucide-sun" class="bg-yellow-500 dark:bg-yellow-300 h-6 w-6" />
+<RLAIcon name="i-lucide-moon" class="bg-blue-500 dark:bg-blue-300 h-6 w-6" />
+```
+
+## API
+
+### Props
+
+<ApiProps component="icon" />
+
+### Slots
+
+<ApiSlots component="icon" />
+
+## Theme
+
+<ApiTheme component="icon" />
+
+## Setup
+
+To use icon collections, install the corresponding `@iconify-json/*` package:
+
+```bash
+pnpm add -D @iconify-json/lucide
+```
+
+The UnoCSS preset automatically detects installed icon sets in your project.
+
+## Changelog
+
+### 2026-05-01
+
+- Added `RLAIcon` and `RLVIcon` components using UnoCSS icons preset
+- Replaced `unplugin-icons` with `@unocss/preset-icons`

@@ -1,0 +1,94 @@
+---
+title: Introduction
+description: Rimelight UI is a comprehensive component library for Astro websites used and maintained by Rimelight Entertainment.
+sidebar:
+  order: 1
+---
+
+import RLACard from "@rimelight/ui/components/astro/RLACard.astro"
+import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro"
+import RLAAccordion from "@rimelight/ui/components/astro/RLAAccordion.astro"
+
+## What is Rimelight UI?
+
+Rimelight UI is a comprehensive component library for [Astro](https://astro.build) websites used and maintained by [Rimelight Entertainment](https://rimelight.com).
+It offers a suite of accessible and highly performant components as [Astro Components](https://docs.astro.build/basics/astro-components/) and [Vue Components](https://vuejs.org), and is available as a free and open source project for any to use.
+
+There are many UI libraries in the JavaScript ecosystem,
+We believe different developers have different preferences, . Whereas some might prefer components that live directly within their projects (shadcn/ui,) we believe the ease of use of managing a single dependency
+
+<RLAGrid cols={2}>
+  <RLACard title="Intuitive" icon="document">
+    Simple APIs, comprehensive documentation, and convenient integrations.
+  </RLACard>
+  <RLACard title="Performant" icon="rocket">
+    Fully type-safe, SEO-friendly, modern and lean dependencies, and blazing fast.
+  </RLACard>
+  <RLACard title="Customizable" icon="pen">
+    Create your own design system by overriding styles and variants globally or per instance.
+  </RLACard>
+  <RLACard title="Accessible" icon="approve-check-circle" href={"#accessibility"}>
+    All components are WAI-ARIA compliant and include keyboard navigation, focus management, and
+    screen reader support.
+  </RLACard>
+  <RLACard title="Secure" icon="shield-lock" href={"#security"}>
+    All components are strictly CSP-compliant, and lean dependencies lower risks of supply-chain
+    exploits.
+  </RLACard>
+</RLAGrid>
+
+<RLAGrid cols={2}>
+  <RLACard title="View on npmx" href="https://npmx.dev/package/@rimelight/ui" />
+  <RLACard title="View on GitHub" href="https://github.com/Rimelight-Entertainment/rimelight" />
+</RLAGrid>
+
+## Performance
+
+- All dependencies used have zero sub-dependencies, ensuring a lean and efficient bundle size.
+- All components are fully [type-safe](https://www.typescriptlang.org) and fully [SEO-friendly](https://web.dev/seo-checklist/).
+- The library utilizes [UnoCSS](https://unocss.dev) for on-demand Atomic CSS and [CSS Variants](https://css-variants.vercel.app) for performant slot styling and customizability.
+
+## Customizability
+
+- Customize component styling globally or per instance with ease.
+- The library comprehensive color themeing system, allowing easy addition or overrides of colors.
+- Sensible default colors are built with [OKLCH color space](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/oklch).
+- Extensive default semantic variants for components like Alerts, Badges, Toasts, and Modals.
+
+## Accessibility
+
+- All components are fully [WCAG 2.1](https://www.w3.org/TR/WCAG21/)-compliant with [WAI-ARIA](https://www.w3.org/WAI/standards-guidelines/aria/) attributes, keyboard navigation, focus management, and screen reader support out of the box.
+- All components support automatic [light and dark mode](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/light-dark) alongside easy overriding for instances where ignoring color mode may be desired (e.g. highly branded sections).
+- All components follow [semantic HTML](https://developer.mozilla.org/en-US/docs/Glossary/Semantics) and follow best practices for accessibility.
+
+## Security
+
+- All components are designed in compliance with a very strict [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP), meaning they won't break regardless of your own restrictions.
+
+## Frequently Asked Questions
+
+<RLAAccordion
+  items={[
+    {
+      label: "Is Rimelight UI free to use?",
+      content:
+        "Yes. Rimelight UI is a completely free and open source package under the MIT License (https://opensource.org/license/mit)."
+    },
+    {
+      label: "Can I use Rimelight UI without Astro?",
+      content:
+        "For the time being, no. The library is strictly distributed as an Astro integration, but in theory could be modularized enough to be usable as a Vite plugin, and we are open to contributions on this topic."
+    },
+    {
+      label: "Are other front-end frameworks supported?",
+      content:
+        "For the time being, no. The library currently only offers Astro and Vue components, but in theory could support other front-end frameworks, and we are open to contributions on this topic."
+    }
+  ]}
+/>
+
+## Useful Links
+
+- [Starter Template](https://starter.rimelight.com)
+- [Playground](https://playground.rimelight.com/ui)
+- [Changelog](https://rimelight.com/company/docs/packages/rimelight-ui/changelog/)

@@ -1,0 +1,38 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rimelight-dot-com",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-05-01",
+  "compatibility_flags": ["global_fetch_strictly_public", "nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true
+    }
+  },
+  "routes": [
+    {
+      "pattern": "rimelight.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.rimelight.com",
+      "custom_domain": true
+    }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "r2_buckets": [
+    {
+      "binding": "BLOB",
+      "bucket_name": "rimelight-dot-com"
+    }
+  ],
+  "vars": {
+    "CONSTRUCTION_MODE": "true"
+  }
+}

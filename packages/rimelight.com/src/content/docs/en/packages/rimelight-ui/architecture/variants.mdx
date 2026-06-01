@@ -1,0 +1,217 @@
+---
+title: Variants
+description: How Rimelight UI uses CSS Variants to define and customize component themes.
+sidebar:
+  order: 6
+---
+
+Rimelight UI uses the `css-variants` package to manage component theming. This allows us to define type-safe component variants (like `size`, `color`, or `variant`) that can be customized at runtime while maintaining excellent TypeScript support.
+
+## Theme Structure
+
+Each component has a corresponding `.theme.ts` file that defines its styling contract. The theme defines:
+
+- **slots**: The elements within the component that can be individually styled
+- **base**: Default classes applied to all instances
+- **variants**: Available options for each prop (color, size, variant, etc.)
+- **compoundVariants**: Combinations of variants that produce specific styles
+- **defaultVariants**: Which values to use if not specified
+
+Here's an abbreviated example from the Button component:
+
+```typescript
+export const buttonTheme = {
+  // Elements that can be styled individually
+  slots: ["root"],
+
+  // Base classes applied to all buttons
+  base: {
+    root: [
+      "inline-flex items-center justify-center gap-4xs rounded-md font-medium",
+      "transition-all outline-none focus-visible:ring-3",
+      "disabled:pointer-events-none disabled:op-50"
+    ]
+  },
+
+  // Available variants
+  variants: {
+    variant: {
+      solid: { root: "shadow-xs" },
+      outlined: { root: "border shadow-xs" },
+      subtle: { root: "" },
+      ghost: { root: "" },
+      link: { root: "h-auto p-0" }
+    },
+    color: {
+      primary: { root: "" },
+      secondary: { root: "" },
+      success: { root: "" },
+      error: { root: "" }
+    },
+    size: {
+      sm: { root: "h-8 px-xs text-sm" },
+      md: { root: "h-9 px-sm text-sm" },
+      lg: { root: "h-10 px-md text-base" }
+    }
+  },
+
+  // Specific combinations (e.g., solid + primary = green background)
+  compoundVariants: [
+    {
+      variant: "solid",
+      color: "primary",
+      classNames: {
+        root: "bg-primary text-primary-foreground hover:bg-primary/90"
+      }
+    }
+  ],
+
+  // Defaults if not specified
+  defaultVariants: {
+    variant: "solid",
+    color: "primary",
+    size: "md"
+  }
+} as const
+```
+
+## Using the Theme
+
+In Astro components, the theme is used via the `scv` function from `css-variants`:
+
+```typescript
+import { scv, cx } from "css-variants"
+import { twMerge } from "tailwind-merge"
+import { buttonTheme } from "@/themes/button.theme"
+
+const button = scv({
+  slots: buttonTheme.slots,
+  base: buttonTheme.base,
+  variants: buttonTheme.variants,
+  compoundVariants: buttonTheme.compoundVariants,
+  defaultVariants: buttonTheme.defaultVariants,
+  classNameResolver: (...args) => twMerge(cx(...args))
+})
+
+const { variant = "solid", color = "primary", size = "md" } = Astro.props
+
+const { root } = button({ variant, color, size })
+```
+
+The `scv` function returns an object where each slot is a function that accepts variant values and returns the merged class string.
+
+## Slot Targeting
+
+In complex components with multiple elements, each element is exposed as a slot in the theme. You can target any slot using the `ui` prop:
+
+```astro
+<!-- For a component with root, leadingIcon, and content slots -->
+<RLVComponent ui={{
+  root: "border-2",
+  leadingIcon: "text-primary-500",
+  content: "font-bold"
+}}>
+```
+
+## TypeScript Support
+
+Because themes are exported as TypeScript objects with `as const`, you get full autocomplete when defining variants:
+
+```typescript
+// Autocomplete knows exact valid values
+color: "primary" // ✓ valid
+color: "invalid" // ✗ TypeScript error
+```
+
+## Integration with tailwind-merge
+
+Rimelight UI uses `tailwind-merge` via the `classNameResolver` option. This means utility classes intelligently override each other without specificity wars:
+
+```astro
+<!-- Base theme says "rounded-md", user adds "rounded-full" -->
+<RLAButton class="rounded-full">
+
+<!-- Result: "rounded-full" wins, no conflicts -->
+</RLAButton>
+```
+
+## Extending via Integration Config
+
+You can override defaults at the integration level in `astro.config.ts`:
+
+```typescript
+import { ui } from "@rimelight/ui/integrations"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      ui: {
+        button: {
+          defaultVariants: {
+            variant: "solid",
+            color: "primary",
+            size: "md"
+          }
+        }
+      }
+    })
+  ]
+})
+```
+
+## Reading the Theme Source
+
+For a complete picture of what variants and combinations are available, see the theme source files in `@rimelight/ui`:
+
+- `src/themes/button.theme.ts`
+- `src/themes/header.theme.ts`
+
+While we prefer the **UnoCSS** and **CSS Variants** system for most component styling, Rimelight UI also exposes a set of standard CSS variables that you can use for low-level overrides or custom components.
+
+## Semantic Color Variables
+
+Each semantic color is exposed as a series of CSS variables in the format `--ui-color-<color>-<shade>`.
+
+```css
+:root {
+  /* Primary colors */
+  --ui-color-primary-50: #effdf5;
+  --ui-color-primary-500: #00c16a;
+  --ui-color-primary-950: #052e16;
+
+  /* Neutral colors */
+  --ui-color-neutral-100: #f1f5f9;
+  --ui-color-neutral-800: #1e293b;
+}
+```
+
+## Usage in Custom CSS
+
+You can use these variables in your own CSS files or in the `style` attribute of any element:
+
+```css
+.custom-card {
+  background-color: var(--ui-color-neutral-50);
+  border: 1px solid var(--ui-color-primary-500);
+  color: var(--ui-color-neutral-900);
+}
+```
+
+## Integration with UnoCSS
+
+Since our integration automatically injects these variables based on your `ui()` configuration, you can also access them through UnoCSS's theme system if you've added the corresponding rules.
+
+## Local Overrides
+
+You can locally override a semantic color for a specific section of your site by redefining the variables within a CSS scope:
+
+```html
+<div class="[--ui-color-primary-500:theme(colors.purple.500)]">
+  <!-- All primary-colored components inside here will now look purple -->
+  <RLAButton color="primary">Purple Button</RLAButton>
+</div>
+```
+
+:::caution
+Note that this method is powerful but can lead to unexpected visual inconsistencies if not used carefully across the entire shade range (50-950).
+:::
