@@ -1,0 +1,121 @@
+<script setup lang="ts">
+import { inject, ref, watch, computed } from "vue";
+import { getLocalizedContent } from "~/utils/page";
+import { useI18n } from "~/composables/app/useI18n";
+import { type Page } from "~/types/pages";
+import { scv, cx } from "css-variants";
+import { useRC } from "~/composables";
+
+/* region Props */
+export interface PageMentionProps {
+  pageId: string;
+  rc?: {
+    link?: string;
+    icon?: string;
+    text?: string;
+    skeleton?: string;
+  };
+}
+
+const { pageId, rc: rcProp } = defineProps<PageMentionProps>();
+
+const { rc } = useRC("PageMention", rcProp);
+/*endregion */
+
+/* region Styles */
+const pageMentionStyles = scv({
+  slots: {
+    linkClass:
+      "inline-flex items-baseline gap-1 align-middle hover:text-primary transition-colors font-medium text-inherit",
+    iconClass: "w-4 h-4 rounded-full object-cover shrink-0",
+    textClass: "truncate font-medium",
+    skeletonClass: "h-3 w-24 rounded bg-neutral-200 dark:bg-neutral-800 animate-pulse inline-block align-middle",
+    unresolvedText: "text-xs text-dimmed italic",
+  },
+});
+
+const styles = computed(() => {
+  const resolved = pageMentionStyles();
+  const result: Record<string, string> = {};
+  for (const [slot, value] of Object.entries(resolved)) {
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+  }
+  return result as {
+    linkClass: string;
+    iconClass: string;
+    textClass: string;
+    skeletonClass: string;
+    unresolvedText: string;
+  };
+});
+/* endregion */
+
+/* region State */
+const { locale } = useI18n();
+const isServer = import.meta.env.SSR;
+const isClient = !isServer;
+
+const resolver =
+  inject<(id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>>("page-resolver");
+
+const linkedPage = ref<Pick<Page, "title" | "icon" | "slug"> | null>(null);
+const status = ref<"idle" | "pending" | "success" | "error">("idle");
+
+const loadPage = async () => {
+  if (!pageId) return;
+  status.value = "pending";
+  if (!resolver) {
+    if (isClient) {
+      console.warn("RLPageMention: No page resolver provided in RLPageRenderer");
+    }
+    status.value = "error";
+    return;
+  }
+  try {
+    linkedPage.value = await resolver(pageId);
+    status.value = "success";
+  } catch (e) {
+    if (isClient) {
+      console.warn("RLPageMention: Failed to resolve page", pageId, e);
+    }
+    status.value = "error";
+  }
+};
+
+watch(() => pageId, loadPage, { immediate: true });
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PageMention",
+});
+/* endregion */
+</script>
+
+<template>
+  <a
+    v-if="linkedPage && linkedPage.slug"
+    :href="`/${linkedPage.slug}`"
+    :class="styles.linkClass"
+  >
+    <img
+      v-if="linkedPage.icon?.src"
+      :src="linkedPage.icon.src"
+      :alt="linkedPage.icon.alt || 'Icon'"
+      :class="styles.iconClass"
+    />
+    <span :class="styles.textClass">
+      {{ getLocalizedContent(linkedPage.title, locale) }}
+    </span>
+  </a>
+  <div
+    v-else-if="status === 'pending' || (isServer && status === 'idle')"
+    :class="styles.skeletonClass"
+  />
+  <span
+    v-else-if="status !== 'idle' && pageId && pageId !== 'undefined' && pageId !== 'null'"
+    :class="styles.unresolvedText"
+  >
+    Unresolved Ref ({{ pageId }})
+  </span>
+</template>

@@ -1,0 +1,170 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from "vue";
+import { formatTimeAgo } from "@vueuse/core";
+import type { Notification } from "~/types";
+import { scv, cx } from "css-variants";
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { useRC, useDashboard } from "~/composables";
+
+/* region Props */
+export interface NotificationsSlideoverProps {
+  rc?: {
+    root?: string;
+    notificationItem?: string;
+    notificationContent?: string;
+    notificationHeader?: string;
+    senderName?: string;
+    timestamp?: string;
+    notificationBody?: string;
+  };
+}
+
+const { rc: rcProp } = defineProps<NotificationsSlideoverProps>();
+
+const { rc } = useRC("NotificationsSlideover", rcProp);
+/* endregion */
+
+/* region Emits */
+export interface NotificationsSlideoverEmits {}
+defineEmits<NotificationsSlideoverEmits>();
+/* endregion */
+
+/* region Slots */
+export interface NotificationsSlideoverSlots {}
+defineSlots<NotificationsSlideoverSlots>();
+/* endregion */
+
+/* region Styles */
+const notificationsSlideoverStyles = scv({
+  slots: [
+    "root",
+    "notificationItem",
+    "notificationContent",
+    "notificationHeader",
+    "senderName",
+    "timestamp",
+    "notificationBody",
+  ],
+  base: {
+    root: "",
+    notificationItem:
+      "relative flex items-center gap-3 rounded-xl px-3 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors border border-transparent hover:border-neutral-100 dark:hover:border-neutral-800",
+    notificationContent: "flex-1 text-sm min-w-0",
+    notificationHeader: "flex items-center justify-between mb-0.5",
+    senderName: "font-medium text-neutral-900 dark:text-neutral-100 truncate",
+    timestamp: "text-xs text-neutral-400 dark:text-neutral-500 shrink-0 ml-2",
+    notificationBody: "text-sm text-neutral-500 dark:text-neutral-400 truncate",
+  },
+});
+
+const styles = computed(() => {
+  const resolved = notificationsSlideoverStyles();
+  const result: Record<string, string> = {};
+  for (const [slot, value] of Object.entries(resolved)) {
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+  }
+  return result;
+});
+/* endregion */
+
+/* region State */
+const { isNotificationsSlideoverOpen } = useDashboard();
+const notifications = ref<Notification[]>([]);
+
+onMounted(async () => {
+  try {
+    const res = await fetch("/api/notifications");
+    if (res.ok) {
+      notifications.value = await res.json();
+    }
+  } catch (err) {
+    console.error("Failed to load notifications:", err);
+  }
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "NotificationsSlideover",
+});
+/* endregion */
+</script>
+
+<template>
+  <teleport to="body">
+    <!-- Outer container to avoid rendering glitches -->
+    <div v-if="isNotificationsSlideoverOpen" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+      <!-- Overlay backdrop -->
+      <div
+        class="absolute inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity duration-300"
+        @click="isNotificationsSlideoverOpen = false"
+      />
+
+      <!-- Slide panel -->
+      <div class="fixed inset-y-0 right-0 pl-10 max-w-full flex">
+        <div class="w-screen max-w-md bg-white dark:bg-neutral-900 shadow-2xl flex flex-col h-full border-l border-neutral-200 dark:border-neutral-800 transition-transform duration-300">
+          <!-- Header -->
+          <div class="px-6 py-5 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">Notifications</h2>
+            <RLVButton
+              color="neutral"
+              variant="link"
+              square
+              icon="i-lucide-x"
+              class="rounded-full"
+              @click="isNotificationsSlideoverOpen = false"
+            />
+          </div>
+
+          <!-- Body -->
+          <div class="flex-1 overflow-y-auto p-6 space-y-2">
+            <div v-if="notifications.length === 0" class="text-center py-12 text-sm text-neutral-400">
+              No new notifications
+            </div>
+            <a
+              v-for="notification in notifications"
+              :key="notification.id"
+              :href="`/dashboard/inbox?id=${notification.id}`"
+              :class="styles.notificationItem"
+            >
+              <!-- Avatar + Badge -->
+              <div class="relative shrink-0">
+                <img
+                  v-if="notification.sender.avatar?.src"
+                  :src="notification.sender.avatar.src"
+                  :alt="notification.sender.name"
+                  class="size-10 rounded-full object-cover"
+                />
+                <div
+                  v-else
+                  class="size-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-300 flex items-center justify-center font-semibold text-sm"
+                >
+                  {{ notification.sender.name.charAt(0) }}
+                </div>
+                <span
+                  v-if="notification.unread"
+                  class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-neutral-900"
+                />
+              </div>
+
+              <!-- Content -->
+              <div :class="styles.notificationContent">
+                <p :class="styles.notificationHeader">
+                  <span :class="styles.senderName">{{ notification.sender.name }}</span>
+                  <time
+                    :datetime="notification.date"
+                    :class="styles.timestamp"
+                    v-text="formatTimeAgo(new Date(notification.date))"
+                  />
+                </p>
+                <p :class="styles.notificationBody">
+                  {{ notification.body }}
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </teleport>
+</template>
