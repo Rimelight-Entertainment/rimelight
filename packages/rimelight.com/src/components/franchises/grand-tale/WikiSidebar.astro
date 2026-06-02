@@ -1,0 +1,77 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useI18n } from 'astro-nanostores-i18n:runtime';
+
+const activeLocale = Astro.currentLocale ?? 'en';
+
+const messages = useI18n('wiki_sidebar', {
+	wiki: 'Wiki',
+	getting_started: 'Getting Started',
+	contribution_guide: 'Contribution Guide',
+	lore: 'Lore',
+	timeline: 'Timeline',
+	characters: 'Characters',
+	locations: 'Locations',
+	species: 'Species',
+	objects: 'Objects',
+	groups: 'Groups',
+	game: 'Game Information',
+	tales: 'Tales',
+	items: 'Items',
+	quests: 'Quests',
+	skills: 'Skills',
+	settings: 'Settings',
+	series: 'Series'
+});
+
+const sections = [
+	{
+		label: messages.wiki,
+		items: [
+			{ label: messages.getting_started, to: '/franchises/grand-tale/wiki/getting-started' },
+			{ label: messages.contribution_guide, to: '/franchises/grand-tale/wiki/contribution-guide' }
+		]
+	},
+	{
+		label: messages.lore,
+		items: [
+			{ label: messages.timeline, to: '/franchises/grand-tale/wiki/lore/timeline' },
+			{ label: messages.characters, to: '/franchises/grand-tale/wiki/lore/characters' },
+			{ label: messages.locations, to: '/franchises/grand-tale/wiki/lore/locations' },
+			{ label: messages.species, to: '/franchises/grand-tale/wiki/lore/species' },
+			{ label: messages.objects, to: '/franchises/grand-tale/wiki/lore/objects' },
+			{ label: messages.groups, to: '/franchises/grand-tale/wiki/lore/groups' }
+		]
+	},
+	{
+		label: messages.game,
+		items: [
+			{ label: messages.tales, to: '/franchises/grand-tale/wiki/game/tales' },
+			{ label: messages.items, to: '/franchises/grand-tale/wiki/game/items' },
+			{ label: messages.quests, to: '/franchises/grand-tale/wiki/game/quests' },
+			{ label: messages.skills, to: '/franchises/grand-tale/wiki/game/skills' },
+			{ label: messages.settings, to: '/franchises/grand-tale/wiki/game/settings' }
+		]
+	}
+];
+---
+
+<div class="flex flex-col gap-6 px-4 py-6 bg-indigo-950/20 rounded-2xl border border-indigo-900/30">
+	{sections.map((section) => (
+		<div class="flex flex-col gap-2">
+			<span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest opacity-60 px-2">
+				{section.label}
+			</span>
+			<nav class="flex flex-col gap-1">
+				{section.items.map((item) => (
+					<a
+						href={getRelativeLocaleUrl(activeLocale, item.to)}
+						class="text-sm font-medium text-indigo-300 hover:text-white transition-colors px-2 py-1.5 rounded-lg hover:bg-indigo-900/20"
+					>
+						{item.label}
+					</a>
+				))}
+			</nav>
+		</div>
+	))}
+</div>

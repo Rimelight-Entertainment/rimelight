@@ -1,0 +1,74 @@
+---
+import DashboardLayout from './DashboardLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+interface Props {
+	title?: string;
+	activeTab: 'notes' | 'todos' | 'archive' | 'trash';
+}
+
+const { title = 'Notes', activeTab } = Astro.props;
+const activeLocale = Astro.currentLocale ?? 'en';
+
+const links = [
+	{
+		label: 'Notes',
+		icon: 'i-lucide-sticky-note',
+		href: getRelativeLocaleUrl(activeLocale, '/dashboard/notes'),
+		active: activeTab === 'notes'
+	},
+	{
+		label: 'Todos',
+		icon: 'i-lucide-check-square',
+		href: getRelativeLocaleUrl(activeLocale, '/dashboard/notes/todos'),
+		active: activeTab === 'todos'
+	},
+	{
+		label: 'Archive',
+		icon: 'i-lucide-archive',
+		href: getRelativeLocaleUrl(activeLocale, '/dashboard/notes/archive'),
+		active: activeTab === 'archive'
+	},
+	{
+		label: 'Trash',
+		icon: 'i-lucide-trash-2',
+		href: getRelativeLocaleUrl(activeLocale, '/dashboard/notes/trash'),
+		active: activeTab === 'trash'
+	}
+];
+---
+
+<DashboardLayout title={title}>
+	<div class="p-6 flex flex-col h-full overflow-y-auto">
+		<div class="mb-6 flex flex-col gap-1">
+			<h1 class="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+				<span class="i-lucide-sticky-note text-primary-500" />
+				Notes & Tasks
+			</h1>
+			<p class="text-sm text-neutral-500 dark:text-neutral-400">Keep track of your ideas, todos, and project documents.</p>
+		</div>
+
+		<div class="border-b border-neutral-200 dark:border-neutral-800 mb-6">
+			<nav class="flex gap-4">
+				{links.map((link) => (
+					<a
+						href={link.href}
+						class:list={[
+							'flex items-center gap-2 px-1 py-3 border-b-2 text-sm font-medium transition-colors',
+							link.active
+								? 'border-primary-500 text-primary-600 dark:text-primary-400'
+								: 'border-transparent text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+						]}
+					>
+						<span class:list={[link.icon, 'size-4']} />
+						<span>{link.label}</span>
+					</a>
+				))}
+			</nav>
+		</div>
+
+		<div class="flex-1">
+			<slot />
+		</div>
+	</div>
+</DashboardLayout>

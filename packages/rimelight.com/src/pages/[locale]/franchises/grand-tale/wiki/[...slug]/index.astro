@@ -1,0 +1,24 @@
+---
+import WikiLayout from '@/layouts/WikiLayout.astro';
+import PageLiveView from '@/components/article/views/PageLiveView.vue';
+
+const { slug } = Astro.params;
+const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
+const user = Astro.locals.user;
+const canEdit = user?.role === 'owner' || user?.role === 'admin';
+---
+
+<WikiLayout title="Wiki Page | Grand Tale Wiki">
+	<PageLiveView
+		client:load
+		lookupPath={lookupSlug}
+		cacheKey={`wiki-${slug}`}
+		baseUrl="/franchises/grand-tale/wiki"
+		canEdit={canEdit}
+		errorRedirectParams={{
+			redirect: '/franchises/grand-tale/wiki',
+			label: 'Back to Wiki',
+			message: 'The requested wiki page could not be located.'
+		}}
+	/>
+</WikiLayout>

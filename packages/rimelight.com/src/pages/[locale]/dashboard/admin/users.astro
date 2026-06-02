@@ -1,0 +1,16 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import AdminUsers from '@/components/dashboard/admin/AdminUsers.vue';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const activeLocale = Astro.currentLocale ?? 'en';
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+}
+---
+
+<AdminLayout activeTab="users" title="Manage Users">
+	<AdminUsers client:load />
+</AdminLayout>

@@ -1,0 +1,16 @@
+---
+import SettingsLayout from '@/layouts/SettingsLayout.astro';
+import NotificationSettingsForm from '@/components/dashboard/settings/NotificationSettingsForm.vue';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const activeLocale = Astro.currentLocale ?? 'en';
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+}
+---
+
+<SettingsLayout activeTab="notifications" title="Notification Settings">
+	<NotificationSettingsForm client:load />
+</SettingsLayout>

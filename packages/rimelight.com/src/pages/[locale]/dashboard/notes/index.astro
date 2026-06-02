@@ -1,0 +1,16 @@
+---
+import NotesLayout from '@/layouts/NotesLayout.astro';
+import NotesIndexContainer from '@/components/dashboard/notes/NotesIndexContainer.vue';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const activeLocale = Astro.currentLocale ?? 'en';
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+}
+---
+
+<NotesLayout activeTab="notes" title="Notes">
+	<NotesIndexContainer client:load />
+</NotesLayout>

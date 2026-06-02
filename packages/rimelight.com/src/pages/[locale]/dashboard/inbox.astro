@@ -1,0 +1,18 @@
+---
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import InboxContainer from '@/components/dashboard/InboxContainer.vue';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const activeLocale = Astro.currentLocale ?? 'en';
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+}
+---
+
+<DashboardLayout title="Inbox" description="Your personal workspace inbox messages.">
+	<div class="p-6 h-[calc(100vh-var(--total-header-offset,80px))] flex flex-col">
+		<InboxContainer client:load />
+	</div>
+</DashboardLayout>

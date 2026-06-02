@@ -1,0 +1,49 @@
+---
+import AppLayout from './AppLayout.astro';
+import BaseDashboardLayout from '@/components/dashboard/layouts/BaseDashboardLayout.vue';
+import RLAButton from '@rimelight/ui/components/astro/RLAButton.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = 'Dashboard', description = 'Rimelight Dashboard' } = Astro.props;
+
+// Replicate links matching the ones defined in the Nuxt dashboard layout
+const links = [
+	{ label: 'Home', icon: 'lucide:home', to: '/dashboard' },
+	{ label: 'Inbox', icon: 'lucide:inbox', to: '/dashboard/inbox' },
+	{ label: 'Notes', icon: 'lucide:notebook', to: '/dashboard/notes' },
+	{ label: 'Projects', icon: 'lucide:square-kanban', to: '/dashboard/projects' }
+];
+
+const footerLinks = [
+	{ label: 'Admin', icon: 'lucide:shield-check', to: '/dashboard/admin' },
+	{ label: 'Users', icon: 'lucide:users', to: '/dashboard/users' }
+];
+---
+
+<AppLayout title={title} description={description}>
+	<BaseDashboardLayout client:load links={links} footerLinks={footerLinks}>
+		<slot />
+
+		<div slot="sidebar-footer-actions" class="flex flex-row gap-2">
+			<a href="/dashboard/settings">
+				<RLAButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Settings">
+					<span class="i-lucide-cog size-4"></span>
+				</RLAButton>
+			</a>
+			<a href="/dashboard/help">
+				<RLAButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Help">
+					<span class="i-lucide-circle-help size-4"></span>
+				</RLAButton>
+			</a>
+			<a href="/dashboard/report-issue">
+				<RLAButton color="neutral" variant="soft" class="rounded-xl size-8 p-0" title="Report Issue">
+					<span class="i-lucide-bug size-4"></span>
+				</RLAButton>
+			</a>
+		</div>
+	</BaseDashboardLayout>
+</AppLayout>

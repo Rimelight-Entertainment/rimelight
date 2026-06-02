@@ -138,7 +138,7 @@ defineOptions({
     </div>
 
     <!-- Hover Actions -->
-    <div :class="styles.actionsWrapper}">
+    <div :class="styles.actionsWrapper">
       <RLVButton
         v-if="note.isPinned || isHovered"
         :icon="note.isPinned ? 'i-lucide-pin-off' : 'i-lucide-pin'"

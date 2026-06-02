@@ -1,0 +1,49 @@
+<script setup lang="ts">
+import { onMounted, markRaw } from "vue"
+import { useFloatingActions } from "@/composables/app/useFloatingActions"
+import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue"
+import QuickActions from "../dashboard/QuickActions.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+
+defineOptions({
+  name: "FloatingActionsOverlay"
+})
+
+const { actions, registerAction } = useFloatingActions()
+
+onMounted(() => {
+  // Register standard global actions
+  registerAction({
+    id: "quick-actions",
+    priority: 10,
+    component: markRaw(QuickActions)
+  })
+
+  registerAction({
+    id: "scroll-to-top",
+    priority: 0,
+    component: markRaw(RLVScrollToTop)
+  })
+})
+</script>
+
+<template>
+  <div class="fixed bottom-6 right-6 z-[10000] flex flex-col-reverse items-center gap-4 pointer-events-none">
+    <div v-for="action in actions" :key="action.id" class="pointer-events-auto flex items-center justify-center font-normal">
+      <component :is="action.component" v-if="action.component" />
+      <template v-else-if="action.icon || action.label">
+        <RLVButton
+          color="primary"
+          class="rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform"
+          :aria-label="action.label || 'Action'"
+          @click="action.onSelect"
+        >
+          <span v-if="action.icon" :class="[action.icon.replace('lucide:', 'i-lucide-'), 'size-6']" />
+          <span v-else>{{ action.label }}</span>
+        </RLVButton>
+      </template>
+    </div>
+  </div>
+</template>
+
+<style scoped></style>

@@ -1,0 +1,16 @@
+---
+import NotesLayout from '@/layouts/NotesLayout.astro';
+import NotesArchiveContainer from '@/components/dashboard/notes/NotesArchiveContainer.vue';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const activeLocale = Astro.currentLocale ?? 'en';
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+}
+---
+
+<NotesLayout activeTab="archive" title="Archived Notes">
+	<NotesArchiveContainer client:load />
+</NotesLayout>

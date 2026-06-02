@@ -1,0 +1,107 @@
+---
+import WikiLayout from '@/layouts/WikiLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export function getStaticPaths() {
+	return [
+		{ params: { category: 'timeline' } },
+		{ params: { category: 'characters' } },
+		{ params: { category: 'locations' } },
+		{ params: { category: 'species' } },
+		{ params: { category: 'objects' } },
+		{ params: { category: 'groups' } }
+	];
+}
+
+const { category } = Astro.params;
+const activeLocale = Astro.currentLocale ?? 'en';
+const categoryLabel = category.charAt(0).toUpperCase() + category.slice(1);
+
+const categoryToType: Record<string, string> = {
+	timeline: 'Timeline',
+	characters: 'Character',
+	locations: 'Location',
+	species: 'Species',
+	objects: 'Object',
+	groups: 'Group'
+};
+
+const pageType = categoryToType[category] || 'Character';
+
+// Fetch pages of this type on server
+let pages = [];
+try {
+	const res = await fetch(new URL(`/api/pages?type=${pageType}&status=published&limit=1000&orderBy=title&order=asc`, Astro.url.origin).toString());
+	if (res.ok) {
+		pages = await res.json();
+	}
+} catch (e) {
+	// Fallback mock pages if api fails
+	pages = [
+		{
+			id: '1',
+			slug: `franchises/grand-tale/wiki/lore/${category}/sample`,
+			title: { en: `Sample ${pageType} Article` },
+			description: { en: `This is a sample description for ${pageType} category.` },
+			icon: 'lucide:file-text'
+		}
+	];
+}
+---
+
+<WikiLayout title={`${categoryLabel} | Grand Tale Wiki`}>
+	<div class="space-y-6">
+		<section class="space-y-4">
+			<div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest">
+				{pageType}
+			</div>
+			<h1 class="text-4xl font-extrabold uppercase tracking-tight text-white leading-none">
+				{categoryLabel}
+			</h1>
+			<p class="text-lg text-neutral-400 font-light max-w-2xl">
+				Browse all {category.toLowerCase()} in the Grand Tale universe.
+			</p>
+		</section>
+
+		<hr class="border-neutral-800/30" />
+
+		<div class="bg-neutral-900/20 border border-neutral-800/50 rounded-2xl overflow-hidden">
+			<table class="w-full border-collapse text-left text-sm">
+				<thead>
+					<tr class="border-b border-neutral-850 bg-neutral-900/50 text-xs font-bold uppercase text-indigo-400 tracking-wider">
+						<th class="p-4">Title</th>
+						<th class="p-4">Description</th>
+						<th class="p-4 text-right"></th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-neutral-850">
+					{pages.map((page) => (
+						<tr class="hover:bg-neutral-900/30 transition-colors">
+							<td class="p-4 flex items-center gap-3">
+								<span class:list={[page.icon ? page.icon.replace('lucide:', 'i-lucide-') : 'i-lucide-file-text', 'size-5 text-indigo-500 shrink-0']} />
+								<a
+									href={getRelativeLocaleUrl(activeLocale, `/${page.slug}`)}
+									class="font-bold text-white hover:text-indigo-400 uppercase transition-colors"
+								>
+									{page.title[activeLocale] || page.title.en}
+								</a>
+							</td>
+							<td class="p-4 text-neutral-400 truncate max-w-md">
+								{page.description[activeLocale] || page.description.en || '---'}
+							</td>
+							<td class="p-4 text-right">
+								<a
+									href={getRelativeLocaleUrl(activeLocale, `/${page.slug}`)}
+									class="inline-flex items-center gap-2 text-xs text-indigo-500 font-bold uppercase hover:text-indigo-400 transition-colors"
+								>
+									Read More
+									<span class="i-lucide-arrow-right size-3"></span>
+								</a>
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</WikiLayout>

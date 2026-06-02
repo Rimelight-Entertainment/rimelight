@@ -1,0 +1,24 @@
+---
+import AppLayout from './AppLayout.astro';
+import GrandTaleHeader from '@/components/franchises/grand-tale/GrandTaleHeader.astro';
+import WikiSidebar from '@/components/franchises/grand-tale/WikiSidebar.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = 'Wiki | Grand Tale', description = 'Grand Tale Wiki' } = Astro.props;
+---
+
+<AppLayout title={title} description={description}>
+	<GrandTaleHeader />
+	<div class="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+		<aside class="w-full lg:w-64 shrink-0">
+			<WikiSidebar />
+		</aside>
+		<main class="flex-1 min-w-0">
+			<slot />
+		</main>
+	</div>
+</AppLayout>
