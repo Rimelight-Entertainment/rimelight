@@ -87,7 +87,57 @@
     "user_dropdown_dashboard": "Dashboard",
     "user_dropdown_settings": "Settings",
     "user_dropdown_support": "Support",
-    "user_dropdown_sign-out": "Sign Out"
+    "user_dropdown_sign-out": "Sign Out",
+    "links_grand-tale_content_main_series_heading": "Series",
+    "links_grand-tale_content_main_series_children_of_the_light": "Children of the Light",
+    "links_grand-tale_content_main_series_grand_academy": "Grand Academy",
+    "links_grand-tale_content_main_series_goldy_adventures": "Goldy Adventures",
+    "links_grand-tale_content_main_books_heading": "Books",
+    "links_grand-tale_content_main_books_first_tale": "The First Tale",
+    "links_grand-tale_content_main_comics_heading": "Comics",
+    "links_grand-tale_content_main_comics_ori_friends": "Ori & Friends",
+    "links_grand-tale_content_side_title": "Resources",
+    "links_grand-tale_content_side_download": "Download",
+    "links_grand-tale_content_side_support": "Support",
+    "links_grand-tale_content_side_socials_title": "Socials",
+    "links_grand-tale_content_side_socials_discord": "Discord",
+    "links_grand-tale_content_side_socials_youtube": "YouTube",
+    "links_grand-tale_content_side_socials_instagram": "Instagram",
+    "links_community_content_main_forums_heading": "Forums",
+    "links_community_content_main_forums_rimelight": "Rimelight Forums",
+    "links_community_content_main_forums_grand-tale": "Grand Tale Forums",
+    "links_community_content_main_events_heading": "Events",
+    "links_community_content_main_events_lightcon": "Lightcon",
+    "links_community_content_side_title": "Socials",
+    "links_community_content_side_instagram": "Instagram",
+    "links_community_content_side_discord": "Discord",
+    "links_community_content_side_spotify": "Spotify",
+    "links_company_content_main_studio_heading": "Studio",
+    "links_company_content_main_careers_heading": "Careers",
+    "links_company_content_main_news_heading": "News & Media",
+    "links_company_content_side_resources_title": "Resources",
+    "links_company_content_side_resources_api": "API",
+    "links_company_content_side_resources_branding": "Branding",
+    "links_company_content_side_resources_legal": "Legal",
+    "links_company_content_side_resources_contact": "Contact",
+    "links_company_content_side_socials_title": "Socials",
+    "links_company_content_side_socials_linkedin": "LinkedIn",
+    "links_company_content_side_socials_github": "GitHub",
+    "links_store_content_main_digital-goods_heading": "Digital Goods",
+    "links_store_content_main_deals_heading": "Deals",
+    "links_store_content_main_clothing_heading": "Clothing",
+    "links_store_content_main_accessories_heading": "Accessories",
+    "links_store_content_main_apparel_heading": "Apparel",
+    "links_store_content_main_collectibles_heading": "Collectibles",
+    "links_store_content_main_art_heading": "Art",
+    "links_store_content_side_title": "Assistance",
+    "links_store_content_side_orders": "Orders",
+    "links_store_content_side_customer-support": "Customer Support",
+    "user_dashboard": "Dashboard",
+    "user_profile": "Profile",
+    "user_support": "Support",
+    "user_settings": "Settings",
+    "user_sign-out": "Sign Out"
   },
   "app_footer": {
     "links_resources_label": "Resources",
@@ -97,7 +147,14 @@
     "links_documents_cookie-policy": "Cookie Policy",
     "links_documents_terms-of-service": "Terms of Service",
     "links_documents_code-of-conduct": "Code of Conduct",
-    "links_documents_other-documents": "Other Documents"
+    "links_documents_other-documents": "Other Documents",
+    "links_resources_content_branding": "Branding",
+    "links_resources_content_visitors": "Visitor Count",
+    "links_documents_content_privacy-policy": "Privacy Policy",
+    "links_documents_content_cookie-policy": "Cookie Policy",
+    "links_documents_content_terms-of-service": "Terms of Service",
+    "links_documents_content_code-of-conduct": "Code of Conduct",
+    "links_documents_content_other-documents": "Other Documents"
   },
   "newsletter": {
     "title": "Subscribe to our newsletter",
@@ -138,14 +195,74 @@
     "section_cta_title": "Ready to play?",
     "section_cta_description": "Join us and let's tell our story together.",
     "section_cta_actions_create-account": "Create Account",
-    "section_cta_actions_explore-careers": "Explore Careers"
+    "section_cta_actions_explore-careers": "Explore Careers",
+    "meta_description": "Tell your story.",
+    "hero_title": "Rimelight Components",
+    "hero_description": "A component and utility library used at Rimelight Entertainment.",
+    "hero_links_01": "View Components",
+    "hero_links_02": "View Wiki",
+    "hero_links_03": "View Branding",
+    "sections_hero_title": "We are Rimelight Entertainment",
+    "sections_hero_description": "We are creators of Grand Tale.",
+    "sections_hero_actions_joinUs": "Join Us",
+    "sections_hero_actions_learnMore": "Learn More",
+    "sections_company_title": "Pushing the boundaries of {interactive}",
+    "sections_company_description": "Founded in 2023, Rimelight Entertainment is independent and player-focused. We don't just create games; we create living, breathing worlds that respect your time and intelligence.",
+    "sections_company_stats_titles_label": "Titles in Development",
+    "sections_company_stats_creators_label": "Global Creators",
+    "sections_projects_title": "Our Projects",
+    "sections_projects_tags_franchise": "Franchise",
+    "sections_projects_tags_fantasy": "Fantasy",
+    "sections_projects_tags_social": "Social",
+    "sections_projects_content_grandTale_description": "A high-fantasy social life-sim game which hosts sub-games of multiple genres.",
+    "sections_projects_actions_discover": "Discover",
+    "sections_news_title": "Latest News",
+    "sections_news_description": "Read our latest news, posts, and project updates.",
+    "sections_news_actions_viewAll": "View All News",
+    "sections_cta_title": "Ready to play?",
+    "sections_cta_description": "Join us and let's tell our story together.",
+    "sections_cta_actions_createAccount": "Create Account",
+    "sections_cta_actions_exploreCareers": "Explore Careers"
   },
   "page_company_blog": {
     "meta_title": "Blog",
     "categories_company-news": "Company News",
     "categories_development-log": "Development Log",
     "categories_other": "Other",
-    "last-updated": "Last updated on"
+    "last-updated": "Last updated on",
+    "actions_create_post_success_title": "",
+    "actions_create_post_success_description": "",
+    "actions_create_post_error_title": "",
+    "actions_create_post_error_description": "",
+    "actions_create_post_label": "Create Post",
+    "actions_create_post_modal_title": "Create Post",
+    "actions_create_post_modal_description": "Create a new Blog Post.",
+    "actions_create_post_modal_fields_title_title": "Post Title",
+    "actions_create_post_modal_fields_title_placeholder": "Enter a title for your post",
+    "actions_create_post_modal_fields_slug_title": "Post Slug",
+    "actions_create_post_modal_fields_slug_placeholder": "post-slug",
+    "actions_create_post_modal_fields_slug_help": "The URL-friendly name of the post.",
+    "actions_create_post_modal_fields_actions_cancel": "Cancel",
+    "actions_create_post_modal_fields_actions_submit": "Create Post",
+    "actions_rss": "RSS Feed",
+    "meta_description": "Read our latest news, posts, and project updates.",
+    "meta_RSS": "Rimelight Entertainment Blog RSS Feed",
+    "drafts_title": "Drafts",
+    "drafts_description": "These posts have currently not been published.",
+    "drafts_error_title": "Failed to load drafts",
+    "drafts_error_description": "Please check your connection and try again later.",
+    "drafts_empty_title": "No drafts yet.",
+    "drafts_empty_description": "Create your first post to get started.",
+    "drafts_empty_actions_create": "Create Post",
+    "posts_title": "Posts",
+    "posts_description": "Our latest posts, including blog posts, press releases, and more.",
+    "posts_error_title": "Failed to load posts",
+    "posts_error_description": "Please check your connection and try again later.",
+    "posts_empty_title": "No posts yet",
+    "posts_empty_description": "Create your first post to get started.",
+    "posts_empty_actions_create": "Create Post",
+    "posts_load_more": "Load More",
+    "posts_end_of_list": "You've reached the end of the posts."
   },
   "page_legal": {
     "meta_title": "Legal"
@@ -227,5 +344,507 @@
     "auth_terms_link": "Terms of Service",
     "auth_sign-in_email_help": "Recover email",
     "auth_sign-in_password_help": "Forgot password?"
+  },
+  "error": {
+    "retry": "Try Again",
+    "clear": "Go Back Home"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "archive": "Archive",
+    "versions": "Versions",
+    "editing": "Editing",
+    "add": "",
+    "reject": "",
+    "approve": "",
+    "select": "",
+    "types_BlogPost": "Blog Post",
+    "types_Document": "Document",
+    "types_PatchNote": "Patch Note",
+    "types_Location": "Location",
+    "types_Species": "Species",
+    "types_Character": "Character",
+    "types_Skill": "Skill",
+    "types_Item": "Item",
+    "types_Object": "Object",
+    "types_Group": "Group",
+    "types_Card": "Card",
+    "types_Hero": "Hero",
+    "types_Series": "Series",
+    "types_Tale": "Tale",
+    "types_Episode": "Episode",
+    "types_Default": "Default"
+  },
+  "page_documents": {
+    "actions_create_document_success_title": "",
+    "actions_create_document_success_description": "",
+    "actions_create_document_error_title": "",
+    "actions_create_document_error_description": "",
+    "actions_create_document_label": "Create Document",
+    "actions_create_document_modal_title": "Create Document",
+    "actions_create_document_modal_description": "Create a new Document.",
+    "actions_create_document_modal_fields_title_title": "Document Title",
+    "actions_create_document_modal_fields_title_placeholder": "Enter a title for your document",
+    "actions_create_document_modal_fields_slug_title": "Document Slug",
+    "actions_create_document_modal_fields_slug_placeholder": "document-slug",
+    "actions_create_document_modal_fields_slug_help": "The URL-friendly name of the document.",
+    "actions_create_document_modal_actions_cancel": "Cancel",
+    "actions_create_document_modal_actions_submit": "Create Document",
+    "meta_title": "Documents",
+    "meta_description": "View our formal documents, policies, and guidelines.",
+    "drafts_title": "Drafts",
+    "drafts_description": "These documents have currently not been published.",
+    "drafts_error_title": "Failed to load drafts",
+    "drafts_error_description": "Please check your connection and try again later.",
+    "drafts_empty_title": "No drafts yet.",
+    "drafts_empty_description": "Create your first document to get started.",
+    "drafts_empty_actions_create": "Create Document",
+    "drafts_load_more": "Load More",
+    "drafts_end_of_list": "You've reached the end of the drafts.",
+    "documents_title": "Documents",
+    "documents_description": "Our official documents and policies.",
+    "documents_error_title": "Failed to load documents",
+    "documents_error_description": "Please check your connection and try again later.",
+    "documents_empty_title": "No documents yet",
+    "documents_empty_description": "Create your first document to get started.",
+    "documents_empty_actions_create": "Create Document",
+    "documents_load_more": "Load More",
+    "documents_end_of_list": "You've reached the end of the documents."
+  },
+  "page_franchises_grand_tale": {
+    "home_sections_hero_title": "May the story never end!",
+    "home_sections_hero_description": "Grand Tale is the next generation open-world RPG from Rimelight Entertainment. Explore a living world shaped by player agency and emergent storytelling.",
+    "home_sections_hero_actions_playNow": "Play Now",
+    "home_sections_hero_actions_watchTrailer": "Watch Trailer",
+    "home_sections_overview_title": "About Grand Tale",
+    "home_sections_overview_description": "Grand Tale is a high-fantasy media franchise built around it's flagship game, the titular 'Grand Tale'.",
+    "home_sections_overview_actions_learnMore": "Learn More",
+    "about_meta_title": "About Grand Tale",
+    "about_sections_hero_title": "About Grand Tale",
+    "about_sections_hero_description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
+    "about_sections_hero_actions_learnMore": "Learn More",
+    "about_sections_story_title": "The story so far...",
+    "about_sections_story_description": ", where they find the Ohrn, a mysterious artifact with powers over life itself. the group set out to form the Grand Tale and live the greatest story ever told.",
+    "about_sections_features_title": "Features",
+    "about_sections_features_description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
+    "about_sections_specifications_title": "Specifications",
+    "about_sections_specifications_description": "Grand Tale is available for download in the following platforms.",
+    "about_sections_specifications_platforms_windows_label": "Windows",
+    "about_sections_specifications_platforms_windows_specs_0_label": "OS",
+    "about_sections_specifications_platforms_windows_specs_0_value": "Windows 10/11 64-bit",
+    "about_sections_specifications_platforms_windows_specs_1_label": "CPU",
+    "about_sections_specifications_platforms_windows_specs_1_value": "Intel Core i5-8400 / AMD Ryzen 5 2600",
+    "about_sections_specifications_platforms_windows_specs_2_label": "GPU",
+    "about_sections_specifications_platforms_windows_specs_2_value": "NVIDIA GeForce GTX 1060 6GB / AMD Radeon RX 580",
+    "about_sections_specifications_platforms_windows_specs_3_label": "RAM",
+    "about_sections_specifications_platforms_windows_specs_3_value": "16 GB",
+    "about_sections_specifications_platforms_windows_specs_4_label": "Storage",
+    "about_sections_specifications_platforms_windows_specs_4_value": "50 GB (SSD Recommended)",
+    "about_sections_specifications_platforms_android_label": "Android",
+    "about_sections_specifications_platforms_android_specs_0_label": "OS",
+    "about_sections_specifications_platforms_android_specs_0_value": "Android 10.0 or higher",
+    "about_sections_specifications_platforms_android_specs_1_label": "CPU",
+    "about_sections_specifications_platforms_android_specs_1_value": "Snapdragon 845 / Kirin 980 or better",
+    "about_sections_specifications_platforms_android_specs_2_label": "GPU",
+    "about_sections_specifications_platforms_android_specs_2_value": "Adreno 630 / Mali-G76 MP10 or better",
+    "about_sections_specifications_platforms_android_specs_3_label": "RAM",
+    "about_sections_specifications_platforms_android_specs_3_value": "8 GB",
+    "about_sections_specifications_platforms_android_specs_4_label": "Storage",
+    "about_sections_specifications_platforms_android_specs_4_value": "15 GB",
+    "about_sections_faq_title": "Frequently Asked Questions",
+    "about_sections_faq_description": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
+    "about_sections_faq_groups_general_title": "General",
+    "about_sections_faq_groups_general_q1_question": "What is Grand Tale?",
+    "about_sections_faq_groups_general_q1_answer": "Grand Tale is a high-fantasy social life-sim game which hosts sub-games of multiple genres. The game is set in a world where players can explore, create, and explore their own worlds. The game is a living, breathing world that respects your time and intelligence.",
+    "about_sections_faq_groups_general_q2_question": "When will Grand Tale be released?",
+    "about_sections_faq_groups_general_q2_answer": "Grand Tale is currently in active development. Stay tuned to our news section for release date announcements.",
+    "about_sections_faq_groups_general_q3_question": "On which platforms will Grand Tale be available?",
+    "about_sections_faq_groups_general_q3_answer": "We are targeting a multi-platform release including PC and major consoles.",
+    "about_sections_faq_groups_gameplay_title": "Gameplay",
+    "about_sections_faq_groups_gameplay_q1_question": "What can I do in Grand Tale?",
+    "about_sections_faq_groups_gameplay_q1_answer": "You can explore a vast open world, engage in various sub-games across different genres, build your own home, and socialize with players worldwide.",
+    "about_sections_faq_groups_gameplay_q2_question": "Is there a multiplayer mode?",
+    "about_sections_faq_groups_gameplay_q2_answer": "Yes! Grand Tale is a social experience at its core, featuring persistent multiplayer environments and collaborative activities.",
+    "about_sections_faq_groups_gameplay_q3_question": "Can I customize my character?",
+    "about_sections_faq_groups_gameplay_q3_answer": "Extensively. Our deep character creator allows you to define your look, while our progression system lets you define your playstyle.",
+    "about_sections_faq_groups_technical_title": "Technical",
+    "about_sections_faq_groups_technical_q1_question": "What are the system requirements?",
+    "about_sections_faq_groups_technical_q1_answer": "System requirements will be finalized closer to release. We aim to support a wide range of hardware.",
+    "about_sections_faq_groups_technical_q2_question": "Does Grand Tale support controllers?",
+    "about_sections_faq_groups_technical_q2_answer": "Yes, Grand Tale will feature full controller support on all platforms.",
+    "about_sections_faq_groups_technical_q3_question": "How do I report a bug?",
+    "about_sections_faq_groups_technical_q3_answer": "During our testing phases, you can report bugs through our official discord or the support section of our website.",
+    "about_sections_faq_footer": "Have a question that isn't covered in this FAQ? Check out our {link}.",
+    "wiki_sidebar_wiki": "Wiki",
+    "wiki_sidebar_getting_started": "Getting Started",
+    "wiki_sidebar_contribution_guide": "Contribution Guide",
+    "wiki_sidebar_game_title": "Game",
+    "wiki_sidebar_game_tales_title": "Tales",
+    "wiki_sidebar_game_tales_tale_mmo_title": "Tale MMO",
+    "wiki_sidebar_game_tales_tale_mmo_heroes": "Heroes",
+    "wiki_sidebar_game_tales_tale_moba": "Tale MOBA",
+    "wiki_sidebar_game_tales_tale_ccg_title": "Tale CCG",
+    "wiki_sidebar_game_tales_tale_ccg_cards": "Cards",
+    "wiki_sidebar_game_tales_tale_rts": "Tale RTS",
+    "wiki_sidebar_game_tales_tale_platform": "Tale Platformer",
+    "wiki_sidebar_game_tales_tale_chess": "Tale Chess",
+    "wiki_sidebar_game_tales_tale_td": "Tale TD",
+    "wiki_sidebar_game_items": "Items",
+    "wiki_sidebar_game_quests_title": "Quests",
+    "wiki_sidebar_game_quests_character_quest": "Character Quests",
+    "wiki_sidebar_game_quests_growth_quest": "Growth Quests",
+    "wiki_sidebar_game_quests_guide_quest": "Guide Quests",
+    "wiki_sidebar_game_quests_relationship_quest": "Relationship Quests",
+    "wiki_sidebar_game_quests_story_quest": "Story Quests",
+    "wiki_sidebar_game_skills_title": "Skills",
+    "wiki_sidebar_game_skills_alchemy": "Alchemy",
+    "wiki_sidebar_game_skills_archaeology": "Archaeology",
+    "wiki_sidebar_game_skills_artistry": "Artistry",
+    "wiki_sidebar_game_skills_crafting": "Crafting",
+    "wiki_sidebar_game_skills_cultivation": "Cultivation",
+    "wiki_sidebar_game_skills_foraging": "Foraging",
+    "wiki_sidebar_game_skills_runology": "Runology",
+    "wiki_sidebar_game_skills_seafaring": "Seafaring",
+    "wiki_sidebar_game_settings": "Settings",
+    "wiki_sidebar_series_title": "Series",
+    "wiki_sidebar_series_children_of_the_light": "Children of the Light",
+    "wiki_sidebar_series_grand_academy": "Grand Academy",
+    "wiki_sidebar_series_goldy_adventures": "Goldy Adventures",
+    "wiki_sidebar_lore_title": "Lore",
+    "wiki_sidebar_lore_timeline": "Timeline",
+    "wiki_sidebar_lore_characters": "Characters",
+    "wiki_sidebar_lore_locations": "Locations",
+    "wiki_sidebar_lore_species": "Species",
+    "wiki_sidebar_lore_objects": "Objects",
+    "wiki_sidebar_lore_groups": "Groups",
+    "wiki_sidebar_mechanics_systems": "Mechanics & Systems"
+  },
+  "page_forums": {
+    "rimelight_meta_title": "Rimelight Forums",
+    "rimelight_meta_description": "Join the Rimelight community discussions.",
+    "rimelight_welcome": "Welcome to the Rimelight Forums. Connect with fellow community members and discuss all things Rimelight.",
+    "grand-tale_meta_title": "Grand Tale Forums",
+    "grand-tale_meta_description": "Discuss Grand Tale with the community.",
+    "grand-tale_welcome": "Welcome to the Grand Tale Forums. Share strategies, stories, and connect with other players."
+  },
+  "page_events": {
+    "lightcon_meta_title": "Lightcon",
+    "lightcon_meta_description": "Join us at Lightcon, our annual community event.",
+    "lightcon_welcome": "Welcome to Lightcon! Join us for our annual community celebration featuring announcements, panels, and exclusive reveals."
+  },
+  "page_store": {
+    "meta_title": "Store",
+    "meta_description": "Shop for digital goods and merchandise.",
+    "header_cart": "Cart"
+  },
+  "auth_sign-in_email_help": {
+    "auth_sign-in_email_help": "Forgot your email?"
+  },
+  "auth_sign-in_password_help": {
+    "auth_sign-in_password_help": "Forgot your password?"
+  },
+  "auth_email_invalid": {
+    "auth_email_invalid": "Invalid email address."
+  },
+  "auth_password_min_length": {
+    "auth_password_min_length": "Password must be at least 8 characters long."
+  },
+  "auth_sign_in_failed_title": {
+    "auth_sign_in_failed_title": "Authentication Failed"
+  },
+  "auth_sign_in_success_title": {
+    "auth_sign_in_success_title": "Sign In successful."
+  },
+  "auth_sign_in_success_description": {
+    "auth_sign_in_success_description": "Welcome back {name}!"
+  },
+  "auth_connection_error_description": {
+    "auth_connection_error_description": "A network error occurred. Please try again later."
+  },
+  "auth_email_label": {
+    "auth_email_label": "Email"
+  },
+  "auth_email_description": {
+    "auth_email_description": "Enter your email address."
+  },
+  "auth_email_placeholder": {
+    "auth_email_placeholder": "email{'@'}example.com"
+  },
+  "auth_password_label": {
+    "auth_password_label": "Password"
+  },
+  "auth_password_description": {
+    "auth_password_description": "Enter your password."
+  },
+  "auth_remember_me": {
+    "auth_remember_me": "Remember Me"
+  },
+  "auth_sign_in_button": {
+    "auth_sign_in_button": "Sign In"
+  },
+  "auth_terms_agreement": {
+    "auth_terms_agreement": "By signing in, you agree to our"
+  },
+  "auth_terms_link": {
+    "auth_terms_link": "Terms of Service"
+  },
+  "auth_username_length_error": {
+    "auth_username_length_error": "Username must be between 2 and 24 characters long."
+  },
+  "auth_username_no_spaces": {
+    "auth_username_no_spaces": "Username cannot contain spaces."
+  },
+  "auth_username_format_error": {
+    "auth_username_format_error": "Username can only contain letters, numbers, periods (.), and underscores (_)."
+  },
+  "auth_username_restricted_error": {
+    "auth_username_restricted_error": "This username is not allowed."
+  },
+  "auth_firstname_length_error": {
+    "auth_firstname_length_error": "First name must be between 2 and 24 characters long."
+  },
+  "auth_lastname_length_error": {
+    "auth_lastname_length_error": "Last name must be between 2 and 24 characters long."
+  },
+  "auth_password_length_error": {
+    "auth_password_length_error": "Password must be between 8 and 24 characters long."
+  },
+  "auth_passwords_mismatch": {
+    "auth_passwords_mismatch": "Passwords do not match."
+  },
+  "auth_terms_required": {
+    "auth_terms_required": "You must agree to the terms of service."
+  },
+  "auth_password_req_length": {
+    "auth_password_req_length": "At least 8 characters"
+  },
+  "auth_password_req_number": {
+    "auth_password_req_number": "At least 1 number"
+  },
+  "auth_password_req_lowercase": {
+    "auth_password_req_lowercase": "At least 1 lowercase letter"
+  },
+  "auth_password_req_uppercase": {
+    "auth_password_req_uppercase": "At least 1 uppercase letter"
+  },
+  "auth_password_req_special": {
+    "auth_password_req_special": "At least 1 special character (e.g., !{'@'}#$%^&*)"
+  },
+  "auth_stepper_identity": {
+    "auth_stepper_identity": "Identity"
+  },
+  "auth_stepper_security": {
+    "auth_stepper_security": "Security"
+  },
+  "auth_stepper_preferences": {
+    "auth_stepper_preferences": "Preferences"
+  },
+  "auth_validation_error_title": {
+    "auth_validation_error_title": "Validation Error"
+  },
+  "auth_validation_error_description": {
+    "auth_validation_error_description": "Please correct the errors before proceeding."
+  },
+  "auth_account_creation_success_title": {
+    "auth_account_creation_success_title": "Account creation successful."
+  },
+  "auth_account_creation_success_description": {
+    "auth_account_creation_success_description": "Welcome!"
+  },
+  "auth_sign_up_failed_title": {
+    "auth_sign_up_failed_title": "Failed to sign up."
+  },
+  "auth_username_label": {
+    "auth_username_label": "Username"
+  },
+  "auth_firstname_label": {
+    "auth_firstname_label": "First Name"
+  },
+  "auth_lastname_label": {
+    "auth_lastname_label": "Last Name"
+  },
+  "auth_password_confirmation_label": {
+    "auth_password_confirmation_label": "Password Confirmation"
+  },
+  "auth_terms_agreement_signup": {
+    "auth_terms_agreement_signup": "I have read and agree to the"
+  },
+  "auth_newsletter_label": {
+    "auth_newsletter_label": "Subscribe to our Newsletter."
+  },
+  "auth_newsletter_description": {
+    "auth_newsletter_description": "Unsubscribe at any time."
+  },
+  "auth_sign_up_button": {
+    "auth_sign_up_button": "Sign Up"
+  },
+  "navigation_previous": {
+    "navigation_previous": "Previous"
+  },
+  "navigation_next": {
+    "navigation_next": "Next"
+  },
+  "modals": {
+    "assetManager_header_title": "Asset Manager",
+    "assetManager_header_description": "View and manage stored assets.",
+    "assetManager_toolbar_items_count": "{count} Items",
+    "assetManager_toolbar_selected_count": "{count} Selected",
+    "assetManager_empty_title": "No items found",
+    "assetManager_empty_description": "This location is currently empty.",
+    "assetManager_upload_dropzone_label": "Drag & Drop Here",
+    "assetManager_upload_dropzone_description": "Max: 5 GB",
+    "assetManager_upload_select_button": "Upload Files",
+    "assetManager_upload_add_asset_button": "Upload Asset",
+    "assetManager_item_folder_label": "Folder",
+    "assetManager_item_last_modified": "Last Modified: {date}",
+    "assetManager_item_copy_url": "Copy URL",
+    "assetManager_item_copy_url_success": "URL copied to clipboard!",
+    "assetManager_item_copy_url_failed": "Failed to copy URL to clipboard.",
+    "assetManager_actions_new_subfolder": "New Folder",
+    "newFolder_title": "New Folder",
+    "newFolder_description": "Organize your assets by creating a virtual directory",
+    "newFolder_label": "Entering a name for the folder in {path}:",
+    "newFolder_placeholder": "e.g. documentation",
+    "newFolder_cancel_button": "Cancel",
+    "newFolder_create_button": "Create Folder",
+    "move_title": "Move or Rename Asset",
+    "move_name_label": "New Name (Basename)",
+    "move_folder_label": "Target Folder",
+    "move_current_location": "Current location: {path}",
+    "move_cancel_button": "Cancel",
+    "move_move_button": "Move Asset",
+    "upload_title": "Confirm Upload",
+    "upload_filename_label": "Filename",
+    "upload_folder_label": "Upload to Folder",
+    "upload_multiple_files_warning_title": "Multiple File Upload",
+    "upload_multiple_files_warning_description": "Renaming is disabled for multiple files. Ensure files are named correctly before uploading, or rename them individually later.",
+    "upload_files_selected": "{count} files selected",
+    "upload_cancel_button": "Cancel",
+    "upload_upload_button": "Start Upload"
+  },
+  "swatch": {
+    "copy_hex": "Copy HEX",
+    "copy_rgb": "Copy RGB",
+    "copy_hsl": "Copy HSL",
+    "copy_oklch": "Copy OKLCH",
+    "copy_cmyk": "Copy CMYK",
+    "download_jpg": "Download JPG",
+    "download_png": "Download PNG",
+    "download_webp": "Download WEBP",
+    "download_svg": "Download SVG",
+    "color_copied": "Color copied to clipboard!",
+    "color_copy_failed": "Failed to copy color to clipboard.",
+    "copy_error_description": "An unexpected error occurred. Please try again."
+  },
+  "font_palette": {
+    "specimen": "Specimen",
+    "hierarchy": "Hierarchy",
+    "color": "Color",
+    "uppercase": "Uppercase",
+    "lowercase": "Lowercase",
+    "numbers": "Numbers",
+    "symbols": "Symbols",
+    "heading_1": "Heading 1",
+    "heading_2": "Heading 2",
+    "heading_3": "Heading 3",
+    "heading_4": "Heading 4",
+    "heading_5": "Heading 5",
+    "heading_6": "Heading 6"
+  },
+  "page_editor": {
+    "preview": "Preview",
+    "view_page": "View Page",
+    "save": "Save",
+    "publish": "Publish",
+    "publish_page": "Publish Page",
+    "publish_confirmation": "Are you sure you want to publish this page? This will make it visible to the public.",
+    "delete_page": "Delete Page",
+    "unsaved_changes_title": "Unsaved Changes",
+    "unsaved_changes_description": "You have unsaved changes. Are you sure you want to leave?",
+    "leave_anyway": "Leave Anyway",
+    "metadata": "Metadata",
+    "page_id": "Page ID",
+    "created_at": "Created At",
+    "posted_at": "Posted At",
+    "updated_at": "Updated At",
+    "add_block": "Add Block",
+    "search_blocks": "Search blocks...",
+    "no_blocks_found": "No blocks found matching your search.",
+    "unpublish_page": "",
+    "unpublish_confirmation": "",
+    "unpublish": "",
+    "add_banner": ""
+  },
+  "page_properties": {
+    "links": "Links",
+    "no_links": "No links added yet.",
+    "add_link": "Add Link",
+    "edit_link": "Edit Link",
+    "update_link": "Update Link",
+    "label": "Label",
+    "url": "URL (to)",
+    "icon": "Icon",
+    "color": "Color",
+    "variant": "Variant",
+    "page_template": "Page Template",
+    "title": "Title",
+    "slug": "Slug",
+    "create_and_edit": "Create & Edit",
+    "images": "",
+    "edit_image_title": "",
+    "image_name_title": "",
+    "image_name": "",
+    "image_name_placeholder": ""
+  },
+  "todo": {
+    "title": "To-do List",
+    "add_placeholder": "Add a to-do...",
+    "description_placeholder": "Add a description (optional)...",
+    "show_archive": "Show Archive",
+    "hide_archive": "Hide Archive",
+    "no_active": "No active to-dos."
+  },
+  "page_version": {
+    "failed_to_load": "Failed to load versions",
+    "approved_successfully": "Version approved successfully",
+    "failed_to_approve": "Failed to approve version",
+    "reverted_successfully": "Version reverted successfully",
+    "failed_to_revert": "Failed to revert version",
+    "rejected_successfully": "",
+    "failed_to_reject": ""
+  },
+  "label_image": {
+    "label_image": "Image"
+  },
+  "editor": {
+    "template_placeholder": "",
+    "delete_page_title": "",
+    "delete_confirm_label": "",
+    "delete_button": ""
+  },
+  "toast_save-post_success_title": {
+    "toast_save-post_success_title": ""
+  },
+  "toast_save-post_error_title": {
+    "toast_save-post_error_title": ""
+  },
+  "toast_publish_success": {
+    "toast_publish_success": ""
+  },
+  "toast_publish_error": {
+    "toast_publish_error": ""
+  },
+  "toast_unpublish_success": {
+    "toast_unpublish_success": ""
+  },
+  "toast_unpublish_error": {
+    "toast_unpublish_error": ""
+  },
+  "toast_delete_success": {
+    "toast_delete_success": ""
+  },
+  "toast_delete_error": {
+    "toast_delete_error": ""
   }
 }
