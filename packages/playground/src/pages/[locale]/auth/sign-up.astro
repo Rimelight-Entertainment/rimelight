@@ -30,7 +30,7 @@ const messages = useI18n('auth', {
 const result = Astro.getActionResult(actions.signUp)
 
 if (result && !result.error) {
-  return Astro.redirect(`/sign-in?new`)
+  return Astro.redirect(`/${activeLocale}/auth/sign-in?new`)
 }
 
 const inputErrors = isInputError(result?.error) ? result.error.fields : {}

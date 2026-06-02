@@ -5,6 +5,8 @@ import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.
 import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
+import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
+import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro";
 import type { NavigationMenuItem, LinkGroupProps, ButtonProps } from "@rimelight/ui/types";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { useI18n } from "astro-nanostores-i18n:runtime";
@@ -13,6 +15,11 @@ import placeholderGrandTale from "../../assets/images/placeholder_header_grand-t
 import placeholderCommunity from "../../assets/images/placeholder_header_community.jpg";
 import placeholderCompany from "../../assets/images/placeholder_header_company.jpg";
 import placeholderStore from "../../assets/images/placeholder_header_store.jpg";
+
+const { auth } = await import("@/auth/auth");
+const session = await auth.api.getSession({
+  headers: Astro.request.headers
+});
 
 const activeLocale = Astro.currentLocale ?? "en";
 
@@ -988,31 +995,154 @@ const storeAssistanceGroup: LinkGroupProps = {
 
     <div slot="right" class="flex items-center gap-md">
       <div class="hidden md:flex flex-row gap-md">
-        {actions.map((act) => (
-          <RLAButton {...act} />
-        ))}
+        {session ? (
+          <RLAPopover placement="bottom" class="relative group/popover">
+            <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
+              <div class="relative">
+                <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
+                <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
+                  session.user.availability === 'busy' ? 'bg-error-500' :
+                  session.user.availability === 'invisible' ? 'bg-neutral-500' :
+                  'bg-success-500'
+                }`} />
+              </div>
+              <span class="hidden md:inline text-sm font-medium">{session.user.name}</span>
+            </div>
+
+            <div class="flex flex-col gap-2 min-w-[240px] text-black dark:text-white">
+              <div class="flex items-center gap-sm pb-2 border-b border-border">
+                <RLAAvatar src={session.user.image} alt={session.user.name} size="md" />
+                <div class="flex flex-col">
+                  <span class="font-semibold text-sm">
+                    {session.user.name} <span class="text-xs text-neutral-400 font-mono">#{session.user.tag || '0000'}</span>
+                  </span>
+                  <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || messages["user_status_placeholder"]}</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-0.5">
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start"
+                  to={getRelativeLocaleUrl(activeLocale, '/dashboard')}
+                  leadingIcon="i-lucide-layout-dashboard"
+                  label={messages["user_dropdown_dashboard"]}
+                />
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start"
+                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/profile')}
+                  leadingIcon="i-lucide-user"
+                  label={messages["user_dropdown_profile"]}
+                />
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start"
+                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/settings')}
+                  leadingIcon="i-lucide-cog"
+                  label={messages["user_dropdown_settings"]}
+                />
+              </div>
+
+              <div class="border-t border-border my-1"></div>
+
+              <div class="flex flex-col">
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start text-error-500 hover:text-error-600"
+                  to={getRelativeLocaleUrl(activeLocale, '/auth/sign-out')}
+                  leadingIcon="i-lucide-log-out"
+                  label={messages["user_dropdown_sign-out"]}
+                />
+              </div>
+            </div>
+          </RLAPopover>
+        ) : (
+          actions.map((act) => (
+            <RLAButton {...act} />
+          ))
+        )}
       </div>
 
       <div class="block md:hidden">
-        <RLASlideover side="right" title="Actions">
+        <RLASlideover side="right" title={session ? "Profile" : "Actions"}>
           <RLAButton
             slot="trigger"
             color="neutral"
             variant="ghost"
             rounded={true}
-            leadingIcon="i-lucide-ellipsis-vertical"
+            leadingIcon={session ? "i-lucide-user" : "i-lucide-ellipsis-vertical"}
             class="!text-white"
             theme="dark"
             aria-label="Open Actions"
           />
 
           <div class="flex flex-col gap-md">
-            {actions.map((act) => (
-              <RLAButton {...act} block={true} />
-            ))}
+            {session ? (
+              <div class="flex flex-col gap-md text-black dark:text-white">
+                <div class="flex items-center gap-sm pb-2 border-b border-border">
+                  <RLAAvatar src={session.user.image} alt={session.user.name} size="md" />
+                  <div class="flex flex-col">
+                    <span class="font-semibold text-sm">
+                      {session.user.name} <span class="text-xs text-neutral-400 font-mono">#{session.user.tag || '0000'}</span>
+                    </span>
+                    <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || messages["user_status_placeholder"]}</span>
+                  </div>
+                </div>
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start"
+                  to={getRelativeLocaleUrl(activeLocale, '/dashboard')}
+                  leadingIcon="i-lucide-layout-dashboard"
+                  label={messages["user_dropdown_dashboard"]}
+                />
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start"
+                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/profile')}
+                  leadingIcon="i-lucide-user"
+                  label={messages["user_dropdown_profile"]}
+                />
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start"
+                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/settings')}
+                  leadingIcon="i-lucide-cog"
+                  label={messages["user_dropdown_settings"]}
+                />
+                <div class="border-t border-border my-1"></div>
+                <RLAButton
+                  color="neutral"
+                  variant="ghost"
+                  block={true}
+                  class="!justify-start text-error-500 hover:text-error-600"
+                  to={getRelativeLocaleUrl(activeLocale, '/auth/sign-out')}
+                  leadingIcon="i-lucide-log-out"
+                  label={messages["user_dropdown_sign-out"]}
+                />
+              </div>
+            ) : (
+              actions.map((act) => (
+                <RLAButton {...act} block={true} />
+              ))
+            )}
           </div>
         </RLASlideover>
-    </div>
+      </div>
 	</div>
 </RLAHeader>
 
