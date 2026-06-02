@@ -5,7 +5,7 @@ import PageLiveView from '@/components/article/views/PageLiveView.vue';
 const { slug } = Astro.params;
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
 const user = Astro.locals.user;
-const canEdit = user?.role === 'owner' || user?.role === 'admin';
+const canEdit = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
 ---
 
 <WikiLayout title="Wiki Page | Grand Tale Wiki">

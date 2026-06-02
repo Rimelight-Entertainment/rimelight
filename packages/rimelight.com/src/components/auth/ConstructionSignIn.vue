@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import {
-  RLVForm as Form,
-  RLVFormField as FormField,
-  RLVInput as Input,
-  RLVButton as Button,
-  RLVCheckbox as Checkbox
-} from "@rimelight/ui/components/vue"
-import RLVCard from "@rimelight/ui/components/vue/RLVPlaceholder.vue" // Using Placeholder as Card is missing in Vue or RLVPlaceholder might be appropriate if it's used for that. Wait, let me check if there's a better alternative for Card.
+import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import RLVCard from "@rimelight/ui/components/vue/RLVPlaceholder.vue"
 import { reactive, ref } from "vue"
 import { z } from "astro/zod"
 
@@ -38,35 +36,29 @@ function getRedirectParam(): string {
 async function onSubmit(event: { data: Schema }) {
   isLoading.value = true
   error.value = ""
-
   const { authClient } = await import("@/auth/auth-client")
-
   const { error: signInError } = await authClient.signIn.email({
     email: event.data.email,
     password: event.data.password,
     rememberMe: event.data.rememberMe
   })
-
   isLoading.value = false
-
   if (signInError) {
     error.value = signInError.message || "Something went wrong"
     return
   }
-
   window.location.href = getRedirectParam()
 }
 </script>
 
 <template>
   <template v-if="allowAuth">
-    <Card class="bg-black">
+    <RLVCard class="bg-black">
       <div class="flex flex-col gap-4">
         <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
-
-        <Form :schema="schema" :state="state" @submit="onSubmit">
+        <RLVForm :schema="schema" :state="state" @submit="onSubmit">
           <div class="flex flex-col gap-4">
-            <FormField
+            <RLVFormField
               name="email"
               label="E-mail"
               required
@@ -75,15 +67,14 @@ async function onSubmit(event: { data: Schema }) {
                 description: 'text-neutral-500'
               }"
             >
-              <Input
+              <RLVInput
                 v-model="state.email"
                 type="email"
                 placeholder="your@email.com"
                 class="w-full"
               />
-            </FormField>
-
-            <FormField
+            </RLVFormField>
+            <RLVFormField
               name="password"
               label="Password"
               required
@@ -92,15 +83,14 @@ async function onSubmit(event: { data: Schema }) {
                 description: 'text-neutral-500'
               }"
             >
-              <Input
+              <RLVInput
                 v-model="state.password"
                 type="password"
-                placeholder="••••••••"
+                placeholder=""
                 class="w-full"
               />
-            </FormField>
-
-            <Checkbox
+            </RLVFormField>
+            <RLVCheckbox
               v-model="state.rememberMe"
               name="rememberMe"
               label="Remember me"
@@ -109,8 +99,7 @@ async function onSubmit(event: { data: Schema }) {
                 indicator: 'data-[state=checked]:bg-primary-500 data-[state=checked]:text-white'
               }"
             />
-
-            <Button
+            <RLVButton
               type="submit"
               color="primary"
               variant="solid"
@@ -120,11 +109,11 @@ async function onSubmit(event: { data: Schema }) {
               class="text-white bg-primary-500 hover:bg-primary-600"
             >
               Sign In
-            </Button>
+            </RLVButton>
           </div>
-        </Form>
+        </RLVForm>
       </div>
-    </Card>
+    </RLVCard>
   </template>
   <p v-else class="text-neutral-400">Please return at a later stage.</p>
 </template>

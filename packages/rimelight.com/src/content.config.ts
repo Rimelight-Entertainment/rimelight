@@ -37,7 +37,12 @@ const docs = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
-    description: z.string().optional()
+    description: z.string().optional(),
+    editUrl: z.string().optional(),
+    tableOfContents: z.union([
+      z.object({ minHeadingLevel: z.number(), maxHeadingLevel: z.number() }),
+      z.literal(false)
+    ]).optional()
   })
 })
 

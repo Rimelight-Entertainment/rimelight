@@ -1,13 +1,11 @@
 ---
 import NotesLayout from '@/layouts/NotesLayout.astro';
 import NotesTrashContainer from '@/components/dashboard/notes/NotesTrashContainer.vue';
-import { getRelativeLocaleUrl } from 'astro:i18n';
 
-const activeLocale = Astro.currentLocale ?? 'en';
 const user = Astro.locals.user;
 
 if (!user) {
-	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);
 }
 ---
 

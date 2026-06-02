@@ -12,7 +12,7 @@ const activeLocale = Astro.currentLocale ?? 'en';
 
 // Auth / permission check
 const user = Astro.locals.user;
-if (!user || !['admin', 'owner'].includes(user.role || '')) {
+if (!user || !['admin', 'owner'].includes((user as { role?: string }).role || '')) {
 	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/dashboard'));
 }
 

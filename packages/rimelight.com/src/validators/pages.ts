@@ -1,7 +1,7 @@
 import { z } from "astro/zod"
 
 const BaseRules = z.object({
-  id: z.string().uuid()
+  id: z.uuid()
 })
 
 const fields = Object.keys(BaseRules.shape) as [keyof typeof BaseRules.shape]
@@ -18,12 +18,12 @@ export const ListRules = z.object({
 })
 
 export const ReadRules = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   include: z.enum(fields).optional()
 })
 
 export const UpdateRules = BaseRules
 
 export const DeleteRules = z.object({
-  id: z.string().uuid()
+  id: z.uuid()
 })

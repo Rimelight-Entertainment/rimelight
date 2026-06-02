@@ -75,14 +75,14 @@ const heroLinks = [
 
 const ctaLinks = [
   {
-    label: messages.ctaActionsCreateAccount,
+    label: messages.home_ctaActionsCreateAccount,
     href: getRelativeLocaleUrl(currentLocale, "/auth/sign-up"),
     color: "blurple" as const,
     variant: "solid" as const,
     class: "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
   },
   {
-    label: messages.ctaActionsExploreCareers,
+    label: messages.home_ctaActionsExploreCareers,
     href: getRelativeLocaleUrl(currentLocale, "/company/careers"),
     color: "neutral" as const,
     variant: "outline" as const,
@@ -194,13 +194,13 @@ const ctaLinks = [
             <div class="absolute inset-0 p-lg flex flex-col gap-sm justify-end z-10">
               <div class="flex gap-sm">
                 <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                  {messages.projectsTagsFranchise}
+                  {messages.home_projectsTagsFranchise}
                 </span>
                 <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                  {messages.projectsTagsFantasy}
+                  {messages.home_projectsTagsFantasy}
                 </span>
                 <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                  {messages.projectsTagsSocial}
+                  {messages.home_projectsTagsSocial}
                 </span>
               </div>
 
@@ -209,11 +209,11 @@ const ctaLinks = [
               </h3>
 
               <p class="text-neutral-300 text-sm mt-1 leading-relaxed">
-                {messages.projectsContentGrandTaleDescription}
+                {messages.home_projectsContentGrandTaleDescription}
               </p>
 
               <div class="flex items-center text-primary-400 font-bold uppercase tracking-widest text-xs mt-4 group-hover:text-primary-300 transition-colors">
-                <span>{messages.projectsActionsDiscover}</span>
+                <span>{messages.home_projectsActionsDiscover}</span>
                 <svg class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1.5 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
@@ -226,8 +226,8 @@ const ctaLinks = [
 
     <RLAPageSection
         orientation="vertical"
-        title={messages.newsTitle}
-        description={messages.newsDescription}
+        title={messages.home_newsTitle}
+        description={messages.home_newsDescription}
         class="w-full relative z-10 py-24 bg-neutral-950 border-t border-neutral-900"
         ui={{
           title: "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
@@ -262,7 +262,7 @@ const ctaLinks = [
         {latestPosts.length > 0 && (
             <div class="flex justify-center mt-14">
               <RLAButton
-                  label={messages.newsActionsViewAll}
+                  label={messages.home_newsActionsViewAll}
                   href={getRelativeLocaleUrl(currentLocale, "/blog")}
                   color="primary"
                   variant="link"
@@ -277,8 +277,8 @@ const ctaLinks = [
     <RLAPageSection
         variant="cta"
         ctaVariant="solid"
-        title={messages.ctaTitle}
-        description={messages.ctaDescription}
+        title={messages.home_ctaTitle}
+        description={messages.home_ctaDescription}
         links={ctaLinks}
         class="w-full relative z-10 py-24 bg-black border-t border-neutral-900 rounded-none overflow-hidden"
         ui={{

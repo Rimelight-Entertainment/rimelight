@@ -1,6 +1,5 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useI18n, currentLocale } from 'astro-nanostores-i18n:runtime';
 
 const activeLocale = Astro.currentLocale ?? 'en';
@@ -8,7 +7,7 @@ currentLocale.set(activeLocale);
 
 const user = Astro.locals.user;
 if (!user) {
-	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+	return Astro.redirect(`/${activeLocale}/auth/sign-in`);
 }
 
 const messages = useI18n('page_dashboard_home', {

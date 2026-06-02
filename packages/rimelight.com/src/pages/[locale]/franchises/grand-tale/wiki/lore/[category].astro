@@ -33,7 +33,7 @@ let pages = [];
 try {
 	const res = await fetch(new URL(`/api/pages?type=${pageType}&status=published&limit=1000&orderBy=title&order=asc`, Astro.url.origin).toString());
 	if (res.ok) {
-		pages = await res.json();
+		pages = await res.json() as any[];
 	}
 } catch (e) {
 	// Fallback mock pages if api fails

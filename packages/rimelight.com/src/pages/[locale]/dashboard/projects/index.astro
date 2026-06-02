@@ -1,7 +1,6 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import CreateBoardModal from '@/components/dashboard/projects/CreateBoardModal.vue';
-import RLAButton from '@rimelight/ui/components/astro/RLAButton.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const activeLocale = Astro.currentLocale ?? 'en';
@@ -18,7 +17,7 @@ try {
 		headers: Astro.request.headers
 	});
 	if (res.ok) {
-		boards = await res.json();
+		boards = await res.json() as any[];
 	}
 } catch (e) {
 	console.error('Failed to fetch boards on server:', e);
@@ -94,7 +93,6 @@ try {
 
 	<script>
 		// Handle opening Create Board modal client-side
-		const modal = document.getElementById('create-board-modal');
 		const btns = [
 			document.getElementById('open-create-board-btn'),
 			document.getElementById('open-create-board-btn-empty')
