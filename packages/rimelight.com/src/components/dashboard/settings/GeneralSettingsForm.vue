@@ -32,19 +32,21 @@ function onFileClick() {
 
 <template>
   <form @submit="onSubmit" class="space-y-6">
-    <div class="flex flex-col gap-2 p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
+    <div
+      class="flex flex-col gap-2 p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+    >
       <div class="flex justify-between items-center">
         <div>
           <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Profile</h3>
           <p class="text-xs text-neutral-500">This information will be displayed publicly.</p>
         </div>
-        <RLVButton type="submit" color="primary">
-          Save changes
-        </RLVButton>
+        <RLVButton type="submit" color="primary"> Save changes </RLVButton>
       </div>
     </div>
 
-    <div class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4">
+    <div
+      class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4"
+    >
       <RLVFormField
         label="Name"
         description="Will appear on receipts, invoices, and other communication."
@@ -75,13 +77,17 @@ function onFileClick() {
 
       <div class="h-[1px] bg-neutral-200 dark:bg-neutral-800 my-4" />
 
-      <RLVFormField
-        label="Avatar"
-        description="JPG, GIF or PNG. 1MB Max."
-      >
+      <RLVFormField label="Avatar" description="JPG, GIF or PNG. 1MB Max.">
         <div class="flex flex-wrap items-center gap-3 mt-2">
-          <div class="size-16 rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 flex items-center justify-center">
-            <img v-if="profile.avatar" :src="profile.avatar" alt="Avatar" class="size-full object-cover" />
+          <div
+            class="size-16 rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 flex items-center justify-center"
+          >
+            <img
+              v-if="profile.avatar"
+              :src="profile.avatar"
+              alt="Avatar"
+              class="size-full object-cover"
+            />
             <span v-else class="i-lucide-user size-8 text-neutral-400" />
           </div>
           <RLVButton type="button" color="neutral" variant="soft" @click="onFileClick">

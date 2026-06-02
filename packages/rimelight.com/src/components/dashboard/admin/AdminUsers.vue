@@ -37,7 +37,7 @@ async function fetchOrgs() {
   loadingOrgs.value = true
   try {
     const res = await fetch("/api/admin/organizations")
-    organizations.value = await res.json() as Organization[]
+    organizations.value = (await res.json()) as Organization[]
   } catch (e) {
     console.error(e)
   } finally {
@@ -58,7 +58,7 @@ async function fetchUsers() {
     const res = await fetch(`/api/admin/users?${query.toString()}`)
     const data = await res.json()
     // Support either direct array or { users: User[] }
-    users.value = Array.isArray(data) ? data : (data.users || [])
+    users.value = Array.isArray(data) ? data : data.users || []
   } catch (e) {
     console.error(e)
   } finally {
@@ -123,7 +123,9 @@ async function impersonateUser(userId: string) {
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
         <h2 class="text-xl font-bold text-neutral-900 dark:text-white">Users</h2>
-        <p class="text-xs text-neutral-500">Manage site users, membership, status, and permissions.</p>
+        <p class="text-xs text-neutral-500">
+          Manage site users, membership, status, and permissions.
+        </p>
       </div>
 
       <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
@@ -147,7 +149,10 @@ async function impersonateUser(userId: string) {
     </div>
 
     <!-- Ban Modal -->
-    <div v-if="isBanModalOpen" class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl max-w-md">
+    <div
+      v-if="isBanModalOpen"
+      class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl max-w-md"
+    >
       <h3 class="font-bold text-md mb-1 text-neutral-900 dark:text-white">Ban User</h3>
       <p class="text-xs text-neutral-500 mb-4">Prevent this user from accessing the platform.</p>
       <form @submit.prevent="banUser" class="space-y-4">
@@ -162,13 +167,17 @@ async function impersonateUser(userId: string) {
         </RLVFormField>
         <div class="flex gap-2">
           <RLVButton type="submit" color="error">Ban User</RLVButton>
-          <RLVButton type="button" color="neutral" variant="soft" @click="isBanModalOpen = false">Cancel</RLVButton>
+          <RLVButton type="button" color="neutral" variant="soft" @click="isBanModalOpen = false"
+            >Cancel</RLVButton
+          >
         </div>
       </form>
     </div>
 
     <!-- Users Table -->
-    <div class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden">
+    <div
+      class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden"
+    >
       <div v-if="loadingUsers || loadingOrgs" class="p-8 text-center text-sm text-neutral-500">
         Loading users...
       </div>
@@ -177,7 +186,9 @@ async function impersonateUser(userId: string) {
       </div>
       <table v-else class="w-full border-collapse text-left text-sm">
         <thead>
-          <tr class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider">
+          <tr
+            class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider"
+          >
             <th class="p-4">User</th>
             <th class="p-4">System Role</th>
             <th class="p-4">Status</th>
@@ -185,9 +196,15 @@ async function impersonateUser(userId: string) {
           </tr>
         </thead>
         <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800">
-          <tr v-for="u in users" :key="u.id" class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors">
+          <tr
+            v-for="u in users"
+            :key="u.id"
+            class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors"
+          >
             <td class="p-4 flex items-center gap-3">
-              <div class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-855">
+              <div
+                class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-855"
+              >
                 <img v-if="u.image" :src="u.image" :alt="u.name" class="size-full object-cover" />
                 <span v-else class="i-lucide-user size-4 text-neutral-400" />
               </div>
@@ -197,23 +214,52 @@ async function impersonateUser(userId: string) {
               </div>
             </td>
             <td class="p-4">
-              <span class="px-2.5 py-0.5 text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-md capitalize">
-                {{ u.role || 'user' }}
+              <span
+                class="px-2.5 py-0.5 text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-md capitalize"
+              >
+                {{ u.role || "user" }}
               </span>
             </td>
             <td class="p-4">
-              <span :class="[u.banned ? 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400' : 'bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400', 'px-2.5 py-0.5 text-xs font-bold rounded-md']">
-                {{ u.banned ? 'Banned' : 'Active' }}
+              <span
+                :class="[
+                  u.banned
+                    ? 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400'
+                    : 'bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400',
+                  'px-2.5 py-0.5 text-xs font-bold rounded-md'
+                ]"
+              >
+                {{ u.banned ? "Banned" : "Active" }}
               </span>
             </td>
             <td class="p-4 text-right flex justify-end gap-1.5">
-              <RLVButton color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" title="Impersonate" @click="impersonateUser(u.id)">
+              <RLVButton
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Impersonate"
+                @click="impersonateUser(u.id)"
+              >
                 <span class="i-lucide-user-round-search size-4" />
               </RLVButton>
-              <RLVButton v-if="u.banned" color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" title="Unban" @click="unbanUser(u.id)">
+              <RLVButton
+                v-if="u.banned"
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Unban"
+                @click="unbanUser(u.id)"
+              >
                 <span class="i-lucide-lock-open size-4 text-green-600" />
               </RLVButton>
-              <RLVButton v-else color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" title="Ban" @click="openBanModal(u)">
+              <RLVButton
+                v-else
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Ban"
+                @click="openBanModal(u)"
+              >
                 <span class="i-lucide-ban size-4 text-red-500" />
               </RLVButton>
             </td>

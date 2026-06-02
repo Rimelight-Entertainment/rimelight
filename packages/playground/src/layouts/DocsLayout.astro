@@ -15,13 +15,16 @@ interface Props {
   description?: string | undefined;
   headings?: { depth: number; slug: string; text: string }[];
   /** Per-page TOC override (from frontmatter) */
-  tableOfContents?: false | TableOfContentsConfig;
+  tableOfContents?: false | TableOfContentsConfig | undefined;
   /** GitHub edit URL for this page (false = hide, string = full URL) */
   editUrl?: string | false | undefined;
-  rawMarkdown?: string;
+  rawMarkdown?: string | undefined;
+  /** Override the prev/next surround navigation */
+  prevOverride?: { label: string; href: string } | null | undefined;
+  nextOverride?: { label: string; href: string } | null | undefined;
 }
 
-const { title, description = "", headings = [], tableOfContents: tocOverride, editUrl, rawMarkdown } = Astro.props;
+const { title, description = "", headings = [], tableOfContents: tocOverride, editUrl, rawMarkdown, prevOverride = null, nextOverride = null } = Astro.props;
 
 const locale = Astro.currentLocale ?? "en";
 const currentPath = Astro.url.pathname;
@@ -70,7 +73,7 @@ const messages = useI18n("docs", {
 
 const t = (key: string | undefined) => {
   if (!key) return "";
-  return messages[key] || key;
+  return (messages as Record<string, string>)[key] || key;
 };
 
 const { items: sidebarItems, scopes, activeScope } = await getDocsSidebar(
@@ -78,7 +81,9 @@ const { items: sidebarItems, scopes, activeScope } = await getDocsSidebar(
   locale,
   currentPath
 );
-const { prev, next } = getSurroundItems(sidebarItems, currentPath);
+const surround = getSurroundItems(sidebarItems, currentPath);
+const prev = prevOverride ?? surround.prev;
+const next = nextOverride ?? surround.next;
 
 // Resolve TOC config: per-page overrides site default
 const globalToc = docsConfig.tableOfContents ?? { minHeadingLevel: 2, maxHeadingLevel: 3 };
@@ -241,7 +246,7 @@ const tocHeadings = hasToc
       <article class="markdown-content prose max-w-none prose-base dark:prose-invert">
         <slot />
       </article>
-      <RLASurround prev={prev as any} next={next as any} />
+      <RLASurround prev={prev ?? null} next={next ?? null} />
 
       {/* Edit link */}
       {resolvedEditUrl && (

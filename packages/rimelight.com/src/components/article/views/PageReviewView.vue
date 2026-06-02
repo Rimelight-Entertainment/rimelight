@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
 import type { Page, PageVersion, PageDefinition } from "~/types/pages"
-import { convertVersionToPage, syncPageWithDefinition, getPageResolutionPath, getLocalizedContent } from "~/utils/page"
+import {
+  convertVersionToPage,
+  syncPageWithDefinition,
+  getPageResolutionPath,
+  getLocalizedContent
+} from "~/utils/page"
 import { usePageRegistry, useRC } from "~/composables"
 import { useI18n } from "~/composables/app/useI18n"
 import PageRenderer from "../PageRenderer.vue"
@@ -216,13 +221,18 @@ defineOptions({
     <span class="i-lucide-loader-2 size-12 animate-spin text-neutral-400" />
   </div>
 
-  <div v-else-if="pageStatus === 'error' || versionStatus === 'error' || !localPage" class="p-8 text-center">
+  <div
+    v-else-if="pageStatus === 'error' || versionStatus === 'error' || !localPage"
+    class="p-8 text-center"
+  >
     <h3 class="text-lg font-bold text-red-600">Version Not Found</h3>
     <p class="text-neutral-500 mt-2">The requested page version could not be located.</p>
   </div>
 
   <template v-else>
-    <div class="h-12 w-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-between px-4 border-b border-default">
+    <div
+      class="h-12 w-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-between px-4 border-b border-default"
+    >
       <div class="flex items-center gap-2">
         <span class="text-xs text-neutral-500 font-medium">
           Reviewing:
@@ -288,12 +298,16 @@ defineOptions({
           />
         </template>
         <template v-else-if="versionId && versionData?.status === 'approved'">
-          <span class="text-xs bg-green-500/10 text-green-600 px-2.5 py-1 rounded-md font-medium border border-green-500/20">
+          <span
+            class="text-xs bg-green-500/10 text-green-600 px-2.5 py-1 rounded-md font-medium border border-green-500/20"
+          >
             Version Already Approved
           </span>
         </template>
         <template v-else-if="versionId && versionData?.status === 'rejected'">
-          <span class="text-xs bg-red-500/10 text-red-600 px-2.5 py-1 rounded-md font-medium border border-red-500/20">
+          <span
+            class="text-xs bg-red-500/10 text-red-600 px-2.5 py-1 rounded-md font-medium border border-red-500/20"
+          >
             Version Rejected
           </span>
         </template>
@@ -302,10 +316,7 @@ defineOptions({
 
     <div class="flex w-full min-h-0">
       <!-- Left Column (Revision) -->
-      <div
-        :style="{ width: showCompare ? `${leftWidth}%` : '100%' }"
-        class="overflow-y-auto"
-      >
+      <div :style="{ width: showCompare ? `${leftWidth}%` : '100%' }" class="overflow-y-auto">
         <PageRenderer
           v-if="localPage"
           :key="versionId || 'live'"

@@ -26,7 +26,7 @@ const {
 async function fetchArchivedNotes() {
   try {
     const res = await fetch("/api/notes?archived=true")
-    notes.value = await res.json() as Note[]
+    notes.value = (await res.json()) as Note[]
   } catch (e) {
     console.error(e)
   }
@@ -43,8 +43,13 @@ watch(noteRefreshTrigger, () => {
 
 <template>
   <div class="space-y-6">
-    <div v-if="selectedIds.length > 0" class="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900 p-4 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
-      <span class="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{{ selectedIds.length }} selected</span>
+    <div
+      v-if="selectedIds.length > 0"
+      class="flex justify-between items-center bg-neutral-50 dark:bg-neutral-900 p-4 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+    >
+      <span class="text-sm font-semibold text-neutral-800 dark:text-neutral-200"
+        >{{ selectedIds.length }} selected</span
+      >
       <div class="flex gap-2">
         <RLVButton color="neutral" size="sm" @click="executeBatchAction('restore')">
           Restore
@@ -58,7 +63,10 @@ watch(noteRefreshTrigger, () => {
       </div>
     </div>
 
-    <div v-if="!notes.length" class="p-8 text-center text-sm text-neutral-500 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl">
+    <div
+      v-if="!notes.length"
+      class="p-8 text-center text-sm text-neutral-500 border border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl"
+    >
       Archive is empty.
     </div>
 

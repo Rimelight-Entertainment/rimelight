@@ -54,7 +54,8 @@ const pageTreeModalStyles = scv({
     footerClass: "flex justify-end gap-2 p-4 border-t border-default",
     loadingWrapper: "p-4 flex justify-center items-center py-12",
     emptyWrapper: "p-4 text-center text-neutral-500 py-12",
-    itemWrapper: "flex items-center gap-2 py-1.5 w-full hover:bg-neutral-50 dark:hover:bg-neutral-800/50 px-2 rounded-md transition cursor-pointer text-left",
+    itemWrapper:
+      "flex items-center gap-2 py-1.5 w-full hover:bg-neutral-50 dark:hover:bg-neutral-800/50 px-2 rounded-md transition cursor-pointer text-left",
     itemLabel: "text-sm",
     arrowIcon: "w-4 h-4 text-neutral-400 shrink-0"
   }
@@ -87,7 +88,7 @@ const treeItems = computed<TreeItem[]>(() => {
   const getNode = (path: string, partLabel: string, pageObj?: Pick<Page, "title" | "slug">) => {
     if (!nodeMap.has(path)) {
       const label = pageObj
-        ? (getLocalizedContent(pageObj.title, locale.value) || partLabel)
+        ? getLocalizedContent(pageObj.title, locale.value) || partLabel
         : partLabel.charAt(0).toUpperCase() + partLabel.slice(1)
 
       const newNode: TreeItem = {
@@ -238,7 +239,10 @@ defineOptions({
             <button :class="styles.itemWrapper" @click="handleSelect(item)">
               <span
                 v-if="item.children && item.children.length > 0"
-                :class="[isExpanded(item) ? 'i-lucide-chevron-down' : 'i-lucide-chevron-right', styles.arrowIcon]"
+                :class="[
+                  isExpanded(item) ? 'i-lucide-chevron-down' : 'i-lucide-chevron-right',
+                  styles.arrowIcon
+                ]"
               />
               <span v-else class="w-4 shrink-0" />
               <span v-if="item.icon" :class="[item.icon, 'size-4 shrink-0 opacity-60']" />
@@ -255,7 +259,10 @@ defineOptions({
             </button>
 
             <!-- Children panel -->
-            <div v-if="item.children && item.children.length > 0 && isExpanded(item)" class="pl-4 border-l border-default ml-4 space-y-1">
+            <div
+              v-if="item.children && item.children.length > 0 && isExpanded(item)"
+              class="pl-4 border-l border-default ml-4 space-y-1"
+            >
               <button
                 v-for="sub in item.children"
                 :key="sub.path"
@@ -280,7 +287,12 @@ defineOptions({
       </div>
 
       <div :class="styles.footerClass">
-        <RLVButton color="neutral" variant="ghost" :label="t('common.close', 'Close')" @click="open = false" />
+        <RLVButton
+          color="neutral"
+          variant="ghost"
+          :label="t('common.close', 'Close')"
+          @click="open = false"
+        />
       </div>
     </div>
   </div>

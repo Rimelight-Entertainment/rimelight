@@ -3,6 +3,8 @@ import AppLayout from "./AppLayout.astro";
 import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
 import TableOfContents from "@rimelight/ui/components/TableOfContents.astro";
 import RLASurround from "@/components/docs/RLASurround.astro";
+import RLACopyMarkdown from "@rimelight/ui/components/astro/RLACopyMarkdown.astro";
+import RLAShare from "@rimelight/ui/components/astro/RLAShare.astro";
 import RLABadge from "@rimelight/ui/components/astro/RLABadge.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/ui/utils";
 import type { ResolvedSidebarItem } from "@rimelight/ui/utils";
@@ -63,9 +65,10 @@ interface Props {
   /** Override the prev/next surround navigation */
   prevOverride?: { label: string; href: string } | null | undefined;
   nextOverride?: { label: string; href: string } | null | undefined;
+  rawMarkdown?: string | undefined;
 }
 
-const { title, description = "", headings = [], tableOfContents: tocOverride, editUrl, prevOverride = null, nextOverride = null } = Astro.props;
+const { title, description = "", headings = [], tableOfContents: tocOverride, editUrl, prevOverride = null, nextOverride = null, rawMarkdown } = Astro.props;
 
 const locale = Astro.currentLocale ?? "en";
 const currentPath = Astro.url.pathname;
@@ -299,6 +302,10 @@ const tocHeadings = hasToc
       <div class="border-b border-border pb-4 mb-6">
         <h1 class="text-3xl font-extrabold text-foreground tracking-tight">{title}</h1>
         {description && <p class="mt-2 text-base text-muted-foreground">{description}</p>}
+        <div class="flex gap-2 items-center justify-end my-4">
+          {rawMarkdown && <RLACopyMarkdown raw={rawMarkdown} />}
+          <RLAShare />
+        </div>
       </div>
       <article class="markdown-content prose max-w-none prose-base dark:prose-invert">
         <slot />

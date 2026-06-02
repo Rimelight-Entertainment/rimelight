@@ -35,26 +35,33 @@ const { rc } = useRC("PagePropertiesEditor", rcProp)
 /* region Styles */
 const pagePropertiesEditorStyles = scv({
   slots: {
-    asideClass: "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
+    asideClass:
+      "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
     iconClass: "rounded-full w-12 h-12 object-cover border border-default shadow-sm",
     titleInputClass: "w-full",
     typeClass: "text-xs text-dimmed uppercase tracking-wider text-center block mt-1",
     tagsClass: "flex flex-row flex-wrap gap-1 justify-center mt-2",
     imageClass: "w-full object-cover rounded-lg border border-default shadow-sm mt-4",
-    groupButtonClass: "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
-    detailsClass: "p-3 flex flex-col gap-3 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
+    groupButtonClass:
+      "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
+    detailsClass:
+      "p-3 flex flex-col gap-3 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
     fieldClass: "w-full",
     linksClass: "flex flex-col gap-2 mt-4 pt-4 border-t border-default",
     headerContent: "flex flex-col gap-2 items-center text-center",
-    slugInput: "w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity text-center text-xs font-mono bg-neutral-100 dark:bg-neutral-800/80 px-2 py-1 rounded border border-default",
+    slugInput:
+      "w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity text-center text-xs font-mono bg-neutral-100 dark:bg-neutral-800/80 px-2 py-1 rounded border border-default",
     linksHeader: "flex items-center justify-between mb-2",
     linksTitle: "text-xs font-bold uppercase tracking-wider text-dimmed",
     linksWrapper: "flex flex-col gap-2",
-    linkItem: "flex items-center justify-between p-2 rounded-lg border border-default bg-white dark:bg-neutral-900",
+    linkItem:
+      "flex items-center justify-between p-2 rounded-lg border border-default bg-white dark:bg-neutral-900",
     linkActions: "flex items-center gap-1",
     emptyLinks: "text-xs text-dimmed italic",
-    modalOverlay: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm",
-    modalContent: "bg-white dark:bg-neutral-900 border border-default rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col",
+    modalOverlay:
+      "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm",
+    modalContent:
+      "bg-white dark:bg-neutral-900 border border-default rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col",
     modalHeader: "flex items-center justify-between px-4 py-3 border-b border-default",
     modalBody: "flex flex-col gap-4 p-4",
     modalGrid: "grid grid-cols-2 gap-4",
@@ -78,14 +85,14 @@ const { t, locale } = useI18n()
 
 const sortedGroups = computed(() => {
   if (!page.value?.properties) return []
-  return Object.entries(page.value.properties).sort((a, b) => {
+  return Object.entries(page.value.properties).toSorted((a, b) => {
     return (a[1] as any).order - (b[1] as any).order
   })
 })
 
 const getSortedFields = (fields: any) => {
   if (!fields) return []
-  return Object.entries(fields).sort((a, b) => {
+  return Object.entries(fields).toSorted((a, b) => {
     return (a[1] as any).order - (b[1] as any).order
   })
 }
@@ -158,7 +165,9 @@ defineOptions({
 
 <template>
   <aside :class="styles.asideClass">
-    <div class="bg-white dark:bg-neutral-900 border border-default rounded-xl p-4 shadow-sm flex flex-col">
+    <div
+      class="bg-white dark:bg-neutral-900 border border-default rounded-xl p-4 shadow-sm flex flex-col"
+    >
       <div :class="styles.headerContent">
         <div class="relative group/icon mb-2">
           <img
@@ -242,7 +251,7 @@ defineOptions({
                     :key="typeof opt === 'string' ? opt : opt.value"
                     :value="typeof opt === 'string' ? opt : opt.value"
                   >
-                    {{ typeof opt === 'string' ? opt : getLocalizedContent(opt, locale) }}
+                    {{ typeof opt === "string" ? opt : getLocalizedContent(opt, locale) }}
                   </option>
                 </select>
                 <div v-else class="text-xs text-dimmed italic">Complex property editor</div>
@@ -303,7 +312,11 @@ defineOptions({
       <div :class="styles.modalContent">
         <div :class="styles.modalHeader">
           <h3 class="text-base font-semibold">
-            {{ editingLinkIndex !== null ? t("page_properties.edit_link", "Edit Link") : t("page_properties.add_link", "Add Link") }}
+            {{
+              editingLinkIndex !== null
+                ? t("page_properties.edit_link", "Edit Link")
+                : t("page_properties.add_link", "Add Link")
+            }}
           </h3>
           <RLVButton
             color="neutral"
@@ -316,7 +329,11 @@ defineOptions({
 
         <div :class="styles.modalBody">
           <RLVFormField :label="t('page_properties.label', 'Label')">
-            <RLVInput v-model="linkDraft.label" placeholder="e.g. GitHub Repository" class="w-full" />
+            <RLVInput
+              v-model="linkDraft.label"
+              placeholder="e.g. GitHub Repository"
+              class="w-full"
+            />
           </RLVFormField>
 
           <RLVFormField :label="t('page_properties.url', 'URL')">
@@ -337,7 +354,11 @@ defineOptions({
           />
           <RLVButton
             color="primary"
-            :label="editingLinkIndex !== null ? t('page_properties.update_link', 'Update') : t('page_properties.add_link', 'Add')"
+            :label="
+              editingLinkIndex !== null
+                ? t('page_properties.update_link', 'Update')
+                : t('page_properties.add_link', 'Add')
+            "
             @click="saveLink"
           />
         </div>

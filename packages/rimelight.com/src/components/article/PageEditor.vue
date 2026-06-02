@@ -77,13 +77,13 @@ provide("page-resolver", resolvePage)
 
 /* region Emits */
 export interface PageEditorEmits {
-  save: [value: Page]
+  "save": [value: Page]
   "version-navigate": [version: PageVersion]
   "version-approved": [version: PageVersion]
   "version-rejected": [version: PageVersion]
   "version-reverted": [version: PageVersion]
-  publish: [value: Page]
-  unpublish: [value: Page]
+  "publish": [value: Page]
+  "unpublish": [value: Page]
 }
 
 const emit = defineEmits<PageEditorEmits>()
@@ -92,7 +92,8 @@ const emit = defineEmits<PageEditorEmits>()
 /* region Styles */
 const pageEditorStyles = scv({
   slots: {
-    header: "h-12 w-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-between px-4 border-b border-default",
+    header:
+      "h-12 w-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-between px-4 border-b border-default",
     headerGroup: "flex items-center gap-2",
     splitContainer: "flex w-full min-h-0",
     editorColumn: "relative overflow-y-auto p-6 flex-1 w-full min-w-0 max-w-7xl mx-auto",
@@ -106,15 +107,18 @@ const pageEditorStyles = scv({
     title: "",
     surroundSkeleton: "grid grid-cols-1 gap-4 sm:grid-cols-2 mt-8",
     skeleton: "h-48 w-full rounded-xl bg-neutral-100 dark:bg-neutral-800 animate-pulse",
-    metadata: "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8",
-    resizer: "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
+    metadata:
+      "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8",
+    resizer:
+      "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
     previewColumn: "sticky self-start overflow-y-auto min-h-0",
     headerText: "text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap",
     headerHighLight: "text-neutral-900 dark:text-white font-semibold",
     headerSeparator: "w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-2",
     titleWrapper: "flex flex-row gap-2 items-center w-full",
     titleInput: "text-4xl font-bold p-0 focus:ring-0 shadow-none border-0 bg-transparent w-full",
-    descriptionInput: "p-0 text-lg text-dimmed focus:ring-0 shadow-none border-0 bg-transparent w-full"
+    descriptionInput:
+      "p-0 text-lg text-dimmed focus:ring-0 shadow-none border-0 bg-transparent w-full"
   }
 })
 
@@ -132,7 +136,8 @@ const styles = computed(() => {
 const page = defineModel<Page>({ required: true })
 const versionId = defineModel<string | null>("currentVersionId", { default: null })
 
-const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } = usePageEditor(page)
+const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } =
+  usePageEditor(page)
 const { t, locale } = useI18n()
 
 const showPreview = ref(false)
@@ -329,7 +334,11 @@ defineExpose({
 
         <RLVButton
           icon="i-lucide-globe"
-          :label="page.postedAt ? t('page_editor.unpublish', 'Unpublish') : t('page_editor.publish', 'Publish')"
+          :label="
+            page.postedAt
+              ? t('page_editor.unpublish', 'Unpublish')
+              : t('page_editor.publish', 'Publish')
+          "
           color="neutral"
           variant="outline"
           :loading="isSaving"
@@ -371,7 +380,9 @@ defineExpose({
 
             <div :class="styles.contentWrapper">
               <!-- Banner Container -->
-              <div class="w-full relative group/banner aspect-[5/1] rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 border border-default mb-4 flex items-center justify-center">
+              <div
+                class="w-full relative group/banner aspect-[5/1] rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 border border-default mb-4 flex items-center justify-center"
+              >
                 <img
                   v-if="page.banner?.src"
                   :src="page.banner?.src"
@@ -383,9 +394,13 @@ defineExpose({
                   class="flex flex-col items-center justify-center text-dimmed gap-1 opacity-50 hover:opacity-100 transition duration-150 cursor-pointer"
                 >
                   <span class="i-lucide-image size-8" />
-                  <span class="text-xs uppercase font-bold tracking-wider">{{ t("page_editor.add_banner", "Add Banner") }}</span>
+                  <span class="text-xs uppercase font-bold tracking-wider">{{
+                    t("page_editor.add_banner", "Add Banner")
+                  }}</span>
                 </div>
-                <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/banner:opacity-100 transition">
+                <div
+                  class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/banner:opacity-100 transition"
+                >
                   <RLVButton
                     v-if="page.banner?.src"
                     icon="i-lucide-trash"
@@ -419,8 +434,8 @@ defineExpose({
                 @start="pauseHistory"
                 @mutation="
                   () => {
-                    resumeHistory();
-                    captureSnapshot();
+                    resumeHistory()
+                    captureSnapshot()
                   }
                 "
               />
@@ -445,8 +460,12 @@ defineExpose({
                 <div :class="styles.metadata">
                   <h6 class="font-bold">Metadata</h6>
                   <span>ID: {{ page.id }}</span>
-                  <span v-if="page.createdAt">Created: {{ new Date(page.createdAt).toLocaleString() }}</span>
-                  <span v-if="page.updatedAt">Updated: {{ new Date(page.updatedAt).toLocaleString() }}</span>
+                  <span v-if="page.createdAt"
+                    >Created: {{ new Date(page.createdAt).toLocaleString() }}</span
+                  >
+                  <span v-if="page.updatedAt"
+                    >Updated: {{ new Date(page.updatedAt).toLocaleString() }}</span
+                  >
                 </div>
               </template>
             </div>

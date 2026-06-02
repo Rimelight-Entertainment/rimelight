@@ -28,8 +28,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="fixed bottom-6 right-6 z-[10000] flex flex-col-reverse items-center gap-4 pointer-events-none">
-    <div v-for="action in actions" :key="action.id" class="pointer-events-auto flex items-center justify-center font-normal">
+  <div
+    class="fixed bottom-6 right-6 z-[10000] flex flex-col-reverse items-center gap-4 pointer-events-none"
+  >
+    <div
+      v-for="action in actions"
+      :key="action.id"
+      class="pointer-events-auto flex items-center justify-center font-normal"
+    >
       <component :is="action.component" v-if="action.component" />
       <template v-else-if="action.icon || action.label">
         <RLVButton
@@ -38,7 +44,10 @@ onMounted(() => {
           :aria-label="action.label || 'Action'"
           @click="action.onSelect"
         >
-          <span v-if="action.icon" :class="[action.icon.replace('lucide:', 'i-lucide-'), 'size-6']" />
+          <span
+            v-if="action.icon"
+            :class="[action.icon.replace('lucide:', 'i-lucide-'), 'size-6']"
+          />
           <span v-else>{{ action.label }}</span>
         </RLVButton>
       </template>

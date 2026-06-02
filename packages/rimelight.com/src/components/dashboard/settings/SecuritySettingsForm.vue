@@ -93,7 +93,9 @@ async function updatePassword(e: Event) {
 const isDeleting = ref(false)
 
 async function deleteAccount() {
-  const isConfirmed = confirm("Delete your account? This action is irreversible. All your data will be permanently removed.")
+  const isConfirmed = confirm(
+    "Delete your account? This action is irreversible. All your data will be permanently removed."
+  )
   if (!isConfirmed) return
 
   isDeleting.value = true
@@ -115,7 +117,9 @@ async function deleteAccount() {
 <template>
   <div class="flex flex-col gap-8">
     <!-- Profile Card -->
-    <div class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4">
+    <div
+      class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4"
+    >
       <div>
         <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Profile Details</h3>
         <p class="text-xs text-neutral-500">Manage your public profile information.</p>
@@ -137,13 +141,19 @@ async function deleteAccount() {
     </div>
 
     <!-- Email Card -->
-    <div class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4">
+    <div
+      class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4"
+    >
       <div>
         <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Email Address</h3>
-        <p class="text-xs text-neutral-500">Update your email address. You will need to verify the new email.</p>
+        <p class="text-xs text-neutral-500">
+          Update your email address. You will need to verify the new email.
+        </p>
       </div>
 
-      <div class="flex flex-row items-center gap-1.5 text-sm text-neutral-700 dark:text-neutral-300">
+      <div
+        class="flex flex-row items-center gap-1.5 text-sm text-neutral-700 dark:text-neutral-300"
+      >
         Current email:
         <span class="font-medium">{{ user?.email }}</span>
         <span v-if="user?.emailVerified" class="text-xs text-green-500 font-bold">(Verified)</span>
@@ -152,20 +162,28 @@ async function deleteAccount() {
 
       <form @submit="updateEmail" class="flex max-w-sm flex-col gap-4">
         <RLVFormField label="New Email">
-          <RLVInput v-model="emailState.newEmail" type="email" leadingIcon="i-lucide-mail" placeholder="email@domain.com" class="w-full" />
+          <RLVInput
+            v-model="emailState.newEmail"
+            type="email"
+            leadingIcon="i-lucide-mail"
+            placeholder="email@domain.com"
+            class="w-full"
+          />
         </RLVFormField>
 
-        <RLVButton :loading="isUpdatingEmail" class="w-fit" type="submit">
-          Update Email
-        </RLVButton>
+        <RLVButton :loading="isUpdatingEmail" class="w-fit" type="submit"> Update Email </RLVButton>
       </form>
     </div>
 
     <!-- Password Card -->
-    <div class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4">
+    <div
+      class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl space-y-4"
+    >
       <div>
         <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Password</h3>
-        <p class="text-xs text-neutral-500">Confirm your current password before setting a new one.</p>
+        <p class="text-xs text-neutral-500">
+          Confirm your current password before setting a new one.
+        </p>
       </div>
 
       <form @submit="updatePassword" class="flex max-w-sm flex-col gap-4">
@@ -187,21 +205,21 @@ async function deleteAccount() {
           />
         </RLVFormField>
 
-        <RLVButton
-          :loading="isUpdatingPassword"
-          class="w-fit"
-          type="submit"
-        >
+        <RLVButton :loading="isUpdatingPassword" class="w-fit" type="submit">
           Update Password
         </RLVButton>
       </form>
     </div>
 
     <!-- Delete Account Card -->
-    <div class="p-6 bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-2xl space-y-4">
+    <div
+      class="p-6 bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-2xl space-y-4"
+    >
       <div>
         <h3 class="text-lg font-bold text-red-700 dark:text-red-400">Delete Account</h3>
-        <p class="text-xs text-red-500/80">No longer want to use our service? This action is not reversible.</p>
+        <p class="text-xs text-red-500/80">
+          No longer want to use our service? This action is not reversible.
+        </p>
       </div>
       <p class="text-sm text-neutral-700 dark:text-neutral-300">
         This will schedule your account for deletion after 30 days and revoke all active sessions.

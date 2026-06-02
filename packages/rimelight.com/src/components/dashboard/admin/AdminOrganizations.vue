@@ -30,7 +30,7 @@ async function fetchOrgs() {
   pending.value = true
   try {
     const res = await fetch("/api/admin/organizations")
-    orgs.value = await res.json() as Organization[]
+    orgs.value = (await res.json()) as Organization[]
   } catch (e) {
     console.error(e)
   } finally {
@@ -99,10 +99,13 @@ async function deleteOrg(id: string) {
     </div>
 
     <!-- Create Org Form / Modal Sim -->
-    <div v-if="isCreateModalOpen" class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
+    <div
+      v-if="isCreateModalOpen"
+      class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+    >
       <h4 class="text-md font-bold mb-1">Create Organization</h4>
       <p class="text-xs text-neutral-500 mb-4">Set up a new workspace for your teams.</p>
-      
+
       <form @submit="onSubmit" class="space-y-4 max-w-md">
         <RLVFormField label="Organization Name" required>
           <RLVInput v-model="state.name" placeholder="Acme Corp" class="w-full" required />
@@ -114,13 +117,17 @@ async function deleteOrg(id: string) {
 
         <div class="flex gap-2">
           <RLVButton type="submit" :loading="isSubmitting">Create</RLVButton>
-          <RLVButton type="button" color="neutral" variant="soft" @click="isCreateModalOpen = false">Cancel</RLVButton>
+          <RLVButton type="button" color="neutral" variant="soft" @click="isCreateModalOpen = false"
+            >Cancel</RLVButton
+          >
         </div>
       </form>
     </div>
 
     <!-- Organizations Table -->
-    <div class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden">
+    <div
+      class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden"
+    >
       <div v-if="pending" class="p-8 text-center text-sm text-neutral-500">
         Loading organizations...
       </div>
@@ -129,7 +136,9 @@ async function deleteOrg(id: string) {
       </div>
       <table v-else class="w-full border-collapse text-left text-sm">
         <thead>
-          <tr class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider">
+          <tr
+            class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider"
+          >
             <th class="p-4">Organization</th>
             <th class="p-4">Slug</th>
             <th class="p-4">Members</th>
@@ -138,10 +147,21 @@ async function deleteOrg(id: string) {
           </tr>
         </thead>
         <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800">
-          <tr v-for="org in orgs" :key="org.id" class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors">
+          <tr
+            v-for="org in orgs"
+            :key="org.id"
+            class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors"
+          >
             <td class="p-4 font-semibold text-neutral-900 dark:text-white flex items-center gap-3">
-              <div class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-850">
-                <img v-if="org.logo" :src="org.logo" :alt="org.name" class="size-full object-cover" />
+              <div
+                class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-850"
+              >
+                <img
+                  v-if="org.logo"
+                  :src="org.logo"
+                  :alt="org.name"
+                  class="size-full object-cover"
+                />
                 <span v-else class="i-lucide-building-2 size-4 text-neutral-400" />
               </div>
               {{ org.name }}
@@ -150,14 +170,23 @@ async function deleteOrg(id: string) {
             <td class="p-4">{{ org.memberCount }}</td>
             <td class="p-4">
               <div v-if="org.teams?.length" class="flex flex-wrap gap-1.5">
-                <span v-for="team in org.teams" :key="team.id" class="px-2 py-0.5 text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-md">
+                <span
+                  v-for="team in org.teams"
+                  :key="team.id"
+                  class="px-2 py-0.5 text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-md"
+                >
                   {{ team.name }}
                 </span>
               </div>
               <span v-else class="text-xs text-neutral-400 italic">No teams</span>
             </td>
             <td class="p-4 text-right">
-              <RLVButton color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" @click="deleteOrg(org.id)">
+              <RLVButton
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                @click="deleteOrg(org.id)"
+              >
                 <span class="i-lucide-trash size-4 text-red-500" />
               </RLVButton>
             </td>

@@ -36,7 +36,8 @@ const sectionBlockEditorStyles = scv({
     root: "flex flex-col gap-4 w-full",
     headerContainer: "flex flex-row items-center gap-2 w-full",
     titleInput: "w-full",
-    levelBadge: "text-xs font-mono text-dimmed shrink-0 leading-none bg-neutral-100 dark:bg-neutral-800 px-1.5 py-1 rounded"
+    levelBadge:
+      "text-xs font-mono text-dimmed shrink-0 leading-none bg-neutral-100 dark:bg-neutral-800 px-1.5 py-1 rounded"
   }
 })
 

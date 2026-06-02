@@ -211,9 +211,15 @@ async function deleteField(id: string) {
 
 <template>
   <div class="h-full flex flex-col overflow-hidden bg-neutral-50 dark:bg-neutral-950/20">
-    <div v-if="board" class="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-white dark:bg-neutral-950">
+    <div
+      v-if="board"
+      class="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-white dark:bg-neutral-950"
+    >
       <div class="flex items-center gap-2">
-        <a href="/dashboard/projects" class="text-neutral-500 hover:text-neutral-900 dark:hover:text-white mr-2">
+        <a
+          href="/dashboard/projects"
+          class="text-neutral-500 hover:text-neutral-900 dark:hover:text-white mr-2"
+        >
           <span class="i-lucide-arrow-left size-5" />
         </a>
         <h2 class="text-lg font-bold text-neutral-900 dark:text-white">{{ board.title }}</h2>
@@ -223,9 +229,7 @@ async function deleteField(id: string) {
           <span class="i-lucide-table-properties size-4 mr-1.5" />
           Fields
         </RLVButton>
-        <RLVButton color="primary" @click="isAddListModalOpen = true">
-          Add List
-        </RLVButton>
+        <RLVButton color="primary" @click="isAddListModalOpen = true"> Add List </RLVButton>
       </div>
     </div>
 
@@ -240,15 +244,30 @@ async function deleteField(id: string) {
         @end="onListDrop"
       >
         <template #item="{ element: list, index }">
-          <div class="flex-none w-80 bg-neutral-100/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800/80 p-4 rounded-2xl flex flex-col max-h-full">
+          <div
+            class="flex-none w-80 bg-neutral-100/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800/80 p-4 rounded-2xl flex flex-col max-h-full"
+          >
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
-                <span class="font-bold text-sm text-neutral-800 dark:text-neutral-200 uppercase tracking-wider">{{ list.title }}</span>
-                <span class="text-xs font-semibold bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 px-2 py-0.5 rounded-lg">{{ list.cards?.length || 0 }}</span>
+                <span
+                  class="font-bold text-sm text-neutral-800 dark:text-neutral-200 uppercase tracking-wider"
+                  >{{ list.title }}</span
+                >
+                <span
+                  class="text-xs font-semibold bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 px-2 py-0.5 rounded-lg"
+                  >{{ list.cards?.length || 0 }}</span
+                >
               </div>
               <div class="flex items-center gap-1">
-                <span class="list-drag-handle i-lucide-grip-vertical text-neutral-400 hover:text-neutral-600 cursor-move size-4" />
-                <RLVButton color="neutral" variant="ghost" class="size-6 p-0 rounded-xl" @click="deleteList(list.id)">
+                <span
+                  class="list-drag-handle i-lucide-grip-vertical text-neutral-400 hover:text-neutral-600 cursor-move size-4"
+                />
+                <RLVButton
+                  color="neutral"
+                  variant="ghost"
+                  class="size-6 p-0 rounded-xl"
+                  @click="deleteList(list.id)"
+                >
                   <span class="i-lucide-trash size-3.5 text-red-500" />
                 </RLVButton>
               </div>
@@ -268,12 +287,23 @@ async function deleteField(id: string) {
                     class="bg-white dark:bg-neutral-900 p-4 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 cursor-pointer hover:shadow-md hover:ring-1 hover:ring-primary-500/30 transition-all"
                     @click="openCardDetail(card)"
                   >
-                    <h4 class="text-sm font-semibold text-neutral-900 dark:text-white leading-snug mb-1">{{ card.title }}</h4>
-                    <p v-if="card.description" class="text-xs text-neutral-500 line-clamp-2">{{ card.description }}</p>
+                    <h4
+                      class="text-sm font-semibold text-neutral-900 dark:text-white leading-snug mb-1"
+                    >
+                      {{ card.title }}
+                    </h4>
+                    <p v-if="card.description" class="text-xs text-neutral-500 line-clamp-2">
+                      {{ card.description }}
+                    </p>
                   </div>
                 </template>
               </draggable>
-              <RLVButton color="neutral" variant="ghost" class="w-full text-left justify-start px-2.5 py-1.5 rounded-xl text-neutral-400 hover:text-primary-500 text-xs" @click="openAddCardModal(list.id)">
+              <RLVButton
+                color="neutral"
+                variant="ghost"
+                class="w-full text-left justify-start px-2.5 py-1.5 rounded-xl text-neutral-400 hover:text-primary-500 text-xs"
+                @click="openAddCardModal(list.id)"
+              >
                 <span class="i-lucide-plus size-3.5 mr-1" /> Add task
               </RLVButton>
             </div>
@@ -283,15 +313,31 @@ async function deleteField(id: string) {
     </div>
 
     <!-- Create List Modal -->
-    <div v-if="isAddListModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div class="bg-white dark:bg-neutral-950 p-6 rounded-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-800 shadow-xl space-y-6">
+    <div
+      v-if="isAddListModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+    >
+      <div
+        class="bg-white dark:bg-neutral-950 p-6 rounded-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-800 shadow-xl space-y-6"
+      >
         <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Create New List</h3>
         <form @submit="createList" class="space-y-4">
           <RLVFormField label="List Title" required>
-            <RLVInput v-model="newListState.title" placeholder="Enter status name..." class="w-full" required />
+            <RLVInput
+              v-model="newListState.title"
+              placeholder="Enter status name..."
+              class="w-full"
+              required
+            />
           </RLVFormField>
           <div class="flex justify-end gap-2">
-            <RLVButton type="button" color="neutral" variant="soft" @click="isAddListModalOpen = false">Cancel</RLVButton>
+            <RLVButton
+              type="button"
+              color="neutral"
+              variant="soft"
+              @click="isAddListModalOpen = false"
+              >Cancel</RLVButton
+            >
             <RLVButton type="submit">Add List</RLVButton>
           </div>
         </form>
@@ -299,18 +345,39 @@ async function deleteField(id: string) {
     </div>
 
     <!-- Create Card Modal -->
-    <div v-if="isAddCardModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div class="bg-white dark:bg-neutral-950 p-6 rounded-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-800 shadow-xl space-y-6">
+    <div
+      v-if="isAddCardModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+    >
+      <div
+        class="bg-white dark:bg-neutral-950 p-6 rounded-2xl w-full max-w-md border border-neutral-200 dark:border-neutral-800 shadow-xl space-y-6"
+      >
         <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Create New Task</h3>
         <form @submit="createCard" class="space-y-4">
           <RLVFormField label="Task Title" required>
-            <RLVInput v-model="newCardState.title" placeholder="What needs to be done?" class="w-full" required />
+            <RLVInput
+              v-model="newCardState.title"
+              placeholder="What needs to be done?"
+              class="w-full"
+              required
+            />
           </RLVFormField>
           <RLVFormField label="Description">
-            <textarea v-model="newCardState.description" placeholder="Add details..." rows="3" class="w-full p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+            <textarea
+              v-model="newCardState.description"
+              placeholder="Add details..."
+              rows="3"
+              class="w-full p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
           </RLVFormField>
           <div class="flex justify-end gap-2">
-            <RLVButton type="button" color="neutral" variant="soft" @click="isAddCardModalOpen = false">Cancel</RLVButton>
+            <RLVButton
+              type="button"
+              color="neutral"
+              variant="soft"
+              @click="isAddCardModalOpen = false"
+              >Cancel</RLVButton
+            >
             <RLVButton type="submit">Create Task</RLVButton>
           </div>
         </form>
@@ -318,15 +385,32 @@ async function deleteField(id: string) {
     </div>
 
     <!-- Card Detail Drawer / Modal -->
-    <div v-if="isCardDetailModalOpen && selectedCard" class="fixed inset-0 z-50 flex items-center justify-end bg-black/50 p-4">
-      <div class="bg-white dark:bg-neutral-950 h-full w-full max-w-md border-l border-neutral-200 dark:border-neutral-800 shadow-xl flex flex-col">
-        <div class="p-6 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900">
+    <div
+      v-if="isCardDetailModalOpen && selectedCard"
+      class="fixed inset-0 z-50 flex items-center justify-end bg-black/50 p-4"
+    >
+      <div
+        class="bg-white dark:bg-neutral-950 h-full w-full max-w-md border-l border-neutral-200 dark:border-neutral-800 shadow-xl flex flex-col"
+      >
+        <div
+          class="p-6 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900"
+        >
           <h3 class="text-sm font-bold uppercase tracking-wider text-neutral-500">Task Detail</h3>
           <div class="flex items-center gap-2">
-            <RLVButton color="error" variant="ghost" class="size-8 p-0 rounded-xl" @click="deleteCard">
+            <RLVButton
+              color="error"
+              variant="ghost"
+              class="size-8 p-0 rounded-xl"
+              @click="deleteCard"
+            >
               <span class="i-lucide-trash size-4" />
             </RLVButton>
-            <RLVButton color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" @click="isCardDetailModalOpen = false">
+            <RLVButton
+              color="neutral"
+              variant="ghost"
+              class="size-8 p-0 rounded-xl"
+              @click="isCardDetailModalOpen = false"
+            >
               <span class="i-lucide-x size-4" />
             </RLVButton>
           </div>
@@ -338,11 +422,23 @@ async function deleteField(id: string) {
           </RLVFormField>
 
           <RLVFormField label="Description">
-            <textarea v-model="selectedCard.description" rows="5" class="w-full p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+            <textarea
+              v-model="selectedCard.description"
+              rows="5"
+              class="w-full p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
           </RLVFormField>
 
-          <div class="flex justify-end gap-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
-            <RLVButton type="button" color="neutral" variant="soft" @click="isCardDetailModalOpen = false">Close</RLVButton>
+          <div
+            class="flex justify-end gap-2 pt-4 border-t border-neutral-200 dark:border-neutral-800"
+          >
+            <RLVButton
+              type="button"
+              color="neutral"
+              variant="soft"
+              @click="isCardDetailModalOpen = false"
+              >Close</RLVButton
+            >
             <RLVButton type="submit">Save Changes</RLVButton>
           </div>
         </form>

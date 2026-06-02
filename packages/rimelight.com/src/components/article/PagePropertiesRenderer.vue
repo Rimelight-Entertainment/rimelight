@@ -43,7 +43,8 @@ const { rc } = useRC("PagePropertiesRenderer", rcProp)
 /* region Styles */
 const pagePropertiesRendererStyles = scv({
   slots: {
-    asideClass: "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
+    asideClass:
+      "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
     actionsClass: "flex flex-row justify-between gap-2 mb-4",
     iconClass: "rounded-full w-12 h-12 object-cover border border-default shadow-sm",
     titleClass: "text-lg font-bold text-neutral-900 dark:text-neutral-100",
@@ -51,8 +52,10 @@ const pagePropertiesRendererStyles = scv({
     tagsClass: "flex flex-row flex-wrap gap-1 mt-2",
     tabsClass: "w-full mt-4",
     imageClass: "w-full object-cover rounded-lg border border-default shadow-sm",
-    groupButtonClass: "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
-    detailsClass: "p-3 flex flex-col gap-2 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
+    groupButtonClass:
+      "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
+    detailsClass:
+      "p-3 flex flex-col gap-2 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
     fieldClass: "grid grid-cols-3 gap-2 items-baseline",
     fieldLabelClass: "text-xs font-semibold text-dimmed",
     fieldValueClass: "text-xs col-span-2 text-default",
@@ -86,14 +89,14 @@ const { t, locale } = useI18n()
 // We avoid importing useInfobox from nuxt UI and define simple sorting/filtering inline.
 const sortedGroups = computed(() => {
   if (!page.value?.properties) return []
-  return Object.entries(page.value.properties).sort((a, b) => {
+  return Object.entries(page.value.properties).toSorted((a, b) => {
     return (a[1] as any).order - (b[1] as any).order
   })
 })
 
 const getSortedFields = (fields: any) => {
   if (!fields) return []
-  return Object.entries(fields).sort((a, b) => {
+  return Object.entries(fields).toSorted((a, b) => {
     return (a[1] as any).order - (b[1] as any).order
   })
 }
@@ -106,7 +109,9 @@ const shouldRenderGroup = (group: any) => {
 }
 
 const isFieldVisible = (schema: any) => {
-  return schema.defaultValue !== undefined && schema.defaultValue !== null && schema.defaultValue !== ""
+  return (
+    schema.defaultValue !== undefined && schema.defaultValue !== null && schema.defaultValue !== ""
+  )
 }
 /* endregion */
 
@@ -119,18 +124,8 @@ defineOptions({
   <aside :class="styles.asideClass">
     <div :class="styles.actionsClass">
       <div :class="styles.actionGroup">
-        <RLVButton
-          variant="outline"
-          color="neutral"
-          icon="i-lucide-share"
-          class="!p-1.5"
-        />
-        <RLVButton
-          variant="outline"
-          color="neutral"
-          icon="i-lucide-link"
-          class="!p-1.5"
-        />
+        <RLVButton variant="outline" color="neutral" icon="i-lucide-share" class="!p-1.5" />
+        <RLVButton variant="outline" color="neutral" icon="i-lucide-link" class="!p-1.5" />
       </div>
       <div v-if="canEdit && editUrl" :class="styles.actionGroup">
         <RLVButton
@@ -143,7 +138,9 @@ defineOptions({
       </div>
     </div>
 
-    <div class="bg-white dark:bg-neutral-900 border border-default rounded-xl p-4 shadow-sm flex flex-col">
+    <div
+      class="bg-white dark:bg-neutral-900 border border-default rounded-xl p-4 shadow-sm flex flex-col"
+    >
       <div :class="styles.headerContent">
         <img
           v-if="page.icon?.src"
@@ -204,7 +201,10 @@ defineOptions({
                       {{ getLocalizedContent((schema as any).defaultValue, locale) }}
                     </span>
                     <ul
-                      v-else-if="(schema as any).type === 'text-array' && Array.isArray((schema as any).defaultValue)"
+                      v-else-if="
+                        (schema as any).type === 'text-array' &&
+                        Array.isArray((schema as any).defaultValue)
+                      "
                       :class="styles.listClass"
                     >
                       <li v-for="(item, index) in (schema as any).defaultValue" :key="index">
@@ -213,19 +213,26 @@ defineOptions({
                         </span>
                       </li>
                     </ul>
-                    <template v-else-if="(schema as any).type === 'page' && (schema as any).defaultValue">
+                    <template
+                      v-else-if="(schema as any).type === 'page' && (schema as any).defaultValue"
+                    >
                       <PageMention
                         :page-id="
                           String(
                             typeof (schema as any).defaultValue === 'object'
-                              ? (schema as any).defaultValue.id || (schema as any).defaultValue.value || getLocalizedContent((schema as any).defaultValue, locale)
+                              ? (schema as any).defaultValue.id ||
+                                  (schema as any).defaultValue.value ||
+                                  getLocalizedContent((schema as any).defaultValue, locale)
                               : (schema as any).defaultValue
                           )
                         "
                       />
                     </template>
                     <ul
-                      v-else-if="(schema as any).type === 'page-array' && Array.isArray((schema as any).defaultValue)"
+                      v-else-if="
+                        (schema as any).type === 'page-array' &&
+                        Array.isArray((schema as any).defaultValue)
+                      "
                       :class="styles.pageArrayListClass"
                     >
                       <li
@@ -245,7 +252,9 @@ defineOptions({
                         />
                       </li>
                     </ul>
-                    <span v-else-if="(schema as any).type === 'enum' && (schema as any).defaultValue">
+                    <span
+                      v-else-if="(schema as any).type === 'enum' && (schema as any).defaultValue"
+                    >
                       {{ getLocalizedContent((schema as any).defaultValue, locale) }}
                     </span>
                     <span v-else-if="(schema as any).type === 'number'">

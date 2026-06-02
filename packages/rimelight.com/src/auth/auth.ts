@@ -125,37 +125,37 @@ export const auth = betterAuth({
       create: {
         before: async (userData, _ctx) => {
           // 1. Normalize the username and check against the restricted set
-          const normalizedInput = normalizeUsername(userData.name);
+          const normalizedInput = normalizeUsername(userData.name)
           if (RESTRICTED_SET.has(normalizedInput)) {
             throw new APIError("BAD_REQUEST", {
               message: "This username is reserved for official use."
-            });
+            })
           }
 
           // 2. Generate a unique 4-digit discriminator tag
-          let uniqueTag = "0000";
-          const MAX_RETRIES = 50;
+          let uniqueTag = "0000"
+          const MAX_RETRIES = 50
           for (let i = 0; i < MAX_RETRIES; i++) {
             const newTag = Math.floor(Math.random() * 10000)
               .toString()
-              .padStart(4, "0");
+              .padStart(4, "0")
 
             const result = await db
               .select({ count: count() })
               .from(userTable)
-              .where(and(eq(userTable.name, userData.name), eq(userTable.tag, newTag)));
+              .where(and(eq(userTable.name, userData.name), eq(userTable.tag, newTag)))
 
-            const tagCount = result[0]?.count ?? 0;
+            const tagCount = result[0]?.count ?? 0
             if (tagCount === 0) {
-              uniqueTag = newTag;
-              break;
+              uniqueTag = newTag
+              break
             }
           }
 
           if (uniqueTag === "0000") {
             throw new APIError("INTERNAL_SERVER_ERROR", {
               message: "Failed to generate a unique tag for this username. Please try again."
-            });
+            })
           }
 
           return {
@@ -163,7 +163,7 @@ export const auth = betterAuth({
               ...userData,
               tag: uniqueTag
             }
-          };
+          }
         }
       }
     }

@@ -113,7 +113,8 @@ const handleConfirm = () => {
 
       <div :class="styles.bodyClass">
         <p>
-          Are you sure you want to delete <strong>{{ pageTitle }}</strong>? This action is permanent and cannot be undone.
+          Are you sure you want to delete <strong>{{ pageTitle }}</strong
+          >? This action is permanent and cannot be undone.
         </p>
 
         <RLVFormField

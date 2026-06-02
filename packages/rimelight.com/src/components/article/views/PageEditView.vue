@@ -73,7 +73,9 @@ const fetchPages = async () => {
   const types = Object.keys(pageDefinitions).join(",")
   const prefix = (hierarchyPath ?? baseUrl).replace(/^\/|\/$/g, "")
 
-  const res = await fetch(`/api/pages/list?select=title,slug,type,id&types=${types}&prefix=${prefix}`)
+  const res = await fetch(
+    `/api/pages/list?select=title,slug,type,id&types=${types}&prefix=${prefix}`
+  )
   if (!res.ok) throw new Error("Failed to fetch page list")
   return await res.json()
 }
@@ -114,7 +116,7 @@ const handlePublish = async (updatedPage: Page): Promise<void> => {
     const slugToUse = updatedPage.slug.startsWith(cleanBase)
       ? updatedPage.slug
       : `${cleanBase}/${updatedPage.slug}`
-    
+
     if (typeof window !== "undefined") {
       window.location.href = `/${slugToUse}`
     }

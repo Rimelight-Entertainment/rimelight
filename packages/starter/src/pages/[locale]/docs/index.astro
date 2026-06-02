@@ -25,6 +25,7 @@ const { title, description, tableOfContents, prev, next, editUrl } = entry.data;
   prevOverride={prev}
   nextOverride={next}
   editUrl={editUrl}
+  rawMarkdown={entry.body}
 >
   <Content />
 </DocsLayout>

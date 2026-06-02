@@ -11,10 +11,10 @@ const stats = ref([
 onMounted(async () => {
   try {
     const [orgs, teams, users, sessions] = await Promise.all([
-      fetch("/api/admin/organizations/count").then(r => r.json() as Promise<number>),
-      fetch("/api/admin/teams/count").then(r => r.json() as Promise<number>),
-      fetch("/api/admin/users/count").then(r => r.json() as Promise<number>),
-      fetch("/api/admin/sessions/count").then(r => r.json() as Promise<number>)
+      fetch("/api/admin/organizations/count").then((r) => r.json() as Promise<number>),
+      fetch("/api/admin/teams/count").then((r) => r.json() as Promise<number>),
+      fetch("/api/admin/users/count").then((r) => r.json() as Promise<number>),
+      fetch("/api/admin/sessions/count").then((r) => r.json() as Promise<number>)
     ])
 
     stats.value[0]!.value = orgs
@@ -30,27 +30,44 @@ onMounted(async () => {
 <template>
   <div class="space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div v-for="stat in stats" :key="stat.label" class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl flex items-center gap-4">
+      <div
+        v-for="stat in stats"
+        :key="stat.label"
+        class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl flex items-center gap-4"
+      >
         <span :class="[stat.icon, 'size-8 text-primary-500']" />
         <div>
-          <p class="text-xs font-bold text-neutral-500 uppercase tracking-widest">{{ stat.label }}</p>
+          <p class="text-xs font-bold text-neutral-500 uppercase tracking-widest">
+            {{ stat.label }}
+          </p>
           <p class="text-2xl font-black text-neutral-900 dark:text-white mt-1">{{ stat.value }}</p>
         </div>
       </div>
     </div>
 
-    <div class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
+    <div
+      class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+    >
       <h3 class="font-bold text-lg text-neutral-900 dark:text-white mb-4">Admin Quick Links</h3>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <a href="/dashboard/admin/organizations" class="p-4 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors flex items-center gap-3">
+        <a
+          href="/dashboard/admin/organizations"
+          class="p-4 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors flex items-center gap-3"
+        >
           <span class="i-lucide-building-2 size-5 text-neutral-500" />
           <span class="text-sm font-semibold">Manage Organizations</span>
         </a>
-        <a href="/dashboard/admin/teams" class="p-4 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors flex items-center gap-3">
+        <a
+          href="/dashboard/admin/teams"
+          class="p-4 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors flex items-center gap-3"
+        >
           <span class="i-lucide-users-2 size-5 text-neutral-500" />
           <span class="text-sm font-semibold">Manage Teams</span>
         </a>
-        <a href="/dashboard/admin/users" class="p-4 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors flex items-center gap-3">
+        <a
+          href="/dashboard/admin/users"
+          class="p-4 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors flex items-center gap-3"
+        >
           <span class="i-lucide-user size-5 text-neutral-500" />
           <span class="text-sm font-semibold">Manage Users</span>
         </a>

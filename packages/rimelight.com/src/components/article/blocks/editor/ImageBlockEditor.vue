@@ -38,7 +38,8 @@ const imageBlockEditorStyles = scv({
   slots: {
     root: "flex flex-col gap-4",
     upload: "w-full",
-    previewContainer: "relative aspect-video w-full overflow-hidden rounded-md border border-default bg-neutral-50 dark:bg-neutral-900/50",
+    previewContainer:
+      "relative aspect-video w-full overflow-hidden rounded-md border border-default bg-neutral-50 dark:bg-neutral-900/50",
     previewImage: "size-full object-cover",
     emptyPreview: "flex size-full items-center justify-center bg-muted text-dimmed"
   }
@@ -96,13 +97,19 @@ defineOptions({
 /* endregion */
 
 /* region Lifecycle */
-watch(() => localAlt.value, (newAlt) => {
-  emit("update:alt", newAlt)
-})
+watch(
+  () => localAlt.value,
+  (newAlt) => {
+    emit("update:alt", newAlt)
+  }
+)
 
-watch(() => localCaption.value, (newCaption) => {
-  emit("update:caption", newCaption)
-})
+watch(
+  () => localCaption.value,
+  (newCaption) => {
+    emit("update:caption", newCaption)
+  }
+)
 
 watch(fileToUpload, (newFile) => {
   emit("update:file", newFile)
@@ -125,12 +132,7 @@ const onFileChange = (e: Event) => {
 <template>
   <div :class="styles.root">
     <div :class="styles.previewContainer">
-      <img
-        v-if="previewSrc"
-        :src="previewSrc"
-        :class="styles.previewImage"
-        alt="Preview"
-      />
+      <img v-if="previewSrc" :src="previewSrc" :class="styles.previewImage" alt="Preview" />
       <div v-else :class="styles.emptyPreview">
         <span class="i-lucide-image size-12 opacity-60" />
       </div>

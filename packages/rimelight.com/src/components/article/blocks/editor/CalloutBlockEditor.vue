@@ -15,7 +15,14 @@ export interface CalloutBlockEditorProps extends CalloutBlockProps {
   }
 }
 
-const { id, rc: rcProp, children, variant = "info", to, target } = defineProps<CalloutBlockEditorProps>()
+const {
+  id,
+  rc: rcProp,
+  children,
+  variant = "info",
+  to,
+  target
+} = defineProps<CalloutBlockEditorProps>()
 
 const { rc } = useRC("CalloutBlockEditor", rcProp)
 /* endregion */
@@ -26,8 +33,10 @@ const calloutBlockEditorStyles = scv({
     root: "",
     iconTrigger: "cursor-pointer hover:opacity-75 transition-opacity outline-none",
     childrenWrapper: "w-full mt-2",
-    dropdownMenu: "absolute z-50 mt-1 w-64 rounded-md border border-default bg-white dark:bg-neutral-900 shadow-lg p-1 flex flex-col gap-1",
-    dropdownItem: "flex items-start gap-2 w-full text-left p-2 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 transition duration-150 outline-none cursor-pointer",
+    dropdownMenu:
+      "absolute z-50 mt-1 w-64 rounded-md border border-default bg-white dark:bg-neutral-900 shadow-lg p-1 flex flex-col gap-1",
+    dropdownItem:
+      "flex items-start gap-2 w-full text-left p-2 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 transition duration-150 outline-none cursor-pointer",
     itemIcon: "size-4 text-dimmed mt-0.5 shrink-0",
     itemContent: "flex flex-col gap-0.5 min-w-0",
     itemLabel: "font-medium text-sm truncate text-neutral-900 dark:text-neutral-100",
@@ -67,7 +76,11 @@ const variantConfigs: Record<CalloutVariant, { icon: string; title: string; tool
   success: { icon: "i-lucide-check-circle", title: "Success", tooltip: "Success status callout" },
   warning: { icon: "i-lucide-alert-triangle", title: "Warning", tooltip: "Important warnings" },
   error: { icon: "i-lucide-alert-octagon", title: "Error", tooltip: "Errors and critical issues" },
-  commentary: { icon: "i-lucide-message-square", title: "Commentary", tooltip: "Side notes and discussions" },
+  commentary: {
+    icon: "i-lucide-message-square",
+    title: "Commentary",
+    tooltip: "Side notes and discussions"
+  },
   ideation: { icon: "i-lucide-lightbulb", title: "Ideation", tooltip: "Ideas and brainstorms" },
   source: { icon: "i-lucide-code", title: "Source", tooltip: "Code snippets and sources" }
 }
@@ -147,19 +160,20 @@ defineOptions({
 
 <template>
   <div :class="styles.root">
-    <div class="border rounded-xl p-4 my-4 flex items-start gap-3 bg-neutral-50/50 dark:bg-neutral-950/10 border-neutral-200 dark:border-neutral-900/50">
+    <div
+      class="border rounded-xl p-4 my-4 flex items-start gap-3 bg-neutral-50/50 dark:bg-neutral-950/10 border-neutral-200 dark:border-neutral-900/50"
+    >
       <div class="relative">
         <span
           ref="triggerRef"
-          :class="[currentIcon, 'size-5 shrink-0 mt-0.5 cursor-pointer hover:opacity-75 transition-opacity outline-none']"
+          :class="[
+            currentIcon,
+            'size-5 shrink-0 mt-0.5 cursor-pointer hover:opacity-75 transition-opacity outline-none'
+          ]"
           @click="toggleDropdown"
         />
 
-        <div
-          v-if="isDropdownOpen"
-          ref="dropdownRef"
-          :class="styles.dropdownMenu"
-        >
+        <div v-if="isDropdownOpen" ref="dropdownRef" :class="styles.dropdownMenu">
           <button
             v-for="item in dropdownItems"
             :key="item.type"

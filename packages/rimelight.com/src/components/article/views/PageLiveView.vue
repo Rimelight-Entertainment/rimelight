@@ -71,7 +71,11 @@ defineOptions({
 </script>
 
 <template>
-  <div v-slot="page" v-if="pageStatus === 'pending'" class="h-full w-full flex items-center justify-center p-12">
+  <div
+    v-slot="page"
+    v-if="pageStatus === 'pending'"
+    class="h-full w-full flex items-center justify-center p-12"
+  >
     <span class="i-lucide-loader-2 size-12 animate-spin text-neutral-400" />
   </div>
 

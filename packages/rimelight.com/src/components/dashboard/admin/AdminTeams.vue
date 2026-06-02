@@ -31,7 +31,7 @@ async function fetchTeams() {
   pending.value = true
   try {
     const res = await fetch("/api/admin/teams")
-    teams.value = await res.json() as Team[]
+    teams.value = (await res.json()) as Team[]
   } catch (e) {
     console.error(e)
   } finally {
@@ -97,22 +97,41 @@ async function deleteTeam(id: string) {
   <div class="space-y-6">
     <div class="flex justify-between items-center">
       <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Teams</h3>
-      <RLVButton color="primary" @click="() => { state.parentId = null; isCreateModalOpen = true; }">
+      <RLVButton
+        color="primary"
+        @click="
+          () => {
+            state.parentId = null
+            isCreateModalOpen = true
+          }
+        "
+      >
         <span class="i-lucide-plus size-4 mr-1.5" />
         Create Team
       </RLVButton>
     </div>
 
     <!-- Create Team form/modal -->
-    <div v-if="isCreateModalOpen" class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
-      <h4 class="text-md font-bold mb-1">{{ state.parentId ? 'Add Subteam' : 'Create Team' }}</h4>
+    <div
+      v-if="isCreateModalOpen"
+      class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+    >
+      <h4 class="text-md font-bold mb-1">{{ state.parentId ? "Add Subteam" : "Create Team" }}</h4>
       <p class="text-xs text-neutral-500 mb-4">
-        {{ state.parentId ? `Creating subteam for ${state.parentName}` : 'Set up a new team workspace.' }}
+        {{
+          state.parentId
+            ? `Creating subteam for ${state.parentName}`
+            : "Set up a new team workspace."
+        }}
       </p>
 
       <form @submit="createTeam" class="space-y-4 max-w-md">
         <RLVFormField v-if="state.parentId" label="Parent Team">
-          <input :placeholder="state.parentName" disabled class="w-full p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-800 text-sm" />
+          <input
+            :placeholder="state.parentName"
+            disabled
+            class="w-full p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-800 text-sm"
+          />
         </RLVFormField>
 
         <RLVFormField label="Team Name" required>
@@ -121,22 +140,26 @@ async function deleteTeam(id: string) {
 
         <div class="flex gap-2">
           <RLVButton type="submit" :loading="isSubmitting">Create</RLVButton>
-          <RLVButton type="button" color="neutral" variant="soft" @click="isCreateModalOpen = false">Cancel</RLVButton>
+          <RLVButton type="button" color="neutral" variant="soft" @click="isCreateModalOpen = false"
+            >Cancel</RLVButton
+          >
         </div>
       </form>
     </div>
 
     <!-- Teams Table -->
-    <div class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden">
-      <div v-if="pending" class="p-8 text-center text-sm text-neutral-500">
-        Loading teams...
-      </div>
+    <div
+      class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden"
+    >
+      <div v-if="pending" class="p-8 text-center text-sm text-neutral-500">Loading teams...</div>
       <div v-else-if="!teams.length" class="p-8 text-center text-sm text-neutral-500">
         No teams found.
       </div>
       <table v-else class="w-full border-collapse text-left text-sm">
         <thead>
-          <tr class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider">
+          <tr
+            class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider"
+          >
             <th class="p-4">Team</th>
             <th class="p-4">Members</th>
             <th class="p-4">Created At</th>
@@ -144,10 +167,21 @@ async function deleteTeam(id: string) {
           </tr>
         </thead>
         <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800">
-          <tr v-for="team in teams" :key="team.id" class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors">
+          <tr
+            v-for="team in teams"
+            :key="team.id"
+            class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors"
+          >
             <td class="p-4 font-semibold text-neutral-900 dark:text-white flex items-center gap-3">
-              <div class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-850">
-                <img v-if="team.logo" :src="team.logo" :alt="team.name" class="size-full object-cover" />
+              <div
+                class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-850"
+              >
+                <img
+                  v-if="team.logo"
+                  :src="team.logo"
+                  :alt="team.name"
+                  class="size-full object-cover"
+                />
                 <span v-else class="i-lucide-users size-4 text-neutral-400" />
               </div>
               {{ team.name }}
@@ -155,10 +189,22 @@ async function deleteTeam(id: string) {
             <td class="p-4">{{ team.memberCount }} members</td>
             <td class="p-4">{{ new Date(team.createdAt).toLocaleDateString() }}</td>
             <td class="p-4 text-right flex justify-end gap-1">
-              <RLVButton color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" title="Add Subteam" @click="openCreateSubteamModal(team)">
+              <RLVButton
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Add Subteam"
+                @click="openCreateSubteamModal(team)"
+              >
                 <span class="i-lucide-plus-circle size-4" />
               </RLVButton>
-              <RLVButton color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" title="Delete Team" @click="deleteTeam(team.id)">
+              <RLVButton
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Delete Team"
+                @click="deleteTeam(team.id)"
+              >
                 <span class="i-lucide-trash size-4 text-red-500" />
               </RLVButton>
             </td>

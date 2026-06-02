@@ -57,9 +57,13 @@ async function createBoard(e: Event) {
 
 <template>
   <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-    <div class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl w-full max-w-md shadow-xl space-y-6">
+    <div
+      class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl w-full max-w-md shadow-xl space-y-6"
+    >
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-primary-50 dark:bg-primary-950/30 rounded-xl flex items-center justify-center text-primary-500">
+        <div
+          class="w-10 h-10 bg-primary-50 dark:bg-primary-950/30 rounded-xl flex items-center justify-center text-primary-500"
+        >
           <span class="i-lucide-plus size-5" />
         </div>
         <div>
@@ -86,9 +90,7 @@ async function createBoard(e: Event) {
           <RLVButton type="button" color="neutral" variant="soft" @click="isOpen = false">
             Cancel
           </RLVButton>
-          <RLVButton type="submit" :loading="submitting">
-            Create Project
-          </RLVButton>
+          <RLVButton type="submit" :loading="submitting"> Create Project </RLVButton>
         </div>
       </form>
     </div>

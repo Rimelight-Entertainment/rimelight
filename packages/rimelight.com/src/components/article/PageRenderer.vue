@@ -61,7 +61,8 @@ const pageRendererStyles = scv({
     title: "text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-2",
     surroundSkeleton: "grid grid-cols-1 gap-4 sm:grid-cols-2 mt-8",
     skeleton: "h-48 w-full rounded-xl bg-neutral-100 dark:bg-neutral-800 animate-pulse",
-    metadata: "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8"
+    metadata:
+      "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8"
   }
 })
 
@@ -168,8 +169,12 @@ watch(
           <div :class="styles.metadata">
             <h6 class="font-bold text-neutral-800 dark:text-neutral-200">Metadata</h6>
             <span>ID: {{ page.id }}</span>
-            <span v-if="page.createdAt">Created: {{ new Date(page.createdAt).toLocaleString() }}</span>
-            <span v-if="page.updatedAt">Updated: {{ new Date(page.updatedAt).toLocaleString() }}</span>
+            <span v-if="page.createdAt"
+              >Created: {{ new Date(page.createdAt).toLocaleString() }}</span
+            >
+            <span v-if="page.updatedAt"
+              >Updated: {{ new Date(page.updatedAt).toLocaleString() }}</span
+            >
           </div>
         </template>
       </div>

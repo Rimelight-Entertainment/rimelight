@@ -15,14 +15,34 @@ function getTool(id: string) {
 </script>
 
 <template>
-  <div v-if="isVisible" class="fixed top-[calc(var(--total-header-offset,64px)+1.5rem)] right-6 z-[9999] flex flex-col items-end gap-4 pointer-events-none">
-    <div v-for="id in activeToolIds" :key="id" class="pointer-events-auto transition-all duration-300 ease-in-out">
+  <div
+    v-if="isVisible"
+    class="fixed top-[calc(var(--total-header-offset,64px)+1.5rem)] right-6 z-[9999] flex flex-col items-end gap-4 pointer-events-none"
+  >
+    <div
+      v-for="id in activeToolIds"
+      :key="id"
+      class="pointer-events-auto transition-all duration-300 ease-in-out"
+    >
       <template v-if="getTool(id)">
-        <div v-if="isToolExpanded(id)" class="w-80 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-xl">
-          <div class="flex items-center justify-between p-3 bg-neutral-100 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+        <div
+          v-if="isToolExpanded(id)"
+          class="w-80 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-xl"
+        >
+          <div
+            class="flex items-center justify-between p-3 bg-neutral-100 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700"
+          >
             <div class="flex items-center gap-2">
-              <span v-if="getTool(id)!.icon" :class="[getTool(id)!.icon.replace('lucide:', 'i-lucide-'), 'w-4 h-4 text-neutral-600 dark:text-neutral-350']" />
-              <span class="text-sm font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-200">
+              <span
+                v-if="getTool(id)!.icon"
+                :class="[
+                  getTool(id)!.icon.replace('lucide:', 'i-lucide-'),
+                  'w-4 h-4 text-neutral-600 dark:text-neutral-350'
+                ]"
+              />
+              <span
+                class="text-sm font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-200"
+              >
                 {{ getTool(id)!.title }}
               </span>
             </div>
@@ -58,7 +78,10 @@ function getTool(id: string) {
           :title="getTool(id)!.tooltip?.() || getTool(id)!.title"
           @click="toggleExpanded(id)"
         >
-          <span v-if="getTool(id)!.icon" :class="[getTool(id)!.icon.replace('lucide:', 'i-lucide-'), 'w-6 h-6']" />
+          <span
+            v-if="getTool(id)!.icon"
+            :class="[getTool(id)!.icon.replace('lucide:', 'i-lucide-'), 'w-6 h-6']"
+          />
         </RLVButton>
       </template>
     </div>

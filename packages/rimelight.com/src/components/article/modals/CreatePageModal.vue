@@ -162,12 +162,10 @@ const handleConfirm = () => {
             v-model="selectedType"
             class="w-full bg-transparent border border-default rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-default"
           >
-            <option value="" disabled>{{ t('editor.template_placeholder', 'Select a template...') }}</option>
-            <option
-              v-for="opt in typeOptions"
-              :key="opt.value"
-              :value="opt.value"
-            >
+            <option value="" disabled>
+              {{ t("editor.template_placeholder", "Select a template...") }}
+            </option>
+            <option v-for="opt in typeOptions" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>
           </select>

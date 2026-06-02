@@ -35,7 +35,7 @@ const latestPosts = (await getCollection("blog"))
 
 const heroLinks = [
     {
-        label: messages.heroLink,
+        label: messages["section_hero_link_github_label"],
         href: getRelativeLocaleUrl(activeLocale, "/blog"),
         color: "primary",
         variant: "solid",
@@ -44,13 +44,13 @@ const heroLinks = [
 
 const ctaLinks = [
     {
-        label: messages.ctaStart,
+        label: messages["section_cta_start"],
         href: getRelativeLocaleUrl(activeLocale, "/blog"),
         color: "primary",
         variant: "solid"
     },
     {
-        label: messages.ctaContribute,
+        label: messages["section_cta_contribute"],
         href: getRelativeLocaleUrl(activeLocale, "/"),
         color: "primary",
         variant: "outline",

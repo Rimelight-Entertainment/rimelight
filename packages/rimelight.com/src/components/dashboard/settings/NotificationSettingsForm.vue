@@ -59,12 +59,16 @@ function onChange() {
 <template>
   <div class="space-y-8">
     <div v-for="(section, index) in sections" :key="index" class="space-y-4">
-      <div class="p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
+      <div
+        class="p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+      >
         <h3 class="text-md font-bold text-neutral-900 dark:text-white">{{ section.title }}</h3>
         <p class="text-xs text-neutral-500">{{ section.description }}</p>
       </div>
 
-      <div class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800">
+      <div
+        class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800"
+      >
         <div
           v-for="field in section.fields"
           :key="field.name"

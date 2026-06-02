@@ -24,7 +24,7 @@ const sending = ref(false)
 async function fetchMails() {
   try {
     const res = await fetch("/api/mails")
-    mails.value = await res.json() as Mail[]
+    mails.value = (await res.json()) as Mail[]
   } catch (e) {
     // Fallback Mock Data if API is not yet running
     mails.value = [
@@ -78,15 +78,23 @@ function handleReply(e: Event) {
 </script>
 
 <template>
-  <div class="flex h-full w-full overflow-hidden border border-neutral-200 dark:border-neutral-800 rounded-2xl bg-white dark:bg-neutral-950">
+  <div
+    class="flex h-full w-full overflow-hidden border border-neutral-200 dark:border-neutral-800 rounded-2xl bg-white dark:bg-neutral-950"
+  >
     <!-- Mails List Column -->
-    <div class="w-full md:w-2/5 border-r border-neutral-200 dark:border-neutral-800 flex flex-col h-full overflow-hidden">
-      <div class="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900">
+    <div
+      class="w-full md:w-2/5 border-r border-neutral-200 dark:border-neutral-800 flex flex-col h-full overflow-hidden"
+    >
+      <div
+        class="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-neutral-50 dark:bg-neutral-900"
+      >
         <div>
           <h3 class="font-bold text-neutral-900 dark:text-white flex items-center gap-2">
             <span class="i-lucide-inbox text-neutral-500" />
             Inbox
-            <span class="px-2 py-0.5 text-xs font-bold bg-neutral-200 dark:bg-neutral-800 rounded-full text-neutral-600 dark:text-neutral-300">
+            <span
+              class="px-2 py-0.5 text-xs font-bold bg-neutral-200 dark:bg-neutral-800 rounded-full text-neutral-600 dark:text-neutral-300"
+            >
               {{ filteredMails.length }}
             </span>
           </h3>
@@ -95,14 +103,22 @@ function handleReply(e: Event) {
         <div class="flex gap-1">
           <button
             class="px-3 py-1 text-xs rounded-lg font-semibold transition-colors"
-            :class="selectedTab === 'all' ? 'bg-primary-500 text-white' : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'"
+            :class="
+              selectedTab === 'all'
+                ? 'bg-primary-500 text-white'
+                : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+            "
             @click="selectedTab = 'all'"
           >
             All
           </button>
           <button
             class="px-3 py-1 text-xs rounded-lg font-semibold transition-colors"
-            :class="selectedTab === 'unread' ? 'bg-primary-500 text-white' : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'"
+            :class="
+              selectedTab === 'unread'
+                ? 'bg-primary-500 text-white'
+                : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+            "
             @click="selectedTab = 'unread'"
           >
             Unread
@@ -122,35 +138,56 @@ function handleReply(e: Event) {
           @click="selectMail(mail)"
         >
           <div class="flex justify-between items-center mb-1">
-            <span class="text-sm font-bold text-neutral-800 dark:text-neutral-200">{{ mail.from.name }}</span>
-            <span class="text-xs text-neutral-500">{{ new Date(mail.date).toLocaleDateString() }}</span>
+            <span class="text-sm font-bold text-neutral-800 dark:text-neutral-200">{{
+              mail.from.name
+            }}</span>
+            <span class="text-xs text-neutral-500">{{
+              new Date(mail.date).toLocaleDateString()
+            }}</span>
           </div>
-          <h4 class="text-sm font-semibold text-neutral-900 dark:text-white truncate mb-1">{{ mail.subject }}</h4>
+          <h4 class="text-sm font-semibold text-neutral-900 dark:text-white truncate mb-1">
+            {{ mail.subject }}
+          </h4>
           <p class="text-xs text-neutral-500 line-clamp-2">{{ mail.body }}</p>
         </div>
       </div>
     </div>
 
     <!-- Active Mail View Column -->
-    <div class="hidden md:flex flex-1 flex-col h-full overflow-hidden bg-neutral-50 dark:bg-neutral-900/30">
+    <div
+      class="hidden md:flex flex-1 flex-col h-full overflow-hidden bg-neutral-50 dark:bg-neutral-900/30"
+    >
       <div v-if="selectedMail" class="flex flex-col h-full overflow-hidden">
-        <div class="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-white dark:bg-neutral-950">
+        <div
+          class="p-4 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-white dark:bg-neutral-950"
+        >
           <div>
             <h3 class="font-bold text-neutral-900 dark:text-white">{{ selectedMail.subject }}</h3>
-            <p class="text-xs text-neutral-500">From: {{ selectedMail.from.name }} ({{ selectedMail.from.email }})</p>
+            <p class="text-xs text-neutral-500">
+              From: {{ selectedMail.from.name }} ({{ selectedMail.from.email }})
+            </p>
           </div>
-          <RLVButton color="neutral" variant="ghost" class="size-8 p-0 rounded-xl" @click="selectedMail = null">
+          <RLVButton
+            color="neutral"
+            variant="ghost"
+            class="size-8 p-0 rounded-xl"
+            @click="selectedMail = null"
+          >
             <span class="i-lucide-x size-4" />
           </RLVButton>
         </div>
 
         <div class="flex-1 p-6 overflow-y-auto bg-white dark:bg-neutral-950/20">
-          <p class="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed">
+          <p
+            class="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed"
+          >
             {{ selectedMail.body }}
           </p>
         </div>
 
-        <div class="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
+        <div
+          class="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950"
+        >
           <form @submit="handleReply" class="space-y-3">
             <textarea
               v-model="replyText"

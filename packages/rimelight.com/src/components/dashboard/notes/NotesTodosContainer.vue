@@ -20,7 +20,7 @@ const { todoRefreshTrigger } = useTodos()
 async function fetchTodos() {
   try {
     const res = await fetch("/api/todos")
-    todos.value = await res.json() as Todo[]
+    todos.value = (await res.json()) as Todo[]
   } catch (e) {
     console.error(e)
   }
@@ -29,7 +29,7 @@ async function fetchTodos() {
 async function fetchArchivedTodos() {
   try {
     const res = await fetch("/api/todos/archived")
-    archivedTodos.value = await res.json() as Todo[]
+    archivedTodos.value = (await res.json()) as Todo[]
   } catch (e) {
     console.error(e)
   }
@@ -47,7 +47,9 @@ watch(todoRefreshTrigger, () => {
 </script>
 
 <template>
-  <div class="p-4 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl">
+  <div
+    class="p-4 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+  >
     <TodoList :todos="todos" :archived-todos="archivedTodos" />
   </div>
 </template>
