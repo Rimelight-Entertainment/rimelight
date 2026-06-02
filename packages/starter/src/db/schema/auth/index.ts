@@ -44,9 +44,7 @@ export const user = pgTable(
     encryptedPrivateKey: text("encrypted_private_key"),
     derivationSalt: text("derivation_salt")
   },
-  (table) => ({
-    nameTagUnique: uniqueIndex("user_name_tag_unique").on(table.name, table.tag)
-  })
+  (table) => [uniqueIndex("user_name_tag_unique").on(table.name, table.tag)]
 )
 
 export const session = pgTable(
@@ -283,9 +281,7 @@ export const note_noteLabel = pgTable(
       .notNull()
       .references(() => noteLabel.id, { onDelete: "cascade" })
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.noteId, t.labelId] })
-  })
+  (t) => [primaryKey({ columns: [t.noteId, t.labelId] })]
 )
 
 // ============================================================================

@@ -30,7 +30,30 @@ const docs = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    editUrl: z.union([z.string().url(), z.literal(false)]).optional()
+    editUrl: z.union([z.url(), z.literal(false)]).optional(),
+    tableOfContents: z
+      .union([
+        z.object({
+          minHeadingLevel: z.number().optional(),
+          maxHeadingLevel: z.number().optional()
+        }),
+        z.literal(false)
+      ])
+      .optional(),
+    prev: z
+      .object({
+        label: z.string(),
+        href: z.string()
+      })
+      .nullable()
+      .optional(),
+    next: z
+      .object({
+        label: z.string(),
+        href: z.string()
+      })
+      .nullable()
+      .optional()
   })
 })
 

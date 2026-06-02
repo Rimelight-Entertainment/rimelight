@@ -8,7 +8,7 @@ export const server = {
     input: z.object({
       firstName: z.string(),
       lastName: z.string(),
-      email: z.string().email(),
+      email: z.email(),
       password: z.string().min(8).max(128)
     }),
     handler: async (input) => {
@@ -32,7 +32,7 @@ export const server = {
   signIn: defineAction({
     accept: "form",
     input: z.object({
-      email: z.string().email(),
+      email: z.email(),
       password: z.string()
     }),
     handler: async (input, ctx) => {
