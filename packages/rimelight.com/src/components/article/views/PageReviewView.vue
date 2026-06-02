@@ -137,6 +137,18 @@ const resolvePage = async (idOrSlug: string): Promise<Pick<Page, "title" | "icon
   return await res.json()
 }
 
+const navigateToView = () => {
+  if (typeof window !== "undefined") {
+    window.location.href = `/${relativeSlug.value}`
+  }
+}
+
+const navigateToVersion = (v: PageVersion) => {
+  if (typeof window !== "undefined") {
+    window.location.search = `?version=${v.id}`
+  }
+}
+
 const handleApprove = async () => {
   if (!versionId || !isAdmin) return
   isActioning.value = "approving"
@@ -232,13 +244,7 @@ defineOptions({
           :page-id="page.id"
           :current-version-id="versionId || undefined"
           :is-admin="isAdmin"
-          @version-selected="
-            (v: PageVersion) => {
-              if (typeof window !== 'undefined') {
-                window.location.search = `?version=${v.id}`
-              }
-            }
-          "
+          @version-selected="navigateToVersion"
         />
       </div>
 
@@ -248,11 +254,7 @@ defineOptions({
           variant="ghost"
           leading-icon="i-lucide-external-link"
           :label="t('page_editor.view_page', 'View Page')"
-          @click="
-            if (typeof window !== 'undefined') {
-              window.location.href = `/${relativeSlug}`
-            }
-          "
+          @click="navigateToView"
         />
         <RLVButton
           color="neutral"
@@ -288,7 +290,7 @@ defineOptions({
         </template>
 
         <template v-else-if="versionId && versionData?.status === 'rejected'">
-          <span class="text-xs bg-red-500/10 text-red-600 px-2.5 py-1 rounded-md font-medium border border-red-500/20">
+          <span class="text-xs bg-red-500/10 text-red-600 px-2.5 py-1 rounded-md font-medium border border-green-500/20">
             Version Rejected
           </span>
         </template>
