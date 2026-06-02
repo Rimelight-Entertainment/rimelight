@@ -15,10 +15,5 @@ const canEdit = (user as { role?: string } | null)?.role === 'owner' || (user as
 		cacheKey={`wiki-${slug}`}
 		baseUrl="/franchises/grand-tale/wiki"
 		canEdit={canEdit}
-		errorRedirectParams={{
-			redirect: '/franchises/grand-tale/wiki',
-			label: 'Back to Wiki',
-			message: 'The requested wiki page could not be located.'
-		}}
 	/>
 </WikiLayout>

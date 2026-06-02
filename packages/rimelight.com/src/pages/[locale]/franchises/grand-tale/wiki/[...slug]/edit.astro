@@ -18,10 +18,5 @@ const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as
 		baseUrl="/franchises/grand-tale/wiki"
 		isAdmin={isAdmin}
 		backUrl="/franchises/grand-tale/wiki"
-		errorRedirectParams={{
-			redirect: '/franchises/grand-tale/wiki',
-			label: 'Back to Wiki',
-			message: 'The requested wiki page could not be located.'
-		}}
 	/>
 </WikiLayout>
