@@ -22,7 +22,22 @@ export interface ResolvedScope {
   active?: boolean
 }
 
-function getCommonHref(items: import("../types").SidebarItem[], locale: string): string {
+function findFirstHref(
+  items: import("../types").SidebarItem[],
+  locale: string
+): string | undefined {
+  for (const item of items) {
+    if (item.href) return item.href.replace("{locale}", locale)
+    const childItems = item.children || item.items
+    if (childItems) {
+      const found = findFirstHref(childItems, locale)
+      if (found) return found
+    }
+  }
+  return undefined
+}
+
+function getScopePrefix(items: import("../types").SidebarItem[], locale: string): string {
   const allHrefs: string[] = []
 
   function collect(item: import("../types").SidebarItem) {
@@ -65,7 +80,7 @@ export async function getDocsSidebar(
     const id = scope.id || scope.label
     let href = scope.href || ""
     if (!href && scope.items && scope.items.length > 0) {
-      href = getCommonHref(scope.items, locale)
+      href = findFirstHref(scope.items, locale) || ""
     }
     return {
       id,
@@ -75,11 +90,22 @@ export async function getDocsSidebar(
     }
   })
 
+  // Compute scope prefixes for active detection (separate from clickable hrefs)
+  const scopePrefixes: string[] = sidebarScopes.map((scope) =>
+    scope.items ? getScopePrefix(scope.items, locale) : ""
+  )
+
   let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase())
   if (!activeScope) {
-    activeScope = [...scopes]
-      .toSorted((a, b) => b.href.length - a.href.length)
-      .find((s) => normPath.startsWith(s.href.toLowerCase()))
+    const sorted = [...scopePrefixes.entries()]
+      .filter(([, p]) => p)
+      .toSorted(([, a], [, b]) => b.length - a.length)
+    for (const [i] of sorted) {
+      if (normPath.startsWith(scopePrefixes[i].toLowerCase())) {
+        activeScope = scopes[i]
+        break
+      }
+    }
   }
   if (!activeScope && scopes.length > 0) {
     activeScope = scopes[0]

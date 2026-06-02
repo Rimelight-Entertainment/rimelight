@@ -19,7 +19,7 @@ if (!entry) {
 }
 
 const { Content, headings } = await render(entry);
-const { title, description, tableOfContents, prev, next, editUrl } = entry.data;
+const { title, description, tableOfContents, editUrl } = entry.data;
 ---
 
 <DocsLayout
@@ -27,8 +27,6 @@ const { title, description, tableOfContents, prev, next, editUrl } = entry.data;
   description={description}
   headings={headings}
   tableOfContents={tableOfContents as any}
-  prevOverride={prev as any}
-  nextOverride={next as any}
   editUrl={editUrl}
 >
   <Content />
