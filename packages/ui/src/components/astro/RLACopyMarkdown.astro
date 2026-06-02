@@ -25,11 +25,11 @@ const {
 
 <script>
   function setupCopy() {
-    const copyBtn = document.getElementById("rl-copy-markdown") as HTMLButtonElement | null;
+    const copyBtn = document.getElementById("rl-copy-markdown") as (HTMLButtonElement & { rlCopyRegistered?: boolean }) | null;
     if (!copyBtn) return;
 
-    if ((copyBtn as any)._rlCopyRegistered) return;
-    (copyBtn as any)._rlCopyRegistered = true;
+    if (copyBtn.rlCopyRegistered) return;
+    copyBtn.rlCopyRegistered = true;
 
     copyBtn.addEventListener("click", async () => {
       try {

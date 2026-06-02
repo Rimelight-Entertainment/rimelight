@@ -100,10 +100,11 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
       const triggers = container.querySelectorAll("[role=tab]");
       const panels = container.querySelectorAll("[role=tabpanel]");
 
-      triggers.forEach(trigger => {
+      triggers.forEach(triggerNode => {
+        const trigger = triggerNode as HTMLButtonElement & { tabsListenerAttached?: boolean };
         // Prevent duplicate listener registration
-        if ((trigger as any).__tabsListenerAttached) return;
-        (trigger as any).__tabsListenerAttached = true;
+        if (trigger.tabsListenerAttached) return;
+        trigger.tabsListenerAttached = true;
 
         trigger.addEventListener("click", () => {
           const targetValue = (trigger as HTMLButtonElement).dataset.value;

@@ -89,8 +89,8 @@ const isDestructive = variant === "destructive"
 
 <script>
 (function() {
-  const win = window as unknown as Window & { __rlConfirm?: () => Promise<boolean> };
-  if (win.__rlConfirm) return;
+  const win = window as unknown as Window & { rlConfirm?: () => Promise<boolean> };
+  if (win.rlConfirm) return;
   var pendingResolve: ((value: boolean) => void) | null = null;
 
   document.addEventListener("click", function(e) {
@@ -101,7 +101,7 @@ const isDestructive = variant === "destructive"
     pendingResolve = null;
   }, true);
 
-  win.__rlConfirm = function() {
+  win.rlConfirm = function() {
     return new Promise<boolean>(function(resolve) {
       var dialog = document.querySelector("[data-slot='alert-dialog-container'] dialog") as HTMLDialogElement | null;
       if (!dialog) { resolve(false); return; }

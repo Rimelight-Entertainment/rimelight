@@ -1,4 +1,11 @@
-import type { DocsConfig, BadgeConfig, PropMeta, ThemeMeta } from "../types"
+import type {
+  DocsConfig,
+  BadgeConfig,
+  PropMeta,
+  ThemeMeta,
+  SidebarItem,
+  SidebarScope
+} from "../types"
 
 export function defineDocsConfig(config: DocsConfig): DocsConfig {
   return config
@@ -22,10 +29,7 @@ export interface ResolvedScope {
   active?: boolean | undefined
 }
 
-function findFirstHref(
-  items: import("../types").SidebarItem[],
-  locale: string
-): string | undefined {
+function findFirstHref(items: SidebarItem[], locale: string): string | undefined {
   for (const item of items) {
     if (item.href) return item.href.replace("{locale}", locale)
     const childItems = item.children || item.items
@@ -37,10 +41,10 @@ function findFirstHref(
   return undefined
 }
 
-function getScopePrefix(items: import("../types").SidebarItem[], locale: string): string {
+function getScopePrefix(items: SidebarItem[], locale: string): string {
   const allHrefs: string[] = []
 
-  function collect(item: import("../types").SidebarItem) {
+  function collect(item: SidebarItem) {
     if (item.href) allHrefs.push(item.href.replace("{locale}", locale))
     const childItems = item.children || item.items
     if (childItems) childItems.forEach(collect)
@@ -72,11 +76,9 @@ export async function getDocsSidebar(
 }> {
   const normPath = currentPath.replace(/\/$/, "").toLowerCase()
 
-  const sidebarScopes: import("../types").SidebarScope[] = Array.isArray(config.sidebar)
-    ? config.sidebar.filter(
-        (item): item is import("../types").SidebarScope => "id" in item || "scopes" in item
-      )
-    : (config.sidebar as any)?.scopes || []
+  const sidebarScopes: SidebarScope[] = Array.isArray(config.sidebar)
+    ? config.sidebar.filter((item): item is SidebarScope => "id" in item || "scopes" in item)
+    : config.sidebar.scopes || []
 
   const scopes: ResolvedScope[] = sidebarScopes.map((scope) => {
     const id = scope.id || scope.label
@@ -121,7 +123,7 @@ export async function getDocsSidebar(
 
   const items = sidebarConfig?.items || []
 
-  async function resolveItem(item: import("../types").SidebarItem): Promise<ResolvedSidebarItem[]> {
+  async function resolveItem(item: SidebarItem): Promise<ResolvedSidebarItem[]> {
     const resolved: ResolvedSidebarItem = {
       label: item.label || "",
       href: item.href ? item.href.replace("{locale}", locale) : undefined,
@@ -137,8 +139,9 @@ export async function getDocsSidebar(
     const childItems = item.children || item.items
     if (childItems) {
       const children: ResolvedSidebarItem[] = []
-      for (const child of childItems) {
-        children.push(...(await resolveItem(child)))
+      const resolvedChildren = await Promise.all(childItems.map((child) => resolveItem(child)))
+      for (const res of resolvedChildren) {
+        children.push(...res)
       }
       resolved.children = children
       if (!resolved.active) {
@@ -150,8 +153,9 @@ export async function getDocsSidebar(
   }
 
   const resolvedItems: ResolvedSidebarItem[] = []
-  for (const item of items) {
-    resolvedItems.push(...(await resolveItem(item)))
+  const resolvedAllItems = await Promise.all(items.map((item) => resolveItem(item)))
+  for (const res of resolvedAllItems) {
+    resolvedItems.push(...res)
   }
 
   return { items: resolvedItems, scopes, activeScope }

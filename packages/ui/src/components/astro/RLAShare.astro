@@ -21,11 +21,11 @@ const {
 
 <script>
   function setupShare() {
-    const shareBtn = document.getElementById("rl-share") as HTMLButtonElement | null;
+    const shareBtn = document.getElementById("rl-share") as (HTMLButtonElement & { rlShareRegistered?: boolean }) | null;
     if (!shareBtn) return;
 
-    if ((shareBtn as any)._rlShareRegistered) return;
-    (shareBtn as any)._rlShareRegistered = true;
+    if (shareBtn.rlShareRegistered) return;
+    shareBtn.rlShareRegistered = true;
 
     shareBtn.addEventListener("click", async () => {
       if (navigator.share) {
