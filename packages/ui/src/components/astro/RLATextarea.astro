@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { TextareaProps } from "../../types"
 import textareaThemeDefault, { createTextareaTheme } from "../../themes/textarea.theme"
 
-const textareaTheme = textareaThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const textareaTheme = uiConfig.colors ? createTextareaTheme() : textareaThemeDefault
 const textarea = scv(textareaTheme)
 
 const {

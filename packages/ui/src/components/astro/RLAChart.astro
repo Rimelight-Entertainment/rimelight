@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { ChartProps, ChartDataPoint } from "../../types"
 import chartThemeDefault, { createChartTheme } from "../../themes/chart.theme"
 
-const chartTheme = chartThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const chartTheme = uiConfig.colors ? createChartTheme() : chartThemeDefault
 const chart = scv(chartTheme)
 
 const {

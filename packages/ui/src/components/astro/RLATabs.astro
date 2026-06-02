@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { TabsProps } from "../../types"
 import tabsThemeDefault, { createTabsTheme } from "../../themes/tabs.theme"
 
-const tabsTheme = tabsThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const tabsTheme = uiConfig.colors ? createTabsTheme() : tabsThemeDefault
 const tabs = scv(tabsTheme)
 
 const {
@@ -25,7 +28,7 @@ const classes = resolveClasses(tabs, {
   size
 }, useUi("tabs", uiProp), className);
 
-const initialValue = value || (items.length > 0 ? items[0].value : "")
+const initialValue = value || (items.length > 0 ? items[0]?.value : "")
 ---
 <div class={classes.root} data-slot="root" data-tabs-container data-value={initialValue} {...rest}>
   <div class={classes.list} data-slot="list" role="tablist">
@@ -105,7 +108,8 @@ const initialValue = value || (items.length > 0 ? items[0].value : "")
         trigger.addEventListener("click", () => {
           const targetValue = (trigger as HTMLButtonElement).dataset.value;
 
-          triggers.forEach(t => {
+          triggers.forEach(tNode => {
+            const t = tNode as HTMLButtonElement;
             t.setAttribute("data-state", t.dataset.value === targetValue ? "active" : "inactive");
           });
 

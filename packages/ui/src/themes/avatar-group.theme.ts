@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createAvatarGroupTheme = (colors: string[] = defaultColors) =>
+export const createAvatarGroupTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root"],
     base: {

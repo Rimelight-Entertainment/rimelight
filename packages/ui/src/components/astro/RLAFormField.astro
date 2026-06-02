@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { FormFieldProps } from "../../types"
 import formFieldThemeDefault, { createFormFieldTheme } from "../../themes/form-field.theme"
 
-const formFieldTheme = formFieldThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const formFieldTheme = uiConfig.colors ? createFormFieldTheme() : formFieldThemeDefault
 const formField = scv(formFieldTheme)
 
 const {

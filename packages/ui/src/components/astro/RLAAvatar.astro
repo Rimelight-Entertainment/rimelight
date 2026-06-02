@@ -25,13 +25,15 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as AvatarProps
+} = Astro.props as AvatarProps & {
+  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left"
+  badgeColor?: string
+}
 
 const classes = resolveClasses(avatar, {
   size,
-  color: Astro.props.color || "neutral",
-  badgePosition,
-  hasBadge: !!badge
+  color: (Astro.props.color || "neutral") as "neutral",
+  badgePosition: badgePosition as "bottom-right"
 }, useUi("avatar", uiProp), className)
 
 const avatarFallback = fallback || initials
@@ -69,7 +71,7 @@ const hasTextLayout = !!(title || subtitle)
       <slot name="badge">
         {badge && (
           <span
-            class={cx(classes.badge, badgeColor && (badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
+            class={cx(classes.badge, badgeColor && (typeof badgeColor === 'string' && badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
             data-slot="badge"
           >
             {typeof badge === 'string' || typeof badge === 'number' ? badge : null}
@@ -121,7 +123,7 @@ const hasTextLayout = !!(title || subtitle)
     <slot name="badge">
       {badge && (
         <span
-          class={cx(classes.badge, badgeColor && (badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
+          class={cx(classes.badge, badgeColor && (typeof badgeColor === 'string' && badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
           data-slot="badge"
         >
           {typeof badge === 'string' || typeof badge === 'number' ? badge : null}

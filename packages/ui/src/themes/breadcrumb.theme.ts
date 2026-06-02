@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createBreadcrumbTheme = (colors: string[] = defaultColors) =>
+export const createBreadcrumbTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "list", "item", "link", "separator", "page"],
     base: {

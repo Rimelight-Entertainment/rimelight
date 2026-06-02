@@ -1,7 +1,6 @@
 ---
 import RLATabs from "./RLATabs.astro";
-import Prism from "prismjs";
-import "prismjs/components/prism-bash.js";
+import { Code } from "astro:components";
 
 type Manager = "npm" | "pnpm" | "yarn" | "deno" | "bun" | "vp"
 type CommandType = "add" | "create" | "dlx" | "exec" | "install" | "remove" | "run"
@@ -71,17 +70,12 @@ const tabItems = tabs.map((tab) => ({
   label: tab.mgr,
 }))
 
-// Pre-render the highlighted bash command via pure static prismjs
-const highlightedTabs = tabs.map((tab) => ({
-  mgr: tab.mgr,
-  html: Prism.highlight(tab.cmd!, Prism.languages.bash || Prism.languages.shell, "bash")
-}))
 ---
 
 <RLATabs items={tabItems} color="primary" size="md" variant="solid">
-  {highlightedTabs.map((tab, idx) => (
+  {tabs.map((tab, idx) => (
     <div role="tabpanel" data-value={tab.mgr} class:list={[{ "hidden": idx !== 0 }]}>
-      <pre class="language-sh"><code class="language-sh" set:html={tab.html}></code></pre>
+      <Code code={tab.cmd!} lang="bash" />
     </div>
   ))}
 </RLATabs>

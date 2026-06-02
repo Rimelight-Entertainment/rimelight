@@ -51,7 +51,6 @@ if (rcLogos && typeof rcLogos === "object") {
 const startsWithUrlPrefix = logoSrc && (logoSrc.startsWith("http") || logoSrc.startsWith("/") || logoSrc.startsWith("."));
 const isIcon = logoSrc && !startsWithUrlPrefix && (logoSrc.includes(":") || logoSrc.startsWith("i-"));
 const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode && theme !== "flat";
-const autoId = hasAutoMode ? `rla-logo-${Math.random().toString(36).slice(2, 8)}` : undefined;
 ---
 
 <a

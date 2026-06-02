@@ -6,7 +6,7 @@ import kbdThemeDefault, { createKbdTheme } from "../../themes/kbd.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const uiConfig = getUIConfig()
-const kbdTheme = uiConfig.colors ? createKbdTheme() : kbdThemeDefault
+const kbdTheme = uiConfig.colors ? createKbdTheme(uiConfig.colors) : kbdThemeDefault
 
 const kbd = scv(kbdTheme)
 
@@ -18,13 +18,13 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as KbdProps
+} = Astro.props as KbdProps & { color?: string; variant?: string; theme?: string }
 
 const classes = resolveClasses(kbd, {
   size,
-  color,
-  variant,
-  theme
+  color: color as "neutral",
+  variant: variant as "solid",
+  theme: theme as "flat"
 }, useUi("kbd", uiProp), className)
 ---
 <kbd class={classes.root} data-slot="root" {...rest}>

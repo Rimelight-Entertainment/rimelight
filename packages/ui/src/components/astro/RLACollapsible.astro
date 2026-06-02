@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { CollapsibleProps } from "../../types"
 import collapsibleThemeDefault, { createCollapsibleTheme } from "../../themes/collapsible.theme"
 
-const collapsibleTheme = collapsibleThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const collapsibleTheme = uiConfig.colors ? createCollapsibleTheme() : collapsibleThemeDefault
 const collapsible = scv(collapsibleTheme)
 
 const {

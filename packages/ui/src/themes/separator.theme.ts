@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createSeparatorTheme = (colors: string[] = defaultColors) =>
+export const createSeparatorTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
     base: {

@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createDrawerTheme = (colors: string[] = defaultColors) =>
+export const createDrawerTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: [
       "root",

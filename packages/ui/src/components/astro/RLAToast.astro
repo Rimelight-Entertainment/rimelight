@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { ToastProps } from "../../types"
 import toastThemeDefault, { createToastTheme } from "../../themes/toast.theme"
 
-const toastTheme = toastThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const toastTheme = uiConfig.colors ? createToastTheme() : toastThemeDefault
 const toast = scv(toastTheme)
 
 const {
@@ -20,7 +23,7 @@ const {
 } = Astro.props as ToastProps
 
 const classes = resolveClasses(toast, {
-  variant
+  variant: (variant === "success" || variant === "destructive") ? variant : "default"
 }, useUi("toast", uiProp), className)
 
 const variantIcons: Record<string, string> = {

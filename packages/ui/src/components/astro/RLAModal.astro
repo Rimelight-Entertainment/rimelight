@@ -22,7 +22,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ModalProps
+} = Astro.props as ModalProps & { size?: "sm" | "md" | "lg" | "xl" }
 
 const classes = resolveClasses(modal, {
   size

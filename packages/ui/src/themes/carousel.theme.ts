@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createCarouselTheme = (colors: string[] = defaultColors) =>
+export const createCarouselTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "viewport", "container", "slide", "buttonPrev", "buttonNext", "dots", "dot"],
     base: {

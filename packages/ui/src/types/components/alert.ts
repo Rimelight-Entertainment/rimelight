@@ -4,7 +4,7 @@ export interface AlertProps {
   /**
    * The visual variant of the alert.
    */
-  variant?: "default" | "destructive" | "outline" | "solid"
+  variant?: "default" | "destructive" | "outline" | "solid" | "soft" | "subtle"
   /**
    * The color scheme of the alert.
    */

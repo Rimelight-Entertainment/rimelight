@@ -28,11 +28,13 @@ const {
   ...rest
 } = Astro.props as PageSectionProps;
 
+const resolvedVariant = (variant === "default" || variant === "hero" || variant === "cta") ? variant : "default"
+
 const classes = resolveClasses(pageSection, {
-  variant,
+  variant: resolvedVariant,
   orientation,
   reverse,
-  ...(variant === "cta" && { ctaVariant }),
+  ...(resolvedVariant === "cta" && { ctaVariant }),
   headline: !!(Astro.slots.has("headline") || headline),
   title: !!(Astro.slots.has("title") || title),
   description: !!(Astro.slots.has("description") || description),

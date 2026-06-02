@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createSliderTheme = (colors: string[] = defaultColors) =>
+export const createSliderTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "track", "range", "thumb"],
     base: {

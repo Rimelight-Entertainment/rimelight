@@ -6,20 +6,20 @@ export function defineDocsConfig(config: DocsConfig): DocsConfig {
 
 export interface ResolvedSidebarItem {
   label: string
-  href?: string
-  icon?: string
-  badge?: string | BadgeConfig
-  active?: boolean
-  children?: ResolvedSidebarItem[]
-  collapsed?: boolean
+  href?: string | undefined
+  icon?: string | undefined
+  badge?: string | BadgeConfig | undefined
+  active?: boolean | undefined
+  children?: ResolvedSidebarItem[] | undefined
+  collapsed?: boolean | undefined
 }
 
 export interface ResolvedScope {
   id: string
   label: string
   href: string
-  icon?: string
-  active?: boolean
+  icon?: string | undefined
+  active?: boolean | undefined
 }
 
 function findFirstHref(
@@ -51,12 +51,14 @@ function getScopePrefix(items: import("../types").SidebarItem[], locale: string)
 
   const parts = allHrefs.map((h) => h.split("/").filter(Boolean))
   let commonLen = 0
-  for (let i = 0; i < parts[0].length; i++) {
-    if (parts.every((p) => p[i] === parts[0][i])) commonLen++
+  const firstPart = parts[0]
+  if (!firstPart) return ""
+  for (let i = 0; i < firstPart.length; i++) {
+    if (parts.every((p) => p[i] === firstPart[i])) commonLen++
     else break
   }
 
-  return "/" + parts[0].slice(0, commonLen).join("/") + "/"
+  return "/" + firstPart.slice(0, commonLen).join("/") + "/"
 }
 
 export async function getDocsSidebar(
@@ -66,7 +68,7 @@ export async function getDocsSidebar(
 ): Promise<{
   items: ResolvedSidebarItem[]
   scopes: ResolvedScope[]
-  activeScope?: ResolvedScope
+  activeScope?: ResolvedScope | undefined
 }> {
   const normPath = currentPath.replace(/\/$/, "").toLowerCase()
 
@@ -101,7 +103,8 @@ export async function getDocsSidebar(
       .filter(([, p]) => p)
       .toSorted(([, a], [, b]) => b.length - a.length)
     for (const [i] of sorted) {
-      if (normPath.startsWith(scopePrefixes[i].toLowerCase())) {
+      const prefix = scopePrefixes[i]
+      if (prefix && normPath.startsWith(prefix.toLowerCase())) {
         activeScope = scopes[i]
         break
       }

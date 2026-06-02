@@ -8,7 +8,7 @@ import RLAAvatar from "./RLAAvatar.astro"
 import { cx } from "css-variants"
 
 const uiConfig = getUIConfig()
-const separatorTheme = uiConfig.colors ? createSeparatorTheme() : separatorThemeDefault
+const separatorTheme = uiConfig.colors ? createSeparatorTheme(uiConfig.colors) : separatorThemeDefault
 
 const separator = scv(separatorTheme)
 
@@ -25,14 +25,19 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as SeparatorProps
+} = Astro.props as SeparatorProps & {
+  color?: string
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  type?: "solid" | "dashed" | "dotted"
+  position?: "start" | "center" | "end"
+}
 
 const classes = resolveClasses(separator, {
   orientation,
-  color,
-  size,
-  type,
-  position
+  color: color as "neutral",
+  size: size as "xs",
+  type: type as "solid",
+  position: position as "center"
 }, useUi("separator", uiProp), className)
 ---
 <div

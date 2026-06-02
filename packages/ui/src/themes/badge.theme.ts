@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createBadgeTheme = (colors: string[] = defaultColors) =>
+export const createBadgeTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
@@ -22,7 +22,7 @@ export const createBadgeTheme = (colors: string[] = defaultColors) =>
       color: {
         ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
         neutral: { root: "" }
-      },
+      } as Record<string, { root: string }>,
       size: {
         xs: {
           root: "text-[8px]/3 px-1 py-0.5 gap-1 rounded-sm",

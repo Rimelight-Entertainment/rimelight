@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { NavigationMenuProps } from "../../types"
 import navigationMenuThemeDefault, { createNavigationMenuTheme } from "../../themes/navigation-menu.theme"
 
-const navigationMenuTheme = navigationMenuThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const navigationMenuTheme = uiConfig.colors ? createNavigationMenuTheme() : navigationMenuThemeDefault
 const navigationMenu = scv(navigationMenuTheme)
 
 const {
@@ -15,9 +18,9 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as NavigationMenuProps
+} = Astro.props as NavigationMenuProps & { theme?: string }
 
-const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("navigationMenu", uiProp), className)
+const classes = resolveClasses(navigationMenu, { theme: theme as "flat", orientation }, useUi("navigationMenu", uiProp), className)
 ---
 
 <nav class={classes.root} data-slot="root" data-nav-menu data-orientation={orientation} {...rest}>
@@ -52,7 +55,7 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
             </button>
           ) : (
             <a
-              href={item.href ?? item.to ?? "#"}
+              href={typeof item.href === "string" ? item.href : (typeof item.to === "string" ? item.to : "#")}
               class={classes.link}
               data-slot="link"
               aria-current={isActive ? "page" : undefined}
@@ -77,7 +80,7 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
                   {item.children!.map(child => (
                     <li>
                       <a
-                        href={child.href ?? child.to ?? "#"}
+                        href={typeof child.href === "string" ? child.href : (typeof child.to === "string" ? child.to : "#")}
                         class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
                       >
                         {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}
@@ -110,7 +113,7 @@ const classes = resolveClasses(navigationMenu, { theme, orientation }, useUi("na
   document.querySelectorAll("[data-nav-menu]").forEach(menu => {
     const orientation = menu.getAttribute("data-orientation") || "horizontal";
     const items = menu.querySelectorAll("[data-nav-item]");
-    const viewportWrapper = orientation === "horizontal" ? menu.querySelector("[data-nav-viewport-wrapper]") : null as HTMLElement | null;
+    const viewportWrapper = (orientation === "horizontal" ? menu.querySelector("[data-nav-viewport-wrapper]") : null) as HTMLElement | null;
     const viewport = orientation === "horizontal" ? menu.querySelector("[data-nav-viewport]") : null;
 
     // Teleport viewport wrapper to body to escape parent transforms (e.g. translate-x on header)

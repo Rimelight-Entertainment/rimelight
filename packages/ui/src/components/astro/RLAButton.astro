@@ -32,7 +32,11 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ButtonProps
+} = Astro.props as ButtonProps & {
+  rounded?: boolean
+  activeColor?: string
+  activeVariant?: string
+}
 
 const isLeading = !!(leadingIcon || avatar || Astro.slots.has("leading")) || loading
 const isTrailing = !!(trailingIcon || Astro.slots.has("trailing")) || (loading && !isLeading)
@@ -49,8 +53,8 @@ const leadingIconClass = loading ? "animate-spin" : ""
 const trailingIconClass = loading ? "animate-spin" : ""
 
 const classes = resolveClasses(button, {
-  variant: active && activeVariant ? activeVariant : variant,
-  color: active && activeColor ? activeColor : color,
+  variant: (active && activeVariant ? activeVariant : variant) as "solid",
+  color: (active && activeColor ? activeColor : color) as "neutral",
   size,
   block,
   square: square || (!label && !Astro.slots.has("default")),
@@ -109,7 +113,7 @@ const loadingAutoProps = loadingAuto ? { 'data-loading-auto': '' } : {};
 {loadingAuto && (
   <script>
     document.querySelectorAll('button[data-loading-auto]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
+      button.addEventListener('click', async (_event) => {
         // Find if there are any other click listeners that return a promise
         // This is tricky in vanilla JS, but we can assume if it's data-loading-auto,
         // the user wants us to track the click.

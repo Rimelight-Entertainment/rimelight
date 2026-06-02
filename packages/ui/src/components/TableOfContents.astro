@@ -20,15 +20,16 @@ export interface TableOfContentsProps {
 
 type Props = TableOfContentsProps;
 
-const { headings, tableOfContents, levels = 2 } = Astro.props as Props;
+const { headings, tableOfContents } = Astro.props as Props;
+const levels = (Astro.props as { levels?: 1 | 2 | 3 }).levels ?? 2;
 
 if (tableOfContents === false) {
   // Render nothing — parent should also skip rendering this component,
   // but guard here as a safety net.
 }
 
-const minLevel = (tableOfContents !== false && tableOfContents?.minHeadingLevel) ?? 2;
-const maxLevel = (tableOfContents !== false && tableOfContents?.maxHeadingLevel) ?? levels;
+const minLevel = tableOfContents ? (tableOfContents.minHeadingLevel ?? 2) : 2;
+const maxLevel = tableOfContents ? (tableOfContents.maxHeadingLevel ?? levels) : levels;
 
 const filteredHeadings = tableOfContents !== false
   ? headings.filter(h => h.depth >= minLevel && h.depth <= maxLevel)

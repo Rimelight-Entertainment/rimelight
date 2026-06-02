@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { SplitterProps } from "../../types"
 import splitterThemeDefault, { createSplitterTheme } from "../../themes/splitter.theme"
 
-const splitterTheme = splitterThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const splitterTheme = uiConfig.colors ? createSplitterTheme() : splitterThemeDefault
 const splitter = scv(splitterTheme)
 
 const {
@@ -34,7 +37,7 @@ const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
   data-direction={direction}
   {...rest}
 >
-  {sizes.map((size, i) => (
+  {sizes.map((_size, i) => (
     <>
       <div
         class={classes.panel}

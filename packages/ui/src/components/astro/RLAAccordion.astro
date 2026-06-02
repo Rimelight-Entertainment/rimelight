@@ -6,7 +6,7 @@ import accordionThemeDefault, { createAccordionTheme } from "../../themes/accord
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const uiConfig = getUIConfig()
-const accordionTheme = uiConfig.colors ? createAccordionTheme(uiConfig.colors) : accordionThemeDefault
+const accordionTheme = uiConfig.colors ? createAccordionTheme() : accordionThemeDefault
 const accordion = scv(accordionTheme)
 
 const {

@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createAspectRatioTheme = (colors: string[] = defaultColors) =>
+export const createAspectRatioTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "content"],
     base: {

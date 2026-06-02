@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { InputMenuProps } from "../../types"
 import inputMenuThemeDefault, { createInputMenuTheme } from "../../themes/input-menu.theme"
 
-const inputMenuTheme = inputMenuThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const inputMenuTheme = uiConfig.colors ? createInputMenuTheme() : inputMenuThemeDefault
 const inputMenu = scv(inputMenuTheme)
 
 const {

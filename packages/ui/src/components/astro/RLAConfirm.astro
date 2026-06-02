@@ -17,7 +17,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ConfirmProps
+} = Astro.props as ConfirmProps & { variant?: "default" | "destructive" }
 
 const classes = resolveClasses(alertDialog, {
   variant
@@ -89,19 +89,21 @@ const isDestructive = variant === "destructive"
 
 <script>
 (function() {
-  if (window.__rlConfirm) return;
-  var pendingResolve = null;
+  const win = window as unknown as Window & { __rlConfirm?: () => Promise<boolean> };
+  if (win.__rlConfirm) return;
+  var pendingResolve: ((value: boolean) => void) | null = null;
 
   document.addEventListener("click", function(e) {
-    var btn = e.target.closest("[data-slot='cancel'], [data-slot='action']");
+    const target = e.target as HTMLElement | null;
+    var btn = target?.closest("[data-slot='cancel'], [data-slot='action']");
     if (!btn || !pendingResolve) return;
     pendingResolve(btn.getAttribute("data-slot") === "action");
     pendingResolve = null;
   }, true);
 
-  window.__rlConfirm = function() {
-    return new Promise(function(resolve) {
-      var dialog = document.querySelector("[data-slot='alert-dialog-container'] dialog");
+  win.__rlConfirm = function() {
+    return new Promise<boolean>(function(resolve) {
+      var dialog = document.querySelector("[data-slot='alert-dialog-container'] dialog") as HTMLDialogElement | null;
       if (!dialog) { resolve(false); return; }
       pendingResolve = resolve;
       dialog.addEventListener("close", function() {

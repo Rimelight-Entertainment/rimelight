@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createStickySurfaceTheme = (colors: string[] = defaultColors) =>
+export const createStickySurfaceTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root"],
     base: {

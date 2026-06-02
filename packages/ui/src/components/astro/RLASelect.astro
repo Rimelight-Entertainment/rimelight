@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { SelectProps } from "../../types"
 import selectThemeDefault, { createSelectTheme } from "../../themes/select.theme"
 
-const selectTheme = selectThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const selectTheme = uiConfig.colors ? createSelectTheme() : selectThemeDefault
 const select = scv(selectTheme)
 
 const {

@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createPopoverTheme = (colors: string[] = defaultColors) =>
+export const createPopoverTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "trigger", "content"],
     base: {

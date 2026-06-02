@@ -6,7 +6,7 @@ import chipThemeDefault, { createChipTheme } from "../../themes/chip.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const uiConfig = getUIConfig()
-const chipTheme = uiConfig.colors ? createChipTheme() : chipThemeDefault
+const chipTheme = uiConfig.colors ? createChipTheme(uiConfig.colors) : chipThemeDefault
 
 const chip = scv(chipTheme)
 
@@ -22,12 +22,18 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ChipProps
+} = Astro.props as ChipProps & {
+  color?: string
+  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"
+  position?: "top-right" | "bottom-right" | "top-left" | "bottom-left"
+  inset?: boolean
+  standalone?: boolean
+}
 
 const classes = resolveClasses(chip, {
-  color,
-  size,
-  position,
+  color: color as "neutral",
+  size: size as "md",
+  position: position as "top-right",
   inset,
   standalone,
   theme

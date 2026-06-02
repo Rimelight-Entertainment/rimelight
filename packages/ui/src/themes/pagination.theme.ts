@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createPaginationTheme = (colors: string[] = defaultColors) =>
+export const createPaginationTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "list", "item", "link", "ellipsis"],
     base: {

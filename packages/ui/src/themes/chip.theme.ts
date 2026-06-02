@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createChipTheme = (colors: string[] = defaultColors) =>
+export const createChipTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "base"],
     base: {
@@ -12,7 +12,7 @@ export const createChipTheme = (colors: string[] = defaultColors) =>
       color: {
         ...Object.fromEntries(colors.map((color) => [color, { base: `bg-${color}` }])),
         neutral: { base: "bg-inverted" }
-      },
+      } as Record<string, { base: string }>,
       size: {
         "3xs": { base: "h-[4px] min-w-[4px] text-[4px]" },
         "2xs": { base: "h-[5px] min-w-[5px] text-[5px]" },

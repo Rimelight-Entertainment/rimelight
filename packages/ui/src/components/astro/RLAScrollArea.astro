@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { ScrollAreaProps } from "../../types"
 import scrollAreaThemeDefault, { createScrollAreaTheme } from "../../themes/scroll-area.theme"
 
-const scrollAreaTheme = scrollAreaThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const scrollAreaTheme = uiConfig.colors ? createScrollAreaTheme() : scrollAreaThemeDefault
 const scrollArea = scv(scrollAreaTheme)
 
 const {

@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { FieldGroupProps } from "../../types"
 import fieldGroupThemeDefault, { createFieldGroupTheme } from "../../themes/field-group.theme"
 
-const fieldGroupTheme = fieldGroupThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const fieldGroupTheme = uiConfig.colors ? createFieldGroupTheme() : fieldGroupThemeDefault
 const fieldGroup = scv(fieldGroupTheme)
 
 const {

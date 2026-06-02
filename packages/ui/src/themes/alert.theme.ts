@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createAlertTheme = (colors: string[] = defaultColors) =>
+export const createAlertTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: [
       "root",
@@ -35,7 +35,7 @@ export const createAlertTheme = (colors: string[] = defaultColors) =>
       color: {
         ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
         neutral: { root: "" }
-      },
+      } as Record<string, { root: string }>,
       orientation: {
         horizontal: {
           root: "items-center",

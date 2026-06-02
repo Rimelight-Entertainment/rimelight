@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { FileUploadProps } from "../../types"
 import fileUploadThemeDefault, { createFileUploadTheme } from "../../themes/file-upload.theme"
 
-const fileUploadTheme = fileUploadThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const fileUploadTheme = uiConfig.colors ? createFileUploadTheme() : fileUploadThemeDefault
 const fileUpload = scv(fileUploadTheme)
 
 const {
@@ -75,7 +78,8 @@ const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
 </div>
 
 <script>
-  document.querySelectorAll("[data-fileUpload]").forEach(zone => {
+  document.querySelectorAll("[data-fileUpload]").forEach(element => {
+    const zone = element as HTMLElement;
     const input = zone.querySelector("[data-fileUpload-input]") as HTMLInputElement | null;
     const fileList = zone.querySelector("[data-fileUpload-filelist]") as HTMLElement | null;
     if (!input) return;

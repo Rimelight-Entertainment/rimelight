@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { DropdownMenuProps } from "../../types"
 import dropdownMenuThemeDefault, { createDropdownMenuTheme } from "../../themes/dropdown-menu.theme"
 
-const dropdownMenuTheme = dropdownMenuThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dropdownMenuTheme = uiConfig.colors ? createDropdownMenuTheme() : dropdownMenuThemeDefault
 const dropdownMenu = scv(dropdownMenuTheme)
 
 const {

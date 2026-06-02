@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { TableProps } from "../../types"
 import tableThemeDefault, { createTableTheme } from "../../themes/table.theme"
 
-const tableTheme = tableThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const tableTheme = uiConfig.colors ? createTableTheme() : tableThemeDefault
 const table = scv(tableTheme)
 
 const {

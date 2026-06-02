@@ -1,6 +1,6 @@
 import { defineTheme } from "../utils/defineTheme"
 
-export const createScrollToTopTheme = (colors: string[] = ["primary", "secondary"]) =>
+export const createScrollToTopTheme = (colors: readonly string[] = ["primary", "secondary"]) =>
   defineTheme({
     slots: ["root", "button", "progressBase", "svg", "iconContainer", "icon"],
     base: {

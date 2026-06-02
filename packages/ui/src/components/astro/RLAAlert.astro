@@ -24,13 +24,14 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as AlertProps
+} = Astro.props as AlertProps & { orientation?: "horizontal" | "vertical" }
 
-const isIcon = !!(icon || Astro.slots.has("icon"))
+const resolvedColor = (variant === "destructive") ? "error" : color
+const resolvedVariant = (variant === "solid" || variant === "outline" || variant === "soft" || variant === "subtle") ? variant : "solid"
 
 const classes = resolveClasses(alert, {
-  variant,
-  color,
+  variant: resolvedVariant,
+  color: resolvedColor as any,
   orientation,
   title: !!(title || Astro.slots.has("title")),
   theme

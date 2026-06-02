@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createAvatarTheme = (colors: string[] = defaultColors) =>
+export const createAvatarTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "image", "fallback", "icon", "badge"],
     base: {

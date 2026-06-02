@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createMarqueeTheme = (colors: string[] = defaultColors) =>
+export const createMarqueeTheme = (_colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "track"],
     base: {

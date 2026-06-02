@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createKbdTheme = (colors: string[] = defaultColors) =>
+export const createKbdTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root"],
     base: {
@@ -11,7 +11,7 @@ export const createKbdTheme = (colors: string[] = defaultColors) =>
       color: {
         ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
         neutral: { root: "" }
-      },
+      } as Record<string, { root: string }>,
       variant: {
         solid: { root: "" },
         outline: { root: "" },

@@ -4,7 +4,10 @@ import { useUi, resolveClasses } from "../../utils"
 import type { InputProps } from "../../types"
 import inputThemeDefault, { createInputTheme } from "../../themes/input.theme"
 
-const inputTheme = inputThemeDefault
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const inputTheme = uiConfig.colors ? createInputTheme() : inputThemeDefault
 const input = scv(inputTheme)
 
 const {

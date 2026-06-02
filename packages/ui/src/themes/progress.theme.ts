@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createProgressTheme = (colors: string[] = defaultColors) =>
+export const createProgressTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: ["root", "indicator"],
     base: {
