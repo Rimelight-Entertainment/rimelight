@@ -1230,12 +1230,19 @@ const storeAssistanceGroup: LinkGroupProps = {
 
     debounceTimer = setTimeout(async () => {
       try {
+        console.log("[Search UI] Fetching search results for:", query);
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        
+        if (!res.ok) {
+          throw new Error(`HTTP status: ${res.status}`);
+        }
+
         const results = await res.json();
+        console.log("[Search UI] Received results:", results);
 
         if (resultsContainer) resultsContainer.innerHTML = "";
 
-        if (results.length === 0) {
+        if (!Array.isArray(results) || results.length === 0) {
           emptyState?.classList.remove("hidden");
           return;
         }
@@ -1256,7 +1263,7 @@ const storeAssistanceGroup: LinkGroupProps = {
           resultsContainer?.appendChild(div);
         });
       } catch (err) {
-        console.error("Search failed:", err);
+        console.error("[Search UI] Search failed:", err);
       }
     }, 200);
   });

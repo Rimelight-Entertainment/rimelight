@@ -27,7 +27,7 @@
     "astro": "astro",
     "predev": "tsx scripts/generate-block-maps.ts",
     "dev": "astro dev",
-    "prebuild": "tsx scripts/generate-block-maps.ts",
+    "prebuild": "tsx scripts/generate-block-maps.ts && tsx scripts/sync-md-to-db.ts",
     "build": "astro build",
     "preview": "astro preview",
     "lunaria:build": "lunaria build",
