@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, provide } from "vue";
+import { computed, inject, provide, useAttrs } from "vue";
 import { scv, cx } from "css-variants";
 import { useRC } from "@/composables";
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys";
@@ -106,7 +106,7 @@ const copyToClipboard = async (text: string) => {
 </script>
 
 <template>
-  <section :id="sectionId" :class="styles.section" v-bind="$attrs">
+  <section :id="sectionId" :class="styles.section" v-bind="useAttrs()"
     <component :is="`h${level}`" :id="`${sectionId}-title`" :class="styles.title">
       <a
         v-if="!isEditing"

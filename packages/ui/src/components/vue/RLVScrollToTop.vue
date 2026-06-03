@@ -4,8 +4,9 @@ import { useUi, resolveClasses } from "../../utils"
 import type { ScrollToTopProps } from "../../types/components/scroll-to-top"
 import scrollToTopTheme from "../../themes/scroll-to-top.theme"
 import { useScrollToTop } from "../../composables/useScrollToTop"
-import { computed } from "vue"
+import { computed, useAttrs } from "vue"
 
+const attrs = useAttrs()
 const scrollToTop = scv(scrollToTopTheme)
 
 const {
@@ -39,7 +40,7 @@ const durationInSeconds = computed(() => `${duration}s`)
 <template>
   <div
     :class="['rla-scroll-to-top fixed bottom-6 right-6 z-50', { visible: isVisible }, classes.root]"
-    v-bind="$attrs"
+    v-bind="attrs"
   >
     <button type="button" :class="classes.button" aria-label="Scroll to top" @click="scrollToTopFn">
       <div :class="classes.progressBase">

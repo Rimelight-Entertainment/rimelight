@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { LogoProps } from "../../types/components/logo"
 import logoTheme from "../../themes/logo.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
+const attrs = useAttrs()
 const logo = scv(logoTheme)
 
 const {
@@ -52,7 +53,7 @@ const Tag = computed(() => (href ? "a" : "div"))
 
 <template>
   <component
-    v-bind="$attrs"
+    v-bind="attrs"
     :is="Tag"
     :href="Tag === 'a' ? href : undefined"
     :aria-label="alt || variant"

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { FooterProps } from "../../types/components/footer"
 import footerTheme from "../../themes/footer.theme"
 
+const attrs = useAttrs()
 const footer = scv(footerTheme)
 
 const { contain = false, ui: uiProp, class: className } = defineProps<FooterProps>()
@@ -21,7 +22,7 @@ const resolvedClasses = computed(() =>
 </script>
 
 <template>
-  <footer :class="[resolvedClasses.root]" data-slot="root" v-bind="$attrs">
+  <footer :class="[resolvedClasses.root]" data-slot="root" v-bind="attrs">
     <div :class="resolvedClasses.container">
       <div :class="resolvedClasses.left" data-slot="left">
         <slot name="left" />

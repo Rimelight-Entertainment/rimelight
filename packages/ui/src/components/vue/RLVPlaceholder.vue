@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PlaceholderProps } from "../../types/components/placeholder"
 import placeholderTheme from "../../themes/placeholder.theme"
 
+const attrs = useAttrs()
 const placeholder = scv(placeholderTheme)
 
 const { ui: uiProp, class: className } = defineProps<PlaceholderProps>()
@@ -22,7 +23,7 @@ const resolvedClasses = computed(() =>
 </script>
 
 <template>
-  <div :class="resolvedClasses.base" v-bind="$attrs">
+  <div :class="resolvedClasses.base"     v-bind="attrs">
     <svg :class="resolvedClasses.svg">
       <defs>
         <pattern

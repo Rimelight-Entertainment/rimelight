@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useAttrs } from "vue";
 import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue";
+
+const attrs = useAttrs();
 
 export interface PlaceholderProps {
     ui?: Record<string, string>;
@@ -14,7 +17,7 @@ defineSlots<{
 </script>
 
 <template>
-  <RLVPlaceholder :ui="ui" :class="$props.class" v-bind="$attrs">
+  <RLVPlaceholder :ui="ui" :class="attrs.class" v-bind="attrs">
     <slot />
   </RLVPlaceholder>
 </template>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, useSlots } from "vue"
+import { computed, useSlots, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ButtonProps } from "../../types/components/button"
 import buttonTheme from "../../themes/button.theme"
 
+const attrs = useAttrs()
 const button = scv(buttonTheme)
 
 const {
@@ -79,7 +80,7 @@ const Tag = href ? "a" : "button"
 </script>
 
 <template>
-  <component v-bind="$attrs" :is="Tag" :href="href" :class="resolvedClasses.root" data-slot="root">
+  <component v-bind="attrs" :is="Tag" :href="href" :class="resolvedClasses.root" data-slot="root">
     <slot name="leading" :ui="resolvedClasses">
       <span v-if="isLeading" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
         <span :class="[showLeadingIcon, leadingIconClass]" aria-hidden="true" />

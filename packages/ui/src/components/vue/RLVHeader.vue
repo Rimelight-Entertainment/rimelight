@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue"
+import { computed, onMounted, onUnmounted, ref, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { HeaderProps } from "../../types/components/header"
 import headerTheme from "../../themes/header.theme"
 import { getHeaderStack } from "../../utils/headerStack"
 
+const attrs = useAttrs()
 const header = scv(headerTheme)
 
 const {
@@ -102,7 +103,7 @@ onUnmounted(() => {
     :class="[resolvedClasses.root]"
     :style="fixedStyle"
     data-slot="root"
-    v-bind="$attrs"
+    v-bind="attrs"
   >
     <div ref="contentRef" :class="resolvedClasses.content">
       <div :class="resolvedClasses.container">

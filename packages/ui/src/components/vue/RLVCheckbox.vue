@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { CheckboxProps } from "../../types/components/checkbox"
@@ -21,6 +21,8 @@ const checked = computed({
   get: () => props.modelValue ?? props.checked ?? false,
   set: (val) => emit("update:modelValue", val)
 })
+
+const attrs = useAttrs()
 
 const resolvedClasses = computed(() =>
   resolveClasses(
@@ -47,7 +49,7 @@ function onChange(event: Event) {
   <label :class="resolvedClasses.root" data-slot="root">
     <div :class="resolvedClasses.container" data-slot="container">
       <input
-        v-bind="$attrs"
+        v-bind="attrs"
         type="checkbox"
         :name="name"
         :checked="checked"

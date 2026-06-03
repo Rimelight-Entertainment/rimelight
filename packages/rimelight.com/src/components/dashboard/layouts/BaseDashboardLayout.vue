@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, useSlots } from "vue";
 import { scv, cx } from "css-variants";
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
 import { useRC, useHeaderStack } from "@/composables";
@@ -113,7 +113,7 @@ defineOptions({ name: "BaseDashboardLayout" });
 <template>
   <div :style="{ '--total-header-offset': `${totalHeight}px` }" :class="styles.root">
     <!-- Header Slot -->
-    <div v-if="$slots.header" class="shrink-0 z-40">
+    <div v-if="useSlots().header" class="shrink-0 z-40">
       <slot name="header" />
     </div>
 

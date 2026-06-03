@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from "vue"
+import { computed, useSlots, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { PageSectionProps } from "../../types/components/page-section"
@@ -24,6 +24,7 @@ const {
   links
 } = defineProps<PageSectionProps>()
 
+const attrs = useAttrs()
 const slots = useSlots()
 
 const resolvedClasses = computed(() =>
@@ -51,9 +52,9 @@ const resolvedClasses = computed(() =>
     data-slot="root"
     :data-orientation="orientation"
     :class="[resolvedClasses.root]"
-    v-bind="$attrs"
+    v-bind="attrs"
   >
-    <slot v-if="$slots.background" name="background">
+    <slot v-if="slots.background" name="background">
       <div :class="resolvedClasses.background" data-slot="background">
         <slot name="background" />
       </div>
@@ -64,26 +65,26 @@ const resolvedClasses = computed(() =>
     <div data-slot="container" :class="resolvedClasses.container">
       <div
         v-if="
-          $slots.header ||
+          slots.header ||
           icon ||
           headline ||
           title ||
           description ||
-          $slots.body ||
-          $slots.footer ||
-          $slots.links ||
+          slots.body ||
+          slots.footer ||
+          slots.links ||
           links?.length
         "
         data-slot="wrapper"
         :class="resolvedClasses.wrapper"
       >
         <div
-          v-if="$slots.header || icon || headline || title || description"
+          v-if="slots.header || icon || headline || title || description"
           data-slot="header"
           :class="resolvedClasses.header"
         >
           <slot name="header">
-            <div v-if="icon || $slots.leading" data-slot="leading" :class="resolvedClasses.leading">
+            <div v-if="icon || slots.leading" data-slot="leading" :class="resolvedClasses.leading">
               <slot name="leading" :ui="resolvedClasses">
                 <RLVIcon
                   v-if="icon"
@@ -119,18 +120,18 @@ const resolvedClasses = computed(() =>
           </slot>
         </div>
 
-        <div v-if="$slots.body" data-slot="body" :class="resolvedClasses.body">
+        <div v-if="slots.body" data-slot="body" :class="resolvedClasses.body">
           <slot name="body" />
         </div>
 
         <div
-          v-if="$slots.footer || $slots.links || links?.length"
+          v-if="slots.footer || slots.links || links?.length"
           data-slot="footer"
           :class="resolvedClasses.footer"
         >
           <slot name="footer">
             <div
-              v-if="links?.length || $slots.links"
+              v-if="links?.length || slots.links"
               data-slot="links"
               :class="resolvedClasses.links"
             >
@@ -141,7 +142,7 @@ const resolvedClasses = computed(() =>
         </div>
       </div>
 
-      <slot v-if="$slots.default" />
+      <slot v-if="slots.default" />
       <div v-else-if="orientation === 'horizontal'" class="hidden lg:block" />
     </div>
 

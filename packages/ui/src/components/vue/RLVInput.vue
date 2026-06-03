@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from "vue"
+import { computed, useSlots, useAttrs } from "vue"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { InputProps } from "../../types/components/input"
@@ -21,6 +21,7 @@ const emit = defineEmits<{
   (e: "blur", event: FocusEvent): void
 }>()
 
+const attrs = useAttrs()
 const slots = useSlots()
 
 const value = computed({
@@ -68,7 +69,7 @@ function onChange(event: Event) {
     </slot>
 
     <input
-      v-bind="$attrs"
+      v-bind="attrs"
       :type="type"
       :name="name"
       :value="value"
@@ -80,8 +81,8 @@ function onChange(event: Event) {
       data-slot="input"
       @input="onInput"
       @change="onChange"
-      @focus="emit('focus', $event)"
-      @blur="emit('blur', $event)"
+      @focus="(e) => emit('focus', e)"
+      @blur="(e) => emit('blur', e)"
     />
 
     <slot name="trailing" :ui="resolvedClasses">

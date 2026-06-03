@@ -642,9 +642,9 @@ defineOptions({
                       ? 'ring-2 ring-primary-500 bg-primary-500/10 scale-95'
                       : ''                  ]"
                   draggable="true"
-                  @dragstart="handleDragStart(itemObj, $event)"
-                  @dragover.prevent="handleDragOverFolder(itemObj, $event)"
-                  @drop="handleDropOnFolder(itemObj, $event)"
+                  @dragstart="(e) => handleDragStart(itemObj, e)"
+                  @dragover.prevent="(e) => handleDragOverFolder(itemObj, e)"
+                  @drop="(e) => handleDropOnFolder(itemObj, e)"
                   @click="itemObj.type === 'folder' ? (selectedPath = itemObj.key) : null"                  class="cursor-pointer transition-all"
                 >
                   <!-- Folder Template -->
