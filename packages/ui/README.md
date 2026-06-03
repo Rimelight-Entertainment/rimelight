@@ -8,6 +8,7 @@
 [![NPM Version](https://img.shields.io/npm/v/@rimelight/ui?style=for-the-badge&logo=npm&logoColor=white&color=A682FF)](https://www.npmjs.com/package/@rimelight/ui) &nbsp;
 [![NPM Downloads](https://img.shields.io/npm/dt/@rimelight/ui?style=for-the-badge&color=A682FF&logo=npm&logoColor=white)](https://www.npmjs.com/package/@rimelight/ui) &nbsp;
 [![View on npmx](https://img.shields.io/badge/VIEW%20ON%20NPMX-A682FF?style=for-the-badge&logo=npm&logoColor=white)](https://npmx.dev/package/@rimelight/ui) &nbsp;
+[![pkg.pr.new](https://pkg.pr.new/badge/Rimelight-Entertainment/rimelight)](https://pkg.pr.new/~/Rimelight-Entertainment/rimelight) &nbsp;
 
 Rimelight UI is a comprehensive component library for [Astro](https://astro.build) websites used and maintained by [Rimelight Entertainment](https://rimelight.com).
 It offers a suite of accessible and highly performant components as [Astro Components](https://docs.astro.build/basics/astro-components/) and [Vue Components](https://vuejs.org), and is available as a free and open source project for any to use.
