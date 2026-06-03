@@ -331,7 +331,7 @@ defineOptions({ name: "NoteModal" })
                 color="neutral"
                 :label="state.isPinned ? 'Unpin' : 'Pin'"
                 @click="
-                  state.isPinned = !state.isPinned
+                  state.isPinned = !state.isPinned;
                   debouncedSave()
                 "
               />
@@ -387,7 +387,7 @@ defineOptions({ name: "NoteModal" })
                 color="neutral"
                 :label="state.isArchived ? 'Unarchive' : 'Archive'"
                 @click="
-                  state.isArchived = !state.isArchived
+                  state.isArchived = !state.isArchived;
                   debouncedSave()
                 "
               />
