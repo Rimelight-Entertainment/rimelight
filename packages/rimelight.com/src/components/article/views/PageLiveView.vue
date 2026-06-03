@@ -59,4 +59,24 @@ const editUrl = computed(() => {
 defineOptions({
   name: "PageLiveView"
 });
-</script><template>  <div    v-slot="page"    v-if="pageStatus === 'pending'"    class="h-full w-full flex items-center justify-center p-12"  >    <span class="i-lucide-loader-2 size-12 animate-spin text-neutral-400" />  </div>  <div v-else-if="pageStatus === 'error' || !page" class="p-8 text-center">    <h3 class="text-lg font-bold text-red-600">Page Not Found</h3>    <p class="text-neutral-500 mt-2">The requested page could not be located.</p>  </div>  <PageRenderer    v-else    v-model="page"    :resolve-page="resolvePage"    :can-edit="canEdit"    :edit-url="editUrl"  /></template>
+</script>
+
+<template>
+  <div
+    v-if="pageStatus === 'pending'"
+    class="h-full w-full flex items-center justify-center p-12"
+  >
+    <span class="i-lucide-loader-2 size-12 animate-spin text-neutral-400" />
+  </div>
+  <div v-else-if="pageStatus === 'error' || !page" class="p-8 text-center">
+    <h3 class="text-lg font-bold text-red-600">Page Not Found</h3>
+    <p class="text-neutral-500 mt-2">The requested page could not be located.</p>
+  </div>
+  <PageRenderer
+    v-else
+    v-model="page"
+    :resolve-page="resolvePage"
+    :can-edit="canEdit"
+    :edit-url="editUrl"
+  />
+</template>
