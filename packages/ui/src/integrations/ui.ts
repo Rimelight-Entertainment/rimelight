@@ -10,6 +10,8 @@ import rimelightUiPreset, {
   type ColorConfigValue,
   type RimelightPresetOptions
 } from "../presets"
+import { extractAllMeta } from "../plugins/starlightDocsApi"
+import virtual from "vite-plugin-virtual"
 
 /**
  * Shape of the `ui` config that can be passed to the integration.
@@ -126,6 +128,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   const resolvedVirtualModuleId = "\0" + virtualModuleId
 
   function setViteConfig(updateConfig: (config: Record<string, unknown>) => void) {
+    const docsMeta = extractAllMeta()
     updateConfig({
       vite: {
         optimizeDeps: {
@@ -148,7 +151,10 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
               }
               return null
             }
-          }
+          },
+          virtual({
+            "virtual:rimelight-ui-docs-meta": `export default ${JSON.stringify(docsMeta)}`
+          })
         ]
       }
     })

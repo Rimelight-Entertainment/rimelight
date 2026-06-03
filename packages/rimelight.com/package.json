@@ -49,6 +49,8 @@
     "astro-nanostores-i18n": "0.7.0",
     "better-auth": "1.6.11",
     "chroma-js": "3.2.0",
+    "css-variants": "2.3.5",
+    "vite-plugin-virtual": "^0.5.0",
     "dotenv": "17.4.2",
     "drizzle-orm": "0.45.2",
     "nanostores": "1.3.0",

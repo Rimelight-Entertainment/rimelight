@@ -241,6 +241,8 @@ function extractAllMeta(): Record<string, ComponentMeta> {
 
 export interface StarlightDocsApiConfig {}
 
+export { extractAllMeta }
+
 export default function starlightDocsApi(_config?: StarlightDocsApiConfig): StarlightPlugin {
   return {
     name: "rimelight-ui-starlight-docs-api",
