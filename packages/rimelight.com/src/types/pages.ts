@@ -59,9 +59,10 @@ export interface BasePage {
   status?: "published" | "draft" | "archived" | (string & {})
 }
 
-export type Page = {
-  [K in PageType]: { type: K; properties: RegisterPageTypes[K] } & BasePage
-}[PageType]
+export interface Page extends BasePage {
+  type: PageType
+  properties: RegisterPageTypes[PageType]
+}
 
 export type SurroundItem = Pick<BasePage, "id" | "slug" | "title" | "description">
 

@@ -199,7 +199,7 @@ export function convertVersionToPage(version: PageVersion): Page {
     description: version.description || { en: "" },
     tags: version.tags || [],
     links: version.links || []
-  } as Page
+  }
 }
 
 export function getPageResolutionPath(idOrSlug: string): string {
