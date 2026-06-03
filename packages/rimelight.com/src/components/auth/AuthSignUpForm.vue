@@ -1,57 +1,88 @@
 <script lang="ts" setup>
-import { reactive, ref, computed } from "vue";
-import { z } from "astro/zod";
-import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVProgress from "@rimelight/ui/components/vue/RLVProgress.vue";
-import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue";
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
-import { normalizeUsername, RESTRICTED_SET } from "@/auth/restricted-usernames";
+import { reactive, ref, computed } from "vue"
+import { z } from "astro/zod"
+import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVProgress from "@rimelight/ui/components/vue/RLVProgress.vue"
+import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import { normalizeUsername, RESTRICTED_SET } from "@/auth/restricted-usernames"
 
 const { messages = {} } = defineProps<{
-    messages?: Record<string, string>;
-}>();
+  messages?: Record<string, string>
+}>()
 
 const step1Schema = z.object({
-  username: z.string()
+  username: z
+    .string()
     .min(2, messages.auth_username_length_error ?? "Username must be between 2 and 24 characters")
     .max(24, messages.auth_username_length_error ?? "Username must be between 2 and 24 characters")
     .transform((val) => val.trim())
-    .refine((val) => !/\s/.test(val), { message: messages.auth_username_no_spaces ?? "Username cannot contain spaces" })
-    .refine((val) => /^[a-z0-9._]+$/i.test(val), { message: messages.auth_username_format_error ?? "Username can only contain letters, numbers, dots and underscores" })
-    .refine((val) => {
-      const normalizedInput = normalizeUsername(val);
-      return !RESTRICTED_SET.has(normalizedInput);
-    }, { message: messages.auth_username_restricted_error ?? "This username is not available" }),
-  firstName: z.string()
-    .min(2, messages.auth_firstname_length_error ?? "First name must be between 2 and 24 characters")
-    .max(24, messages.auth_firstname_length_error ?? "First name must be between 2 and 24 characters"),
-  lastName: z.string()
+    .refine((val) => !/\s/.test(val), {
+      message: messages.auth_username_no_spaces ?? "Username cannot contain spaces"
+    })
+    .refine((val) => /^[a-z0-9._]+$/i.test(val), {
+      message:
+        messages.auth_username_format_error ??
+        "Username can only contain letters, numbers, dots and underscores"
+    })
+    .refine(
+      (val) => {
+        const normalizedInput = normalizeUsername(val)
+        return !RESTRICTED_SET.has(normalizedInput)
+      },
+      { message: messages.auth_username_restricted_error ?? "This username is not available" }
+    ),
+  firstName: z
+    .string()
+    .min(
+      2,
+      messages.auth_firstname_length_error ?? "First name must be between 2 and 24 characters"
+    )
+    .max(
+      24,
+      messages.auth_firstname_length_error ?? "First name must be between 2 and 24 characters"
+    ),
+  lastName: z
+    .string()
     .min(2, messages.auth_lastname_length_error ?? "Last name must be between 2 and 24 characters")
-    .max(24, messages.auth_lastname_length_error ?? "Last name must be between 2 and 24 characters"),
+    .max(
+      24,
+      messages.auth_lastname_length_error ?? "Last name must be between 2 and 24 characters"
+    ),
   email: z.string().email(messages.auth_email_invalid ?? "Invalid email"),
   emailConfirmation: z.string().max(0)
-});
+})
 
-const step2Schema = z.object({
-  password: z.string()
-    .min(8, messages.auth_password_length_error ?? "Password must be between 8 and 24 characters")
-    .max(24, messages.auth_password_length_error ?? "Password must be between 8 and 24 characters"),
-  passwordConfirmation: z.string()
-}).refine((input) => input.password === input.passwordConfirmation, {
-  message: messages.auth_passwords_mismatch ?? "Passwords do not match",
-  path: ["passwordConfirmation"]
-});
+const step2Schema = z
+  .object({
+    password: z
+      .string()
+      .min(8, messages.auth_password_length_error ?? "Password must be between 8 and 24 characters")
+      .max(
+        24,
+        messages.auth_password_length_error ?? "Password must be between 8 and 24 characters"
+      ),
+    passwordConfirmation: z.string()
+  })
+  .refine((input) => input.password === input.passwordConfirmation, {
+    message: messages.auth_passwords_mismatch ?? "Passwords do not match",
+    path: ["passwordConfirmation"]
+  })
 
 const step3Schema = z.object({
-  terms: z.boolean().refine((val) => val, { message: messages.auth_terms_required ?? "You must accept the terms of service" }),
+  terms: z
+    .boolean()
+    .refine((val) => val, {
+      message: messages.auth_terms_required ?? "You must accept the terms of service"
+    }),
   newsletter: z.boolean().optional()
-});
+})
 
-const schema = step1Schema.and(step2Schema).and(step3Schema);
-type Schema = z.infer<typeof schema>;
+const schema = step1Schema.and(step2Schema).and(step3Schema)
+type Schema = z.infer<typeof schema>
 
 const state = reactive<Partial<Schema>>({
   username: "",
@@ -63,29 +94,29 @@ const state = reactive<Partial<Schema>>({
   passwordConfirmation: "",
   terms: false,
   newsletter: false
-});
+})
 
-const currentStep = ref(0);
-const visibility = reactive({ password: false, confirmation: false });
-const strength = computed(() => checkStrength(state.password ?? ""));
-const score = computed(() => strength.value.filter((req) => req.met).length);
+const currentStep = ref(0)
+const visibility = reactive({ password: false, confirmation: false })
+const strength = computed(() => checkStrength(state.password ?? ""))
+const score = computed(() => strength.value.filter((req) => req.met).length)
 
 const strengthColor = computed(() => {
-  if (score.value === 0) return "neutral";
-  if (score.value <= 2) return "error";
-  if (score.value === 3) return "warning";
-  return "success";
-});
+  if (score.value === 0) return "neutral"
+  if (score.value <= 2) return "error"
+  if (score.value === 3) return "warning"
+  return "success"
+})
 
 const stepTitles = [
   messages.auth_stepper_identity ?? "Identity",
   messages.auth_stepper_security ?? "Security",
   messages.auth_stepper_preferences ?? "Preferences"
-];
+]
 
-const isLoading = ref(false);
-const error = ref("");
-const success = ref("");
+const isLoading = ref(false)
+const error = ref("")
+const success = ref("")
 
 function checkStrength(str: string) {
   const requirements = [
@@ -94,43 +125,44 @@ function checkStrength(str: string) {
     { regex: /[a-z]/, text: messages.auth_password_req_lowercase ?? "At least 1 lowercase letter" },
     { regex: /[A-Z]/, text: messages.auth_password_req_uppercase ?? "At least 1 uppercase letter" },
     { regex: /[^\w\s]/, text: messages.auth_password_req_special ?? "At least 1 special character" }
-  ];
-  return requirements.map((req) => ({ met: req.regex.test(str), text: req.text }));
+  ]
+  return requirements.map((req) => ({ met: req.regex.test(str), text: req.text }))
 }
 
 function nextStep() {
-  currentStep.value++;
+  currentStep.value++
 }
 
 function prevStep() {
-  currentStep.value--;
+  currentStep.value--
 }
 
 function getSignInPath(): string {
-  if (typeof window === "undefined") return "/";
-  return window.location.pathname.replace(/\/sign-up.*/, "/sign-in") + "?new";
+  if (typeof window === "undefined") return "/"
+  return window.location.pathname.replace(/\/sign-up.*/, "/sign-in") + "?new"
 }
 
 async function onSubmit(event: { data: Schema }) {
-  isLoading.value = true;
-  error.value = "";
-  success.value = "";
-  const { authClient } = await import("@/auth/auth-client");
+  isLoading.value = true
+  error.value = ""
+  success.value = ""
+  const { authClient } = await import("@/auth/auth-client")
   const { error: signUpError } = await authClient.signUp.email({
     name: event.data.username,
     firstName: event.data.firstName,
     lastName: event.data.lastName,
     email: event.data.email,
     password: event.data.password
-  } as any);
+  } as any)
   if (signUpError) {
-    error.value = signUpError.message ?? messages.auth_connection_error_description ?? "Something went wrong";
-    isLoading.value = false;
-    return;
+    error.value =
+      signUpError.message ?? messages.auth_connection_error_description ?? "Something went wrong"
+    isLoading.value = false
+    return
   }
-  success.value = messages.auth_account_creation_success_title ?? "Account created successfully";
-  isLoading.value = false;
-  window.location.href = getSignInPath();
+  success.value = messages.auth_account_creation_success_title ?? "Account created successfully"
+  isLoading.value = false
+  window.location.href = getSignInPath()
 }
 </script>
 
@@ -305,8 +337,8 @@ async function onSubmit(event: { data: Schema }) {
               <template #label>
                 {{ messages.auth_terms_agreement_signup ?? "I agree to the" }}
                 <a href="/documents/terms-of-service" class="font-medium text-primary">
-                  {{ messages.auth_terms_link ?? "Terms of Service" }}
-                </a>.
+                  {{ messages.auth_terms_link ?? "Terms of Service" }} </a
+                >.
               </template>
             </RLVCheckbox>
           </RLVFormField>

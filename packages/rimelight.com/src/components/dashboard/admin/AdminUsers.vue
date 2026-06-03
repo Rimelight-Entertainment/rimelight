@@ -1,114 +1,105 @@
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted, watch } from "vue";
-import { authClient } from "@/auth/auth-client";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { ref, reactive, computed, onMounted, watch } from "vue"
+import { authClient } from "@/auth/auth-client"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 interface Organization {
-    id: string;
-    name: string;
-    slug: string;
-    logo?: string;
+  id: string
+  name: string
+  slug: string
+  logo?: string
 }
 interface User {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-    role?: string | null;
-    banned?: boolean | null;
+  id: string
+  name: string
+  email: string
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
 }
-const users = ref<User[]>([]);
-const organizations = ref<Organization[]>([]);
-const loadingUsers = ref(true);
-const loadingOrgs = ref(true);
-const selectedOrgId = ref("all");
-const search = ref("");
-const isBanModalOpen = ref(false);
-const selectedUser = ref<User | null>(null);
-const banReason = ref("");
+const users = ref<User[]>([])
+const organizations = ref<Organization[]>([])
+const loadingUsers = ref(true)
+const loadingOrgs = ref(true)
+const selectedOrgId = ref("all")
+const search = ref("")
+const isBanModalOpen = ref(false)
+const selectedUser = ref<User | null>(null)
+const banReason = ref("")
 async function fetchOrgs() {
-    loadingOrgs.value = true;
-    try {
-        const res = await fetch("/api/admin/organizations");
-        organizations.value = (await res.json()) as Organization[];
-    }
-    catch (e) {
-        console.error(e);
-    }
-    finally {
-        loadingOrgs.value = false;
-    }
+  loadingOrgs.value = true
+  try {
+    const res = await fetch("/api/admin/organizations")
+    organizations.value = (await res.json()) as Organization[]
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loadingOrgs.value = false
+  }
 }
 async function fetchUsers() {
-    loadingUsers.value = true;
-    try {
-        const query = new URLSearchParams();
-        if (selectedOrgId.value !== "all") {
-            query.append("organizationId", selectedOrgId.value);
-        }
-        if (search.value) {
-            query.append("search", search.value);
-        }
-        const res = await fetch(`/api/admin/users?${query.toString()}`);
-        const data = await res.json();
-        // Support either direct array or { users: User[] }
-        users.value = Array.isArray(data) ? data : data.users || [];
+  loadingUsers.value = true
+  try {
+    const query = new URLSearchParams()
+    if (selectedOrgId.value !== "all") {
+      query.append("organizationId", selectedOrgId.value)
     }
-    catch (e) {
-        console.error(e);
+    if (search.value) {
+      query.append("search", search.value)
     }
-    finally {
-        loadingUsers.value = false;
-    }
+    const res = await fetch(`/api/admin/users?${query.toString()}`)
+    const data = await res.json()
+    // Support either direct array or { users: User[] }
+    users.value = Array.isArray(data) ? data : data.users || []
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loadingUsers.value = false
+  }
 }
 onMounted(() => {
-    fetchOrgs();
-    fetchUsers();
-});
+  fetchOrgs()
+  fetchUsers()
+})
 watch([selectedOrgId, search], () => {
-    fetchUsers();
-});
+  fetchUsers()
+})
 function openBanModal(user: User) {
-    selectedUser.value = user;
-    isBanModalOpen.value = true;
+  selectedUser.value = user
+  isBanModalOpen.value = true
 }
 async function banUser() {
-    if (!selectedUser.value)
-        return;
-    if (!confirm(`Are you sure you want to ban ${selectedUser.value.name}?`))
-        return;
-    const { error } = await authClient.admin.banUser({
-        userId: selectedUser.value.id,
-        banReason: banReason.value
-    });
-    if (!error) {
-        isBanModalOpen.value = false;
-        alert("User banned successfully.");
-        fetchUsers();
-    }
-    else {
-        alert("Failed to ban user: " + error.message);
-    }
+  if (!selectedUser.value) return
+  if (!confirm(`Are you sure you want to ban ${selectedUser.value.name}?`)) return
+  const { error } = await authClient.admin.banUser({
+    userId: selectedUser.value.id,
+    banReason: banReason.value
+  })
+  if (!error) {
+    isBanModalOpen.value = false
+    alert("User banned successfully.")
+    fetchUsers()
+  } else {
+    alert("Failed to ban user: " + error.message)
+  }
 }
 async function unbanUser(userId: string) {
-    const { error } = await authClient.admin.unbanUser({ userId });
-    if (!error) {
-        alert("User unbanned.");
-        fetchUsers();
-    }
-    else {
-        alert("Failed to unban user: " + error.message);
-    }
+  const { error } = await authClient.admin.unbanUser({ userId })
+  if (!error) {
+    alert("User unbanned.")
+    fetchUsers()
+  } else {
+    alert("Failed to unban user: " + error.message)
+  }
 }
 async function impersonateUser(userId: string) {
-    const { error } = await authClient.admin.impersonateUser({ userId });
-    if (!error) {
-        window.location.reload();
-    }
-    else {
-        alert("Failed to impersonate user: " + error.message);
-    }
+  const { error } = await authClient.admin.impersonateUser({ userId })
+  if (!error) {
+    window.location.reload()
+  } else {
+    alert("Failed to impersonate user: " + error.message)
+  }
 }
 </script>
 

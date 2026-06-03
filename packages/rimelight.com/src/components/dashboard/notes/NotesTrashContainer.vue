@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
-import NoteCard from "./NoteCard.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useNotes } from "@/composables/dashboard/useNotes";
+import { ref, onMounted, watch } from "vue"
+import NoteCard from "./NoteCard.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useNotes } from "@/composables/dashboard/useNotes"
 
 interface Note {
-  id: string;
-  title?: string;
-  content?: string;
-  isPinned?: boolean;
-  isArchived?: boolean;
+  id: string
+  title?: string
+  content?: string
+  isPinned?: boolean
+  isArchived?: boolean
 }
 
-const notes = ref<Note[]>([]);
+const notes = ref<Note[]>([])
 const {
   selectedIds,
   toggleSelection,
@@ -20,34 +20,34 @@ const {
   executeSingleAction,
   clearSelection,
   noteRefreshTrigger
-} = useNotes();
+} = useNotes()
 
 async function fetchTrashNotes() {
   try {
-    const res = await fetch("/api/notes?trash=true");
+    const res = await fetch("/api/notes?trash=true")
     if (res.ok) {
-      notes.value = (await res.json()) as Note[];
+      notes.value = (await res.json()) as Note[]
     }
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
 }
 
 onMounted(() => {
-  fetchTrashNotes();
-});
+  fetchTrashNotes()
+})
 
 watch(noteRefreshTrigger, () => {
-  fetchTrashNotes();
-});
+  fetchTrashNotes()
+})
 
-const handleRestore = (id: string) => executeSingleAction(id, "restore");
+const handleRestore = (id: string) => executeSingleAction(id, "restore")
 
 const handleDeleteForever = async (id: string) => {
   if (confirm("This will permanently remove this note. This action cannot be undone. Continue?")) {
-    await executeSingleAction(id, "hard-delete");
+    await executeSingleAction(id, "hard-delete")
   }
-};
+}
 
 const confirmBatchDelete = async () => {
   if (
@@ -55,9 +55,9 @@ const confirmBatchDelete = async () => {
       `Are you sure you want to permanently delete ${selectedIds.value.length} notes? This action cannot be undone.`
     )
   ) {
-    await executeBatchAction("hard-delete");
+    await executeBatchAction("hard-delete")
   }
-};
+}
 </script>
 
 <template>
@@ -73,9 +73,7 @@ const confirmBatchDelete = async () => {
         <RLVButton color="neutral" size="sm" @click="executeBatchAction('restore')">
           Restore
         </RLVButton>
-        <RLVButton color="error" size="sm" @click="confirmBatchDelete">
-          Delete Forever
-        </RLVButton>
+        <RLVButton color="error" size="sm" @click="confirmBatchDelete"> Delete Forever </RLVButton>
         <RLVButton color="neutral" variant="ghost" size="sm" @click="clearSelection">
           Cancel
         </RLVButton>

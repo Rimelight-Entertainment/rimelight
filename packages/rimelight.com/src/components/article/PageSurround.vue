@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import { useI18n } from "@/composables/app/useI18n";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed } from "vue"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import { useI18n } from "@/composables/app/useI18n"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface PageSurroundProps {
-  pageType: string;
-  previousTitle?: string;
-  previousDescription?: string;
-  previousTo?: string;
-  nextTitle?: string;
-  nextDescription?: string;
-  nextTo?: string;
+  pageType: string
+  previousTitle?: string
+  previousDescription?: string
+  previousTo?: string
+  nextTitle?: string
+  nextDescription?: string
+  nextTo?: string
   rc?: {
-    grid?: string;
-    card?: string;
-    cardContent?: string;
-    headingGroup?: string;
-    button?: string;
-    typeLabel?: string;
-    infoGroup?: string;
-    title?: string;
-    description?: string;
-  };
+    grid?: string
+    card?: string
+    cardContent?: string
+    headingGroup?: string
+    button?: string
+    typeLabel?: string
+    infoGroup?: string
+    title?: string
+    description?: string
+  }
 }
 
 const {
@@ -36,16 +36,17 @@ const {
   nextDescription,
   nextTo,
   rc: rcProp
-} = defineProps<PageSurroundProps>();
+} = defineProps<PageSurroundProps>()
 
-const { rc } = useRC("PageSurround", rcProp);
+const { rc } = useRC("PageSurround", rcProp)
 /* endregion */
 
 /* region Styles */
 const pageSurroundStyles = scv({
   slots: {
     grid: "grid grid-cols-1 gap-8 sm:grid-cols-2",
-    cardClass: "group block h-full bg-transparent hover:bg-elevated/50 focus-visible:outline-primary border border-default rounded-xl p-6 transition-all shadow-sm",
+    cardClass:
+      "group block h-full bg-transparent hover:bg-elevated/50 focus-visible:outline-primary border border-default rounded-xl p-6 transition-all shadow-sm",
     cardContent: "flex flex-col gap-md",
     cardContentEnd: "items-end",
     headingGroup: "flex flex-col gap-xs",
@@ -59,35 +60,31 @@ const pageSurroundStyles = scv({
     description: "text-toned text-xs line-clamp-2",
     descriptionEnd: "text-right"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = pageSurroundStyles();
-  const result: Record<string, string> = {};
+  const resolved = pageSurroundStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const { t } = useI18n();
+const { t } = useI18n()
 /* endregion */
 
 /* region Meta */
-defineOptions({ name: "PageSurround" });
+defineOptions({ name: "PageSurround" })
 /* endregion */
 </script>
 
 <template>
   <div :class="styles.grid">
     <div>
-      <a
-        v-if="previousTitle"
-        :href="previousTo"
-        class="h-full block"
-      >
+      <a v-if="previousTitle" :href="previousTo" class="h-full block">
         <div :class="styles.cardClass">
           <div :class="styles.cardContent">
             <div :class="styles.headingGroup">
@@ -116,11 +113,7 @@ defineOptions({ name: "PageSurround" });
     </div>
 
     <div>
-      <a
-        v-if="nextTitle"
-        :href="nextTo"
-        class="h-full block"
-      >
+      <a v-if="nextTitle" :href="nextTo" class="h-full block">
         <div :class="styles.cardClass">
           <div :class="[styles.cardContent, styles.cardContentEnd]">
             <div :class="[styles.headingGroup, styles.headingGroupEnd]">

@@ -1,31 +1,31 @@
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { ref, reactive } from "vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
-const fileRef = ref<HTMLInputElement>();
+const fileRef = ref<HTMLInputElement>()
 const profile = reactive({
   name: "Benjamin Canac",
   email: "ben@nuxtlabs.com",
   username: "benjamincanac",
   avatar: "",
   bio: ""
-});
+})
 
 function onSubmit(e: Event) {
-  e.preventDefault();
-  alert("Settings updated (Simulation)");
+  e.preventDefault()
+  alert("Settings updated (Simulation)")
 }
 
 function onFileChange(e: Event) {
-  const input = e.target as HTMLInputElement;
-  if (!input.files?.length) return;
-  profile.avatar = URL.createObjectURL(input.files[0]!);
+  const input = e.target as HTMLInputElement
+  if (!input.files?.length) return
+  profile.avatar = URL.createObjectURL(input.files[0]!)
 }
 
 function onFileClick() {
-  fileRef.value?.click();
+  fileRef.value?.click()
 }
 </script>
 

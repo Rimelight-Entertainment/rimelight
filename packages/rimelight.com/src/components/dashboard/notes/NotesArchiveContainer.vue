@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
-import NoteCard from "./NoteCard.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useNotes } from "@/composables/dashboard/useNotes";
+import { ref, onMounted, watch } from "vue"
+import NoteCard from "./NoteCard.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useNotes } from "@/composables/dashboard/useNotes"
 
 interface Note {
-  id: string;
-  title?: string;
-  content?: string;
-  isPinned?: boolean;
-  isArchived?: boolean;
+  id: string
+  title?: string
+  content?: string
+  isPinned?: boolean
+  isArchived?: boolean
 }
 
-const notes = ref<Note[]>([]);
+const notes = ref<Note[]>([])
 const {
   selectedIds,
   toggleSelection,
@@ -20,26 +20,26 @@ const {
   executeSingleAction,
   clearSelection,
   noteRefreshTrigger
-} = useNotes();
+} = useNotes()
 
 async function fetchArchivedNotes() {
   try {
-    const res = await fetch("/api/notes?archived=true");
+    const res = await fetch("/api/notes?archived=true")
     if (res.ok) {
-      notes.value = (await res.json()) as Note[];
+      notes.value = (await res.json()) as Note[]
     }
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
 }
 
 onMounted(() => {
-  fetchArchivedNotes();
-});
+  fetchArchivedNotes()
+})
 
 watch(noteRefreshTrigger, () => {
-  fetchArchivedNotes();
-});
+  fetchArchivedNotes()
+})
 </script>
 
 <template>

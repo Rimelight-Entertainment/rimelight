@@ -1,52 +1,52 @@
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
-import TodoList from "./TodoList.vue";
-import { useTodos } from "@/composables/dashboard/useTodos";
+import { ref, onMounted, watch } from "vue"
+import TodoList from "./TodoList.vue"
+import { useTodos } from "@/composables/dashboard/useTodos"
 
 interface Todo {
-  id: string;
-  title: string;
-  completed: boolean;
-  description?: string;
-  createdAt: string;
-  archived: boolean;
+  id: string
+  title: string
+  completed: boolean
+  description?: string
+  createdAt: string
+  archived: boolean
 }
 
-const todos = ref<Todo[]>([]);
-const archivedTodos = ref<Todo[]>([]);
-const { todoRefreshTrigger } = useTodos();
+const todos = ref<Todo[]>([])
+const archivedTodos = ref<Todo[]>([])
+const { todoRefreshTrigger } = useTodos()
 
 async function fetchTodos() {
   try {
-    const res = await fetch("/api/todos");
+    const res = await fetch("/api/todos")
     if (res.ok) {
-      todos.value = (await res.json()) as Todo[];
+      todos.value = (await res.json()) as Todo[]
     }
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
 }
 
 async function fetchArchivedTodos() {
   try {
-    const res = await fetch("/api/todos/archived");
+    const res = await fetch("/api/todos/archived")
     if (res.ok) {
-      archivedTodos.value = (await res.json()) as Todo[];
+      archivedTodos.value = (await res.json()) as Todo[]
     }
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
 }
 
 onMounted(() => {
-  fetchTodos();
-  fetchArchivedTodos();
-});
+  fetchTodos()
+  fetchArchivedTodos()
+})
 
 watch(todoRefreshTrigger, () => {
-  fetchTodos();
-  fetchArchivedTodos();
-});
+  fetchTodos()
+  fetchArchivedTodos()
+})
 </script>
 
 <template>

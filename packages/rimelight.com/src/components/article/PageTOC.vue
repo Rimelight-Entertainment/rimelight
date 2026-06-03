@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch } from "vue";
-import { useI18n } from "@/composables/app/useI18n";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import type { Block, SectionBlockProps, HeadingLevel } from "@/types/blocks";
+import { computed, ref, onMounted, onUnmounted, watch } from "vue"
+import { useI18n } from "@/composables/app/useI18n"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import type { Block, SectionBlockProps, HeadingLevel } from "@/types/blocks"
 
 /* region Props */
 export interface TOCItem {
-  id: string;
-  title: string;
-  level: HeadingLevel;
+  id: string
+  title: string
+  level: HeadingLevel
 }
 
 export interface PageTOCProps {
-  pageBlocks: Block[] | null;
-  title?: string;
-  levels?: HeadingLevel[];
+  pageBlocks: Block[] | null
+  title?: string
+  levels?: HeadingLevel[]
   rc?: {
-    nav?: string;
-    list?: string;
-    link?: string;
-    text?: string;
-  };
+    nav?: string
+    list?: string
+    link?: string
+    text?: string
+  }
 }
 
 const {
@@ -29,9 +29,9 @@ const {
   title = "table_of_contents",
   levels = [2, 3, 4],
   rc: rcProp
-} = defineProps<PageTOCProps>();
+} = defineProps<PageTOCProps>()
 
-const { rc } = useRC("PageTOC", rcProp);
+const { rc } = useRC("PageTOC", rcProp)
 /* endregion */
 
 /* region Styles */
@@ -39,7 +39,8 @@ const pageTOCStyles = scv({
   slots: {
     navClass: "flex flex-col gap-sm w-full",
     listClass: "flex flex-col",
-    linkClass: "group relative flex items-center px-3 py-1.5 text-sm transition-all duration-200 border-s-2 -ms-px",
+    linkClass:
+      "group relative flex items-center px-3 py-1.5 text-sm transition-all duration-200 border-s-2 -ms-px",
     textClass: "truncate"
   },
   variants: {
@@ -56,31 +57,31 @@ const pageTOCStyles = scv({
       6: { linkClass: "ps-15" }
     }
   }
-});
+})
 
 const styles = (active: boolean, level: number) => {
-  const resolved = pageTOCStyles({ active, level });
-  const result: Record<string, string> = {};
+  const resolved = pageTOCStyles({ active, level })
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
   return result as {
-    navClass: string;
-    listClass: string;
-    linkClass: string;
-    textClass: string;
-  };
-};
+    navClass: string
+    listClass: string
+    linkClass: string
+    textClass: string
+  }
+}
 /* endregion */
 
 /* region State */
-const { t } = useI18n();
-const activeId = ref<string | null>(null);
+const { t } = useI18n()
+const activeId = ref<string | null>(null)
 
 const items = computed(() => {
-  const all = extractHeadings(pageBlocks ?? []);
-  return all.filter((h) => levels.includes(h.level));
-});
+  const all = extractHeadings(pageBlocks ?? [])
+  return all.filter((h) => levels.includes(h.level))
+})
 /* endregion */
 
 /* region Logic */
@@ -94,69 +95,69 @@ function slugify(text: string): string {
     .replace(/[^\w-]+/g, "")
     .replace(/--+/g, "-")
     .replace(/^-+/, "")
-    .replace(/-+$/, "");
+    .replace(/-+$/, "")
 }
 
 function extractHeadings(blocks: Block[]): TOCItem[] {
-  const headings: TOCItem[] = [];
-  if (!blocks) return headings;
+  const headings: TOCItem[] = []
+  if (!blocks) return headings
   for (const block of blocks) {
     if (block.type === "SectionBlock") {
-      const p = block.props as SectionBlockProps;
+      const p = block.props as SectionBlockProps
       if (p.title && p.level) {
         headings.push({
           id: slugify(p.title),
           title: p.title,
           level: p.level as HeadingLevel
-        });
+        })
       }
       if (p.children?.length) {
-        headings.push(...extractHeadings(p.children));
+        headings.push(...extractHeadings(p.children))
       }
     }
   }
-  return headings;
+  return headings
 }
 
-let observer: IntersectionObserver | null = null;
+let observer: IntersectionObserver | null = null
 
 onMounted(() => {
   if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") {
-    return;
+    return
   }
   observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
-          activeId.value = entry.target.id;
+          activeId.value = entry.target.id
         }
       }
     },
     { rootMargin: "-80px 0px -80% 0px", threshold: 0 }
-  );
+  )
 
   watch(
     () => items.value,
     (newItems) => {
-      observer?.disconnect();
+      observer?.disconnect()
       newItems.forEach((item) => {
-        const el = document.getElementById(item.id);
+        const el = document.getElementById(item.id)
         if (el) {
-          observer?.observe(el);
+          observer?.observe(el)
         }
-      });
+      })
     },
     { immediate: true }
-  );
-});
+  )
+})
 
 onUnmounted(() => {
-  observer?.disconnect();
-});
+  observer?.disconnect()
+})
 /* endregion */
 
 /* region Meta */
-defineOptions({ name: "PageTOC" });
+defineOptions({ name: "PageTOC" })
 /* endregion */
 </script>
 

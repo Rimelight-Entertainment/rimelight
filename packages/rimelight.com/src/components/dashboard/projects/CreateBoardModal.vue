@@ -1,49 +1,49 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { ref, onMounted, onUnmounted } from "vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
-const isOpen = defineModel<boolean>("open", { default: false });
-const title = ref("");
-const description = ref("");
-const submitting = ref(false);
+const isOpen = defineModel<boolean>("open", { default: false })
+const title = ref("")
+const description = ref("")
+const submitting = ref(false)
 
 const emit = defineEmits<{
-  (e: "created"): void;
-}>();
+  (e: "created"): void
+}>()
 
 const handler = () => {
-  isOpen.value = true;
-};
+  isOpen.value = true
+}
 
 onMounted(() => {
-  window.addEventListener("open-create-board", handler);
-});
+  window.addEventListener("open-create-board", handler)
+})
 
 onUnmounted(() => {
-  window.removeEventListener("open-create-board", handler);
-});
+  window.removeEventListener("open-create-board", handler)
+})
 
 async function createBoard(e: Event) {
-  e.preventDefault();
-  if (!title.value.trim()) return;
-  submitting.value = true;
+  e.preventDefault()
+  if (!title.value.trim()) return
+  submitting.value = true
   try {
     const res = await fetch("/api/projects/boards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title: title.value, description: description.value })
-    });
-    if (!res.ok) throw new Error("Failed to create board");
-    title.value = "";
-    description.value = "";
-    isOpen.value = false;
-    emit("created");
+    })
+    if (!res.ok) throw new Error("Failed to create board")
+    title.value = ""
+    description.value = ""
+    isOpen.value = false
+    emit("created")
   } catch (err) {
-    alert("Error creating board");
+    alert("Error creating board")
   } finally {
-    submitting.value = false;
+    submitting.value = false
   }
 }
 </script>

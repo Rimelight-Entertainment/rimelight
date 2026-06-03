@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import type { PageDefinition, PageType, Page } from "@/types/blocks";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import { useI18n } from "@/composables/app/useI18n";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+import { ref, computed, watch } from "vue"
+import type { PageDefinition, PageType, Page } from "@/types/blocks"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import { useI18n } from "@/composables/app/useI18n"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
 
 /* region Props */
 export interface CreatePageModalProps {
-  definitions: Record<string, PageDefinition>;
-  loading?: boolean;
+  definitions: Record<string, PageDefinition>
+  loading?: boolean
   rc?: {
-    header?: string;
-    headerTitle?: string;
-    closeButton?: string;
-    body?: string;
-    field?: string;
-    footer?: string;
-  };
+    header?: string
+    headerTitle?: string
+    closeButton?: string
+    body?: string
+    field?: string
+    footer?: string
+  }
 }
 
-const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>();
-const { rc } = useRC("CreatePageModal", rcProp);
+const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>()
+const { rc } = useRC("CreatePageModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface CreatePageModalEmits {
-  close: [];
-  confirm: [page: Partial<Page>];
+  close: []
+  confirm: [page: Partial<Page>]
 }
-const emit = defineEmits<CreatePageModalEmits>();
+const emit = defineEmits<CreatePageModalEmits>()
 /* endregion */
 
 /* region Styles */
@@ -44,66 +44,66 @@ const createPageModalStyles = scv({
     field: "w-full",
     footerClass: "flex justify-end gap-2 p-4 border-t border-default"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = createPageModalStyles();
-  const result: Record<string, string> = {};
+  const resolved = createPageModalStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const open = defineModel<boolean>("open", { default: false });
-const { t } = useI18n();
-const selectedType = ref<PageType | "">("");
-const title = ref("");
-const slug = ref("");
+const open = defineModel<boolean>("open", { default: false })
+const { t } = useI18n()
+const selectedType = ref<PageType | "">("")
+const title = ref("")
+const slug = ref("")
 
 const typeOptions = computed(() => {
   return Object.entries(definitions).map(([key, def]) => ({
     label: t(def.typeLabelKey) === def.typeLabelKey ? key : t(def.typeLabelKey),
     value: key
-  }));
-});
+  }))
+})
 /* endregion */
 
-defineOptions({ name: "CreatePageModal" });
+defineOptions({ name: "CreatePageModal" })
 
 /* region Lifecycle */
 watch(title, (newTitle) => {
   slug.value = newTitle
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-});
+    .replace(/(^-|-$)/g, "")
+})
 
 watch(open, (isOpen) => {
   if (!isOpen) {
-    emit("close");
+    emit("close")
   }
-});
+})
 /* endregion */
 
 /* region Logic */
 const handleConfirm = () => {
-  if (!selectedType.value) return;
-  const definition = definitions[selectedType.value];
+  if (!selectedType.value) return
+  const definition = definitions[selectedType.value]
   if (!definition) {
-    console.error(`Definition for type "${selectedType.value}" not found.`);
-    return;
+    console.error(`Definition for type "${selectedType.value}" not found.`)
+    return
   }
 
-  const properties: Record<string, any> = {};
+  const properties: Record<string, any> = {}
   Object.entries(definition.properties).forEach(([groupKey, group]) => {
-    properties[groupKey] = { ...group, fields: {} };
+    properties[groupKey] = { ...group, fields: {} }
     Object.entries(group.fields).forEach(([fieldKey, field]) => {
-      properties[groupKey].fields[fieldKey] = { ...field };
-    });
-  });
+      properties[groupKey].fields[fieldKey] = { ...field }
+    })
+  })
 
   const newPage: Partial<Page> = {
     type: selectedType.value as any,
@@ -113,10 +113,10 @@ const handleConfirm = () => {
     blocks: definition.initialBlocks ? definition.initialBlocks() : [],
     createdAt: new Date(),
     updatedAt: new Date()
-  };
+  }
 
-  emit("confirm", newPage);
-};
+  emit("confirm", newPage)
+}
 /* endregion */
 </script>
 
@@ -186,5 +186,4 @@ const handleConfirm = () => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

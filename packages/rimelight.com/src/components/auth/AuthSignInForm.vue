@@ -1,62 +1,70 @@
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
-import { z } from "astro/zod";
-import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
+import { reactive, ref } from "vue"
+import { z } from "astro/zod"
+import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
 
-const { recovery = true, terms = true, remember = true, messages = {} } = defineProps<{
-    recovery?: boolean;
-    terms?: boolean;
-    remember?: boolean;
-    messages?: Record<string, string>;
-}>();
+const {
+  recovery = true,
+  terms = true,
+  remember = true,
+  messages = {}
+} = defineProps<{
+  recovery?: boolean
+  terms?: boolean
+  remember?: boolean
+  messages?: Record<string, string>
+}>()
 
 const schema = z.object({
   email: z.string().email(messages.auth_email_invalid ?? "Invalid email"),
-  password: z.string().min(8, messages.auth_password_min_length ?? "Password must be at least 8 characters"),
+  password: z
+    .string()
+    .min(8, messages.auth_password_min_length ?? "Password must be at least 8 characters"),
   rememberMe: z.boolean()
-});
+})
 
-type Schema = z.infer<typeof schema>;
+type Schema = z.infer<typeof schema>
 
 const state = reactive<Partial<Schema>>({
   email: "",
   password: "",
   rememberMe: remember
-});
+})
 
-const isLoading = ref(false);
-const error = ref("");
-const success = ref("");
-const showPassword = ref(false);
+const isLoading = ref(false)
+const error = ref("")
+const success = ref("")
+const showPassword = ref(false)
 
 function getRedirectParam(): string {
-  if (typeof window === "undefined") return "/";
-  const params = new URLSearchParams(window.location.search);
-  return params.get("redirect") || "/";
+  if (typeof window === "undefined") return "/"
+  const params = new URLSearchParams(window.location.search)
+  return params.get("redirect") || "/"
 }
 
 async function onSubmit(event: { data: Schema }) {
-  isLoading.value = true;
-  error.value = "";
-  success.value = "";
-  const { authClient } = await import("@/auth/auth-client");
+  isLoading.value = true
+  error.value = ""
+  success.value = ""
+  const { authClient } = await import("@/auth/auth-client")
   const { error: signInError } = await authClient.signIn.email({
     email: event.data.email,
     password: event.data.password,
     rememberMe: event.data.rememberMe
-  });
+  })
   if (signInError) {
-    error.value = signInError.message ?? messages.auth_connection_error_description ?? "Something went wrong";
-    isLoading.value = false;
-    return;
+    error.value =
+      signInError.message ?? messages.auth_connection_error_description ?? "Something went wrong"
+    isLoading.value = false
+    return
   }
-  success.value = messages.auth_sign_in_success_title || "Signed in successfully";
-  isLoading.value = false;
-  window.location.href = getRedirectParam();
+  success.value = messages.auth_sign_in_success_title || "Signed in successfully"
+  isLoading.value = false
+  window.location.href = getRedirectParam()
 }
 </script>
 
@@ -164,8 +172,8 @@ async function onSubmit(event: { data: Schema }) {
       <span class="text-center text-sm text-black">
         {{ messages.auth_terms_agreement ?? "By signing in you agree to our" }}
         <a href="/documents/terms-of-service" class="font-medium text-primary hover:text-dimmed">
-          {{ messages.auth_terms_link ?? "Terms of Service" }}
-        </a>.
+          {{ messages.auth_terms_link ?? "Terms of Service" }} </a
+        >.
       </span>
     </template>
   </div>

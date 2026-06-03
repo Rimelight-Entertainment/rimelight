@@ -1,28 +1,27 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, computed, watch } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useDashboard } from "@/composables";
-import { authClient } from "@/auth/auth-client";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useDashboard } from "@/composables"
+import { authClient } from "@/auth/auth-client"
 
 /* region Props */
 export interface TeamsMenuProps {
-    collapsed?: boolean;
-    rc?: {
-        root?: string;
-        triggerButton?: string;
-        buttonTrailing?: string;
-    };
+  collapsed?: boolean
+  rc?: {
+    root?: string
+    triggerButton?: string
+    buttonTrailing?: string
+  }
 }
 
-const { collapsed = false, rc: rcProp } = defineProps<TeamsMenuProps>();
-const { rc } = useRC("TeamsMenu", rcProp);
+const { collapsed = false, rc: rcProp } = defineProps<TeamsMenuProps>()
+const { rc } = useRC("TeamsMenu", rcProp)
 /* endregion */
 
 /* region Emits */
-export interface TeamsMenuEmits {
-}
-defineEmits<TeamsMenuEmits>();
+export interface TeamsMenuEmits {}
+defineEmits<TeamsMenuEmits>()
 /* endregion */
 
 /* region Styles */
@@ -33,72 +32,72 @@ const teamsMenuStyles = scv({
     triggerButton: "hover:bg-neutral-50 dark:hover:bg-neutral-800",
     buttonTrailing: "text-neutral-400 dark:text-neutral-500"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = teamsMenuStyles();
-  const result: Record<string, string> = {};
+  const resolved = teamsMenuStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { activeOrganization, activeTeamId, setActiveTeam } = useDashboard();
-const isOpen = ref(false);
-const menuRef = ref<HTMLElement | null>(null);
+const { activeOrganization, activeTeamId, setActiveTeam } = useDashboard()
+const isOpen = ref(false)
+const menuRef = ref<HTMLElement | null>(null)
 
-const activeOrgId = computed(() => activeOrganization.value?.id);
+const activeOrgId = computed(() => activeOrganization.value?.id)
 
 // 1. Fetch only teams the user is a part of
-const userTeamsRes = ref<any[]>([]);
+const userTeamsRes = ref<any[]>([])
 
 const loadTeams = async () => {
-  if (!authClient?.organization?.listUserTeams) return;
+  if (!authClient?.organization?.listUserTeams) return
   try {
-    const { data } = await authClient.organization.listUserTeams();
-    userTeamsRes.value = data || [];
+    const { data } = await authClient.organization.listUserTeams()
+    userTeamsRes.value = data || []
   } catch (e) {
-    console.error("Failed to load user teams:", e);
+    console.error("Failed to load user teams:", e)
   }
-};
+}
 
 watch(
   activeOrgId,
   () => {
-    loadTeams();
+    loadTeams()
   },
   { immediate: true }
-);
+)
 
 // 2. Filter teams by the active organization
 const teams = computed(() => {
-  const allUserTeams = userTeamsRes.value || [];
-  if (!activeOrgId.value) return [];
-  return allUserTeams.filter((team: any) => team.organizationId === activeOrgId.value);
-});
+  const allUserTeams = userTeamsRes.value || []
+  if (!activeOrgId.value) return []
+  return allUserTeams.filter((team: any) => team.organizationId === activeOrgId.value)
+})
 
 // 3. Current selection
 const selectedTeam = computed(() => {
   if (activeTeamId.value) {
-    const found = teams.value.find((t: any) => t.id === activeTeamId.value);
-    if (found) return found;
+    const found = teams.value.find((t: any) => t.id === activeTeamId.value)
+    if (found) return found
   }
-  return teams.value[0] || null;
-});
+  return teams.value[0] || null
+})
 
 // Auto-select first team if none selected
 watch(
   teams,
   (newTeams) => {
     if (newTeams.length > 0 && !activeTeamId.value) {
-      setActiveTeam(newTeams[0].id);
+      setActiveTeam(newTeams[0].id)
     }
   },
   { immediate: true }
-);
+)
 
 const items = computed(() => {
   return teams.value.map((team: any) => ({
@@ -106,30 +105,30 @@ const items = computed(() => {
     avatar: team.logo ? { src: team.logo, alt: team.name } : undefined,
     icon: !team.logo ? "i-lucide-users" : undefined,
     onSelect: () => {
-      setActiveTeam(team.id);
+      setActiveTeam(team.id)
     }
-  }));
-});
+  }))
+})
 
 const handleClickOutside = (event: MouseEvent) => {
   if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
-    isOpen.value = false;
+    isOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
+  document.addEventListener("click", handleClickOutside)
+})
 
 onUnmounted(() => {
-  document.removeEventListener("click", handleClickOutside);
-});
+  document.removeEventListener("click", handleClickOutside)
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
   name: "TeamsMenu"
-});
+})
 /* endregion */
 </script>
 

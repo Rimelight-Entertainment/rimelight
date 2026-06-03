@@ -1,71 +1,74 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import type { Page } from "@/types/pages";
-import { getPageResolutionPath } from "@/utils/page";
-import PageRenderer from "../PageRenderer.vue";
+import { computed, ref, watch } from "vue"
+import type { Page } from "@/types/pages"
+import { getPageResolutionPath } from "@/utils/page"
+import PageRenderer from "../PageRenderer.vue"
 
 /* region Props */
 export interface PageLiveViewProps {
-    lookupPath?: string;
-    fetchUrl?: string;
-    cacheKey: string;
-    baseUrl: string;
-    canEdit?: boolean;
+  lookupPath?: string
+  fetchUrl?: string
+  cacheKey: string
+  baseUrl: string
+  canEdit?: boolean
 }
-const { lookupPath, fetchUrl, cacheKey, baseUrl, canEdit = false } = defineProps<PageLiveViewProps>();
+const {
+  lookupPath,
+  fetchUrl,
+  cacheKey,
+  baseUrl,
+  canEdit = false
+} = defineProps<PageLiveViewProps>()
 /* endregion */
 
 /* region State */
-const resolvedFetchUrl = computed(() => getPageResolutionPath(lookupPath || fetchUrl || ""));
-const page = ref<Page | null>(null);
-const pageStatus = ref<"idle" | "pending" | "success" | "error">("idle");
+const resolvedFetchUrl = computed(() => getPageResolutionPath(lookupPath || fetchUrl || ""))
+const page = ref<Page | null>(null)
+const pageStatus = ref<"idle" | "pending" | "success" | "error">("idle")
 
 const fetchPage = async () => {
-  if (!resolvedFetchUrl.value) return;
-  pageStatus.value = "pending";
+  if (!resolvedFetchUrl.value) return
+  pageStatus.value = "pending"
   try {
-    const res = await fetch(resolvedFetchUrl.value);
-    if (!res.ok) throw new Error("Failed to fetch page");
-    const data = await res.json();
-    page.value = data;
-    pageStatus.value = "success";
+    const res = await fetch(resolvedFetchUrl.value)
+    if (!res.ok) throw new Error("Failed to fetch page")
+    const data = await res.json()
+    page.value = data
+    pageStatus.value = "success"
   } catch (err) {
-    pageStatus.value = "error";
+    pageStatus.value = "error"
   }
-};
+}
 
-watch(() => resolvedFetchUrl.value, fetchPage, { immediate: true });
+watch(() => resolvedFetchUrl.value, fetchPage, { immediate: true })
 
 const resolvePage = async (id: string) => {
-  const res = await fetch(`/api/pages/id/${id}?select=title,icon,slug`);
-  if (!res.ok) throw new Error("Failed to resolve page");
-  return await res.json();
-};
+  const res = await fetch(`/api/pages/id/${id}?select=title,icon,slug`)
+  if (!res.ok) throw new Error("Failed to resolve page")
+  return await res.json()
+}
 
 const editUrl = computed(() => {
-  const base = baseUrl.replace(/\/$/, "");
+  const base = baseUrl.replace(/\/$/, "")
   if (page.value?.slug) {
-    const slug = page.value.slug;
-    const cleanBase = base.replace(/^\//, "");
+    const slug = page.value.slug
+    const cleanBase = base.replace(/^\//, "")
     if (slug.startsWith(cleanBase)) {
-      return `/${slug}/edit`;
+      return `/${slug}/edit`
     }
-    return `${base}/${slug}/edit`;
+    return `${base}/${slug}/edit`
   }
-  return `${base}/edit`;
-});
+  return `${base}/edit`
+})
 /* endregion */
 
 defineOptions({
   name: "PageLiveView"
-});
+})
 </script>
 
 <template>
-  <div
-    v-if="pageStatus === 'pending'"
-    class="h-full w-full flex items-center justify-center p-12"
-  >
+  <div v-if="pageStatus === 'pending'" class="h-full w-full flex items-center justify-center p-12">
     <span class="i-lucide-loader-2 size-12 animate-spin text-neutral-400" />
   </div>
   <div v-else-if="pageStatus === 'error' || !page" class="p-8 text-center">

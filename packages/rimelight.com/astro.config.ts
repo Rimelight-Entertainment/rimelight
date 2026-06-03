@@ -110,7 +110,6 @@ export default defineConfig({
     }
   ],
 
-
   integrations: [
     nanostoresI18n({
       translationLoader: "./src/i18n/loader.ts",

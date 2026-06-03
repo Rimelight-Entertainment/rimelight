@@ -1,85 +1,89 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
-import { formatTimeAgo } from "@vueuse/core";
-import type { Notification } from "@/types";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useDashboard } from "@/composables";
+import { ref, onMounted, computed } from "vue"
+import { formatTimeAgo } from "@vueuse/core"
+import type { Notification } from "@/types"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useDashboard } from "@/composables"
 
 /* region Props */
 export interface NotificationsSlideoverProps {
-    rc?: {
-        root?: string;
-        notificationItem?: string;
-        notificationContent?: string;
-        notificationHeader?: string;
-        senderName?: string;
-        timestamp?: string;
-        notificationBody?: string;
-    };
+  rc?: {
+    root?: string
+    notificationItem?: string
+    notificationContent?: string
+    notificationHeader?: string
+    senderName?: string
+    timestamp?: string
+    notificationBody?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<NotificationsSlideoverProps>();
-const { rc } = useRC("NotificationsSlideover", rcProp);
+const { rc: rcProp } = defineProps<NotificationsSlideoverProps>()
+const { rc } = useRC("NotificationsSlideover", rcProp)
 /* endregion */
 
 /* region Emits */
-export interface NotificationsSlideoverEmits {
-}
-defineEmits<NotificationsSlideoverEmits>();
+export interface NotificationsSlideoverEmits {}
+defineEmits<NotificationsSlideoverEmits>()
 /* endregion */
 
 /* region Slots */
-export interface NotificationsSlideoverSlots {
-}
-defineSlots<NotificationsSlideoverSlots>();
+export interface NotificationsSlideoverSlots {}
+defineSlots<NotificationsSlideoverSlots>()
 /* endregion */
 
 /* region Styles */
 const notificationsSlideoverStyles = scv({
   slots: [
-    "root", "notificationItem", "notificationContent",
-    "notificationHeader", "senderName", "timestamp", "notificationBody"
+    "root",
+    "notificationItem",
+    "notificationContent",
+    "notificationHeader",
+    "senderName",
+    "timestamp",
+    "notificationBody"
   ],
   base: {
     root: "",
-    notificationItem: "relative flex items-center gap-3 rounded-xl px-3 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors border border-transparent hover:border-neutral-100 dark:hover:border-neutral-800",
+    notificationItem:
+      "relative flex items-center gap-3 rounded-xl px-3 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors border border-transparent hover:border-neutral-100 dark:hover:border-neutral-800",
     notificationContent: "flex-1 text-sm min-w-0",
     notificationHeader: "flex items-center justify-between mb-0.5",
     senderName: "font-medium text-neutral-900 dark:text-neutral-100 truncate",
     timestamp: "text-xs text-neutral-400 dark:text-neutral-500 shrink-0 ml-2",
     notificationBody: "text-sm text-neutral-500 dark:text-neutral-400 truncate"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = notificationsSlideoverStyles();
-  const result: Record<string, string> = {};
+  const resolved = notificationsSlideoverStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { isNotificationsSlideoverOpen } = useDashboard();
-const notifications = ref<Notification[]>([]);
+const { isNotificationsSlideoverOpen } = useDashboard()
+const notifications = ref<Notification[]>([])
 
 onMounted(async () => {
   try {
-    const res = await fetch("/api/notifications");
+    const res = await fetch("/api/notifications")
     if (res.ok) {
-      notifications.value = await res.json();
+      notifications.value = await res.json()
     }
   } catch (err) {
-    console.error("Failed to load notifications:", err);
+    console.error("Failed to load notifications:", err)
   }
-});
+})
 /* endregion */
 
 /* region Meta */
-defineOptions({ name: "NotificationsSlideover" });
+defineOptions({ name: "NotificationsSlideover" })
 /* endregion */
 </script>
 
@@ -136,7 +140,8 @@ defineOptions({ name: "NotificationsSlideover" });
                   v-if="notification.sender.avatar?.src"
                   :src="notification.sender.avatar.src"
                   :alt="notification.sender.name"
-                  class="size-10 rounded-full object-cover"                />
+                  class="size-10 rounded-full object-cover"
+                />
                 <div
                   v-else
                   class="size-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-300 flex items-center justify-center font-semibold text-sm"

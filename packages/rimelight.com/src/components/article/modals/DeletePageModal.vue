@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
-import { useI18n } from "@/composables/app/useI18n";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+import { ref, watch, computed } from "vue"
+import { useI18n } from "@/composables/app/useI18n"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
 
 /* region Props */
 export interface DeletePageModalProps {
-  loading?: boolean;
-  pageTitle: string;
+  loading?: boolean
+  pageTitle: string
   rc?: {
-    header?: string;
-    headerTitle?: string;
-    closeButton?: string;
-    body?: string;
-    footer?: string;
-  };
+    header?: string
+    headerTitle?: string
+    closeButton?: string
+    body?: string
+    footer?: string
+  }
 }
 
-const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>();
-const { rc } = useRC("DeletePageModal", rcProp);
+const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>()
+const { rc } = useRC("DeletePageModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface DeletePageModalEmits {
-  close: [];
-  confirm: [];
+  close: []
+  confirm: []
 }
-const emits = defineEmits<DeletePageModalEmits>();
+const emits = defineEmits<DeletePageModalEmits>()
 /* endregion */
 
 /* region Styles */
@@ -41,42 +41,42 @@ const deletePageModalStyles = scv({
     bodyClass: "text-sm text-neutral-600 dark:text-neutral-400 p-4 space-y-4",
     footerClass: "flex justify-end gap-2 p-4 border-t border-default"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = deletePageModalStyles();
-  const result: Record<string, string> = {};
+  const resolved = deletePageModalStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const open = defineModel<boolean>("open", { default: false });
-const { t } = useI18n();
-const confirmationInput = ref("");
-const CONFIRMATION_TEXT = "DELETE";
+const open = defineModel<boolean>("open", { default: false })
+const { t } = useI18n()
+const confirmationInput = ref("")
+const CONFIRMATION_TEXT = "DELETE"
 /* endregion */
 
-defineOptions({ name: "DeletePageModal" });
+defineOptions({ name: "DeletePageModal" })
 
 /* region Lifecycle */
 watch(open, (val) => {
   if (!val) {
-    confirmationInput.value = "";
-    emits("close");
+    confirmationInput.value = ""
+    emits("close")
   }
-});
+})
 /* endregion */
 
 /* region Logic */
 const handleConfirm = () => {
   if (confirmationInput.value === CONFIRMATION_TEXT) {
-    emits("confirm");
+    emits("confirm")
   }
-};
+}
 /* endregion */
 </script>
 
@@ -105,7 +105,8 @@ const handleConfirm = () => {
 
       <div :class="styles.bodyClass">
         <p>
-          Are you sure you want to delete <strong>{{ pageTitle }}</strong>? This action is permanent and cannot be undone.
+          Are you sure you want to delete <strong>{{ pageTitle }}</strong
+          >? This action is permanent and cannot be undone.
         </p>
         <RLVFormField
           :label="t('editor.delete_confirm_label', `Please type ${CONFIRMATION_TEXT} to confirm`)"
@@ -141,5 +142,4 @@ const handleConfirm = () => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

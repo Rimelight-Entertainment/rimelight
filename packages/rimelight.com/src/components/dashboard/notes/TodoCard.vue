@@ -1,45 +1,45 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC } from "@/composables";
+import { computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC } from "@/composables"
 
 export interface Todo {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  isArchived?: boolean;
+  id: string
+  title: string
+  description?: string
+  completed: boolean
+  isArchived?: boolean
 }
 
 /* region Props */
 export interface TodoCardProps {
-  todo: Todo;
+  todo: Todo
   rc?: {
-    root?: string;
-    contentWrapper?: string;
-    checkWrapper?: string;
-    checkIcon?: string;
-    textWrapper?: string;
-    titleClass?: string;
-    descriptionClass?: string;
-    actionsWrapper?: string;
-  };
+    root?: string
+    contentWrapper?: string
+    checkWrapper?: string
+    checkIcon?: string
+    textWrapper?: string
+    titleClass?: string
+    descriptionClass?: string
+    actionsWrapper?: string
+  }
 }
 
-const { todo, rc: rcProp } = defineProps<TodoCardProps>();
-const { rc } = useRC("TodoCard", rcProp);
+const { todo, rc: rcProp } = defineProps<TodoCardProps>()
+const { rc } = useRC("TodoCard", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface TodoCardEmits {
-  toggle: [completed: boolean];
-  archive: [];
-  restore: [];
-  delete: [];
+  toggle: [completed: boolean]
+  archive: []
+  restore: []
+  delete: []
 }
-const emit = defineEmits<TodoCardEmits>();
+const emit = defineEmits<TodoCardEmits>()
 /* endregion */
 
 /* region Styles */
@@ -75,22 +75,22 @@ const todoCardStyles = scv({
       }
     }
   }
-});
+})
 
 const styles = computed(() => {
   const resolved = todoCardStyles({
     isArchived: todo.isArchived,
     completed: todo.completed
-  });
-  const result: Record<string, string> = {};
+  })
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
-defineOptions({ name: "TodoCard" });
+defineOptions({ name: "TodoCard" })
 </script>
 
 <template>

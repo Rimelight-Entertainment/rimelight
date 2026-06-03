@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { computed, provide, watch } from "vue";
-import type { Page, PageSurround } from "@/types/pages";
-import { getLocalizedContent, syncPageWithDefinition } from "@/utils/page";
-import { useI18n } from "@/composables/app/useI18n";
-import { usePageRegistry, useRC } from "@/composables";
-import { scv, cx } from "css-variants";
-import PageTOC from "./PageTOC.vue";
-import PagePropertiesRenderer from "./PagePropertiesRenderer.vue";
-import BlockViewRenderer from "./blocks/BlockViewRenderer.vue";
-import PageSurroundComponent from "./PageSurround.vue";
+import { computed, provide, watch } from "vue"
+import type { Page, PageSurround } from "@/types/pages"
+import { getLocalizedContent, syncPageWithDefinition } from "@/utils/page"
+import { useI18n } from "@/composables/app/useI18n"
+import { usePageRegistry, useRC } from "@/composables"
+import { scv, cx } from "css-variants"
+import PageTOC from "./PageTOC.vue"
+import PagePropertiesRenderer from "./PagePropertiesRenderer.vue"
+import BlockViewRenderer from "./blocks/BlockViewRenderer.vue"
+import PageSurroundComponent from "./PageSurround.vue"
 
 /* region Props */
 export interface PageRendererProps {
-  useSurround?: boolean;
-  surround?: PageSurround | null;
-  surroundStatus?: "idle" | "pending" | "success" | "error";
-  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>;
-  canEdit?: boolean;
-  editUrl?: string;
+  useSurround?: boolean
+  surround?: PageSurround | null
+  surroundStatus?: "idle" | "pending" | "success" | "error"
+  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>
+  canEdit?: boolean
+  editUrl?: string
   rc?: {
-    container?: string;
-    grid?: string;
-    toc?: string;
-    properties?: string;
-    contentWrapper?: string;
-    banner?: string;
-    icon?: string;
-    title?: string;
-    surroundSkeleton?: string;
-    skeleton?: string;
-    metadata?: string;
-  };
+    container?: string
+    grid?: string
+    toc?: string
+    properties?: string
+    contentWrapper?: string
+    banner?: string
+    icon?: string
+    title?: string
+    surroundSkeleton?: string
+    skeleton?: string
+    metadata?: string
+  }
 }
 
 const {
@@ -41,9 +41,9 @@ const {
   canEdit = false,
   editUrl,
   rc: rcProp
-} = defineProps<PageRendererProps>();
-const { rc } = useRC("PageRenderer", rcProp);
-provide("page-resolver", resolvePage);
+} = defineProps<PageRendererProps>()
+const { rc } = useRC("PageRenderer", rcProp)
+provide("page-resolver", resolvePage)
 /* endregion */
 
 /* region Styles */
@@ -59,40 +59,41 @@ const pageRendererStyles = scv({
     title: "text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-2",
     surroundSkeleton: "grid grid-cols-1 gap-4 sm:grid-cols-2 mt-8",
     skeleton: "h-48 w-full rounded-xl bg-neutral-100 dark:bg-neutral-800 animate-pulse",
-    metadata: "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8"
+    metadata:
+      "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = pageRendererStyles();
-  const result: Record<string, string> = {};
+  const resolved = pageRendererStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const page = defineModel<Page>({ required: true });
-const { getTypeLabelKey, definitions } = usePageRegistry();
-const { t, locale } = useI18n();
+const page = defineModel<Page>({ required: true })
+const { getTypeLabelKey, definitions } = usePageRegistry()
+const { t, locale } = useI18n()
 
 const currentDefinition = computed(() => {
-  if (!page.value?.type || !definitions) return null;
+  if (!page.value?.type || !definitions) return null
   const typeKey = Object.keys(definitions).find(
     (k) => k.toLowerCase() === page.value.type.toLowerCase()
-  );
-  return typeKey ? (definitions as any)[typeKey] : null;
-});
+  )
+  return typeKey ? (definitions as any)[typeKey] : null
+})
 
-const previousPage = computed(() => surround?.previous);
-const nextPage = computed(() => surround?.next);
-const hasSurround = computed(() => !!(surround?.previous || surround?.next));
+const previousPage = computed(() => surround?.previous)
+const nextPage = computed(() => surround?.next)
+const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 /* endregion */
 
 /* region Meta */
-defineOptions({ name: "PageRenderer" });
+defineOptions({ name: "PageRenderer" })
 /* endregion */
 
 /* region Lifecycle */
@@ -100,12 +101,12 @@ watch(
   [() => page.value?.id, () => page.value?.type, currentDefinition],
   () => {
     if (page.value && currentDefinition.value) {
-      console.log("[PageRenderer] Syncing page with definition", page.value.id);
-      syncPageWithDefinition(page.value, currentDefinition.value);
+      console.log("[PageRenderer] Syncing page with definition", page.value.id)
+      syncPageWithDefinition(page.value, currentDefinition.value)
     }
   },
   { immediate: true }
-);
+)
 /* endregion */
 </script>
 

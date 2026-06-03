@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { defineAsyncComponent, computed } from "vue";
-import { scv, cx } from "css-variants";
-import type { Block } from "@/types/blocks";
-import { useRC } from "@/composables";
-import { BLOCK_RENDERER_COMPONENT_MAP } from "@/generated/blockRendererMap";
+import { defineAsyncComponent, computed } from "vue"
+import { scv, cx } from "css-variants"
+import type { Block } from "@/types/blocks"
+import { useRC } from "@/composables"
+import { BLOCK_RENDERER_COMPONENT_MAP } from "@/generated/blockRendererMap"
 
 /* region Props */
 export interface BlockViewRendererProps {
-  blocks: Block[];
+  blocks: Block[]
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { blocks, rc: rcProp } = defineProps<BlockViewRendererProps>();
+const { blocks, rc: rcProp } = defineProps<BlockViewRendererProps>()
 
-const { rc } = useRC("BlockViewRenderer", rcProp);
+const { rc } = useRC("BlockViewRenderer", rcProp)
 /* endregion */
 
 /* region Styles */
 const blockViewRendererStyles = scv({
   slots: { root: "flex flex-col gap-lg w-full" }
-});
+})
 
 const styles = computed(() => {
-  const resolved = blockViewRendererStyles();
-  const result: Record<string, string> = {};
+  const resolved = blockViewRendererStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region Logic */
@@ -39,18 +39,18 @@ const asyncRendererMap = Object.fromEntries(
     key,
     defineAsyncComponent(importFn as any)
   ])
-);
+)
 
 const resolveBlockComponent = (type?: string) => {
-  if (!type) return "div";
-  const cleanType = type.replace(/Block$/, "");
-  return asyncRendererMap[cleanType] || "div";
-};
+  if (!type) return "div"
+  const cleanType = type.replace(/Block$/, "")
+  return asyncRendererMap[cleanType] || "div"
+}
 /* endregion */
 
 defineOptions({
   name: "BlockViewRenderer"
-});
+})
 </script>
 
 <template>

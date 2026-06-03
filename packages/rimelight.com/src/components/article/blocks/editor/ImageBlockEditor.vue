@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { ref, watch, computed, onUnmounted } from "vue";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import type { ImageBlockProps } from "@/types/blocks";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+import { ref, watch, computed, onUnmounted } from "vue"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import type { ImageBlockProps } from "@/types/blocks"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
 
 /* region Props */
 export interface ImageBlockEditorProps extends ImageBlockProps {
   rc?: {
-    root?: string;
-    upload?: string;
-    previewContainer?: string;
-    previewImage?: string;
-    emptyPreview?: string;
-  };
+    root?: string
+    upload?: string
+    previewContainer?: string
+    previewImage?: string
+    emptyPreview?: string
+  }
 }
 
-const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockEditorProps>();
+const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockEditorProps>()
 
-const { rc } = useRC("ImageBlockEditor", rcProp);
+const { rc } = useRC("ImageBlockEditor", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface ImageBlockEditorEmits {
-  "update:src": [value: string | null];
-  "update:alt": [value: string];
-  "update:caption": [value: string | null];
-  "update:file": [value: File | null];
+  "update:src": [value: string | null]
+  "update:alt": [value: string]
+  "update:caption": [value: string | null]
+  "update:file": [value: File | null]
 }
 
-const emit = defineEmits<ImageBlockEditorEmits>();
+const emit = defineEmits<ImageBlockEditorEmits>()
 /* endregion */
 
 /* region Styles */
@@ -38,93 +38,94 @@ const imageBlockEditorStyles = scv({
   slots: {
     root: "flex flex-col gap-4",
     upload: "w-full",
-    previewContainer: "relative aspect-video w-full overflow-hidden rounded-md border border-default bg-neutral-50 dark:bg-neutral-900/50",
+    previewContainer:
+      "relative aspect-video w-full overflow-hidden rounded-md border border-default bg-neutral-50 dark:bg-neutral-900/50",
     previewImage: "size-full object-cover",
     emptyPreview: "flex size-full items-center justify-center bg-muted text-dimmed"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = imageBlockEditorStyles();
-  const result: Record<string, string> = {};
+  const resolved = imageBlockEditorStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
   return result as {
-    root: string;
-    upload: string;
-    previewContainer: string;
-    previewImage: string;
-    emptyPreview: string;
-  };
-});
+    root: string
+    upload: string
+    previewContainer: string
+    previewImage: string
+    emptyPreview: string
+  }
+})
 /* endregion */
 
 /* region State */
-const fileToUpload = ref<File | null>(null);
-const localAlt = ref(alt || "");
-const localCaption = ref(caption || "");
+const fileToUpload = ref<File | null>(null)
+const localAlt = ref(alt || "")
+const localCaption = ref(caption || "")
 
 // Custom lightweight URL object hook
-const filePreviewUrl = ref<string | null>(null);
+const filePreviewUrl = ref<string | null>(null)
 
 watch(fileToUpload, (newFile) => {
   if (filePreviewUrl.value) {
-    URL.revokeObjectURL(filePreviewUrl.value);
-    filePreviewUrl.value = null;
+    URL.revokeObjectURL(filePreviewUrl.value)
+    filePreviewUrl.value = null
   }
   if (newFile) {
-    filePreviewUrl.value = URL.createObjectURL(newFile);
+    filePreviewUrl.value = URL.createObjectURL(newFile)
   }
-});
+})
 
 onUnmounted(() => {
   if (filePreviewUrl.value) {
-    URL.revokeObjectURL(filePreviewUrl.value);
+    URL.revokeObjectURL(filePreviewUrl.value)
   }
-});
+})
 
 const previewSrc = computed(() => {
-  return fileToUpload.value ? filePreviewUrl.value : src;
-});
+  return fileToUpload.value ? filePreviewUrl.value : src
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
   name: "ImageBlockEditor"
-});
+})
 /* endregion */
 
 /* region Lifecycle */
 watch(
   () => localAlt.value,
   (newAlt) => {
-    emit("update:alt", newAlt);
+    emit("update:alt", newAlt)
   }
-);
+)
 
 watch(
   () => localCaption.value,
   (newCaption) => {
-    emit("update:caption", newCaption);
+    emit("update:caption", newCaption)
   }
-);
+)
 
 watch(fileToUpload, (newFile) => {
-  emit("update:file", newFile);
+  emit("update:file", newFile)
   if (newFile) {
-    emit("update:src", null);
+    emit("update:src", null)
   }
-});
+})
 /* endregion */
 
 /* region Logic */
 const onFileChange = (e: Event) => {
-  const target = e.target as HTMLInputElement;
+  const target = e.target as HTMLInputElement
   if (target.files?.length) {
-    fileToUpload.value = target.files[0] ?? null;
+    fileToUpload.value = target.files[0] ?? null
   }
-};
+}
 /* endregion */
 </script>
 
@@ -154,5 +155,4 @@ const onFileChange = (e: Event) => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

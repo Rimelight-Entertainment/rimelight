@@ -1,87 +1,90 @@
 <script setup lang="ts">
-import { inject, ref, watch, computed } from "vue";
-import { getLocalizedContent } from "@/utils/page";
-import { useI18n } from "@/composables/app/useI18n";
-import { type Page } from "@/types/pages";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
+import { inject, ref, watch, computed } from "vue"
+import { getLocalizedContent } from "@/utils/page"
+import { useI18n } from "@/composables/app/useI18n"
+import { type Page } from "@/types/pages"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
 
 /* region Props */
 export interface PageMentionProps {
-  pageId: string;
+  pageId: string
   rc?: {
-    link?: string;
-    icon?: string;
-    text?: string;
-    skeleton?: string;
-  };
+    link?: string
+    icon?: string
+    text?: string
+    skeleton?: string
+  }
 }
 
-const { pageId, rc: rcProp } = defineProps<PageMentionProps>();
-const { rc } = useRC("PageMention", rcProp);
+const { pageId, rc: rcProp } = defineProps<PageMentionProps>()
+const { rc } = useRC("PageMention", rcProp)
 /* endregion */
 
 /* region Styles */
 const pageMentionStyles = scv({
   slots: {
-    linkClass: "inline-flex items-baseline gap-1 align-middle hover:text-primary transition-colors font-medium text-inherit",
+    linkClass:
+      "inline-flex items-baseline gap-1 align-middle hover:text-primary transition-colors font-medium text-inherit",
     iconClass: "w-4 h-4 rounded-full object-cover shrink-0",
     textClass: "truncate font-medium",
-    skeletonClass: "h-3 w-24 rounded bg-neutral-200 dark:bg-neutral-800 animate-pulse inline-block align-middle",
+    skeletonClass:
+      "h-3 w-24 rounded bg-neutral-200 dark:bg-neutral-800 animate-pulse inline-block align-middle",
     unresolvedText: "text-xs text-dimmed italic"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = pageMentionStyles();
-  const result: Record<string, string> = {};
+  const resolved = pageMentionStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
   return result as {
-    linkClass: string;
-    iconClass: string;
-    textClass: string;
-    skeletonClass: string;
-    unresolvedText: string;
-  };
-});
+    linkClass: string
+    iconClass: string
+    textClass: string
+    skeletonClass: string
+    unresolvedText: string
+  }
+})
 /* endregion */
 
 /* region State */
-const { locale } = useI18n();
-const isServer = import.meta.env.SSR;
-const isClient = !isServer;
-const resolver = inject<(id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>>("page-resolver");
-const linkedPage = ref<Pick<Page, "title" | "icon" | "slug"> | null>(null);
-const status = ref<"idle" | "pending" | "success" | "error">("idle");
+const { locale } = useI18n()
+const isServer = import.meta.env.SSR
+const isClient = !isServer
+const resolver =
+  inject<(id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>>("page-resolver")
+const linkedPage = ref<Pick<Page, "title" | "icon" | "slug"> | null>(null)
+const status = ref<"idle" | "pending" | "success" | "error">("idle")
 
 const loadPage = async () => {
-  if (!pageId) return;
-  status.value = "pending";
+  if (!pageId) return
+  status.value = "pending"
   if (!resolver) {
     if (isClient) {
-      console.warn("RLPageMention: No page resolver provided in RLPageRenderer");
+      console.warn("RLPageMention: No page resolver provided in RLPageRenderer")
     }
-    status.value = "error";
-    return;
+    status.value = "error"
+    return
   }
   try {
-    linkedPage.value = await resolver(pageId);
-    status.value = "success";
+    linkedPage.value = await resolver(pageId)
+    status.value = "success"
   } catch (e) {
     if (isClient) {
-      console.warn("RLPageMention: Failed to resolve page", pageId, e);
+      console.warn("RLPageMention: Failed to resolve page", pageId, e)
     }
-    status.value = "error";
+    status.value = "error"
   }
-};
+}
 
-watch(() => pageId, loadPage, { immediate: true });
+watch(() => pageId, loadPage, { immediate: true })
 /* endregion */
 
 /* region Meta */
-defineOptions({ name: "PageMention" });
+defineOptions({ name: "PageMention" })
 /* endregion */
 </script>
 

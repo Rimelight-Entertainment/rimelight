@@ -1,75 +1,75 @@
 <script lang="ts" setup>
-import { ref, reactive, watch, onMounted } from "vue";
-import draggable from "vuedraggable";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
+import { ref, reactive, watch, onMounted } from "vue"
+import draggable from "vuedraggable"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
 
 const props = defineProps<{
-  boardId: string;
-}>();
+  boardId: string
+}>()
 
-const board = ref<any>(null);
-const localLists = ref<any[]>([]);
-const pending = ref(true);
-const isAddListModalOpen = ref(false);
-const isAddCardModalOpen = ref(false);
-const selectedListId = ref<string | null>(null);
-const selectedCard = ref<any>(null);
-const isCardDetailModalOpen = ref(false);
-const isFieldManagerOpen = ref(false);
-const newListState = ref({ title: "" });
-const newCardState = ref({ title: "", description: "" });
+const board = ref<any>(null)
+const localLists = ref<any[]>([])
+const pending = ref(true)
+const isAddListModalOpen = ref(false)
+const isAddCardModalOpen = ref(false)
+const selectedListId = ref<string | null>(null)
+const selectedCard = ref<any>(null)
+const isCardDetailModalOpen = ref(false)
+const isFieldManagerOpen = ref(false)
+const newListState = ref({ title: "" })
+const newCardState = ref({ title: "", description: "" })
 const newFieldState = ref({
   name: "",
   type: "TEXT" as "TEXT" | "NUMBER" | "DATE" | "SELECT" | "CHECKBOX" | "URL",
   optionsStr: ""
-});
-const fieldTypes = ["TEXT", "NUMBER", "DATE", "SELECT", "CHECKBOX", "URL"];
+})
+const fieldTypes = ["TEXT", "NUMBER", "DATE", "SELECT", "CHECKBOX", "URL"]
 
 async function fetchBoard() {
-  pending.value = true;
+  pending.value = true
   try {
-    const res = await fetch(`/api/projects/boards/${props.boardId}`);
+    const res = await fetch(`/api/projects/boards/${props.boardId}`)
     if (res.ok) {
-      board.value = await res.json();
-      localLists.value = JSON.parse(JSON.stringify(board.value.lists || []));
+      board.value = await res.json()
+      localLists.value = JSON.parse(JSON.stringify(board.value.lists || []))
     }
   } catch (err) {
-    console.error(err);
+    console.error(err)
   } finally {
-    pending.value = false;
+    pending.value = false
   }
 }
 
 onMounted(() => {
-  fetchBoard();
-});
+  fetchBoard()
+})
 
 async function createList(e: Event) {
-  e.preventDefault();
+  e.preventDefault()
   try {
     await fetch("/api/projects/lists", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ boardId: props.boardId, title: newListState.value.title })
-    });
-    isAddListModalOpen.value = false;
-    newListState.value.title = "";
-    await fetchBoard();
+    })
+    isAddListModalOpen.value = false
+    newListState.value.title = ""
+    await fetchBoard()
   } catch (err) {
-    alert("Error creating list");
+    alert("Error creating list")
   }
 }
 
 async function deleteList(id: string) {
-  if (!confirm("Delete list and all its cards?")) return;
+  if (!confirm("Delete list and all its cards?")) return
   try {
-    await fetch(`/api/projects/lists/${id}`, { method: "DELETE" });
-    await fetchBoard();
+    await fetch(`/api/projects/lists/${id}`, { method: "DELETE" })
+    await fetchBoard()
   } catch (err) {
-    alert("Error deleting list");
+    alert("Error deleting list")
   }
 }
 
@@ -82,17 +82,17 @@ async function onListDrop() {
         body: JSON.stringify({ order: index })
       })
     )
-  );
+  )
 }
 
 function openAddCardModal(listId: string) {
-  selectedListId.value = listId;
-  isAddCardModalOpen.value = true;
+  selectedListId.value = listId
+  isAddCardModalOpen.value = true
 }
 
 async function createCard(e: Event) {
-  e.preventDefault();
-  if (!selectedListId.value) return;
+  e.preventDefault()
+  if (!selectedListId.value) return
   try {
     await fetch("/api/projects/cards", {
       method: "POST",
@@ -102,26 +102,26 @@ async function createCard(e: Event) {
         title: newCardState.value.title,
         description: newCardState.value.description
       })
-    });
-    isAddCardModalOpen.value = false;
-    newCardState.value = { title: "", description: "" };
-    selectedListId.value = null;
-    await fetchBoard();
+    })
+    isAddCardModalOpen.value = false
+    newCardState.value = { title: "", description: "" }
+    selectedListId.value = null
+    await fetchBoard()
   } catch (err) {
-    alert("Error creating card");
+    alert("Error creating card")
   }
 }
 
 function openCardDetail(card: any) {
-  selectedCard.value = JSON.parse(JSON.stringify(card));
+  selectedCard.value = JSON.parse(JSON.stringify(card))
   if (!selectedCard.value.customFields) {
-    selectedCard.value.customFields = {};
+    selectedCard.value.customFields = {}
   }
-  isCardDetailModalOpen.value = true;
+  isCardDetailModalOpen.value = true
 }
 
 async function updateCard(e: Event) {
-  e.preventDefault();
+  e.preventDefault()
   try {
     await fetch(`/api/projects/cards/${selectedCard.value.id}`, {
       method: "PUT",
@@ -131,29 +131,29 @@ async function updateCard(e: Event) {
         description: selectedCard.value.description,
         customFields: selectedCard.value.customFields
       })
-    });
-    isCardDetailModalOpen.value = false;
-    await fetchBoard();
+    })
+    isCardDetailModalOpen.value = false
+    await fetchBoard()
   } catch (err) {
-    alert("Error updating card");
+    alert("Error updating card")
   }
 }
 
 async function deleteCard() {
-  if (!confirm("Delete card?")) return;
+  if (!confirm("Delete card?")) return
   try {
-    await fetch(`/api/projects/cards/${selectedCard.value.id}`, { method: "DELETE" });
-    isCardDetailModalOpen.value = false;
-    await fetchBoard();
+    await fetch(`/api/projects/cards/${selectedCard.value.id}`, { method: "DELETE" })
+    isCardDetailModalOpen.value = false
+    await fetchBoard()
   } catch (err) {
-    alert("Error deleting card");
+    alert("Error deleting card")
   }
 }
 
 async function onCardDrop(event: any, listId: string) {
   if (event.added || event.moved) {
-    const list = localLists.value.find((l) => l.id === listId);
-    if (!list) return;
+    const list = localLists.value.find((l) => l.id === listId)
+    if (!list) return
     await Promise.all(
       list.cards.map((card: any, index: number) =>
         fetch(`/api/projects/cards/${card.id}`, {
@@ -162,7 +162,7 @@ async function onCardDrop(event: any, listId: string) {
           body: JSON.stringify({ listId: listId, order: index })
         })
       )
-    );
+    )
   }
 }
 
@@ -183,21 +183,21 @@ async function createField() {
               }))
             : []
       })
-    });
-    newFieldState.value = { name: "", type: "TEXT", optionsStr: "" };
-    await fetchBoard();
+    })
+    newFieldState.value = { name: "", type: "TEXT", optionsStr: "" }
+    await fetchBoard()
   } catch (err) {
-    alert("Error creating field");
+    alert("Error creating field")
   }
 }
 
 async function deleteField(id: string) {
-  if (!confirm("Delete field? Data will be hidden.")) return;
+  if (!confirm("Delete field? Data will be hidden.")) return
   try {
-    await fetch(`/api/projects/fields/${id}`, { method: "DELETE" });
-    await fetchBoard();
+    await fetch(`/api/projects/fields/${id}`, { method: "DELETE" })
+    await fetchBoard()
   } catch (err) {
-    alert("Error deleting field");
+    alert("Error deleting field")
   }
 }
 </script>

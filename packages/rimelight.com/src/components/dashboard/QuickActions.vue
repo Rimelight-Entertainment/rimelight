@@ -1,32 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useQuickActions } from "@/composables";
+import { ref, onMounted, onUnmounted, computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useQuickActions } from "@/composables"
 
 /* region Props */
 export interface QuickActionsProps {
-    rc?: {
-        root?: string;
-        triggerButton?: string;
-        triggerIcon?: string;
-    };
+  rc?: {
+    root?: string
+    triggerButton?: string
+    triggerIcon?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<QuickActionsProps>();
-const { rc } = useRC("QuickActions", rcProp);
+const { rc: rcProp } = defineProps<QuickActionsProps>()
+const { rc } = useRC("QuickActions", rcProp)
 /* endregion */
 
 /* region Emits */
-export interface QuickActionsEmits {
-}
-defineEmits<QuickActionsEmits>();
+export interface QuickActionsEmits {}
+defineEmits<QuickActionsEmits>()
 /* endregion */
 
 /* region Slots */
-export interface QuickActionsSlots {
-}
-defineSlots<QuickActionsSlots>();
+export interface QuickActionsSlots {}
+defineSlots<QuickActionsSlots>()
 /* endregion */
 
 /* region Styles */
@@ -34,66 +32,73 @@ const quickActionsStyles = scv({
   slots: ["root", "triggerButton", "triggerIcon"],
   base: {
     root: "relative inline-block",
-    triggerButton: "rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform",
+    triggerButton:
+      "rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform",
     triggerIcon: "size-6"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = quickActionsStyles();
-  const result: Record<string, string> = {};
+  const resolved = quickActionsStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { registeredActions } = useQuickActions();
+const { registeredActions } = useQuickActions()
 
 const menuItems = computed(() => {
-  const grouped = registeredActions.value.reduce((acc, action) => {
-    const groupId = action.group ?? 0;
-    if (!acc[groupId]) {
-      acc[groupId] = [];
-    }
-    acc[groupId].push({
-      label: action.label,
-      icon: action.icon,
-      onSelect: action.onSelect
-    });
-    return acc;
-  }, {} as Record<number, {
-    label: string;
-    icon?: string;
-    onSelect?: () => void;
-  }[]>);
-  return Object.values(grouped);
-});
+  const grouped = registeredActions.value.reduce(
+    (acc, action) => {
+      const groupId = action.group ?? 0
+      if (!acc[groupId]) {
+        acc[groupId] = []
+      }
+      acc[groupId].push({
+        label: action.label,
+        icon: action.icon,
+        onSelect: action.onSelect
+      })
+      return acc
+    },
+    {} as Record<
+      number,
+      {
+        label: string
+        icon?: string
+        onSelect?: () => void
+      }[]
+    >
+  )
+  return Object.values(grouped)
+})
 
-const isOpen = ref(false);
-const dropdownRef = ref<HTMLElement | null>(null);
+const isOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
 
 const handleClickOutside = (event: MouseEvent) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
-    isOpen.value = false;
+    isOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
+  document.addEventListener("click", handleClickOutside)
+})
 
 onUnmounted(() => {
-  document.removeEventListener("click", handleClickOutside);
-});
+  document.removeEventListener("click", handleClickOutside)
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
   name: "QuickActions"
-});
+})
 /* endregion */
 </script>
 

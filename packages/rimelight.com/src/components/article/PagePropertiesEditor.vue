@@ -1,154 +1,161 @@
 <script setup lang="ts">
-import { computed, ref, reactive } from "vue";
-import type { Page, Link } from "@/types/pages";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import { useI18n } from "@/composables/app/useI18n";
-import { getLocalizedContent } from "@/utils/page";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+import { computed, ref, reactive } from "vue"
+import type { Page, Link } from "@/types/pages"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import { useI18n } from "@/composables/app/useI18n"
+import { getLocalizedContent } from "@/utils/page"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
 
 /* region Props */
 export interface PagePropertiesEditorProps {
   rc?: {
-    aside?: string;
-    icon?: string;
-    titleInput?: string;
-    type?: string;
-    tags?: string;
-    tabs?: string;
-    image?: string;
-    groupButton?: string;
-    details?: string;
-    field?: string;
-    links?: string;
-  };
-  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
+    aside?: string
+    icon?: string
+    titleInput?: string
+    type?: string
+    tags?: string
+    tabs?: string
+    image?: string
+    groupButton?: string
+    details?: string
+    field?: string
+    links?: string
+  }
+  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>
 }
 
-const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>();
-const { rc } = useRC("PagePropertiesEditor", rcProp);
+const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>()
+const { rc } = useRC("PagePropertiesEditor", rcProp)
 /* endregion */
 
 /* region Styles */
 const pagePropertiesEditorStyles = scv({
   slots: {
-    asideClass: "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
+    asideClass:
+      "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
     iconClass: "rounded-full w-12 h-12 object-cover border border-default shadow-sm",
     titleInputClass: "w-full",
     typeClass: "text-xs text-dimmed uppercase tracking-wider text-center block mt-1",
     tagsClass: "flex flex-row flex-wrap gap-1 justify-center mt-2",
     imageClass: "w-full object-cover rounded-lg border border-default shadow-sm mt-4",
-    groupButtonClass: "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
-    detailsClass: "p-3 flex flex-col gap-3 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
+    groupButtonClass:
+      "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
+    detailsClass:
+      "p-3 flex flex-col gap-3 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
     fieldClass: "w-full",
     linksClass: "flex flex-col gap-2 mt-4 pt-4 border-t border-default",
     headerContent: "flex flex-col gap-2 items-center text-center",
-    slugInput: "w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity text-center text-xs font-mono bg-neutral-100 dark:bg-neutral-800/80 px-2 py-1 rounded border border-default",
+    slugInput:
+      "w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity text-center text-xs font-mono bg-neutral-100 dark:bg-neutral-800/80 px-2 py-1 rounded border border-default",
     linksHeader: "flex items-center justify-between mb-2",
     linksTitle: "text-xs font-bold uppercase tracking-wider text-dimmed",
     linksWrapper: "flex flex-col gap-2",
-    linkItem: "flex items-center justify-between p-2 rounded-lg border border-default bg-white dark:bg-neutral-900",
+    linkItem:
+      "flex items-center justify-between p-2 rounded-lg border border-default bg-white dark:bg-neutral-900",
     linkActions: "flex items-center gap-1",
     emptyLinks: "text-xs text-dimmed italic",
-    modalOverlay: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm",
-    modalContent: "bg-white dark:bg-neutral-900 border border-default rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col",
+    modalOverlay:
+      "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm",
+    modalContent:
+      "bg-white dark:bg-neutral-900 border border-default rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col",
     modalHeader: "flex items-center justify-between px-4 py-3 border-b border-default",
     modalBody: "flex flex-col gap-4 p-4",
     modalGrid: "grid grid-cols-2 gap-4",
     modalFooter: "flex justify-end gap-2 p-4 border-t border-default"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = pagePropertiesEditorStyles();
-  const result: Record<string, string> = {};
+  const resolved = pagePropertiesEditorStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const page = defineModel<Page>({ required: true });
-const { t, locale } = useI18n();
+const page = defineModel<Page>({ required: true })
+const { t, locale } = useI18n()
 
 const sortedGroups = computed(() => {
-  if (!page.value?.properties) return [];
+  if (!page.value?.properties) return []
   return Object.entries(page.value.properties).toSorted((a, b) => {
-    return (a[1] as any).order - (b[1] as any).order;
-  });
-});
+    return (a[1] as any).order - (b[1] as any).order
+  })
+})
 
 const getSortedFields = (fields: any) => {
-  if (!fields) return [];
+  if (!fields) return []
   return Object.entries(fields).toSorted((a, b) => {
-    return (a[1] as any).order - (b[1] as any).order;
-  });
-};
+    return (a[1] as any).order - (b[1] as any).order
+  })
+}
 
 // Link editing state
-const isLinkModalOpen = ref(false);
-const editingLinkIndex = ref<number | null>(null);
+const isLinkModalOpen = ref(false)
+const editingLinkIndex = ref<number | null>(null)
 const linkDraft = reactive<Partial<Link>>({
   label: "",
   to: "",
   icon: "",
   color: "neutral",
   variant: "link"
-});
+})
 /* endregion */
 
 /* region Logic */
 function openLinkModal(index: number | null = null) {
-  editingLinkIndex.value = index;
+  editingLinkIndex.value = index
   if (index !== null && page.value.links?.[index]) {
-    const link = page.value.links[index]!;
-    linkDraft.label = link.label;
-    linkDraft.to = link.to;
-    linkDraft.icon = link.icon;
-    linkDraft.color = link.color || "neutral";
-    linkDraft.variant = link.variant || "link";
+    const link = page.value.links[index]!
+    linkDraft.label = link.label
+    linkDraft.to = link.to
+    linkDraft.icon = link.icon
+    linkDraft.color = link.color || "neutral"
+    linkDraft.variant = link.variant || "link"
   } else {
-    linkDraft.label = "";
-    linkDraft.to = "";
-    linkDraft.icon = "";
-    linkDraft.color = "neutral";
-    linkDraft.variant = "link";
+    linkDraft.label = ""
+    linkDraft.to = ""
+    linkDraft.icon = ""
+    linkDraft.color = "neutral"
+    linkDraft.variant = "link"
   }
-  isLinkModalOpen.value = true;
+  isLinkModalOpen.value = true
 }
 
 function saveLink() {
-  if (!linkDraft.label || !linkDraft.to) return;
-  if (!page.value.links) page.value.links = [];
+  if (!linkDraft.label || !linkDraft.to) return
+  if (!page.value.links) page.value.links = []
   const newLink: Link = {
     label: linkDraft.label,
     to: linkDraft.to!,
     icon: linkDraft.icon,
     color: (linkDraft.color as any) || "neutral",
     variant: (linkDraft.variant as any) || "link"
-  };
-  if (editingLinkIndex.value !== null) {
-    page.value.links[editingLinkIndex.value] = newLink;
-  } else {
-    page.value.links.push(newLink);
   }
-  isLinkModalOpen.value = false;
+  if (editingLinkIndex.value !== null) {
+    page.value.links[editingLinkIndex.value] = newLink
+  } else {
+    page.value.links.push(newLink)
+  }
+  isLinkModalOpen.value = false
 }
 
 function removeLink(index: number) {
   if (page.value.links) {
-    page.value.links.splice(index, 1);
+    page.value.links.splice(index, 1)
   }
 }
 /* endregion */
 
 defineOptions({
   name: "PagePropertiesEditor"
-});
+})
 </script>
 
 <template>

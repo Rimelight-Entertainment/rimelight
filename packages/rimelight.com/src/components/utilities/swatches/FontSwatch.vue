@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed } from "vue"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface FontSwatchProps {
-    name?: string;
-    jpg?: string;
-    png?: string;
-    webp?: string;
-    svg?: string;
-    rc?: {
-        card?: string;
-        title?: string;
-        content?: string;
-        actions?: string;
-        buttonGroup?: string;
-        button?: string;
-    };
-    t?: (key: string) => string;
+  name?: string
+  jpg?: string
+  png?: string
+  webp?: string
+  svg?: string
+  rc?: {
+    card?: string
+    title?: string
+    content?: string
+    actions?: string
+    buttonGroup?: string
+    button?: string
+  }
+  t?: (key: string) => string
 }
 
 const {
@@ -35,24 +35,22 @@ const {
       "swatch.download_png": "Download PNG",
       "swatch.download_webp": "Download WEBP",
       "swatch.download_svg": "Download SVG"
-    };
-    return map[key] || key;
+    }
+    return map[key] || key
   }
-} = defineProps<FontSwatchProps>();
+} = defineProps<FontSwatchProps>()
 
-const { rc } = useRC("FontSwatch", rcProp);
+const { rc } = useRC("FontSwatch", rcProp)
 /* endregion */
 
 /* region Emits */
-export interface FontSwatchEmits {
-}
-defineEmits<FontSwatchEmits>();
+export interface FontSwatchEmits {}
+defineEmits<FontSwatchEmits>()
 /* endregion */
 
 /* region Slots */
-export interface FontSwatchSlots {
-}
-defineSlots<FontSwatchSlots>();
+export interface FontSwatchSlots {}
+defineSlots<FontSwatchSlots>()
 /* endregion */
 
 /* region Styles */
@@ -67,26 +65,26 @@ const fontSwatchStyles = scv({
     button: "w-full xl:w-36",
     specimen: "flex flex-col gap-xs"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = fontSwatchStyles();
-  const result: Record<string, string> = {};
+  const resolved = fontSwatchStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
 const image = computed(() => {
-  if (webp) return webp;
-  if (png) return png;
-  if (jpg) return jpg;
-  if (svg) return svg;
-  return undefined;
-});
+  if (webp) return webp
+  if (png) return png
+  if (jpg) return jpg
+  if (svg) return svg
+  return undefined
+})
 /* endregion */
 </script>
 

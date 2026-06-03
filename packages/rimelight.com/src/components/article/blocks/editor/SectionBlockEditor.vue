@@ -1,26 +1,33 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from "vue";
-import type { SectionBlockProps } from "@/types/blocks";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys";
-import BlockEditor from "../BlockEditor.vue";
-import Section from "../../../content/Section.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
+import { computed, inject, ref, watch } from "vue"
+import type { SectionBlockProps } from "@/types/blocks"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
+import BlockEditor from "../BlockEditor.vue"
+import Section from "../../../content/Section.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
 
 /* region Props */
 export interface SectionBlockEditorProps extends SectionBlockProps {
-  id: string;
+  id: string
   rc?: {
-    root?: string;
-    headerContainer?: string;
-    titleInput?: string;
-  };
+    root?: string
+    headerContainer?: string
+    titleInput?: string
+  }
 }
 
-const { id, rc: rcProp, title, description, children, level } = defineProps<SectionBlockEditorProps>();
+const {
+  id,
+  rc: rcProp,
+  title,
+  description,
+  children,
+  level
+} = defineProps<SectionBlockEditorProps>()
 
-const { rc } = useRC("SectionBlockEditor", rcProp);
+const { rc } = useRC("SectionBlockEditor", rcProp)
 /* endregion */
 
 /* region Styles */
@@ -29,40 +36,44 @@ const sectionBlockEditorStyles = scv({
     root: "flex flex-col gap-4 w-full",
     headerContainer: "flex flex-row items-center gap-2 w-full",
     titleInput: "w-full",
-    levelBadge: "text-xs font-mono text-dimmed shrink-0 leading-none bg-neutral-100 dark:bg-neutral-800 px-1.5 py-1 rounded"
+    levelBadge:
+      "text-xs font-mono text-dimmed shrink-0 leading-none bg-neutral-100 dark:bg-neutral-800 px-1.5 py-1 rounded"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = sectionBlockEditorStyles();
-  const result: Record<string, string> = {};
+  const resolved = sectionBlockEditorStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const localTitle = ref(title);
-const localDescription = ref(description || "");
-const editorApi = inject<any>("block-editor-api");
-const parentLevel = inject(SECTION_LEVEL_KEY, computed(() => 1));
-const currentLevel = computed(() => Math.min(6, parentLevel.value + 1));
+const localTitle = ref(title)
+const localDescription = ref(description || "")
+const editorApi = inject<any>("block-editor-api")
+const parentLevel = inject(
+  SECTION_LEVEL_KEY,
+  computed(() => 1)
+)
+const currentLevel = computed(() => Math.min(6, parentLevel.value + 1))
 
 const localChildren = computed({
   get: () => children ?? [],
   set: (newChildren) => {
     if (editorApi && id) {
-      const childrenCopy = JSON.parse(JSON.stringify(newChildren));
-      editorApi.updateBlockProps(id, { children: childrenCopy });
+      const childrenCopy = JSON.parse(JSON.stringify(newChildren))
+      editorApi.updateBlockProps(id, { children: childrenCopy })
     }
   }
-});
+})
 /* endregion */
 
 /* region Meta */
-defineOptions({ name: "SectionBlockEditor" });
+defineOptions({ name: "SectionBlockEditor" })
 /* endregion */
 
 /* region Lifecycle */
@@ -70,55 +81,55 @@ watch(
   () => currentLevel.value,
   (newLevel) => {
     if (editorApi && id && newLevel !== level) {
-      editorApi.updateBlockProps(id, { level: newLevel });
+      editorApi.updateBlockProps(id, { level: newLevel })
     }
   },
   { immediate: true }
-);
+)
 
 watch(
   () => title,
   (newVal) => {
     if (newVal !== localTitle.value) {
-      localTitle.value = newVal;
+      localTitle.value = newVal
     }
   }
-);
+)
 
 watch(
   () => description,
   (newVal) => {
     if (newVal !== localDescription.value) {
-      localDescription.value = newVal || "";
+      localDescription.value = newVal || ""
     }
   }
-);
+)
 /* endregion */
 
 /* region Logic */
 const updateLocalTitle = (val: string) => {
-  localTitle.value = val;
-};
+  localTitle.value = val
+}
 
 const commitTitleOnBlur = () => {
   if (editorApi && id && localTitle.value !== title) {
-    editorApi.updateBlockProps(id, { title: localTitle.value });
+    editorApi.updateBlockProps(id, { title: localTitle.value })
   }
-};
+}
 
 const updateLocalDescription = (val: string) => {
-  localDescription.value = val;
-};
+  localDescription.value = val
+}
 
 const commitDescriptionOnBlur = () => {
   if (editorApi && id && localDescription.value !== description) {
-    editorApi.updateBlockProps(id, { description: localDescription.value });
+    editorApi.updateBlockProps(id, { description: localDescription.value })
   }
-};
+}
 
 const handleChildrenMutation = () => {
-  console.log("[SectionBlockEditor] Mutation event received (handled by setter)");
-};
+  console.log("[SectionBlockEditor] Mutation event received (handled by setter)")
+}
 /* endregion */
 </script>
 
@@ -159,5 +170,4 @@ const handleChildrenMutation = () => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

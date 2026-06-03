@@ -34,7 +34,13 @@ function extractTextFromBlocks(blocks: Block[]): string {
   return text.trim()
 }
 
-async function indexDatabasePage(page: { id: string; slug: string; title: any; description?: any; content: { blocks: Block[] } }) {
+async function indexDatabasePage(page: {
+  id: string
+  slug: string
+  title: any
+  description?: any
+  content: { blocks: Block[] }
+}) {
   const titleObj = page.title as Record<string, string>
   const title = titleObj?.en || Object.values(titleObj || {})[0] || "Untitled Page"
 
@@ -44,35 +50,34 @@ async function indexDatabasePage(page: { id: string; slug: string; title: any; d
   const bodyContent = `${description} ${extractTextFromBlocks(page.content?.blocks || [])}`.trim()
   const url = `/${page.slug}`
 
-  await db.insert(searchIndex).values({
-    sourceType: "database_page",
-    sourceId: page.id,
-    title,
-    url,
-    bodyContent,
-    searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${bodyContent}), 'B')`,
-    updatedAt: new Date()
-  }).onConflictDoUpdate({
-    target: [searchIndex.sourceType, searchIndex.sourceId],
-    set: {
+  await db
+    .insert(searchIndex)
+    .values({
+      sourceType: "database_page",
+      sourceId: page.id,
       title,
       url,
       bodyContent,
       searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${bodyContent}), 'B')`,
       updatedAt: new Date()
-    }
-  })
+    })
+    .onConflictDoUpdate({
+      target: [searchIndex.sourceType, searchIndex.sourceId],
+      set: {
+        title,
+        url,
+        bodyContent,
+        searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${bodyContent}), 'B')`,
+        updatedAt: new Date()
+      }
+    })
 }
 
 async function deindexDatabasePage(id: string) {
-  await db.delete(searchIndex).where(
-    and(
-      eq(searchIndex.sourceType, "database_page"),
-      eq(searchIndex.sourceId, id)
-    )
-  )
+  await db
+    .delete(searchIndex)
+    .where(and(eq(searchIndex.sourceType, "database_page"), eq(searchIndex.sourceId, id)))
 }
-
 
 function checkOwnerOrMember(context: any) {
   const user = context.locals.user

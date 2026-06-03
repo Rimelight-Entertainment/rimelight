@@ -1,28 +1,27 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useDashboard } from "@/composables";
-import { authClient } from "@/auth/auth-client";
+import { ref, onMounted, onUnmounted, computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useDashboard } from "@/composables"
+import { authClient } from "@/auth/auth-client"
 
 /* region Props */
 export interface OrganizationsMenuProps {
-    collapsed?: boolean;
-    rc?: {
-        root?: string;
-        triggerButton?: string;
-        buttonTrailing?: string;
-    };
+  collapsed?: boolean
+  rc?: {
+    root?: string
+    triggerButton?: string
+    buttonTrailing?: string
+  }
 }
 
-const { collapsed = false, rc: rcProp } = defineProps<OrganizationsMenuProps>();
-const { rc } = useRC("OrganizationsMenu", rcProp);
+const { collapsed = false, rc: rcProp } = defineProps<OrganizationsMenuProps>()
+const { rc } = useRC("OrganizationsMenu", rcProp)
 /* endregion */
 
 /* region Emits */
-export interface OrganizationsMenuEmits {
-}
-defineEmits<OrganizationsMenuEmits>();
+export interface OrganizationsMenuEmits {}
+defineEmits<OrganizationsMenuEmits>()
 /* endregion */
 
 /* region Styles */
@@ -33,36 +32,36 @@ const organizationsMenuStyles = scv({
     triggerButton: "hover:bg-neutral-50 dark:hover:bg-neutral-800",
     buttonTrailing: "text-neutral-400 dark:text-neutral-500"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = organizationsMenuStyles();
-  const result: Record<string, string> = {};
+  const resolved = organizationsMenuStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { activeOrganization, refreshActiveOrganization } = useDashboard();
-const isOpen = ref(false);
-const menuRef = ref<HTMLElement | null>(null);
+const { activeOrganization, refreshActiveOrganization } = useDashboard()
+const isOpen = ref(false)
+const menuRef = ref<HTMLElement | null>(null)
 
 // 1. Get List of organizations
-const organizationsState = authClient?.useListOrganizations?.();
-const organizations = computed(() => organizationsState?.value?.data || []);
+const organizationsState = authClient?.useListOrganizations?.()
+const organizations = computed(() => organizationsState?.value?.data || [])
 
 const selectedOrganization = computed(() => {
   return (
     activeOrganization.value ||
     (organizations.value && organizations.value.length > 0 ? organizations.value[0] : null)
-  );
-});
+  )
+})
 
 const items = computed(() => {
-  const orgs = organizations.value || [];
+  const orgs = organizations.value || []
   return orgs.map((org: any) => ({
     label: org.name,
     avatar: org.logo
@@ -76,32 +75,32 @@ const items = computed(() => {
       if (authClient?.organization?.setActive) {
         await authClient.organization.setActive({
           organizationId: org.id
-        });
-        await refreshActiveOrganization();
+        })
+        await refreshActiveOrganization()
       }
     }
-  }));
-});
+  }))
+})
 
 const handleClickOutside = (event: MouseEvent) => {
   if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
-    isOpen.value = false;
+    isOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
+  document.addEventListener("click", handleClickOutside)
+})
 
 onUnmounted(() => {
-  document.removeEventListener("click", handleClickOutside);
-});
+  document.removeEventListener("click", handleClickOutside)
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
   name: "OrganizationsMenu"
-});
+})
 /* endregion */
 </script>
 

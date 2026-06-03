@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted } from "vue"
 
 const stats = ref([
   { label: "Total Organizations", value: 0, icon: "i-lucide-building-2" },
   { label: "Total Teams", value: 0, icon: "i-lucide-users" },
   { label: "Total Users", value: 0, icon: "i-lucide-user" },
   { label: "Active Sessions", value: 0, icon: "i-lucide-activity" }
-]);
+])
 
 onMounted(async () => {
   try {
@@ -15,15 +15,15 @@ onMounted(async () => {
       fetch("/api/admin/teams/count").then((r) => r.json() as Promise<number>),
       fetch("/api/admin/users/count").then((r) => r.json() as Promise<number>),
       fetch("/api/admin/sessions/count").then((r) => r.json() as Promise<number>)
-    ]);
-    stats.value[0].value = orgs;
-    stats.value[1].value = teams;
-    stats.value[2].value = users;
-    stats.value[3].value = sessions;
+    ])
+    stats.value[0].value = orgs
+    stats.value[1].value = teams
+    stats.value[2].value = users
+    stats.value[3].value = sessions
   } catch (e) {
-    console.error("Failed to load admin stats", e);
+    console.error("Failed to load admin stats", e)
   }
-});
+})
 </script>
 
 <template>

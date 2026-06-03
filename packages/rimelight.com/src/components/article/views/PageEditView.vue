@@ -1,26 +1,35 @@
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from "vue";
-import type { Page, PageVersion, PageDefinition } from "@/types/pages";
-import { getPageResolutionPath } from "@/utils/page";
-import PageEditor from "../PageEditor.vue"; /* region Props */
+import { computed, ref, watch, nextTick } from "vue"
+import type { Page, PageVersion, PageDefinition } from "@/types/pages"
+import { getPageResolutionPath } from "@/utils/page"
+import PageEditor from "../PageEditor.vue" /* region Props */
 export interface PageEditViewProps {
-    lookupPath?: string;
-    fetchUrl?: string;
-    cacheKey: string;
-    pageDefinitions: Record<string, PageDefinition>;
-    baseUrl: string;
-    hierarchyPath?: string;
-    isAdmin?: boolean;
-    backUrl?: string;
+  lookupPath?: string
+  fetchUrl?: string
+  cacheKey: string
+  pageDefinitions: Record<string, PageDefinition>
+  baseUrl: string
+  hierarchyPath?: string
+  isAdmin?: boolean
+  backUrl?: string
 }
-const { lookupPath, fetchUrl, cacheKey, pageDefinitions, baseUrl, hierarchyPath, isAdmin = false, backUrl } = defineProps<PageEditViewProps>(); /* endregion */ /* region State */
-const resolvedFetchUrl = computed(() => getPageResolutionPath(lookupPath || fetchUrl || ""));
-const isSaving = ref(false);
-const currentVersionId = ref<string | null>(null);
+const {
+  lookupPath,
+  fetchUrl,
+  cacheKey,
+  pageDefinitions,
+  baseUrl,
+  hierarchyPath,
+  isAdmin = false,
+  backUrl
+} = defineProps<PageEditViewProps>() /* endregion */ /* region State */
+const resolvedFetchUrl = computed(() => getPageResolutionPath(lookupPath || fetchUrl || ""))
+const isSaving = ref(false)
+const currentVersionId = ref<string | null>(null)
 const editorRef = ref<{
-    resetHistory: () => void;
-} | null>(null);
-const localPage = ref<Page | null>(null); // Custom manual fetch instead of useFetch (Astro compatibility/Vue SPA fallback)
+  resetHistory: () => void
+} | null>(null)
+const localPage = ref<Page | null>(null) // Custom manual fetch instead of useFetch (Astro compatibility/Vue SPA fallback)
 const pageData = ref<Page | null>(null)
 const pageStatus = ref<"idle" | "pending" | "success" | "error">("idle")
 const fetchPageDetails = async () => {
@@ -145,4 +154,32 @@ const handleNavigateToPage = (slug: string) => {
 defineOptions({
   name: "PageEditView"
 })
-</script><template>  <div v-if="pageStatus === 'pending'" class="h-full w-full flex items-center justify-center p-12">    <span class="i-lucide-loader-2 size-12 animate-spin text-neutral-400" />  </div>  <div v-else-if="pageStatus === 'error' || !localPage" class="p-8 text-center">    <h3 class="text-lg font-bold text-red-600">Page Not Found</h3>    <p class="text-neutral-500 mt-2">The requested page could not be loaded.</p>  </div>  <template v-else-if="localPage && localPage.id">    <PageEditor      ref="editorRef"      v-model="localPage"      v-model:current-version-id="currentVersionId"      :is-saving="isSaving"      :is-admin="isAdmin"      :base-path="(hierarchyPath ?? baseUrl).replace(/^\/|\/$/g, '')"      :page-definitions="pageDefinitions"      :resolve-page="resolvePage"      :on-fetch-pages="fetchPages"      :on-delete-page="handleDelete"      :on-navigate-to-page="handleNavigateToPage"      @save="handleSave"      @publish="handlePublish"      @unpublish="handleUnpublish"      @version-navigate="handleVersionNavigate"    />  </template></template>
+</script>
+<template>
+  <div v-if="pageStatus === 'pending'" class="h-full w-full flex items-center justify-center p-12">
+    <span class="i-lucide-loader-2 size-12 animate-spin text-neutral-400" />
+  </div>
+  <div v-else-if="pageStatus === 'error' || !localPage" class="p-8 text-center">
+    <h3 class="text-lg font-bold text-red-600">Page Not Found</h3>
+    <p class="text-neutral-500 mt-2">The requested page could not be loaded.</p>
+  </div>
+  <template v-else-if="localPage && localPage.id">
+    <PageEditor
+      ref="editorRef"
+      v-model="localPage"
+      v-model:current-version-id="currentVersionId"
+      :is-saving="isSaving"
+      :is-admin="isAdmin"
+      :base-path="(hierarchyPath ?? baseUrl).replace(/^\/|\/$/g, '')"
+      :page-definitions="pageDefinitions"
+      :resolve-page="resolvePage"
+      :on-fetch-pages="fetchPages"
+      :on-delete-page="handleDelete"
+      :on-navigate-to-page="handleNavigateToPage"
+      @save="handleSave"
+      @publish="handlePublish"
+      @unpublish="handleUnpublish"
+      @version-navigate="handleVersionNavigate"
+    />
+  </template>
+</template>

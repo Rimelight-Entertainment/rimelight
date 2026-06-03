@@ -1,56 +1,56 @@
 <script setup lang="ts">
-import { ref, computed, watch, provide } from "vue";
-import type { Page, PageSurround, PageDefinition, PageVersion } from "@/types/pages";
-import { scv, cx } from "css-variants";
-import { useRC, usePageEditor } from "@/composables";
-import { useI18n } from "@/composables/app/useI18n";
-import { getLocalizedContent, syncPageWithDefinition, dehydratePageProperties } from "@/utils/page";
-import PageTOC from "./PageTOC.vue";
-import PagePropertiesEditor from "./PagePropertiesEditor.vue";
-import PageRenderer from "./PageRenderer.vue";
-import BlockEditor from "./blocks/BlockEditor.vue";
-import PageSurroundComponent from "./PageSurround.vue";
-import DeletePageModal from "./modals/DeletePageModal.vue";
-import PageTreeModal from "./modals/PageTreeModal.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import PageVersionSelector from "./PageVersionSelector.vue";
+import { ref, computed, watch, provide } from "vue"
+import type { Page, PageSurround, PageDefinition, PageVersion } from "@/types/pages"
+import { scv, cx } from "css-variants"
+import { useRC, usePageEditor } from "@/composables"
+import { useI18n } from "@/composables/app/useI18n"
+import { getLocalizedContent, syncPageWithDefinition, dehydratePageProperties } from "@/utils/page"
+import PageTOC from "./PageTOC.vue"
+import PagePropertiesEditor from "./PagePropertiesEditor.vue"
+import PageRenderer from "./PageRenderer.vue"
+import BlockEditor from "./blocks/BlockEditor.vue"
+import PageSurroundComponent from "./PageSurround.vue"
+import DeletePageModal from "./modals/DeletePageModal.vue"
+import PageTreeModal from "./modals/PageTreeModal.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import PageVersionSelector from "./PageVersionSelector.vue"
 
 /* region Props */
 export interface PageEditorProps {
-  isSaving: boolean;
-  isViewingVersion?: boolean;
-  useSurround?: boolean;
-  surround?: PageSurround | null;
-  surroundStatus?: "idle" | "pending" | "success" | "error";
-  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>;
-  pageDefinitions: Record<string, PageDefinition>;
-  onDeletePage?: (id: string) => Promise<void>;
-  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
-  onNavigateToPage?: (slug: string) => void;
-  onViewPage?: (slug: string) => void;
-  basePath?: string;
-  isAdmin?: boolean;
+  isSaving: boolean
+  isViewingVersion?: boolean
+  useSurround?: boolean
+  surround?: PageSurround | null
+  surroundStatus?: "idle" | "pending" | "success" | "error"
+  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>
+  pageDefinitions: Record<string, PageDefinition>
+  onDeletePage?: (id: string) => Promise<void>
+  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>
+  onNavigateToPage?: (slug: string) => void
+  onViewPage?: (slug: string) => void
+  basePath?: string
+  isAdmin?: boolean
   rc?: {
-    header?: string;
-    headerGroup?: string;
-    splitContainer?: string;
-    editorColumn?: string;
-    container?: string;
-    grid?: string;
-    toc?: string;
-    properties?: string;
-    contentWrapper?: string;
-    banner?: string;
-    icon?: string;
-    title?: string;
-    surroundSkeleton?: string;
-    skeleton?: string;
-    metadata?: string;
-    resizer?: string;
-    previewColumn?: string;
-  };
+    header?: string
+    headerGroup?: string
+    splitContainer?: string
+    editorColumn?: string
+    container?: string
+    grid?: string
+    toc?: string
+    properties?: string
+    contentWrapper?: string
+    banner?: string
+    icon?: string
+    title?: string
+    surroundSkeleton?: string
+    skeleton?: string
+    metadata?: string
+    resizer?: string
+    previewColumn?: string
+  }
 }
 
 const {
@@ -68,28 +68,29 @@ const {
   isAdmin = false,
   pageDefinitions,
   rc: rcProp
-} = defineProps<PageEditorProps>();
-const { rc } = useRC("PageEditor", rcProp);
-provide("page-resolver", resolvePage);
+} = defineProps<PageEditorProps>()
+const { rc } = useRC("PageEditor", rcProp)
+provide("page-resolver", resolvePage)
 /* endregion */
 
 /* region Emits */
 export interface PageEditorEmits {
-  "save": [value: Page];
-  "version-navigate": [version: PageVersion];
-  "version-approved": [version: PageVersion];
-  "version-rejected": [version: PageVersion];
-  "version-reverted": [version: PageVersion];
-  "publish": [value: Page];
-  "unpublish": [value: Page];
+  "save": [value: Page]
+  "version-navigate": [version: PageVersion]
+  "version-approved": [version: PageVersion]
+  "version-rejected": [version: PageVersion]
+  "version-reverted": [version: PageVersion]
+  "publish": [value: Page]
+  "unpublish": [value: Page]
 }
-const emit = defineEmits<PageEditorEmits>();
+const emit = defineEmits<PageEditorEmits>()
 /* endregion */
 
 /* region Styles */
 const pageEditorStyles = scv({
   slots: {
-    header: "h-12 w-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-between px-4 border-b border-default",
+    header:
+      "h-12 w-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-between px-4 border-b border-default",
     headerGroup: "flex items-center gap-2",
     splitContainer: "flex w-full min-h-0",
     editorColumn: "relative overflow-y-auto p-6 flex-1 w-full min-w-0 max-w-7xl mx-auto",
@@ -103,56 +104,59 @@ const pageEditorStyles = scv({
     title: "",
     surroundSkeleton: "grid grid-cols-1 gap-4 sm:grid-cols-2 mt-8",
     skeleton: "h-48 w-full rounded-xl bg-neutral-100 dark:bg-neutral-800 animate-pulse",
-    metadata: "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8",
-    resizer: "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
+    metadata:
+      "flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-8",
+    resizer:
+      "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
     previewColumn: "sticky self-start overflow-y-auto min-h-0",
     headerText: "text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap",
     headerHighLight: "text-neutral-900 dark:text-white font-semibold",
     headerSeparator: "w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-2",
     titleWrapper: "flex flex-row gap-2 items-center w-full",
     titleInput: "text-4xl font-bold p-0 focus:ring-0 shadow-none border-0 bg-transparent w-full",
-    descriptionInput: "p-0 text-lg text-dimmed focus:ring-0 shadow-none border-0 bg-transparent w-full"
+    descriptionInput:
+      "p-0 text-lg text-dimmed focus:ring-0 shadow-none border-0 bg-transparent w-full"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = pageEditorStyles();
-  const result: Record<string, string> = {};
+  const resolved = pageEditorStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const page = defineModel<Page>({ required: true });
-const versionId = defineModel<string | null>("currentVersionId", { default: null });
+const page = defineModel<Page>({ required: true })
+const versionId = defineModel<string | null>("currentVersionId", { default: null })
 const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } =
-  usePageEditor(page);
-const { t, locale } = useI18n();
+  usePageEditor(page)
+const { t, locale } = useI18n()
 
-const showPreview = ref(false);
-const isResizing = ref(false);
-const editorWidth = ref(50);
-const isDeleteModalOpen = ref(false);
-const isDeleting = ref(false);
-const isPageTreeModalOpen = ref(false);
-const isFetchingTree = ref(false);
-const treePages = ref<Pick<Page, "title" | "slug">[]>([]);
+const showPreview = ref(false)
+const isResizing = ref(false)
+const editorWidth = ref(50)
+const isDeleteModalOpen = ref(false)
+const isDeleting = ref(false)
+const isPageTreeModalOpen = ref(false)
+const isFetchingTree = ref(false)
+const treePages = ref<Pick<Page, "title" | "slug">[]>([])
 
 const currentDefinition = computed(() => {
-  if (!page.value?.type || !pageDefinitions) return null;
-  return pageDefinitions[page.value.type];
-});
+  if (!page.value?.type || !pageDefinitions) return null
+  return pageDefinitions[page.value.type]
+})
 
-const previousPage = computed(() => surround?.previous);
-const nextPage = computed(() => surround?.next);
-const hasSurround = computed(() => !!(surround?.previous || surround?.next));
+const previousPage = computed(() => surround?.previous)
+const nextPage = computed(() => surround?.next)
+const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 /* endregion */
 
 /* region Meta */
-defineOptions({ name: "PageEditor" });
+defineOptions({ name: "PageEditor" })
 /* endregion */
 
 /* region Lifecycle */
@@ -160,85 +164,85 @@ watch(
   [() => page.value?.id, () => versionId.value, () => page.value?.type, currentDefinition],
   () => {
     if (page.value && currentDefinition.value) {
-      console.log("[PageEditor] Syncing page with definition", page.value.id, versionId.value);
-      syncPageWithDefinition(page.value, currentDefinition.value);
+      console.log("[PageEditor] Syncing page with definition", page.value.id, versionId.value)
+      syncPageWithDefinition(page.value, currentDefinition.value)
       if (!page.value.description) {
-        page.value.description = { en: "" };
+        page.value.description = { en: "" }
       }
     }
   },
   { immediate: true }
-);
+)
 /* endregion */
 
 /* region Logic */
 const handleViewPage = () => {
   if (onViewPage) {
-    onViewPage(page.value.slug);
+    onViewPage(page.value.slug)
   } else if (typeof window !== "undefined") {
-    window.location.href = `/${page.value.slug}`;
+    window.location.href = `/${page.value.slug}`
   }
-};
+}
 
 const handleSave = () => {
   if (currentDefinition.value) {
-    syncPageWithDefinition(page.value, currentDefinition.value);
+    syncPageWithDefinition(page.value, currentDefinition.value)
   }
-  const dataToPersist = JSON.parse(JSON.stringify(page.value));
-  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties);
-  emit("save", dataToPersist);
-};
+  const dataToPersist = JSON.parse(JSON.stringify(page.value))
+  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
+  emit("save", dataToPersist)
+}
 
 const handlePublishToggle = () => {
   if (currentDefinition.value) {
-    syncPageWithDefinition(page.value, currentDefinition.value);
+    syncPageWithDefinition(page.value, currentDefinition.value)
   }
-  const dataToPersist = JSON.parse(JSON.stringify(page.value));
-  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties);
+  const dataToPersist = JSON.parse(JSON.stringify(page.value))
+  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
   if (page.value.postedAt) {
-    emit("unpublish", dataToPersist);
+    emit("unpublish", dataToPersist)
   } else {
-    emit("publish", dataToPersist);
+    emit("publish", dataToPersist)
   }
-};
+}
 
 const handleDeleteConfirm = async () => {
-  if (!onDeletePage || !page.value.id) return;
+  if (!onDeletePage || !page.value.id) return
   try {
-    isDeleting.value = true;
-    await onDeletePage(page.value.id);
-    isDeleteModalOpen.value = false;
+    isDeleting.value = true
+    await onDeletePage(page.value.id)
+    isDeleteModalOpen.value = false
   } catch (err) {
-    console.error("Failed to delete page:", err);
+    console.error("Failed to delete page:", err)
   } finally {
-    isDeleting.value = false;
+    isDeleting.value = false
   }
-};
+}
 
 const handleOpenTree = async () => {
-  if (!onFetchPages) return;
-  isFetchingTree.value = true;
+  if (!onFetchPages) return
+  isFetchingTree.value = true
   try {
-    treePages.value = await onFetchPages();
-    isPageTreeModalOpen.value = true;
+    treePages.value = await onFetchPages()
+    isPageTreeModalOpen.value = true
   } catch (e) {
-    console.error("Failed to fetch pages for tree", e);
+    console.error("Failed to fetch pages for tree", e)
   } finally {
-    isFetchingTree.value = false;
+    isFetchingTree.value = false
   }
-};
+}
 
 const handleTreeNavigate = (slug: string) => {
   if (onNavigateToPage) {
-    onNavigateToPage(slug);
+    onNavigateToPage(slug)
   }
-};
+}
 
 const removeBanner = () => {
-  page.value.banner = undefined;
-};
+  page.value.banner = undefined
+}
 
-defineExpose({ undo, redo, canUndo, canRedo, resetHistory });
+defineExpose({ undo, redo, canUndo, canRedo, resetHistory })
 /* endregion */
 </script>
 

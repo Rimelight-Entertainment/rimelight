@@ -1,32 +1,33 @@
 <script lang="ts" setup>
-import { ref, computed, watch } from "vue";
-import { useClipboard } from "@vueuse/core";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import { useRC, useAssetManagement, useAuth, useToast } from "@/composables";
+import { ref, computed, watch } from "vue"
+import { useClipboard } from "@vueuse/core"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import { useRC, useAssetManagement, useAuth, useToast } from "@/composables"
 
 /* region Props */
 export interface AssetManagerModalProps {
-    rc?: {
-        root?: string;
-    };
-    selectionMode?: boolean;
+  rc?: {
+    root?: string
+  }
+  selectionMode?: boolean
 }
 
-const { rc: rcProp, selectionMode = false } = defineProps<AssetManagerModalProps>();
-const { rc } = useRC("AssetManagerModal", rcProp);
-const { copy } = useClipboard();
-const toast = useToast();
+const { rc: rcProp, selectionMode = false } = defineProps<AssetManagerModalProps>()
+const { rc } = useRC("AssetManagerModal", rcProp)
+const { copy } = useClipboard()
+const toast = useToast()
 
 const t = (key: string, data?: any) => {
   const keys: Record<string, string> = {
     "modals.assetManager.header.title": "Asset Manager",
     "modals.assetManager.header.description": "Manage your organization's assets and folders.",
     "modals.assetManager.empty.title": "No assets found",
-    "modals.assetManager.empty.description": "Drag and drop files here or click the upload button to add your first asset.",
+    "modals.assetManager.empty.description":
+      "Drag and drop files here or click the upload button to add your first asset.",
     "modals.assetManager.upload.dropzone_label": "Upload assets",
     "modals.assetManager.upload.dropzone_description": "Drop files here or click to select",
     "modals.assetManager.upload.select_button": "Select Files",
@@ -53,138 +54,168 @@ const t = (key: string, data?: any) => {
     "modals.upload.cancel_button": "Cancel",
     "modals.upload.upload_button": "Upload",
     "modals.upload.multiple_files_warning.title": "Uploading multiple files",
-    "modals.upload.multiple_files_warning.description": "You cannot rename multiple files during upload.",
+    "modals.upload.multiple_files_warning.description":
+      "You cannot rename multiple files during upload.",
     "modals.upload.files_selected": "{count} files selected",
     "modals.assetManager.toolbar.selected_count": "{count} selected",
     "modals.assetManager.toolbar.items_count": "{count} items",
     "modals.assetManager.actions.new_subfolder": "New Subfolder",
     "modals.assetManager.upload.add_asset_button": "Upload Asset"
-  };
-  let val = keys[key] || key;
+  }
+  let val = keys[key] || key
   if (data) {
     for (const [k, v] of Object.entries(data)) {
-      val = val.replace(`{${k}}`, String(v));
+      val = val.replace(`{${k}}`, String(v))
     }
   }
-  return val;
-};
+  return val
+}
 /* endregion */
 
 /* region Emits */
 export interface AssetManagerModalEmits {
-    close: [];
-    select: [key: string];
+  close: []
+  select: [key: string]
 }
-const emit = defineEmits<AssetManagerModalEmits>();
+const emit = defineEmits<AssetManagerModalEmits>()
 /* endregion */
 
 /* region Styles */
 const assetManagerStyles = scv({
   slots: [
-    "root", "main", "sidebar", "sidebarContent", "sidebarFooter", "content",
-    "toolbar", "grid", "item", "preview", "previewImage", "itemInfo",
-    "itemLabel", "itemSize", "actions"
+    "root",
+    "main",
+    "sidebar",
+    "sidebarContent",
+    "sidebarFooter",
+    "content",
+    "toolbar",
+    "grid",
+    "item",
+    "preview",
+    "previewImage",
+    "itemInfo",
+    "itemLabel",
+    "itemSize",
+    "actions"
   ],
   base: {
     root: "flex flex-col h-[70vh] w-full overflow-hidden",
     main: "flex flex-1 min-h-0 overflow-hidden",
-    sidebar: "w-64 border-r border-neutral-200 dark:border-neutral-800 flex flex-col overflow-hidden bg-neutral-50/30 dark:bg-neutral-900/30",
+    sidebar:
+      "w-64 border-r border-neutral-200 dark:border-neutral-800 flex flex-col overflow-hidden bg-neutral-50/30 dark:bg-neutral-900/30",
     sidebarContent: "flex-1 overflow-y-auto p-4",
-    sidebarFooter: "p-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50",
+    sidebarFooter:
+      "p-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50",
     content: "flex-1 flex flex-col min-w-0 overflow-hidden",
-    toolbar: "p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/10 dark:bg-neutral-900/10 shrink-0",
+    toolbar:
+      "p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/10 dark:bg-neutral-900/10 shrink-0",
     grid: "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 overflow-y-auto flex-1 min-h-0 items-start content-start",
     item: "group relative aspect-square flex flex-col gap-2 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-primary-500 transition-colors bg-neutral-50/50 dark:bg-neutral-900 overflow-hidden",
-    preview: "flex-1 min-h-0 w-full rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center relative",
+    preview:
+      "flex-1 min-h-0 w-full rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center relative",
     previewImage: "w-full h-full object-contain",
     itemInfo: "flex flex-col gap-0.5 overflow-hidden shrink-0",
-    itemLabel: "text-[11px] font-semibold truncate leading-tight text-neutral-800 dark:text-neutral-200",
+    itemLabel:
+      "text-[11px] font-semibold truncate leading-tight text-neutral-800 dark:text-neutral-200",
     itemSize: "text-[10px] text-neutral-400 dark:text-neutral-500",
-    actions: "absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-1 rounded-lg backdrop-blur-sm"
+    actions:
+      "absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-1 rounded-lg backdrop-blur-sm"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = assetManagerStyles();
-  const result: Record<string, string> = {};
+  const resolved = assetManagerStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
 interface TreeItemExtended {
-  label: string;
-  fullPath: string;
-  icon?: string;
-  defaultExpanded?: boolean;
-  children?: TreeItemExtended[];
+  label: string
+  fullPath: string
+  icon?: string
+  defaultExpanded?: boolean
+  children?: TreeItemExtended[]
 }
 
-const open = defineModel<boolean>("open", { default: false });
-const { permissions: authPermissions } = useAuth();
+const open = defineModel<boolean>("open", { default: false })
+const { permissions: authPermissions } = useAuth()
 const {
-  assets, status, selectedPath, selectedKeys, localFolders, isProcessing,
-  refresh, uploadAsset, deleteAsset, moveAsset, batchDelete, downloadAsset,
-  addLocalFolder, splitFilename
-} = useAssetManagement();
+  assets,
+  status,
+  selectedPath,
+  selectedKeys,
+  localFolders,
+  isProcessing,
+  refresh,
+  uploadAsset,
+  deleteAsset,
+  moveAsset,
+  batchDelete,
+  downloadAsset,
+  addLocalFolder,
+  splitFilename
+} = useAssetManagement()
 
-const isDragging = ref(false);
-const draggedItem = ref<any>(null);
-const dropTarget = ref<any>(null);
+const isDragging = ref(false)
+const draggedItem = ref<any>(null)
+const dropTarget = ref<any>(null)
 
 const breadcrumbs = computed(() => {
-  const crumbs = [{ label: "Root", path: "" }];
+  const crumbs = [{ label: "Root", path: "" }]
   if (selectedPath.value) {
-    const parts = selectedPath.value.split("/");
-    let currentPath = "";
+    const parts = selectedPath.value.split("/")
+    let currentPath = ""
     parts.forEach((part) => {
-      currentPath += (currentPath ? "/" : "") + part;
-      crumbs.push({ label: part, path: currentPath });
-    });
+      currentPath += (currentPath ? "/" : "") + part
+      crumbs.push({ label: part, path: currentPath })
+    })
   }
-  return crumbs;
-});
+  return crumbs
+})
 
 // --- New Folder State ---
-const showNewFolderModal = ref(false);
-const newFolderName = ref("");
+const showNewFolderModal = ref(false)
+const newFolderName = ref("")
 
 // --- Upload State ---
-const showUploadModal = ref(false);
-const pendingFiles = ref<File[]>([]);
-const uploadFileBasename = ref("");
-const uploadFileExtension = ref("");
-const uploadTargetFolder = ref("");
+const showUploadModal = ref(false)
+const pendingFiles = ref<File[]>([])
+const uploadFileBasename = ref("")
+const uploadFileExtension = ref("")
+const uploadTargetFolder = ref("")
 
 // --- Move/Rename State ---
-const showMoveModal = ref(false);
-const movingAsset = ref<any>(null);
-const moveTargetBasename = ref("");
-const moveTargetFolder = ref("");
-const fileInput = ref<HTMLInputElement | null>(null);
+const showMoveModal = ref(false)
+const movingAsset = ref<any>(null)
+const moveTargetBasename = ref("")
+const moveTargetFolder = ref("")
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const modalUploadTargetValue = computed({
   get: () => findNodeByPath(uploadTargetFolder.value, treeItems.value) || treeItems.value[0],
   set: (val: any) => {
-    const selected = Array.isArray(val) ? val[0] : val;
-    if (!selected) return;
-    const path = typeof selected === "object" ? (selected.fullPath ?? "") : selected;
-    uploadTargetFolder.value = path === "Root" ? "" : path;
+    const selected = Array.isArray(val) ? val[0] : val
+    if (!selected) return
+    const path = typeof selected === "object" ? (selected.fullPath ?? "") : selected
+    uploadTargetFolder.value = path === "Root" ? "" : path
   }
-});
+})
 
 const modalMoveTargetValue = computed({
   get: () => findNodeByPath(moveTargetFolder.value, treeItems.value) || treeItems.value[0],
   set: (val: any) => {
-    const selected = Array.isArray(val) ? val[0] : val;
-    if (!selected) return;
-    const path = typeof selected === "object" ? (selected.fullPath ?? "") : selected;
-    moveTargetFolder.value = path === "Root" ? "" : path;
+    const selected = Array.isArray(val) ? val[0] : val
+    if (!selected) return
+    const path = typeof selected === "object" ? (selected.fullPath ?? "") : selected
+    moveTargetFolder.value = path === "Root" ? "" : path
   }
-});
+})
 
 const treeItems = computed<TreeItemExtended[]>(() => {
   const rootNode: TreeItemExtended[] = [
@@ -195,70 +226,70 @@ const treeItems = computed<TreeItemExtended[]>(() => {
       defaultExpanded: true,
       children: []
     }
-  ];
-  if (!assets.value) return rootNode;
-  const foldersSet = new Set<string>();
+  ]
+  if (!assets.value) return rootNode
+  const foldersSet = new Set<string>()
   assets.value.forEach((asset) => {
-    const parts = asset.key.split("/");
+    const parts = asset.key.split("/")
     if (parts.length > 1) {
-      let currentPath = "";
+      let currentPath = ""
       for (let i = 0; i < parts.length - 1; i++) {
-        currentPath += (currentPath ? "/" : "") + parts[i];
-        if (currentPath) foldersSet.add(currentPath);
+        currentPath += (currentPath ? "/" : "") + parts[i]
+        if (currentPath) foldersSet.add(currentPath)
       }
     }
-  });
+  })
   localFolders.value.forEach((f) => {
-    if (f && typeof f === "string") foldersSet.add(f);
-  });
-  const sortedFolders = Array.from(foldersSet).toSorted();
+    if (f && typeof f === "string") foldersSet.add(f)
+  })
+  const sortedFolders = Array.from(foldersSet).toSorted()
 
   const findOrCreateNode = (
     parent: TreeItemExtended[],
     path: string,
     label: string
   ): TreeItemExtended => {
-    let node = parent.find((n) => n.label === label);
+    let node = parent.find((n) => n.label === label)
     if (!node) {
       node = {
         label,
         fullPath: path,
         children: []
-      };
-      parent.push(node);
+      }
+      parent.push(node)
     }
-    return node;
-  };
+    return node
+  }
 
   sortedFolders.forEach((folderPath) => {
-    if (typeof folderPath !== "string") return;
-    const parts = folderPath.split("/");
-    const first = rootNode[0];
-    if (!first || !first.children) return;
-    let currentLevel = first.children as TreeItemExtended[];
-    let currentFullPath = "";
+    if (typeof folderPath !== "string") return
+    const parts = folderPath.split("/")
+    const first = rootNode[0]
+    if (!first || !first.children) return
+    let currentLevel = first.children as TreeItemExtended[]
+    let currentFullPath = ""
     parts.forEach((part) => {
-      currentFullPath += (currentFullPath ? "/" : "") + part;
-      const node = findOrCreateNode(currentLevel, currentFullPath, part);
-      currentLevel = node.children as TreeItemExtended[];
-    });
-  });
-  return rootNode;
-});
+      currentFullPath += (currentFullPath ? "/" : "") + part
+      const node = findOrCreateNode(currentLevel, currentFullPath, part)
+      currentLevel = node.children as TreeItemExtended[]
+    })
+  })
+  return rootNode
+})
 
 const currentNode = computed(() => {
-  return findNodeByPath(selectedPath.value, treeItems.value) || treeItems.value[0];
-});
+  return findNodeByPath(selectedPath.value, treeItems.value) || treeItems.value[0]
+})
 
 const activeTreeValue = computed({
   get: () => currentNode.value,
   set: (val: any) => {
-    const selected = Array.isArray(val) ? val[0] : val;
-    if (!selected) return;
-    const path = typeof selected === "object" ? (selected.fullPath ?? "") : selected;
-    selectedPath.value = path === "Root" ? "" : path;
+    const selected = Array.isArray(val) ? val[0] : val
+    if (!selected) return
+    const path = typeof selected === "object" ? (selected.fullPath ?? "") : selected
+    selectedPath.value = path === "Root" ? "" : path
   }
-});
+})
 
 const gridItems = computed(() => {
   const folders =
@@ -266,207 +297,207 @@ const gridItems = computed(() => {
       key: n.fullPath,
       label: n.label,
       type: "folder" as const
-    })) || [];
+    })) || []
   const assetsInDir =
     assets.value
       ?.filter((asset) => {
-        const parts = asset.key.split("/");
-        const assetPath = parts.slice(0, -1).join("/");
-        return assetPath === selectedPath.value;
+        const parts = asset.key.split("/")
+        const assetPath = parts.slice(0, -1).join("/")
+        return assetPath === selectedPath.value
       })
-      .map((a) => ({ ...a, type: "asset" as const })) || [];
-  return [...folders, ...assetsInDir];
-});
+      .map((a) => ({ ...a, type: "asset" as const })) || []
+  return [...folders, ...assetsInDir]
+})
 /* endregion */
 
 /* region Lifecycle */
 watch(open, (isOpen) => {
-  if (isOpen) refresh();
-});
+  if (isOpen) refresh()
+})
 /* endregion */
 
 /* region Logic */
 function findNodeByPath(path: string, nodes: TreeItemExtended[]): TreeItemExtended | undefined {
-  const normalizedPath = path === "/" || path === "Root" || !path ? "" : path;
+  const normalizedPath = path === "/" || path === "Root" || !path ? "" : path
   for (const node of nodes) {
-    if (node.fullPath === normalizedPath) return node;
+    if (node.fullPath === normalizedPath) return node
     if (node.children?.length) {
-      const found = findNodeByPath(normalizedPath, node.children);
-      if (found) return found;
+      const found = findNodeByPath(normalizedPath, node.children)
+      if (found) return found
     }
   }
-  return undefined;
+  return undefined
 }
 
 function triggerFilePicker() {
-  fileInput.value?.click();
+  fileInput.value?.click()
 }
 
 function handleFileSelected(event: Event) {
-  const filesInput = (event.target as HTMLInputElement).files;
-  if (!filesInput) return;
-  const filesList = Array.from(filesInput);
+  const filesInput = (event.target as HTMLInputElement).files
+  if (!filesInput) return
+  const filesList = Array.from(filesInput)
   if (filesList.length > 0) {
-    pendingFiles.value = filesList;
-    uploadTargetFolder.value = selectedPath.value;
+    pendingFiles.value = filesList
+    uploadTargetFolder.value = selectedPath.value
     if (filesList.length === 1) {
-      const { basename, extension } = splitFilename(filesList[0].name);
-      uploadFileBasename.value = basename;
-      uploadFileExtension.value = extension;
+      const { basename, extension } = splitFilename(filesList[0].name)
+      uploadFileBasename.value = basename
+      uploadFileExtension.value = extension
     } else {
-      uploadFileBasename.value = "";
-      uploadFileExtension.value = "";
+      uploadFileBasename.value = ""
+      uploadFileExtension.value = ""
     }
-    showUploadModal.value = true;
+    showUploadModal.value = true
   }
 }
 
 async function performUpload() {
-  if (pendingFiles.value.length === 0) return;
-  const filesToUpload = pendingFiles.value.length === 1 ? pendingFiles.value[0] : pendingFiles.value;
+  if (pendingFiles.value.length === 0) return
+  const filesToUpload = pendingFiles.value.length === 1 ? pendingFiles.value[0] : pendingFiles.value
   const success = await uploadAsset(
     filesToUpload,
     uploadTargetFolder.value,
     pendingFiles.value.length === 1 ? uploadFileBasename.value : undefined
-  );
+  )
   if (success) {
-    showUploadModal.value = false;
-    pendingFiles.value = [];
-    uploadFileBasename.value = "";
-    uploadFileExtension.value = "";
+    showUploadModal.value = false
+    pendingFiles.value = []
+    uploadFileBasename.value = ""
+    uploadFileExtension.value = ""
   }
 }
 
 function triggerNewFolder() {
-  newFolderName.value = "";
-  showNewFolderModal.value = true;
+  newFolderName.value = ""
+  showNewFolderModal.value = true
 }
 
 function confirmNewFolder() {
-  const newPath = addLocalFolder(newFolderName.value, selectedPath.value);
+  const newPath = addLocalFolder(newFolderName.value, selectedPath.value)
   if (newPath) {
-    selectedPath.value = newPath;
-    showNewFolderModal.value = false;
-    newFolderName.value = "";
+    selectedPath.value = newPath
+    showNewFolderModal.value = false
+    newFolderName.value = ""
   }
 }
 
 function triggerMove(asset: any) {
-  movingAsset.value = asset;
-  const parts = asset.key.split("/");
-  const fullFilename = parts.pop()!;
-  const lastDot = fullFilename.lastIndexOf(".");
-  moveTargetFolder.value = parts.join("/");
+  movingAsset.value = asset
+  const parts = asset.key.split("/")
+  const fullFilename = parts.pop()!
+  const lastDot = fullFilename.lastIndexOf(".")
+  moveTargetFolder.value = parts.join("/")
   if (lastDot === -1) {
-    moveTargetBasename.value = fullFilename;
+    moveTargetBasename.value = fullFilename
   } else {
-    moveTargetBasename.value = fullFilename.substring(0, lastDot);
+    moveTargetBasename.value = fullFilename.substring(0, lastDot)
   }
-  showMoveModal.value = true;
+  showMoveModal.value = true
 }
 
 async function performMove() {
-  if (!movingAsset.value || !moveTargetBasename.value) return;
+  if (!movingAsset.value || !moveTargetBasename.value) return
   const success = await moveAsset(
     movingAsset.value.key,
     moveTargetFolder.value,
     moveTargetBasename.value
-  );
+  )
   if (success) {
-    showMoveModal.value = false;
+    showMoveModal.value = false
   }
 }
 
 function toggleSelection(key: string) {
-  const index = selectedKeys.value.indexOf(key);
+  const index = selectedKeys.value.indexOf(key)
   if (index > -1) {
-    selectedKeys.value = selectedKeys.value.filter((k) => k !== key);
+    selectedKeys.value = selectedKeys.value.filter((k) => k !== key)
   } else {
-    selectedKeys.value = [...selectedKeys.value, key];
+    selectedKeys.value = [...selectedKeys.value, key]
   }
 }
 
 function handleDragStart(itemObj: any, event: DragEvent) {
-  isDragging.value = true;
-  draggedItem.value = itemObj;
+  isDragging.value = true
+  draggedItem.value = itemObj
   if (event.dataTransfer) {
-    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.effectAllowed = "move"
   }
 }
 
 function handleDragOverFolder(itemObj: any, event: DragEvent) {
   if (itemObj.type === "folder" && draggedItem.value?.type === "asset") {
-    dropTarget.value = itemObj;
+    dropTarget.value = itemObj
   }
 }
 
 async function handleDropOnFolder(itemObj: any, event: DragEvent) {
-  const asset = draggedItem.value;
-  const folder = itemObj;
+  const asset = draggedItem.value
+  const folder = itemObj
   if (asset && folder && asset.type === "asset" && folder.type === "folder") {
-    const fileName = asset.key.split("/").pop() || "";
-    const lastDot = fileName.lastIndexOf(".");
-    const basename = lastDot === -1 ? fileName : fileName.substring(0, lastDot);
-    await moveAsset(asset.key, folder.key, basename);
+    const fileName = asset.key.split("/").pop() || ""
+    const lastDot = fileName.lastIndexOf(".")
+    const basename = lastDot === -1 ? fileName : fileName.substring(0, lastDot)
+    await moveAsset(asset.key, folder.key, basename)
   }
-  isDragging.value = false;
-  draggedItem.value = null;
-  dropTarget.value = null;
+  isDragging.value = false
+  draggedItem.value = null
+  dropTarget.value = null
 }
 
 function isImage(contentType?: string, key?: string) {
-  if (contentType?.startsWith("image/")) return true;
-  const ext = key?.split(".").pop()?.toLowerCase();
-  return ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext || "");
+  if (contentType?.startsWith("image/")) return true
+  const ext = key?.split(".").pop()?.toLowerCase()
+  return ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext || "")
 }
 
 function formatSize(bytes: number) {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  if (bytes === 0) return "0 B"
+  const k = 1024
+  const sizes = ["B", "KB", "MB", "GB"]
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
 }
 
 function formatDate(date: string | Date) {
-  if (!date) return "";
-  const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  const hours = String(d.getHours()).padStart(2, "0");
-  const minutes = String(d.getMinutes()).padStart(2, "0");
-  const dateStr = `${day}/${month}/${year} ${hours}:${minutes}`;
-  return t("modals.assetManager.item.last_modified", { date: dateStr });
+  if (!date) return ""
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, "0")
+  const month = String(d.getMonth() + 1).padStart(2, "0")
+  const year = d.getFullYear()
+  const hours = String(d.getHours()).padStart(2, "0")
+  const minutes = String(d.getMinutes()).padStart(2, "0")
+  const dateStr = `${day}/${month}/${year} ${hours}:${minutes}`
+  return t("modals.assetManager.item.last_modified", { date: dateStr })
 }
 
 function getAssetUrl(key: string): string {
-  const encodedKey = key.split("/").map(encodeURIComponent).join("/");
-  if (typeof window === "undefined") return `/api/assets/${encodedKey}`;
-  return `${window.location.origin}/api/assets/${encodedKey}`;
+  const encodedKey = key.split("/").map(encodeURIComponent).join("/")
+  if (typeof window === "undefined") return `/api/assets/${encodedKey}`
+  return `${window.location.origin}/api/assets/${encodedKey}`
 }
 
 async function copyAssetUrl(key: string) {
   try {
-    const url = getAssetUrl(key);
-    await copy(url);
+    const url = getAssetUrl(key)
+    await copy(url)
     toast.add({
       title: t("modals.assetManager.item.copy_url_success"),
       description: url,
       color: "success"
-    });
+    })
   } catch {
     toast.add({
       title: t("modals.assetManager.item.copy_url_failed"),
       color: "error"
-    });
+    })
   }
 }
 /* endregion */
 
 defineOptions({
   name: "AssetManagerModal"
-});
+})
 </script>
 
 <template>
@@ -497,7 +528,8 @@ defineOptions({
             </h2>
             <p class="text-xs text-neutral-500">
               {{ t("modals.assetManager.header.description") }}
-            </p>          </div>
+            </p>
+          </div>
           <RLVButton
             color="neutral"
             variant="link"
@@ -517,7 +549,8 @@ defineOptions({
                 <button
                   v-for="node in treeItems"
                   :key="node.fullPath"
-                  class="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"                  :class="[
+                  class="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"
+                  :class="[
                     selectedPath === node.fullPath
                       ? 'bg-primary-500 text-white font-medium'
                       : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300'
@@ -531,7 +564,8 @@ defineOptions({
                   <button
                     v-for="subNode in treeItems[0].children"
                     :key="subNode.fullPath"
-                    class="w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors flex items-center gap-2"                    :class="[
+                    class="w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors flex items-center gap-2"
+                    :class="[
                       selectedPath === subNode.fullPath
                         ? 'bg-primary-500 text-white font-medium'
                         : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300'
@@ -551,7 +585,8 @@ defineOptions({
             <div :class="styles.toolbar">
               <div class="flex items-center gap-1 overflow-hidden h-6">
                 <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.path">
-                  <span v-if="idx > 0" class="text-neutral-400 opacity-50 shrink-0 text-xs px-1"                    >/</span
+                  <span v-if="idx > 0" class="text-neutral-400 opacity-50 shrink-0 text-xs px-1"
+                    >/</span
                   >
                   <button
                     class="text-xs font-semibold truncate hover:text-primary-500 hover:bg-primary-500/10 px-1.5 py-0.5 rounded transition-colors whitespace-nowrap text-neutral-700 dark:text-neutral-300"
@@ -566,7 +601,8 @@ defineOptions({
                   <span class="text-xs font-bold text-primary-600 dark:text-primary-400">
                     {{
                       t("modals.assetManager.toolbar.selected_count", {
-                        count: selectedKeys.length                      })
+                        count: selectedKeys.length
+                      })
                     }}
                   </span>
                   <RLVButton
@@ -622,7 +658,8 @@ defineOptions({
                 <div
                   v-if="authPermissions.assets.canUpload.value"
                   :class="styles.item"
-                  class="flex flex-col items-center justify-center border-dashed border-2 border-neutral-300 dark:border-neutral-700 hover:border-primary-500 cursor-pointer"                  @click="triggerFilePicker"
+                  class="flex flex-col items-center justify-center border-dashed border-2 border-neutral-300 dark:border-neutral-700 hover:border-primary-500 cursor-pointer"
+                  @click="triggerFilePicker"
                 >
                   <span class="i-lucide-upload-cloud size-8 text-neutral-400 mb-2" />
                   <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">{{
@@ -640,16 +677,19 @@ defineOptions({
                     styles.item,
                     dropTarget?.key === itemObj.key
                       ? 'ring-2 ring-primary-500 bg-primary-500/10 scale-95'
-                      : ''                  ]"
+                      : ''
+                  ]"
                   draggable="true"
                   @dragstart="(e) => handleDragStart(itemObj, e)"
                   @dragover.prevent="(e) => handleDragOverFolder(itemObj, e)"
                   @drop="(e) => handleDropOnFolder(itemObj, e)"
-                  @click="itemObj.type === 'folder' ? (selectedPath = itemObj.key) : null"                  class="cursor-pointer transition-all"
+                  @click="itemObj.type === 'folder' ? (selectedPath = itemObj.key) : null"
+                  class="cursor-pointer transition-all"
                 >
                   <!-- Folder Template -->
                   <template v-if="itemObj.type === 'folder'">
-                    <div :class="styles.preview" class="bg-primary-50/50 dark:bg-primary-900/10">                      <span class="i-lucide-folder size-12 text-primary-500/40" />
+                    <div :class="styles.preview" class="bg-primary-50/50 dark:bg-primary-900/10">
+                      <span class="i-lucide-folder size-12 text-primary-500/40" />
                     </div>
                     <div :class="styles.itemInfo">
                       <span :class="styles.itemLabel">{{ itemObj.label }}</span>
@@ -710,7 +750,8 @@ defineOptions({
                         itemObj.key.split("/").pop()
                       }}</span>
                       <div class="flex flex-col">
-                        <span :class="styles.itemSize" class="uppercase font-semibold">                          {{ itemObj.key.split(".").pop() }}
+                        <span :class="styles.itemSize" class="uppercase font-semibold">
+                          {{ itemObj.key.split(".").pop() }}
                         </span>
                         <span :class="styles.itemSize">{{ formatSize(itemObj.size) }}</span>
                       </div>

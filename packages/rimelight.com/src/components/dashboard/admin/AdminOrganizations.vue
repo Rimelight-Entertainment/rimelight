@@ -1,82 +1,82 @@
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue";
-import { authClient } from "@/auth/auth-client";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { ref, reactive, onMounted } from "vue"
+import { authClient } from "@/auth/auth-client"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 interface Organization {
-    id: string;
-    name: string;
-    slug: string;
-    logo?: string;
-    memberCount: number;
-    createdAt: string;
-    teams: {
-        id: string;
-        name: string;
-    }[];
+  id: string
+  name: string
+  slug: string
+  logo?: string
+  memberCount: number
+  createdAt: string
+  teams: {
+    id: string
+    name: string
+  }[]
 }
 
-const orgs = ref<Organization[]>([]);
-const pending = ref(true);
-const isCreateModalOpen = ref(false);
-const isSubmitting = ref(false);
-const state = reactive({ name: "", slug: "" });
+const orgs = ref<Organization[]>([])
+const pending = ref(true)
+const isCreateModalOpen = ref(false)
+const isSubmitting = ref(false)
+const state = reactive({ name: "", slug: "" })
 
 async function fetchOrgs() {
-  pending.value = true;
+  pending.value = true
   try {
-    const res = await fetch("/api/admin/organizations");
-    orgs.value = (await res.json()) as Organization[];
+    const res = await fetch("/api/admin/organizations")
+    orgs.value = (await res.json()) as Organization[]
   } catch (e) {
-    console.error(e);
+    console.error(e)
   } finally {
-    pending.value = false;
+    pending.value = false
   }
 }
 
 onMounted(() => {
-  fetchOrgs();
-});
+  fetchOrgs()
+})
 
 async function onSubmit(e: Event) {
-  e.preventDefault();
-  isSubmitting.value = true;
+  e.preventDefault()
+  isSubmitting.value = true
   try {
     const { data, error } = await authClient.organization.create({
       name: state.name,
       slug: state.slug,
       keepCurrentActiveOrganization: true
-    });
+    })
     if (error) {
-      alert("Error: " + (error.message || "Failed to create organization"));
-      return;
+      alert("Error: " + (error.message || "Failed to create organization"))
+      return
     }
-    alert(`Organization ${data?.name} created successfully.`);
-    isCreateModalOpen.value = false;
-    state.name = "";
-    state.slug = "";
-    await fetchOrgs();
+    alert(`Organization ${data?.name} created successfully.`)
+    isCreateModalOpen.value = false
+    state.name = ""
+    state.slug = ""
+    await fetchOrgs()
   } catch (err) {
-    alert("An unknown error occurred during submission.");
+    alert("An unknown error occurred during submission.")
   } finally {
-    isSubmitting.value = false;
+    isSubmitting.value = false
   }
 }
 
 async function deleteOrg(id: string) {
-  if (!confirm("Are you sure you want to delete this organization?")) return;
+  if (!confirm("Are you sure you want to delete this organization?")) return
   try {
-    const res = await fetch(`/api/admin/organizations/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/organizations/${id}`, { method: "DELETE" })
     if (res.ok) {
-      alert("Organization deleted successfully.");
-      await fetchOrgs();
+      alert("Organization deleted successfully.")
+      await fetchOrgs()
     } else {
-      alert("Failed to delete organization.");
+      alert("Failed to delete organization.")
     }
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
 }
 </script>
@@ -108,7 +108,8 @@ async function deleteOrg(id: string) {
         <div class="flex gap-2">
           <RLVButton type="submit" :loading="isSubmitting">Create</RLVButton>
           <RLVButton type="button" color="neutral" variant="soft" @click="isCreateModalOpen = false"
-            >Cancel</RLVButton          >
+            >Cancel</RLVButton
+          >
         </div>
       </form>
     </div>
@@ -149,7 +150,8 @@ async function deleteOrg(id: string) {
                   v-if="org.logo"
                   :src="org.logo"
                   :alt="org.name"
-                  class="size-full object-cover"                />
+                  class="size-full object-cover"
+                />
                 <span v-else class="i-lucide-building-2 size-4 text-neutral-400" />
               </div>
               {{ org.name }}

@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useToast } from "@rimelight/ui/composables";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed } from "vue"
+import { useToast } from "@rimelight/ui/composables"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface ColorSwatchProps {
-    name?: string;
-    hex?: string;
-    rgb?: string;
-    hsl?: string;
-    oklch?: string;
-    cmyk?: string;
-    textColor?: string;
-    rc?: {
-        card?: string;
-        title?: string;
-        content?: string;
-        preview?: string;
-        details?: string;
-        buttonGroup?: string;
-        button?: string;
-    };
-    t?: (key: string) => string;
+  name?: string
+  hex?: string
+  rgb?: string
+  hsl?: string
+  oklch?: string
+  cmyk?: string
+  textColor?: string
+  rc?: {
+    card?: string
+    title?: string
+    content?: string
+    preview?: string
+    details?: string
+    buttonGroup?: string
+    button?: string
+  }
+  t?: (key: string) => string
 }
 
 const {
@@ -45,24 +45,22 @@ const {
       "swatch.copy_hsl": "Copy HSL",
       "swatch.copy_oklch": "Copy OKLCH",
       "swatch.copy_cmyk": "Copy CMYK"
-    };
-    return map[key] || key;
+    }
+    return map[key] || key
   }
-} = defineProps<ColorSwatchProps>();
+} = defineProps<ColorSwatchProps>()
 
-const { rc } = useRC("ColorSwatch", rcProp);
+const { rc } = useRC("ColorSwatch", rcProp)
 /* endregion */
 
 /* region Emits */
-export interface ColorSwatchEmits {
-}
-defineEmits<ColorSwatchEmits>();
+export interface ColorSwatchEmits {}
+defineEmits<ColorSwatchEmits>()
 /* endregion */
 
 /* region Slots */
-export interface ColorSwatchSlots {
-}
-defineSlots<ColorSwatchSlots>();
+export interface ColorSwatchSlots {}
+defineSlots<ColorSwatchSlots>()
 /* endregion */
 
 /* region Styles */
@@ -78,54 +76,50 @@ const colorSwatchStyles = scv({
     button: "w-full xl:w-36",
     detailsName: "text-sm font-bold uppercase tracking-wider mb-2 border-b border-current pb-1"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = colorSwatchStyles();
-  const result: Record<string, string> = {};
+  const resolved = colorSwatchStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const toast = useToast();
+const toast = useToast()
 const color = computed(() => {
-  if (hex) return hex;
-  if (rgb) return rgb;
-  if (hsl) return hsl;
-  if (cmyk) return cmyk;
-  if (oklch) return oklch;
-  return "var(--color-primary-500)";
-});
+  if (hex) return hex
+  if (rgb) return rgb
+  if (hsl) return hsl
+  if (cmyk) return cmyk
+  if (oklch) return oklch
+  return "var(--color-primary-500)"
+})
 /* endregion */
 
 /* region Logic */
 const copyToClipboard = async (text: string) => {
   try {
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(text)
     toast.add({
       title: t("swatch.color_copied"),
       description: text,
       color: "primary"
-    });
+    })
   } catch {
     toast.add({
       title: t("swatch.color_copy_failed"),
       description: t("swatch.copy_error_description"),
       color: "danger"
-    });
+    })
   }
-};
+}
 
 function formatColor(colorStr: string) {
-  return colorStr
-    .toUpperCase()
-    .replace(/[)]/g, "")
-    .replace(/[(]/g, " ")
-    .replace(/%/g, "");
+  return colorStr.toUpperCase().replace(/[)]/g, "").replace(/[(]/g, " ").replace(/%/g, "")
 }
 /* endregion */
 </script>

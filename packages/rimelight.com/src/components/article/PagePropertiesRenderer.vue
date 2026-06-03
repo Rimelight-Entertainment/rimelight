@@ -1,48 +1,49 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { Page } from "@/types/pages";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import { useI18n } from "@/composables/app/useI18n";
-import { getLocalizedContent } from "@/utils/page";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import PageMention from "./PageMention.vue";
+import { computed } from "vue"
+import type { Page } from "@/types/pages"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import { useI18n } from "@/composables/app/useI18n"
+import { getLocalizedContent } from "@/utils/page"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import PageMention from "./PageMention.vue"
 
 /* region Props */
 export interface PagePropertiesRendererProps {
-  canEdit?: boolean;
-  editUrl?: string;
+  canEdit?: boolean
+  editUrl?: string
   rc?: {
-    aside?: string;
-    actions?: string;
-    icon?: string;
-    title?: string;
-    type?: string;
-    tags?: string;
-    tabs?: string;
-    image?: string;
-    groupButton?: string;
-    details?: string;
-    field?: string;
-    fieldLabel?: string;
-    fieldValue?: string;
-    list?: string;
-    listItem?: string;
-    pageArrayList?: string;
-    pageArrayItem?: string;
-    pageArrayBullet?: string;
-    links?: string;
-  };
+    aside?: string
+    actions?: string
+    icon?: string
+    title?: string
+    type?: string
+    tags?: string
+    tabs?: string
+    image?: string
+    groupButton?: string
+    details?: string
+    field?: string
+    fieldLabel?: string
+    fieldValue?: string
+    list?: string
+    listItem?: string
+    pageArrayList?: string
+    pageArrayItem?: string
+    pageArrayBullet?: string
+    links?: string
+  }
 }
 
-const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>();
-const { rc } = useRC("PagePropertiesRenderer", rcProp);
+const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>()
+const { rc } = useRC("PagePropertiesRenderer", rcProp)
 /* endregion */
 
 /* region Styles */
 const pagePropertiesRendererStyles = scv({
   slots: {
-    asideClass: "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
+    asideClass:
+      "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
     actionsClass: "flex flex-row justify-between gap-2 mb-4",
     iconClass: "rounded-full w-12 h-12 object-cover border border-default shadow-sm",
     titleClass: "text-lg font-bold text-neutral-900 dark:text-neutral-100",
@@ -50,8 +51,10 @@ const pagePropertiesRendererStyles = scv({
     tagsClass: "flex flex-row flex-wrap gap-1 mt-2",
     tabsClass: "w-full mt-4",
     imageClass: "w-full object-cover rounded-lg border border-default shadow-sm",
-    groupButtonClass: "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
-    detailsClass: "p-3 flex flex-col gap-2 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
+    groupButtonClass:
+      "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
+    detailsClass:
+      "p-3 flex flex-col gap-2 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
     fieldClass: "grid grid-cols-3 gap-2 items-baseline",
     fieldLabelClass: "text-xs font-semibold text-dimmed",
     fieldValueClass: "text-xs col-span-2 text-default",
@@ -65,55 +68,55 @@ const pagePropertiesRendererStyles = scv({
     headerContent: "flex flex-col gap-2 items-center text-center",
     imageWrapper: "w-full mt-4"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = pagePropertiesRendererStyles();
-  const result: Record<string, string> = {};
+  const resolved = pagePropertiesRendererStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const page = defineModel<Page>({ required: true });
-const { t, locale } = useI18n();
+const page = defineModel<Page>({ required: true })
+const { t, locale } = useI18n()
 
 // Use a computed to safely handle properties and group rendering.
 // We avoid importing useInfobox from nuxt UI and define simple sorting/filtering inline.
 const sortedGroups = computed(() => {
-  if (!page.value?.properties) return [];
+  if (!page.value?.properties) return []
   return Object.entries(page.value.properties).toSorted((a, b) => {
-    return (a[1] as any).order - (b[1] as any).order;
-  });
-});
+    return (a[1] as any).order - (b[1] as any).order
+  })
+})
 
 const getSortedFields = (fields: any) => {
-  if (!fields) return [];
+  if (!fields) return []
   return Object.entries(fields).toSorted((a, b) => {
-    return (a[1] as any).order - (b[1] as any).order;
-  });
-};
+    return (a[1] as any).order - (b[1] as any).order
+  })
+}
 
 const shouldRenderGroup = (group: any) => {
-  if (!group?.fields) return false;
+  if (!group?.fields) return false
   return Object.values(group.fields).some((f: any) => {
-    return f.defaultValue !== undefined && f.defaultValue !== null && f.defaultValue !== "";
-  });
-};
+    return f.defaultValue !== undefined && f.defaultValue !== null && f.defaultValue !== ""
+  })
+}
 
 const isFieldVisible = (schema: any) => {
   return (
     schema.defaultValue !== undefined && schema.defaultValue !== null && schema.defaultValue !== ""
-  );
-};
+  )
+}
 /* endregion */
 
 defineOptions({
   name: "PagePropertiesRenderer"
-});
+})
 </script>
 
 <template>

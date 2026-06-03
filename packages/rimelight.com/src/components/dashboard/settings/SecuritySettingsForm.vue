@@ -1,100 +1,100 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from "vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useAuth } from "@/composables/auth/useAuth";
-import { authClient } from "@/auth/auth-client";
+import { reactive, ref, watch } from "vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useAuth } from "@/composables/auth/useAuth"
+import { authClient } from "@/auth/auth-client"
 
-const { user } = useAuth();
-const profileState = reactive({ name: "", image: "" });
+const { user } = useAuth()
+const profileState = reactive({ name: "", image: "" })
 
 watch(
   user,
   (newUser) => {
     if (newUser) {
-      profileState.name = newUser.name;
-      profileState.image = newUser.image || "";
+      profileState.name = newUser.name
+      profileState.image = newUser.image || ""
     }
   },
   { immediate: true }
-);
+)
 
-const isUpdatingProfile = ref(false);
+const isUpdatingProfile = ref(false)
 
 async function updateProfile(e: Event) {
-  e.preventDefault();
-  isUpdatingProfile.value = true;
+  e.preventDefault()
+  isUpdatingProfile.value = true
   const { error } = await authClient.updateUser({
     name: profileState.name,
     image: profileState.image || undefined
-  });
+  })
   if (error) {
-    alert("Profile Update Failed: " + error.message);
+    alert("Profile Update Failed: " + error.message)
   } else {
-    alert("Profile Updated: Your profile details have been saved.");
+    alert("Profile Updated: Your profile details have been saved.")
   }
-  isUpdatingProfile.value = false;
+  isUpdatingProfile.value = false
 }
 
-const emailState = reactive({ newEmail: "" });
-const isUpdatingEmail = ref(false);
+const emailState = reactive({ newEmail: "" })
+const isUpdatingEmail = ref(false)
 
 async function updateEmail(e: Event) {
-  e.preventDefault();
-  isUpdatingEmail.value = true;
+  e.preventDefault()
+  isUpdatingEmail.value = true
   const { error } = await authClient.changeEmail({
     newEmail: emailState.newEmail,
     callbackURL: "/dashboard"
-  });
+  })
   if (error) {
-    alert("Email Update Failed: " + error.message);
+    alert("Email Update Failed: " + error.message)
   } else {
-    alert("Email Update Scheduled: Please check your inbox to verify.");
-    emailState.newEmail = "";
+    alert("Email Update Scheduled: Please check your inbox to verify.")
+    emailState.newEmail = ""
   }
-  isUpdatingEmail.value = false;
+  isUpdatingEmail.value = false
 }
 
-const passwordState = reactive({ current: "", newPassword: "" });
-const isUpdatingPassword = ref(false);
+const passwordState = reactive({ current: "", newPassword: "" })
+const isUpdatingPassword = ref(false)
 
 async function updatePassword(e: Event) {
-  e.preventDefault();
-  if (!passwordState.current || !passwordState.newPassword) return;
-  isUpdatingPassword.value = true;
+  e.preventDefault()
+  if (!passwordState.current || !passwordState.newPassword) return
+  isUpdatingPassword.value = true
   const { error } = await authClient.changePassword({
     currentPassword: passwordState.current,
     newPassword: passwordState.newPassword,
     revokeOtherSessions: true
-  });
+  })
   if (error) {
-    alert("Password Update Failed: " + error.message);
+    alert("Password Update Failed: " + error.message)
   } else {
-    alert("Password Updated successfully.");
-    passwordState.current = "";
-    passwordState.newPassword = "";
+    alert("Password Updated successfully.")
+    passwordState.current = ""
+    passwordState.newPassword = ""
   }
-  isUpdatingPassword.value = false;
+  isUpdatingPassword.value = false
 }
 
-const isDeleting = ref(false);
+const isDeleting = ref(false)
 
 async function deleteAccount() {
   const isConfirmed = confirm(
     "Delete your account? This action is irreversible. All your data will be permanently removed."
-  );
-  if (!isConfirmed) return;
-  isDeleting.value = true;
-  const { error } = await authClient.deleteUser({ callbackURL: "/goodbye" });
+  )
+  if (!isConfirmed) return
+  isDeleting.value = true
+  const { error } = await authClient.deleteUser({ callbackURL: "/goodbye" })
   if (error) {
     if (error.code === "FRESH_SESSION_REQUIRED") {
-      alert("Security Check Required: Please log out and log back in to delete your account.");
+      alert("Security Check Required: Please log out and log back in to delete your account.")
     } else {
-      alert("Deletion Failed: " + error.message);
+      alert("Deletion Failed: " + error.message)
     }
   }
-  isDeleting.value = false;
+  isDeleting.value = false
 }
 </script>
 

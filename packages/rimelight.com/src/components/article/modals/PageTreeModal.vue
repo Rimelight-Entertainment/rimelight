@@ -1,45 +1,45 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRC } from "@/composables";
-import { scv, cx } from "css-variants";
-import { getLocalizedContent } from "@/utils/page";
-import { useI18n } from "@/composables/app/useI18n";
-import type { Page } from "@/types/pages";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed, ref } from "vue"
+import { useRC } from "@/composables"
+import { scv, cx } from "css-variants"
+import { getLocalizedContent } from "@/utils/page"
+import { useI18n } from "@/composables/app/useI18n"
+import type { Page } from "@/types/pages"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface TreeItem {
-  label: string;
-  icon?: string;
-  slug?: string;
-  path: string;
-  children?: TreeItem[];
-  defaultExpanded?: boolean;
+  label: string
+  icon?: string
+  slug?: string
+  path: string
+  children?: TreeItem[]
+  defaultExpanded?: boolean
 }
 
 export interface PageTreeModalProps {
-  loading?: boolean;
-  pages?: Pick<Page, "title" | "slug">[];
-  basePath?: string;
+  loading?: boolean
+  pages?: Pick<Page, "title" | "slug">[]
+  basePath?: string
   rc?: {
-    header?: string;
-    headerTitle?: string;
-    closeButton?: string;
-    body?: string;
-    footer?: string;
-  };
+    header?: string
+    headerTitle?: string
+    closeButton?: string
+    body?: string
+    footer?: string
+  }
 }
 
-const { loading, pages = [], basePath, rc: rcProp } = defineProps<PageTreeModalProps>();
-const { rc } = useRC("PageTreeModal", rcProp);
+const { loading, pages = [], basePath, rc: rcProp } = defineProps<PageTreeModalProps>()
+const { rc } = useRC("PageTreeModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface PageTreeModalEmits {
-  close: [];
-  navigate: [slug: string];
+  close: []
+  navigate: [slug: string]
 }
-const emit = defineEmits<PageTreeModalEmits>();
+const emit = defineEmits<PageTreeModalEmits>()
 /* endregion */
 
 /* region Styles */
@@ -52,98 +52,103 @@ const pageTreeModalStyles = scv({
     footerClass: "flex justify-end gap-2 p-4 border-t border-default",
     loadingWrapper: "p-4 flex justify-center items-center py-12",
     emptyWrapper: "p-4 text-center text-neutral-500 py-12",
-    itemWrapper: "flex items-center gap-2 py-1.5 w-full hover:bg-neutral-50 dark:hover:bg-neutral-800/50 px-2 rounded-md transition cursor-pointer text-left",
+    itemWrapper:
+      "flex items-center gap-2 py-1.5 w-full hover:bg-neutral-50 dark:hover:bg-neutral-800/50 px-2 rounded-md transition cursor-pointer text-left",
     itemLabel: "text-sm",
     arrowIcon: "w-4 h-4 text-neutral-400 shrink-0"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = pageTreeModalStyles();
-  const result: Record<string, string> = {};
+  const resolved = pageTreeModalStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result as Record<string, string>;
-});
+  return result as Record<string, string>
+})
 /* endregion */
 
 /* region State */
-const open = defineModel<boolean>("open", { default: false });
-const { t, locale } = useI18n();
-const expandedNodes = ref<Record<string, boolean>>({});
+const open = defineModel<boolean>("open", { default: false })
+const { t, locale } = useI18n()
+const expandedNodes = ref<Record<string, boolean>>({})
 
 const treeItems = computed<TreeItem[]>(() => {
-  if (!pages || pages.length === 0) return [];
-  const nodeMap = new Map<string, TreeItem>();
-  const rootNodes: TreeItem[] = [];
-  const cleanBasePath = basePath ? basePath.replace(/^\/|\/$/g, "") : "";
+  if (!pages || pages.length === 0) return []
+  const nodeMap = new Map<string, TreeItem>()
+  const rootNodes: TreeItem[] = []
+  const cleanBasePath = basePath ? basePath.replace(/^\/|\/$/g, "") : ""
 
-  const getNode = (path: string, partLabel: string, pageObj?: Pick<Page, "title" | "slug">): TreeItem => {
+  const getNode = (
+    path: string,
+    partLabel: string,
+    pageObj?: Pick<Page, "title" | "slug">
+  ): TreeItem => {
     if (!nodeMap.has(path)) {
       const label = pageObj
         ? getLocalizedContent(pageObj.title, locale.value) || partLabel
-        : partLabel.charAt(0).toUpperCase() + partLabel.slice(1);
+        : partLabel.charAt(0).toUpperCase() + partLabel.slice(1)
       const newNode: TreeItem = {
         label,
         path,
         slug: pageObj ? pageObj.slug : undefined,
         icon: pageObj ? "i-lucide-file" : "i-lucide-folder",
         children: []
-      };
-      nodeMap.set(path, newNode);
+      }
+      nodeMap.set(path, newNode)
     } else if (pageObj) {
-      const node = nodeMap.get(path)!;
-      node.label = getLocalizedContent(pageObj.title, locale.value) || node.label;
-      node.slug = pageObj.slug;
-      node.icon = "i-lucide-file-text";
+      const node = nodeMap.get(path)!
+      node.label = getLocalizedContent(pageObj.title, locale.value) || node.label
+      node.slug = pageObj.slug
+      node.icon = "i-lucide-file-text"
     }
-    return nodeMap.get(path)!;
-  };
+    return nodeMap.get(path)!
+  }
 
   pages.forEach((page) => {
-    const cleanSlug = page.slug.replace(/^\/|\/$/g, "");
-    let relativePath = cleanSlug;
+    const cleanSlug = page.slug.replace(/^\/|\/$/g, "")
+    let relativePath = cleanSlug
     if (cleanBasePath && cleanSlug.startsWith(cleanBasePath)) {
-      relativePath = cleanSlug.slice(cleanBasePath.length).replace(/^\//, "");
+      relativePath = cleanSlug.slice(cleanBasePath.length).replace(/^\//, "")
     } else if (cleanBasePath) {
       if (cleanSlug === cleanBasePath) {
-        relativePath = "";
+        relativePath = ""
       }
     }
-    const parts = relativePath.split("/").filter(Boolean);
+    const parts = relativePath.split("/").filter(Boolean)
     if (parts.length === 0) {
-      const node = getNode("__root__", "Overview", page);
+      const node = getNode("__root__", "Overview", page)
       if (!rootNodes.includes(node)) {
-        rootNodes.push(node);
+        rootNodes.push(node)
       }
-      return;
+      return
     }
-    let currentPath = "";
-    let parent: TreeItem | null = null;
+    let currentPath = ""
+    let parent: TreeItem | null = null
     parts.forEach((part, index) => {
-      currentPath = currentPath ? `${currentPath}/${part}` : part;
-      const isLast = index === parts.length - 1;
-      const pageObj = isLast ? page : undefined;
-      const node = getNode(currentPath, part, pageObj);
+      currentPath = currentPath ? `${currentPath}/${part}` : part
+      const isLast = index === parts.length - 1
+      const pageObj = isLast ? page : undefined
+      const node = getNode(currentPath, part, pageObj)
       if (index === 0) {
         if (!rootNodes.includes(node)) {
-          rootNodes.push(node);
+          rootNodes.push(node)
         }
       } else {
         if (parent && !parent.children?.some((c) => c.path === node.path)) {
           if (!parent.children) {
-            parent.children = [];
+            parent.children = []
           }
-          parent.children.push(node);
+          parent.children.push(node)
         }
       }
-      parent = node;
-    });
-  });
+      parent = node
+    })
+  })
 
   const processNodes = (nodes: TreeItem[]) => {
-    nodes.sort((a, b) => a.label.localeCompare(b.label));
+    nodes.sort((a, b) => a.label.localeCompare(b.label))
     for (const node of nodes) {
       if (node.slug && node.children && node.children.length > 0) {
         const indexNode: TreeItem = {
@@ -152,39 +157,39 @@ const treeItems = computed<TreeItem[]>(() => {
           path: `${node.path}:index`,
           icon: "i-lucide-file-text",
           children: []
-        };
-        if (!node.children.some((c) => c.path === indexNode.path)) {
-          node.children.unshift(indexNode);
         }
-        node.slug = undefined;
-        node.icon = "i-lucide-folder";
+        if (!node.children.some((c) => c.path === indexNode.path)) {
+          node.children.unshift(indexNode)
+        }
+        node.slug = undefined
+        node.icon = "i-lucide-folder"
       }
       if (node.children && node.children.length > 0) {
-        processNodes(node.children);
+        processNodes(node.children)
       }
     }
-  };
+  }
 
-  processNodes(rootNodes);
-  return rootNodes;
-});
+  processNodes(rootNodes)
+  return rootNodes
+})
 /* endregion */
 
-defineOptions({ name: "PageTreeModal" });
+defineOptions({ name: "PageTreeModal" })
 
 /* region Logic */
 const handleSelect = (node: TreeItem) => {
   if (node.slug) {
-    emit("navigate", node.slug);
-    open.value = false;
+    emit("navigate", node.slug)
+    open.value = false
   } else {
-    expandedNodes.value[node.path] = !expandedNodes.value[node.path];
+    expandedNodes.value[node.path] = !expandedNodes.value[node.path]
   }
-};
+}
 
 const isExpanded = (node: TreeItem) => {
-  return expandedNodes.value[node.path] ?? false;
-};
+  return expandedNodes.value[node.path] ?? false
+}
 /* endregion */
 </script>
 
@@ -285,5 +290,4 @@ const isExpanded = (node: TreeItem) => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

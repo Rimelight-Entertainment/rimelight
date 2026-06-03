@@ -17,7 +17,7 @@ export const GET: APIRoute = async ({ request }) => {
   try {
     const cleanQuery = q.trim().replace(/[!|&()*]/g, "")
     const terms = cleanQuery.split(/\s+/).filter(Boolean)
-    const formattedQuery = terms.map(t => `${t}:*`).join(" & ")
+    const formattedQuery = terms.map((t) => `${t}:*`).join(" & ")
 
     console.log("[Search API] Query:", q, "Formatted:", formattedQuery)
 
@@ -56,12 +56,7 @@ export const GET: APIRoute = async ({ request }) => {
           snippet: sql<string>`substring(${searchIndex.bodyContent} from 1 for 150)`
         })
         .from(searchIndex)
-        .where(
-          or(
-            like(searchIndex.title, `%${q}%`),
-            like(searchIndex.bodyContent, `%${q}%`)
-          )
-        )
+        .where(or(like(searchIndex.title, `%${q}%`), like(searchIndex.bodyContent, `%${q}%`)))
         .orderBy(desc(searchIndex.updatedAt))
         .limit(10)
     }

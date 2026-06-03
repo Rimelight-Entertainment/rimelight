@@ -50,7 +50,11 @@ function parseMarkdown(filePath: string) {
     const parts = line.split(":")
     if (parts.length >= 2) {
       const key = parts[0].trim()
-      const value = parts.slice(1).join(":").trim().replace(/^['"]|['"]$/g, "")
+      const value = parts
+        .slice(1)
+        .join(":")
+        .trim()
+        .replace(/^['"]|['"]$/g, "")
       data[key] = value
     }
   }
@@ -78,7 +82,7 @@ function getFilesRecursively(dir: string): string[] {
 
 async function sync() {
   console.log("Starting optimized database & markdown search_index sync...")
-  
+
   // 1. Fetch all existing records from the DB to build a cache map
   const existing = await db
     .select({
@@ -89,7 +93,7 @@ async function sync() {
     .from(searchIndex)
 
   const existingMap = new Map<string, Date>(
-    existing.map(row => [`${row.sourceType}:${row.sourceId}`, new Date(row.updatedAt)])
+    existing.map((row) => [`${row.sourceType}:${row.sourceId}`, new Date(row.updatedAt)])
   )
   console.log(`Fetched ${existingMap.size} existing records from database index.`)
 
@@ -126,11 +130,11 @@ async function sync() {
         .replace(/\.mdx?$/, "")
         .replace(/[/\\]index$/, "")
         .replace(/\\/g, "/")
-      
+
       if (urlSlug === "index" || urlSlug === "") {
         urlSlug = ""
       }
-      
+
       const url = `${col.urlPrefix}${urlSlug ? "/" + urlSlug : ""}`
       const { title, body } = parseMarkdown(filePath)
 
@@ -183,7 +187,8 @@ async function sync() {
     const description = descObj?.en || Object.values(descObj || {})[0] || ""
 
     // Extract text content from custom editor blocks
-    const bodyContent = `${description} ${extractTextFromBlocks(pageRow.content?.blocks || [])}`.trim()
+    const bodyContent =
+      `${description} ${extractTextFromBlocks(pageRow.content?.blocks || [])}`.trim()
     const url = `/${pageRow.slug}`
 
     console.log(`Queueing database page sync: ${title} -> ${url}`)
@@ -203,17 +208,22 @@ async function sync() {
   const chunkSize = 50
   for (let i = 0; i < toUpsert.length; i += chunkSize) {
     const chunk = toUpsert.slice(i, i + chunkSize)
-    console.log(`Upserting batch ${Math.floor(i / chunkSize) + 1}/${Math.ceil(toUpsert.length / chunkSize)} (${chunk.length} items)...`)
-    await db.insert(searchIndex).values(chunk).onConflictDoUpdate({
-      target: [searchIndex.sourceType, searchIndex.sourceId],
-      set: {
-        title: sql`excluded.title`,
-        url: sql`excluded.url`,
-        bodyContent: sql`excluded.body_content`,
-        searchableText: sql`excluded.searchable_text`,
-        updatedAt: sql`excluded.updated_at`
-      }
-    })
+    console.log(
+      `Upserting batch ${Math.floor(i / chunkSize) + 1}/${Math.ceil(toUpsert.length / chunkSize)} (${chunk.length} items)...`
+    )
+    await db
+      .insert(searchIndex)
+      .values(chunk)
+      .onConflictDoUpdate({
+        target: [searchIndex.sourceType, searchIndex.sourceId],
+        set: {
+          title: sql`excluded.title`,
+          url: sql`excluded.url`,
+          bodyContent: sql`excluded.body_content`,
+          searchableText: sql`excluded.searchable_text`,
+          updatedAt: sql`excluded.updated_at`
+        }
+      })
   }
 
   // 3. Remove deleted/unpublished documents from the index
@@ -229,13 +239,12 @@ async function sync() {
   }
 
   for (const [type, ids] of toDeleteMap.entries()) {
-    console.log(`Cleaning up ${ids.length} deleted/unpublished ${type} records from database index...`)
-    await db.delete(searchIndex).where(
-      and(
-        eq(searchIndex.sourceType, type),
-        inArray(searchIndex.sourceId, ids)
-      )
+    console.log(
+      `Cleaning up ${ids.length} deleted/unpublished ${type} records from database index...`
     )
+    await db
+      .delete(searchIndex)
+      .where(and(eq(searchIndex.sourceType, type), inArray(searchIndex.sourceId, ids)))
   }
 
   console.log("Sync completed successfully!")

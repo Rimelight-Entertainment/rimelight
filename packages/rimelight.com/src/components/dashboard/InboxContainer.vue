@@ -1,30 +1,30 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { ref, computed, onMounted } from "vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 interface Mail {
-    id: number;
-    from: {
-        name: string;
-        email: string;
-        avatar?: any;
-    };
-    subject: string;
-    body: string;
-    date: string;
-    unread: boolean;
+  id: number
+  from: {
+    name: string
+    email: string
+    avatar?: any
+  }
+  subject: string
+  body: string
+  date: string
+  unread: boolean
 }
 
-const mails = ref<Mail[]>([]);
-const selectedMail = ref<Mail | null>(null);
-const selectedTab = ref("all");
-const replyText = ref("");
-const sending = ref(false);
+const mails = ref<Mail[]>([])
+const selectedMail = ref<Mail | null>(null)
+const selectedTab = ref("all")
+const replyText = ref("")
+const sending = ref(false)
 
 async function fetchMails() {
   try {
-    const res = await fetch("/api/mails");
-    mails.value = (await res.json()) as Mail[];
+    const res = await fetch("/api/mails")
+    mails.value = (await res.json()) as Mail[]
   } catch (e) {
     // Fallback Mock Data if API is not yet running
     mails.value = [
@@ -44,36 +44,36 @@ async function fetchMails() {
         date: new Date(Date.now() - 3600000).toISOString(),
         unread: false
       }
-    ];
+    ]
   }
 }
 
 onMounted(() => {
-  fetchMails();
-});
+  fetchMails()
+})
 
 const filteredMails = computed(() => {
   if (selectedTab.value === "unread") {
-    return mails.value.filter((m) => m.unread);
+    return mails.value.filter((m) => m.unread)
   }
-  return mails.value;
-});
+  return mails.value
+})
 
 function selectMail(mail: Mail) {
-  selectedMail.value = mail;
+  selectedMail.value = mail
   // Mark as read (mock client-side)
-  mail.unread = false;
+  mail.unread = false
 }
 
 function handleReply(e: Event) {
-  e.preventDefault();
-  if (!replyText.value.trim()) return;
-  sending.value = true;
+  e.preventDefault()
+  if (!replyText.value.trim()) return
+  sending.value = true
   setTimeout(() => {
-    alert("Reply sent to " + selectedMail.value?.from.name);
-    replyText.value = "";
-    sending.value = false;
-  }, 800);
+    alert("Reply sent to " + selectedMail.value?.from.name)
+    replyText.value = ""
+    sending.value = false
+  }, 800)
 }
 </script>
 

@@ -26,7 +26,9 @@ function stub(): unknown {
 
 let db!: NeonHttpDatabase<typeof schema>
 
-const databaseUrl = (typeof import.meta.env !== "undefined" ? import.meta.env.DATABASE_URL : undefined) ?? process.env.DATABASE_URL
+const databaseUrl =
+  (typeof import.meta.env !== "undefined" ? import.meta.env.DATABASE_URL : undefined) ??
+  process.env.DATABASE_URL
 
 if (databaseUrl) {
   db = drizzle(neon(databaseUrl), { schema })

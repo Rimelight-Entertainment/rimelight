@@ -1,20 +1,14 @@
 <script setup lang="ts">
-import { useFloatingTools } from "@/composables";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { useFloatingTools } from "@/composables"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
-defineOptions({ name: "FloatingToolsOverlay" });
+defineOptions({ name: "FloatingToolsOverlay" })
 
-const {
-  activeToolIds,
-  registeredTools,
-  isVisible,
-  removeTool,
-  toggleExpanded,
-  isToolExpanded
-} = useFloatingTools();
+const { activeToolIds, registeredTools, isVisible, removeTool, toggleExpanded, isToolExpanded } =
+  useFloatingTools()
 
 function getTool(id: string) {
-  return registeredTools.value.get(id);
+  return registeredTools.value.get(id)
 }
 </script>
 
@@ -90,5 +84,4 @@ function getTool(id: string) {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

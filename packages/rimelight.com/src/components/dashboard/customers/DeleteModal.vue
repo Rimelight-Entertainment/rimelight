@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC } from "@/composables";
+import { ref, computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC } from "@/composables"
 
 /* region Props */
 export interface DeleteModalProps {
-  count?: number;
+  count?: number
   rc?: {
-    root?: string;
-    actions?: string;
-  };
+    root?: string
+    actions?: string
+  }
 }
 
-const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>();
-const { rc } = useRC("DeleteModal", rcProp);
+const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>()
+const { rc } = useRC("DeleteModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface DeleteModalEmits {}
-defineEmits<DeleteModalEmits>();
+defineEmits<DeleteModalEmits>()
 /* endregion */
 
 /* region Slots */
 export interface DeleteModalSlots {
-  default: (props: {}) => any;
+  default: (props: {}) => any
 }
-defineSlots<DeleteModalSlots>();
+defineSlots<DeleteModalSlots>()
 /* endregion */
 
 /* region Styles */
@@ -36,33 +36,33 @@ const deleteModalStyles = scv({
     root: "inline-block",
     actions: "flex justify-end gap-2 mt-6"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = deleteModalStyles();
-  const result: Record<string, string> = {};
+  const resolved = deleteModalStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const open = ref(false);
-const isLoading = ref(false);
+const open = ref(false)
+const isLoading = ref(false)
 /* endregion */
 
 /* region Logic */
 async function onSubmit() {
-  isLoading.value = true;
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  isLoading.value = false;
-  open.value = false;
+  isLoading.value = true
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  isLoading.value = false
+  open.value = false
 }
 /* endregion */
 
-defineOptions({ name: "DeleteModal" });
+defineOptions({ name: "DeleteModal" })
 </script>
 
 <template>
@@ -109,12 +109,7 @@ defineOptions({ name: "DeleteModal" });
             />
           </div>
           <div :class="styles.actions">
-            <RLVButton
-              label="Cancel"
-              color="neutral"
-              variant="ghost"
-              @click="open = false"
-            />
+            <RLVButton label="Cancel" color="neutral" variant="ghost" @click="open = false" />
             <RLVButton
               label="Delete"
               color="error"

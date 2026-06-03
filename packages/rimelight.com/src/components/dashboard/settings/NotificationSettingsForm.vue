@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
+import { reactive } from "vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
 
 const state = reactive<{
-  [key: string]: boolean;
+  [key: string]: boolean
 }>({
   email: true,
   desktop: false,
   product_updates: true,
   weekly_digest: false,
   important_updates: true
-});
+})
 
 const sections = [
   {
@@ -26,7 +26,11 @@ const sections = [
     title: "Account updates",
     description: "Receive updates about Rimelight.",
     fields: [
-      { name: "weekly_digest", label: "Weekly digest", description: "Receive a weekly digest of news." },
+      {
+        name: "weekly_digest",
+        label: "Weekly digest",
+        description: "Receive a weekly digest of news."
+      },
       {
         name: "product_updates",
         label: "Product updates",
@@ -39,10 +43,10 @@ const sections = [
       }
     ]
   }
-];
+]
 
 function onChange() {
-  console.log("Notification settings updated:", state);
+  console.log("Notification settings updated:", state)
 }
 </script>
 

@@ -1,45 +1,45 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-import { useRC, useTodos } from "@/composables";
-import TodoCard from "./TodoCard.vue";
+import { ref, computed } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import { useRC, useTodos } from "@/composables"
+import TodoCard from "./TodoCard.vue"
 
 export interface Todo {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  isArchived?: boolean;
+  id: string
+  title: string
+  description?: string
+  completed: boolean
+  isArchived?: boolean
 }
 
 /* region Props */
 export interface TodoListProps {
-  todos: Todo[];
-  archivedTodos?: Todo[];
-  loading?: boolean;
+  todos: Todo[]
+  archivedTodos?: Todo[]
+  loading?: boolean
   rc?: {
-    root?: string;
-    header?: string;
-    headerTitle?: string;
-    mainContainer?: string;
-    quickAddWrapper?: string;
-    inputRow?: string;
-    descriptionRow?: string;
-    todoGrid?: string;
-    emptyText?: string;
-    archivedGrid?: string;
-  };
+    root?: string
+    header?: string
+    headerTitle?: string
+    mainContainer?: string
+    quickAddWrapper?: string
+    inputRow?: string
+    descriptionRow?: string
+    todoGrid?: string
+    emptyText?: string
+    archivedGrid?: string
+  }
 }
 
-const { todos, archivedTodos = [], loading = false, rc: rcProp } = defineProps<TodoListProps>();
-const { rc } = useRC("TodoList", rcProp);
+const { todos, archivedTodos = [], loading = false, rc: rcProp } = defineProps<TodoListProps>()
+const { rc } = useRC("TodoList", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface TodoListEmits {}
-defineEmits<TodoListEmits>();
+defineEmits<TodoListEmits>()
 /* endregion */
 
 /* region Styles */
@@ -59,7 +59,8 @@ const todoListStyles = scv({
   base: {
     root: "flex flex-col gap-4",
     header: "flex items-center justify-between",
-    headerTitle: "text-xs font-bold tracking-wider text-neutral-400 dark:text-neutral-500 uppercase",
+    headerTitle:
+      "text-xs font-bold tracking-wider text-neutral-400 dark:text-neutral-500 uppercase",
     mainContainer: "flex flex-col gap-4",
     quickAddWrapper: "flex flex-col gap-2",
     inputRow: "flex gap-2 items-center",
@@ -68,20 +69,20 @@ const todoListStyles = scv({
     emptyText: "text-xs text-neutral-400 dark:text-neutral-500 text-center py-4",
     archivedGrid: "flex flex-col gap-1"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = todoListStyles();
-  const result: Record<string, string> = {};
+  const resolved = todoListStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos();
+const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos()
 
 const t = (key: string) => {
   const keys: Record<string, string> = {
@@ -92,31 +93,31 @@ const t = (key: string) => {
     "todo.description_placeholder": "Add a description (optional)...",
     "todo.no_active": "No active tasks",
     "common.archive": "Archived Tasks"
-  };
-  return keys[key] || key;
-};
+  }
+  return keys[key] || key
+}
 
-const newTodoTitle = ref("");
-const newTodoDescription = ref("");
-const isAdding = ref(false);
-const showArchived = ref(false);
+const newTodoTitle = ref("")
+const newTodoDescription = ref("")
+const isAdding = ref(false)
+const showArchived = ref(false)
 /* endregion */
 
 /* region Logic */
 const handleAddTodo = async () => {
-  if (!newTodoTitle.value.trim()) return;
-  isAdding.value = true;
+  if (!newTodoTitle.value.trim()) return
+  isAdding.value = true
   try {
-    await createTodo(newTodoTitle.value.trim(), newTodoDescription.value.trim() || undefined);
-    newTodoTitle.value = "";
-    newTodoDescription.value = "";
+    await createTodo(newTodoTitle.value.trim(), newTodoDescription.value.trim() || undefined)
+    newTodoTitle.value = ""
+    newTodoDescription.value = ""
   } finally {
-    isAdding.value = false;
+    isAdding.value = false
   }
-};
+}
 /* endregion */
 
-defineOptions({ name: "TodoList" });
+defineOptions({ name: "TodoList" })
 </script>
 
 <template>

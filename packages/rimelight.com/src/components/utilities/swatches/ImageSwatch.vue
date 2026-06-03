@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { scv, cx } from "css-variants";
-import { useRC } from "@/composables";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { computed } from "vue"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
 export interface ImageSwatchProps {
-    name?: string;
-    jpg?: string;
-    png?: string;
-    webp?: string;
-    svg?: string;
-    rc?: {
-        card?: string;
-        title?: string;
-        content?: string;
-        image?: string;
-        buttonGroup?: string;
-        button?: string;
-    };
-    t?: (key: string) => string;
+  name?: string
+  jpg?: string
+  png?: string
+  webp?: string
+  svg?: string
+  rc?: {
+    card?: string
+    title?: string
+    content?: string
+    image?: string
+    buttonGroup?: string
+    button?: string
+  }
+  t?: (key: string) => string
 }
 
 const {
@@ -35,24 +35,22 @@ const {
       "swatch.download_png": "Download PNG",
       "swatch.download_webp": "Download WEBP",
       "swatch.download_svg": "Download SVG"
-    };
-    return map[key] || key;
+    }
+    return map[key] || key
   }
-} = defineProps<ImageSwatchProps>();
+} = defineProps<ImageSwatchProps>()
 
-const { rc } = useRC("ImageSwatch", rcProp);
+const { rc } = useRC("ImageSwatch", rcProp)
 /* endregion */
 
 /* region Emits */
-export interface ImageSwatchEmits {
-}
-defineEmits<ImageSwatchEmits>();
+export interface ImageSwatchEmits {}
+defineEmits<ImageSwatchEmits>()
 /* endregion */
 
 /* region Slots */
-export interface ImageSwatchSlots {
-}
-defineSlots<ImageSwatchSlots>();
+export interface ImageSwatchSlots {}
+defineSlots<ImageSwatchSlots>()
 /* endregion */
 
 /* region Styles */
@@ -66,26 +64,26 @@ const imageSwatchStyles = scv({
     buttonGroup: "flex w-full flex-col justify-center gap-sm",
     button: "w-full xl:w-36"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = imageSwatchStyles();
-  const result: Record<string, string> = {};
+  const resolved = imageSwatchStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
 const image = computed(() => {
-  if (webp) return webp;
-  if (png) return png;
-  if (jpg) return jpg;
-  if (svg) return svg;
-  return undefined;
-});
+  if (webp) return webp
+  if (png) return png
+  if (jpg) return jpg
+  if (svg) return svg
+  return undefined
+})
 /* endregion */
 </script>
 

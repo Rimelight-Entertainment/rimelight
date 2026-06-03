@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { onMounted, markRaw } from "vue";
-import { useFloatingActions } from "@/composables/app/useFloatingActions";
-import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue";
-import QuickActions from "../dashboard/QuickActions.vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import { onMounted, markRaw } from "vue"
+import { useFloatingActions } from "@/composables/app/useFloatingActions"
+import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue"
+import QuickActions from "../dashboard/QuickActions.vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
-defineOptions({ name: "FloatingActionsOverlay" });
+defineOptions({ name: "FloatingActionsOverlay" })
 
-const { actions, registerAction } = useFloatingActions();
+const { actions, registerAction } = useFloatingActions()
 
 onMounted(() => {
   // Register standard global actions
@@ -15,13 +15,13 @@ onMounted(() => {
     id: "quick-actions",
     priority: 10,
     component: markRaw(QuickActions)
-  });
+  })
   registerAction({
     id: "scroll-to-top",
     priority: 0,
     component: markRaw(RLVScrollToTop)
-  });
-});
+  })
+})
 </script>
 
 <template>
@@ -52,5 +52,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

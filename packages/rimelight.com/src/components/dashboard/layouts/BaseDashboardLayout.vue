@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import { ref, computed, useSlots } from "vue";
-import { scv, cx } from "css-variants";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import { useRC, useHeaderStack } from "@/composables";
-import OrganizationsMenu from "../OrganizationsMenu.vue";
-import TeamsMenu from "../TeamsMenu.vue";
+import { ref, computed, useSlots } from "vue"
+import { scv, cx } from "css-variants"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import { useRC, useHeaderStack } from "@/composables"
+import OrganizationsMenu from "../OrganizationsMenu.vue"
+import TeamsMenu from "../TeamsMenu.vue"
 
 export interface NavigationMenuItem {
-  label: string;
-  to?: string;
-  icon?: string;
-  active?: boolean;
+  label: string
+  to?: string
+  icon?: string
+  active?: boolean
 }
 
 /* region Props */
 export interface BaseDashboardLayoutProps {
-  id?: string;
-  sidebarOpen?: boolean;
-  links?: NavigationMenuItem[] | NavigationMenuItem[][];
-  footerLinks?: NavigationMenuItem[] | NavigationMenuItem[][];
-  searchGroups?: any[];
-  headerLayerId?: string;
-  headerOrder?: number;
+  id?: string
+  sidebarOpen?: boolean
+  links?: NavigationMenuItem[] | NavigationMenuItem[][]
+  footerLinks?: NavigationMenuItem[] | NavigationMenuItem[][]
+  searchGroups?: any[]
+  headerLayerId?: string
+  headerOrder?: number
   rc?: {
-    root?: string;
-    dashboardGroup?: string;
-    sidebar?: string;
-    sidebarFooterWrapper?: string;
-    footerActions?: string;
-  };
+    root?: string
+    dashboardGroup?: string
+    sidebar?: string
+    sidebarFooterWrapper?: string
+    footerActions?: string
+  }
 }
 
 const {
@@ -40,28 +40,28 @@ const {
   headerLayerId = "global-header",
   headerOrder = 2,
   rc: rcProp
-} = defineProps<BaseDashboardLayoutProps>();
-const { rc } = useRC("BaseDashboardLayout", rcProp);
+} = defineProps<BaseDashboardLayoutProps>()
+const { rc } = useRC("BaseDashboardLayout", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface BaseDashboardLayoutEmits {
-  "update:sidebarOpen": [value: boolean];
+  "update:sidebarOpen": [value: boolean]
 }
-const emit = defineEmits<BaseDashboardLayoutEmits>();
+const emit = defineEmits<BaseDashboardLayoutEmits>()
 /* endregion */
 
 /* region Slots */
 export interface BaseDashboardLayoutSlots {
-  "header": (props: {}) => any;
-  "sidebar-header": (props: { collapsed: boolean }) => any;
-  "sidebar-content": (props: { collapsed: boolean }) => any;
-  "sidebar-footer": (props: { collapsed: boolean }) => any;
-  "sidebar-footer-actions": (props: { collapsed: boolean }) => any;
-  "default": (props: {}) => any;
-  "modals": (props: {}) => any;
+  "header": (props: {}) => any
+  "sidebar-header": (props: { collapsed: boolean }) => any
+  "sidebar-content": (props: { collapsed: boolean }) => any
+  "sidebar-footer": (props: { collapsed: boolean }) => any
+  "sidebar-footer-actions": (props: { collapsed: boolean }) => any
+  "default": (props: {}) => any
+  "modals": (props: {}) => any
 }
-defineSlots<BaseDashboardLayoutSlots>();
+defineSlots<BaseDashboardLayoutSlots>()
 /* endregion */
 
 /* region Styles */
@@ -70,44 +70,47 @@ const baseDashboardLayoutStyles = scv({
   base: {
     root: "flex h-svh w-full flex-col overflow-hidden",
     dashboardGroup: "flex-1 flex min-h-0 overflow-hidden relative",
-    sidebar: "h-full border-r border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 transition-all duration-300 flex flex-col justify-between shrink-0 z-30",
+    sidebar:
+      "h-full border-r border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 transition-all duration-300 flex flex-col justify-between shrink-0 z-30",
     sidebarFooterWrapper: "flex flex-col gap-2 w-full",
     footerActions: "flex flex-row gap-2 justify-between items-center"
   }
-});
+})
 
 const styles = computed(() => {
-  const resolved = baseDashboardLayoutStyles();
-  const result: Record<string, string> = {};
+  const resolved = baseDashboardLayoutStyles()
+  const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
   }
-  return result;
-});
+  return result
+})
 /* endregion */
 
 /* region State */
-const collapsed = ref(false);
+const collapsed = ref(false)
 const sidebarOpenModel = computed({
   get: () => sidebarOpen,
   set: (val) => emit("update:sidebarOpen", val)
-});
-const { totalHeight } = useHeaderStack();
+})
+const { totalHeight } = useHeaderStack()
 
 const normalizedLinks = computed(() => {
-  if (!links) return [];
-  const flat = Array.isArray(links[0]) ? (links as any[]).flat() : (links as any[]);
-  return flat;
-});
+  if (!links) return []
+  const flat = Array.isArray(links[0]) ? (links as any[]).flat() : (links as any[])
+  return flat
+})
 
 const normalizedFooterLinks = computed(() => {
-  if (!footerLinks) return [];
-  const flat = Array.isArray(footerLinks[0]) ? (footerLinks as any[]).flat() : (footerLinks as any[]);
-  return flat;
-});
+  if (!footerLinks) return []
+  const flat = Array.isArray(footerLinks[0])
+    ? (footerLinks as any[]).flat()
+    : (footerLinks as any[])
+  return flat
+})
 /* endregion */
 
-defineOptions({ name: "BaseDashboardLayout" });
+defineOptions({ name: "BaseDashboardLayout" })
 </script>
 
 <template>

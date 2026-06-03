@@ -1,31 +1,31 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, watch } from "vue";
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-import NoteCard from "./NoteCard.vue";
-import NoteModal from "./NoteModal.vue";
-import { useNotes } from "@/composables/dashboard/useNotes";
+import { ref, computed, onMounted, watch } from "vue"
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import NoteCard from "./NoteCard.vue"
+import NoteModal from "./NoteModal.vue"
+import { useNotes } from "@/composables/dashboard/useNotes"
 
 interface Label {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 
 interface Note {
-  id: string;
-  title?: string;
-  content?: string;
-  isPinned?: boolean;
-  isArchived?: boolean;
+  id: string
+  title?: string
+  content?: string
+  isPinned?: boolean
+  isArchived?: boolean
   labels?: {
-    label: Label;
-  }[];
+    label: Label
+  }[]
 }
 
-const notes = ref<Note[]>([]);
-const labels = ref<Label[]>([]);
-const selectedLabelId = ref<string | undefined>(undefined);
-const isModalOpen = ref(false);
-const selectedNote = ref<Note | null>(null);
+const notes = ref<Note[]>([])
+const labels = ref<Label[]>([])
+const selectedLabelId = ref<string | undefined>(undefined)
+const isModalOpen = ref(false)
+const selectedNote = ref<Note | null>(null)
 const {
   selectedIds,
   toggleSelection,
@@ -33,62 +33,62 @@ const {
   executeSingleAction,
   clearSelection,
   noteRefreshTrigger
-} = useNotes();
+} = useNotes()
 
 async function fetchNotes() {
   try {
-    const res = await fetch("/api/notes");
+    const res = await fetch("/api/notes")
     if (res.ok) {
-      notes.value = (await res.json()) as Note[];
+      notes.value = (await res.json()) as Note[]
     }
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
 }
 
 async function fetchLabels() {
   try {
-    const res = await fetch("/api/notes/labels");
+    const res = await fetch("/api/notes/labels")
     if (res.ok) {
-      labels.value = (await res.json()) as Label[];
+      labels.value = (await res.json()) as Label[]
     }
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
 }
 
 onMounted(() => {
-  fetchNotes();
-  fetchLabels();
-});
+  fetchNotes()
+  fetchLabels()
+})
 
 watch(noteRefreshTrigger, () => {
-  fetchNotes();
-});
+  fetchNotes()
+})
 
 const isNoteMatch = (note: Note) => {
-  if (!selectedLabelId.value) return true;
-  if (!note.labels?.length) return false;
-  return note.labels.some((joinEntry) => joinEntry.label?.id === selectedLabelId.value);
-};
+  if (!selectedLabelId.value) return true
+  if (!note.labels?.length) return false
+  return note.labels.some((joinEntry) => joinEntry.label?.id === selectedLabelId.value)
+}
 
 const pinnedNotes = computed(() =>
   notes.value.filter((n) => n.isPinned && !n.isArchived && isNoteMatch(n))
-);
+)
 
 const otherNotes = computed(() =>
   notes.value.filter((n) => !n.isPinned && !n.isArchived && isNoteMatch(n))
-);
+)
 
 const openCreateModal = () => {
-  selectedNote.value = null;
-  isModalOpen.value = true;
-};
+  selectedNote.value = null
+  isModalOpen.value = true
+}
 
 const openEditModal = (note: Note) => {
-  selectedNote.value = note;
-  isModalOpen.value = true;
-};
+  selectedNote.value = note
+  isModalOpen.value = true
+}
 </script>
 
 <template>
