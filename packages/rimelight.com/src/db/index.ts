@@ -26,11 +26,11 @@ function stub(): unknown {
 
 let db!: NeonHttpDatabase<typeof schema>
 
-const databaseUrl = import.meta.env.DATABASE_URL ?? process.env.DATABASE_URL
+const databaseUrl = (typeof import.meta.env !== "undefined" ? import.meta.env.DATABASE_URL : undefined) ?? process.env.DATABASE_URL
 
 if (databaseUrl) {
   db = drizzle(neon(databaseUrl), { schema })
-} else if (import.meta.env.PROD) {
+} else if (typeof import.meta.env !== "undefined" && import.meta.env.PROD) {
   throw new Error("[db] DATABASE_URL is not set. Cannot start in production.")
 } else {
   db = stub()
