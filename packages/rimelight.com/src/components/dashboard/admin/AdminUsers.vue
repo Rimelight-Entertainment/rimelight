@@ -1,6 +1,263 @@
-<script lang="ts" setup>import { ref, reactive, computed, onMounted, watch } from "vue"
+<script lang="ts" setup>
+import { ref, reactive, computed, onMounted, watch } from "vue"
 import { authClient } from "@/auth/auth-client"
 import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
 import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-interface Organization {  id: string  name: string  slug: string  logo?: string}interface User {  id: string  name: string  email: string  image?: string | null  role?: string | null  banned?: boolean | null}const users = ref<User[]>([])const organizations = ref<Organization[]>([])const loadingUsers = ref(true)const loadingOrgs = ref(true)const selectedOrgId = ref("all")const search = ref("")const isBanModalOpen = ref(false)const selectedUser = ref<User | null>(null)const banReason = ref("")async function fetchOrgs() {  loadingOrgs.value = true  try {    const res = await fetch("/api/admin/organizations")    organizations.value = (await res.json()) as Organization[]  } catch (e) {    console.error(e)  } finally {    loadingOrgs.value = false  }}async function fetchUsers() {  loadingUsers.value = true  try {    const query = new URLSearchParams()    if (selectedOrgId.value !== "all") {      query.append("organizationId", selectedOrgId.value)    }    if (search.value) {      query.append("search", search.value)    }    const res = await fetch(`/api/admin/users?${query.toString()}`)    const data = await res.json()    // Support either direct array or { users: User[] }    users.value = Array.isArray(data) ? data : data.users || []  } catch (e) {    console.error(e)  } finally {    loadingUsers.value = false  }}onMounted(() => {  fetchOrgs()  fetchUsers()})watch([selectedOrgId, search], () => {  fetchUsers()})function openBanModal(user: User) {  selectedUser.value = user  isBanModalOpen.value = true}async function banUser() {  if (!selectedUser.value) return  if (!confirm(`Are you sure you want to ban ${selectedUser.value.name}?`)) return  const { error } = await authClient.admin.banUser({    userId: selectedUser.value.id,    banReason: banReason.value  })  if (!error) {    isBanModalOpen.value = false    alert("User banned successfully.")    fetchUsers()  } else {    alert("Failed to ban user: " + error.message)  }}async function unbanUser(userId: string) {  const { error } = await authClient.admin.unbanUser({ userId })  if (!error) {    alert("User unbanned.")    fetchUsers()  } else {    alert("Failed to unban user: " + error.message)  }}async function impersonateUser(userId: string) {  const { error } = await authClient.admin.impersonateUser({ userId })  if (!error) {    window.location.reload()  } else {    alert("Failed to impersonate user: " + error.message)  }}</script><template>  <div class="space-y-6">    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">      <div>        <h2 class="text-xl font-bold text-neutral-900 dark:text-white">Users</h2>        <p class="text-xs text-neutral-500">          Manage site users, membership, status, and permissions.        </p>      </div>      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">        <select          v-model="selectedOrgId"          class="p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full sm:w-48"        >          <option value="all">All Organizations</option>          <option v-for="org in organizations" :key="org.id" :value="org.id">            {{ org.name }}          </option>        </select>        <RLVInput          v-model="search"          placeholder="Search users..."          leadingIcon="i-lucide-search"          class="w-full sm:w-64"        />      </div>    </div>    <!-- Ban Modal -->    <div      v-if="isBanModalOpen"      class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl max-w-md"    >      <h3 class="font-bold text-md mb-1 text-neutral-900 dark:text-white">Ban User</h3>      <p class="text-xs text-neutral-500 mb-4">Prevent this user from accessing the platform.</p>      <form @submit.prevent="banUser" class="space-y-4">        <RLVFormField label="Reason for ban">          <textarea            v-model="banReason"            placeholder="Violation of terms..."            rows="3"            class="w-full p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"            required          />        </RLVFormField>        <div class="flex gap-2">          <RLVButton type="submit" color="error">Ban User</RLVButton>          <RLVButton type="button" color="neutral" variant="soft" @click="isBanModalOpen = false"            >Cancel</RLVButton          >        </div>      </form>    </div>    <!-- Users Table -->    <div      class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden"    >      <div v-if="loadingUsers || loadingOrgs" class="p-8 text-center text-sm text-neutral-500">        Loading users...      </div>      <div v-else-if="!users.length" class="p-8 text-center text-sm text-neutral-500">        No users found matching search or filter criteria.      </div>      <table v-else class="w-full border-collapse text-left text-sm">        <thead>          <tr            class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider"          >            <th class="p-4">User</th>            <th class="p-4">System Role</th>            <th class="p-4">Status</th>            <th class="p-4 text-right">Actions</th>          </tr>        </thead>        <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800">          <tr            v-for="u in users"            :key="u.id"            class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors"          >            <td class="p-4 flex items-center gap-3">              <div                class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-855"              >                <img v-if="u.image" :src="u.image" :alt="u.name" class="size-full object-cover" />                <span v-else class="i-lucide-user size-4 text-neutral-400" />              </div>              <div class="flex flex-col">                <span class="font-semibold text-neutral-900 dark:text-white">{{ u.name }}</span>                <span class="text-xs text-neutral-500">{{ u.email }}</span>              </div>            </td>            <td class="p-4">              <span                class="px-2.5 py-0.5 text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-md capitalize"              >                {{ u.role || "user" }}              </span>            </td>            <td class="p-4">              <span                :class="[                  u.banned                    ? 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400'                    : 'bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400',                  'px-2.5 py-0.5 text-xs font-bold rounded-md'                ]"              >                {{ u.banned ? "Banned" : "Active" }}              </span>            </td>            <td class="p-4 text-right flex justify-end gap-1.5">              <RLVButton                color="neutral"                variant="ghost"                class="size-8 p-0 rounded-xl"                title="Impersonate"                @click="impersonateUser(u.id)"              >                <span class="i-lucide-user-round-search size-4" />              </RLVButton>              <RLVButton                v-if="u.banned"                color="neutral"                variant="ghost"                class="size-8 p-0 rounded-xl"                title="Unban"                @click="unbanUser(u.id)"              >                <span class="i-lucide-lock-open size-4 text-green-600" />              </RLVButton>              <RLVButton                v-else                color="neutral"                variant="ghost"                class="size-8 p-0 rounded-xl"                title="Ban"                @click="openBanModal(u)"              >                <span class="i-lucide-ban size-4 text-red-500" />              </RLVButton>            </td>          </tr>        </tbody>      </table>    </div>  </div></template>
+
+interface Organization {
+  id: string
+  name: string
+  slug: string
+  logo?: string
+}
+
+interface User {
+  id: string
+  name: string
+  email: string
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+}
+
+const users = ref<User[]>([])
+const organizations = ref<Organization[]>([])
+const loadingUsers = ref(true)
+const loadingOrgs = ref(true)
+const selectedOrgId = ref("all")
+const search = ref("")
+const isBanModalOpen = ref(false)
+const selectedUser = ref<User | null>(null)
+const banReason = ref("")
+
+async function fetchOrgs() {
+  loadingOrgs.value = true
+  try {
+    const res = await fetch("/api/admin/organizations")
+    organizations.value = (await res.json()) as Organization[]
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loadingOrgs.value = false
+  }
+}
+
+async function fetchUsers() {
+  loadingUsers.value = true
+  try {
+    const query = new URLSearchParams()
+    if (selectedOrgId.value !== "all") {
+      query.append("organizationId", selectedOrgId.value)
+    }
+    if (search.value) {
+      query.append("search", search.value)
+    }
+    const res = await fetch(`/api/admin/users?${query.toString()}`)
+    const data = await res.json()
+    // Support either direct array or { users: User[] }
+    users.value = Array.isArray(data) ? data : data.users || []
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loadingUsers.value = false
+  }
+}
+
+onMounted(() => {
+  fetchOrgs()
+  fetchUsers()
+})
+
+watch([selectedOrgId, search], () => {
+  fetchUsers()
+})
+
+function openBanModal(user: User) {
+  selectedUser.value = user
+  isBanModalOpen.value = true
+}
+
+async function banUser() {
+  if (!selectedUser.value) return
+  if (!confirm(`Are you sure you want to ban ${selectedUser.value.name}?`)) return
+  const { error } = await authClient.admin.banUser({
+    userId: selectedUser.value.id,
+    banReason: banReason.value
+  })
+  if (!error) {
+    isBanModalOpen.value = false
+    alert("User banned successfully.")
+    fetchUsers()
+  } else {
+    alert("Failed to ban user: " + error.message)
+  }
+}
+
+async function unbanUser(userId: string) {
+  const { error } = await authClient.admin.unbanUser({ userId })
+  if (!error) {
+    alert("User unbanned.")
+    fetchUsers()
+  } else {
+    alert("Failed to unban user: " + error.message)
+  }
+}
+
+async function impersonateUser(userId: string) {
+  const { error } = await authClient.admin.impersonateUser({ userId })
+  if (!error) {
+    window.location.reload()
+  } else {
+    alert("Failed to impersonate user: " + error.message)
+  }
+}
+</script>
+
+<template>
+  <div class="space-y-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h2 class="text-xl font-bold text-neutral-900 dark:text-white">Users</h2>
+        <p class="text-xs text-neutral-500">
+          Manage site users, membership, status, and permissions.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <select
+          v-model="selectedOrgId"
+          class="p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full sm:w-48"
+        >
+          <option value="all">All Organizations</option>
+          <option v-for="org in organizations" :key="org.id" :value="org.id">
+            {{ org.name }}
+          </option>
+        </select>
+        <RLVInput
+          v-model="search"
+          placeholder="Search users..."
+          leadingIcon="i-lucide-search"
+          class="w-full sm:w-64"
+        />
+      </div>
+    </div>
+    <!-- Ban Modal -->
+    <div
+      v-if="isBanModalOpen"
+      class="p-6 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl max-w-md"
+    >
+      <h3 class="font-bold text-md mb-1 text-neutral-900 dark:text-white">Ban User</h3>
+      <p class="text-xs text-neutral-500 mb-4">Prevent this user from accessing the platform.</p>
+      <form @submit.prevent="banUser" class="space-y-4">
+        <RLVFormField label="Reason for ban">
+          <textarea
+            v-model="banReason"
+            placeholder="Violation of terms..."
+            rows="3"
+            class="w-full p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            required
+          />
+        </RLVFormField>
+        <div class="flex gap-2">
+          <RLVButton type="submit" color="error">Ban User</RLVButton>
+          <RLVButton type="button" color="neutral" variant="soft" @click="isBanModalOpen = false"
+            >Cancel</RLVButton
+          >
+        </div>
+      </form>
+    </div>
+    <!-- Users Table -->
+    <div
+      class="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden"
+    >
+      <div v-if="loadingUsers || loadingOrgs" class="p-8 text-center text-sm text-neutral-500">
+        Loading users...
+      </div>
+      <div v-else-if="!users.length" class="p-8 text-center text-sm text-neutral-500">
+        No users found matching search or filter criteria.
+      </div>
+      <table v-else class="w-full border-collapse text-left text-sm">
+        <thead>
+          <tr
+            class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-bold uppercase text-neutral-500 tracking-wider"
+          >
+            <th class="p-4">User</th>
+            <th class="p-4">System Role</th>
+            <th class="p-4">Status</th>
+            <th class="p-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800">
+          <tr
+            v-for="u in users"
+            :key="u.id"
+            class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors"
+          >
+            <td class="p-4 flex items-center gap-3">
+              <div
+                class="size-8 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border border-neutral-200 dark:border-neutral-855"
+              >
+                <img v-if="u.image" :src="u.image" :alt="u.name" class="size-full object-cover" />
+                <span v-else class="i-lucide-user size-4 text-neutral-400" />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-semibold text-neutral-900 dark:text-white">{{ u.name }}</span>
+                <span class="text-xs text-neutral-500">{{ u.email }}</span>
+              </div>
+            </td>
+            <td class="p-4">
+              <span
+                class="px-2.5 py-0.5 text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-md capitalize"
+              >
+                {{ u.role || "user" }}
+              </span>
+            </td>
+            <td class="p-4">
+              <span
+                :class="[
+                  u.banned
+                    ? 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400'
+                    : 'bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400',
+                  'px-2.5 py-0.5 text-xs font-bold rounded-md'
+                ]"
+              >
+                {{ u.banned ? "Banned" : "Active" }}
+              </span>
+            </td>
+            <td class="p-4 text-right flex justify-end gap-1.5">
+              <RLVButton
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Impersonate"
+                @click="impersonateUser(u.id)"
+              >
+                <span class="i-lucide-user-round-search size-4" />
+              </RLVButton>
+              <RLVButton
+                v-if="u.banned"
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Unban"
+                @click="unbanUser(u.id)"
+              >
+                <span class="i-lucide-lock-open size-4 text-green-600" />
+              </RLVButton>
+              <RLVButton
+                v-else
+                color="neutral"
+                variant="ghost"
+                class="size-8 p-0 rounded-xl"
+                title="Ban"
+                @click="openBanModal(u)"
+              >
+                <span class="i-lucide-ban size-4 text-red-500" />
+              </RLVButton>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

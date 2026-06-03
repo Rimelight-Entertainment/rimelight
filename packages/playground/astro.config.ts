@@ -12,6 +12,20 @@ import { defineSecurity } from "@rimelight/ui/config"
 import cloudflare from "@astrojs/cloudflare"
 import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
 
+const theme = (() => {
+  const t = createCssVariablesTheme({
+    name: "csp-theme",
+    variablePrefix: "--shiki-",
+    fontStyle: true
+  })
+  t.colors = Object.fromEntries(
+    Object.entries(t.colors || {}).filter(
+      ([_, val]) => typeof val === "string" && val.startsWith("#")
+    )
+  )
+  return t
+})()
+
 export default defineConfig({
   experimental: {
     contentIntellisense: true,
@@ -96,9 +110,6 @@ export default defineConfig({
     }
   ],
 
-  markdown: {
-    syntaxHighlight: false
-  },
 
   integrations: [
     nanostoresI18n({
@@ -123,21 +134,7 @@ export default defineConfig({
 
     astroExpressiveCode({
       emitExternalStylesheet: true,
-      themes: [
-        (() => {
-          const t = createCssVariablesTheme({
-            name: "shiki-theme",
-            variablePrefix: "--shiki-",
-            fontStyle: true
-          })
-          t.colors = Object.fromEntries(
-            Object.entries(t.colors || {}).filter(
-              ([_, val]) => typeof val === "string" && val.startsWith("#")
-            )
-          )
-          return t
-        })()
-      ],
+      themes: [theme],
       themeCssRoot: ":root"
     }),
 
