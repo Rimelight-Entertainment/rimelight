@@ -76,7 +76,7 @@ const pendingVersions = computed(() => {
 })
 const currentVersionStatus = computed(() => {
   if (!selectedVersionId.value) return "approved"
-  const v = versions.value.find((v) => v.id === selectedVersionId.value)
+  const v = versions.value.find((version) => version.id === selectedVersionId.value)
   return v?.status || "pending"
 })
 const currentVersion = computed(() => versions.value.find((v) => v.id === selectedVersionId.value))
@@ -352,9 +352,7 @@ defineOptions({ name: "PageVersionSelector" }) /* endregion */
       </div>
       <div v-if="pendingVersions.length > 0 && isAdmin" :class="styles.pendingFooter">
         <p :class="styles.pendingText">
-          {{ pendingVersions.length }} pending version{{
-            pendingVersions.length !== 1 ? "s" : ""
-          }}
+          {{ pendingVersions.length }} pending version{{ pendingVersions.length !== 1 ? "s" : "" }}
           awaiting approval
         </p>
       </div>

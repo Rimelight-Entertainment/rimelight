@@ -1,5 +1,29 @@
 import { defineAction, ActionError } from "astro:actions"
 
+interface CloudflareEnv {
+  BLOB: R2Bucket
+  R2: R2Bucket
+}
+
+function getCloudflareEnv(
+  locals: App.Locals & { runtime?: { env: CloudflareEnv } }
+): CloudflareEnv | undefined {
+  return locals.runtime?.env
+}
+
+async function listAll(
+  BLOB: {
+    list(opts?: {
+      cursor?: string
+    }): Promise<{ objects: any[]; truncated: boolean; cursor?: string }>
+  },
+  cursor?: string
+): Promise<any[]> {
+  const list = await BLOB.list(cursor ? { cursor } : undefined)
+  if (!list.truncated) return list.objects
+  return list.objects.concat(await listAll(BLOB, list.cursor))
+}
+
 export const assets = {
   getAssets: defineAction({
     handler: async (_input, context) => {
@@ -11,7 +35,7 @@ export const assets = {
         })
       }
 
-      const cloudflareEnv = (context.locals as any).runtime?.env
+      const cloudflareEnv = getCloudflareEnv(context.locals)
       const BLOB = cloudflareEnv?.BLOB
 
       if (!BLOB) {
@@ -21,16 +45,7 @@ export const assets = {
       }
 
       try {
-        let allObjects: any[] = []
-        let truncated = true
-        let cursor: string | undefined
-
-        while (truncated) {
-          const list: any = await BLOB.list({ cursor })
-          allObjects.push(...list.objects)
-          truncated = list.truncated
-          cursor = list.cursor
-        }
+        const allObjects = await listAll(BLOB)
 
         const uniqueObjectsMap = new Map()
         allObjects.forEach((obj) => {

@@ -134,8 +134,8 @@ export const auth = betterAuth({
 
           // 2. Generate a unique 4-digit discriminator tag
           let uniqueTag = "0000"
-          const MAX_RETRIES = 50
-          for (let i = 0; i < MAX_RETRIES; i++) {
+          const tryFindTag = async (attemptsLeft: number): Promise<string> => {
+            if (attemptsLeft <= 0) return "0000"
             const newTag = Math.floor(Math.random() * 10000)
               .toString()
               .padStart(4, "0")
@@ -146,11 +146,10 @@ export const auth = betterAuth({
               .where(and(eq(userTable.name, userData.name), eq(userTable.tag, newTag)))
 
             const tagCount = result[0]?.count ?? 0
-            if (tagCount === 0) {
-              uniqueTag = newTag
-              break
-            }
+            if (tagCount === 0) return newTag
+            return tryFindTag(attemptsLeft - 1)
           }
+          uniqueTag = await tryFindTag(50)
 
           if (uniqueTag === "0000") {
             throw new APIError("INTERNAL_SERVER_ERROR", {

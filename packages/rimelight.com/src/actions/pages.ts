@@ -3,7 +3,8 @@ import { z } from "astro/zod"
 import { db } from "@/db"
 import { pages, pageVersions, searchIndex } from "@/db/schema"
 import { and, asc, desc, eq, isNotNull, isNull, sql } from "drizzle-orm"
-import { type Block } from "@/types/pages"
+import { type Block, type PageType, type Localized, type Page } from "@/types/pages"
+import { PAGE_MAP } from "@/types/pageDefinitions"
 
 function extractTextFromBlocks(blocks: Block[]): string {
   if (!blocks || !Array.isArray(blocks)) return ""
@@ -37,14 +38,14 @@ function extractTextFromBlocks(blocks: Block[]): string {
 async function indexDatabasePage(page: {
   id: string
   slug: string
-  title: any
-  description?: any
+  title: Localized
+  description?: Localized | null
   content: { blocks: Block[] }
 }) {
-  const titleObj = page.title as Record<string, string>
+  const titleObj = page.title
   const title = titleObj?.en || Object.values(titleObj || {})[0] || "Untitled Page"
 
-  const descObj = page.description as Record<string, string>
+  const descObj = page.description
   const description = descObj?.en || Object.values(descObj || {})[0] || ""
 
   const bodyContent = `${description} ${extractTextFromBlocks(page.content?.blocks || [])}`.trim()
@@ -79,9 +80,28 @@ async function deindexDatabasePage(id: string) {
     .where(and(eq(searchIndex.sourceType, "database_page"), eq(searchIndex.sourceId, id)))
 }
 
+function getRole(user: unknown): string | undefined {
+  if (!user || typeof user !== "object") return undefined
+  if ("role" in user) {
+    return typeof user.role === "string" ? user.role : undefined
+  }
+  return undefined
+}
+
+function toLocalized(val: string | Record<string, string>): Localized {
+  return typeof val === "string" ? { en: val } : val
+}
+
+function toLocalizedOptional(
+  val: string | Record<string, string> | undefined
+): Localized | undefined {
+  return val ? toLocalized(val) : undefined
+}
+
 function checkOwnerOrMember(context: any) {
   const user = context.locals.user
-  const isAuthorized = user?.role === "owner" || user?.role === "member"
+  const role = getRole(user)
+  const isAuthorized = role === "owner" || role === "member"
   if (!isAuthorized) {
     throw new ActionError({
       code: "UNAUTHORIZED",
@@ -91,14 +111,18 @@ function checkOwnerOrMember(context: any) {
   return user
 }
 
-const localizedSchema = z.record(z.string(), z.any())
+const localizedSchema = z.record(z.string(), z.string())
+
+const pageTypeSchema = z
+  .string()
+  .refine((val): val is PageType => val in PAGE_MAP, { message: "Invalid page type" })
 
 export const pageActions = {
   getPages: defineAction({
     input: z.object({
       limit: z.number().optional().default(10),
       offset: z.number().optional().default(0),
-      type: z.string().optional().default("Default"),
+      type: pageTypeSchema.optional().default("Default"),
       status: z.enum(["published", "draft"]).optional(),
       orderBy: z.enum(["title", "postedAt", "createdAt"]).optional().default("postedAt"),
       order: z.enum(["asc", "desc"]).optional().default("desc")
@@ -106,7 +130,8 @@ export const pageActions = {
     handler: async (input, context) => {
       const { limit, offset, type, status, orderBy: orderByField, order: orderDirection } = input
       const user = context.locals.user
-      const isAuthorized = (user as any)?.role === "owner" || (user as any)?.role === "member"
+      const role = getRole(user)
+      const isAuthorized = role === "owner" || role === "member"
 
       if (status === "draft" && !isAuthorized) {
         throw new ActionError({
@@ -115,7 +140,7 @@ export const pageActions = {
         })
       }
 
-      const filters = [eq(pages.type, type as any), isNull(pages.deletedAt)]
+      const filters = [eq(pages.type, type), isNull(pages.deletedAt)]
 
       if (status === "published") {
         filters.push(isNotNull(pages.postedAt))
@@ -139,11 +164,12 @@ export const pageActions = {
           offset
         })
 
-        return results.map((row) => ({
-          ...row,
-          blocks: row.content?.blocks || [],
-          properties: row.content?.properties || {}
-        }))
+        return results.map((row) =>
+          Object.assign({}, row, {
+            blocks: row.content?.blocks || [],
+            properties: row.content?.properties || {}
+          })
+        ) as Page[]
       } catch (error) {
         console.error("Pages API Error:", error)
         throw new ActionError({
@@ -156,7 +182,7 @@ export const pageActions = {
 
   createPage: defineAction({
     input: z.object({
-      type: z.string(),
+      type: pageTypeSchema,
       slug: z.string(),
       title: z.string().or(localizedSchema),
       description: z.string().or(localizedSchema).optional(),
@@ -167,12 +193,12 @@ export const pageActions = {
     handler: async (input, context) => {
       const user = checkOwnerOrMember(context)
 
-      const newPage = {
-        type: input.type as any,
+      const newPage: typeof pages.$inferInsert = {
+        type: input.type,
         slug: input.slug,
-        title: input.title as any,
-        description: (input.description || {}) as any,
-        tags: (input.tags || []) as any,
+        title: toLocalized(input.title),
+        description: toLocalizedOptional(input.description),
+        tags: input.tags?.map(toLocalized) ?? [],
         authorIds: [user.id],
         content: {
           properties: input.properties || {},
@@ -196,10 +222,10 @@ export const pageActions = {
           blocks: inserted.content.blocks,
           properties: inserted.content.properties
         }
-      } catch (error: any) {
+      } catch (error) {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to create page"
+          message: error instanceof Error ? error.message : "Failed to create page"
         })
       }
     }
@@ -230,14 +256,14 @@ export const pageActions = {
         })
       }
 
-      const versionData = {
+      const versionData: typeof pageVersions.$inferInsert = {
         pageId: id,
         status: "pending" as const,
         slug: body.slug || existingPage.slug,
         type: existingPage.type,
-        title: (body.title || existingPage.title) as any,
-        description: (body.description || existingPage.description) as any,
-        tags: (body.tags || []) as any,
+        title: toLocalized(body.title || existingPage.title),
+        description: toLocalizedOptional(body.description ?? existingPage.description ?? undefined),
+        tags: (body.tags ? body.tags.map(toLocalized) : existingPage.tags) ?? [],
         authorIds: body.authorIds || [],
         content: {
           properties: body.properties || {},
@@ -263,11 +289,11 @@ export const pageActions = {
           properties: newVersion.content.properties,
           message: "Page changes saved as a new version pending approval"
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Version Creation Error:", error)
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to create page version"
+          message: error instanceof Error ? error.message : "Failed to create page version"
         })
       }
     }

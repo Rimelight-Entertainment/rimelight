@@ -5,9 +5,14 @@ import type {
   PageVersion,
   BasePageProperties,
   PageDefinition,
-  Property
+  Property,
+  PropertyGroup
 } from "@/types/pages"
-import type { Block } from "@/types/blocks"
+import type { Block, SectionBlock } from "@/types/blocks"
+
+function getValue(value: object, key: string): unknown {
+  return Reflect.get(value, key)
+}
 
 export const getLocalizedContent = <T = string>(
   field: Localized<T> | T | undefined,
@@ -19,32 +24,25 @@ export const getLocalizedContent = <T = string>(
 
   const locale = toValue(currentLocale)
 
-  if (typeof field === "object" && field !== null) {
-    if (Object.keys(field).length === 0) return ""
+  if (Object.keys(field).length === 0) return ""
 
-    const val = (field as any)[locale] ?? (field as any)["en"]
-    if (val !== undefined && val !== null) {
-      if (typeof val === "string") return val
+  const val = getValue(field, locale) ?? getValue(field, "en")
+  if (val !== undefined && val !== null) {
+    if (typeof val === "string") return val
 
-      if (typeof val === "object") {
-        const innerVal = val[locale] ?? val["en"]
-        if (typeof innerVal === "string") return innerVal
+    if (typeof val === "object") {
+      const innerVal = getValue(val, locale) ?? getValue(val, "en")
+      if (typeof innerVal === "string") return innerVal
 
-        const firstString = Object.values(val as object).find((v) => typeof v === "string")
-        if (firstString !== undefined) return String(firstString)
-      }
+      const firstString = Object.values(val).find((v) => typeof v === "string")
+      if (firstString !== undefined) return firstString
     }
-
-    const firstVal = Object.values(field as object).find(
-      (v) => typeof v === "string" && v.trim() !== ""
-    )
-    if (firstVal !== undefined) return String(firstVal)
-
-    return ""
   }
 
-  const strVal = String(field)
-  return strVal === "[object Object]" ? "" : strVal
+  const firstVal = Object.values(field).find((v) => typeof v === "string" && v.trim() !== "")
+  if (firstVal !== undefined) return String(firstVal)
+
+  return ""
 }
 
 /**
@@ -56,10 +54,10 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   const updatedProperties: BasePageProperties = {}
   const definitionGroups = definition.properties
 
-  const existingProperties = (page.properties || {}) as any
+  const existingProperties: Record<string, PropertyGroup | undefined> = page.properties || {}
 
   for (const [groupId, group] of Object.entries(definitionGroups)) {
-    const definitionGroup = group as any
+    const definitionGroup = group
     let existingGroup = existingProperties[groupId]
 
     if (!existingGroup) {
@@ -77,19 +75,19 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
     const definitionFields = definitionGroup.fields || {}
 
     for (const [fieldId, field] of Object.entries(definitionFields)) {
-      const definitionField = field as any
+      const definitionField = field
       let value = definitionField.defaultValue
 
       if (existingGroup) {
         if (existingGroup.fields?.[fieldId]?.defaultValue !== undefined) {
           value = existingGroup.fields[fieldId].defaultValue
-        } else if (existingGroup[fieldId] !== undefined) {
-          value = existingGroup[fieldId]
+        } else if (getValue(existingGroup, fieldId) !== undefined) {
+          value = getValue(existingGroup, fieldId)
         } else {
           const lowerFieldId = fieldId.toLowerCase()
           const foundKey = Object.keys(existingGroup).find((k) => k.toLowerCase() === lowerFieldId)
-          if (foundKey && existingGroup[foundKey] !== undefined) {
-            value = existingGroup[foundKey]
+          if (foundKey && getValue(existingGroup, foundKey) !== undefined) {
+            value = getValue(existingGroup, foundKey)
           }
         }
       }
@@ -106,20 +104,11 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
     }
   }
 
-  page.properties = updatedProperties as any
+  page.properties = updatedProperties
 
   if (definition.initialBlocks) {
     const templateBlocks = definition.initialBlocks()
     const currentBlocks = page.blocks || []
-
-    const isSameBlock = (a: any, b: any) => {
-      if (a.id === b.id) return true
-      if (a.type !== b.type) return false
-      if (a.type === "SectionBlock" && b.type === "SectionBlock") {
-        return a.props.title === b.props.title
-      }
-      return false
-    }
 
     const definitionTemplatedBlocks = templateBlocks.filter((b) => b.isTemplated)
 
@@ -135,20 +124,25 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
       if (existingIdx === -1) {
         updatedBlocks.splice(dbIndexAtStart, 0, { ...db })
       } else {
-        const existing = updatedBlocks[existingIdx]!
-        const updated = {
-          ...existing,
-          ...db,
-          props: {
-            ...db.props
-          }
-        } as any
-
-        if (existing.type === "SectionBlock" && db.type === "SectionBlock") {
-          updated.props.children = existing.props.children || db.props.children || []
+        const existing = updatedBlocks[existingIdx]
+        if (!existing) {
+          updatedBlocks.splice(dbIndexAtStart, 0, { ...db })
+          continue
         }
 
-        updatedBlocks[existingIdx] = updated
+        if (existing.type === "SectionBlock" && db.type === "SectionBlock") {
+          const updated: SectionBlock = {
+            ...existing,
+            ...db,
+            props: {
+              ...db.props,
+              children: existing.props.children || db.props.children || []
+            }
+          }
+          updatedBlocks[existingIdx] = updated
+        } else {
+          updatedBlocks[existingIdx] = { ...db }
+        }
       }
     }
 
@@ -156,6 +150,15 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   }
 
   return page
+}
+
+function isSameBlock(a: any, b: any) {
+  if (a.id === b.id) return true
+  if (a.type !== b.type) return false
+  if (a.type === "SectionBlock" && b.type === "SectionBlock") {
+    return a.props.title === b.props.title
+  }
+  return false
 }
 
 export function dehydratePageProperties(properties: BasePageProperties): any {
@@ -172,20 +175,24 @@ export function dehydratePageProperties(properties: BasePageProperties): any {
 
 export function convertVersionToPage(version: PageVersion): Page {
   const blocks = version.content?.blocks || version.blocks || []
-  const properties = version.content?.properties || (version as any).properties
+  const properties = version.content?.properties || getValue(version, "properties")
+  const rawAuthorIds = getValue(version, "authorIds")
 
   return {
-    ...version,
     id: version.pageId || version.id,
     type: version.type,
     blocks: JSON.parse(JSON.stringify(blocks)),
     properties: properties ? JSON.parse(JSON.stringify(properties)) : {},
-    authorsIds: (version as any).authorsIds || (version as any).authorIds || [],
+    authorsIds:
+      version.authorsIds ??
+      (Array.isArray(rawAuthorIds)
+        ? rawAuthorIds.filter((s): s is string => typeof s === "string")
+        : []),
     createdAt: version.createdAt ? new Date(version.createdAt) : new Date(),
     updatedAt: version.updatedAt ? new Date(version.updatedAt) : new Date(),
     postedAt: version.postedAt ? new Date(version.postedAt) : null,
-    banner: version.banner,
-    icon: version.icon,
+    ...(version.banner ? { banner: version.banner } : {}),
+    ...(version.icon ? { icon: version.icon } : {}),
     images: version.images || [],
     title: version.title || { en: "" },
     slug: version.slug || "",
@@ -204,7 +211,7 @@ export function getPageResolutionPath(idOrSlug: string): string {
   )
     return ""
 
-  let clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, "")
+  let clean = idOrSlug.replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, "")
 
   clean = clean.replace(/^\/|\/$/g, "")
 

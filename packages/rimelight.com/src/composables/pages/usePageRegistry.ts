@@ -7,8 +7,8 @@ const PAGE_DEFINITIONS = reactive<Partial<Record<PageType, PageDefinition>>>({})
 export const usePageRegistry = () => {
   const definitions = readonly(PAGE_DEFINITIONS)
 
-  const registerDefinitions = (definitions: Record<string, PageDefinition>) => {
-    Object.assign(PAGE_DEFINITIONS, definitions)
+  const registerDefinitions = (defs: Record<string, PageDefinition>) => {
+    Object.assign(PAGE_DEFINITIONS, defs)
   }
 
   const getTypeLabelKey = (type: PageType): string => {

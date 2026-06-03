@@ -18,6 +18,33 @@ const selectedPath = ref("")
 const selectedKeys = ref<string[]>([])
 const localFolders = ref<string[]>([])
 
+function splitFilename(name: string) {
+  const lastDotIndex = name.lastIndexOf(".")
+  if (lastDotIndex === -1) {
+    return { basename: name, extension: "" }
+  }
+  return {
+    basename: name.substring(0, lastDotIndex),
+    extension: name.substring(lastDotIndex)
+  }
+}
+
+function getExt(key: string) {
+  const fileName = key.split("/").pop() || ""
+  return fileName.includes(".") ? fileName.substring(fileName.lastIndexOf(".")) : ""
+}
+
+function downloadAsset(key: string) {
+  const encodedKey = key.split("/").map(encodeURIComponent).join("/")
+  const link = document.createElement("a")
+  link.href = `/api/assets/${encodedKey}`
+  const fileName = key.split("/").pop() || key
+  link.download = fileName
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
 export function useAssetManagement() {
   const { confirm } = useConfirm()
   const toast = useToast()
@@ -41,23 +68,6 @@ export function useAssetManagement() {
       status.value = "error"
       console.error(err)
     }
-  }
-
-  // Helper functions
-  function splitFilename(name: string) {
-    const lastDotIndex = name.lastIndexOf(".")
-    if (lastDotIndex === -1) {
-      return { basename: name, extension: "" }
-    }
-    return {
-      basename: name.substring(0, lastDotIndex),
-      extension: name.substring(lastDotIndex)
-    }
-  }
-
-  function getExt(key: string) {
-    const fileName = key.split("/").pop() || ""
-    return fileName.includes(".") ? fileName.substring(fileName.lastIndexOf(".")) : ""
   }
 
   // Operations
@@ -201,17 +211,6 @@ export function useAssetManagement() {
     } finally {
       isProcessing.value = false
     }
-  }
-
-  function downloadAsset(key: string) {
-    const encodedKey = key.split("/").map(encodeURIComponent).join("/")
-    const link = document.createElement("a")
-    link.href = `/api/assets/${encodedKey}`
-    const fileName = key.split("/").pop() || key
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
   }
 
   function addLocalFolder(name: string, parentPath: string) {

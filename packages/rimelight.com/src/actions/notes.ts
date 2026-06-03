@@ -50,10 +50,9 @@ export const notes = {
           orderBy: [desc(note.createdAt)]
         })
 
-        return notesList.map((n) => ({
-          ...n,
-          labels: n.noteLabels.map((nl) => nl.label)
-        }))
+        return notesList.map((n) =>
+          Object.assign({}, n, { labels: n.noteLabels.map((nl) => nl.label) })
+        )
       } catch (error) {
         console.error("Failed to fetch notes:", error)
         throw new ActionError({
@@ -99,7 +98,7 @@ export const notes = {
               labelId
             }))
           )
-        } catch (error) {
+        } catch {
           await db.delete(note).where(eq(note.id, newNote.id))
           throw new ActionError({
             code: "INTERNAL_SERVER_ERROR",
@@ -322,10 +321,9 @@ export const notes = {
         }
       })
 
-      return trashNotes.map((n) => ({
-        ...n,
-        labels: n.noteLabels.map((nl) => nl.label)
-      }))
+      return trashNotes.map((n) =>
+        Object.assign({}, n, { labels: n.noteLabels.map((nl) => nl.label) })
+      )
     }
   }),
 

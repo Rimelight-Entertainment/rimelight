@@ -197,7 +197,7 @@ export const projects = {
           .returning()
 
         return newList
-      } catch (error) {
+      } catch {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create list."
@@ -287,7 +287,7 @@ export const projects = {
           .returning()
 
         return newCard
-      } catch (error) {
+      } catch {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create card."
@@ -358,10 +358,11 @@ export const projects = {
         }
 
         return { success: true }
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Failed to delete card."
         throw new ActionError({
-          code: error.code || "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to delete card."
+          code: "INTERNAL_SERVER_ERROR",
+          message
         })
       }
     }
@@ -386,18 +387,20 @@ export const projects = {
     handler: async (input, context) => {
       checkAuth(context)
       try {
-        const [newField] = await db
-          .insert(customFieldDefinition)
-          .values({
-            boardId: input.boardId,
-            name: input.name,
-            type: input.type,
-            options: input.options as any
-          })
-          .returning()
+        const values: typeof customFieldDefinition.$inferInsert = {
+          boardId: input.boardId,
+          name: input.name,
+          type: input.type,
+          options: input.options.map((o) => ({
+            label: o.label,
+            value: o.value,
+            ...(o.color ? { color: o.color } : {})
+          }))
+        }
+        const [newField] = await db.insert(customFieldDefinition).values(values).returning()
 
         return newField
-      } catch (error) {
+      } catch {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create custom field."

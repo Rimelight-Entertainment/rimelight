@@ -73,11 +73,9 @@ const step2Schema = z
   })
 
 const step3Schema = z.object({
-  terms: z
-    .boolean()
-    .refine((val) => val, {
-      message: messages.auth_terms_required ?? "You must accept the terms of service"
-    }),
+  terms: z.boolean().refine((val) => val, {
+    message: messages.auth_terms_required ?? "You must accept the terms of service"
+  }),
   newsletter: z.boolean().optional()
 })
 

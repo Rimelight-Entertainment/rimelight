@@ -1,6 +1,30 @@
 import { ref, type MaybeRefOrGetter, toValue } from "vue"
 import type { Property, PropertyGroup, BasePageProperties } from "@/types/pages"
 
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v)
+}
+
+function hasNonEmptyStringValue(v: unknown): boolean {
+  if (v === undefined || v === null) return false
+  if (typeof v === "string") return v.trim() !== ""
+  if (typeof v === "number" || typeof v === "boolean") return String(v).trim() !== ""
+  return false
+}
+
+function getSortedFields(fields: Record<string, Property>) {
+  if (!fields) return []
+  return Object.entries(fields).toSorted(([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0))
+}
+
+function getSortedGroups(props: MaybeRefOrGetter<BasePageProperties>) {
+  const p = toValue(props)
+  if (!p) return []
+  return Object.entries(p)
+    .filter((entry): entry is [string, PropertyGroup] => entry[1] !== undefined)
+    .toSorted(([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0))
+}
+
 export const useInfobox = (
   propertiesRef: MaybeRefOrGetter<BasePageProperties>,
   localeRef = ref("en")
@@ -16,14 +40,17 @@ export const useInfobox = (
     if (isReadOnly) {
       const val = schema.defaultValue
 
-      if (typeof val === "object" && val !== null && !Array.isArray(val)) {
-        const v = val as Record<string, any>
-        if (v[locale.value] !== undefined && String(v[locale.value]).trim() !== "") return true
-        if (v["en"] !== undefined && String(v["en"]).trim() !== "") return true
-
-        return Object.values(v).some(
-          (x) => x !== undefined && x !== null && String(x).trim() !== ""
+      if (isRecord(val)) {
+        if (
+          val[locale.value] !== undefined &&
+          val[locale.value] !== null &&
+          hasNonEmptyStringValue(val[locale.value])
         )
+          return true
+        if (val["en"] !== undefined && val["en"] !== null && hasNonEmptyStringValue(val["en"]))
+          return true
+
+        return Object.values(val).some((x) => hasNonEmptyStringValue(x))
       }
 
       if (schema.type === "text") return !!val && String(val).trim() !== ""
@@ -40,19 +67,6 @@ export const useInfobox = (
   const shouldRenderGroup = (group: PropertyGroup, isReadOnly: boolean) => {
     if (!group || !group.fields) return false
     return Object.values(group.fields).some((schema) => isFieldVisible(schema, isReadOnly))
-  }
-
-  const getSortedFields = (fields: Record<string, Property>) => {
-    if (!fields) return []
-    return Object.entries(fields).toSorted(([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0))
-  }
-
-  const getSortedGroups = (props: MaybeRefOrGetter<BasePageProperties>) => {
-    const p = toValue(props)
-    if (!p) return []
-    return (Object.entries(p) as [string, PropertyGroup][]).toSorted(
-      ([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0)
-    )
   }
 
   return {

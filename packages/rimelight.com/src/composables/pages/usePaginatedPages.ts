@@ -51,7 +51,7 @@ export function usePaginatedPages(options: UsePaginatedPagesOptions) {
       throw new Error(error.message || "Failed to fetch pages")
     }
 
-    return (data as any) || []
+    return data ?? []
   }
 
   const refresh = async (): Promise<void> => {
@@ -62,7 +62,7 @@ export function usePaginatedPages(options: UsePaginatedPagesOptions) {
       offset.value = newPages.length
       hasMore.value = newPages.length === initialLimit
       initialStatus.value = "success"
-    } catch (e) {
+    } catch {
       initialStatus.value = "error"
     }
   }
@@ -93,7 +93,7 @@ export function usePaginatedPages(options: UsePaginatedPagesOptions) {
 
   if (immediate) {
     onMounted(() => {
-      refresh()
+      void refresh()
     })
   }
 

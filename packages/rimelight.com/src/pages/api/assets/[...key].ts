@@ -1,5 +1,16 @@
 import type { APIRoute } from "astro"
 
+interface CloudflareEnv {
+  BLOB: R2Bucket
+  R2: R2Bucket
+}
+
+function getCloudflareEnv(
+  locals: App.Locals & { runtime?: { env: CloudflareEnv } }
+): CloudflareEnv | undefined {
+  return locals.runtime?.env
+}
+
 export const GET: APIRoute = async (context) => {
   const user = context.locals.user
   if (!user) {
@@ -11,7 +22,7 @@ export const GET: APIRoute = async (context) => {
     return new Response("Bad Request", { status: 400 })
   }
 
-  const cloudflareEnv = (context.locals as any).runtime?.env
+  const cloudflareEnv = getCloudflareEnv(context.locals)
   const BLOB = cloudflareEnv?.BLOB
   if (!BLOB) {
     // Return mock data/warning in local development so it doesn't break
@@ -42,7 +53,7 @@ export const PUT: APIRoute = async (context) => {
     return new Response("Bad Request", { status: 400 })
   }
 
-  const cloudflareEnv = (context.locals as any).runtime?.env
+  const cloudflareEnv = getCloudflareEnv(context.locals)
   const BLOB = cloudflareEnv?.BLOB
   if (!BLOB) {
     console.warn(
@@ -76,7 +87,7 @@ export const DELETE: APIRoute = async (context) => {
     return new Response("Bad Request", { status: 400 })
   }
 
-  const cloudflareEnv = (context.locals as any).runtime?.env
+  const cloudflareEnv = getCloudflareEnv(context.locals)
   const BLOB = cloudflareEnv?.BLOB
   if (!BLOB) {
     console.warn(
@@ -106,7 +117,7 @@ export const POST: APIRoute = async (context) => {
     return new Response("Bad Request", { status: 400 })
   }
 
-  const cloudflareEnv = (context.locals as any).runtime?.env
+  const cloudflareEnv = getCloudflareEnv(context.locals)
   const BLOB = cloudflareEnv?.BLOB
   if (!BLOB) {
     console.warn(
@@ -117,15 +128,18 @@ export const POST: APIRoute = async (context) => {
     })
   }
 
-  const body = (await context.request.json()) as any
-  const { to: newKey } = body
-  if (!newKey) {
-    return new Response("Missing target key ('to')", { status: 400 })
+  const body: Record<string, unknown> = await context.request.json()
+  const newKey = body.to
+  if (typeof newKey !== "string") {
+    return new Response("Missing or invalid target key ('to')", { status: 400 })
   }
 
   const obj = await BLOB.get(key)
   if (!obj) {
     return new Response("Source object not found", { status: 404 })
+  }
+  if (!obj.body) {
+    return new Response("Source object has no body", { status: 500 })
   }
 
   await BLOB.put(newKey, obj.body, {

@@ -6,14 +6,16 @@ import { useAuth } from "../auth/useAuth"
 const activeTeamId = ref<string | null>(null)
 const isNotificationsSlideoverOpen = ref<boolean>(false)
 
+type OrgState = ReturnType<typeof authClient.useActiveOrganization>
+
 export const useDashboard = () => {
   const { session } = useAuth()
 
   // 1. Auth States (Client-only, only if logged in)
-  const activeOrgState =
+  const activeOrgState: OrgState | null =
     typeof window !== "undefined" && session.value ? authClient.useActiveOrganization() : null
 
-  const activeOrganization = computed(() => (activeOrgState as any)?.value?.data || null)
+  const activeOrganization = computed(() => activeOrgState?.value?.data ?? null)
 
   const setActiveTeam = (id: string | null) => {
     activeTeamId.value = id

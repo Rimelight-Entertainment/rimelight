@@ -85,17 +85,14 @@ export const admin = {
         ])
 
         return {
-          users: users.map((u) => ({
-            ...u,
-            organizations: allMemberships
-              .filter((m) => m.userId === u.id)
-              .map((m) => ({
-                ...m.org,
-                memberId: m.memberId,
-                role: m.role
-              })),
-            teams: allTeamMemberships.filter((m) => m.userId === u.id).map((m) => m.tm)
-          }))
+          users: users.map((u) =>
+            Object.assign({}, u, {
+              organizations: allMemberships
+                .filter((m) => m.userId === u.id)
+                .map((m) => Object.assign({}, m.org, { memberId: m.memberId, role: m.role })),
+              teams: allTeamMemberships.filter((m) => m.userId === u.id).map((m) => m.tm)
+            })
+          )
         }
       } catch (error) {
         console.error("Failed to fetch users:", error)

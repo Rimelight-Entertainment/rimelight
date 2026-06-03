@@ -15,10 +15,12 @@ function deepMerge<T extends Record<string, any>>(target: T, source: any): T {
         if (!(key in target)) {
           Object.assign(output, { [key]: sourceVal })
         } else {
-          ;(output as any)[key] = deepMerge(
-            typeof targetVal === "object" && targetVal !== null ? targetVal : {},
-            sourceVal
-          )
+          Object.assign(output, {
+            [key]: deepMerge(
+              typeof targetVal === "object" && targetVal !== null ? targetVal : {},
+              sourceVal
+            )
+          })
         }
       } else {
         if (!(key in target) || targetVal === undefined) {
@@ -34,9 +36,9 @@ export function useRC<T extends Record<string, any>>(namespace: string, propsPro
   const appConfig = useAppConfig()
 
   const rc = computed(() => {
-    const config = (appConfig.rimelightComponents as any) || {}
-    const conf = config[namespace] || config[namespace.toLowerCase()] || {}
-    return deepMerge(propsProp || ({} as T), conf.slots || conf)
+    const config: Record<string, any> = appConfig.rimelightComponents || {}
+    const conf: Record<string, any> = config[namespace] || config[namespace.toLowerCase()] || {}
+    return deepMerge<T>(propsProp ?? Object.create(null), conf.slots || conf)
   })
 
   return {

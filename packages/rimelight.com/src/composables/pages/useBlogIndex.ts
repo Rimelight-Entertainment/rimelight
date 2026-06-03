@@ -19,7 +19,6 @@ export interface UseBlogIndexOptions {
 
 function slugify(text: string): string {
   return text
-    .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-")

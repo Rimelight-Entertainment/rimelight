@@ -86,12 +86,8 @@ export const useFocusTimer = () => {
       isModified.value = false
     }
 
-    if (
-      defaultWindow &&
-      "Notification" in defaultWindow &&
-      (defaultWindow as any).Notification.permission === "default"
-    ) {
-      ;(defaultWindow as any).Notification.requestPermission()
+    if (defaultWindow?.Notification?.permission === "default") {
+      void defaultWindow.Notification.requestPermission()
     }
 
     isRunning.value = true
@@ -136,21 +132,17 @@ export const useFocusTimer = () => {
     }
 
     if (defaultWindow) {
-      const audio = new (defaultWindow as any).Audio(
+      const audio = new defaultWindow.Audio(
         "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
       )
-      audio.play().catch(() => {})
-    }
+      void audio.play()
 
-    if (
-      defaultWindow &&
-      "Notification" in defaultWindow &&
-      (defaultWindow as any).Notification.permission === "granted"
-    ) {
-      new (defaultWindow as any).Notification("Focus Timer Done!", {
-        body: mode.value === "work" ? "Time for a break!" : "Break over, back to work!",
-        icon: "/logo.png"
-      })
+      if (defaultWindow.Notification.permission === "granted") {
+        void new defaultWindow.Notification("Focus Timer Done!", {
+          body: mode.value === "work" ? "Time for a break!" : "Break over, back to work!",
+          icon: "/logo.png"
+        })
+      }
     }
 
     if (mode.value === "work") {

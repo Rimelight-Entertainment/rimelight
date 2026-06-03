@@ -76,35 +76,35 @@ const styles = computed(() => {
 const activeTabIndex = ref(0)
 const openSections = ref<Record<string, boolean>>({})
 
+function getFormat(value: string): SwatchData["format"] {
+  if (value.startsWith("#")) return "hex"
+  if (value.startsWith("oklch")) return "oklch"
+  if (value.startsWith("rgb")) return "rgb"
+  if (value.startsWith("hsl")) return "hsl"
+  if (value.startsWith("cmyk")) return "cmyk"
+  return "unknown"
+}
+
+function getName(fullVarName: string): string {
+  const parts = fullVarName.split("-")
+  return parts[parts.length - 1] ?? ""
+}
+
 const tabItems = computed(() => {
   if (!css) return []
   const tabs: PaletteTab[] = []
   const lines = css.split("\n")
   const stack: string[] = []
 
-  function getFormat(value: string): SwatchData["format"] {
-    if (value.startsWith("#")) return "hex"
-    if (value.startsWith("oklch")) return "oklch"
-    if (value.startsWith("rgb")) return "rgb"
-    if (value.startsWith("hsl")) return "hsl"
-    if (value.startsWith("cmyk")) return "cmyk"
-    return "unknown"
-  }
-
-  function getName(fullVarName: string): string {
-    const parts = fullVarName.split("-")
-    return parts[parts.length - 1] ?? ""
-  }
-
   lines.forEach((line) => {
     // Check for region markers
-    const regionStartMatch = line.match(/\/\*\s*region\s+(.*?)\s*\*\//)
+    const regionStartMatch = line.match(/\/\*\s*region\s+(\S+)\s*\*\//)
     const regionEndMatch = line.match(/\/\*\s*endregion\s*\*\//)
     if (regionStartMatch) {
       stack.push(regionStartMatch[1] ?? "")
     }
     // Capture colors only if NOT a comment line (except for the regions we just identified)
-    const colorMatch = line.match(/^\s*--color-([\w-]+):\s*(.*?);/)
+    const colorMatch = line.match(/^\s*--color-([\w-]+):([^;]*);/)
     if (colorMatch && !line.trim().startsWith("/*")) {
       const fullVarName = colorMatch[1] ?? ""
       const value = colorMatch[2]?.trim() ?? ""

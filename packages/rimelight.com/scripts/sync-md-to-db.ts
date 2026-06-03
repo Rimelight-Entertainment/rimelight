@@ -43,13 +43,13 @@ function parseMarkdown(filePath: string) {
   if (!match) {
     return { title: path.basename(filePath, path.extname(filePath)), body: fileContent }
   }
-  const yaml = match[1]
-  const body = match[2]
+  const yaml = match[1] ?? ""
+  const body = match[2] ?? ""
   const data: Record<string, string> = {}
   for (const line of yaml.split("\n")) {
     const parts = line.split(":")
     if (parts.length >= 2) {
-      const key = parts[0].trim()
+      const key = (parts[0] ?? "").trim()
       const value = parts
         .slice(1)
         .join(":")
@@ -172,7 +172,7 @@ async function sync() {
     const cacheKey = `${sourceType}:${sourceId}`
     activeSourceKeys.add(cacheKey)
 
-    const updatedAt = new Date(pageRow.updatedAt)
+    const updatedAt = pageRow.updatedAt ? new Date(pageRow.updatedAt) : new Date(0)
     const dbUpdatedAt = existingMap.get(cacheKey)
 
     if (dbUpdatedAt && updatedAt <= dbUpdatedAt) {
@@ -180,10 +180,10 @@ async function sync() {
     }
 
     // Dynamic pages titles are Localized objects { en: "..." }
-    const titleObj = pageRow.title as Record<string, string>
+    const titleObj = pageRow.title ?? {}
     const title = titleObj?.en || Object.values(titleObj || {})[0] || "Untitled Page"
 
-    const descObj = pageRow.description as Record<string, string>
+    const descObj = pageRow.description ?? {}
     const description = descObj?.en || Object.values(descObj || {})[0] || ""
 
     // Extract text content from custom editor blocks
@@ -206,25 +206,32 @@ async function sync() {
 
   // 2. Perform batched updates in chunks of 50
   const chunkSize = 50
+  const batchCount = Math.ceil(toUpsert.length / chunkSize)
+  const upsertPromises: Array<Promise<void>> = []
   for (let i = 0; i < toUpsert.length; i += chunkSize) {
     const chunk = toUpsert.slice(i, i + chunkSize)
-    console.log(
-      `Upserting batch ${Math.floor(i / chunkSize) + 1}/${Math.ceil(toUpsert.length / chunkSize)} (${chunk.length} items)...`
+    upsertPromises.push(
+      db
+        .insert(searchIndex)
+        .values(chunk)
+        .onConflictDoUpdate({
+          target: [searchIndex.sourceType, searchIndex.sourceId],
+          set: {
+            title: sql`excluded.title`,
+            url: sql`excluded.url`,
+            bodyContent: sql`excluded.body_content`,
+            searchableText: sql`excluded.searchable_text`,
+            updatedAt: sql`excluded.updated_at`
+          }
+        })
+        .then(() => {
+          console.log(
+            `Upserting batch ${Math.floor(i / chunkSize) + 1}/${batchCount} (${chunk.length} items)...`
+          )
+        })
     )
-    await db
-      .insert(searchIndex)
-      .values(chunk)
-      .onConflictDoUpdate({
-        target: [searchIndex.sourceType, searchIndex.sourceId],
-        set: {
-          title: sql`excluded.title`,
-          url: sql`excluded.url`,
-          bodyContent: sql`excluded.body_content`,
-          searchableText: sql`excluded.searchable_text`,
-          updatedAt: sql`excluded.updated_at`
-        }
-      })
   }
+  await Promise.all(upsertPromises)
 
   // 3. Remove deleted/unpublished documents from the index
   const toDeleteMap = new Map<string, string[]>()
@@ -238,14 +245,20 @@ async function sync() {
     }
   }
 
+  const deletePromises: Array<Promise<void>> = []
   for (const [type, ids] of toDeleteMap.entries()) {
-    console.log(
-      `Cleaning up ${ids.length} deleted/unpublished ${type} records from database index...`
+    deletePromises.push(
+      db
+        .delete(searchIndex)
+        .where(and(eq(searchIndex.sourceType, type), inArray(searchIndex.sourceId, ids)))
+        .then(() => {
+          console.log(
+            `Cleaning up ${ids.length} deleted/unpublished ${type} records from database index...`
+          )
+        })
     )
-    await db
-      .delete(searchIndex)
-      .where(and(eq(searchIndex.sourceType, type), inArray(searchIndex.sourceId, ids)))
   }
+  await Promise.all(deletePromises)
 
   console.log("Sync completed successfully!")
 }

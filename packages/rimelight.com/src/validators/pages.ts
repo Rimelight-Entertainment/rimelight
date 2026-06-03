@@ -4,7 +4,7 @@ const BaseRules = z.object({
   id: z.uuid()
 })
 
-const fields = Object.keys(BaseRules.shape) as [keyof typeof BaseRules.shape]
+const fields = BaseRules.keyof().options
 
 export const CreateRules = BaseRules.omit({ id: true })
 

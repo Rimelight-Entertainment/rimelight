@@ -158,7 +158,7 @@ const parsedData = computed(() => {
       return
     }
     // Parse Variables
-    const varMatch = line.match(/^\s*(--[\w-]+):\s*(.*?);/)
+    const varMatch = line.match(/^\s*(--[\w-]+):([^;]*);/)
     if (varMatch && !line.trim().startsWith("/*")) {
       const key = varMatch[1] ?? ""
       const value = varMatch[2]?.trim() ?? ""
@@ -169,7 +169,7 @@ const parsedData = computed(() => {
       }
     }
     // Parse Fonts (Independent of block, usually root/static)
-    const fontMatch = line.match(/^\s*--font-([\w-]+):\s*(.*?);/)
+    const fontMatch = line.match(/^\s*--font-([\w-]+):([^;]*);/)
     if (fontMatch && !line.trim().startsWith("/*")) {
       fonts.push({
         name: fontMatch[1] ?? "",

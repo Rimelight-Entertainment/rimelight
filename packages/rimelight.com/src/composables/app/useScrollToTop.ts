@@ -3,6 +3,14 @@ import { defaultDocument, defaultWindow } from "@/utils/ssr"
 
 const scrollPercentage = ref(0)
 
+function scrollToTop() {
+  if (!defaultWindow) return
+  defaultWindow.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  })
+}
+
 export const useScrollToTop = () => {
   const minScrollThreshold = 15
 
@@ -22,15 +30,6 @@ export const useScrollToTop = () => {
     }
 
     scrollPercentage.value = Math.min((scrollY / maxScroll) * 100, 100)
-  }
-
-  function scrollToTop() {
-    if (!defaultWindow) return
-
-    defaultWindow.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    })
   }
 
   // Lifecycle

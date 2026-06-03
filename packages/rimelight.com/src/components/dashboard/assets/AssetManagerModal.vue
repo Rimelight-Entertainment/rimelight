@@ -217,6 +217,23 @@ const modalMoveTargetValue = computed({
   }
 })
 
+function findOrCreateNode(
+  parent: TreeItemExtended[],
+  path: string,
+  label: string
+): TreeItemExtended {
+  let node = parent.find((n) => n.label === label)
+  if (!node) {
+    node = {
+      label,
+      fullPath: path,
+      children: []
+    }
+    parent.push(node)
+  }
+  return node
+}
+
 const treeItems = computed<TreeItemExtended[]>(() => {
   const rootNode: TreeItemExtended[] = [
     {
@@ -243,23 +260,6 @@ const treeItems = computed<TreeItemExtended[]>(() => {
     if (f && typeof f === "string") foldersSet.add(f)
   })
   const sortedFolders = Array.from(foldersSet).toSorted()
-
-  const findOrCreateNode = (
-    parent: TreeItemExtended[],
-    path: string,
-    label: string
-  ): TreeItemExtended => {
-    let node = parent.find((n) => n.label === label)
-    if (!node) {
-      node = {
-        label,
-        fullPath: path,
-        children: []
-      }
-      parent.push(node)
-    }
-    return node
-  }
 
   sortedFolders.forEach((folderPath) => {
     if (typeof folderPath !== "string") return
@@ -305,7 +305,7 @@ const gridItems = computed(() => {
         const assetPath = parts.slice(0, -1).join("/")
         return assetPath === selectedPath.value
       })
-      .map((a) => ({ ...a, type: "asset" as const })) || []
+      .map((a) => Object.assign({}, a, { type: "asset" as const })) || []
   return [...folders, ...assetsInDir]
 })
 /* endregion */
