@@ -1,91 +1,92 @@
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-
+import { ref, reactive, onMounted } from "vue";
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
 interface Team {
-  id: string
-  name: string
-  slug: string
-  logo?: string
-  memberCount: number
-  createdAt: string
-  parentId: string | null
-  subteams?: Team[]
+    id: string;
+    name: string;
+    slug: string;
+    logo?: string;
+    memberCount: number;
+    createdAt: string;
+    parentId: string | null;
+    subteams?: Team[];
 }
-
-const teams = ref<Team[]>([])
-const pending = ref(true)
-const isCreateModalOpen = ref(false)
-const isSubmitting = ref(false)
+const teams = ref<Team[]>([]);
+const pending = ref(true);
+const isCreateModalOpen = ref(false);
+const isSubmitting = ref(false);
 const state = reactive({
-  name: "",
-  parentId: null as string | null,
-  parentName: ""
-})
-
+    name: "",
+    parentId: null as string | null,
+    parentName: ""
+});
 async function fetchTeams() {
-  pending.value = true
-  try {
-    const res = await fetch("/api/admin/teams")
-    teams.value = (await res.json()) as Team[]
-  } catch (e) {
-    console.error(e)
-  } finally {
-    pending.value = false
-  }
-}
-
-onMounted(() => {
-  fetchTeams()
-})
-
-function openCreateSubteamModal(parent: Team) {
-  state.parentId = parent.id
-  state.parentName = parent.name
-  isCreateModalOpen.value = true
-}
-
-async function createTeam(e: Event) {
-  e.preventDefault()
-  isSubmitting.value = true
-  try {
-    const res = await fetch("/api/admin/teams", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: state.name,
-        parentId: state.parentId
-      })
-    })
-    if (!res.ok) throw new Error("Failed to create team")
-    alert("Team created successfully.")
-    isCreateModalOpen.value = false
-    state.name = ""
-    state.parentId = null
-    state.parentName = ""
-    await fetchTeams()
-  } catch (err: any) {
-    alert("Error: " + err.message)
-  } finally {
-    isSubmitting.value = false
-  }
-}
-
-async function deleteTeam(id: string) {
-  if (!confirm("Are you sure you want to delete this team?")) return
-  try {
-    const res = await fetch(`/api/admin/teams/${id}`, { method: "DELETE" })
-    if (res.ok) {
-      alert("Team removed successfully.")
-      await fetchTeams()
-    } else {
-      alert("Failed to delete team.")
+    pending.value = true;
+    try {
+        const res = await fetch("/api/admin/teams");
+        teams.value = (await res.json()) as Team[];
     }
-  } catch (err) {
-    console.error(err)
-  }
+    catch (e) {
+        console.error(e);
+    }
+    finally {
+        pending.value = false;
+    }
+}
+onMounted(() => {
+    fetchTeams();
+});
+function openCreateSubteamModal(parent: Team) {
+    state.parentId = parent.id;
+    state.parentName = parent.name;
+    isCreateModalOpen.value = true;
+}
+async function createTeam(e: Event) {
+    e.preventDefault();
+    isSubmitting.value = true;
+    try {
+        const res = await fetch("/api/admin/teams", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: state.name,
+                parentId: state.parentId
+            })
+        });
+        if (!res.ok)
+            throw new Error("Failed to create team");
+        alert("Team created successfully.");
+        isCreateModalOpen.value = false;
+        state.name = "";
+        state.parentId = null;
+        state.parentName = "";
+        await fetchTeams();
+    }
+    catch (err: any) {
+        alert("Error: " + err.message);
+    }
+    finally {
+        isSubmitting.value = false;
+    }
+}
+async function deleteTeam(id: string) {
+    if (!confirm("Are you sure you want to delete this team?"))
+        return;
+    try {
+        const res = await fetch(`/api/admin/teams/${id}`, { method: "DELETE" });
+        if (res.ok) {
+            alert("Team removed successfully.");
+            await fetchTeams();
+        }
+        else {
+            alert("Failed to delete team.");
+        }
+    }
+    catch (err) {
+        console.error(err);
+    }
 }
 </script>
 

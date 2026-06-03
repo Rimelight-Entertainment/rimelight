@@ -1,9 +1,363 @@
-<script setup lang="ts">import { computed, ref, reactive } from "vue"
-import type { Page, Link } from "@/types/pages"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
-import { getLocalizedContent } from "@/utils/page"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"/* region Props */export interface PagePropertiesEditorProps {  rc?: {    aside?: string    icon?: string    titleInput?: string    type?: string    tags?: string    tabs?: string    image?: string    groupButton?: string    details?: string    field?: string    links?: string  }  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>}const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>()const { rc } = useRC("PagePropertiesEditor", rcProp)/* endregion *//* region Styles */const pagePropertiesEditorStyles = scv({  slots: {    asideClass:      "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",    iconClass: "rounded-full w-12 h-12 object-cover border border-default shadow-sm",    titleInputClass: "w-full",    typeClass: "text-xs text-dimmed uppercase tracking-wider text-center block mt-1",    tagsClass: "flex flex-row flex-wrap gap-1 justify-center mt-2",    imageClass: "w-full object-cover rounded-lg border border-default shadow-sm mt-4",    groupButtonClass:      "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",    detailsClass:      "p-3 flex flex-col gap-3 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",    fieldClass: "w-full",    linksClass: "flex flex-col gap-2 mt-4 pt-4 border-t border-default",    headerContent: "flex flex-col gap-2 items-center text-center",    slugInput:      "w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity text-center text-xs font-mono bg-neutral-100 dark:bg-neutral-800/80 px-2 py-1 rounded border border-default",    linksHeader: "flex items-center justify-between mb-2",    linksTitle: "text-xs font-bold uppercase tracking-wider text-dimmed",    linksWrapper: "flex flex-col gap-2",    linkItem:      "flex items-center justify-between p-2 rounded-lg border border-default bg-white dark:bg-neutral-900",    linkActions: "flex items-center gap-1",    emptyLinks: "text-xs text-dimmed italic",    modalOverlay:      "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm",    modalContent:      "bg-white dark:bg-neutral-900 border border-default rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col",    modalHeader: "flex items-center justify-between px-4 py-3 border-b border-default",    modalBody: "flex flex-col gap-4 p-4",    modalGrid: "grid grid-cols-2 gap-4",    modalFooter: "flex justify-end gap-2 p-4 border-t border-default"  }})const styles = computed(() => {  const resolved = pagePropertiesEditorStyles()  const result: Record<string, string> = {}  for (const [slot, value] of Object.entries(resolved)) {    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])  }  return result as Record<string, string>})/* endregion *//* region State */const page = defineModel<Page>({ required: true })const { t, locale } = useI18n()const sortedGroups = computed(() => {  if (!page.value?.properties) return []  return Object.entries(page.value.properties).toSorted((a, b) => {    return (a[1] as any).order - (b[1] as any).order  })})const getSortedFields = (fields: any) => {  if (!fields) return []  return Object.entries(fields).toSorted((a, b) => {    return (a[1] as any).order - (b[1] as any).order  })}// Link editing stateconst isLinkModalOpen = ref(false)const editingLinkIndex = ref<number | null>(null)const linkDraft = reactive<Partial<Link>>({  label: "",  to: "",  icon: "",  color: "neutral",  variant: "link"})/* endregion *//* region Logic */function openLinkModal(index: number | null = null) {  editingLinkIndex.value = index  if (index !== null && page.value.links?.[index]) {    const link = page.value.links[index]!    linkDraft.label = link.label    linkDraft.to = link.to    linkDraft.icon = link.icon    linkDraft.color = link.color || "neutral"    linkDraft.variant = link.variant || "link"  } else {    linkDraft.label = ""    linkDraft.to = ""    linkDraft.icon = ""    linkDraft.color = "neutral"    linkDraft.variant = "link"  }  isLinkModalOpen.value = true}function saveLink() {  if (!linkDraft.label || !linkDraft.to) return  if (!page.value.links) page.value.links = []  const newLink: Link = {    label: linkDraft.label,    to: linkDraft.to!,    icon: linkDraft.icon,    color: (linkDraft.color as any) || "neutral",    variant: (linkDraft.variant as any) || "link"  }  if (editingLinkIndex.value !== null) {    page.value.links[editingLinkIndex.value] = newLink  } else {    page.value.links.push(newLink)  }  isLinkModalOpen.value = false}function removeLink(index: number) {  if (page.value.links) {    page.value.links.splice(index, 1)  }}/* endregion */defineOptions({  name: "PagePropertiesEditor"})</script><template>  <aside :class="styles.asideClass">    <div      class="bg-white dark:bg-neutral-900 border border-default rounded-xl p-4 shadow-sm flex flex-col"    >      <div :class="styles.headerContent">        <div class="relative group/icon mb-2">          <img            v-if="page.icon?.src"            :src="page.icon?.src"            :alt="page.icon?.alt || 'Icon'"            :class="styles.iconClass"          />          <div            v-else            class="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center border-2 border-dashed border-default"          >            <span class="i-lucide-image size-6 text-neutral-400" />          </div>        </div>        <RLVInput          v-model="page.title.en"          placeholder="Enter page title..."          class="w-full text-center font-bold text-lg"        />        <div class="mt-2 w-full">          <RLVInput            v-model="page.slug"            placeholder="page-slug"            class="w-full text-center text-xs font-mono opacity-80"          />        </div>        <span :class="styles.typeClass">{{ page.type }}</span>        <div v-if="page.tags?.length" :class="styles.tagsClass">          <span            v-for="(tag, index) in page.tags"            :key="index"            class="text-[10px] px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-800 rounded font-mono text-dimmed"          >            {{ getLocalizedContent(tag, locale) }}          </span>        </div>        <div v-if="page.images?.length" class="w-full">          <img            v-if="page.images[0]"            :src="page.images[0].src"            :alt="page.images[0].alt || 'Page Image'"            :class="styles.imageClass"          />        </div>      </div>      <!-- Properties Fields Editor -->      <div class="mt-4 space-y-2 w-full">        <div v-for="[groupId, group] in sortedGroups" :key="groupId" class="w-full">          <div :class="styles.groupButtonClass">            <span>{{ getLocalizedContent((group as any).label, locale) }}</span>            <span class="i-lucide-chevron-down size-4 opacity-60" />          </div>          <div :class="styles.detailsClass">            <div              v-for="[fieldKey, schema] in getSortedFields((group as any).fields)"              :key="fieldKey"              class="w-full"            >              <RLVFormField :label="getLocalizedContent((schema as any).label, locale)">                <RLVInput                  v-if="(schema as any).type === 'text' || (schema as any).type === 'number'"                  v-model="(schema as any).defaultValue"                  placeholder="Type here..."                  class="w-full"                />                <select                  v-else-if="(schema as any).type === 'enum' && (schema as any).options"                  v-model="(schema as any).defaultValue"                  class="w-full bg-transparent border border-default rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-default bg-white dark:bg-neutral-900"                >                  <option                    v-for="opt in (schema as any).options"                    :key="typeof opt === 'string' ? opt : opt.value"                    :value="typeof opt === 'string' ? opt : opt.value"                  >                    {{ typeof opt === "string" ? opt : getLocalizedContent(opt, locale) }}                  </option>                </select>                <div v-else class="text-xs text-dimmed italic">Complex property editor</div>              </RLVFormField>            </div>          </div>        </div>      </div>    </div>    <!-- Page Links Management -->    <div :class="styles.linksClass">      <div :class="styles.linksHeader">        <h6 :class="styles.linksTitle">          {{ t("page_properties.links", "Links") }}        </h6>        <RLVButton          icon="i-lucide-plus"          size="sm"          variant="outline"          color="neutral"          class="!p-1"          @click="openLinkModal()"        />      </div>      <div v-if="page.links?.length" :class="styles.linksWrapper">        <div v-for="(item, index) in page.links" :key="index" :class="styles.linkItem">          <div class="flex items-center gap-2 text-sm text-neutral-800 dark:text-neutral-200">            <span v-if="item.icon" :class="[item.icon, 'size-4 opacity-60']" />            <span>{{ item.label }}</span>          </div>          <div :class="styles.linkActions">            <RLVButton              icon="i-lucide-pencil"              variant="ghost"              color="neutral"              class="!p-1"              @click="openLinkModal(index)"            />            <RLVButton              icon="i-lucide-trash"              variant="ghost"              color="neutral"              class="!p-1"              @click="removeLink(index)"            />          </div>        </div>      </div>      <p v-else :class="styles.emptyLinks">        {{ t("page_properties.no_links", "No links added") }}      </p>    </div>    <!-- Link Modal -->    <div v-if="isLinkModalOpen" :class="styles.modalOverlay" @click.self="isLinkModalOpen = false">      <div :class="styles.modalContent">        <div :class="styles.modalHeader">          <h3 class="text-base font-semibold">            {{              editingLinkIndex !== null                ? t("page_properties.edit_link", "Edit Link")                : t("page_properties.add_link", "Add Link")            }}          </h3>          <RLVButton            color="neutral"            variant="ghost"            leading-icon="i-lucide-x"            class="!p-1.5"            @click="isLinkModalOpen = false"          />        </div>        <div :class="styles.modalBody">          <RLVFormField :label="t('page_properties.label', 'Label')">            <RLVInput              v-model="linkDraft.label"              placeholder="e.g. GitHub Repository"              class="w-full"            />          </RLVFormField>          <RLVFormField :label="t('page_properties.url', 'URL')">            <RLVInput v-model="linkDraft.to" placeholder="https://github.com/..." class="w-full" />          </RLVFormField>          <RLVFormField :label="t('page_properties.icon', 'Icon Class')">            <RLVInput v-model="linkDraft.icon" placeholder="i-lucide-github" class="w-full" />          </RLVFormField>        </div>        <div :class="styles.modalFooter">          <RLVButton            color="neutral"            variant="ghost"            :label="t('common.cancel', 'Cancel')"            @click="isLinkModalOpen = false"          />          <RLVButton            color="primary"            :label="              editingLinkIndex !== null                ? t('page_properties.update_link', 'Update')                : t('page_properties.add_link', 'Add')            "            @click="saveLink"          />        </div>      </div>    </div>  </aside></template><style scoped></style>
+<script setup lang="ts">
+import { computed, ref, reactive } from "vue";
+import type { Page, Link } from "@/types/pages";
+import { scv, cx } from "css-variants";
+import { useRC } from "@/composables";
+import { useI18n } from "@/composables/app/useI18n";
+import { getLocalizedContent } from "@/utils/page";
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+
+/* region Props */
+export interface PagePropertiesEditorProps {
+  rc?: {
+    aside?: string;
+    icon?: string;
+    titleInput?: string;
+    type?: string;
+    tags?: string;
+    tabs?: string;
+    image?: string;
+    groupButton?: string;
+    details?: string;
+    field?: string;
+    links?: string;
+  };
+  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
+}
+
+const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>();
+const { rc } = useRC("PagePropertiesEditor", rcProp);
+/* endregion */
+
+/* region Styles */
+const pagePropertiesEditorStyles = scv({
+  slots: {
+    asideClass: "flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full",
+    iconClass: "rounded-full w-12 h-12 object-cover border border-default shadow-sm",
+    titleInputClass: "w-full",
+    typeClass: "text-xs text-dimmed uppercase tracking-wider text-center block mt-1",
+    tagsClass: "flex flex-row flex-wrap gap-1 justify-center mt-2",
+    imageClass: "w-full object-cover rounded-lg border border-default shadow-sm mt-4",
+    groupButtonClass: "flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-4",
+    detailsClass: "p-3 flex flex-col gap-3 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1",
+    fieldClass: "w-full",
+    linksClass: "flex flex-col gap-2 mt-4 pt-4 border-t border-default",
+    headerContent: "flex flex-col gap-2 items-center text-center",
+    slugInput: "w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity text-center text-xs font-mono bg-neutral-100 dark:bg-neutral-800/80 px-2 py-1 rounded border border-default",
+    linksHeader: "flex items-center justify-between mb-2",
+    linksTitle: "text-xs font-bold uppercase tracking-wider text-dimmed",
+    linksWrapper: "flex flex-col gap-2",
+    linkItem: "flex items-center justify-between p-2 rounded-lg border border-default bg-white dark:bg-neutral-900",
+    linkActions: "flex items-center gap-1",
+    emptyLinks: "text-xs text-dimmed italic",
+    modalOverlay: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm",
+    modalContent: "bg-white dark:bg-neutral-900 border border-default rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col",
+    modalHeader: "flex items-center justify-between px-4 py-3 border-b border-default",
+    modalBody: "flex flex-col gap-4 p-4",
+    modalGrid: "grid grid-cols-2 gap-4",
+    modalFooter: "flex justify-end gap-2 p-4 border-t border-default"
+  }
+});
+
+const styles = computed(() => {
+  const resolved = pagePropertiesEditorStyles();
+  const result: Record<string, string> = {};
+  for (const [slot, value] of Object.entries(resolved)) {
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+  }
+  return result as Record<string, string>;
+});
+/* endregion */
+
+/* region State */
+const page = defineModel<Page>({ required: true });
+const { t, locale } = useI18n();
+
+const sortedGroups = computed(() => {
+  if (!page.value?.properties) return [];
+  return Object.entries(page.value.properties).toSorted((a, b) => {
+    return (a[1] as any).order - (b[1] as any).order;
+  });
+});
+
+const getSortedFields = (fields: any) => {
+  if (!fields) return [];
+  return Object.entries(fields).toSorted((a, b) => {
+    return (a[1] as any).order - (b[1] as any).order;
+  });
+};
+
+// Link editing state
+const isLinkModalOpen = ref(false);
+const editingLinkIndex = ref<number | null>(null);
+const linkDraft = reactive<Partial<Link>>({
+  label: "",
+  to: "",
+  icon: "",
+  color: "neutral",
+  variant: "link"
+});
+/* endregion */
+
+/* region Logic */
+function openLinkModal(index: number | null = null) {
+  editingLinkIndex.value = index;
+  if (index !== null && page.value.links?.[index]) {
+    const link = page.value.links[index]!;
+    linkDraft.label = link.label;
+    linkDraft.to = link.to;
+    linkDraft.icon = link.icon;
+    linkDraft.color = link.color || "neutral";
+    linkDraft.variant = link.variant || "link";
+  } else {
+    linkDraft.label = "";
+    linkDraft.to = "";
+    linkDraft.icon = "";
+    linkDraft.color = "neutral";
+    linkDraft.variant = "link";
+  }
+  isLinkModalOpen.value = true;
+}
+
+function saveLink() {
+  if (!linkDraft.label || !linkDraft.to) return;
+  if (!page.value.links) page.value.links = [];
+  const newLink: Link = {
+    label: linkDraft.label,
+    to: linkDraft.to!,
+    icon: linkDraft.icon,
+    color: (linkDraft.color as any) || "neutral",
+    variant: (linkDraft.variant as any) || "link"
+  };
+  if (editingLinkIndex.value !== null) {
+    page.value.links[editingLinkIndex.value] = newLink;
+  } else {
+    page.value.links.push(newLink);
+  }
+  isLinkModalOpen.value = false;
+}
+
+function removeLink(index: number) {
+  if (page.value.links) {
+    page.value.links.splice(index, 1);
+  }
+}
+/* endregion */
+
+defineOptions({
+  name: "PagePropertiesEditor"
+});
+</script>
+
+<template>
+  <aside :class="styles.asideClass">
+    <div
+      class="bg-white dark:bg-neutral-900 border border-default rounded-xl p-4 shadow-sm flex flex-col"
+    >
+      <div :class="styles.headerContent">
+        <div class="relative group/icon mb-2">
+          <img
+            v-if="page.icon?.src"
+            :src="page.icon?.src"
+            :alt="page.icon?.alt || 'Icon'"
+            :class="styles.iconClass"
+          />
+          <div
+            v-else
+            class="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center border-2 border-dashed border-default"
+          >
+            <span class="i-lucide-image size-6 text-neutral-400" />
+          </div>
+        </div>
+
+        <RLVInput
+          v-model="page.title.en"
+          placeholder="Enter page title..."
+          class="w-full text-center font-bold text-lg"
+        />
+
+        <div class="mt-2 w-full">
+          <RLVInput
+            v-model="page.slug"
+            placeholder="page-slug"
+            class="w-full text-center text-xs font-mono opacity-80"
+          />
+        </div>
+
+        <span :class="styles.typeClass">{{ page.type }}</span>
+
+        <div v-if="page.tags?.length" :class="styles.tagsClass">
+          <span
+            v-for="(tag, index) in page.tags"
+            :key="index"
+            class="text-[10px] px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-800 rounded font-mono text-dimmed"
+          >
+            {{ getLocalizedContent(tag, locale) }}
+          </span>
+        </div>
+
+        <div v-if="page.images?.length" class="w-full">
+          <img
+            v-if="page.images[0]"
+            :src="page.images[0].src"
+            :alt="page.images[0].alt || 'Page Image'"
+            :class="styles.imageClass"
+          />
+        </div>
+      </div>
+
+      <!-- Properties Fields Editor -->
+      <div class="mt-4 space-y-2 w-full">
+        <div v-for="[groupId, group] in sortedGroups" :key="groupId" class="w-full">
+          <div :class="styles.groupButtonClass">
+            <span>{{ getLocalizedContent((group as any).label, locale) }}</span>
+            <span class="i-lucide-chevron-down size-4 opacity-60" />
+          </div>
+
+          <div :class="styles.detailsClass">
+            <div
+              v-for="[fieldKey, schema] in getSortedFields((group as any).fields)"
+              :key="fieldKey"
+              class="w-full"
+            >
+              <RLVFormField :label="getLocalizedContent((schema as any).label, locale)">
+                <RLVInput
+                  v-slot:default
+                  v-if="(schema as any).type === 'text' || (schema as any).type === 'number'"
+                  v-model="(schema as any).defaultValue"
+                  placeholder="Type here..."
+                  class="w-full"
+                />
+
+                <select
+                  v-else-if="(schema as any).type === 'enum' && (schema as any).options"
+                  v-model="(schema as any).defaultValue"
+                  class="w-full bg-transparent border border-default rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-default bg-white dark:bg-neutral-900"
+                >
+                  <option
+                    v-for="opt in (schema as any).options"
+                    :key="typeof opt === 'string' ? opt : opt.value"
+                    :value="typeof opt === 'string' ? opt : opt.value"
+                  >
+                    {{ typeof opt === "string" ? opt : getLocalizedContent(opt, locale) }}
+                  </option>
+                </select>
+
+                <div v-else class="text-xs text-dimmed italic">Complex property editor</div>
+              </RLVFormField>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Links Management -->
+    <div :class="styles.linksClass">
+      <div :class="styles.linksHeader">
+        <h6 :class="styles.linksTitle">
+          {{ t("page_properties.links", "Links") }}
+        </h6>
+        <RLVButton
+          icon="i-lucide-plus"
+          size="sm"
+          variant="outline"
+          color="neutral"
+          class="!p-1"
+          @click="openLinkModal()"
+        />
+      </div>
+
+      <div v-if="page.links?.length" :class="styles.linksWrapper">
+        <div v-for="(item, index) in page.links" :key="index" :class="styles.linkItem">
+          <div class="flex items-center gap-2 text-sm text-neutral-800 dark:text-neutral-200">
+            <span v-if="item.icon" :class="[item.icon, 'size-4 opacity-60']" />
+            <span>{{ item.label }}</span>
+          </div>
+
+          <div :class="styles.linkActions">
+            <RLVButton
+              icon="i-lucide-pencil"
+              variant="ghost"
+              color="neutral"
+              class="!p-1"
+              @click="openLinkModal(index)"
+            />
+            <RLVButton
+              icon="i-lucide-trash"
+              variant="ghost"
+              color="neutral"
+              class="!p-1"
+              @click="removeLink(index)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <p v-else :class="styles.emptyLinks">
+        {{ t("page_properties.no_links", "No links added") }}
+      </p>
+    </div>
+
+    <!-- Link Modal -->
+    <div v-if="isLinkModalOpen" :class="styles.modalOverlay" @click.self="isLinkModalOpen = false">
+      <div :class="styles.modalContent">
+        <div :class="styles.modalHeader">
+          <h3 class="text-base font-semibold">
+            {{
+              editingLinkIndex !== null
+                ? t("page_properties.edit_link", "Edit Link")
+                : t("page_properties.add_link", "Add Link")
+            }}
+          </h3>
+          <RLVButton
+            color="neutral"
+            variant="ghost"
+            leading-icon="i-lucide-x"
+            class="!p-1.5"
+            @click="isLinkModalOpen = false"
+          />
+        </div>
+
+        <div :class="styles.modalBody">
+          <RLVFormField :label="t('page_properties.label', 'Label')">
+            <RLVInput
+              v-model="linkDraft.label"
+              placeholder="e.g. GitHub Repository"
+              class="w-full"
+            />
+          </RLVFormField>
+
+          <RLVFormField :label="t('page_properties.url', 'URL')">
+            <RLVInput v-model="linkDraft.to" placeholder="https://github.com/..." class="w-full" />
+          </RLVFormField>
+
+          <RLVFormField :label="t('page_properties.icon', 'Icon Class')">
+            <RLVInput v-model="linkDraft.icon" placeholder="i-lucide-github" class="w-full" />
+          </RLVFormField>
+        </div>
+
+        <div :class="styles.modalFooter">
+          <RLVButton
+            color="neutral"
+            variant="ghost"
+            :label="t('common.cancel', 'Cancel')"
+            @click="isLinkModalOpen = false"
+          />
+          <RLVButton
+            color="primary"
+            :label="
+              editingLinkIndex !== null
+                ? t('page_properties.update_link', 'Update')
+                : t('page_properties.add_link', 'Add')
+            "
+            @click="saveLink"
+          />
+        </div>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<style scoped></style>

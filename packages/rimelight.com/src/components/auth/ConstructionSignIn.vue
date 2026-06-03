@@ -1,53 +1,51 @@
 <script lang="ts" setup>
-import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
-import RLVCard from "@rimelight/ui/components/vue/RLVPlaceholder.vue"
-import { reactive, ref } from "vue"
-import { z } from "astro/zod"
-
-const { allowAuth = true } = defineProps<{ allowAuth?: boolean }>()
-
+import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue";
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
+import RLVCard from "@rimelight/ui/components/vue/RLVPlaceholder.vue";
+import { reactive, ref } from "vue";
+import { z } from "astro/zod";
+const { allowAuth = true } = defineProps<{
+    allowAuth?: boolean;
+}>();
 const schema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-  rememberMe: z.boolean()
-})
-
-type Schema = z.infer<typeof schema>
-
+    email: z.string().email("Invalid email"),
+    password: z.string().min(1, "Password is required"),
+    rememberMe: z.boolean()
+});
+type Schema = z.infer<typeof schema>;
 const state = reactive<Partial<Schema>>({
-  email: "",
-  password: "",
-  rememberMe: true
-})
-
-const isLoading = ref(false)
-const error = ref("")
-
+    email: "",
+    password: "",
+    rememberMe: true
+});
+const isLoading = ref(false);
+const error = ref("");
 function getRedirectParam(): string {
-  if (typeof window === "undefined") return "/"
-  const params = new URLSearchParams(window.location.search)
-  return params.get("redirect") || "/"
+    if (typeof window === "undefined")
+        return "/";
+    const params = new URLSearchParams(window.location.search);
+    return params.get("redirect") || "/";
 }
-
-async function onSubmit(event: { data: Schema }) {
-  isLoading.value = true
-  error.value = ""
-  const { authClient } = await import("@/auth/auth-client")
-  const { error: signInError } = await authClient.signIn.email({
-    email: event.data.email,
-    password: event.data.password,
-    rememberMe: event.data.rememberMe
-  })
-  isLoading.value = false
-  if (signInError) {
-    error.value = signInError.message || "Something went wrong"
-    return
-  }
-  window.location.href = getRedirectParam()
+async function onSubmit(event: {
+    data: Schema;
+}) {
+    isLoading.value = true;
+    error.value = "";
+    const { authClient } = await import("@/auth/auth-client");
+    const { error: signInError } = await authClient.signIn.email({
+        email: event.data.email,
+        password: event.data.password,
+        rememberMe: event.data.rememberMe
+    });
+    isLoading.value = false;
+    if (signInError) {
+        error.value = signInError.message || "Something went wrong";
+        return;
+    }
+    window.location.href = getRedirectParam();
 }
 </script>
 

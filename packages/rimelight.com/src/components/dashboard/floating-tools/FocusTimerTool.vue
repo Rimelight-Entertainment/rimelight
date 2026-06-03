@@ -1,5 +1,115 @@
-<script setup lang="ts">import { computed, watch } from "vue"
-import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVProgress from "@rimelight/ui/components/vue/RLVProgress.vue"
-import { useRC, useFocusTimer, useToast } from "@/composables"/* region Props */export interface FocusTimerToolProps {  rc?: {    root?: string    timerDisplay?: string    timeValue?: string    modeLabel?: string    controls?: string  }}const { rc: rcProp } = defineProps<FocusTimerToolProps>()const { rc } = useRC("FocusTimerTool", rcProp)/* endregion *//* region Emits */export interface FocusTimerToolEmits {}defineEmits<FocusTimerToolEmits>()/* endregion *//* region Slots */export interface FocusTimerToolSlots {}defineSlots<FocusTimerToolSlots>()/* endregion *//* region Styles */const focusTimerToolStyles = scv({  slots: ["root", "timerDisplay", "timeValue", "modeLabel", "controls"],  base: {    root: "flex flex-col gap-3",    timerDisplay: "flex flex-col items-center",    timeValue: "text-4xl font-bold tabular-nums text-neutral-900 dark:text-white",    modeLabel:      "text-md text-neutral-400 dark:text-neutral-500 uppercase font-medium tracking-wider",    controls: "flex items-center gap-2"  }})const styles = computed(() => {  const resolved = focusTimerToolStyles()  const result: Record<string, string> = {}  for (const [slot, value] of Object.entries(resolved)) {    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])  }  return result})/* endregion *//* region State */const focusTimer = useFocusTimer()const toast = useToast()/* endregion *//* region Meta */defineOptions({  name: "FocusTimerTool"})/* endregion *//* region Lifecycle */watch(  () => focusTimer.status.value,  (st) => {    if (st === "completed") {      toast.add({        title: "Timer Finished!",        description:          focusTimer.mode.value === "work"            ? "Great work! Take a break."            : "Break is over! Time to focus.",        color: "success"      })    }  })/* endregion */</script><template>  <div :class="styles.root">    <!-- Progress Indicator -->    <RLVProgress :model-value="focusTimer.progress.value" :max="100" size="sm" color="primary" />    <div :class="styles.timerDisplay">      <div :class="styles.timeValue">        {{ focusTimer.formattedTime.value }}      </div>      <div :class="styles.modeLabel">        {{ focusTimer.mode.value.replace("-", " ") }}      </div>    </div>    <!-- Controls -->    <div :class="styles.controls">      <RLVButton        :icon="focusTimer.isRunning.value ? 'i-lucide-pause' : 'i-lucide-play'"        :label="focusTimer.isRunning.value ? 'Pause' : 'Start'"        :color="focusTimer.isRunning.value ? 'warning' : 'primary'"        class="flex-1"        size="sm"        @click="focusTimer.isRunning.value ? focusTimer.pauseTimer() : focusTimer.startTimer()"      />      <RLVButton        icon="i-lucide-rotate-ccw"        color="neutral"        variant="ghost"        size="sm"        @click="focusTimer.resetTimer"      />    </div>  </div></template>
+<script setup lang="ts">
+import { computed, watch } from "vue";
+import { scv, cx } from "css-variants";
+import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+import RLVProgress from "@rimelight/ui/components/vue/RLVProgress.vue";
+import { useRC, useFocusTimer, useToast } from "@/composables";
+
+/* region Props */
+export interface FocusTimerToolProps {
+  rc?: {
+    root?: string;
+    timerDisplay?: string;
+    timeValue?: string;
+    modeLabel?: string;
+    controls?: string;
+  };
+}
+
+const { rc: rcProp } = defineProps<FocusTimerToolProps>();
+const { rc } = useRC("FocusTimerTool", rcProp);
+/* endregion */
+
+/* region Emits */
+export interface FocusTimerToolEmits {}
+defineEmits<FocusTimerToolEmits>();
+/* endregion */
+
+/* region Slots */
+export interface FocusTimerToolSlots {}
+defineSlots<FocusTimerToolSlots>();
+/* endregion */
+
+/* region Styles */
+const focusTimerToolStyles = scv({
+  slots: ["root", "timerDisplay", "timeValue", "modeLabel", "controls"],
+  base: {
+    root: "flex flex-col gap-3",
+    timerDisplay: "flex flex-col items-center",
+    timeValue: "text-4xl font-bold tabular-nums text-neutral-900 dark:text-white",
+    modeLabel: "text-md text-neutral-400 dark:text-neutral-500 uppercase font-medium tracking-wider",
+    controls: "flex items-center gap-2"
+  }
+});
+
+const styles = computed(() => {
+  const resolved = focusTimerToolStyles();
+  const result: Record<string, string> = {};
+  for (const [slot, value] of Object.entries(resolved)) {
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot]);
+  }
+  return result;
+});
+/* endregion */
+
+/* region State */
+const focusTimer = useFocusTimer();
+const toast = useToast();
+/* endregion */
+
+/* region Meta */
+defineOptions({ name: "FocusTimerTool" });
+/* endregion */
+
+/* region Lifecycle */
+watch(() => focusTimer.status.value, (st) => {
+  if (st === "completed") {
+    toast.add({
+      title: "Timer Finished!",
+      description: focusTimer.mode.value === "work" ? "Great work! Take a break." : "Break is over! Time to focus.",
+      color: "success"
+    });
+  }
+});
+/* endregion */
+</script>
+
+<template>
+  <div :class="styles.root">
+    <!-- Progress Indicator -->
+    <RLVProgress
+      :model-value="focusTimer.progress.value"
+      :max="100"
+      size="sm"
+      color="primary"
+    />
+
+    <div :class="styles.timerDisplay">
+      <div :class="styles.timeValue">
+        {{ focusTimer.formattedTime.value }}
+      </div>
+      <div :class="styles.modeLabel">
+        {{ focusTimer.mode.value.replace("-", " ") }}
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div :class="styles.controls">
+      <RLVButton
+        :icon="focusTimer.isRunning.value ? 'i-lucide-pause' : 'i-lucide-play'"
+        :label="focusTimer.isRunning.value ? 'Pause' : 'Start'"
+        :color="focusTimer.isRunning.value ? 'warning' : 'primary'"
+        class="flex-1"
+        size="sm"
+        @click="focusTimer.isRunning.value ? focusTimer.pauseTimer() : focusTimer.startTimer()"
+      />
+      <RLVButton
+        icon="i-lucide-rotate-ccw"
+        color="neutral"
+        variant="ghost"
+        size="sm"
+        @click="focusTimer.resetTimer"
+      />
+    </div>
+  </div>
+</template>

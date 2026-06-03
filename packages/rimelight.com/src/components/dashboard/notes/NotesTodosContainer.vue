@@ -1,4 +1,58 @@
-<script lang="ts" setup>import { ref, onMounted, watch } from "vue"
-import TodoList from "./TodoList.vue"
-import { useTodos } from "@/composables/dashboard/useTodos"
-interface Todo {  id: string  title: string  completed: boolean  description?: string  createdAt: string  archived: boolean}const todos = ref<Todo[]>([])const archivedTodos = ref<Todo[]>([])const { todoRefreshTrigger } = useTodos()async function fetchTodos() {  try {    const res = await fetch("/api/todos")    todos.value = (await res.json()) as Todo[]  } catch (e) {    console.error(e)  }}async function fetchArchivedTodos() {  try {    const res = await fetch("/api/todos/archived")    archivedTodos.value = (await res.json()) as Todo[]  } catch (e) {    console.error(e)  }}onMounted(() => {  fetchTodos()  fetchArchivedTodos()})watch(todoRefreshTrigger, () => {  fetchTodos()  fetchArchivedTodos()})</script><template>  <div    class="p-4 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl"  >    <TodoList :todos="todos" :archived-todos="archivedTodos" />  </div></template>
+<script lang="ts" setup>
+import { ref, onMounted, watch } from "vue";
+import TodoList from "./TodoList.vue";
+import { useTodos } from "@/composables/dashboard/useTodos";
+
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+  description?: string;
+  createdAt: string;
+  archived: boolean;
+}
+
+const todos = ref<Todo[]>([]);
+const archivedTodos = ref<Todo[]>([]);
+const { todoRefreshTrigger } = useTodos();
+
+async function fetchTodos() {
+  try {
+    const res = await fetch("/api/todos");
+    if (res.ok) {
+      todos.value = (await res.json()) as Todo[];
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function fetchArchivedTodos() {
+  try {
+    const res = await fetch("/api/todos/archived");
+    if (res.ok) {
+      archivedTodos.value = (await res.json()) as Todo[];
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+onMounted(() => {
+  fetchTodos();
+  fetchArchivedTodos();
+});
+
+watch(todoRefreshTrigger, () => {
+  fetchTodos();
+  fetchArchivedTodos();
+});
+</script>
+
+<template>
+  <div
+    class="p-4 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+  >
+    <TodoList :todos="todos" :archived-todos="archivedTodos" />
+  </div>
+</template>
