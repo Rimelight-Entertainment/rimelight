@@ -134,11 +134,11 @@ defineOptions({
           {{ selectedOrganization?.name || "Personal Workspace" }}
         </span>
       </div>
-      <span
-        v-slot:trailing
-        v-if="!collapsed"
-        class="i-lucide-chevrons-up-down size-4 text-neutral-400 dark:text-neutral-500 shrink-0 ml-2"
-      />
+      <template v-if="!collapsed" #trailing>
+        <span
+          class="i-lucide-chevrons-up-down size-4 text-neutral-400 dark:text-neutral-500 shrink-0 ml-2"
+        />
+      </template>
     </RLVButton>
 
     <!-- Custom Dropdown Menu -->

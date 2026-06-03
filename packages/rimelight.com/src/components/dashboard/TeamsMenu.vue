@@ -143,28 +143,25 @@ defineOptions({
       :square="collapsed"
       @click="isOpen = !isOpen"
     >
-      <div class="flex items-center gap-2 truncate">
+      <template #leading>
         <img
-          v-slot:leading
           v-if="selectedTeam?.logo"
           :src="selectedTeam.logo"
           :alt="selectedTeam.name"
           class="size-5 rounded object-cover shrink-0"
         />
         <span v-else class="i-lucide-users size-5 text-neutral-500 shrink-0" />
-        <span
-          v-slot:label
-          v-if="!collapsed"
-          class="truncate text-sm font-medium text-neutral-700 dark:text-neutral-300"
-        >
+      </template>
+      <template v-if="!collapsed" #label>
+        <span class="truncate text-sm font-medium text-neutral-700 dark:text-neutral-300">
           {{ selectedTeam?.name }}
         </span>
-      </div>
-      <span
-        v-slot:trailing
-        v-if="!collapsed"
-        class="i-lucide-chevrons-up-down size-4 text-neutral-400 dark:text-neutral-500 shrink-0 ml-2"
-      />
+      </template>
+      <template v-if="!collapsed" #trailing>
+        <span
+          class="i-lucide-chevrons-up-down size-4 text-neutral-400 dark:text-neutral-500 shrink-0 ml-2"
+        />
+      </template>
     </RLVButton>
 
     <!-- Custom Dropdown Menu -->
