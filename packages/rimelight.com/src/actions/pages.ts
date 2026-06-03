@@ -1,8 +1,78 @@
 import { defineAction, ActionError } from "astro:actions"
 import { z } from "astro/zod"
 import { db } from "@/db"
-import { pages, pageVersions } from "@/db/schema"
-import { and, asc, desc, eq, isNotNull, isNull } from "drizzle-orm"
+import { pages, pageVersions, searchIndex } from "@/db/schema"
+import { and, asc, desc, eq, isNotNull, isNull, sql } from "drizzle-orm"
+import { type Block } from "@/types/pages"
+
+function extractTextFromBlocks(blocks: Block[]): string {
+  if (!blocks || !Array.isArray(blocks)) return ""
+  let text = ""
+  for (const block of blocks) {
+    if (!block) continue
+    if (block.type === "SectionBlock") {
+      text += ` ${block.props.title || ""} ${block.props.description || ""}`
+      if (block.props.children) {
+        text += ` ${extractTextFromBlocks(block.props.children)}`
+      }
+    } else if (block.type === "ParagraphBlock") {
+      if (Array.isArray(block.props.text)) {
+        for (const item of block.props.text) {
+          if (item && (item.type === "text" || item.type === "link")) {
+            text += ` ${item.props.content || ""}`
+          }
+        }
+      }
+    } else if (block.type === "CalloutBlock") {
+      if (block.props.children) {
+        text += ` ${extractTextFromBlocks(block.props.children)}`
+      }
+    } else if (block.type === "ImageBlock") {
+      text += ` ${block.props.alt || ""} ${block.props.caption || ""}`
+    }
+  }
+  return text.trim()
+}
+
+async function indexDatabasePage(page: { id: string; slug: string; title: any; description?: any; content: { blocks: Block[] } }) {
+  const titleObj = page.title as Record<string, string>
+  const title = titleObj?.en || Object.values(titleObj || {})[0] || "Untitled Page"
+
+  const descObj = page.description as Record<string, string>
+  const description = descObj?.en || Object.values(descObj || {})[0] || ""
+
+  const bodyContent = `${description} ${extractTextFromBlocks(page.content?.blocks || [])}`.trim()
+  const url = `/${page.slug}`
+
+  await db.insert(searchIndex).values({
+    sourceType: "database_page",
+    sourceId: page.id,
+    title,
+    url,
+    bodyContent,
+    searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${bodyContent}), 'B')`,
+    updatedAt: new Date()
+  }).onConflictDoUpdate({
+    target: [searchIndex.sourceType, searchIndex.sourceId],
+    set: {
+      title,
+      url,
+      bodyContent,
+      searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${bodyContent}), 'B')`,
+      updatedAt: new Date()
+    }
+  })
+}
+
+async function deindexDatabasePage(id: string) {
+  await db.delete(searchIndex).where(
+    and(
+      eq(searchIndex.sourceType, "database_page"),
+      eq(searchIndex.sourceId, id)
+    )
+  )
+}
+
 
 function checkOwnerOrMember(context: any) {
   const user = context.locals.user
@@ -218,6 +288,8 @@ export const pageActions = {
         })
       }
 
+      await deindexDatabasePage(input.id)
+
       return { success: true }
     }
   }),
@@ -242,6 +314,8 @@ export const pageActions = {
         })
       }
 
+      await indexDatabasePage(published)
+
       return { success: true }
     }
   }),
@@ -265,6 +339,8 @@ export const pageActions = {
           message: "Page not found"
         })
       }
+
+      await deindexDatabasePage(input.id)
 
       return { success: true }
     }
@@ -311,6 +387,18 @@ export const pageActions = {
           postedAt: version.postedAt
         })
         .where(eq(pages.id, version.pageId))
+
+      if (version.postedAt) {
+        await indexDatabasePage({
+          id: version.pageId,
+          slug: version.slug,
+          title: version.title,
+          description: version.description,
+          content: version.content
+        })
+      } else {
+        await deindexDatabasePage(version.pageId)
+      }
 
       return updatedVersion
     }

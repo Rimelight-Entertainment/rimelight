@@ -2,8 +2,39 @@ import "dotenv/config"
 import fs from "node:fs"
 import path from "node:path"
 import { db } from "../src/db"
-import { searchIndex } from "../src/db/schema"
-import { sql, eq, inArray, and } from "drizzle-orm"
+import { searchIndex, pages } from "../src/db/schema"
+import { sql, eq, inArray, and, isNull, isNotNull } from "drizzle-orm"
+import { type Block } from "../src/types/pages"
+
+// Extract text from editor content blocks for database pages
+function extractTextFromBlocks(blocks: Block[]): string {
+  if (!blocks || !Array.isArray(blocks)) return ""
+  let text = ""
+  for (const block of blocks) {
+    if (!block) continue
+    if (block.type === "SectionBlock") {
+      text += ` ${block.props.title || ""} ${block.props.description || ""}`
+      if (block.props.children) {
+        text += ` ${extractTextFromBlocks(block.props.children)}`
+      }
+    } else if (block.type === "ParagraphBlock") {
+      if (Array.isArray(block.props.text)) {
+        for (const item of block.props.text) {
+          if (item && (item.type === "text" || item.type === "link")) {
+            text += ` ${item.props.content || ""}`
+          }
+        }
+      }
+    } else if (block.type === "CalloutBlock") {
+      if (block.props.children) {
+        text += ` ${extractTextFromBlocks(block.props.children)}`
+      }
+    } else if (block.type === "ImageBlock") {
+      text += ` ${block.props.alt || ""} ${block.props.caption || ""}`
+    }
+  }
+  return text.trim()
+}
 
 // Basic markdown frontmatter parser
 function parseMarkdown(filePath: string) {
@@ -46,30 +77,31 @@ function getFilesRecursively(dir: string): string[] {
 }
 
 async function sync() {
-  console.log("Starting optimized markdown to search_index sync...")
+  console.log("Starting optimized database & markdown search_index sync...")
   
-  // 1. Fetch all existing markdown records from the DB to build a cache map
+  // 1. Fetch all existing records from the DB to build a cache map
   const existing = await db
     .select({
       sourceId: searchIndex.sourceId,
+      sourceType: searchIndex.sourceType,
       updatedAt: searchIndex.updatedAt
     })
     .from(searchIndex)
-    .where(eq(searchIndex.sourceType, "markdown"))
 
   const existingMap = new Map<string, Date>(
-    existing.map(row => [row.sourceId, new Date(row.updatedAt)])
+    existing.map(row => [`${row.sourceType}:${row.sourceId}`, new Date(row.updatedAt)])
   )
-  console.log(`Fetched ${existingMap.size} existing markdown records from database.`)
+  console.log(`Fetched ${existingMap.size} existing records from database index.`)
 
+  const activeSourceKeys = new Set<string>()
+  const toUpsert: any[] = []
+
+  // --- PART 1: Sync Markdown Content collections ---
   const collections = [
     { name: "blog", dir: "./src/content/blog", urlPrefix: "/company/blog" },
     { name: "docs", dir: "./src/content/docs", urlPrefix: "/company/docs" },
     { name: "legal", dir: "./src/content/legal", urlPrefix: "/company/legal" }
   ]
-
-  const activeSourceIds = new Set<string>()
-  const toUpsert: any[] = []
 
   for (const col of collections) {
     const fullDir = path.resolve(col.dir)
@@ -77,21 +109,19 @@ async function sync() {
 
     for (const filePath of files) {
       const relativePath = path.relative(fullDir, filePath)
+      const sourceType = "markdown"
       const sourceId = `${col.name}:${relativePath}`
-      activeSourceIds.add(sourceId)
+      const cacheKey = `${sourceType}:${sourceId}`
+      activeSourceKeys.add(cacheKey)
 
-      // Get file modification time
       const stat = fs.statSync(filePath)
       const mtime = stat.mtime
 
-      // Check if file is modified since last sync
-      const dbUpdatedAt = existingMap.get(sourceId)
+      const dbUpdatedAt = existingMap.get(cacheKey)
       if (dbUpdatedAt && mtime <= dbUpdatedAt) {
-        // File is unchanged, skip syncing it
         continue
       }
 
-      // Generate URLs
       let urlSlug = relativePath
         .replace(/\.mdx?$/, "")
         .replace(/[/\\]index$/, "")
@@ -104,10 +134,10 @@ async function sync() {
       const url = `${col.urlPrefix}${urlSlug ? "/" + urlSlug : ""}`
       const { title, body } = parseMarkdown(filePath)
 
-      console.log(`Queueing upsert for modified/new file: ${sourceId} -> ${url}`)
+      console.log(`Queueing markdown sync: ${sourceId} -> ${url}`)
 
       toUpsert.push({
-        sourceType: "markdown",
+        sourceType,
         sourceId,
         title,
         url,
@@ -116,6 +146,57 @@ async function sync() {
         updatedAt: mtime
       })
     }
+  }
+
+  // --- PART 2: Sync Dynamic Database Pages ---
+  console.log("Fetching pages from 'pages' database table...")
+  const dbPages = await db
+    .select({
+      id: pages.id,
+      slug: pages.slug,
+      title: pages.title,
+      description: pages.description,
+      content: pages.content,
+      updatedAt: pages.updatedAt
+    })
+    .from(pages)
+    .where(and(isNull(pages.deletedAt), isNotNull(pages.postedAt)))
+
+  for (const pageRow of dbPages) {
+    const sourceType = "database_page"
+    const sourceId = pageRow.id
+    const cacheKey = `${sourceType}:${sourceId}`
+    activeSourceKeys.add(cacheKey)
+
+    const updatedAt = new Date(pageRow.updatedAt)
+    const dbUpdatedAt = existingMap.get(cacheKey)
+
+    if (dbUpdatedAt && updatedAt <= dbUpdatedAt) {
+      continue
+    }
+
+    // Dynamic pages titles are Localized objects { en: "..." }
+    const titleObj = pageRow.title as Record<string, string>
+    const title = titleObj?.en || Object.values(titleObj || {})[0] || "Untitled Page"
+
+    const descObj = pageRow.description as Record<string, string>
+    const description = descObj?.en || Object.values(descObj || {})[0] || ""
+
+    // Extract text content from custom editor blocks
+    const bodyContent = `${description} ${extractTextFromBlocks(pageRow.content?.blocks || [])}`.trim()
+    const url = `/${pageRow.slug}`
+
+    console.log(`Queueing database page sync: ${title} -> ${url}`)
+
+    toUpsert.push({
+      sourceType,
+      sourceId,
+      title,
+      url,
+      bodyContent,
+      searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${bodyContent}), 'B')`,
+      updatedAt
+    })
   }
 
   // 2. Perform batched updates in chunks of 50
@@ -135,14 +216,24 @@ async function sync() {
     })
   }
 
-  // 3. Remove deleted documents
-  const toDelete = Array.from(existingMap.keys()).filter(id => !activeSourceIds.has(id))
-  if (toDelete.length > 0) {
-    console.log(`Cleaning up ${toDelete.length} deleted files from database index...`)
+  // 3. Remove deleted/unpublished documents from the index
+  const toDeleteMap = new Map<string, string[]>()
+  for (const row of existing) {
+    const cacheKey = `${row.sourceType}:${row.sourceId}`
+    if (!activeSourceKeys.has(cacheKey)) {
+      if (!toDeleteMap.has(row.sourceType)) {
+        toDeleteMap.set(row.sourceType, [])
+      }
+      toDeleteMap.get(row.sourceType)!.push(row.sourceId)
+    }
+  }
+
+  for (const [type, ids] of toDeleteMap.entries()) {
+    console.log(`Cleaning up ${ids.length} deleted/unpublished ${type} records from database index...`)
     await db.delete(searchIndex).where(
       and(
-        eq(searchIndex.sourceType, "markdown"),
-        inArray(searchIndex.sourceId, toDelete)
+        eq(searchIndex.sourceType, type),
+        inArray(searchIndex.sourceId, ids)
       )
     )
   }

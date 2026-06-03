@@ -33,7 +33,7 @@ export const GET: APIRoute = async ({ request }) => {
           url: searchIndex.url,
           sourceType: searchIndex.sourceType,
           rank: sql<number>`ts_rank(${searchIndex.searchableText}, ${querySql})`,
-          snippet: sql<string>`ts_headline('english', ${searchIndex.bodyContent}, ${querySql}, 'StartSel=<mark class="bg-primary-500/30 text-primary-200 px-0.5 rounded">, StopSel=</mark>, MaxWords=20')`
+          snippet: sql<string>`ts_headline('english', ${searchIndex.bodyContent}, ${querySql}, 'StartSel=<mark>, StopSel=</mark>, MaxWords=20')`
         })
         .from(searchIndex)
         .where(
