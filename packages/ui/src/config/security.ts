@@ -34,6 +34,10 @@ export interface SecurityConfigOptions {
    */
   styleResources?: string[]
   /**
+   * Enables the 'require-trusted-types-for' directive
+   */
+  trustedTypes?: boolean
+  /**
    * Direct overrides for any security config fields
    */
   overrides?: Partial<Omit<AstroSecurityConfig, "csp">> & {
@@ -134,7 +138,8 @@ export function defineSecurity(options: SecurityConfigOptions): AstroSecurityCon
     `frame-src ${frameSources.join(" ")}`,
     "upgrade-insecure-requests",
     "base-uri 'self'",
-    "form-action 'self'"
+    "form-action 'self'",
+    ...(options.trustedTypes === false ? [] : ["require-trusted-types-for 'script'" as const])
   ]
 
   // 3. Build script & style directives
