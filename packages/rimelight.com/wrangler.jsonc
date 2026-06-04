@@ -35,6 +35,12 @@
       "bucket_name": "rimelight-dot-com"
     }
   ],
+  "kv_namespaces": [
+    {
+      "binding": "rimelight-dot-com_translations",
+      "id": "e1ae79418e4c4532a9344102bf663861"
+    }
+  ],
   "vars": {
     "CONSTRUCTION_MODE": "true"
   }
