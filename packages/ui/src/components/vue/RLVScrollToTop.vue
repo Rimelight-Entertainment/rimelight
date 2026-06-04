@@ -29,12 +29,11 @@ const {
   threshold
 })
 
-const circumference = 2 * Math.PI * 45
-const percentPx = circumference / 100
-
 const currentPercent = computed(() => scrollPercentage.value)
-const percentageInPx = computed(() => `${percentPx}px`)
-const durationInSeconds = computed(() => `${duration}s`)
+const gaugeBorderWidth = computed(() => `${progressWidth * 0.5}px`)
+const strokeColor = computed(() => `var(--color-${color}-900)`)
+const trackBgColor = computed(() => `var(--color-${color}-950)`)
+const gaugeColor = computed(() => `var(--color-${color}-500)`)
 </script>
 
 <template>
@@ -44,34 +43,23 @@ const durationInSeconds = computed(() => `${duration}s`)
   >
     <button type="button" :class="classes.button" aria-label="Scroll to top" @click="scrollToTopFn">
       <div :class="classes.progressBase">
-        <svg :class="classes.svg" viewBox="0 0 100 100" shape-rendering="geometricPrecision">
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            fill="var(--color-primary-950)"
-            :stroke-width="progressWidth"
-            stroke-dashoffset="0"
-            stroke-linecap="round"
-            class="gauge-secondary-stroke opacity-100"
-          />
-          <circle
-            v-if="showProgress"
-            cx="50"
-            cy="50"
-            r="45"
-            fill="transparent"
-            :stroke-width="progressWidth"
-            stroke-linecap="round"
-            class="gauge-primary-stroke opacity-100"
-            :style="{
-              '--stroke-percent': currentPercent,
-              '--percent-to-px': percentageInPx,
-              '--circumference': circumference,
-              '--duration': durationInSeconds
-            }"
-          />
-        </svg>
+        <div
+          class="gauge-track"
+          :style="{
+            borderWidth: gaugeBorderWidth,
+            borderColor: strokeColor,
+            backgroundColor: trackBgColor
+          }"
+        ></div>
+        <div
+          v-if="showProgress"
+          class="gauge-progress"
+          :style="{
+            '--gauge-progress': currentPercent,
+            '--gauge-stroke-width': gaugeBorderWidth,
+            '--gauge-color': gaugeColor
+          }"
+        ></div>
         <div :class="classes.iconContainer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -107,27 +95,36 @@ const durationInSeconds = computed(() => `${duration}s`)
 }
 
 .progress-circle-base {
+  position: relative;
   transform: translateZ(0);
 }
 
-.gauge-primary-stroke {
-  stroke: var(--color-primary-500);
-  --stroke-percent: v-bind(currentPercent);
-  --percent-to-px: v-bind(percentageInPx);
-  --circumference: v-bind(circumference);
-  stroke-dasharray: calc(var(--stroke-percent) * var(--percent-to-px)) var(--circumference);
-  transition:
-    stroke-dasharray v-bind(durationInSeconds) ease,
-    stroke v-bind(durationInSeconds) ease;
-  transform: rotate(-90deg);
-  transform-origin: center;
-  shape-rendering: geometricPrecision;
+.gauge-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border-style: solid;
 }
 
-.gauge-secondary-stroke {
-  stroke: var(--color-primary-900);
-  stroke-dasharray: 282.6;
-  transform: rotate(-90deg);
-  transform-origin: center;
+.gauge-progress {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--gauge-color, var(--color-primary-500)) 0deg,
+    var(--gauge-color, var(--color-primary-500)) calc(var(--gauge-progress, 0) * 3.6deg),
+    transparent calc(var(--gauge-progress, 0) * 3.6deg)
+  );
+  -webkit-mask: radial-gradient(
+    circle closest-side,
+    transparent calc(100% - var(--gauge-stroke-width, 6px)),
+    #000 calc(100% - var(--gauge-stroke-width, 6px))
+  );
+  mask: radial-gradient(
+    circle closest-side,
+    transparent calc(100% - var(--gauge-stroke-width, 6px)),
+    #000 calc(100% - var(--gauge-stroke-width, 6px))
+  );
 }
 </style>

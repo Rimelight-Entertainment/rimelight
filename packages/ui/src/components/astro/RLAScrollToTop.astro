@@ -24,6 +24,7 @@ const {
 
 const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop", uiProp), className)
 
+const gaugeBorderWidth = progressWidth * 0.5
 
 ---
 
@@ -41,33 +42,25 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
     data-scroll-to-top-button
   >
     <div class={classes.progressBase}>
-      <svg class={classes.svg} viewBox="0 0 100 100" shape-rendering="geometricPrecision">
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          stroke={`var(--color-${color}-900)`}
-          fill={`var(--color-${color}-950)`}
-          stroke-width={progressWidth}
-          stroke-dashoffset="0"
-          stroke-linecap="round"
-          class="gauge-secondary-stroke opacity-100"
-        />
-        {showProgress && (
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          fill="transparent"
-          stroke={`var(--color-${color}-500)`}
-          stroke-width={progressWidth}
-          stroke-dashoffset="0"
-          stroke-linecap="round"
-          class="gauge-primary-stroke opacity-100"
-          data-progress-circle
-        />
-        )}
-      </svg>
+      <div
+        class="gauge-track"
+        style={`
+          border-width: ${gaugeBorderWidth}px;
+          border-color: var(--color-${color}-900);
+          background-color: var(--color-${color}-950);
+        `}
+      ></div>
+      {showProgress && (
+      <div
+        class="gauge-progress"
+        style={`
+          --gauge-progress: 0;
+          --gauge-stroke-width: ${gaugeBorderWidth}px;
+          --gauge-color: var(--color-${color}-500);
+        `}
+        data-gauge-progress
+      ></div>
+      )}
       <div class={classes.iconContainer}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +86,7 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
   document.querySelectorAll('.rla-scroll-to-top').forEach((el) => {
     const element = el as HTMLElement
     const button = element.querySelector('[data-scroll-to-top-button]') as HTMLButtonElement | null
-    const progressCircle = element.querySelector('[data-progress-circle]') as SVGCircleElement | null
+    const gauge = element.querySelector('[data-gauge-progress]') as HTMLElement | null
 
     if (!button) return
 
@@ -110,14 +103,8 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
         element.classList.remove('visible')
       }
 
-      if (progressCircle) {
-        const circumference = 2 * Math.PI * 45
-        const percentPx = circumference / 100
-        const duration = element.dataset.duration || '0.1'
-        progressCircle.style.setProperty('--stroke-percent', scrollPercentage.toString())
-        progressCircle.style.setProperty('--percent-to-px', `${percentPx}px`)
-        progressCircle.style.setProperty('--circumference', circumference.toString())
-        progressCircle.style.setProperty('--duration', `${duration}s`)
+      if (gauge) {
+        gauge.style.setProperty('--gauge-progress', scrollPercentage.toString())
       }
     }
 
@@ -143,27 +130,36 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
   }
 
   .progress-circle-base {
+    position: relative;
     transform: translateZ(0);
   }
 
-  .gauge-primary-stroke {
-    stroke-dasharray: calc(var(--stroke-percent, 0) * var(--percent-to-px, 2.826px)) var(--circumference, 282.6);
-    transition: stroke-dasharray var(--duration, 0.1s) ease, stroke var(--duration, 0.1s) ease;
-    transform: rotate(-90deg);
-    transform-origin: center;
-    shape-rendering: geometricPrecision;
+  .gauge-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border-style: solid;
   }
 
-  .gauge-secondary-stroke {
-    stroke-dasharray: 282.6;
-    transform: rotate(-90deg);
-    transform-origin: center;
-  }
-
-  [data-progress-circle] {
-    --stroke-percent: 0;
-    --percent-to-px: 2.826px;
-    --circumference: 282.6;
-    --duration: 0.1s;
+  .gauge-progress {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      var(--gauge-color, var(--color-primary-500)) 0deg,
+      var(--gauge-color, var(--color-primary-500)) calc(var(--gauge-progress, 0) * 3.6deg),
+      transparent calc(var(--gauge-progress, 0) * 3.6deg)
+    );
+    -webkit-mask: radial-gradient(
+      circle closest-side,
+      transparent calc(100% - var(--gauge-stroke-width, 6px)),
+      #000 calc(100% - var(--gauge-stroke-width, 6px))
+    );
+    mask: radial-gradient(
+      circle closest-side,
+      transparent calc(100% - var(--gauge-stroke-width, 6px)),
+      #000 calc(100% - var(--gauge-stroke-width, 6px))
+    );
   }
 </style>
