@@ -35,6 +35,12 @@
       "bucket_name": "playground-dot-rimelight-dot-com"
     }
   ],
+  "kv_namespaces": [
+    {
+      "binding": "playground-dot-rimelight-dot-com_translations",
+      "id": "7b38260a802041098234d3fe62b637cc"
+    }
+  ],
   "vars": {
     "CONSTRUCTION_MODE": "false"
   }
