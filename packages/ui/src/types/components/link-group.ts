@@ -34,9 +34,11 @@ export interface LinkGroupProps {
    */
   ui?: any
   /**
-   * Force a theme mode for the link group (flat, light, dark).
+   * Force a color-scheme context on the link group. `"light"` or `"dark"` sets `color-scheme` on
+   * the root element, causing all `light-dark()` color variables to resolve to the correct scheme
+   * regardless of the global page mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: "light" | "dark"
   /**
    * Additional CSS classes to apply to the root element.
    */

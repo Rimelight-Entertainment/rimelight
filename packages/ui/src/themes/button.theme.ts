@@ -80,7 +80,6 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
         false: { root: "" }
       },
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

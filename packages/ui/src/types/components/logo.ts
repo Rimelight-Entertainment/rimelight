@@ -8,10 +8,10 @@ export interface LogoProps {
    */
   mode?: "color" | "white" | "black"
   /**
-   * Theme override for color mode detection. Use "flat" to pin to the configured flat variant and
-   * skip auto-detection.
+   * Theme override — pins the logo rendering to `"light"` or `"dark"` color-scheme context, causing
+   * `light-dark()` variables to resolve to the correct scheme regardless of the global page mode.
    */
-  theme?: "flat" | "light" | "dark"
+  theme?: "light" | "dark"
   /**
    * The destination URL when the logo is clicked.
    */

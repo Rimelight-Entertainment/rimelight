@@ -59,9 +59,9 @@ const targetLanguages = [
 ];
 ---
 
-<RLAFooter contain={false} class="bg-black z-50">
+<RLAFooter contain={false} class="rl-dark bg-black z-50">
   <div slot="left" class="flex flex-col gap-xl justify-between items-center lg:items-start">
-    <div class="text-white text-center lg:text-left">
+    <div class="text-center lg:text-left">
       Newsletter Signup
     </div>
     <div class="flex flex-col gap-2xs items-center lg:items-start">
@@ -70,15 +70,14 @@ const targetLanguages = [
         class="h-10 w-auto"
         mode="white"
       />
-      <p class="text-sm text-white text-center lg:text-left">Rimelight Starter</p>
-      <span class="text-sm text-white text-center lg:text-left">© {new Date().getFullYear()} Rimelight Entertainment</span>
+      <p class="text-sm text-center lg:text-left">Rimelight Starter</p>
+      <span class="text-sm text-center lg:text-left">© {new Date().getFullYear()} Rimelight Entertainment</span>
     </div>
   </div>
 
   <div slot="center" class="flex flex-col md:flex-row gap-xl">
     {footerGroups.map(group => (
       <RLALinkGroup
-        theme="flat"
         {...group}
       />
     ))}
@@ -92,7 +91,7 @@ const targetLanguages = [
 
     <div class="flex flex-row flex-wrap gap-sm justify-center lg:justify-end items-center lg:items-end">
       {socials.map((social) => (
-        <RLAButton size="xl" color="neutral" variant="ghost" theme="dark" {...social} />
+        <RLAButton size="xl" color="neutral" variant="ghost" {...social} />
       ))}
     </div>
   </div>

@@ -1,6 +1,6 @@
 import type { defaultColors } from "../presets/defaults"
 
-export type Theme = "flat" | "light" | "dark"
+export type Theme = "light" | "dark"
 
 export interface CustomColors {}
 
