@@ -32,7 +32,6 @@ const gaugeBorderWidth = progressWidth * 0.5
   class:list={["rla-scroll-to-top", "fixed bottom-6 right-6 z-50", classes.root]}
   data-threshold={threshold}
   data-duration={duration}
-  data-circle-stroke-width={progressWidth}
   {...rest}
 >
   <button
@@ -42,24 +41,9 @@ const gaugeBorderWidth = progressWidth * 0.5
     data-scroll-to-top-button
   >
     <div class={classes.progressBase}>
-      <div
-        class="gauge-track"
-        style={`
-          border-width: ${gaugeBorderWidth}px;
-          border-color: var(--color-${color}-900);
-          background-color: var(--color-${color}-950);
-        `}
-      ></div>
+      <div class="gauge-track"></div>
       {showProgress && (
-      <div
-        class="gauge-progress"
-        style={`
-          --gauge-progress: 0;
-          --gauge-stroke-width: ${gaugeBorderWidth}px;
-          --gauge-color: var(--color-${color}-500);
-        `}
-        data-gauge-progress
-      ></div>
+      <div class="gauge-progress" data-gauge-progress></div>
       )}
       <div class={classes.iconContainer}>
         <svg
@@ -83,14 +67,29 @@ const gaugeBorderWidth = progressWidth * 0.5
 </div>
 
 <script>
+  let rlaInstanceId = 0
+
   document.querySelectorAll('.rla-scroll-to-top').forEach((el) => {
-    const element = el as HTMLElement
-    const button = element.querySelector('[data-scroll-to-top-button]') as HTMLButtonElement | null
-    const gauge = element.querySelector('[data-gauge-progress]') as HTMLElement | null
+    const element = el
+    const button = element.querySelector('[data-scroll-to-top-button]')
+    const gauge = element.querySelector('[data-gauge-progress]')
 
     if (!button) return
 
+    const id = rlaInstanceId++
     const threshold = Number(element.dataset.threshold) || 200
+    const nonce = (document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ?? '')
+
+    let styleEl = null
+
+    function getStyleEl() {
+      if (!styleEl) {
+        styleEl = document.createElement('style')
+        if (nonce) styleEl.setAttribute('nonce', nonce)
+        document.head.appendChild(styleEl)
+      }
+      return styleEl
+    }
 
     function updateScrollState() {
       const scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -104,9 +103,11 @@ const gaugeBorderWidth = progressWidth * 0.5
       }
 
       if (gauge) {
-        gauge.style.setProperty('--gauge-progress', scrollPercentage.toString())
+        getStyleEl().textContent = `.rla-scroll-to-top[data-rla-instance="${id}"] .gauge-progress { --gauge-progress: ${scrollPercentage}; }`
       }
     }
+
+    element.dataset.rlaInstance = String(id)
 
     button.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -139,12 +140,18 @@ const gaugeBorderWidth = progressWidth * 0.5
     inset: 0;
     border-radius: 50%;
     border-style: solid;
+    border-width: {gaugeBorderWidth}px;
+    border-color: var(--color-{color}-900);
+    background-color: var(--color-{color}-950);
   }
 
   .gauge-progress {
     position: absolute;
     inset: 0;
     border-radius: 50%;
+    --gauge-progress: 0;
+    --gauge-stroke-width: {gaugeBorderWidth}px;
+    --gauge-color: var(--color-{color}-500);
     background: conic-gradient(
       from 0deg,
       var(--gauge-color, var(--color-primary-500)) 0deg,

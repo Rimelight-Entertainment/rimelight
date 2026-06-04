@@ -4,7 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { ScrollToTopProps } from "../../types/components/scroll-to-top"
 import scrollToTopTheme from "../../themes/scroll-to-top.theme"
 import { useScrollToTop } from "../../composables/useScrollToTop"
-import { computed, useAttrs } from "vue"
+import { computed, onMounted, onUnmounted, watch, useAttrs } from "vue"
 
 const attrs = useAttrs()
 const scrollToTop = scv(scrollToTopTheme)
@@ -29,37 +29,49 @@ const {
   threshold
 })
 
-const currentPercent = computed(() => scrollPercentage.value)
-const gaugeBorderWidth = computed(() => `${progressWidth * 0.5}px`)
-const strokeColor = computed(() => `var(--color-${color}-900)`)
-const trackBgColor = computed(() => `var(--color-${color}-950)`)
-const gaugeColor = computed(() => `var(--color-${color}-500)`)
+const instanceId = `rla-vue-${Math.random().toString(36).slice(2, 8)}`
+const gaugeBorderWidth = progressWidth * 0.5
+
+let styleEl: HTMLStyleElement | null = null
+
+function updateCssVars() {
+  if (!styleEl) return
+  styleEl.textContent = `
+    [data-rla-instance="${instanceId}"] {
+      --gauge-track-border-color: var(--color-${color}-900);
+      --gauge-track-bg: var(--color-${color}-950);
+      --gauge-stroke-width: ${gaugeBorderWidth}px;
+      --gauge-color: var(--color-${color}-500);
+      --gauge-progress: ${scrollPercentage.value};
+    }
+  `
+}
+
+watch(scrollPercentage, updateCssVars)
+
+onMounted(() => {
+  const nonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute("content") ?? ""
+  styleEl = document.createElement("style")
+  if (nonce) styleEl.setAttribute("nonce", nonce)
+  document.head.appendChild(styleEl)
+  updateCssVars()
+})
+
+onUnmounted(() => {
+  if (styleEl) styleEl.remove()
+})
 </script>
 
 <template>
   <div
+    :data-rla-instance="instanceId"
     :class="['rla-scroll-to-top fixed bottom-6 right-6 z-50', { visible: isVisible }, classes.root]"
     v-bind="attrs"
   >
     <button type="button" :class="classes.button" aria-label="Scroll to top" @click="scrollToTopFn">
       <div :class="classes.progressBase">
-        <div
-          class="gauge-track"
-          :style="{
-            borderWidth: gaugeBorderWidth,
-            borderColor: strokeColor,
-            backgroundColor: trackBgColor
-          }"
-        ></div>
-        <div
-          v-if="showProgress"
-          class="gauge-progress"
-          :style="{
-            '--gauge-progress': currentPercent,
-            '--gauge-stroke-width': gaugeBorderWidth,
-            '--gauge-color': gaugeColor
-          }"
-        ></div>
+        <div class="gauge-track"></div>
+        <div v-if="showProgress" class="gauge-progress"></div>
         <div :class="classes.iconContainer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -104,6 +116,9 @@ const gaugeColor = computed(() => `var(--color-${color}-500)`)
   inset: 0;
   border-radius: 50%;
   border-style: solid;
+  border-width: var(--gauge-stroke-width, 3px);
+  border-color: var(--gauge-track-border-color, var(--color-primary-900));
+  background-color: var(--gauge-track-bg, var(--color-primary-950));
 }
 
 .gauge-progress {
@@ -118,13 +133,13 @@ const gaugeColor = computed(() => `var(--color-${color}-500)`)
   );
   -webkit-mask: radial-gradient(
     circle closest-side,
-    transparent calc(100% - var(--gauge-stroke-width, 6px)),
-    #000 calc(100% - var(--gauge-stroke-width, 6px))
+    transparent calc(100% - var(--gauge-stroke-width, 3px)),
+    #000 calc(100% - var(--gauge-stroke-width, 3px))
   );
   mask: radial-gradient(
     circle closest-side,
-    transparent calc(100% - var(--gauge-stroke-width, 6px)),
-    #000 calc(100% - var(--gauge-stroke-width, 6px))
+    transparent calc(100% - var(--gauge-stroke-width, 3px)),
+    #000 calc(100% - var(--gauge-stroke-width, 3px))
   );
 }
 </style>
