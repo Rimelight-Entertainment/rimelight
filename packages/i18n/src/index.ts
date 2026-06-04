@@ -18,7 +18,7 @@ export function useI18n<Body extends Translations>(
   baseTranslations: Body
 ): Body
 export function useI18n<Body extends Translations>(
-  astro: { currentLocale?: string } | undefined | null,
+  astro: { currentLocale?: string | undefined } | undefined | null,
   componentName: string,
   baseTranslations: Body
 ): Body
@@ -37,7 +37,7 @@ export function useI18nAsync<Body extends Translations>(
   baseTranslations: Body
 ): Promise<Body>
 export function useI18nAsync<Body extends Translations>(
-  astro: { currentLocale?: string } | undefined | null,
+  astro: { currentLocale?: string | undefined } | undefined | null,
   componentName: string,
   baseTranslations: Body
 ): Promise<Body>
