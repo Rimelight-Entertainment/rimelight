@@ -37,8 +37,8 @@
   ],
   "kv_namespaces": [
     {
-      "binding": "TRANSLATIONS_KV",
-      "id": "TRANSLATIONS_KV_PLACEHOLDER_ID"
+      "binding": "starter-dot-rimelight-dot-com_translations",
+      "id": "8c09f90741704096bd1dcdf2abadc974"
     }
   ],
   "vars": {
