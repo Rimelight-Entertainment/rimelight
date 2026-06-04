@@ -51,6 +51,10 @@ export default defineDocsConfig({
                 label: "Localization",
                 href: "/{locale}/company/docs/website/overview/localization/"
               },
+              {
+                label: "Internationalization",
+                href: "/{locale}/company/docs/website/overview/internationalization/"
+              },
               { label: "Deployment", href: "/{locale}/company/docs/website/overview/deployment/" }
             ]
           }

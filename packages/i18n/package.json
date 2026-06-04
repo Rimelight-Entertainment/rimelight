@@ -1,0 +1,28 @@
+{
+  "name": "@rimelight/i18n",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Rimelight i18n — unified translation loader with optional KV backing",
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./integration": "./src/integration.ts",
+    "./middleware": "./src/middleware.ts",
+    "./types": "./src/types.ts",
+    "./utils": "./src/utils.ts"
+  },
+  "dependencies": {
+    "@nanostores/i18n": "1.3.3"
+  },
+  "peerDependencies": {
+    "astro": ">=6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "astro": {
+      "optional": true
+    }
+  }
+}

@@ -111,7 +111,11 @@ defineOptions({
                   : 'text-default'
               "
               @click="
-                () => { item.onSelect(); isMenuOpen = false }              "
+                () => {
+                  item.onSelect()
+                  isMenuOpen = false
+                }
+              "
             >
               <span :class="item.icon" class="size-4 shrink-0" />
               {{ item.label }}

@@ -23,7 +23,7 @@ const resolvedClasses = computed(() =>
 </script>
 
 <template>
-  <div :class="resolvedClasses.base"     v-bind="attrs">
+  <div :class="resolvedClasses.base" v-bind="attrs">
     <svg :class="resolvedClasses.svg">
       <defs>
         <pattern

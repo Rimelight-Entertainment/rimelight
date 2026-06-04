@@ -35,6 +35,12 @@
       "bucket_name": "starter-dot-rimelight-dot-com"
     }
   ],
+  "kv_namespaces": [
+    {
+      "binding": "TRANSLATIONS_KV",
+      "id": "TRANSLATIONS_KV_PLACEHOLDER_ID"
+    }
+  ],
   "vars": {
     "CONSTRUCTION_MODE": "false"
   }
