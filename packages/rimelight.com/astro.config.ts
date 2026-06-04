@@ -5,26 +5,10 @@ import es from "./src/translations/es.json"
 import pt from "./src/translations/pt.json"
 import sitemap from "@astrojs/sitemap"
 import mdx from "@astrojs/mdx"
-import astroExpressiveCode from "astro-expressive-code"
-import { createCssVariablesTheme } from "shiki/core"
 import { ui, sri } from "@rimelight/ui/integrations"
 import { defineSecurity } from "@rimelight/ui/config"
 import cloudflare from "@astrojs/cloudflare"
 import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
-
-const theme = (() => {
-  const t = createCssVariablesTheme({
-    name: "csp-theme",
-    variablePrefix: "--shiki-",
-    fontStyle: true
-  })
-  t.colors = Object.fromEntries(
-    Object.entries(t.colors || {}).filter(
-      ([_, val]) => typeof val === "string" && val.startsWith("#")
-    )
-  )
-  return t
-})()
 
 export default defineConfig({
   experimental: {
@@ -129,12 +113,6 @@ export default defineConfig({
           es: "es-ES"
         }
       }
-    }),
-
-    astroExpressiveCode({
-      emitExternalStylesheet: true,
-      themes: [theme],
-      themeCssRoot: ":root"
     }),
 
     mdx(),
