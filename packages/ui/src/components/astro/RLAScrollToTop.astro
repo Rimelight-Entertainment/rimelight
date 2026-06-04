@@ -24,14 +24,14 @@ const {
 
 const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop", uiProp), className)
 
-const gaugeBorderWidth = progressWidth * 0.5
-
 ---
 
 <div
   class:list={["rla-scroll-to-top", "fixed bottom-6 right-6 z-50", classes.root]}
   data-threshold={threshold}
   data-duration={duration}
+  data-color={color}
+  data-progress-width={progressWidth}
   {...rest}
 >
   <button
@@ -78,6 +78,9 @@ const gaugeBorderWidth = progressWidth * 0.5
 
     const id = rlaInstanceId++
     const threshold = Number(element.dataset.threshold) || 200
+    const color = element.dataset.color || 'primary'
+    const progressWidth = Number(element.dataset.progressWidth) || 6
+    const gaugeBorderWidth = progressWidth * 0.5
     const nonce = (document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ?? '')
 
     let styleEl = null
@@ -91,7 +94,7 @@ const gaugeBorderWidth = progressWidth * 0.5
       return styleEl
     }
 
-    function updateScrollState() {
+    function updateStyles() {
       const scrollTop = window.scrollY || document.documentElement.scrollTop
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
       const scrollPercentage = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
@@ -102,9 +105,18 @@ const gaugeBorderWidth = progressWidth * 0.5
         element.classList.remove('visible')
       }
 
-      if (gauge) {
-        getStyleEl().textContent = `.rla-scroll-to-top[data-rla-instance="${id}"] .gauge-progress { --gauge-progress: ${scrollPercentage}; }`
-      }
+      getStyleEl().textContent = `
+        .rla-scroll-to-top[data-rla-instance="${id}"] .gauge-track {
+          border-width: ${gaugeBorderWidth}px;
+          border-color: var(--color-${color}-900);
+          background-color: var(--color-${color}-950);
+        }
+        .rla-scroll-to-top[data-rla-instance="${id}"] .gauge-progress {
+          --gauge-progress: ${scrollPercentage};
+          --gauge-stroke-width: ${gaugeBorderWidth}px;
+          --gauge-color: var(--color-${color}-500);
+        }
+      `
     }
 
     element.dataset.rlaInstance = String(id)
@@ -113,8 +125,8 @@ const gaugeBorderWidth = progressWidth * 0.5
       window.scrollTo({ top: 0, behavior: 'smooth' })
     })
 
-    window.addEventListener('scroll', updateScrollState, { passive: true })
-    updateScrollState()
+    window.addEventListener('scroll', updateStyles, { passive: true })
+    updateStyles()
   })
 </script>
 
@@ -140,18 +152,12 @@ const gaugeBorderWidth = progressWidth * 0.5
     inset: 0;
     border-radius: 50%;
     border-style: solid;
-    border-width: {gaugeBorderWidth}px;
-    border-color: var(--color-{color}-900);
-    background-color: var(--color-{color}-950);
   }
 
   .gauge-progress {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    --gauge-progress: 0;
-    --gauge-stroke-width: {gaugeBorderWidth}px;
-    --gauge-color: var(--color-{color}-500);
     background: conic-gradient(
       from 0deg,
       var(--gauge-color, var(--color-primary-500)) 0deg,
