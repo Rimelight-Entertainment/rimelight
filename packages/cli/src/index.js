@@ -660,7 +660,7 @@ function getDiffLines(starterContent, targetContent, file, targetDir) {
     try {
       const diffs = getStructuredJsonDiffs(starterContent, targetContent, file)
       return diffs.map((d) => d.message)
-    } catch (e) {
+    } catch {
       // Fallback to line diff if JSON parse fails
     }
   }
@@ -887,7 +887,7 @@ export async function runUpdate(options) {
             let diffs = []
             try {
               diffs = getStructuredJsonDiffs(starterContent, currentTargetContent, file)
-            } catch (e) {
+            } catch {
               // Fallback to line diff
             }
 
