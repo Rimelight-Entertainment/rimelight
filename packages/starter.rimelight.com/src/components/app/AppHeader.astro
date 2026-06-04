@@ -11,7 +11,7 @@ import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 import placeholderImage from "../../assets/placeholder.webp";
 
 const messages = useI18n(Astro, "app_header", {
-	"left-links_home_label": "Home",
+  "left-links_home_label": "Home",
   "left-links_features_label": "Features",
   "link-groups_center_foundations_label": "Foundation",
   "link-groups_center_foundations_description": "Design tokens, color palettes, fluid typography.",
@@ -30,7 +30,7 @@ const messages = useI18n(Astro, "app_header", {
   "link-groups_right_resources_links_github": "GitHub Repository",
   "left-links_about_label": "About",
   "left-links_blog_label": "Blog",
-	"left-links_docs_label": "Docs",
+  "left-links_docs_label": "Docs",
   "left-links_dashboard_label": "Dashboard",
   "actions_view-on-github_label": "View on GitHub",
   "actions_use-template_label": "Use Template",
@@ -146,7 +146,7 @@ const actions: ButtonProps[] = [
 <RLAHeader
   contain={false}
   fixed={true}
-  class="rl-dark scroll-header bg-black left-1/2 -translate-x-1/2 duration-300"
+  class="rl-dark scroll-header bg-black left-1/2"
 >
   <div slot="left" class="flex items-center gap-md">
     <div class="hidden md:flex flex-row gap-md">
@@ -155,7 +155,7 @@ const actions: ButtonProps[] = [
         class="h-10 w-auto"
         mode="white"
       />
-     <RLANavigationMenu
+      <RLANavigationMenu
         items={leftLinks}
         variant="link"
         ui={{
@@ -284,15 +284,22 @@ const actions: ButtonProps[] = [
 
   @keyframes shrinkHeader {
     from {
-      margin-top: 0;
+      transform: translateX(-50%) translateY(0);
       width: 100%;
       max-width: 100%;
     }
     to {
-      margin-top: 16px;
+      transform: translateX(-50%) translateY(16px);
       width: calc(100% - 32px);
       border-radius: 9999px;
     }
+  }
+
+  .scroll-header {
+    left: 50%;
+    animation: shrinkHeader linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 90px;
   }
 
   @keyframes shrinkViewport {
@@ -310,6 +317,7 @@ const actions: ButtonProps[] = [
   }
 
   .scroll-header {
+    left: 50%;
     animation: shrinkHeader linear both;
     animation-timeline: scroll(root);
     animation-range: 0 90px;
