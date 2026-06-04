@@ -234,6 +234,16 @@ function toggleLabel(labelId: string) {
   debouncedSave()
 }
 
+function togglePinned() {
+  state.isPinned = !state.isPinned
+  debouncedSave()
+}
+
+function toggleArchived() {
+  state.isArchived = !state.isArchived
+  debouncedSave()
+}
+
 async function createNewLabel() {
   const name = newLabelInput.value.trim()
   if (!name) return
@@ -330,10 +340,7 @@ defineOptions({ name: "NoteModal" })
                 variant="ghost"
                 color="neutral"
                 :label="state.isPinned ? 'Unpin' : 'Pin'"
-                @click="
-                  state.isPinned = !state.isPinned
-                  debouncedSave()
-                "
+                @click="togglePinned"
               />
 
               <!-- Tag dropdown -->
@@ -386,10 +393,7 @@ defineOptions({ name: "NoteModal" })
                 variant="ghost"
                 color="neutral"
                 :label="state.isArchived ? 'Unarchive' : 'Archive'"
-                @click="
-                  state.isArchived = !state.isArchived
-                  debouncedSave()
-                "
+                @click="toggleArchived"
               />
             </div>
           </div>
