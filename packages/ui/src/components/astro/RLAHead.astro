@@ -163,6 +163,17 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
 
 <script is:inline>
   (function() {
+    if (window.trustedTypes && trustedTypes.createPolicy) {
+      trustedTypes.createPolicy('default', {
+        createHTML: function(input) { return input; },
+        createScript: function(input) { return input; },
+        createScriptURL: function(input) { return input; }
+      });
+    }
+  })();
+</script>
+<script is:inline>
+  (function() {
     if (!window.initialCspNonce) {
       window.initialCspNonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
                                Array.from(document.querySelectorAll('script')).find(function(s) { return s.nonce; })?.nonce ||
