@@ -1,14 +1,11 @@
-import { fileURLToPath } from "node:url"
 import path from "node:path"
 import fs from "node:fs/promises"
-import { existsSync } from "node:fs"
+import { existsSync, readdirSync } from "node:fs"
 import * as prompts from "@clack/prompts"
 import pc from "picocolors"
 import spawn from "cross-spawn"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const starterPath = path.resolve(__dirname, "../../starter")
+const starterPath = path.resolve(import.meta.dirname, "../../starter")
 
 // Helper to parse JSON with comments (JSONC)
 function parseJsonc(content) {
@@ -22,10 +19,7 @@ async function copyDir(src, dest) {
   await fs.mkdir(dest, { recursive: true })
   const entries = await fs.readdir(src, { withFileTypes: true })
 
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name)
-    const destPath = path.join(dest, entry.name)
-
+  const promises = entries.map(async (entry) => {
     if (
       entry.name === "node_modules" ||
       entry.name === "dist" ||
@@ -33,15 +27,20 @@ async function copyDir(src, dest) {
       entry.name === ".git" ||
       entry.name === ".wrangler"
     ) {
-      continue
+      return
     }
+
+    const srcPath = path.join(src, entry.name)
+    const destPath = path.join(dest, entry.name)
 
     if (entry.isDirectory()) {
       await copyDir(srcPath, destPath)
     } else {
       await fs.copyFile(srcPath, destPath)
     }
-  }
+  })
+
+  await Promise.all(promises)
 }
 
 // Helper to update astro.config.ts and wrangler.jsonc with the chosen domain
@@ -92,9 +91,10 @@ export async function runCreate(options) {
         placeholder: "./my-rimelight-app",
         validate: (value) => {
           if (!value.trim()) return "Please enter a directory path"
-          if (existsSync(path.resolve(value)) && fs.readdir(path.resolve(value)).length > 0) {
+          if (existsSync(path.resolve(value)) && readdirSync(path.resolve(value)).length > 0) {
             return "Directory is not empty"
           }
+          return undefined
         }
       })
 
@@ -115,11 +115,12 @@ export async function runCreate(options) {
         message: "What is the website domain for this project? (Optional)",
         placeholder: "e.g. example.com",
         validate: (value) => {
-          if (!value || !value.trim()) return
+          if (!value || !value.trim()) return undefined
           // Simple domain check
           if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(value.trim())) {
             return "Please enter a valid domain name (e.g. example.com)"
           }
+          return undefined
         }
       })
 
@@ -149,9 +150,11 @@ export async function runCreate(options) {
 
         const spinner = prompts.spinner()
         spinner.start("Clearing target directory")
-        for (const file of files) {
-          await fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true })
-        }
+        await Promise.all(
+          files.map((file) =>
+            fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true })
+          )
+        )
         spinner.stop("Target directory cleared")
       }
     }
@@ -293,9 +296,11 @@ export async function runCreate(options) {
       const files = await fs.readdir(resolvedTargetDir)
       if (files.length > 0) {
         console.log(pc.yellow(`Target directory is not empty. Overwriting existing files...`))
-        for (const file of files) {
-          await fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true })
-        }
+        await Promise.all(
+          files.map((file) =>
+            fs.rm(path.join(resolvedTargetDir, file), { recursive: true, force: true })
+          )
+        )
       }
     }
 
@@ -328,10 +333,15 @@ export async function runCreate(options) {
 
     if (installDeps) {
       console.log(`Installing dependencies using ${packageManager}...`)
-      const install = spawn.sync(packageManager, ["install"], {
-        cwd: resolvedTargetDir,
-        stdio: "ignore"
-      })
+      const install = spawn.crossSpawn
+        ? spawn.crossSpawn(packageManager, ["install"], {
+            cwd: resolvedTargetDir,
+            stdio: "ignore"
+          })
+        : spawn.sync(packageManager, ["install"], {
+            cwd: resolvedTargetDir,
+            stdio: "ignore"
+          })
       if (install.status === 0) {
         console.log(pc.green("✔ Dependencies successfully installed!"))
       } else {
@@ -350,8 +360,8 @@ export async function runCreate(options) {
 }
 
 // Helper to get nested properties in an object
-function getNested(obj, path) {
-  const parts = path.split(".")
+function getNested(obj, propPath) {
+  const parts = propPath.split(".")
   let current = obj
   for (const part of parts) {
     if (current === undefined || current === null) return undefined
@@ -361,8 +371,8 @@ function getNested(obj, path) {
 }
 
 // Helper to set nested properties in an object
-function setNested(obj, path, value) {
-  const parts = path.split(".")
+function setNested(obj, propPath, value) {
+  const parts = propPath.split(".")
   let current = obj
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i]
@@ -420,9 +430,10 @@ function injectIntoArray(targetArr, starterArr, value) {
   return targetArr
 }
 
+const cleanLine = (l) => l.trim().replace(/\s+/g, "")
+
 // Inject a missing line cleanly at its semantic index inside targetLines based on starterLines order
 function injectIntoLines(targetLines, starterLines, value) {
-  const cleanLine = (l) => l.trim().replace(/\s+/g, "")
   const valueClean = cleanLine(value)
 
   const sIdx = starterLines.findIndex((x) => cleanLine(x) === valueClean)
@@ -526,18 +537,18 @@ function getStructuredJsonDiffs(starterContent, targetContent, file) {
     }
 
     for (const [key, val] of Object.entries(sObj)) {
-      const path = prefix ? `${prefix}.${key}` : key
+      const nestedPath = prefix ? `${prefix}.${key}` : key
 
-      if (file === "wrangler.jsonc" && (path === "name" || path === "routes")) {
+      if (file === "wrangler.jsonc" && (nestedPath === "name" || nestedPath === "routes")) {
         continue
       }
 
       if (tObj[key] === undefined) {
         diffs.push({
           type: "missing",
-          path,
+          path: nestedPath,
           value: val,
-          message: `missing key "${path}"`
+          message: `missing key "${nestedPath}"`
         })
       } else if (Array.isArray(val) && Array.isArray(tObj[key])) {
         // Element-level list checking
@@ -549,9 +560,9 @@ function getStructuredJsonDiffs(starterContent, targetContent, file) {
             arrayMissing = true
             diffs.push({
               type: "array_missing",
-              path,
+              path: nestedPath,
               value: item,
-              message: `missing array entry ${itemString} in "${path}"`
+              message: `missing array entry ${itemString} in "${nestedPath}"`
             })
           }
         }
@@ -576,9 +587,9 @@ function getStructuredJsonDiffs(starterContent, targetContent, file) {
             }
             diffs.push({
               type: "out_of_order_array",
-              path,
+              path: nestedPath,
               value: reordered,
-              message: `[Out of Order] array elements in "${path}" differ from starter order`
+              message: `[Out of Order] array elements in "${nestedPath}" differ from starter order`
             })
           }
         }
@@ -588,14 +599,14 @@ function getStructuredJsonDiffs(starterContent, targetContent, file) {
         typeof tObj[key] === "object" &&
         tObj[key] !== null
       ) {
-        diffKeys(val, tObj[key], path)
+        diffKeys(val, tObj[key], nestedPath)
       } else if (JSON.stringify(tObj[key]) !== JSON.stringify(val)) {
         diffs.push({
           type: "differing",
-          path,
+          path: nestedPath,
           value: val,
           currentValue: tObj[key],
-          message: `differing key "${path}":\n      ├─ Current:   ${JSON.stringify(tObj[key])}\n      └─ Reference: ${JSON.stringify(val)}`
+          message: `differing key "${nestedPath}":\n      ├─ Current:   ${JSON.stringify(tObj[key])}\n      └─ Reference: ${JSON.stringify(val)}`
         })
       }
     }
@@ -604,6 +615,12 @@ function getStructuredJsonDiffs(starterContent, targetContent, file) {
   diffKeys(starterObj, targetObj)
   return diffs
 }
+
+const cleanLines = (c) =>
+  c
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
 
 // Helper to diff files line-by-line
 function getStructuredLineDiffs(starterContent, targetContent, file, targetDir) {
@@ -627,12 +644,6 @@ function getStructuredLineDiffs(starterContent, targetContent, file, targetDir) 
       normalizedTarget = normalizedTarget.replace(/\/\/ /g, "")
     }
   }
-
-  const cleanLines = (c) =>
-    c
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean)
 
   const starterLines = cleanLines(normalizedStarter)
   const targetLines = cleanLines(normalizedTarget)
@@ -698,20 +709,46 @@ export async function runCompare(options) {
 
   let totalDiffs = 0
 
-  for (const file of files) {
-    const starterFilePath = path.join(starterPath, file)
-    const targetFilePath = path.join(targetDir, file)
+  const filesData = await Promise.all(
+    files.map(async (file) => {
+      const starterFilePath = path.join(starterPath, file)
+      const targetFilePath = path.join(targetDir, file)
 
-    if (!existsSync(targetFilePath)) {
+      if (!existsSync(targetFilePath)) {
+        return { file, exists: false }
+      }
+
+      try {
+        const [starterContent, targetContent] = await Promise.all([
+          fs.readFile(starterFilePath, "utf-8"),
+          fs.readFile(targetFilePath, "utf-8")
+        ])
+        return { file, exists: true, starterContent, targetContent }
+      } catch (err) {
+        return { file, exists: true, error: err }
+      }
+    })
+  )
+
+  for (const data of filesData) {
+    const { file, exists, starterContent, targetContent, error } = data
+
+    if (!exists) {
       console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("MISSING")}`)
+      totalDiffs++
+      continue
+    }
+
+    if (error) {
+      console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("ERROR")} (${error.message})`)
       totalDiffs++
       continue
     }
 
     if (file === "package.json") {
       try {
-        const starterPkg = JSON.parse(await fs.readFile(starterFilePath, "utf-8"))
-        const targetPkg = JSON.parse(await fs.readFile(targetFilePath, "utf-8"))
+        const starterPkg = JSON.parse(starterContent)
+        const targetPkg = JSON.parse(targetContent)
 
         const pkgDiffs = []
 
@@ -771,29 +808,21 @@ export async function runCompare(options) {
         } else {
           console.log(`${pc.green("✔")} ${pc.bold(file)}: ${pc.green("UP TO DATE")}`)
         }
-      } catch (e) {
-        console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("INVALID JSON")} (${e.message})`)
+      } catch (err) {
+        console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("INVALID JSON")} (${err.message})`)
         totalDiffs++
       }
     } else {
-      try {
-        const starterContent = await fs.readFile(starterFilePath, "utf-8")
-        const targetContent = await fs.readFile(targetFilePath, "utf-8")
+      const diffs = getDiffLines(starterContent, targetContent, file, targetDir)
 
-        const diffs = getDiffLines(starterContent, targetContent, file, targetDir)
-
-        if (diffs.length > 0) {
-          console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`)
-          for (const diff of diffs) {
-            console.log(`  └─ ${pc.dim(diff)}`)
-          }
-          totalDiffs += diffs.length
-        } else {
-          console.log(`${pc.green("✔")} ${pc.bold(file)}: ${pc.green("UP TO DATE")}`)
+      if (diffs.length > 0) {
+        console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`)
+        for (const diff of diffs) {
+          console.log(`  └─ ${pc.dim(diff)}`)
         }
-      } catch (e) {
-        console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("ERROR")} (${e.message})`)
-        totalDiffs++
+        totalDiffs += diffs.length
+      } else {
+        console.log(`${pc.green("✔")} ${pc.bold(file)}: ${pc.green("UP TO DATE")}`)
       }
     }
   }
@@ -841,13 +870,172 @@ export async function runUpdate(options) {
   const pendingWrites = [] // Accumulate in-memory changes: { filePath, content, actionDescription }
 
   try {
-    // 1. Process standard configuration files
-    for (const file of files) {
-      const starterFilePath = path.join(starterPath, file)
+    // Pre-read config files
+    const starterExists = files.map((file) => existsSync(path.join(starterPath, file)))
+    const targetExists = files.map((file) => existsSync(path.join(targetDir, file)))
+
+    const preReadStarter = await Promise.all(
+      files.map((file, i) =>
+        starterExists[i] ? fs.readFile(path.join(starterPath, file), "utf-8") : Promise.resolve("")
+      )
+    )
+    const preReadTarget = await Promise.all(
+      files.map((file, i) =>
+        starterExists[i] && targetExists[i]
+          ? fs.readFile(path.join(targetDir, file), "utf-8")
+          : Promise.resolve("")
+      )
+    )
+
+    // Pre-read package.json files
+    const targetPkgPath = path.join(targetDir, "package.json")
+    const starterPkgPath = path.join(starterPath, "package.json")
+    const targetPkgExists = existsSync(targetPkgPath)
+
+    const [starterPkgContent, targetPkgContent] = await Promise.all([
+      fs.readFile(starterPkgPath, "utf-8").catch(() => "{}"),
+      targetPkgExists ? fs.readFile(targetPkgPath, "utf-8") : Promise.resolve("{}")
+    ])
+
+    const starterPkg = JSON.parse(starterPkgContent)
+    const targetPkg = JSON.parse(targetPkgContent)
+
+    // Helper functions to update diffs recursively instead of using loop with await
+    const handleJsonDiff = async (currentTargetContent, starterContent, file) => {
+      let diffs = []
+      try {
+        diffs = getStructuredJsonDiffs(starterContent, currentTargetContent, file)
+      } catch {
+        // Fallback to line diff
+      }
+
+      if (diffs.length === 0) return currentTargetContent
+
+      console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`)
+      for (const diff of diffs) {
+        console.log(`  └─ ${pc.dim(diff.message)}`)
+      }
+
+      let selectedDiffMessages = []
+      if (isInteractive) {
+        const selection = await prompts.multiselect({
+          message: `Select keys to update in ${file} (Select none to finish):`,
+          options: diffs.map((diff) => ({
+            value: diff.message,
+            label: diff.message
+          })),
+          required: false
+        })
+
+        if (prompts.isCancel(selection)) {
+          prompts.cancel("Update cancelled.")
+          process.exit(0)
+        }
+        selectedDiffMessages = selection
+      } else {
+        // Apply all in non-interactive mode
+        selectedDiffMessages = diffs.map((d) => d.message)
+      }
+
+      if (selectedDiffMessages.length === 0) {
+        return currentTargetContent
+      }
+
+      let targetObj = parseJsonc(currentTargetContent)
+      for (const diff of diffs) {
+        if (selectedDiffMessages.includes(diff.message)) {
+          if (diff.type === "array_missing") {
+            const arr = getNested(targetObj, diff.path) || []
+            const starterObj = parseJsonc(starterContent)
+            const starterArr = getNested(starterObj, diff.path) || []
+            const newArr = injectIntoArray(arr, starterArr, diff.value)
+            setNested(targetObj, diff.path, newArr)
+          } else if (diff.type === "out_of_order_array") {
+            setNested(targetObj, diff.path, diff.value)
+          } else if (diff.type === "out_of_order_keys") {
+            targetObj = reorderKeys(targetObj, parseJsonc(starterContent))
+          } else {
+            setNested(targetObj, diff.path, diff.value)
+          }
+        }
+      }
+
+      if (file === "wrangler.jsonc") {
+        const parsed = parseJsonc(targetPkgContent)
+        targetObj.name = parsed.name
+        targetObj.routes = parsed.routes
+      }
+
+      const nextContent = JSON.stringify(targetObj, null, 2)
+      console.log(
+        pc.green(`✔ Staged ${selectedDiffMessages.length} updates for "${file}" in memory.\n`)
+      )
+
+      if (!isInteractive) return nextContent
+      return handleJsonDiff(nextContent, starterContent, file)
+    }
+
+    const handleLineDiff = async (currentTargetContent, starterContent, file) => {
+      const diffs = getStructuredLineDiffs(starterContent, currentTargetContent, file, targetDir)
+      if (diffs.length === 0) return currentTargetContent
+
+      console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`)
+      for (const diff of diffs) {
+        console.log(`  └─ ${pc.dim(diff.message)}`)
+      }
+
+      let selectedLines = []
+      if (isInteractive) {
+        const selection = await prompts.multiselect({
+          message: `Select entries to add to ${file} (Select none to finish):`,
+          options: diffs.map((diff) => ({
+            value: diff.line,
+            label: diff.line
+          })),
+          required: false
+        })
+
+        if (prompts.isCancel(selection)) {
+          prompts.cancel("Update cancelled.")
+          process.exit(0)
+        }
+        selectedLines = selection
+      } else {
+        selectedLines = diffs.map((d) => d.line)
+      }
+
+      if (selectedLines.length === 0) {
+        return currentTargetContent
+      }
+
+      const starterLines = starterContent.split("\n")
+      let targetLines = currentTargetContent.split("\n")
+
+      for (const diff of diffs) {
+        if (selectedLines.includes(diff.line)) {
+          let resolvedLine = diff.line
+          if (file === "astro.config.ts") {
+            resolvedLine = resolveDomainInLine(diff.line, targetPkgContent)
+          }
+          targetLines = injectIntoLines(targetLines, starterLines, resolvedLine)
+        }
+      }
+
+      const nextContent = targetLines.join("\n")
+      console.log(pc.green(`✔ Staged ${selectedLines.length} entries for "${file}" in memory.\n`))
+
+      if (!isInteractive) return nextContent
+      return handleLineDiff(nextContent, starterContent, file)
+    }
+
+    // 1. Process standard configuration files recursively to avoid loops with await
+    const processFiles = async (index) => {
+      if (index >= files.length) return
+      const file = files[index]
       const targetFilePath = path.join(targetDir, file)
 
-      if (existsSync(starterFilePath)) {
-        if (!existsSync(targetFilePath)) {
+      if (starterExists[index]) {
+        if (!targetExists[index]) {
           // File is missing entirely
           console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("MISSING")}`)
           let shouldCreate = true
@@ -862,104 +1050,29 @@ export async function runUpdate(options) {
             }
           }
           if (shouldCreate) {
-            const starterContent = await fs.readFile(starterFilePath, "utf-8")
             pendingWrites.push({
               filePath: targetFilePath,
-              content: starterContent,
+              content: preReadStarter[index],
               actionDescription: `Create missing file "${file}"`
             })
             console.log(pc.green(`✔ Scheduled creation of "${file}".`))
           } else {
             console.log(pc.yellow(`ℹ Skipped file "${file}".`))
           }
-          continue
+          await processFiles(index + 1)
+          return
         }
 
-        const starterContent = await fs.readFile(starterFilePath, "utf-8")
-        const targetContent = await fs.readFile(targetFilePath, "utf-8")
+        const starterContent = preReadStarter[index]
+        const targetContent = preReadTarget[index]
 
         // Parse/Diff dynamically based on file type
         if (file.endsWith(".json") || file.endsWith(".jsonc")) {
-          let currentTargetContent = targetContent
-          let loop = true
-
-          while (loop) {
-            let diffs = []
-            try {
-              diffs = getStructuredJsonDiffs(starterContent, currentTargetContent, file)
-            } catch {
-              // Fallback to line diff
-            }
-
-            if (diffs.length === 0) break
-
-            console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`)
-            for (const diff of diffs) {
-              console.log(`  └─ ${pc.dim(diff.message)}`)
-            }
-
-            let selectedDiffMessages = []
-            if (isInteractive) {
-              const selection = await prompts.multiselect({
-                message: `Select keys to update in ${file} (Select none to finish):`,
-                options: diffs.map((diff) => ({
-                  value: diff.message,
-                  label: diff.message
-                })),
-                required: false
-              })
-
-              if (prompts.isCancel(selection)) {
-                prompts.cancel("Update cancelled.")
-                process.exit(0)
-              }
-              selectedDiffMessages = selection
-            } else {
-              // Apply all in non-interactive mode
-              selectedDiffMessages = diffs.map((d) => d.message)
-            }
-
-            if (selectedDiffMessages.length === 0) {
-              break
-            }
-
-            let targetObj = parseJsonc(currentTargetContent)
-            for (const diff of diffs) {
-              if (selectedDiffMessages.includes(diff.message)) {
-                if (diff.type === "array_missing") {
-                  const arr = getNested(targetObj, diff.path) || []
-                  const starterObj = parseJsonc(starterContent)
-                  const starterArr = getNested(starterObj, diff.path) || []
-                  const newArr = injectIntoArray(arr, starterArr, diff.value)
-                  setNested(targetObj, diff.path, newArr)
-                } else if (diff.type === "out_of_order_array") {
-                  setNested(targetObj, diff.path, diff.value)
-                } else if (diff.type === "out_of_order_keys") {
-                  targetObj = reorderKeys(targetObj, parseJsonc(starterContent))
-                } else {
-                  setNested(targetObj, diff.path, diff.value)
-                }
-              }
-            }
-
-            if (file === "wrangler.jsonc") {
-              const parsed = parseJsonc(targetContent)
-              targetObj.name = parsed.name
-              targetObj.routes = parsed.routes
-            }
-
-            currentTargetContent = JSON.stringify(targetObj, null, 2)
-            console.log(
-              pc.green(`✔ Staged ${selectedDiffMessages.length} updates for "${file}" in memory.\n`)
-            )
-
-            if (!isInteractive) break // Non-interactive mode finishes after one re-evaluation
-          }
-
-          if (currentTargetContent !== targetContent) {
+          const finalContent = await handleJsonDiff(targetContent, starterContent, file)
+          if (finalContent !== targetContent) {
             pendingWrites.push({
               filePath: targetFilePath,
-              content: currentTargetContent,
+              content: finalContent,
               actionDescription: `Standardize JSON structures in "${file}"`
             })
             console.log(pc.green(`✔ Scheduled batch updates for "${file}".`))
@@ -973,88 +1086,24 @@ export async function runUpdate(options) {
           file === "vite.config.ts" ||
           file === "uno.config.ts"
         ) {
-          let currentTargetContent = targetContent
-          let loop = true
-
-          while (loop) {
-            const diffs = getStructuredLineDiffs(
-              starterContent,
-              currentTargetContent,
-              file,
-              targetDir
-            )
-            if (diffs.length === 0) break
-
-            console.log(`${pc.yellow("⚠")} ${pc.bold(file)}: ${pc.yellow("DIFFERING")}`)
-            for (const diff of diffs) {
-              console.log(`  └─ ${pc.dim(diff.message)}`)
-            }
-
-            let selectedLines = []
-            if (isInteractive) {
-              const selection = await prompts.multiselect({
-                message: `Select entries to add to ${file} (Select none to finish):`,
-                options: diffs.map((diff) => ({
-                  value: diff.line,
-                  label: diff.line
-                })),
-                required: false
-              })
-
-              if (prompts.isCancel(selection)) {
-                prompts.cancel("Update cancelled.")
-                process.exit(0)
-              }
-              selectedLines = selection
-            } else {
-              selectedLines = diffs.map((d) => d.line)
-            }
-
-            if (selectedLines.length === 0) {
-              break
-            }
-
-            let starterLines = starterContent.split("\n")
-            let targetLines = currentTargetContent.split("\n")
-
-            for (const diff of diffs) {
-              if (selectedLines.includes(diff.line)) {
-                let resolvedLine = diff.line
-                if (file === "astro.config.ts") {
-                  resolvedLine = resolveDomainInLine(diff.line, targetContent)
-                }
-                targetLines = injectIntoLines(targetLines, starterLines, resolvedLine)
-              }
-            }
-
-            currentTargetContent = targetLines.join("\n")
-            console.log(
-              pc.green(`✔ Staged ${selectedLines.length} entries for "${file}" in memory.\n`)
-            )
-
-            if (!isInteractive) break
-          }
-
-          if (currentTargetContent !== targetContent) {
+          const finalContent = await handleLineDiff(targetContent, starterContent, file)
+          if (finalContent !== targetContent) {
             pendingWrites.push({
               filePath: targetFilePath,
-              content: currentTargetContent,
+              content: finalContent,
               actionDescription: `Standardize entry list in "${file}"`
             })
             console.log(pc.green(`✔ Scheduled batch updates for "${file}".`))
           }
         }
       }
+      await processFiles(index + 1)
     }
 
-    // 2. Standardize package.json preserving custom dependencies
-    const targetPkgPath = path.join(targetDir, "package.json")
-    if (existsSync(targetPkgPath)) {
-      const starterPkg = JSON.parse(
-        await fs.readFile(path.join(starterPath, "package.json"), "utf-8")
-      )
-      const targetPkg = JSON.parse(await fs.readFile(targetPkgPath, "utf-8"))
+    await processFiles(0)
 
+    // 2. Standardize package.json preserving custom dependencies
+    if (targetPkgExists) {
       const pkgOptions = []
 
       // Engines Node
@@ -1214,9 +1263,9 @@ export async function runUpdate(options) {
       if (confirmApply) {
         const writeSpinner = prompts.spinner()
         writeSpinner.start("Writing changes to configuration files...")
-        for (const item of pendingWrites) {
-          await fs.writeFile(item.filePath, item.content, "utf-8")
-        }
+        await Promise.all(
+          pendingWrites.map((item) => fs.writeFile(item.filePath, item.content, "utf-8"))
+        )
         writeSpinner.stop(pc.green(`✔ Successfully wrote ${pendingWrites.length} files to disk!`))
       }
     } else {
