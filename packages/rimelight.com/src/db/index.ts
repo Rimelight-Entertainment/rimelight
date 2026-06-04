@@ -27,7 +27,7 @@ function stub(): unknown {
 let db!: NeonHttpDatabase<typeof schema>
 
 const databaseUrl =
-  (typeof import.meta.env !== "undefined" ? import.meta.env.DATABASE_URL : undefined) ??
+  (typeof import.meta.env !== "undefined" ? import.meta.env.DATABASE_URL : undefined) ||
   process.env.DATABASE_URL
 
 if (databaseUrl) {
