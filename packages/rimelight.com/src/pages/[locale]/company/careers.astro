@@ -1,0 +1,146 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("careers", {
+  title: "Careers",
+  description: "Work at Rimelight Entertainment - Help us build the future of interactive media.",
+  hero_title: "Join the Team",
+  hero_description: "We believe in empowering creators, low bureaucracy, and player-focused game development.",
+  culture_title: "Our Culture",
+  culture_desc: "We believe that the best work happens when people feel safe, supported, and inspired. At Rimelight, we empower our team to take ownership, experiment, and grow.",
+  benefits_title: "Benefits & Perks",
+  benefits_health: "Comprehensive Health",
+  benefits_health_desc: "Full medical, dental, and vision insurance coverage for you and your family.",
+  benefits_time: "Flexible Time Off",
+  benefits_time_desc: "Generous paid time off, parental leave, and flexible working hours.",
+  benefits_dev: "Professional Growth",
+  benefits_dev_desc: "Budget for books, conferences, learning materials, and courses.",
+  benefits_gear: "Home Office Budget",
+  benefits_gear_desc: "We provide high-end gear and a budget to set up your ideal workspace.",
+  offices_title: "Where We Work",
+  offices_remote: "Remote-First",
+  offices_remote_desc: "Work from anywhere that inspires you. We are a fully distributed global team.",
+  offices_hq: "Creative Spaces",
+  offices_hq_desc: "Access to collaborative hubs and offices for team meetups and social gatherings.",
+  positions_title: "Open Roles",
+  no_positions: "No open positions at this time. Check back soon or follow us for updates!"
+});
+---
+
+<AppLayout title={messages.title} description={messages.description}>
+  <div class="flex flex-col gap-16 md:gap-24 pb-24 bg-neutral-950 text-white">
+    <!-- Hero Section -->
+    <section class="flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 gap-6 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary-500/10 to-transparent pointer-events-none" />
+      <h1 class="text-4xl md:text-6xl font-black uppercase tracking-tight relative z-10">
+        {messages.hero_title}
+      </h1>
+      <p class="text-xl md:text-2xl text-neutral-400 max-w-3xl relative z-10 leading-relaxed">
+        {messages.hero_description}
+      </p>
+    </section>
+
+    <!-- Culture Section -->
+    <section class="max-w-6xl mx-auto px-4 w-full">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="bg-neutral-900 border border-neutral-800 aspect-video rounded-2xl flex items-center justify-center shadow-2xl">
+          <span class="i-lucide-smile text-primary-500/50 text-7xl"></span>
+        </div>
+        <div class="space-y-6">
+          <h2 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight">{messages.culture_title}</h2>
+          <p class="text-lg text-neutral-400 leading-relaxed">
+            {messages.culture_desc}
+          </p>
+          <p class="text-lg text-neutral-400 leading-relaxed">
+            We value intellectual honesty, autonomy, and high standards. We don't micromanage; we hire brilliant people and trust them to execute.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="bg-neutral-900/30 border-y border-neutral-900 py-24 w-full">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight mb-12 text-center">{messages.benefits_title}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 shadow-lg space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="i-lucide-heart-pulse text-primary-500 text-2xl"></span>
+              <h3 class="font-bold text-lg uppercase">{messages.benefits_health}</h3>
+            </div>
+            <p class="text-neutral-400 text-sm leading-relaxed">
+              {messages.benefits_health_desc}
+            </p>
+          </div>
+          <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 shadow-lg space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="i-lucide-calendar-clock text-primary-500 text-2xl"></span>
+              <h3 class="font-bold text-lg uppercase">{messages.benefits_time}</h3>
+            </div>
+            <p class="text-neutral-400 text-sm leading-relaxed">
+              {messages.benefits_time_desc}
+            </p>
+          </div>
+          <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 shadow-lg space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="i-lucide-trending-up text-primary-500 text-2xl"></span>
+              <h3 class="font-bold text-lg uppercase">{messages.benefits_dev}</h3>
+            </div>
+            <p class="text-neutral-400 text-sm leading-relaxed">
+              {messages.benefits_dev_desc}
+            </p>
+          </div>
+          <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 shadow-lg space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="i-lucide-laptop text-primary-500 text-2xl"></span>
+              <h3 class="font-bold text-lg uppercase">{messages.benefits_gear}</h3>
+            </div>
+            <p class="text-neutral-400 text-sm leading-relaxed">
+              {messages.benefits_gear_desc}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Offices Section -->
+    <section class="max-w-6xl mx-auto px-4 w-full">
+      <h2 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight mb-12 text-center">{messages.offices_title}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-neutral-900 border border-neutral-850 rounded-2xl p-8 space-y-4">
+          <div class="h-40 bg-neutral-950 flex items-center justify-center rounded-xl border border-neutral-800">
+            <span class="i-lucide-map-pin text-primary-500 text-5xl"></span>
+          </div>
+          <h3 class="text-xl font-bold uppercase">{messages.offices_remote}</h3>
+          <p class="text-neutral-400 leading-relaxed text-sm">
+            {messages.offices_remote_desc}
+          </p>
+        </div>
+        <div class="bg-neutral-900 border border-neutral-850 rounded-2xl p-8 space-y-4">
+          <div class="h-40 bg-neutral-950 flex items-center justify-center rounded-xl border border-neutral-800">
+            <span class="i-lucide-building-2 text-primary-500 text-5xl"></span>
+          </div>
+          <h3 class="text-xl font-bold uppercase">{messages.offices_hq}</h3>
+          <p class="text-neutral-400 leading-relaxed text-sm">
+            {messages.offices_hq_desc}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Open Positions Section -->
+    <section class="max-w-4xl mx-auto px-4 w-full" id="open-positions">
+      <h2 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight mb-12 text-center">{messages.positions_title}</h2>
+      <div class="text-center py-16 border-2 border-dashed border-neutral-800 rounded-3xl bg-neutral-900/10 space-y-4 shadow-xl">
+        <span class="i-lucide-search-x text-neutral-600 text-6xl block mx-auto"></span>
+        <p class="text-xl font-medium text-neutral-400 max-w-sm mx-auto leading-relaxed">
+          {messages.no_positions}
+        </p>
+      </div>
+    </section>
+  </div>
+</AppLayout>
