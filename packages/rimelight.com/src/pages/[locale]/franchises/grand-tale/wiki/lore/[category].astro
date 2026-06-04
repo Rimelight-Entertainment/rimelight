@@ -2,18 +2,12 @@
 import WikiLayout from '@/layouts/WikiLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
-export function getStaticPaths() {
-	return [
-		{ params: { category: 'timeline' } },
-		{ params: { category: 'characters' } },
-		{ params: { category: 'locations' } },
-		{ params: { category: 'species' } },
-		{ params: { category: 'objects' } },
-		{ params: { category: 'groups' } }
-	];
-}
-
 const { category } = Astro.params;
+
+const validCategories = ['timeline', 'characters', 'locations', 'species', 'objects', 'groups'];
+if (!category || !validCategories.includes(category)) {
+	return Astro.redirect('/404');
+}
 const activeLocale = Astro.currentLocale ?? 'en';
 const categoryLabel = category.charAt(0).toUpperCase() + category.slice(1);
 
