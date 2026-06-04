@@ -1,0 +1,95 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+
+const activeLocale = Astro.currentLocale ?? "en";
+currentLocale.set(activeLocale);
+
+const messages = useI18n("grand_tale_calculators", {
+  title: "Game Calculators",
+  description: "Crunch the numbers to gain a competitive edge in Grand Tale.",
+  heading: "Game Calculators",
+  subheading: "Crunch the numbers to gain a competitive edge. From damage optimization to survival thresholds, our math tools do the heavy lifting for you.",
+  calc1_title: "DPS Calculator",
+  calc1_desc: "Calculate your true damage per second based on attack speed, crit rate, and elemental scaling.",
+  calc2_title: "Effective HP (EHP)",
+  calc2_desc: "Determine your actual survivability against physical and magical hits by factoring in armor and resistances.",
+  calc3_title: "Resonance Finder",
+  calc3_desc: "Identify the optimal Soulstone combinations to trigger your hero's secret passive abilities.",
+  calc4_title: "Resource Yield",
+  calc4_desc: "Estimate materials gathered per hour based on your current tool tier and gathering efficiency stats.",
+  suggest_title: "Have a complex formula suggestion?",
+  suggest_btn: "Submit Calculation Request"
+});
+
+const calculators = [
+  {
+    title: messages.calc1_title,
+    icon: "i-lucide-swords",
+    description: messages.calc1_desc
+  },
+  {
+    title: messages.calc2_title,
+    icon: "i-lucide-shield",
+    description: messages.calc2_desc
+  },
+  {
+    title: messages.calc3_title,
+    icon: "i-lucide-sparkles",
+    description: messages.calc3_desc
+  },
+  {
+    title: messages.calc4_title,
+    icon: "i-lucide-pickaxe",
+    description: messages.calc4_desc
+  }
+];
+---
+
+<AppLayout title={messages.title} description={messages.description}>
+  <div class="py-24 bg-neutral-950 text-white min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 space-y-16">
+      <section class="space-y-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-500/10 border border-primary-500/20 text-primary-400 text-xs font-bold uppercase tracking-widest rounded-full">
+          Tools
+        </div>
+        <h1 class="text-5xl font-black uppercase tracking-tight leading-none">
+          Game <br />
+          <span class="text-primary-500">{messages.heading}</span>
+        </h1>
+        <p class="text-xl text-neutral-400 leading-relaxed font-light">
+          {messages.subheading}
+        </p>
+      </section>
+
+      <hr class="border-neutral-900" />
+
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {calculators.map((calc) => (
+          <div class="group p-6 bg-neutral-900 border border-neutral-800 hover:border-primary-500/50 rounded-2xl transition-all cursor-pointer shadow-md">
+            <div class="flex items-start gap-4">
+              <div class="p-3 bg-primary-500/10 border border-primary-500/20 group-hover:bg-primary-500/25 transition-colors rounded-xl">
+                <span class={`${calc.icon} text-primary-500 text-2xl`}></span>
+              </div>
+              <div class="space-y-1">
+                <h3 class="text-lg font-bold text-white group-hover:text-primary-400 transition-colors uppercase tracking-tight">
+                  {calc.title}
+                </h3>
+                <p class="text-sm text-neutral-400 leading-relaxed">
+                  {calc.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <!-- Formula suggestion card -->
+      <div class="bg-neutral-900/50 border-2 border-dashed border-neutral-800 rounded-2xl p-8 text-center shadow-lg max-w-2xl mx-auto">
+        <p class="text-neutral-500 text-sm mb-2">{messages.suggest_title}</p>
+        <RLAButton label={messages.suggest_btn} color="primary" variant="link" class="font-bold text-primary-500 hover:text-primary-400 transition-colors" />
+      </div>
+    </div>
+  </div>
+</AppLayout>

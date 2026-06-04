@@ -1,0 +1,14 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import AdminOverview from '@/components/dashboard/admin/AdminOverview.vue';
+
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);
+}
+---
+
+<AdminLayout activeTab="overview" title="Admin Overview">
+	<AdminOverview client:load />
+</AdminLayout>

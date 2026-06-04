@@ -1,0 +1,14 @@
+---
+import SettingsLayout from '@/layouts/SettingsLayout.astro';
+import GeneralSettingsForm from '@/components/dashboard/settings/GeneralSettingsForm.vue';
+
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);
+}
+---
+
+<SettingsLayout activeTab="general" title="General Settings">
+	<GeneralSettingsForm client:load />
+</SettingsLayout>

@@ -1,0 +1,82 @@
+<script setup lang="ts">
+import { reactive } from "vue"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+
+const state = reactive<{
+  [key: string]: boolean
+}>({
+  email: true,
+  desktop: false,
+  product_updates: true,
+  weekly_digest: false,
+  important_updates: true
+})
+
+const sections = [
+  {
+    title: "Notification channels",
+    description: "Where can we notify you?",
+    fields: [
+      { name: "email", label: "Email", description: "Receive a daily email digest." },
+      { name: "desktop", label: "Desktop", description: "Receive desktop notifications." }
+    ]
+  },
+  {
+    title: "Account updates",
+    description: "Receive updates about Rimelight.",
+    fields: [
+      {
+        name: "weekly_digest",
+        label: "Weekly digest",
+        description: "Receive a weekly digest of news."
+      },
+      {
+        name: "product_updates",
+        label: "Product updates",
+        description: "Receive a monthly email with all new features and updates."
+      },
+      {
+        name: "important_updates",
+        label: "Important updates",
+        description: "Receive emails about important updates like security fixes, maintenance, etc."
+      }
+    ]
+  }
+]
+
+function onChange() {
+  console.log("Notification settings updated:", state)
+}
+</script>
+
+<template>
+  <div class="space-y-8">
+    <div v-for="(section, index) in sections" :key="index" class="space-y-4">
+      <div
+        class="p-4 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl"
+      >
+        <h3 class="text-md font-bold text-neutral-900 dark:text-white">{{ section.title }}</h3>
+        <p class="text-xs text-neutral-500">{{ section.description }}</p>
+      </div>
+
+      <div
+        class="p-6 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800"
+      >
+        <div
+          v-for="field in section.fields"
+          :key="field.name"
+          class="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
+        >
+          <RLVFormField
+            :name="field.name"
+            :label="field.label"
+            :description="field.description"
+            class="flex-1"
+          />
+          <RLVCheckbox v-model="state[field.name]" @change="onChange" />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,22 @@
+---
+import WikiLayout from '@/layouts/WikiLayout.astro';
+import PageEditView from '@/components/article/views/PageEditView.vue';
+import { PAGE_MAP as pageDefinitions } from '@/types/pageDefinitions';
+
+const { slug } = Astro.params;
+const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
+const user = Astro.locals.user;
+const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
+---
+
+<WikiLayout title="Edit Wiki Page | Grand Tale Wiki">
+	<PageEditView
+		client:only="vue"
+		lookupPath={lookupSlug}
+		cacheKey={`edit-wiki-${slug}`}
+		pageDefinitions={pageDefinitions}
+		baseUrl="/franchises/grand-tale/wiki"
+		isAdmin={isAdmin}
+		backUrl="/franchises/grand-tale/wiki"
+	/>
+</WikiLayout>

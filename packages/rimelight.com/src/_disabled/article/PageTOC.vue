@@ -1,0 +1,180 @@
+<script setup lang="ts">
+import { computed, ref, onMounted, onUnmounted, watch } from "vue"
+import { useI18n } from "@/composables/app/useI18n"
+import { scv, cx } from "css-variants"
+import { useRC } from "@/composables"
+import type { Block, SectionBlockProps, HeadingLevel } from "@/types/blocks"
+
+/* region Props */
+export interface TOCItem {
+  id: string
+  title: string
+  level: HeadingLevel
+}
+
+export interface PageTOCProps {
+  pageBlocks: Block[] | null
+  title?: string
+  levels?: HeadingLevel[]
+  rc?: {
+    nav?: string
+    list?: string
+    link?: string
+    text?: string
+  }
+}
+
+const {
+  pageBlocks,
+  title = "table_of_contents",
+  levels = [2, 3, 4],
+  rc: rcProp
+} = defineProps<PageTOCProps>()
+
+const { rc } = useRC("PageTOC", rcProp)
+/* endregion */
+
+/* region Styles */
+const pageTOCStyles = scv({
+  slots: {
+    navClass: "flex flex-col gap-sm w-full",
+    listClass: "flex flex-col",
+    linkClass:
+      "group relative flex items-center px-3 py-1.5 text-sm transition-all duration-200 border-s-2 -ms-px",
+    textClass: "truncate"
+  },
+  variants: {
+    active: {
+      true: { linkClass: "border-accented font-semibold text-foreground" },
+      false: { linkClass: "border-dimmed text-dimmed" }
+    },
+    level: {
+      1: { linkClass: "ps-3" },
+      2: { linkClass: "ps-3" },
+      3: { linkClass: "ps-6" },
+      4: { linkClass: "ps-9" },
+      5: { linkClass: "ps-12" },
+      6: { linkClass: "ps-15" }
+    }
+  }
+})
+
+const styles = (active: boolean, level: number) => {
+  const resolved = pageTOCStyles({ active, level })
+  const result: Record<string, string> = {}
+  for (const [slot, value] of Object.entries(resolved)) {
+    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
+  }
+  return result as {
+    navClass: string
+    listClass: string
+    linkClass: string
+    textClass: string
+  }
+}
+/* endregion */
+
+/* region State */
+const { t } = useI18n()
+const activeId = ref<string | null>(null)
+
+const items = computed(() => {
+  const all = extractHeadings(pageBlocks ?? [])
+  return all.filter((h) => levels.includes(h.level))
+})
+/* endregion */
+
+/* region Logic */
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "")
+}
+
+function extractHeadings(blocks: Block[]): TOCItem[] {
+  const headings: TOCItem[] = []
+  if (!blocks) return headings
+  for (const block of blocks) {
+    if (block.type === "SectionBlock") {
+      const p = block.props as SectionBlockProps
+      if (p.title && p.level) {
+        headings.push({
+          id: slugify(p.title),
+          title: p.title,
+          level: p.level as HeadingLevel
+        })
+      }
+      if (p.children?.length) {
+        headings.push(...extractHeadings(p.children))
+      }
+    }
+  }
+  return headings
+}
+
+let observer: IntersectionObserver | null = null
+
+onMounted(() => {
+  if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") {
+    return
+  }
+  observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          activeId.value = entry.target.id
+        }
+      }
+    },
+    { rootMargin: "-80px 0px -80% 0px", threshold: 0 }
+  )
+
+  watch(
+    () => items.value,
+    (newItems) => {
+      observer?.disconnect()
+      newItems.forEach((item) => {
+        const el = document.getElementById(item.id)
+        if (el) {
+          observer?.observe(el)
+        }
+      })
+    },
+    { immediate: true }
+  )
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
+/* endregion */
+
+/* region Meta */
+defineOptions({ name: "PageTOC" })
+/* endregion */
+</script>
+
+<template>
+  <nav :class="styles(false, 2).navClass" aria-label="Table of Contents">
+    <h5 v-if="title" class="font-bold text-sm text-dimmed uppercase tracking-wider mb-2">
+      {{ t(title, "Table of Contents") }}
+    </h5>
+    <ul v-if="items.length > 0" :class="styles(false, 2).listClass">
+      <li v-for="item in items" :key="item.id">
+        <a :href="`#${item.id}`" :class="styles(activeId === item.id, item.level).linkClass">
+          <span :class="styles(activeId === item.id, item.level).textClass">
+            {{ item.title }}
+          </span>
+        </a>
+      </li>
+    </ul>
+    <slot name="bottom" />
+  </nav>
+</template>

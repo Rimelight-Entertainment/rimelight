@@ -1,0 +1,14 @@
+---
+import NotesLayout from '@/layouts/NotesLayout.astro';
+import NotesTrashContainer from '@/components/dashboard/notes/NotesTrashContainer.vue';
+
+const user = Astro.locals.user;
+
+if (!user) {
+	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);
+}
+---
+
+<NotesLayout activeTab="trash" title="Trash Notes">
+	<NotesTrashContainer client:load />
+</NotesLayout>
