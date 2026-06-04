@@ -9,6 +9,7 @@ import { ui, sri } from "@rimelight/ui/integrations"
 import { defineSecurity } from "@rimelight/ui/config"
 import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
+import expressiveCode from "astro-expressive-code"
 import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
 
 export default defineConfig({
@@ -119,6 +120,8 @@ export default defineConfig({
         }
       }
     }),
+
+    expressiveCode(),
 
     mdx(),
 
