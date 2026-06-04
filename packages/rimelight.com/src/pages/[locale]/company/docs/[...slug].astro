@@ -1,10 +1,9 @@
 ---
 import { getEntry, render } from "astro:content";
 import DocsLayout from "@/layouts/DocsLayout.astro";
-import { currentLocale } from "@rimelight/i18n";
 
 
-
+const activeLocale = Astro.currentLocale ?? "en";
 
 const { slug } = Astro.params;
 
