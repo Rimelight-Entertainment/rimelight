@@ -42,6 +42,7 @@
     }
   ],
   "vars": {
-    "CONSTRUCTION_MODE": "true"
+    "CONSTRUCTION_MODE": "true",
+    "CONSTRUCTION_AUTH": "true"
   }
 }

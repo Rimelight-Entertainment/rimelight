@@ -7,9 +7,7 @@ import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
 import RLVCard from "@rimelight/ui/components/vue/RLVPlaceholder.vue"
 import { reactive, ref } from "vue"
 import { z } from "astro/zod"
-const { allowAuth = true } = defineProps<{
-  allowAuth?: boolean
-}>()
+
 const schema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(1, "Password is required"),
@@ -47,63 +45,60 @@ async function onSubmit(event: { data: Schema }) {
 </script>
 
 <template>
-  <template v-if="allowAuth">
-    <RLVCard class="bg-black">
-      <div class="flex flex-col gap-4">
-        <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
-        <RLVForm :schema="schema" :state="state" @submit="onSubmit">
-          <div class="flex flex-col gap-4">
-            <RLVFormField
-              name="email"
-              label="E-mail"
-              required
-              :ui="{
-                label: 'text-white',
-                description: 'text-neutral-500'
-              }"
-            >
-              <RLVInput
-                v-model="state.email"
-                type="email"
-                placeholder="your@email.com"
-                class="w-full"
-              />
-            </RLVFormField>
-            <RLVFormField
-              name="password"
-              label="Password"
-              required
-              :ui="{
-                label: 'text-white',
-                description: 'text-neutral-500'
-              }"
-            >
-              <RLVInput v-model="state.password" type="password" placeholder="" class="w-full" />
-            </RLVFormField>
-            <RLVCheckbox
-              v-model="state.rememberMe"
-              name="rememberMe"
-              label="Remember me"
-              :ui="{
-                label: 'text-white',
-                indicator: 'data-[state=checked]:bg-primary-500 data-[state=checked]:text-white'
-              }"
+  <RLVCard class="bg-black">
+    <div class="flex flex-col gap-4">
+      <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+      <RLVForm :schema="schema" :state="state" @submit="onSubmit">
+        <div class="flex flex-col gap-4">
+          <RLVFormField
+            name="email"
+            label="E-mail"
+            required
+            :ui="{
+              label: 'text-white',
+              description: 'text-neutral-500'
+            }"
+          >
+            <RLVInput
+              v-model="state.email"
+              type="email"
+              placeholder="your@email.com"
+              class="w-full"
             />
-            <RLVButton
-              type="submit"
-              color="primary"
-              variant="solid"
-              block
-              :loading="isLoading"
-              :disabled="isLoading"
-              class="text-white bg-primary-500 hover:bg-primary-600"
-            >
-              Sign In
-            </RLVButton>
-          </div>
-        </RLVForm>
-      </div>
-    </RLVCard>
-  </template>
-  <p v-else class="text-neutral-400">Please return at a later stage.</p>
+          </RLVFormField>
+          <RLVFormField
+            name="password"
+            label="Password"
+            required
+            :ui="{
+              label: 'text-white',
+              description: 'text-neutral-500'
+            }"
+          >
+            <RLVInput v-model="state.password" type="password" placeholder="" class="w-full" />
+          </RLVFormField>
+          <RLVCheckbox
+            v-model="state.rememberMe"
+            name="rememberMe"
+            label="Remember me"
+            :ui="{
+              label: 'text-white',
+              indicator: 'data-[state=checked]:bg-primary-500 data-[state=checked]:text-white'
+            }"
+          />
+          <RLVButton
+            type="submit"
+            color="primary"
+            variant="solid"
+            block
+            :loading="isLoading"
+            :disabled="isLoading"
+            class="text-white bg-primary-500 hover:bg-primary-600"
+          >
+            Sign In
+          </RLVButton>
+        </div>
+      </RLVForm>
+    </div>
+  </RLVCard>
 </template>

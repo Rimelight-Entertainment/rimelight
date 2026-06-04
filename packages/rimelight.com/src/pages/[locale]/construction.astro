@@ -1,12 +1,11 @@
 ---
-import ConstructionLayout from '@/layouts/ConstructionLayout.astro'
+import BlankLayout from '@/layouts/BlankLayout.astro'
 import RLALogo from '@rimelight/ui/components/astro/RLALogo.astro'
 import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
 import ConstructionSignIn from '@/components/auth/ConstructionSignIn.vue'
 import { useI18n } from "@rimelight/i18n"
 
-
-
+const constructionAuth = (import.meta.env.CONSTRUCTION_AUTH ?? process.env.CONSTRUCTION_AUTH) === "true"
 
 const messages = useI18n(Astro, "construction", {
   constructionTitle: 'Under Construction',
@@ -22,7 +21,7 @@ const targetLanguages = [
 ]
 ---
 
-<ConstructionLayout title={messages.constructionTitle} description={messages.constructionDescription}>
+<BlankLayout title={messages.constructionTitle} description={messages.constructionDescription}>
   <div class="flex min-h-screen flex-col items-center justify-center bg-black px-4 py-12">
     <div class="z-10 w-full max-w-md space-y-8 text-center">
       <div class="flex flex-col items-center gap-4">
@@ -33,7 +32,11 @@ const targetLanguages = [
         <p class="m-0 text-neutral-400">{messages.constructionDescription}</p>
       </div>
 
-      <ConstructionSignIn client:load />
+      {constructionAuth ? (
+        <ConstructionSignIn client:load />
+      ) : (
+        <p class="text-neutral-400">Please return at a later stage.</p>
+      )}
 
       <div class="flex flex-col items-center gap-2 text-xs text-neutral-500">
         <span>&copy; {new Date().getFullYear()} Rimelight Entertainment</span>
@@ -41,4 +44,4 @@ const targetLanguages = [
       </div>
     </div>
   </div>
-</ConstructionLayout>
+</BlankLayout>
