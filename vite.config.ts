@@ -26,6 +26,7 @@ export default defineConfig({
       perf: "warn"
     },
     rules: {
+      "oxc/no-barrel-file": "error",
       "no-console": "off",
       "no-restricted-globals": "error",
       "typescript/consistent-type-imports": "error",

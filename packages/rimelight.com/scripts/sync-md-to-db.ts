@@ -112,7 +112,7 @@ async function sync() {
     const files = getFilesRecursively(fullDir)
 
     for (const filePath of files) {
-      const relativePath = path.relative(fullDir, filePath)
+      const relativePath = path.relative(fullDir, filePath).replace(/\\/g, "/")
       const sourceType = "markdown"
       const sourceId = `${col.name}:${relativePath}`
       const cacheKey = `${sourceType}:${sourceId}`
