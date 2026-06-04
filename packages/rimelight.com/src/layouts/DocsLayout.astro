@@ -6,7 +6,7 @@ import RLASurround from "@rimelight/ui/components/astro/RLASurround.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/ui/utils";
 import docsConfig from "@/config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/TableOfContents.astro";
-import { useI18n } from "astro-nanostores-i18n:runtime";
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 interface Props {
   title: string;
@@ -24,7 +24,7 @@ const locale = Astro.currentLocale ?? "en";
 const currentPath = Astro.url.pathname;
 
 // Load translations for docs sidebar keys
-const messages = useI18n("docs", {
+const messages = useI18n(Astro, "docs", {
   "docs_sidebar_scopes_overview": "Overview",
   "docs_sidebar_page_getting-started": "Getting Started",
   "docs_sidebar_page_contributing": "Contributing",

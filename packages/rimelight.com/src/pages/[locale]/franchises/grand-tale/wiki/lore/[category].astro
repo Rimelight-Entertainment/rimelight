@@ -1,6 +1,6 @@
 ---
 import WikiLayout from '@/layouts/WikiLayout.astro';
-import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const { category } = Astro.params;
 
@@ -8,7 +8,7 @@ const validCategories = ['timeline', 'characters', 'locations', 'species', 'obje
 if (!category || !validCategories.includes(category)) {
 	return Astro.redirect('/404');
 }
-const activeLocale = Astro.currentLocale ?? 'en';
+
 const categoryLabel = category.charAt(0).toUpperCase() + category.slice(1);
 
 const categoryToType: Record<string, string> = {
@@ -74,7 +74,7 @@ try {
 							<td class="p-4 flex items-center gap-3">
 								<span class:list={[page.icon ? page.icon.replace('lucide:', 'i-lucide-') : 'i-lucide-file-text', 'size-5 text-indigo-500 shrink-0']} />
 								<a
-									href={getRelativeLocaleUrl(activeLocale, `/${page.slug}`)}
+									href={getRelativeLocaleUrl(`/${page.slug}`)}
 									class="font-bold text-white hover:text-indigo-400 uppercase transition-colors"
 								>
 									{page.title[activeLocale] || page.title.en}
@@ -85,7 +85,7 @@ try {
 							</td>
 							<td class="p-4 text-right">
 								<a
-									href={getRelativeLocaleUrl(activeLocale, `/${page.slug}`)}
+									href={getRelativeLocaleUrl(`/${page.slug}`)}
 									class="inline-flex items-center gap-2 text-xs text-indigo-500 font-bold uppercase hover:text-indigo-400 transition-colors"
 								>
 									Read More

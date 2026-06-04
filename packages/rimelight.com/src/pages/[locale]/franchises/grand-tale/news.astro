@@ -1,12 +1,12 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
-import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const activeLocale = Astro.currentLocale ?? "en";
-currentLocale.set(activeLocale);
 
-const messages = useI18n("grand_tale_news", {
+
+
+const messages = useI18n(Astro, "grand_tale_news", {
   title: "Grand Tale News",
   description: "Read official news transmissions and development updates for Grand Tale.",
   heading: "Transmissions",

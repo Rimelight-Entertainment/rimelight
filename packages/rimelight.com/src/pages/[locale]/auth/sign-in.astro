@@ -2,13 +2,13 @@
 import AppLayout from '@/layouts/AppLayout.astro'
 import AuthLayout from '@/layouts/AuthLayout.astro'
 import AuthSignInForm from '@/components/auth/AuthSignInForm.vue'
-import { useI18n, currentLocale } from 'astro-nanostores-i18n:runtime'
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n"
 import bgMobile from '@/assets/images/auth_background_mobile.jpg'
 import bgDesktop from '@/assets/images/auth_background_desktop.jpg'
 
-const activeLocale = Astro.currentLocale ?? 'en'
-currentLocale.set(activeLocale)
-const messages = useI18n('page_auth_sign-in', {
+
+
+const messages = useI18n(Astro, "page_auth_sign-in", {
   meta_title: 'Sign in',
   'sign-in_title': 'Sign in',
   'sign-in_description': 'Sign in to your account',

@@ -8,6 +8,7 @@ import mdx from "@astrojs/mdx"
 import { ui, sri } from "@rimelight/ui/integrations"
 import { defineSecurity } from "@rimelight/ui/config"
 import cloudflare from "@astrojs/cloudflare"
+import { rimelightI18n } from "@rimelight/i18n/integration"
 import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
 
 export default defineConfig({
@@ -95,6 +96,10 @@ export default defineConfig({
   ],
 
   integrations: [
+    rimelightI18n({
+      translations: { en, es, pt },
+      kvBinding: "TRANSLATIONS_KV"
+    }),
     nanostoresI18n({
       translationLoader: "./src/i18n/loader.ts",
       addMiddleware: true,

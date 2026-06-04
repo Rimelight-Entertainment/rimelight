@@ -1,10 +1,10 @@
 ---
-import { getRelativeLocaleUrl } from 'astro:i18n';
-import { useI18n } from 'astro-nanostores-i18n:runtime';
 
-const activeLocale = Astro.currentLocale ?? 'en';
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const messages = useI18n('wiki_sidebar', {
+
+
+const messages = useI18n(Astro, "wiki_sidebar", {
 	wiki: 'Wiki',
 	getting_started: 'Getting Started',
 	contribution_guide: 'Contribution Guide',
@@ -65,7 +65,7 @@ const sections = [
 			<nav class="flex flex-col gap-1">
 				{section.items.map((item) => (
 					<a
-						href={getRelativeLocaleUrl(activeLocale, item.to)}
+						href={getRelativeLocaleUrl(item.to)}
 						class="text-sm font-medium text-indigo-300 hover:text-white transition-colors px-2 py-1.5 rounded-lg hover:bg-indigo-900/20"
 					>
 						{item.label}

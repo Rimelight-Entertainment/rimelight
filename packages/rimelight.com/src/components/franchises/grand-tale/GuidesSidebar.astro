@@ -1,7 +1,7 @@
 ---
-import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const activeLocale = Astro.currentLocale ?? 'en';
+
 
 const sections = [
 	{
@@ -44,7 +44,7 @@ const sections = [
 			<nav class="flex flex-col gap-1">
 				{section.items.map((item) => (
 					<a
-						href={getRelativeLocaleUrl(activeLocale, item.to)}
+						href={getRelativeLocaleUrl(item.to)}
 						class="text-sm font-medium text-indigo-300 hover:text-white transition-colors px-2 py-1.5 rounded-lg hover:bg-indigo-900/20"
 					>
 						{item.label}

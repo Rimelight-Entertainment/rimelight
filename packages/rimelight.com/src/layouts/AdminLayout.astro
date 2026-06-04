@@ -1,6 +1,6 @@
 ---
 import DashboardLayout from './DashboardLayout.astro';
-import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 interface Props {
 	title?: string;
@@ -8,37 +8,37 @@ interface Props {
 }
 
 const { title = 'Admin Panel', activeTab } = Astro.props;
-const activeLocale = Astro.currentLocale ?? 'en';
+
 
 // Auth / permission check
 const user = Astro.locals.user;
 if (!user || !['admin', 'owner'].includes((user as { role?: string }).role || '')) {
-	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/dashboard'));
+	return Astro.redirect(getRelativeLocaleUrl('/dashboard'));
 }
 
 const links = [
 	{
 		label: 'Overview',
 		icon: 'i-lucide-layout-dashboard',
-		href: getRelativeLocaleUrl(activeLocale, '/dashboard/admin'),
+		href: getRelativeLocaleUrl('/dashboard/admin'),
 		active: activeTab === 'overview'
 	},
 	{
 		label: 'Organizations',
 		icon: 'i-lucide-building-2',
-		href: getRelativeLocaleUrl(activeLocale, '/dashboard/admin/organizations'),
+		href: getRelativeLocaleUrl('/dashboard/admin/organizations'),
 		active: activeTab === 'organizations'
 	},
 	{
 		label: 'Teams',
 		icon: 'i-lucide-users-2',
-		href: getRelativeLocaleUrl(activeLocale, '/dashboard/admin/teams'),
+		href: getRelativeLocaleUrl('/dashboard/admin/teams'),
 		active: activeTab === 'teams'
 	},
 	{
 		label: 'Users',
 		icon: 'i-lucide-user',
-		href: getRelativeLocaleUrl(activeLocale, '/dashboard/admin/users'),
+		href: getRelativeLocaleUrl('/dashboard/admin/users'),
 		active: activeTab === 'users'
 	}
 ];

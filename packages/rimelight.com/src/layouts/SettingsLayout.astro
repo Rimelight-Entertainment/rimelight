@@ -1,6 +1,6 @@
 ---
 import DashboardLayout from './DashboardLayout.astro';
-import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 interface Props {
 	title?: string;
@@ -8,25 +8,25 @@ interface Props {
 }
 
 const { title = 'Settings', activeTab } = Astro.props;
-const activeLocale = Astro.currentLocale ?? 'en';
+
 
 const links = [
 	{
 		label: 'General',
 		icon: 'i-lucide-user',
-		href: getRelativeLocaleUrl(activeLocale, '/dashboard/settings'),
+		href: getRelativeLocaleUrl('/dashboard/settings'),
 		active: activeTab === 'general'
 	},
 	{
 		label: 'Notifications',
 		icon: 'i-lucide-bell',
-		href: getRelativeLocaleUrl(activeLocale, '/dashboard/settings/notifications'),
+		href: getRelativeLocaleUrl('/dashboard/settings/notifications'),
 		active: activeTab === 'notifications'
 	},
 	{
 		label: 'Security',
 		icon: 'i-lucide-shield',
-		href: getRelativeLocaleUrl(activeLocale, '/dashboard/settings/security'),
+		href: getRelativeLocaleUrl('/dashboard/settings/security'),
 		active: activeTab === 'security'
 	}
 ];

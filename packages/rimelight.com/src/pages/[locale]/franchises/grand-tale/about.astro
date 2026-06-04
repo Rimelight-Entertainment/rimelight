@@ -1,12 +1,12 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
 import RLAAccordion from "@rimelight/ui/components/astro/RLAAccordion.astro";
-import { useI18n, currentLocale } from "astro-nanostores-i18n:runtime";
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const activeLocale = Astro.currentLocale ?? "en";
-currentLocale.set(activeLocale);
 
-const messages = useI18n("grand_tale_about", {
+
+
+const messages = useI18n(Astro, "grand_tale_about", {
   title: "About Grand Tale",
   description: "Learn about the gameplay, specs, and features of Grand Tale.",
   hero_title: "Game Overview",

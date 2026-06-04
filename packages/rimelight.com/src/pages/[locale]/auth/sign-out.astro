@@ -1,8 +1,8 @@
 ---
-import { currentLocale } from 'astro-nanostores-i18n:runtime'
+import { currentLocale } from "@rimelight/i18n"
 
-const activeLocale = Astro.currentLocale ?? 'en'
-currentLocale.set(activeLocale)
+
+
 
 try {
   const { auth } = await import("@/auth/auth")
@@ -18,5 +18,5 @@ try {
   console.error("Sign out error:", error)
 }
 
-return Astro.redirect(`/${activeLocale}`)
+return Astro.redirect(getRelativeLocaleUrl(''))
 ---

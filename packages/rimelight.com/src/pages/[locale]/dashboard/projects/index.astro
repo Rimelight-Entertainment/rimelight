@@ -1,13 +1,13 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import CreateBoardModal from '@/components/dashboard/projects/CreateBoardModal.vue';
-import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const activeLocale = Astro.currentLocale ?? 'en';
+
 const user = Astro.locals.user;
 
 if (!user) {
-	return Astro.redirect(getRelativeLocaleUrl(activeLocale, '/auth/sign-in'));
+	return Astro.redirect(getRelativeLocaleUrl('/auth/sign-in'));
 }
 
 // Fetch boards on server
@@ -60,7 +60,7 @@ try {
 			<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 				{boards.map((board) => (
 					<a
-						href={getRelativeLocaleUrl(activeLocale, `/dashboard/projects/${board.id}`)}
+						href={getRelativeLocaleUrl(`/dashboard/projects/${board.id}`)}
 						class="block p-5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm hover:shadow-md hover:ring-2 hover:ring-primary-500/20 transition-all group"
 					>
 						<div class="flex items-center gap-2 mb-3">

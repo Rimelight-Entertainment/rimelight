@@ -1,11 +1,11 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
-import { useI18n, currentLocale } from 'astro-nanostores-i18n:runtime';
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const activeLocale = Astro.currentLocale ?? 'en';
-currentLocale.set(activeLocale);
 
-const messages = useI18n('store_apparel_bottles_mugs', {
+
+
+const messages = useI18n(Astro, "store_apparel_bottles_mugs", {
   title: 'Bottles & Mugs',
   description: 'Browse bottles, mugs, and drinkware.'
 });

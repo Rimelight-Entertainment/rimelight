@@ -1,7 +1,7 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
 import { siteConfig } from "@/site.config";
-import { getRelativeLocaleUrl } from "astro:i18n";
+import { getRelativeLocaleUrl, useI18n } from "@rimelight/i18n";
 import { getCollection } from "astro:content";
 import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
 import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
@@ -10,12 +10,8 @@ import RLAVideo from "@rimelight/ui/components/astro/RLAVideo.astro";
 import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro";
 import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro";
 import { Image } from "astro:assets";
-import { useI18n, currentLocale as localeStore } from "astro-nanostores-i18n:runtime";
 
-const activeLocale = Astro.currentLocale ?? "en";
-localeStore.set(activeLocale);
-
-const messages = useI18n("home", {
+const messages = useI18n(Astro, "home", {
   home_heroTitle: "We are Rimelight Entertainment",
   home_heroDescription: "We are creators of Grand Tale.",
   home_heroJoinUs: "Join Us",
@@ -58,14 +54,14 @@ const latestPosts = (await getCollection("blog"))
 const heroLinks = [
   {
     label: messages.home_heroJoinUs,
-    href: getRelativeLocaleUrl(currentLocale, "/auth/sign-up"),
+    href: getRelativeLocaleUrl("/auth/sign-up"),
     color: "blurple" as const,
     variant: "solid" as const,
     class: "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
   },
   {
     label: messages.home_heroLearnMore,
-    href: getRelativeLocaleUrl(currentLocale, "/company/about"),
+    href: getRelativeLocaleUrl("/company/about"),
     color: "neutral" as const,
     variant: "outline" as const,
     trailingIcon: "i-lucide-arrow-right",
@@ -76,14 +72,14 @@ const heroLinks = [
 const ctaLinks = [
   {
     label: messages.home_ctaActionsCreateAccount,
-    href: getRelativeLocaleUrl(currentLocale, "/auth/sign-up"),
+    href: getRelativeLocaleUrl("/auth/sign-up"),
     color: "blurple" as const,
     variant: "solid" as const,
     class: "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
   },
   {
     label: messages.home_ctaActionsExploreCareers,
-    href: getRelativeLocaleUrl(currentLocale, "/company/careers"),
+    href: getRelativeLocaleUrl("/company/careers"),
     color: "neutral" as const,
     variant: "outline" as const,
     class: "text-white ring-white bg-transparent hover:bg-white hover:text-black px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
@@ -178,7 +174,7 @@ const ctaLinks = [
 
       <div slot="body" class="flex flex-wrap justify-center gap-lg mt-12 w-full max-w-7xl mx-auto px-4">
         <a
-            href={getRelativeLocaleUrl(currentLocale, "/franchises/grand-tale")}
+            href={getRelativeLocaleUrl("/franchises/grand-tale")}
             class="block relative h-128 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] group rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 transition-all duration-300"
         >
           <div class="relative h-full w-full overflow-hidden isolate transition-transform duration-700 ease-out group-hover:scale-[1.02] rounded-[inherit] will-change-transform bg-neutral-900">
@@ -252,7 +248,7 @@ const ctaLinks = [
                     description={post.data.description}
                     date={post.data.pubDate}
                     image={post.data.heroImage}
-                    to={getRelativeLocaleUrl(currentLocale, `/blog/${post.id}/`)}
+                    to={getRelativeLocaleUrl(`/blog/${post.id}/`)}
                     variant="ghost"
                 />
             ))
@@ -263,7 +259,7 @@ const ctaLinks = [
             <div class="flex justify-center mt-14">
               <RLAButton
                   label={messages.home_newsActionsViewAll}
-                  href={getRelativeLocaleUrl(currentLocale, "/blog")}
+                  href={getRelativeLocaleUrl("/blog")}
                   color="primary"
                   variant="link"
                   trailingIcon="i-lucide-arrow-right"

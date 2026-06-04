@@ -1,9 +1,9 @@
 ---
 import RLAHeader from '@rimelight/ui/components/astro/RLAHeader.astro';
 import RLAButton from '@rimelight/ui/components/astro/RLAButton.astro';
-import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const activeLocale = Astro.currentLocale ?? 'en';
+
 
 const links = [
 	{ label: 'News', to: '/franchises/grand-tale/news' },
@@ -21,7 +21,7 @@ const rightLinks = [
 
 <RLAHeader class="bg-indigo-950 border-b border-indigo-900 shadow-md">
 	<div slot="left" class="flex flex-row items-center gap-6">
-		<a href={getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale')}>
+		<a href={getRelativeLocaleUrl('/franchises/grand-tale')}>
 			<img
 				src="https://cdn.rimelight.com/Franchises/Grand%20Tale/Logos/Grand%20Tale%20-%20Logomark.png"
 				alt="Grand Tale Logo"
@@ -32,7 +32,7 @@ const rightLinks = [
 		<nav class="hidden lg:flex items-center gap-4">
 			{links.map((link) => (
 				<a
-					href={getRelativeLocaleUrl(activeLocale, link.to)}
+					href={getRelativeLocaleUrl(link.to)}
 					class="text-sm font-medium text-indigo-300 hover:text-white transition-colors"
 				>
 					{link.label}
@@ -45,14 +45,14 @@ const rightLinks = [
 		<nav class="hidden lg:flex items-center gap-4">
 			{rightLinks.map((link) => (
 				<a
-					href={getRelativeLocaleUrl(activeLocale, link.to)}
+					href={getRelativeLocaleUrl(link.to)}
 					class="text-sm font-medium text-indigo-300 hover:text-white transition-colors"
 				>
 					{link.label}
 				</a>
 			))}
 		</nav>
-		<a href={getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/download')}>
+		<a href={getRelativeLocaleUrl('/franchises/grand-tale/download')}>
 			<RLAButton variant="solid" label="Play Now" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm rounded-xl py-2 px-4 shadow-md" />
 		</a>
 	</div>

@@ -6,12 +6,9 @@ import type { ButtonProps, LinkGroupProps } from "@rimelight/ui/types";
 import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
 import RLAThemeSelector from "@rimelight/ui/components/astro/RLAThemeSelector.astro";
 import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
-import { getRelativeLocaleUrl } from "astro:i18n";
-import { useI18n } from "astro-nanostores-i18n:runtime";
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const activeLocale = Astro.currentLocale ?? "en";
-
-const messages = useI18n("app_footer", {
+const messages = useI18n(Astro, "app_footer", {
   "links_resources_label": "Resources",
   "links_resources_branding": "Branding",
   "links_legal_label": "Legal",
@@ -25,7 +22,7 @@ const footerGroups: LinkGroupProps[] = [
     links: [
       {
         label: messages["links_resources_branding"],
-        href: getRelativeLocaleUrl(activeLocale, "/branding")
+        href: getRelativeLocaleUrl("/branding")
       }
     ]
   },
@@ -34,11 +31,11 @@ const footerGroups: LinkGroupProps[] = [
     links: [
       {
         label: messages["links_legal_privacy-policy"],
-        href: getRelativeLocaleUrl(activeLocale, "/legal/privacy-policy")
+        href: getRelativeLocaleUrl("/legal/privacy-policy")
       },
       {
         label: messages["links_legal_other-documents"],
-        href: getRelativeLocaleUrl(activeLocale, "/legal")
+        href: getRelativeLocaleUrl("/legal")
       }
     ]
   }

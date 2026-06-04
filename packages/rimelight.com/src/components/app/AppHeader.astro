@@ -8,8 +8,8 @@ import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
 import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro";
 import type { NavigationMenuItem, LinkGroupProps, ButtonProps } from "@rimelight/ui/types";
-import { getRelativeLocaleUrl } from "astro:i18n";
-import { useI18n } from "astro-nanostores-i18n:runtime";
+
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 import placeholderGrandTale from "../../assets/images/placeholder_header_grand-tale.jpg";
 import placeholderCommunity from "../../assets/images/placeholder_header_community.jpg";
@@ -21,9 +21,9 @@ const session = await auth.api.getSession({
   headers: Astro.request.headers
 });
 
-const activeLocale = Astro.currentLocale ?? "en";
 
-const messages = useI18n("app_header", {
+
+const messages = useI18n(Astro, "app_header", {
 	"left-links_grand-tale_label": "Grand Tale",
 	"link-groups_center_grand-tale_main_title": "Game",
 	"link-groups_center_grand-tale_main_home": "Home",
@@ -118,7 +118,7 @@ const messages = useI18n("app_header", {
 const leftLinks: NavigationMenuItem[] = [
 	{
 		label: messages["left-links_grand-tale_label"],
-		to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale'),
+		to: getRelativeLocaleUrl('/franchises/grand-tale'),
 		slot: "grand-tale" as const,
 		children: [
 			{
@@ -126,27 +126,27 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_grand-tale_main_news"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/news')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/news')
           },
 					{
             label: messages["link-groups_center_grand-tale_main_about"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/about')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/about')
           },
 					{
             label: messages["link-groups_center_grand-tale_main_wiki"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/wiki')
           },
 					{
             label: messages["link-groups_center_grand-tale_main_guides"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/guides')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/guides')
           },
 					{
             label: messages["link-groups_center_grand-tale_main_forums"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/forums')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/forums')
           },
 					{
             label: messages["link-groups_center_grand-tale_main_leaderboards"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/leaderboards')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/leaderboards')
           }
 				]
 			},
@@ -155,15 +155,15 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_grand-tale_series_children-of-the-light"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/children-of-the-light')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/wiki/series/children-of-the-light')
           },
 					{
             label: messages["link-groups_center_grand-tale_series_grand-academy"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/grand-academy')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/wiki/series/grand-academy')
           },
 					{
             label: messages["link-groups_center_grand-tale_series_goldy-adventures"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/goldy-adventures')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/wiki/series/goldy-adventures')
           }
 				]
 			},
@@ -172,7 +172,7 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_grand-tale_books_the-first-tale"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/books/the-first-tale')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/wiki/books/the-first-tale')
           }
 				]
 			},
@@ -181,7 +181,7 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_grand-tale_comics_ori-friends"],
-            to: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/comics/ori-and-friends')
+            to: getRelativeLocaleUrl('/franchises/grand-tale/wiki/comics/ori-and-friends')
           }
 				]
 			}
@@ -196,11 +196,11 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_community_forums_rimelight"],
-            to: getRelativeLocaleUrl(activeLocale, '/forums/rimelight')
+            to: getRelativeLocaleUrl('/forums/rimelight')
           },
 					{
             label: messages["link-groups_center_community_forums_grand-tale"],
-            to: getRelativeLocaleUrl(activeLocale, '/forums/grand-tale')
+            to: getRelativeLocaleUrl('/forums/grand-tale')
           }
 				]
 			},
@@ -209,7 +209,7 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_community_events_lightcon"],
-            to: getRelativeLocaleUrl(activeLocale, '/events/lightcon')
+            to: getRelativeLocaleUrl('/events/lightcon')
           }
 				]
 			}
@@ -217,7 +217,7 @@ const leftLinks: NavigationMenuItem[] = [
 	},
 	{
 		label: messages["left-links_company_label"],
-		to: getRelativeLocaleUrl(activeLocale, '/company'),
+		to: getRelativeLocaleUrl('/company'),
 		slot: "company" as const,
 		children: [
 			{
@@ -225,11 +225,11 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_company_main_studio_about-us"],
-            to: getRelativeLocaleUrl(activeLocale, '/company/about')
+            to: getRelativeLocaleUrl('/company/about')
           },
 					{
             label: messages["link-groups_center_company_main_studio_partnerships"],
-            to: getRelativeLocaleUrl(activeLocale, '/company/studio/partnerships')
+            to: getRelativeLocaleUrl('/company/studio/partnerships')
           }
 				]
 			},
@@ -238,11 +238,11 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_company_main_careers_life"],
-            to: getRelativeLocaleUrl(activeLocale, '/company/careers/culture')
+            to: getRelativeLocaleUrl('/company/careers/culture')
           },
 					{
             label: messages["link-groups_center_company_main_careers_jobs"],
-            to: getRelativeLocaleUrl(activeLocale, '/company/careers')
+            to: getRelativeLocaleUrl('/company/careers')
           }
 				]
 			},
@@ -251,7 +251,7 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_company_main_news_blog"],
-            to: getRelativeLocaleUrl(activeLocale, '/company/blog')
+            to: getRelativeLocaleUrl('/company/blog')
           }
 				]
 			},
@@ -260,11 +260,11 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_right_company_resources_docs"],
-            to: getRelativeLocaleUrl(activeLocale, '/company/docs')
+            to: getRelativeLocaleUrl('/company/docs')
           },
 					{
             label: messages["link-groups_right_company_resources_api"],
-            to: getRelativeLocaleUrl(activeLocale, '/company/docs/api')
+            to: getRelativeLocaleUrl('/company/docs/api')
           }
 				]
 			}
@@ -272,27 +272,27 @@ const leftLinks: NavigationMenuItem[] = [
 	},
 	{
 		label: messages["left-links_store_label"],
-		to: getRelativeLocaleUrl(activeLocale, '/store'),
+		to: getRelativeLocaleUrl('/store'),
 		slot: "store" as const,
 		children: [
 			{
         label: messages["link-groups_center_store_main_digital-goods_title"],
-        to: getRelativeLocaleUrl(activeLocale, '/store/digital')
+        to: getRelativeLocaleUrl('/store/digital')
       },
 			{
 				label: messages["link-groups_center_store_main_deals_title"],
 				children: [
 					{
             label: messages["link-groups_center_store_main_deals_new-releases"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/deals/new')
+            to: getRelativeLocaleUrl('/store/deals/new')
           },
 					{
             label: messages["link-groups_center_store_main_deals_sales"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/deals/sales')
+            to: getRelativeLocaleUrl('/store/deals/sales')
           },
 					{
             label: messages["link-groups_center_store_main_deals_bundles"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/deals/bundles')
+            to: getRelativeLocaleUrl('/store/deals/bundles')
           }
 				]
 			},
@@ -301,15 +301,15 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_store_main_clothing_headwear"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/clothing/headwear')
+            to: getRelativeLocaleUrl('/store/clothing/headwear')
           },
 					{
             label: messages["link-groups_center_store_main_clothing_tops"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/clothing/tops')
+            to: getRelativeLocaleUrl('/store/clothing/tops')
           },
 					{
             label: messages["link-groups_center_store_main_clothing_bottoms"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/clothing/bottoms')
+            to: getRelativeLocaleUrl('/store/clothing/bottoms')
           }
 				]
 			},
@@ -318,15 +318,15 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_store_main_accessories_jewelry"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/accessories/jewelry')
+            to: getRelativeLocaleUrl('/store/accessories/jewelry')
           },
 					{
             label: messages["link-groups_center_store_main_accessories_pins-patches"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/merch/pins')
+            to: getRelativeLocaleUrl('/store/merch/pins')
           },
 					{
             label: messages["link-groups_center_store_main_accessories_keychains"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/accessories/keychains')
+            to: getRelativeLocaleUrl('/store/accessories/keychains')
           }
 				]
 			},
@@ -335,7 +335,7 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_store_main_apparel_bottles-mugs"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/apparel/bottles-mugs')
+            to: getRelativeLocaleUrl('/store/apparel/bottles-mugs')
           }
 				]
 			},
@@ -344,11 +344,11 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_store_main_collectibles_figurines-statues"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/collectibles/figurines')
+            to: getRelativeLocaleUrl('/store/collectibles/figurines')
           },
 					{
             label: messages["link-groups_center_store_main_collectibles_plushies"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/merch/plushies')
+            to: getRelativeLocaleUrl('/store/merch/plushies')
           }
 				]
 			},
@@ -357,15 +357,15 @@ const leftLinks: NavigationMenuItem[] = [
 				children: [
 					{
             label: messages["link-groups_center_store_main_art_posters-prints"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/merch/posters')
+            to: getRelativeLocaleUrl('/store/merch/posters')
           },
 					{
             label: messages["link-groups_center_store_main_art_comics-books"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/art/books')
+            to: getRelativeLocaleUrl('/store/art/books')
           },
 					{
             label: messages["link-groups_center_store_main_art_physical-games"],
-            to: getRelativeLocaleUrl(activeLocale, '/store/art/games')
+            to: getRelativeLocaleUrl('/store/art/games')
           }
 				]
 			}
@@ -377,13 +377,13 @@ const actions: ButtonProps[] = [
 	{
     color: "neutral",
 		variant: "outline",
-		to: getRelativeLocaleUrl(activeLocale, '/auth/sign-up'),
+		to: getRelativeLocaleUrl('/auth/sign-up'),
 		label: messages["actions_sign-up"]
 	},
 	{
 		variant: "solid",
 		color: "primary",
-		to: getRelativeLocaleUrl(activeLocale, '/auth/sign-in'),
+		to: getRelativeLocaleUrl('/auth/sign-in'),
 		label: messages["actions_sign-in"]
 	}
 ];
@@ -393,27 +393,27 @@ const grandTaleLinkGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_grand-tale_main_news"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/news')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/news')
     },
 		{
       label: messages["link-groups_center_grand-tale_main_about"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/about')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/about')
     },
 		{
       label: messages["link-groups_center_grand-tale_main_wiki"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/wiki')
     },
 		{
       label: messages["link-groups_center_grand-tale_main_guides"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/guides')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/guides')
     },
 		{
       label: messages["link-groups_center_grand-tale_main_forums"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/forums')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/forums')
     },
 		{
       label: messages["link-groups_center_grand-tale_main_leaderboards"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/leaderboards')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/leaderboards')
     }
 	]
 };
@@ -423,15 +423,15 @@ const grandTaleSeriesLinkGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_grand-tale_series_children-of-the-light"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/children-of-the-light')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/wiki/series/children-of-the-light')
     },
 		{
       label: messages["link-groups_center_grand-tale_series_grand-academy"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/grand-academy')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/wiki/series/grand-academy')
     },
 		{
       label: messages["link-groups_center_grand-tale_series_goldy-adventures"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/series/goldy-adventures')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/wiki/series/goldy-adventures')
     }
 	]
 };
@@ -441,7 +441,7 @@ const grandTaleBooksLinkGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_grand-tale_books_the-first-tale"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/books/the-first-tale')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/wiki/books/the-first-tale')
     }
 	]
 };
@@ -451,7 +451,7 @@ const grandTaleComicsLinkGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_grand-tale_comics_ori-friends"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/wiki/comics/ori-and-friends')
+      href: getRelativeLocaleUrl('/franchises/grand-tale/wiki/comics/ori-and-friends')
     }
 	]
 };
@@ -461,12 +461,12 @@ const grandTaleResourcesGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_right_grand-tale_resources_download"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/download'),
+      href: getRelativeLocaleUrl('/franchises/grand-tale/download'),
       leadingIcon: "i-lucide-download"
     },
 		{
       label: messages["link-groups_right_grand-tale_resources_support"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/support'),
+      href: getRelativeLocaleUrl('/franchises/grand-tale/support'),
       leadingIcon: "i-lucide-headset"
     }
 	]
@@ -495,11 +495,11 @@ const commForumsGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_community_forums_rimelight"],
-      href: getRelativeLocaleUrl(activeLocale, '/forums/rimelight')
+      href: getRelativeLocaleUrl('/forums/rimelight')
     },
 		{
       label: messages["link-groups_center_community_forums_grand-tale"],
-      href: getRelativeLocaleUrl(activeLocale, '/forums/grand-tale')
+      href: getRelativeLocaleUrl('/forums/grand-tale')
     }
 	]
 };
@@ -509,7 +509,7 @@ const commEventsGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_community_events_lightcon"],
-      href: getRelativeLocaleUrl(activeLocale, '/events/lightcon')
+      href: getRelativeLocaleUrl('/events/lightcon')
     }
 	]
 };
@@ -539,11 +539,11 @@ const compStudioGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_company_main_studio_about-us"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/about')
+      href: getRelativeLocaleUrl('/company/about')
     },
 		{
       label: messages["link-groups_center_company_main_studio_partnerships"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/studio/partnerships')
+      href: getRelativeLocaleUrl('/company/studio/partnerships')
     }
 	]
 };
@@ -553,11 +553,11 @@ const compCareersGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_company_main_careers_life"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/careers/culture')
+      href: getRelativeLocaleUrl('/company/careers/culture')
     },
 		{
       label: messages["link-groups_center_company_main_careers_jobs"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/careers')
+      href: getRelativeLocaleUrl('/company/careers')
     }
 	]
 };
@@ -567,7 +567,7 @@ const compNewsGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_company_main_news_blog"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/blog')
+      href: getRelativeLocaleUrl('/company/blog')
     }
 	]
 };
@@ -577,27 +577,27 @@ const compResourcesGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_right_company_resources_docs"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/docs'),
+      href: getRelativeLocaleUrl('/company/docs'),
       leadingIcon: "i-lucide-file-text"
     },
 		{
       label: messages["link-groups_right_company_resources_api"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/docs/api'),
+      href: getRelativeLocaleUrl('/company/docs/api'),
       leadingIcon: "i-lucide-file-code"
     },
 		{
       label: messages["link-groups_right_company_resources_branding"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/branding'),
+      href: getRelativeLocaleUrl('/company/branding'),
       leadingIcon: "i-lucide-image"
     },
 		{
       label: messages["link-groups_right_company_resources_legal"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/legal'),
+      href: getRelativeLocaleUrl('/company/legal'),
       leadingIcon: "i-lucide-scale"
     },
 		{
       label: messages["link-groups_right_company_resources_contact"],
-      href: getRelativeLocaleUrl(activeLocale, '/company/contact'),
+      href: getRelativeLocaleUrl('/company/contact'),
       leadingIcon: "i-lucide-mail"
     }
 	]
@@ -624,15 +624,15 @@ const storeDealsGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_store_main_deals_new-releases"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/deals/new')
+      href: getRelativeLocaleUrl('/store/deals/new')
     },
 		{
       label: messages["link-groups_center_store_main_deals_sales"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/deals/sales')
+      href: getRelativeLocaleUrl('/store/deals/sales')
     },
 		{
       label: messages["link-groups_center_store_main_deals_bundles"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/deals/bundles')
+      href: getRelativeLocaleUrl('/store/deals/bundles')
     }
 	]
 };
@@ -642,15 +642,15 @@ const storeClothingGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_store_main_clothing_headwear"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/clothing/headwear')
+      href: getRelativeLocaleUrl('/store/clothing/headwear')
     },
 		{
       label: messages["link-groups_center_store_main_clothing_tops"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/clothing/tops')
+      href: getRelativeLocaleUrl('/store/clothing/tops')
     },
 		{
       label: messages["link-groups_center_store_main_clothing_bottoms"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/clothing/bottoms')
+      href: getRelativeLocaleUrl('/store/clothing/bottoms')
     }
 	]
 };
@@ -660,15 +660,15 @@ const storeAccessoriesGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_store_main_accessories_jewelry"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/accessories/jewelry')
+      href: getRelativeLocaleUrl('/store/accessories/jewelry')
     },
 		{
       label: messages["link-groups_center_store_main_accessories_pins-patches"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/merch/pins')
+      href: getRelativeLocaleUrl('/store/merch/pins')
     },
 		{
       label: messages["link-groups_center_store_main_accessories_keychains"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/accessories/keychains')
+      href: getRelativeLocaleUrl('/store/accessories/keychains')
     }
 	]
 };
@@ -678,7 +678,7 @@ const storeApparelGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_store_main_apparel_bottles-mugs"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/apparel/bottles-mugs')
+      href: getRelativeLocaleUrl('/store/apparel/bottles-mugs')
     }
 	]
 };
@@ -688,11 +688,11 @@ const storeCollectiblesGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_store_main_collectibles_figurines-statues"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/collectibles/figurines')
+      href: getRelativeLocaleUrl('/store/collectibles/figurines')
     },
 		{
       label: messages["link-groups_center_store_main_collectibles_plushies"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/merch/plushies')
+      href: getRelativeLocaleUrl('/store/merch/plushies')
     }
 	]
 };
@@ -702,15 +702,15 @@ const storeArtGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_center_store_main_art_posters-prints"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/merch/posters')
+      href: getRelativeLocaleUrl('/store/merch/posters')
     },
 		{
       label: messages["link-groups_center_store_main_art_comics-books"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/art/books')
+      href: getRelativeLocaleUrl('/store/art/books')
     },
 		{
       label: messages["link-groups_center_store_main_art_physical-games"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/art/games')
+      href: getRelativeLocaleUrl('/store/art/games')
     }
 	]
 };
@@ -720,12 +720,12 @@ const storeAssistanceGroup: LinkGroupProps = {
 	links: [
 		{
       label: messages["link-groups_right_store_assistance_orders"],
-      href: getRelativeLocaleUrl(activeLocale, '/store/orders'),
+      href: getRelativeLocaleUrl('/store/orders'),
       leadingIcon: "i-lucide-shopping-bag"
     },
 		{
       label: messages["link-groups_right_store_assistance_customer-support"],
-      href: getRelativeLocaleUrl(activeLocale, '/franchises/grand-tale/support'),
+      href: getRelativeLocaleUrl('/franchises/grand-tale/support'),
       leadingIcon: "i-lucide-help-circle"
     }
 	]
@@ -1031,7 +1031,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl(activeLocale, '/dashboard')}
+                  to={getRelativeLocaleUrl('/dashboard')}
                   leadingIcon="i-lucide-layout-dashboard"
                   label={messages["user_dropdown_dashboard"]}
                 />
@@ -1040,7 +1040,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/profile')}
+                  to={getRelativeLocaleUrl('/dashboard/profile')}
                   leadingIcon="i-lucide-user"
                   label={messages["user_dropdown_profile"]}
                 />
@@ -1049,7 +1049,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/settings')}
+                  to={getRelativeLocaleUrl('/dashboard/settings')}
                   leadingIcon="i-lucide-cog"
                   label={messages["user_dropdown_settings"]}
                 />
@@ -1063,7 +1063,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start text-error-500 hover:text-error-600"
-                  to={getRelativeLocaleUrl(activeLocale, '/auth/sign-out')}
+                  to={getRelativeLocaleUrl('/auth/sign-out')}
                   leadingIcon="i-lucide-log-out"
                   label={messages["user_dropdown_sign-out"]}
                 />
@@ -1107,7 +1107,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl(activeLocale, '/dashboard')}
+                  to={getRelativeLocaleUrl('/dashboard')}
                   leadingIcon="i-lucide-layout-dashboard"
                   label={messages["user_dropdown_dashboard"]}
                 />
@@ -1116,7 +1116,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/profile')}
+                  to={getRelativeLocaleUrl('/dashboard/profile')}
                   leadingIcon="i-lucide-user"
                   label={messages["user_dropdown_profile"]}
                 />
@@ -1125,7 +1125,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl(activeLocale, '/dashboard/settings')}
+                  to={getRelativeLocaleUrl('/dashboard/settings')}
                   leadingIcon="i-lucide-cog"
                   label={messages["user_dropdown_settings"]}
                 />
@@ -1135,7 +1135,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start text-error-500 hover:text-error-600"
-                  to={getRelativeLocaleUrl(activeLocale, '/auth/sign-out')}
+                  to={getRelativeLocaleUrl('/auth/sign-out')}
                   leadingIcon="i-lucide-log-out"
                   label={messages["user_dropdown_sign-out"]}
                 />

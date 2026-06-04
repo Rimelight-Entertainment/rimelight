@@ -6,14 +6,11 @@ import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 import type { NavigationMenuItem, LinkGroupProps, ButtonProps } from "@rimelight/ui/types";
-import { getRelativeLocaleUrl } from "astro:i18n";
-import { useI18n } from "astro-nanostores-i18n:runtime";
+import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 import placeholderImage from "../../assets/placeholder.webp";
 
-const activeLocale = Astro.currentLocale ?? "en";
-
-const messages = useI18n("app_header", {
+const messages = useI18n(Astro, "app_header", {
 	"left-links_home_label": "Home",
   "left-links_features_label": "Features",
   "link-groups_center_foundations_label": "Foundation",
@@ -96,7 +93,7 @@ const resourcesLinkGroup: LinkGroupProps = {
 const leftLinks: NavigationMenuItem[] = [
   {
     label: messages["left-links_features_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/features'),
+    to: getRelativeLocaleUrl('/features'),
     slot: "features" as const,
     children: [
       {
@@ -115,19 +112,19 @@ const leftLinks: NavigationMenuItem[] = [
   },
   {
     label: messages["left-links_about_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/about')
+    to: getRelativeLocaleUrl('/about')
   },
   {
     label: messages["left-links_blog_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/blog')
+    to: getRelativeLocaleUrl('/blog')
   },
   {
     label: messages["left-links_docs_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/docs')
+    to: getRelativeLocaleUrl('/docs')
   },
   {
     label: messages["left-links_dashboard_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/dashboard')
+    to: getRelativeLocaleUrl('/dashboard')
   },
 ];
 
@@ -141,7 +138,7 @@ const actions: ButtonProps[] = [
   },
   {
     label: messages["actions_use-template_label"],
-    to: getRelativeLocaleUrl(activeLocale, '/docs/usage')
+    to: getRelativeLocaleUrl('/docs/usage')
   }
 ];
 ---
