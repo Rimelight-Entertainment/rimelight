@@ -1,5 +1,5 @@
-import { signUp } from "./auth/signUp"
-import { signIn } from "./auth/signIn"
-import { signOut } from "./auth/signOut"
+import { auth } from "./auth"
 
-export const server = { signUp, signIn, signOut }
+export const server = {
+  auth
+}

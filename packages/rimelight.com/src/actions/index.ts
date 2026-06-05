@@ -6,9 +6,7 @@ import { admin } from "./admin"
 import { mails } from "./mails"
 import { notifications } from "./notifications"
 import { assets } from "./assets"
-import { signUp } from "./auth/signUp"
-import { signIn } from "./auth/signIn"
-import { signOut } from "./auth/signOut"
+import { auth } from "./auth"
 
 export const server = {
   notes,
@@ -19,7 +17,5 @@ export const server = {
   mails,
   notifications,
   assets,
-  signUp,
-  signIn,
-  signOut
+  auth
 }

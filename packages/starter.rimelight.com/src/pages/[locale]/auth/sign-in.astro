@@ -26,7 +26,7 @@ const messages = useI18n(Astro, 'auth', {
   authSignOutButton: 'Sign out'
 })
 
-const result = Astro.getActionResult(actions.signIn)
+const result = Astro.getActionResult(actions.auth.signIn)
 
 if (result && !result.error && result.data.cookies.length > 0) {
   Astro.response.headers.append('Location', '/')
@@ -50,7 +50,7 @@ const isNewUser = new URL(Astro.request.url).searchParams.has('new')
       <p>{result.error.message}</p>
     )
   }
-  <RLAForm method="POST" action={actions.signIn}>
+  <RLAForm method="POST" action={actions.auth.signIn}>
     <RLAFormField label={messages.authSignInEmail} error={inputErrors.email?.[0]}>
       <RLAInput name="email" required type="email" />
     </RLAFormField>
