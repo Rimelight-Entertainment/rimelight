@@ -3,7 +3,8 @@ import { getEntry, render } from "astro:content";
 import DocsLayout from "@/layouts/DocsLayout.astro";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/TableOfContents.astro";
 
-const entry = await getEntry("docs", "index");
+const activeLocale = Astro.currentLocale ?? "en";
+const entry = await getEntry("docs", `${activeLocale}/index`);
 
 if (!entry) {
   return Astro.redirect(getRelativeLocaleUrl("/404"));

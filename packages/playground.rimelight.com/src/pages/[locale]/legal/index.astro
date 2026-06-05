@@ -5,11 +5,14 @@ import { siteConfig } from '@/site.config';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useI18nAsync, currentLocale } from "astro-nanostores-i18n:runtime";
 
-const legalDocs = (await getCollection('legal')).toSorted(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
 const activeLocale = Astro.currentLocale ?? 'en';
 currentLocale.set(activeLocale);
+
+const legalDocs = (await getCollection('legal'))
+	.filter((doc) => doc.id.startsWith(`${activeLocale}/`))
+	.toSorted(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	);
 
 const messages = await useI18nAsync("legal", {
     title: "Legal",
@@ -24,7 +27,7 @@ const messages = await useI18nAsync("legal", {
 			<ul class="legal-list">
 				{legalDocs.map((doc) => (
 					<li class="legal-item">
-						<h3><a href={getRelativeLocaleUrl(activeLocale, `/legal/${doc.id}/`)}>{doc.data.title}</a></h3>
+						<h3><a href={getRelativeLocaleUrl(activeLocale, `/legal/${doc.id.replace(`${activeLocale}/`, "")}/`)}>{doc.data.title}</a></h3>
 						<p>{doc.data.description}</p>
 						<span class="date">{messages.lastUpdated} {doc.data.pubDate.toLocaleDateString()}</span>
 					</li>

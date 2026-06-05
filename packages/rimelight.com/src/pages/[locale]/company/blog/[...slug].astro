@@ -12,9 +12,11 @@ const messages = useI18n(Astro, "blog", {
     lastUpdatedOn: "Last updated on",
 });
 
+const activeLocale = Astro.currentLocale ?? "en";
+
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/company/blog');
-const post = await getEntry('blog', slug);
+const post = await getEntry('blog', `${activeLocale}/${slug}`);
 
 if (!post) {
 	return Astro.redirect('/404');

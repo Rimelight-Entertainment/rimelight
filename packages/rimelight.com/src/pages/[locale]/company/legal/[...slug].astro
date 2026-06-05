@@ -11,9 +11,11 @@ const messages = useI18n(Astro, "legal", {
     lastUpdatedOn: "Last updated on",
 });
 
+const activeLocale = Astro.currentLocale ?? "en";
+
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/404');
-const post = await getEntry('legal', slug);
+const post = await getEntry('legal', `${activeLocale}/${slug}`);
 
 if (!post) {
 	return Astro.redirect('/404');

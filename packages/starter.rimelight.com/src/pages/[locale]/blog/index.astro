@@ -7,9 +7,13 @@ import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro"
 import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro"
 import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro"
 
-const posts = (await getCollection('blog')).toSorted(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const activeLocale = Astro.currentLocale ?? "en";
+
+const posts = (await getCollection('blog'))
+	.filter((post) => post.id.startsWith(`${activeLocale}/`))
+	.toSorted(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	);
 
 const groupedPosts = posts.reduce<Record<string, typeof posts>>((acc, post) => {
 	const type = post.data.type;
@@ -43,7 +47,7 @@ const messages = await useI18nAsync(Astro, 'blog', {
 									date={post.data.pubDate}
 									title={post.data.title}
 									description={post.data.description}
-									to={getRelativeLocaleUrl(`/blog/${post.id}/`)}
+									to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
 								/>
 							))
 						}

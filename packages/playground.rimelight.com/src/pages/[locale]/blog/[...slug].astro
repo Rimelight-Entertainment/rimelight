@@ -14,7 +14,7 @@ const messages = useI18n("blog", {
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/blog');
-const post = await getEntry('blog', slug);
+const post = await getEntry('blog', `${activeLocale}/${slug}`);
 
 if (!post) {
 	return Astro.redirect('/404');

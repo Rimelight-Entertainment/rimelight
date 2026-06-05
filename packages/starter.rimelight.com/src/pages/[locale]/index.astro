@@ -25,7 +25,10 @@ const messages = useI18n(Astro, "page_home", {
   "section_cta_contribute": "Join Us",
 });
 
+const activeLocale = Astro.currentLocale ?? "en";
+
 const latestPosts = (await getCollection("blog"))
+  .filter((post) => post.id.startsWith(`${activeLocale}/`))
   .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 
@@ -95,7 +98,7 @@ const ctaLinks = [
               date={post.data.pubDate}
               title={post.data.title}
               description={post.data.description}
-              to={getRelativeLocaleUrl(`/blog/${post.id}/`)}
+              to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
             />
           ))
         }

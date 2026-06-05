@@ -44,7 +44,9 @@ import NewsBg from "@/assets/images/placeholder_home_news_background.jpg";
 import CtaBg from "@/assets/images/placeholder_home_cta_background.jpg";
 
 // Fetch the 3 latest blog posts
+const activeLocale = Astro.currentLocale ?? "en";
 const latestPosts = (await getCollection("blog"))
+    .filter((post) => post.id.startsWith(`${activeLocale}/`))
     .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
     .slice(0, 3);
 
@@ -246,7 +248,7 @@ const ctaLinks = [
                     description={post.data.description}
                     date={post.data.pubDate}
                     image={post.data.heroImage}
-                    to={getRelativeLocaleUrl(`/blog/${post.id}/`)}
+                    to={getRelativeLocaleUrl(`/company/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
                     variant="ghost"
                 />
             ))
