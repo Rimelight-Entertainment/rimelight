@@ -1,82 +1,72 @@
 ---
 import { Image } from 'astro:assets';
-import AppLayout from '@/layouts/AppLayout.astro';
 import AboutHeroImage from '@/assets/images/placeholder.webp';
-import RLADate from '@rimelight/ui/components/astro/RLADate.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import RLAPageSection from '@rimelight/ui/components/astro/RLAPageSection.astro';
+import RLAGrid from '@rimelight/ui/components/astro/RLAGrid.astro';
+import RLACard from '@rimelight/ui/components/astro/RLACard.astro';
 import { useI18n } from '@rimelight/i18n';
 
 const messages = useI18n(Astro, 'about', {
-  title: 'About',
-  description: 'About Rimelight Starter',
-  heading: 'About Me'
-});
+  title: 'About Rimelight',
+  description: 'Learn about Rimelight Entertainment and our starter template.',
+  hero_title: 'Rimelight Entertainment',
+  hero_description: 'We craft beautiful, modern, high-performance web experiences designed to scale and empower developers.',
+  
+  section_values_title: 'Our Core Principles',
+  section_values_description: 'The ideas that drive how we build our templates and application frameworks.',
+  
+  value_dx_title: 'Developer Experience',
+  value_dx_description: 'We believe tooling should be fast, seamless, and intuitive, getting out of your way so you can create.',
+  
+  value_design_title: 'Design Excellence',
+  value_design_description: 'Aesthetics matter. Our components are crafted with precision, rich styling, and premium interactive details.',
+  
+  value_performance_title: 'Built to Scale',
+  value_performance_description: 'Performance isn\'t an afterthought. Every line of code is optimized for lightning-fast speeds and core web vitals.',
 
+  section_about_template_title: 'About The Starter',
+  section_about_template_description: 'This is a unified starter template designed to bundle all our core UI elements, auth integration, localization, and robust database setups in a single place. Rather than maintaining dozens of fragments, we build one powerful base—allowing you to easily disable what you don\'t need.'
+});
 ---
 
 <AppLayout title={messages.title} description={messages.description}>
-		<article>
-			<div class="hero-image">
-				<Image width={1020} height={510} src={AboutHeroImage} alt="" />
-			</div>
-			<div class="prose">
-				<div class="title">
-					<div class="date">
-						<RLADate date={new Date('August 08 2021')} />
-					</div>
-					<h1>{messages.heading}</h1>
-					<hr />
-				</div>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-					labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-					viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-					adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-					et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-					vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-					sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-				</p>
+  <RLAPageSection
+    variant="hero"
+    title={messages.hero_title}
+    description={messages.hero_description}
+    orientation="horizontal"
+  >
+    <Image width={1020} height={510} src={AboutHeroImage} alt="" class="w-full h-auto rounded-lg object-cover" />
+  </RLAPageSection>
 
-				<p>
-					Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-					tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-					blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-					porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-					massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-					Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-					bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-					massa massa ultricies mi.
-				</p>
+  <RLAPageSection
+    title={messages.section_values_title}
+    description={messages.section_values_description}
+    orientation="vertical"
+  >
+    <div slot="body">
+      <RLAGrid>
+        <RLACard
+          title={messages.value_dx_title}
+          description={messages.value_dx_description}
+        />
+        <RLACard
+          title={messages.value_design_title}
+          description={messages.value_design_description}
+        />
+        <RLACard
+          title={messages.value_performance_title}
+          description={messages.value_performance_description}
+        />
+      </RLAGrid>
+    </div>
+  </RLAPageSection>
 
-				<p>
-					Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-					suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-					nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-					turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-					dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-					semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-					vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-					facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-					vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-					urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-				</p>
-
-				<p>
-					Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-					viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-					scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-					gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-					pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-					blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-					cursus metus aliquam eleifend mi.
-				</p>
-
-				<p>
-					Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-					nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-					tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-					ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-					proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-				</p>
-			</div>
-		</article>
+  <RLAPageSection
+    title={messages.section_about_template_title}
+    description={messages.section_about_template_description}
+    orientation="vertical"
+  />
 </AppLayout>
+

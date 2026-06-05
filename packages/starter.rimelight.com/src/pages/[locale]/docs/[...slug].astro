@@ -8,16 +8,17 @@ const activeLocale = Astro.currentLocale ?? "en";
 const { slug } = Astro.params;
 
 if (!slug) {
-  return Astro.redirect(getRelativeLocaleUrl("/404"));
+  return Astro.redirect("/404");
 }
 
 const entry = await getEntry("docs", `${activeLocale}/${slug}`);
 
 if (!entry) {
-  return Astro.redirect(getRelativeLocaleUrl("/404"));
+  return Astro.redirect("/404");
 }
 
-const { Content, headings } = await render(entry);
+const renderFn = render;
+const { Content, headings } = await renderFn(entry);
 const { title, description, tableOfContents, prev, next, editUrl } = entry.data;
 ---
 
