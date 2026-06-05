@@ -4,6 +4,8 @@ import { useUi, resolveClasses } from "../../utils"
 import type { SearchProps } from "../../types"
 import searchThemeDefault, { createSearchTheme } from "../../themes/search.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAInput from "./RLAInput.astro"
+import RLAKbd from "./RLAKbd.astro"
 
 const uiConfig = getUIConfig()
 const searchTheme = uiConfig.colors ? createSearchTheme() : searchThemeDefault
@@ -37,16 +39,31 @@ const resultsId = `search-results-${uniqueId}`
 const emptyId = `search-empty-${uniqueId}`
 ---
 
-<div class={classes.root} data-slot="root" {...rest}>
+<div 
+  class:list={[classes.root, "rla-search-wrapper"]} 
+  data-slot="root" 
+  data-trigger-id={triggerId} 
+  data-modal-id={modalId} 
+  data-input-id={inputId} 
+  data-results-id={resultsId} 
+  data-empty-id={emptyId}
+  data-endpoint={endpoint}
+  {...rest}
+>
   {Astro.slots.has("trigger") ? (
     <div id={triggerId} class="cursor-pointer">
       <slot name="trigger" />
     </div>
   ) : (
-    <button id={triggerId} class={classes.trigger} aria-label="Open Search">
-      <span class={classes.triggerIcon}></span>
-      <span class={classes.triggerLabel}>{searchButtonLabel}</span>
-      <kbd class={classes.triggerKbd}>Ctrl K</kbd>
+    <button id={triggerId} class="p-0 border-0 bg-transparent cursor-pointer inline-block w-64 text-left" aria-label="Open Search">
+      <RLAInput
+        readonly
+        placeholder={searchButtonLabel}
+        class="pointer-events-none"
+      >
+        <span slot="leading" class="i-lucide-search text-neutral-400 w-4 h-4" />
+        <RLAKbd slot="trailing" size="sm">Ctrl K</RLAKbd>
+      </RLAInput>
     </button>
   )}
 
@@ -55,17 +72,26 @@ const emptyId = `search-empty-${uniqueId}`
     <div class={classes.dialog} data-slot="dialog">
       <!-- Search header -->
       <div class={classes.header} data-slot="header">
-        <span class={classes.headerIcon}></span>
-        <input
+        <RLAInput
           type="text"
           id={inputId}
           placeholder={searchPlaceholder}
-          class={classes.input}
           autocomplete="off"
-        />
-        <button id={`${modalId}-close`} class={classes.close} aria-label="Close search">
-          <span class={classes.closeIcon}></span>
-        </button>
+          ui={{
+            root: "relative flex items-center w-full border-none bg-transparent shadow-none focus-within:ring-0",
+            input: "w-full bg-transparent pl-8 pr-20 py-1.5 text-base outline-none text-white placeholder-neutral-500 border-none",
+            leading: "absolute left-0 text-neutral-400 flex items-center",
+            trailing: "absolute right-0 flex items-center gap-2"
+          }}
+        >
+          <span slot="leading" class={classes.headerIcon} />
+          <div slot="trailing" class="flex items-center gap-2">
+            <RLAKbd size="sm">Esc</RLAKbd>
+            <button id={`${modalId}-close`} class={classes.close} aria-label="Close search">
+              <span class={classes.closeIcon}></span>
+            </button>
+          </div>
+        </RLAInput>
       </div>
 
       <!-- Results list -->
@@ -85,105 +111,132 @@ const emptyId = `search-empty-${uniqueId}`
   </div>
 </div>
 
-<script define:vars={{ triggerId, modalId, inputId, resultsId, emptyId, endpoint }}>
-  const trigger = document.getElementById(triggerId);
-  const modal = document.getElementById(modalId);
-  const closeBtn = document.getElementById(`${modalId}-close`);
-  const input = document.getElementById(inputId);
-  const resultsContainer = document.getElementById(resultsId);
-  const emptyState = document.getElementById(emptyId);
+<script>
+  import { defineShortcuts } from "../../utils/shortcuts"
 
-  // Teleport modal to body to avoid containing block/transform clipping from header containers
-  if (modal && modal.parentNode !== document.body) {
-    document.body.appendChild(modal);
-  }
+  document.querySelectorAll<HTMLElement>('.rla-search-wrapper').forEach((wrapper) => {
+    const triggerId = wrapper.dataset.triggerId
+    const modalId = wrapper.dataset.modalId
+    const inputId = wrapper.dataset.inputId
+    const resultsId = wrapper.dataset.resultsId
+    const emptyId = wrapper.dataset.emptyId
+    const endpoint = wrapper.dataset.endpoint
 
-  function openModal() {
-    modal?.classList.remove("hidden");
-    modal?.classList.add("flex");
-    input?.focus();
-    document.body.style.overflow = "hidden";
-  }
+    const trigger = document.getElementById(triggerId!)
+    const modal = document.getElementById(modalId!)
+    const closeBtn = document.getElementById(`${modalId}-close`)
+    const input = document.getElementById(inputId!) as HTMLInputElement
+    const resultsContainer = document.getElementById(resultsId!)
+    const emptyState = document.getElementById(emptyId!)
 
-  function closeModal() {
-    modal?.classList.add("hidden");
-    modal?.classList.remove("flex");
-    document.body.style.overflow = "";
-    if (input) input.value = "";
-    if (resultsContainer) resultsContainer.innerHTML = "";
-    emptyState?.classList.add("hidden");
-  }
-
-  trigger?.addEventListener("click", openModal);
-  closeBtn?.addEventListener("click", closeModal);
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal || !e.target.closest('[data-slot="dialog"]')) {
-      closeModal();
-    }
-  });
-
-  // Shortcut key Ctrl+K
-  document.addEventListener("keydown", (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-      e.preventDefault();
-      openModal();
-    }
-    if (e.key === "Escape") {
-      closeModal();
-    }
-  });
-
-  let debounceTimer;
-  input?.addEventListener("input", () => {
-    clearTimeout(debounceTimer);
-    const query = input.value.trim();
-    if (!query) {
-      if (resultsContainer) resultsContainer.innerHTML = "";
-      emptyState?.classList.add("hidden");
-      return;
+    // Teleport modal to body to avoid containing block/transform clipping from header containers
+    if (modal && modal.parentNode !== document.body) {
+      document.body.appendChild(modal)
     }
 
-    debounceTimer = setTimeout(async () => {
-      try {
-        console.log("[Search UI] Fetching search results for:", query);
-        const res = await fetch(`${endpoint}?q=${encodeURIComponent(query)}`);
-        
-        if (!res.ok) {
-          throw new Error(`HTTP status: ${res.status}`);
+    let escapeCleanup: (() => void) | null = null
+
+    function openModal() {
+      modal?.classList.remove("hidden")
+      modal?.classList.add("flex")
+      input?.focus()
+      document.body.style.overflow = "hidden"
+
+      // Register escape shortcut dynamically when modal is open
+      escapeCleanup = defineShortcuts({
+        escape: {
+          handler: () => closeModal(),
+          usingInput: true
         }
+      })
+    }
 
-        const results = await res.json();
-        console.log("[Search UI] Received results:", results);
+    function closeModal() {
+      modal?.classList.add("hidden")
+      modal?.classList.remove("flex")
+      document.body.style.overflow = ""
+      if (input) input.value = ""
+      if (resultsContainer) resultsContainer.innerHTML = ""
+      emptyState?.classList.add("hidden")
 
-        if (resultsContainer) resultsContainer.innerHTML = "";
-
-        if (!Array.isArray(results) || results.length === 0) {
-          emptyState?.classList.remove("hidden");
-          return;
-        }
-
-        emptyState?.classList.add("hidden");
-        results.forEach((item) => {
-          const div = document.createElement("a");
-          div.href = item.url || "#";
-          div.className = "flex flex-col gap-1 p-3 hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700 text-left decoration-none";
-          
-          div.innerHTML = `
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold text-white">${item.title || "Untitled"}</span>
-              ${item.sourceType ? `<span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">${item.sourceType}</span>` : ""}
-            </div>
-            ${item.snippet ? `<p class="text-xs text-neutral-400 line-clamp-2 m-0">${item.snippet}</p>` : ""}
-          `;
-          resultsContainer?.appendChild(div);
-        });
-      } catch (err) {
-        console.error("[Search UI] Search failed:", err);
-        if (resultsContainer) resultsContainer.innerHTML = "";
-        emptyState?.classList.remove("hidden");
+      // Clean up escape shortcut
+      if (escapeCleanup) {
+        escapeCleanup()
+        escapeCleanup = null
       }
-    }, 200);
-  });
+    }
+
+    trigger?.addEventListener("click", openModal)
+    closeBtn?.addEventListener("click", closeModal)
+    modal?.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement | null
+      if (target && (target === modal || !target.closest('[data-slot="dialog"]'))) {
+        closeModal()
+      }
+    })
+
+    // Register global shortcut key Cmd+K / Ctrl+K
+    defineShortcuts({
+      meta_k: {
+        handler: () => openModal(),
+        label: "Open Search",
+        description: "Open the global site search modal",
+        category: "Navigation"
+      }
+    })
+
+    let debounceTimer: any
+    input?.addEventListener("input", () => {
+      clearTimeout(debounceTimer)
+      const query = input.value.trim()
+      if (!query) {
+        if (resultsContainer) resultsContainer.innerHTML = ""
+        emptyState?.classList.add("hidden")
+        return
+      }
+
+      debounceTimer = setTimeout(async () => {
+        try {
+          console.log("[Search UI] Fetching search results for:", query)
+          const res = await fetch(`${endpoint}?q=${encodeURIComponent(query)}`)
+          
+          if (!res.ok) {
+            throw new Error(`HTTP status: ${res.status}`)
+          }
+
+          const results = await res.json()
+          console.log("[Search UI] Received results:", results)
+
+          if (resultsContainer) resultsContainer.innerHTML = ""
+
+          if (!Array.isArray(results) || results.length === 0) {
+            emptyState?.classList.remove("hidden")
+            return
+          }
+
+          emptyState?.classList.add("hidden")
+          results.forEach((item) => {
+            const div = document.createElement("a")
+            div.href = item.url || "#"
+            div.className = "flex flex-col gap-1 p-3 hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700 text-left decoration-none"
+            
+            div.innerHTML = `
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-white">${item.title || "Untitled"}</span>
+                ${item.sourceType ? `<span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">${item.sourceType}</span>` : ""}
+              </div>
+              ${item.snippet ? `<p class="text-xs text-neutral-400 line-clamp-2 m-0">${item.snippet}</p>` : ""}
+            `
+            resultsContainer?.appendChild(div)
+          })
+        } catch (err) {
+          console.error("[Search UI] Search failed:", err)
+          if (resultsContainer) resultsContainer.innerHTML = ""
+          emptyState?.classList.remove("hidden")
+        }
+      }, 200)
+    })
+  })
 </script>
 
 <style is:global>

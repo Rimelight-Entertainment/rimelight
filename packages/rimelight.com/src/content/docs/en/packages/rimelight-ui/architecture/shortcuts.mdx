@@ -1,0 +1,128 @@
+---
+title: "Keyboard Shortcuts"
+description: "Registering, managing, and listing keyboard shortcuts globally in Rimelight UI."
+---
+
+Rimelight UI includes a unified, cross-platform keyboard shortcuts (hotkeys) system that works seamlessly in both server-rendered Astro pages (vanilla JS) and client-side interactive Vue components.
+
+It automatically handles:
+
+- **Cross-Platform Normalization**: e.g., mapping `meta` (Command) to `ctrl` on Windows/Linux.
+- **Input Exclusion**: Disabling hotkeys automatically while the user is typing in forms/inputs.
+- **Layout Independence**: Bypassing browser key-translation issues for key combinations containing the `Alt` modifier.
+- **Sequential Key Chaining**: e.g., pressing `g` then `d` sequentially.
+- **Centralized Registry**: Storing all active keybinds in a global reactive store so they can be listed dynamically (e.g. in a shortcuts modal or command palette).
+
+---
+
+## Vanilla JS / TS Usage
+
+To register keyboard shortcuts in Astro components, import `defineShortcuts` inside a standard `<script>` tag. It returns a cleanup function to unregister the listeners.
+
+```astro
+---
+// SearchTrigger.astro
+import RLAInput from "./RLAInput.astro";
+---
+<button id="search-trigger">Open Search</button>
+
+<script>
+  import { defineShortcuts } from "@rimelight/ui/utils";
+
+  const trigger = document.getElementById("search-trigger");
+
+  const cleanup = defineShortcuts({
+    // Modifier combination (Command+K on macOS, Ctrl+K on Windows/Linux)
+    meta_k: {
+      handler: () => trigger?.click(),
+      label: "Open Search",
+      description: "Opens the global website search modal",
+      category: "Navigation"
+    }
+  });
+
+  // Clean up when leaving the page (essential for Astro View Transitions)
+  document.addEventListener("astro:after-swap", cleanup);
+</script>
+```
+
+---
+
+## Vue Composable Usage
+
+Inside Vue components, use the `useShortcuts` composable. It automatically handles cleanup when the component is unmounted.
+
+```vue
+<script setup>
+import { useShortcuts } from "@rimelight/ui/composables"
+
+useShortcuts({
+  // Simultaneous Alt + T toggle shortcut
+  meta_alt_t: {
+    handler: () => toggleTheme(),
+    label: "Toggle Theme",
+    description: "Switch between light and dark theme mode",
+    category: "System"
+  }
+})
+</script>
+```
+
+---
+
+## Core Shortcut Properties
+
+When registering a shortcut, you can pass either a handler function or a configuration object:
+
+```typescript
+export interface ShortcutConfig {
+  handler: (e: KeyboardEvent) => void
+  usingInput?: boolean | string // Enable shortcut inside input/textarea elements
+  label?: string // Human-readable action label (e.g. "Toggle Theme")
+  description?: string // Brief summary of what the shortcut does
+  category?: string // Section category grouping (e.g. "Navigation")
+}
+```
+
+- **`usingInput`**: By default, shortcuts are ignored if the active element is an input, textarea, or contenteditable. Set `usingInput: true` to bypass this filter (e.g., allowing `Escape` to close a search modal even when focusing the search field).
+
+---
+
+## Central Registry (`activeShortcutsStore`)
+
+All documented shortcuts (i.e. those specifying a `label` or `description`) are dynamically tracked in a reactive **Nano Store**:
+
+```typescript
+import { activeShortcutsStore } from "@rimelight/ui/utils"
+
+// Subscribe to active shortcuts
+activeShortcutsStore.subscribe((shortcuts) => {
+  console.log("Active shortcuts on this page:", shortcuts)
+})
+```
+
+Because registration and cleanup are linked to component mount/unmount lifecycles, this store always reflects exactly what shortcuts are currently usable on the screen at any given time.
+
+---
+
+## The Shortcuts Component (`<RLAShortcuts />`)
+
+To display a beautiful, auto-updating cheat sheet of all active keyboard shortcuts to your users, render the `<RLAShortcuts />` component globally in your main layout:
+
+```astro
+---
+// AppLayout.astro
+import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro";
+---
+<!doctype html>
+<html>
+  <body>
+    <slot />
+    <!-- Place at the bottom of the body -->
+    <RLAShortcuts />
+  </body>
+</html>
+```
+
+- **Global Key**: Renders a backdrop-blurred modal cheatsheet that toggles open when the user presses the `?` key.
+- **Categorization**: Groups shortcuts automatically by the `category` property configured during registration.

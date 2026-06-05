@@ -35,6 +35,8 @@ const classes = resolveClasses(themeSelector, {
 </RLAButton>
 
 <script>
+    import { defineShortcuts } from "../../utils/shortcuts"
+
     // CSP-safe: we toggle .dark / .light classes on <html> instead of setting
     // inline styles. Class toggling is governed by script-src, not style-src.
     // The preflight emits:
@@ -55,6 +57,21 @@ const classes = resolveClasses(themeSelector, {
         // The head script has already applied OS preference via .dark if needed.
     }
 
+    function toggleTheme() {
+        const willBeDark = !document.documentElement.classList.contains('dark');
+        document.documentElement.classList.toggle('dark',  willBeDark);
+        document.documentElement.classList.toggle('light', !willBeDark);
+        localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
+        
+        const buttons = document.querySelectorAll('.theme-toggle-button');
+        buttons.forEach(btn => {
+            btn.setAttribute('data-state', willBeDark ? 'on' : 'off');
+            btn.setAttribute('aria-pressed', willBeDark.toString());
+        });
+    }
+
+    let shortcutsCleanup: (() => void) | null = null;
+
     function setupThemeToggle() {
         const buttons = document.querySelectorAll('.theme-toggle-button');
 
@@ -71,13 +88,20 @@ const classes = resolveClasses(themeSelector, {
         buttons.forEach(button => {
             if (button.hasAttribute('data-initialized')) return;
             button.setAttribute('data-initialized', '');
-            button.addEventListener('click', () => {
-                const willBeDark = !document.documentElement.classList.contains('dark');
-                document.documentElement.classList.toggle('dark',  willBeDark);
-                document.documentElement.classList.toggle('light', !willBeDark);
-                localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
-                updateButtons(willBeDark);
-            });
+            button.addEventListener('click', toggleTheme);
+        });
+
+        // Register/refresh the theme toggle shortcut (Command+Option+T or Ctrl+Alt+T)
+        if (shortcutsCleanup) shortcutsCleanup();
+        shortcutsCleanup = defineShortcuts({
+            meta_alt_t: {
+                handler: () => {
+                    toggleTheme();
+                },
+                label: "Toggle Theme",
+                description: "Switch between light and dark theme mode",
+                category: "System"
+            }
         });
     }
 

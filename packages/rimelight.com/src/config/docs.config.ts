@@ -267,6 +267,10 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/ssr/"
                   },
                   {
+                    label: "Shortcuts",
+                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/shortcuts/"
+                  },
+                  {
                     label: "Variants",
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/variants/"
                   }

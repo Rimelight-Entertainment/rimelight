@@ -1,0 +1,329 @@
+---
+// Generate a unique ID to avoid collisions
+const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
+---
+
+<dialog id={modalId} class="rla-shortcuts-dialog" aria-labelledby={`${modalId}-title`}>
+  <div class="rla-shortcuts-content">
+    <div class="rla-shortcuts-header">
+      <h3 id={`${modalId}-title`} class="rla-shortcuts-title">Keyboard Shortcuts</h3>
+      <button class="rla-shortcuts-close" aria-label="Close shortcuts help">
+        <span class="i-lucide-x w-4 h-4"></span>
+      </button>
+    </div>
+    
+    <div class="rla-shortcuts-body">
+      <!-- Active categories and shortcuts rendered dynamically client-side -->
+    </div>
+    
+    <div class="rla-shortcuts-footer">
+      <span>Press <kbd class="rla-shortcuts-kbd-footer">?</kbd> to close</span>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import { activeShortcutsStore, defineShortcuts } from "../../utils/shortcuts"
+  import type { RegisteredShortcut } from "../../utils/shortcuts"
+
+  document.querySelectorAll<HTMLDialogElement>('.rla-shortcuts-dialog').forEach((dialog) => {
+    const body = dialog.querySelector('.rla-shortcuts-body')
+    const closeBtn = dialog.querySelector('.rla-shortcuts-close')
+    
+    let escapeCleanup: (() => void) | null = null
+
+    function openHelp() {
+      dialog.showModal()
+      document.body.style.overflow = "hidden"
+      
+      // Register escape and ? cleanup while open (configured with usingInput to work inside elements)
+      escapeCleanup = defineShortcuts({
+        escape: {
+          handler: () => closeHelp(),
+          usingInput: true
+        },
+        "?": {
+          handler: () => closeHelp(),
+          usingInput: true
+        }
+      })
+    }
+
+    function closeHelp() {
+      dialog.close()
+      document.body.style.overflow = ""
+      if (escapeCleanup) {
+        escapeCleanup()
+        escapeCleanup = null
+      }
+    }
+
+    closeBtn?.addEventListener('click', closeHelp)
+    
+    // Close on click outside
+    dialog.addEventListener('click', (e) => {
+      const rect = dialog.getBoundingClientRect()
+      const isInDialog = (
+        rect.top <= e.clientY &&
+        e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.left + rect.width
+      )
+      if (!isInDialog) {
+        closeHelp()
+      }
+    })
+
+    // Register global ? shortcut to open the modal
+    defineShortcuts({
+      "?": {
+        handler: () => {
+          if (dialog.open) {
+            closeHelp()
+          } else {
+            openHelp()
+          }
+        },
+        label: "Show Keyboard Shortcuts",
+        description: "Display this shortcuts help cheat sheet modal",
+        category: "General"
+      }
+    })
+
+    // Subscribe to changes in active shortcuts store
+    activeShortcutsStore.subscribe((shortcuts) => {
+      if (!body) return
+      body.innerHTML = ""
+
+      if (shortcuts.length === 0) {
+        body.innerHTML = '<div class="rla-shortcuts-empty">No active shortcuts found on this page.</div>'
+        return
+      }
+
+      // Group shortcuts by category
+      const categories: Record<string, RegisteredShortcut[]> = {}
+      shortcuts.forEach(s => {
+        const cat = s.category || "General"
+        if (!categories[cat]) categories[cat] = []
+        categories[cat].push(s)
+      })
+
+      Object.entries(categories).forEach(([category, list]) => {
+        const section = document.createElement('div')
+        section.className = 'rla-shortcuts-category-section'
+        
+        const title = document.createElement('h4')
+        title.className = 'rla-shortcuts-category-title'
+        title.textContent = category
+        section.appendChild(title)
+
+        const grid = document.createElement('div')
+        grid.className = 'rla-shortcuts-grid'
+
+        list.forEach(shortcut => {
+          const row = document.createElement('div')
+          row.className = 'rla-shortcuts-row'
+
+          const info = document.createElement('div')
+          info.className = 'rla-shortcuts-info'
+          
+          const name = document.createElement('span')
+          name.className = 'rla-shortcuts-name'
+          name.textContent = shortcut.label || shortcut.id
+          info.appendChild(name)
+
+          if (shortcut.description) {
+            const desc = document.createElement('span')
+            desc.className = 'rla-shortcuts-desc'
+            desc.textContent = shortcut.description
+            info.appendChild(desc)
+          }
+          row.appendChild(info)
+
+          const keysContainer = document.createElement('div')
+          keysContainer.className = 'rla-shortcuts-keys'
+          
+          shortcut.keys.forEach(key => {
+            const kbd = document.createElement('kbd')
+            kbd.className = 'rla-shortcuts-kbd'
+            kbd.textContent = key
+            keysContainer.appendChild(kbd)
+          })
+          row.appendChild(keysContainer)
+          grid.appendChild(row)
+        })
+
+        section.appendChild(grid)
+        body.appendChild(section)
+      })
+    })
+  })
+</script>
+
+<style is:global>
+  .rla-shortcuts-dialog {
+    border: 1px solid var(--color-neutral-800, #262626);
+    background: #171717 !important;
+    color: #fff !important;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    outline: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+    margin: 0;
+  }
+
+  .rla-shortcuts-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .rla-shortcuts-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rla-shortcuts-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-neutral-800, #262626);
+  }
+
+  .rla-shortcuts-title {
+    margin: 0 !important;
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: #ffffff !important; /* Force high contrast white */
+  }
+
+  .rla-shortcuts-close {
+    background: transparent;
+    border: none;
+    color: var(--color-neutral-400, #a3a3a3);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background-color 0.15s;
+  }
+
+  .rla-shortcuts-close:hover {
+    color: #fff;
+    background-color: var(--color-neutral-800, #262626);
+  }
+
+  .rla-shortcuts-body {
+    padding: 20px;
+    max-height: 380px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .rla-shortcuts-category-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rla-shortcuts-category-title {
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primary-500, #3b82f6);
+    font-weight: 700;
+  }
+
+  .rla-shortcuts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rla-shortcuts-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(38, 38, 38, 0.4);
+  }
+
+  .rla-shortcuts-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .rla-shortcuts-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #f5f5f5;
+  }
+
+  .rla-shortcuts-desc {
+    font-size: 0.75rem;
+    color: var(--color-neutral-400, #a3a3a3);
+  }
+
+  .rla-shortcuts-keys {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rla-shortcuts-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: var(--color-neutral-800, #262626);
+    border: 1px solid var(--color-neutral-700, #404040);
+    border-radius: 4px;
+    padding: 2px 6px;
+    min-width: 20px;
+    color: #e5e5e5;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  }
+
+  .rla-shortcuts-empty {
+    font-size: 0.875rem;
+    color: var(--color-neutral-500, #737373);
+    text-align: center;
+    padding: 16px 0;
+  }
+
+  .rla-shortcuts-footer {
+    padding: 12px 20px;
+    background-color: rgba(10, 10, 10, 0.35);
+    border-top: 1px solid var(--color-neutral-800, #262626);
+    font-size: 0.75rem;
+    color: var(--color-neutral-400, #a3a3a3);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .rla-shortcuts-kbd-footer {
+    background-color: var(--color-neutral-800, #262626);
+    border: 1px solid var(--color-neutral-700, #404040);
+    border-radius: 3px;
+    padding: 1px 4px;
+    font-size: 0.7rem;
+    color: var(--color-neutral-300, #d4d4d4);
+  }
+</style>

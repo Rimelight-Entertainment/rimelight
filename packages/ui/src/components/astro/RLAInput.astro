@@ -29,8 +29,8 @@ const {
   ...rest
 } = Astro.props as InputProps
 
-const hasLeading = !!leadingIcon
-const hasTrailing = !!trailingIcon
+const hasLeading = !!leadingIcon || Astro.slots.has("leading")
+const hasTrailing = !!trailingIcon || Astro.slots.has("trailing")
 
 const classes = resolveClasses(input, {
   size,
@@ -41,9 +41,9 @@ const classes = resolveClasses(input, {
 }, useUi("input", uiProp), className);
 ---
 <div class={classes.root} data-slot="root">
-  {leadingIcon && (
-    <span class={classes.leading} data-slot="leading-icon">
-      <span class={leadingIcon} />
+  {(leadingIcon || Astro.slots.has("leading")) && (
+    <span class={classes.leading} data-slot="leading">
+      {leadingIcon ? <span class={leadingIcon} /> : <slot name="leading" />}
     </span>
   )}
   <input
@@ -57,9 +57,9 @@ const classes = resolveClasses(input, {
     required={required}
     {...rest}
   />
-  {trailingIcon && (
-    <span class={classes.trailing} data-slot="trailing-icon">
-      <span class={trailingIcon} />
+  {(trailingIcon || Astro.slots.has("trailing")) && (
+    <span class={classes.trailing} data-slot="trailing">
+      {trailingIcon ? <span class={trailingIcon} /> : <slot name="trailing" />}
     </span>
   )}
 </div>
