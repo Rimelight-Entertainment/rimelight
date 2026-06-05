@@ -23,7 +23,7 @@ function slugify(text: string): string {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "")
-    .replace(/--+/g, "-")
+    .replace(/-{2,}/g, "-")
 }
 
 export function useDocumentsIndex(

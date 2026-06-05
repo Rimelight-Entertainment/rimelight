@@ -119,7 +119,7 @@ const copyToClipboard = async (text: string) => {
 }
 
 function formatColor(colorStr: string) {
-  return colorStr.toUpperCase().replace(/[)]/g, "").replace(/[(]/g, " ").replace(/%/g, "")
+  return colorStr.toUpperCase().replace(/\)/g, "").replace(/\(/g, " ").replace(/%/g, "")
 }
 /* endregion */
 </script>

@@ -1,17 +1,17 @@
-# Rimelight Monorepo
+# Rimelight Entertainment Workspace
 
 ## Structure
 
-### Packages (`/packages`)
-
-- **`@rimelight/components`**:
-
-### Apps (`/apps`)
-
-Deployable applications tailored for different subdomains and distinct platform functions.
+## Apps
 
 - **`rimelight.com`**: The main company website.
-- **`starter`**: A standardized starter template or minimal project setup referencing the core components.
-- **`docs`**: Documentation site detailing how to use Rimelight tools and components.
+- **`starter.rimelight.com`**: Our standardizes starter template for Astro websites.
+- **`playground.rimelight.com`**: Our playground for testing and experimenting.
+
+### Packages (`/packages`)
+
+- **`@rimelight/cli`**: The command line interface for managing Rimelight projects.
+- **`@rimelight/i18n`**: Internationalization and localization tools.
+- **`@rimelight/ui`**: Our component library used in all our web projects.
 
 ## Development

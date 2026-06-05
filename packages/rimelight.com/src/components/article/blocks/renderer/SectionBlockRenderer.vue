@@ -48,7 +48,7 @@ function slugify(text: string): string {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "")
-    .replace(/--+/g, "-")
+    .replace(/-{2,}/g, "-")
     .replace(/^-+/, "")
     .replace(/-+$/, "")
 }

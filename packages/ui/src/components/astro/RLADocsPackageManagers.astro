@@ -45,7 +45,7 @@ function getCommand(mgr: Manager, cmdType: CommandType): string | undefined {
   if (pkg) {
     // Logic to strip version tags for yarn create
     const processedPkg = (cmdType === "create" && mgr === "yarn")
-        ? pkg.replace(/@(?![^@]*\/)[^\s]*$/, "")
+        ? pkg.replace(/@(?![^@]*\/)\S*$/, "")
         : pkg
     cmd += ` ${processedPkg}`
   }

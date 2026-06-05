@@ -117,7 +117,7 @@ export async function runCreate(options) {
         validate: (value) => {
           if (!value || !value.trim()) return undefined
           // Simple domain check
-          if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(value.trim())) {
+          if (!/^[a-z0-9][a-z0-9-]{0,61}[a-z0-9](?:\.[a-z]{2,})+$/i.test(value.trim())) {
             return "Please enter a valid domain name (e.g. example.com)"
           }
           return undefined
