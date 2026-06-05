@@ -56,7 +56,6 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "vp config",
     "knip": "knip",
     "astro": "astro",
     "docs:meta": "tsx scripts/extract-meta.ts"
