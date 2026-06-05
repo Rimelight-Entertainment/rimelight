@@ -7,6 +7,7 @@ import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
 import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro";
+import RLASearch from "@rimelight/ui/components/astro/RLASearch.astro";
 import type { NavigationMenuItem, LinkGroupProps, ButtonProps } from "@rimelight/ui/types";
 
 import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
@@ -994,11 +995,7 @@ const storeAssistanceGroup: LinkGroupProps = {
     </div>
 
     <div slot="right" class="flex items-center gap-md">
-      <button id="search-trigger" class="flex items-center gap-xs text-neutral-400 hover:text-white transition-colors bg-neutral-900 border border-neutral-800 rounded-full px-3 py-1.5 text-sm cursor-pointer mr-1">
-        <span class="i-lucide-search w-4 h-4"></span>
-        <span class="hidden lg:inline text-xs opacity-60">Search...</span>
-        <kbd class="hidden lg:inline-flex items-center gap-0.5 text-[10px] bg-neutral-800 border border-neutral-700 px-1.5 py-0.5 rounded font-sans text-neutral-400">Ctrl K</kbd>
-      </button>
+      <RLASearch placeholder="Search blog, docs, legal..." />
       <div class="hidden md:flex flex-row gap-md">
         {session ? (
           <RLAPopover placement="bottom" class="relative group/popover">
@@ -1151,123 +1148,7 @@ const storeAssistanceGroup: LinkGroupProps = {
 	</div>
 </RLAHeader>
 
-<!-- Search modal -->
-<div id="search-modal" class="fixed inset-0 z-[1000] hidden items-start justify-center pt-[10vh] px-4 bg-black/70 backdrop-blur-sm">
-  <div class="bg-neutral-900 border border-neutral-800 rounded-xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
-    <!-- Search header -->
-    <div class="flex items-center border-b border-neutral-800 px-4 py-3">
-      <span class="i-lucide-search text-neutral-400 w-5 h-5 mr-3"></span>
-      <input type="text" id="search-input" placeholder="Search blog, docs, legal..." class="bg-transparent text-white placeholder-neutral-500 focus:outline-none flex-1 text-base" autocomplete="off" />
-      <button id="search-close" class="text-neutral-400 hover:text-white transition-colors bg-transparent border-0 cursor-pointer">
-        <span class="i-lucide-x w-5 h-5"></span>
-      </button>
-    </div>
-    <!-- Results list -->
-    <div id="search-results" class="max-h-[350px] overflow-y-auto p-2 empty:hidden flex flex-col gap-1">
-    </div>
-    <!-- Empty state -->
-    <div id="search-empty" class="p-6 text-center text-neutral-500 text-sm hidden">
-      No results found
-    </div>
-    <!-- Footer -->
-    <div class="bg-neutral-950 border-t border-neutral-800 px-4 py-2 flex items-center justify-between text-[11px] text-neutral-500">
-      <span>Escape to close</span>
-      <span>Postgres Full-Text Search</span>
-    </div>
-  </div>
-</div>
 
-<script>
-  const trigger = document.getElementById("search-trigger");
-  const modal = document.getElementById("search-modal");
-  const closeBtn = document.getElementById("search-close");
-  const input = document.getElementById("search-input") as HTMLInputElement;
-  const resultsContainer = document.getElementById("search-results");
-  const emptyState = document.getElementById("search-empty");
-
-  function openModal() {
-    modal?.classList.remove("hidden");
-    modal?.classList.add("flex");
-    input?.focus();
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() {
-    modal?.classList.add("hidden");
-    modal?.classList.remove("flex");
-    document.body.style.overflow = "";
-    if (input) input.value = "";
-    if (resultsContainer) resultsContainer.innerHTML = "";
-    emptyState?.classList.add("hidden");
-  }
-
-  trigger?.addEventListener("click", openModal);
-  closeBtn?.addEventListener("click", closeModal);
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  // Short cut key Ctrl+K
-  document.addEventListener("keydown", (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-      e.preventDefault();
-      openModal();
-    }
-    if (e.key === "Escape") {
-      closeModal();
-    }
-  });
-
-  let debounceTimer: any;
-  input?.addEventListener("input", () => {
-    clearTimeout(debounceTimer);
-    const query = input.value.trim();
-    if (!query) {
-      if (resultsContainer) resultsContainer.innerHTML = "";
-      emptyState?.classList.add("hidden");
-      return;
-    }
-
-    debounceTimer = setTimeout(async () => {
-      try {
-        console.log("[Search UI] Fetching search results for:", query);
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-        
-        if (!res.ok) {
-          throw new Error(`HTTP status: ${res.status}`);
-        }
-
-        const results = await res.json();
-        console.log("[Search UI] Received results:", results);
-
-        if (resultsContainer) resultsContainer.innerHTML = "";
-
-        if (!Array.isArray(results) || results.length === 0) {
-          emptyState?.classList.remove("hidden");
-          return;
-        }
-
-        emptyState?.classList.add("hidden");
-        results.forEach((item: any) => {
-          const div = document.createElement("a");
-          div.href = item.url;
-          div.className = "flex flex-col gap-1 p-3 hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700 text-left decoration-none";
-          
-          div.innerHTML = `
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold text-white">${item.title}</span>
-              <span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">${item.sourceType}</span>
-            </div>
-            ${item.snippet ? `<p class="text-xs text-neutral-400 line-clamp-2 m-0">${item.snippet}</p>` : ""}
-          `;
-          resultsContainer?.appendChild(div);
-        });
-      } catch (err) {
-        console.error("[Search UI] Search failed:", err);
-      }
-    }, 200);
-  });
-</script>
 
 <style is:global>
   #search-results mark {

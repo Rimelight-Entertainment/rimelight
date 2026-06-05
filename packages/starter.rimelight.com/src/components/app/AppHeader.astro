@@ -5,6 +5,7 @@ import RLANavigationMenu from "@rimelight/ui/components/astro/RLANavigationMenu.
 import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
+import RLASearch from "@rimelight/ui/components/astro/RLASearch.astro";
 import type { NavigationMenuItem, LinkGroupProps, ButtonProps } from "@rimelight/ui/types";
 import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
@@ -241,6 +242,7 @@ const actions: ButtonProps[] = [
   </div>
 
   <div slot="right" class="flex items-center gap-md">
+    <RLASearch />
     <div class="hidden md:flex flex-row gap-md">
       {actions.map((buttonProps) => (
         <RLAButton {...buttonProps} />
