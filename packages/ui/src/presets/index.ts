@@ -183,14 +183,15 @@ export default definePreset((options?: RimelightPresetOptions) => {
           "--rl-border": `var(--color-${color}-500)`
         })
       ],
-      // Pins the element's color-scheme to light — light-dark() resolves to light values
-      ["rl-light", { "color-scheme": "light" }],
-      // Pins the element's color-scheme to dark — light-dark() resolves to dark values
-      ["rl-dark", { "color-scheme": "dark" }],
+      // Pins the element's color-scheme to light — light-dark() resolves to light values.
+      // Also sets color so plain text children inherit the correct foreground without needing
+      // an explicit utility class on every element.
+      ["rl-light", { "color-scheme": "light", "color": "var(--foreground)" }],
+      // Pins the element's color-scheme to dark — light-dark() resolves to dark values.
+      ["rl-dark", { "color-scheme": "dark", "color": "var(--foreground)" }],
       // Resets color-scheme back to reactive — follows the page-level preference
-      // (i.e. whatever is set on <html>). Use this inside a pinned wrapper to opt
-      // a subtree back out of the pin.
-      ["rl-auto", { "color-scheme": "light dark" }],
+      // (i.e. whatever is set on <html>). Use inside a pinned wrapper to opt a subtree back out.
+      ["rl-auto", { "color-scheme": "light dark", "color": "var(--foreground)" }],
       [
         /^(text)-(default|inverted)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
@@ -490,6 +491,15 @@ ${lightDarkLines}
           --shiki-token-constant: #79b8ff;
           --shiki-token-parameter: #ffab70;
           --shiki-token-punctuation: #e1e4e8;
+        }
+        /* Re-declare color on semantic text elements so light-dark() re-evaluates
+           against each element's own inherited color-scheme. Without this, plain
+           text inherits a pre-computed color from body and ignores rl-dark/rl-light
+           wrappers. All rules are overridable by any utility class. */
+        p, h1, h2, h3, h4, h5, h6,
+        li, blockquote, figcaption, caption,
+        label, legend, dt, dd {
+          color: var(--foreground);
         }
         .dark {
           color-scheme: dark;
