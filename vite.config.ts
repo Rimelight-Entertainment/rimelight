@@ -2,7 +2,7 @@ import { defineConfig } from "vite-plus"
 
 export default defineConfig({
   staged: {
-    "*": "vpr check"
+    "*": "vp check --fix"
   },
   lint: {
     plugins: ["oxc", "vitest", "typescript", "unicorn", "jsdoc", "vue"],
