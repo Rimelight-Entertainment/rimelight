@@ -81,16 +81,11 @@ const overrideTriggerClass = classes.select
 
 const gapClass = size === "sm" ? "gap-1.5" : size === "lg" ? "gap-3" : "gap-2";
 
-const isDefault = variant === "default";
-const triggerDarkModeOverrides = isDefault 
-    ? "dark:!bg-neutral-800 dark:!text-white dark:hover:!bg-neutral-700" 
-    : "";
-
 const selectUi = {
     root: "!w-fit !inline-flex",
-    trigger: `flex items-center justify-between !w-fit ${gapClass} ${overrideTriggerClass} ${triggerDarkModeOverrides}`,
-    content: "!min-w-0 !w-full !bg-white !border-gray-200 !text-gray-800 dark:!bg-neutral-900 dark:!border-neutral-800 dark:!text-white",
-    item: "!text-gray-700 hover:!bg-gray-100 hover:!text-gray-900 dark:!text-neutral-300 dark:hover:!bg-neutral-800 dark:hover:!text-white"
+    trigger: `flex items-center justify-between !w-fit ${gapClass} ${overrideTriggerClass}`,
+    content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
+    item: "!text-[var(--foreground)] hover:!bg-[var(--accent)] hover:!text-[var(--accent-foreground)]"
 };
 ---
 

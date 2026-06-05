@@ -380,7 +380,6 @@ export default definePreset((options?: RimelightPresetOptions) => {
 
           return `
         :root {
-          /* Opt in to both schemes so light-dark() resolves correctly everywhere */
           color-scheme: light dark;
 
           /* Semantic tokens — each resolves to its light or dark value based on color-scheme */
@@ -491,6 +490,12 @@ ${lightDarkLines}
           --shiki-token-constant: #79b8ff;
           --shiki-token-parameter: #ffab70;
           --shiki-token-punctuation: #e1e4e8;
+        }
+        .dark {
+          color-scheme: dark;
+        }
+        .light {
+          color-scheme: light;
         }
         `
         }

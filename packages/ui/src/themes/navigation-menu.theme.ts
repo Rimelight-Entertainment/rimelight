@@ -18,7 +18,6 @@ export const createNavigationMenuTheme = () =>
     },
     variants: {
       theme: {
-        flat: { link: "rl-flat", trigger: "rl-flat" },
         light: { link: "rl-light", trigger: "rl-light" },
         dark: { link: "rl-dark", trigger: "rl-dark" }
       },

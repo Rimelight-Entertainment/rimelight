@@ -23,7 +23,6 @@ export const createSliderTheme = (colors: readonly string[] = defaultColors) =>
         ])
       ),
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

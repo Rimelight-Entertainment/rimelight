@@ -20,7 +20,6 @@ export const createSpinnerTheme = (colors: readonly string[] = defaultColors) =>
         ...colors.map((color) => [color, { root: "rl-color-" + color + " text-[var(--rl-text)]" }])
       ]),
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

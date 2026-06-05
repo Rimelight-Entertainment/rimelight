@@ -64,7 +64,6 @@ export const createBadgeTheme = (colors: readonly string[] = defaultColors) =>
         true: { root: "" }
       },
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

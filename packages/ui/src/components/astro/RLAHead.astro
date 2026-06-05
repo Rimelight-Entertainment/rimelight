@@ -254,20 +254,16 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
       };
     }
 
-    function getThemeClass() {
+    function getThemePreference() {
       var stored = localStorage.getItem('theme');
-      if (stored === 'dark') return 'dark';
-      if (stored === 'light') return '';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : '';
+      if (stored === 'dark' || stored === 'light') return stored;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
 
     function applyTheme(doc) {
-      var cls = getThemeClass();
-      if (cls) {
-        doc.documentElement.classList.add('dark');
-      } else {
-        doc.documentElement.classList.remove('dark');
-      }
+      var pref = getThemePreference();
+      doc.documentElement.classList.toggle('dark',  pref === 'dark');
+      doc.documentElement.classList.toggle('light', pref === 'light');
     }
 
     // Apply immediately on initial load

@@ -81,12 +81,12 @@ const hasTextLayout = !!(title || subtitle)
     </span>
     <div class="flex flex-col leading-tight">
       {title && (
-        <span class="font-medium text-sm text-neutral-900 dark:text-neutral-100" data-slot="title">
+        <span class="font-medium text-sm text-[var(--foreground)]" data-slot="title">
           {title}
         </span>
       )}
       {subtitle && (
-        <span class="text-xs text-neutral-500 dark:text-neutral-400" data-slot="subtitle">
+        <span class="text-xs text-[var(--muted-foreground)]" data-slot="subtitle">
           {subtitle}
         </span>
       )}

@@ -12,10 +12,6 @@ export const createLinkGroupTheme = () =>
     },
     variants: {
       theme: {
-        flat: {
-          link: "text-white hover:text-accent-foreground",
-          title: "text-white"
-        },
         dark: {
           link: "text-white hover:text-accent-foreground",
           title: "text-white"

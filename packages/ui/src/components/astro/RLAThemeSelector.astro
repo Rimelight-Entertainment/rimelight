@@ -35,13 +35,24 @@ const classes = resolveClasses(themeSelector, {
 </RLAButton>
 
 <script>
+    // CSP-safe: we toggle .dark / .light classes on <html> instead of setting
+    // inline styles. Class toggling is governed by script-src, not style-src.
+    // The preflight emits:
+    //   .dark  { color-scheme: dark  }
+    //   .light { color-scheme: light }
+    // which makes all light-dark() variables resolve correctly.
+
     function applyStoredTheme() {
         const stored = localStorage.getItem('theme');
         if (stored === 'dark') {
-            document.documentElement.style.colorScheme = 'dark';
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
         } else if (stored === 'light') {
-            document.documentElement.style.colorScheme = 'light';
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
         }
+        // No stored preference → leave classes alone.
+        // The head script has already applied OS preference via .dark if needed.
     }
 
     function setupThemeToggle() {
@@ -54,17 +65,18 @@ const classes = resolveClasses(themeSelector, {
             });
         };
 
-        const currentIsDark = document.documentElement.style.colorScheme === 'dark';
+        const currentIsDark = document.documentElement.classList.contains('dark');
         updateButtons(currentIsDark);
 
         buttons.forEach(button => {
             if (button.hasAttribute('data-initialized')) return;
             button.setAttribute('data-initialized', '');
             button.addEventListener('click', () => {
-                const isDark = document.documentElement.style.colorScheme !== 'dark';
-                document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                updateButtons(isDark);
+                const willBeDark = !document.documentElement.classList.contains('dark');
+                document.documentElement.classList.toggle('dark',  willBeDark);
+                document.documentElement.classList.toggle('light', !willBeDark);
+                localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
+                updateButtons(willBeDark);
             });
         });
     }

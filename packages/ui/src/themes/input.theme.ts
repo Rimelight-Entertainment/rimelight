@@ -26,7 +26,6 @@ export const createInputTheme = () =>
         true: { root: "border-error-500 focus-within:ring-error-500/50" }
       },
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

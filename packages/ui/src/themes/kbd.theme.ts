@@ -24,7 +24,6 @@ export const createKbdTheme = (colors: readonly string[] = defaultColors) =>
         lg: { root: "h-6 min-w-[24px] text-[12px]" }
       },
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

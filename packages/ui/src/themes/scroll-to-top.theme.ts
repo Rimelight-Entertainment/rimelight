@@ -25,7 +25,6 @@ export const createScrollToTopTheme = (colors: readonly string[] = ["primary", "
         ])
       ),
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

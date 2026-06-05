@@ -37,7 +37,6 @@ export const createChipTheme = (colors: readonly string[] = defaultColors) =>
         false: { base: "absolute" }
       },
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

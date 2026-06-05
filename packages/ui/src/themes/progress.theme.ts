@@ -24,7 +24,6 @@ export const createProgressTheme = (colors: readonly string[] = defaultColors) =
         lg: { root: "h-5" }
       },
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }

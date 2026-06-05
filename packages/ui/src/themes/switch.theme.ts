@@ -35,7 +35,6 @@ export const createSwitchTheme = (colors: readonly string[] = defaultColors) =>
         false: { thumb: "translate-x-0" }
       },
       theme: {
-        flat: { root: "rl-flat" },
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
       }
