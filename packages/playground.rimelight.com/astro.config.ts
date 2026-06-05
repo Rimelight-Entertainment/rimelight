@@ -123,9 +123,14 @@ export default defineConfig({
     ui({
       logos: {
         logomark: {
-          color: "/favicon.svg",
-          white: "/favicon-white.svg",
-          black: "/favicon-black.svg"
+          color: "./src/assets/logos/logomark_color.svg",
+          white: "./src/assets/logos/logomark_white.svg",
+          black: "./src/assets/logos/logomark_black.svg"
+        },
+        logotype: {
+          color: "./src/assets/logos/logotype_color.svg",
+          white: "./src/assets/logos/logotype_color.svg",
+          black: "./src/assets/logos/logotype_black.svg"
         }
       }
     }),

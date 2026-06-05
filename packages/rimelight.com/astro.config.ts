@@ -128,24 +128,14 @@ export default defineConfig({
     ui({
       logos: {
         logomark: {
-          black: "/images/logos/RIMELIGHT_LOGOMARK_BLACK.svg",
-          white: "/images/logos/RIMELIGHT_LOGOMARK_WHITE.svg",
-          color: "/images/logos/RIMELIGHT_LOGOMARK_COLOR.svg"
+          color: "./src/assets/logos/logomark_color.svg",
+          white: "./src/assets/logos/logomark_white.svg",
+          black: "./src/assets/logos/logomark_black.svg"
         },
         logotype: {
-          black: "/images/logos/RIMELIGHT_LOGOTYPE_BLACK.svg",
-          white: "/images/logos/RIMELIGHT_LOGOTYPE_WHITE.svg",
-          color: "/images/logos/RIMELIGHT_LOGOTYPE_COLOR.svg"
-        },
-        combomark_horizontal: {
-          black: "/images/logos/RIMELIGHT_COMBOMARK_HORIZONTAL_BLACK.svg",
-          white: "/images/logos/RIMELIGHT_COMBOMARK_HORIZONTAL_WHITE.svg",
-          color: "/images/logos/RIMELIGHT_COMBOMARK_HORIZONTAL_COLOR.svg"
-        },
-        combomark_vertical: {
-          black: "/images/logos/RIMELIGHT_COMBOMARK_VERTICAL_BLACK.svg",
-          white: "/images/logos/RIMELIGHT_COMBOMARK_VERTICAL_WHITE.svg",
-          color: "/images/logos/RIMELIGHT_COMBOMARK_VERTICAL_COLOR.svg"
+          color: "./src/assets/logos/logotype_color.svg",
+          white: "./src/assets/logos/logotype_color.svg",
+          black: "./src/assets/logos/logotype_black.svg"
         }
       }
     }),
