@@ -1,5 +1,5 @@
-import { setKVBinding } from "./index"
 import { env } from "cloudflare:workers"
+import { setKVBinding } from "./index"
 
 export const onRequest = async (context: any, next: any) => {
   const kv = (env as any).TRANSLATIONS_KV
@@ -8,3 +8,5 @@ export const onRequest = async (context: any, next: any) => {
   }
   return next()
 }
+
+export { i18n } from "./middleware/routing"
