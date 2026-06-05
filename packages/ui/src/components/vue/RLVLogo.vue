@@ -24,6 +24,26 @@ defineSlots<{
 
 const resolvedClasses = computed(() => resolveClasses(logo, {}, useUi("logo", uiProp), className))
 
+const logoFiles = import.meta.glob<{ default: any }>(
+  "/src/assets/**/*.{svg,png,jpg,jpeg,webp,gif}",
+  { eager: true }
+)
+
+function resolveLogo(pathStr: string | null | undefined): any {
+  if (!pathStr) return null
+  let lookupPath = pathStr
+  if (lookupPath.startsWith("./")) {
+    lookupPath = lookupPath.substring(1)
+  } else if (!lookupPath.startsWith("/")) {
+    lookupPath = "/" + lookupPath
+  }
+  const file = logoFiles[lookupPath]
+  if (file) {
+    return file.default?.src || file.default
+  }
+  return pathStr
+}
+
 const logoSrc = computed<string | null>(() => {
   const globalConfig = getUIConfig()
   const rcLogos = globalConfig.logos as Record<string, any>
@@ -36,7 +56,8 @@ const logoSrc = computed<string | null>(() => {
     }
   }
 
-  if (src && typeof src === "string" && src) return src
+  const resolved = resolveLogo(src)
+  if (resolved && typeof resolved === "string" && resolved) return resolved
 
   return null
 })

@@ -30,18 +30,35 @@ let logoSrc: string | null = null;
 let darkSrc: string | null = null;
 let lightSrc: string | null = null;
 
+const logoFiles = import.meta.glob<{ default: any }>("/src/assets/**/*.{svg,png,jpg,jpeg,webp,gif}", { eager: true });
+
+function resolveLogo(pathStr: string | null | undefined): any {
+  if (!pathStr) return null;
+  let lookupPath = pathStr;
+  if (lookupPath.startsWith("./")) {
+    lookupPath = lookupPath.substring(1);
+  } else if (!lookupPath.startsWith("/")) {
+    lookupPath = "/" + lookupPath;
+  }
+  const file = logoFiles[lookupPath];
+  if (file) {
+    return file.default?.src || file.default;
+  }
+  return pathStr;
+}
+
 if (rcLogos && typeof rcLogos === "object") {
   let src = rcLogos[variant];
   if (src && typeof src === "object") {
     if (mode) {
-      logoSrc = src[mode] || src.color;
+      logoSrc = resolveLogo(src[mode] || src.color);
     } else {
-      logoSrc = src.color || src.black || src.white;
-      darkSrc = src.white || src.color;
-      lightSrc = src.black || src.color;
+      logoSrc = resolveLogo(src.color || src.black || src.white);
+      darkSrc = resolveLogo(src.white || src.color);
+      lightSrc = resolveLogo(src.black || src.color);
     }
   } else if (typeof src === "string") {
-    logoSrc = src;
+    logoSrc = resolveLogo(src);
   }
 }
 
