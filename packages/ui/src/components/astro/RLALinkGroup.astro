@@ -39,7 +39,7 @@ const normalizedLinks = Array.isArray(linksProp) ? linksProp : [linksProp];
 
 // Prefix utility classes in classes.link with `!` to cleanly override conflicting text colors in RLAButton's base classes.
 // For default or light themes, do not force base text classes so RLAButton's own light/dark mode styles can adapt naturally.
-const isPinnedDark = theme === "flat" || theme === "dark";
+const isPinnedDark = theme === "dark";
 const overrideLinkClass = classes.link
     ? classes.link
         .split(" ")

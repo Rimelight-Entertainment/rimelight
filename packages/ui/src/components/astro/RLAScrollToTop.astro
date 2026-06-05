@@ -69,10 +69,8 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 <script>
   let rlaInstanceId = 0
 
-  document.querySelectorAll('.rla-scroll-to-top').forEach((el) => {
-    const element = el
+  document.querySelectorAll<HTMLElement>('.rla-scroll-to-top').forEach((element) => {
     const button = element.querySelector('[data-scroll-to-top-button]')
-    const gauge = element.querySelector('[data-gauge-progress]')
 
     if (!button) return
 
@@ -83,7 +81,7 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
     const gaugeBorderWidth = progressWidth * 0.5
     const nonce = (document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ?? '')
 
-    let styleEl = null
+    let styleEl: HTMLStyleElement | null = null
 
     function getStyleEl() {
       if (!styleEl) {

@@ -99,7 +99,7 @@ export default defineConfig({
   integrations: [
     rimelightI18n({
       translations: { en, es, pt },
-      kvBinding: "TRANSLATIONS_KV"
+      kvBinding: "rimelight-dot-com_translations"
     }),
     nanostoresI18n({
       translationLoader: "./src/i18n/loader.ts",

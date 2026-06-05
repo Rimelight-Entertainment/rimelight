@@ -33,12 +33,9 @@ let lightSrc: string | null = null;
 if (rcLogos && typeof rcLogos === "object") {
   let src = rcLogos[variant];
   if (src && typeof src === "object") {
-    if (theme === "flat" && src.flat) {
-      logoSrc = src.flat;
-    } else if (mode) {
+    if (mode) {
       logoSrc = src[mode] || src.color;
     } else {
-      // No mode, no flat — auto-detect, use color as default
       logoSrc = src.color || src.black || src.white;
       darkSrc = src.white || src.color;
       lightSrc = src.black || src.color;
@@ -50,7 +47,7 @@ if (rcLogos && typeof rcLogos === "object") {
 
 const startsWithUrlPrefix = logoSrc && (logoSrc.startsWith("http") || logoSrc.startsWith("/") || logoSrc.startsWith("."));
 const isIcon = logoSrc && !startsWithUrlPrefix && (logoSrc.includes(":") || logoSrc.startsWith("i-"));
-const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode && theme !== "flat";
+const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
 ---
 
 <a
