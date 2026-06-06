@@ -18,9 +18,10 @@ interface AppLayoutProps {
 	noindex?: boolean;
 	is404?: boolean;
 	robots?: string;
+	languageAlternates?: Array<{ hreflang: string; href: string }>;
 }
 
-const { title, description, noindex, is404, robots } = Astro.props as AppLayoutProps;
+const { title, description, noindex, is404, robots, languageAlternates } = Astro.props as AppLayoutProps;
 
 const localeMap: Record<string, string> = {
 	en: 'en_US',
@@ -36,7 +37,7 @@ const messages = useI18n(Astro, "app_layout", {
 
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
-	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots}>
+	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates}>
 		<slot name="head" slot="head" />
 		<Font cssVariable="--font-sans" preload={true} slot="head" />
 		<Font cssVariable="--font-serif" preload={true} slot="head" />
