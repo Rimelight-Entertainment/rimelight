@@ -15,7 +15,7 @@ const { title, description } = Astro.props as BlankLayoutProps;
 
 <!doctype html>
 <html lang="en">
-  <RLAHead title={title} description={description} config={siteConfig}>
+  <RLAHead title={title} description={description} config={siteConfig} rssFeed={{ href: '/rss.xml', title: siteConfig.name }}>
     <slot name="head" slot="head" />
     <Font cssVariable="--font-sans" preload={true} slot="head" />
     <Font cssVariable="--font-serif" preload={true} slot="head" />

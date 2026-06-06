@@ -21,15 +21,16 @@ const {
 const classes = resolveClasses(popover, {
   placement
 }, useUi("popover", uiProp), className)
+const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
 ---
 <div class={classes.root} data-slot="popover-container" {...rest}>
-  <div class={classes.trigger} data-slot="trigger" tabindex="0">
+  <div class={classes.trigger} data-slot="trigger">
     <slot name="trigger">
-      {triggerLabel && <button type="button" class="cursor-pointer">{triggerLabel}</button>}
+      {triggerLabel && <button type="button" class="cursor-pointer" popovertarget={popoverId}>{triggerLabel}</button>}
     </slot>
   </div>
 
-  <div class={classes.content} data-slot="content">
+  <div id={popoverId} popover class={classes.content} data-slot="content">
     <slot />
   </div>
 </div>

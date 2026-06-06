@@ -155,11 +155,16 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
 {twitterHandle && <meta property="twitter:site" content={twitterHandle} />}
 {twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
 
-<!-- Icons -->
+<!-- Icons & Manifest -->
 <link rel="icon" type="image/svg+xml" href={favicon} />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
 
 <!-- Theme -->
-{themeColor && <meta name="theme-color" content={themeColor} />}
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content={themeColor || "#ffffff"} />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
 
 <script is:inline>
   (function() {
