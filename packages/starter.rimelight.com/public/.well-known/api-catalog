@@ -1,0 +1,12 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://starter.rimelight.com/",
+      "service": [
+        {
+          "href": "https://starter.rimelight.com/api"
+        }
+      ]
+    }
+  ]
+}

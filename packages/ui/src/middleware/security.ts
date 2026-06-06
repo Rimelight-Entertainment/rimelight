@@ -18,6 +18,10 @@ function addSecurityHeaders(response: Response): Response {
     "Strict-Transport-Security",
     "max-age=31536000; includeSubDomains; preload"
   )
+  newResponse.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  )
   return newResponse
 }
 
