@@ -8,7 +8,7 @@ import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
 import { siteConfig } from '@/site.config';
 import '@/styles/global.css';
 import { Font } from 'astro:assets';
-import { currentLocale } from '@rimelight/i18n';
+import { currentLocale, useI18n } from '@rimelight/i18n';
 
 currentLocale.set(Astro.currentLocale ?? 'en');
 
@@ -28,6 +28,10 @@ const localeMap: Record<string, string> = {
 	es: 'es_ES',
 };
 const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
+
+const messages = useI18n(Astro, "app_layout", {
+	skipToContent: "Skip to main content"
+});
 ---
 
 <!doctype html>
@@ -39,8 +43,11 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 		<Font cssVariable="--font-mono" preload={true} slot="head" />
 	</RLAHead>
 	<body class="isolate">
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
+			{messages.skipToContent}
+		</a>
 		<AppHeader />
-		<RLAMain>
+		<RLAMain id="main-content">
 			<slot />
 		</RLAMain>
 		<AppFooter />

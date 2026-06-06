@@ -6,6 +6,7 @@ import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
 import RLASearch from "@rimelight/ui/components/astro/RLASearch.astro";
+import RLAImage from "@rimelight/ui/components/astro/RLAImage.astro";
 import type { NavigationMenuItem, LinkGroupProps, ButtonProps } from "@rimelight/ui/types";
 import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
@@ -169,9 +170,10 @@ const actions: ButtonProps[] = [
         <!-- Features Mega Menu -->
         <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-[var(--card)] w-full">
           <div class="bg-[var(--card)] flex flex-col lg:flex-row gap-lg p-lg flex-1">
-            <img
+            <RLAImage
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderImage.src}
+              src={placeholderImage}
+              alt=""
             />
 
             <div class="flex flex-col gap-sm flex-2">
@@ -210,9 +212,10 @@ const actions: ButtonProps[] = [
           <!-- Features Mega Menu (Mobile/Vertical) -->
           <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-[var(--card)] w-full">
             <div class="bg-[var(--card)] flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <img
+              <RLAImage
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderImage.src}
+                src={placeholderImage}
+                alt=""
               />
 
               <div class="flex flex-col gap-sm flex-2">
@@ -367,5 +370,13 @@ const actions: ButtonProps[] = [
     width: 100% !important;
     background: transparent !important;
     padding: 12px 4px !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-header,
+    html [data-nav-viewport] {
+      animation: none !important;
+      transition: none !important;
+    }
   }
 </style>
