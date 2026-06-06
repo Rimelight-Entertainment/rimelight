@@ -92,6 +92,11 @@ export const security = defineMiddleware(async (context, next) => {
           }
         }
       })
+      .on('meta[http-equiv="content-security-policy" i]', {
+        element(el: any) {
+          el.remove()
+        }
+      })
 
     if (nonceValue) {
       rewriter = rewriter
@@ -127,6 +132,12 @@ export const security = defineMiddleware(async (context, next) => {
   }
 
   let modifiedHtml = await response.text()
+
+  // Remove Astro-injected CSP meta tag to prevent duplicate CSP headers and HTML escaping errors
+  modifiedHtml = modifiedHtml.replace(
+    /<meta[^>]*http-equiv=["']content-security-policy["'][^>]*>/gi,
+    ""
+  )
 
   assertManifest(manifest)
 

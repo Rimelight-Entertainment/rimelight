@@ -139,6 +139,7 @@ export function defineSecurity(options: SecurityConfigOptions): AstroSecurityCon
     "upgrade-insecure-requests",
     "base-uri 'self'",
     "form-action 'self'",
+    "object-src 'none'",
     ...(options.trustedTypes ? ["require-trusted-types-for 'script'" as const] : [])
   ]
 
