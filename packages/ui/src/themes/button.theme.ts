@@ -177,7 +177,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
         color: "neutral",
         variant: "ghost",
         classNames: {
-          root: "text-default hover:bg-elevated/10 active:bg-elevated/10 focus:outline-none focus-visible:bg-elevated/10 hover:disabled:bg-transparent hover:aria-disabled:bg-transparent"
+          root: "text-default hover:bg-hover active:bg-hover/80 focus:outline-none focus-visible:bg-hover hover:disabled:bg-transparent hover:aria-disabled:bg-transparent"
         }
       },
       {

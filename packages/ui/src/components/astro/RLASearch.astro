@@ -6,6 +6,7 @@ import searchThemeDefault, { createSearchTheme } from "../../themes/search.theme
 import { getUIConfig } from "virtual:rimelight-ui"
 import RLAInput from "./RLAInput.astro"
 import RLAKbd from "./RLAKbd.astro"
+import RLAButton from "./RLAButton.astro"
 
 const uiConfig = getUIConfig()
 const searchTheme = uiConfig.colors ? createSearchTheme() : searchThemeDefault
@@ -55,16 +56,15 @@ const emptyId = `search-empty-${uniqueId}`
       <slot name="trigger" />
     </div>
   ) : (
-    <button id={triggerId} class="p-0 border-0 bg-transparent cursor-pointer inline-block w-64 text-left" aria-label="Open Search">
-      <RLAInput
-        readonly
-        placeholder={searchButtonLabel}
-        class="pointer-events-none"
-      >
-        <span slot="leading" class="i-lucide-search text-neutral-400 w-4 h-4" />
-        <RLAKbd slot="trailing" size="sm">Ctrl K</RLAKbd>
-      </RLAInput>
-    </button>
+    <RLAButton
+      id={triggerId}
+      variant="ghost"
+      color="neutral"
+      square
+      aria-label="Open Search"
+    >
+      <span class="i-lucide-search w-5 h-5" />
+    </RLAButton>
   )}
 
   <!-- Search modal -->

@@ -456,27 +456,27 @@ export default definePreset((options?: RimelightPresetOptions) => {
           --ui-header-height: 4rem;
           --ui-container: 80rem;
 
-          /* Text / background / border / ring semantic tokens using light-dark() */
-          --text-color-default: light-dark(var(--color-neutral-700), var(--color-neutral-200));
-          --text-color-muted: light-dark(var(--color-neutral-500), var(--color-neutral-400));
-          --text-color-dimmed: light-dark(var(--color-neutral-400), var(--color-neutral-500));
-          --text-color-toned: light-dark(var(--color-neutral-600), var(--color-neutral-300));
-          --text-color-highlighted: light-dark(var(--color-neutral-900), #ffffff);
-          --text-color-inverted: light-dark(#ffffff, #030712);
-          --background-color-default: light-dark(#ffffff, var(--color-neutral-900));
-          --background-color-muted: light-dark(var(--color-neutral-50), var(--color-neutral-800));
-          --background-color-elevated: light-dark(var(--color-neutral-100), var(--color-neutral-800));
-          --background-color-accented: light-dark(var(--color-neutral-200), var(--color-neutral-700));
-          --background-color-inverted: light-dark(var(--color-neutral-900), #ffffff);
-          --border-color-default: light-dark(var(--color-neutral-200), var(--color-neutral-800));
-          --border-color-muted: light-dark(var(--color-neutral-200), var(--color-neutral-700));
-          --border-color-accented: light-dark(var(--color-neutral-300), var(--color-neutral-700));
-          --border-color-inverted: light-dark(var(--color-neutral-900), #ffffff);
-          --ring-color-default: light-dark(var(--color-neutral-200), var(--color-neutral-800));
-          --ring-color-muted: light-dark(var(--color-neutral-200), var(--color-neutral-700));
-          --ring-color-accented: light-dark(var(--color-neutral-300), var(--color-neutral-700));
-          --ring-color-inverted: light-dark(var(--color-neutral-900), #ffffff);
-          --divide-color-default: light-dark(var(--color-neutral-200), var(--color-neutral-800));
+          /* Text / background / border / ring semantic tokens using responsive neutral variables */
+          --text-color-default: var(--color-neutral-700);
+          --text-color-muted: var(--color-neutral-500);
+          --text-color-dimmed: var(--color-neutral-400);
+          --text-color-toned: var(--color-neutral-600);
+          --text-color-highlighted: var(--color-neutral-950);
+          --text-color-inverted: light-dark(#ffffff, var(--color-neutral-50));
+          --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
+          --background-color-muted: var(--color-neutral-100);
+          --background-color-elevated: var(--color-neutral-200);
+          --background-color-accented: var(--color-neutral-300);
+          --background-color-inverted: var(--color-neutral-950);
+          --border-color-default: var(--color-neutral-200);
+          --border-color-muted: var(--color-neutral-100);
+          --border-color-accented: var(--color-neutral-300);
+          --border-color-inverted: var(--color-neutral-950);
+          --ring-color-default: var(--color-neutral-200);
+          --ring-color-muted: var(--color-neutral-100);
+          --ring-color-accented: var(--color-neutral-300);
+          --ring-color-inverted: var(--color-neutral-950);
+          --divide-color-default: var(--color-neutral-200);
 
           /* Color scales — light-dark() resolves based on inherited color-scheme */
 ${lightDarkLines}
