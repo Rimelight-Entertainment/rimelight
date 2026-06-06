@@ -3,6 +3,8 @@ import { db } from "@/db"
 import { searchIndex, searchIndexFts, rateLimit } from "@/db/schema"
 import { sql, desc, asc, eq, or, like } from "drizzle-orm"
 
+import { waitUntil } from "cloudflare:workers"
+
 export const GET: APIRoute = async (context) => {
   const { request } = context
   const url = new URL(request.url)
@@ -10,13 +12,9 @@ export const GET: APIRoute = async (context) => {
 
   // Check and trigger sync in background on new deployments
   const currentBuildTime = import.meta.env.BUILD_TIME
-  const locals = Reflect.get(context, "locals")
-  const platform =
-    (locals ? Reflect.get(locals, "runtime") : undefined) || Reflect.get(context, "platform")
-  const ctx = platform ? Reflect.get(platform, "ctx") : undefined
 
-  if (currentBuildTime && ctx?.waitUntil) {
-    ctx.waitUntil(
+  if (currentBuildTime) {
+    waitUntil(
       (async () => {
         try {
           const [lastSync] = await db
