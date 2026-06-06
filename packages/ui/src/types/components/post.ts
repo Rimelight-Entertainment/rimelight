@@ -24,6 +24,10 @@ export interface PostProps {
    */
   variant?: "soft" | "ghost"
   /**
+   * The orientation layout of the post.
+   */
+  orientation?: "vertical" | "horizontal"
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

@@ -19,12 +19,13 @@ const {
   image,
   to,
   variant = "soft",
+  orientation = "vertical",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as PostProps
 
-const classes = resolveClasses(post, { variant }, useUi("post", uiProp), className);
+const classes = resolveClasses(post, { variant, orientation }, useUi("post", uiProp), className);
 
 const Tag = to ? "a" : "div";
 const formattedDate = date ? (date instanceof Date ? date.toLocaleDateString() : date) : null;

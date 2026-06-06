@@ -8,13 +8,19 @@ import postTheme from "../../themes/post.theme"
 const post = scv(postTheme)
 
 const props = withDefaults(defineProps<PostProps>(), {
-  variant: "soft"
+  variant: "soft",
+  orientation: "vertical"
 })
 
 const slots = useSlots()
 
 const resolvedClasses = computed(() =>
-  resolveClasses(post, { variant: props.variant }, useUi("post", props.ui), props.class)
+  resolveClasses(
+    post,
+    { variant: props.variant, orientation: props.orientation },
+    useUi("post", props.ui),
+    props.class
+  )
 )
 
 const Tag = props.to ? "a" : "div"

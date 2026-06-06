@@ -38,11 +38,13 @@ const messages = await useI18nAsync(Astro, 'blog', {
 			if (!categoryPosts || categoryPosts.length === 0) return null;
 			return (
 				<RLAPageSection title={(messages.categories as unknown as Record<string, string>)[category]}>
-					<RLAGrid>
+					<RLAGrid cols={4}>
 						{
-							categoryPosts.map((post) => (
+							categoryPosts.map((post, index) => (
 								<RLAPost
 									variant="ghost"
+									orientation={index === 0 ? "horizontal" : "vertical"}
+									class={index === 0 ? "col-span-full mb-6" : ""}
 									image={post.data.heroImage}
 									date={post.data.pubDate}
 									title={post.data.title}

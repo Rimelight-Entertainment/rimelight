@@ -101,7 +101,7 @@ const ctaLinks = [
     description={messages["section_posts_description"]}
   >
     <div slot="body" class="flex flex-col gap-xl">
-      <RLAGrid>
+      <RLAGrid cols={3}>
         {
           latestPosts.map((post) => (
             <RLAPost
