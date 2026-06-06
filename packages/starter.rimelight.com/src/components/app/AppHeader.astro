@@ -43,14 +43,15 @@ const foundationLinkGroup: LinkGroupProps = {
   links: [
     {
       label: messages["link-groups_center_foundations_links_tokens"],
-      href: "/features/tokens" },
+      href: getRelativeLocaleUrl('/docs/tokens')
+    },
     {
       label: messages["link-groups_center_foundations_links_colors"],
-      href: "/features/colors"
+      href: getRelativeLocaleUrl('/docs/colors')
     },
     {
       label: messages["link-groups_center_foundations_links_typography"],
-      href: "/features/typography"
+      href: getRelativeLocaleUrl('/docs/typography')
     }
   ]
 };
@@ -61,15 +62,15 @@ const componentsLinkGroup: LinkGroupProps = {
   links: [
     {
       label: messages["link-groups_center_components_links_astro"],
-      href: "/features/astro"
+      href: getRelativeLocaleUrl('/docs/astro')
     },
     {
       label: messages["link-groups_center_components_links_vue"],
-      href: "/features/vue"
+      href: getRelativeLocaleUrl('/docs/vue')
     },
     {
       label: messages["link-groups_center_components_links_integrations"],
-      href: "/features/integrations"
+      href: getRelativeLocaleUrl('/docs/integrations')
     }
   ]
 };

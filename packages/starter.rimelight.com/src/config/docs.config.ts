@@ -12,6 +12,26 @@ export default defineDocsConfig({
       href: "/{locale}/docs/",
       icon: "i-lucide-book-open",
       items: [{ label: "Home", href: "/{locale}/docs/" }]
+    },
+    {
+      id: "foundation",
+      label: "Foundation",
+      icon: "i-lucide-layout",
+      items: [
+        { label: "Design Tokens", href: "/{locale}/docs/tokens" },
+        { label: "Color Palettes", href: "/{locale}/docs/colors" },
+        { label: "Fluid Typography", href: "/{locale}/docs/typography" }
+      ]
+    },
+    {
+      id: "components",
+      label: "Components",
+      icon: "i-lucide-blocks",
+      items: [
+        { label: "Astro Elements", href: "/{locale}/docs/astro" },
+        { label: "Vue Components", href: "/{locale}/docs/vue" },
+        { label: "Integrations", href: "/{locale}/docs/integrations" }
+      ]
     }
   ]
 })
