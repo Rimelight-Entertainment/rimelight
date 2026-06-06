@@ -20,7 +20,8 @@ export default defineDocsConfig({
       items: [
         { label: "Design Tokens", href: "/{locale}/docs/tokens" },
         { label: "Color Palettes", href: "/{locale}/docs/colors" },
-        { label: "Fluid Typography", href: "/{locale}/docs/typography" }
+        { label: "Fluid Typography", href: "/{locale}/docs/typography" },
+        { label: "Search & Database", href: "/{locale}/docs/search-db" }
       ]
     },
     {
