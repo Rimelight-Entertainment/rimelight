@@ -193,7 +193,7 @@ CREATE TABLE `verification` (
 --> statement-breakpoint
 CREATE INDEX `verification_identifier_idx` ON `verification` (`identifier`);--> statement-breakpoint
 CREATE TABLE `search_index` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`source_type` text NOT NULL,
 	`source_id` text NOT NULL,
 	`title` text NOT NULL,
