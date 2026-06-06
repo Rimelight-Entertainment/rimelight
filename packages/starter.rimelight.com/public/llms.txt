@@ -1,0 +1,17 @@
+# Rimelight Starter
+
+> Welcome to the Rimelight Starter template. A modern, optimized, and SEO-compliant fullstack Astro framework built with Vanilla CSS and TypeScript.
+
+## Core Content
+
+- [Home Page](https://starter.rimelight.com/) - Home screen overview and features.
+- [About Page](https://starter.rimelight.com/en/about) - Information about the template.
+- [Blog](https://starter.rimelight.com/en/blog) - Documentation, news, and technical articles.
+- [Docs](https://starter.rimelight.com/en/docs) - Complete guides on layout, components, and toolchain configurations.
+
+## API & Metadata Endpoints
+
+- [Sitemap](https://starter.rimelight.com/sitemap-index.xml) - Complete website index sitemap.
+- [RSS Feed](https://starter.rimelight.com/rss.xml) - Localized XML publication feed.
+- [API Catalog](https://starter.rimelight.com/.well-known/api-catalog) - Exposed machine-readable endpoint indexes.
+- [LLMs Extended Index](https://starter.rimelight.com/llms-full.txt) - Full text content index for LLMs.

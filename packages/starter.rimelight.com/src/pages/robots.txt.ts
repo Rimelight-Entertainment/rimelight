@@ -1,6 +1,24 @@
 import type { APIRoute } from "astro"
 
 const getRobotsTxt = (sitemapURL: URL) => `\
+User-agent: GPTBot
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /internal/
+Disallow: /*/admin/
+Disallow: /*/dashboard/
+Disallow: /*/internal/
+Allow: /
+
+User-agent: ClaudeBot
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /internal/
+Disallow: /*/admin/
+Disallow: /*/dashboard/
+Disallow: /*/internal/
+Allow: /
+
 User-agent: *
 Disallow: /admin/
 Disallow: /dashboard/

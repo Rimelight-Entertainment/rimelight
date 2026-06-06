@@ -10,6 +10,10 @@ import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
 import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
 import { useI18n, currentLocale } from '@rimelight/i18n'
 
+Astro.response.status = 503;
+Astro.response.statusText = "Service Unavailable";
+Astro.response.headers.set("Retry-After", "3600");
+
 currentLocale.set(Astro.currentLocale ?? 'en');
 
 const constructionAuth = (import.meta.env.CONSTRUCTION_AUTH ?? process.env.CONSTRUCTION_AUTH) === "true"

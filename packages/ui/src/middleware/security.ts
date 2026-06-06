@@ -8,7 +8,7 @@ function assertManifest(obj: unknown): asserts obj is Record<string, string> {
   if (!obj || typeof obj !== "object") throw new Error("Expected manifest")
 }
 
-function addSecurityHeaders(response: Response): Response {
+function addSecurityHeaders(response: Response, origin?: string): Response {
   const newResponse = new Response(response.body, response)
   newResponse.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
   newResponse.headers.set("X-Content-Type-Options", "nosniff")
@@ -22,6 +22,17 @@ function addSecurityHeaders(response: Response): Response {
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
   )
+  if (origin) {
+    newResponse.headers.set(
+      "Link",
+      [
+        `<${origin}/sitemap-index.xml>; rel="sitemap"`,
+        `<${origin}/llms.txt>; rel="llms"`,
+        `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
+        `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`
+      ].join(", ")
+    )
+  }
   return newResponse
 }
 
@@ -39,7 +50,7 @@ export const security = defineMiddleware(async (context, next) => {
   const contentType = response.headers.get("content-type") || ""
 
   if (!contentType.includes("text/html")) {
-    return addSecurityHeaders(response)
+    return addSecurityHeaders(response, context.url.origin)
   }
 
   const cspHeader = response.headers.get("content-security-policy")
@@ -110,7 +121,8 @@ export const security = defineMiddleware(async (context, next) => {
           statusText: response.statusText,
           headers: newHeaders
         })
-      )
+      ),
+      context.url.origin
     )
   }
 
@@ -155,6 +167,7 @@ export const security = defineMiddleware(async (context, next) => {
       status: response.status,
       statusText: response.statusText,
       headers: newHeaders
-    })
+    }),
+    context.url.origin
   )
 })
