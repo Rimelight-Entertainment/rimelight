@@ -2,8 +2,8 @@ import type { APIRoute } from "astro"
 import { db } from "@/db"
 import { searchIndex, searchIndexFts, rateLimit } from "@/db/schema"
 import { sql, desc, asc, eq, or, like } from "drizzle-orm"
-
 import { waitUntil } from "cloudflare:workers"
+import { doSearchSync } from "./syncSearch"
 
 export const GET: APIRoute = async (context) => {
   const { request } = context
@@ -26,13 +26,7 @@ export const GET: APIRoute = async (context) => {
           if (!lastSync || lastSync.lastRequest !== Date.parse(currentBuildTime)) {
             console.log("[Search API] Build time mismatch. Syncing search index in background...")
 
-            const syncUrl = new URL("/api/syncSearch", request.url)
-            const syncToken = import.meta.env.SYNC_TOKEN ?? process.env.SYNC_TOKEN
-            if (syncToken) {
-              syncUrl.searchParams.set("token", syncToken)
-            }
-
-            await fetch(syncUrl.toString())
+            await doSearchSync()
 
             if (lastSync) {
               await db
