@@ -123,6 +123,12 @@ export default defineConfig({
     mdx(),
 
     ui({
+      shortcuts: {
+        categories: {
+          system: { label: "System" },
+          navigation: { label: "Navigation" }
+        }
+      },
       logos: {
         logomark: {
           color: "./src/assets/logos/logomark_color.svg",

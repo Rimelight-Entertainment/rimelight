@@ -80,11 +80,14 @@ export interface ShortcutConfig {
   usingInput?: boolean | string // Enable shortcut inside input/textarea elements
   label?: string // Human-readable action label (e.g. "Toggle Theme")
   description?: string // Brief summary of what the shortcut does
-  category?: string // Section category grouping (e.g. "Navigation")
+  category?: string // Section category grouping (e.g. "navigation", defaults to "system")
+  order?: number // Numeric sorting priority (higher values sorted first)
 }
 ```
 
 - **`usingInput`**: By default, shortcuts are ignored if the active element is an input, textarea, or contenteditable. Set `usingInput: true` to bypass this filter (e.g., allowing `Escape` to close a search modal even when focusing the search field).
+- **`category`**: The category identifier to group the shortcut under. If not specified, it defaults to `"system"`.
+- **`order`**: An optional numeric value (acting like a `z-index`) defining the sorting order of shortcuts within their category. Shortcuts with higher order values appear first. When orders are equal or undefined, items are sorted alphabetically by their label or id.
 
 ---
 

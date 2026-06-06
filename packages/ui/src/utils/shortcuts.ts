@@ -8,6 +8,7 @@ export interface ShortcutConfig {
   label?: string
   description?: string
   category?: string
+  order?: number
 }
 
 export interface ShortcutsConfig {
@@ -35,6 +36,7 @@ export interface RegisteredShortcut {
   label?: string
   description?: string
   category?: string
+  order?: number
 }
 
 // OS detection
@@ -202,7 +204,7 @@ export function defineShortcuts(
     .map(([key, shortcutConfig]) => {
       if (!shortcutConfig || typeof shortcutConfig !== "object") return null
 
-      const { label, description, category } = shortcutConfig
+      const { label, description, category, order } = shortcutConfig
       if (!label && !description) return null // only register documented shortcuts
 
       return {
@@ -210,7 +212,8 @@ export function defineShortcuts(
         keys: formatShortcutKeys(key),
         label,
         description,
-        category: category || "General"
+        category: category || "system",
+        order
       }
     })
     .filter(Boolean) as RegisteredShortcut[]

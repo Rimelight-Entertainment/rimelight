@@ -13,12 +13,21 @@ import rimelightUiPreset, {
 import { extractAllMeta } from "../plugins/starlightDocsApi"
 import virtual from "vite-plugin-virtual"
 
-/**
- * Shape of the `ui` config that can be passed to the integration.
- */
-export type UIConfigOverrides = Record<string, Partial<ComponentTheme>>
+export interface CategoryConfig {
+  label: string
+}
+
+export interface UIConfigOverrides {
+  [key: string]: Partial<ComponentTheme>
+}
 
 export interface UIOptions {
+  /**
+   * Configuration for keyboard shortcuts.
+   */
+  shortcuts?: {
+    categories?: Record<string, CategoryConfig>
+  }
   /**
    * Configuration for the Logo component variants.
    */
@@ -121,7 +130,8 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   const resolvedConfig = {
     ...resolvedUI,
     logos: options.logos ?? {},
-    colors: mergedColors
+    colors: mergedColors,
+    shortcuts: options.shortcuts ?? {}
   }
 
   const virtualModuleId = "virtual:rimelight-ui"
