@@ -7,6 +7,42 @@ Rimelight features a cloud-native database setup powered by **Cloudflare D1 (SQL
 
 ---
 
+## Setup Workflow for Cloners
+
+If you have just cloned this template, follow these steps to set up the database and search indexing:
+
+### 1. Create a D1 Database
+
+Create a new D1 instance in your Cloudflare account:
+
+```bash
+npx wrangler d1 create starter-dot-rimelight-dot-com_db
+```
+
+Copy the generated `database_id` and paste it into the `d1_databases` array inside `wrangler.jsonc`.
+
+### 2. Apply Schema Migrations
+
+Deploy the database tables to both your local development environment and your production Cloudflare instance:
+
+```bash
+# Apply migrations locally
+npx wrangler d1 migrations apply starter-dot-rimelight-dot-com_db --local
+
+# Apply migrations to production (remote)
+npx wrangler d1 migrations apply starter-dot-rimelight-dot-com_db --remote
+```
+
+### 3. Add Sync Environment Variable
+
+In your Cloudflare Pages Dashboard -> Settings -> Environment Variables, add a new environment variable `SYNC_TOKEN` with a secret string of your choice.
+
+### 4. Deploy & Auto-Sync
+
+Push your code to trigger a deployment. Perform any search query on the live website, and the backend will automatically detect the empty index and build the search index in the background.
+
+---
+
 ## 1. Database Architecture & Client
 
 The database client is located at `src/db/index.ts`. Since Cloudflare Workers inject resources on a per-request basis, the database client is initialized lazily using a JavaScript `Proxy`.
