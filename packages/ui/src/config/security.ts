@@ -140,6 +140,7 @@ export function defineSecurity(options: SecurityConfigOptions): AstroSecurityCon
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
+    "manifest-src 'self'",
     ...(options.trustedTypes ? ["require-trusted-types-for 'script'" as const] : [])
   ]
 

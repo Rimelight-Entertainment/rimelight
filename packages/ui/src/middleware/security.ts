@@ -53,9 +53,16 @@ export const security = defineMiddleware(async (context, next) => {
     return addSecurityHeaders(response, context.url.origin)
   }
 
-  const cspHeader = response.headers.get("content-security-policy")
-  const nonceValue = cspHeader ? crypto.randomUUID().replace(/-/g, "") : null
+  let cspHeader = response.headers.get("content-security-policy")
   const newHeaders = new Headers(response.headers)
+
+  if (cspHeader) {
+    // Unescape HTML entities (like &#39; to ') that Astro's native CSP generation mistakenly puts in the header
+    cspHeader = cspHeader.replace(/&#39;/g, "'").replace(/&amp;/g, "&")
+    newHeaders.set("content-security-policy", cspHeader)
+  }
+
+  const nonceValue = cspHeader ? crypto.randomUUID().replace(/-/g, "") : null
 
   if (cspHeader && nonceValue) {
     let newCsp = cspHeader
