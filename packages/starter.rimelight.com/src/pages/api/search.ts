@@ -1,11 +1,60 @@
 import type { APIRoute } from "astro"
 import { db } from "@/db"
-import { searchIndex, searchIndexFts } from "@/db/schema"
+import { searchIndex, searchIndexFts, rateLimit } from "@/db/schema"
 import { sql, desc, asc, eq, or, like } from "drizzle-orm"
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async (context) => {
+  const { request } = context
   const url = new URL(request.url)
   const q = url.searchParams.get("q") || ""
+
+  // Check and trigger sync in background on new deployments
+  const currentBuildTime = import.meta.env.BUILD_TIME
+  const locals = Reflect.get(context, "locals")
+  const platform =
+    (locals ? Reflect.get(locals, "runtime") : undefined) || Reflect.get(context, "platform")
+  const ctx = platform ? Reflect.get(platform, "ctx") : undefined
+
+  if (currentBuildTime && ctx?.waitUntil) {
+    ctx.waitUntil(
+      (async () => {
+        try {
+          const [lastSync] = await db
+            .select()
+            .from(rateLimit)
+            .where(eq(rateLimit.key, "search_sync_build_time"))
+            .limit(1)
+
+          if (!lastSync || lastSync.lastRequest !== Date.parse(currentBuildTime)) {
+            console.log("[Search API] Build time mismatch. Syncing search index in background...")
+
+            const syncUrl = new URL("/api/syncSearch", request.url)
+            const syncToken = import.meta.env.SYNC_TOKEN ?? process.env.SYNC_TOKEN
+            if (syncToken) {
+              syncUrl.searchParams.set("token", syncToken)
+            }
+
+            await fetch(syncUrl.toString())
+
+            if (lastSync) {
+              await db
+                .update(rateLimit)
+                .set({ lastRequest: Date.parse(currentBuildTime) })
+                .where(eq(rateLimit.key, "search_sync_build_time"))
+            } else {
+              await db.insert(rateLimit).values({
+                key: "search_sync_build_time",
+                count: 0,
+                lastRequest: Date.parse(currentBuildTime)
+              })
+            }
+          }
+        } catch (err) {
+          console.error("[Search API] Background sync check failed:", err)
+        }
+      })()
+    )
+  }
 
   if (!q.trim()) {
     return new Response(JSON.stringify([]), {

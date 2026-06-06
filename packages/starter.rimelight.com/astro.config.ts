@@ -50,7 +50,10 @@ export default defineConfig({
         emitFile: true,
         filename: "stats.html"
       })
-    ]
+    ],
+    define: {
+      "import.meta.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
+    }
   },
 
   site: "https://starter.rimelight.com",
