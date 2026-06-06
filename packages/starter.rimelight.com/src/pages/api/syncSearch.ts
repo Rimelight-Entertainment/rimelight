@@ -2,7 +2,7 @@ import type { APIRoute } from "astro"
 import { getCollection } from "astro:content"
 import { db } from "@/db"
 import * as schema from "@/db/schema"
-import { sql, and, isNull, isNotNull } from "drizzle-orm"
+import { sql, and, isNull, isNotNull, eq } from "drizzle-orm"
 
 // Helper to check table existence in database
 async function tableExists(tableName: string): Promise<boolean> {
@@ -22,9 +22,7 @@ async function ensureFtsTable(): Promise<void> {
     await db.run(
       sql`CREATE VIRTUAL TABLE IF NOT EXISTS search_index_fts USING fts5(
         title,
-        body_content,
-        content='search_index',
-        content_rowid='id'
+        body_content
       )`
     )
   } catch (err: any) {
@@ -83,11 +81,14 @@ export async function doSearchSync() {
     const cacheKey = `markdown:${sourceId}`
     activeSourceKeys.add(cacheKey)
 
-    let urlSlug = entry.id.replace(/[/\\]index$/, "")
-    if (urlSlug === "index" || urlSlug === "") {
-      urlSlug = ""
+    const parts = entry.id.split("/")
+    const locale = parts[0]
+    let subSlug = parts.slice(1).join("/")
+    subSlug = subSlug.replace(/[/\\]index$/, "")
+    if (subSlug === "index" || subSlug === "") {
+      subSlug = ""
     }
-    const pageUrl = `/blog${urlSlug ? "/" + urlSlug : ""}`
+    const pageUrl = `/${locale}/blog${subSlug ? "/" + subSlug : ""}`
 
     toUpsert.push({
       sourceType: "markdown",
@@ -105,11 +106,14 @@ export async function doSearchSync() {
     const cacheKey = `markdown:${sourceId}`
     activeSourceKeys.add(cacheKey)
 
-    let urlSlug = entry.id.replace(/[/\\]index$/, "")
-    if (urlSlug === "index" || urlSlug === "") {
-      urlSlug = ""
+    const parts = entry.id.split("/")
+    const locale = parts[0]
+    let subSlug = parts.slice(1).join("/")
+    subSlug = subSlug.replace(/[/\\]index$/, "")
+    if (subSlug === "index" || subSlug === "") {
+      subSlug = ""
     }
-    const pageUrl = `/docs${urlSlug ? "/" + urlSlug : ""}`
+    const pageUrl = `/${locale}/docs${subSlug ? "/" + subSlug : ""}`
 
     toUpsert.push({
       sourceType: "markdown",
@@ -127,11 +131,14 @@ export async function doSearchSync() {
     const cacheKey = `markdown:${sourceId}`
     activeSourceKeys.add(cacheKey)
 
-    let urlSlug = entry.id.replace(/[/\\]index$/, "")
-    if (urlSlug === "index" || urlSlug === "") {
-      urlSlug = ""
+    const parts = entry.id.split("/")
+    const locale = parts[0]
+    let subSlug = parts.slice(1).join("/")
+    subSlug = subSlug.replace(/[/\\]index$/, "")
+    if (subSlug === "index" || subSlug === "") {
+      subSlug = ""
     }
-    const pageUrl = `/legal${urlSlug ? "/" + urlSlug : ""}`
+    const pageUrl = `/${locale}/legal${subSlug ? "/" + subSlug : ""}`
 
     toUpsert.push({
       sourceType: "markdown",
@@ -189,9 +196,9 @@ export async function doSearchSync() {
   }
 
   // --- PART 3: Upsert records in D1 ---
-  const syncedIds: string[] = []
+  const syncedIds: number[] = []
   if (toUpsert.length > 0) {
-    const chunkSize = 50
+    const chunkSize = 10
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < toUpsert.length; i += chunkSize) {
       const chunk = toUpsert.slice(i, i + chunkSize)
@@ -199,7 +206,7 @@ export async function doSearchSync() {
         .insert(schema.searchIndex)
         .values(chunk)
         .onConflictDoUpdate({
-          target: [schema.searchIndex.sourceType, schema.searchIndex.sourceId],
+          target: [sql`source_type`, sql`source_id`],
           set: {
             title: sql`excluded.title`,
             url: sql`excluded.url`,
@@ -218,7 +225,9 @@ export async function doSearchSync() {
         syncedIds.push(...ids)
 
         // Sync FTS5 virtual table manually
-        await db.delete(schema.searchIndexFts).where(sql`rowid IN ${ids}`)
+        for (const id of ids) {
+          await db.delete(schema.searchIndexFts).where(eq(schema.searchIndexFts.rowid, id))
+        }
         await db.insert(schema.searchIndexFts).values(
           insertedRows.map((r) => ({
             rowid: r.id,
@@ -240,7 +249,7 @@ export async function doSearchSync() {
     })
     .from(schema.searchIndex)
 
-  const staleIds: string[] = []
+  const staleIds: number[] = []
   for (const row of allExisting) {
     const cacheKey = `${row.sourceType}:${row.sourceId}`
     if (!activeSourceKeys.has(cacheKey)) {
@@ -249,8 +258,15 @@ export async function doSearchSync() {
   }
 
   if (staleIds.length > 0) {
-    await db.delete(schema.searchIndex).where(sql`id IN ${staleIds}`)
-    await db.delete(schema.searchIndexFts).where(sql`rowid IN ${staleIds}`)
+    const deleteChunkSize = 50
+    /* eslint-disable no-await-in-loop */
+    for (let i = 0; i < staleIds.length; i += deleteChunkSize) {
+      const chunk = staleIds.slice(i, i + deleteChunkSize)
+      await db.delete(schema.searchIndex).where(sql`id IN ${chunk}`)
+      for (const id of chunk) {
+        await db.delete(schema.searchIndexFts).where(eq(schema.searchIndexFts.rowid, id))
+      }
+    }
   }
 
   return {

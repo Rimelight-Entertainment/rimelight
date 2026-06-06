@@ -57,8 +57,14 @@ export const GET: APIRoute = async (context) => {
 
   try {
     const cleanQuery = q.trim().replace(/[!|&()*"]/g, "")
+    // Prepare prefix matching query for FTS5 (e.g. "toke" -> "toke*", "fluid typography" -> "fluid* AND typography*")
+    const ftsQuery = cleanQuery
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((word) => `${word}*`)
+      .join(" AND ")
 
-    console.log("[Search API] Query:", q, "Cleaned:", cleanQuery)
+    console.log("[Search API] Query:", q, "Cleaned:", cleanQuery, "FTS Query:", ftsQuery)
 
     let results = []
     try {
@@ -74,7 +80,7 @@ export const GET: APIRoute = async (context) => {
         })
         .from(searchIndex)
         .innerJoin(searchIndexFts, eq(searchIndex.id, searchIndexFts.rowid))
-        .where(sql`search_index_fts MATCH ${cleanQuery}`)
+        .where(sql`search_index_fts MATCH ${ftsQuery}`)
         .orderBy(asc(sql`search_index_fts.rank`), desc(searchIndex.updatedAt))
         .limit(10)
     } catch (dbErr: any) {

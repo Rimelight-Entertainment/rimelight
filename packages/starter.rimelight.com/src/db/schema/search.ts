@@ -3,10 +3,7 @@ import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core
 export const searchIndex = sqliteTable(
   "search_index",
   {
-    id: text("id")
-      .$defaultFn(() => crypto.randomUUID())
-      .notNull()
-      .primaryKey(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
     sourceType: text("source_type").notNull(),
     sourceId: text("source_id").notNull(),
     title: text("title").notNull(),
@@ -23,7 +20,7 @@ export const searchIndex = sqliteTable(
 export const searchIndexFts = sqliteTable("search_index_fts", {
   // SQLite virtual tables use 'rowid' as their primary identifier.
   // We map it to search_index.id.
-  rowid: text("rowid").primaryKey(),
+  rowid: integer("rowid").primaryKey(),
   title: text("title").notNull(),
   bodyContent: text("body_content").notNull()
 })
