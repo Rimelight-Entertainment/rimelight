@@ -41,6 +41,13 @@
       "id": "8c09f90741704096bd1dcdf2abadc974"
     }
   ],
+  "d1_databases": [
+    {
+      "binding": "starter_dot_rimelight_dot_com_db",
+      "database_name": "starter-dot-rimelight-dot-com_db",
+      "database_id": "0ddfa4b5-bccb-498f-9adc-a0c24c45d4f1"
+    }
+  ],
   "vars": {
     "CONSTRUCTION_MODE": "false",
     "CONSTRUCTION_AUTH": "false"

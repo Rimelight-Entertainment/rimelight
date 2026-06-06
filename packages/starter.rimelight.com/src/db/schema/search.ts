@@ -1,27 +1,34 @@
-import { customType, pgTable, text, timestamp, uuid, unique, index } from "drizzle-orm/pg-core"
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core"
 
-const tsvector = customType<{ data: string }>({
-  dataType() {
-    return "tsvector"
-  }
-})
-
-export const searchIndex = pgTable(
+export const searchIndex = sqliteTable(
   "search_index",
   {
-    id: uuid("id").defaultRandom().notNull().primaryKey(),
+    id: text("id")
+      .$defaultFn(() => crypto.randomUUID())
+      .notNull()
+      .primaryKey(),
     sourceType: text("source_type").notNull(),
     sourceId: text("source_id").notNull(),
     title: text("title").notNull(),
     url: text("url").notNull(),
     bodyContent: text("body_content").notNull(),
-    searchableText: tsvector("searchable_text"),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .$defaultFn(() => new Date())
+      .notNull()
   },
-  (t) => [
-    unique("search_index_source_type_source_id_key").on(t.sourceType, t.sourceId),
-    index("idx_search_index_text").using("gin", t.searchableText)
-  ]
+  (t) => [uniqueIndex("search_index_source_type_source_id_key").on(t.sourceType, t.sourceId)]
 )
+
+// Declare the FTS5 virtual table for querying through Drizzle
+export const searchIndexFts = sqliteTable("search_index_fts", {
+  // SQLite virtual tables use 'rowid' as their primary identifier.
+  // We map it to search_index.id.
+  rowid: text("rowid").primaryKey(),
+  title: text("title").notNull(),
+  bodyContent: text("body_content").notNull()
+})
+
 export type SearchIndex = typeof searchIndex.$inferSelect
 export type NewSearchIndex = typeof searchIndex.$inferInsert
+export type SearchIndexFts = typeof searchIndexFts.$inferSelect
+export type NewSearchIndexFts = typeof searchIndexFts.$inferInsert

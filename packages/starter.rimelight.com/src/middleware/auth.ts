@@ -1,9 +1,14 @@
 import { defineMiddleware } from "astro:middleware"
+import { env } from "cloudflare:workers"
 
 const IGNORED_ROUTES = ["/docs/"]
 const PROTECTED_ROUTES = ["/internal"]
 
 export const auth = defineMiddleware(async (context, next) => {
+  if (env && (env as Record<string, any>).DB) {
+    globalThis.DB = (env as Record<string, any>).DB
+  }
+
   const isIgnored = IGNORED_ROUTES.some((path) => context.url.pathname.includes(path))
   const isProtected = PROTECTED_ROUTES.some((path) => context.url.pathname.startsWith(path))
 

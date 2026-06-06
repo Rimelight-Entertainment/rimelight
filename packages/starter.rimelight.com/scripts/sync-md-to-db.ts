@@ -4,28 +4,14 @@ import path from "node:path"
 import { db } from "../src/db"
 import * as schema from "../src/db/schema"
 import { sql, and, isNull, isNotNull } from "drizzle-orm"
-import { type PgTable, type PgColumn } from "drizzle-orm/pg-core"
-
-interface SchemaWithPages {
-  pages?: Record<string, unknown>
-}
-
-interface PageRow {
-  id: string
-  slug: string
-  title: Record<string, string>
-  description: Record<string, string>
-  content: { blocks?: Block[] }
-  updatedAt: string | Date
-}
 
 export type Block = any
 
 // Helper to check table existence in database
 async function tableExists(tableName: string): Promise<boolean> {
   try {
-    await db.execute(
-      sql`SELECT 1 FROM information_schema.tables WHERE table_name = ${tableName} LIMIT 1`
+    await db.run(
+      sql`SELECT 1 FROM sqlite_master WHERE type='table' AND name = ${tableName} LIMIT 1`
     )
     return true
   } catch {
@@ -107,13 +93,22 @@ function getFilesRecursively(dir: string): string[] {
   return files
 }
 
-async function sync() {
-  const databaseUrl = process.env.DATABASE_URL
-  if (!databaseUrl) {
-    console.warn("[Sync] DATABASE_URL is not set. Skipping search index synchronization.")
-    return
+async function ensureFtsTable(): Promise<void> {
+  try {
+    await db.run(
+      sql`CREATE VIRTUAL TABLE IF NOT EXISTS search_index_fts USING fts5(
+        title,
+        body_content,
+        content='search_index',
+        content_rowid='id'
+      )`
+    )
+  } catch (err: any) {
+    console.warn("[Sync] Failed to ensure FTS5 virtual table exists:", err.message)
   }
+}
 
+async function sync() {
   const searchIndexTable = schema.searchIndex
   if (!searchIndexTable) {
     console.warn("[Sync] 'searchIndex' table not found in Drizzle schema. Skipping sync.")
@@ -127,6 +122,8 @@ async function sync() {
     )
     return
   }
+
+  await ensureFtsTable()
 
   console.log("Starting database & markdown search_index sync...")
 
@@ -193,58 +190,53 @@ async function sync() {
         title,
         url,
         bodyContent: body,
-        searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${body}), 'B')`,
         updatedAt: mtime
       })
     }
   }
 
   // --- PART 2: Sync Dynamic Database Pages ---
-  const pagesTable = (schema as unknown as SchemaWithPages).pages
+  const pagesTable = Reflect.get(schema, "pages")
   const hasPagesTable = pagesTable && (await tableExists("pages"))
 
   if (hasPagesTable) {
     console.log("Fetching pages from 'pages' database table...")
     try {
-      const dbPages = (await db
+      const dbPages = await db
         .select({
-          id: pagesTable["id"] as PgColumn,
-          slug: pagesTable["slug"] as PgColumn,
-          title: pagesTable["title"] as PgColumn,
-          description: pagesTable["description"] as PgColumn,
-          content: pagesTable["content"] as PgColumn,
-          updatedAt: pagesTable["updatedAt"] as PgColumn
+          id: pagesTable.id,
+          slug: pagesTable.slug,
+          title: pagesTable.title,
+          description: pagesTable.description,
+          content: pagesTable.content,
+          updatedAt: pagesTable.updatedAt
         })
-        .from(pagesTable as unknown as PgTable)
-        .where(
-          and(
-            isNull(pagesTable["deletedAt"] as PgColumn),
-            isNotNull(pagesTable["postedAt"] as PgColumn)
-          )
-        )) as unknown as PageRow[]
+        .from(pagesTable)
+        .where(and(isNull(pagesTable.deletedAt), isNotNull(pagesTable.postedAt)))
 
-      for (const pageRow of dbPages) {
+      for (const row of dbPages) {
         const sourceType = "database_page"
-        const sourceId = pageRow.id
+        const sourceId = String(row.id)
         const cacheKey = `${sourceType}:${sourceId}`
         activeSourceKeys.add(cacheKey)
 
-        const updatedAt = pageRow.updatedAt ? new Date(pageRow.updatedAt) : new Date(0)
+        const updatedAt = row.updatedAt ? new Date(row.updatedAt) : new Date(0)
         const dbUpdatedAt = existingMap.get(cacheKey)
 
         if (dbUpdatedAt && updatedAt <= dbUpdatedAt) {
           continue
         }
 
-        const titleObj = pageRow.title ?? {}
-        const title = titleObj?.en || Object.values(titleObj || {})[0] || "Untitled Page"
+        const titleObj = row.title || {}
+        const title = Reflect.get(titleObj, "en") || Object.values(titleObj)[0] || "Untitled Page"
 
-        const descObj = pageRow.description ?? {}
-        const description = descObj?.en || Object.values(descObj || {})[0] || ""
+        const descObj = row.description || {}
+        const description = Reflect.get(descObj, "en") || Object.values(descObj)[0] || ""
 
-        const bodyContent =
-          `${description} ${extractTextFromBlocks(pageRow.content?.blocks || [])}`.trim()
-        const url = `/${pageRow.slug}`
+        const contentObj = row.content || {}
+        const blocks = Reflect.get(contentObj, "blocks") || []
+        const bodyContent = `${description} ${extractTextFromBlocks(blocks)}`.trim()
+        const url = `/${row.slug}`
 
         console.log(`Queueing database page sync: ${title} -> ${url}`)
 
@@ -254,7 +246,6 @@ async function sync() {
           title,
           url,
           bodyContent,
-          searchableText: sql`setweight(to_tsvector('english', ${title}), 'A') || setweight(to_tsvector('english', ${bodyContent}), 'B')`,
           updatedAt
         })
       }
@@ -283,14 +274,30 @@ async function sync() {
               title: sql`excluded.title`,
               url: sql`excluded.url`,
               bodyContent: sql`excluded.body_content`,
-              searchableText: sql`excluded.searchable_text`,
               updatedAt: sql`excluded.updated_at`
             }
           })
-          .then(() => {
+          .returning({
+            id: searchIndexTable.id,
+            title: searchIndexTable.title,
+            bodyContent: searchIndexTable.bodyContent
+          })
+          .then(async (insertedRows) => {
             console.log(
-              `Upserting batch ${Math.floor(i / chunkSize) + 1}/${batchCount} (${chunk.length} items)...`
+              `Upserted batch ${Math.floor(i / chunkSize) + 1}/${batchCount} (${chunk.length} items)...`
             )
+            // Sync FTS5 virtual table manually
+            if (insertedRows && insertedRows.length > 0) {
+              const ids = insertedRows.map((r) => r.id)
+              await db.delete(schema.searchIndexFts).where(sql`rowid IN ${ids}`)
+              await db.insert(schema.searchIndexFts).values(
+                insertedRows.map((r) => ({
+                  rowid: r.id,
+                  title: r.title,
+                  bodyContent: r.bodyContent
+                }))
+              )
+            }
           })
       )
     }
@@ -330,6 +337,9 @@ async function sync() {
     }
   }
   await Promise.all(deletePromises)
+
+  // Remove stale records from FTS5 table
+  await db.delete(schema.searchIndexFts).where(sql`rowid NOT IN (SELECT id FROM search_index)`)
 
   console.log("Sync completed successfully!")
 }
