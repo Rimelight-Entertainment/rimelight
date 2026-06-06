@@ -8,14 +8,17 @@ import { Font } from 'astro:assets';
 interface BlankLayoutProps {
   title: string;
   description: string;
+  noindex?: boolean;
+  is404?: boolean;
+  robots?: string;
 }
 
-const { title, description } = Astro.props as BlankLayoutProps;
+const { title, description, noindex, is404, robots } = Astro.props as BlankLayoutProps;
 ---
 
 <!doctype html>
 <html lang="en">
-  <RLAHead title={title} description={description} config={siteConfig} rssFeed={{ href: '/rss.xml', title: siteConfig.name }}>
+  <RLAHead title={title} description={description} config={siteConfig} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots}>
     <slot name="head" slot="head" />
     <Font cssVariable="--font-sans" preload={true} slot="head" />
     <Font cssVariable="--font-serif" preload={true} slot="head" />

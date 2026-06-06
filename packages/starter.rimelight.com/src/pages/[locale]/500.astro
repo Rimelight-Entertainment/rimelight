@@ -3,6 +3,9 @@ import AppLayout from '@/layouts/AppLayout.astro';
 import { useI18n } from "@rimelight/i18n";
 // import { getRelativeLocaleUrl } from 'astro:i18n';
 
+Astro.response.status = 500;
+Astro.response.statusText = "Internal Server Error";
+
 const messages = useI18n(Astro, "errors", {
     serverError: "Server Error",
     unknownError: "Unknown error",
@@ -10,6 +13,6 @@ const messages = useI18n(Astro, "errors", {
 });
 ---
 
-<AppLayout title={messages.serverError} description={messages.serverError}>
+<AppLayout title={messages.serverError} description={messages.serverError} noindex={true}>
 
 </AppLayout>

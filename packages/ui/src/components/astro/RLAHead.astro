@@ -438,3 +438,13 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
 </script>
 
 {transitions && <ClientRouter />}
+
+{config && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": config.name,
+    "url": Astro.site ? Astro.site.toString() : config.url,
+    "description": config.description
+  })} />
+)}

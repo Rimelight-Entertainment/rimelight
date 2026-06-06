@@ -46,3 +46,16 @@ const classes = resolveClasses(breadcrumb, {}, useUi("breadcrumb", uiProp), clas
     )}
   </ol>
 </nav>
+
+{items && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, idx) => ({
+      "@type": "ListItem",
+      "position": idx + 1,
+      "name": item.label,
+      "item": item.href ? new URL(item.href, Astro.site || "https://starter.rimelight.com").toString() : undefined
+    }))
+  })} />
+)}
