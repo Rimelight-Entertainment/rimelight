@@ -78,61 +78,73 @@ const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
 </div>
 
 <script>
-  document.querySelectorAll("[data-fileUpload]").forEach(element => {
-    const zone = element as HTMLElement;
-    const input = zone.querySelector("[data-fileUpload-input]") as HTMLInputElement | null;
-    const fileList = zone.querySelector("[data-fileUpload-filelist]") as HTMLElement | null;
-    if (!input) return;
+  function initializeFileUploads() {
+    document.querySelectorAll<HTMLElement>("[data-fileUpload]").forEach(element => {
+      if (element.hasAttribute('data-initialized')) return;
+      element.setAttribute('data-initialized', 'true');
 
-    const isDisabled = zone.dataset.disabled === "true";
-    if (isDisabled) return;
+      const zone = element;
+      const input = zone.querySelector("[data-fileUpload-input]") as HTMLInputElement | null;
+      const fileList = zone.querySelector("[data-fileUpload-filelist]") as HTMLElement | null;
+      if (!input) return;
 
-    const showFiles = (files: FileList | null) => {
-      if (!fileList || !files || files.length === 0) return;
-      fileList.classList.remove("hidden");
-      fileList.textContent =
-        files.length === 1
-          ? files[0]!.name
-          : `${files.length} files selected`;
-    };
+      const isDisabled = zone.dataset.disabled === "true";
+      if (isDisabled) return;
 
-    // Click anywhere on the zone to open file picker
-    zone.addEventListener("click", () => input.click());
-    zone.addEventListener("keydown", (e) => {
-      if ((e as KeyboardEvent).key === "Enter" || (e as KeyboardEvent).key === " ") {
+      const showFiles = (files: FileList | null) => {
+        if (!fileList || !files || files.length === 0) return;
+        fileList.classList.remove("hidden");
+        fileList.textContent =
+          files.length === 1
+            ? files[0]!.name
+            : `${files.length} files selected`;
+      };
+
+      // Click anywhere on the zone to open file picker
+      zone.addEventListener("click", () => input.click());
+      zone.addEventListener("keydown", (e) => {
+        if ((e as KeyboardEvent).key === "Enter" || (e as KeyboardEvent).key === " ") {
+          e.preventDefault();
+          input.click();
+        }
+      });
+
+      input.addEventListener("change", () => showFiles(input.files));
+
+      // Drag and drop
+      zone.addEventListener("dragover", (e) => {
         e.preventDefault();
-        input.click();
-      }
+        zone.classList.add("border-primary", "bg-primary/5");
+      });
+
+      zone.addEventListener("dragleave", () => {
+        zone.classList.remove("border-primary", "bg-primary/5");
+      });
+
+      zone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        zone.classList.remove("border-primary", "bg-primary/5");
+        const dt = (e as DragEvent).dataTransfer;
+        if (!dt) return;
+
+        // Transfer dropped files to the hidden input via DataTransfer trick
+        try {
+          const transfer = new DataTransfer();
+          Array.from(dt.files).forEach(f => transfer.items.add(f));
+          input.files = transfer.files;
+        } catch {
+          // Some browsers don't support assigning to input.files — graceful fallback
+        }
+
+        showFiles(dt.files);
+      });
     });
+  }
 
-    input.addEventListener("change", () => showFiles(input.files));
+  // Run on first load
+  initializeFileUploads();
 
-    // Drag and drop
-    zone.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      zone.classList.add("border-primary", "bg-primary/5");
-    });
-
-    zone.addEventListener("dragleave", () => {
-      zone.classList.remove("border-primary", "bg-primary/5");
-    });
-
-    zone.addEventListener("drop", (e) => {
-      e.preventDefault();
-      zone.classList.remove("border-primary", "bg-primary/5");
-      const dt = (e as DragEvent).dataTransfer;
-      if (!dt) return;
-
-      // Transfer dropped files to the hidden input via DataTransfer trick
-      try {
-        const transfer = new DataTransfer();
-        Array.from(dt.files).forEach(f => transfer.items.add(f));
-        input.files = transfer.files;
-      } catch {
-        // Some browsers don't support assigning to input.files — graceful fallback
-      }
-
-      showFiles(dt.files);
-    });
-  });
+  // Run on page transitions
+  document.addEventListener("DOMContentLoaded", initializeFileUploads);
+  document.addEventListener("astro:page-load", initializeFileUploads);
 </script>

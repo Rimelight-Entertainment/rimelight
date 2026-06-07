@@ -110,165 +110,198 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
 </nav>
 
 <script>
-  document.querySelectorAll("[data-nav-menu]").forEach(menu => {
-    const orientation = menu.getAttribute("data-orientation") || "horizontal";
-    const items = menu.querySelectorAll("[data-nav-item]");
-    const viewportWrapper = (orientation === "horizontal" ? menu.querySelector("[data-nav-viewport-wrapper]") : null) as HTMLElement | null;
-    const viewport = orientation === "horizontal" ? menu.querySelector("[data-nav-viewport]") : null;
+  const activeMenus = new Map<HTMLElement, () => void>();
 
-    // Teleport viewport wrapper to body to escape parent transforms (e.g. translate-x on header)
-    if (viewportWrapper && viewportWrapper.parentNode !== document.body) {
-      document.body.appendChild(viewportWrapper);
+  function initializeNavMenus() {
+    // Clean up any menus that are no longer in the document
+    for (const [menu, cleanup] of activeMenus.entries()) {
+      if (!document.contains(menu)) {
+        cleanup();
+        activeMenus.delete(menu);
+      }
     }
 
-    let activeItem = null as HTMLElement | null;
-    let hoverTimeout = null as any;
+    document.querySelectorAll<HTMLElement>("[data-nav-menu]").forEach(menu => {
+      if (menu.hasAttribute('data-initialized')) return;
+      menu.setAttribute('data-initialized', 'true');
 
-    const updatePosition = () => {
-      if (viewportWrapper && activeItem) {
-        const header = menu.closest("header") || document.querySelector("header");
-        if (header) {
-          const headerRect = header.getBoundingClientRect();
-          viewportWrapper.style.top = `${headerRect.bottom}px`;
+      const orientation = menu.getAttribute("data-orientation") || "horizontal";
+      const items = menu.querySelectorAll("[data-nav-item]");
+      const viewportWrapper = (orientation === "horizontal" ? menu.querySelector("[data-nav-viewport-wrapper]") : null) as HTMLElement | null;
+      const viewport = orientation === "horizontal" ? menu.querySelector("[data-nav-viewport]") : null;
+
+      // Teleport viewport wrapper to body to escape parent transforms (e.g. translate-x on header)
+      if (viewportWrapper && viewportWrapper.parentNode !== document.body) {
+        document.body.appendChild(viewportWrapper);
+      }
+
+      let activeItem = null as HTMLElement | null;
+      let hoverTimeout = null as any;
+
+      const updatePosition = () => {
+        if (viewportWrapper && activeItem) {
+          const header = menu.closest("header") || document.querySelector("header");
+          if (header) {
+            const headerRect = header.getBoundingClientRect();
+            viewportWrapper.style.top = `${headerRect.bottom}px`;
+          }
         }
-      }
-    };
+      };
 
-    window.addEventListener("scroll", updatePosition, { passive: true });
-    window.addEventListener("resize", updatePosition, { passive: true });
+      window.addEventListener("scroll", updatePosition, { passive: true });
+      window.addEventListener("resize", updatePosition, { passive: true });
 
-    const open = (item: HTMLElement, trigger: HTMLElement, content: HTMLElement) => {
-      clearTimeout(hoverTimeout);
-      
-      // If there's another active item, close it first (horizontal viewport mode only)
-      if (orientation === "horizontal" && activeItem && activeItem !== item) {
-        close(activeItem);
-      }
-
-      if (orientation === "horizontal") {
-        activeItem = item;
-        updatePosition();
-      }
-
-      if (viewport) {
-        viewport.innerHTML = "";
-        viewport.appendChild(content);
-        content.classList.remove("hidden");
-        if (viewportWrapper) {
-          viewportWrapper.classList.remove("hidden");
-          viewportWrapper.setAttribute("data-state", "open");
+      const open = (item: HTMLElement, trigger: HTMLElement, content: HTMLElement) => {
+        clearTimeout(hoverTimeout);
+        
+        // If there's another active item, close it first (horizontal viewport mode only)
+        if (orientation === "horizontal" && activeItem && activeItem !== item) {
+          close(activeItem);
         }
-      } else {
-        content.classList.remove("hidden");
-      }
 
-      trigger.setAttribute("aria-expanded", "true");
-      trigger.setAttribute("data-state", "open");
-      const icon = trigger.querySelector(".i-lucide-chevron-down");
-      if (icon) (icon as HTMLElement).style.transform = "rotate(180deg)";
-    };
-
-    const close = (item: HTMLElement) => {
-      const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
-      const itemIndex = item.getAttribute("data-index");
-      
-      // Find content - either inside viewport or inside the item
-      let content = item.querySelector("[data-nav-content]") as HTMLElement | null;
-      if (!content && viewport) {
-        content = viewport.querySelector(`[data-nav-content][data-item-index="${itemIndex}"]`) as HTMLElement | null;
-      }
-
-      if (content) {
-        content.classList.add("hidden");
-        // Move back to item
-        if (viewport && viewport.contains(content)) {
-          item.appendChild(content);
+        if (orientation === "horizontal") {
+          activeItem = item;
+          updatePosition();
         }
-      }
 
-      if (trigger) {
-        trigger.setAttribute("aria-expanded", "false");
-        trigger.setAttribute("data-state", "closed");
-        const icon = trigger.querySelector(".i-lucide-chevron-down");
-        if (icon) (icon as HTMLElement).style.transform = "";
-      }
-
-      if (orientation === "horizontal" && activeItem === item) {
-        activeItem = null;
-      }
-
-      // If no item is active, hide viewport (horizontal viewport mode only)
-      if (orientation === "horizontal" && !activeItem && viewportWrapper) {
-        viewportWrapper.classList.add("hidden");
-        viewportWrapper.setAttribute("data-state", "closed");
-        if (viewport) viewport.innerHTML = "";
-      }
-    };
-
-    const closeAll = () => {
-      items.forEach(item => {
-        close(item as HTMLElement);
-      });
-    };
-
-    items.forEach(itemNode => {
-      const item = itemNode as HTMLElement;
-      const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
-      const content = item.querySelector("[data-nav-content]") as HTMLElement | null;
-
-      if (!trigger || !content) return;
-
-      // Click behavior (works everywhere, including mobile)
-      trigger.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const isOpen = trigger.getAttribute("aria-expanded") === "true";
-        if (isOpen) {
-          close(item);
+        if (viewport) {
+          viewport.innerHTML = "";
+          viewport.appendChild(content);
+          content.classList.remove("hidden");
+          if (viewportWrapper) {
+            viewportWrapper.classList.remove("hidden");
+            viewportWrapper.setAttribute("data-state", "open");
+          }
         } else {
-          open(item, trigger, content);
+          content.classList.remove("hidden");
         }
-      });
 
-      // Hover behavior (horizontal desktop only)
-      if (orientation === "horizontal") {
-        item.addEventListener("mouseenter", () => {
-          clearTimeout(hoverTimeout);
-          open(item, trigger, content);
+        trigger.setAttribute("aria-expanded", "true");
+        trigger.setAttribute("data-state", "open");
+        const icon = trigger.querySelector(".i-lucide-chevron-down");
+        if (icon) (icon as HTMLElement).style.transform = "rotate(180deg)";
+      };
+
+      const close = (item: HTMLElement) => {
+        const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
+        const itemIndex = item.getAttribute("data-index");
+        
+        // Find content - either inside viewport or inside the item
+        let content = item.querySelector("[data-nav-content]") as HTMLElement | null;
+        if (!content && viewport) {
+          content = viewport.querySelector(`[data-nav-content][data-item-index="${itemIndex}"]`) as HTMLElement | null;
+        }
+
+        if (content) {
+          content.classList.add("hidden");
+          // Move back to item
+          if (viewport && viewport.contains(content)) {
+            item.appendChild(content);
+          }
+        }
+
+        if (trigger) {
+          trigger.setAttribute("aria-expanded", "false");
+          trigger.setAttribute("data-state", "closed");
+          const icon = trigger.querySelector(".i-lucide-chevron-down");
+          if (icon) (icon as HTMLElement).style.transform = "";
+        }
+
+        if (orientation === "horizontal" && activeItem === item) {
+          activeItem = null;
+        }
+
+        // If no item is active, hide viewport (horizontal viewport mode only)
+        if (orientation === "horizontal" && !activeItem && viewportWrapper) {
+          viewportWrapper.classList.add("hidden");
+          viewportWrapper.setAttribute("data-state", "closed");
+          if (viewport) viewport.innerHTML = "";
+        }
+      };
+
+      const closeAll = () => {
+        items.forEach(item => {
+          close(item as HTMLElement);
+        });
+      };
+
+      items.forEach(itemNode => {
+        const item = itemNode as HTMLElement;
+        const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
+        const content = item.querySelector("[data-nav-content]") as HTMLElement | null;
+
+        if (!trigger || !content) return;
+
+        // Click behavior (works everywhere, including mobile)
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = trigger.getAttribute("aria-expanded") === "true";
+          if (isOpen) {
+            close(item);
+          } else {
+            open(item, trigger, content);
+          }
         });
 
-        item.addEventListener("mouseleave", () => {
+        // Hover behavior (horizontal desktop only)
+        if (orientation === "horizontal") {
+          item.addEventListener("mouseenter", () => {
+            clearTimeout(hoverTimeout);
+            open(item, trigger, content);
+          });
+
+          item.addEventListener("mouseleave", () => {
+            hoverTimeout = setTimeout(() => {
+              if (activeItem === item) {
+                close(item);
+              }
+            }, 150);
+          });
+        }
+      });
+
+      // Handle viewport wrapper hover so menu stays open when hovering the mega menu itself
+      if (viewportWrapper) {
+        viewportWrapper.addEventListener("mouseenter", () => {
+          clearTimeout(hoverTimeout);
+        });
+
+        viewportWrapper.addEventListener("mouseleave", () => {
           hoverTimeout = setTimeout(() => {
-            if (activeItem === item) {
-              close(item);
+            if (activeItem) {
+              close(activeItem);
             }
           }, 150);
         });
       }
-    });
 
-    // Handle viewport wrapper hover so menu stays open when hovering the mega menu itself
-    if (viewportWrapper) {
-      viewportWrapper.addEventListener("mouseenter", () => {
-        clearTimeout(hoverTimeout);
+      // Close on clicking outside
+      const onDocumentClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        if (!menu.contains(target) && (!viewportWrapper || !viewportWrapper.contains(target))) {
+          closeAll();
+        }
+      };
+      document.addEventListener("click", onDocumentClick);
+
+      // Save cleanup function for when menu gets destroyed/unmounted on navigation
+      activeMenus.set(menu, () => {
+        window.removeEventListener("scroll", updatePosition);
+        window.removeEventListener("resize", updatePosition);
+        document.removeEventListener("click", onDocumentClick);
+        if (viewportWrapper && viewportWrapper.parentNode === document.body) {
+          viewportWrapper.remove();
+        }
       });
-
-      viewportWrapper.addEventListener("mouseleave", () => {
-        hoverTimeout = setTimeout(() => {
-          if (activeItem) {
-            close(activeItem);
-          }
-        }, 150);
-      });
-    }
-
-    // Close on clicking outside
-    document.addEventListener("click", (e) => {
-      const target = e.target as HTMLElement;
-      if (!menu.contains(target) && (!viewportWrapper || !viewportWrapper.contains(target))) {
-        closeAll();
-      }
     });
-  });
+  }
+
+  // Run on first load
+  initializeNavMenus();
+
+  // Run on page navigation when using Astro view transitions
+  document.addEventListener("DOMContentLoaded", initializeNavMenus);
+  document.addEventListener("astro:page-load", initializeNavMenus);
 </script>
 
 <style is:global>

@@ -663,11 +663,6 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/link-group/"
                       },
                       {
-                        label: "MegaMenu",
-                        badge: { text: "Coming Soon", variant: "tip" },
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/megamenu/"
-                      },
-                      {
                         label: "NavigationMenu",
                         badge: { text: "Coming Soon", variant: "tip" },
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/navigation-menu/"

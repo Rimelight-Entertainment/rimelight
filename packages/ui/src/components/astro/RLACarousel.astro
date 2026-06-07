@@ -53,23 +53,55 @@ const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
 <script>
   import EmblaCarousel from "embla-carousel"
 
-  document.querySelectorAll('[data-slot="carousel-root"]').forEach((carouselEl) => {
-    const viewport = carouselEl.querySelector('[data-slot="viewport"]') as HTMLElement
-    const prevBtn = carouselEl.querySelector('[data-slot="prev-button"]') as HTMLButtonElement
-    const nextBtn = carouselEl.querySelector('[data-slot="next-button"]') as HTMLButtonElement
+  const activeCarousels = new Map<HTMLElement, () => void>();
 
-    if (!viewport) return
-
-    const embla = EmblaCarousel(viewport, { loop: true })
-
-    if (prevBtn) prevBtn.addEventListener("click", () => embla.scrollPrev())
-    if (nextBtn) nextBtn.addEventListener("click", () => embla.scrollNext())
-
-    const autoplay = carouselEl.getAttribute("data-autoplay") === "true"
-    if (autoplay) {
-      setInterval(() => {
-        if (embla) embla.scrollNext()
-      }, 4000)
+  function initializeCarousels() {
+    for (const [carouselEl, cleanup] of activeCarousels.entries()) {
+      if (!document.contains(carouselEl)) {
+        cleanup();
+        activeCarousels.delete(carouselEl);
+      }
     }
-  })
+
+    document.querySelectorAll<HTMLElement>('[data-slot="carousel-root"]').forEach((carouselEl) => {
+      if (carouselEl.hasAttribute('data-initialized')) return
+      carouselEl.setAttribute('data-initialized', 'true')
+
+      const viewport = carouselEl.querySelector('[data-slot="viewport"]') as HTMLElement
+      const prevBtn = carouselEl.querySelector('[data-slot="prev-button"]') as HTMLButtonElement
+      const nextBtn = carouselEl.querySelector('[data-slot="next-button"]') as HTMLButtonElement
+
+      if (!viewport) return
+
+      const embla = EmblaCarousel(viewport, { loop: true })
+
+      const onPrevClick = () => embla.scrollPrev()
+      const onNextClick = () => embla.scrollNext()
+
+      if (prevBtn) prevBtn.addEventListener("click", onPrevClick)
+      if (nextBtn) nextBtn.addEventListener("click", onNextClick)
+
+      let intervalId: any = null
+      const autoplay = carouselEl.getAttribute("data-autoplay") === "true"
+      if (autoplay) {
+        intervalId = setInterval(() => {
+          if (embla) embla.scrollNext()
+        }, 4000)
+      }
+
+      activeCarousels.set(carouselEl, () => {
+        if (prevBtn) prevBtn.removeEventListener("click", onPrevClick)
+        if (nextBtn) nextBtn.removeEventListener("click", onNextClick)
+        if (intervalId) clearInterval(intervalId)
+        embla.destroy()
+      })
+    })
+  }
+
+  // Run on first load
+  initializeCarousels();
+
+  // Run on page transitions
+  document.addEventListener("DOMContentLoaded", initializeCarousels);
+  document.addEventListener("astro:page-load", initializeCarousels);
 </script>

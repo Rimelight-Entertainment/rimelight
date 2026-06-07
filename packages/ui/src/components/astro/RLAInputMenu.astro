@@ -81,54 +81,89 @@ const initialLabel = selectedItem ? selectedItem.label : ""
 </div>
 
 <script>
-  document.querySelectorAll("[data-inputMenu-wrapper]").forEach(wrapper => {
-    const trigger = wrapper.querySelector("[data-inputMenu-trigger]") as HTMLButtonElement;
-    const dropdown = wrapper.querySelector("[data-inputMenu-dropdown]") as HTMLDivElement;
-    const search = wrapper.querySelector("[data-inputMenu-search]") as HTMLInputElement;
-    const items = wrapper.querySelectorAll("[data-inputMenu-item]");
-    const valueSpan = wrapper.querySelector("[data-inputMenu-value]");
-    const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-inputMenu-hidden-input]") as HTMLInputElement;
+  const activeInputMenus = new Map<HTMLElement, () => void>();
 
-    if (!trigger || !dropdown) return;
-
-    trigger.addEventListener("click", (e) => {
-      e.stopPropagation();
-      dropdown.classList.toggle("hidden");
-      if (!dropdown.classList.contains("hidden")) {
-        search?.focus();
+  function initializeInputMenus() {
+    // Clean up any input menus that are no longer in the document
+    for (const [wrapper, cleanup] of activeInputMenus.entries()) {
+      if (!document.contains(wrapper)) {
+        cleanup();
+        activeInputMenus.delete(wrapper);
       }
-    });
+    }
 
-    search?.addEventListener("input", (e) => {
-      const q = (e.target as HTMLInputElement).value.toLowerCase();
-      items.forEach(item => {
-        const label = (item as HTMLElement).dataset.label?.toLowerCase() || "";
-        if (label.includes(q)) {
-          (item as HTMLElement).classList.remove("hidden");
-        } else {
-          (item as HTMLElement).classList.add("hidden");
-        }
-      });
-    });
+    document.querySelectorAll<HTMLElement>("[data-inputMenu-wrapper]").forEach(wrapper => {
+      if (wrapper.hasAttribute('data-initialized')) return;
+      wrapper.setAttribute('data-initialized', 'true');
 
-    items.forEach(item => {
-      item.addEventListener("click", (e) => {
+      const trigger = wrapper.querySelector("[data-inputMenu-trigger]") as HTMLButtonElement;
+      const dropdown = wrapper.querySelector("[data-inputMenu-dropdown]") as HTMLDivElement;
+      const search = wrapper.querySelector("[data-inputMenu-search]") as HTMLInputElement;
+      const items = wrapper.querySelectorAll("[data-inputMenu-item]");
+      const valueSpan = wrapper.querySelector("[data-inputMenu-value]");
+      const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-inputMenu-hidden-input]") as HTMLInputElement;
+
+      if (!trigger || !dropdown) return;
+
+      const onTriggerClick = (e: MouseEvent) => {
         e.stopPropagation();
-        const val = (item as HTMLElement).dataset.value || "";
-        const label = (item as HTMLElement).dataset.label || "";
-        
-        if (hiddenInput) hiddenInput.value = val;
-        if (valueSpan) valueSpan.textContent = label;
-        
-        items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
-        item.querySelector("[data-check-icon]")?.classList.remove("hidden");
-        
+        dropdown.classList.toggle("hidden");
+        if (!dropdown.classList.contains("hidden")) {
+          search?.focus();
+        }
+      };
+      trigger.addEventListener("click", onTriggerClick);
+
+      const onSearchInput = (e: Event) => {
+        const q = (e.target as HTMLInputElement).value.toLowerCase();
+        items.forEach(item => {
+          const label = (item as HTMLElement).dataset.label?.toLowerCase() || "";
+          if (label.includes(q)) {
+            (item as HTMLElement).classList.remove("hidden");
+          } else {
+            (item as HTMLElement).classList.add("hidden");
+          }
+        });
+      };
+      search?.addEventListener("input", onSearchInput);
+
+      const itemCleanups: (() => void)[] = [];
+      items.forEach(item => {
+        const onItemClick = (e: MouseEvent) => {
+          e.stopPropagation();
+          const val = (item as HTMLElement).dataset.value || "";
+          const label = (item as HTMLElement).dataset.label || "";
+          
+          if (hiddenInput) hiddenInput.value = val;
+          if (valueSpan) valueSpan.textContent = label;
+          
+          items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
+          item.querySelector("[data-check-icon]")?.classList.remove("hidden");
+          
+          dropdown.classList.add("hidden");
+        };
+        item.addEventListener("click", onItemClick);
+        itemCleanups.push(() => item.removeEventListener("click", onItemClick));
+      });
+
+      const onDocumentClick = () => {
         dropdown.classList.add("hidden");
+      };
+      document.addEventListener("click", onDocumentClick);
+
+      activeInputMenus.set(wrapper, () => {
+        trigger.removeEventListener("click", onTriggerClick);
+        search?.removeEventListener("input", onSearchInput);
+        itemCleanups.forEach(fn => fn());
+        document.removeEventListener("click", onDocumentClick);
       });
     });
+  }
 
-    document.addEventListener("click", () => {
-      dropdown.classList.add("hidden");
-    });
-  });
+  // Run on first load
+  initializeInputMenus();
+
+  // Run on page transitions
+  document.addEventListener("DOMContentLoaded", initializeInputMenus);
+  document.addEventListener("astro:page-load", initializeInputMenus);
 </script>

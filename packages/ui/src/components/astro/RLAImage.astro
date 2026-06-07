@@ -201,63 +201,74 @@ const initialSize = preMetadata?.size ?? undefined
 </div>
 
 <script>
-  const triggers = document.querySelectorAll("[data-image-trigger]")
-  for (const trigger of triggers) {
-    const parent = trigger.closest(".group\\/image") || trigger.parentElement
-    const dialog = parent?.querySelector("[data-image-dialog]") as HTMLDialogElement | null
-    if (!dialog) continue
+  function initializeImages() {
+    document.querySelectorAll<HTMLElement>("[data-image-trigger]").forEach((trigger) => {
+      if (trigger.hasAttribute('data-initialized')) return
+      trigger.setAttribute('data-initialized', 'true')
 
-    const sizeEl = parent?.querySelector("[data-metadata-size]")
-    const formatEl = parent?.querySelector("[data-metadata-format]")
-    let fetched = false
+      const parent = trigger.closest(".group\\/image") || trigger.parentElement
+      const dialog = parent?.querySelector("[data-image-dialog]") as HTMLDialogElement | null
+      if (!dialog) return
 
-    trigger.addEventListener("click", () => {
-      if (!fetched) {
-        fetched = true
-        const imgEl = dialog.querySelector("[data-modal-img]")
-        if (imgEl) {
-          const src = imgEl.getAttribute("src")
-          if (src) {
-            fetch(src).then(r => r.blob()).then(blob => {
-              if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB"
-              if (formatEl && blob.type) {
-                const mime = blob.type ? blob.type.split("/").pop()?.toUpperCase() : ""
-                if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime
-              }
-            }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable" })
+      const sizeEl = parent?.querySelector("[data-metadata-size]")
+      const formatEl = parent?.querySelector("[data-metadata-format]")
+      let fetched = false
+
+      trigger.addEventListener("click", () => {
+        if (!fetched) {
+          fetched = true
+          const imgEl = dialog.querySelector("[data-modal-img]")
+          if (imgEl) {
+            const src = imgEl.getAttribute("src")
+            if (src) {
+              fetch(src).then(r => r.blob()).then(blob => {
+                if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB"
+                if (formatEl && blob.type) {
+                  const mime = blob.type ? blob.type.split("/").pop()?.toUpperCase() : ""
+                  if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime
+                }
+              }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable" })
+            }
           }
         }
-      }
-      dialog.showModal()
-    })
-
-    dialog.addEventListener("click", (e) => {
-      if (e.target === dialog) dialog.close()
-    })
-
-    const downloadBtn = dialog.querySelector("[data-image-download]")
-    if (downloadBtn) {
-      downloadBtn.addEventListener("click", async () => {
-        const img = dialog.querySelector("img")
-        const imgSrc = img?.getAttribute("src")
-        if (!imgSrc) return
-        try {
-          const response = await fetch(imgSrc)
-          const blob = await response.blob()
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement("a")
-          link.href = url
-          const triggerImg = trigger.querySelector("img")
-          const srcAttr = triggerImg ? triggerImg.getAttribute("src") || "" : ""
-          link.download = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          URL.revokeObjectURL(url)
-        } catch (err) {
-          console.error("Download failed", err)
-        }
+        dialog.showModal()
       })
-    }
+
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) dialog.close()
+      })
+
+      const downloadBtn = dialog.querySelector("[data-image-download]")
+      if (downloadBtn) {
+        downloadBtn.addEventListener("click", async () => {
+          const img = dialog.querySelector("img")
+          const imgSrc = img?.getAttribute("src")
+          if (!imgSrc) return
+          try {
+            const response = await fetch(imgSrc)
+            const blob = await response.blob()
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            const triggerImg = trigger.querySelector("img")
+            const srcAttr = triggerImg ? triggerImg.getAttribute("src") || "" : ""
+            link.download = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(url)
+          } catch (err) {
+            console.error("Download failed", err)
+          }
+        })
+      }
+    })
   }
+
+  // Run on first load
+  initializeImages()
+
+  // Run on page navigation when using Astro view transitions
+  document.addEventListener("DOMContentLoaded", initializeImages)
+  document.addEventListener("astro:page-load", initializeImages)
 </script>
