@@ -114,129 +114,148 @@ const emptyId = `search-empty-${uniqueId}`
 <script>
   import { defineShortcuts } from "../../utils/shortcuts"
 
-  document.querySelectorAll<HTMLElement>('.rla-search-wrapper').forEach((wrapper) => {
-    const triggerId = wrapper.dataset.triggerId
-    const modalId = wrapper.dataset.modalId
-    const inputId = wrapper.dataset.inputId
-    const resultsId = wrapper.dataset.resultsId
-    const emptyId = wrapper.dataset.emptyId
-    const endpoint = wrapper.dataset.endpoint
+  let globalCleanups: (() => void)[] = []
 
-    const trigger = document.getElementById(triggerId!)
-    const modal = document.getElementById(modalId!)
-    const closeBtn = document.getElementById(`${modalId}-close`)
-    const input = document.getElementById(inputId!) as HTMLInputElement
-    const resultsContainer = document.getElementById(resultsId!)
-    const emptyState = document.getElementById(emptyId!)
+  function initializeSearch() {
+    // Clean up previous page's global shortcuts
+    globalCleanups.forEach((fn) => fn())
+    globalCleanups = []
 
-    // Teleport modal to body to avoid containing block/transform clipping from header containers
-    if (modal && modal.parentNode !== document.body) {
-      document.body.appendChild(modal)
-    }
+    document.querySelectorAll<HTMLElement>('.rla-search-wrapper').forEach((wrapper) => {
+      if (wrapper.hasAttribute('data-initialized')) return
+      wrapper.setAttribute('data-initialized', 'true')
 
-    let escapeCleanup: (() => void) | null = null
+      const triggerId = wrapper.dataset.triggerId
+      const modalId = wrapper.dataset.modalId
+      const inputId = wrapper.dataset.inputId
+      const resultsId = wrapper.dataset.resultsId
+      const emptyId = wrapper.dataset.emptyId
+      const endpoint = wrapper.dataset.endpoint
 
-    function openModal() {
-      modal?.classList.remove("hidden")
-      modal?.classList.add("flex")
-      input?.focus()
-      document.body.style.overflow = "hidden"
+      const trigger = document.getElementById(triggerId!)
+      const modal = document.getElementById(modalId!)
+      const closeBtn = document.getElementById(`${modalId}-close`)
+      const input = document.getElementById(inputId!) as HTMLInputElement
+      const resultsContainer = document.getElementById(resultsId!)
+      const emptyState = document.getElementById(emptyId!)
 
-      // Register escape shortcut dynamically when modal is open
-      escapeCleanup = defineShortcuts({
-        escape: {
-          handler: () => closeModal(),
-          usingInput: true
-        }
-      })
-    }
-
-    function closeModal() {
-      modal?.classList.add("hidden")
-      modal?.classList.remove("flex")
-      document.body.style.overflow = ""
-      if (input) input.value = ""
-      if (resultsContainer) resultsContainer.innerHTML = ""
-      emptyState?.classList.add("hidden")
-
-      // Clean up escape shortcut
-      if (escapeCleanup) {
-        escapeCleanup()
-        escapeCleanup = null
+      // Teleport modal to body to avoid containing block/transform clipping from header containers
+      if (modal && modal.parentNode !== document.body) {
+        document.body.appendChild(modal)
       }
-    }
 
-    trigger?.addEventListener("click", openModal)
-    closeBtn?.addEventListener("click", closeModal)
-    modal?.addEventListener("click", (e) => {
-      const target = e.target as HTMLElement | null
-      if (target && (target === modal || !target.closest('[data-slot="dialog"]'))) {
-        closeModal()
+      let escapeCleanup: (() => void) | null = null
+
+      function openModal() {
+        modal?.classList.remove("hidden")
+        modal?.classList.add("flex")
+        input?.focus()
+        document.body.style.overflow = "hidden"
+
+        // Register escape shortcut dynamically when modal is open
+        escapeCleanup = defineShortcuts({
+          escape: {
+            handler: () => closeModal(),
+            usingInput: true
+          }
+        })
       }
-    })
 
-    // Register global shortcut key Cmd+K / Ctrl+K
-    defineShortcuts({
-      meta_k: {
-        handler: () => openModal(),
-        label: "Open Search",
-        description: "Open the global site search modal",
-        category: "navigation"
-      }
-    })
-
-    let debounceTimer: any
-    input?.addEventListener("input", () => {
-      clearTimeout(debounceTimer)
-      const query = input.value.trim()
-      if (!query) {
+      function closeModal() {
+        modal?.classList.add("hidden")
+        modal?.classList.remove("flex")
+        document.body.style.overflow = ""
+        if (input) input.value = ""
         if (resultsContainer) resultsContainer.innerHTML = ""
         emptyState?.classList.add("hidden")
-        return
+
+        // Clean up escape shortcut
+        if (escapeCleanup) {
+          escapeCleanup()
+          escapeCleanup = null
+        }
       }
 
-      debounceTimer = setTimeout(async () => {
-        try {
-          console.log("[Search UI] Fetching search results for:", query)
-          const res = await fetch(`${endpoint}?q=${encodeURIComponent(query)}`)
-          
-          if (!res.ok) {
-            throw new Error(`HTTP status: ${res.status}`)
-          }
-
-          const results = await res.json()
-          console.log("[Search UI] Received results:", results)
-
-          if (resultsContainer) resultsContainer.innerHTML = ""
-
-          if (!Array.isArray(results) || results.length === 0) {
-            emptyState?.classList.remove("hidden")
-            return
-          }
-
-          emptyState?.classList.add("hidden")
-          results.forEach((item) => {
-            const div = document.createElement("a")
-            div.href = item.url || "#"
-            div.className = "flex flex-col gap-1 p-3 hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700 text-left decoration-none"
-            
-            div.innerHTML = `
-              <div class="flex items-center justify-between">
-                <span class="text-sm font-semibold text-white">${item.title || "Untitled"}</span>
-                ${item.sourceType ? `<span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">${item.sourceType}</span>` : ""}
-              </div>
-              ${item.snippet ? `<p class="text-xs text-neutral-400 line-clamp-2 m-0">${item.snippet}</p>` : ""}
-            `
-            resultsContainer?.appendChild(div)
-          })
-        } catch (err) {
-          console.error("[Search UI] Search failed:", err)
-          if (resultsContainer) resultsContainer.innerHTML = ""
-          emptyState?.classList.remove("hidden")
+      trigger?.addEventListener("click", openModal)
+      closeBtn?.addEventListener("click", closeModal)
+      modal?.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement | null
+        if (target && (target === modal || !target.closest('[data-slot="dialog"]'))) {
+          closeModal()
         }
-      }, 200)
+      })
+
+      // Register global shortcut key Cmd+K / Ctrl+K
+      const metaKCleanup = defineShortcuts({
+        meta_k: {
+          handler: () => openModal(),
+          label: "Open Search",
+          description: "Open the global site search modal",
+          category: "navigation"
+        }
+      })
+      globalCleanups.push(metaKCleanup)
+
+      let debounceTimer: any
+      input?.addEventListener("input", () => {
+        clearTimeout(debounceTimer)
+        const query = input.value.trim()
+        if (!query) {
+          if (resultsContainer) resultsContainer.innerHTML = ""
+          emptyState?.classList.add("hidden")
+          return
+        }
+
+        debounceTimer = setTimeout(async () => {
+          try {
+            console.log("[Search UI] Fetching search results for:", query)
+            const res = await fetch(`${endpoint}?q=${encodeURIComponent(query)}`)
+            
+            if (!res.ok) {
+              throw new Error(`HTTP status: ${res.status}`)
+            }
+
+            const results = await res.json()
+            console.log("[Search UI] Received results:", results)
+
+            if (resultsContainer) resultsContainer.innerHTML = ""
+
+            if (!Array.isArray(results) || results.length === 0) {
+              emptyState?.classList.remove("hidden")
+              return
+            }
+
+            emptyState?.classList.add("hidden")
+            results.forEach((item) => {
+              const div = document.createElement("a")
+              div.href = item.url || "#"
+              div.className = "flex flex-col gap-1 p-3 hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700 text-left decoration-none"
+              
+              div.innerHTML = `
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-semibold text-white">${item.title || "Untitled"}</span>
+                  ${item.sourceType ? `<span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">${item.sourceType}</span>` : ""}
+                </div>
+                ${item.snippet ? `<p class="text-xs text-neutral-400 line-clamp-2 m-0">${item.snippet}</p>` : ""}
+              `
+              resultsContainer?.appendChild(div)
+            })
+          } catch (err) {
+            console.error("[Search UI] Search failed:", err)
+            if (resultsContainer) resultsContainer.innerHTML = ""
+            emptyState?.classList.remove("hidden")
+          }
+        }, 200)
+      })
     })
-  })
+  }
+
+  // Run on first load
+  initializeSearch()
+
+  // Run on page navigation when using Astro view transitions
+  document.addEventListener("DOMContentLoaded", initializeSearch)
+  document.addEventListener("astro:page-load", initializeSearch)
 </script>
 
 <style is:global>
