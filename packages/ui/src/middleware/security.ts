@@ -99,7 +99,12 @@ export const security = defineMiddleware(async (context, next) => {
           }
         }
       })
-      .on('meta[http-equiv="content-security-policy" i]', {
+      .on('meta[http-equiv="Content-Security-Policy"]', {
+        element(el: any) {
+          el.remove()
+        }
+      })
+      .on('meta[http-equiv="content-security-policy"]', {
         element(el: any) {
           el.remove()
         }
