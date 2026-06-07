@@ -27,9 +27,7 @@ const { title, description, pubDate, updatedDate, heroImage } = post.data;
 <AppLayout title={title} description={description}>
 	<RLAContainer class="py-16 max-w-3xl">
 		<article>
-			<div class="hero-image mb-8 w-full aspect-video flex">
-				{heroImage && <RLAImage width={1020} height={510} src={heroImage} alt="" ui={{ root: "relative w-full h-full block", trigger: "relative w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />}
-			</div>
+			{heroImage && <RLAImage src={heroImage} alt="" class="hero-image mb-8" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />}
 			<div class="prose dark:prose-invert max-w-none">
 				<div class="title mb-8">
 					<div class="date text-neutral-400 mb-2 text-sm">
