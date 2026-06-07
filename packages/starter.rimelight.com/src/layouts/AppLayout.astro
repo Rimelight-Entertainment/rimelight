@@ -5,10 +5,12 @@ import RLAMain from "@rimelight/ui/components/astro/RLAMain.astro"
 import AppFooter from '@/components/app/AppFooter.astro';
 import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro"
 import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
+import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro"
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
 import { siteConfig } from '@/site.config';
 import '@/styles/global.css';
 import { Font } from 'astro:assets';
-import { currentLocale, useI18n } from '@rimelight/i18n';
+import { currentLocale, useI18n, getRelativeLocaleUrl } from '@rimelight/i18n';
 
 currentLocale.set(Astro.currentLocale ?? 'en');
 
@@ -33,6 +35,17 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 const messages = useI18n(Astro, "app_layout", {
 	skipToContent: "Skip to main content"
 });
+
+const cookieMessages = useI18n(Astro, "cookie_notice", {
+	title: "Cookie Notice",
+	description_prefix: "This site doesn't actually use cookies, but this is how a cookie notice would be done, as per a ",
+	cookie_policy_label: "Cookie Policy",
+	description_suffix: ".",
+	allow_all: "Allow all",
+	deny_all: "Deny all"
+});
+
+const hasConsent = Astro.cookies.has("cookie-consent");
 ---
 
 <!doctype html>
@@ -54,5 +67,53 @@ const messages = useI18n(Astro, "app_layout", {
 		<AppFooter />
 		<RLAScrollToTop showProgress={true} />
 		<RLAShortcuts />
+
+		{!hasConsent && (
+			<div id="cookie-notice-container" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300">
+				<RLAToast title={cookieMessages.title} dismissable={false} class="pointer-events-auto shadow-2xl border-border bg-background/95 backdrop-blur-sm">
+					<span slot="description">
+						{cookieMessages.description_prefix}
+						<a href={getRelativeLocaleUrl('/legal/cookie-policy')} class="underline hover:text-primary transition-colors font-medium">{cookieMessages.cookie_policy_label}</a>
+						{cookieMessages.description_suffix}
+					</span>
+					<Fragment slot="actions">
+						<RLAButton id="cookie-allow" variant="solid" color="success" size="sm">
+							{cookieMessages.allow_all}
+						</RLAButton>
+						<RLAButton id="cookie-deny" variant="solid" color="error" size="sm">
+							{cookieMessages.deny_all}
+						</RLAButton>
+					</Fragment>
+				</RLAToast>
+			</div>
+		)}
+
+		<script>
+			function initCookieNotice() {
+				const container = document.getElementById("cookie-notice-container");
+				if (!container) return;
+
+				const allowBtn = container.querySelector("#cookie-allow");
+				const denyBtn = container.querySelector("#cookie-deny");
+
+				const setCookieAndDismiss = (consentValue: string) => {
+					// Set cookie for 1 year
+					const maxAge = 365 * 24 * 60 * 60;
+					document.cookie = `cookie-consent=${consentValue}; path=/; max-age=${maxAge}; SameSite=Lax`;
+
+					// Animate out
+					container.classList.add("opacity-0", "translate-y-4");
+					container.addEventListener("transitionend", () => {
+						container.remove();
+					}, { once: true });
+				};
+
+				allowBtn?.addEventListener("click", () => setCookieAndDismiss("allowed"));
+				denyBtn?.addEventListener("click", () => setCookieAndDismiss("denied"));
+			}
+
+			initCookieNotice();
+			document.addEventListener("astro:after-swap", initCookieNotice);
+		</script>
 	</body>
 </html>

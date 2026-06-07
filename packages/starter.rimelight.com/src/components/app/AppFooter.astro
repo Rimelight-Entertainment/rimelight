@@ -13,6 +13,7 @@ const messages = useI18n(Astro, "app_footer", {
   "links_resources_branding": "Branding",
   "links_legal_label": "Legal",
   "links_legal_privacy-policy": "Privacy Policy",
+  "links_legal_cookie-policy": "Cookie Policy",
   "links_legal_other-documents": "Other Documents"
 });
 
@@ -32,6 +33,10 @@ const footerGroups: LinkGroupProps[] = [
       {
         label: messages["links_legal_privacy-policy"],
         href: getRelativeLocaleUrl("/legal/privacy-policy")
+      },
+      {
+        label: messages["links_legal_cookie-policy"],
+        href: getRelativeLocaleUrl("/legal/cookie-policy")
       },
       {
         label: messages["links_legal_other-documents"],

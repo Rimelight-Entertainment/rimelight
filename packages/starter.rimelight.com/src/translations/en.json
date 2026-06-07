@@ -6,5 +6,16 @@
     "links_about_label": "About",
     "links_components_label": "Components",
     "links_tests_label": "Tests"
+  },
+  "cookie_notice": {
+    "title": "Cookie Notice",
+    "description_prefix": "This site doesn't actually use cookies, but this is how a cookie notice would be done, as per a ",
+    "cookie_policy_label": "Cookie Policy",
+    "description_suffix": ".",
+    "allow_all": "Allow all",
+    "deny_all": "Deny all"
+  },
+  "app_footer": {
+    "links_legal_cookie-policy": "Cookie Policy"
   }
 }

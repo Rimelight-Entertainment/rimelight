@@ -49,11 +49,24 @@ const icon = computed(() => variantIcons[props.variant] ?? variantIcons.default!
         {{ description }}
       </div>
       <slot />
-    </div>
 
-    <button v-if="actionLabel" type="button" :class="resolvedClasses.action" data-slot="action">
-      {{ actionLabel }}
-    </button>
+      <div
+        v-if="$slots.actions || actionLabel"
+        class="flex items-center justify-end gap-2 mt-3"
+        data-slot="actions"
+      >
+        <slot name="actions">
+          <button
+            v-if="actionLabel"
+            type="button"
+            :class="resolvedClasses.action"
+            data-slot="action"
+          >
+            {{ actionLabel }}
+          </button>
+        </slot>
+      </div>
+    </div>
 
     <button
       type="button"

@@ -32,5 +32,9 @@ export interface ToastProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any
+  /**
+   * Whether the toast can be dismissed by user or timeout.
+   */
+  dismissable?: boolean
   [key: string]: unknown
 }
