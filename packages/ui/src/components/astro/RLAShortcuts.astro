@@ -30,6 +30,8 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
   <dialog 
     id={modalId} 
     class="rla-shortcuts-dialog" 
+    autofocus
+    tabindex="-1"
     aria-labelledby={`${modalId}-title`}
     data-categories={JSON.stringify(resolvedCategories)}
     data-category-order={JSON.stringify(configKeys)}
@@ -75,6 +77,7 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
       const openHelp = () => {
         dialog.showModal();
+        dialog.focus();
         document.body.style.overflow = "hidden";
         
         escapeCleanup = defineShortcuts({
@@ -247,8 +250,8 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
 <style is:global>
   .rla-shortcuts-dialog {
-    border: 1px solid var(--color-neutral-800, #262626);
-    background: #171717 !important;
+    border: 1px solid #27272a !important;
+    background: #18181b !important;
     color: #fff !important;
     border-radius: 12px;
     padding: 0;
@@ -280,7 +283,7 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid var(--color-neutral-800, #262626);
+    border-bottom: 1px solid #27272a;
   }
 
   .rla-shortcuts-title {
@@ -306,6 +309,14 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
   .rla-shortcuts-close:hover {
     color: #fff;
     background-color: var(--color-neutral-800, #262626);
+  }
+
+  .rla-shortcuts-close:focus {
+    outline: none !important;
+  }
+
+  .rla-shortcuts-close:focus-visible {
+    outline: 2px solid var(--color-primary-500, #3b82f6) !important;
   }
 
   .rla-shortcuts-body {
@@ -377,12 +388,12 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
     font-family: inherit;
     font-size: 0.75rem;
     font-weight: 600;
-    background-color: var(--color-neutral-800, #262626);
-    border: 1px solid var(--color-neutral-700, #404040);
+    background-color: #27272a !important;
+    border: 1px solid #3f3f46 !important;
     border-radius: 4px;
     padding: 2px 6px;
     min-width: 20px;
-    color: #e5e5e5;
+    color: #a3a3a3 !important;
     box-shadow: 0 1px 0 rgba(0,0,0,0.2);
   }
 
@@ -395,8 +406,8 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
   .rla-shortcuts-footer {
     padding: 12px 20px;
-    background-color: rgba(10, 10, 10, 0.35);
-    border-top: 1px solid var(--color-neutral-800, #262626);
+    background-color: #09090b !important;
+    border-top: 1px solid #27272a;
     font-size: 0.75rem;
     color: var(--color-neutral-400, #a3a3a3);
     display: flex;
@@ -404,11 +415,11 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
   }
 
   .rla-shortcuts-kbd-footer {
-    background-color: var(--color-neutral-800, #262626);
-    border: 1px solid var(--color-neutral-700, #404040);
+    background-color: #27272a !important;
+    border: 1px solid #3f3f46 !important;
     border-radius: 3px;
     padding: 1px 4px;
     font-size: 0.7rem;
-    color: var(--color-neutral-300, #d4d4d4);
+    color: #a3a3a3 !important;
   }
 </style>

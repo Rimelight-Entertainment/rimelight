@@ -148,6 +148,7 @@ const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
           document.body.style.cursor = "";
           document.body.style.userSelect = "";
           handle.classList.remove("bg-primary/30");
+          panels.forEach(p => p.style.transition = "");
           document.removeEventListener("mousemove", onMouseMove);
           document.removeEventListener("mouseup", onMouseUp);
         };
@@ -161,6 +162,7 @@ const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
           document.body.style.cursor = isHorizontal ? "col-resize" : "row-resize";
           document.body.style.userSelect = "none";
           handle.classList.add("bg-primary/30");
+          panels.forEach(p => p.style.transition = "none");
           document.addEventListener("mousemove", onMouseMove);
           document.addEventListener("mouseup", onMouseUp);
         };
