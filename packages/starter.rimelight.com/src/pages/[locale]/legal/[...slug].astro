@@ -2,6 +2,7 @@
 import { getEntry, render } from 'astro:content';
 import AppLayout from '@/layouts/AppLayout.astro';
 import RLADate from '@rimelight/ui/components/astro/RLADate.astro';
+import RLAContainer from '@rimelight/ui/components/astro/RLAContainer.astro';
 import { useI18n } from "@rimelight/i18n";
 
 const messages = useI18n(Astro, "legal", {
@@ -23,23 +24,25 @@ const { title, description, pubDate, updatedDate } = post.data;
 ---
 
 <AppLayout title={title} description={description}>
+	<RLAContainer class="py-16 max-w-3xl">
 		<article>
-			<div class="prose">
-				<div class="title">
-					<div class="date">
+			<div class="prose dark:prose-invert max-w-none">
+				<div class="title mb-8">
+					<div class="date text-neutral-400 mb-2 text-sm">
 						<RLADate date={pubDate} />
 						{
 							updatedDate && (
-								<div class="last-updated-on">
+								<div class="last-updated-on text-xs text-neutral-500 mt-1">
 									{messages.lastUpdatedOn} <RLADate date={updatedDate} />
 								</div>
 							)
 						}
 					</div>
-					<h1>{title}</h1>
-					<hr />
+					<h1 class="text-4xl font-extrabold text-white mb-4">{title}</h1>
+					<hr class="border-neutral-800" />
 				</div>
 				<Content />
 			</div>
 		</article>
+	</RLAContainer>
 </AppLayout>

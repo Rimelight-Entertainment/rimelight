@@ -1,10 +1,10 @@
 ---
-import { Image } from 'astro:assets';
 import AboutHeroImage from '@/assets/images/placeholder.webp';
 import AppLayout from '@/layouts/AppLayout.astro';
 import RLAPageSection from '@rimelight/ui/components/astro/RLAPageSection.astro';
 import RLAGrid from '@rimelight/ui/components/astro/RLAGrid.astro';
 import RLACard from '@rimelight/ui/components/astro/RLACard.astro';
+import RLAImage from '@rimelight/ui/components/astro/RLAImage.astro';
 import { useI18n } from '@rimelight/i18n';
 
 const messages = useI18n(Astro, 'about', {
@@ -24,7 +24,7 @@ const messages = useI18n(Astro, 'about', {
   
   value_performance_title: 'Built to Scale',
   value_performance_description: 'Performance isn\'t an afterthought. Every line of code is optimized for lightning-fast speeds and core web vitals.',
-
+  
   section_about_template_title: 'About The Starter',
   section_about_template_description: 'This is a unified starter template designed to bundle all our core UI elements, auth integration, localization, and robust database setups in a single place. Rather than maintaining dozens of fragments, we build one powerful base—allowing you to easily disable what you don\'t need.'
 });
@@ -37,7 +37,9 @@ const messages = useI18n(Astro, 'about', {
     description={messages.hero_description}
     orientation="horizontal"
   >
-    <Image width={1020} height={510} src={AboutHeroImage} alt="" class="w-full h-auto rounded-lg object-cover" />
+    <div class="w-full aspect-video flex">
+      <RLAImage width={1020} height={510} src={AboutHeroImage} alt="" ui={{ root: "relative w-full h-full block", trigger: "relative w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />
+    </div>
   </RLAPageSection>
 
   <RLAPageSection

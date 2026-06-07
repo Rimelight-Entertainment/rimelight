@@ -2,11 +2,21 @@ import { defineTheme } from "../utils/defineTheme"
 
 export const createImageTheme = () =>
   defineTheme({
-    slots: ["root", "trigger", "dialog", "image", "fileInfo", "download", "closeButton"],
+    slots: [
+      "root",
+      "trigger",
+      "triggerImage",
+      "dialog",
+      "image",
+      "fileInfo",
+      "download",
+      "closeButton"
+    ],
     base: {
       root: "relative inline-block group/image",
       trigger:
         "cursor-pointer overflow-hidden rounded-lg block hover:scale-[1.02] active:scale-95 transition-transform duration-300",
+      triggerImage: "",
       dialog:
         "backdrop:bg-black/60 max-w-[98vw] sm:max-w-[95vw] w-fit max-h-[90vh] rounded-xl p-0 overflow-hidden border-0 m-auto",
       image: "object-contain max-w-full max-h-[65vh] rounded-lg",

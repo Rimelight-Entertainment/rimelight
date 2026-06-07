@@ -92,9 +92,9 @@ const initialSize = preMetadata?.size ?? undefined
         )
       ) : (
         typeof src === "string" ? (
-          <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} fit={fit} />
+          <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
         ) : (
-          <Image src={src as ImageMetadata} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} fit={fit} />
+          <Image src={src as ImageMetadata} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
         )
       )}
     </button>

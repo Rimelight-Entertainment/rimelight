@@ -55,8 +55,12 @@ export const security = defineMiddleware(async (context, next) => {
   const newHeaders = new Headers(response.headers)
 
   if (cspHeader) {
-    // Unescape HTML entities (like &#39; to ') that Astro's native CSP generation mistakenly puts in the header
-    cspHeader = cspHeader.replace(/&#39;/g, "'").replace(/&amp;/g, "&")
+    // Unescape HTML entities (like &#39; or &#x27; to ') that Astro's native CSP generation mistakenly puts in the header
+    cspHeader = cspHeader
+      .replace(/&#0*39;/g, "'")
+      .replace(/&#x0*27;/gi, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, "&")
     newHeaders.set("content-security-policy", cspHeader)
   }
 
@@ -97,12 +101,7 @@ export const security = defineMiddleware(async (context, next) => {
           }
         }
       })
-      .on('meta[http-equiv="Content-Security-Policy"]', {
-        element(el: any) {
-          el.remove()
-        }
-      })
-      .on('meta[http-equiv="content-security-policy"]', {
+      .on('meta[http-equiv="content-security-policy" i]', {
         element(el: any) {
           el.remove()
         }
@@ -145,7 +144,7 @@ export const security = defineMiddleware(async (context, next) => {
 
   // Remove Astro-injected CSP meta tag to prevent duplicate CSP headers and HTML escaping errors
   modifiedHtml = modifiedHtml.replace(
-    /<meta[^>]*http-equiv=["']content-security-policy["'][^>]*>/gi,
+    /<meta\s[^>]*http-equiv\s*=\s*["']?content-security-policy[^>]*>/gi,
     ""
   )
 
