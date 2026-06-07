@@ -32,12 +32,12 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
       class={classes.trigger}
       data-slot="trigger"
       type="button"
-      onclick={`document.getElementById('${dialogId}').showModal()`}
+      data-dialog-show={dialogId}
     >
       {triggerLabel}
     </button>
   ) : (
-    <span onclick={`document.getElementById('${dialogId}').showModal()`}>
+    <span data-dialog-show={dialogId}>
       <slot name="trigger" />
     </span>
   )}
@@ -53,7 +53,7 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
       class={classes.closeButton}
       data-slot="close-button"
       type="button"
-      onclick={`document.getElementById('${dialogId}').close()`}
+      data-dialog-close={dialogId}
       aria-label="Close slideover"
     >
       <span class="i-lucide-x size-4" aria-hidden="true" />
@@ -122,20 +122,50 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
   }
 </style>
 
-<script is:inline>
-  document.addEventListener('click', (e) => {
-    if (e.target && e.target.tagName === 'DIALOG' && e.target.getAttribute('data-close-on-click-outside') === 'true') {
-      const rect = e.target.getBoundingClientRect();
-      const isInModal = (
-        rect.top <= e.clientY &&
-        e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX &&
-        e.clientX <= rect.left + rect.width
-      );
-      if (!isInModal) {
-        e.target.close();
+<script>
+  if (!(window as any).__rla_dialog_listener_active) {
+    (window as any).__rla_dialog_listener_active = true;
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const showTrigger = target.closest('[data-dialog-show]');
+      if (showTrigger) {
+        const dialogId = showTrigger.getAttribute('data-dialog-show');
+        if (dialogId) {
+          const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
+          if (dialog) {
+            if (typeof dialog.showModal === 'function') {
+              dialog.showModal();
+            } else if (typeof (dialog as any).showmodal === 'function') {
+              (dialog as any).showmodal();
+            }
+          }
+        }
       }
-    }
-  });
+
+      const closeTrigger = target.closest('[data-dialog-close]');
+      if (closeTrigger) {
+        const dialogId = closeTrigger.getAttribute('data-dialog-close');
+        if (dialogId) {
+          const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
+          dialog?.close();
+        }
+      }
+
+      if (target.tagName === 'DIALOG' && target.getAttribute('data-close-on-click-outside') === 'true') {
+        const rect = target.getBoundingClientRect();
+        const isInModal = (
+          rect.top <= e.clientY &&
+          e.clientY <= rect.top + rect.height &&
+          rect.left <= e.clientX &&
+          e.clientX <= rect.left + rect.width
+        );
+        if (!isInModal) {
+          (target as HTMLDialogElement).close();
+        }
+      }
+    });
+  }
 </script>
 

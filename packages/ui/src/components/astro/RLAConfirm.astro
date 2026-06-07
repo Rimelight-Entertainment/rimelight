@@ -33,12 +33,12 @@ const isDestructive = variant === "destructive"
       class={classes.trigger}
       data-slot="trigger"
       type="button"
-      onclick={`document.getElementById('${dialogId}').showModal()`}
+      data-dialog-show={dialogId}
     >
       {triggerLabel}
     </RLAButton>
   ) : (
-    <span onclick={`document.getElementById('${dialogId}').showModal()`}>
+    <span data-dialog-show={dialogId}>
       <slot name="trigger" />
     </span>
   )}
@@ -68,7 +68,7 @@ const isDestructive = variant === "destructive"
           variant="outline"
           color={isDestructive ? "error" : "neutral"}
           type="button"
-          onclick={`document.getElementById('${dialogId}').close()`}
+          data-dialog-close={dialogId}
         >
           {cancelLabel}
         </RLAButton>
@@ -78,7 +78,7 @@ const isDestructive = variant === "destructive"
           color={isDestructive ? "error" : "primary"}
           variant={isDestructive ? "subtle" : "solid"}
           type="button"
-          onclick={`document.getElementById('${dialogId}').close()`}
+          data-dialog-close={dialogId}
         >
           {actionLabel}
         </RLAButton>
