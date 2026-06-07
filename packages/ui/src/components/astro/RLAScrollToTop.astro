@@ -26,116 +26,139 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 
 ---
 
-<div
-  class:list={["rla-scroll-to-top", "fixed bottom-6 right-6 z-50", classes.root]}
-  data-threshold={threshold}
-  data-duration={duration}
-  data-color={color}
-  data-progress-width={progressWidth}
-  {...rest}
->
-  <button
-    type="button"
-    class={classes.button}
-    aria-label="Scroll to top"
-    data-scroll-to-top-button
+<rla-scroll-to-top data-threshold={threshold} data-duration={duration} data-color={color} data-progress-width={progressWidth} {...rest}>
+  <div
+    class:list={["rla-scroll-to-top-inner", "fixed bottom-6 right-6 z-50", classes.root]}
   >
-    <div class={classes.progressBase}>
-      <div class="gauge-track"></div>
-      {showProgress && (
-      <div class="gauge-progress" data-gauge-progress></div>
-      )}
-      <div class={classes.iconContainer}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class={classes.icon}
-        >
-          <path d="m5 12 7-7 7 7" />
-          <path d="M12 19V5" />
-        </svg>
+    <button
+      type="button"
+      class={classes.button}
+      aria-label="Scroll to top"
+      data-scroll-to-top-button
+    >
+      <div class={classes.progressBase}>
+        <div class="gauge-track"></div>
+        {showProgress && (
+        <div class="gauge-progress" data-gauge-progress></div>
+        )}
+        <div class={classes.iconContainer}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class={classes.icon}
+          >
+            <path d="m5 12 7-7 7 7" />
+            <path d="M12 19V5" />
+          </svg>
+        </div>
       </div>
-    </div>
-  </button>
-</div>
+    </button>
+  </div>
+</rla-scroll-to-top>
 
 <script>
-  let rlaInstanceId = 0
+  class RLAScrollToTop extends HTMLElement {
+    private cleanupScroll: (() => void) | null = null;
+    private styleEl: HTMLStyleElement | null = null;
 
-  document.querySelectorAll<HTMLElement>('.rla-scroll-to-top').forEach((element) => {
-    const button = element.querySelector('[data-scroll-to-top-button]')
+    connectedCallback() {
+      this.style.display = 'contents';
+      const button = this.querySelector('[data-scroll-to-top-button]');
+      const innerElement = this.querySelector('.rla-scroll-to-top-inner') as HTMLElement | null;
 
-    if (!button) return
+      if (!button || !innerElement) return;
 
-    const id = rlaInstanceId++
-    const threshold = Number(element.dataset.threshold) || 200
-    const color = element.dataset.color || 'primary'
-    const progressWidth = Number(element.dataset.progressWidth) || 6
-    const gaugeBorderWidth = progressWidth * 0.5
-    const nonce = (document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ?? '')
+      const id = ++RLAScrollToTop.instanceCounter;
+      const threshold = Number(this.dataset.threshold) || 200;
+      const color = this.dataset.color || 'primary';
+      const progressWidth = Number(this.dataset.progressWidth) || 6;
+      const gaugeBorderWidth = progressWidth * 0.5;
+      const nonce = (document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ?? '');
 
-    let styleEl: HTMLStyleElement | null = null
+      const getStyleEl = () => {
+        if (!this.styleEl) {
+          this.styleEl = document.createElement('style');
+          if (nonce) this.styleEl.setAttribute('nonce', nonce);
+          document.head.appendChild(this.styleEl);
+        }
+        return this.styleEl;
+      };
 
-    function getStyleEl() {
-      if (!styleEl) {
-        styleEl = document.createElement('style')
-        if (nonce) styleEl.setAttribute('nonce', nonce)
-        document.head.appendChild(styleEl)
-      }
-      return styleEl
+      const updateStyles = () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercentage = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+        if (scrollTop > threshold) {
+          innerElement.classList.add('visible');
+        } else {
+          innerElement.classList.remove('visible');
+        }
+
+        getStyleEl().textContent = `
+          .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-track {
+            border-width: ${gaugeBorderWidth}px;
+            border-color: var(--color-${color}-900);
+            background-color: var(--color-${color}-950);
+          }
+          .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-progress {
+            --gauge-progress: ${scrollPercentage};
+            --gauge-stroke-width: ${gaugeBorderWidth}px;
+            --gauge-color: var(--color-${color}-500);
+          }
+        `;
+      };
+
+      innerElement.dataset.rlaInstance = String(id);
+
+      const onClick = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      button.addEventListener('click', onClick);
+
+      window.addEventListener('scroll', updateStyles, { passive: true });
+      updateStyles();
+
+      this.cleanupScroll = () => {
+        button.removeEventListener('click', onClick);
+        window.removeEventListener('scroll', updateStyles);
+        if (this.styleEl) {
+          this.styleEl.remove();
+          this.styleEl = null;
+        }
+      };
     }
 
-    function updateStyles() {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
-      const scrollPercentage = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
-
-      if (scrollTop > threshold) {
-        element.classList.add('visible')
-      } else {
-        element.classList.remove('visible')
+    disconnectedCallback() {
+      if (this.cleanupScroll) {
+        this.cleanupScroll();
+        this.cleanupScroll = null;
       }
-
-      getStyleEl().textContent = `
-        .rla-scroll-to-top[data-rla-instance="${id}"] .gauge-track {
-          border-width: ${gaugeBorderWidth}px;
-          border-color: var(--color-${color}-900);
-          background-color: var(--color-${color}-950);
-        }
-        .rla-scroll-to-top[data-rla-instance="${id}"] .gauge-progress {
-          --gauge-progress: ${scrollPercentage};
-          --gauge-stroke-width: ${gaugeBorderWidth}px;
-          --gauge-color: var(--color-${color}-500);
-        }
-      `
     }
 
-    element.dataset.rlaInstance = String(id)
+    static instanceCounter = 0;
+  }
 
-    button.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    })
-
-    window.addEventListener('scroll', updateStyles, { passive: true })
-    updateStyles()
-  })
+  if (!customElements.get('rla-scroll-to-top')) {
+    customElements.define('rla-scroll-to-top', RLAScrollToTop);
+  }
 </script>
 
 <style>
-  .rla-scroll-to-top {
+  .rla-scroll-to-top-inner {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
   }
 
-  .rla-scroll-to-top.visible {
+  .rla-scroll-to-top-inner.visible {
     opacity: 1;
     pointer-events: auto;
   }

@@ -21,87 +21,84 @@ const {
 const classes = resolveClasses(carousel, {}, useUi("carousel", uiProp), className)
 const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
 ---
-<div id={carouselId} class={classes.root} data-slot="carousel-root" data-autoplay={autoplay ? "true" : "false"} {...rest}>
-  <div class={classes.viewport} data-slot="viewport">
-    <div class={classes.container} data-slot="container">
-      {slides ? (
-        slides.map((slide) => (
-          <div class={classes.slide} data-slot="slide">
-            {slide.imageSrc && <img src={slide.imageSrc} alt={slide.title || ""} class="w-full aspect-video object-cover rounded-lg" />}
-            {(slide.title || slide.description) && (
-              <div class="absolute bottom-4 left-4 right-4 p-4 rounded-lg bg-black/60 backdrop-blur-sm text-white">
-                {slide.title && <h4 class="text-sm font-semibold">{slide.title}</h4>}
-                {slide.description && <p class="text-xs opacity-95 mt-1">{slide.description}</p>}
-              </div>
-            )}
-          </div>
-        ))
-      ) : (
-        <slot />
-      )}
+<rla-carousel data-autoplay={autoplay ? "true" : "false"} {...rest}>
+  <div id={carouselId} class={classes.root} data-slot="carousel-root">
+    <div class={classes.viewport} data-slot="viewport">
+      <div class={classes.container} data-slot="container">
+        {slides ? (
+          slides.map((slide) => (
+            <div class={classes.slide} data-slot="slide">
+              {slide.imageSrc && <img src={slide.imageSrc} alt={slide.title || ""} class="w-full aspect-video object-cover rounded-lg" />}
+              {(slide.title || slide.description) && (
+                <div class="absolute bottom-4 left-4 right-4 p-4 rounded-lg bg-black/60 backdrop-blur-sm text-white">
+                  {slide.title && <h4 class="text-sm font-semibold">{slide.title}</h4>}
+                  {slide.description && <p class="text-xs opacity-95 mt-1">{slide.description}</p>}
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <slot />
+        )}
+      </div>
     </div>
-  </div>
 
-  <button class={classes.buttonPrev} data-slot="prev-button" type="button" aria-label="Previous slide">
-    <span class="i-lucide-chevron-left size-5" aria-hidden="true" />
-  </button>
-  <button class={classes.buttonNext} data-slot="next-button" type="button" aria-label="Next slide">
-    <span class="i-lucide-chevron-right size-5" aria-hidden="true" />
-  </button>
-</div>
+    <button class={classes.buttonPrev} data-slot="prev-button" type="button" aria-label="Previous slide">
+      <span class="i-lucide-chevron-left size-5" aria-hidden="true" />
+    </button>
+    <button class={classes.buttonNext} data-slot="next-button" type="button" aria-label="Next slide">
+      <span class="i-lucide-chevron-right size-5" aria-hidden="true" />
+    </button>
+  </div>
+</rla-carousel>
 
 <script>
   import EmblaCarousel from "embla-carousel"
 
-  const activeCarousels = new Map<HTMLElement, () => void>();
+  class RLACarousel extends HTMLElement {
+    private emblaCleanup: (() => void) | null = null;
 
-  function initializeCarousels() {
-    for (const [carouselEl, cleanup] of activeCarousels.entries()) {
-      if (!document.contains(carouselEl)) {
-        cleanup();
-        activeCarousels.delete(carouselEl);
-      }
-    }
+    connectedCallback() {
+      this.style.display = 'contents';
+      const autoplay = this.getAttribute("data-autoplay") === "true";
+      const viewport = this.querySelector('[data-slot="viewport"]') as HTMLElement;
+      const prevBtn = this.querySelector('[data-slot="prev-button"]') as HTMLButtonElement;
+      const nextBtn = this.querySelector('[data-slot="next-button"]') as HTMLButtonElement;
 
-    document.querySelectorAll<HTMLElement>('[data-slot="carousel-root"]').forEach((carouselEl) => {
-      if (carouselEl.hasAttribute('data-initialized')) return
-      carouselEl.setAttribute('data-initialized', 'true')
+      if (!viewport) return;
 
-      const viewport = carouselEl.querySelector('[data-slot="viewport"]') as HTMLElement
-      const prevBtn = carouselEl.querySelector('[data-slot="prev-button"]') as HTMLButtonElement
-      const nextBtn = carouselEl.querySelector('[data-slot="next-button"]') as HTMLButtonElement
+      const embla = EmblaCarousel(viewport, { loop: true });
 
-      if (!viewport) return
+      const onPrevClick = () => embla.scrollPrev();
+      const onNextClick = () => embla.scrollNext();
 
-      const embla = EmblaCarousel(viewport, { loop: true })
+      if (prevBtn) prevBtn.addEventListener("click", onPrevClick);
+      if (nextBtn) nextBtn.addEventListener("click", onNextClick);
 
-      const onPrevClick = () => embla.scrollPrev()
-      const onNextClick = () => embla.scrollNext()
-
-      if (prevBtn) prevBtn.addEventListener("click", onPrevClick)
-      if (nextBtn) nextBtn.addEventListener("click", onNextClick)
-
-      let intervalId: any = null
-      const autoplay = carouselEl.getAttribute("data-autoplay") === "true"
+      let intervalId: any = null;
       if (autoplay) {
         intervalId = setInterval(() => {
-          if (embla) embla.scrollNext()
-        }, 4000)
+          embla.scrollNext();
+        }, 4000);
       }
 
-      activeCarousels.set(carouselEl, () => {
-        if (prevBtn) prevBtn.removeEventListener("click", onPrevClick)
-        if (nextBtn) nextBtn.removeEventListener("click", onNextClick)
-        if (intervalId) clearInterval(intervalId)
-        embla.destroy()
-      })
-    })
+      this.emblaCleanup = () => {
+        if (prevBtn) prevBtn.removeEventListener("click", onPrevClick);
+        if (nextBtn) nextBtn.removeEventListener("click", onNextClick);
+        if (intervalId) clearInterval(intervalId);
+        embla.destroy();
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.emblaCleanup) {
+        this.emblaCleanup();
+        this.emblaCleanup = null;
+      }
+    }
   }
 
-  // Run on first load
-  initializeCarousels();
-
-  // Run on page transitions
-  document.addEventListener("DOMContentLoaded", initializeCarousels);
-  document.addEventListener("astro:page-load", initializeCarousels);
+  if (!customElements.get('rla-carousel')) {
+    customElements.define('rla-carousel', RLACarousel);
+  }
 </script>

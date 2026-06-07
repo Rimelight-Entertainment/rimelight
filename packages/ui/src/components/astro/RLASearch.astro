@@ -25,7 +25,6 @@ const {
 const classes = resolveClasses(search, {}, useUi("search", uiProp), className)
 
 // Default messages
-const searchButtonLabel = messages.searchButtonLabel || "Search..."
 const searchPlaceholder = messages.searchPlaceholder || placeholder
 const noResultsLabel = messages.noResultsLabel || "No results found"
 const footerCloseHint = messages.footerCloseHint || "Escape to close"
@@ -40,7 +39,7 @@ const resultsId = `search-results-${uniqueId}`
 const emptyId = `search-empty-${uniqueId}`
 ---
 
-<div 
+<rla-search 
   class:list={[classes.root, "rla-search-wrapper"]} 
   data-slot="root" 
   data-trigger-id={triggerId} 
@@ -109,81 +108,77 @@ const emptyId = `search-empty-${uniqueId}`
       </div>
     </div>
   </div>
-</div>
+</rla-search>
 
 <script>
   import { defineShortcuts } from "../../utils/shortcuts"
 
-  let globalCleanups: (() => void)[] = []
+  class RLASearch extends HTMLElement {
+    private searchCleanup: (() => void) | null = null;
 
-  function initializeSearch() {
-    // Clean up previous page's global shortcuts
-    globalCleanups.forEach((fn) => fn())
-    globalCleanups = []
+    connectedCallback() {
+      this.style.display = 'contents';
+      const triggerId = this.dataset.triggerId;
+      const modalId = this.dataset.modalId;
+      const inputId = this.dataset.inputId;
+      const resultsId = this.dataset.resultsId;
+      const emptyId = this.dataset.emptyId;
+      const endpoint = this.dataset.endpoint;
 
-    document.querySelectorAll<HTMLElement>('.rla-search-wrapper').forEach((wrapper) => {
-      if (wrapper.hasAttribute('data-initialized')) return
-      wrapper.setAttribute('data-initialized', 'true')
-
-      const triggerId = wrapper.dataset.triggerId
-      const modalId = wrapper.dataset.modalId
-      const inputId = wrapper.dataset.inputId
-      const resultsId = wrapper.dataset.resultsId
-      const emptyId = wrapper.dataset.emptyId
-      const endpoint = wrapper.dataset.endpoint
-
-      const trigger = document.getElementById(triggerId!)
-      const modal = document.getElementById(modalId!)
-      const closeBtn = document.getElementById(`${modalId}-close`)
-      const input = document.getElementById(inputId!) as HTMLInputElement
-      const resultsContainer = document.getElementById(resultsId!)
-      const emptyState = document.getElementById(emptyId!)
+      const trigger = this.querySelector(`#${triggerId}`);
+      const modal = this.querySelector(`#${modalId}`) as HTMLElement | null;
+      const closeBtn = this.querySelector(`#${modalId}-close`);
+      const input = this.querySelector(`#${inputId}`) as HTMLInputElement | null;
+      const resultsContainer = this.querySelector(`#${resultsId}`) as HTMLElement | null;
+      const emptyState = this.querySelector(`#${emptyId}`) as HTMLElement | null;
 
       // Teleport modal to body to avoid containing block/transform clipping from header containers
       if (modal && modal.parentNode !== document.body) {
-        document.body.appendChild(modal)
+        document.body.appendChild(modal);
       }
 
-      let escapeCleanup: (() => void) | null = null
+      let escapeCleanup: (() => void) | null = null;
 
-      function openModal() {
-        modal?.classList.remove("hidden")
-        modal?.classList.add("flex")
-        input?.focus()
-        document.body.style.overflow = "hidden"
+      const openModal = () => {
+        modal?.classList.remove("hidden");
+        modal?.classList.add("flex");
+        input?.focus();
+        document.body.style.overflow = "hidden";
 
-        // Register escape shortcut dynamically when modal is open
         escapeCleanup = defineShortcuts({
           escape: {
             handler: () => closeModal(),
             usingInput: true
           }
-        })
-      }
+        });
+      };
 
-      function closeModal() {
-        modal?.classList.add("hidden")
-        modal?.classList.remove("flex")
-        document.body.style.overflow = ""
-        if (input) input.value = ""
-        if (resultsContainer) resultsContainer.innerHTML = ""
-        emptyState?.classList.add("hidden")
+      const closeModal = () => {
+        modal?.classList.add("hidden");
+        modal?.classList.remove("flex");
+        document.body.style.overflow = "";
+        if (input) input.value = "";
+        if (resultsContainer) resultsContainer.innerHTML = "";
+        emptyState?.classList.add("hidden");
 
-        // Clean up escape shortcut
         if (escapeCleanup) {
-          escapeCleanup()
-          escapeCleanup = null
+          escapeCleanup();
+          escapeCleanup = null;
         }
-      }
+      };
 
-      trigger?.addEventListener("click", openModal)
-      closeBtn?.addEventListener("click", closeModal)
-      modal?.addEventListener("click", (e) => {
-        const target = e.target as HTMLElement | null
+      const onTriggerClick = () => openModal();
+      const onCloseClick = () => closeModal();
+      const onModalClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement | null;
         if (target && (target === modal || !target.closest('[data-slot="dialog"]'))) {
-          closeModal()
+          closeModal();
         }
-      })
+      };
+
+      trigger?.addEventListener("click", onTriggerClick);
+      closeBtn?.addEventListener("click", onCloseClick);
+      modal?.addEventListener("click", onModalClick);
 
       // Register global shortcut key Cmd+K / Ctrl+K
       const metaKCleanup = defineShortcuts({
@@ -193,43 +188,42 @@ const emptyId = `search-empty-${uniqueId}`
           description: "Open the global site search modal",
           category: "navigation"
         }
-      })
-      globalCleanups.push(metaKCleanup)
+      });
 
-      let debounceTimer: any
-      input?.addEventListener("input", () => {
-        clearTimeout(debounceTimer)
-        const query = input.value.trim()
+      let debounceTimer: any;
+      const onInput = () => {
+        clearTimeout(debounceTimer);
+        const query = input?.value.trim();
         if (!query) {
-          if (resultsContainer) resultsContainer.innerHTML = ""
-          emptyState?.classList.add("hidden")
-          return
+          if (resultsContainer) resultsContainer.innerHTML = "";
+          emptyState?.classList.add("hidden");
+          return;
         }
 
         debounceTimer = setTimeout(async () => {
           try {
-            console.log("[Search UI] Fetching search results for:", query)
-            const res = await fetch(`${endpoint}?q=${encodeURIComponent(query)}`)
+            console.log("[Search UI] Fetching search results for:", query);
+            const res = await fetch(`${endpoint}?q=${encodeURIComponent(query)}`);
             
             if (!res.ok) {
-              throw new Error(`HTTP status: ${res.status}`)
+              throw new Error(`HTTP status: ${res.status}`);
             }
 
-            const results = await res.json()
-            console.log("[Search UI] Received results:", results)
+            const results = await res.json();
+            console.log("[Search UI] Received results:", results);
 
-            if (resultsContainer) resultsContainer.innerHTML = ""
+            if (resultsContainer) resultsContainer.innerHTML = "";
 
             if (!Array.isArray(results) || results.length === 0) {
-              emptyState?.classList.remove("hidden")
-              return
+              emptyState?.classList.remove("hidden");
+              return;
             }
 
-            emptyState?.classList.add("hidden")
+            emptyState?.classList.add("hidden");
             results.forEach((item) => {
-              const div = document.createElement("a")
-              div.href = item.url || "#"
-              div.className = "flex flex-col gap-1 p-3 hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700 text-left decoration-none"
+              const div = document.createElement("a");
+              div.href = item.url || "#";
+              div.className = "flex flex-col gap-1 p-3 hover:bg-neutral-800 rounded-lg transition-colors border border-transparent hover:border-neutral-700 text-left decoration-none";
               
               div.innerHTML = `
                 <div class="flex items-center justify-between">
@@ -237,25 +231,43 @@ const emptyId = `search-empty-${uniqueId}`
                   ${item.sourceType ? `<span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">${item.sourceType}</span>` : ""}
                 </div>
                 ${item.snippet ? `<p class="text-xs text-neutral-400 line-clamp-2 m-0">${item.snippet}</p>` : ""}
-              `
-              resultsContainer?.appendChild(div)
-            })
+              `;
+              resultsContainer?.appendChild(div);
+            });
           } catch (err) {
-            console.error("[Search UI] Search failed:", err)
-            if (resultsContainer) resultsContainer.innerHTML = ""
-            emptyState?.classList.remove("hidden")
+            console.error("[Search UI] Search failed:", err);
+            if (resultsContainer) resultsContainer.innerHTML = "";
+            emptyState?.classList.remove("hidden");
           }
-        }, 200)
-      })
-    })
+        }, 200);
+      };
+      input?.addEventListener("input", onInput);
+
+      this.searchCleanup = () => {
+        clearTimeout(debounceTimer);
+        trigger?.removeEventListener("click", onTriggerClick);
+        closeBtn?.removeEventListener("click", onCloseClick);
+        modal?.removeEventListener("click", onModalClick);
+        input?.removeEventListener("input", onInput);
+        if (escapeCleanup) escapeCleanup();
+        metaKCleanup();
+        if (modal && modal.parentNode === document.body) {
+          modal.remove();
+        }
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.searchCleanup) {
+        this.searchCleanup();
+        this.searchCleanup = null;
+      }
+    }
   }
 
-  // Run on first load
-  initializeSearch()
-
-  // Run on page navigation when using Astro view transitions
-  document.addEventListener("DOMContentLoaded", initializeSearch)
-  document.addEventListener("astro:page-load", initializeSearch)
+  if (!customElements.get('rla-search')) {
+    customElements.define('rla-search', RLASearch);
+  }
 </script>
 
 <style is:global>

@@ -71,204 +71,203 @@ const fileExtension = imgFormat?.toUpperCase() || (fileName.includes(".") ? file
 const initialSize = preMetadata?.size ?? undefined
 ---
 
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot name="trigger">
-    <button
-      type="button"
-      class={classes.trigger}
-      data-image-trigger
-    >
-      {isResponsive && mobileImg && desktopImg ? (
-        <picture>
-          <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
-          <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
-          <img src={desktopImg.src} alt={alt} loading={loading} class="w-full h-full object-cover rounded-lg" />
-        </picture>
-      ) : isFormatFallback ? (
-        typeof src === "string" ? (
-          <Picture src={src} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
-        ) : (
-          <Picture src={src as ImageMetadata} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
-        )
-      ) : (
-        typeof src === "string" ? (
-          <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
-        ) : (
-          <Image src={src as ImageMetadata} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
-        )
-      )}
-    </button>
-  </slot>
-
-  <dialog
-    class={classes.dialog}
-    data-image-dialog
-  >
-    <div class="flex flex-col bg-background text-foreground max-h-[90vh]">
-      <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
+<rla-image {...rest}>
+  <div class={classes.root} data-slot="root">
+    <slot name="trigger">
+      <button
+        type="button"
+        class={classes.trigger}
+        data-image-trigger
+      >
         {isResponsive && mobileImg && desktopImg ? (
-          <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
+          <picture>
             <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
             <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
-            <img src={desktopImg.src} alt={alt} class={classes.image} data-modal-img />
+            <img src={desktopImg.src} alt={alt} loading={loading} class="w-full h-full object-cover rounded-lg" />
           </picture>
+        ) : isFormatFallback ? (
+          typeof src === "string" ? (
+            <Picture src={src} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
+          ) : (
+            <Picture src={src as ImageMetadata} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
+          )
         ) : (
-          <img
-            src={typeof src === "string" ? src : src!.src}
-            alt={alt}
-            class={classes.image}
-            data-modal-img
-          />
+          typeof src === "string" ? (
+            <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
+          ) : (
+            <Image src={src as ImageMetadata} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
+          )
         )}
-      </div>
+      </button>
+    </slot>
 
-      <hr class="border-border mx-4 mb-3 shrink-0" />
+    <dialog
+      class={classes.dialog}
+      data-image-dialog
+    >
+      <div class="flex flex-col bg-background text-foreground max-h-[90vh]">
+        <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
+          {isResponsive && mobileImg && desktopImg ? (
+            <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
+              <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+              <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+              <img src={desktopImg.src} alt={alt} class={classes.image} data-modal-img />
+            </picture>
+          ) : (
+            <img
+              src={typeof src === "string" ? src : src!.src}
+              alt={alt}
+              class={classes.image}
+              data-modal-img
+            />
+          )}
+        </div>
 
-      <div class={classes.fileInfo}>
-        <div class="flex flex-col gap-xs text-sm">
+        <hr class="border-border mx-4 mb-3 shrink-0" />
+
+        <div class={classes.fileInfo}>
+          <div class="flex flex-col gap-xs text-sm">
+            {
+              metaSource && (
+                <div class="flex flex-row gap-xs items-center">
+                  <span class="i-lucide-image size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Source:</span>
+                  <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
+                </div>
+              )
+            }
+            {
+              metaFormat && (
+                <div class="flex flex-row gap-xs items-center">
+                  <span class="i-lucide-file-question-mark size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Format:</span>
+                  <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
+                </div>
+              )
+            }
+            {
+              metaDimensions && (
+                <div class="flex flex-row gap-xs items-center">
+                  <span class="i-lucide-image-upscale size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Dimensions:</span>
+                  <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
+                </div>
+              )
+            }
+            {
+              metaSize && (
+                <div class="flex flex-row gap-xs items-center">
+                  <span class="i-lucide-hard-drive size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Size:</span>
+                  <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
+                </div>
+              )
+            }
+            {
+              metaAlt && (
+                <div class="flex flex-row gap-xs items-center">
+                  <span class="i-lucide-align-left size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Alt:</span>
+                  <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
+                </div>
+              )
+            }
+          </div>
+
           {
-            metaSource && (
-              <div class="flex flex-row gap-xs items-center">
-                <span class="i-lucide-image size-4 shrink-0 text-muted-foreground" />
-                <span class="text-muted-foreground">Source:</span>
-                <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
-              </div>
-            )
-          }
-          {
-            metaFormat && (
-              <div class="flex flex-row gap-xs items-center">
-                <span class="i-lucide-file-question-mark size-4 shrink-0 text-muted-foreground" />
-                <span class="text-muted-foreground">Format:</span>
-                <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
-              </div>
-            )
-          }
-          {
-            metaDimensions && (
-              <div class="flex flex-row gap-xs items-center">
-                <span class="i-lucide-image-upscale size-4 shrink-0 text-muted-foreground" />
-                <span class="text-muted-foreground">Dimensions:</span>
-                <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
-              </div>
-            )
-          }
-          {
-            metaSize && (
-              <div class="flex flex-row gap-xs items-center">
-                <span class="i-lucide-hard-drive size-4 shrink-0 text-muted-foreground" />
-                <span class="text-muted-foreground">Size:</span>
-                <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
-              </div>
-            )
-          }
-          {
-            metaAlt && (
-              <div class="flex flex-row gap-xs items-center">
-                <span class="i-lucide-align-left size-4 shrink-0 text-muted-foreground" />
-                <span class="text-muted-foreground">Alt:</span>
-                <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
-              </div>
+            metaDownload && (
+              <button
+                type="button"
+                class={classes.download}
+                data-image-download
+              >
+                <span class="i-lucide-download size-4 shrink-0" />
+                Download Original
+              </button>
             )
           }
         </div>
 
-        {
-          metaDownload && (
-            <button
-              type="button"
-              class={classes.download}
-              data-image-download
-            >
-              <span class="i-lucide-download size-4 shrink-0" />
-              Download Original
-            </button>
-          )
-        }
+        <form method="dialog" class="absolute top-2 right-2">
+          <button
+            type="submit"
+            class={classes.closeButton}
+            aria-label="Close"
+          >
+            <span class="i-lucide-x size-4" />
+          </button>
+        </form>
       </div>
-
-      <form method="dialog" class="absolute top-2 right-2">
-        <button
-          type="submit"
-          class={classes.closeButton}
-          aria-label="Close"
-        >
-          <span class="i-lucide-x size-4" />
-        </button>
-      </form>
-    </div>
-  </dialog>
-</div>
+    </dialog>
+  </div>
+</rla-image>
 
 <script>
-  function initializeImages() {
-    document.querySelectorAll<HTMLElement>("[data-image-trigger]").forEach((trigger) => {
-      if (trigger.hasAttribute('data-initialized')) return
-      trigger.setAttribute('data-initialized', 'true')
+  class RLAImage extends HTMLElement {
+    connectedCallback() {
+      this.style.display = 'contents';
+      const trigger = this.querySelector("[data-image-trigger]");
+      if (!trigger) return;
 
-      const parent = trigger.closest(".group\\/image") || trigger.parentElement
-      const dialog = parent?.querySelector("[data-image-dialog]") as HTMLDialogElement | null
-      if (!dialog) return
+      const dialog = this.querySelector("[data-image-dialog]") as HTMLDialogElement | null;
+      if (!dialog) return;
 
-      const sizeEl = parent?.querySelector("[data-metadata-size]")
-      const formatEl = parent?.querySelector("[data-metadata-format]")
-      let fetched = false
+      const sizeEl = this.querySelector("[data-metadata-size]");
+      const formatEl = this.querySelector("[data-metadata-format]");
+      let fetched = false;
 
       trigger.addEventListener("click", () => {
         if (!fetched) {
-          fetched = true
-          const imgEl = dialog.querySelector("[data-modal-img]")
+          fetched = true;
+          const imgEl = dialog.querySelector("[data-modal-img]");
           if (imgEl) {
-            const src = imgEl.getAttribute("src")
+            const src = imgEl.getAttribute("src");
             if (src) {
               fetch(src).then(r => r.blob()).then(blob => {
-                if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB"
+                if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB";
                 if (formatEl && blob.type) {
-                  const mime = blob.type ? blob.type.split("/").pop()?.toUpperCase() : ""
-                  if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime
+                  const mime = blob.type.split("/").pop()?.toUpperCase();
+                  if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime;
                 }
-              }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable" })
+              }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable"; });
             }
           }
         }
-        dialog.showModal()
-      })
+        dialog.showModal();
+      });
 
       dialog.addEventListener("click", (e) => {
-        if (e.target === dialog) dialog.close()
-      })
+        if (e.target === dialog) dialog.close();
+      });
 
-      const downloadBtn = dialog.querySelector("[data-image-download]")
+      const downloadBtn = dialog.querySelector("[data-image-download]");
       if (downloadBtn) {
         downloadBtn.addEventListener("click", async () => {
-          const img = dialog.querySelector("img")
-          const imgSrc = img?.getAttribute("src")
-          if (!imgSrc) return
+          const img = dialog.querySelector("img");
+          const imgSrc = img?.getAttribute("src");
+          if (!imgSrc) return;
           try {
-            const response = await fetch(imgSrc)
-            const blob = await response.blob()
-            const url = URL.createObjectURL(blob)
-            const link = document.createElement("a")
-            link.href = url
-            const triggerImg = trigger.querySelector("img")
-            const srcAttr = triggerImg ? triggerImg.getAttribute("src") || "" : ""
-            link.download = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            URL.revokeObjectURL(url)
+            const response = await fetch(imgSrc);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            const triggerImg = trigger.querySelector("img");
+            const srcAttr = triggerImg ? triggerImg.getAttribute("src") || "" : "";
+            link.download = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
           } catch (err) {
-            console.error("Download failed", err)
+            console.error("Download failed", err);
           }
-        })
+        });
       }
-    })
+    }
   }
 
-  // Run on first load
-  initializeImages()
-
-  // Run on page navigation when using Astro view transitions
-  document.addEventListener("DOMContentLoaded", initializeImages)
-  document.addEventListener("astro:page-load", initializeImages)
+  if (!customElements.get('rla-image')) {
+    customElements.define('rla-image', RLAImage);
+  }
 </script>

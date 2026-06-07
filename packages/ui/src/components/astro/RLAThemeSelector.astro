@@ -23,26 +23,20 @@ const classes = resolveClasses(themeSelector, {
 }, useUi("themeSelector", uiProp), className);
 ---
 
-<RLAButton
-        size={size}
-        class:list={["theme-toggle-button", classes.root]}
-        variant="ghost"
-        aria-label="Toggle theme"
-        {...rest}
->
-    <span class:list={[classes.sun]} />
-    <span class:list={[classes.moon]} />
-</RLAButton>
+<rla-theme-selector {...rest}>
+    <RLAButton
+            size={size}
+            class:list={["theme-toggle-button", classes.root]}
+            variant="ghost"
+            aria-label="Toggle theme"
+    >
+        <span class:list={[classes.sun]} />
+        <span class:list={[classes.moon]} />
+    </RLAButton>
+</rla-theme-selector>
 
 <script>
     import { defineShortcuts } from "../../utils/shortcuts"
-
-    // CSP-safe: we toggle .dark / .light classes on <html> instead of setting
-    // inline styles. Class toggling is governed by script-src, not style-src.
-    // The preflight emits:
-    //   .dark  { color-scheme: dark  }
-    //   .light { color-scheme: light }
-    // which makes all light-dark() variables resolve correctly.
 
     function applyStoredTheme() {
         const stored = localStorage.getItem('theme');
@@ -53,62 +47,60 @@ const classes = resolveClasses(themeSelector, {
             document.documentElement.classList.remove('dark');
             document.documentElement.classList.add('light');
         }
-        // No stored preference → leave classes alone.
-        // The head script has already applied OS preference via .dark if needed.
-    }
-
-    function toggleTheme() {
-        const willBeDark = !document.documentElement.classList.contains('dark');
-        document.documentElement.classList.toggle('dark',  willBeDark);
-        document.documentElement.classList.toggle('light', !willBeDark);
-        localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
-        
-        const buttons = document.querySelectorAll('.theme-toggle-button');
-        buttons.forEach(btn => {
-            btn.setAttribute('data-state', willBeDark ? 'on' : 'off');
-            btn.setAttribute('aria-pressed', willBeDark.toString());
-        });
-    }
-
-    let shortcutsCleanup: (() => void) | null = null;
-
-    function setupThemeToggle() {
-        const buttons = document.querySelectorAll('.theme-toggle-button');
-
-        const updateButtons = (isDark: boolean) => {
-            buttons.forEach(btn => {
-                btn.setAttribute('data-state', isDark ? 'on' : 'off');
-                btn.setAttribute('aria-pressed', isDark.toString());
-            });
-        };
-
-        const currentIsDark = document.documentElement.classList.contains('dark');
-        updateButtons(currentIsDark);
-
-        buttons.forEach(button => {
-            if (button.hasAttribute('data-initialized')) return;
-            button.setAttribute('data-initialized', '');
-            button.addEventListener('click', toggleTheme);
-        });
-
-        // Register/refresh the theme toggle shortcut (Command+Option+T or Ctrl+Alt+T)
-        if (shortcutsCleanup) shortcutsCleanup();
-        shortcutsCleanup = defineShortcuts({
-            meta_alt_t: {
-                handler: () => {
-                    toggleTheme();
-                },
-                label: "Toggle Theme",
-                description: "Switch between light and dark theme mode",
-                category: "system"
-            }
-        });
     }
 
     applyStoredTheme();
-    setupThemeToggle();
-    document.addEventListener('astro:page-load', () => {
-        applyStoredTheme();
-        setupThemeToggle();
-    });
+
+    class RLAThemeSelector extends HTMLElement {
+        private buttonCleanup: (() => void) | null = null;
+
+        connectedCallback() {
+            this.style.display = 'contents';
+            const button = this.querySelector('.theme-toggle-button');
+            if (!button) return;
+
+            const isDark = document.documentElement.classList.contains('dark');
+            button.setAttribute('data-state', isDark ? 'on' : 'off');
+            button.setAttribute('aria-pressed', isDark.toString());
+
+            const onToggle = () => {
+                const willBeDark = !document.documentElement.classList.contains('dark');
+                document.documentElement.classList.toggle('dark',  willBeDark);
+                document.documentElement.classList.toggle('light', !willBeDark);
+                localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
+                
+                document.querySelectorAll('.theme-toggle-button').forEach(btn => {
+                    btn.setAttribute('data-state', willBeDark ? 'on' : 'off');
+                    btn.setAttribute('aria-pressed', willBeDark.toString());
+                });
+            };
+
+            button.addEventListener('click', onToggle);
+
+            const cleanupShortcut = defineShortcuts({
+                meta_alt_t: {
+                    handler: onToggle,
+                    label: "Toggle Theme",
+                    description: "Switch between light and dark theme mode",
+                    category: "system"
+                }
+            });
+
+            this.buttonCleanup = () => {
+                button.removeEventListener('click', onToggle);
+                cleanupShortcut();
+            };
+        }
+
+        disconnectedCallback() {
+            if (this.buttonCleanup) {
+                this.buttonCleanup();
+                this.buttonCleanup = null;
+            }
+        }
+    }
+
+    if (!customElements.get('rla-theme-selector')) {
+        customElements.define('rla-theme-selector', RLAThemeSelector);
+    }
 </script>

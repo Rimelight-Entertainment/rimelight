@@ -23,107 +23,102 @@ const {
 const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orientation }, useUi("navigationMenu", uiProp), className)
 ---
 
-<nav class={classes.root} data-slot="root" data-nav-menu data-orientation={orientation} {...rest}>
-  <ul class={classes.list} data-slot="list" role="list">
-    {items.map((item, i) => {
-      const hasChildren = item.children && item.children.length > 0
-      
-      const itemPath = (item.href ?? item.to ?? "#") as string
-      const normalizedPath = itemPath.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, '').replace(/\/+$/, '') || '/'
-      const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, '').replace(/\/+$/, '') || '/'
-      
-      const isActive = item.active ?? (
-        normalizedPath !== '' && normalizedPath !== '/' 
-          ? currentPath.startsWith(normalizedPath)
-          : currentPath === '/'
-      )
-      
-      return (
-        <li class={classes.item} data-slot="item" data-nav-item data-index={i}>
-          {hasChildren ? (
-            <button
-              type="button"
-              class={classes.link}
-              data-slot="trigger"
-              data-nav-trigger
-              aria-expanded="false"
-              aria-haspopup="true"
-            >
-              {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
-              {item.label}
-              <span class="i-lucide-chevron-down ml-1 size-3.5 transition-transform duration-200" aria-hidden="true" />
-            </button>
-          ) : (
-            <a
-              href={typeof item.href === "string" ? item.href : (typeof item.to === "string" ? item.to : "#")}
-              class={classes.link}
-              data-slot="link"
-              aria-current={isActive ? "page" : undefined}
-            >
-              {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
-              {item.label}
-            </a>
-          )}
+<rla-navigation-menu orientation={orientation} {...rest}>
+  <nav class={classes.root} data-slot="root" data-nav-menu data-orientation={orientation}>
+    <ul class={classes.list} data-slot="list" role="list">
+      {items.map((item, i) => {
+        const hasChildren = item.children && item.children.length > 0
+        
+        const itemPath = (item.href ?? item.to ?? "#") as string
+        const normalizedPath = itemPath.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, '').replace(/\/+$/, '') || '/'
+        const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, '').replace(/\/+$/, '') || '/'
+        
+        const isActive = item.active ?? (
+          normalizedPath !== '' && normalizedPath !== '/' 
+            ? currentPath.startsWith(normalizedPath)
+            : currentPath === '/'
+        )
+        
+        return (
+          <li class={classes.item} data-slot="item" data-nav-item data-index={i}>
+            {hasChildren ? (
+              <button
+                type="button"
+                class={classes.link}
+                data-slot="trigger"
+                data-nav-trigger
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
+                {item.label}
+                <span class="i-lucide-chevron-down ml-1 size-3.5 transition-transform duration-200" aria-hidden="true" />
+              </button>
+            ) : (
+              <a
+                href={typeof item.href === "string" ? item.href : (typeof item.to === "string" ? item.to : "#")}
+                class={classes.link}
+                data-slot="link"
+                aria-current={isActive ? "page" : undefined}
+              >
+                {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
+                {item.label}
+              </a>
+            )}
 
-          {hasChildren && (
-            <div 
-              class={classes.content + " hidden"} 
-              data-slot="content" 
-              data-nav-content 
-              data-item-index={i}
-              role="region"
-            >
-              {item.slot && Astro.slots.has(`${item.slot}-content`) ? (
-                <slot name={`${item.slot}-content`} />
-              ) : (
-                <ul role="list" class="py-1">
-                  {item.children!.map(child => (
-                    <li>
-                      <a
-                        href={typeof child.href === "string" ? child.href : (typeof child.to === "string" ? child.to : "#")}
-                        class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-                      >
-                        {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}
-                        <div>
-                          <div class="font-medium leading-none">{child.label}</div>
-                          {child.description && (
-                            <p class="mt-1 text-xs text-muted-foreground line-clamp-2">{child.description}</p>
-                          )}
-                        </div>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-        </li>
-      )
-    })}
-  </ul>
+            {hasChildren && (
+              <div 
+                class={classes.content + " hidden"} 
+                data-slot="content" 
+                data-nav-content 
+                data-item-index={i}
+                role="region"
+              >
+                {item.slot && Astro.slots.has(`${item.slot}-content`) ? (
+                  <slot name={`${item.slot}-content`} />
+                ) : (
+                  <ul role="list" class="py-1">
+                    {item.children!.map(child => (
+                      <li>
+                        <a
+                          href={typeof child.href === "string" ? child.href : (typeof child.to === "string" ? child.to : "#")}
+                          class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                        >
+                          {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}
+                          <div>
+                            <div class="font-medium leading-none">{child.label}</div>
+                            {child.description && (
+                              <p class="mt-1 text-xs text-muted-foreground line-clamp-2">{child.description}</p>
+                            )}
+                          </div>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </li>
+        )
+      })}
+    </ul>
 
-  <slot />
+    <slot />
 
-  <div class={classes.viewportWrapper + " hidden"} data-slot="viewport-wrapper" data-nav-viewport-wrapper>
-    <div class={classes.viewport} data-slot="viewport" data-nav-viewport />
-  </div>
-</nav>
+    <div class={classes.viewportWrapper + " hidden"} data-slot="viewport-wrapper" data-nav-viewport-wrapper>
+      <div class={classes.viewport} data-slot="viewport" data-nav-viewport />
+    </div>
+  </nav>
+</rla-navigation-menu>
 
 <script>
-  const activeMenus = new Map<HTMLElement, () => void>();
+  class RLANavigationMenu extends HTMLElement {
+    private navCleanup: (() => void) | null = null;
 
-  function initializeNavMenus() {
-    // Clean up any menus that are no longer in the document
-    for (const [menu, cleanup] of activeMenus.entries()) {
-      if (!document.contains(menu)) {
-        cleanup();
-        activeMenus.delete(menu);
-      }
-    }
-
-    document.querySelectorAll<HTMLElement>("[data-nav-menu]").forEach(menu => {
-      if (menu.hasAttribute('data-initialized')) return;
-      menu.setAttribute('data-initialized', 'true');
+    connectedCallback() {
+      this.style.display = 'contents';
+      const menu = this.querySelector("[data-nav-menu]") as HTMLElement | null;
+      if (!menu) return;
 
       const orientation = menu.getAttribute("data-orientation") || "horizontal";
       const items = menu.querySelectorAll("[data-nav-item]");
@@ -154,7 +149,6 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
       const open = (item: HTMLElement, trigger: HTMLElement, content: HTMLElement) => {
         clearTimeout(hoverTimeout);
         
-        // If there's another active item, close it first (horizontal viewport mode only)
         if (orientation === "horizontal" && activeItem && activeItem !== item) {
           close(activeItem);
         }
@@ -186,7 +180,6 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
         const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
         const itemIndex = item.getAttribute("data-index");
         
-        // Find content - either inside viewport or inside the item
         let content = item.querySelector("[data-nav-content]") as HTMLElement | null;
         if (!content && viewport) {
           content = viewport.querySelector(`[data-nav-content][data-item-index="${itemIndex}"]`) as HTMLElement | null;
@@ -194,7 +187,6 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
 
         if (content) {
           content.classList.add("hidden");
-          // Move back to item
           if (viewport && viewport.contains(content)) {
             item.appendChild(content);
           }
@@ -211,7 +203,6 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
           activeItem = null;
         }
 
-        // If no item is active, hide viewport (horizontal viewport mode only)
         if (orientation === "horizontal" && !activeItem && viewportWrapper) {
           viewportWrapper.classList.add("hidden");
           viewportWrapper.setAttribute("data-state", "closed");
@@ -225,6 +216,10 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
         });
       };
 
+      const clickListeners: (() => void)[] = [];
+      const enterListeners: (() => void)[] = [];
+      const leaveListeners: (() => void)[] = [];
+
       items.forEach(itemNode => {
         const item = itemNode as HTMLElement;
         const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
@@ -232,8 +227,7 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
 
         if (!trigger || !content) return;
 
-        // Click behavior (works everywhere, including mobile)
-        trigger.addEventListener("click", (e) => {
+        const onClick = (e: MouseEvent) => {
           e.stopPropagation();
           const isOpen = trigger.getAttribute("aria-expanded") === "true";
           if (isOpen) {
@@ -241,41 +235,49 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
           } else {
             open(item, trigger, content);
           }
-        });
+        };
+        trigger.addEventListener("click", onClick);
+        clickListeners.push(() => trigger.removeEventListener("click", onClick));
 
-        // Hover behavior (horizontal desktop only)
         if (orientation === "horizontal") {
-          item.addEventListener("mouseenter", () => {
+          const onMouseEnter = () => {
             clearTimeout(hoverTimeout);
             open(item, trigger, content);
-          });
-
-          item.addEventListener("mouseleave", () => {
+          };
+          const onMouseLeave = () => {
             hoverTimeout = setTimeout(() => {
               if (activeItem === item) {
                 close(item);
               }
             }, 150);
-          });
+          };
+          item.addEventListener("mouseenter", onMouseEnter);
+          item.addEventListener("mouseleave", onMouseLeave);
+          enterListeners.push(() => item.removeEventListener("mouseenter", onMouseEnter));
+          leaveListeners.push(() => item.removeEventListener("mouseleave", onMouseLeave));
         }
       });
 
-      // Handle viewport wrapper hover so menu stays open when hovering the mega menu itself
-      if (viewportWrapper) {
-        viewportWrapper.addEventListener("mouseenter", () => {
-          clearTimeout(hoverTimeout);
-        });
+      let viewportEnter: (() => void) | null = null;
+      let viewportLeave: (() => void) | null = null;
 
-        viewportWrapper.addEventListener("mouseleave", () => {
+      if (viewportWrapper) {
+        const onVpEnter = () => {
+          clearTimeout(hoverTimeout);
+        };
+        const onVpLeave = () => {
           hoverTimeout = setTimeout(() => {
             if (activeItem) {
               close(activeItem);
             }
           }, 150);
-        });
+        };
+        viewportWrapper.addEventListener("mouseenter", onVpEnter);
+        viewportWrapper.addEventListener("mouseleave", onVpLeave);
+        viewportEnter = () => viewportWrapper.removeEventListener("mouseenter", onVpEnter);
+        viewportLeave = () => viewportWrapper.removeEventListener("mouseleave", onVpLeave);
       }
 
-      // Close on clicking outside
       const onDocumentClick = (e: MouseEvent) => {
         const target = e.target as HTMLElement;
         if (!menu.contains(target) && (!viewportWrapper || !viewportWrapper.contains(target))) {
@@ -284,24 +286,32 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
       };
       document.addEventListener("click", onDocumentClick);
 
-      // Save cleanup function for when menu gets destroyed/unmounted on navigation
-      activeMenus.set(menu, () => {
+      this.navCleanup = () => {
         window.removeEventListener("scroll", updatePosition);
         window.removeEventListener("resize", updatePosition);
         document.removeEventListener("click", onDocumentClick);
+        clickListeners.forEach(fn => fn());
+        enterListeners.forEach(fn => fn());
+        leaveListeners.forEach(fn => fn());
+        if (viewportEnter) viewportEnter();
+        if (viewportLeave) viewportLeave();
         if (viewportWrapper && viewportWrapper.parentNode === document.body) {
           viewportWrapper.remove();
         }
-      });
-    });
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.navCleanup) {
+        this.navCleanup();
+        this.navCleanup = null;
+      }
+    }
   }
 
-  // Run on first load
-  initializeNavMenus();
-
-  // Run on page navigation when using Astro view transitions
-  document.addEventListener("DOMContentLoaded", initializeNavMenus);
-  document.addEventListener("astro:page-load", initializeNavMenus);
+  if (!customElements.get('rla-navigation-menu')) {
+    customElements.define('rla-navigation-menu', RLANavigationMenu);
+  }
 </script>
 
 <style is:global>

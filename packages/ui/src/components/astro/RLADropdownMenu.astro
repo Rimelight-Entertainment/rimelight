@@ -25,65 +25,56 @@ const classes = resolveClasses(dropdownMenu, {
   size
 }, useUi("dropdownMenu", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" data-dropdown-menu>
-  <button
-    type="button"
-    class={classes.trigger}
-    data-slot="trigger"
-    data-dropdown-trigger
-    {...rest}
-  >
-    <slot name="trigger">
-      {icon && <span class={icon} />}
-      {label}
-      <span class="ml-2 i-lucide-chevron-down opacity-50" />
-    </slot>
-  </button>
+<rla-dropdown-menu {...rest}>
+  <div class={classes.root} data-slot="root" data-dropdown-menu>
+    <button
+      type="button"
+      class={classes.trigger}
+      data-slot="trigger"
+      data-dropdown-trigger
+    >
+      <slot name="trigger">
+        {icon && <span class={icon} />}
+        {label}
+        <span class="ml-2 i-lucide-chevron-down opacity-50" />
+      </slot>
+    </button>
 
-  <div class={classes.content + " hidden"} data-slot="content" data-dropdown-content>
-    <slot>
-      {items.map(item => {
-        if (item.type === "separator") {
-          return <div class={classes.separator} />
-        }
-        if (item.type === "label") {
-          return <div class={classes.label}>{item.label}</div>
-        }
-        return (
-          <button
-            type="button"
-            class={classes.item}
-            data-slot="item"
-            disabled={item.disabled}
-          >
-            {item.icon && <span class={item.icon + " mr-2 size-4 text-muted-foreground"} />}
-            <span>{item.label}</span>
-            {item.shortcut && <span class={classes.shortcut}>{item.shortcut}</span>}
-          </button>
-        )
-      })}
-    </slot>
+    <div class={classes.content + " hidden"} data-slot="content" data-dropdown-content>
+      <slot>
+        {items.map(item => {
+          if (item.type === "separator") {
+            return <div class={classes.separator} />
+          }
+          if (item.type === "label") {
+            return <div class={classes.label}>{item.label}</div>
+          }
+          return (
+            <button
+              type="button"
+              class={classes.item}
+              data-slot="item"
+              disabled={item.disabled}
+            >
+              {item.icon && <span class={item.icon + " mr-2 size-4 text-muted-foreground"} />}
+              <span>{item.label}</span>
+              {item.shortcut && <span class={classes.shortcut}>{item.shortcut}</span>}
+            </button>
+          )
+        })}
+      </slot>
+    </div>
   </div>
-</div>
+</rla-dropdown-menu>
 
 <script>
-  const activeDropdowns = new Map<HTMLElement, () => void>();
+  class RLADropdownMenu extends HTMLElement {
+    private dropdownCleanup: (() => void) | null = null;
 
-  function initializeDropdowns() {
-    // Clean up any dropdowns that are no longer in the document
-    for (const [menu, cleanup] of activeDropdowns.entries()) {
-      if (!document.contains(menu)) {
-        cleanup();
-        activeDropdowns.delete(menu);
-      }
-    }
-
-    document.querySelectorAll<HTMLElement>("[data-dropdown-menu]").forEach(menu => {
-      if (menu.hasAttribute('data-initialized')) return;
-      menu.setAttribute('data-initialized', 'true');
-
-      const trigger = menu.querySelector("[data-dropdown-trigger]");
-      const content = menu.querySelector("[data-dropdown-content]");
+    connectedCallback() {
+      this.style.display = 'contents';
+      const trigger = this.querySelector("[data-dropdown-trigger]") as HTMLElement | null;
+      const content = this.querySelector("[data-dropdown-content]") as HTMLElement | null;
 
       if (!trigger || !content) return;
 
@@ -98,17 +89,21 @@ const classes = resolveClasses(dropdownMenu, {
       };
       document.addEventListener("click", onDocumentClick);
 
-      activeDropdowns.set(menu, () => {
+      this.dropdownCleanup = () => {
         trigger.removeEventListener("click", onTriggerClick);
         document.removeEventListener("click", onDocumentClick);
-      });
-    });
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.dropdownCleanup) {
+        this.dropdownCleanup();
+        this.dropdownCleanup = null;
+      }
+    }
   }
 
-  // Run on first load
-  initializeDropdowns();
-
-  // Run on page transitions
-  document.addEventListener("DOMContentLoaded", initializeDropdowns);
-  document.addEventListener("astro:page-load", initializeDropdowns);
+  if (!customElements.get('rla-dropdown-menu')) {
+    customElements.define('rla-dropdown-menu', RLADropdownMenu);
+  }
 </script>

@@ -38,63 +38,69 @@ const normalizedItems = items.map(item => {
 const selectedItem = normalizedItems.find(item => item.value === value)
 const initialLabel = selectedItem ? selectedItem.label : ""
 ---
-<div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
-  {label && <label class={classes.label} data-slot="label">{label}</label>}
-  
-  <div class="relative w-full" data-select-wrapper>
-    <button
-      type="button"
-      class={classes.trigger}
-      data-slot="trigger"
-      disabled={disabled}
-      data-select-trigger
-      {...rest}
-    >
-      <span data-select-value>{initialLabel || placeholder}</span>
-      <span class="i-lucide-chevron-down opacity-50" />
-    </button>
+<rla-select {...rest}>
+  <div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
+    {label && <label class={classes.label} data-slot="label">{label}</label>}
+    
+    <div class="relative w-full" data-select-wrapper>
+      <button
+        type="button"
+        class={classes.trigger}
+        data-slot="trigger"
+        disabled={disabled}
+        data-select-trigger
+      >
+        <span data-select-value>{initialLabel || placeholder}</span>
+        <span class="i-lucide-chevron-down opacity-50" />
+      </button>
 
-    <div class={classes.content + " hidden"} data-select-dropdown data-slot="content">
-      <div class="py-1" data-select-items>
-        {normalizedItems.map(item => (
-          <div
-            class={classes.item}
-            data-slot="item"
-            data-value={item.value}
-            data-label={item.label}
-            data-select-item
-          >
-            <span class={classes.itemText}>{item.label}</span>
-            <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
-          </div>
-        ))}
+      <div class={classes.content + " hidden"} data-select-dropdown data-slot="content">
+        <div class="py-1" data-select-items>
+          {normalizedItems.map(item => (
+            <div
+              class={classes.item}
+              data-slot="item"
+              data-value={item.value}
+              data-label={item.label}
+              data-select-item
+            >
+              <span class={classes.itemText}>{item.label}</span>
+              <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
+    <input type="hidden" name={name} value={value} data-select-hidden-input />
   </div>
-  <input type="hidden" name={name} value={value} data-select-hidden-input />
-</div>
+</rla-select>
 
 <script>
-  const initializeSelects = () => {
-    document.querySelectorAll("[data-select-wrapper]").forEach(wrapper => {
-      if (wrapper.hasAttribute("data-initialized")) return;
-      wrapper.setAttribute("data-initialized", "true");
+  class RLASelect extends HTMLElement {
+    private selectCleanup: (() => void) | null = null;
+
+    connectedCallback() {
+      this.style.display = 'contents';
+      const wrapper = this.querySelector("[data-select-wrapper]") as HTMLElement | null;
+      if (!wrapper) return;
 
       const trigger = wrapper.querySelector("[data-select-trigger]") as HTMLButtonElement;
       const dropdown = wrapper.querySelector("[data-select-dropdown]") as HTMLDivElement;
-      const items = wrapper.querySelectorAll("[data-select-item]");
+      const items = wrapper.querySelectorAll<HTMLElement>("[data-select-item]");
       const valueSpan = wrapper.querySelector("[data-select-value]");
-      const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-select-hidden-input]") as HTMLInputElement;
+      const hiddenInput = this.querySelector("[data-select-hidden-input]") as HTMLInputElement | null;
 
       if (!trigger || !dropdown) return;
 
-      trigger.addEventListener("click", (e) => {
+      const onTriggerClick = (e: MouseEvent) => {
         e.stopPropagation();
         dropdown.classList.toggle("hidden");
-      });
+      };
+      trigger.addEventListener("click", onTriggerClick);
 
+      const itemCleanups: (() => void)[] = [];
       items.forEach(item => {
-        item.addEventListener("click", (e) => {
+        const onItemClick = (e: MouseEvent) => {
           e.stopPropagation();
           const val = (item as HTMLElement).dataset.value || "";
           const label = (item as HTMLElement).dataset.label || "";
@@ -109,18 +115,32 @@ const initialLabel = selectedItem ? selectedItem.label : ""
           item.querySelector("[data-check-icon]")?.classList.remove("hidden");
           
           dropdown.classList.add("hidden");
-        });
+        };
+        item.addEventListener("click", onItemClick);
+        itemCleanups.push(() => item.removeEventListener("click", onItemClick));
       });
-    });
-  };
 
-  // Close all dropdowns when clicking outside
-  document.addEventListener("click", () => {
-    document.querySelectorAll("[data-select-dropdown]").forEach(dropdown => {
-      dropdown.classList.add("hidden");
-    });
-  });
+      const onDocumentClick = () => {
+        dropdown.classList.add("hidden");
+      };
+      document.addEventListener("click", onDocumentClick);
 
-  document.addEventListener("DOMContentLoaded", initializeSelects);
-  document.addEventListener("astro:page-load", initializeSelects);
+      this.selectCleanup = () => {
+        trigger.removeEventListener("click", onTriggerClick);
+        itemCleanups.forEach(fn => fn());
+        document.removeEventListener("click", onDocumentClick);
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.selectCleanup) {
+        this.selectCleanup();
+        this.selectCleanup = null;
+      }
+    }
+  }
+
+  if (!customElements.get('rla-select')) {
+    customElements.define('rla-select', RLASelect);
+  }
 </script>

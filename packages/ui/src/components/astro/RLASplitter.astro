@@ -30,153 +30,191 @@ const panelCount = sizes.length
 const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
 ---
 
-<div
-  class:list={[classes.root, id]}
-  data-slot="root"
-  data-resizable
-  data-direction={direction}
-  {...rest}
->
-  {sizes.map((_size, i) => (
-    <>
-      <div
-        class={classes.panel}
-        data-slot="panel"
-        data-resizable-panel={i}
-      >
-        <slot name={`panel-${i}`}>
-          {i === 0
-            ? <slot />
-            : <slot name="panel" />
-          }
-        </slot>
-      </div>
-
-      {/* Render a handle between panels, not after the last one */}
-      {i < panelCount - 1 && (
+<rla-splitter {...rest}>
+  <div
+    class:list={[classes.root, id]}
+    data-slot="root"
+    data-resizable
+    data-direction={direction}
+  >
+    {sizes.map((_size, i) => (
+      <>
         <div
-          class={classes.handle}
-          data-slot="handle"
-          data-resizable-handle={i}
-          role="separator"
-          aria-orientation={direction === "horizontal" ? "vertical" : "horizontal"}
-          tabindex={0}
-          aria-label="Resize panels"
+          class={classes.panel}
+          data-slot="panel"
+          data-resizable-panel={i}
         >
-          <span
-            class={
-              direction === "horizontal"
-                ? "i-lucide-grip-vertical size-3.5 text-muted-foreground/50"
-                : "i-lucide-grip-horizontal size-3.5 text-muted-foreground/50"
+          <slot name={`panel-${i}`}>
+            {i === 0
+              ? <slot />
+              : <slot name="panel" />
             }
-            aria-hidden="true"
-          />
+          </slot>
         </div>
-      )}
-    </>
-  ))}
-</div>
+
+        {/* Render a handle between panels, not after the last one */}
+        {i < panelCount - 1 && (
+          <div
+            class={classes.handle}
+            data-slot="handle"
+            data-resizable-handle={i}
+            role="separator"
+            aria-orientation={direction === "horizontal" ? "vertical" : "horizontal"}
+            tabindex={0}
+            aria-label="Resize panels"
+          >
+            <span
+              class={
+                direction === "horizontal"
+                  ? "i-lucide-grip-vertical size-3.5 text-muted-foreground/50"
+                  : "i-lucide-grip-horizontal size-3.5 text-muted-foreground/50"
+              }
+              aria-hidden="true"
+            />
+          </div>
+        )}
+      </>
+    ))}
+  </div>
+</rla-splitter>
 
 <script>
-  document.querySelectorAll("[data-resizable]").forEach(container => {
-    const direction = (container as HTMLElement).dataset.direction ?? "horizontal";
-    const isHorizontal = direction === "horizontal";
+  class RLASplitter extends HTMLElement {
+    private splitterCleanup: (() => void) | null = null;
 
-    const panels = Array.from(
-      container.querySelectorAll("[data-resizable-panel]")
-    ) as HTMLElement[];
+    connectedCallback() {
+      this.style.display = 'contents';
+      const container = this.querySelector("[data-resizable]") as HTMLElement | null;
+      if (!container) return;
 
-    const handles = Array.from(
-      container.querySelectorAll("[data-resizable-handle]")
-    ) as HTMLElement[];
+      const direction = container.dataset.direction ?? "horizontal";
+      const isHorizontal = direction === "horizontal";
 
-    handles.forEach((handle, idx) => {
-      const panelA = panels[idx];
-      const panelB = panels[idx + 1];
-      if (!panelA || !panelB) return;
+      const panels = Array.from(
+        container.querySelectorAll("[data-resizable-panel]")
+      ) as HTMLElement[];
 
-      const containerSize = () =>
-        isHorizontal
-          ? (container as HTMLElement).clientWidth
-          : (container as HTMLElement).clientHeight;
+      const handles = Array.from(
+        container.querySelectorAll("[data-resizable-handle]")
+      ) as HTMLElement[];
 
-      let isDragging = false;
-      let startPos = 0;
-      let startASize = 0;
-      let startBSize = 0;
+      const cleanupFns: (() => void)[] = [];
 
-      const getSize = (el: HTMLElement) =>
-        isHorizontal ? el.offsetWidth : el.offsetHeight;
+      handles.forEach((handle, idx) => {
+        const panelA = panels[idx];
+        const panelB = panels[idx + 1];
+        if (!panelA || !panelB) return;
 
-      const setSize = (el: HTMLElement, px: number) => {
-        const pct = (px / containerSize()) * 100;
-        if (isHorizontal) {
-          el.style.width = `${pct}%`;
-        } else {
-          el.style.height = `${pct}%`;
-        }
-      };
+        const containerSize = () =>
+          isHorizontal
+            ? container.clientWidth
+            : container.clientHeight;
 
-      const onMouseMove = (e: MouseEvent) => {
-        if (!isDragging) return;
-        const delta = isHorizontal
-          ? e.clientX - startPos
-          : e.clientY - startPos;
+        let isDragging = false;
+        let startPos = 0;
+        let startASize = 0;
+        let startBSize = 0;
 
-        const newASize = Math.max(48, startASize + delta);
-        const newBSize = Math.max(48, startBSize - delta);
+        const getSize = (el: HTMLElement) =>
+          isHorizontal ? el.offsetWidth : el.offsetHeight;
 
-        // Only resize if both panels have enough space
-        if (startASize + startBSize - newASize < 48) return;
+        const setSize = (el: HTMLElement, px: number) => {
+          const pct = (px / containerSize()) * 100;
+          if (isHorizontal) {
+            el.style.width = `${pct}%`;
+          } else {
+            el.style.height = `${pct}%`;
+          }
+        };
 
-        setSize(panelA, newASize);
-        setSize(panelB, newBSize);
-      };
+        const onMouseMove = (e: MouseEvent) => {
+          if (!isDragging) return;
+          const delta = isHorizontal
+            ? e.clientX - startPos
+            : e.clientY - startPos;
 
-      const onMouseUp = () => {
-        isDragging = false;
-        document.body.style.cursor = "";
-        document.body.style.userSelect = "";
-        handle.classList.remove("bg-primary/30");
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-      };
+          const newASize = Math.max(48, startASize + delta);
+          const newBSize = Math.max(48, startBSize - delta);
 
-      handle.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        isDragging = true;
-        startPos = isHorizontal ? e.clientX : e.clientY;
-        startASize = getSize(panelA);
-        startBSize = getSize(panelB);
-        document.body.style.cursor = isHorizontal ? "col-resize" : "row-resize";
-        document.body.style.userSelect = "none";
-        handle.classList.add("bg-primary/30");
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
+          // Only resize if both panels have enough space
+          if (startASize + startBSize - newASize < 48) return;
+
+          setSize(panelA, newASize);
+          setSize(panelB, newBSize);
+        };
+
+        const onMouseUp = () => {
+          isDragging = false;
+          document.body.style.cursor = "";
+          document.body.style.userSelect = "";
+          handle.classList.remove("bg-primary/30");
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("mouseup", onMouseUp);
+        };
+
+        const onMouseDown = (e: MouseEvent) => {
+          e.preventDefault();
+          isDragging = true;
+          startPos = isHorizontal ? e.clientX : e.clientY;
+          startASize = getSize(panelA);
+          startBSize = getSize(panelB);
+          document.body.style.cursor = isHorizontal ? "col-resize" : "row-resize";
+          document.body.style.userSelect = "none";
+          handle.classList.add("bg-primary/30");
+          document.addEventListener("mousemove", onMouseMove);
+          document.addEventListener("mouseup", onMouseUp);
+        };
+
+        handle.addEventListener("mousedown", onMouseDown);
+        cleanupFns.push(() => {
+          handle.removeEventListener("mousedown", onMouseDown);
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("mouseup", onMouseUp);
+        });
+
+        // Keyboard resize: arrow keys shift by 2%
+        const onKeyDown = (e: KeyboardEvent) => {
+          const step = containerSize() * 0.02;
+          const forward = isHorizontal
+            ? e.key === "ArrowRight"
+            : e.key === "ArrowDown";
+          const backward = isHorizontal
+            ? e.key === "ArrowLeft"
+            : e.key === "ArrowUp";
+
+          if (!forward && !backward) return;
+          e.preventDefault();
+
+          const aSize = getSize(panelA);
+          const bSize = getSize(panelB);
+          const delta = forward ? step : -step;
+
+          setSize(panelA, Math.max(48, aSize + delta));
+          setSize(panelB, Math.max(48, bSize - delta));
+        };
+
+        handle.addEventListener("keydown", onKeyDown);
+        cleanupFns.push(() => {
+          handle.removeEventListener("keydown", onKeyDown);
+        });
       });
 
-      // Keyboard resize: arrow keys shift by 2%
-      handle.addEventListener("keydown", (e) => {
-        const step = containerSize() * 0.02;
-        const forward = isHorizontal
-          ? e.key === "ArrowRight"
-          : e.key === "ArrowDown";
-        const backward = isHorizontal
-          ? e.key === "ArrowLeft"
-          : e.key === "ArrowUp";
+      this.splitterCleanup = () => {
+        cleanupFns.forEach(fn => fn());
+      };
+    }
 
-        if (!forward && !backward) return;
-        e.preventDefault();
+    disconnectedCallback() {
+      if (this.splitterCleanup) {
+        this.splitterCleanup();
+        this.splitterCleanup = null;
+      }
+    }
+  }
 
-        const aSize = getSize(panelA);
-        const bSize = getSize(panelB);
-        const delta = forward ? step : -step;
-
-        setSize(panelA, Math.max(48, aSize + delta));
-        setSize(panelB, Math.max(48, bSize - delta));
-      });
-    });
-  });
+  if (!customElements.get('rla-splitter')) {
+    customElements.define('rla-splitter', RLASplitter);
+  }
 </script>
 
 <style is:inline set:html={`

@@ -89,32 +89,30 @@ const selectUi = {
 };
 ---
 
-<div class:list={[classes.root]} data-locale-selector {...rest}>
-    {Astro.slots.has("label") && (
-            <label class:list={[classes.label]}>
-                <slot name="label" />
-            </label>
-    )}
+<rla-locale-selector {...rest}>
+    <div class:list={[classes.root]} data-locale-selector>
+        {Astro.slots.has("label") && (
+                <label class:list={[classes.label]}>
+                    <slot name="label" />
+                </label>
+        )}
 
-    <div class:list={[classes.wrapper]}>
-        <RLASelect
-            items={items}
-            value={currentLocaleUrl}
-            size={size}
-            ui={selectUi}
-        />
+        <div class:list={[classes.wrapper]}>
+            <RLASelect
+                items={items}
+                value={currentLocaleUrl}
+                size={size}
+                ui={selectUi}
+            />
+        </div>
     </div>
-</div>
+</rla-locale-selector>
 
 <script>
-    const initializeLocaleSelector = () => {
-        const selectors = document.querySelectorAll('[data-locale-selector]');
-
-        selectors.forEach(selector => {
-            if (selector.hasAttribute('data-initialized')) return;
-            selector.setAttribute('data-initialized', 'true');
-
-            const hiddenInput = selector.querySelector('[data-select-hidden-input]') as HTMLInputElement;
+    class RLALocaleSelector extends HTMLElement {
+        connectedCallback() {
+            this.style.display = 'contents';
+            const hiddenInput = this.querySelector('[data-select-hidden-input]') as HTMLInputElement | null;
             if (!hiddenInput) return;
 
             hiddenInput.addEventListener('change', (event) => {
@@ -124,9 +122,10 @@ const selectUi = {
                     window.location.href = targetUrl;
                 }
             });
-        });
-    };
+        }
+    }
 
-    document.addEventListener('DOMContentLoaded', initializeLocaleSelector);
-    document.addEventListener('astro:page-load', initializeLocaleSelector);
+    if (!customElements.get('rla-locale-selector')) {
+        customElements.define('rla-locale-selector', RLALocaleSelector);
+    }
 </script>

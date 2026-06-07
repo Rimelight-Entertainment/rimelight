@@ -12,50 +12,67 @@ const {
 } = Astro.props
 ---
 
-<RLAButton
-  id="rl-copy-markdown"
-  color="neutral"
-  variant="outline"
-  size="sm"
-  leadingIcon="i-lucide-copy"
-  label="Copy Markdown"
-  data-raw={raw}
-  {...rest}
-/>
+<rla-copy-markdown {...rest}>
+  <RLAButton
+    class="rl-copy-markdown"
+    color="neutral"
+    variant="outline"
+    size="sm"
+    leadingIcon="i-lucide-copy"
+    label="Copy Markdown"
+    data-raw={raw}
+  />
+</rla-copy-markdown>
 
 <script>
-  function setupCopy() {
-    const copyBtn = document.getElementById("rl-copy-markdown") as (HTMLButtonElement & { rlCopyRegistered?: boolean }) | null;
-    if (!copyBtn) return;
+  class RLACopyMarkdown extends HTMLElement {
+    private copyCleanup: (() => void) | null = null;
 
-    if (copyBtn.rlCopyRegistered) return;
-    copyBtn.rlCopyRegistered = true;
+    connectedCallback() {
+      this.style.display = 'contents';
+      const copyBtn = this.querySelector(".rl-copy-markdown") as HTMLButtonElement | null;
+      if (!copyBtn) return;
 
-    copyBtn.addEventListener("click", async () => {
-      try {
-        copyBtn.disabled = true;
-        const markdown = copyBtn.getAttribute("data-raw");
-        if (!markdown) {
-          throw new Error("No raw markdown content provided to copy");
+      const onClick = async () => {
+        try {
+          copyBtn.disabled = true;
+          const markdown = copyBtn.getAttribute("data-raw");
+          if (!markdown) {
+            throw new Error("No raw markdown content provided to copy");
+          }
+          await navigator.clipboard.writeText(markdown);
+          
+          const labelEl = copyBtn.querySelector('[data-slot="label"]');
+          if (labelEl) {
+            const origText = labelEl.textContent;
+            labelEl.textContent = "Copied!";
+            setTimeout(() => {
+              labelEl.textContent = origText;
+            }, 2000);
+          }
+        } catch (err) {
+          console.error("Failed to copy:", err);
+        } finally {
+          copyBtn.disabled = false;
         }
-        await navigator.clipboard.writeText(markdown);
-        
-        const labelEl = copyBtn.querySelector('[data-slot="label"]');
-        if (labelEl) {
-          const origText = labelEl.textContent;
-          labelEl.textContent = "Copied!";
-          setTimeout(() => {
-            labelEl.textContent = origText;
-          }, 2000);
-        }
-      } catch (err) {
-        console.error("Failed to copy:", err);
-      } finally {
-        copyBtn.disabled = false;
+      };
+
+      copyBtn.addEventListener("click", onClick);
+
+      this.copyCleanup = () => {
+        copyBtn.removeEventListener("click", onClick);
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.copyCleanup) {
+        this.copyCleanup();
+        this.copyCleanup = null;
       }
-    });
+    }
   }
 
-  setupCopy();
-  document.addEventListener("astro:after-swap", setupCopy);
+  if (!customElements.get('rla-copy-markdown')) {
+    customElements.define('rla-copy-markdown', RLACopyMarkdown);
+  }
 </script>

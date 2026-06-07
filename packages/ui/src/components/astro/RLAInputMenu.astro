@@ -38,70 +38,64 @@ const normalizedItems = items.map(item => {
 const selectedItem = normalizedItems.find(item => item.value === value)
 const initialLabel = selectedItem ? selectedItem.label : ""
 ---
-<div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
-  {label && <label class={classes.label} data-slot="label">{label}</label>}
-  
-  <div class="relative w-full" data-inputMenu-wrapper>
-    <button
-      type="button"
-      class={classes.trigger}
-      data-slot="trigger"
-      disabled={disabled}
-      data-inputMenu-trigger
-      {...rest}
-    >
-      <span data-inputMenu-value>{initialLabel || placeholder}</span>
-      <span class="i-lucide-chevrons-up-down opacity-50" />
-    </button>
+<rla-input-menu {...rest}>
+  <div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
+    {label && <label class={classes.label} data-slot="label">{label}</label>}
+    
+    <div class="relative w-full" data-inputMenu-wrapper>
+      <button
+        type="button"
+        class={classes.trigger}
+        data-slot="trigger"
+        disabled={disabled}
+        data-inputMenu-trigger
+      >
+        <span data-inputMenu-value>{initialLabel || placeholder}</span>
+        <span class="i-lucide-chevrons-up-down opacity-50" />
+      </button>
 
-    <div class={classes.content + " hidden"} data-inputMenu-dropdown data-slot="content">
-      <input
-        type="text"
-        class={classes.input}
-        placeholder="Search..."
-        data-inputMenu-search
-      />
-      <div class="py-1" data-inputMenu-items>
-        {normalizedItems.map(item => (
-          <div
-            class={classes.item}
-            data-slot="item"
-            data-value={item.value}
-            data-label={item.label}
-            data-inputMenu-item
-          >
-            <span class={classes.itemText}>{item.label}</span>
-            <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
-          </div>
-        ))}
+      <div class={classes.content + " hidden"} data-inputMenu-dropdown data-slot="content">
+        <input
+          type="text"
+          class={classes.input}
+          placeholder="Search..."
+          data-inputMenu-search
+        />
+        <div class="py-1" data-inputMenu-items>
+          {normalizedItems.map(item => (
+            <div
+              class={classes.item}
+              data-slot="item"
+              data-value={item.value}
+              data-label={item.label}
+              data-inputMenu-item
+            >
+              <span class={classes.itemText}>{item.label}</span>
+              <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
+    <input type="hidden" name={name} value={value} data-inputMenu-hidden-input />
   </div>
-  <input type="hidden" name={name} value={value} data-inputMenu-hidden-input />
-</div>
+</rla-input-menu>
 
 <script>
-  const activeInputMenus = new Map<HTMLElement, () => void>();
+  class RLAInputMenu extends HTMLElement {
+    private inputMenuCleanup: (() => void) | null = null;
 
-  function initializeInputMenus() {
-    // Clean up any input menus that are no longer in the document
-    for (const [wrapper, cleanup] of activeInputMenus.entries()) {
-      if (!document.contains(wrapper)) {
-        cleanup();
-        activeInputMenus.delete(wrapper);
-      }
-    }
-
-    document.querySelectorAll<HTMLElement>("[data-inputMenu-wrapper]").forEach(wrapper => {
-      if (wrapper.hasAttribute('data-initialized')) return;
-      wrapper.setAttribute('data-initialized', 'true');
+    connectedCallback() {
+      this.style.display = 'contents';
+      const wrapper = this.querySelector("[data-inputMenu-wrapper]") as HTMLElement | null;
+      if (!wrapper) return;
 
       const trigger = wrapper.querySelector("[data-inputMenu-trigger]") as HTMLButtonElement;
       const dropdown = wrapper.querySelector("[data-inputMenu-dropdown]") as HTMLDivElement;
       const search = wrapper.querySelector("[data-inputMenu-search]") as HTMLInputElement;
-      const items = wrapper.querySelectorAll("[data-inputMenu-item]");
+      const items = wrapper.querySelectorAll<HTMLElement>("[data-inputMenu-item]");
       const valueSpan = wrapper.querySelector("[data-inputMenu-value]");
-      const hiddenInput = wrapper.closest("[data-slot=root]")?.querySelector("[data-inputMenu-hidden-input]") as HTMLInputElement;
+      const hiddenInput = this.querySelector("[data-inputMenu-hidden-input]") as HTMLInputElement;
 
       if (!trigger || !dropdown) return;
 
@@ -151,19 +145,23 @@ const initialLabel = selectedItem ? selectedItem.label : ""
       };
       document.addEventListener("click", onDocumentClick);
 
-      activeInputMenus.set(wrapper, () => {
+      this.inputMenuCleanup = () => {
         trigger.removeEventListener("click", onTriggerClick);
         search?.removeEventListener("input", onSearchInput);
         itemCleanups.forEach(fn => fn());
         document.removeEventListener("click", onDocumentClick);
-      });
-    });
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.inputMenuCleanup) {
+        this.inputMenuCleanup();
+        this.inputMenuCleanup = null;
+      }
+    }
   }
 
-  // Run on first load
-  initializeInputMenus();
-
-  // Run on page transitions
-  document.addEventListener("DOMContentLoaded", initializeInputMenus);
-  document.addEventListener("astro:page-load", initializeInputMenus);
+  if (!customElements.get('rla-input-menu')) {
+    customElements.define('rla-input-menu', RLAInputMenu);
+  }
 </script>

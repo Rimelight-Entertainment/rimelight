@@ -30,49 +30,57 @@ const classes = resolveClasses(tabs, {
 
 const initialValue = value || (items.length > 0 ? items[0]?.value : "")
 ---
-<div class={classes.root} data-slot="root" data-tabs-container data-value={initialValue} {...rest}>
-  <div class={classes.list} data-slot="list" role="tablist">
-    {items.map((item) => {
-      const active = item.value === initialValue
-      return (
-        <button
-          type="button"
-          class={classes.trigger}
-          data-slot="trigger"
-          role="tab"
-          data-value={item.value}
-          data-state={active ? "active" : "inactive"}
-          disabled={item.disabled}
-        >
-          {item.icon && <span class={item.icon + " mr-2"} />}
-          {item.label}
-        </button>
-      )
-    })}
-  </div>
-  <div class="flex-1">
-    <slot>
-      {items.map(item => {
+<rla-tabs {...rest}>
+  <div class={classes.root} data-slot="root" data-tabs-container data-value={initialValue}>
+    <div class={classes.list} data-slot="list" role="tablist">
+      {items.map((item) => {
         const active = item.value === initialValue
         return (
-          <div
-            class={classes.content + (active ? "" : " hidden")}
-            data-slot="content"
-            role="tabpanel"
+          <button
+            type="button"
+            class={classes.trigger}
+            data-slot="trigger"
+            role="tab"
             data-value={item.value}
+            data-state={active ? "active" : "inactive"}
+            disabled={item.disabled}
           >
-            {item.content}
-          </div>
+            {item.icon && <span class={item.icon + " mr-2"} />}
+            {item.label}
+          </button>
         )
       })}
-    </slot>
+    </div>
+    <div class="flex-1">
+      <slot>
+        {items.map(item => {
+          const active = item.value === initialValue
+          return (
+            <div
+              class={classes.content + (active ? "" : " hidden")}
+              data-slot="content"
+              role="tabpanel"
+              data-value={item.value}
+            >
+              {item.content}
+            </div>
+          )
+        })}
+      </slot>
+    </div>
   </div>
-</div>
+</rla-tabs>
 
 <script>
-  function initTabs() {
-    document.querySelectorAll("[data-tabs-container]").forEach(container => {
-      const containerValue = (container as HTMLElement).dataset.value;
+  class RLATabs extends HTMLElement {
+    private tabsCleanup: (() => void) | null = null;
+
+    connectedCallback() {
+      this.style.display = 'contents';
+      const container = this.querySelector("[data-tabs-container]") as HTMLElement | null;
+      if (!container) return;
+
+      const containerValue = container.dataset.value;
       const triggers = container.querySelectorAll("[role=tab]");
       const panels = container.querySelectorAll("[role=tabpanel]");
 
@@ -91,23 +99,13 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
           (panel as HTMLElement).style.display = "none";
         }
       });
-    });
-  }
 
-  // Setup click listeners
-  function setupTabsListeners() {
-    document.querySelectorAll("[data-tabs-container]").forEach(container => {
-      const triggers = container.querySelectorAll("[role=tab]");
-      const panels = container.querySelectorAll("[role=tabpanel]");
+      const clickCleanups: (() => void)[] = [];
 
       triggers.forEach(triggerNode => {
-        const trigger = triggerNode as HTMLButtonElement & { tabsListenerAttached?: boolean };
-        // Prevent duplicate listener registration
-        if (trigger.tabsListenerAttached) return;
-        trigger.tabsListenerAttached = true;
-
-        trigger.addEventListener("click", () => {
-          const targetValue = (trigger as HTMLButtonElement).dataset.value;
+        const trigger = triggerNode as HTMLButtonElement;
+        const onClick = () => {
+          const targetValue = trigger.dataset.value;
 
           triggers.forEach(tNode => {
             const t = tNode as HTMLButtonElement;
@@ -123,16 +121,25 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
               (panel as HTMLElement).style.display = "none";
             }
           });
-        });
+        };
+        trigger.addEventListener("click", onClick);
+        clickCleanups.push(() => trigger.removeEventListener("click", onClick));
       });
-    });
+
+      this.tabsCleanup = () => {
+        clickCleanups.forEach(fn => fn());
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.tabsCleanup) {
+        this.tabsCleanup();
+        this.tabsCleanup = null;
+      }
+    }
   }
 
-  initTabs();
-  setupTabsListeners();
-
-  document.addEventListener("astro:after-swap", () => {
-    initTabs();
-    setupTabsListeners();
-  });
+  if (!customElements.get('rla-tabs')) {
+    customElements.define('rla-tabs', RLATabs);
+  }
 </script>
