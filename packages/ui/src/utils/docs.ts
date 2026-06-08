@@ -65,6 +65,22 @@ function getScopePrefix(items: SidebarItem[], locale: string): string {
   return "/" + firstPart.slice(0, commonLen).join("/") + "/"
 }
 
+function hasPath(items: SidebarItem[], locale: string, normPath: string): boolean {
+  for (const item of items) {
+    if (
+      item.href &&
+      item.href.replace("{locale}", locale).replace(/\/$/, "").toLowerCase() === normPath
+    ) {
+      return true
+    }
+    const childItems = item.children || item.items
+    if (childItems && hasPath(childItems, locale, normPath)) {
+      return true
+    }
+  }
+  return false
+}
+
 export async function getDocsSidebar(
   config: DocsConfig,
   locale: string,
@@ -100,6 +116,15 @@ export async function getDocsSidebar(
   )
 
   let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase())
+  if (!activeScope) {
+    for (let i = 0; i < sidebarScopes.length; i++) {
+      const scope = sidebarScopes[i]
+      if (scope && scope.items && hasPath(scope.items, locale, normPath)) {
+        activeScope = scopes[i]
+        break
+      }
+    }
+  }
   if (!activeScope) {
     const sorted = [...scopePrefixes.entries()]
       .filter(([, p]) => p)
