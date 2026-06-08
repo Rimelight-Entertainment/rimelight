@@ -25,8 +25,10 @@
     "knip": "knip",
     "astro": "astro",
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "tsx scripts/generate-social-cards.ts && astro build",
     "preview": "astro preview",
+    "generate:og": "tsx scripts/generate-social-cards.ts",
+    "generate:og:force": "tsx scripts/generate-social-cards.ts --force",
     "lunaria:build": "lunaria build",
     "lunaria:preview": "lunaria preview"
   },

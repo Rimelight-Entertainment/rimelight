@@ -4,37 +4,25 @@ import RLAMain from "@rimelight/ui/components/astro/RLAMain.astro"
 import { siteConfig } from '@/site.config';
 import '@/styles/global.css';
 import { Font } from 'astro:assets';
-import { useI18n } from '@rimelight/i18n';
 
 interface BlankLayoutProps {
   title: string;
   description: string;
-  noindex?: boolean;
-  is404?: boolean;
-  robots?: string;
-  languageAlternates?: Array<{ hreflang: string; href: string }>;
 }
 
-const { title, description, noindex, is404, robots, languageAlternates } = Astro.props as BlankLayoutProps;
-
-const messages = useI18n(Astro, "app_layout", {
-  skipToContent: "Skip to main content"
-});
+const { title, description } = Astro.props as BlankLayoutProps;
 ---
 
 <!doctype html>
 <html lang="en">
-  <RLAHead title={title} description={description} config={siteConfig} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates}>
+  <RLAHead title={title} description={description} config={siteConfig}>
     <slot name="head" slot="head" />
     <Font cssVariable="--font-sans" preload={true} slot="head" />
     <Font cssVariable="--font-serif" preload={true} slot="head" />
     <Font cssVariable="--font-mono" preload={true} slot="head" />
   </RLAHead>
   <body>
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
-      {messages.skipToContent}
-    </a>
-    <RLAMain id="main-content">
+    <RLAMain>
       <slot />
     </RLAMain>
   </body>
