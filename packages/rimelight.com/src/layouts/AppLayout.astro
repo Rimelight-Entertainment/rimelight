@@ -51,12 +51,13 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 				if (!window.RLHeaderStack) {
 					window.RLHeaderStack = {
 						layers: [],
-						register: function(id, order, naturalHeight, isVisible, el) {
+						register: function(id, order, naturalHeight, isVisible, el, type) {
+							if (type === undefined) type = el && el.getAttribute ? (el.getAttribute('data-layer-type') || 'header') : 'header';
 							let layer = this.layers.find(function(l) { return l.id === id; });
 							if (!layer) {
-								layer = { id: id, order: order, naturalHeight: naturalHeight, isVisible: isVisible, el: el };
+								layer = { id: id, type: type, order: order, naturalHeight: naturalHeight, isVisible: isVisible, el: el };
 								this.layers.push(layer);
-								this.layers.sort(function(a, b) { return a.order - b.order; });
+								this.sortLayers();
 							} else {
 								layer.naturalHeight = naturalHeight;
 								layer.isVisible = isVisible;
@@ -67,6 +68,12 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 						unregister: function(id) {
 							this.layers = this.layers.filter(function(l) { return l.id !== id; });
 							this.update();
+						},
+						sortLayers: function() {
+							this.layers.sort(function(a, b) {
+								if (a.type !== b.type) return a.type === 'banner' ? -1 : 1;
+								return a.order - b.order;
+							});
 						},
 						update: function() {
 							let currentTop = 0;
@@ -97,18 +104,19 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 					return h > 0 ? h : 64;
 				}
 
-				function initHeader(header) {
-					if (header.rlManaged) return;
-					header.rlManaged = true;
+				function initLayer(el) {
+					if (el.rlManaged) return;
+					el.rlManaged = true;
 
-					const id = header.id;
-					const stackIndex = parseInt(header.getAttribute('data-stack-index') || '0', 10);
-					const hideOnScroll = header.getAttribute('data-hide-on-scroll') === 'true';
-					const contentEl = header.querySelector('[data-header-content]');
+					const id = el.id;
+					const type = el.getAttribute('data-layer-type') || 'header';
+					const stackIndex = parseInt(el.getAttribute('data-stack-index') || '0', 10);
+					const hideOnScroll = el.getAttribute('data-hide-on-scroll') === 'true';
+					const contentEl = el.querySelector('[data-header-content]');
 					let naturalHeight = getHeight(contentEl);
 					let isVisible = true;
 
-					RL.register(id, stackIndex, naturalHeight, isVisible, header);
+					RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
 
 					if (typeof ResizeObserver !== 'undefined' && contentEl) {
 						new ResizeObserver(function(entries) {
@@ -129,7 +137,7 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 								const newVisible = current <= 50 ? true : diff <= 0;
 								if (newVisible !== isVisible) {
 									isVisible = newVisible;
-									RL.register(id, stackIndex, naturalHeight, isVisible, header);
+									RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
 								}
 								lastScrollY = current;
 							}
@@ -147,30 +155,34 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 					})();
 				}
 
-				// Init all existing headers
-				const headers = document.querySelectorAll("[data-rla-header='true']");
-				for (let i = 0; i < headers.length; i++) initHeader(headers[i]);
+				function layerSelector() {
+					return "[data-rla-header='true'],[data-rla-banner='true']";
+				}
 
-				// Watch for new headers (client-side nav) and removals
+				// Init all existing layers
+				const layers = document.querySelectorAll(layerSelector());
+				for (let i = 0; i < layers.length; i++) initLayer(layers[i]);
+
+				// Watch for new layers (client-side nav) and removals
 				window.rlHeaderObserver = new MutationObserver(function(mutations) {
 					for (let i = 0; i < mutations.length; i++) {
 						const added = mutations[i].addedNodes;
 						for (let j = 0; j < added.length; j++) {
 							const node = added[j];
 							if (node.nodeType !== 1) continue;
-							if (node.matches && node.matches("[data-rla-header='true']")) initHeader(node);
+							if (node.matches && node.matches(layerSelector())) initLayer(node);
 							if (node.querySelectorAll) {
-								const nested = node.querySelectorAll("[data-rla-header='true']");
-								for (let k = 0; k < nested.length; k++) initHeader(nested[k]);
+								const nested = node.querySelectorAll(layerSelector());
+								for (let k = 0; k < nested.length; k++) initLayer(nested[k]);
 							}
 						}
 						const removed = mutations[i].removedNodes;
 						for (let j = 0; j < removed.length; j++) {
 							const node = removed[j];
 							if (node.nodeType !== 1) continue;
-							if (node.matches && node.matches("[data-rla-header='true']")) RL.unregister(node.id);
+							if (node.matches && node.matches(layerSelector())) RL.unregister(node.id);
 							if (node.querySelectorAll) {
-								const nested = node.querySelectorAll("[data-rla-header='true']");
+								const nested = node.querySelectorAll(layerSelector());
 								for (let k = 0; k < nested.length; k++) RL.unregister(nested[k].id);
 							}
 						}

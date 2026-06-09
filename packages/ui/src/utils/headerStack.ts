@@ -1,5 +1,6 @@
 export interface HeaderLayer {
   id: string
+  type: "banner" | "header"
   order: number
   naturalHeight: number
   isVisible: boolean
@@ -13,7 +14,8 @@ export interface HeaderStackManager {
     order: number,
     naturalHeight: number,
     isVisible: boolean,
-    el: HTMLElement | null
+    el: HTMLElement | null,
+    type?: "banner" | "header"
   ) => void
   unregister: (id: string) => void
   update: () => void
@@ -49,13 +51,17 @@ export function getHeaderStack(): HeaderStackManager {
         order: number,
         naturalHeight: number,
         isVisible: boolean,
-        el: HTMLElement | null
+        el: HTMLElement | null,
+        type: "banner" | "header" = "header"
       ) {
         let layer = this.layers.find((l: HeaderLayer) => l.id === id)
         if (!layer) {
-          layer = { id, order, naturalHeight, isVisible, el }
+          layer = { id, type, order, naturalHeight, isVisible, el }
           this.layers.push(layer)
-          this.layers.sort((a: HeaderLayer, b: HeaderLayer) => a.order - b.order)
+          this.layers.sort((a: HeaderLayer, b: HeaderLayer) => {
+            if (a.type !== b.type) return a.type === "banner" ? -1 : 1
+            return a.order - b.order
+          })
         } else {
           layer.naturalHeight = naturalHeight
           layer.isVisible = isVisible

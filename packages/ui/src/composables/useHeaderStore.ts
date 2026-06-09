@@ -1,6 +1,7 @@
 import { map } from "nanostores"
 
 export interface HeaderLayerInfo {
+  type: "banner" | "header"
   order: number
   isVisible: boolean
   height: number

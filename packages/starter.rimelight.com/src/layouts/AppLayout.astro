@@ -1,6 +1,7 @@
 ---
 import RLAHead from '@rimelight/ui/components/astro/RLAHead.astro';
 import AppHeader from '@/components/app/AppHeader.astro';
+import RLABanner from "@rimelight/ui/components/astro/RLABanner.astro"
 import RLAMain from "@rimelight/ui/components/astro/RLAMain.astro"
 import AppFooter from '@/components/app/AppFooter.astro';
 import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro"
@@ -63,6 +64,18 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
 			{messages.skipToContent}
 		</a>
+		<RLABanner
+			contain={false}
+			dismissable
+			dismissId="v2-announcement"
+			class="bg-primary text-primary-foreground font-medium"
+			actions={[
+				{ label: "Learn more", href: "/docs", variant: "solid" },
+				{ label: "What's new", href: "/changelog", variant: "outline" }
+			]}
+		>
+			New: Rimelight v2 is out
+		</RLABanner>
 		<AppHeader />
 		<RLAMain id="main-content">
 			<slot />

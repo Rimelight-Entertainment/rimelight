@@ -2,12 +2,48 @@ import { defineTheme } from "../utils/defineTheme"
 
 export const createBannerTheme = () =>
   defineTheme({
-    slots: ["root"],
+    slots: ["root", "content", "container", "center", "left", "side", "actions", "dismiss"],
     base: {
-      root: ""
+      root: "w-full",
+      content: "w-full",
+      container:
+        "relative flex flex-row items-center justify-center h-12 md:h-14 px-4 md:px-6 lg:px-8 text-sm",
+      left: "absolute left-0 inset-y-0 flex items-center px-4 max-w-[30%] truncate",
+      center: "flex-none text-center min-w-0",
+      side: "absolute right-0 inset-y-0 flex items-center gap-2xs px-4 max-w-[40%]",
+      actions: "flex-none flex items-center gap-2xs",
+      dismiss:
+        "flex-none flex items-center justify-center size-8 rounded-md hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
     },
-    variants: {},
-    defaultVariants: {}
+    variants: {
+      contain: {
+        true: {
+          container: "mx-auto max-w-7xl"
+        },
+        false: {
+          container: "max-w-none"
+        }
+      },
+      sticky: {
+        true: {
+          root: "sticky top-0 inset-x-0 z-50"
+        },
+        false: {
+          root: ""
+        }
+      },
+      fixed: {
+        true: {
+          root: "fixed left-0 right-0 transition-[top,opacity] duration-200 ease-in-out"
+        },
+        false: {}
+      }
+    },
+    defaultVariants: {
+      contain: true,
+      sticky: false,
+      fixed: true
+    }
   })
 
 export default createBannerTheme()
