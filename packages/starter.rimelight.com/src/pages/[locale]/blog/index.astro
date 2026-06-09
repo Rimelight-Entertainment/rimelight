@@ -25,6 +25,11 @@ const groupedPosts = posts.reduce<Record<string, typeof posts>>((acc, post) => {
 
 const categoryOrder = ["development-log", "other"] as const;
 
+const badgeColorMap: Record<string, string> = {
+  "development-log": "info",
+  "other": "success",
+};
+
 const messages = await useI18nAsync(Astro, 'blog', {
 	categories: {
   "development-log": "Development Log",
@@ -58,6 +63,8 @@ const tabsItems = [
 							title={post.data.title}
 							description={post.data.description}
 							to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
+							badge={(messages.categories as unknown as Record<string, string>)[post.data.type]}
+							badgeColor={badgeColorMap[post.data.type] || "primary"}
 						/>
 					))}
 				</RLAGrid>
@@ -79,6 +86,8 @@ const tabsItems = [
 										title={post.data.title}
 										description={post.data.description}
 										to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
+										badge={(messages.categories as unknown as Record<string, string>)[category]}
+										badgeColor={badgeColorMap[category] || "primary"}
 									/>
 								))
 							}

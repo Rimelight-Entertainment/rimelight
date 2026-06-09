@@ -2,7 +2,17 @@ import { defineTheme } from "../utils/defineTheme"
 
 export const createPostTheme = () =>
   defineTheme({
-    slots: ["root", "imageWrapper", "image", "content", "title", "description", "date", "footer"],
+    slots: [
+      "root",
+      "imageWrapper",
+      "image",
+      "content",
+      "title",
+      "description",
+      "badge",
+      "date",
+      "footer"
+    ],
     base: {
       root: "group relative flex overflow-hidden transition-all duration-300",
       imageWrapper: "relative overflow-hidden aspect-video",

@@ -41,6 +41,7 @@ const contentRef = ref<HTMLElement | null>(null)
 const naturalHeight = ref(0)
 const isVisible = ref(true)
 const closed = ref(false)
+const showActions = ref(false)
 
 const fixedStyle = computed(() => {
   if (!fixed) return {}
@@ -133,19 +134,38 @@ function handleActionClick(action: any) {
   >
     <div ref="contentRef" :class="resolvedClasses.content">
       <div :class="resolvedClasses.container">
-        <div :class="resolvedClasses.left" data-slot="left">
+        <div v-show="!showActions" :class="resolvedClasses.left" data-slot="left">
           <slot name="left" />
         </div>
-        <div :class="resolvedClasses.center" data-slot="center">
+        <div v-show="!showActions" :class="resolvedClasses.center" data-slot="center">
           <slot name="center">
             <slot />
           </slot>
         </div>
+
+        <div class="flex-1"></div>
+
         <div :class="resolvedClasses.side">
-          <div data-slot="right">
-            <slot name="right" />
-          </div>
-          <div v-if="actions.length > 0 || !!$slots.actions" :class="resolvedClasses.actions">
+          <slot name="right" />
+        </div>
+
+        <template v-if="actions.length > 0 || !!$slots.actions">
+          <button
+            class="flex-none flex items-center justify-center size-7 rounded-md hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer md:hidden text-sm leading-none"
+            :class="showActions ? 'order-first' : ''"
+            :aria-label="showActions ? 'Hide actions' : 'Show actions'"
+            @click="showActions = !showActions"
+          >
+            ···
+          </button>
+          <div
+            :class="[
+              resolvedClasses.actions,
+              'flex-row items-center justify-center gap-2',
+              showActions ? 'flex order-first' : 'hidden',
+              'md:flex'
+            ]"
+          >
             <slot name="actions">
               <template v-for="(action, i) in actions" :key="i">
                 <a
@@ -180,29 +200,30 @@ function handleActionClick(action: any) {
               </template>
             </slot>
           </div>
-          <button
-            v-if="dismissable"
-            :class="[resolvedClasses.dismiss]"
-            aria-label="Close banner"
-            type="button"
-            @click="handleClose"
+        </template>
+
+        <button
+          v-if="dismissable"
+          :class="[resolvedClasses.dismiss]"
+          aria-label="Close banner"
+          type="button"
+          @click="handleClose"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>

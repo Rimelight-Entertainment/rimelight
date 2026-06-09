@@ -28,6 +28,14 @@ export interface PostProps {
    */
   orientation?: "vertical" | "horizontal"
   /**
+   * Badge label displayed on the post.
+   */
+  badge?: string
+  /**
+   * Badge color scheme.
+   */
+  badgeColor?: string
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any
