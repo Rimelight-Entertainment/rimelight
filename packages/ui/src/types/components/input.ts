@@ -42,6 +42,10 @@ export interface InputProps {
    */
   trailingIcon?: string
   /**
+   * Variant style.
+   */
+  variant?: "default" | "ghost"
+  /**
    * Size scale.
    */
   size?: "sm" | "md" | "lg"

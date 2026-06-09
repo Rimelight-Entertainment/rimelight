@@ -210,10 +210,10 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
             const keysContainer = document.createElement('div');
             keysContainer.className = 'rla-shortcuts-keys';
             
-            shortcut.keys.forEach(key => {
+            shortcut.keys.forEach(k => {
               const kbd = document.createElement('kbd');
               kbd.className = 'rla-shortcuts-kbd';
-              kbd.textContent = key;
+              kbd.textContent = k;
               keysContainer.appendChild(kbd);
             });
             row.appendChild(keysContainer);

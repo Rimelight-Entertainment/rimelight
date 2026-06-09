@@ -41,6 +41,12 @@ const messages = useI18n(Astro, 'about', {
   </RLAPageSection>
 
   <RLAPageSection
+    title={messages.section_about_template_title}
+    description={messages.section_about_template_description}
+    orientation="vertical"
+  />
+
+  <RLAPageSection
     title={messages.section_values_title}
     description={messages.section_values_description}
     orientation="vertical"
@@ -62,11 +68,5 @@ const messages = useI18n(Astro, 'about', {
       </RLAGrid>
     </div>
   </RLAPageSection>
-
-  <RLAPageSection
-    title={messages.section_about_template_title}
-    description={messages.section_about_template_description}
-    orientation="vertical"
-  />
 </AppLayout>
 

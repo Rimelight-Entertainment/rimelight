@@ -82,8 +82,8 @@ const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
 </div>
 
 <script>
-  if (!(window as any).__rla_dialog_listener_active) {
-    (window as any).__rla_dialog_listener_active = true;
+  if (!(window as any).rlaDialogListenerActive) {
+    (window as any).rlaDialogListenerActive = true;
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;

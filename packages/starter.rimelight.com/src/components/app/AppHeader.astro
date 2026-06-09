@@ -213,9 +213,13 @@ const actions: ButtonProps[] = [
           <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-[var(--card)] w-full">
             <div class="bg-[var(--card)] flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <RLAImage
-                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
                 src={placeholderImage}
                 alt=""
+                ui={{
+                  trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",
+                  triggerImage: "w-full h-full object-cover"
+                }}
               />
 
               <div class="flex flex-col gap-sm flex-2">

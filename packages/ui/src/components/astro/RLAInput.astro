@@ -21,6 +21,7 @@ const {
   error = false,
   leadingIcon,
   trailingIcon,
+  variant = "default",
   size = "md",
   color = "primary",
   theme,
@@ -33,6 +34,7 @@ const hasLeading = !!leadingIcon || Astro.slots.has("leading")
 const hasTrailing = !!trailingIcon || Astro.slots.has("trailing")
 
 const classes = resolveClasses(input, {
+  variant,
   size,
   hasLeading,
   hasTrailing,

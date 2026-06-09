@@ -22,7 +22,8 @@ export const createCardTheme = () =>
           description: "text-dimmed"
         },
         outline: {
-          root: "bg-default ring ring-default divide-y divide-default"
+          root: "bg-default ring ring-default divide-y divide-default",
+          description: "text-muted-foreground"
         },
         soft: {
           root: "bg-elevated/50 divide-y divide-default"

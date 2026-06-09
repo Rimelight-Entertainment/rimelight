@@ -51,6 +51,18 @@ const classes = resolveClasses(themeSelector, {
 
     applyStoredTheme();
 
+    function onToggle() {
+        const willBeDark = !document.documentElement.classList.contains('dark');
+        document.documentElement.classList.toggle('dark',  willBeDark);
+        document.documentElement.classList.toggle('light', !willBeDark);
+        localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
+        
+        document.querySelectorAll('.theme-toggle-button').forEach(btn => {
+            btn.setAttribute('data-state', willBeDark ? 'on' : 'off');
+            btn.setAttribute('aria-pressed', willBeDark.toString());
+        });
+    }
+
     class RLAThemeSelector extends HTMLElement {
         private buttonCleanup: (() => void) | null = null;
 
@@ -62,18 +74,6 @@ const classes = resolveClasses(themeSelector, {
             const isDark = document.documentElement.classList.contains('dark');
             button.setAttribute('data-state', isDark ? 'on' : 'off');
             button.setAttribute('aria-pressed', isDark.toString());
-
-            const onToggle = () => {
-                const willBeDark = !document.documentElement.classList.contains('dark');
-                document.documentElement.classList.toggle('dark',  willBeDark);
-                document.documentElement.classList.toggle('light', !willBeDark);
-                localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
-                
-                document.querySelectorAll('.theme-toggle-button').forEach(btn => {
-                    btn.setAttribute('data-state', willBeDark ? 'on' : 'off');
-                    btn.setAttribute('aria-pressed', willBeDark.toString());
-                });
-            };
 
             button.addEventListener('click', onToggle);
 

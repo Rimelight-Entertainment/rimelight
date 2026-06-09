@@ -6,6 +6,7 @@ import { useI18nAsync, getRelativeLocaleUrl } from '@rimelight/i18n';
 import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro"
 import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro"
 import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro"
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 
 const activeLocale = Astro.currentLocale ?? "en";
 
@@ -30,31 +31,61 @@ const messages = await useI18nAsync(Astro, 'blog', {
   "other": "Other"
 } as any
 });
+
+const tabsItems = [
+	{ label: "All", value: "all" },
+	...categoryOrder
+		.filter((cat) => groupedPosts[cat]?.length)
+		.map((cat) => ({
+			label: (messages.categories as unknown as Record<string, string>)[cat],
+			value: cat
+		}))
+];
 ---
 
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
-		{categoryOrder.map((category) => {
-			const categoryPosts = groupedPosts[category];
-			if (!categoryPosts || categoryPosts.length === 0) return null;
-			return (
-				<RLAPageSection title={(messages.categories as unknown as Record<string, string>)[category]}>
-					<RLAGrid cols={4}>
-						{
-							categoryPosts.map((post, index) => (
-								<RLAPost
-									variant="ghost"
-									orientation={index === 0 ? "horizontal" : "vertical"}
-									class={index === 0 ? "col-span-full mb-6" : ""}
-									image={post.data.heroImage}
-									date={post.data.pubDate}
-									title={post.data.title}
-									description={post.data.description}
-									to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
-								/>
-							))
-						}
-					</RLAGrid>
-				</RLAPageSection>
-			);
-		})}
+	<RLAPageSection>
+		<RLATabs items={tabsItems} variant="underline">
+			<div role="tabpanel" data-value="all" class="hidden">
+				<RLAGrid cols={4}>
+					{posts.map((post, index) => (
+						<RLAPost
+							variant="ghost"
+							orientation={index === 0 ? "horizontal" : "vertical"}
+							class={index === 0 ? "col-span-full mb-6" : ""}
+							image={post.data.heroImage}
+							date={post.data.pubDate}
+							title={post.data.title}
+							description={post.data.description}
+							to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
+						/>
+					))}
+				</RLAGrid>
+			</div>
+			{categoryOrder.map((category, i) => {
+				const categoryPosts = groupedPosts[category];
+				if (!categoryPosts || categoryPosts.length === 0) return null;
+				return (
+					<div role="tabpanel" data-value={category} class="hidden">
+						<RLAGrid cols={4}>
+							{
+								categoryPosts.map((post, index) => (
+									<RLAPost
+										variant="ghost"
+										orientation={index === 0 ? "horizontal" : "vertical"}
+										class={index === 0 ? "col-span-full mb-6" : ""}
+										image={post.data.heroImage}
+										date={post.data.pubDate}
+										title={post.data.title}
+										description={post.data.description}
+										to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
+									/>
+								))
+							}
+						</RLAGrid>
+					</div>
+				);
+			})}
+		</RLATabs>
+	</RLAPageSection>
 </AppLayout>

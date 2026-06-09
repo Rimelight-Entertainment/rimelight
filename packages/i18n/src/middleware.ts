@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers"
 import { setKVBinding } from "./index"
 
 export const onRequest = async (context: any, next: any) => {
-  const kv = (env as any).TRANSLATIONS_KV
+  const kv = Reflect.get(env, "TRANSLATIONS_KV")
   if (kv) {
     setKVBinding(kv)
   }

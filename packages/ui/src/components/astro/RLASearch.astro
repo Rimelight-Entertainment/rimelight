@@ -72,13 +72,14 @@ const emptyId = `search-empty-${uniqueId}`
       <!-- Search header -->
       <div class={classes.header} data-slot="header">
         <RLAInput
+          variant="ghost"
           type="text"
           id={inputId}
           placeholder={searchPlaceholder}
           autocomplete="off"
           ui={{
-            root: "relative flex items-center w-full border-none bg-transparent shadow-none focus-within:ring-0",
-            input: "w-full bg-transparent pl-8 pr-20 py-1.5 text-base outline-none text-white placeholder-neutral-500 border-none",
+            root: "relative flex items-center w-full",
+            input: "pl-8 pr-20 py-1.5 text-base outline-none text-white placeholder-neutral-500",
             leading: "absolute left-0 text-neutral-400 flex items-center",
             trailing: "absolute right-0 flex items-center gap-2"
           }}

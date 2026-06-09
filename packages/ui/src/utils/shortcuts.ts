@@ -197,26 +197,27 @@ export function defineShortcuts(
         usingInput
       } as Shortcut
     })
-    .filter(Boolean) as Shortcut[]
+    .filter((item): item is Shortcut => item != null)
 
   // Register documented shortcuts to the store
-  const itemsToRegister: RegisteredShortcut[] = Object.entries(config)
-    .map(([key, shortcutConfig]) => {
-      if (!shortcutConfig || typeof shortcutConfig !== "object") return null
+  const itemsToRegister: RegisteredShortcut[] = Object.entries(config).flatMap(
+    ([key, shortcutConfig]) => {
+      if (!shortcutConfig || typeof shortcutConfig !== "object") return []
 
       const { label, description, category, order } = shortcutConfig
-      if (!label && !description) return null // only register documented shortcuts
+      if (!label && !description) return [] // only register documented shortcuts
 
-      return {
+      const item: RegisteredShortcut = {
         id: `${key}-${Math.random().toString(36).slice(2, 7)}`,
         keys: formatShortcutKeys(key),
-        label,
-        description,
-        category: category || "system",
-        order
+        category: category || "system"
       }
-    })
-    .filter(Boolean) as RegisteredShortcut[]
+      if (label) item.label = label
+      if (description) item.description = description
+      if (order !== undefined) item.order = order
+      return [item]
+    }
+  )
 
   if (itemsToRegister.length > 0) {
     activeShortcutsStore.set([...activeShortcutsStore.get(), ...itemsToRegister])

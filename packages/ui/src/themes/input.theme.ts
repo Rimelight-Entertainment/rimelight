@@ -11,6 +11,12 @@ export const createInputTheme = () =>
       trailing: "absolute right-3 flex items-center justify-center text-muted-foreground"
     },
     variants: {
+      variant: {
+        default: {},
+        ghost: {
+          root: "bg-transparent border-none shadow-none focus-within:ring-0"
+        }
+      },
       size: {
         sm: { input: "py-1 text-xs", leading: "left-2.5", trailing: "right-2.5" },
         md: { input: "py-1.5 text-sm", leading: "left-3", trailing: "right-3" },
@@ -31,6 +37,7 @@ export const createInputTheme = () =>
       }
     },
     defaultVariants: {
+      variant: "default",
       size: "md",
       hasLeading: false,
       hasTrailing: false,

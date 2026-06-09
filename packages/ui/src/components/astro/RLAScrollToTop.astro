@@ -64,6 +64,10 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 </rla-scroll-to-top>
 
 <script>
+  function onClick() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   class RLAScrollToTop extends HTMLElement {
     private cleanupScroll: (() => void) | null = null;
     private styleEl: HTMLStyleElement | null = null;
@@ -106,7 +110,7 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
           .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-track {
             border-width: ${gaugeBorderWidth}px;
             border-color: var(--color-${color}-900);
-            background-color: var(--color-${color}-950);
+            background-color: #000;
           }
           .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-progress {
             --gauge-progress: ${scrollPercentage};
@@ -118,9 +122,6 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 
       innerElement.dataset.rlaInstance = String(id);
 
-      const onClick = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      };
       button.addEventListener('click', onClick);
 
       window.addEventListener('scroll', updateStyles, { passive: true });
