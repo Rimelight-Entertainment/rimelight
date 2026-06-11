@@ -120,6 +120,12 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
       this.columnsContainer = this.querySelector('[data-slot="columns-container"]') as HTMLElement
       this.indicatorElement = this.querySelector('[data-slot="indicator"]') as HTMLElement
 
+      // Restore visibility state from localStorage
+      this.isVisible = localStorage.getItem('rla-grid-visible') === 'true'
+      if (this.gridElement) {
+        this.gridElement.style.display = this.isVisible ? 'block' : 'none'
+      }
+
       // Initialize ResizeObserver to monitor viewport changes
       this.resizeObserver = new ResizeObserver(this.handleResize)
       this.resizeObserver.observe(document.documentElement)
@@ -373,6 +379,7 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
 
     toggleGrid() {
       this.isVisible = !this.isVisible
+      localStorage.setItem('rla-grid-visible', this.isVisible ? 'true' : 'false')
       if (this.gridElement) {
         this.gridElement.style.display = this.isVisible ? 'block' : 'none'
       }
