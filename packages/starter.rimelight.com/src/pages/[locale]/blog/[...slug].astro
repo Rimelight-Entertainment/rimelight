@@ -52,7 +52,8 @@ const ogImageSrc = `/social-cards/${post.id}.png`;
 </AppLayout>
 
 <style is:global>
-  .blog-container {
-    max-width: calc(6 * var(--rla-grid-col-width, 94px) + 7 * var(--rla-grid-gutter, 24px)) !important;
+  div.blog-container {
+    max-width: calc(6 * var(--rla-grid-col-width, 94px) + 7 * var(--rla-grid-gutter, 24px));
+    padding-inline: var(--rla-grid-gutter, 1.5rem);
   }
 </style>
