@@ -4,7 +4,7 @@ export const createContainerTheme = () =>
   defineTheme({
     slots: ["root"],
     base: {
-      root: "w-full max-w-(--rl-container) mx-auto px-4 sm:px-6 lg:px-8"
+      root: "w-full max-w-(--rl-container) mx-auto px-xs sm:px-md md:px-xl lg:px-xl"
     },
     variants: {},
     defaultVariants: {}

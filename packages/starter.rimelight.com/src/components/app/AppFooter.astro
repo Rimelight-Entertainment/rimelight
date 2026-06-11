@@ -101,3 +101,10 @@ const targetLanguages = [
     </div>
   </div>
 </RLAFooter>
+
+<style is:global>
+  footer[data-slot="root"]:not([data-contain="true"]) [data-slot="container"],
+  header[data-slot="root"]:not([data-contain="true"]) [data-slot="container"] {
+    padding-inline: var(--rla-grid-margin, 1.5rem) !important;
+  }
+</style>

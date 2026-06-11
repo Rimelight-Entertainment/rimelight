@@ -7,7 +7,7 @@ export const createHeaderTheme = () =>
       root: "w-full",
       content: "w-full",
       container:
-        "flex flex-row items-center justify-between gap-4xs h-16 md:h-18 px-4 md:px-6 lg:px-8",
+        "flex flex-row items-center justify-between gap-4xs h-16 md:h-18 px-xs sm:px-md md:px-xl lg:px-xl",
       left: "flex-1 min-w-0 flex items-center justify-start truncate",
       center: "flex-none flex items-center justify-center mx-4",
       right: "flex-1 min-w-0 flex items-center justify-end truncate"
@@ -15,7 +15,7 @@ export const createHeaderTheme = () =>
     variants: {
       contain: {
         true: {
-          container: "mx-auto max-w-7xl"
+          container: "mx-auto max-w-90rem"
         },
         false: {
           container: "max-w-none"

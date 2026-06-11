@@ -6,6 +6,7 @@ import RLAMain from "@rimelight/ui/components/astro/RLAMain.astro"
 import AppFooter from '@/components/app/AppFooter.astro';
 import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro"
 import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
+import RLALayoutGrid from "@rimelight/ui/components/astro/RLALayoutGrid.astro"
 import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro"
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
 import { siteConfig } from '@/site.config';
@@ -83,6 +84,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 		<AppFooter />
 		<RLAScrollToTop showProgress={true} />
 		<RLAShortcuts />
+		<RLALayoutGrid />
 
 		{!hasConsent && (
 			<div id="cookie-notice-container" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300">

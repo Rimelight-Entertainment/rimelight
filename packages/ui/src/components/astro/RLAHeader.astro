@@ -35,6 +35,7 @@ const zIndex = 100 - stackIndex;
   id={headerId}
   data-slot="root"
   class:list={[classes.root]}
+  data-contain={contain ? "true" : "false"}
   data-rla-header={fixed ? "true" : undefined}
   data-stack-index={stackIndex}
   data-hide-on-scroll={String(hideOnScroll)}
@@ -42,7 +43,7 @@ const zIndex = 100 - stackIndex;
   {...rest}
 >
   <div class:list={[classes.content]} data-header-content>
-    <div class:list={[classes.container]}>
+    <div class:list={[classes.container]} data-slot="container">
       <div class:list={[classes.left]} data-slot="left">
         <slot name="left" />
       </div>

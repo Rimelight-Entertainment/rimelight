@@ -164,7 +164,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
     },
 
     shortcuts: {
-      "container": "mx-auto w-full max-w-90rem px-md",
+      "container": "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl",
       "sr-only":
         "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
     },
@@ -455,6 +455,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
 
           --ui-header-height: 4rem;
           --ui-container: 80rem;
+          --rl-container: 1440px;
 
           /* Text / background / border / ring semantic tokens using responsive neutral variables */
           --text-color-default: var(--color-neutral-700);

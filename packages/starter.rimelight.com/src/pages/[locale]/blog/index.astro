@@ -31,11 +31,13 @@ const badgeColorMap: Record<string, string> = {
 };
 
 const messages = await useI18nAsync(Astro, 'blog', {
+	title: "Blog",
+	description: "Articles, development logs, and more.",
 	categories: {
   "development-log": "Development Log",
   "other": "Other"
 } as any
-});
+} as any);
 
 const tabsItems = [
 	{ label: "All", value: "all" },
@@ -49,7 +51,7 @@ const tabsItems = [
 ---
 
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
-	<RLAPageSection>
+	<RLAPageSection title={(messages as any).title} description={(messages as any).description}>
 		<RLATabs items={tabsItems} variant="underline">
 			<div role="tabpanel" data-value="all" class="hidden">
 				<RLAGrid cols={4}>

@@ -23,9 +23,10 @@ const classes = resolveClasses(footer, { contain }, useUi("footer", uiProp), cla
 <footer
   class:list={[classes.root]}
   data-slot="root"
+  data-contain={contain ? "true" : "false"}
   {...rest}
 >
-  <div class:list={[classes.container]}>
+  <div class:list={[classes.container]} data-slot="container">
     <div class:list={[classes.left]} data-slot="left">
       <slot name="left" />
     </div>

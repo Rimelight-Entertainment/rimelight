@@ -20,7 +20,8 @@ export const createPageSectionTheme = () =>
     base: {
       root: "relative isolate",
       background: "absolute inset-0 -z-1 overflow-hidden",
-      container: "mx-auto w-full max-w-90rem px-md flex flex-col lg:grid",
+      container:
+        "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl flex flex-col lg:grid",
       wrapper: "",
       header: "",
       leading: "flex items-center mb-6",
@@ -55,7 +56,8 @@ export const createPageSectionTheme = () =>
         },
         cta: {
           root: "rounded-xl overflow-hidden",
-          container: "lg:grid px-6 py-12 sm:px-12 sm:py-24 lg:px-16 lg:py-24 gap-8 sm:gap-16",
+          container:
+            "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl lg:grid py-12 sm:py-24 lg:py-24 gap-8 sm:gap-16",
           title: "text-3xl sm:text-4xl",
           description: "text-base sm:text-lg",
           body: "mt-8",

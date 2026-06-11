@@ -147,7 +147,6 @@ const actions: ButtonProps[] = [
 ---
 
 <RLAHeader
-  contain={false}
   fixed={true}
   class="rl-dark scroll-header bg-black left-1/2"
 >
@@ -292,6 +291,25 @@ const actions: ButtonProps[] = [
     initial-value: 0px;
   }
 
+  :root {
+    --header-margin-y: 12px;
+    --header-margin-x: 24px;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --header-margin-y: 16px;
+      --header-margin-x: 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --header-margin-y: 24px;
+      --header-margin-x: 48px;
+    }
+  }
+
   @keyframes shrinkHeader {
     from {
       transform: translateX(-50%) translateY(0);
@@ -299,17 +317,10 @@ const actions: ButtonProps[] = [
       max-width: 100%;
     }
     to {
-      transform: translateX(-50%) translateY(16px);
-      width: calc(100% - 32px);
+      transform: translateX(-50%) translateY(var(--header-margin-y));
+      width: calc(100% - var(--header-margin-x));
       border-radius: 9999px;
     }
-  }
-
-  .scroll-header {
-    left: 50%;
-    animation: shrinkHeader linear both;
-    animation-timeline: scroll(root);
-    animation-range: 0 90px;
   }
 
   @keyframes shrinkViewport {
@@ -320,9 +331,9 @@ const actions: ButtonProps[] = [
       max-width: 100%;
     }
     to {
-      --viewport-margin: 12px;
+      --viewport-margin: var(--header-margin-y);
       --viewport-radius: 16px;
-      width: calc(100% - 32px);
+      width: calc(100% - var(--header-margin-x));
     }
   }
 

@@ -27,7 +27,7 @@ const ogImageSrc = `/social-cards/${post.id}.png`;
 ---
 
 <AppLayout title={title} description={description} ogImageSrc={ogImageSrc} ogImageAlt={title}>
-	<RLAContainer class="py-16 max-w-3xl">
+	<RLAContainer class="py-16 blog-container">
 		<article>
 			{heroImage && <RLAImage src={heroImage} alt="" class="hero-image mb-8" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />}
 			<div class="prose dark:prose-invert max-w-none">
@@ -50,3 +50,9 @@ const ogImageSrc = `/social-cards/${post.id}.png`;
 		</article>
 	</RLAContainer>
 </AppLayout>
+
+<style is:global>
+  .blog-container {
+    max-width: calc(6 * var(--rla-grid-col-width, 94px) + 7 * var(--rla-grid-gutter, 24px)) !important;
+  }
+</style>
