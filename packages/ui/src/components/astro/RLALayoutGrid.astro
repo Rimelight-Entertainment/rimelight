@@ -27,12 +27,12 @@ const {
   innerMaxWidth = "768px",
   innerGridColor = "#10b981",
   innerGridOpacity = 0.1,
-  showInnerBackground = false,
-  showBackground = false,
+  showInnerBackground = true,
+  showBackground = true,
   showFullWidth = true,
   fullWidthGridColor = "#3b82f6",
   fullWidthGridOpacity = 0.05,
-  showFullWidthBackground = false,
+  showFullWidthBackground = true,
   zIndex = 1000,
   shortcut = "meta_shift_g",
   devOnly = true,
@@ -92,6 +92,7 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
     <aside class={classes.overlay} data-slot="overlay" style={`z-index: ${zIndex}; display: none;`} id="rla-layout-grid-overlay">
       <!-- Container holding absolutely-positioned viewport columns -->
       <div style="position: relative; width: 100%; height: 100%;" data-slot="columns-container"></div>
+      <div data-slot="indicator" style="position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.85); color: #fff; padding: 6px 12px; border-radius: 6px; font-family: var(--font-mono, monospace); font-size: 11px; font-weight: bold; pointer-events: none; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.5); letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"></div>
     </aside>
   </rla-layout-grid>
 )}
@@ -103,6 +104,7 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
     private isVisible = false
     private gridElement: HTMLElement | null = null
     private columnsContainer: HTMLElement | null = null
+    private indicatorElement: HTMLElement | null = null
     private resizeObserver: ResizeObserver | null = null
     private shortcutsCleanup: (() => void) | null = null
     private currentBreakpoint: 'base' | 'sm' | 'md' | 'lg' | 'xl' = 'base'
@@ -116,6 +118,7 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
       this.style.display = 'contents'
       this.gridElement = this.querySelector('[data-slot="overlay"], #rla-layout-grid-overlay') as HTMLElement
       this.columnsContainer = this.querySelector('[data-slot="columns-container"]') as HTMLElement
+      this.indicatorElement = this.querySelector('[data-slot="indicator"]') as HTMLElement
 
       // Initialize ResizeObserver to monitor viewport changes
       this.resizeObserver = new ResizeObserver(this.handleResize)
@@ -174,29 +177,40 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
       if (!this.columnsContainer) return
 
       const width = document.documentElement.clientWidth
+      const smBreakpoint = parseInt(this.dataset.smBreakpoint || '640')
+      const mdBreakpoint = parseInt(this.dataset.mdBreakpoint || '768')
+      const lgBreakpoint = parseInt(this.dataset.lgBreakpoint || '1024')
+      const xlBreakpoint = parseInt(this.dataset.xlBreakpoint || '1280')
+
       let breakpointIndex = 0
       let colCount = parseInt(this.dataset.cols || '4')
+      let breakpointThreshold = 0
 
       switch (this.currentBreakpoint) {
         case 'xl':
           breakpointIndex = 4
           colCount = parseInt(this.dataset.xlCols || '12')
+          breakpointThreshold = xlBreakpoint
           break
         case 'lg':
           breakpointIndex = 3
           colCount = parseInt(this.dataset.lgCols || '12')
+          breakpointThreshold = lgBreakpoint
           break
         case 'md':
           breakpointIndex = 2
           colCount = parseInt(this.dataset.mdCols || '8')
+          breakpointThreshold = mdBreakpoint
           break
         case 'sm':
           breakpointIndex = 1
           colCount = parseInt(this.dataset.smCols || '4')
+          breakpointThreshold = smBreakpoint
           break
         default:
           breakpointIndex = 0
           colCount = parseInt(this.dataset.cols || '4')
+          breakpointThreshold = 0
           break
       }
 
@@ -264,6 +278,34 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
       const containerStartX = width > maxWidthPx ? containerLeft + marginPx : marginPx
       const step = colWidth + gutterPx
 
+      // Calculate total columns including outer ones
+      let totalCols = colCount
+      if (width > maxWidthPx && showFullWidth) {
+        let leftX = marginPx
+        while (leftX + colWidth < containerLeft) {
+          totalCols++
+          leftX += step
+        }
+        let rightX = width - marginPx - colWidth
+        while (rightX > containerRight) {
+          totalCols++
+          rightX -= step
+        }
+      }
+
+      if (this.indicatorElement) {
+        this.indicatorElement.innerHTML = `<span style="color: #3b82f6;">${this.currentBreakpoint.toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`
+      }
+
+      const hexToRgba = (hex: string, alpha: number): string => {
+        const cleanHex = hex.replace('#', '')
+        const num = parseInt(cleanHex, 16)
+        const r = (num >> 16) & 255
+        const g = (num >> 8) & 255
+        const b = num & 255
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`
+      }
+
       // Create centered CSS Grid container using the exact same classes as the page container
       const gridWrapper = document.createElement('div')
       gridWrapper.className = "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl gap-xs sm:gap-md md:gap-xl lg:gap-xl h-full box-border grid"
@@ -288,8 +330,7 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
           height: '100%',
           borderInline: `1px solid ${color}`,
           boxSizing: 'border-box',
-          backgroundColor: bg ? color : 'transparent',
-          opacity: bg ? opacity.toString() : '1'
+          backgroundColor: bg ? hexToRgba(color, opacity) : 'transparent'
         })
         gridWrapper.appendChild(col)
       }
@@ -309,8 +350,7 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
             height: '100%',
             borderInline: `1px solid ${fullWidthColor}`,
             boxSizing: 'border-box',
-            backgroundColor: showFullWidthBackground ? fullWidthColor : 'transparent',
-            opacity: showFullWidthBackground ? fullWidthOpacity.toString() : '1'
+            backgroundColor: showFullWidthBackground ? hexToRgba(fullWidthColor, fullWidthOpacity) : 'transparent'
           })
           this.columnsContainer!.appendChild(col)
         }
