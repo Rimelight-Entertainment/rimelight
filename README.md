@@ -6,7 +6,6 @@
 
 - **`rimelight.com`**: The main company website.
 - **`starter.rimelight.com`**: Our standardizes starter template for Astro websites.
-- **`playground.rimelight.com`**: Our playground for testing and experimenting.
 
 ### Packages (`/packages`)
 
