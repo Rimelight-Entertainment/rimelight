@@ -5,7 +5,8 @@
     "links_docs_label": "Docs",
     "links_about_label": "About",
     "links_components_label": "Components",
-    "links_tests_label": "Tests"
+    "links_tests_label": "Tests",
+    "left-links_chat_label": "Chat"
   },
   "cookie_notice": {
     "title": "Cookie Notice",

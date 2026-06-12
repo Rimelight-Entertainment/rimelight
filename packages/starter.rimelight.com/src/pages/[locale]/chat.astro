@@ -1,0 +1,547 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { useI18n } from "@rimelight/i18n";
+
+const messages = useI18n(Astro, "chat_page", {
+  title: "Real-time Chat",
+  description: "Experience global, edge-rendered real-time conversations using Cloudflare Durable Objects.",
+  header: "Durable Chat Lobby",
+  status_connected: "Live",
+  status_disconnected: "Offline",
+  status_connecting: "Connecting...",
+  btn_change_nick: "Change Nickname",
+  placeholder_msg: "Send a message to the channel...",
+  btn_send: "Send",
+  channels_title: "Channels",
+  online_title: "Active Users",
+  welcome_title: "Welcome to Rimelight Chat",
+  welcome_desc: "Choose a nickname to join the real-time edge-powered lobby.",
+  nickname_label: "Display Name",
+  btn_join: "Join Chat",
+  no_users: "No other users online",
+  history_loaded: "Message history loaded"
+});
+
+const activeLocale = Astro.currentLocale ?? "en";
+---
+
+<AppLayout title={messages.title} description={messages.description}>
+  <div class="chat-demo-container min-h-[calc(100vh-var(--rl-total-header-height,64px)-80px)] flex items-center justify-center p-4 md:p-6 lg:p-8">
+    
+    <!-- Lobby glass card wrapper -->
+    <div class="chat-glass-card w-full max-w-6xl h-[650px] rounded-2xl overflow-hidden flex flex-col md:flex-row relative">
+      
+      <!-- Side panel: Channels & Nickname -->
+      <div class="w-full md:w-64 bg-zinc-900/80 border-b md:border-b-0 md:border-r border-white/10 p-5 flex flex-col justify-between shrink-0">
+        <div>
+          <!-- Channels list -->
+          <div class="mb-6">
+            <h3 class="text-xs font-semibold tracking-wider text-zinc-400 uppercase mb-3">{messages.channels_title}</h3>
+            <div class="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
+              <button class="channel-btn active" data-channel="general">
+                <span class="opacity-50">#</span> general
+              </button>
+              <button class="channel-btn" data-channel="lounge">
+                <span class="opacity-50">#</span> lounge
+              </button>
+              <button class="channel-btn" data-channel="random">
+                <span class="opacity-50">#</span> random
+              </button>
+              <button class="channel-btn" data-channel="dev">
+                <span class="opacity-50">#</span> dev
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Current user identity profile card -->
+        <div class="bg-white/5 rounded-xl p-3 border border-white/10 flex flex-col gap-2">
+          <div class="flex items-center gap-3">
+            <div id="my-avatar" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white uppercase select-none">
+              ?
+            </div>
+            <div class="overflow-hidden">
+              <div class="text-xs text-zinc-400">Identity</div>
+              <div id="my-nickname-display" class="text-sm font-semibold text-white truncate">Guest</div>
+            </div>
+          </div>
+          <button id="edit-nick-btn" class="w-full text-center py-1.5 text-xs font-medium text-indigo-400 hover:text-indigo-300 bg-white/5 hover:bg-white/10 rounded-md border border-white/5 transition-all">
+            {messages.btn_change_nick}
+          </button>
+        </div>
+      </div>
+
+      <!-- Main chat area -->
+      <div class="flex-1 flex flex-col bg-zinc-950/70 justify-between overflow-hidden">
+        
+        <!-- Header banner -->
+        <div class="h-16 border-b border-white/10 px-6 flex items-center justify-between bg-zinc-900/30 shrink-0">
+          <div>
+            <h2 class="text-base font-semibold text-white flex items-center gap-2">
+              <span class="text-zinc-500 font-normal">#</span>
+              <span id="active-channel-name">general</span>
+            </h2>
+          </div>
+          
+          <!-- Live status badge -->
+          <div class="flex items-center gap-2">
+            <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-zinc-600 transition-colors duration-300"></span>
+            <span id="status-text" class="text-xs font-medium text-zinc-400">{messages.status_connecting}</span>
+          </div>
+        </div>
+
+        <!-- Chat messages stream -->
+        <div id="messages-container" class="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Chat input panel -->
+        <form id="chat-form" class="p-4 border-t border-white/10 bg-zinc-900/30 flex gap-3 items-center shrink-0">
+          <input 
+            type="text" 
+            id="message-input" 
+            placeholder={messages.placeholder_msg} 
+            maxlength="500"
+            required
+            autocomplete="off"
+            class="flex-1 bg-white/5 border border-white/10 hover:border-white/20 focus:border-indigo-500/80 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors"
+          />
+          <button 
+            type="submit" 
+            class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-semibold px-5 py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/10 hover:shadow-indigo-600/20 active:scale-[0.98] cursor-pointer"
+          >
+            {messages.btn_send}
+          </button>
+        </form>
+
+      </div>
+
+      <!-- Side panel: Presence/Active users (hidden on mobile, visible on desktop) -->
+      <div class="w-56 bg-zinc-900/40 border-l border-white/10 p-5 shrink-0 hidden lg:flex flex-col">
+        <h3 class="text-xs font-semibold tracking-wider text-zinc-400 uppercase mb-3 flex items-center gap-2">
+          {messages.online_title}
+          <span id="presence-count" class="bg-white/10 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">0</span>
+        </h3>
+        <div id="presence-list" class="flex-1 overflow-y-auto flex flex-col gap-2">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Welcome Overlay Modal -->
+      <div id="nickname-modal" class="absolute inset-0 bg-zinc-950/95 backdrop-blur-md z-30 flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+        <div class="bg-zinc-900 border border-white/10 w-full max-w-md p-6 rounded-2xl shadow-2xl flex flex-col gap-5 transform scale-95 transition-transform duration-300">
+          <div class="text-center">
+            <h2 class="text-xl font-bold text-white mb-2">{messages.welcome_title}</h2>
+            <p class="text-sm text-zinc-400">{messages.welcome_desc}</p>
+          </div>
+          <form id="nickname-form" class="flex flex-col gap-4">
+            <div>
+              <label for="nickname-input" class="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">{messages.nickname_label}</label>
+              <input 
+                type="text" 
+                id="nickname-input" 
+                maxlength="20"
+                required
+                autocomplete="off"
+                placeholder="Enter nickname..."
+                class="w-full bg-white/5 border border-white/10 focus:border-indigo-500/80 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
+              />
+            </div>
+            <button 
+              type="submit" 
+              class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/10 cursor-pointer text-sm"
+            >
+              {messages.btn_join}
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</AppLayout>
+
+<style>
+  /* Custom vanilla CSS layout styles */
+  .chat-demo-container {
+    background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.08), transparent 40%);
+  }
+
+  .chat-glass-card {
+    background: rgba(24, 24, 27, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Channel buttons styling */
+  .channel-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #a1a1aa; /* text-zinc-400 */
+    background: transparent;
+    border: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .channel-btn:hover {
+    color: #f4f4f5; /* text-zinc-100 */
+    background: rgba(255, 255, 255, 0.04);
+  }
+  
+  .channel-btn.active {
+    color: #ffffff;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+  }
+
+  /* Custom scrollbar */
+  #messages-container::-webkit-scrollbar,
+  #presence-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #messages-container::-webkit-scrollbar-track,
+  #presence-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #messages-container::-webkit-scrollbar-thumb,
+  #presence-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+  }
+
+  #messages-container::-webkit-scrollbar-thumb:hover,
+  #presence-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Modal animation helpers */
+  .modal-open {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  
+  .modal-open > div {
+    transform: scale(1) !important;
+  }
+</style>
+
+<script>
+  let socket: WebSocket | null = null;
+  let activeChannel = 'general';
+  
+  // Retrieve or generate persistent user ID
+  let userId = localStorage.getItem('chat_user_id');
+  if (!userId) {
+    userId = crypto.randomUUID();
+    localStorage.setItem('chat_user_id', userId);
+  }
+
+  // Retrieve nickname
+  let nickname = localStorage.getItem('chat_nickname');
+
+  // DOM references
+  const nicknameModal = document.getElementById('nickname-modal') as HTMLDivElement;
+  const nicknameForm = document.getElementById('nickname-form') as HTMLFormElement;
+  const nicknameInput = document.getElementById('nickname-input') as HTMLInputElement;
+  const myNicknameDisplay = document.getElementById('my-nickname-display') as HTMLDivElement;
+  const myAvatar = document.getElementById('my-avatar') as HTMLDivElement;
+  const editNickBtn = document.getElementById('edit-nick-btn') as HTMLButtonElement;
+  
+  const statusDot = document.getElementById('status-dot') as HTMLSpanElement;
+  const statusText = document.getElementById('status-text') as HTMLSpanElement;
+  
+  const messagesContainer = document.getElementById('messages-container') as HTMLDivElement;
+  const messageInput = document.getElementById('message-input') as HTMLInputElement;
+  const chatForm = document.getElementById('chat-form') as HTMLFormElement;
+  
+  const presenceCount = document.getElementById('presence-count') as HTMLSpanElement;
+  const presenceList = document.getElementById('presence-list') as HTMLDivElement;
+  const activeChannelName = document.getElementById('active-channel-name') as HTMLSpanElement;
+  
+  const channelBtns = document.querySelectorAll('.channel-btn');
+
+  // Colors mapping for user avatar background
+  const colors = [
+    'from-red-500 to-rose-600',
+    'from-blue-500 to-indigo-600',
+    'from-green-500 to-emerald-600',
+    'from-yellow-500 to-amber-600',
+    'from-purple-500 to-violet-600',
+    'from-pink-500 to-fuchsia-600',
+    'from-teal-500 to-cyan-600',
+    'from-orange-500 to-red-600'
+  ];
+
+  function getAvatarGradientClass(name: string): string {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  }
+
+  function setMyIdentity(name: string) {
+    nickname = name;
+    localStorage.setItem('chat_nickname', name);
+    myNicknameDisplay.textContent = name;
+    
+    // Set my avatar initials & color
+    myAvatar.textContent = name.charAt(0);
+    myAvatar.className = `w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white uppercase select-none bg-gradient-to-br ${getAvatarGradientClass(name)}`;
+  }
+
+  // Check if nickname is already set, if not show modal
+  if (!nickname) {
+    nicknameModal.classList.add('modal-open');
+  } else {
+    setMyIdentity(nickname);
+    connectWebSocket();
+  }
+
+  nicknameForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const entered = nicknameInput.value.trim();
+    if (entered) {
+      setMyIdentity(entered);
+      nicknameModal.classList.remove('modal-open');
+      connectWebSocket();
+    }
+  });
+
+  editNickBtn.addEventListener('click', () => {
+    nicknameInput.value = nickname || '';
+    nicknameModal.classList.add('modal-open');
+  });
+
+  // WebSocket Connection
+  // WebSocket Connection
+  function connectWebSocket() {
+    if (socket) {
+      socket.close(1000, 'Reconnecting with new settings');
+    }
+
+    updateConnectionStatus('connecting');
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socketUrl = `${protocol}//${window.location.host}/api/chat/${activeChannel}?userId=${encodeURIComponent(userId!)}&username=${encodeURIComponent(nickname!)}`;
+    
+    socket = new WebSocket(socketUrl);
+
+    socket.onopen = () => {
+      updateConnectionStatus('connected');
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        handleServerMessage(data);
+      } catch (err) {
+        console.error('Error parsing WebSocket message:', err);
+      }
+    };
+
+    socket.onclose = (event) => {
+      updateConnectionStatus('disconnected');
+      // Auto reconnect unless closed intentionally
+      if (event.code !== 1000) {
+        setTimeout(connectWebSocket, 3000);
+      }
+    };
+
+    socket.onerror = (err) => {
+      console.error('WebSocket encountered an error:', err);
+      updateConnectionStatus('disconnected');
+    };
+  }
+
+  function updateConnectionStatus(status: 'connected' | 'disconnected' | 'connecting') {
+    statusDot.className = 'w-2.5 h-2.5 rounded-full transition-colors duration-300';
+    if (status === 'connected') {
+      statusDot.classList.add('bg-emerald-500', 'shadow-[0_0_8px_#10b981]');
+      statusText.textContent = 'Live';
+      statusText.className = 'text-xs font-medium text-emerald-400';
+    } else if (status === 'connecting') {
+      statusDot.classList.add('bg-amber-500', 'shadow-[0_0_8px_#f59e0b]');
+      statusText.textContent = 'Connecting...';
+      statusText.className = 'text-xs font-medium text-amber-400';
+    } else {
+      statusDot.classList.add('bg-rose-500');
+      statusText.textContent = 'Offline';
+      statusText.className = 'text-xs font-medium text-rose-500';
+    }
+  }
+
+  interface ChatMsgPayload {
+    id: string;
+    type: 'message' | 'join' | 'leave' | 'presence';
+    userId: string;
+    username: string;
+    content?: string;
+    timestamp: number;
+  }
+
+  interface PresenceUser {
+    userId: string;
+    username: string;
+  }
+
+  interface HistoryPayload {
+    type: 'history';
+    messages: ChatMsgPayload[];
+  }
+
+  type ServerMessage = ChatMsgPayload | HistoryPayload;
+
+  function handleServerMessage(data: ServerMessage) {
+    if (data.type === 'history') {
+      // Clear container and render history
+      messagesContainer.innerHTML = '';
+      (data as HistoryPayload).messages.forEach((msg) => renderMessage(msg));
+      scrollToBottom();
+    } else if (data.type === 'message') {
+      renderMessage(data as ChatMsgPayload);
+      scrollToBottom();
+    } else if (data.type === 'join' || data.type === 'leave') {
+      renderSystemEvent(data as ChatMsgPayload);
+      scrollToBottom();
+    } else if (data.type === 'presence') {
+      const payload = data as any;
+      updatePresenceList(payload.users || []);
+    }
+  }
+
+  function renderMessage(msg: ChatMsgPayload) {
+    const isMe = msg.userId === userId;
+    const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const messageEl = document.createElement('div');
+    messageEl.className = `flex gap-3 items-end max-w-[85%] md:max-w-[70%] ${isMe ? 'self-end flex-row-reverse' : 'self-start'}`;
+
+    const gradientClass = getAvatarGradientClass(msg.username);
+    const avatarInitial = msg.username.charAt(0);
+
+    messageEl.innerHTML = `
+      <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white uppercase bg-gradient-to-br ${gradientClass} select-none shrink-0 mb-1">
+        ${avatarInitial}
+      </div>
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center text-[10px] text-zinc-400 ${isMe ? 'justify-end' : 'justify-start'}">
+          <span class="font-semibold text-zinc-300">${msg.username}</span>
+          <span>${time}</span>
+        </div>
+        <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed border ${
+          isMe 
+            ? 'bg-gradient-to-br from-indigo-600 to-violet-600 text-white border-indigo-500/30 rounded-br-sm' 
+            : 'bg-white/5 text-zinc-100 border-white/5 rounded-bl-sm'
+        }">
+          ${escapeHtml(msg.content || '')}
+        </div>
+      </div>
+    `;
+    
+    messagesContainer.appendChild(messageEl);
+  }
+
+  function renderSystemEvent(msg: ChatMsgPayload) {
+    const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const eventEl = document.createElement('div');
+    eventEl.className = 'self-center py-1.5 px-3 bg-white/5 rounded-full border border-white/5 text-[10px] text-zinc-400 flex items-center gap-1.5';
+    
+    if (msg.type === 'join') {
+      eventEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span class="font-medium text-zinc-300">${msg.username}</span> joined the room <span class="text-zinc-500">${time}</span>`;
+    } else {
+      eventEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> <span class="font-medium text-zinc-300">${msg.username}</span> left <span class="text-zinc-500">${time}</span>`;
+    }
+    
+    messagesContainer.appendChild(eventEl);
+  }
+
+  function updatePresenceList(users: PresenceUser[]) {
+    presenceCount.textContent = String(users.length);
+    presenceList.innerHTML = '';
+    
+    if (users.length === 0) {
+      presenceList.innerHTML = `<div class="text-xs text-zinc-500 italic p-2">No other users</div>`;
+      return;
+    }
+
+    users.forEach((user) => {
+      const isMe = user.userId === userId;
+      const gradient = getAvatarGradientClass(user.username);
+      
+      const item = document.createElement('div');
+      item.className = 'flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 border border-transparent hover:border-white/5 transition-all';
+      item.innerHTML = `
+        <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white uppercase bg-gradient-to-br ${gradient} select-none shrink-0">
+          ${user.username.charAt(0)}
+        </div>
+        <span class="text-xs text-zinc-200 truncate flex-1 font-medium">${user.username} ${isMe ? '<span class="text-[9px] text-indigo-400">(you)</span>' : ''}</span>
+      `;
+      presenceList.appendChild(item);
+    });
+  }
+
+  function scrollToBottom() {
+    messagesContainer.scrollTo({
+      top: messagesContainer.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+
+  function escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Submit Message Form
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    const content = messageInput.value.trim();
+    if (content) {
+      socket.send(JSON.stringify({
+        type: 'message',
+        content
+      }));
+      messageInput.value = '';
+    }
+  });
+
+  // Channel switcher
+  channelBtns.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      const channel = target.dataset.channel;
+      if (channel && channel !== activeChannel) {
+        // Update active class
+        document.querySelector('.channel-btn.active')?.classList.remove('active');
+        target.classList.add('active');
+
+        // Switch channel
+        activeChannel = channel;
+        activeChannelName.textContent = channel;
+        
+        // Reconnect to the new channel DO stub
+        connectWebSocket();
+      }
+    });
+  });
+</script>

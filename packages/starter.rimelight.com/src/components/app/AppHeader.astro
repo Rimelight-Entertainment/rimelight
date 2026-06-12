@@ -34,6 +34,7 @@ const messages = useI18n(Astro, "app_header", {
   "left-links_blog_label": "Blog",
   "left-links_docs_label": "Docs",
   "left-links_dashboard_label": "Dashboard",
+  "left-links_chat_label": "Chat",
   "actions_view-on-github_label": "View on GitHub",
   "actions_use-template_label": "Use Template",
 });
@@ -128,6 +129,10 @@ const leftLinks: NavigationMenuItem[] = [
   {
     label: messages["left-links_dashboard_label"],
     to: getRelativeLocaleUrl('/dashboard')
+  },
+  {
+    label: messages["left-links_chat_label"],
+    to: getRelativeLocaleUrl('/chat')
   },
 ];
 

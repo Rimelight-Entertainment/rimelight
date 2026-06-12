@@ -1,6 +1,7 @@
 {
   "app_header": {
-    "links_tests_label": "Pruebas"
+    "links_tests_label": "Pruebas",
+    "left-links_chat_label": "Chat"
   },
   "cookie_notice": {
     "title": "Aviso de cookies",
