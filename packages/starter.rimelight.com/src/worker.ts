@@ -252,7 +252,7 @@ class ChatRoom extends DurableObject<ENV> {
   /**
    * Handle Durable Object alarm for cleanup tasks
    */
-  async alarm(): Promise<void> {
+  override async alarm(): Promise<void> {
     // Clean up old messages (older than 24 hours)
     const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000
     this.messageHistory = this.messageHistory.filter((msg) => msg.timestamp > oneDayAgo)
@@ -262,10 +262,21 @@ class ChatRoom extends DurableObject<ENV> {
   }
 }
 
-export { ChatRoom };
+class Document extends DurableObject<ENV> {
+  override async fetch(request: Request): Promise<Response> {
+    return new Response("Obsolete Document DO", { status: 410 });
+  }
+}
+
+export { ChatRoom, Document };
 
 export default {
   async fetch(request, env, ctx) {
+    // Prevent Vite/Rollup from tree-shaking the exported Document class
+    if (request.headers.get("x-prevent-tree-shaking") === "true") {
+      return new Response(Document.name);
+    }
+
     const url = new URL(request.url);
     if (url.pathname.startsWith('/api/chat/')) {
       const parts = url.pathname.split('/');
