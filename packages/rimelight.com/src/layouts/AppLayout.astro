@@ -14,9 +14,11 @@ currentLocale.set(Astro.currentLocale ?? 'en');
 interface AppLayoutProps {
 	title: string;
 	description: string;
+	ogImageSrc?: string;
+	ogImageAlt?: string;
 }
 
-const { title, description } = Astro.props as AppLayoutProps;
+const { title, description, ogImageSrc, ogImageAlt } = Astro.props as AppLayoutProps;
 
 const localeMap: Record<string, string> = {
 	en: 'en_US',
@@ -28,12 +30,13 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
-	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }}>
+	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
 		<slot name="head" slot="head" />
 		<Font cssVariable="--font-sans" preload={true} slot="head" />
 		<Font cssVariable="--font-serif" preload={true} slot="head" />
 		<Font cssVariable="--font-mono" preload={true} slot="head" />
 	</RLAHead>
+	<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
 	<body class="isolate">
 		<AppHeader />
 		<RLAMain>

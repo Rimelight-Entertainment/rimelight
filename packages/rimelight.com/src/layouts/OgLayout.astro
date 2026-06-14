@@ -1,0 +1,26 @@
+---
+import RLAHead from '@rimelight/ui/components/astro/RLAHead.astro';
+import { siteConfig } from '@/site.config';
+import '@/styles/global.css';
+import { Font } from 'astro:assets';
+
+interface OgLayoutProps {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props as OgLayoutProps;
+---
+
+<!doctype html>
+<html lang="en">
+  <RLAHead title={title} description={description} config={siteConfig}>
+    <slot name="head" slot="head" />
+    <Font cssVariable="--font-sans" preload={true} slot="head" />
+    <Font cssVariable="--font-serif" preload={true} slot="head" />
+    <Font cssVariable="--font-mono" preload={true} slot="head" />
+  </RLAHead>
+  <body>
+    <slot />
+  </body>
+</html>

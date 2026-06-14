@@ -27,6 +27,8 @@
     "predev": "tsx scripts/generate-block-maps.ts",
     "dev": "astro dev",
     "prebuild": "tsx scripts/generate-block-maps.ts && tsx scripts/sync-md-to-db.ts",
+    "generate:og": "tsx scripts/generate-social-cards.ts",
+    "generate:og:force": "tsx scripts/generate-social-cards.ts --force",
     "build": "astro build",
     "preview": "astro preview",
     "lunaria:build": "lunaria build",
