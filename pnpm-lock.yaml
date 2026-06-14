@@ -23,7 +23,7 @@ importers:
     devDependencies:
       '@e18e/eslint-plugin':
         specifier: 0.5.0
-        version: 0.5.0(eslint@10.2.0(jiti@2.7.0))(oxlint@1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)))
+        version: 0.5.0(eslint@10.2.0(jiti@2.7.0))(oxlint@1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)))
       '@types/node':
         specifier: 25.9.1
         version: 25.9.1
@@ -38,7 +38,7 @@ importers:
         version: 0.0.75
       vite-plus:
         specifier: latest
-        version: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
+        version: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
 
   packages/cli:
     dependencies:
@@ -66,121 +66,6 @@ importers:
       astro-nanostores-i18n:
         specifier: '>=0.7.0'
         version: 0.7.0(@nanostores/i18n@1.3.3(nanostores@1.3.0))(astro@6.4.4(@types/node@25.9.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3))(nanostores@1.3.0)
-
-  packages/playground.rimelight.com:
-    dependencies:
-      '@astrojs/cloudflare':
-        specifier: 14.0.0-alpha.0
-        version: 14.0.0-alpha.0(@types/node@25.9.1)(astro@7.0.0-alpha.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3))(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(workerd@1.20260529.1)(wrangler@4.96.0)(yaml@2.8.3)
-      '@astrojs/mdx':
-        specifier: 5.0.6
-        version: 5.0.6(astro@7.0.0-alpha.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3))
-      '@astrojs/rss':
-        specifier: 4.0.18
-        version: 4.0.18
-      '@astrojs/sitemap':
-        specifier: 3.7.3
-        version: 3.7.3
-      '@astrojs/vue':
-        specifier: 7.0.0-alpha.0
-        version: 7.0.0-alpha.0(@types/node@25.9.1)(astro@7.0.0-alpha.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3))(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3))(yaml@2.8.3)
-      '@nanostores/i18n':
-        specifier: 1.3.3
-        version: 1.3.3(nanostores@1.3.0)
-      '@neondatabase/serverless':
-        specifier: 1.1.0
-        version: 1.1.0
-      '@rimelight/i18n':
-        specifier: workspace:^0.0.1
-        version: link:../i18n
-      '@rimelight/ui':
-        specifier: workspace:^0.0.34
-        version: link:../ui
-      astro:
-        specifier: 7.0.0-alpha.0
-        version: 7.0.0-alpha.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3)
-      astro-expressive-code:
-        specifier: 0.42.0
-        version: 0.42.0(astro@7.0.0-alpha.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3))
-      astro-nanostores-i18n:
-        specifier: 0.7.0
-        version: 0.7.0(@nanostores/i18n@1.3.3(nanostores@1.3.0))(astro@7.0.0-alpha.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3))(nanostores@1.3.0)
-      better-auth:
-        specifier: 1.6.13
-        version: 1.6.13(better-sqlite3@12.10.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.3)(@neondatabase/serverless@1.1.0)(better-sqlite3@12.10.0)(kysely@0.28.17))(vue@3.5.35(typescript@6.0.3))
-      dotenv:
-        specifier: 17.4.2
-        version: 17.4.2
-      drizzle-orm:
-        specifier: 0.45.2
-        version: 0.45.2(@libsql/client@0.17.3)(@neondatabase/serverless@1.1.0)(better-sqlite3@12.10.0)(kysely@0.28.17)
-      nanostores:
-        specifier: 1.3.0
-        version: 1.3.0
-      sharp:
-        specifier: 0.34.5
-        version: 0.34.5
-      shiki:
-        specifier: 4.1.0
-        version: 4.1.0
-      vue:
-        specifier: 3.5.35
-        version: 3.5.35(typescript@6.0.3)
-      vue-router:
-        specifier: 5.1.0
-        version: 5.1.0(@vue/compiler-sfc@3.5.35)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(vue@3.5.35(typescript@6.0.3))
-      wrangler:
-        specifier: 4.96.0
-        version: 4.96.0
-    devDependencies:
-      '@astrojs/check':
-        specifier: 0.9.9
-        version: 0.9.9(prettier@3.8.3)(typescript@6.0.3)
-      '@astrojs/ts-plugin':
-        specifier: 1.10.9
-        version: 1.10.9
-      '@e18e/eslint-plugin':
-        specifier: 0.5.0
-        version: 0.5.0(eslint@10.2.0(jiti@2.7.0))(oxlint@1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)))
-      '@iconify-json/logos':
-        specifier: 1.2.11
-        version: 1.2.11
-      '@iconify-json/lucide':
-        specifier: ^1.2.111
-        version: 1.2.111
-      '@lunariajs/core':
-        specifier: 0.1.1
-        version: 0.1.1
-      '@types/node':
-        specifier: 25.9.1
-        version: 25.9.1
-      '@unocss/eslint-plugin':
-        specifier: 66.7.0
-        version: 66.7.0(eslint@10.2.0(jiti@2.7.0))(typescript@6.0.3)
-      drizzle-kit:
-        specifier: 0.31.10
-        version: 0.31.10
-      eslint-plugin-regexp:
-        specifier: 3.1.0
-        version: 3.1.0(eslint@10.2.0(jiti@2.7.0))
-      knip:
-        specifier: 6.15.0
-        version: 6.15.0
-      rollup-plugin-visualizer:
-        specifier: 7.0.1
-        version: 7.0.1(rolldown@1.0.0-rc.12(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))
-      tsx:
-        specifier: 4.22.4
-        version: 4.22.4
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-      unocss:
-        specifier: 66.7.0
-        version: 66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
-      vite-plus:
-        specifier: latest
-        version: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
 
   packages/rimelight.com:
     dependencies:
@@ -316,7 +201,7 @@ importers:
         version: 6.0.3
       unocss:
         specifier: 66.7.0
-        version: 66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
+        version: 66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
       vite-plus:
         specifier: latest
         version: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
@@ -431,7 +316,7 @@ importers:
         version: 6.0.3
       unocss:
         specifier: 66.7.0
-        version: 66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
+        version: 66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
       vite-plus:
         specifier: latest
         version: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
@@ -449,7 +334,7 @@ importers:
         version: 1.2.111
       '@unocss/astro':
         specifier: ^66.7.0
-        version: 66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
+        version: 66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
       css-variants:
         specifier: 2.3.5
         version: 2.3.5
@@ -480,7 +365,7 @@ importers:
         version: 1.10.9
       '@e18e/eslint-plugin':
         specifier: 0.5.0
-        version: 0.5.0(eslint@10.2.0(jiti@2.7.0))(oxlint@1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)))
+        version: 0.5.0(eslint@10.2.0(jiti@2.7.0))(oxlint@1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)))
       '@types/node':
         specifier: 25.9.1
         version: 25.9.1
@@ -507,10 +392,10 @@ importers:
         version: 6.0.3
       unocss:
         specifier: 66.7.0
-        version: 66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
+        version: 66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
       vite-plus:
         specifier: latest
-        version: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
+        version: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
 
 packages:
 
@@ -6371,15 +6256,6 @@ snapshots:
       eslint: 10.2.0(jiti@2.7.0)
       oxlint: 1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3))
 
-  '@e18e/eslint-plugin@0.5.0(eslint@10.2.0(jiti@2.7.0))(oxlint@1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)))':
-    dependencies:
-      empathic: 2.0.1
-      module-replacements: 3.0.0-beta.8
-      semver: 7.8.1
-    optionalDependencies:
-      eslint: 10.2.0(jiti@2.7.0)
-      oxlint: 1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3))
-
   '@emmetio/abbreviation@2.3.3':
     dependencies:
       '@emmetio/scanner': 1.0.4
@@ -7531,11 +7407,11 @@ snapshots:
 
   '@ungap/structured-clone@1.3.1': {}
 
-  '@unocss/astro@66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))':
+  '@unocss/astro@66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))':
     dependencies:
       '@unocss/core': 66.7.0
       '@unocss/reset': 66.7.0
-      '@unocss/vite': 66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
+      '@unocss/vite': 66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
     optionalDependencies:
       vite: 8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)
 
@@ -7670,7 +7546,7 @@ snapshots:
     dependencies:
       '@unocss/core': 66.7.0
 
-  '@unocss/vite@66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))':
+  '@unocss/vite@66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.7.0
@@ -7734,7 +7610,7 @@ snapshots:
   '@voidzero-dev/vite-plus-linux-x64-musl@0.1.24':
     optional: true
 
-  '@voidzero-dev/vite-plus-test@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)':
+  '@voidzero-dev/vite-plus-test@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@types/chai': 5.2.3
@@ -10069,31 +9945,6 @@ snapshots:
       '@oxfmt/binding-win32-x64-msvc': 0.52.0
       vite-plus: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
 
-  oxfmt@0.52.0(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)):
-    dependencies:
-      tinypool: 2.1.0
-    optionalDependencies:
-      '@oxfmt/binding-android-arm-eabi': 0.52.0
-      '@oxfmt/binding-android-arm64': 0.52.0
-      '@oxfmt/binding-darwin-arm64': 0.52.0
-      '@oxfmt/binding-darwin-x64': 0.52.0
-      '@oxfmt/binding-freebsd-x64': 0.52.0
-      '@oxfmt/binding-linux-arm-gnueabihf': 0.52.0
-      '@oxfmt/binding-linux-arm-musleabihf': 0.52.0
-      '@oxfmt/binding-linux-arm64-gnu': 0.52.0
-      '@oxfmt/binding-linux-arm64-musl': 0.52.0
-      '@oxfmt/binding-linux-ppc64-gnu': 0.52.0
-      '@oxfmt/binding-linux-riscv64-gnu': 0.52.0
-      '@oxfmt/binding-linux-riscv64-musl': 0.52.0
-      '@oxfmt/binding-linux-s390x-gnu': 0.52.0
-      '@oxfmt/binding-linux-x64-gnu': 0.52.0
-      '@oxfmt/binding-linux-x64-musl': 0.52.0
-      '@oxfmt/binding-openharmony-arm64': 0.52.0
-      '@oxfmt/binding-win32-arm64-msvc': 0.52.0
-      '@oxfmt/binding-win32-ia32-msvc': 0.52.0
-      '@oxfmt/binding-win32-x64-msvc': 0.52.0
-      vite-plus: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
-
   oxlint-tsgolint@0.23.0:
     optionalDependencies:
       '@oxlint-tsgolint/darwin-arm64': 0.23.0
@@ -10126,30 +9977,6 @@ snapshots:
       '@oxlint/binding-win32-x64-msvc': 1.67.0
       oxlint-tsgolint: 0.23.0
       vite-plus: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
-
-  oxlint@1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)):
-    optionalDependencies:
-      '@oxlint/binding-android-arm-eabi': 1.67.0
-      '@oxlint/binding-android-arm64': 1.67.0
-      '@oxlint/binding-darwin-arm64': 1.67.0
-      '@oxlint/binding-darwin-x64': 1.67.0
-      '@oxlint/binding-freebsd-x64': 1.67.0
-      '@oxlint/binding-linux-arm-gnueabihf': 1.67.0
-      '@oxlint/binding-linux-arm-musleabihf': 1.67.0
-      '@oxlint/binding-linux-arm64-gnu': 1.67.0
-      '@oxlint/binding-linux-arm64-musl': 1.67.0
-      '@oxlint/binding-linux-ppc64-gnu': 1.67.0
-      '@oxlint/binding-linux-riscv64-gnu': 1.67.0
-      '@oxlint/binding-linux-riscv64-musl': 1.67.0
-      '@oxlint/binding-linux-s390x-gnu': 1.67.0
-      '@oxlint/binding-linux-x64-gnu': 1.67.0
-      '@oxlint/binding-linux-x64-musl': 1.67.0
-      '@oxlint/binding-openharmony-arm64': 1.67.0
-      '@oxlint/binding-win32-arm64-msvc': 1.67.0
-      '@oxlint/binding-win32-ia32-msvc': 1.67.0
-      '@oxlint/binding-win32-x64-msvc': 1.67.0
-      oxlint-tsgolint: 0.23.0
-      vite-plus: 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
 
   p-limit@3.1.0:
     dependencies:
@@ -10931,7 +10758,7 @@ snapshots:
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.0.2
 
-  unocss@66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)):
+  unocss@66.7.0(@unocss/astro@66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)))(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3)):
     dependencies:
       '@unocss/cli': 66.7.0
       '@unocss/core': 66.7.0
@@ -10949,9 +10776,9 @@ snapshots:
       '@unocss/transformer-compile-class': 66.7.0
       '@unocss/transformer-directives': 66.7.0
       '@unocss/transformer-variant-group': 66.7.0
-      '@unocss/vite': 66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
+      '@unocss/vite': 66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
     optionalDependencies:
-      '@unocss/astro': 66.7.0(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
+      '@unocss/astro': 66.7.0(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))
     transitivePeerDependencies:
       - vite
 
@@ -11072,59 +10899,9 @@ snapshots:
       '@oxc-project/types': 0.133.0
       '@oxlint/plugins': 1.61.0
       '@voidzero-dev/vite-plus-core': 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3)
-      '@voidzero-dev/vite-plus-test': 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
+      '@voidzero-dev/vite-plus-test': 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
       oxfmt: 0.52.0(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3))
       oxlint: 1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3))
-      oxlint-tsgolint: 0.23.0
-    optionalDependencies:
-      '@voidzero-dev/vite-plus-darwin-arm64': 0.1.24
-      '@voidzero-dev/vite-plus-darwin-x64': 0.1.24
-      '@voidzero-dev/vite-plus-linux-arm64-gnu': 0.1.24
-      '@voidzero-dev/vite-plus-linux-arm64-musl': 0.1.24
-      '@voidzero-dev/vite-plus-linux-x64-gnu': 0.1.24
-      '@voidzero-dev/vite-plus-linux-x64-musl': 0.1.24
-      '@voidzero-dev/vite-plus-win32-arm64-msvc': 0.1.24
-      '@voidzero-dev/vite-plus-win32-x64-msvc': 0.1.24
-    transitivePeerDependencies:
-      - '@arethetypeswrong/core'
-      - '@edge-runtime/vm'
-      - '@opentelemetry/api'
-      - '@tsdown/css'
-      - '@tsdown/exe'
-      - '@types/node'
-      - '@vitejs/devtools'
-      - '@vitest/coverage-istanbul'
-      - '@vitest/coverage-v8'
-      - '@vitest/ui'
-      - bufferutil
-      - esbuild
-      - happy-dom
-      - jiti
-      - jsdom
-      - less
-      - publint
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - svelte
-      - terser
-      - tsx
-      - typescript
-      - unplugin-unused
-      - unrun
-      - utf-8-validate
-      - vite
-      - yaml
-
-  vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3):
-    dependencies:
-      '@oxc-project/types': 0.133.0
-      '@oxlint/plugins': 1.61.0
-      '@voidzero-dev/vite-plus-core': 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.8.3)
-      '@voidzero-dev/vite-plus-test': 0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3)
-      oxfmt: 0.52.0(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3))
-      oxlint: 1.67.0(oxlint-tsgolint@0.23.0)(vite-plus@0.1.24(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.5(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)(yaml@2.8.3))(yaml@2.8.3))
       oxlint-tsgolint: 0.23.0
     optionalDependencies:
       '@voidzero-dev/vite-plus-darwin-arm64': 0.1.24
