@@ -1,0 +1,43 @@
+---
+title: "Color Field"
+description: "An input field for entering and editing color values in various formats."
+---
+
+import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
+import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
+import RLAColorField from "@rimelight/ui/components/astro/RLAColorField.astro"
+
+The Color Field component provides an input for editing and entering hexadecimal or specific channel color values. It features a built-in color swatch block to visualize the active selection.
+
+## Anatomy
+
+Import the component and use it directly:
+
+```astro
+---
+import RLAColorField from "@rimelight/ui/components/astro/RLAColorField.astro"
+---
+
+<RLAColorField defaultValue="#10b981" />
+```
+
+## Interactive Example
+
+Here is a live interactive example showing the color field with its built-in swatch. Try typing a different Hex color (e.g., `#ef4444`, `#8b5cf6`) or using your arrow keys / scroll wheel on the field.
+
+<div class="p-8 border border-border rounded-2xl bg-background/50 flex flex-col items-center justify-center gap-4 max-w-sm mx-auto shadow-lg backdrop-blur-md">
+  <div class="w-full flex flex-col gap-2">
+    <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Hex Input</label>
+    <RLAColorField id="demo-field-only" defaultValue="#10b981" class="w-full font-mono uppercase font-bold text-sm tracking-wide" />
+  </div>
+</div>
+
+## API Reference
+
+### Props
+
+<ApiProps component="colorField" />
+
+### Theme
+
+<ApiTheme component="colorField" />

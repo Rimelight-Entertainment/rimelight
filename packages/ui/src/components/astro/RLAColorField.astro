@@ -1,0 +1,282 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ColorFieldProps } from "../../types"
+import colorFieldThemeDefault, { createColorFieldTheme } from "../../themes/color-field.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const colorFieldTheme = uiConfig.colors ? createColorFieldTheme(uiConfig.colors) : colorFieldThemeDefault
+const colorField = scv(colorFieldTheme)
+
+const {
+  channel,
+  colorSpace = "hsl",
+  defaultValue = "#000000",
+  disabled = false,
+  disableWheelChange = false,
+  locale,
+  modelValue,
+  name,
+  placeholder,
+  readonly = false,
+  required,
+  step = 1,
+  color = "primary",
+  theme,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ColorFieldProps
+
+const classes = resolveClasses(colorField, {
+  color,
+  theme
+}, useUi("colorField", uiProp), className)
+
+const initialValue = modelValue || defaultValue
+---
+<rla-color-field
+  data-channel={channel}
+  data-color-space={colorSpace}
+  data-value={initialValue}
+  data-disabled={disabled ? "true" : "false"}
+  data-disable-wheel={disableWheelChange ? "true" : "false"}
+  data-readonly={readonly ? "true" : "false"}
+  data-step={step}
+  {...rest}
+>
+  <div class={classes.root} data-slot="root">
+    <div class="w-5 h-5 rounded border border-border mr-2 shrink-0 shadow-sm" data-slot="swatch"></div>
+    <input
+      type="text"
+      class={classes.input}
+      placeholder={placeholder}
+      required={required}
+      data-slot="input"
+    />
+    {name && <input type="hidden" name={name} value={initialValue} data-main-input />}
+  </div>
+</rla-color-field>
+
+<script>
+  import {
+    hexToRgb,
+    rgbToHex,
+    rgbToHsl,
+    hslToRgb,
+    rgbToHsb,
+    hsbToRgb,
+    getChannelRange,
+    clamp
+  } from "./color-utils"
+
+  if (typeof HTMLElement !== 'undefined') {
+    class RLAColorField extends HTMLElement {
+      private cleanup: (() => void) | null = null
+      private channel: string | null = null
+      private colorSpace: string = "hsl"
+      private value: string = "#000000"
+      private stepValue: number = 1
+
+      connectedCallback() {
+        this.style.display = 'contents'
+        this.channel = this.getAttribute("data-channel")
+        this.colorSpace = this.getAttribute("data-color-space") || "hsl"
+        this.value = this.getAttribute("data-value") || "#000000"
+        this.stepValue = parseFloat(this.getAttribute("data-step") || "1")
+
+        const input = this.querySelector('[data-slot="input"]') as HTMLInputElement
+        if (!input) return
+
+        const getDisplayValue = () => {
+          if (!this.channel) {
+            return this.value
+          }
+          const rgb = hexToRgb(this.value)
+          if (this.colorSpace === "hsl") {
+            const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2])
+            const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
+            return index !== -1 ? hsl[index].toString() : "0"
+          } else if (this.colorSpace === "hsb") {
+            const hsb = rgbToHsb(rgb[0], rgb[1], rgb[2])
+            const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
+            return index !== -1 ? hsb[index].toString() : "0"
+          } else if (this.colorSpace === "rgb") {
+            const index = ["red", "green", "blue"].indexOf(this.channel)
+            return index !== -1 ? rgb[index].toString() : "0"
+          }
+          return "0"
+        }
+
+        const updateInput = () => {
+          input.value = getDisplayValue()
+          input.disabled = this.getAttribute("data-disabled") === "true"
+          input.readOnly = this.getAttribute("data-readonly") === "true"
+
+          const mainInput = this.querySelector("[data-main-input]") as HTMLInputElement
+          if (mainInput) mainInput.value = this.value
+
+          const swatch = this.querySelector('[data-slot="swatch"]') as HTMLElement
+          if (swatch) {
+            swatch.style.backgroundColor = this.value
+          }
+        }
+
+        updateInput()
+
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === "attributes" && mutation.attributeName === "data-value") {
+              this.value = this.getAttribute("data-value") || "#000000"
+              updateInput()
+            }
+          })
+        })
+        observer.observe(this, { attributes: true })
+
+        const updateColorFromChannelValue = (val: number) => {
+          if (!this.channel) return
+          const range = getChannelRange(this.channel)
+          const clampedVal = clamp(val, range.min, range.max)
+
+          const rgb = hexToRgb(this.value)
+          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2])
+          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2])
+          let newRgb = [...rgb]
+
+          if (this.colorSpace === "hsl") {
+            const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
+            if (index !== -1) hsl[index] = clampedVal
+            newRgb = hslToRgb(hsl[0], hsl[1], hsl[2])
+          } else if (this.colorSpace === "hsb") {
+            const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
+            if (index !== -1) hsb[index] = clampedVal
+            newRgb = hsbToRgb(hsb[0], hsb[1], hsb[2])
+          } else if (this.colorSpace === "rgb") {
+            const index = ["red", "green", "blue"].indexOf(this.channel)
+            if (index !== -1) newRgb[index] = clampedVal
+          }
+
+          const newHex = rgbToHex(newRgb[0], newRgb[1], newRgb[2])
+          if (newHex !== this.value) {
+            this.value = newHex
+            this.setAttribute("data-value", newHex)
+            updateInput()
+            this.dispatchEvent(new CustomEvent("change", { detail: newHex }))
+            this.dispatchEvent(new CustomEvent("update:modelValue", { detail: newHex }))
+
+            const rootId = this.getAttribute("id")
+            if (rootId) {
+              document.querySelectorAll(`[data-color-link="${rootId}"]`).forEach((el) => {
+                el.setAttribute("data-value", newHex)
+              })
+            }
+          }
+        }
+
+        const handleInput = () => {
+          if (this.getAttribute("data-disabled") === "true" || this.getAttribute("data-readonly") === "true") return
+          const raw = input.value.trim()
+          if (!this.channel) {
+            if (/^#[0-9A-F]{6}$/i.test(raw)) {
+              this.value = raw
+              this.setAttribute("data-value", raw)
+              updateInput()
+              this.dispatchEvent(new CustomEvent("change", { detail: raw }))
+              this.dispatchEvent(new CustomEvent("update:modelValue", { detail: raw }))
+
+              const rootId = this.getAttribute("id")
+              if (rootId) {
+                document.querySelectorAll(`[data-color-link="${rootId}"]`).forEach((el) => {
+                  el.setAttribute("data-value", raw)
+                })
+              }
+            }
+          } else {
+            const num = parseFloat(raw)
+            if (!isNaN(num)) {
+              updateColorFromChannelValue(num)
+            }
+          }
+        }
+
+        const onKeyDown = (e: KeyboardEvent) => {
+          if (this.getAttribute("data-disabled") === "true" || this.getAttribute("data-readonly") === "true") return
+          const isShift = e.shiftKey
+          const stepSize = (isShift ? 10 : 1) * this.stepValue
+
+          if (this.channel) {
+            const currentVal = parseFloat(getDisplayValue())
+            let handled = false
+            let newVal = currentVal
+
+            if (e.key === "ArrowUp") {
+              newVal = currentVal + stepSize
+              handled = true
+            } else if (e.key === "ArrowDown") {
+              newVal = currentVal - stepSize
+              handled = true
+            } else if (e.key === "PageUp") {
+              newVal = currentVal + stepSize * 10
+              handled = true
+            } else if (e.key === "PageDown") {
+              newVal = currentVal - stepSize * 10
+              handled = true
+            } else if (e.key === "Home") {
+              newVal = getChannelRange(this.channel).min
+              handled = true
+            } else if (e.key === "End") {
+              newVal = getChannelRange(this.channel).max
+              handled = true
+            }
+
+            if (handled) {
+              e.preventDefault()
+              updateColorFromChannelValue(newVal)
+            }
+          }
+
+          if (e.key === "Enter") {
+            e.preventDefault()
+            handleInput()
+          }
+        }
+
+        const onWheel = (e: WheelEvent) => {
+          if (this.getAttribute("data-disable-wheel") === "true") return
+          if (this.getAttribute("data-disabled") === "true" || this.getAttribute("data-readonly") === "true") return
+          if (!this.channel) return
+          e.preventDefault()
+
+          const direction = e.deltaY < 0 ? 1 : -1
+          const stepSize = this.stepValue * direction
+          const currentVal = parseFloat(getDisplayValue())
+          updateColorFromChannelValue(currentVal + stepSize)
+        }
+
+        input.addEventListener("input", handleInput)
+        input.addEventListener("keydown", onKeyDown)
+        input.addEventListener("wheel", onWheel, { passive: false })
+
+        this.cleanup = () => {
+          input.removeEventListener("input", handleInput)
+          input.removeEventListener("keydown", onKeyDown)
+          input.removeEventListener("wheel", onWheel)
+          observer.disconnect()
+        }
+      }
+
+      disconnectedCallback() {
+        if (this.cleanup) {
+          this.cleanup()
+          this.cleanup = null
+        }
+      }
+    }
+
+    if (!customElements.get("rla-color-field")) {
+      customElements.define("rla-color-field", RLAColorField)
+    }
+  }
+</script>

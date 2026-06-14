@@ -1,0 +1,73 @@
+---
+title: "Color Slider"
+description: "A slider control for adjusting individual color channels."
+---
+
+import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
+import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
+import RLAColorSlider from "@rimelight/ui/components/astro/RLAColorSlider.astro"
+
+The Color Slider component allows adjusting specific channels (like Hue, Saturation, Lightness, Alpha, Red, Green, Blue) of a color value.
+
+## Anatomy
+
+Import the component and use it directly:
+
+```astro
+---
+import RLAColorSlider from "@rimelight/ui/components/astro/RLAColorSlider.astro"
+---
+
+<RLAColorSlider channel="hue" defaultValue="#3b82f6" />
+```
+
+## Interactive Example
+
+Here is a live interactive example showing a **Hue Slider** accompanied by a dynamic preview swatch and text display.
+
+<div class="p-8 border border-border rounded-2xl bg-background/50 flex flex-col items-center justify-center gap-6 max-w-sm mx-auto shadow-lg backdrop-blur-md">
+  <div class="flex items-center gap-4 w-full">
+    <div id="slider-preview-box" class="w-12 h-12 rounded-xl border border-border shadow-md transition-colors duration-100"></div>
+    <div class="flex flex-col">
+      <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Hue</span>
+      <span id="slider-preview-text" class="font-mono font-bold text-sm text-foreground uppercase">#3b82f6</span>
+    </div>
+  </div>
+
+  <RLAColorSlider id="demo-slider-instance" channel="hue" defaultValue="#3b82f6" class="w-full" />
+</div>
+
+<script is:inline>{`
+  const initSlider = () => {
+    const slider = document.getElementById("demo-slider-instance");
+    const previewBox = document.getElementById("slider-preview-box");
+    const previewText = document.getElementById("slider-preview-text");
+
+    if (slider && previewBox && previewText) {
+      // Initialize background color dynamically to avoid inline styles in HTML (CSP compliant)
+      const initialVal = slider.getAttribute("data-value") || "#3b82f6";
+      previewBox.style.backgroundColor = initialVal;
+      previewText.textContent = initialVal;
+
+      // Sync on slider changes
+      slider.addEventListener("change", (e) => {
+        const val = e.detail;
+        previewBox.style.backgroundColor = val;
+        previewText.textContent = val;
+      });
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", initSlider);
+  document.addEventListener("astro:page-load", initSlider);
+`}</script>
+
+## API Reference
+
+### Props
+
+<ApiProps component="colorSlider" />
+
+### Theme
+
+<ApiTheme component="colorSlider" />

@@ -570,6 +570,27 @@ export default defineDocsConfig({
                     ]
                   },
                   {
+                    label: "Color",
+                    collapsed: true,
+                    items: [
+                      {
+                        label: "ColorArea",
+                        badge: { text: "New", variant: "tip" },
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/color/color-area/"
+                      },
+                      {
+                        label: "ColorField",
+                        badge: { text: "New", variant: "tip" },
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/color/color-field/"
+                      },
+                      {
+                        label: "ColorSlider",
+                        badge: { text: "New", variant: "tip" },
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/color/color-slider/"
+                      }
+                    ]
+                  },
+                  {
                     label: "Data",
                     collapsed: true,
                     items: [
