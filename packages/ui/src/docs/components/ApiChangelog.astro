@@ -1,0 +1,131 @@
+---
+import RLATimeline from "../../components/astro/RLATimeline.astro"
+
+interface Props {
+  component: string
+}
+
+const { component } = Astro.props
+---
+
+<div class="api-changelog-container group" data-component={component}>
+  <!-- Loading skeleton -->
+  <div class="api-changelog-loading py-6 flex flex-col gap-4">
+    <div class="animate-pulse h-4 bg-gray-800 rounded w-1/4"></div>
+    <div class="animate-pulse h-3 bg-gray-850 rounded w-full"></div>
+    <div class="animate-pulse h-3 bg-gray-850 rounded w-5/6"></div>
+  </div>
+  
+  <!-- Timeline Content -->
+  <div class="api-changelog-content hidden">
+    <RLATimeline class="relative flex flex-col pl-6 border-l-2 border-gray-800 space-y-8 ml-2 py-2">
+      <!-- Dynamic timeline items insert here -->
+      <div class="api-changelog-list flex flex-col space-y-8"></div>
+    </RLATimeline>
+  </div>
+  
+  <div class="api-changelog-empty hidden text-sm italic text-gray-500 py-2">
+    No recent changes found.
+  </div>
+</div>
+
+<script>
+  function escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  async function loadChangelog() {
+    if (typeof document === "undefined") return;
+    const containers = document.querySelectorAll('.api-changelog-container');
+    
+    for (const container of containers) {
+      if (container.getAttribute('data-changelog-ready') === 'true') continue;
+      container.setAttribute('data-changelog-ready', 'true');
+
+      const component = container.getAttribute('data-component');
+      const loadingEl = container.querySelector('.api-changelog-loading') as HTMLElement;
+      const contentEl = container.querySelector('.api-changelog-content') as HTMLElement;
+      const listEl = container.querySelector('.api-changelog-list') as HTMLElement;
+      const emptyEl = container.querySelector('.api-changelog-empty') as HTMLElement;
+
+      if (!component || !loadingEl || !contentEl || !listEl || !emptyEl) continue;
+
+      try {
+        const res = await fetch(`/api/github/changelog?component=${component}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+
+        loadingEl.classList.add('hidden');
+
+        if (!data || data.length === 0) {
+          emptyEl.classList.remove('hidden');
+          continue;
+        }
+
+        let html = '';
+        for (const item of data) {
+          const dateStr = item.published_at 
+            ? new Date(item.published_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+            : 'Unreleased';
+
+          html += `
+            <div class="relative timeline-node">
+              <!-- Dot Indicator -->
+              <span class="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gray-950 ring-2 ring-gray-800">
+                <span class="h-2 w-2 rounded-full bg-primary-500"></span>
+              </span>
+              
+              <div class="flex items-center justify-between gap-4 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-primary-500/10 text-primary-400 border border-primary-500/20">
+                    ${escapeHtml(item.tag === 'unreleased' ? 'Soon' : item.tag)}
+                  </span>
+                </div>
+                
+                <time class="text-xs text-gray-500 font-normal">
+                  ${escapeHtml(dateStr)}
+                </time>
+              </div>
+              
+              <ul class="space-y-2 text-sm text-gray-400">
+                ${item.commits.map((commit: any) => {
+                  const cleanedMessage = commit.message
+                    .replace(/#(\d+)/g, '<a href="https://github.com/Rimelight-Entertainment/rimelight/issues/$1" target="_blank" class="text-primary-400 hover:underline">#$1</a>')
+                    .replace(/`(.*?)`/g, '<code class="text-xs px-1 bg-gray-900 border border-gray-800 rounded font-mono text-gray-300">$1</code>');
+
+                  return `
+                    <li class="flex items-start gap-2">
+                      <a href="https://github.com/Rimelight-Entertainment/rimelight/commit/${commit.sha}" target="_blank" class="font-mono text-xs text-gray-500 hover:text-gray-300 hover:underline shrink-0 pt-0.5">
+                        ${commit.sha.slice(0, 7)}
+                      </a>
+                      <span class="text-gray-300">
+                        ${cleanedMessage}
+                      </span>
+                    </li>
+                  `;
+                }).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        listEl.innerHTML = html;
+        contentEl.classList.remove('hidden');
+      } catch (err) {
+        loadingEl.classList.add('hidden');
+        emptyEl.textContent = 'Failed to load changelog.';
+        emptyEl.classList.remove('hidden');
+      }
+    }
+  }
+
+  if (typeof document !== 'undefined') {
+    loadChangelog();
+    document.addEventListener('astro:after-swap', loadChangelog);
+  }
+</script>

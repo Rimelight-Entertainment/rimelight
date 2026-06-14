@@ -5,7 +5,7 @@ import { extractAllMeta } from "../src/docs/extractAll"
 
 const pathDirname = dirname(fileURLToPath(import.meta.url))
 const uiRoot = resolve(pathDirname, "..")
-const outputDir = join(uiRoot, "docs", "meta")
+const outputDir = join(uiRoot, "test-results")
 
 async function main() {
   console.log("Extracting component metadata...")
