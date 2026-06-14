@@ -64,12 +64,7 @@
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["ChatRoom"],
-      "new_classes": ["Document"]
-    },
-    {
-      "tag": "v2",
-      "deleted_classes": ["Document"]
+      "new_sqlite_classes": ["ChatRoom"]
     }
   ]
 }
