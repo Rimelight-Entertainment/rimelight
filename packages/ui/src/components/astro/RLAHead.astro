@@ -315,6 +315,10 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
             layer.isVisible = isVisible;
             layer.el = el;
           }
+          if (el) {
+            el.rlNaturalHeight = naturalHeight;
+            el.rlIsVisible = isVisible;
+          }
           this.update();
         },
         unregister: function(id) {
@@ -356,14 +360,20 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
     }
 
     function initLayer(el) {
-      if (el.rlManaged) return;
-      el.rlManaged = true;
-
       const id = el.id;
       const type = el.getAttribute('data-layer-type') || 'header';
       const stackIndex = parseInt(el.getAttribute('data-stack-index') || '0', 10);
       const hideOnScroll = el.getAttribute('data-hide-on-scroll') === 'true';
       const contentEl = el.querySelector('[data-header-content]');
+
+      if (el.rlManaged) {
+        const naturalHeight = el.rlNaturalHeight || getHeight(contentEl);
+        const isVisible = el.rlIsVisible !== false;
+        RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
+        return;
+      }
+      el.rlManaged = true;
+
       let naturalHeight = getHeight(contentEl);
       let isVisible = true;
 
@@ -374,7 +384,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
           const h = entries[0] && entries[0].contentRect.height;
           if (h && h > 0) {
             naturalHeight = h;
-            RL.update();
+            RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
           }
         }).observe(contentEl);
       }
@@ -399,7 +409,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
         const h = getHeight(contentEl);
         if (h !== naturalHeight) {
           naturalHeight = h;
-          RL.update();
+          RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
         }
         if (h > 0 && h !== 64 && contentEl && contentEl.offsetHeight > 0) return;
         requestAnimationFrame(retry);
