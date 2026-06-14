@@ -4,7 +4,6 @@ description: "A versatile button component with multiple variants, colors, and s
 ---
 
 import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
-
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
@@ -19,7 +18,7 @@ A versatile button component with support for multiple variants, colors, and siz
 
 <ComponentShowcase>
   <RLAButton label="Click me" />
-  
+
   <Fragment slot="code-astro">
   ```astro
   <RLAButton label="Click me" />
@@ -111,12 +110,24 @@ A versatile button component with support for multiple variants, colors, and siz
 <RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
 <div role="tabpanel" data-value="astro">
 
-<RLAButton color="primary">Primary</RLAButton>
-<RLAButton color="secondary">Secondary</RLAButton>
-<RLAButton color="info">Info</RLAButton>
-<RLAButton color="success">Success</RLAButton>
-<RLAButton color="warning">Warning</RLAButton>
-<RLAButton color="error">Error</RLAButton>
+<RLAButton color="primary">
+  Primary
+</RLAButton>
+<RLAButton color="secondary">
+  Secondary
+</RLAButton>
+<RLAButton color="info">
+  Info
+</RLAButton>
+<RLAButton color="success">
+  Success
+</RLAButton>
+<RLAButton color="warning">
+  Warning
+</RLAButton>
+<RLAButton color="error">
+  Error
+</RLAButton>
 
 </div>
 <div role="tabpanel" data-value="vue" class="hidden">

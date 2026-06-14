@@ -1,5 +1,6 @@
-import { readFileSync, readdirSync, writeFileSync, existsSync, mkdirSync } from "node:fs"
+import { readFileSync, readdirSync, writeFileSync, existsSync, mkdirSync, statSync } from "node:fs"
 import { join, resolve, dirname } from "node:path"
+import path from "node:path"
 import { fileURLToPath } from "node:url"
 import ts from "typescript"
 
@@ -119,10 +120,31 @@ function extractVueMeta(filePath: string): {
       ts.ScriptKind.TS
     )
 
-    const interfaces = new Map<string, ts.InterfaceDeclaration>()
+    const interfaces = new Map<string, ts.InterfaceDeclaration | ts.TypeAliasDeclaration>()
+    const destructuredDefaults: Record<string, string> = {}
+    const imports = new Map<string, string>()
 
     function collectDeclarations(n: ts.Node) {
-      if (ts.isInterfaceDeclaration(n)) interfaces.set(n.name.text, n)
+      if (ts.isInterfaceDeclaration(n) || ts.isTypeAliasDeclaration(n)) {
+        interfaces.set(n.name.text, n)
+      }
+      if (ts.isImportDeclaration(n)) {
+        const moduleSpecifier = n.moduleSpecifier
+        if (ts.isStringLiteral(moduleSpecifier)) {
+          const importPath = moduleSpecifier.text
+          const importClause = n.importClause
+          if (importClause) {
+            if (importClause.namedBindings && ts.isNamedImports(importClause.namedBindings)) {
+              for (const element of importClause.namedBindings.elements) {
+                imports.set(element.name.text, importPath)
+              }
+            }
+            if (importClause.name) {
+              imports.set(importClause.name.text, importPath)
+            }
+          }
+        }
+      }
       ts.forEachChild(n, collectDeclarations)
     }
     collectDeclarations(sourceFile)
@@ -134,9 +156,63 @@ function extractVueMeta(filePath: string): {
         if (fnName === "defineProps") {
           if (n.typeArguments && n.typeArguments.length > 0) {
             const typeArg = n.typeArguments[0]!
-            if (ts.isTypeReferenceNode(typeArg) && ts.isIdentifier(typeArg.typeName)) {
-              const iface = interfaces.get(typeArg.typeName.text)
-              if (iface) props.push(...extractPropsFromInterface(iface))
+            const refName = getTypeRefName(typeArg)
+            if (refName) {
+              let iface = interfaces.get(refName)
+              if (!iface && imports.has(refName)) {
+                const relPath = imports.get(refName)!
+                const baseDir = path.dirname(filePath)
+                const absolutePath = path.resolve(baseDir, relPath)
+                const extensions = [".ts", ".d.ts", "/index.ts", "/index.d.ts"]
+                let foundPath = ""
+                if (existsSync(absolutePath) && statSync(absolutePath).isFile()) {
+                  foundPath = absolutePath
+                } else {
+                  for (const ext of extensions) {
+                    const testPath = absolutePath + ext
+                    if (existsSync(testPath)) {
+                      foundPath = testPath
+                      break
+                    }
+                  }
+                }
+                if (foundPath) {
+                  try {
+                    const importContent = readFileSync(foundPath, "utf-8")
+                    const importSourceFile = ts.createSourceFile(
+                      "import.ts",
+                      importContent,
+                      ts.ScriptTarget.Latest,
+                      true,
+                      ts.ScriptKind.TS
+                    )
+                    let foundNode: ts.InterfaceDeclaration | ts.TypeAliasDeclaration | null = null
+                    function findDecl(innerNode: ts.Node) {
+                      if (
+                        (ts.isInterfaceDeclaration(innerNode) || ts.isTypeAliasDeclaration(innerNode)) &&
+                        innerNode.name.text === refName
+                      ) {
+                        foundNode = innerNode
+                      }
+                      ts.forEachChild(innerNode, findDecl)
+                    }
+                    findDecl(importSourceFile)
+                    if (foundNode) {
+                      iface = foundNode
+                    }
+                  } catch (e) {}
+                }
+              }
+
+              if (iface) {
+                let extracted: PropMeta[] = []
+                if (ts.isInterfaceDeclaration(iface)) {
+                  extracted = extractPropsFromInterface(iface)
+                } else if (ts.isTypeAliasDeclaration(iface) && ts.isTypeLiteralNode(iface.type)) {
+                  extracted = extractPropsFromTypeLiteral(iface.type)
+                }
+                props.push(...extracted)
+              }
             } else if (ts.isTypeLiteralNode(typeArg)) {
               props.push(...extractPropsFromTypeLiteral(typeArg))
             }
@@ -163,10 +239,61 @@ function extractVueMeta(filePath: string): {
             }
             if (callArg.typeArguments && callArg.typeArguments.length > 0) {
               const typeArg = callArg.typeArguments[0]!
-              if (ts.isTypeReferenceNode(typeArg) && ts.isIdentifier(typeArg.typeName)) {
-                const iface = interfaces.get(typeArg.typeName.text)
+              const refName = getTypeRefName(typeArg)
+              if (refName) {
+                let iface = interfaces.get(refName)
+                if (!iface && imports.has(refName)) {
+                  const relPath = imports.get(refName)!
+                  const baseDir = path.dirname(filePath)
+                  const absolutePath = path.resolve(baseDir, relPath)
+                  const extensions = [".ts", ".d.ts", "/index.ts", "/index.d.ts"]
+                  let foundPath = ""
+                  if (existsSync(absolutePath) && statSync(absolutePath).isFile()) {
+                    foundPath = absolutePath
+                  } else {
+                    for (const ext of extensions) {
+                      const testPath = absolutePath + ext
+                      if (existsSync(testPath)) {
+                        foundPath = testPath
+                        break
+                      }
+                    }
+                  }
+                  if (foundPath) {
+                    try {
+                      const importContent = readFileSync(foundPath, "utf-8")
+                      const importSourceFile = ts.createSourceFile(
+                        "import.ts",
+                        importContent,
+                        ts.ScriptTarget.Latest,
+                        true,
+                        ts.ScriptKind.TS
+                      )
+                      let foundNode: ts.InterfaceDeclaration | ts.TypeAliasDeclaration | null = null
+                      function findDecl(innerNode: ts.Node) {
+                        if (
+                          (ts.isInterfaceDeclaration(innerNode) || ts.isTypeAliasDeclaration(innerNode)) &&
+                          innerNode.name.text === refName
+                        ) {
+                          foundNode = innerNode
+                        }
+                        ts.forEachChild(innerNode, findDecl)
+                      }
+                      findDecl(importSourceFile)
+                      if (foundNode) {
+                        iface = foundNode
+                      }
+                    } catch (e) {}
+                  }
+                }
+
                 if (iface) {
-                  const baseProps = extractPropsFromInterface(iface)
+                  let baseProps: PropMeta[] = []
+                  if (ts.isInterfaceDeclaration(iface)) {
+                    baseProps = extractPropsFromInterface(iface)
+                  } else if (ts.isTypeAliasDeclaration(iface) && ts.isTypeLiteralNode(iface.type)) {
+                    baseProps = extractPropsFromTypeLiteral(iface.type)
+                  }
                   for (const p of baseProps) {
                     const d = defaults[p.name]
                     if (d !== undefined) p.default = d

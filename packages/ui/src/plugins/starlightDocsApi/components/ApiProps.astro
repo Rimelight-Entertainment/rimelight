@@ -33,15 +33,15 @@ const props = filterProps(compMeta?.props ?? [], filterOpts)
     <tbody>
       {props.map((prop: PropMeta) => (
         <tr>
-          <td><code>{prop.name}</code></td>
-          <td><code>{prop.type}</code></td>
+          <td><code class="before:content-none after:content-none">{prop.name}</code></td>
+          <td><code class="before:content-none after:content-none">{prop.type}</code></td>
           <td>{prop.required ? "Yes" : "No"}</td>
-          <td>{prop.default !== undefined ? <code>{prop.default}</code> : "—"}</td>
+          <td>{prop.default !== undefined ? <code class="before:content-none after:content-none">{prop.default}</code> : "—"}</td>
           <td>{prop.description || "—"}</td>
         </tr>
       ))}
     </tbody>
   </table>
 ) : (
-  <p>No props to display.</p>
+  <p class="text-sm italic text-gray-500">No props to display.</p>
 )}
