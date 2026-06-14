@@ -1,14 +1,25 @@
 ---
 import RLATimeline from "../../components/astro/RLATimeline.astro"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import timelineThemeDefault, { createTimelineTheme } from "../../themes/timeline.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
 interface Props {
   component: string
+  ui?: any
+  class?: any
 }
 
-const { component } = Astro.props
+const { component, ui: uiProp, class: className } = Astro.props
+
+const uiConfig = getUIConfig()
+const timelineTheme = uiConfig.colors ? createTimelineTheme() : timelineThemeDefault
+const timeline = scv(timelineTheme)
+const classes = resolveClasses(timeline, {}, useUi("timeline", uiProp), className);
 ---
 
-<div class="api-changelog-container group" data-component={component}>
+<div class="api-changelog-container group" data-component={component} data-theme-classes={JSON.stringify(classes)}>
   <!-- Loading skeleton -->
   <div class="api-changelog-loading py-6 flex flex-col gap-4">
     <div class="animate-pulse h-4 bg-gray-800 rounded w-1/4"></div>
@@ -18,7 +29,7 @@ const { component } = Astro.props
   
   <!-- Timeline Content -->
   <div class="api-changelog-content hidden">
-    <RLATimeline class="relative flex flex-col pl-6 border-l-2 border-gray-800 space-y-8 ml-2 py-2">
+    <RLATimeline ui={uiProp} class={className}>
       <!-- Dynamic timeline items insert here -->
       <div class="api-changelog-list flex flex-col space-y-8"></div>
     </RLATimeline>
@@ -48,6 +59,9 @@ const { component } = Astro.props
       container.setAttribute('data-changelog-ready', 'true');
 
       const component = container.getAttribute('data-component');
+      const themeClassesJson = container.getAttribute('data-theme-classes');
+      const themeClasses = themeClassesJson ? JSON.parse(themeClassesJson) : {};
+
       const loadingEl = container.querySelector('.api-changelog-loading') as HTMLElement;
       const contentEl = container.querySelector('.api-changelog-content') as HTMLElement;
       const listEl = container.querySelector('.api-changelog-list') as HTMLElement;
@@ -74,13 +88,13 @@ const { component } = Astro.props
             : 'Unreleased';
 
           html += `
-            <div class="relative timeline-node">
+            <div class="${themeClasses.node || 'relative timeline-node'}">
               <!-- Dot Indicator -->
-              <span class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-gray-950 ring-2 ring-gray-800">
-                <span class="h-2 w-2 rounded-full bg-primary-500"></span>
+              <span class="${themeClasses.dot || 'absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-gray-950 ring-2 ring-gray-800'}">
+                <span class="${themeClasses.dotInner || 'h-2 w-2 rounded-full bg-primary-500'}"></span>
               </span>
               
-              <div class="flex items-center justify-between gap-4 mb-3">
+              <div class="${themeClasses.header || 'flex items-center justify-between gap-4 mb-3'}">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-primary-500/10 text-primary-400 border border-primary-500/20">
                     ${escapeHtml(item.tag === 'unreleased' ? 'Soon' : item.tag)}
@@ -92,7 +106,7 @@ const { component } = Astro.props
                 </time>
               </div>
               
-              <ul class="space-y-2 text-sm text-gray-400">
+              <ul class="${themeClasses.content || 'space-y-2 text-sm text-gray-400'}">
                 ${item.commits.map((commit: any) => {
                   const cleanedMessage = commit.message
                     .replace(/#(\d+)/g, '<a href="https://github.com/Rimelight-Entertainment/rimelight/issues/$1" target="_blank" class="text-primary-400 hover:underline">#$1</a>')
