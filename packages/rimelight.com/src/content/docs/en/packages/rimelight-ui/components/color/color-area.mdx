@@ -4,13 +4,16 @@ description: "A two-dimensional area for selecting color values in a specific co
 ---
 
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
+import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
+import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
+import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 import RLAColorArea from "@rimelight/ui/components/astro/RLAColorArea.astro"
 import RLAColorField from "@rimelight/ui/components/astro/RLAColorField.astro"
 
 The Color Area component allows users to select color values by clicking or dragging within a 2D saturation/lightness gradient box.
 
-## Anatomy
+## Usage
 
 Import the component and use it directly:
 
@@ -22,7 +25,7 @@ import RLAColorArea from "@rimelight/ui/components/astro/RLAColorArea.astro"
 <RLAColorArea colorSpace="hsl" xChannel="saturation" yChannel="lightness" defaultValue="#3b82f6" class="w-56 h-56" />
 ```
 
-## Interactive Example
+## Examples
 
 Here is a live interactive example combining a **Color Area** with a synchronized **Color Field** showing the selected color value.
 
@@ -53,12 +56,24 @@ Here is a live interactive example combining a **Color Area** with a synchronize
   document.addEventListener("astro:page-load", initArea);
 `}</script>
 
-## API Reference
+## API
 
 ### Props
 
 <ApiProps component="colorArea" />
 
-### Theme
+### Slots
+
+<ApiSlots component="colorArea" />
+
+### Emits
+
+<ApiEmits component="colorArea" />
+
+## Theme
 
 <ApiTheme component="colorArea" />
+
+## Changelog
+
+<ApiChangelog component="colorArea" />

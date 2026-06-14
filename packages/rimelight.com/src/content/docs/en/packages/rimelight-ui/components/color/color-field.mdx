@@ -4,12 +4,15 @@ description: "An input field for entering and editing color values in various fo
 ---
 
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
+import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
+import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
+import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 import RLAColorField from "@rimelight/ui/components/astro/RLAColorField.astro"
 
 The Color Field component provides an input for editing and entering hexadecimal or specific channel color values. It features a built-in color swatch block to visualize the active selection.
 
-## Anatomy
+## Usage
 
 Import the component and use it directly:
 
@@ -21,7 +24,7 @@ import RLAColorField from "@rimelight/ui/components/astro/RLAColorField.astro"
 <RLAColorField defaultValue="#10b981" />
 ```
 
-## Interactive Example
+## Examples
 
 Here is a live interactive example showing the color field with its built-in swatch. Try typing a different Hex color (e.g., `#ef4444`, `#8b5cf6`) or using your arrow keys / scroll wheel on the field.
 
@@ -32,12 +35,24 @@ Here is a live interactive example showing the color field with its built-in swa
   </div>
 </div>
 
-## API Reference
+## API
 
 ### Props
 
 <ApiProps component="colorField" />
 
-### Theme
+### Slots
+
+<ApiSlots component="colorField" />
+
+### Emits
+
+<ApiEmits component="colorField" />
+
+## Theme
 
 <ApiTheme component="colorField" />
+
+## Changelog
+
+<ApiChangelog component="colorField" />

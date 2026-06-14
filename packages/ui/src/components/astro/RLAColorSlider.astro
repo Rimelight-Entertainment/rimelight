@@ -9,6 +9,23 @@ const uiConfig = getUIConfig()
 const colorSliderTheme = uiConfig.colors ? createColorSliderTheme(uiConfig.colors) : colorSliderThemeDefault
 const colorSlider = scv(colorSliderTheme)
 
+export interface Props {
+  channel: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"
+  colorSpace?: "hsl" | "rgb" | "hsb"
+  defaultValue?: string
+  dir?: "ltr" | "rtl"
+  disabled?: boolean
+  inverted?: boolean
+  modelValue?: string
+  name?: string
+  orientation?: "vertical" | "horizontal"
+  required?: boolean
+  step?: number
+  color?: any
+  theme?: any
+  ui?: any
+}
+
 const {
   channel,
   colorSpace = "hsl",
@@ -26,7 +43,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ColorSliderProps
+} = Astro.props as Props
 
 const classes = resolveClasses(colorSlider, {
   color,
@@ -187,8 +204,11 @@ const initialValue = modelValue || defaultValue
           mutations.forEach((mutation) => {
             if (mutation.type === "attributes") {
               if (mutation.attributeName === "data-value") {
-                this.value = this.getAttribute("data-value") || "#000000"
-                updateUI()
+                const newVal = this.getAttribute("data-value") || "#000000"
+                if (newVal !== this.value) {
+                  this.value = newVal
+                  updateUI()
+                }
               }
               if (mutation.attributeName === "data-disabled") {
                 updateUI()

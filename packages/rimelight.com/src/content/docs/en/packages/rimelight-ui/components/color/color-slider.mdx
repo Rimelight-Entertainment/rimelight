@@ -4,12 +4,15 @@ description: "A slider control for adjusting individual color channels."
 ---
 
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
+import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
+import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
+import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 import RLAColorSlider from "@rimelight/ui/components/astro/RLAColorSlider.astro"
 
 The Color Slider component allows adjusting specific channels (like Hue, Saturation, Lightness, Alpha, Red, Green, Blue) of a color value.
 
-## Anatomy
+## Usage
 
 Import the component and use it directly:
 
@@ -21,7 +24,7 @@ import RLAColorSlider from "@rimelight/ui/components/astro/RLAColorSlider.astro"
 <RLAColorSlider channel="hue" defaultValue="#3b82f6" />
 ```
 
-## Interactive Example
+## Examples
 
 Here is a live interactive example showing a **Hue Slider** accompanied by a dynamic preview swatch and text display.
 
@@ -62,12 +65,24 @@ Here is a live interactive example showing a **Hue Slider** accompanied by a dyn
   document.addEventListener("astro:page-load", initSlider);
 `}</script>
 
-## API Reference
+## API
 
 ### Props
 
 <ApiProps component="colorSlider" />
 
-### Theme
+### Slots
+
+<ApiSlots component="colorSlider" />
+
+### Emits
+
+<ApiEmits component="colorSlider" />
+
+## Theme
 
 <ApiTheme component="colorSlider" />
+
+## Changelog
+
+<ApiChangelog component="colorSlider" />

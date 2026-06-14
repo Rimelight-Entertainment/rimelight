@@ -9,6 +9,24 @@ const uiConfig = getUIConfig()
 const colorFieldTheme = uiConfig.colors ? createColorFieldTheme(uiConfig.colors) : colorFieldThemeDefault
 const colorField = scv(colorFieldTheme)
 
+export interface Props {
+  channel?: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"
+  colorSpace?: "hsl" | "rgb" | "hsb"
+  defaultValue?: string
+  disabled?: boolean
+  disableWheelChange?: boolean
+  locale?: string
+  modelValue?: string
+  name?: string
+  placeholder?: string
+  readonly?: boolean
+  required?: boolean
+  step?: number
+  color?: any
+  theme?: any
+  ui?: any
+}
+
 const {
   channel,
   colorSpace = "hsl",
@@ -27,7 +45,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ColorFieldProps
+} = Astro.props as Props
 
 const classes = resolveClasses(colorField, {
   color,
