@@ -6,16 +6,8 @@ export const createStepsTheme = () =>
     base: {
       root: "w-full"
     },
-    variants: {
-      size: {
-        sm: { root: "" },
-        md: { root: "" },
-        lg: { root: "" }
-      }
-    },
-    defaultVariants: {
-      size: "md"
-    }
+    variants: {},
+    defaultVariants: {}
   })
 
 export default createStepsTheme()

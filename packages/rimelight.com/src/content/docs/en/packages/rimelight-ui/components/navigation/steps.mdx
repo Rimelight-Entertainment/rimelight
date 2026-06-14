@@ -1,0 +1,205 @@
+---
+title: "Steps"
+description: "A documentation component for presenting sequential, numbered steps with arbitrary content in each."
+---
+
+import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
+import RLAPackageManagers from "@rimelight/ui/components/astro/RLAPackageManagers.astro"
+import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
+import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
+import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
+import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
+
+A layout component for structured, numbered sequences. Useful in documentation, onboarding flows, and guides where each step needs to be clearly highlighted and can contain arbitrary content — headings, code blocks, other components, etc.
+
+## Usage
+
+Write `<li>` items directly inside `<RLASteps>`. Each becomes a numbered step and can hold any Astro content.
+
+```astro
+---
+import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
+---
+
+<RLASteps>
+  <li>
+    **First step title**
+
+    Supporting content goes here.
+  </li>
+  <li>
+    **Second step title**
+
+    Each step is independent and can hold anything.
+  </li>
+</RLASteps>
+```
+
+## Examples
+
+### Text content
+
+The simplest usage — plain headings and paragraphs inside each step.
+
+<RLASteps>
+  <li>
+    **Create a new project**
+
+    Run the scaffold command to initialise your workspace. You can also start with an existing project.
+  </li>
+  <li>
+    **Install dependencies**
+
+    Use your preferred package manager to pull in everything needed before starting the server.
+  </li>
+  <li>
+    **Start the dev server**
+
+    Open `http://localhost:4321` in your browser. Changes are reflected instantly without a full reload.
+  </li>
+</RLASteps>
+
+```astro
+<RLASteps>
+  <li>
+    **Create a new project**
+
+    Run the scaffold command to initialise your workspace.
+  </li>
+  <li>
+    **Install dependencies**
+
+    Use your preferred package manager.
+  </li>
+  <li>
+    **Start the dev server**
+
+    Open `http://localhost:4321` in your browser.
+  </li>
+</RLASteps>
+```
+
+### Rich content
+
+Each `<li>` accepts arbitrary Astro content — components, code blocks, images, nested lists, etc.
+
+<RLASteps>
+  <li>
+    **Install the package**
+
+    Add `@rimelight/ui` to your project:
+
+    <RLAPackageManagers pkg="@rimelight/ui" type="add" />
+  </li>
+  <li>
+    **Register the integration**
+
+    In your `astro.config.ts`, add the `ui()` integration:
+
+    ```typescript
+    import { ui } from "@rimelight/ui/integrations"
+    import { defineConfig } from "astro/config"
+
+    export default defineConfig({
+      integrations: [ui()]
+    })
+    ```
+  </li>
+  <li>
+    **Import and use components**
+
+    Import any component directly in your `.astro` file — no global registration needed:
+
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+    ---
+
+    <RLAButton label="Hello world" color="primary" />
+    ```
+  </li>
+</RLASteps>
+
+```astro
+<RLASteps>
+  <li>
+    **Install the package**
+
+    <RLAPackageManagers pkg="@rimelight/ui" type="add" />
+  </li>
+  <li>
+    **Register the integration**
+
+    ```typescript
+    import { ui } from "@rimelight/ui/integrations"
+    export default defineConfig({ integrations: [ui()] })
+    ```
+  </li>
+  <li>
+    **Import and use components**
+
+    ```astro
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+    ```
+  </li>
+</RLASteps>
+```
+
+### Sizes
+
+Use the `size` prop to adjust indicator size and step spacing.
+
+<div class="flex flex-col gap-8 not-content">
+
+<div>
+  <p class="text-sm font-mono text-muted mb-3">size="sm"</p>
+  <RLASteps size="sm">
+    <li>**Step one** — compact indicator, tighter spacing.</li>
+    <li>**Step two** — good for dense documentation.</li>
+    <li>**Step three** — minimal visual footprint.</li>
+  </RLASteps>
+</div>
+
+<div>
+  <p class="text-sm font-mono text-muted mb-3">size="md" (default)</p>
+  <RLASteps size="md">
+    <li>**Step one** — the default for most pages.</li>
+    <li>**Step two** — balances readability and density.</li>
+    <li>**Step three** — works well in prose contexts.</li>
+  </RLASteps>
+</div>
+
+<div>
+  <p class="text-sm font-mono text-muted mb-3">size="lg"</p>
+  <RLASteps size="lg">
+    <li>**Step one** — larger indicator and more breathing room.</li>
+    <li>**Step two** — great for onboarding or landing pages.</li>
+    <li>**Step three** — draws more visual attention.</li>
+  </RLASteps>
+</div>
+
+</div>
+
+```astro
+<RLASteps size="sm">…</RLASteps>
+<RLASteps size="md">…</RLASteps>
+<RLASteps size="lg">…</RLASteps>
+```
+
+## API
+
+### Props
+
+<ApiProps component="steps" />
+
+### Slots
+
+<ApiSlots component="steps" />
+
+## Theme
+
+<ApiTheme component="steps" />
+
+## Changelog
+
+<ApiChangelog component="steps" />

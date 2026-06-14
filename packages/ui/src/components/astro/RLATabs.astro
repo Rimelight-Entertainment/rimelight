@@ -72,74 +72,76 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
 </rla-tabs>
 
 <script>
-  class RLATabs extends HTMLElement {
-    private tabsCleanup: (() => void) | null = null;
+  if (typeof HTMLElement !== 'undefined') {
+    class RLATabs extends HTMLElement {
+      private tabsCleanup: (() => void) | null = null;
 
-    connectedCallback() {
-      this.style.display = 'contents';
-      const container = this.querySelector("[data-tabs-container]") as HTMLElement | null;
-      if (!container) return;
+      connectedCallback() {
+        this.style.display = 'contents';
+        const container = this.querySelector("[data-tabs-container]") as HTMLElement | null;
+        if (!container) return;
 
-      const containerValue = container.dataset.value;
-      const triggers = container.querySelectorAll("[role=tab]");
-      const panels = container.querySelectorAll("[role=tabpanel]");
+        const containerValue = container.dataset.value;
+        const triggers = container.querySelectorAll("[role=tab]");
+        const panels = container.querySelectorAll("[role=tabpanel]");
 
-      triggers.forEach(trigger => {
-        const val = (trigger as HTMLButtonElement).dataset.value;
-        trigger.setAttribute("data-state", val === containerValue ? "active" : "inactive");
-      });
+        triggers.forEach(trigger => {
+          const val = (trigger as HTMLButtonElement).dataset.value;
+          trigger.setAttribute("data-state", val === containerValue ? "active" : "inactive");
+        });
 
-      panels.forEach(panel => {
-        const val = (panel as HTMLElement).dataset.value;
-        if (val === containerValue) {
-          panel.classList.remove("hidden");
-          (panel as HTMLElement).style.display = "";
-        } else {
-          panel.classList.add("hidden");
-          (panel as HTMLElement).style.display = "none";
-        }
-      });
+        panels.forEach(panel => {
+          const val = (panel as HTMLElement).dataset.value;
+          if (val === containerValue) {
+            panel.classList.remove("hidden");
+            (panel as HTMLElement).style.display = "";
+          } else {
+            panel.classList.add("hidden");
+            (panel as HTMLElement).style.display = "none";
+          }
+        });
 
-      const clickCleanups: (() => void)[] = [];
+        const clickCleanups: (() => void)[] = [];
 
-      triggers.forEach(triggerNode => {
-        const trigger = triggerNode as HTMLButtonElement;
-        const onClick = () => {
-          const targetValue = trigger.dataset.value;
+        triggers.forEach(triggerNode => {
+          const trigger = triggerNode as HTMLButtonElement;
+          const onClick = () => {
+            const targetValue = trigger.dataset.value;
 
-          triggers.forEach(tNode => {
-            const t = tNode as HTMLButtonElement;
-            t.setAttribute("data-state", t.dataset.value === targetValue ? "active" : "inactive");
-          });
+            triggers.forEach(tNode => {
+              const t = tNode as HTMLButtonElement;
+              t.setAttribute("data-state", t.dataset.value === targetValue ? "active" : "inactive");
+            });
 
-          panels.forEach(panel => {
-            if ((panel as HTMLElement).dataset.value === targetValue) {
-              panel.classList.remove("hidden");
-              (panel as HTMLElement).style.display = "";
-            } else {
-              panel.classList.add("hidden");
-              (panel as HTMLElement).style.display = "none";
-            }
-          });
+            panels.forEach(panel => {
+              if ((panel as HTMLElement).dataset.value === targetValue) {
+                panel.classList.remove("hidden");
+                (panel as HTMLElement).style.display = "";
+              } else {
+                panel.classList.add("hidden");
+                (panel as HTMLElement).style.display = "none";
+              }
+            });
+          };
+          trigger.addEventListener("click", onClick);
+          clickCleanups.push(() => trigger.removeEventListener("click", onClick));
+        });
+
+        this.tabsCleanup = () => {
+          clickCleanups.forEach(fn => fn());
         };
-        trigger.addEventListener("click", onClick);
-        clickCleanups.push(() => trigger.removeEventListener("click", onClick));
-      });
+      }
 
-      this.tabsCleanup = () => {
-        clickCleanups.forEach(fn => fn());
-      };
-    }
-
-    disconnectedCallback() {
-      if (this.tabsCleanup) {
-        this.tabsCleanup();
-        this.tabsCleanup = null;
+      disconnectedCallback() {
+        if (this.tabsCleanup) {
+          this.tabsCleanup();
+          this.tabsCleanup = null;
+        }
       }
     }
-  }
 
-  if (!customElements.get('rla-tabs')) {
-    customElements.define('rla-tabs', RLATabs);
+    if (!customElements.get('rla-tabs')) {
+      customElements.define('rla-tabs', RLATabs);
+    }
   }
 </script>
