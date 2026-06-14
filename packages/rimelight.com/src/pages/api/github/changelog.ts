@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ request }) => {
     Accept: "application/vnd.github.v3+json"
   }
   if (token) {
-    headers["Authorization"] = `token ${token}`
+    headers["Authorization"] = `Bearer ${token}`
   }
 
   const paths = [
