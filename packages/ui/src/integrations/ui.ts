@@ -10,7 +10,7 @@ import rimelightUiPreset, {
   type ColorConfigValue,
   type RimelightPresetOptions
 } from "../presets"
-import { extractAllMeta } from "../plugins/starlightDocsApi"
+import { extractAllMeta } from "../docs/extractAll"
 import virtual from "vite-plugin-virtual"
 
 export interface CategoryConfig {
@@ -137,8 +137,8 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   const virtualModuleId = "virtual:rimelight-ui"
   const resolvedVirtualModuleId = "\0" + virtualModuleId
 
-  function setViteConfig(updateConfig: (config: Record<string, unknown>) => void) {
-    const docsMeta = extractAllMeta()
+  async function setViteConfig(updateConfig: (config: Record<string, unknown>) => void) {
+    const docsMeta = await extractAllMeta()
     updateConfig({
       vite: {
         optimizeDeps: {
@@ -173,9 +173,9 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   const rimelightUIIntegration: AstroIntegration = {
     name: "@rimelight/ui",
     hooks: {
-      "astro:config:setup": ({ updateConfig, logger }) => {
+      "astro:config:setup": async ({ updateConfig, logger }) => {
         logger.info("Initializing @rimelight/ui core")
-        setViteConfig(updateConfig)
+        await setViteConfig(updateConfig)
       }
     }
   }

@@ -1,7 +1,7 @@
 import { readFileSync, existsSync, statSync } from "node:fs"
 import path from "node:path"
 import ts from "typescript"
-import type { PropMeta, SlotMeta, EmitMeta } from "./types"
+import type { PropMeta, SlotMeta, EmitMeta } from "../types"
 
 function extractScriptBlock(content: string): string | null {
   const match =
@@ -74,7 +74,7 @@ function getTypeRefName(typeArg: ts.TypeNode): string | null {
   return null
 }
 
-export function extractVueMetaDirect(filePath: string): {
+export function extractVueMeta(filePath: string): {
   props: PropMeta[]
   slots: SlotMeta[]
   emits: EmitMeta[]
@@ -322,14 +322,36 @@ export function extractVueMetaDirect(filePath: string): {
           const typeArg = node.typeArguments?.[0]
           if (typeArg && ts.isTypeLiteralNode(typeArg)) {
             for (const member of typeArg.members) {
-              if (ts.isMethodSignature(member) && member.name && ts.isIdentifier(member.name)) {
+              if (
+                (ts.isMethodSignature(member) || ts.isPropertySignature(member)) &&
+                member.name &&
+                ts.isIdentifier(member.name)
+              ) {
                 const slotName = member.name.text
                 const bindings: Record<string, string> = {}
-                if (member.parameters.length > 0) {
-                  const param = member.parameters[0]
-                  if (param?.type) {
-                    const typeText = param.type.getText()
-                    bindings["props"] = typeText
+                
+                let params: readonly ts.ParameterDeclaration[] = []
+                if (ts.isMethodSignature(member)) {
+                  params = member.parameters
+                } else if (ts.isPropertySignature(member) && member.type && ts.isFunctionTypeNode(member.type)) {
+                  params = member.type.parameters
+                }
+
+                if (params.length > 0) {
+                  const param = params[0]
+                  if (param?.type && ts.isTypeLiteralNode(param.type)) {
+                    for (const pm of param.type.members) {
+                      if (
+                        ts.isPropertySignature(pm) &&
+                        pm.name &&
+                        ts.isIdentifier(pm.name) &&
+                        pm.type
+                      ) {
+                        bindings[pm.name.text] = pm.type.getText()
+                      }
+                    }
+                  } else if (param?.type) {
+                    bindings["props"] = param.type.getText()
                   }
                 }
                 slots.push({ name: slotName, bindings, description: "" })

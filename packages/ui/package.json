@@ -42,6 +42,8 @@
     "./utils/*": "./src/utils/*",
     "./integrations": "./src/integrations/index.ts",
     "./integrations/*": "./src/integrations/*",
+    "./docs": "./src/docs/extractAll.ts",
+    "./docs/*": "./src/docs/*",
     "./plugins": "./src/plugins/index.ts",
     "./plugins/*": "./src/plugins/*",
     "./middleware": "./src/middleware/index.ts",

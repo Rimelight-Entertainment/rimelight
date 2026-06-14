@@ -22,7 +22,6 @@ export function filterProps(
 
 export function generateThemeCode(componentName: string, theme: ThemeMeta): string {
   const componentConfig: Record<string, unknown> = {
-    ...(theme.slots.length ? { slots: theme.slots } : {}),
     ...(Object.keys(theme.base).length ? { base: theme.base } : {}),
     ...(Object.keys(theme.variants).length ? { variants: theme.variants } : {}),
     ...(theme.compoundVariants.length ? { compoundVariants: theme.compoundVariants } : {}),
@@ -36,7 +35,7 @@ import { defineConfig } from "astro/config"
 export default defineConfig({
   integrations: [
     ui({
-      components: {
+      ui: {
         ${componentName}: ${JSON.stringify(componentConfig, null, 6).replace(/\n/g, "\n        ")}
       }
     })
