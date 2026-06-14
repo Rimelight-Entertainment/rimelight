@@ -1,71 +1,154 @@
 ---
-interface Props {
-  class?: string
-}
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { StepsProps } from "../../types"
+import stepsThemeDefault, { createStepsTheme } from "../../themes/steps.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 
-const { class: className = "", ...rest } = Astro.props
+const uiConfig = getUIConfig()
+const stepsTheme = uiConfig.colors ? createStepsTheme() : stepsThemeDefault
+
+const steps = scv(stepsTheme)
+
+const {
+  size = "md",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as StepsProps
+
+const classes = resolveClasses(steps, { size }, useUi("steps", uiProp), className)
 ---
-<div class:list={["rl-steps-container", className]} {...rest}>
+
+<!--
+  Usage: wrap an ordered list with any content inside each <li>.
+
+  <RLASteps>
+    <ol>
+      <li>
+        <strong>Create a project</strong>
+        <p>Run the scaffold command…</p>
+        <Code code="npm create astro@latest" lang="bash" />
+      </li>
+      <li>
+        <strong>Install dependencies</strong>
+        <Code code="npm install" lang="bash" />
+      </li>
+    </ol>
+  </RLASteps>
+
+  The component styles the <ol> with numbered indicators and connector lines.
+  Each <li> can hold any arbitrary Astro/HTML content.
+-->
+<div class:list={[classes.root, "rl-steps"]} data-slot="root" data-size={size} {...rest}>
   <slot />
 </div>
 
 <style is:global>
-  .rl-steps-container ol {
+  /* ── Reset & layout ─────────────────────────────────────────────────────── */
+  .rl-steps ol {
     list-style: none;
-    counter-reset: steps-counter 0;
-    padding-inline-start: 0;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    counter-reset: rl-step 0;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
   }
 
-  .rl-steps-container ol > li {
-    counter-increment: steps-counter;
+  .rl-steps ol > li {
+    counter-increment: rl-step;
     position: relative;
-    padding-inline-start: 3rem;
-    padding-bottom: 1.5rem;
-    min-height: 2.5rem;
+    display: flex;
+    gap: 0.875rem;
+    padding-bottom: 1.75rem;
   }
 
-  .rl-steps-container ol > li + li {
-    margin-top: 0;
+  .rl-steps ol > li:last-child {
+    padding-bottom: 0;
   }
 
-  /* Custom bullet */
-  .rl-steps-container ol > li::before {
-    content: counter(steps-counter);
-    position: absolute;
-    top: 0.125rem;
-    left: 0;
+  /* ── Numbered indicator bubble (::before) ──────────────────────────────── */
+  .rl-steps ol > li::before {
+    content: counter(rl-step);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 1.75rem;
     height: 1.75rem;
-    line-height: 1.75rem;
+    margin-top: 0.0625rem; /* fine-tune vertical alignment with first line of content */
+    border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 700;
-    text-align: center;
-    color: var(--primary-foreground, #fff);
-    background-color: var(--primary, #3b82f6);
-    border-radius: 9999px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    line-height: 1;
+    color: var(--color-primary-foreground, #fff);
+    background-color: var(--color-primary, #3b82f6);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
   }
 
-  /* Vertical guideline */
-  .rl-steps-container ol > li::after {
+  /* ── Vertical connector line (::after) ─────────────────────────────────── */
+  .rl-steps ol > li::after {
     content: '';
     position: absolute;
-    top: 2rem;
-    bottom: 0.125rem;
-    left: 0.875rem;
+    /* start just below the indicator bottom */
+    top: calc(1.75rem + 0.25rem);
+    bottom: 0;
+    /* centered on the indicator: indicator is 1.75rem wide, centered at 0.875rem */
+    left: calc(0.875rem - 1px);
     width: 2px;
-    background-color: var(--border, #e5e7eb);
+    background-color: var(--color-border, #e5e7eb);
   }
 
-  /* Hide guideline on the last item */
-  .rl-steps-container ol > li:last-child::after {
+  .rl-steps ol > li:last-child::after {
     display: none;
   }
 
-  /* Style headings or paragraphs inside list items nicely */
-  .rl-steps-container ol > li > :first-child {
+  /* ── Content area ───────────────────────────────────────────────────────── */
+  /* The content sits to the right of the indicator (flex sibling) */
+  .rl-steps ol > li > * {
+    min-width: 0;
+    flex: 1;
+  }
+
+  /* Remove top margin from the first element so it aligns with the indicator */
+  .rl-steps ol > li > :first-child,
+  .rl-steps ol > li > :first-child > :first-child {
     margin-top: 0;
+  }
+
+  /* ── Size: sm ───────────────────────────────────────────────────────────── */
+  .rl-steps[data-size="sm"] ol > li {
+    gap: 0.625rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .rl-steps[data-size="sm"] ol > li::before {
+    width: 1.375rem;
+    height: 1.375rem;
+    font-size: 0.625rem;
+  }
+
+  .rl-steps[data-size="sm"] ol > li::after {
+    top: calc(1.375rem + 0.25rem);
+    left: calc(0.6875rem - 1px);
+  }
+
+  /* ── Size: lg ───────────────────────────────────────────────────────────── */
+  .rl-steps[data-size="lg"] ol > li {
+    gap: 1.125rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .rl-steps[data-size="lg"] ol > li::before {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.875rem;
+  }
+
+  .rl-steps[data-size="lg"] ol > li::after {
+    top: calc(2.25rem + 0.25rem);
+    left: calc(1.125rem - 1px);
   }
 </style>
