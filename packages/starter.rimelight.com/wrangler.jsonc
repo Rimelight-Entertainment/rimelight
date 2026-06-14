@@ -65,6 +65,14 @@
     {
       "tag": "v1",
       "new_sqlite_classes": ["ChatRoom"]
+    },
+    {
+      "tag": "v2",
+      "new_classes": ["Document"]
+    },
+    {
+      "tag": "v3",
+      "deleted_classes": ["Document"]
     }
   ]
 }
