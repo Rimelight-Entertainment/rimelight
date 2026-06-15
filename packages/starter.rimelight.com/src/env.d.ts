@@ -3,6 +3,9 @@
 
 type ENV = {
   ChatRoom: import("@cloudflare/workers-types").DurableObjectNamespace;
+  MY_RATE_LIMITER: {
+    limit: (options: { key: string }) => Promise<{ success: boolean }>;
+  };
 };
 
 declare global {
