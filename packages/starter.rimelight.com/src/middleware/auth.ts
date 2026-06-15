@@ -8,6 +8,22 @@ export const auth = defineMiddleware(async (context, next) => {
   if (env && (env as Record<string, any>).DB) {
     globalThis.DB = (env as Record<string, any>).DB
   }
+  if (env && (env as Record<string, any>).BLOB) {
+    (globalThis as any).BLOB = (env as Record<string, any>).BLOB
+  }
+
+  if (context.url.pathname.includes('/admin')) {
+    const authHeader = context.request.headers.get('Authorization');
+    const adminPassword = (env as Record<string, any>)?.ADMIN_PASSWORD || "admin";
+    const expected = `Basic ${btoa(`admin:${adminPassword}`)}`;
+
+    if (authHeader !== expected) {
+      return new Response('Unauthorized', {
+        status: 401,
+        headers: { 'WWW-Authenticate': 'Basic realm="Admin"' }
+      });
+    }
+  }
 
   const isIgnored = IGNORED_ROUTES.some((path) => context.url.pathname.includes(path))
   const isProtected = PROTECTED_ROUTES.some((path) => context.url.pathname.startsWith(path))

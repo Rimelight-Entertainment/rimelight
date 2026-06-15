@@ -1,0 +1,326 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import RLAContainer from '@rimelight/ui/components/astro/RLAContainer.astro';
+import RLAFileUpload from '@rimelight/ui/components/astro/RLAFileUpload.astro';
+import { db, posts } from '@/db';
+import { eq } from 'drizzle-orm';
+
+const { id } = Astro.params;
+const post = await db.select().from(posts).where(eq(posts.id, id ?? "")).get();
+
+if (!post) {
+  return Astro.redirect(`/${Astro.currentLocale}/404`);
+}
+
+let errorMsg = "";
+
+if (Astro.request.method === "POST") {
+  try {
+    const formData = await Astro.request.formData();
+    const title = formData.get("title") as string;
+    const slug = formData.get("slug") as string;
+    const content = formData.get("content") as string;
+    const coverImage = formData.get("coverImage") as string;
+
+    if (!title || !slug || !content) {
+      throw new Error("Title, Slug, and Content are required.");
+    }
+
+    await db.update(posts).set({
+      title,
+      slug,
+      content,
+      coverImage: coverImage || null,
+      updatedAt: new Date(),
+    }).where(eq(posts.id, id ?? ""));
+
+    return Astro.redirect(`/${Astro.currentLocale}/admin/posts`);
+  } catch (err: any) {
+    errorMsg = err.message || "Failed to update post.";
+  }
+}
+---
+
+<AppLayout title={`CMS - Edit ${post.title}`} description="Edit database-backed blog post details">
+  <RLAContainer class="py-16 editor-container">
+    <div class="cms-header">
+      <h1>Edit D1 Post</h1>
+      <p class="subtitle">Modify details and update media stored in R2.</p>
+    </div>
+
+    {errorMsg && <div class="error-banner">{errorMsg}</div>}
+
+    <form method="POST" class="post-form">
+      <div class="form-group">
+        <label for="title">Post Title</label>
+        <input type="text" id="title" name="title" value={post.title} required />
+      </div>
+
+      <div class="form-group">
+        <label for="slug">Slug</label>
+        <input type="text" id="slug" name="slug" value={post.slug} required />
+      </div>
+
+      <div class="form-group">
+        <label>Cover Image (R2 / RLAFileUpload)</label>
+        <RLAFileUpload id="cover-uploader" accept="image/*" title="Click or drop cover image to change" description="Uploads new cover to local R2 simulation" />
+        <div id="upload-status" class="upload-status">
+          {post.coverImage ? "Current image stored. Upload another to replace." : "No image uploaded yet."}
+        </div>
+        <input type="hidden" id="coverImage" name="coverImage" value={post.coverImage || ""} />
+        
+        <div id="cover-preview-container" class={`cover-preview ${post.coverImage ? '' : 'hidden'}`}>
+          <img id="cover-preview-img" src={post.coverImage || ""} alt="Cover Preview" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="content">Markdown Content</label>
+        <textarea id="content" name="content" required>{post.content}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href={`/${Astro.currentLocale}/admin/posts`} class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </RLAContainer>
+</AppLayout>
+
+<script>
+  const titleInput = document.getElementById('title') as HTMLInputElement;
+  const slugInput = document.getElementById('slug') as HTMLInputElement;
+  const fileInput = document.querySelector('[data-fileUpload-input]') as HTMLInputElement | null;
+  const uploadStatus = document.getElementById('upload-status') as HTMLDivElement;
+  const coverImageInput = document.getElementById('coverImage') as HTMLInputElement;
+  const coverPreviewContainer = document.getElementById('cover-preview-container') as HTMLDivElement;
+  const coverPreviewImg = document.getElementById('cover-preview-img') as HTMLImageElement;
+
+  // Auto-generate slug from title (only if title updates)
+  titleInput?.addEventListener('input', () => {
+    slugInput.value = titleInput.value
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  });
+
+  async function compressImage(file: File, maxWidth = 1600, quality = 0.85): Promise<File> {
+    if (!file.type.startsWith('image/') || file.type === 'image/gif') {
+      return file;
+    }
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxWidth / bitmap.width);
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+
+    const canvas = new OffscreenCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await canvas.convertToBlob({ type: 'image/webp', quality });
+    return new File([blob], file.name.replace(/\.\w+$/, '.webp'), { type: 'image/webp' });
+  }
+
+  fileInput?.addEventListener('change', async () => {
+    const files = fileInput.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    uploadStatus.textContent = 'Uploading to simulated R2...';
+    uploadStatus.className = 'upload-status loading';
+
+    try {
+      const compressed = await compressImage(file);
+      const formData = new FormData();
+      formData.append('file', compressed);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const data = await response.json();
+      uploadStatus.textContent = 'New cover image uploaded!';
+      uploadStatus.className = 'upload-status success';
+      
+      coverImageInput.value = data.url;
+      coverPreviewImg.src = data.url;
+      coverPreviewContainer.classList.remove('hidden');
+    } catch (err: any) {
+      console.error(err);
+      uploadStatus.textContent = `Upload failed: ${err.message || 'Error'}`;
+      uploadStatus.className = 'upload-status error';
+    }
+  });
+</script>
+
+<style>
+  .editor-container {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: var(--font-sans), sans-serif;
+  }
+
+  .cms-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .cms-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #a3a3a3;
+    font-size: 1.1rem;
+  }
+
+  .error-banner {
+    background: #7f1d1d;
+    color: #fca5a5;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    border: 1px solid #b91c1c;
+  }
+
+  .post-form {
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .form-group label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e5e5e5;
+  }
+
+  .form-group input[type="text"] {
+    background: #0a0a0a;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input[type="text"]:focus {
+    border-color: #3b82f6;
+  }
+
+  .upload-status {
+    font-size: 0.85rem;
+    color: #a3a3a3;
+    margin-top: 0.5rem;
+  }
+
+  .loading {
+    color: #eab308;
+  }
+
+  .success {
+    color: #22c55e;
+  }
+
+  .error {
+    color: #ef4444;
+  }
+
+  .cover-preview {
+    margin-top: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 200px;
+    border: 1px solid #404040;
+  }
+
+  .cover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  textarea {
+    width: 100%;
+    height: 320px;
+    background: #0a0a0a;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #e5e5e5;
+    font-family: var(--font-mono), monospace;
+    font-size: 0.95rem;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  textarea:focus {
+    border-color: #3b82f6;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: #2563eb;
+  }
+
+  .btn-secondary {
+    background: #262626;
+    color: #e5e5e5;
+    border: 1px solid #404040;
+  }
+
+  .btn-secondary:hover {
+    background: #404040;
+    color: #fff;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+</style>

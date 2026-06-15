@@ -13,6 +13,7 @@ declare global {
         }
     }
     var DB: any;
+    var BLOB: any;
 }
 
 export {};
