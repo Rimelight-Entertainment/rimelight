@@ -13,6 +13,7 @@ declare global {
         interface Locals {
             user: import("better-auth").User | null;
             session: import("better-auth").Session | null;
+            runtime: import("@astrojs/cloudflare").Runtime<ENV>;
         }
     }
     var DB: any;

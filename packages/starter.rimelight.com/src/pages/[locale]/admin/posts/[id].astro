@@ -129,6 +129,7 @@ if (Astro.request.method === "POST") {
     if (!files || files.length === 0) return;
 
     const file = files[0];
+    if (!file) return;
     uploadStatus.textContent = 'Uploading to simulated R2...';
     uploadStatus.className = 'upload-status loading';
 
@@ -146,7 +147,7 @@ if (Astro.request.method === "POST") {
         throw new Error(await response.text());
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as { url: string };
       uploadStatus.textContent = 'New cover image uploaded!';
       uploadStatus.className = 'upload-status success';
       

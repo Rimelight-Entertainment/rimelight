@@ -5,6 +5,11 @@ import RLAFormField from '@rimelight/ui/components/astro/RLAFormField.astro'
 import RLAInput from '@rimelight/ui/components/astro/RLAInput.astro'
 import RLAForm from '@rimelight/ui/components/astro/RLAForm.astro'
 import { useI18n } from '@rimelight/i18n'
+import { isTurnstileEnabled } from '@/lib/turnstile'
+
+const env = Astro.locals.runtime?.env
+const turnstileEnabled = isTurnstileEnabled(env)
+const siteKey = env?.TURNSTILE_SITE_KEY
 
 const messages = useI18n(Astro, 'auth', {
   authSignInTitle: 'Sign in',
@@ -36,6 +41,9 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {}
 ---
 
 <AppLayout title={messages.authSignUpTitle} description={messages.authSignUpDescription}>
+  {turnstileEnabled && (
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  )}
   {
     result?.error && !isInputError(result.error) && (
       <p>{result.error.message}</p>
@@ -54,6 +62,15 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {}
     <RLAFormField label={messages.authSignUpPassword} error={inputErrors.password?.[0]}>
       <RLAInput name="password" required type="password" />
     </RLAFormField>
+
+    {turnstileEnabled ? (
+      <div class="cf-turnstile my-4" data-sitekey={siteKey} data-theme="dark"></div>
+    ) : (
+      <div class="text-[10px] text-neutral-500 my-4 border border-dashed border-neutral-800 p-2 text-center rounded">
+        🛡️ {`[Turnstile Bot Check Mock (Disabled - Keys not configured)]`}
+      </div>
+    )}
+
     <button>{messages.authSignUpButton}</button>
   </RLAForm>
 </AppLayout>
