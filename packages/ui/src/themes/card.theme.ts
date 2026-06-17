@@ -4,10 +4,10 @@ export const createCardTheme = () =>
   defineTheme({
     slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media"],
     base: {
-      root: "rounded-lg overflow-hidden transition-all duration-300",
+      root: "rounded-lg overflow-hidden",
       header: "p-4 sm:px-6",
       title: "text-highlighted font-semibold",
-      description: "mt-1 text-muted text-sm",
+      description: "mt-1 text-muted-foreground text-sm",
       body: "p-4 sm:p-6",
       footer: "p-4 sm:px-6",
       overlay:
@@ -22,14 +22,13 @@ export const createCardTheme = () =>
           description: "text-dimmed"
         },
         outline: {
-          root: "bg-default ring ring-default divide-y divide-default",
-          description: "text-muted-foreground"
+          root: "bg-default border border-default divide-y [&>:not(:last-child)]:border-default"
         },
         soft: {
-          root: "bg-elevated/50 divide-y divide-default"
+          root: "bg-elevated/50 divide-y [&>:not(:last-child)]:border-default"
         },
         subtle: {
-          root: "bg-elevated/50 ring ring-default divide-y divide-default"
+          root: "bg-elevated/50 border border-default divide-y [&>:not(:last-child)]:border-default"
         }
       },
       interactive: {

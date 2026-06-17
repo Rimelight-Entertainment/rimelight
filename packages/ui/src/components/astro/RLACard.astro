@@ -32,6 +32,7 @@ const Tag = href ? "a" : "div"
   class={classes.root}
   data-slot="card-root"
   {...(Tag === "a" ? { href } : {})}
+  {...(Tag === "a" ? { style: "text-decoration: none" } : {})}
   {...rest}
 >
   <slot name="media">
@@ -44,8 +45,8 @@ const Tag = href ? "a" : "div"
 
   {overlay ? (
     <div class={classes.overlay} data-slot="overlay">
-      {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
-      {description && <p class={classes.description} data-slot="description">{description}</p>}
+      {title && <div class={classes.title} data-slot="title">{title}</div>}
+      {description && <div class={classes.description} data-slot="description">{description}</div>}
       <slot />
     </div>
   ) : (
@@ -53,17 +54,17 @@ const Tag = href ? "a" : "div"
       <slot name="header">
         {(title || description || Astro.slots.has("title") || Astro.slots.has("description")) && (
           <div class={classes.header} data-slot="header">
-            {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
+            {title && <div class={classes.title} data-slot="title">{title}</div>}
             <slot name="title" />
             
-            {description && <p class={classes.description} data-slot="description">{description}</p>}
+            {description && <div class={classes.description} data-slot="description">{description}</div>}
             <slot name="description" />
           </div>
         )}
       </slot>
 
       {Astro.slots.has("default") && (
-        <div class={classes.content} data-slot="content">
+        <div class={classes.body} data-slot="body">
           <slot />
         </div>
       )}

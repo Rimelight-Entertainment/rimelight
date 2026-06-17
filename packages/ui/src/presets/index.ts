@@ -193,14 +193,14 @@ export default definePreset((options?: RimelightPresetOptions) => {
       // (i.e. whatever is set on <html>). Use inside a pinned wrapper to opt a subtree back out.
       ["rl-auto", { "color-scheme": "light dark", "color": "var(--foreground)" }],
       [
-        /^(text)-(default|inverted)(?:\/(\d+))?$/,
+        /^(text)-(default|inverted|muted|dimmed|toned|highlighted)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? { color: `color-mix(in srgb, var(--text-color-${name}) ${opacity}%, transparent)` }
             : { color: `var(--text-color-${name})` }
       ],
       [
-        /^(bg)-(default|inverted)(?:\/(\d+))?$/,
+        /^(bg)-(default|inverted|muted|elevated|accented)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? {
@@ -209,7 +209,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
             : { "background-color": `var(--background-color-${name})` }
       ],
       [
-        /^(ring)-(default|inverted)(?:\/(\d+))?$/,
+        /^(ring)-(default|inverted|muted|accented)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? {
@@ -218,16 +218,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
             : { "--un-ring-color": `var(--ring-color-${name})` }
       ],
       [
-        /^(divide)-(default)(?:\/(\d+))?$/,
-        ([, , name, opacity]) =>
-          opacity
-            ? {
-                "border-color": `color-mix(in srgb, var(--divide-color-${name}) ${opacity}%, transparent)`
-              }
-            : { "border-color": `var(--divide-color-${name})` }
-      ],
-      [
-        /^(border)-(default)(?:\/(\d+))?$/,
+        /^(border)-(default|inverted|muted|accented)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? {
@@ -478,6 +469,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
           --ring-color-accented: var(--color-neutral-300);
           --ring-color-inverted: var(--color-neutral-950);
           --divide-color-default: var(--color-neutral-200);
+          --divide-color-inverted: var(--color-neutral-950);
 
           /* Color scales — light-dark() resolves based on inherited color-scheme */
 ${lightDarkLines}
