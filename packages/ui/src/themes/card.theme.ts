@@ -5,11 +5,11 @@ export const createCardTheme = () =>
     slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media"],
     base: {
       root: "rounded-lg overflow-hidden",
-      header: "p-4 sm:px-6",
+      header: "p-4 sm:px-6 border-default",
       title: "text-highlighted font-semibold",
       description: "mt-1 text-muted-foreground text-sm",
-      body: "p-4 sm:p-6",
-      footer: "p-4 sm:px-6",
+      body: "p-4 sm:p-6 border-default",
+      footer: "p-4 sm:px-6 border-default",
       overlay:
         "absolute inset-0 z-10 flex flex-col justify-end p-4 bg-gradient-to-t from-black/80 to-transparent text-white",
       media: "relative"
@@ -22,13 +22,13 @@ export const createCardTheme = () =>
           description: "text-dimmed"
         },
         outline: {
-          root: "bg-default border border-default divide-y [&>:not(:last-child)]:border-default"
+          root: "bg-default border border-default divide-y divide-default"
         },
         soft: {
-          root: "bg-elevated/50 divide-y [&>:not(:last-child)]:border-default"
+          root: "bg-elevated/50 divide-y divide-default"
         },
         subtle: {
-          root: "bg-elevated/50 border border-default divide-y [&>:not(:last-child)]:border-default"
+          root: "bg-elevated/50 border border-default divide-y divide-default"
         }
       },
       interactive: {
