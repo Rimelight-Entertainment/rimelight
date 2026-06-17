@@ -1,3 +1,101 @@
+---
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    configDependencies:
+      '@pnpm/pacquet':
+        specifier: 0.11.9
+        version: 0.11.9
+
+packages:
+
+  '@pacquet/darwin-arm64@0.11.9':
+    resolution: {integrity: sha512-/u/KpZN3E1ulzf+BpF9lUsfRwUcJiGXmcc4AeTvXuKru0Sy1WT1LgHcVc//FsZEr8+0b7VYtMjbhNs7iejA6MA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@pacquet/darwin-x64@0.11.9':
+    resolution: {integrity: sha512-O5MUR6jiJMz8klo1U7D1jIgiK8KVTnpy8MI0PuDiMuuiLDUPSicUaef8Sl75MdeHc3AntTyZnJ2d0H2NNzEurw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@pacquet/linux-arm64-musl@0.11.9':
+    resolution: {integrity: sha512-EL0ppwJTcSQ6UoFxh9B6j7yeAvfBmsii9vWcsy4tyTQiO3y3fejts8s/5YouJJjasx++/RJ0j4+QAILHJB5pZw==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@pacquet/linux-arm64@0.11.9':
+    resolution: {integrity: sha512-aF3+UBmfFGyyINOMvqVT1SzpHqgiJC9sh1vfcK21PxLhnc1tl1wdFNafw8cir9jw7xqOkxMeKmPbPJEA/MmR/g==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@pacquet/linux-x64-musl@0.11.9':
+    resolution: {integrity: sha512-rG315wyiVRYKciQJFDJwgx4e7wZ64UrBVyF3gALjbpAU0tzmFmsdA/tx3s4Axx6PJadfjj5Fko4EYCnF8hUgCQ==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@pacquet/linux-x64@0.11.9':
+    resolution: {integrity: sha512-Hf9IYWlrHBkGygGD3VgCn6QVtUlKtdwnFOkbuqCow3KCFhPu5GqMfFh373EL2k5WjSgFxXeH9SQbyVXyH0f3Mw==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@pacquet/win32-arm64@0.11.9':
+    resolution: {integrity: sha512-0y07vF7vUTZoKuT+QcQVXwDEONnR2eG2Xj+sP+bubuP8q4+B+6IGsp4V4ztDxFFgJt8qyCISoWTNLjgnOchN7g==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@pacquet/win32-x64@0.11.9':
+    resolution: {integrity: sha512-sJyg2waJPDtWExHud44yjh/QcYu6kkMyeD2rzNV4FObMmwum3Isa/xJV9aKuw436rYUBDa2dg3j6/Xbc76eR1w==}
+    cpu: [x64]
+    os: [win32]
+
+  '@pnpm/pacquet@0.11.9':
+    resolution: {integrity: sha512-tALyh7r37bvX304pYCbs9ol9M7Q/e8Eb7sD5ZvVKt6tCsxdRYH4XcHJIYFPlxLMOSICP1/UA6zjvdclMbECivQ==}
+
+snapshots:
+
+  '@pacquet/darwin-arm64@0.11.9':
+    optional: true
+
+  '@pacquet/darwin-x64@0.11.9':
+    optional: true
+
+  '@pacquet/linux-arm64-musl@0.11.9':
+    optional: true
+
+  '@pacquet/linux-arm64@0.11.9':
+    optional: true
+
+  '@pacquet/linux-x64-musl@0.11.9':
+    optional: true
+
+  '@pacquet/linux-x64@0.11.9':
+    optional: true
+
+  '@pacquet/win32-arm64@0.11.9':
+    optional: true
+
+  '@pacquet/win32-x64@0.11.9':
+    optional: true
+
+  '@pnpm/pacquet@0.11.9':
+    optionalDependencies:
+      '@pacquet/darwin-arm64': 0.11.9
+      '@pacquet/darwin-x64': 0.11.9
+      '@pacquet/linux-arm64': 0.11.9
+      '@pacquet/linux-arm64-musl': 0.11.9
+      '@pacquet/linux-x64': 0.11.9
+      '@pacquet/linux-x64-musl': 0.11.9
+      '@pacquet/win32-arm64': 0.11.9
+      '@pacquet/win32-x64': 0.11.9
+
+---
 lockfileVersion: '9.0'
 
 settings:
