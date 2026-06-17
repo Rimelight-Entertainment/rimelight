@@ -14,8 +14,6 @@ packageImportMethod: copy
 strictSsl: true
 overrides:
   kysely: "0.28.17"
-  vite-plus: latest
-  vite: "npm:@voidzero-dev/vite-plus-core@latest"
   ws: "^8.21.0"
   astro: "^6.4.6"
   esbuild: "0.28.1"
