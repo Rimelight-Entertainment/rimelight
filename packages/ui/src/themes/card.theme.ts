@@ -12,7 +12,7 @@ export const createCardTheme = () =>
       footer: "p-4 sm:px-6 border-default",
       overlay:
         "absolute inset-0 z-10 flex flex-col justify-end p-4 bg-gradient-to-t from-black/80 to-transparent text-white",
-      media: "relative"
+      media: "relative border-default"
     },
     variants: {
       variant: {
