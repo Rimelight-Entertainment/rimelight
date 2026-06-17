@@ -5,6 +5,7 @@ linkWorkspacePackages: true
 saveWorkspaceProtocol: false
 minimumReleaseAge: 4320 # Minutes = 3 Days
 minimumReleaseAgeExclude:
+  - "pnpm"
   - "@rimelight/*"
   - "astro"
   - "@astrojs/*"
@@ -15,7 +16,6 @@ overrides:
   kysely: "0.28.17"
   vite-plus: latest
   vite: "npm:@voidzero-dev/vite-plus-core@latest"
-  vitest: "npm:@voidzero-dev/vite-plus-test@latest"
   # Dependencies failing pnpm audit
   fast-uri: "3.1.2"
   fast-xml-parser: "5.8.0"
