@@ -954,16 +954,6 @@ export default defineDocsConfig({
                 ]
               },
               {
-                label: "Plugins",
-                collapsed: true,
-                items: [
-                  {
-                    label: "Starlight Addons",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/plugins/starlight-addons/"
-                  }
-                ]
-              },
-              {
                 label: "Agents",
                 collapsed: true,
                 items: [
