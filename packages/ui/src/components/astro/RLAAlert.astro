@@ -19,21 +19,33 @@ const {
   avatar,
   actions,
   close,
-  orientation = "horizontal",
   theme,
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as AlertProps & { orientation?: "horizontal" | "vertical" }
+} = Astro.props as AlertProps
+
+const colorToIcon: Record<string, string | undefined> = {
+  error: "i-lucide-circle-x",
+  warning: "i-lucide-triangle-alert",
+  info: "i-lucide-info",
+  success: "i-lucide-circle-check",
+  primary: undefined,
+  secondary: undefined,
+  commentary: undefined,
+  ideation: undefined,
+  source: undefined,
+  neutral: undefined
+}
 
 const resolvedColor = (variant === "destructive") ? "error" : color
 const resolvedVariant = (variant === "solid" || variant === "outline" || variant === "soft" || variant === "subtle") ? variant : "solid"
+const resolvedIcon = icon ?? colorToIcon[resolvedColor]
+const hasTitleRow = !!(title || Astro.slots.has("title") || Astro.slots.has("header") || avatar || close || Astro.slots.has("close"))
 
 const classes = resolveClasses(alert, {
   variant: resolvedVariant,
   color: resolvedColor as any,
-  orientation,
-  title: !!(title || Astro.slots.has("title")),
   theme
 }, useUi("alert", uiProp), className)
 ---
@@ -44,34 +56,48 @@ const classes = resolveClasses(alert, {
   {...rest}
 >
   <slot name="icon">
-    {icon && (
+    {resolvedIcon && (
       <span class={classes.icon} data-slot="icon">
-        <span class={cx(icon)} aria-hidden="true" />
+        <span class={cx(resolvedIcon)} aria-hidden="true" />
       </span>
     )}
   </slot>
 
-  <slot name="avatar" {...{ ui: classes }}>
-    {avatar && (
-      <RLAAvatar 
-        {...(typeof avatar === 'string' ? { src: avatar } : avatar)} 
-        size={classes.avatarSize as any} 
-        class={classes.avatar} 
-        data-slot="avatar" 
-      />
-    )}
-  </slot>
+  <div class={classes.body} data-slot="body">
+    {hasTitleRow && (
+      <div class="flex items-center gap-2.5">
+        <slot name="avatar" {...{ ui: classes }}>
+          {avatar && (
+            <RLAAvatar
+              {...(typeof avatar === 'string' ? { src: avatar } : avatar)}
+              size={classes.avatarSize as any}
+              class={classes.avatar}
+              data-slot="avatar"
+            />
+          )}
+        </slot>
 
-  <div class={classes.wrapper} data-slot="wrapper">
-    {(title || Astro.slots.has("title")) && (
-      <h5 class={classes.title} data-slot="title">
-        {title}
-        <slot name="title" />
-      </h5>
+        {(title || Astro.slots.has("title")) && (
+          <h5 class={classes.title} data-slot="title">
+            {title}
+            <slot name="title" />
+          </h5>
+        )}
+
+        <slot name="header" />
+
+        <slot name="close">
+          {close && (
+            <button class={classes.close} data-slot="close">
+              <span class="i-lucide-x size-4" />
+            </button>
+          )}
+        </slot>
+      </div>
     )}
 
     {(description || Astro.slots.has("default")) && (
-      <div class={classes.description} data-slot="description">
+      <div class={classes.content} data-slot="content">
         {description}
         <slot />
       </div>
@@ -83,12 +109,4 @@ const classes = resolveClasses(alert, {
       </div>
     )}
   </div>
-
-  <slot name="close" {...{ ui: classes }}>
-    {close && (
-      <button class={classes.close} data-slot="close">
-        <span class="i-lucide-x size-4" />
-      </button>
-    )}
-  </slot>
 </div>

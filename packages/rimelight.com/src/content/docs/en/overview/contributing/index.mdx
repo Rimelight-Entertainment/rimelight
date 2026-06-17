@@ -25,17 +25,13 @@ All software developed by our company is available under one of two distinct lic
 
 ### Documentation
 
-The Rimelight Entertainment documentation is built with [Starlight](https://starlight.astro.build) and lives within the [rimelight.com](https://github.com/Rimelight-Entertainment/rimelight.com) package.
-
-Be mindful the duplicate nesting is required as per current [Starlight configuration](https://starlight.astro.build/manual-setup/#use-starlight-at-a-subpath):
+The Rimelight Entertainment documentation is built with internal tooling and lives within the [rimelight.com](https://github.com/Rimelight-Entertainment/rimelight.com) package as [Markdown](https://daringfireball.net/projects/markdown/) files split between locales.
 
 ```text
 ├── src/
 │   └─ content/
 │       └─ docs/
 │           └─ en/
-│               └─ company/
-│                   └─ docs/
 ```
 
 ### Internationalization (i18n)
@@ -75,12 +71,10 @@ We have dedicated channels for feedback and feature requests in all of our proje
 To begin local development, follow these steps:
 
 <RLASteps>
-  1. **Clone the repository:** Clone the
-  [`rimelight.com`](https://github.com/Rimelight-Entertainment/rimelight.com) repository from
-  GitHub. 2. **Install package managers:** Ensure [pnpm](https://pnpm.io/installation) and [Vite
-  Plus](https://viteplus.dev/guide/) are installed. 3. **Install dependencies:** Run `vp i` in the
-  root of the repository. 4. **Run the application:** Run `vpr dev` to start the local development
-  server.
+  <li>**Clone the repository:** Clone the [`rimelight.com`](https://github.com/Rimelight-Entertainment/rimelight.com) repository from GitHub.</li>
+  <li>**Install package managers:** Ensure [pnpm](https://pnpm.io/installation) and [Vite Plus](https://viteplus.dev/guide/) are installed.</li>
+  <li>**Install dependencies:** Run `vp i` in the root of the repository.</li>
+  <li>**Run the application:** Run `vpr dev` to start the local development server.</li>
 </RLASteps>
 
 ### Web Packages
@@ -88,12 +82,10 @@ To begin local development, follow these steps:
 To begin local development, follow these steps:
 
 <RLASteps>
-  1. **Clone the repository:** Clone the
-  [`rimelight`](https://github.com/Rimelight-Entertainment/rimelight) monorepository from GitHub. 2.
-  **Install package managers:** Ensure [pnpm](https://pnpm.io/installation) and [Vite
-  Plus](https://viteplus.dev/guide/) are installed. 3. **Install dependencies:** Run `vp i` in the
-  root of the monorepository. 4. **Run the playground:** Navigate to `packages/playground` and run
-  `vpr dev` to start the local development server.
+  <li>**Clone the repository:** Clone the [`rimelight`](https://github.com/Rimelight-Entertainment/rimelight) monorepository from GitHub.</li>
+  <li>**Install package managers:** Ensure [pnpm](https://pnpm.io/installation) and [Vite Plus](https://viteplus.dev/guide/) are installed.</li>
+  <li>**Install dependencies:** Run `vp i` in the root of the monorepository.</li>
+  <li>**Run the playground:** Navigate to `packages/playground` and run `vpr dev` to start the local development server.</li>
 </RLASteps>
 
 ### Games
@@ -104,7 +96,7 @@ To begin local development, follow these steps:
 
 ### Submitting a Pull Request
 
-<RLAAlert color="warning" variant="soft">
+<RLAAlert color="warning" variant="soft" title="Commit Message Convention">
     We use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages. Any pull requests that do not follow this convention will be rejected.
 
     - Use `feat` for new features.
@@ -121,9 +113,7 @@ To begin local development, follow these steps:
 </RLAAlert>
 
 <RLASteps>
-
-    1. Create a new branch for your feature or bug fix.
-    2. Ensure `vpr dev`, `vpr check`, `vpr test`, `vpr build`, and `vpr preview` pass with no errors or warnings.
-    3. Push your branch and open a pull request against the `main` branch.
-
+  <li>Create a new branch for your feature or bug fix.</li>
+  <li>Ensure `vpr dev`, `vpr check`, `vpr test`, `vpr build`, and `vpr preview` pass with no errors or warnings.</li>
+  <li>Push your branch and open a pull request against the `main` branch.</li>
 </RLASteps>
