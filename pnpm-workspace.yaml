@@ -14,8 +14,9 @@ packageImportMethod: copy
 strictSsl: true
 overrides:
   kysely: "0.28.17"
+  vite-plus: latest
+  vite: "npm:@voidzero-dev/vite-plus-core@latest"
   ws: "^8.21.0"
-  astro: "^6.4.6"
   esbuild: "0.28.1"
   yaml: "^2.8.3"
   js-yaml: "^4.1.2"
@@ -23,6 +24,9 @@ peerDependencyRules:
   allowAny:
     - vite
     - vitest
+  allowedVersions:
+    "astro-nanostores-i18n>astro": ">=6.0.0 || >=7.0.0-alpha.0"
+    "astro-expressive-code>astro": ">=6.0.0 || >=7.0.0-alpha.0"
 allowBuilds:
   better-sqlite3: true
   esbuild: true
