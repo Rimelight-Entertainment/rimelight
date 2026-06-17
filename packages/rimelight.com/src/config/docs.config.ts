@@ -385,10 +385,6 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/fieldset/"
                       },
                       {
-                        label: "Hover Card",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/element/hover-card/"
-                      },
-                      {
                         label: "Kbd",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/kbd/"
                       },
@@ -399,10 +395,6 @@ export default defineDocsConfig({
                       {
                         label: "Logo",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/logo/"
-                      },
-                      {
-                        label: "Progress",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/element/progress/"
                       },
                       {
                         label: "Separator",
@@ -519,24 +511,18 @@ export default defineDocsConfig({
                       {
                         label: "Textarea",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/textarea/"
-                      }
-                    ]
-                  },
-                  {
-                    label: "Color",
-                    collapsed: true,
-                    items: [
+                      },
                       {
                         label: "ColorArea",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/color/color-area/"
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/form/color-area/"
                       },
                       {
                         label: "ColorField",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/color/color-field/"
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/form/color-field/"
                       },
                       {
                         label: "ColorSlider",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/color/color-slider/"
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/form/color-slider/"
                       }
                     ]
                   },
@@ -627,10 +613,6 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/breadcrumb/"
                       },
                       {
-                        label: "CommandPalette",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/command-palette/"
-                      },
-                      {
                         label: "Link",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/link/"
                       },
@@ -677,6 +659,10 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/context-menu/"
                       },
                       {
+                        label: "CommandPalette",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/command-palette/"
+                      },
+                      {
                         label: "Dock",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/dock/"
                       },
@@ -691,6 +677,10 @@ export default defineDocsConfig({
                       {
                         label: "Floating Action",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/floating-action/"
+                      },
+                      {
+                        label: "Hover Card",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/hover-card/"
                       },
                       {
                         label: "Modal",
@@ -750,6 +740,10 @@ export default defineDocsConfig({
                       {
                         label: "PricingTable",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/pricing-table/"
+                      },
+                      {
+                        label: "Prose",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/page/prose/"
                       }
                     ]
                   },
@@ -898,10 +892,6 @@ export default defineDocsConfig({
                       {
                         label: "Placeholder",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/placeholder/"
-                      },
-                      {
-                        label: "Prose",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/prose/"
                       },
                       {
                         label: "QR Code",

@@ -187,9 +187,6 @@ importers:
       eslint-plugin-regexp:
         specifier: 3.1.0
         version: 3.1.0(eslint@10.2.0(jiti@2.7.0))
-      knip:
-        specifier: 6.15.0
-        version: 6.15.0
       rollup-plugin-visualizer:
         specifier: 7.0.1
         version: 7.0.1(rolldown@1.0.0-rc.12(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))
@@ -302,9 +299,6 @@ importers:
       eslint-plugin-regexp:
         specifier: 3.1.0
         version: 3.1.0(eslint@10.2.0(jiti@2.7.0))
-      knip:
-        specifier: 6.15.0
-        version: 6.15.0
       rollup-plugin-visualizer:
         specifier: 7.0.1
         version: 7.0.1(rolldown@1.0.0-rc.12(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))
