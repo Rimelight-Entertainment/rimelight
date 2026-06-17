@@ -6,9 +6,9 @@ saveWorkspaceProtocol: false
 minimumReleaseAge: 4320 # Minutes = 3 Days
 minimumReleaseAgeExclude:
   - "pnpm"
-  - "@rimelight/*"
   - "astro"
   - "@astrojs/*"
+  - "@rimelight/*"
 saveExact: true
 packageImportMethod: copy
 strictSsl: true
@@ -16,21 +16,15 @@ overrides:
   kysely: "0.28.17"
   vite-plus: latest
   vite: "npm:@voidzero-dev/vite-plus-core@latest"
-  # Dependencies failing pnpm audit
-  fast-uri: "3.1.2"
-  fast-xml-parser: "5.8.0"
-  devalue: "5.8.1"
-  brace-expansion: "5.0.6"
-  ws@8: "8.20.1"
-  esbuild: "0.28.0"
-  yaml: "2.8.3"
+  ws: "^8.21.0"
+  astro: "^6.4.6"
+  esbuild: "0.28.1"
+  yaml: "^2.8.3"
+  js-yaml: "^4.1.2"
 peerDependencyRules:
   allowAny:
     - vite
     - vitest
-  allowedVersions:
-    vite: "*"
-    vitest: "*"
 allowBuilds:
   better-sqlite3: true
   esbuild: true
@@ -38,4 +32,4 @@ allowBuilds:
   vue-demi: true
   workerd: true
 configDependencies:
-  '@pnpm/pacquet': 0.11.9
+  "@pnpm/pacquet": 0.11.9

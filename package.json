@@ -30,6 +30,9 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test"
   },
+  "dependencies": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.1.24"
+  },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.5.0",
     "@types/node": "25.9.1",
