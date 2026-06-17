@@ -281,8 +281,7 @@ export default defineDocsConfig({
                 collapsed: true,
                 items: [
                   {
-                    label: "Components Overview",
-                    badge: { text: "Coming Soon", variant: "tip" },
+                    label: "Overview",
                     href: "/{locale}/company/docs/packages/rimelight-ui/components/"
                   },
                   {
@@ -346,7 +345,7 @@ export default defineDocsConfig({
                     ]
                   },
                   {
-                    label: "Elements",
+                    label: "Element",
                     collapsed: true,
                     items: [
                       {
@@ -722,6 +721,10 @@ export default defineDocsConfig({
                         label: "Stepper",
                         badge: { text: "Coming Soon", variant: "tip" },
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/stepper/"
+                      },
+                      {
+                        label: "Steps",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/steps/"
                       },
                       {
                         label: "Surround",
