@@ -7,7 +7,7 @@ import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 const fileRef = ref<HTMLInputElement>()
 const profile = reactive({
   name: "Benjamin Canac",
-  email: "ben@nuxtlabs.com",
+  email: "ben@example.com",
   username: "benjamincanac",
   avatar: "",
   bio: ""

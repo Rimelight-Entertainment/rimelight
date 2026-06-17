@@ -5,17 +5,13 @@ description: "A composable to display toast notifications in your app."
 
 The `useToast` composable allows you to programmatically trigger toast notifications from anywhere in your Vue components or interactive Astro pages.
 
-:::note[Nuxt UI Re-export]
-The `useToast` composable is currently a re-export from [Nuxt UI](https://ui.nuxt.com/docs/composables/use-toast).
-:::
-
 ## Usage
 
 Import `useToast` and call it to get access to the toast API.
 
 ```vue
 <script setup lang="ts">
-import { useToast } from "@rimelight/ui/nuxt"
+import { useToast } from "@rimelight/ui"
 
 const toast = useToast()
 

@@ -85,7 +85,7 @@ const page = defineModel<Page>({ required: true })
 const { t, locale } = useI18n()
 
 // Use a computed to safely handle properties and group rendering.
-// We avoid importing useInfobox from nuxt UI and define simple sorting/filtering inline.
+// Sorting and filtering are handled inline to avoid external dependencies.
 const sortedGroups = computed(() => {
   if (!page.value?.properties) return []
   return Object.entries(page.value.properties).toSorted((a, b) => {

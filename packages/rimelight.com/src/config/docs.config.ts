@@ -309,10 +309,6 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/header/"
                       },
                       {
-                        label: "Logo",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/app/logo/"
-                      },
-                      {
                         label: "Main",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/main/"
                       }
@@ -399,6 +395,10 @@ export default defineDocsConfig({
                       {
                         label: "Label",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/label/"
+                      },
+                      {
+                        label: "Logo",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/element/logo/"
                       },
                       {
                         label: "Progress",
