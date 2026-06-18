@@ -24,4 +24,5 @@ export interface SiteConfig {
     maxDescriptionLength: number
     authorHandle?: string
   }
+  ui?: Record<string, any>
 }

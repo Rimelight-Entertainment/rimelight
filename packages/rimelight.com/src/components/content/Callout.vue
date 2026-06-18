@@ -2,7 +2,9 @@
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import { useAppConfig } from "@/config/app.config" /* region Props */
+import { siteConfig } from "@/config/site.config"
+
+/* region Props */
 export type CalloutVariant =
   | "info"
   | "success"
@@ -90,10 +92,9 @@ const styles = computed(() => {
   }
   return result
 }) /* endregion */ /* region State */
-const appConfig = useAppConfig()
 const config = computed(() => {
   return (
-    (appConfig.rimelightComponents as any)?.callouts?.[variant] ?? {
+    (siteConfig.ui as any)?.callouts?.[variant] ?? {
       icon: "i-lucide-alert-circle",
       title: variant.toUpperCase(),
       tooltip: ""

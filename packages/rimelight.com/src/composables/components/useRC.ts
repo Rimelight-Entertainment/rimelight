@@ -1,5 +1,5 @@
 import { computed } from "vue"
-import { useAppConfig } from "@/config/app.config"
+import { siteConfig } from "@/config/site.config"
 
 // Pure JavaScript deep merge helper to replace defu
 function deepMerge<T extends Record<string, any>>(target: T, source: any): T {
@@ -33,10 +33,8 @@ function deepMerge<T extends Record<string, any>>(target: T, source: any): T {
 }
 
 export function useRC<T extends Record<string, any>>(namespace: string, propsProp: T | undefined) {
-  const appConfig = useAppConfig()
-
   const rc = computed(() => {
-    const config: Record<string, any> = appConfig.rimelightComponents || {}
+    const config: Record<string, any> = siteConfig.ui || {}
     const conf: Record<string, any> = config[namespace] || config[namespace.toLowerCase()] || {}
     return deepMerge<T>(propsProp ?? Object.create(null), conf.slots || conf)
   })
