@@ -1,10 +1,10 @@
 interface TurnstileResponse {
-  success: boolean;
-  "error-codes"?: string[];
+  "success": boolean
+  "error-codes"?: string[]
 }
 
 export function isTurnstileEnabled(env: any): boolean {
-  return !!(env?.TURNSTILE_SITE_KEY && env?.TURNSTILE_SECRET_KEY);
+  return !!(env?.TURNSTILE_SITE_KEY && env?.TURNSTILE_SECRET_KEY)
 }
 
 export async function verifyTurnstile(
@@ -14,12 +14,12 @@ export async function verifyTurnstile(
 ): Promise<{ success: boolean; error?: string }> {
   // Fail-open for local dev / unconfigured environments
   if (!isTurnstileEnabled(env)) {
-    console.log("[Turnstile] Keys missing. Skipping verification (Failing Open).");
-    return { success: true };
+    console.log("[Turnstile] Keys missing. Skipping verification (Failing Open).")
+    return { success: true }
   }
 
   if (!token) {
-    return { success: false, error: "Security check token is missing." };
+    return { success: false, error: "Security check token is missing." }
   }
 
   try {
@@ -29,22 +29,26 @@ export async function verifyTurnstile(
       body: JSON.stringify({
         secret: env.TURNSTILE_SECRET_KEY,
         response: token,
-        remoteip: remoteIP,
-      }),
-    });
+        remoteip: remoteIP
+      })
+    })
 
     if (!response.ok) {
-      return { success: false, error: `Cloudflare Turnstile API returned status ${response.status}` };
+      return {
+        success: false,
+        error: `Cloudflare Turnstile API returned status ${response.status}`
+      }
     }
 
-    const data = (await response.json()) as TurnstileResponse;
+    // eslint-disable-next-line typescript/no-unsafe-type-assertion
+    const data = (await response.json()) as TurnstileResponse
     if (data.success) {
-      return { success: true };
+      return { success: true }
     } else {
-      return { success: false, error: "Bot check verification failed." };
+      return { success: false, error: "Bot check verification failed." }
     }
   } catch (err: any) {
-    console.error("[Turnstile Exception]", err);
-    return { success: true };
+    console.error("[Turnstile Exception]", err)
+    return { success: true }
   }
 }

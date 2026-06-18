@@ -14,12 +14,12 @@ if (!post) {
 // Simple custom Markdown to HTML converter (self-contained, zero-dependency)
 function renderMarkdown(md: string) {
   return md
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/\!\[(.*?)\]\((.*?)\)/gim, "<img src='$2' alt='$1' class='blog-img' />")
-    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+    .replace(/!\[(.*?)\]\((.*?)\)/g, "<img src='$2' alt='$1' class='blog-img' />")
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .split('\n\n')
     .map(p => {
       const trimmed = p.trim();

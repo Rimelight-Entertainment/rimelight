@@ -167,30 +167,27 @@ import RLAFileUpload from '@rimelight/ui/components/astro/RLAFileUpload.astro';
     const items = e.clipboardData?.items;
     if (!items) return;
 
-    for (const item of items) {
-      if (item.type.startsWith('image/')) {
-        e.preventDefault();
+    const imageItem = Array.from(items).find((item) => item.type.startsWith('image/'))
+    if (!imageItem) return
+    e.preventDefault()
 
-        const file = item.getAsFile();
-        if (!file) continue;
+    const file = imageItem.getAsFile()
+    if (!file) return
 
-        uploadStatus.textContent = 'Compressing image...';
-        uploadStatus.className = 'upload-status loading';
+    uploadStatus.textContent = 'Compressing image...';
+    uploadStatus.className = 'upload-status loading';
 
-        const originalSize = file.size;
-        const compressed = await compressImage(file);
-        const compressedSize = compressed.size;
+    const originalSize = file.size;
+    const compressed = await compressImage(file);
+    const compressedSize = compressed.size;
 
-        originalSizeEl.textContent = formatBytes(originalSize);
-        compressedSizeEl.textContent = formatBytes(compressedSize);
-        const savedPct = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
-        reductionPctEl.textContent = `${savedPct}% saved`;
-        statsPanel.classList.remove('hidden');
+    originalSizeEl.textContent = formatBytes(originalSize);
+    compressedSizeEl.textContent = formatBytes(compressedSize);
+    const savedPct = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
+    reductionPctEl.textContent = `${savedPct}% saved`;
+    statsPanel.classList.remove('hidden');
 
-        await uploadImage(compressed);
-        return;
-      }
-    }
+    await uploadImage(compressed);
   });
 
   copyUrlBtn.addEventListener('click', () => {

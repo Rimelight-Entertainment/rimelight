@@ -1,8 +1,5 @@
-import { handle } from '@astrojs/cloudflare/handler';
-import { DurableObject } from 'cloudflare:workers';
-
-
-
+import { handle } from "@astrojs/cloudflare/handler"
+import { DurableObject } from "cloudflare:workers"
 
 interface SessionAttachment {
   id: string
@@ -12,15 +9,15 @@ interface SessionAttachment {
 
 interface ChatMessage {
   id: string
-  type: 'message' | 'join' | 'leave' | 'presence'
+  type: "message" | "join" | "leave" | "presence"
   userId: string
   username: string
   content?: string
   timestamp: number
 }
 
-type ENV = {
-  ChatRoom: import('@cloudflare/workers-types').DurableObjectNamespace
+type ENV = Env & {
+  ChatRoom: DurableObjectNamespace
 }
 
 class ChatRoom extends DurableObject<ENV> {
@@ -38,6 +35,7 @@ class ChatRoom extends DurableObject<ENV> {
     // Restore hibernating WebSocket connections
     // When the DO wakes up, we need to restore session data from attachments
     this.ctx.getWebSockets().forEach((ws) => {
+      // eslint-disable-next-line typescript/no-unsafe-type-assertion
       const attachment = ws.deserializeAttachment() as SessionAttachment | null
       if (attachment) {
         this.sessions.set(ws, attachment)
@@ -46,32 +44,29 @@ class ChatRoom extends DurableObject<ENV> {
 
     // Set up automatic ping/pong responses
     // This keeps connections alive without waking the DO
-    this.ctx.setWebSocketAutoResponse(
-      new WebSocketRequestResponsePair('ping', 'pong')
-    )
+    this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"))
 
     // Load message history from storage on initialization
-    this.ctx.blockConcurrencyWhile(async () => {
-      const stored = await this.ctx.storage.get<ChatMessage[]>('messages')
+    void this.ctx.blockConcurrencyWhile(async () => {
+      const stored = await this.ctx.storage.get<ChatMessage[]>("messages")
       if (stored) this.messageHistory = stored
     })
   }
 
   /**
-   * Handle HTTP requests to this Durable Object
-   * This is called when a client wants to establish a WebSocket connection
+   * Handle HTTP requests to this Durable Object This is called when a client wants to establish a
+   * WebSocket connection
    */
-  async fetch(request: Request): Promise<Response> {
+  override async fetch(request: Request): Promise<Response> {
     // Parse the URL to get query parameters (userId and username)
     const url = new URL(request.url)
-    const userId = url.searchParams.get('userId')
-    const username = url.searchParams.get('username')
-    if (!userId || !username)
-      return new Response('Missing userId or username', { status: 400 })
+    const userId = url.searchParams.get("userId")
+    const username = url.searchParams.get("username")
+    if (!userId || !username) return new Response("Missing userId or username", { status: 400 })
     // Expect a WebSocket upgrade request
-    const upgradeHeader = request.headers.get('Upgrade')
-    if (upgradeHeader?.toLowerCase() !== 'websocket')
-      return new Response('Expected WebSocket upgrade', { status: 426 })
+    const upgradeHeader = request.headers.get("Upgrade")
+    if (upgradeHeader?.toLowerCase() !== "websocket")
+      return new Response("Expected WebSocket upgrade", { status: 426 })
     // Create a WebSocket pair (client and server)
     const { 0: client, 1: server } = new WebSocketPair()
 
@@ -99,10 +94,10 @@ class ChatRoom extends DurableObject<ENV> {
     // Broadcast join notification to all clients
     this.broadcast({
       id: crypto.randomUUID(),
-      type: 'join',
+      type: "join",
       userId,
       username,
-      timestamp: Date.now(),
+      timestamp: Date.now()
     })
 
     // Send current presence to the new user
@@ -111,64 +106,65 @@ class ChatRoom extends DurableObject<ENV> {
     // Return the client WebSocket in the response
     return new Response(null, {
       status: 101,
-      webSocket: client,
+      webSocket: client
     })
   }
 
   /**
-   * Handle incoming WebSocket messages (Hibernation API)
-   * Called when a message is received, even after hibernation
+   * Handle incoming WebSocket messages (Hibernation API) Called when a message is received, even
+   * after hibernation
    */
-  async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string): Promise<void> {
+  override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string): Promise<void> {
     // Get session data from the map (or deserialize if just woken)
     let session = this.sessions.get(ws)
     if (!session) {
+      // eslint-disable-next-line typescript/no-unsafe-type-assertion
       session = ws.deserializeAttachment() as SessionAttachment
       if (session) this.sessions.set(ws, session)
     }
     if (!session) return
 
+    if (typeof message !== "string") return
     try {
-      const parsed = JSON.parse(message as string)
-      if (parsed.type === 'message' && parsed.content) {
+      const parsed = JSON.parse(message)
+      if (parsed.type === "message" && parsed.content) {
         // Create a chat message
         const chatMessage: ChatMessage = {
           id: crypto.randomUUID(),
-          type: 'message',
+          type: "message",
           userId: session.userId,
           username: session.username,
           content: parsed.content,
-          timestamp: Date.now(),
+          timestamp: Date.now()
         }
 
         // Add to history
         this.messageHistory.push(chatMessage)
         // Persist to storage (limit to last 100 messages)
-        if (this.messageHistory.length > 100)
-          this.messageHistory = this.messageHistory.slice(-100)
-        this.ctx.storage.put('messages', this.messageHistory)
+        if (this.messageHistory.length > 100) this.messageHistory = this.messageHistory.slice(-100)
+        void this.ctx.storage.put("messages", this.messageHistory)
 
         // Broadcast to all connected clients
         this.broadcast(chatMessage)
       }
     } catch (error) {
-      console.error('Error handling message:', error)
+      console.error("Error handling message:", error)
     }
   }
 
   /**
-   * Handle WebSocket close events (Hibernation API)
-   * Called when a client disconnects
+   * Handle WebSocket close events (Hibernation API) Called when a client disconnects
    */
-  async webSocketClose(
+  override async webSocketClose(
     ws: WebSocket,
     code: number,
-    reason: string,
-    wasClean: boolean
+    _reason: string,
+    _wasClean: boolean
   ): Promise<void> {
     // Get session data
-    const session = this.sessions.get(ws) ||
-      (ws.deserializeAttachment() as SessionAttachment | null)
+    const session =
+      // eslint-disable-next-line typescript/no-unsafe-type-assertion
+      this.sessions.get(ws) || (ws.deserializeAttachment() as SessionAttachment | null)
 
     // Remove from sessions
     this.sessions.delete(ws)
@@ -177,24 +173,24 @@ class ChatRoom extends DurableObject<ENV> {
     if (session) {
       this.broadcast({
         id: crypto.randomUUID(),
-        type: 'leave',
+        type: "leave",
         userId: session.userId,
         username: session.username,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       })
     }
 
     // Close the WebSocket
-    ws.close(code, 'Durable Object is closing WebSocket')
+    ws.close(code, "Durable Object is closing WebSocket")
   }
 
   /**
    * Handle WebSocket errors (Hibernation API)
    */
-  async webSocketError(ws: WebSocket, error: unknown): Promise<void> {
-    console.error('WebSocket error:', error)
+  override async webSocketError(ws: WebSocket, error: unknown): Promise<void> {
+    console.error("WebSocket error:", error)
     // Treat errors as disconnections
-    await this.webSocketClose(ws, 1011, 'WebSocket error', false)
+    await this.webSocketClose(ws, 1011, "WebSocket error", false)
   }
 
   /**
@@ -209,7 +205,7 @@ class ChatRoom extends DurableObject<ENV> {
         ws.send(messageStr)
       } catch (error) {
         // Connection might be closed, will be cleaned up by close handler
-        console.error('Error broadcasting to session:', error)
+        console.error("Error broadcasting to session:", error)
       }
     })
   }
@@ -219,13 +215,13 @@ class ChatRoom extends DurableObject<ENV> {
    */
   private sendMessageHistory(ws: WebSocket): void {
     const historyMessage = JSON.stringify({
-      type: 'history',
-      messages: this.messageHistory,
+      type: "history",
+      messages: this.messageHistory
     })
     try {
       ws.send(historyMessage)
     } catch (error) {
-      console.error('Error sending history:', error)
+      console.error("Error sending history:", error)
     }
   }
 
@@ -235,17 +231,17 @@ class ChatRoom extends DurableObject<ENV> {
   private sendPresence(ws: WebSocket): void {
     const users = Array.from(this.sessions.values()).map((s) => ({
       userId: s.userId,
-      username: s.username,
+      username: s.username
     }))
     const presenceMessage = JSON.stringify({
-      type: 'presence',
-      users,
+      type: "presence",
+      users
     })
 
     try {
       ws.send(presenceMessage)
     } catch (error) {
-      console.error('Error sending presence:', error)
+      console.error("Error sending presence:", error)
     }
   }
 
@@ -256,52 +252,52 @@ class ChatRoom extends DurableObject<ENV> {
     // Clean up old messages (older than 24 hours)
     const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000
     this.messageHistory = this.messageHistory.filter((msg) => msg.timestamp > oneDayAgo)
-    await this.ctx.storage.put('messages', this.messageHistory)
+    await this.ctx.storage.put("messages", this.messageHistory)
     // Schedule next cleanup in 1 hour
     await this.ctx.storage.setAlarm(Date.now() + 60 * 60 * 1000)
   }
 }
 
 class Document extends DurableObject<ENV> {
-  override async fetch(request: Request): Promise<Response> {
-    return new Response("Obsolete Document DO", { status: 410 });
+  override async fetch(_request: Request): Promise<Response> {
+    return new Response("Obsolete Document DO", { status: 410 })
   }
 }
 
-export { ChatRoom, Document };
+export { ChatRoom, Document }
 
 export default {
   async fetch(request, env, ctx) {
     // Prevent Vite/Rollup from tree-shaking the exported Document class
     if (request.headers.get("x-prevent-tree-shaking") === "true") {
-      return new Response(Document.name);
+      return new Response(Document.name)
     }
 
-    const url = new URL(request.url);
-    if (url.pathname.startsWith('/api/chat/')) {
-      const parts = url.pathname.split('/');
-      const id = parts[parts.length - 1];
+    const url = new URL(request.url)
+    if (url.pathname.startsWith("/api/chat/")) {
+      const parts = url.pathname.split("/")
+      const id = parts[parts.length - 1]
       if (!id) {
-        return new Response('Missing room id', { status: 400 });
+        return new Response("Missing room id", { status: 400 })
       }
 
-      const upgradeHeader = request.headers.get('Upgrade');
-      if (upgradeHeader?.toLowerCase() !== 'websocket') {
-        return new Response('Expected WebSocket upgrade', { status: 426 });
+      const upgradeHeader = request.headers.get("Upgrade")
+      if (upgradeHeader?.toLowerCase() !== "websocket") {
+        return new Response("Expected WebSocket upgrade", { status: 426 })
       }
 
-      const chatRoomNamespace = env.ChatRoom;
+      const chatRoomNamespace = env.ChatRoom
       if (!chatRoomNamespace) {
-        return new Response('ChatRoom Durable Object namespace not bound', { status: 500 });
+        return new Response("ChatRoom Durable Object namespace not bound", { status: 500 })
       }
 
-      const chatRoomId = chatRoomNamespace.idFromName(id);
-      const chatRoomStub = chatRoomNamespace.get(chatRoomId);
+      const chatRoomId = chatRoomNamespace.idFromName(id)
+      const chatRoomStub = chatRoomNamespace.get(chatRoomId)
 
-      return chatRoomStub.fetch(request);
+      return chatRoomStub.fetch(request)
     }
 
     // Pass the request directly to the Astro handler
-    return handle(request, env, ctx);
+    return handle(request, env, ctx)
   }
-} satisfies ExportedHandler<ENV>;
+} satisfies ExportedHandler<ENV>

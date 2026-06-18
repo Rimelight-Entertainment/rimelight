@@ -340,31 +340,31 @@ const activeLocale = Astro.currentLocale ?? "en";
     
     socket = new WebSocket(socketUrl);
 
-    socket.onopen = () => {
+    socket.addEventListener('open', () => {
       updateConnectionStatus('connected');
-    };
+    });
 
-    socket.onmessage = (event) => {
+    socket.addEventListener('message', (event) => {
       try {
         const data = JSON.parse(event.data);
         handleServerMessage(data);
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);
       }
-    };
+    });
 
-    socket.onclose = (event) => {
+    socket.addEventListener('close', (event) => {
       updateConnectionStatus('disconnected');
       // Auto reconnect unless closed intentionally
       if (event.code !== 1000) {
         setTimeout(connectWebSocket, 3000);
       }
-    };
+    });
 
-    socket.onerror = (err) => {
+    socket.addEventListener('error', (err) => {
       console.error('WebSocket encountered an error:', err);
       updateConnectionStatus('disconnected');
-    };
+    });
   }
 
   function updateConnectionStatus(status: 'connected' | 'disconnected' | 'connecting') {
