@@ -1,4 +1,5 @@
 /// <reference path="../.astro/types.d.ts" />
+/// <reference types="astro/client" />
 
 declare module "*.vue" {
   import type { DefineComponent } from "vue"
@@ -12,5 +13,9 @@ declare namespace App {
         session: import("better-auth").Session | null;
     }
 }
-declare module "turndown";
-declare module "turndown-plugin-gfm";
+
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue';
+  const component: DefineComponent<{}, {}, unknown>;
+  export default component;
+}
