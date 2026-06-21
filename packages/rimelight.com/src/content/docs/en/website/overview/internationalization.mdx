@@ -3,7 +3,7 @@ title: "Internationalization"
 description: "How rimelight.com handles i18n with Nano Stores, static JSON, and optional Cloudflare KV."
 ---
 
-import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 
 The rimelight.com websites use a internationalization system built on [@nanostores/i18n](https://github.com/nanostores/i18n) and the [astro-nanostores-i18n](https://github.com/cijiuge/astro-nanostores-i18n) integration.
 
@@ -117,11 +117,11 @@ export default defineConfig({
 
 ## Cloudflare KV
 
-<RLAAlert color="warning" variant="soft">
+<RLACallout color="warning" variant="soft">
   KV runtime hydration in the translation loader is not yet implemented. The information below
   describes the intended architecture. Currently KV is only accessible through the API routes
   described below.
-</RLAAlert>
+</RLACallout>
 
 Cloudflare KV can be used as an external translation store for projects that share translations across multiple platforms (web, native apps, games). KV is populated via API endpoints and consumed by external services, not by the Astro page loader.
 

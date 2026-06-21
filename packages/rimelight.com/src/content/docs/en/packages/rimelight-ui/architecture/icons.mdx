@@ -3,7 +3,7 @@ title: "Icons"
 description: "How Rimelight UI handles icons."
 ---
 
-import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 
 ## Engine: UnoCSS Icons Preset
 
@@ -13,11 +13,11 @@ Rimelight UI leverages **@unocss/preset-icons** to provide a pure CSS icon syste
 
 ### Using with Component Props
 
-Most Rimelight UI components (like Button, Badge, Alert) have an `icon` prop that accepts a string following the `i-<collection>-<icon>` format.
+Most Rimelight UI components (like Button, Badge, Callout) have an `icon` prop that accepts a string following the `i-<collection>-<icon>` format.
 
 ```astro
 <RLAButton icon="i-lucide-rocket">Launch</RLAButton>
-<RLAAlert icon="i-lucide-info" title="Heads up!" />
+<RLACallout icon="i-lucide-info" title="Heads up!" />
 ```
 
 ### Using as CSS Classes
@@ -68,11 +68,11 @@ To recolor a brand icon (making it single-color), append `?mask` to force mask m
 <span class="i-logos-github-icon?mask text-white h-6 w-6" />
 ```
 
-<RLAAlert color="primary" variant="soft">
+<RLACallout color="primary" variant="soft">
   When forcing mask mode on brand icons, they lose their original brand colors and become
   single-color. This is useful when you need icons to match your theme (e.g., white icons on a dark
   background).
-</RLAAlert>
+</RLACallout>
 
 ### Dark Mode Support
 

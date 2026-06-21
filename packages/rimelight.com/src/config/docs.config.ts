@@ -337,8 +337,8 @@ export default defineDocsConfig({
                     collapsed: true,
                     items: [
                       {
-                        label: "Alert",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/element/alert/"
+                        label: "Callout",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/element/callout/"
                       },
                       {
                         label: "Avatar",

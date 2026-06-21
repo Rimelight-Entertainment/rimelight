@@ -4,7 +4,7 @@ export * from "./docs"
 
 export type { ThreeDHoverProps } from "./components/3d-hover"
 export type { AccordionProps } from "./components/accordion"
-export type { AlertProps } from "./components/alert"
+export type { CalloutProps } from "./components/callout"
 export type { AppProps } from "./components/app"
 export type { AspectRatioProps } from "./components/aspect-ratio"
 export type { AudioProps } from "./components/audio"

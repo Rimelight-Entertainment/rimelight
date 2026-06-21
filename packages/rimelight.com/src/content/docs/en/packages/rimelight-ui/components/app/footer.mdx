@@ -3,7 +3,7 @@ title: "Footer"
 description: "This component is currently under development."
 ---
 
-import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
@@ -12,11 +12,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-<RLAAlert color="warning" variant="soft">
+<RLACallout color="warning" variant="soft">
 
     This component is not currently available but will be coming eventually.
 
-</RLAAlert>
+</RLACallout>
  
 <RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
 <div role="tabpanel" data-value="astro">

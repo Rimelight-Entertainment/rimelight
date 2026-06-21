@@ -3,7 +3,7 @@ title: "Icon"
 description: "Display icons from any Iconify collection using UnoCSS."
 ---
 
-import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
@@ -13,9 +13,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 A component to display any icon from [Iconify](https://iconify.design/) collections using the UnoCSS icons preset.
 
-<RLAAlert color="success" variant="soft">
+<RLACallout color="success" variant="soft">
   You can browse all available icons at [icones.js.org](https://icones.js.org/).
-</RLAAlert>
+</RLACallout>
 
 ## Usage
 
@@ -135,10 +135,10 @@ To override a brand icon's color, force **mask mode** by appending `?mask` to th
 </div>
 </RLATabs>
 
-<RLAAlert color="primary" variant="soft">
+<RLACallout color="primary" variant="soft">
   When using `?mask` with brand icons, they lose their original colors and become single-color
   (controlled by `text-*` classes). This is expected behavior.
-</RLAAlert>
+</RLACallout>
 
 ### Using with Other Components
 

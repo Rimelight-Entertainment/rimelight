@@ -1,7 +1,7 @@
 import { defaultColors } from "../presets/defaults"
 import { defineTheme } from "../utils/defineTheme"
 
-export const createAlertTheme = (colors: readonly string[] = defaultColors) =>
+export const createCalloutTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
     slots: [
       "root",
@@ -111,4 +111,4 @@ export const createAlertTheme = (colors: readonly string[] = defaultColors) =>
     }
   })
 
-export default createAlertTheme()
+export default createCalloutTheme()

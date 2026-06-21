@@ -3,7 +3,7 @@ title: "Localization"
 description: "Rimelight UI is a high-performance Astro component library for building modern web applications."
 ---
 
-import RLAAlert from "@rimelight/ui/components/astro/RLAAlert.astro"
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 
 Localization in rimelight.com is managed through a combination of Astro's native [i18n routing](https://docs.astro.build/en/guides/internationalization/) and [Nanostores i18n](https://github.com/nanostores/i18n).
 
@@ -21,10 +21,10 @@ All localized pages must be placed within the dynamic `src/pages/[locale]` direc
 │       └── index.astro           # Empty i18n Routing Page
 ```
 
-<RLAAlert color="warning" variant="soft">
+<RLACallout color="warning" variant="soft">
   The empty root file `src/pages/index.astro` is required by Astro for redirecting to the correct
   locale path.
-</RLAAlert>
+</RLACallout>
 
 ## Translation Files
 
@@ -44,7 +44,7 @@ Translation files live in the `src/translations` directory, and are named after 
 │       └── zh_cn.json
 ```
 
-<RLAAlert color="warning" variant="soft">
+<RLACallout color="warning" variant="soft">
     Any instances of user-facing locale options must be displayed each language's native writing.
 
     Reference:
@@ -58,7 +58,7 @@ Translation files live in the `src/translations` directory, and are named after 
     - Română (ro)
     - 简体中文 (zh_cn)
 
-</RLAAlert>
+</RLACallout>
 
 Keys within translation files must be flat under their root objects and not deeply nested. Use underscores to convey hierarchy and hyphens to contain multiple words within a scope.
 

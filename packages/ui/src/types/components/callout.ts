@@ -1,13 +1,13 @@
 import type { Theme, ThemeColor } from "../theme"
 
-export interface AlertProps {
-  /** The visual variant of the alert. */
+export interface CalloutProps {
+  /** The visual variant of the callout. */
   variant?: "default" | "destructive" | "outline" | "solid" | "soft" | "subtle"
-  /** The color scheme of the alert. */
+  /** The color scheme of the callout. */
   color?: ThemeColor
-  /** The main title text of the alert. */
+  /** The main title text of the callout. */
   title?: string
-  /** The secondary description text of the alert. */
+  /** The secondary description text of the callout. */
   description?: string
   /** An optional leading icon. */
   icon?: string
