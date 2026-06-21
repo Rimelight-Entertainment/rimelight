@@ -58,14 +58,13 @@
     "access": "public"
   },
   "scripts": {
-    "knip": "knip",
     "astro": "astro",
     "docs:meta": "tsx scripts/extract-meta.ts"
   },
   "dependencies": {
     "@astrojs/vue": "6.0.1",
     "@iconify-json/lucide": "1.2.113",
-    "@unocss/astro": "^66.7.0",
+    "@unocss/astro": "^66.7.2",
     "css-variants": "2.3.5",
     "defu": "6.1.7",
     "embla-carousel": "8.6.0",
@@ -82,11 +81,10 @@
     "@unocss/eslint-plugin": "66.7.2",
     "astro": "6.4.8",
     "eslint-plugin-regexp": "3.1.0",
-    "knip": "6.15.0",
     "tsx": "4.22.4",
     "typescript": "6.0.3",
     "unocss": "66.7.2",
-    "vite-plus": "latest"
+    "vite-plus": "0.2.1"
   },
   "peerDependencies": {
     "astro": ">=6.0.0",

@@ -7,22 +7,18 @@ saveExact: true
 packageImportMethod: copy
 strictSsl: true
 overrides:
-  vite-plus: latest
-  vite: "npm:@voidzero-dev/vite-plus-core@latest"
-  vitest: "npm:@voidzero-dev/vite-plus-test@latest"
   # Dependencies failing pnpm audit
   fast-uri: "3.1.2"
   fast-xml-parser: "4.4.1"
   devalue: "5.8.1"
   brace-expansion: "5.0.6"
   ws@8: "8.20.1"
+  undici: "7.28.0"
 peerDependencyRules:
   allowAny:
     - vite
-    - vitest
   allowedVersions:
     vite: "*"
-    vitest: "*"
 allowBuilds:
   better-sqlite3: true
   esbuild: true
