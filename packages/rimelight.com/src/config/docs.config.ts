@@ -22,13 +22,17 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/overview/contributing/coding-style-guide/"
               },
               {
+                label: "TypeScript",
+                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/typescript/"
+              },
+              {
+                label: "Verse",
+                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/verse/"
+              },
+              {
                 label: "C++",
                 href: "/{locale}/company/docs/overview/contributing/coding-style-guide/cpp/"
               },
-              {
-                label: "TypeScript",
-                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/typescript/"
-              }
             ]
           }
         ]
