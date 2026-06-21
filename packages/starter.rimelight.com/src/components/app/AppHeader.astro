@@ -255,6 +255,13 @@ const actions: ButtonProps[] = [
 
   <div slot="right" class="flex items-center gap-md">
     <RLASearch />
+    <RLAButton
+      variant="ghost"
+      color="neutral"
+      leadingIcon="i-lucide-keyboard"
+      aria-label="Keyboard Shortcuts"
+      onclick="document.dispatchEvent(new CustomEvent('rla-shortcuts:open'))"
+    />
     <div class="hidden md:flex flex-row gap-md">
       {actions.map((buttonProps) => (
         <RLAButton {...buttonProps} />

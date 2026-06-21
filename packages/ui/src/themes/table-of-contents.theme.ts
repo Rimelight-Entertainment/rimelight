@@ -2,7 +2,26 @@ import { defineTheme } from "../utils/defineTheme"
 
 export const createTableOfContentsTheme = () =>
   defineTheme({
-    slots: ["root", "media", "header", "title", "description", "content", "footer", "overlay"],
+    slots: [
+      "root",
+      "container",
+      "top",
+      "bottom",
+      "trigger",
+      "title",
+      "trailing",
+      "trailingIcon",
+      "content",
+      "list",
+      "listWithChildren",
+      "item",
+      "itemWithChildren",
+      "link",
+      "linkText",
+      "indicator",
+      "indicatorLine",
+      "indicatorActive"
+    ],
     base: {
       root: "sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 sm:px-6 sm:-mx-6 lg:ms-0 overflow-y-auto max-h-[calc(100vh-var(--ui-header-height))]",
       container:

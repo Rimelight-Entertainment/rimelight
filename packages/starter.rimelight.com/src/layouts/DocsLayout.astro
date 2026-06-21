@@ -1,7 +1,7 @@
 ---
 import AppLayout from "./AppLayout.astro";
 import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
-import TableOfContents from "@rimelight/ui/components/TableOfContents.astro";
+import RLATableOfContents from "@rimelight/ui/components/astro/RLATableOfContents.astro";
 import RLASurround from "@rimelight/ui/components/astro/RLASurround.astro";
 import RLACopyMarkdown from "@rimelight/ui/components/astro/RLACopyMarkdown.astro";
 import RLAShare from "@rimelight/ui/components/astro/RLAShare.astro";
@@ -10,7 +10,7 @@ import RLAContainer from "@rimelight/ui/components/astro/RLAContainer.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/ui/utils";
 import type { ResolvedSidebarItem } from "@rimelight/ui/utils";
 import docsConfig from "@/config/docs.config";
-import type { TableOfContentsConfig } from "@rimelight/ui/components/TableOfContents.astro";
+import type { TableOfContentsConfig } from "@rimelight/ui/types";
 
 
 function normalizeBadge(badge: any) {
@@ -332,7 +332,7 @@ const tocHeadings = hasToc
     {/* TOC right column — xl+ only */}
     {hasToc && (
       <div class="hidden xl:block w-[240px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto pl-4">
-        <TableOfContents headings={headings} tableOfContents={resolvedToc as any} />
+        <RLATableOfContents headings={headings} tableOfContents={resolvedToc as any} />
       </div>
     )}
 

@@ -27,9 +27,9 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 ---
 
 <rla-shortcuts {...rest}>
-  <dialog 
-    id={modalId} 
-    class="rla-shortcuts-dialog" 
+  <dialog
+    id={modalId}
+    class="rla-shortcuts-dialog"
     autofocus
     tabindex="-1"
     aria-labelledby={`${modalId}-title`}
@@ -43,11 +43,11 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
           <span class="i-lucide-x w-4 h-4"></span>
         </button>
       </div>
-      
+
       <div class="rla-shortcuts-body">
         <!-- Active categories and shortcuts rendered dynamically client-side -->
       </div>
-      
+
       <div class="rla-shortcuts-footer">
         <span>Press <kbd class="rla-shortcuts-kbd-footer">?</kbd> to close</span>
       </div>
@@ -69,17 +69,17 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
       const body = dialog.querySelector('.rla-shortcuts-body');
       const closeBtn = dialog.querySelector('.rla-shortcuts-close');
-      
+
       const resolvedCategories = JSON.parse(dialog.dataset.categories || '{}');
       const categoryOrder = JSON.parse(dialog.dataset.categoryOrder || '[]');
-      
+
       let escapeCleanup: (() => void) | null = null;
 
       const openHelp = () => {
         dialog.showModal();
         dialog.focus();
         document.body.style.overflow = "hidden";
-        
+
         escapeCleanup = defineShortcuts({
           escape: {
             handler: () => closeHelp(),
@@ -103,7 +103,10 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
       const onCloseClick = () => closeHelp();
       closeBtn?.addEventListener('click', onCloseClick);
-      
+
+      const onOpenEvent = () => openHelp();
+      document.addEventListener('rla-shortcuts:open', onOpenEvent);
+
       const onDialogClick = (e: MouseEvent) => {
         const rect = dialog.getBoundingClientRect();
         const isInDialog = (
@@ -153,11 +156,11 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
         const sortedKeys = Object.keys(groupedCategories).toSorted((keyA, keyB) => {
           const indexA = categoryOrder.indexOf(keyA);
           const indexB = categoryOrder.indexOf(keyB);
-          
+
           if (indexA !== -1 && indexB !== -1) return indexA - indexB;
           if (indexA !== -1) return -1;
           if (indexB !== -1) return 1;
-          
+
           const labelA = resolvedCategories[keyA] || keyA;
           const labelB = resolvedCategories[keyB] || keyB;
           return labelA.localeCompare(labelB);
@@ -178,7 +181,7 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
           const section = document.createElement('div');
           section.className = 'rla-shortcuts-category-section';
-          
+
           const title = document.createElement('h4');
           title.className = 'rla-shortcuts-category-title';
           title.textContent = categoryLabel;
@@ -193,7 +196,7 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
             const info = document.createElement('div');
             info.className = 'rla-shortcuts-info';
-            
+
             const name = document.createElement('span');
             name.className = 'rla-shortcuts-name';
             name.textContent = shortcut.label || shortcut.id;
@@ -209,7 +212,7 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 
             const keysContainer = document.createElement('div');
             keysContainer.className = 'rla-shortcuts-keys';
-            
+
             shortcut.keys.forEach(k => {
               const kbd = document.createElement('kbd');
               kbd.className = 'rla-shortcuts-kbd';
@@ -229,6 +232,7 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
         closeHelp();
         closeBtn?.removeEventListener('click', onCloseClick);
         dialog.removeEventListener('click', onDialogClick);
+        document.removeEventListener('rla-shortcuts:open', onOpenEvent);
         if (escapeCleanup) escapeCleanup();
         qShortcutCleanup();
         unsubscribe();

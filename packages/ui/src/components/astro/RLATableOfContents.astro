@@ -11,13 +11,100 @@ const tableOfContentsTheme = uiConfig.colors ? createTableOfContentsTheme() : ta
 const tableOfContents = scv(tableOfContentsTheme)
 
 const {
+  headings,
+  tableOfContents: tableOfContentsConfig,
+  levels = 2,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as TableOfContentsProps
 
 const classes = resolveClasses(tableOfContents, {}, useUi("tableOfContents", uiProp), className);
+
+if (tableOfContentsConfig === false) {
+  // Render nothing
+}
+
+const minLevel = tableOfContentsConfig ? (tableOfContentsConfig.minHeadingLevel ?? 2) : 2;
+const maxLevel = tableOfContentsConfig ? (tableOfContentsConfig.maxHeadingLevel ?? levels) : levels;
+
+const filteredHeadings = tableOfContentsConfig !== false
+  ? headings.filter(h => h.depth >= minLevel && h.depth <= maxLevel)
+  : [];
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+
+{tableOfContentsConfig !== false && filteredHeadings.length > 0 && (
+  <div class={classes.root} data-slot="root" {...rest}>
+    <div class={classes.container} data-slot="container">
+      <h4 class={classes.title} data-slot="title">On this page</h4>
+      <ul class:list={[classes.list, "mt-2xl flex flex-col gap-3xs"]} data-slot="list">
+        {filteredHeadings.map(heading => (
+          <li
+            class:list={[
+              classes.item,
+              heading.depth === 2 && "pl-3xs",
+              heading.depth === 3 && "pl-6",
+              heading.depth >= 4 && "pl-9"
+            ]}
+            data-slot="item"
+          >
+            <a
+              href={`#${heading.slug}`}
+              class:list={["toc-link", classes.link]}
+              data-slot="link"
+            >
+              <span class={classes.linkText} data-slot="link-text">{heading.text}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+)}
+
+<style>
+  .toc-current {
+    color: var(--primary);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  let wrappingElement: Element | null;
+  let observeHeaderTags: IntersectionObserver;
+  let allHeaderTags: NodeListOf<Element>;
+
+  function setCurrent(e: IntersectionObserverEntry[]) {
+    const allSectionLinks = document.querySelectorAll(".toc-link");
+    e.map(i => {
+      if (i.isIntersecting === true) {
+        allSectionLinks.forEach(link => link.classList.remove("toc-current"));
+        const targetLink = document.querySelector(`a[href="#${i.target.id}"].toc-link`);
+        if (targetLink) targetLink.classList.add("toc-current");
+      }
+    });
+  }
+
+  function initTOC() {
+    wrappingElement = document.querySelector(".markdown-content");
+    if (wrappingElement !== null) {
+      allHeaderTags = wrappingElement.querySelectorAll(":scope > h1, :scope > h2, :scope > h3, :scope > h4");
+    }
+
+    const options: IntersectionObserverInit = {
+      root: null,
+      rootMargin: "0px 0px -50% 0px",
+      threshold: [1]
+    };
+
+    observeHeaderTags = new IntersectionObserver(setCurrent, options);
+    if (wrappingElement === null) return;
+    allHeaderTags.forEach(tag => {
+      tag.classList.add("scroll-mt-3xl");
+      observeHeaderTags.observe(tag);
+    });
+  }
+
+  initTOC();
+  document.addEventListener("astro:after-swap", initTOC);
+</script>

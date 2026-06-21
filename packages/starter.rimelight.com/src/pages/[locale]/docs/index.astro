@@ -1,7 +1,7 @@
 ---
 import { getEntry, render } from "astro:content";
 import DocsLayout from "@/layouts/DocsLayout.astro";
-import type { TableOfContentsConfig } from "@rimelight/ui/components/TableOfContents.astro";
+import type { TableOfContentsConfig } from "@rimelight/ui/types";
 
 const activeLocale = Astro.currentLocale ?? "en";
 const entry = await getEntry("docs", activeLocale);
