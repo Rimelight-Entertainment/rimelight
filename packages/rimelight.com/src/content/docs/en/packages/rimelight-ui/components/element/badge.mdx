@@ -1,6 +1,6 @@
 ---
 title: "Badge"
-description: "This component is currently under development."
+description: "A small status label for highlighting categories, counts, or states with variant and color support."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,7 +11,7 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A small inline label used to highlight statuses, categories, counts, or tags. Supports multiple visual variants, color themes, sizes, and shape options.
 
 ## Usage
 
@@ -28,9 +28,114 @@ This component is currently under development.
     ```
 
   </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVBadge from "@rimelight/ui/components/vue/RLVBadge.vue";
+    </script>
+
+    <template>
+      <RLVBadge label="Badge" />
+    </template>
+    ```
+
+  </div>
 </ComponentShowcase>
 
 ## Examples
+
+<ComponentShowcase
+  title="Variants"
+  description="Use the `variant` prop to change the visual style of the badge."
+  togglingPattern="tab-segmented"
+  componentName="RLABadge"
+  propsConfig={{
+    variant: ["solid", "outline", "soft", "subtle"]
+  }}
+  defaultProps={{
+    variant: "solid"
+  }}
+>
+  <RLABadge label="Badge" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Colors"
+  description="Use the `color` prop to change the color theme of the badge."
+  togglingPattern="tab-segmented"
+  componentName="RLABadge"
+  propsConfig={{
+    color: ["primary", "secondary", "info", "success", "warning", "error", "neutral"]
+  }}
+  defaultProps={{
+    color: "primary"
+  }}
+>
+  <RLABadge label="Badge" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Sizes"
+  description="Use the `size` prop to control the size of the badge."
+  togglingPattern="tab-segmented"
+  componentName="RLABadge"
+  propsConfig={{
+    size: ["sm", "md", "lg"]
+  }}
+  defaultProps={{
+    size: "md"
+  }}
+>
+  <RLABadge label="Badge" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Shape"
+  description="Use the `shape` prop to switch between a `pill` (fully rounded) or `square` (sharp corners) badge."
+  togglingPattern="tab-segmented"
+  componentName="RLABadge"
+  propsConfig={{
+    shape: ["pill", "square"]
+  }}
+  defaultProps={{
+    shape: "pill"
+  }}
+>
+  <RLABadge label="Badge" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="All Variants at a Glance"
+  description="A side-by-side comparison of all `variant` values."
+>
+  <div class="flex flex-wrap items-center gap-2">
+    <RLABadge label="Solid" variant="solid" />
+    <RLABadge label="Outline" variant="outline" />
+    <RLABadge label="Soft" variant="soft" />
+    <RLABadge label="Subtle" variant="subtle" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLABadge label="Solid" variant="solid" />
+  <RLABadge label="Outline" variant="outline" />
+  <RLABadge label="Soft" variant="soft" />
+  <RLABadge label="Subtle" variant="subtle" />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVBadge label="Solid" variant="solid" />
+      <RLVBadge label="Outline" variant="outline" />
+      <RLVBadge label="Soft" variant="soft" />
+      <RLVBadge label="Subtle" variant="subtle" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

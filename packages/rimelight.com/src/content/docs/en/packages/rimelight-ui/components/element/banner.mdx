@@ -1,6 +1,6 @@
 ---
 title: "Banner"
-description: "This component is currently under development."
+description: "A top-of-page announcement bar with optional actions, dismiss support, and scroll-aware visibility."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -12,12 +12,12 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A full-width announcement bar designed to sit at the top of the page. Supports action links, a dismiss button, scroll-aware hiding, and stacking multiple banners via `stackIndex`.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLABanner>This is a banner</RLABanner>
+  <RLABanner fixed={false} sticky={false}>We just launched v2.0 — check it out!</RLABanner>
 
   <div slot="code-astro">
     ```astro
@@ -25,7 +25,7 @@ This component is currently under development.
     import RLABanner from "@rimelight/ui/components/astro/RLABanner.astro";
     ---
 
-    <RLABanner>This is a banner</RLABanner>
+    <RLABanner>We just launched v2.0 — check it out!</RLABanner>
     ```
 
   </div>
@@ -37,7 +37,7 @@ This component is currently under development.
     </script>
 
     <template>
-      <RLVBanner>This is a banner</RLVBanner>
+      <RLVBanner>We just launched v2.0 — check it out!</RLVBanner>
     </template>
     ```
 
@@ -45,6 +45,159 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+<ComponentShowcase
+  title="With Actions"
+  description="Pass an `actions` array to render CTA links inside the banner. Each action accepts `label`, `href`, and `variant`."
+>
+  <RLABanner
+    fixed={false}
+    sticky={false}
+    actions={[
+      { label: "Read More", href: "#", variant: "solid" },
+      { label: "Dismiss", href: "#", variant: "ghost" }
+    ]}
+  >
+    🎉 New features are now available.
+  </RLABanner>
+
+<div slot="code-astro">
+  ```astro
+  <RLABanner
+    actions={[
+      { label: "Read More", href: "/blog", variant: "solid" },
+      { label: "Dismiss", href: "#", variant: "ghost" }
+    ]}
+  >
+    🎉 New features are now available.
+  </RLABanner>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVBanner
+        :actions="[
+          { label: 'Read More', href: '/blog', variant: 'solid' },
+          { label: 'Dismiss', href: '#', variant: 'ghost' }
+        ]"
+      >
+        🎉 New features are now available.
+      </RLVBanner>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Dismissable"
+  description="Set `dismissable` to show a close button. Use `dismissId` to persist the dismissed state in localStorage so it stays hidden across page loads."
+>
+  <RLABanner fixed={false} sticky={false} dismissable dismissId="launch-banner-demo">
+    You can close this banner — it will remember your choice.
+  </RLABanner>
+
+<div slot="code-astro">
+  ```astro
+  <RLABanner dismissable dismissId="launch-banner-v1">
+    You can close this banner — it will remember your choice.
+  </RLABanner>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVBanner :dismissable="true" dismiss-id="launch-banner-v1">
+        You can close this banner — it will remember your choice.
+      </RLVBanner>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Left & Right Slots"
+  description="Use the `left` and `right` named slots to place custom content on either side of the banner message."
+>
+  <RLABanner fixed={false} sticky={false}>
+    <span slot="left">🚀</span>
+    Announcing our new product launch — explore what's new.
+    <a slot="right" href="#" class="text-xs underline opacity-75 hover:opacity-100">Learn more</a>
+  </RLABanner>
+
+<div slot="code-astro">
+  ```astro
+  <RLABanner>
+    <span slot="left">🚀</span>
+    Announcing our new product launch — explore what's new.
+    <a slot="right" href="/launch">
+      Learn more
+    </a>
+  </RLABanner>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVBanner>
+        <template #left>🚀</template>
+        Announcing our new product launch — explore what's new.
+        <template #right>
+          <a href="/launch">Learn more</a>
+        </template>
+      </RLVBanner>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Fixed vs Sticky"
+  description="By default banners are `fixed` to the top of the viewport. Set `fixed={false}` and `sticky` to make the banner stick when scrolled to."
+>
+  <RLABanner fixed={false} sticky={false}>
+    This banner renders inline (fixed=false, sticky=false).
+  </RLABanner>
+
+  <div slot="code-astro">
+    ```astro
+    <RLABanner>
+      Always visible at the top of the page.
+    </RLABanner>
+
+    <RLABanner fixed={false} sticky>
+      Sticks when you scroll to it.
+    </RLABanner>
+
+    <RLABanner fixed={false} sticky={false}>
+      Renders in document flow.
+    </RLABanner>
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVBanner>
+        Always visible at the top of the page.
+      </RLVBanner>
+
+      <RLVBanner :fixed="false" :sticky="true">
+        Sticks when you scroll to it.
+      </RLVBanner>
+
+      <RLVBanner :fixed="false" :sticky="false">
+        Renders in document flow.
+      </RLVBanner>
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,6 +1,6 @@
 ---
 title: "Avatar"
-description: "This component is currently under development."
+description: "Display a user's profile picture, initials, or a fallback icon, with optional badge indicator and profile layout."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,12 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+Display a user's profile picture, initials, or a fallback icon. Supports badge indicators, profile text layout, and full slot customization.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLAAvatar initials="JD" />
+  <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" />
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +24,195 @@ This component is currently under development.
     import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro";
     ---
 
-    <RLAAvatar initials="JD" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVAvatar from "@rimelight/ui/components/vue/RLVAvatar.vue";
+    </script>
+
+    <template>
+      <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" />
+    </template>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+<ComponentShowcase
+  title="Sizes"
+  description="Use the `size` prop to change the size of the avatar."
+  togglingPattern="tab-segmented"
+  componentName="RLAAvatar"
+  propsConfig={{
+    size: ["xs", "sm", "md", "lg", "xl", "2xl"]
+  }}
+  defaultProps={{
+    size: "md"
+  }}
+>
+  <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Colors"
+  description="Use the `color` prop to set the tint applied to the avatar background and text when no image is provided."
+  togglingPattern="tab-segmented"
+  componentName="RLAAvatar"
+  propsConfig={{
+    color: ["primary", "secondary", "info", "success", "warning", "error", "neutral"]
+  }}
+  defaultProps={{
+    color: "primary"
+  }}
+>
+  <RLAAvatar initials="JD" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Fallback / Initials"
+  description="When no `src` is provided, the avatar shows `initials` or a default user icon as fallback."
+>
+  <div class="flex items-center gap-3">
+    <RLAAvatar initials="JD" color="primary" />
+    <RLAAvatar initials="AB" color="secondary" />
+    <RLAAvatar initials="RL" color="success" />
+    <RLAAvatar color="neutral" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAAvatar initials="JD" color="primary" />
+  <RLAAvatar initials="AB" color="secondary" />
+  <RLAAvatar initials="RL" color="success" />
+  <RLAAvatar color="neutral" />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVAvatar initials="JD" color="primary" />
+      <RLVAvatar initials="AB" color="secondary" />
+      <RLVAvatar initials="RL" color="success" />
+      <RLVAvatar color="neutral" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Badge Indicator"
+  description="Use the `badge` prop to show a status dot. Control its color with `badgeColor` and its placement with `badgePosition`."
+>
+  <div class="flex items-center gap-4">
+    <RLAAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" badge badgeColor="success" badgePosition="bottom-right" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" badge badgeColor="warning" badgePosition="top-right" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" badge badgeColor="error" badgePosition="bottom-left" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=4" alt="User 4" badge={5} badgeColor="primary" badgePosition="top-left" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAAvatar
+    src="https://i.pravatar.cc/150?img=1"
+    alt="User 1"
+    badge
+    badgeColor="success"
+    badgePosition="bottom-right"
+  />
+  <RLAAvatar
+    src="https://i.pravatar.cc/150?img=2"
+    alt="User 2"
+    badge
+    badgeColor="warning"
+    badgePosition="top-right"
+  />
+  <RLAAvatar
+    src="https://i.pravatar.cc/150?img=3"
+    alt="User 3"
+    badge
+    badgeColor="error"
+    badgePosition="bottom-left"
+  />
+  <RLAAvatar
+    src="https://i.pravatar.cc/150?img=4"
+    alt="User 4"
+    badge={5}
+    badgeColor="primary"
+    badgePosition="top-left"
+  />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" :badge="true" badge-color="success" badge-position="bottom-right" />
+      <RLVAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" :badge="true" badge-color="warning" badge-position="top-right" />
+      <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" :badge="true" badge-color="error" badge-position="bottom-left" />
+      <RLVAvatar src="https://i.pravatar.cc/150?img=4" alt="User 4" :badge="5" badge-color="primary" badge-position="top-left" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Badge Positions"
+  description="Use the `badgePosition` prop to control where the badge is anchored on the avatar."
+  togglingPattern="tab-segmented"
+  componentName="RLAAvatar"
+  propsConfig={{
+    badgePosition: ["top-right", "top-left", "bottom-right", "bottom-left"]
+  }}
+  defaultProps={{
+    badgePosition: "bottom-right"
+  }}
+>
+  <RLAAvatar src="https://i.pravatar.cc/150?img=5" alt="User" badge badgeColor="success" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Profile Layout"
+  description="Provide `title` and `subtitle` props to render a horizontal profile card alongside the avatar."
+>
+  <div class="flex flex-col gap-3">
+    <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" title="Jane Doe" subtitle="Product Designer" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=8" alt="John Smith" title="John Smith" subtitle="Engineering Lead" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAAvatar
+    src="https://i.pravatar.cc/150?img=3"
+    alt="Jane Doe"
+    title="Jane Doe"
+    subtitle="Product Designer"
+  />
+  <RLAAvatar
+    src="https://i.pravatar.cc/150?img=8"
+    alt="John Smith"
+    title="John Smith"
+    subtitle="Engineering Lead"
+  />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" title="Jane Doe" subtitle="Product Designer" />
+      <RLVAvatar src="https://i.pravatar.cc/150?img=8" alt="John Smith" title="John Smith" subtitle="Engineering Lead" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -12,7 +12,7 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-A button element that can be used to trigger actions or navigate to other pages.
+A button element that can be used to trigger actions or navigate to other pages. Supports icons, loading states, avatar, link mode, and full theme customization.
 
 ## Usage
 
@@ -48,7 +48,7 @@ A button element that can be used to trigger actions or navigate to other pages.
 
 <ComponentShowcase
   title="Variants"
-  description="Use the `variant` prop to change the variant of the button."
+  description="Use the `variant` prop to change the visual style of the button."
   togglingPattern="tab-segmented"
   componentName="RLAButton"
   propsConfig={{
@@ -89,6 +89,276 @@ A button element that can be used to trigger actions or navigate to other pages.
   }}
 >
   <RLAButton label="Button" />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Leading Icon"
+  description="Use the `leadingIcon` prop with any icon class to place an icon before the label."
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <RLAButton label="Download" leadingIcon="i-lucide-download" />
+    <RLAButton label="Add" leadingIcon="i-lucide-plus" />
+    <RLAButton label="Search" leadingIcon="i-lucide-search" />
+    <RLAButton label="Star" leadingIcon="i-lucide-star" />
+    <RLAButton label="Delete" leadingIcon="i-lucide-trash-2" color="error" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Download" leadingIcon="i-lucide-download" />
+  <RLAButton label="Add" leadingIcon="i-lucide-plus" />
+  <RLAButton label="Search" leadingIcon="i-lucide-search" />
+  <RLAButton label="Star" leadingIcon="i-lucide-star" />
+  <RLAButton label="Delete" leadingIcon="i-lucide-trash-2" color="error" />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Download" leading-icon="i-lucide-download" />
+      <RLVButton label="Add" leading-icon="i-lucide-plus" />
+      <RLVButton label="Search" leading-icon="i-lucide-search" />
+      <RLVButton label="Star" leading-icon="i-lucide-star" />
+      <RLVButton label="Delete" leading-icon="i-lucide-trash-2" color="error" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Trailing Icon"
+  description="Use the `trailingIcon` prop with any icon class to place an icon after the label."
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
+    <RLAButton label="Options" trailingIcon="i-lucide-chevron-down" />
+    <RLAButton label="Open" trailingIcon="i-lucide-external-link" variant="outline" />
+    <RLAButton label="Done" trailingIcon="i-lucide-check" color="success" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
+  <RLAButton label="Options" trailingIcon="i-lucide-chevron-down" />
+  <RLAButton label="Open" trailingIcon="i-lucide-external-link" variant="outline" />
+  <RLAButton label="Done" trailingIcon="i-lucide-check" color="success" />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Continue" trailing-icon="i-lucide-arrow-right" />
+      <RLVButton label="Options" trailing-icon="i-lucide-chevron-down" />
+      <RLVButton label="Open" trailing-icon="i-lucide-external-link" variant="outline" />
+      <RLVButton label="Done" trailing-icon="i-lucide-check" color="success" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Loading State"
+  description="Set `loading` to show a spinner in place of the leading icon. The button remains in the DOM and keeps its size while loading."
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <RLAButton label="Loading" loading />
+    <RLAButton label="Loading" loading variant="outline" />
+    <RLAButton label="Loading" loading variant="soft" color="success" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Loading" loading />
+  <RLAButton label="Loading" loading variant="outline" />
+  <RLAButton label="Loading" loading variant="soft" color="success" />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Loading" :loading="true" />
+      <RLVButton label="Loading" :loading="true" variant="outline" />
+      <RLVButton label="Loading" :loading="true" variant="soft" color="success" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Square"
+  description="Set `square` for icon-only buttons that apply equal padding on all sides. Pair with `leadingIcon` or a default slot for the icon."
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <RLAButton leadingIcon="i-lucide-plus" square />
+    <RLAButton leadingIcon="i-lucide-search" square variant="outline" />
+    <RLAButton leadingIcon="i-lucide-heart" square variant="soft" color="error" />
+    <RLAButton leadingIcon="i-lucide-star" square color="warning" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton leadingIcon="i-lucide-plus" square />
+  <RLAButton leadingIcon="i-lucide-search" square variant="outline" />
+  <RLAButton leadingIcon="i-lucide-heart" square variant="soft" color="error" />
+  <RLAButton leadingIcon="i-lucide-star" square color="warning" />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton leading-icon="i-lucide-plus" :square="true" />
+      <RLVButton leading-icon="i-lucide-search" :square="true" variant="outline" />
+      <RLVButton leading-icon="i-lucide-heart" :square="true" variant="soft" color="error" />
+      <RLVButton leading-icon="i-lucide-star" :square="true" color="warning" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Rounded"
+  description="Set `rounded` to apply fully rounded pill-shaped corners."
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <RLAButton label="Rounded" rounded />
+    <RLAButton label="Rounded Outline" rounded variant="outline" />
+    <RLAButton leadingIcon="i-lucide-plus" square rounded />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Rounded" rounded />
+  <RLAButton label="Rounded Outline" rounded variant="outline" />
+  <RLAButton leadingIcon="i-lucide-plus" square rounded />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Rounded" :rounded="true" />
+      <RLVButton label="Rounded Outline" :rounded="true" variant="outline" />
+      <RLVButton leading-icon="i-lucide-plus" :square="true" :rounded="true" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Block"
+  description="Set `block` to make the button span the full width of its container."
+>
+  <div class="w-full max-w-sm">
+    <RLAButton label="Full Width Button" block />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Full Width Button" block />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Full Width Button" :block="true" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Link Mode"
+  description="Pass an `href` prop to render the button as an `<a>` tag instead of a `<button>` for navigation."
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <RLAButton label="Go to Docs" href="/docs" trailingIcon="i-lucide-arrow-right" />
+    <RLAButton label="External Link" href="https://rimelight.com" trailingIcon="i-lucide-external-link" variant="outline" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Go to Docs" href="/docs" trailingIcon="i-lucide-arrow-right" />
+  <RLAButton
+    label="External Link"
+    href="https://rimelight.com"
+    trailingIcon="i-lucide-external-link"
+    variant="outline"
+  />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Go to Docs" href="/docs" trailing-icon="i-lucide-arrow-right" />
+      <RLVButton label="External Link" href="https://rimelight.com" trailing-icon="i-lucide-external-link" variant="outline" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="With Avatar"
+  description="Pass an `avatar` prop as a URL string or an avatar props object to display a user photo as the leading element."
+>
+  <div class="flex flex-wrap items-center gap-3">
+    <RLAButton label="Jane Doe" avatar="https://i.pravatar.cc/150?img=3" />
+    <RLAButton label="John Smith" avatar="https://i.pravatar.cc/150?img=8" variant="outline" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Jane Doe" avatar="https://i.pravatar.cc/150?img=3" />
+  <RLAButton
+    label="John Smith"
+    avatar={{ src: "https://i.pravatar.cc/150?img=8", alt: "John Smith" }}
+    variant="outline"
+  />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Jane Doe" avatar="https://i.pravatar.cc/150?img=3" />
+      <RLVButton label="John Smith" :avatar="{ src: 'https://i.pravatar.cc/150?img=8', alt: 'John Smith' }" variant="outline" />
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Active State"
+  description="Use `active` with `activeVariant` and `activeColor` to override the button appearance when selected — useful for nav groups or toggle sets."
+>
+  <div class="flex items-center gap-1">
+    <RLAButton label="Overview" variant="ghost" active activeVariant="soft" />
+    <RLAButton label="Analytics" variant="ghost" />
+    <RLAButton label="Reports" variant="ghost" />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAButton label="Overview" variant="ghost" active activeVariant="soft" />
+  <RLAButton label="Analytics" variant="ghost" />
+  <RLAButton label="Reports" variant="ghost" />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVButton label="Overview" variant="ghost" :active="true" active-variant="soft" />
+      <RLVButton label="Analytics" variant="ghost" />
+      <RLVButton label="Reports" variant="ghost" />
+    </template>
+    ```
+  </div>
 </ComponentShowcase>
 
 ## API

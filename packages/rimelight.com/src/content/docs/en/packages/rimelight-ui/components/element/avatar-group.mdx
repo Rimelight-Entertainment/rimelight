@@ -1,36 +1,142 @@
 ---
 title: "AvatarGroup"
-description: "This component is currently under development."
+description: "Stack multiple Avatar components together in an overlapping group layout."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAAvatarGroup from "@rimelight/ui/components/astro/RLAAvatarGroup.astro"
+import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+`AvatarGroup` is a wrapper that stacks multiple `Avatar` components in an overlapping horizontal layout. Ideal for showing a compact list of collaborators, participants, or team members.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLAAvatarGroup />
+  <RLAAvatarGroup>
+    <RLAAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
+  </RLAAvatarGroup>
 
   <div slot="code-astro">
     ```astro
     ---
     import RLAAvatarGroup from "@rimelight/ui/components/astro/RLAAvatarGroup.astro";
+    import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro";
     ---
 
-    <RLAAvatarGroup />
+    <RLAAvatarGroup>
+      <RLAAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
+      <RLAAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
+      <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
+    </RLAAvatarGroup>
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVAvatarGroup from "@rimelight/ui/components/vue/RLVAvatarGroup.vue";
+    import RLVAvatar from "@rimelight/ui/components/vue/RLVAvatar.vue";
+    </script>
+
+    <template>
+      <RLVAvatarGroup>
+        <RLVAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
+        <RLVAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
+        <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
+      </RLVAvatarGroup>
+    </template>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+<ComponentShowcase
+  title="With Initials"
+  description="Use `initials` and `color` on each `Avatar` when no profile image is available."
+>
+  <RLAAvatarGroup>
+    <RLAAvatar initials="JD" color="primary" />
+    <RLAAvatar initials="AB" color="secondary" />
+    <RLAAvatar initials="CD" color="success" />
+    <RLAAvatar initials="EF" color="warning" />
+  </RLAAvatarGroup>
+
+<div slot="code-astro">
+  ```astro
+  <RLAAvatarGroup>
+    <RLAAvatar initials="JD" color="primary" />
+    <RLAAvatar initials="AB" color="secondary" />
+    <RLAAvatar initials="CD" color="success" />
+    <RLAAvatar initials="EF" color="warning" />
+  </RLAAvatarGroup>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVAvatarGroup>
+        <RLVAvatar initials="JD" color="primary" />
+        <RLVAvatar initials="AB" color="secondary" />
+        <RLVAvatar initials="CD" color="success" />
+        <RLVAvatar initials="EF" color="warning" />
+      </RLVAvatarGroup>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Larger Group with Overflow"
+  description="Stack as many avatars as needed. Use an initials avatar to indicate how many members are hidden."
+>
+  <RLAAvatarGroup>
+    <RLAAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=4" alt="User 4" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=5" alt="User 5" />
+    <RLAAvatar initials="+8" />
+  </RLAAvatarGroup>
+
+<div slot="code-astro">
+  ```astro
+  <RLAAvatarGroup>
+    <RLAAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=4" alt="User 4" />
+    <RLAAvatar src="https://i.pravatar.cc/150?img=5" alt="User 5" />
+    <RLAAvatar initials="+8" />
+  </RLAAvatarGroup>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVAvatarGroup>
+        <RLVAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
+        <RLVAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
+        <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
+        <RLVAvatar src="https://i.pravatar.cc/150?img=4" alt="User 4" />
+        <RLVAvatar src="https://i.pravatar.cc/150?img=5" alt="User 5" />
+        <RLVAvatar initials="+8" color="neutral" />
+      </RLVAvatarGroup>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

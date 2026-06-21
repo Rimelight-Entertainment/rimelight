@@ -1,6 +1,6 @@
 ---
 title: "Chip"
-description: "This component is currently under development."
+description: "A small indicator dot or counter badge that attaches to another element, or renders standalone."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,7 +11,7 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A small dot or counter that overlays a target element to indicate status, notifications, or counts. Can also be used `standalone` without wrapping any content.
 
 ## Usage
 
@@ -28,9 +28,203 @@ This component is currently under development.
     ```
 
   </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVChip from "@rimelight/ui/components/vue/RLVChip.vue";
+    </script>
+
+    <template>
+      <RLVChip text="99+" :standalone="true" />
+    </template>
+    ```
+
+  </div>
 </ComponentShowcase>
 
 ## Examples
+
+<ComponentShowcase
+  title="Colors"
+  description="Use the `color` prop to change the color of the chip indicator."
+  togglingPattern="tab-segmented"
+  componentName="RLAChip"
+  propsConfig={{
+    color: ["primary", "secondary", "info", "success", "warning", "error", "neutral"]
+  }}
+  defaultProps={{
+    color: "primary"
+  }}
+>
+  <RLAChip text="5" standalone />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Sizes"
+  description="Use the `size` prop to control how large the chip indicator appears."
+  togglingPattern="tab-segmented"
+  componentName="RLAChip"
+  propsConfig={{
+    size: ["xs", "sm", "md", "lg", "xl"]
+  }}
+  defaultProps={{
+    size: "md"
+  }}
+>
+  <RLAChip text="3" standalone />
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Attached to an Element"
+  description="Wrap any element with `RLAChip` to position the indicator relative to it."
+>
+  <div class="flex items-center gap-6">
+    <RLAChip text="5" position="top-right">
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">A</div>
+    </RLAChip>
+    <RLAChip text="2" position="bottom-right" color="success">
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">B</div>
+    </RLAChip>
+    <RLAChip text="9" position="top-left" color="warning">
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">C</div>
+    </RLAChip>
+    <RLAChip position="bottom-left" color="error" inset>
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">D</div>
+    </RLAChip>
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAChip text="5" position="top-right">
+    <div>A</div>
+  </RLAChip>
+  <RLAChip text="2" position="bottom-right" color="success">
+    <div>B</div>
+  </RLAChip>
+  <RLAChip text="9" position="top-left" color="warning">
+    <div>C</div>
+  </RLAChip>
+  <RLAChip position="bottom-left" color="error" inset>
+    <div>D</div>
+  </RLAChip>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVChip text="5" position="top-right">
+        <div>A</div>
+      </RLVChip>
+      <RLVChip text="2" position="bottom-right" color="success">
+        <div>B</div>
+      </RLVChip>
+      <RLVChip text="9" position="top-left" color="warning">
+        <div>C</div>
+      </RLVChip>
+      <RLVChip position="bottom-left" color="error" :inset="true">
+        <div>D</div>
+      </RLVChip>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Positions"
+  description="Use the `position` prop to control where the chip is anchored relative to its wrapped content."
+  togglingPattern="tab-segmented"
+  componentName="RLAChip"
+  propsConfig={{
+    position: ["top-right", "top-left", "bottom-right", "bottom-left"]
+  }}
+  defaultProps={{
+    position: "top-right"
+  }}
+>
+  <RLAChip text="•">
+    <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+      U
+    </div>
+  </RLAChip>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Inset"
+  description="Set `inset` to overlap the chip inside the element's border instead of extending beyond it."
+>
+  <div class="flex items-center gap-6">
+    <RLAChip text="3" position="top-right">
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">Default</div>
+    </RLAChip>
+    <RLAChip text="3" position="top-right" inset>
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">Inset</div>
+    </RLAChip>
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAChip text="3" position="top-right">
+    <div>Default</div>
+  </RLAChip>
+  <RLAChip text="3" position="top-right" inset>
+    <div>Inset</div>
+  </RLAChip>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVChip text="3" position="top-right">
+        <div>Default</div>
+      </RLVChip>
+      <RLVChip text="3" position="top-right" :inset="true">
+        <div>Inset</div>
+      </RLVChip>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
+
+<ComponentShowcase
+  title="Show / Hide"
+  description="Use `show` to programmatically toggle chip visibility without removing it from the DOM."
+>
+  <div class="flex items-center gap-6">
+    <RLAChip text="5" show>
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">On</div>
+    </RLAChip>
+    <RLAChip text="5" show={false}>
+      <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">Off</div>
+    </RLAChip>
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  <RLAChip text="5" show>
+    <div>On</div>
+  </RLAChip>
+  <RLAChip text="5" show={false}>
+    <div>Off</div>
+  </RLAChip>
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <template>
+      <RLVChip text="5" :show="true">
+        <div>On</div>
+      </RLVChip>
+      <RLVChip text="5" :show="false">
+        <div>Off</div>
+      </RLVChip>
+    </template>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 
