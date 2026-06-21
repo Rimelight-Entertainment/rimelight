@@ -1,10 +1,10 @@
-import { visualizer } from "rollup-plugin-visualizer"
 import nanostoresI18n from "astro-nanostores-i18n"
 import en from "./src/translations/en.json"
 import es from "./src/translations/es.json"
 import pt from "./src/translations/pt.json"
 import sitemap from "@astrojs/sitemap"
 import mdx from "@astrojs/mdx"
+import { satteri } from "@astrojs/markdown-satteri"
 import { ui, sri } from "@rimelight/ui/integrations"
 import { defineSecurity } from "@rimelight/ui/config"
 import cloudflare from "@astrojs/cloudflare"
@@ -45,12 +45,6 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [
-      visualizer({
-        emitFile: true,
-        filename: "stats.html"
-      })
-    ],
     define: {
       "import.meta.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
     }
@@ -100,6 +94,16 @@ export default defineConfig({
       fallbacks: ["monospace"]
     }
   ],
+
+  image: {
+    domains: ["starter.rimelight.com", "cdn.starter.rimelight.com"]
+  },
+
+  markdown: {
+    processor: satteri({
+      features: { directive: true }
+    })
+  },
 
   integrations: [
     rimelightI18n({
