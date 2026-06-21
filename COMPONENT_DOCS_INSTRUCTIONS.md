@@ -225,21 +225,20 @@ the code sample.
 
 ---
 
-### 6. Avatar Initials — Always Use Explicit Color (Not Neutral)
+### 6. Avatar Initials — Always Use Explicit Color
 
 When using `RLAAvatar` with `initials` and no `src`, always set an explicit `color`
-prop that is NOT `neutral`. The neutral color uses `text-muted` which is invisible
-against the `bg-elevated` background.
+prop. Using a named color gives the avatar a visible tinted background and colored text.
+`color="neutral"` is now also safe (renders with `text-foreground` on `bg-elevated`).
 
 ```
 GOOD:  <RLAAvatar initials="JD" color="primary" />
 GOOD:  <RLAAvatar initials="AB" color="secondary" />
-BAD:   <RLAAvatar initials="JD" />
-BAD:   <RLAAvatar initials="JD" color="neutral" />
+GOOD:  <RLAAvatar initials="+8" color="neutral" />
 ```
 
-For overflow indicators (e.g. `+8`), omit the color prop entirely (default) — if
-the text is still not visible, use `color="primary"`.
+All colors (`primary`, `secondary`, `info`, `success`, `warning`, `error`, etc.) are
+safelisted in the UnoCSS preset, so they will always render correctly.
 
 ---
 

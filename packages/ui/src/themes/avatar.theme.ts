@@ -25,7 +25,7 @@ export const createAvatarTheme = (colors: readonly string[] = defaultColors) =>
         ),
         neutral: {
           root: "bg-elevated",
-          fallback: "text-muted",
+          fallback: "text-foreground",
           icon: "text-muted"
         }
       },
