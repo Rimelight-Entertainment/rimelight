@@ -1,4 +1,5 @@
-import "dotenv/config"
+import dotenv from "dotenv"
+dotenv.config()
 import fs from "node:fs"
 import path from "node:path"
 import { db } from "../src/db"
@@ -228,6 +229,7 @@ async function sync() {
           console.log(
             `Upserting batch ${Math.floor(i / chunkSize) + 1}/${batchCount} (${chunk.length} items)...`
           )
+          return
         })
     )
   }
@@ -255,6 +257,7 @@ async function sync() {
           console.log(
             `Cleaning up ${ids.length} deleted/unpublished ${type} records from database index...`
           )
+          return
         })
     )
   }

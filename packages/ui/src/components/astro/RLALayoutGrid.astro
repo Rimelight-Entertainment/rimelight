@@ -101,6 +101,15 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
 <script>
   import { defineShortcuts } from "../../utils/shortcuts"
 
+  function hexToRgba(hex: string, alpha: number): string {
+    const cleanHex = hex.replace('#', '')
+    const num = parseInt(cleanHex, 16)
+    const r = (num >> 16) & 255
+    const g = (num >> 8) & 255
+    const b = num & 255
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  }
+
   class RLALayoutGrid extends HTMLElement {
     private isVisible = false
     private gridElement: HTMLElement | null = null
@@ -304,14 +313,7 @@ const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), clas
         this.indicatorElement.innerHTML = `<span style="color: #3b82f6;">${this.currentBreakpoint.toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`
       }
 
-      const hexToRgba = (hex: string, alpha: number): string => {
-        const cleanHex = hex.replace('#', '')
-        const num = parseInt(cleanHex, 16)
-        const r = (num >> 16) & 255
-        const g = (num >> 8) & 255
-        const b = num & 255
-        return `rgba(${r}, ${g}, ${b}, ${alpha})`
-      }
+
 
       // Create centered CSS Grid container using the exact same classes as the page container
       const gridWrapper = document.createElement('div')

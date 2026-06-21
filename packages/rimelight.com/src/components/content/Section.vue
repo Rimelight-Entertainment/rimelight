@@ -22,7 +22,13 @@ export interface SectionProps {
     content?: string
   }
 }
-const { title, description, isEditing = false, rc: rcProp } = defineProps<SectionProps>()
+const {
+  level: levelProp,
+  title,
+  description,
+  isEditing = false,
+  rc: rcProp
+} = defineProps<SectionProps>()
 const { rc } = useRC("Section", rcProp)
 /* endregion */
 
@@ -82,11 +88,11 @@ const parentLevel = inject(
   SECTION_LEVEL_KEY,
   computed(() => 1)
 )
-const level = computed(() => Math.min(6, parentLevel.value + 1))
-provide(SECTION_LEVEL_KEY, level)
+const resolvedLevel = computed(() => levelProp ?? Math.min(6, parentLevel.value + 1))
+provide(SECTION_LEVEL_KEY, resolvedLevel)
 
 const styles = computed(() => {
-  const resolved = sectionStyles({ level: level.value as SectionLevel })
+  const resolved = sectionStyles({ level: resolvedLevel.value as SectionLevel })
   const result: Record<string, string> = {}
   for (const [slot, value] of Object.entries(resolved)) {
     result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
@@ -133,7 +139,7 @@ const copyToClipboard = async (text: string) => {
 
 <template>
   <section :id="sectionId" :class="styles.section" v-bind="useAttrs()">
-    <component :is="`h${level}`" :id="`${sectionId}-title`" :class="styles.title">
+    <component :is="`h${resolvedLevel}`" :id="`${sectionId}-title`" :class="styles.title">
       <a
         v-if="!isEditing"
         :href="`#${sectionId}`"

@@ -1,10 +1,7 @@
 import { defineAction, ActionError } from "astro:actions"
 import { z } from "astro/zod"
 import { db } from "@/db"
-import { board } from "@/db/schema/projects/boards"
-import { list } from "@/db/schema/projects/lists"
-import { card } from "@/db/schema/projects/cards"
-import { customFieldDefinition } from "@/db/schema/projects/custom_fields"
+import { board, list, card, customFieldDefinition } from "@/db/schema"
 import { and, asc, desc, eq, isNull } from "drizzle-orm"
 
 function checkAuth(context: any) {

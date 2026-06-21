@@ -73,7 +73,10 @@ export function getHeaderStack(): HeaderStackManager {
       unregister(id: string) {
         const layer = this.layers.find((l: HeaderLayer) => l.id === id)
         if (layer && layer.el) {
-          const el = layer.el as any
+          const el = layer.el as HTMLElement & {
+            rlScrollListener?: () => void
+            rlResizeObserver?: ResizeObserver
+          }
           if (el.rlScrollListener) {
             window.removeEventListener("scroll", el.rlScrollListener)
           }

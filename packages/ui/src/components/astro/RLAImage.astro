@@ -229,6 +229,7 @@ const initialSize = preMetadata?.size ?? undefined
                   const mime = blob.type.split("/").pop()?.toUpperCase();
                   if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime;
                 }
+                return;
               }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable"; });
             }
           }

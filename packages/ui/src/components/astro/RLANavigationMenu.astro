@@ -23,11 +23,13 @@ const {
 const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orientation }, useUi("navigationMenu", uiProp), className)
 
 const slotContents: Record<string, string> = {}
-for (const item of items) {
-  if (item.slot && Astro.slots.has(`${item.slot}-content`)) {
-    slotContents[`${item.slot}-content`] = await Astro.slots.render(`${item.slot}-content`)
-  }
-}
+await Promise.all(
+  items.map(async (item) => {
+    if (item.slot && Astro.slots.has(`${item.slot}-content`)) {
+      slotContents[`${item.slot}-content`] = await Astro.slots.render(`${item.slot}-content`)
+    }
+  })
+)
 ---
 
 <rla-navigation-menu orientation={orientation} {...rest}>

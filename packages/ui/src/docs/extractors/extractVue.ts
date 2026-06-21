@@ -199,7 +199,7 @@ export function extractVueMeta(filePath: string): {
                     if (foundNode) {
                       iface = foundNode
                     }
-                  } catch (e) {}
+                  } catch {}
                 }
               }
 
@@ -289,7 +289,7 @@ export function extractVueMeta(filePath: string): {
                         if (foundNode) {
                           iface = foundNode
                         }
-                      } catch (e) {}
+                      } catch {}
                     }
                   }
 
