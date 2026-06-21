@@ -32,7 +32,7 @@ export default defineDocsConfig({
               {
                 label: "C++",
                 href: "/{locale}/company/docs/overview/contributing/coding-style-guide/cpp/"
-              },
+              }
             ]
           }
         ]
@@ -712,7 +712,6 @@ export default defineDocsConfig({
                     label: "Page",
                     collapsed: true,
                     items: [
-
                       {
                         label: "Page",
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/page/"
@@ -1012,4 +1011,3 @@ export default defineDocsConfig({
     ]
   }
 })
-

@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ request }) => {
   const token = import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN
   const headers: Record<string, string> = {
     "User-Agent": "Rimelight-Docs-Changelog",
-    Accept: "application/vnd.github.v3+json"
+    "Accept": "application/vnd.github.v3+json"
   }
   if (token) {
     headers["Authorization"] = `Bearer ${token}`
@@ -52,7 +52,7 @@ export const GET: APIRoute = async ({ request }) => {
         }
       }
     }
-    const commits = Array.from(uniqueCommits.values()).sort(
+    const commits = Array.from(uniqueCommits.values()).toSorted(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     )
 
@@ -76,10 +76,10 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     // 3. Group commits by release
-    const sortedReleases = [...releases].sort(
+    const sortedReleases = [...releases].toSorted(
       (a: any, b: any) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
     )
-    const releasesOldestFirst = [...sortedReleases].reverse()
+    const releasesOldestFirst = [...sortedReleases].toReversed()
 
     const groups: any[] = []
     const unreleased: any[] = []
@@ -119,9 +119,7 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     // Sort groups in reverse chronological order (newest release first)
-    groups.sort(
-      (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-    )
+    groups.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
     result.push(...groups)
 
     return new Response(JSON.stringify(result), {

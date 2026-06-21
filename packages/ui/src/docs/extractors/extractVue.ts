@@ -274,7 +274,8 @@ export function extractVueMeta(filePath: string): {
                           true,
                           ts.ScriptKind.TS
                         )
-                        let foundNode: ts.InterfaceDeclaration | ts.TypeAliasDeclaration | null = null
+                        let foundNode: ts.InterfaceDeclaration | ts.TypeAliasDeclaration | null =
+                          null
                         function findDecl(n: ts.Node) {
                           if (
                             (ts.isInterfaceDeclaration(n) || ts.isTypeAliasDeclaration(n)) &&
@@ -296,7 +297,10 @@ export function extractVueMeta(filePath: string): {
                     let baseProps: PropMeta[] = []
                     if (ts.isInterfaceDeclaration(iface)) {
                       baseProps = extractPropsFromInterface(iface)
-                    } else if (ts.isTypeAliasDeclaration(iface) && ts.isTypeLiteralNode(iface.type)) {
+                    } else if (
+                      ts.isTypeAliasDeclaration(iface) &&
+                      ts.isTypeLiteralNode(iface.type)
+                    ) {
                       baseProps = extractPropsFromTypeLiteral(iface.type)
                     }
                     for (const p of baseProps) {
@@ -329,11 +333,15 @@ export function extractVueMeta(filePath: string): {
               ) {
                 const slotName = member.name.text
                 const bindings: Record<string, string> = {}
-                
+
                 let params: readonly ts.ParameterDeclaration[] = []
                 if (ts.isMethodSignature(member)) {
                   params = member.parameters
-                } else if (ts.isPropertySignature(member) && member.type && ts.isFunctionTypeNode(member.type)) {
+                } else if (
+                  ts.isPropertySignature(member) &&
+                  member.type &&
+                  ts.isFunctionTypeNode(member.type)
+                ) {
                   params = member.type.parameters
                 }
 

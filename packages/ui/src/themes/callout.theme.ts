@@ -3,17 +3,7 @@ import { defineTheme } from "../utils/defineTheme"
 
 export const createCalloutTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({
-    slots: [
-      "root",
-      "body",
-      "icon",
-      "title",
-      "content",
-      "avatar",
-      "avatarSize",
-      "actions",
-      "close"
-    ],
+    slots: ["root", "body", "icon", "title", "content", "avatar", "avatarSize", "actions", "close"],
     base: {
       root: "relative overflow-hidden w-full rounded-lg p-4 flex gap-2.5 items-start",
       body: "flex flex-col gap-2.5 flex-1 min-w-0",

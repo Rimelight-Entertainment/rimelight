@@ -21,7 +21,9 @@ function createDbProxy(): NeonHttpDatabase<typeof schema> {
         process.env.DATABASE_URL
 
       if (!databaseUrl) {
-        throw new Error("[db] DATABASE_URL is not set. Set the variable and restart the dev server.")
+        throw new Error(
+          "[db] DATABASE_URL is not set. Set the variable and restart the dev server."
+        )
       }
 
       if (!cachedDb) {

@@ -1,6 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "fs"
 import { join, relative, dirname, parse } from "path"
-import "dotenv/config"
 
 const BASE_URL = process.env.BASE_URL || "https://rimelight.com"
 const CF_API = "https://api.cloudflare.com/client/v4/accounts"

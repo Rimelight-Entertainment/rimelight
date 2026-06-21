@@ -129,7 +129,11 @@ export type { StepperProps } from "./components/stepper"
 export type { StepsProps } from "./components/steps"
 export type { StickySurfaceProps } from "./components/sticky-surface"
 export type { SwitchProps } from "./components/switch"
-export type { TableOfContentsProps, TableOfContentsHeading, TableOfContentsConfig } from "./components/table-of-contents"
+export type {
+  TableOfContentsProps,
+  TableOfContentsHeading,
+  TableOfContentsConfig
+} from "./components/table-of-contents"
 export type { TableProps } from "./components/table"
 export type { TabsProps } from "./components/tabs"
 export type { TextareaProps } from "./components/textarea"
@@ -147,4 +151,3 @@ export type { WindowMockupProps } from "./components/window-mockup"
 export type { ColorAreaProps } from "./components/color-area"
 export type { ColorFieldProps } from "./components/color-field"
 export type { ColorSliderProps } from "./components/color-slider"
-

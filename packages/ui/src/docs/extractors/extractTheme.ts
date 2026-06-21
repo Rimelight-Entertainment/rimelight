@@ -3,7 +3,10 @@ import path from "node:path"
 import { execSync } from "node:child_process"
 import type { ThemeMeta } from "../types"
 
-export async function extractThemeMeta(componentName: string, themesDir: string): Promise<ThemeMeta | null> {
+export async function extractThemeMeta(
+  componentName: string,
+  themesDir: string
+): Promise<ThemeMeta | null> {
   if (!existsSync(themesDir)) return null
 
   const themeFiles = readdirSync(themesDir).filter((f) => f.endsWith(".theme.ts"))
@@ -36,9 +39,15 @@ export async function extractThemeMeta(componentName: string, themesDir: string)
     return {
       slots: Array.isArray(themeObj.slots) ? themeObj.slots : [],
       base: typeof themeObj.base === "object" && themeObj.base !== null ? themeObj.base : {},
-      variants: typeof themeObj.variants === "object" && themeObj.variants !== null ? themeObj.variants : {},
+      variants:
+        typeof themeObj.variants === "object" && themeObj.variants !== null
+          ? themeObj.variants
+          : {},
       compoundVariants: Array.isArray(themeObj.compoundVariants) ? themeObj.compoundVariants : [],
-      defaultVariants: typeof themeObj.defaultVariants === "object" && themeObj.defaultVariants !== null ? themeObj.defaultVariants : {}
+      defaultVariants:
+        typeof themeObj.defaultVariants === "object" && themeObj.defaultVariants !== null
+          ? themeObj.defaultVariants
+          : {}
     }
   } catch (err) {
     console.warn(`[docs] Failed to extract theme via child process for ${componentName}:`, err)

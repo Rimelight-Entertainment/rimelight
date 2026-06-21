@@ -6,7 +6,8 @@ export const createColorFieldTheme = (colors: readonly string[] = defaultColors)
     slots: ["root", "input"],
     base: {
       root: "relative flex items-center border border-border rounded-lg bg-background shadow-sm px-3 py-1.5 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-      input: "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-foreground placeholder-muted-foreground"
+      input:
+        "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-foreground placeholder-muted-foreground"
     },
     variants: {
       color: Object.fromEntries(

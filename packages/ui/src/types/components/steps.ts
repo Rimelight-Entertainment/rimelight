@@ -1,6 +1,7 @@
 export interface StepsProps {
   /**
    * Controls the size of the step indicators and spacing.
+   *
    * @default "md"
    */
   size?: "sm" | "md" | "lg"
