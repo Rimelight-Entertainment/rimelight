@@ -3,6 +3,9 @@ title: "PageSection"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro"
+import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,40 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAPageSection title="Section Title" description="Section Description">
+    Section Content
+  </RLAPageSection>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
+    ---
+
+    <RLAPageSection title="Section Title" description="Section Description">
+      Section Content
+    </RLAPageSection>
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
+    </script>
+
+    <template>
+      <RLVSection title="Section Title" description="Section Description">
+        Section Content
+      </RLVSection>
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

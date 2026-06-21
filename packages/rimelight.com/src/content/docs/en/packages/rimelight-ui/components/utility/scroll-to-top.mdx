@@ -3,6 +3,9 @@ title: "ScrollToTop"
 description: "A scroll-to-top button with a progress indicator that appears when the user scrolls down the page."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro"
+import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,34 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 A scroll-to-top button with a progress indicator that appears when the user scrolls down the page.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAScrollToTop />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro";
+    ---
+
+    <RLAScrollToTop />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue";
+    </script>
+
+    <template>
+      <RLVScrollToTop />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

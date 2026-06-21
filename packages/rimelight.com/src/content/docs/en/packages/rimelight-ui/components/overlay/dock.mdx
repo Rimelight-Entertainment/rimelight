@@ -3,6 +3,8 @@ title: "Dock"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADock from "@rimelight/ui/components/astro/RLADock.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,31 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLADock>
+    <div class="p-2 bg-muted rounded-md flex gap-2">
+      <span class="i-lucide-home size-6" />
+      <span class="i-lucide-settings size-6" />
+    </div>
+  </RLADock>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADock from "@rimelight/ui/components/astro/RLADock.astro";
+    ---
+
+    <RLADock>
+      <div class="p-2 bg-muted rounded-md flex gap-2">
+        <span class="i-lucide-home size-6" />
+        <span class="i-lucide-settings size-6" />
+      </div>
+    </RLADock>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

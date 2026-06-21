@@ -3,6 +3,8 @@ title: "Tabs"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,32 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLATabs items={[{ label: "Tab 1", value: "tab1" }, { label: "Tab 2", value: "tab2" }]}>
+    <div role="tabpanel" data-value="tab1">Content 1</div>
+    <div role="tabpanel" data-value="tab2">Content 2</div>
+  </RLATabs>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro";
+
+    const items = [
+      { label: "Tab 1", value: "tab1" },
+      { label: "Tab 2", value: "tab2" }
+    ];
+    ---
+
+    <RLATabs items={items}>
+      <div role="tabpanel" data-value="tab1">Content 1</div>
+      <div role="tabpanel" data-value="tab2">Content 2</div>
+    </RLATabs>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

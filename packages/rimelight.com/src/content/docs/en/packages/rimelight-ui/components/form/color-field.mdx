@@ -3,6 +3,7 @@ title: "Color Field"
 description: "An input field for entering and editing color values in various formats."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -14,15 +15,20 @@ The Color Field component provides an input for editing and entering hexadecimal
 
 ## Usage
 
-Import the component and use it directly:
+<ComponentShowcase>
+  <RLAColorField defaultValue="#10b981" />
 
-```astro
----
-import RLAColorField from "@rimelight/ui/components/astro/RLAColorField.astro"
----
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAColorField from "@rimelight/ui/components/astro/RLAColorField.astro";
+    ---
 
-<RLAColorField defaultValue="#10b981" />
-```
+    <RLAColorField defaultValue="#10b981" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

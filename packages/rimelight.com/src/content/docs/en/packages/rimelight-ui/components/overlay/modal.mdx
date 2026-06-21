@@ -3,6 +3,8 @@ title: "Modal"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAModal triggerLabel="Open Modal" title="Modal Title" description="Modal Description">
+    <div class="p-4">Modal Content</div>
+  </RLAModal>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro";
+    ---
+
+    <RLAModal triggerLabel="Open Modal" title="Modal Title" description="Modal Description">
+      <div class="p-4">Modal Content</div>
+    </RLAModal>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

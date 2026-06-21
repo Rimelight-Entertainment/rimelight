@@ -3,6 +3,8 @@ title: "TableOfContents"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLATableOfContents from "@rimelight/ui/components/astro/RLATableOfContents.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,26 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLATableOfContents headings={[{ depth: 2, slug: "usage", text: "Usage" }, { depth: 3, slug: "examples", text: "Examples" }]} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATableOfContents from "@rimelight/ui/components/astro/RLATableOfContents.astro";
+
+    const headings = [
+      { depth: 2, slug: "usage", text: "Usage" },
+      { depth: 3, slug: "examples", text: "Examples" }
+    ];
+    ---
+
+    <RLATableOfContents headings={headings} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

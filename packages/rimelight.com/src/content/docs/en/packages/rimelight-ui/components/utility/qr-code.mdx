@@ -3,6 +3,8 @@ title: "QR Code"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAQrCode from "@rimelight/ui/components/astro/RLAQrCode.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,21 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAQrCode value="https://rimelight.com" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAQrCode from "@rimelight/ui/components/astro/RLAQrCode.astro";
+    ---
+
+    <RLAQrCode value="https://rimelight.com" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

@@ -3,6 +3,8 @@ title: "Breadcrumb"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLABreadcrumb from "@rimelight/ui/components/astro/RLABreadcrumb.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,26 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLABreadcrumb items={[{ label: "Home", href: "/" }, { label: "Docs" }]} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLABreadcrumb from "@rimelight/ui/components/astro/RLABreadcrumb.astro";
+
+    const items = [
+      { label: "Home", href: "/" },
+      { label: "Docs" }
+    ];
+    ---
+
+    <RLABreadcrumb items={items} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

@@ -3,6 +3,8 @@ title: "Hover Card"
 description: "A card that appears when hovering over an element."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,29 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 A card that appears when hovering over an element.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAHoverCard triggerLabel="Hover me">
+    <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
+      Hover Card Content
+    </div>
+  </RLAHoverCard>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro";
+    ---
+
+    <RLAHoverCard triggerLabel="Hover me">
+      <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
+        Hover Card Content
+      </div>
+    </RLAHoverCard>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

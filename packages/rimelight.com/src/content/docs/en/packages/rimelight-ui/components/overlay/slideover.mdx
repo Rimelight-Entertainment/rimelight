@@ -3,6 +3,8 @@ title: "Slideover"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLASlideover triggerLabel="Open Slideover" title="Slideover Title" description="Slideover Description">
+    <div class="p-4">Slideover Content</div>
+  </RLASlideover>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
+    ---
+
+    <RLASlideover triggerLabel="Open Slideover" title="Slideover Title" description="Slideover Description">
+      <div class="p-4">Slideover Content</div>
+    </RLASlideover>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

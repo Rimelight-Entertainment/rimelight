@@ -3,6 +3,9 @@ title: "FormField"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro"
+import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,34 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAFormField label="Username" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro";
+    ---
+
+    <RLAFormField label="Username" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
+    </script>
+
+    <template>
+      <RLVFormField label="Username" />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

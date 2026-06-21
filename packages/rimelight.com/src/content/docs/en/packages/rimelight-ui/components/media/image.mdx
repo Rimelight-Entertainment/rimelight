@@ -3,6 +3,8 @@ title: "Image"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAImage from "@rimelight/ui/components/astro/RLAImage.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,21 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAImage src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809" alt="Colorful gradient" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAImage from "@rimelight/ui/components/astro/RLAImage.astro";
+    ---
+
+    <RLAImage src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809" alt="Colorful gradient" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

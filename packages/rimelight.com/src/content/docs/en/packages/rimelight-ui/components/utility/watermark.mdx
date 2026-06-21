@@ -3,6 +3,8 @@ title: "Watermark"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAWatermark from "@rimelight/ui/components/astro/RLAWatermark.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAWatermark>
+    <div class="h-32 flex items-center justify-center border">Content Area</div>
+  </RLAWatermark>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAWatermark from "@rimelight/ui/components/astro/RLAWatermark.astro";
+    ---
+
+    <RLAWatermark>
+      <div class="h-32 flex items-center justify-center border">Content Area</div>
+    </RLAWatermark>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

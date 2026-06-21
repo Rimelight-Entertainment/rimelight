@@ -3,6 +3,8 @@ title: "Sticky Surface"
 description: "A utility component that pins content to a specific position within its container."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAStickySurface from "@rimelight/ui/components/astro/RLAStickySurface.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 A utility component that pins content to a specific position within its container.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAStickySurface offsetTop={20}>
+    <div class="p-4 bg-muted rounded">Sticky Content</div>
+  </RLAStickySurface>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAStickySurface from "@rimelight/ui/components/astro/RLAStickySurface.astro";
+    ---
+
+    <RLAStickySurface offsetTop={20}>
+      <div class="p-4 bg-muted rounded">Sticky Content</div>
+    </RLAStickySurface>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

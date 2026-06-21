@@ -3,6 +3,7 @@ title: "Steps"
 description: "A documentation component for presenting sequential, numbered steps with arbitrary content in each."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
 import RLAPackageManagers from "@rimelight/ui/components/astro/RLAPackageManagers.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
@@ -14,26 +15,43 @@ A layout component for structured, numbered sequences. Useful in documentation, 
 
 ## Usage
 
-Write `<li>` items directly inside `<RLASteps>`. Each becomes a numbered step and can hold any Astro content.
+<ComponentShowcase>
+  <RLASteps>
+    <li>
+      **First step**
 
-```astro
----
-import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
----
+      Supporting content.
+    </li>
+    <li>
+      **Second step**
 
-<RLASteps>
-  <li>
-    **First step title**
+      More content.
+    </li>
 
-    Supporting content goes here.
-  </li>
-  <li>
-    **Second step title**
+  </RLASteps>
 
-    Each step is independent and can hold anything.
-  </li>
-</RLASteps>
-```
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro";
+    ---
+
+    <RLASteps>
+      <li>
+        **First step**
+
+        Supporting content.
+      </li>
+      <li>
+        **Second step**
+
+        More content.
+      </li>
+    </RLASteps>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

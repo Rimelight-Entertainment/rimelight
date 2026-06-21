@@ -3,6 +3,8 @@ title: "LocaleSelector"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,26 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLALocaleSelector locales={[{ code: "en", label: "English" }, { code: "fr", label: "Français" }]} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+
+    const locales = [
+      { code: "en", label: "English" },
+      { code: "fr", label: "Français" }
+    ];
+    ---
+
+    <RLALocaleSelector locales={locales} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

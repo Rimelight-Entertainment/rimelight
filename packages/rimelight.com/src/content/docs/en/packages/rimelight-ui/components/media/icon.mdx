@@ -3,6 +3,9 @@ title: "Icon"
 description: "Display icons from any Iconify collection using UnoCSS."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro"
+import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue"
 import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 
@@ -19,34 +22,33 @@ A component to display any icon from [Iconify](https://iconify.design/) collecti
 
 ## Usage
 
-Use the `name` prop to display an icon following the `i-<collection>-<icon>` format:
+<ComponentShowcase>
+  <RLAIcon name="i-lucide-home" />
 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
+    ---
 
-```astro
----
-import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
----
+    <RLAIcon name="i-lucide-home" />
+    ```
 
-<RLAIcon name="i-lucide-home" />
-```
+  </div>
 
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue";
+    </script>
 
-```vue
-<script setup lang="ts">
-import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue"
-</script>
+    <template>
+      <RLVIcon name="i-lucide-home" />
+    </template>
+    ```
 
-<template>
-  <RLVIcon name="i-lucide-home" />
-</template>
-```
-
-</div>
-</RLATabs>
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

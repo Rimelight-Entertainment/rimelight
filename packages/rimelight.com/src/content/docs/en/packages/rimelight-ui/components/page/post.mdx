@@ -3,6 +3,9 @@ title: "Post"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro"
+import RLVPost from "@rimelight/ui/components/vue/RLVPost.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,34 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAPost title="Post Title" description="Post Description" date="2026-06-21" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro";
+    ---
+
+    <RLAPost title="Post Title" description="Post Description" date="2026-06-21" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVPost from "@rimelight/ui/components/vue/RLVPost.vue";
+    </script>
+
+    <template>
+      <RLVPost title="Post Title" description="Post Description" date="2026-06-21" />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

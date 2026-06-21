@@ -3,6 +3,8 @@ title: "Splitter"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLASplitter from "@rimelight/ui/components/astro/RLASplitter.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,27 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLASplitter>
+    <div>Left Content</div>
+    <div slot="panel">Right Content</div>
+  </RLASplitter>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASplitter from "@rimelight/ui/components/astro/RLASplitter.astro";
+    ---
+
+    <RLASplitter>
+      <div>Left Content</div>
+      <div slot="panel">Right Content</div>
+    </RLASplitter>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

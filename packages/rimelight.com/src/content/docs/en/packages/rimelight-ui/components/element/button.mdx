@@ -1,80 +1,98 @@
 ---
 title: "Button"
-description: "A versatile button component with multiple variants, colors, and sizes."
+description: "A button element that can be used to trigger actions or navigate to other pages."
 ---
 
-import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-A versatile button component with support for multiple variants, colors, and sizes.
+A button element that can be used to trigger actions or navigate to other pages.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAButton label="Click me" />
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
 
-<Fragment slot="code-astro">
-  ```astro
-  <RLAButton label="Click me" />
-  ```
-</Fragment>
+    <RLAButton label="Click me" />
+    ```
 
-  <Fragment slot="code-vue">
-  ```vue
-  <RLVButton label="Click me" />
-  ```
-  </Fragment>
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <RLVButton label="Click me" />
+    </template>
+    ```
+
+  </div>
 </ComponentShowcase>
 
 ## Examples
 
 ### Variants
 
+Use the `variant` prop to change the variant of the button.
+
 <ComponentShowcase>
   <div class="flex flex-wrap gap-4">
     <RLAButton variant="solid" color="primary">Solid</RLAButton>
     <RLAButton variant="outline" color="primary">Outline</RLAButton>
+    <RLAButton variant="soft" color="primary">Soft</RLAButton>
     <RLAButton variant="subtle" color="primary">Subtle</RLAButton>
     <RLAButton variant="ghost" color="primary">Ghost</RLAButton>
     <RLAButton variant="link" color="primary">Link</RLAButton>
   </div>
 
-<Fragment slot="code-astro">
-  ```astro
-  <RLAButton variant="solid" color="primary">
-    Solid
-  </RLAButton>
-  <RLAButton variant="outline" color="primary">
-    Outline
-  </RLAButton>
-  <RLAButton variant="subtle" color="primary">
-    Subtle
-  </RLAButton>
-  <RLAButton variant="ghost" color="primary">
-    Ghost
-  </RLAButton>
-  <RLAButton variant="link" color="primary">
-    Link
-  </RLAButton>
-  ```
-</Fragment>
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
 
-  <Fragment slot="code-vue">
-  ```vue
-  <RLVButton variant="solid" color="primary">Solid</RLVButton>
-  <RLVButton variant="outline" color="primary">Outline</RLVButton>
-  <RLVButton variant="subtle" color="primary">Subtle</RLVButton>
-  <RLVButton variant="ghost" color="primary">Ghost</RLVButton>
-  <RLVButton variant="link" color="primary">Link</RLVButton>
-  ```
-  </Fragment>
+    <RLAButton variant="solid" color="primary">Solid</RLAButton>
+    <RLAButton variant="outline" color="primary">Outline</RLAButton>
+    <RLAButton variant="subtle" color="primary">Subtle</RLAButton>
+    <RLAButton variant="ghost" color="primary">Ghost</RLAButton>
+    <RLAButton variant="link" color="primary">Link</RLAButton>
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <div class="flex flex-wrap gap-4">
+        <RLVButton variant="solid" color="primary">Solid</RLVButton>
+        <RLVButton variant="outline" color="primary">Outline</RLVButton>
+        <RLVButton variant="subtle" color="primary">Subtle</RLVButton>
+        <RLVButton variant="ghost" color="primary">Ghost</RLVButton>
+        <RLVButton variant="link" color="primary">Link</RLVButton>
+      </div>
+    </template>
+    ```
+
+  </div>
 </ComponentShowcase>
 
 ### Sizes

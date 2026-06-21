@@ -3,6 +3,9 @@ title: "Form"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAForm from "@rimelight/ui/components/astro/RLAForm.astro"
+import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,34 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAForm />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAForm from "@rimelight/ui/components/astro/RLAForm.astro";
+    ---
+
+    <RLAForm />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue";
+    </script>
+
+    <template>
+      <RLVForm />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

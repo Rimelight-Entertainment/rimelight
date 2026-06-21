@@ -3,6 +3,8 @@ title: "Pagination"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPagination from "@rimelight/ui/components/astro/RLAPagination.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,21 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAPagination currentPage={1} totalPages={5} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPagination from "@rimelight/ui/components/astro/RLAPagination.astro";
+    ---
+
+    <RLAPagination currentPage={1} totalPages={5} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

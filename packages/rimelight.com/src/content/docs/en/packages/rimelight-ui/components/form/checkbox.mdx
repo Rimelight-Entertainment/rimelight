@@ -3,6 +3,9 @@ title: "Checkbox"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLACheckbox from "@rimelight/ui/components/astro/RLACheckbox.astro"
+import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,34 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLACheckbox label="Checkbox" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLACheckbox from "@rimelight/ui/components/astro/RLACheckbox.astro";
+    ---
+
+    <RLACheckbox label="Checkbox" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
+    </script>
+
+    <template>
+      <RLVCheckbox label="Checkbox" />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

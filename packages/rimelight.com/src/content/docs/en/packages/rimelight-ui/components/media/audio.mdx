@@ -3,6 +3,8 @@ title: "Audio"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAAudio from "@rimelight/ui/components/astro/RLAAudio.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,21 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAAudio src="audio.mp3" controls />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAAudio from "@rimelight/ui/components/astro/RLAAudio.astro";
+    ---
+
+    <RLAAudio src="audio.mp3" controls />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

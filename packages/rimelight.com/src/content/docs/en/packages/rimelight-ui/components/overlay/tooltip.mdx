@@ -3,6 +3,8 @@ title: "Tooltip"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLATooltip from "@rimelight/ui/components/astro/RLATooltip.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLATooltip content="Tooltip Content">
+    <button class="px-4 py-2 border rounded">Hover me</button>
+  </RLATooltip>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATooltip from "@rimelight/ui/components/astro/RLATooltip.astro";
+    ---
+
+    <RLATooltip content="Tooltip Content">
+      <button class="px-4 py-2 border rounded">Hover me</button>
+    </RLATooltip>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

@@ -3,6 +3,8 @@ title: "Link Group"
 description: "A group of navigational links, typically used in footers."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,26 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 A group of navigational links, typically used in footers.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLALinkGroup title="Resources" links={[{ label: "Docs", href: "/docs" }, { label: "GitHub", href: "https://github.com" }]} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
+
+    const links = [
+      { label: "Docs", href: "/docs" },
+      { label: "GitHub", href: "https://github.com" }
+    ];
+    ---
+
+    <RLALinkGroup title="Resources" links={links} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

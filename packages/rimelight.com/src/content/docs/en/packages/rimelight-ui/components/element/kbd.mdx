@@ -3,6 +3,8 @@ title: "Kbd"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAKbd from "@rimelight/ui/components/astro/RLAKbd.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,21 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAKbd>⌘ K</RLAKbd>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAKbd from "@rimelight/ui/components/astro/RLAKbd.astro";
+    ---
+
+    <RLAKbd>⌘ K</RLAKbd>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

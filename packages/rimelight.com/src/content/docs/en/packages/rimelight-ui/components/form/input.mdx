@@ -3,6 +3,9 @@ title: "Input"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro"
+import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,34 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAInput placeholder="Type here..." />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    ---
+
+    <RLAInput placeholder="Type here..." />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
+    </script>
+
+    <template>
+      <RLVInput placeholder="Type here..." />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

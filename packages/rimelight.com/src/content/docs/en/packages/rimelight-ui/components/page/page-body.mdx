@@ -3,6 +3,8 @@ title: "PageBody"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPageBody from "@rimelight/ui/components/astro/RLAPageBody.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAPageBody>
+    Body Content
+  </RLAPageBody>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPageBody from "@rimelight/ui/components/astro/RLAPageBody.astro";
+    ---
+
+    <RLAPageBody>
+      Body Content
+    </RLAPageBody>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

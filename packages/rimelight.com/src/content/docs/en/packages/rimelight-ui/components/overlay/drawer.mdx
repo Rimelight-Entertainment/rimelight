@@ -3,6 +3,8 @@ title: "Drawer"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADrawer from "@rimelight/ui/components/astro/RLADrawer.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLADrawer triggerLabel="Open Drawer" title="Drawer Title" description="Drawer Description">
+    <div class="p-4">Drawer Content</div>
+  </RLADrawer>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADrawer from "@rimelight/ui/components/astro/RLADrawer.astro";
+    ---
+
+    <RLADrawer triggerLabel="Open Drawer" title="Drawer Title" description="Drawer Description">
+      <div class="p-4">Drawer Content</div>
+    </RLADrawer>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

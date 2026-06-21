@@ -47,8 +47,25 @@ export const security = defineMiddleware(async (context, next) => {
   const response = await next()
   const contentType = response.headers.get("content-type") || ""
 
-  if (!contentType.includes("text/html")) {
-    return addSecurityHeaders(response, context.url.origin)
+  if (import.meta.env.DEV) {
+    if (!contentType.includes("text/html")) {
+      return addSecurityHeaders(response, context.url.origin)
+    }
+    const cleanHeaders = new Headers(response.headers)
+    cleanHeaders.delete("content-security-policy")
+    let modifiedHtml = await response.text()
+    modifiedHtml = modifiedHtml.replace(
+      /<meta\s[^>]*http-equiv\s*=\s*["']?content-security-policy[^>]*>/gi,
+      ""
+    )
+    return addSecurityHeaders(
+      new Response(modifiedHtml, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: cleanHeaders
+      }),
+      context.url.origin
+    )
   }
 
   let cspHeader = response.headers.get("content-security-policy")

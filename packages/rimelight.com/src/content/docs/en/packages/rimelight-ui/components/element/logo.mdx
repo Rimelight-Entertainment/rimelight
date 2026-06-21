@@ -3,6 +3,7 @@ title: "Logo"
 description: "A component to display the site logo with different variants and color modes."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 
 import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro"
@@ -16,32 +17,33 @@ A versatile logo component that renders a site logo from your configuration, sup
 
 ## Usage
 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
+<ComponentShowcase>
+  <RLALogo variant="logomark" />
 
-```astro
----
-import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro"
----
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+    ---
 
-<RLALogo variant="logomark" />
-```
+    <RLALogo variant="logomark" />
+    ```
 
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
+  </div>
 
-```vue
-<script setup lang="ts">
-import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue"
-</script>
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue";
+    </script>
 
-<template>
-  <RLVLogo client:load variant="logomark" />
-</template>
-```
+    <template>
+      <RLVLogo variant="logomark" />
+    </template>
+    ```
 
-</div>
-</RLATabs>
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

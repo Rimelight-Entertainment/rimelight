@@ -3,6 +3,8 @@ title: "Popover"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,29 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAPopover triggerLabel="Open Popover">
+    <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
+      Popover Content
+    </div>
+  </RLAPopover>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
+    ---
+
+    <RLAPopover triggerLabel="Open Popover">
+      <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
+        Popover Content
+      </div>
+    </RLAPopover>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

@@ -4,7 +4,7 @@ export interface ButtonProps {
   /**
    * The visual style variant of the button
    */
-  variant?: "solid" | "outline" | "ghost" | "link" | "soft"
+  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link"
   /**
    * The color scheme applied to the button
    */
@@ -56,7 +56,7 @@ export interface ButtonProps {
   /**
    * Variant used when button is in active state
    */
-  activeVariant?: "solid" | "outline" | "ghost" | "link" | "soft"
+  activeVariant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link"
   /**
    * Theme mode override — pins colors to flat, light, or dark mode.
    */

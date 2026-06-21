@@ -3,6 +3,8 @@ title: "BrowserMockup"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLABrowserMockup from "@rimelight/ui/components/astro/RLABrowserMockup.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,25 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLABrowserMockup>
+    <div class="p-4 bg-muted text-muted-foreground text-center">Browser Content</div>
+  </RLABrowserMockup>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLABrowserMockup from "@rimelight/ui/components/astro/RLABrowserMockup.astro";
+    ---
+
+    <RLABrowserMockup>
+      <div class="p-4 bg-muted text-muted-foreground text-center">Browser Content</div>
+    </RLABrowserMockup>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

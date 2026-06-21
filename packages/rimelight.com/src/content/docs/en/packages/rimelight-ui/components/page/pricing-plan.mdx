@@ -3,6 +3,8 @@ title: "PricingPlan"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPricingPlan from "@rimelight/ui/components/astro/RLAPricingPlan.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +14,27 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAPricingPlan>
+    <h3>Starter</h3>
+    <p>$19/month</p>
+  </RLAPricingPlan>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPricingPlan from "@rimelight/ui/components/astro/RLAPricingPlan.astro";
+    ---
+
+    <RLAPricingPlan>
+      <h3>Starter</h3>
+      <p>$19/month</p>
+    </RLAPricingPlan>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

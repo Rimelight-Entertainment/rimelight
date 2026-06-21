@@ -3,6 +3,9 @@ title: "Banner"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLABanner from "@rimelight/ui/components/astro/RLABanner.astro"
+import RLVBanner from "@rimelight/ui/components/vue/RLVBanner.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,34 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 This component is currently under development.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLABanner>This is a banner</RLABanner>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLABanner from "@rimelight/ui/components/astro/RLABanner.astro";
+    ---
+
+    <RLABanner>This is a banner</RLABanner>
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVBanner from "@rimelight/ui/components/vue/RLVBanner.vue";
+    </script>
+
+    <template>
+      <RLVBanner>This is a banner</RLVBanner>
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

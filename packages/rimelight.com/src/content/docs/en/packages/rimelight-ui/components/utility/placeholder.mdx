@@ -3,6 +3,9 @@ title: "Placeholder"
 description: "A placeholder component with a decorative SVG pattern overlay, useful for empty states or loading skeletons."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPlaceholder from "@rimelight/ui/components/astro/RLAPlaceholder.astro"
+import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -12,6 +15,40 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 A placeholder component with a decorative SVG pattern overlay, useful for empty states or loading skeletons.
 
 ## Usage
+
+<ComponentShowcase>
+  <RLAPlaceholder class="h-32 flex items-center justify-center">
+    Placeholder Content
+  </RLAPlaceholder>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPlaceholder from "@rimelight/ui/components/astro/RLAPlaceholder.astro";
+    ---
+
+    <RLAPlaceholder class="h-32 flex items-center justify-center">
+      Placeholder Content
+    </RLAPlaceholder>
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue";
+    </script>
+
+    <template>
+      <RLVPlaceholder class="h-32 flex items-center justify-center">
+        Placeholder Content
+      </RLVPlaceholder>
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 
