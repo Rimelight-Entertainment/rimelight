@@ -44,12 +44,13 @@ const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
           data-slot="panel"
           data-resizable-panel={i}
         >
-          <slot name={`panel-${i}`}>
-            {i === 0
+          {Astro.slots.has(`panel-${i}`) ? (
+            <Fragment set:html={await Astro.slots.render(`panel-${i}`)} />
+          ) : (
+            i === 0
               ? <slot />
               : <slot name="panel" />
-            }
-          </slot>
+          )}
         </div>
 
         {/* Render a handle between panels, not after the last one */}

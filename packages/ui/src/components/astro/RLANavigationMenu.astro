@@ -75,7 +75,7 @@ const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orienta
                 role="region"
               >
                 {item.slot && Astro.slots.has(`${item.slot}-content`) ? (
-                  <slot name={`${item.slot}-content`} />
+                  <Fragment set:html={await Astro.slots.render(`${item.slot}-content`)} />
                 ) : (
                   <ul role="list" class="py-1">
                     {item.children!.map(child => (
