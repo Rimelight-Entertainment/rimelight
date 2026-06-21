@@ -12,6 +12,7 @@ interface Props {
   playground?: string;
   propsConfig?: Record<string, string[]>;
   defaultProps?: Record<string, string>;
+  togglingPattern?: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
 }
 
 const {
@@ -22,15 +23,25 @@ const {
   component,
   componentName,
   propsConfig,
-  defaultProps
+  defaultProps,
+  togglingPattern = "tab-segmented"
 } = Astro.props;
 
 const resolvedComponentName = componentName || component || "";
 const isDynamic = !!propsConfig;
 const propKeys = propsConfig ? Object.keys(propsConfig) : [];
+
+// If select-option pattern is used, we inject the special compare option to each config
+let resolvedPropsConfig = { ...propsConfig };
+if (isDynamic && togglingPattern === "select-option") {
+  resolvedPropsConfig = {};
+  for (const key of propKeys) {
+    resolvedPropsConfig[key] = [...propsConfig[key], "— Compare All —"];
+  }
+}
 ---
 
-<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})}>
+<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern}>
   {(title || description) && (
     <div class="px-4 py-3 border-b border-border bg-muted/10">
       {title && <h4 class="text-sm font-semibold m-0 text-foreground">{title}</h4>}
@@ -38,35 +49,52 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
     </div>
   )}
 
-  <!-- Dynamic Props Configuration Area with Compare toggles -->
+  <!-- Dynamic Props Configuration Area -->
   {isDynamic && (
-    <div class="flex flex-wrap items-center gap-6 px-4 py-3 bg-muted/20 border-b border-border">
-      {propKeys.map((prop) => (
-        <div class="flex items-center gap-2 prop-control-group" data-prop={prop}>
-          <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{prop}:</label>
-          <div class="flex items-center gap-1.5">
-            <RLASelect
-              items={propsConfig[prop]}
-              value={defaultProps ? defaultProps[prop] : ""}
-              name={prop}
-              size="sm"
-            />
-            {propsConfig[prop].length > 1 && (
-              <button class="compare-prop-btn p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title={`Compare all ${prop}s`}>
-                <span class="i-lucide-layout-grid size-3.5"></span>
-              </button>
-            )}
+    <div class="flex flex-wrap items-center gap-6 px-4 py-3 bg-muted/20 border-b border-border justify-between w-full">
+      <div class="flex flex-wrap items-center gap-6">
+        {propKeys.map((prop) => (
+          <div class="flex items-center gap-2 prop-control-group" data-prop={prop}>
+            <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{prop}:</label>
+            <div class="flex items-center gap-1.5">
+              <RLASelect
+                items={resolvedPropsConfig[prop]}
+                value={defaultProps ? defaultProps[prop] : ""}
+                name={prop}
+                size="sm"
+              />
+              {togglingPattern === "icon" && propsConfig[prop].length > 1 && (
+                <button class="compare-prop-btn p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title={`Compare all ${prop}s`}>
+                  <span class="i-lucide-layout-grid size-3.5"></span>
+                </button>
+              )}
+              {togglingPattern === "pill-toggle" && propsConfig[prop].length > 1 && (
+                <button class="compare-prop-btn px-2 py-0.5 text-[10px] font-semibold border border-border/60 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent/30 transition-colors" title={`Compare all ${prop}s`}>
+                  Compare
+                </button>
+              )}
+            </div>
           </div>
+        ))}
+      </div>
+
+      <!-- Segmented Control for Layout Mode -->
+      {togglingPattern === "tab-segmented" && (
+        <div class="flex items-center gap-1 bg-muted/40 p-0.5 rounded-lg border border-border/40 mode-segmented-control ml-auto">
+          <button class="mode-tab active px-2.5 py-0.5 text-xs font-medium rounded-md bg-background text-foreground shadow-xs border border-border/40" data-mode="single">Single Preview</button>
+          <button class="mode-tab px-2.5 py-0.5 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/30 transition-colors" data-mode="compare">Compare All</button>
         </div>
-      ))}
+      )}
     </div>
   )}
 
   <!-- Tabs & Actions Controls Area -->
   <div class="controls-area px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between gap-4">
-    <div class="flex items-center gap-2">
-       <button class="showcase-tab active px-3 py-1 text-xs font-medium rounded-md bg-background text-foreground shadow-sm border border-border" data-lang="astro">Astro</button>
-       <button class="showcase-tab px-3 py-1 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" data-lang="vue">Vue</button>
+    <div class="flex flex-wrap items-center gap-4">
+      <div class="flex items-center gap-2">
+         <button class="showcase-tab active px-3 py-1 text-xs font-medium rounded-md bg-background text-foreground shadow-sm border border-border" data-lang="astro">Astro</button>
+         <button class="showcase-tab px-3 py-1 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" data-lang="vue">Vue</button>
+      </div>
     </div>
 
     <div class="flex items-center gap-1.5">
@@ -79,7 +107,7 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
     </div>
   </div>
 
-  <!-- Preview Area (Always visible label) -->
+  <!-- Preview Area -->
   <div class="preview-area p-4 sm:p-6 flex items-center justify-center min-h-[120px] border-b border-border relative">
     <div class="absolute top-2 right-2">
         <div class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded border border-border">Preview</div>
@@ -231,11 +259,13 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
       const componentName = showcase.getAttribute('data-component');
       const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]');
       const propsConfig = JSON.parse(showcase.getAttribute('data-config') || '{}');
+      const togglingPattern = showcase.getAttribute('data-pattern') || 'icon';
       const codeAstroElement = showcase.querySelector('.dynamic-code-astro');
       const codeVueElement = showcase.querySelector('.dynamic-code-vue');
       const previewWrapper = showcase.querySelector('.preview-slot-wrapper') as HTMLElement;
       
       const compareButtons = showcase.querySelectorAll('.compare-prop-btn');
+      const modeTabs = showcase.querySelectorAll('.mode-tab');
       
       let comparedProp = null;
 
@@ -255,9 +285,32 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
           }
         });
 
+        // If toggling pattern is select-option, check if any select has "— Compare All —"
+        if (togglingPattern === "select-option") {
+          comparedProp = null;
+          propKeys.forEach((prop) => {
+            if (currentProps[prop] === "— Compare All —") {
+              comparedProp = prop;
+            }
+          });
+
+          // Disable other selects if comparing
+          propKeys.forEach((prop) => {
+            const selectWrapper = showcase.querySelector(`.prop-control-group[data-prop="${prop}"] rla-select`);
+            if (selectWrapper) {
+              if (comparedProp && prop !== comparedProp) {
+                selectWrapper.setAttribute('disabled', 'true');
+                selectWrapper.classList.add('opacity-50', 'pointer-events-none');
+              } else {
+                selectWrapper.removeAttribute('disabled');
+                selectWrapper.classList.remove('opacity-50', 'pointer-events-none');
+              }
+            }
+          });
+        }
+
         // 1. Update preview area
         if (comparedProp && propsConfig[comparedProp]) {
-          // Render a grid/flex layout showing all combinations of the compared prop
           previewWrapper.innerHTML = '';
           const grid = document.createElement('div');
           grid.className = "flex flex-wrap gap-4 items-center justify-center w-full";
@@ -272,7 +325,6 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
               const variantClass = getVariantClasses(variant, color);
               const sizeClass = sizeClasses[size] || "";
               clone.className = `${baseButtonClasses} ${sizeClass} ${variantClass}`;
-              // Update text label inside comparison clones to make it descriptive
               const labelEl = clone.querySelector('[data-slot="label"]') || clone;
               if (labelEl) labelEl.textContent = val;
             }
@@ -280,7 +332,6 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
           });
           previewWrapper.appendChild(grid);
         } else {
-          // Single element rendering
           previewWrapper.innerHTML = '';
           const clone = originalTemplate.cloneNode(true) as HTMLElement;
           const variant = currentProps.variant || "solid";
@@ -301,7 +352,6 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
         const vueComponentName = componentName.replace(/^RLA/, 'RLV');
 
         if (comparedProp && propsConfig[comparedProp]) {
-          // Compare Code Generation: output all variations
           let astroBody = '';
           let vueBody = '';
           propsConfig[comparedProp].forEach(val => {
@@ -331,7 +381,6 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
             "  \x3c/div\x3e" + "\n" +
             "\x3c/template\x3e";
         } else {
-          // Single element code generation
           let propString = '';
           propKeys.forEach((key) => {
             const val = currentProps[key];
@@ -355,45 +404,92 @@ const propKeys = propsConfig ? Object.keys(propsConfig) : [];
         if (codeVueElement) codeVueElement.textContent = vueCode;
       }
 
-      // Initialize compare toggles
-      compareButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const propGroup = btn.closest('.prop-control-group');
-          const propName = propGroup?.getAttribute('data-prop');
-          
-          if (!propName) return;
-
-          if (comparedProp === propName) {
-            // Turning off comparison
-            comparedProp = null;
-            btn.classList.remove('bg-accent', 'text-foreground');
-            showcase.querySelectorAll('.prop-control-group select, .prop-control-group rla-select').forEach(sel => {
-              sel.removeAttribute('disabled');
-              sel.classList.remove('opacity-50', 'pointer-events-none');
-            });
-          } else {
-            // Turning on comparison
-            comparedProp = propName;
-            compareButtons.forEach(b => b.classList.remove('bg-accent', 'text-foreground'));
-            btn.classList.add('bg-accent', 'text-foreground');
+      // Initialize compare toggles (for icon and pill-toggle patterns)
+      if (togglingPattern === "icon" || togglingPattern === "pill-toggle") {
+        compareButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const propGroup = btn.closest('.prop-control-group');
+            const propName = propGroup?.getAttribute('data-prop');
             
-            // Disable other selects, but keep the compared one active
-            showcase.querySelectorAll('.prop-control-group').forEach(group => {
-              const name = group.getAttribute('data-prop');
-              const selectWrapper = group.querySelector('rla-select');
-              if (name !== comparedProp && selectWrapper) {
-                selectWrapper.setAttribute('disabled', 'true');
-                selectWrapper.classList.add('opacity-50', 'pointer-events-none');
-              } else if (selectWrapper) {
-                selectWrapper.removeAttribute('disabled');
-                selectWrapper.classList.remove('opacity-50', 'pointer-events-none');
+            if (!propName) return;
+
+            if (comparedProp === propName) {
+              comparedProp = null;
+              if (togglingPattern === "icon") {
+                btn.classList.remove('bg-accent', 'text-foreground');
+              } else {
+                btn.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');
+                btn.classList.add('text-muted-foreground', 'border-border/60');
               }
-            });
-          }
-          
-          updateComponent();
+              showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
+                sel.removeAttribute('disabled');
+                sel.classList.remove('opacity-50', 'pointer-events-none');
+              });
+            } else {
+              comparedProp = propName;
+              if (togglingPattern === "icon") {
+                compareButtons.forEach(b => b.classList.remove('bg-accent', 'text-foreground'));
+                btn.classList.add('bg-accent', 'text-foreground');
+              } else {
+                compareButtons.forEach(b => {
+                  b.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');
+                  b.classList.add('text-muted-foreground', 'border-border/60');
+                });
+                btn.classList.remove('text-muted-foreground', 'border-border/60');
+                btn.classList.add('bg-primary-500', 'text-white', 'border-primary-500');
+              }
+              
+              showcase.querySelectorAll('.prop-control-group').forEach(group => {
+                const name = group.getAttribute('data-prop');
+                const selectWrapper = group.querySelector('rla-select');
+                if (name !== comparedProp && selectWrapper) {
+                  selectWrapper.setAttribute('disabled', 'true');
+                  selectWrapper.classList.add('opacity-50', 'pointer-events-none');
+                } else if (selectWrapper) {
+                  selectWrapper.removeAttribute('disabled');
+                  selectWrapper.classList.remove('opacity-50', 'pointer-events-none');
+                }
+              });
+            }
+            
+            updateComponent();
+          });
         });
-      });
+      }
+
+      // Initialize segmented control (for tab-segmented pattern)
+      if (togglingPattern === "tab-segmented") {
+        modeTabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            const mode = tab.getAttribute('data-mode');
+
+            modeTabs.forEach(t => {
+              t.classList.remove('active', 'bg-background', 'text-foreground', 'shadow-xs', 'border', 'border-border/40');
+              t.classList.add('text-muted-foreground');
+            });
+
+            tab.classList.add('active', 'bg-background', 'text-foreground', 'shadow-xs', 'border', 'border-border/40');
+            tab.classList.remove('text-muted-foreground');
+
+            if (mode === 'compare') {
+              comparedProp = propKeys[0]; // Compare the first configured prop
+              // Disable selector
+              showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
+                sel.setAttribute('disabled', 'true');
+                sel.classList.add('opacity-50', 'pointer-events-none');
+              });
+            } else {
+              comparedProp = null;
+              showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
+                sel.removeAttribute('disabled');
+                sel.classList.remove('opacity-50', 'pointer-events-none');
+              });
+            }
+
+            updateComponent();
+          });
+        });
+      }
 
       // Listen to change events bubbling up from rla-select hidden inputs
       showcase.addEventListener('change', updateComponent);
