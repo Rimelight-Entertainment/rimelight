@@ -3,27 +3,29 @@ title: "Callout"
 description: "Display informative messages, alerts, or hints with custom colors, variant styles, and slot customization."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
-
 The `RLACallout` component provides a flexible callout/alert message box featuring icons, custom headers, body content, custom avatars, and actionable buttons.
 
 ## Usage
 
-Import `RLACallout` from the component library.
+<ComponentShowcase>
+  <RLACallout title="Information" description="This is a simple callout message." />
 
-```astro
----
-import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
----
+  <Fragment slot="code-astro">
+  ```astro
+  import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 
-<RLACallout title="Information" description="This is a simple callout message." />
-```
+  <RLACallout title="Information" description="This is a simple callout message." />
+  ```
+  </Fragment>
+</ComponentShowcase>
 
 ## Examples
 
@@ -31,22 +33,41 @@ import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 
 You can customize the `variant` ("solid", "outline", "soft", "subtle") and `color` ("primary", "success", "warning", "error", "neutral", etc.) of the callout:
 
-```astro
-<RLACallout variant="soft" color="warning" title="Warning" description="This is a soft warning callout." />
-<RLACallout variant="outline" color="error" title="Error" description="An error occurred during operation." />
-```
+<ComponentShowcase>
+  <div class="flex flex-col gap-4 w-full">
+    <RLACallout variant="soft" color="warning" title="Warning" description="This is a soft warning callout." />
+    <RLACallout variant="outline" color="error" title="Error" description="An error occurred during operation." />
+  </div>
+
+  <Fragment slot="code-astro">
+  ```astro
+  <RLACallout variant="soft" color="warning" title="Warning" description="This is a soft warning callout." />
+  <RLACallout variant="outline" color="error" title="Error" description="An error occurred during operation." />
+  ```
+  </Fragment>
+</ComponentShowcase>
 
 ### Custom Icons & Slots
 
 Use custom icons or slots like `icon`, `avatar`, `actions`, and `close`:
 
-```astro
-<RLACallout icon="i-lucide-info" title="Note" description="You can use custom slot-specific icons.">
-  <div slot="actions">
-    <button class="px-3 py-1 bg-primary text-white rounded text-sm">Action</button>
-  </div>
-</RLACallout>
-```
+<ComponentShowcase>
+  <RLACallout icon="i-lucide-info" title="Note" description="You can use custom slot-specific icons.">
+    <div slot="actions">
+      <button class="px-3 py-1 bg-primary text-white rounded text-sm">Action</button>
+    </div>
+  </RLACallout>
+
+  <Fragment slot="code-astro">
+  ```astro
+  <RLACallout icon="i-lucide-info" title="Note" description="You can use custom slot-specific icons.">
+    <div slot="actions">
+      <button class="px-3 py-1 bg-primary text-white rounded text-sm">Action</button>
+    </div>
+  </RLACallout>
+  ```
+  </Fragment>
+</ComponentShowcase>
 
 ## API
 
