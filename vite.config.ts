@@ -5,7 +5,19 @@ export default defineConfig({
     "*": "vp check --fix"
   },
   lint: {
-    plugins: ["oxc", "vitest", "typescript", "unicorn", "jsdoc", "vue"],
+    plugins: [
+      "eslint",
+      "typescript",
+      "unicorn",
+      "oxc",
+      "import",
+      "jsdoc",
+      "jsx-a11y",
+      "node",
+      "promise",
+      "vitest",
+      "vue"
+    ],
     ignorePatterns: [
       "**/dist/**",
       "**/node_modules/**",
@@ -32,6 +44,7 @@ export default defineConfig({
     },
     rules: {
       "oxc/no-barrel-file": "off",
+      "import/no-cycle": ["error", { maxDepth: 3 }],
       "no-console": "off",
       "vite-plus/prefer-vite-plus-imports": "error",
       "no-restricted-globals": "error",
