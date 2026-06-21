@@ -304,6 +304,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
       window.RLHeaderStack = {
         layers: [],
         register: function(id, order, naturalHeight, isVisible, el, type) {
+          if (el && !el.isConnected) return;
           if (type === undefined) type = el && el.getAttribute ? (el.getAttribute('data-layer-type') || 'header') : 'header';
           let layer = this.layers.find(function(l) { return l.id === id; });
           if (!layer) {
@@ -322,6 +323,16 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
           this.update();
         },
         unregister: function(id) {
+          const layer = this.layers.find(function(l) { return l.id === id; });
+          if (layer && layer.el) {
+            const el = layer.el;
+            if (el.rlScrollListener) {
+              window.removeEventListener('scroll', el.rlScrollListener);
+            }
+            if (el.rlResizeObserver) {
+              el.rlResizeObserver.disconnect();
+            }
+          }
           this.layers = this.layers.filter(function(l) { return l.id !== id; });
           this.update();
         },
@@ -380,18 +391,28 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
       RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
 
       if (typeof ResizeObserver !== 'undefined' && contentEl) {
-        new ResizeObserver(function(entries) {
+        const ro = new ResizeObserver(function(entries) {
+          if (!el.isConnected) {
+            ro.disconnect();
+            return;
+          }
           const h = entries[0] && entries[0].contentRect.height;
           if (h && h > 0) {
             naturalHeight = h;
             RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
           }
-        }).observe(contentEl);
+        });
+        ro.observe(contentEl);
+        el.rlResizeObserver = ro;
       }
 
       if (hideOnScroll) {
         let lastScrollY = window.scrollY;
-        window.addEventListener('scroll', function() {
+        const scrollListener = function() {
+          if (!el.isConnected) {
+            window.removeEventListener('scroll', scrollListener);
+            return;
+          }
           const current = window.scrollY;
           const diff = current - lastScrollY;
           if (Math.abs(diff) >= 10) {
@@ -402,10 +423,13 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
             }
             lastScrollY = current;
           }
-        }, { passive: true });
+        };
+        el.rlScrollListener = scrollListener;
+        window.addEventListener('scroll', scrollListener, { passive: true });
       }
 
       (function retry() {
+        if (!el.isConnected) return;
         const h = getHeight(contentEl);
         if (h !== naturalHeight) {
           naturalHeight = h;

@@ -54,6 +54,7 @@ export function getHeaderStack(): HeaderStackManager {
         el: HTMLElement | null,
         type: "banner" | "header" = "header"
       ) {
+        if (el && !el.isConnected) return
         let layer = this.layers.find((l: HeaderLayer) => l.id === id)
         if (!layer) {
           layer = { id, type, order, naturalHeight, isVisible, el }
@@ -70,6 +71,16 @@ export function getHeaderStack(): HeaderStackManager {
         this.update()
       },
       unregister(id: string) {
+        const layer = this.layers.find((l: HeaderLayer) => l.id === id)
+        if (layer && layer.el) {
+          const el = layer.el as any
+          if (el.rlScrollListener) {
+            window.removeEventListener("scroll", el.rlScrollListener)
+          }
+          if (el.rlResizeObserver) {
+            el.rlResizeObserver.disconnect()
+          }
+        }
         this.layers = this.layers.filter((l: HeaderLayer) => l.id !== id)
         this.update()
       },

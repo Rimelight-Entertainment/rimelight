@@ -7,7 +7,7 @@ export const createBannerTheme = () =>
       root: "w-full",
       content: "w-full",
       container:
-        "relative flex flex-row items-center min-h-12 md:h-14 px-4 md:px-6 lg:px-8 text-sm gap-2",
+        "relative flex flex-row items-center min-h-12 md:h-14 px-xs sm:px-md md:px-xl lg:px-xl text-sm gap-2",
       left: "absolute left-0 inset-y-0 flex items-center px-4 max-w-[30%] truncate",
       center: "absolute left-1/2 -translate-x-1/2 max-w-[50%] truncate text-center",
       side: "flex-none flex items-center gap-2",
@@ -18,7 +18,7 @@ export const createBannerTheme = () =>
     variants: {
       contain: {
         true: {
-          container: "mx-auto max-w-7xl"
+          container: "mx-auto max-w-90rem"
         },
         false: {
           container: "max-w-none"
