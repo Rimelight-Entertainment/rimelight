@@ -49,7 +49,8 @@ const normalizeArray = (val: number | number[] | undefined, defaultVal: number):
   if (!Array.isArray(val)) return [val, val, val, val, val]
   const arr = [...val]
   while (arr.length < 5) {
-    arr.push(arr[arr.length - 1])
+    const lastVal = arr[arr.length - 1]
+    arr.push(lastVal !== undefined ? lastVal : defaultVal)
   }
   return arr
 }

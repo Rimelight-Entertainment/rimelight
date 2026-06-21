@@ -1,7 +1,6 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ColorAreaProps } from "../../types"
 import colorAreaThemeDefault, { createColorAreaTheme } from "../../themes/color-area.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -23,6 +22,7 @@ export interface Props {
   color?: any
   theme?: any
   ui?: any
+  class?: string
 }
 
 const {
@@ -78,7 +78,7 @@ const initialValue = modelValue || defaultValue
     hsbToRgb,
     getChannelRange,
     clamp
-  } from "./color-utils"
+  } from "../../utils/color"
 
   if (typeof HTMLElement !== 'undefined') {
     class RLAColorArea extends HTMLElement {
@@ -173,20 +173,20 @@ const initialValue = modelValue || defaultValue
             const indexX = ["hue", "saturation", "lightness"].indexOf(this.xChannel)
             const indexY = ["hue", "saturation", "lightness"].indexOf(this.yChannel)
             const hsl = [this.hue, this.saturation, this.lightness]
-            xVal = indexX !== -1 ? hsl[indexX] : 0
-            yVal = indexY !== -1 ? hsl[indexY] : 0
+            xVal = indexX !== -1 ? hsl[indexX]! : 0
+            yVal = indexY !== -1 ? hsl[indexY]! : 0
           } else if (this.colorSpace === "hsb") {
             const indexX = ["hue", "saturation", "brightness"].indexOf(this.xChannel)
             const indexY = ["hue", "saturation", "brightness"].indexOf(this.yChannel)
             const hsb = [this.hue, this.saturation, this.brightness]
-            xVal = indexX !== -1 ? hsb[indexX] : 0
-            yVal = indexY !== -1 ? hsb[indexY] : 0
+            xVal = indexX !== -1 ? hsb[indexX]! : 0
+            yVal = indexY !== -1 ? hsb[indexY]! : 0
           } else if (this.colorSpace === "rgb") {
             const indexX = ["red", "green", "blue"].indexOf(this.xChannel)
             const indexY = ["red", "green", "blue"].indexOf(this.yChannel)
             const rgb = [this.red, this.green, this.blue]
-            xVal = indexX !== -1 ? rgb[indexX] : 0
-            yVal = indexY !== -1 ? rgb[indexY] : 0
+            xVal = indexX !== -1 ? rgb[indexX]! : 0
+            yVal = indexY !== -1 ? rgb[indexY]! : 0
           }
 
           const pctX = ((xVal - xRange.min) / (xRange.max - xRange.min)) * 100
@@ -241,7 +241,7 @@ const initialValue = modelValue || defaultValue
           const newX = Math.round(xRange.min + x * (xRange.max - xRange.min))
           const newY = Math.round(yRange.min + y * (yRange.max - yRange.min))
 
-          let newRgb = [this.red, this.green, this.blue]
+          let newRgb: [number, number, number] = [this.red, this.green, this.blue]
 
           if (this.colorSpace === "hsl") {
             if (this.xChannel === "saturation") this.saturation = newX
@@ -328,20 +328,20 @@ const initialValue = modelValue || defaultValue
             const indexX = ["hue", "saturation", "lightness"].indexOf(this.xChannel)
             const indexY = ["hue", "saturation", "lightness"].indexOf(this.yChannel)
             const hsl = [this.hue, this.saturation, this.lightness]
-            xVal = indexX !== -1 ? hsl[indexX] : 0
-            yVal = indexY !== -1 ? hsl[indexY] : 0
+            xVal = indexX !== -1 ? hsl[indexX]! : 0
+            yVal = indexY !== -1 ? hsl[indexY]! : 0
           } else if (this.colorSpace === "hsb") {
             const indexX = ["hue", "saturation", "brightness"].indexOf(this.xChannel)
             const indexY = ["hue", "saturation", "brightness"].indexOf(this.yChannel)
             const hsb = [this.hue, this.saturation, this.brightness]
-            xVal = indexX !== -1 ? hsb[indexX] : 0
-            yVal = indexY !== -1 ? hsb[indexY] : 0
+            xVal = indexX !== -1 ? hsb[indexX]! : 0
+            yVal = indexY !== -1 ? hsb[indexY]! : 0
           } else if (this.colorSpace === "rgb") {
             const indexX = ["red", "green", "blue"].indexOf(this.xChannel)
             const indexY = ["red", "green", "blue"].indexOf(this.yChannel)
             const rgb = [this.red, this.green, this.blue]
-            xVal = indexX !== -1 ? rgb[indexX] : 0
-            yVal = indexY !== -1 ? rgb[indexY] : 0
+            xVal = indexX !== -1 ? rgb[indexX]! : 0
+            yVal = indexY !== -1 ? rgb[indexY]! : 0
           }
 
           let handled = false
@@ -367,7 +367,7 @@ const initialValue = modelValue || defaultValue
 
           if (handled) {
             e.preventDefault()
-            let newRgb = [this.red, this.green, this.blue]
+            let newRgb: [number, number, number] = [this.red, this.green, this.blue]
 
             if (this.colorSpace === "hsl") {
               if (this.xChannel === "saturation") this.saturation = xVal

@@ -13,7 +13,6 @@ const tableOfContents = scv(tableOfContentsTheme)
 const {
   headings,
   tableOfContents: tableOfContentsConfig,
-  levels = 2,
   ui: uiProp,
   class: className,
   ...rest
@@ -26,7 +25,7 @@ if (tableOfContentsConfig === false) {
 }
 
 const minLevel = tableOfContentsConfig ? (tableOfContentsConfig.minHeadingLevel ?? 2) : 2;
-const maxLevel = tableOfContentsConfig ? (tableOfContentsConfig.maxHeadingLevel ?? levels) : levels;
+const maxLevel = tableOfContentsConfig ? (tableOfContentsConfig.maxHeadingLevel ?? 3) : 3;
 
 const filteredHeadings = tableOfContentsConfig !== false
   ? headings.filter(h => h.depth >= minLevel && h.depth <= maxLevel)

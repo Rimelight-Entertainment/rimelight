@@ -28,6 +28,13 @@ const sizes = defaultSizes.map(s => (s / (total || 100)) * 100)
 
 const panelCount = sizes.length
 const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
+
+const panelContents: string[] = []
+for (let i = 0; i < sizes.length; i++) {
+  if (Astro.slots.has(`panel-${i}`)) {
+    panelContents[i] = await Astro.slots.render(`panel-${i}`)
+  }
+}
 ---
 
 <rla-splitter {...rest}>
@@ -45,7 +52,7 @@ const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
           data-resizable-panel={i}
         >
           {Astro.slots.has(`panel-${i}`) ? (
-            <Fragment set:html={await Astro.slots.render(`panel-${i}`)} />
+            <Fragment set:html={panelContents[i]} />
           ) : (
             i === 0
               ? <slot />

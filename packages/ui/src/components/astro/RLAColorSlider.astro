@@ -1,7 +1,6 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ColorSliderProps } from "../../types"
 import colorSliderThemeDefault, { createColorSliderTheme } from "../../themes/color-slider.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -24,6 +23,7 @@ export interface Props {
   color?: any
   theme?: any
   ui?: any
+  class?: string
 }
 
 const {
@@ -80,7 +80,7 @@ const initialValue = modelValue || defaultValue
     hsbToRgb,
     getChannelRange,
     clamp
-  } from "./color-utils"
+  } from "../../utils/color"
 
   if (typeof HTMLElement !== 'undefined') {
     class RLAColorSlider extends HTMLElement {
@@ -122,13 +122,13 @@ const initialValue = modelValue || defaultValue
 
           if (this.colorSpace === "hsl") {
             const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
-            channelVal = index !== -1 ? hsl[index] : 0
+            channelVal = index !== -1 ? hsl[index]! : 0
           } else if (this.colorSpace === "hsb") {
             const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
-            channelVal = index !== -1 ? hsb[index] : 0
+            channelVal = index !== -1 ? hsb[index]! : 0
           } else if (this.colorSpace === "rgb") {
             const index = ["red", "green", "blue"].indexOf(this.channel)
-            channelVal = index !== -1 ? rgb[index] : 0
+            channelVal = index !== -1 ? rgb[index]! : 0
           }
 
           let pct = ((channelVal - range.min) / (range.max - range.min)) * 100
@@ -243,24 +243,24 @@ const initialValue = modelValue || defaultValue
           targetVal = clamp(targetVal, range.min, range.max)
 
           const rgb = hexToRgb(this.value)
-          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2])
-          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2])
-          let newRgb = [...rgb]
+          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]) as number[]
+          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2]) as number[]
+          let newRgb = [...rgb] as number[]
 
           if (this.colorSpace === "hsl") {
             const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
             if (index !== -1) hsl[index] = targetVal
-            newRgb = hslToRgb(hsl[0], hsl[1], hsl[2])
+            newRgb = hslToRgb(hsl[0]!, hsl[1]!, hsl[2]!)
           } else if (this.colorSpace === "hsb") {
             const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
             if (index !== -1) hsb[index] = targetVal
-            newRgb = hsbToRgb(hsb[0], hsb[1], hsb[2])
+            newRgb = hsbToRgb(hsb[0]!, hsb[1]!, hsb[2]!)
           } else if (this.colorSpace === "rgb") {
             const index = ["red", "green", "blue"].indexOf(this.channel)
             if (index !== -1) newRgb[index] = targetVal
           }
 
-          const newValue = rgbToHex(newRgb[0], newRgb[1], newRgb[2])
+          const newValue = rgbToHex(newRgb[0]!, newRgb[1]!, newRgb[2]!)
           if (newValue !== this.value) {
             this.value = newValue
             this.setAttribute("data-value", newValue)
@@ -314,13 +314,13 @@ const initialValue = modelValue || defaultValue
           let channelVal = 0
           if (this.colorSpace === "hsl") {
             const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
-            channelVal = index !== -1 ? hsl[index] : 0
+            channelVal = index !== -1 ? hsl[index]! : 0
           } else if (this.colorSpace === "hsb") {
             const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
-            channelVal = index !== -1 ? hsb[index] : 0
+            channelVal = index !== -1 ? hsb[index]! : 0
           } else if (this.colorSpace === "rgb") {
             const index = ["red", "green", "blue"].indexOf(this.channel)
-            channelVal = index !== -1 ? rgb[index] : 0
+            channelVal = index !== -1 ? rgb[index]! : 0
           }
 
           let handled = false
@@ -362,21 +362,21 @@ const initialValue = modelValue || defaultValue
             e.preventDefault()
             newVal = clamp(newVal, range.min, range.max)
 
-            let newRgb = [...rgb]
+            let newRgb = [...rgb] as number[]
             if (this.colorSpace === "hsl") {
               const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
               if (index !== -1) hsl[index] = newVal
-              newRgb = hslToRgb(hsl[0], hsl[1], hsl[2])
+              newRgb = hslToRgb(hsl[0]!, hsl[1]!, hsl[2]!)
             } else if (this.colorSpace === "hsb") {
               const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
               if (index !== -1) hsb[index] = newVal
-              newRgb = hsbToRgb(hsb[0], hsb[1], hsb[2])
+              newRgb = hsbToRgb(hsb[0]!, hsb[1]!, hsb[2]!)
             } else if (this.colorSpace === "rgb") {
               const index = ["red", "green", "blue"].indexOf(this.channel)
               if (index !== -1) newRgb[index] = newVal
             }
 
-            const newValue = rgbToHex(newRgb[0], newRgb[1], newRgb[2])
+            const newValue = rgbToHex(newRgb[0]!, newRgb[1]!, newRgb[2]!)
             if (newValue !== this.value) {
               this.value = newValue
               this.setAttribute("data-value", newValue)

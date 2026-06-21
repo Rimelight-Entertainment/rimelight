@@ -1,7 +1,6 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
-import type { ColorFieldProps } from "../../types"
 import colorFieldThemeDefault, { createColorFieldTheme } from "../../themes/color-field.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -25,6 +24,7 @@ export interface Props {
   color?: any
   theme?: any
   ui?: any
+  class?: string
 }
 
 const {
@@ -87,7 +87,7 @@ const initialValue = modelValue || defaultValue
     hsbToRgb,
     getChannelRange,
     clamp
-  } from "./color-utils"
+  } from "../../utils/color"
 
   if (typeof HTMLElement !== 'undefined') {
     class RLAColorField extends HTMLElement {
@@ -115,14 +115,14 @@ const initialValue = modelValue || defaultValue
           if (this.colorSpace === "hsl") {
             const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2])
             const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
-            return index !== -1 ? hsl[index].toString() : "0"
+            return index !== -1 ? hsl[index]!.toString() : "0"
           } else if (this.colorSpace === "hsb") {
             const hsb = rgbToHsb(rgb[0], rgb[1], rgb[2])
             const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
-            return index !== -1 ? hsb[index].toString() : "0"
+            return index !== -1 ? hsb[index]!.toString() : "0"
           } else if (this.colorSpace === "rgb") {
             const index = ["red", "green", "blue"].indexOf(this.channel)
-            return index !== -1 ? rgb[index].toString() : "0"
+            return index !== -1 ? rgb[index]!.toString() : "0"
           }
           return "0"
         }
@@ -159,24 +159,24 @@ const initialValue = modelValue || defaultValue
           const clampedVal = clamp(val, range.min, range.max)
 
           const rgb = hexToRgb(this.value)
-          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2])
-          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2])
-          let newRgb = [...rgb]
+          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]) as number[]
+          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2]) as number[]
+          let newRgb = [...rgb] as number[]
 
           if (this.colorSpace === "hsl") {
             const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
             if (index !== -1) hsl[index] = clampedVal
-            newRgb = hslToRgb(hsl[0], hsl[1], hsl[2])
+            newRgb = hslToRgb(hsl[0]!, hsl[1]!, hsl[2]!)
           } else if (this.colorSpace === "hsb") {
             const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
             if (index !== -1) hsb[index] = clampedVal
-            newRgb = hsbToRgb(hsb[0], hsb[1], hsb[2])
+            newRgb = hsbToRgb(hsb[0]!, hsb[1]!, hsb[2]!)
           } else if (this.colorSpace === "rgb") {
             const index = ["red", "green", "blue"].indexOf(this.channel)
             if (index !== -1) newRgb[index] = clampedVal
           }
 
-          const newHex = rgbToHex(newRgb[0], newRgb[1], newRgb[2])
+          const newHex = rgbToHex(newRgb[0]!, newRgb[1]!, newRgb[2]!)
           if (newHex !== this.value) {
             this.value = newHex
             this.setAttribute("data-value", newHex)

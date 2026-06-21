@@ -11,10 +11,10 @@ export interface TableOfContentsConfig {
 
 export interface TableOfContentsProps {
   headings: TableOfContentsHeading[]
-  /** false = hide entirely, object = heading level bounds */
+  /**
+   * False = hide entirely, object = heading level bounds
+   */
   tableOfContents?: false | TableOfContentsConfig
-  /** @deprecated use tableOfContents.maxHeadingLevel instead */
-  levels?: 1 | 2 | 3
   /**
    * The component the root element should render as.
    *
