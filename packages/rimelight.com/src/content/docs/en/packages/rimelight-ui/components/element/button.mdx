@@ -18,6 +18,7 @@ A button element that can be used to trigger actions or navigate to other pages.
 
 <ComponentShowcase>
   <RLAButton label="Button" />
+
   <div slot="code-astro">
     ```astro
     ---
@@ -45,137 +46,52 @@ A button element that can be used to trigger actions or navigate to other pages.
 
 ## Examples
 
-<ComponentShowcase title="Variant" description="Use the `variant` prop to change the variant of the button.">
-  <div class="flex flex-row gap-md">
-    <RLAButton variant="solid" color="primary">Solid</RLAButton>
-    <RLAButton variant="outline" color="primary">Outline</RLAButton>
-    <RLAButton variant="soft" color="primary">Soft</RLAButton>
-    <RLAButton variant="subtle" color="primary">Subtle</RLAButton>
-    <RLAButton variant="ghost" color="primary">Ghost</RLAButton>
-    <RLAButton variant="link" color="primary">Link</RLAButton>
-  </div>
+### Variants
 
-  <div slot="code-astro">
-    ```astro
-    ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
-    ---
-
-    <RLAButton variant="solid" color="primary">Solid</RLAButton>
-    <RLAButton variant="outline" color="primary">Outline</RLAButton>
-    <RLAButton variant="subtle" color="primary">Subtle</RLAButton>
-    <RLAButton variant="ghost" color="primary">Ghost</RLAButton>
-    <RLAButton variant="link" color="primary">Link</RLAButton>
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <div class="flex flex-wrap gap-4">
-        <RLVButton variant="solid">Solid</RLVButton>
-        <RLVButton variant="outline">Outline</RLVButton>
-        <RLVButton variant="subtle">Subtle</RLVButton>
-        <RLVButton variant="ghost">Ghost</RLVButton>
-        <RLVButton variant="link">Link</RLVButton>
-      </div>
-    </template>
-    ```
-
-  </div>
+<ComponentShowcase
+  title="Variants"
+  description="Use the `variant` prop to change the variant of the button."
+  componentName="RLAButton"
+  propsConfig={{
+    variant: ["solid", "outline", "soft", "subtle", "ghost", "link"]
+  }}
+  defaultProps={{
+    variant: "solid"
+  }}
+>
+  <RLAButton label="Button" />
 </ComponentShowcase>
 
-<ComponentShowcase title="Sizes" description="Use the `size` prop to change the size of the button.">
-  <div class="flex flex-wrap gap-4">
-    <RLAButton size="sm">Small</RLAButton>
-    <RLAButton size="md">Medium</RLAButton>
-    <RLAButton size="lg">Large</RLAButton>
-    <RLAButton size="xl">Extra Large</RLAButton>
-  </div>
+### Sizes
 
-  <div slot="code-astro">
-    ```astro
-    ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
-    ---
-
-    <RLAButton size="sm">Small</RLAButton>
-    <RLAButton size="md">Medium</RLAButton>
-    <RLAButton size="lg">Large</RLAButton>
-    <RLAButton size="xl">Extra Large</RLAButton>
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <div class="flex flex-wrap gap-4">
-        <RLVButton size="sm">Small</RLVButton>
-        <RLVButton size="md">Medium</RLVButton>
-        <RLVButton size="lg">Large</RLVButton>
-        <RLVButton size="xl">Extra Large</RLVButton>
-      </div>
-    </template>
-    ```
-
-  </div>
+<ComponentShowcase
+  title="Sizes"
+  description="Use the `size` prop to change the size of the button."
+  componentName="RLAButton"
+  propsConfig={{
+    size: ["sm", "md", "lg", "xl"]
+  }}
+  defaultProps={{
+    size: "md"
+  }}
+>
+  <RLAButton label="Button" />
 </ComponentShowcase>
 
-<ComponentShowcase title="Colors">
-  <div class="flex flex-wrap gap-4">
-    <RLAButton color="primary">Primary</RLAButton>
-    <RLAButton color="secondary">Secondary</RLAButton>
-    <RLAButton color="info">Info</RLAButton>
-    <RLAButton color="success">Success</RLAButton>
-    <RLAButton color="warning">Warning</RLAButton>
-    <RLAButton color="error">Error</RLAButton>
-  </div>
+### Colors
 
-  <div slot="code-astro">
-    ```astro
-    ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
-    ---
-
-    <RLAButton color="primary">Primary</RLAButton>
-    <RLAButton color="secondary">Secondary</RLAButton>
-    <RLAButton color="info">Info</RLAButton>
-    <RLAButton color="success">Success</RLAButton>
-    <RLAButton color="warning">Warning</RLAButton>
-    <RLAButton color="error">Error</RLAButton>
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <div class="flex flex-wrap gap-4">
-        <RLVButton color="primary">Primary</RLVButton>
-        <RLVButton color="secondary">Secondary</RLVButton>
-        <RLVButton color="info">Info</RLVButton>
-        <RLVButton color="success">Success</RLVButton>
-        <RLVButton color="warning">Warning</RLVButton>
-        <RLVButton color="error">Error</RLVButton>
-      </div>
-    </template>
-    ```
-
-  </div>
+<ComponentShowcase
+  title="Colors"
+  description="Use the `color` prop to change the color of the button."
+  componentName="RLAButton"
+  propsConfig={{
+    color: ["primary", "secondary", "info", "success", "warning", "error", "neutral"]
+  }}
+  defaultProps={{
+    color: "primary"
+  }}
+>
+  <RLAButton label="Button" />
 </ComponentShowcase>
 
 ## API

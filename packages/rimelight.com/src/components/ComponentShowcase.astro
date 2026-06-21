@@ -1,24 +1,68 @@
 ---
+import RLASelect from "@rimelight/ui/components/astro/RLASelect.astro";
+
 interface Props {
   component?: string;
+  componentName?: string;
   slots?: string[];
   props?: Record<string, any>;
   class?: string;
   title?: string;
   description?: string;
   playground?: string;
+  propsConfig?: Record<string, string[]>;
+  defaultProps?: Record<string, string>;
 }
 
-const { class: className, title, description, playground } = Astro.props;
+const {
+  class: className,
+  title,
+  description,
+  playground,
+  component,
+  componentName,
+  propsConfig,
+  defaultProps
+} = Astro.props;
+
+const resolvedComponentName = componentName || component || "";
+const isDynamic = !!propsConfig;
+const propKeys = propsConfig ? Object.keys(propsConfig) : [];
 ---
 
-<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground ${className}`}>
+<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})}>
   {(title || description) && (
     <div class="px-4 py-3 border-b border-border bg-muted/10">
       {title && <h4 class="text-sm font-semibold m-0 text-foreground">{title}</h4>}
       {description && <p class="text-xs text-muted-foreground mt-1 mb-0">{description}</p>}
     </div>
   )}
+
+  <!-- Dynamic Props Configuration Area with Compare toggles -->
+  {isDynamic && (
+    <div class="flex flex-wrap items-center gap-6 px-4 py-3 bg-muted/20 border-b border-border">
+      {propKeys.map((prop) => (
+        <div class="flex items-center gap-2 prop-control-group" data-prop={prop}>
+          <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{prop}:</label>
+          <div class="flex items-center gap-1.5">
+            <RLASelect
+              items={propsConfig[prop]}
+              value={defaultProps ? defaultProps[prop] : ""}
+              name={prop}
+              size="sm"
+            />
+            {propsConfig[prop].length > 1 && (
+              <button class="compare-prop-btn p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title={`Compare all ${prop}s`}>
+                <span class="i-lucide-layout-grid size-3.5"></span>
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <!-- Tabs & Actions Controls Area -->
   <div class="controls-area px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between gap-4">
     <div class="flex items-center gap-2">
        <button class="showcase-tab active px-3 py-1 text-xs font-medium rounded-md bg-background text-foreground shadow-sm border border-border" data-lang="astro">Astro</button>
@@ -32,26 +76,46 @@ const { class: className, title, description, playground } = Astro.props;
          <a href={playground || "#"} target={playground ? "_blank" : undefined} rel="noopener noreferrer" class="open-playground p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Open in Playground">
             <span class="i-lucide-flask-conical size-4"></span>
          </a>
-         <button class="copy-code p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Copy code">
-            <span class="i-lucide-copy size-4"></span>
-         </button>
     </div>
   </div>
 
-  <div class="preview-area p-4 sm:p-6 flex items-center justify-center min-h-[120px] border-b border-border relative group">
-    <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+  <!-- Preview Area (Always visible label) -->
+  <div class="preview-area p-4 sm:p-6 flex items-center justify-center min-h-[120px] border-b border-border relative">
+    <div class="absolute top-2 right-2">
         <div class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded border border-border">Preview</div>
     </div>
-    <slot />
+    <div class="preview-slot-wrapper flex items-center justify-center w-full">
+      <slot />
+    </div>
   </div>
 
-  <div class="code-area bg-gray-950">
-    <div class="code-block" data-lang="astro">
-        <slot name="code-astro" />
+  <!-- Code Block Area -->
+  <div class="code-area bg-gray-950 relative">
+    <div class="absolute top-[6px] right-2 z-10">
+      <button class="copy-code p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Copy code">
+        <span class="i-lucide-copy size-4"></span>
+      </button>
     </div>
-    <div class="code-block hidden" data-lang="vue">
-        <slot name="code-vue" />
-    </div>
+
+    {isDynamic ? (
+      <Fragment>
+        <div class="code-block" data-lang="astro">
+          <pre class="shiki language-astro !bg-transparent !m-0 !p-4"><code class="dynamic-code-astro text-sm text-gray-300 font-mono"></code></pre>
+        </div>
+        <div class="code-block hidden" data-lang="vue">
+          <pre class="shiki language-vue !bg-transparent !m-0 !p-4"><code class="dynamic-code-vue text-sm text-gray-300 font-mono"></code></pre>
+        </div>
+      </Fragment>
+    ) : (
+      <Fragment>
+        <div class="code-block" data-lang="astro">
+            <slot name="code-astro" />
+        </div>
+        <div class="code-block hidden" data-lang="vue">
+            <slot name="code-vue" />
+        </div>
+      </Fragment>
+    )}
   </div>
 </div>
 
@@ -65,10 +129,7 @@ const { class: className, title, description, playground } = Astro.props;
   }
 
   .code-area :global(pre),
-  .code-area :global(code),
-  .code-area :global(.expressive-code),
-  .code-area :global(figure),
-  .code-area :global(.frame) {
+  .code-area :global(code) {
     background-color: transparent !important;
     background: transparent !important;
     margin: 0 !important;
@@ -83,11 +144,13 @@ const { class: className, title, description, playground } = Astro.props;
 
 <script>
   function initShowcases() {
+    // 1. Initialize all showcases (Static & Dynamic) for tab-switching and copy functionality
     document.querySelectorAll('.component-showcase').forEach(showcase => {
       const tabs = showcase.querySelectorAll('.showcase-tab');
       const codeBlocks = showcase.querySelectorAll('.code-block');
       const copyBtn = showcase.querySelector('.copy-code');
 
+      // Tabbing behavior
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
           const lang = tab.getAttribute('data-lang');
@@ -110,9 +173,10 @@ const { class: className, title, description, playground } = Astro.props;
         });
       });
 
+      // Copy code behavior
       if (copyBtn) {
         copyBtn.addEventListener('click', () => {
-          const visibleCode = showcase.querySelector('.code-block:not(.hidden) pre');
+          const visibleCode = showcase.querySelector('.code-block:not(.hidden) code, .code-block:not(.hidden) pre');
           if (visibleCode) {
             navigator.clipboard.writeText(visibleCode.textContent || '');
             const icon = copyBtn.querySelector('span');
@@ -125,6 +189,217 @@ const { class: className, title, description, playground } = Astro.props;
           }
         });
       }
+    });
+
+    // 2. Initialize Dynamic Showcases specifically
+    const baseButtonClasses = "group inline-flex items-center justify-center font-medium ws-nowrap disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors outline-none aria-invalid:border-error-500 aria-invalid:ring-error-500/20 rounded-md";
+    
+    const sizeClasses = {
+      xs: "text-xs gap-1 [&_svg]:size-4 px-2 py-1",
+      sm: "text-xs gap-1.5 [&_svg]:size-4 px-2.5 py-1.5",
+      md: "text-sm gap-1.5 [&_svg]:size-5 px-2.5 py-1.5",
+      lg: "text-sm gap-2 [&_svg]:size-5 px-3 py-2",
+      xl: "text-base gap-2 [&_svg]:size-6 px-3 py-2"
+    };
+
+    const getVariantClasses = (variant, color) => {
+      if (color === 'neutral') {
+        const neutralVariants = {
+          solid: "text-inverted bg-inverted hover:bg-inverted/90 active:bg-inverted/90 disabled:bg-inverted aria-disabled:bg-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-inverted",
+          outline: "ring ring-inset ring-current text-default bg-transparent hover:bg-elevated active:bg-elevated disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
+          soft: "text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 focus:outline-none focus-visible:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated",
+          subtle: "ring ring-inset ring-accented text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
+          ghost: "text-default hover:bg-hover active:bg-hover/80 focus:outline-none focus-visible:bg-hover hover:disabled:bg-transparent hover:aria-disabled:bg-transparent",
+          link: "text-muted hover:text-default active:text-default disabled:text-muted aria-disabled:text-muted focus:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-inverted"
+        };
+        return neutralVariants[variant] || "";
+      }
+
+      const standardVariants = {
+        solid: `rl-color-${color} bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] disabled:bg-[var(--rl-bg)] aria-disabled:bg-[var(--rl-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]`,
+        outline: `rl-color-${color} ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]`,
+        soft: `rl-color-${color} text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 focus:outline-none focus-visible:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10`,
+        subtle: `rl-color-${color} text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]`,
+        ghost: `rl-color-${color} text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent`,
+        link: `rl-color-${color} text-[var(--rl-text)] hover:text-[var(--rl-text)]/75 active:text-[var(--rl-text)]/75 disabled:text-[var(--rl-text)] aria-disabled:text-[var(--rl-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--rl-ring)]`
+      };
+      return standardVariants[variant] || "";
+    };
+
+    document.querySelectorAll('.dynamic-showcase').forEach(node => {
+      const showcase = node as HTMLElement;
+      const componentName = showcase.getAttribute('data-component');
+      const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]');
+      const propsConfig = JSON.parse(showcase.getAttribute('data-config') || '{}');
+      const codeAstroElement = showcase.querySelector('.dynamic-code-astro');
+      const codeVueElement = showcase.querySelector('.dynamic-code-vue');
+      const previewWrapper = showcase.querySelector('.preview-slot-wrapper') as HTMLElement;
+      
+      const compareButtons = showcase.querySelectorAll('.compare-prop-btn');
+      
+      let comparedProp = null;
+
+      // Capture original template element inside slot wrapper on startup
+      const originalTemplate = previewWrapper?.firstElementChild?.cloneNode(true) as HTMLElement | null;
+
+      function updateComponent() {
+        if (!originalTemplate || !previewWrapper) return;
+
+        const currentProps = {};
+        
+        // Find inputs (hidden inputs generated by RLASelect)
+        propKeys.forEach((prop) => {
+          const input = showcase.querySelector(`input[name="${prop}"]`) as HTMLInputElement | null;
+          if (input) {
+            currentProps[prop] = input.value;
+          }
+        });
+
+        // 1. Update preview area
+        if (comparedProp && propsConfig[comparedProp]) {
+          // Render a grid/flex layout showing all combinations of the compared prop
+          previewWrapper.innerHTML = '';
+          const grid = document.createElement('div');
+          grid.className = "flex flex-wrap gap-4 items-center justify-center w-full";
+          
+          propsConfig[comparedProp].forEach(val => {
+            const clone = originalTemplate.cloneNode(true) as HTMLElement;
+            const variant = comparedProp === 'variant' ? val : (currentProps.variant || "solid");
+            const color = comparedProp === 'color' ? val : (currentProps.color || "primary");
+            const size = comparedProp === 'size' ? val : (currentProps.size || "md");
+
+            if (componentName === "RLAButton") {
+              const variantClass = getVariantClasses(variant, color);
+              const sizeClass = sizeClasses[size] || "";
+              clone.className = `${baseButtonClasses} ${sizeClass} ${variantClass}`;
+              // Update text label inside comparison clones to make it descriptive
+              const labelEl = clone.querySelector('[data-slot="label"]') || clone;
+              if (labelEl) labelEl.textContent = val;
+            }
+            grid.appendChild(clone);
+          });
+          previewWrapper.appendChild(grid);
+        } else {
+          // Single element rendering
+          previewWrapper.innerHTML = '';
+          const clone = originalTemplate.cloneNode(true) as HTMLElement;
+          const variant = currentProps.variant || "solid";
+          const color = currentProps.color || "primary";
+          const size = currentProps.size || "md";
+
+          if (componentName === "RLAButton") {
+            const variantClass = getVariantClasses(variant, color);
+            const sizeClass = sizeClasses[size] || "";
+            clone.className = `${baseButtonClasses} ${sizeClass} ${variantClass}`;
+          }
+          previewWrapper.appendChild(clone);
+        }
+
+        // 2. Generate and update code block content
+        let astroCode = '';
+        let vueCode = '';
+        const vueComponentName = componentName.replace(/^RLA/, 'RLV');
+
+        if (comparedProp && propsConfig[comparedProp]) {
+          // Compare Code Generation: output all variations
+          let astroBody = '';
+          let vueBody = '';
+          propsConfig[comparedProp].forEach(val => {
+            let propString = '';
+            propKeys.forEach((key) => {
+              const pVal = key === comparedProp ? val : currentProps[key];
+              if (pVal) propString += ` ${key}="${pVal}"`;
+            });
+            
+            astroBody += `  \x3c${componentName}${propString} \x3e${val}\x3c/${componentName}\x3e` + "\n";
+            vueBody += `    \x3c${vueComponentName}${propString} \x3e${val}\x3c/${vueComponentName}\x3e` + "\n";
+          });
+
+          astroCode = "---" + "\n" +
+            "import " + componentName + " from \"@rimelight/ui/components/astro/" + componentName + ".astro\";" + "\n" +
+            "---" + "\n\n" +
+            "\x3cdiv class=\"flex gap-4\"\x3e" + "\n" +
+            astroBody +
+            "\x3c/div\x3e";
+
+          vueCode = "\x3cscript setup\x3e" + "\n" +
+            "import " + vueComponentName + " from \"@rimelight/ui/components/vue/" + vueComponentName + ".vue\";" + "\n" +
+            "\x3c/script\x3e" + "\n\n" +
+            "\x3ctemplate\x3e" + "\n" +
+            "  \x3cdiv class=\"flex gap-4\"\x3e" + "\n" +
+            vueBody +
+            "  \x3c/div\x3e" + "\n" +
+            "\x3c/template\x3e";
+        } else {
+          // Single element code generation
+          let propString = '';
+          propKeys.forEach((key) => {
+            const val = currentProps[key];
+            if (val) propString += ` ${key}="${val}"`;
+          });
+
+          astroCode = "---" + "\n" +
+            "import " + componentName + " from \"@rimelight/ui/components/astro/" + componentName + ".astro\";" + "\n" +
+            "---" + "\n\n" +
+            "\x3c" + componentName + propString + " /\x3e";
+
+          vueCode = "\x3cscript setup\x3e" + "\n" +
+            "import " + vueComponentName + " from \"@rimelight/ui/components/vue/" + vueComponentName + ".vue\";" + "\n" +
+            "\x3c/script\x3e" + "\n\n" +
+            "\x3ctemplate\x3e" + "\n" +
+            "  \x3c" + vueComponentName + propString + " /\x3e" + "\n" +
+            "\x3c/template\x3e";
+        }
+
+        if (codeAstroElement) codeAstroElement.textContent = astroCode;
+        if (codeVueElement) codeVueElement.textContent = vueCode;
+      }
+
+      // Initialize compare toggles
+      compareButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const propGroup = btn.closest('.prop-control-group');
+          const propName = propGroup?.getAttribute('data-prop');
+          
+          if (!propName) return;
+
+          if (comparedProp === propName) {
+            // Turning off comparison
+            comparedProp = null;
+            btn.classList.remove('bg-accent', 'text-foreground');
+            showcase.querySelectorAll('.prop-control-group select, .prop-control-group rla-select').forEach(sel => {
+              sel.removeAttribute('disabled');
+              sel.classList.remove('opacity-50', 'pointer-events-none');
+            });
+          } else {
+            // Turning on comparison
+            comparedProp = propName;
+            compareButtons.forEach(b => b.classList.remove('bg-accent', 'text-foreground'));
+            btn.classList.add('bg-accent', 'text-foreground');
+            
+            // Disable other selects, but keep the compared one active
+            showcase.querySelectorAll('.prop-control-group').forEach(group => {
+              const name = group.getAttribute('data-prop');
+              const selectWrapper = group.querySelector('rla-select');
+              if (name !== comparedProp && selectWrapper) {
+                selectWrapper.setAttribute('disabled', 'true');
+                selectWrapper.classList.add('opacity-50', 'pointer-events-none');
+              } else if (selectWrapper) {
+                selectWrapper.removeAttribute('disabled');
+                selectWrapper.classList.remove('opacity-50', 'pointer-events-none');
+              }
+            });
+          }
+          
+          updateComponent();
+        });
+      });
+
+      // Listen to change events bubbling up from rla-select hidden inputs
+      showcase.addEventListener('change', updateComponent);
+
+      // Initial run
+      updateComponent();
     });
   }
 
