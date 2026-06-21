@@ -6,9 +6,10 @@ interface Props {
   class?: string;
   title?: string;
   description?: string;
+  playground?: string;
 }
 
-const { class: className, title, description } = Astro.props;
+const { class: className, title, description, playground } = Astro.props;
 ---
 
 <div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground ${className}`}>
@@ -24,7 +25,13 @@ const { class: className, title, description } = Astro.props;
        <button class="showcase-tab px-3 py-1 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" data-lang="vue">Vue</button>
     </div>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
+         <button class="highlight-slots p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Highlight component slots">
+            <span class="i-lucide-boxes size-4"></span>
+         </button>
+         <a href={playground || "#"} target={playground ? "_blank" : undefined} rel="noopener noreferrer" class="open-playground p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Open in Playground">
+            <span class="i-lucide-flask-conical size-4"></span>
+         </a>
          <button class="copy-code p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Copy code">
             <span class="i-lucide-copy size-4"></span>
          </button>
