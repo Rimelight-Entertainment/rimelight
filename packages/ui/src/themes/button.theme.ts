@@ -37,28 +37,28 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
           trailingIcon: "size-4"
         },
         sm: {
-          root: "text-xs gap-1.5 [&_svg]:size-4",
+          root: "text-sm gap-1.5 [&_svg]:size-4",
           leadingIcon: "size-4",
-          leadingAvatarSize: "3xs",
+          leadingAvatarSize: "2xs",
           trailingIcon: "size-4"
         },
         md: {
-          root: "text-sm gap-1.5 [&_svg]:size-5",
+          root: "text-base gap-2 [&_svg]:size-5",
           leadingIcon: "size-5",
-          leadingAvatarSize: "2xs",
+          leadingAvatarSize: "xs",
           trailingIcon: "size-5"
         },
         lg: {
-          root: "text-sm gap-2 [&_svg]:size-5",
+          root: "text-lg gap-2.5 [&_svg]:size-5",
           leadingIcon: "size-5",
-          leadingAvatarSize: "2xs",
+          leadingAvatarSize: "sm",
           trailingIcon: "size-5"
         },
         xl: {
-          root: "text-base gap-2 [&_svg]:size-6",
-          leadingIcon: "size-6",
-          leadingAvatarSize: "xs",
-          trailingIcon: "size-6"
+          root: "text-2xl gap-3 [&_svg]:size-7",
+          leadingIcon: "size-7",
+          leadingAvatarSize: "lg",
+          trailingIcon: "size-7"
         }
       },
       block: {
@@ -191,12 +191,12 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
       { square: true, size: "xs", classNames: { root: "p-1" } },
       { square: false, size: "sm", classNames: { root: "px-2.5 py-1.5" } },
       { square: true, size: "sm", classNames: { root: "p-1.5" } },
-      { square: false, size: "md", classNames: { root: "px-2.5 py-1.5" } },
-      { square: true, size: "md", classNames: { root: "p-1.5" } },
-      { square: false, size: "lg", classNames: { root: "px-3 py-2" } },
-      { square: true, size: "lg", classNames: { root: "p-2" } },
-      { square: false, size: "xl", classNames: { root: "px-3 py-2" } },
-      { square: true, size: "xl", classNames: { root: "p-2" } },
+      { square: false, size: "md", classNames: { root: "px-3 py-2" } },
+      { square: true, size: "md", classNames: { root: "p-2" } },
+      { square: false, size: "lg", classNames: { root: "px-3.5 py-2.5" } },
+      { square: true, size: "lg", classNames: { root: "p-2.5" } },
+      { square: false, size: "xl", classNames: { root: "px-5 py-3.5" } },
+      { square: true, size: "xl", classNames: { root: "p-3.5" } },
       {
         loading: true,
         leading: true,

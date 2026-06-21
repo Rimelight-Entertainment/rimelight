@@ -67,7 +67,7 @@ A button element that can be used to trigger actions or navigate to other pages.
   togglingPattern="tab-segmented"
   componentName="RLAButton"
   propsConfig={{
-    size: ["sm", "md", "lg", "xl"]
+    size: ["xs", "sm", "md", "lg", "xl"]
   }}
   defaultProps={{
     size: "md"
@@ -82,7 +82,18 @@ A button element that can be used to trigger actions or navigate to other pages.
   togglingPattern="tab-segmented"
   componentName="RLAButton"
   propsConfig={{
-    color: ["primary", "secondary", "info", "success", "warning", "error", "neutral"]
+    color: [
+      "primary",
+      "secondary",
+      "info",
+      "success",
+      "warning",
+      "error",
+      "commentary",
+      "ideation",
+      "source",
+      "neutral"
+    ]
   }}
   defaultProps={{
     color: "primary"
@@ -109,7 +120,7 @@ A button element that can be used to trigger actions or navigate to other pages.
   <RLAButton label="Add" leadingIcon="i-lucide-plus" />
   <RLAButton label="Search" leadingIcon="i-lucide-search" />
   <RLAButton label="Star" leadingIcon="i-lucide-star" />
-  <RLAButton label="Delete" leadingIcon="i-lucide-trash-2" color="error" />
+  <RLAButton color="error" label="Delete" leadingIcon="i-lucide-trash-2" />
   ```
 </div>
 
