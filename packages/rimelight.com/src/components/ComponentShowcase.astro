@@ -55,12 +55,7 @@ if (isDynamic) {
       const module = await import(`../../../ui/src/themes/${componentKey}.theme.ts`);
       resolvedTheme = module.default;
     } catch (e) {
-      try {
-        const module = await import(`@rimelight/ui/themes/${componentKey}.theme`);
-        resolvedTheme = module.default;
-      } catch (e2) {
-        console.warn(`Could not load theme for component: ${resolvedComponentName}`);
-      }
+      console.warn(`Could not load theme for component: ${resolvedComponentName}`);
     }
   }
 
