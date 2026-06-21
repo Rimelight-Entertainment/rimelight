@@ -4,19 +4,20 @@ interface Props {
   slots?: string[];
   props?: Record<string, any>;
   class?: string;
+  title?: string;
+  description?: string;
 }
 
-const { class: className } = Astro.props;
+const { class: className, title, description } = Astro.props;
 ---
 
 <div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground ${className}`}>
-  <div class="preview-area p-4 sm:p-6 flex items-center justify-center min-h-[120px] border-b border-border relative group">
-    <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <div class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded border border-border">Preview</div>
+  {(title || description) && (
+    <div class="px-4 py-3 border-b border-border bg-muted/10">
+      {title && <h4 class="text-sm font-semibold m-0 text-foreground">{title}</h4>}
+      {description && <p class="text-xs text-muted-foreground mt-1 mb-0">{description}</p>}
     </div>
-    <slot />
-  </div>
-
+  )}
   <div class="controls-area px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between gap-4">
     <div class="flex items-center gap-2">
        <button class="showcase-tab active px-3 py-1 text-xs font-medium rounded-md bg-background text-foreground shadow-sm border border-border" data-lang="astro">Astro</button>
@@ -30,6 +31,13 @@ const { class: className } = Astro.props;
     </div>
   </div>
 
+  <div class="preview-area p-4 sm:p-6 flex items-center justify-center min-h-[120px] border-b border-border relative group">
+    <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded border border-border">Preview</div>
+    </div>
+    <slot />
+  </div>
+
   <div class="code-area bg-gray-950">
     <div class="code-block" data-lang="astro">
         <slot name="code-astro" />
@@ -41,6 +49,10 @@ const { class: className } = Astro.props;
 </div>
 
 <style>
+  .component-showcase {
+    margin-block: 1.5rem;
+  }
+
   .showcase-tab.active {
     color: var(--color-primary-500);
   }

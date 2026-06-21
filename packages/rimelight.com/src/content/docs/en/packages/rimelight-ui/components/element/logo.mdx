@@ -4,8 +4,6 @@ description: "A component to display the site logo with different variants and c
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
-
 import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro"
 import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
@@ -47,45 +45,84 @@ A versatile logo component that renders a site logo from your configuration, sup
 
 ## Examples
 
-### Variants
+<ComponentShowcase title="Variants">
+  <div class="flex flex-col gap-4">
+    <RLALogo variant="logomark" />
+    <RLALogo variant="logotype" />
+  </div>
 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+    ---
 
-<RLALogo variant="logomark" />
-<RLALogo variant="logotype" />
+    <RLALogo variant="logomark" />
+    <RLALogo variant="logotype" />
+    ```
 
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
+  </div>
 
-<RLVLogo client:load variant="logomark" />
-<RLVLogo client:load variant="logotype" />
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue";
+    </script>
 
-</div>
-</RLATabs>
+    <template>
+      <div class="flex flex-col gap-4">
+        <RLVLogo variant="logomark" />
+        <RLVLogo variant="logotype" />
+      </div>
+    </template>
+    ```
 
-### Modes
+  </div>
+</ComponentShowcase>
 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
+<ComponentShowcase title="Modes">
+  <div class="flex flex-col gap-4">
+    <RLALogo variant="logomark" mode="color" />
+    <div class="bg-black p-2 inline-block">
+      <RLALogo variant="logomark" mode="white" />
+    </div>
+    <RLALogo variant="logomark" mode="black" />
+  </div>
 
-<RLALogo variant="logomark" mode="color" />
-<div class="bg-black p-2 inline-block">
-  <RLALogo variant="logomark" mode="white" />
-</div>
-<RLALogo variant="logomark" mode="black" />
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
+    ---
 
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
+    <RLALogo variant="logomark" mode="color" />
+    <div class="bg-black p-2 inline-block">
+      <RLALogo variant="logomark" mode="white" />
+    </div>
+    <RLALogo variant="logomark" mode="black" />
+    ```
 
-<RLVLogo client:load variant="logomark" mode="color" />
-<div class="bg-black p-2 inline-block">
-  <RLVLogo client:load variant="logomark" mode="white" />
-</div>
-<RLVLogo client:load variant="logomark" mode="black" />
+  </div>
 
-</div>
-</RLATabs>
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue";
+    </script>
+
+    <template>
+      <div class="flex flex-col gap-4">
+        <RLVLogo variant="logomark" mode="color" />
+        <div class="bg-black p-2 inline-block">
+          <RLVLogo variant="logomark" mode="white" />
+        </div>
+        <RLVLogo variant="logomark" mode="black" />
+      </div>
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ### Configuration
 

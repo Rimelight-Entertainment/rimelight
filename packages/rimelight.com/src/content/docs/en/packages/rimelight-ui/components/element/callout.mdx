@@ -32,11 +32,7 @@ The `RLACallout` component provides a flexible callout/alert message box featuri
 
 ## Examples
 
-### Variants & Colors
-
-You can customize the `variant` ("solid", "outline", "soft", "subtle") and `color` ("primary", "success", "warning", "error", "neutral", etc.) of the callout:
-
-<ComponentShowcase>
+<ComponentShowcase title="Variants & Colors" description='You can customize the `variant` ("solid", "outline", "soft", "subtle") and `color` ("primary", "success", "warning", "error", "neutral", etc.) of the callout:'>
   <div class="flex flex-col gap-4 w-full">
     <RLACallout variant="soft" color="warning" title="Warning" description="This is a soft warning callout." />
     <RLACallout variant="outline" color="error" title="Error" description="An error occurred during operation." />
@@ -50,11 +46,7 @@ You can customize the `variant` ("solid", "outline", "soft", "subtle") and `colo
   </Fragment>
 </ComponentShowcase>
 
-### Custom Icons & Slots
-
-Use custom icons or slots like `icon`, `avatar`, `actions`, and `close`:
-
-<ComponentShowcase>
+<ComponentShowcase title="Custom Icons & Slots" description="Use custom icons or slots like `icon`, `avatar`, `actions`, and `close`:">
   <RLACallout icon="i-lucide-info" title="Note" description="You can use custom slot-specific icons.">
     <div slot="actions">
       <button class="px-3 py-1 bg-primary text-white rounded text-sm">Action</button>

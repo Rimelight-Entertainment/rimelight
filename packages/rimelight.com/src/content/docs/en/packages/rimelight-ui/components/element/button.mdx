@@ -6,7 +6,6 @@ description: "A button element that can be used to trigger actions or navigate t
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -46,12 +45,8 @@ A button element that can be used to trigger actions or navigate to other pages.
 
 ## Examples
 
-### Variants
-
-Use the `variant` prop to change the variant of the button.
-
-<ComponentShowcase>
-  <div class="flex flex-wrap gap-4">
+<ComponentShowcase title="Variants" description="Use the `variant` prop to change the variant of the button.">
+  <div class="flex flex-row gap-md">
     <RLAButton variant="solid" color="primary">Solid</RLAButton>
     <RLAButton variant="outline" color="primary">Outline</RLAButton>
     <RLAButton variant="soft" color="primary">Soft</RLAButton>
@@ -95,71 +90,93 @@ Use the `variant` prop to change the variant of the button.
   </div>
 </ComponentShowcase>
 
-### Sizes
+<ComponentShowcase title="Sizes" description="Use the `size` prop to change the size of the button.">
+  <div class="flex flex-wrap gap-4">
+    <RLAButton size="sm">Small</RLAButton>
+    <RLAButton size="md">Medium</RLAButton>
+    <RLAButton size="lg">Large</RLAButton>
+    <RLAButton size="xl">Extra Large</RLAButton>
+  </div>
 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
 
-<RLAButton size="sm">Small</RLAButton>
-<RLAButton size="md">Medium</RLAButton>
-<RLAButton size="lg">Large</RLAButton>
-<RLAButton size="xl">Extra Large</RLAButton>
+    <RLAButton size="sm">Small</RLAButton>
+    <RLAButton size="md">Medium</RLAButton>
+    <RLAButton size="lg">Large</RLAButton>
+    <RLAButton size="xl">Extra Large</RLAButton>
+    ```
 
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
+  </div>
 
-<RLVButton client:load size="sm">
-  Small
-</RLVButton>
-<RLVButton client:load size="md">
-  Medium
-</RLVButton>
-<RLVButton client:load size="lg">
-  Large
-</RLVButton>
-<RLVButton client:load size="xl">
-  Extra Large
-</RLVButton>
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
 
-</div>
-</RLATabs>
+    <template>
+      <div class="flex flex-wrap gap-4">
+        <RLVButton size="sm">Small</RLVButton>
+        <RLVButton size="md">Medium</RLVButton>
+        <RLVButton size="lg">Large</RLVButton>
+        <RLVButton size="xl">Extra Large</RLVButton>
+      </div>
+    </template>
+    ```
 
-### Colors
+  </div>
+</ComponentShowcase>
 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
+<ComponentShowcase title="Colors">
+  <div class="flex flex-wrap gap-4">
+    <RLAButton color="primary">Primary</RLAButton>
+    <RLAButton color="secondary">Secondary</RLAButton>
+    <RLAButton color="info">Info</RLAButton>
+    <RLAButton color="success">Success</RLAButton>
+    <RLAButton color="warning">Warning</RLAButton>
+    <RLAButton color="error">Error</RLAButton>
+  </div>
 
-<RLAButton color="primary">Primary</RLAButton>
-<RLAButton color="secondary">Secondary</RLAButton>
-<RLAButton color="info">Info</RLAButton>
-<RLAButton color="success">Success</RLAButton>
-<RLAButton color="warning">Warning</RLAButton>
-<RLAButton color="error">Error</RLAButton>
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
 
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
+    <RLAButton color="primary">Primary</RLAButton>
+    <RLAButton color="secondary">Secondary</RLAButton>
+    <RLAButton color="info">Info</RLAButton>
+    <RLAButton color="success">Success</RLAButton>
+    <RLAButton color="warning">Warning</RLAButton>
+    <RLAButton color="error">Error</RLAButton>
+    ```
 
-<RLVButton client:load color="primary">
-  Primary
-</RLVButton>
-<RLVButton client:load color="secondary">
-  Secondary
-</RLVButton>
-<RLVButton client:load color="info">
-  Info
-</RLVButton>
-<RLVButton client:load color="success">
-  Success
-</RLVButton>
-<RLVButton client:load color="warning">
-  Warning
-</RLVButton>
-<RLVButton client:load color="error">
-  Error
-</RLVButton>
+  </div>
 
-</div>
-</RLATabs>
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <div class="flex flex-wrap gap-4">
+        <RLVButton color="primary">Primary</RLVButton>
+        <RLVButton color="secondary">Secondary</RLVButton>
+        <RLVButton color="info">Info</RLVButton>
+        <RLVButton color="success">Success</RLVButton>
+        <RLVButton color="warning">Warning</RLVButton>
+        <RLVButton color="error">Error</RLVButton>
+      </div>
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

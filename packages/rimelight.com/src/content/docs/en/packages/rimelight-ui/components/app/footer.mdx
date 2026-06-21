@@ -4,8 +4,9 @@ description: "This component is currently under development."
 ---
 
 import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
-import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
-
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAFooter from "@rimelight/ui/components/astro/RLAFooter.astro"
+import RLVFooter from "@rimelight/ui/components/vue/RLVFooter.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -17,21 +18,36 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
     This component is not currently available but will be coming eventually.
 
 </RLACallout>
- 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
 
-Coming soon
-
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
-
-Coming soon
-
-</div>
-</RLATabs>
- 
 ## Usage
+
+<ComponentShowcase>
+  <RLAFooter />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAFooter from "@rimelight/ui/components/astro/RLAFooter.astro";
+    ---
+
+    <RLAFooter />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVFooter from "@rimelight/ui/components/vue/RLVFooter.vue";
+    </script>
+
+    <template>
+      <RLVFooter />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

@@ -40,8 +40,7 @@ export async function verifyTurnstile(
       }
     }
 
-    // eslint-disable-next-line typescript/no-unsafe-type-assertion
-    const data = (await response.json()) as TurnstileResponse
+    const data = await response.json()
     if (data.success) {
       return { success: true }
     } else {

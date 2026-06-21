@@ -3,8 +3,8 @@ title: "Main"
 description: "A semantic <main> element that fills the viewport height."
 ---
 
-import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
-
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAMain from "@rimelight/ui/components/astro/RLAMain.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -17,24 +17,24 @@ A semantic &lt;main&gt; element that fills the viewport height.
 
 The Main component renders a `<main>` element that works in conjunction with the [Header](http://rimelight.com/en/docs/packages/rimelight-ui/components/app/header) component to create a full-height layout that extends to the viewport's available height.
 
-## Examples
+<ComponentShowcase>
+  <RLAMain>
+    Content
+  </RLAMain>
 
-<RLATabs
-  items={[
-    { label: "Astro", value: "astro" },
-    { label: "Vue", value: "vue" }
-  ]}
-  color="primary"
-  size="md"
-  variant="solid"
->
-  <div role="tabpanel" data-value="astro">
-    Coming soon
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAMain from "@rimelight/ui/components/astro/RLAMain.astro";
+    ---
+
+    <RLAMain>
+      Content
+    </RLAMain>
+    ```
+
   </div>
-  <div role="tabpanel" data-value="vue" class="hidden">
-    Coming soon
-  </div>
-</RLATabs>
+</ComponentShowcase>
 
 ## API
 

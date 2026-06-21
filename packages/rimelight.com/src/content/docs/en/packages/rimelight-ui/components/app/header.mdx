@@ -3,8 +3,9 @@ title: "Header"
 description: "A flexible, cross-framework header component that supports dynamic stacking, CSS-first positioning, and scroll-hide behaviors."
 ---
 
-import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
-
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro"
+import RLVHeader from "@rimelight/ui/components/vue/RLVHeader.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
@@ -14,40 +15,47 @@ The Header component provides a unified structural shell for application and web
 
 It is available as a native Astro component (`RLAHeader`) for static/island architectures and a Vue component (`RLVHeader`) for highly interactive single-page apps.
 
-<RLATabs items={[{label:"Astro",value:"astro"},{label:"Vue",value:"vue"}]} color="primary" size="md" variant="solid">
-<div role="tabpanel" data-value="astro">
-
-```astro
-import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
-
-<RLAHeader fixed={true} stackIndex={0} hideOnScroll={true}>
-  <div slot="left">Logo</div>
-  <nav slot="center">Links</nav>
-  <div slot="right">Profile</div>
-</RLAHeader>
-```
-
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
-
-```vue
-<script setup>
-import { RLVHeader } from "@rimelight/ui/components/vue"
-</script>
-
-<template>
-  <RLVHeader :fixed="true" :stack-index="0" :hide-on-scroll="true">
-    <template #left>Logo</template>
-    <template #center>Links</template>
-    <template #right>Profile</template>
-  </RLVHeader>
-</template>
-```
-
-</div>
-</RLATabs>
-
 ## Usage
+
+<ComponentShowcase>
+  <RLAHeader>
+    <div slot="left">Logo</div>
+    <nav slot="center">Links</nav>
+    <div slot="right">Profile</div>
+  </RLAHeader>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAHeader from "@rimelight/ui/components/astro/RLAHeader.astro";
+    ---
+
+    <RLAHeader>
+      <div slot="left">Logo</div>
+      <nav slot="center">Links</nav>
+      <div slot="right">Profile</div>
+    </RLAHeader>
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVHeader from "@rimelight/ui/components/vue/RLVHeader.vue";
+    </script>
+
+    <template>
+      <RLVHeader>
+        <template #left>Logo</template>
+        <template #center>Links</template>
+        <template #right>Profile</template>
+      </RLVHeader>
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 
