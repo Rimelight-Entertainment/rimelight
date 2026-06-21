@@ -1,5 +1,6 @@
 ---
 import RLASelect from "@rimelight/ui/components/astro/RLASelect.astro";
+import { scv } from "css-variants";
 
 interface Props {
   component?: string;
@@ -13,6 +14,7 @@ interface Props {
   propsConfig?: Record<string, string[]>;
   defaultProps?: Record<string, string>;
   togglingPattern?: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
+  theme?: any;
 }
 
 const {
@@ -24,7 +26,8 @@ const {
   componentName,
   propsConfig,
   defaultProps,
-  togglingPattern = "tab-segmented"
+  togglingPattern = "tab-segmented",
+  theme
 } = Astro.props;
 
 const resolvedComponentName = componentName || component || "";
@@ -39,9 +42,71 @@ if (isDynamic && togglingPattern === "select-option") {
     resolvedPropsConfig[key] = [...propsConfig[key], "— Compare All —"];
   }
 }
+
+// Load theme and pre-calculate all variant classes at build-time (server-side)
+let resolvedTheme = theme;
+const componentKey = resolvedComponentName.replace(/^RL[AV]/, '').toLowerCase(); // e.g. "button"
+let combinationClasses = {};
+let initialThemeClasses = {};
+
+if (isDynamic) {
+  if (!resolvedTheme && componentKey) {
+    try {
+      const module = await import(`../../../ui/src/themes/${componentKey}.theme.ts`);
+      resolvedTheme = module.default;
+    } catch (e) {
+      try {
+        const module = await import(`@rimelight/ui/themes/${componentKey}.theme`);
+        resolvedTheme = module.default;
+      } catch (e2) {
+        console.warn(`Could not load theme for component: ${resolvedComponentName}`);
+      }
+    }
+  }
+
+  if (resolvedTheme) {
+    try {
+      const resolver = scv(resolvedTheme);
+      
+      // Calculate baseline classes for initial/default variants
+      const initialVariants = {
+        ...resolvedTheme.defaultVariants,
+        ...defaultProps
+      };
+      initialThemeClasses = resolver(initialVariants);
+
+      // Generate classes for all combinations of configured props
+      const keys = Object.keys(propsConfig || {});
+      const getCombinations = (index, current) => {
+        if (index === keys.length) {
+          const activeVariants = {
+            ...resolvedTheme.defaultVariants,
+            ...defaultProps,
+            ...current
+          };
+          const resolved = resolver(activeVariants);
+          const keyStr = keys.map(k => `${k}:${current[k]}`).join('|');
+          combinationClasses[keyStr] = resolved;
+          return;
+        }
+        
+        const key = keys[index];
+        const vals = propsConfig[key] || [];
+        vals.forEach(val => {
+          current[key] = val;
+          getCombinations(index + 1, { ...current });
+        });
+      };
+      
+      getCombinations(0, {});
+    } catch (err) {
+      console.error(`Failed to pre-resolve classes for: ${resolvedComponentName}`, err);
+    }
+  }
+}
 ---
 
-<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern}>
+<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)}>
   {(title || description) && (
     <div class="px-4 py-3 border-b border-border bg-muted/10">
       {title && <h4 class="text-sm font-semibold m-0 text-foreground">{title}</h4>}
@@ -219,50 +284,65 @@ if (isDynamic && togglingPattern === "select-option") {
       }
     });
 
-    // 2. Initialize Dynamic Showcases specifically
-    const baseButtonClasses = "group inline-flex items-center justify-center font-medium ws-nowrap disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors outline-none aria-invalid:border-error-500 aria-invalid:ring-error-500/20 rounded-md";
-    
-    const sizeClasses = {
-      xs: "text-xs gap-1 [&_svg]:size-4 px-2 py-1",
-      sm: "text-xs gap-1.5 [&_svg]:size-4 px-2.5 py-1.5",
-      md: "text-sm gap-1.5 [&_svg]:size-5 px-2.5 py-1.5",
-      lg: "text-sm gap-2 [&_svg]:size-5 px-3 py-2",
-      xl: "text-base gap-2 [&_svg]:size-6 px-3 py-2"
-    };
+    // Helper to get static/custom classes of an element (classes not managed by theme defaults)
+    function getCustomClasses(element, initialClassesForSlot) {
+      if (!element) return [];
+      const currentClasses = element.className.split(/\s+/).filter(Boolean);
+      const initialSet = new Set(initialClassesForSlot.split(/\s+/).filter(Boolean));
+      return currentClasses.filter(c => !initialSet.has(c));
+    }
 
-    const getVariantClasses = (variant, color) => {
-      if (color === 'neutral') {
-        const neutralVariants = {
-          solid: "text-inverted bg-inverted hover:bg-inverted/90 active:bg-inverted/90 disabled:bg-inverted aria-disabled:bg-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-inverted",
-          outline: "ring ring-inset ring-current text-default bg-transparent hover:bg-elevated active:bg-elevated disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
-          soft: "text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 focus:outline-none focus-visible:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated",
-          subtle: "ring ring-inset ring-accented text-default bg-elevated hover:bg-accented/75 active:bg-accented/75 disabled:bg-elevated aria-disabled:bg-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-inverted",
-          ghost: "text-default hover:bg-hover active:bg-hover/80 focus:outline-none focus-visible:bg-hover hover:disabled:bg-transparent hover:aria-disabled:bg-transparent",
-          link: "text-muted hover:text-default active:text-default disabled:text-muted aria-disabled:text-muted focus:outline-none focus-visible:ring-inset focus-visible:ring-2 focus-visible:ring-inverted"
-        };
-        return neutralVariants[variant] || "";
+    // Apply pre-resolved theme classes dynamically while preserving custom static classes
+    function applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses) {
+      if (!resolvedSlots) return;
+      
+      const elementsToUpdate = [];
+      if (clone.getAttribute('data-slot')) {
+        elementsToUpdate.push({ el: clone, orig: originalTemplate, slot: clone.getAttribute('data-slot') });
+      } else {
+        elementsToUpdate.push({ el: clone, orig: originalTemplate, slot: 'root' });
       }
+      
+      clone.querySelectorAll('[data-slot]').forEach(el => {
+        const slotName = el.getAttribute('data-slot');
+        const origEl = originalTemplate.querySelector(`[data-slot="${slotName}"]`);
+        elementsToUpdate.push({ el, orig: origEl, slot: slotName });
+      });
+      
+      elementsToUpdate.forEach(({ el, orig, slot }) => {
+        if (!el) return;
+        const camelSlot = slot.replace(/-([a-z])/g, g => g[1].toUpperCase());
+        const themeClasses = resolvedSlots[camelSlot] || resolvedSlots[slot] || '';
+        const initialClasses = initialThemeClasses[camelSlot] || initialThemeClasses[slot] || '';
+        
+        // Preserve any custom classes
+        const customClasses = getCustomClasses(orig, initialClasses);
+        
+        // Merge theme classes and custom classes
+        const finalClasses = [...themeClasses.split(/\s+/), ...customClasses]
+          .filter(Boolean)
+          .join(' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+          
+        el.className = finalClasses;
+      });
+    }
 
-      const standardVariants = {
-        solid: `rl-color-${color} bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] disabled:bg-[var(--rl-bg)] aria-disabled:bg-[var(--rl-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]`,
-        outline: `rl-color-${color} ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]`,
-        soft: `rl-color-${color} text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 focus:outline-none focus-visible:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10`,
-        subtle: `rl-color-${color} text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]`,
-        ghost: `rl-color-${color} text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent`,
-        link: `rl-color-${color} text-[var(--rl-text)] hover:text-[var(--rl-text)]/75 active:text-[var(--rl-text)]/75 disabled:text-[var(--rl-text)] aria-disabled:text-[var(--rl-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--rl-ring)]`
-      };
-      return standardVariants[variant] || "";
-    };
-
+    // 3. Initialize Dynamic Showcases
     document.querySelectorAll('.dynamic-showcase').forEach(node => {
-      const showcase = node as HTMLElement;
+      const showcase = node;
       const componentName = showcase.getAttribute('data-component');
       const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]');
       const propsConfig = JSON.parse(showcase.getAttribute('data-config') || '{}');
       const togglingPattern = showcase.getAttribute('data-pattern') || 'icon';
+      
+      const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}');
+      const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}');
+      
       const codeAstroElement = showcase.querySelector('.dynamic-code-astro');
       const codeVueElement = showcase.querySelector('.dynamic-code-vue');
-      const previewWrapper = showcase.querySelector('.preview-slot-wrapper') as HTMLElement;
+      const previewWrapper = showcase.querySelector('.preview-slot-wrapper');
       
       const compareButtons = showcase.querySelectorAll('.compare-prop-btn');
       const modeTabs = showcase.querySelectorAll('.mode-tab');
@@ -270,7 +350,7 @@ if (isDynamic && togglingPattern === "select-option") {
       let comparedProp = null;
 
       // Capture original template element inside slot wrapper on startup
-      const originalTemplate = previewWrapper?.firstElementChild?.cloneNode(true) as HTMLElement | null;
+      const originalTemplate = previewWrapper?.firstElementChild?.cloneNode(true);
 
       function updateComponent() {
         if (!originalTemplate || !previewWrapper) return;
@@ -279,7 +359,7 @@ if (isDynamic && togglingPattern === "select-option") {
         
         // Find inputs (hidden inputs generated by RLASelect)
         propKeys.forEach((prop) => {
-          const input = showcase.querySelector(`input[name="${prop}"]`) as HTMLInputElement | null;
+          const input = showcase.querySelector(`input[name="${prop}"]`);
           if (input) {
             currentProps[prop] = input.value;
           }
@@ -316,33 +396,43 @@ if (isDynamic && togglingPattern === "select-option") {
           grid.className = "flex flex-wrap gap-4 items-center justify-center w-full";
           
           propsConfig[comparedProp].forEach(val => {
-            const clone = originalTemplate.cloneNode(true) as HTMLElement;
-            const variant = comparedProp === 'variant' ? val : (currentProps.variant || "solid");
-            const color = comparedProp === 'color' ? val : (currentProps.color || "primary");
-            const size = comparedProp === 'size' ? val : (currentProps.size || "md");
-
-            if (componentName === "RLAButton") {
-              const variantClass = getVariantClasses(variant, color);
-              const sizeClass = sizeClasses[size] || "";
-              clone.className = `${baseButtonClasses} ${sizeClass} ${variantClass}`;
-              const labelEl = clone.querySelector('[data-slot="label"]') || clone;
-              if (labelEl) labelEl.textContent = val;
+            const clone = originalTemplate.cloneNode(true);
+            
+            // Build current combination
+            const activeVariants = { ...currentProps };
+            activeVariants[comparedProp] = val;
+            
+            // Look up pre-calculated classes
+            const keyStr = propKeys.map(k => `${k}:${activeVariants[k]}`).join('|');
+            const resolvedSlots = combinationClasses[keyStr];
+            
+            // Apply theme classes dynamically
+            if (resolvedSlots) {
+              applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses);
             }
+            
+            // Update label text content if applicable
+            const labelEl = clone.querySelector('[data-slot="label"]') || (clone.getAttribute('data-slot') === 'label' ? clone : null);
+            if (labelEl) {
+              labelEl.textContent = val;
+            }
+            
             grid.appendChild(clone);
           });
           previewWrapper.appendChild(grid);
         } else {
           previewWrapper.innerHTML = '';
-          const clone = originalTemplate.cloneNode(true) as HTMLElement;
-          const variant = currentProps.variant || "solid";
-          const color = currentProps.color || "primary";
-          const size = currentProps.size || "md";
+          const clone = originalTemplate.cloneNode(true);
+          
+          // Look up pre-calculated classes
+          const keyStr = propKeys.map(k => `${k}:${currentProps[k]}`).join('|');
+          const resolvedSlots = combinationClasses[keyStr];
 
-          if (componentName === "RLAButton") {
-            const variantClass = getVariantClasses(variant, color);
-            const sizeClass = sizeClasses[size] || "";
-            clone.className = `${baseButtonClasses} ${sizeClass} ${variantClass}`;
+          // Apply theme classes dynamically
+          if (resolvedSlots) {
+            applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses);
           }
+          
           previewWrapper.appendChild(clone);
         }
 
