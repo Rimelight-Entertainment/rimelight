@@ -192,7 +192,9 @@ import RLAFileUpload from '@rimelight/ui/components/astro/RLAFileUpload.astro';
 
   copyUrlBtn.addEventListener('click', () => {
     uploadedUrl.select();
-    document.execCommand('copy');
+    navigator.clipboard.writeText(uploadedUrl.value).catch((err) => {
+      console.error('Failed to copy: ', err);
+    });
     const prevText = copyUrlBtn.textContent;
     copyUrlBtn.textContent = 'Copied!';
     setTimeout(() => {

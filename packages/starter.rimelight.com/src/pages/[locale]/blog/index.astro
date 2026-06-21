@@ -71,7 +71,7 @@ const tabsItems = [
 					))}
 				</RLAGrid>
 			</div>
-			{categoryOrder.map((category, i) => {
+			{categoryOrder.map((category) => {
 				const categoryPosts = groupedPosts[category];
 				if (!categoryPosts || categoryPosts.length === 0) return null;
 				return (

@@ -54,7 +54,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
-	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates}>
+	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
 		<slot name="head" slot="head" />
 		<Font cssVariable="--font-sans" preload={true} slot="head" />
 		<Font cssVariable="--font-serif" preload={true} slot="head" />

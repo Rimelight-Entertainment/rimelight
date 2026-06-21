@@ -22,7 +22,6 @@ const messages = useI18n(Astro, "chat_page", {
   history_loaded: "Message history loaded"
 });
 
-const activeLocale = Astro.currentLocale ?? "en";
 ---
 
 <AppLayout title={messages.title} description={messages.description}>
@@ -290,7 +289,7 @@ const activeLocale = Astro.currentLocale ?? "en";
       hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
     const index = Math.abs(hash) % colors.length;
-    return colors[index];
+    return colors[index] ?? 'from-blue-500 to-indigo-600';
   }
 
   function setMyIdentity(name: string) {
