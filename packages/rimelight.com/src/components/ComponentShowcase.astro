@@ -57,12 +57,20 @@ const { class: className, title, description } = Astro.props;
     color: var(--color-primary-500);
   }
 
-  .code-area pre {
+  .code-area :global(pre),
+  .code-area :global(code),
+  .code-area :global(.expressive-code),
+  .code-area :global(figure),
+  .code-area :global(.frame) {
     background-color: transparent !important;
+    background: transparent !important;
     margin: 0 !important;
-    padding: 1rem !important;
     border-radius: 0 !important;
     border-width: 0 !important;
+  }
+
+  .code-area :global(pre) {
+    padding: 1rem !important;
   }
 </style>
 
