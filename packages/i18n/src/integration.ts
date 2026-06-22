@@ -1,3 +1,4 @@
+import nanostoresI18n from "astro-nanostores-i18n"
 import type { AstroIntegration } from "astro"
 import fs from "node:fs"
 import path from "node:path"
@@ -6,14 +7,27 @@ export interface RimelightI18nOptions {
   validateExtraction?: boolean
   translations?: Record<string, Record<string, any>>
   kvBinding?: string
+  translationLoader?: string
 }
 
-export function rimelightI18n(options?: RimelightI18nOptions): AstroIntegration {
+export function rimelightI18n(options?: RimelightI18nOptions): any {
   const validateExtraction = options?.validateExtraction ?? true
   const translations = options?.translations
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV"
+  const translationLoader = options?.translationLoader ?? "./src/i18n/loader.ts"
 
-  return {
+  const nanostoresTranslations: Record<string, any> = {}
+  if (translations) {
+    for (const [locale, val] of Object.entries(translations)) {
+      if (locale === "pt") {
+        nanostoresTranslations["pt-br"] = val
+      } else {
+        nanostoresTranslations[locale] = val
+      }
+    }
+  }
+
+  const rimelightI18nCore: AstroIntegration = {
     name: "@rimelight/i18n",
     hooks: {
       "astro:config:setup": ({ addMiddleware, updateConfig, logger }) => {
@@ -69,4 +83,13 @@ export function rimelightI18n(options?: RimelightI18nOptions): AstroIntegration 
       }
     }
   }
+
+  return [
+    nanostoresI18n({
+      translationLoader,
+      addMiddleware: true,
+      translations: nanostoresTranslations
+    }),
+    rimelightI18nCore
+  ]
 }
