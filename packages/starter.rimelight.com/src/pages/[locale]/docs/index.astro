@@ -10,8 +10,7 @@ if (!entry) {
   return Astro.redirect("/404");
 }
 
-const renderFn = render;
-const { Content, headings } = await renderFn(entry);
+const { Content, headings } = await render(entry);
 const { title, description, tableOfContents, prev, next, editUrl } = entry.data;
 ---
 

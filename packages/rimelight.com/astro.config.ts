@@ -4,7 +4,6 @@ import es from "./src/translations/es.json"
 import pt from "./src/translations/pt.json"
 import sitemap from "@astrojs/sitemap"
 import mdx from "@astrojs/mdx"
-import { satteri } from "@astrojs/markdown-satteri"
 import { ui, sri } from "@rimelight/ui/integrations"
 import { defineSecurity } from "@rimelight/ui/config"
 import cloudflare from "@astrojs/cloudflare"
@@ -14,21 +13,6 @@ import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/c
 export default defineConfig({
   experimental: {
     contentIntellisense: true,
-    queuedRendering: {
-      enabled: true,
-      contentCache: true
-    },
-    cache: {
-      provider: memoryCache()
-    },
-    routeRules: {
-      "/api/[...path]": {
-        swr: 600 // 10 minutes stale-while-revalidate
-      },
-      "/[...path]": {
-        maxAge: 300 // 5 minutes cache
-      }
-    },
     clientPrerender: true,
     svgOptimizer: svgoOptimizer({
       plugins: [
@@ -57,6 +41,17 @@ export default defineConfig({
 
   output: "server",
   adapter: cloudflare(),
+  cache: {
+    provider: memoryCache()
+  },
+  routeRules: {
+    "/api/[...path]": {
+      swr: 600 // 10 minutes stale-while-revalidate
+    },
+    "/[...path]": {
+      maxAge: 300 // 5 minutes cache
+    }
+  },
 
   security: defineSecurity({
     domain: "rimelight.com"
@@ -94,12 +89,6 @@ export default defineConfig({
 
   image: {
     domains: ["rimelight.com", "cdn.rimelight.com"]
-  },
-
-  markdown: {
-    processor: satteri({
-      features: { directive: true }
-    })
   },
 
   integrations: [
