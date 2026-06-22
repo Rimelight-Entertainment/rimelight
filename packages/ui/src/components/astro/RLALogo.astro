@@ -22,12 +22,16 @@ const {
 } = Astro.props as LogoProps;
 
 let resolvedHref = href;
-if (href === "/" && Astro.currentLocale) {
+if (href === "/") {
   try {
-    const { getRelativeLocaleUrl } = await import("astro:i18n");
-    resolvedHref = getRelativeLocaleUrl(Astro.currentLocale, "/");
+    const { getRelativeLocaleUrl } = await import("@rimelight/i18n");
+    resolvedHref = Astro.currentLocale
+      ? getRelativeLocaleUrl(Astro.currentLocale, "/")
+      : getRelativeLocaleUrl("/");
   } catch {
-    resolvedHref = `/${Astro.currentLocale}/`;
+    if (Astro.currentLocale) {
+      resolvedHref = `/${Astro.currentLocale}/`;
+    }
   }
 }
 

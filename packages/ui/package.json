@@ -87,10 +87,14 @@
     "vite-plus": "0.2.1"
   },
   "peerDependencies": {
+    "@rimelight/i18n": "workspace:^0.0.1",
     "astro": ">=6.0.0",
     "vue": ">=3.4.0"
   },
   "peerDependenciesMeta": {
+    "@rimelight/i18n": {
+      "optional": true
+    },
     "vue": {
       "optional": true
     }
