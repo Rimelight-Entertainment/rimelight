@@ -66,14 +66,14 @@ const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) =
 
 <style is:global>
   .toc-active {
-    color: var(--primary) !important;
-    font-weight: 600 !important;
+    color: var(--primary);
+    font-weight: 600;
   }
 </style>
 
 <script is:inline>
   (function() {
-    var root = document.querySelector('[data-slot="root"]');
+    var root = document.querySelector('[data-container-selector]');
     if (!root) return;
 
     function updateActiveHeading() {
@@ -95,14 +95,10 @@ const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) =
 
       for (var j = 0; j < links.length; j++) {
         links[j].classList.remove("toc-active");
-        links[j].style.color = "";
       }
       if (activeId) {
         var targetLink = root.querySelector('a[href="#' + activeId + '"].toc-link');
-        if (targetLink) {
-          targetLink.classList.add("toc-active");
-          targetLink.style.color = "red";
-        }
+        if (targetLink) targetLink.classList.add("toc-active");
       }
     }
 
