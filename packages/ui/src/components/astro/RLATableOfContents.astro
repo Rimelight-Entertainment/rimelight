@@ -15,6 +15,7 @@ const {
   tableOfContents: tableOfContentsConfig,
   ui: uiProp,
   class: className,
+  containerSelector = ".markdown-content",
   ...rest
 } = Astro.props as TableOfContentsProps
 
@@ -30,10 +31,12 @@ const maxLevel = tableOfContentsConfig ? (tableOfContentsConfig.maxHeadingLevel 
 const filteredHeadings = tableOfContentsConfig !== false
   ? headings.filter(h => h.depth >= minLevel && h.depth <= maxLevel)
   : [];
+
+const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) => `:scope > h${minLevel + i}`).join(", ");
 ---
 
 {tableOfContentsConfig !== false && filteredHeadings.length > 0 && (
-  <div class={classes.root} data-slot="root" {...rest}>
+  <div class={classes.root} data-slot="root" data-container-selector={containerSelector} data-heading-selector={headingSelector} {...rest}>
     <div class={classes.container} data-slot="container">
       <h4 class={classes.title} data-slot="title">On this page</h4>
       <ul class:list={[classes.list, "mt-2xl flex flex-col gap-3xs"]} data-slot="list">
@@ -61,49 +64,50 @@ const filteredHeadings = tableOfContentsConfig !== false
   </div>
 )}
 
-<style>
-  .toc-current {
-    color: var(--primary);
-    font-weight: 500;
+<style is:global>
+  .toc-active {
+    color: var(--primary) !important;
+    font-weight: 600 !important;
   }
 </style>
 
-<script>
-  let wrappingElement: Element | null;
-  let observeHeaderTags: IntersectionObserver;
-  let allHeaderTags: NodeListOf<Element>;
+<script is:inline>
+  (function() {
+    var root = document.querySelector('[data-slot="root"]');
+    if (!root) return;
 
-  function setCurrent(e: IntersectionObserverEntry[]) {
-    const allSectionLinks = document.querySelectorAll(".toc-link");
-    e.map(i => {
-      if (i.isIntersecting === true) {
-        allSectionLinks.forEach(link => link.classList.remove("toc-current"));
-        const targetLink = document.querySelector(`a[href="#${i.target.id}"].toc-link`);
-        if (targetLink) targetLink.classList.add("toc-current");
+    function updateActiveHeading() {
+      var links = root.querySelectorAll(".toc-link");
+      if (links.length === 0) return;
+
+      var threshold = window.innerHeight * 0.5;
+      var activeId = null;
+
+      for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute("href");
+        if (!href || href.charAt(0) !== "#") continue;
+        var id = href.substring(1);
+        var heading = document.getElementById(id);
+        if (heading && heading.getBoundingClientRect().top <= threshold) {
+          activeId = id;
+        }
       }
-    });
-  }
 
-  function initTOC() {
-    wrappingElement = document.querySelector(".markdown-content");
-    if (wrappingElement !== null) {
-      allHeaderTags = wrappingElement.querySelectorAll(":scope > h1, :scope > h2, :scope > h3, :scope > h4");
+      for (var j = 0; j < links.length; j++) {
+        links[j].classList.remove("toc-active");
+        links[j].style.color = "";
+      }
+      if (activeId) {
+        var targetLink = root.querySelector('a[href="#' + activeId + '"].toc-link');
+        if (targetLink) {
+          targetLink.classList.add("toc-active");
+          targetLink.style.color = "red";
+        }
+      }
     }
 
-    const options: IntersectionObserverInit = {
-      root: null,
-      rootMargin: "0px 0px -50% 0px",
-      threshold: [1]
-    };
-
-    observeHeaderTags = new IntersectionObserver(setCurrent, options);
-    if (wrappingElement === null) return;
-    allHeaderTags.forEach(tag => {
-      tag.classList.add("scroll-mt-3xl");
-      observeHeaderTags.observe(tag);
-    });
-  }
-
-  initTOC();
-  document.addEventListener("astro:after-swap", initTOC);
+    updateActiveHeading();
+    window.addEventListener("scroll", updateActiveHeading, { passive: true });
+    document.addEventListener("astro:after-swap", updateActiveHeading);
+  })();
 </script>

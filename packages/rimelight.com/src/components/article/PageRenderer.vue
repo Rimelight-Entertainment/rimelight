@@ -5,7 +5,6 @@ import { getLocalizedContent, syncPageWithDefinition } from "@/utils/page"
 import { useI18n } from "@/composables/app/useI18n"
 import { usePageRegistry, useRC } from "@/composables"
 import { scv, cx } from "css-variants"
-import PageTOC from "./PageTOC.vue"
 import PagePropertiesRenderer from "./PagePropertiesRenderer.vue"
 import BlockViewRenderer from "./blocks/BlockViewRenderer.vue"
 import PageSurroundComponent from "./PageSurround.vue"
@@ -113,7 +112,6 @@ watch(
 <template>
   <div :class="styles.container">
     <div :class="styles.grid">
-      <PageTOC :page-blocks="page.blocks || []" :levels="[2, 3, 4]" :class="styles.toc" />
       <PagePropertiesRenderer
         v-model="page"
         :can-edit="canEdit"

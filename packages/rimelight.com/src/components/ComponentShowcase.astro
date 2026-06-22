@@ -228,9 +228,75 @@ if (isDynamic) {
   .code-area :global(pre) {
     padding: 1rem !important;
   }
+
+  /* Slot Visualizer */
+  .highlight-slots.active {
+    background: #ef4444;
+    color: white;
+  }
 </style>
 
 <script>
+  // Slot visualizer: refresh after dynamic content swaps
+  function refreshSlotVisualizer(showcase) {
+    const s = showcase.slotVis;
+    if (!s || !s.active) return;
+    if (s.panel) { s.panel.remove(); s.panel = null; }
+    if (s.overlay) { s.overlay.remove(); s.overlay = null; }
+    const pw = showcase.querySelector('.preview-slot-wrapper');
+    const pa = showcase.querySelector('.preview-area');
+    if (!pw || !pa) return;
+    const slots = new Set();
+    Array.from(pw.querySelectorAll('[data-slot]')).forEach(el => slots.add(el.getAttribute('data-slot')));
+    if (slots.size === 0) return;
+    s.panel = document.createElement('div');
+    slots.forEach(slot => {
+      const item = document.createElement('div');
+      item.textContent = slot;
+      item.style.cssText = 'cursor:pointer;padding:3px 6px;border-radius:3px;';
+      item.addEventListener('mouseenter', () => {
+        item.style.background = 'var(--color-accent)';
+        const target = pw.querySelector(`[data-slot="${slot}"]`);
+        if (!target) return;
+        const rect = target.getBoundingClientRect();
+        const areaRect = pa.getBoundingClientRect();
+        if (!s.overlay) {
+          s.overlay = document.createElement('div');
+          s.overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:2px;opacity:0;';
+          const label = document.createElement('span');
+          label.style.cssText = 'position:absolute;top:-20px;left:-2px;font-size:11px;font-weight:600;background:#ef4444;color:white;padding:1px 6px;border-radius:3px;white-space:nowrap;font-family:monospace;line-height:1.4;';
+          s.overlay.appendChild(label);
+          pa.appendChild(s.overlay);
+        }
+        s.overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
+        s.overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
+        s.overlay.style.width = (rect.width + 4) + 'px';
+        s.overlay.style.height = (rect.height + 4) + 'px';
+        s.overlay.style.opacity = '1';
+        s.overlay.querySelector('span').textContent = slot;
+      });
+      item.addEventListener('mouseleave', () => {
+        item.style.background = '';
+        if (s.overlay) s.overlay.style.opacity = '0';
+      });
+      s.panel.appendChild(item);
+    });
+    const btn = showcase.querySelector('.highlight-slots');
+    if (btn) {
+      const btnRect = btn.getBoundingClientRect();
+      s.panel.style.cssText = 'position:fixed;top:' + (btnRect.bottom + 4) + 'px;right:' + (window.innerWidth - btnRect.right + 4) + 'px;z-index:2147483646;min-width:120px;background:var(--color-background);border:1px solid var(--color-border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:6px;display:flex;flex-direction:column;gap:4px;font-size:12px;font-family:monospace;color:var(--color-foreground);';
+      document.body.appendChild(s.panel);
+    }
+  }
+
+  // Helper to get static/custom classes of an element (classes not managed by theme defaults)
+  function getCustomClasses(element, initialClassesForSlot) {
+    if (!element) return [];
+    const currentClasses = element.className.split(/\s+/).filter(Boolean);
+    const initialSet = new Set(initialClassesForSlot.split(/\s+/).filter(Boolean));
+    return currentClasses.filter(c => !initialSet.has(c));
+  }
+
   function initShowcases() {
     // 1. Initialize all showcases (Static & Dynamic) for tab-switching and copy functionality
     document.querySelectorAll('.component-showcase').forEach(showcase => {
@@ -277,15 +343,72 @@ if (isDynamic) {
           }
         });
       }
-    });
 
-    // Helper to get static/custom classes of an element (classes not managed by theme defaults)
-    function getCustomClasses(element, initialClassesForSlot) {
-      if (!element) return [];
-      const currentClasses = element.className.split(/\s+/).filter(Boolean);
-      const initialSet = new Set(initialClassesForSlot.split(/\s+/).filter(Boolean));
-      return currentClasses.filter(c => !initialSet.has(c));
-    }
+      // === Slot Visualizer ===
+      const previewWrapper = showcase.querySelector('.preview-slot-wrapper');
+      const previewArea = showcase.querySelector('.preview-area');
+      const highlightBtn = showcase.querySelector('.highlight-slots');
+      const svState = showcase.slotVis = { active: false, panel: null, overlay: null };
+
+      function svClearOverlay() {
+        if (svState.overlay) svState.overlay.style.opacity = '0';
+      }
+
+      function svHighlightSlot(slotName) {
+        const target = previewWrapper.querySelector(`[data-slot="${slotName}"]`);
+        if (!target) return;
+        const rect = target.getBoundingClientRect();
+        const areaRect = previewArea.getBoundingClientRect();
+        if (!svState.overlay) {
+          svState.overlay = document.createElement('div');
+          svState.overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:2px;opacity:0;';
+          const label = document.createElement('span');
+          label.style.cssText = 'position:absolute;top:-20px;left:-2px;font-size:11px;font-weight:600;background:#ef4444;color:white;padding:1px 6px;border-radius:3px;white-space:nowrap;font-family:monospace;line-height:1.4;';
+          svState.overlay.appendChild(label);
+          previewArea.appendChild(svState.overlay);
+        }
+        svState.overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
+        svState.overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
+        svState.overlay.style.width = (rect.width + 4) + 'px';
+        svState.overlay.style.height = (rect.height + 4) + 'px';
+        svState.overlay.style.opacity = '1';
+        svState.overlay.querySelector('span').textContent = slotName;
+      }
+
+      function svDeactivate() {
+        svState.active = false;
+        highlightBtn?.classList.remove('active');
+        if (svState.panel) { svState.panel.remove(); svState.panel = null; }
+        if (svState.overlay) { svState.overlay.remove(); svState.overlay = null; }
+      }
+
+      function svActivate() {
+        svState.active = true;
+        highlightBtn?.classList.add('active');
+        const slots = new Set();
+        const els = previewWrapper ? Array.from(previewWrapper.querySelectorAll('[data-slot]')) : [];
+        els.forEach(el => slots.add(el.getAttribute('data-slot')));
+        if (slots.size === 0) { svDeactivate(); return; }
+        svState.panel = document.createElement('div');
+        slots.forEach(slot => {
+          const item = document.createElement('div');
+          item.textContent = slot;
+          item.style.cssText = 'cursor:pointer;padding:3px 6px;border-radius:3px;';
+          item.addEventListener('mouseenter', () => { item.style.background = 'var(--color-accent)'; svHighlightSlot(slot); });
+          item.addEventListener('mouseleave', () => { item.style.background = ''; svClearOverlay(); });
+          svState.panel.appendChild(item);
+        });
+        const btnRect = highlightBtn.getBoundingClientRect();
+        svState.panel.style.cssText = 'position:fixed;top:' + (btnRect.bottom + 4) + 'px;right:' + (window.innerWidth - btnRect.right + 4) + 'px;z-index:2147483646;min-width:120px;background:var(--color-background);border:1px solid var(--color-border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:6px;display:flex;flex-direction:column;gap:4px;font-size:12px;font-family:monospace;color:var(--color-foreground);';
+        document.body.appendChild(svState.panel);
+      }
+
+      if (highlightBtn) {
+        highlightBtn.addEventListener('click', () => {
+          if (svState.active) svDeactivate(); else svActivate();
+        });
+      }
+    });
 
     // Apply pre-resolved theme classes dynamically while preserving custom static classes
     function applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses) {
@@ -446,25 +569,13 @@ if (isDynamic) {
               if (pVal) propString += ` ${key}="${pVal}"`;
             });
             
-            astroBody += `  \x3c${componentName}${propString} \x3e${val}\x3c/${componentName}\x3e` + "\n";
-            vueBody += `    \x3c${vueComponentName}${propString} \x3e${val}\x3c/${vueComponentName}\x3e` + "\n";
+            astroBody += `  \x3c${componentName}${propString} \x3e${val}\x3c/${componentName}\x3e\n`;
+            vueBody += `    \x3c${vueComponentName}${propString} \x3e${val}\x3c/${vueComponentName}\x3e\n`;
           });
 
-          astroCode = "---" + "\n" +
-            "import " + componentName + " from \"@rimelight/ui/components/astro/" + componentName + ".astro\";" + "\n" +
-            "---" + "\n\n" +
-            "\x3cdiv class=\"flex gap-4\"\x3e" + "\n" +
-            astroBody +
-            "\x3c/div\x3e";
+          astroCode = `---\nimport ${componentName} from "@rimelight/ui/components/astro/${componentName}.astro";\n---\n\n\x3cdiv class="flex gap-4"\x3e\n${astroBody}\x3c/div\x3e`;
 
-          vueCode = "\x3cscript setup\x3e" + "\n" +
-            "import " + vueComponentName + " from \"@rimelight/ui/components/vue/" + vueComponentName + ".vue\";" + "\n" +
-            "\x3c/script\x3e" + "\n\n" +
-            "\x3ctemplate\x3e" + "\n" +
-            "  \x3cdiv class=\"flex gap-4\"\x3e" + "\n" +
-            vueBody +
-            "  \x3c/div\x3e" + "\n" +
-            "\x3c/template\x3e";
+          vueCode = `\x3cscript setup\x3e\nimport ${vueComponentName} from "@rimelight/ui/components/vue/${vueComponentName}.vue";\n\x3c/script\x3e\n\n\x3ctemplate\x3e\n  \x3cdiv class="flex gap-4"\x3e\n${vueBody}  \x3c/div\x3e\n\x3c/template\x3e`;
         } else {
           let propString = '';
           propKeys.forEach((key) => {
@@ -472,21 +583,16 @@ if (isDynamic) {
             if (val) propString += ` ${key}="${val}"`;
           });
 
-          astroCode = "---" + "\n" +
-            "import " + componentName + " from \"@rimelight/ui/components/astro/" + componentName + ".astro\";" + "\n" +
-            "---" + "\n\n" +
-            "\x3c" + componentName + propString + " /\x3e";
+          astroCode = `---\nimport ${componentName} from "@rimelight/ui/components/astro/${componentName}.astro";\n---\n\n\x3c${componentName}${propString} /\x3e`;
 
-          vueCode = "\x3cscript setup\x3e" + "\n" +
-            "import " + vueComponentName + " from \"@rimelight/ui/components/vue/" + vueComponentName + ".vue\";" + "\n" +
-            "\x3c/script\x3e" + "\n\n" +
-            "\x3ctemplate\x3e" + "\n" +
-            "  \x3c" + vueComponentName + propString + " /\x3e" + "\n" +
-            "\x3c/template\x3e";
+          vueCode = `\x3cscript setup\x3e\nimport ${vueComponentName} from "@rimelight/ui/components/vue/${vueComponentName}.vue";\n\x3c/script\x3e\n\n\x3ctemplate\x3e\n  \x3c${vueComponentName}${propString} /\x3e\n\x3c/template\x3e`;
         }
 
         if (codeAstroElement) codeAstroElement.textContent = astroCode;
         if (codeVueElement) codeVueElement.textContent = vueCode;
+
+        // Refresh slot visualizer if active
+        refreshSlotVisualizer(showcase);
       }
 
       // Initialize compare toggles (for icon and pill-toggle patterns)

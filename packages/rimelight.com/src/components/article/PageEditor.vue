@@ -5,7 +5,6 @@ import { scv, cx } from "css-variants"
 import { useRC, usePageEditor } from "@/composables"
 import { useI18n } from "@/composables/app/useI18n"
 import { getLocalizedContent, syncPageWithDefinition, dehydratePageProperties } from "@/utils/page"
-import PageTOC from "./PageTOC.vue"
 import PagePropertiesEditor from "./PagePropertiesEditor.vue"
 import PageRenderer from "./PageRenderer.vue"
 import BlockEditor from "./blocks/BlockEditor.vue"
@@ -347,7 +346,6 @@ defineExpose({ undo, redo, canUndo, canRedo, resetHistory })
       >
         <div :class="styles.container">
           <div :class="styles.grid">
-            <PageTOC :page-blocks="page.blocks || []" :levels="[2, 3, 4]" :class="styles.toc" />
             <PagePropertiesEditor
               v-model="page"
               :on-fetch-pages="onFetchPages"

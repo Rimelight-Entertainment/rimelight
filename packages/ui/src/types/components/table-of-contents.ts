@@ -16,6 +16,12 @@ export interface TableOfContentsProps {
    */
   tableOfContents?: false | TableOfContentsConfig
   /**
+   * CSS selector for the container element whose headings should be tracked.
+   *
+   * @default ".markdown-content"
+   */
+  containerSelector?: string
+  /**
    * The component the root element should render as.
    *
    * @default "div"

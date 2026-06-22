@@ -1,10 +1,10 @@
-interface TurnstileResponse {
-  "success": boolean
-  "error-codes"?: string[]
-}
-
 export function isTurnstileEnabled(env: any): boolean {
   return !!(env?.TURNSTILE_SITE_KEY && env?.TURNSTILE_SECRET_KEY)
+}
+
+interface VerifyResponse {
+  "success": boolean
+  "error-codes"?: string[]
 }
 
 export async function verifyTurnstile(
@@ -12,7 +12,6 @@ export async function verifyTurnstile(
   env: any,
   remoteIP?: string
 ): Promise<{ success: boolean; error?: string }> {
-  // Fail-open for local dev / unconfigured environments
   if (!isTurnstileEnabled(env)) {
     console.log("[Turnstile] Keys missing. Skipping verification (Failing Open).")
     return { success: true }
@@ -40,7 +39,7 @@ export async function verifyTurnstile(
       }
     }
 
-    const data = await response.json()
+    const data: VerifyResponse = await response.json()
     if (data.success) {
       return { success: true }
     } else {
