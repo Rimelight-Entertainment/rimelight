@@ -29,23 +29,117 @@ export interface ResolvedScope {
   active?: boolean | undefined
 }
 
-function findFirstHref(items: SidebarItem[], locale: string): string | undefined {
+export function formatDocsUrl(
+  href: string,
+  locale: string,
+  activeVersion?: string,
+  includeVersionInUrl?: boolean
+): string {
+  let url = href.replace("{locale}", locale)
+  if (activeVersion && includeVersionInUrl) {
+    if (url.includes(`/${activeVersion}/`) || url.endsWith(`/${activeVersion}`)) {
+      return url
+    }
+    const docsPattern = new RegExp(`(/${locale}/docs)(/|$)`)
+    const companyDocsPattern = new RegExp(`(/${locale}/company/docs)(/|$)`)
+
+    if (companyDocsPattern.test(url)) {
+      url = url.replace(companyDocsPattern, `$1/${activeVersion}$2`)
+    } else if (docsPattern.test(url)) {
+      url = url.replace(docsPattern, `$1/${activeVersion}$2`)
+    }
+
+    url = url.replace(/\/{2,}/g, "/")
+  }
+  return url
+}
+
+export interface DocEntry {
+  id: string
+  [key: string]: any
+}
+
+export function getDocsVersions(entries: DocEntry[], locale: string): string[] {
+  const versions = new Set<string>()
+  for (const entry of entries) {
+    const id = entry.id.replace(/\\/g, "/")
+    const parts = id.split("/")
+    // File structure is: [version]/[locale]/[...slug]
+    if (parts[1] === locale && parts[0]?.startsWith("v")) {
+      versions.add(parts[0])
+    }
+  }
+  return Array.from(versions).toSorted((a, b) => {
+    return b.localeCompare(a, undefined, { numeric: true, sensitivity: "base" })
+  })
+}
+
+export function parseDocsSlug(slug: string | undefined, versions: string[]) {
+  if (versions.length === 0) {
+    return {
+      activeVersion: "",
+      contentPath: slug || "index",
+      includeVersionInUrl: false
+    }
+  }
+
+  const defaultVersion = versions[0]
+  const isMultiVersion = versions.length > 1
+
+  if (!slug) {
+    return {
+      activeVersion: defaultVersion,
+      contentPath: "index",
+      includeVersionInUrl: isMultiVersion
+    }
+  }
+
+  const parts = slug.split("/")
+  const firstPart = parts[0]
+
+  if (firstPart && versions.includes(firstPart)) {
+    return {
+      activeVersion: firstPart,
+      contentPath: parts.slice(1).join("/") || "index",
+      includeVersionInUrl: isMultiVersion
+    }
+  }
+
+  return {
+    activeVersion: defaultVersion,
+    contentPath: slug || "index",
+    includeVersionInUrl: isMultiVersion
+  }
+}
+
+function findFirstHref(
+  items: SidebarItem[],
+  locale: string,
+  activeVersion?: string,
+  includeVersionInUrl?: boolean
+): string | undefined {
   for (const item of items) {
-    if (item.href) return item.href.replace("{locale}", locale)
+    if (item.href) return formatDocsUrl(item.href, locale, activeVersion, includeVersionInUrl)
     const childItems = item.children || item.items
     if (childItems) {
-      const found = findFirstHref(childItems, locale)
+      const found = findFirstHref(childItems, locale, activeVersion, includeVersionInUrl)
       if (found) return found
     }
   }
   return undefined
 }
 
-function getScopePrefix(items: SidebarItem[], locale: string): string {
+function getScopePrefix(
+  items: SidebarItem[],
+  locale: string,
+  activeVersion?: string,
+  includeVersionInUrl?: boolean
+): string {
   const allHrefs: string[] = []
 
   function collect(item: SidebarItem) {
-    if (item.href) allHrefs.push(item.href.replace("{locale}", locale))
+    if (item.href)
+      allHrefs.push(formatDocsUrl(item.href, locale, activeVersion, includeVersionInUrl))
     const childItems = item.children || item.items
     if (childItems) childItems.forEach(collect)
   }
@@ -65,16 +159,24 @@ function getScopePrefix(items: SidebarItem[], locale: string): string {
   return "/" + firstPart.slice(0, commonLen).join("/") + "/"
 }
 
-function hasPath(items: SidebarItem[], locale: string, normPath: string): boolean {
+function hasPath(
+  items: SidebarItem[],
+  locale: string,
+  normPath: string,
+  activeVersion?: string,
+  includeVersionInUrl?: boolean
+): boolean {
   for (const item of items) {
     if (
       item.href &&
-      item.href.replace("{locale}", locale).replace(/\/$/, "").toLowerCase() === normPath
+      formatDocsUrl(item.href, locale, activeVersion, includeVersionInUrl)
+        .replace(/\/$/, "")
+        .toLowerCase() === normPath
     ) {
       return true
     }
     const childItems = item.children || item.items
-    if (childItems && hasPath(childItems, locale, normPath)) {
+    if (childItems && hasPath(childItems, locale, normPath, activeVersion, includeVersionInUrl)) {
       return true
     }
   }
@@ -84,7 +186,9 @@ function hasPath(items: SidebarItem[], locale: string, normPath: string): boolea
 export async function getDocsSidebar(
   config: DocsConfig,
   locale: string,
-  currentPath: string
+  currentPath: string,
+  activeVersion?: string,
+  includeVersionInUrl?: boolean
 ): Promise<{
   items: ResolvedSidebarItem[]
   scopes: ResolvedScope[]
@@ -100,26 +204,30 @@ export async function getDocsSidebar(
     const id = scope.id || scope.label
     let href = scope.href || ""
     if (!href && scope.items && scope.items.length > 0) {
-      href = findFirstHref(scope.items, locale) || ""
+      href = findFirstHref(scope.items, locale, activeVersion, includeVersionInUrl) || ""
     }
     return {
       id,
       label: scope.label,
-      href: href.replace("{locale}", locale),
+      href: formatDocsUrl(href, locale, activeVersion, includeVersionInUrl),
       icon: scope.icon
     }
   })
 
   // Compute scope prefixes for active detection (separate from clickable hrefs)
   const scopePrefixes: string[] = sidebarScopes.map((scope) =>
-    scope.items ? getScopePrefix(scope.items, locale) : ""
+    scope.items ? getScopePrefix(scope.items, locale, activeVersion, includeVersionInUrl) : ""
   )
 
   let activeScope = scopes.find((s) => normPath === s.href.replace(/\/$/, "").toLowerCase())
   if (!activeScope) {
     for (let i = 0; i < sidebarScopes.length; i++) {
       const scope = sidebarScopes[i]
-      if (scope && scope.items && hasPath(scope.items, locale, normPath)) {
+      if (
+        scope &&
+        scope.items &&
+        hasPath(scope.items, locale, normPath, activeVersion, includeVersionInUrl)
+      ) {
         activeScope = scopes[i]
         break
       }
@@ -151,7 +259,9 @@ export async function getDocsSidebar(
   async function resolveItem(item: SidebarItem): Promise<ResolvedSidebarItem[]> {
     const resolved: ResolvedSidebarItem = {
       label: item.label || "",
-      href: item.href ? item.href.replace("{locale}", locale) : undefined,
+      href: item.href
+        ? formatDocsUrl(item.href, locale, activeVersion, includeVersionInUrl)
+        : undefined,
       icon: item.icon,
       badge: item.badge,
       collapsed: item.collapsed

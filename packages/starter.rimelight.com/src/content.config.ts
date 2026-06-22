@@ -26,7 +26,15 @@ const blog = defineCollection({
 })
 
 const docs = defineCollection({
-  loader: glob({ base: "./src/content/docs", pattern: "**/*.{md,mdx}" }),
+  loader: glob({
+    base: "./src/content/docs",
+    pattern: "**/*.{md,mdx}",
+    generateId: ({ entry }) =>
+      entry
+        .replace(/\/?index\.(md|mdx)$/, "")
+        .replace(/\.(md|mdx)$/, "")
+        .replace(/\/$/, "")
+  }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
