@@ -22,24 +22,21 @@
   "type": "module",
   "scripts": {
     "generate-types": "wrangler types",
-    "knip": "knip",
     "astro": "astro",
     "dev": "astro dev",
     "build": "tsx scripts/generate-social-cards.ts && astro build",
     "preview": "astro preview",
     "generate:og": "tsx scripts/generate-social-cards.ts",
-    "generate:og:force": "tsx scripts/generate-social-cards.ts --force",
-    "lunaria:build": "lunaria build",
-    "lunaria:preview": "lunaria preview"
+    "generate:og:force": "tsx scripts/generate-social-cards.ts --force"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.0.0",
     "@astrojs/mdx": "7.0.0",
     "@astrojs/rss": "4.0.18",
     "@astrojs/sitemap": "3.7.3",
-    "@rimelight/i18n": "workspace:^0.0.1",
-    "@rimelight/ui": "workspace:^0.0.34",
-    "astro": "7.0.0",
+    "@rimelight/i18n": "workspace:*",
+    "@rimelight/ui": "workspace:*",
+    "astro": "7.0.2",
     "better-auth": "1.6.19",
     "dotenv": "17.4.2",
     "drizzle-orm": "0.45.2",
@@ -53,17 +50,17 @@
     "@iconify-json/logos": "1.2.11",
     "@iconify-json/lucide": "1.2.114",
     "@libsql/client": "0.17.4",
-    "@lunariajs/core": "0.1.1",
     "@types/node": "26.0.0",
     "@unocss/eslint-plugin": "66.7.2",
     "drizzle-kit": "0.31.10",
     "eslint-plugin-regexp": "3.1.0",
     "tsx": "4.22.4",
     "typescript": "6.0.3",
+    "unocss": "66.7.2",
     "vite-plus": "0.2.1"
   },
   "engines": {
     "node": ">=25.2.1"
   },
-  "packageManager": "pnpm@11.8.0"
+  "packageManager": "pnpm@11.9.0"
 }
