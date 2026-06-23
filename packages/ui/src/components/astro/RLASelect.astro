@@ -78,61 +78,66 @@ const initialLabel = selectedItem ? selectedItem.label : ""
 <script>
   class RLASelect extends HTMLElement {
     private selectCleanup: (() => void) | null = null;
+    private initTimeout: any = null;
 
     connectedCallback() {
       this.style.display = 'contents';
-      const wrapper = this.querySelector("[data-select-wrapper]") as HTMLElement | null;
-      if (!wrapper) return;
+      this.initTimeout = setTimeout(() => {
+        const wrapper = this.querySelector("[data-select-wrapper]") as HTMLElement | null;
+        if (!wrapper) return;
 
-      const trigger = wrapper.querySelector("[data-select-trigger]") as HTMLButtonElement;
-      const dropdown = wrapper.querySelector("[data-select-dropdown]") as HTMLDivElement;
-      const items = wrapper.querySelectorAll<HTMLElement>("[data-select-item]");
-      const valueSpan = wrapper.querySelector("[data-select-value]");
-      const hiddenInput = this.querySelector("[data-select-hidden-input]") as HTMLInputElement | null;
+        const trigger = wrapper.querySelector("[data-select-trigger]") as HTMLButtonElement;
+        const dropdown = wrapper.querySelector("[data-select-dropdown]") as HTMLDivElement;
+        const items = wrapper.querySelectorAll<HTMLElement>("[data-select-item]");
+        const valueSpan = wrapper.querySelector("[data-select-value]");
+        const hiddenInput = this.querySelector("[data-select-hidden-input]") as HTMLInputElement | null;
 
-      if (!trigger || !dropdown) return;
+        if (!trigger || !dropdown) return;
 
-      const onTriggerClick = (e: MouseEvent) => {
-        e.stopPropagation();
-        dropdown.classList.toggle("hidden");
-      };
-      trigger.addEventListener("click", onTriggerClick);
-
-      const itemCleanups: (() => void)[] = [];
-      items.forEach(item => {
-        const onItemClick = (e: MouseEvent) => {
+        const onTriggerClick = (e: MouseEvent) => {
           e.stopPropagation();
-          const val = (item as HTMLElement).dataset.value || "";
-          const label = (item as HTMLElement).dataset.label || "";
-          
-          if (hiddenInput) {
-            hiddenInput.value = val;
-            hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
-          }
-          if (valueSpan) valueSpan.textContent = label;
-          
-          items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
-          item.querySelector("[data-check-icon]")?.classList.remove("hidden");
-          
+          dropdown.classList.toggle("hidden");
+        };
+        trigger.addEventListener("click", onTriggerClick);
+
+        const itemCleanups: (() => void)[] = [];
+        items.forEach(item => {
+          const onItemClick = (e: MouseEvent) => {
+            e.stopPropagation();
+            const val = (item as HTMLElement).dataset.value || "";
+            const label = (item as HTMLElement).dataset.label || "";
+            if (hiddenInput) {
+              hiddenInput.value = val;
+              hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+            if (valueSpan) valueSpan.textContent = label;
+            
+            items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
+            item.querySelector("[data-check-icon]")?.classList.remove("hidden");
+            
+            dropdown.classList.add("hidden");
+          };
+          item.addEventListener("click", onItemClick);
+          itemCleanups.push(() => item.removeEventListener("click", onItemClick));
+        });
+
+        const onDocumentClick = () => {
           dropdown.classList.add("hidden");
         };
-        item.addEventListener("click", onItemClick);
-        itemCleanups.push(() => item.removeEventListener("click", onItemClick));
-      });
+        document.addEventListener("click", onDocumentClick);
 
-      const onDocumentClick = () => {
-        dropdown.classList.add("hidden");
-      };
-      document.addEventListener("click", onDocumentClick);
-
-      this.selectCleanup = () => {
-        trigger.removeEventListener("click", onTriggerClick);
-        itemCleanups.forEach(fn => fn());
-        document.removeEventListener("click", onDocumentClick);
-      };
+        this.selectCleanup = () => {
+          trigger.removeEventListener("click", onTriggerClick);
+          itemCleanups.forEach(fn => fn());
+          document.removeEventListener("click", onDocumentClick);
+        };
+      }, 0);
     }
 
     disconnectedCallback() {
+      if (this.initTimeout) {
+        clearTimeout(this.initTimeout);
+      }
       if (this.selectCleanup) {
         this.selectCleanup();
         this.selectCleanup = null;

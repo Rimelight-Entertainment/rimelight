@@ -49,7 +49,8 @@ function getLocaleDisplayName(localeCode: string): string {
 }
 
 const items = processedLocales.map((item) => {
-    const targetUrl = getRelativeLocaleUrl(item.code, Astro.url.pathname.replace(/^\/[^/]+/, ''));
+    const basePath = Astro.url.pathname.replace(/^\/[^/]+/, '') || '/';
+    const targetUrl = getRelativeLocaleUrl(item.code, basePath) + Astro.url.search;
     return {
         label: item.label !== item.code ? item.label : getLocaleDisplayName(item.code),
         value: targetUrl,

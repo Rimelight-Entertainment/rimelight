@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "description": "Rimelight i18n — unified translation loader with optional KV backing",
   "files": [

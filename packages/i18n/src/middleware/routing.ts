@@ -1,5 +1,7 @@
-const SUPPORTED_LOCALES = new Set(["en", "pt", "es"])
-const DEFAULT_LOCALE = "en"
+import { locales, defaultLocale } from "virtual:rimelight-i18n-config"
+
+const SUPPORTED_LOCALES = new Set(locales)
+const DEFAULT_LOCALE = defaultLocale
 
 function getPreferredLocale(acceptLanguage: string | null): string {
   if (!acceptLanguage) return DEFAULT_LOCALE

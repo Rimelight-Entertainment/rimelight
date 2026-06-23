@@ -30,7 +30,10 @@ export function rimelightI18n(options?: RimelightI18nOptions): any {
   const rimelightI18nCore: AstroIntegration = {
     name: "@rimelight/i18n",
     hooks: {
-      "astro:config:setup": ({ addMiddleware, updateConfig, logger }) => {
+      "astro:config:setup": ({ config, addMiddleware, updateConfig, logger }) => {
+        const locales = config.i18n?.locales ?? ["en"]
+        const defaultLocale = config.i18n?.defaultLocale ?? "en"
+
         addMiddleware({
           entrypoint: "@rimelight/i18n/middleware",
           order: "pre"
@@ -39,7 +42,25 @@ export function rimelightI18n(options?: RimelightI18nOptions): any {
           vite: {
             ssr: {
               noExternal: ["@rimelight/i18n"]
-            }
+            },
+            plugins: [
+              {
+                name: "vite-plugin-rimelight-i18n-config",
+                resolveId(id) {
+                  if (id === "virtual:rimelight-i18n-config") {
+                    return "\0" + id
+                  }
+                },
+                load(id) {
+                  if (id === "\0virtual:rimelight-i18n-config") {
+                    return `
+                      export const locales = ${JSON.stringify(locales)};
+                      export const defaultLocale = ${JSON.stringify(defaultLocale)};
+                    `
+                  }
+                }
+              }
+            ]
           }
         })
         if (validateExtraction) {
