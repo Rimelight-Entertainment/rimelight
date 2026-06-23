@@ -1,7 +1,5 @@
 configDependencies:
   "@pnpm/pacquet": 0.11.9
-packages:
-  - "packages/*"
 preferWorkspacePackages: true
 linkWorkspacePackages: true
 saveWorkspaceProtocol: false
@@ -42,8 +40,6 @@ peerDependencyRules:
     - vite
     - vitest
   allowedVersions:
-    "astro-nanostores-i18n>astro": ">=6.0.0 || >=7.0.0-alpha.0"
-    "astro-expressive-code>astro": ">=6.0.0 || >=7.0.0-alpha.0"
     vite: "*"
     vitest: "*"
 allowBuilds:

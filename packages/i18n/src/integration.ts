@@ -87,7 +87,7 @@ export function rimelightI18n(options?: RimelightI18nOptions): any {
   return [
     nanostoresI18n({
       translationLoader,
-      addMiddleware: true,
+      addMiddleware: false,
       translations: nanostoresTranslations
     }),
     rimelightI18nCore
