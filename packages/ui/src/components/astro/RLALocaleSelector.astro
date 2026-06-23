@@ -112,14 +112,13 @@ const selectUi = {
     class RLALocaleSelector extends HTMLElement {
         connectedCallback() {
             this.style.display = 'contents';
-            const hiddenInput = this.querySelector('[data-select-hidden-input]') as HTMLInputElement | null;
-            if (!hiddenInput) return;
-
-            hiddenInput.addEventListener('change', (event) => {
+            this.addEventListener('change', (event) => {
                 const target = event.target as HTMLInputElement;
-                const targetUrl = target.value;
-                if (targetUrl) {
-                    window.location.href = targetUrl;
+                if (target && target.hasAttribute('data-select-hidden-input')) {
+                    const targetUrl = target.value;
+                    if (targetUrl) {
+                        window.location.href = targetUrl;
+                    }
                 }
             });
         }
