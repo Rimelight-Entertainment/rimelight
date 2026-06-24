@@ -5,13 +5,10 @@ export const createPopoverTheme = (_colors: readonly string[] = defaultColors) =
   defineTheme({
     slots: ["root", "trigger", "content"],
     base: {
-      root: "relative inline-block group/popover",
+      root: "relative inline-block",
       trigger: "",
       content: [
-        "absolute z-50 w-72 rounded-lg border border-border bg-popover p-4 text-popover-foreground shadow-md outline-none",
-        "transition-all duration-200 invisible opacity-0 scale-95 origin-center",
-        "group-hover/popover:visible group-hover/popover:opacity-100 group-hover/popover:scale-100",
-        "focus-within:visible focus-within:opacity-100 focus-within:scale-100"
+        "absolute z-50 w-72 rounded-xl border border-border bg-background p-4 text-foreground shadow-lg outline-none"
       ]
     },
     variants: {

@@ -21,16 +21,106 @@ const {
 const classes = resolveClasses(popover, {
   placement
 }, useUi("popover", uiProp), className)
-const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
 ---
-<div class={classes.root} data-slot="popover-container" {...rest}>
-  <div class={classes.trigger} data-slot="trigger">
+<div class={classes.root} data-slot="popover-container" data-placement={placement} {...rest}>
+  <div class={`${classes.trigger} popover-trigger`} data-slot="trigger">
     <slot name="trigger">
-      {triggerLabel && <button type="button" class="cursor-pointer" popovertarget={popoverId}>{triggerLabel}</button>}
+      {triggerLabel && <button type="button" class="cursor-pointer">{triggerLabel}</button>}
     </slot>
   </div>
 
-  <div id={popoverId} popover class={classes.content} data-slot="content">
+  <div class={`${classes.content} popover-content hidden`} data-slot="content">
     <slot />
   </div>
 </div>
+
+<script>
+  function initPopovers() {
+    document.querySelectorAll('[data-slot="popover-container"]').forEach(container => {
+      if (container["dataset"] && container["dataset"].popoverInitialized) return;
+      if (container["dataset"]) container["dataset"].popoverInitialized = "true";
+
+      const trigger = container.querySelector('.popover-trigger');
+      const content = container.querySelector('.popover-content');
+
+      if (!trigger || !content) return;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !content.classList.contains('hidden');
+        
+        document.querySelectorAll('.popover-content').forEach(otherContent => {
+          if (otherContent !== content && !otherContent.classList.contains('hidden')) {
+            otherContent.classList.add('hidden');
+            otherContent["style"].left = '';
+            otherContent["style"].right = '';
+            otherContent["style"].transform = '';
+            otherContent.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+          }
+        });
+
+        if (isOpen) {
+          content.classList.add('hidden');
+          content["style"].left = '';
+          content["style"].right = '';
+          content["style"].transform = '';
+          content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+        } else {
+          content.classList.remove('hidden');
+
+          // Reset styles to measure original computed bounds
+          content["style"].left = '';
+          content["style"].right = '';
+          content["style"].transform = '';
+
+          const rect = content.getBoundingClientRect();
+          const viewportWidth = window.innerWidth;
+          const placement = container.getAttribute('data-placement') || 'bottom';
+          
+          let shift = 0;
+          const safetyMargin = 24;
+          if (rect.right > viewportWidth - safetyMargin) {
+            shift = (viewportWidth - safetyMargin) - rect.right;
+          } else if (rect.left < safetyMargin) {
+            shift = safetyMargin - rect.left;
+          }
+
+          if (shift !== 0) {
+            const isCentered = (placement === 'top' || placement === 'bottom') && 
+                               !content.classList.contains('right-0') && 
+                               !content.classList.contains('left-0');
+            if (isCentered) {
+              content["style"].transform = `translateX(calc(-50% + ${shift}px))`;
+            } else {
+              content["style"].transform = `translateX(${shift}px)`;
+            }
+          }
+
+          content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: true } }));
+        }
+      });
+
+      content.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+  }
+
+  if (!window["hasGlobalPopoverListener"]) {
+    window["hasGlobalPopoverListener"] = true;
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.popover-content').forEach(content => {
+        if (!content.classList.contains('hidden')) {
+          content.classList.add('hidden');
+          content["style"].left = '';
+          content["style"].right = '';
+          content["style"].transform = '';
+          content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+        }
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initPopovers);
+  initPopovers();
+</script>

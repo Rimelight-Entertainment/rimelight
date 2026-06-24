@@ -1,6 +1,7 @@
 ---
 import RLASelect from "@rimelight/ui/components/astro/RLASelect.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
 import { scv } from "css-variants";
 
 interface Props {
@@ -111,7 +112,7 @@ if (componentKey) {
 }
 ---
 
-<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(resolvedTheme?.slots || [])}>
+<div class={`component-showcase border border-border rounded-xl overflow-visible bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(resolvedTheme?.slots || [])}>
   {(title || description) && (
     <div class="px-4 py-3 border-b border-border bg-muted/10">
       {title && <h4 class="text-sm font-semibold m-0 text-foreground">{title}</h4>}
@@ -168,20 +169,18 @@ if (componentKey) {
     </div>
 
     <div class="flex items-center gap-1.5">
-         <div class="relative inline-block highlight-slots-wrapper">
-           <RLAButton class="highlight-slots" size="sm" variant="ghost" color="neutral" title="Highlight component slots" square>
-              <span class="i-lucide-boxes size-4"></span>
-           </RLAButton>
-           <div class="slots-popover hidden absolute right-0 top-full mt-2 z-50 w-80 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-lg outline-none text-xs flex flex-col gap-3">
-             <div class="flex items-center justify-between border-b border-border pb-2">
-               <span class="font-semibold text-sm text-foreground">Theme slots</span>
-               <span class="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Visualizer</span>
-             </div>
-             <div class="slots-list flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
-               <!-- Slots populated by JS -->
-             </div>
-           </div>
-         </div>
+         <RLAPopover class="highlight-slots-wrapper" placement="bottom" ui={{ content: "right-0 w-80 text-xs flex flex-col gap-3" }}>
+            <RLAButton slot="trigger" class="highlight-slots" size="sm" variant="ghost" color="neutral" title="Highlight component slots" square>
+               <span class="i-lucide-boxes size-4"></span>
+            </RLAButton>
+            <div class="flex items-center justify-between border-b border-border pb-2">
+              <span class="font-semibold text-sm text-foreground">Theme slots</span>
+              <span class="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Visualizer</span>
+            </div>
+            <div class="slots-list flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
+              <!-- Slots populated by JS -->
+            </div>
+         </RLAPopover>
          <RLAButton href={playground || "#"} target={playground ? "_blank" : undefined} rel="noopener noreferrer" class="open-playground" size="sm" variant="ghost" color="neutral" title="Open in Playground" square>
             <span class="i-lucide-flask-conical size-4"></span>
          </RLAButton>
@@ -231,6 +230,19 @@ if (componentKey) {
 <style>
   .component-showcase {
     margin-block: 1.5rem;
+    overflow: visible;
+  }
+
+  .component-showcase > :first-child {
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+  }
+
+  .component-showcase > :last-child,
+  .component-showcase > :last-child pre,
+  .component-showcase > :last-child code {
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
   }
 
   .showcase-tab.active {
@@ -459,56 +471,35 @@ if (componentKey) {
 
       // === Slot Visualizer ===
       const highlightBtn = showcase.querySelector('.highlight-slots');
-      const popover = showcase.querySelector('.slots-popover');
+      const popoverContent = showcase.querySelector('.popover-content');
       const svState = showcase.slotVis = { active: false, overlay: null };
 
       function svDeactivate() {
         svState.active = false;
         highlightBtn?.classList.remove('active');
-        popover?.classList.add('hidden');
         if (svState.overlay) { svState.overlay.remove(); svState.overlay = null; }
       }
 
       function svActivate() {
-        document.querySelectorAll('.component-showcase').forEach(other => {
-          if (other !== showcase && other.slotVis) {
-            other.slotVis.deactivate?.();
-          }
-        });
-        
         svState.active = true;
         highlightBtn?.classList.add('active');
-        popover?.classList.remove('hidden');
         refreshSlotVisualizer(showcase);
       }
 
       svState.activate = svActivate;
       svState.deactivate = svDeactivate;
 
-      if (highlightBtn) {
-        highlightBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (svState.active) svDeactivate(); else svActivate();
-        });
-      }
-
-      if (popover) {
-        popover.addEventListener('click', (e) => {
-          e.stopPropagation();
+      if (popoverContent) {
+        popoverContent.addEventListener('popover-toggle', (e) => {
+          const isOpen = e.detail && e.detail.open;
+          if (isOpen) {
+            svActivate();
+          } else {
+            svDeactivate();
+          }
         });
       }
     });
-
-    if (!window.hasGlobalShowcaseListener) {
-      window.hasGlobalShowcaseListener = true;
-      document.addEventListener('click', () => {
-        document.querySelectorAll('.component-showcase').forEach(showcase => {
-          if (showcase.slotVis && showcase.slotVis.active) {
-            showcase.slotVis.deactivate();
-          }
-        });
-      });
-    }
 
     // Apply pre-resolved theme classes dynamically while preserving custom static classes
     function applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses) {
