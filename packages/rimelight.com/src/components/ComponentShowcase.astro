@@ -314,7 +314,8 @@ if (componentKey) {
         if (slot === 'root') {
           target = previewWrapper.querySelector('[data-slot="root"]') || previewWrapper.firstElementChild;
         } else {
-          target = previewWrapper.querySelector(`[data-slot="${slot}"]`);
+          const kebabSlot = slot.replace(/([A-Z])/g, "-$1").toLowerCase();
+          target = previewWrapper.querySelector(`[data-slot="${slot}"]`) || previewWrapper.querySelector(`[data-slot="${kebabSlot}"]`);
         }
       }
 
