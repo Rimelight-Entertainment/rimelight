@@ -1,6 +1,6 @@
 ---
 title: "Button"
-description: "A button element that can be used to trigger actions or navigate to other pages."
+description: "A Button element that can act as a link or trigger an action."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -31,7 +31,7 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
   <div slot="code-vue">
     ```vue
     <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+      import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
     </script>
 
     <template>
@@ -44,39 +44,44 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ## Examples
 
-<ComponentShowcase
-  title="Variants"
-  description="Use the `variant` prop to change the visual style of the button."
-  togglingPattern="tab-segmented"
-  componentName="RLAButton"
-  propsConfig={{
-    variant: ["solid", "outline", "soft", "subtle", "ghost", "link"]
-  }}
-  defaultProps={{
-    variant: "solid"
-  }}
->
-  <RLAButton label="Button" />
-</ComponentShowcase>
+### Label
 
 <ComponentShowcase
-  title="Sizes"
-  description="Use the `size` prop to change the size of the button."
-  togglingPattern="tab-segmented"
-  componentName="RLAButton"
-  propsConfig={{
-    size: ["xs", "sm", "md", "lg", "xl"]
-  }}
-  defaultProps={{
-    size: "md"
-  }}
+  title="Label"
+  description="Use the `label` prop to set the label of the Button."
 >
   <RLAButton label="Button" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
+
+    <RLAButton label="Button" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <RLVButton label="Button" />
+    </template>
+    ```
+
+  </div>
 </ComponentShowcase>
 
+### Color
+
 <ComponentShowcase
-  title="Colors"
-  description="Use the `color` prop to change the color of the button."
+  title="Color"
+  description="Use the `color` prop to change the color of the Button."
   togglingPattern="tab-segmented"
   componentName="RLAButton"
   propsConfig={{
@@ -98,258 +103,484 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
   }}
 >
   <RLAButton label="Button" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
+
+    <RLAButton color="primary" label="Button" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <RLVButton color="primary" label="Button" />
+    </template>
+    ```
+
+  </div>
 </ComponentShowcase>
 
+### Variant
+
 <ComponentShowcase
-  title="Leading Icon"
-  description="Use the `leadingIcon` prop with any icon class to place an icon before the label."
+  title="Variant"
+  description="Use the `variant` prop to change the variant of the Button."
+  togglingPattern="tab-segmented"
+  componentName="RLAButton"
+  propsConfig={{
+    variant: ["solid", "outline", "soft", "subtle", "ghost", "link"]
+  }}
+  defaultProps={{
+    variant: "solid"
+  }}
 >
-  <div class="flex flex-wrap items-center gap-3">
-    <RLAButton leadingIcon="i-lucide-download" label="Download" />
-    <RLAButton leadingIcon="i-lucide-plus" label="Add" />
-    <RLAButton leadingIcon="i-lucide-search" label="Search" />
-    <RLAButton leadingIcon="i-lucide-star" label="Star" />
-    <RLAButton color="error" leadingIcon="i-lucide-trash-2" label="Delete" />
+  <RLAButton label="Button" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
+
+    <RLAButton variant="solid" label="Button" />
+    ```
+
   </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <RLVButton variant="solid" label="Button" />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Size
+
+<ComponentShowcase
+  title="Size"
+  description="Use the `size` prop to change the size of the Button."
+  togglingPattern="tab-segmented"
+  componentName="RLAButton"
+  propsConfig={{
+    size: ["xs", "sm", "md", "lg", "xl"]
+  }}
+  defaultProps={{
+    size: "md"
+  }}
+>
+  <RLAButton label="Button" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
+
+    <RLAButton size="md" label="Button" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <RLVButton size="md" label="Button" />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Leading Icon
+
+<ComponentShowcase title="Leading Icon">
+  <span slot="description">
+    Use the `leadingIcon` prop with any [icon class](/company/docs/packages/rimelight-ui/architecture/icons/) to place an Icon before the label.
+  </span>
+
+<div class="flex flex-wrap items-center gap-md">
+  <RLAButton leadingIcon="i-lucide-download" label="Download" />
+</div>
 
 <div slot="code-astro">
   ```astro
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
   <RLAButton leadingIcon="i-lucide-download" label="Download" />
-  <RLAButton leadingIcon="i-lucide-plus" label="Add" />
-  <RLAButton leadingIcon="i-lucide-search" label="Search" />
-  <RLAButton leadingIcon="i-lucide-star" label="Star" />
-  <RLAButton color="error" leadingIcon="i-lucide-trash-2" label="Delete" />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
       <RLVButton leading-icon="i-lucide-download" label="Download" />
-      <RLVButton leading-icon="i-lucide-plus" label="Add" />
-      <RLVButton leading-icon="i-lucide-search" label="Search" />
-      <RLVButton leading-icon="i-lucide-star" label="Star" />
-      <RLVButton color="error" leading-icon="i-lucide-trash-2" label="Delete" />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Trailing Icon"
-  description="Use the `trailingIcon` prop with any icon class to place an icon after the label."
->
-  <div class="flex flex-wrap items-center gap-3">
-    <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
-    <RLAButton label="Options" trailingIcon="i-lucide-chevron-down" />
-    <RLAButton variant="outline" label="Open" trailingIcon="i-lucide-external-link" />
-    <RLAButton color="success" label="Done" trailingIcon="i-lucide-check" />
-  </div>
+### Trailing Icon
+
+<ComponentShowcase title="Trailing Icon">
+  <span slot="description">
+    Use the `trailingIcon` prop with any [icon class](/company/docs/packages/rimelight-ui/architecture/icons/) to place an Icon after the label.
+  </span>
+
+<div class="flex flex-wrap items-center gap-md">
+  <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
+</div>
 
 <div slot="code-astro">
   ```astro
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
   <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
-  <RLAButton label="Options" trailingIcon="i-lucide-chevron-down" />
-  <RLAButton variant="outline" label="Open" trailingIcon="i-lucide-external-link" />
-  <RLAButton color="success" label="Done" trailingIcon="i-lucide-check" />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
       <RLVButton label="Continue" trailing-icon="i-lucide-arrow-right" />
-      <RLVButton label="Options" trailing-icon="i-lucide-chevron-down" />
-      <RLVButton variant="outline" label="Open" trailing-icon="i-lucide-external-link" />
-      <RLVButton color="success" label="Done" trailing-icon="i-lucide-check" />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Loading State"
-  description="Set `loading` to show a spinner in place of the leading icon. The button remains in the DOM and keeps its size while loading."
->
-  <div class="flex flex-wrap items-center gap-3">
-    <RLAButton label="Loading" loading />
-    <RLAButton variant="outline" label="Loading" loading />
-    <RLAButton color="success" variant="soft" label="Loading" loading />
-  </div>
+### Avatar
+
+<ComponentShowcase title="Avatar">
+  <span slot="description">
+    Use the `avatar` prop to show an [Avatar](/company/docs/packages/rimelight-ui/components/element/avatar/) inside the Button.
+  </span>
+
+<div class="flex flex-wrap items-center gap-md">
+  <RLAButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
+  <RLAButton avatar="https://i.pravatar.cc/150?img=3" />
+</div>
 
 <div slot="code-astro">
   ```astro
-  <RLAButton label="Loading" loading />
-  <RLAButton variant="outline" label="Loading" loading />
-  <RLAButton color="success" variant="soft" label="Loading" loading />
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
+  <RLAButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
+  <RLAButton avatar="https://i.pravatar.cc/150?img=3" />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
-      <RLVButton label="Loading" loading />
-      <RLVButton variant="outline" label="Loading" loading />
-      <RLVButton color="success" variant="soft" label="Loading" loading />
+      <RLVButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
+      <RLVButton avatar="https://i.pravatar.cc/150?img=3" />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
+
+### Loading
+
+<ComponentShowcase
+  title="Loading"
+  description="Use the `loading` prop to show a loading icon and disable the Button."
+>
+  <div class="flex flex-wrap items-center gap-md">
+    <RLAButton label="Loading" loading />
+  </div>
+
+<div slot="code-astro">
+  ```astro
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
+  <RLAButton label="Loading" loading />
+  ```
+</div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
+    <template>
+      <RLVButton label="Loading" loading />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Loading Auto
+
+<ComponentShowcase
+  title="Loading Auto"
+  description="Use the `loadingAuto` prop to show the loading icon automatically while the click promise is pending."
+>
+  <div class="flex flex-wrap items-center gap-md">
+    <RLAButton
+      id="loading-auto-demo"
+      label="Submit"
+      loadingAuto
+    />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
+
+    <RLAButton label="Submit" loadingAuto onclick="return new Promise(resolve => setTimeout(resolve, 2000))" />
+    ```
+
+  </div>
+
+  <div slot="code-vue">
+    ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+
+    async function onClick() {
+      return new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    </script>
+
+    <template>
+      <RLVButton label="Submit" loading-auto @click="onClick" />
+    </template>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Square
 
 <ComponentShowcase
   title="Square"
-  description="Use `square` for equal padding on all sides. Auto-detected on icon-only buttons without a label or default slot, but explicitly needed when using the default slot with custom content."
+  description="Use the `square` prop to render a square Button with equal padding."
 >
-  <div class="flex flex-wrap items-center gap-3">
-    <RLAButton variant="outline" square>
+  <div class="flex flex-wrap items-center gap-md">
+    <RLAButton square>
       <span class="i-lucide-star size-5" />
     </RLAButton>
-    <RLAButton variant="outline" leadingIcon="i-lucide-plus" square />
-    <RLAButton color="error" variant="soft" leadingIcon="i-lucide-heart" square />
-    <RLAButton color="success" variant="soft" leadingIcon="i-lucide-plus" />
+    <RLAButton leadingIcon="i-lucide-plus" square />
   </div>
 
 <div slot="code-astro">
   ```astro
-  <RLAButton variant="outline" square>
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
+  <RLAButton square>
     <span class="i-lucide-star size-5" />
   </RLAButton>
-  <RLAButton variant="outline" leadingIcon="i-lucide-plus" square />
-  <RLAButton color="error" variant="soft" leadingIcon="i-lucide-heart" square />
-  <RLAButton color="success" variant="soft" leadingIcon="i-lucide-plus" />
+  <RLAButton leadingIcon="i-lucide-plus" square />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
-      <RLVButton variant="outline" square>
+      <RLVButton square>
         <span class="i-lucide-star size-5" />
       </RLVButton>
-      <RLVButton variant="outline" leading-icon="i-lucide-plus" square />
-      <RLVButton color="error" variant="soft" leading-icon="i-lucide-heart" square />
-      <RLVButton color="success" variant="soft" leading-icon="i-lucide-plus" />
+      <RLVButton leading-icon="i-lucide-plus" square />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
+### Rounded
+
 <ComponentShowcase
   title="Rounded"
-  description="Set `rounded` to apply fully rounded pill-shaped corners."
+  description="Use the `rounded` prop to apply fully rounded pill-shaped corners."
 >
-  <div class="flex flex-wrap items-center gap-3">
+  <div class="flex flex-wrap items-center gap-md">
     <RLAButton label="Rounded" rounded />
-    <RLAButton variant="outline" label="Rounded Outline" rounded />
     <RLAButton leadingIcon="i-lucide-plus" square rounded />
   </div>
 
 <div slot="code-astro">
   ```astro
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
   <RLAButton label="Rounded" rounded />
-  <RLAButton variant="outline" label="Rounded Outline" rounded />
   <RLAButton leadingIcon="i-lucide-plus" square rounded />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
       <RLVButton label="Rounded" rounded />
-      <RLVButton variant="outline" label="Rounded Outline" rounded />
       <RLVButton leading-icon="i-lucide-plus" square rounded />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
+### Block
+
 <ComponentShowcase
   title="Block"
-  description="Set `block` to make the button span the full width of its container."
+  description="Use the `block` prop to make the Button span the full width of its container."
 >
-  <div class="w-full">
-    <RLAButton label="Full Width Button" block />
-  </div>
+  <RLAButton label="Full Width Button" block />
 
 <div slot="code-astro">
   ```astro
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
   <RLAButton label="Full Width Button" block />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
       <RLVButton label="Full Width Button" block />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
+### Link
+
 <ComponentShowcase
-  title="Link Mode"
-  description="Pass an `href` prop to render the button as an `<a>` tag instead of a `<button>` for navigation."
+  title="Link"
+  description="Use the `href` prop to render the Button as a link. You can pass any standard anchor attribute such as target, rel, etc."
 >
-  <div class="flex flex-wrap items-center gap-3">
-    <RLAButton label="Go to Docs" trailingIcon="i-lucide-arrow-right" href="/docs" />
-    <RLAButton variant="outline" label="External Link" trailingIcon="i-lucide-external-link" href="https://rimelight.com" />
+  <div class="flex flex-wrap items-center gap-md">
+    <RLAButton label="Go to Docs" href="/docs" />
   </div>
 
 <div slot="code-astro">
   ```astro
-  <RLAButton label="Go to Docs" trailingIcon="i-lucide-arrow-right" href="/docs" />
-  <RLAButton
-    variant="outline"
-    label="External Link"
-    trailingIcon="i-lucide-external-link"
-    href="https://rimelight.com"
-  />
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
+  <RLAButton label="Go to Docs" href="/docs" />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
-      <RLVButton label="Go to Docs" trailing-icon="i-lucide-arrow-right" href="/docs" />
-      <RLVButton variant="outline" label="External Link" trailing-icon="i-lucide-external-link" href="https://rimelight.com" />
+      <RLVButton label="Go to Docs" href="/docs" />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
+### Disabled
+
 <ComponentShowcase
-  title="With Avatar"
-  description="Pass an `avatar` prop as a URL string or an avatar props object to display a user photo as the leading element."
+  title="Disabled"
+  description="Use the `disabled` prop to disable the Button."
 >
-  <div class="flex flex-wrap items-center gap-3">
-    <RLAButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
-    <RLAButton variant="outline" avatar="https://i.pravatar.cc/150?img=8" label="John Smith" />
+  <div class="flex flex-wrap items-center gap-md">
+    <RLAButton label="Disabled" disabled />
   </div>
 
 <div slot="code-astro">
   ```astro
-  <RLAButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
-  <RLAButton
-    variant="outline"
-    avatar={{ src: "https://i.pravatar.cc/150?img=8", alt: "John Smith" }}
-    label="John Smith"
-  />
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
+  <RLAButton label="Disabled" disabled />
   ```
 </div>
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
-      <RLVButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
-      <RLVButton variant="outline" :avatar="{ src: 'https://i.pravatar.cc/150?img=8', alt: 'John Smith' }" label="John Smith" />
+      <RLVButton label="Disabled" disabled />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
+### Active
+
 <ComponentShowcase
-  title="Active State"
-  description="Use `active` with `activeVariant` and `activeColor` to override the button appearance when selected — useful for nav groups or toggle sets."
+  title="Active"
+  description="Use the `active` prop along with `activeVariant` and `activeColor` to override the Button appearance when selected."
 >
   <div class="flex items-center gap-1">
     <RLAButton variant="ghost" label="Overview" active activeVariant="soft" />
@@ -359,6 +590,10 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 <div slot="code-astro">
   ```astro
+  ---
+  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  ---
+
   <RLAButton variant="ghost" label="Overview" active activeVariant="soft" />
   <RLAButton variant="ghost" label="Analytics" />
   <RLAButton variant="ghost" label="Reports" />
@@ -367,12 +602,17 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
   <div slot="code-vue">
     ```vue
+    <script setup>
+    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
+    </script>
+
     <template>
       <RLVButton variant="ghost" label="Overview" active active-variant="soft" />
       <RLVButton variant="ghost" label="Analytics" />
       <RLVButton variant="ghost" label="Reports" />
     </template>
     ```
+
   </div>
 </ComponentShowcase>
 
