@@ -22,6 +22,11 @@ export interface TableOfContentsProps {
    */
   containerSelector?: string
   /**
+   * Render as a collapsible dropdown (<details>/<summary>) with a scrollable list and a built-in
+   * bottom gap. Intended for small-screen / mobile contexts.
+   */
+  collapsible?: boolean
+  /**
    * The component the root element should render as.
    *
    * @default "div"

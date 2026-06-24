@@ -1,5 +1,3 @@
-import type { ThemeColor } from "../theme"
-
 export interface LinkProps {
   to?: string | object
   href?: string

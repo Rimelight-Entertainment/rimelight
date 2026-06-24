@@ -213,33 +213,9 @@ const tocHeadings = hasToc
 
     {/* ── TOC bar — hidden on xl+ ── */}
     {hasToc && (
-      <details id="docs-toc-details" class="xl:hidden border-b border-border docs-mobile-bar">
-        <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-foreground cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
-          <span class="flex items-center gap-2">
-            <span class="i-lucide-list size-4 text-primary shrink-0" />
-            <span>On this page</span>
-          </span>
-          <span class="docs-toc-chevron i-lucide-chevron-down size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
-        </summary>
-        <div class="px-4 py-3 max-h-[50vh] overflow-y-auto border-t border-border/50 bg-background">
-          <ul class="flex flex-col gap-0.5">
-            {tocHeadings.map(heading => (
-              <li class:list={[heading.depth === 3 && "pl-4"]}>
-                <a
-                  href={`#${heading.slug}`}
-                  class:list={[
-                    "toc-link block py-1.5 text-sm transition-colors hover:text-primary no-underline",
-                    heading.depth === 2 ? "text-foreground font-medium" : "text-muted-foreground"
-                  ]}
-                  data-toc-bar-link
-                >
-                  {heading.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </details>
+      <div class="xl:hidden border-b border-border docs-mobile-bar">
+        <RLATableOfContents headings={tocHeadings} tableOfContents={resolvedToc} collapsible />
+      </div>
     )}
   </div>
 
@@ -331,9 +307,9 @@ const tocHeadings = hasToc
 
 <script>
   function initDocsBars() {
+    // Only the nav bar is managed here; the TOC collapsible is handled by RLATableOfContents.
     const pairs = [
       { detailsId: 'docs-nav-details', chevronClass: '.docs-nav-chevron', linkAttr: '[data-docs-nav-link]' },
-      { detailsId: 'docs-toc-details', chevronClass: '.docs-toc-chevron', linkAttr: '[data-toc-bar-link]' },
     ];
 
     for (const { detailsId, chevronClass, linkAttr } of pairs) {
