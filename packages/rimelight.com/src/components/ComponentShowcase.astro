@@ -320,6 +320,16 @@ if (componentKey) {
     
     const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}');
     
+    // Determine which slot is the default slot for this component
+    let defaultSlotName = '';
+    if (themeSlots.includes('default')) {
+      defaultSlotName = 'default';
+    } else if (themeSlots.includes('content')) {
+      defaultSlotName = 'content';
+    } else if (themeSlots.includes('label')) {
+      defaultSlotName = 'label';
+    }
+    
     themeSlots.forEach(slot => {
       let targets = [];
       if (previewWrapper) {
@@ -338,6 +348,30 @@ if (componentKey) {
         } else {
           const kebabSlot = slot.replace(/([A-Z])/g, "-$1").toLowerCase();
           targets = Array.from(previewWrapper.querySelectorAll(`[data-slot="${slot}"], [data-slot="${kebabSlot}"]`));
+          
+          if (targets.length === 0 && (slot === 'label' || slot === 'content' || slot === 'default')) {
+            const roots = Array.from(previewWrapper.querySelectorAll('[data-slot="root"]'));
+            const actualRoots = roots.length > 0 ? roots : Array.from(previewWrapper.children);
+            
+            // Build a list of all other slot names in kebab-case and camelCase to exclude
+            const otherSlotsKebab = themeSlots
+              .filter(s => s !== slot)
+              .map(s => s.replace(/([A-Z])/g, "-$1").toLowerCase());
+            const otherSlotsSet = new Set(otherSlotsKebab);
+            themeSlots.filter(s => s !== slot).forEach(s => otherSlotsSet.add(s));
+
+            actualRoots.forEach(rootEl => {
+              Array.from(rootEl.children).forEach(child => {
+                const childSlot = child.getAttribute('data-slot');
+                if (!childSlot || childSlot === slot || childSlot === 'default') {
+                  const childSlotKebab = childSlot ? childSlot.replace(/([A-Z])/g, "-$1").toLowerCase() : '';
+                  if (!otherSlotsSet.has(childSlotKebab) && !otherSlotsSet.has(childSlot || '')) {
+                    targets.push(child);
+                  }
+                }
+              });
+            });
+          }
         }
       }
 
@@ -357,7 +391,7 @@ if (componentKey) {
       item.className = 'slot-item p-2 rounded-lg hover:bg-muted/50 border border-transparent hover:border-border transition-all cursor-pointer text-left';
       item.innerHTML = `
         <div class="flex items-center justify-between gap-2 mb-1">
-          <span class="font-mono font-medium text-foreground text-xs">${slot}</span>
+          <span class="font-mono font-medium text-foreground text-xs">${slot}${slot === defaultSlotName ? ' <span class="text-[10px] text-muted-foreground/80 font-sans font-normal lowercase">(default)</span>' : ''}</span>
           ${isRendered ? '' : '<span class="text-[10px] text-destructive font-sans font-medium px-1.5 py-0.5 bg-destructive/10 rounded-full">not rendered</span>'}
         </div>
         <div class="classes-container font-mono text-[10px] text-muted-foreground break-all whitespace-normal line-clamp-2 transition-all">
