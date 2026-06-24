@@ -194,8 +194,8 @@ if (componentKey) {
   </div>
 
   <!-- Preview Area -->
-  <div class="preview-area p-4 sm:p-6 flex items-center justify-center min-h-[120px] border-b border-border relative">
-    <div class="absolute top-2 right-2">
+  <div class="preview-area px-4 py-6 flex items-center justify-center min-h-[120px] border-b border-border relative">
+    <div class="absolute top-[8px] right-[16px] z-10">
         <div class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded border border-border">Preview</div>
     </div>
     <div class="preview-slot-wrapper flex items-center justify-center w-full">
@@ -479,28 +479,6 @@ if (componentKey) {
   }
 
   function initShowcases() {
-    // Initialize loadingAuto demo handler for button documentation
-    const loadingAutoBtn = document.getElementById('loading-auto-demo');
-    if (loadingAutoBtn) {
-      loadingAutoBtn.addEventListener('click', () => {
-        const leadingIconSpan = loadingAutoBtn.querySelector('[data-slot="leading-icon"]');
-        if (leadingIconSpan) {
-          const icon = leadingIconSpan.querySelector('span');
-          if (icon) {
-            const origClass = icon.className;
-            icon.className = 'i-lucide-loader-circle animate-spin';
-            loadingAutoBtn.setAttribute('disabled', 'true');
-            loadingAutoBtn.classList.add('opacity-50', 'pointer-events-none');
-            setTimeout(() => {
-              icon.className = origClass;
-              loadingAutoBtn.removeAttribute('disabled');
-              loadingAutoBtn.classList.remove('opacity-50', 'pointer-events-none');
-            }, 2000);
-          }
-        }
-      });
-    }
-
     document.querySelectorAll('.component-showcase').forEach(showcase => {
       const tabs = showcase.querySelectorAll('.showcase-tab');
       const codeBlocks = showcase.querySelectorAll('.code-block');
