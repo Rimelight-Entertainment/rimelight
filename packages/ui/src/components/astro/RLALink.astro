@@ -1,19 +1,16 @@
 ---
-import RLAButton from "./RLAButton.astro"
 import type { LinkProps } from "../../types"
 
 const {
   to,
   href,
-  variant = "link",
-  color = "neutral",
   external,
-  isButton = false,
   ariaLabel,
   externalIcon,
   target,
   rel,
   trailingIcon,
+  class: className,
   ...rest
 } = Astro.props as LinkProps
 
@@ -21,24 +18,24 @@ const linkHref = href || (typeof to === 'string' ? to : undefined);
 
 const isExternal = !!(external || (linkHref && (linkHref.startsWith('http://') || linkHref.startsWith('https://') || linkHref.startsWith('//'))));
 
-const linkVariant = isButton && variant === "link" ? "solid" : variant;
 const linkTarget = target || (isExternal ? "_blank" : undefined);
 const linkRel = rel || (isExternal ? "noopener noreferrer" : undefined);
 
 const showExternalIcon = isExternal && !trailingIcon ? (externalIcon || "i-lucide-external-link") : trailingIcon;
 ---
-<RLAButton
-  variant={linkVariant as any}
-  color={color as any}
+<a
   href={linkHref}
   target={linkTarget}
   rel={linkRel}
   aria-label={ariaLabel}
-  trailingIcon={showExternalIcon}
+  class={className}
   {...rest}
 >
   <slot />
+  {showExternalIcon && (
+    <span class={showExternalIcon} aria-hidden="true" />
+  )}
   {isExternal && !ariaLabel && (
     <span class="sr-only"> (opens in a new tab)</span>
   )}
-</RLAButton>
+</a>

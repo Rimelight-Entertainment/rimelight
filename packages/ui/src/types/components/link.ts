@@ -13,14 +13,6 @@ export interface LinkProps {
   exactHash?: boolean
   inactiveClass?: string
   activeClass?: string
-  variant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link"
-  color?: ThemeColor
-  /**
-   * Styles the link visually as a button
-   *
-   * @default false
-   */
-  isButton?: boolean
   /**
    * Screen reader accessibility label. Will automatically append " (opens in a new tab)" for
    * external links if not customized

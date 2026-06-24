@@ -5,6 +5,7 @@ import type { ButtonProps } from "../../types"
 import buttonThemeDefault, { createButtonTheme } from "../../themes/button.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 import RLAAvatar from "./RLAAvatar.astro"
+import RLALink from "./RLALink.astro"
 
 const uiConfig = getUIConfig()
 const buttonTheme = uiConfig.colors ? createButtonTheme(uiConfig.colors) : buttonThemeDefault
@@ -16,6 +17,7 @@ const {
   color = "primary",
   size = "md",
   href,
+  to,
   label,
   leadingIcon,
   trailingIcon,
@@ -66,14 +68,14 @@ const classes = resolveClasses(button, {
   theme
 }, useUi("button", uiProp), className);
 
-const Tag = href ? "a" : "button";
+const Tag = (href || to) ? RLALink : "button";
 
 const loadingAutoProps = loadingAuto ? { 'data-loading-auto': '' } : {};
 ---
 <Tag
   class={classes.root}
   data-slot="root"
-  {...(Tag === "a" ? { href } : {})}
+  {...(Tag === RLALink ? { href, to } : {})}
   {...loadingAutoProps}
   {...rest}
 >

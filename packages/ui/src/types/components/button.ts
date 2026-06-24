@@ -1,6 +1,7 @@
 import type { Theme, ThemeColor } from "../theme"
+import type { LinkProps } from "./link"
 
-export interface ButtonProps {
+export interface ButtonProps extends LinkProps {
   /**
    * The visual style variant of the button
    */
