@@ -10,9 +10,10 @@ const {
   target,
   rel,
   trailingIcon,
+  noExternalIcon,
   class: className,
   ...rest
-} = Astro.props as LinkProps
+} = Astro.props as LinkProps & { noExternalIcon?: boolean }
 
 const linkHref = href || (typeof to === 'string' ? to : undefined);
 
@@ -21,7 +22,7 @@ const isExternal = !!(external || (linkHref && (linkHref.startsWith('http://') |
 const linkTarget = target || (isExternal ? "_blank" : undefined);
 const linkRel = rel || (isExternal ? "noopener noreferrer" : undefined);
 
-const showExternalIcon = isExternal && !trailingIcon ? (externalIcon || "i-lucide-external-link") : trailingIcon;
+const showExternalIcon = isExternal && !noExternalIcon && !trailingIcon ? (externalIcon || "i-lucide-external-link") : trailingIcon;
 ---
 <a
   href={linkHref}

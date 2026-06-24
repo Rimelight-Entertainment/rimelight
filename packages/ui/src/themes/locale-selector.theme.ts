@@ -5,7 +5,7 @@ export const createLocaleSelectorTheme = () =>
     base: {
       root: "inline-flex flex-col gap-1.5",
       label: "text-xs font-semibold text-muted select-none",
-      wrapper: "relative inline-block w-full",
+      wrapper: "relative inline-block",
       select:
         "w-full appearance-none font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/40 cursor-pointer pr-10",
       option: "bg-neutral-900 text-white selection:bg-neutral-800",

@@ -91,16 +91,18 @@ const targetLanguages = [
 ---
 
 <RLAFooter contain={false} class="bg-black z-50">
-  <div slot="left" class="flex flex-col items-center gap-xs lg:items-start">
-    <RLALogo
-      variant="logotype"
-      class="h-6 w-auto"
-      mode="color"
-    />
-    <p class="text-sm text-white">Accessing me.</p>
-    <span class="text-sm text-white">© {new Date().getFullYear()} idantity.me</span>
+  <div slot="left" class="flex flex-col items-center gap-xs lg:items-start flex-1">
+    <div class="flex flex-col items-center gap-xs lg:items-start mt-auto">
+      <RLALogo
+        variant="logotype"
+        class="h-6 w-auto"
+        mode="color"
+      />
+      <p class="text-sm text-white">Accessing me.</p>
+      <span class="text-sm text-white">© {new Date().getFullYear()} idantity.me</span>
+    </div>
   </div>
-  <div slot="center" class="flex gap-12">
+  <div slot="center" class="flex flex-col md:flex-row gap-12">
     {columns.map(column => (
       <RLALinkGroup 
         title={column.label} 
@@ -109,10 +111,12 @@ const targetLanguages = [
       />
     ))}
   </div>
-  <div slot="right" class="flex flex-col gap-sm lg:items-end">
-    <RLAThemeSelector />
-    <RLALocaleSelector locales={targetLanguages} />
-    <div class="flex flex-row flex-wrap gap-sm lg:items-end">
+  <div slot="right" class="flex flex-col items-center lg:items-end flex-1 justify-between gap-sm">
+    <div class="flex flex-col gap-sm items-center lg:items-end">
+      <RLAThemeSelector />
+      <RLALocaleSelector locales={targetLanguages} />
+    </div>
+    <div class="flex flex-row flex-wrap gap-sm justify-center lg:justify-end items-center lg:items-end">
       {socials.map((social) => (
           <RLAButton
               size="xl"
