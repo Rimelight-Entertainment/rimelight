@@ -45,9 +45,11 @@ Display a user's profile picture, initials, or a fallback icon. Supports badge i
 
 ## Examples
 
+### Sizes
+
+Use the `size` prop to change the size of the avatar.
+
 <ComponentShowcase
-  title="Sizes"
-  description="Use the `size` prop to change the size of the avatar."
   togglingPattern="tab-segmented"
   componentName="RLAAvatar"
   propsConfig={{
@@ -60,9 +62,11 @@ Display a user's profile picture, initials, or a fallback icon. Supports badge i
   <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" />
 </ComponentShowcase>
 
+### Colors
+
+Use the `color` prop to set the tint applied to the avatar background and text when no image is provided.
+
 <ComponentShowcase
-  title="Colors"
-  description="Use the `color` prop to set the tint applied to the avatar background and text when no image is provided."
   togglingPattern="tab-segmented"
   componentName="RLAAvatar"
   propsConfig={{
@@ -75,10 +79,11 @@ Display a user's profile picture, initials, or a fallback icon. Supports badge i
   <RLAAvatar initials="JD" />
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Fallback / Initials"
-  description="When no `src` is provided, the avatar shows `initials` or a default user icon as fallback."
->
+### Fallback / Initials
+
+When no `src` is provided, the avatar shows `initials` or a default user icon as fallback.
+
+<ComponentShowcase>
   <div class="flex items-center gap-3">
     <RLAAvatar initials="JD" color="primary" />
     <RLAAvatar initials="AB" color="secondary" />
@@ -107,10 +112,11 @@ Display a user's profile picture, initials, or a fallback icon. Supports badge i
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Badge Indicator"
-  description="Use the `badge` prop to show a status dot. Control its color with `badgeColor` and its placement with `badgePosition`."
->
+### Badge Indicator
+
+Use the `badge` prop to show a status dot. Control its color with `badgeColor` and its placement with `badgePosition`.
+
+<ComponentShowcase>
   <div class="flex items-center gap-4">
     <RLAAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" badge badgeColor="success" badgePosition="bottom-right" />
     <RLAAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" badge badgeColor="warning" badgePosition="top-right" />
@@ -163,9 +169,11 @@ Display a user's profile picture, initials, or a fallback icon. Supports badge i
   </div>
 </ComponentShowcase>
 
+### Badge Positions
+
+Use the `badgePosition` prop to control where the badge is anchored on the avatar.
+
 <ComponentShowcase
-  title="Badge Positions"
-  description="Use the `badgePosition` prop to control where the badge is anchored on the avatar."
   togglingPattern="tab-segmented"
   componentName="RLAAvatar"
   propsConfig={{
@@ -178,10 +186,11 @@ Display a user's profile picture, initials, or a fallback icon. Supports badge i
   <RLAAvatar src="https://i.pravatar.cc/150?img=5" alt="User" badge badgeColor="success" />
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Profile Layout"
-  description="Provide `title` and `subtitle` props to render a horizontal profile card alongside the avatar."
->
+### Profile Layout
+
+Provide `title` and `subtitle` props to render a horizontal profile card alongside the avatar.
+
+<ComponentShowcase>
   <div class="flex flex-col gap-3">
     <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" title="Jane Doe" subtitle="Product Designer" />
     <RLAAvatar src="https://i.pravatar.cc/150?img=8" alt="John Smith" title="John Smith" subtitle="Engineering Lead" />

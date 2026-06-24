@@ -46,10 +46,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Label
 
-<ComponentShowcase
-  title="Label"
-  description="Use the `label` prop to set the label of the Button."
->
+Use the `label` prop to set the label of the Button.
+
+<ComponentShowcase>
   <RLAButton label="Button" />
 
   <div slot="code-astro">
@@ -79,9 +78,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Color
 
+Use the `color` prop to change the color of the Button.
+
 <ComponentShowcase
-  title="Color"
-  description="Use the `color` prop to change the color of the Button."
   togglingPattern="tab-segmented"
   componentName="RLAButton"
   propsConfig={{
@@ -131,9 +130,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Variant
 
+Use the `variant` prop to change the variant of the Button.
+
 <ComponentShowcase
-  title="Variant"
-  description="Use the `variant` prop to change the variant of the Button."
   togglingPattern="tab-segmented"
   componentName="RLAButton"
   propsConfig={{
@@ -172,9 +171,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Size
 
+Use the `size` prop to change the size of the Button.
+
 <ComponentShowcase
-  title="Size"
-  description="Use the `size` prop to change the size of the Button."
   togglingPattern="tab-segmented"
   componentName="RLAButton"
   propsConfig={{
@@ -213,10 +212,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Leading Icon
 
-<ComponentShowcase title="Leading Icon">
-  <span slot="description">
-    Use the `leadingIcon` prop with any [icon class](/company/docs/packages/rimelight-ui/architecture/icons/) to place an Icon before the label.
-  </span>
+Use the `leadingIcon` prop with any [icon class](/company/docs/packages/rimelight-ui/architecture/icons/) to place an Icon before the label.
+
+<ComponentShowcase>
 
 <div class="flex flex-wrap items-center gap-md">
   <RLAButton leadingIcon="i-lucide-download" label="Download" />
@@ -248,10 +246,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Trailing Icon
 
-<ComponentShowcase title="Trailing Icon">
-  <span slot="description">
-    Use the `trailingIcon` prop with any [icon class](/company/docs/packages/rimelight-ui/architecture/icons/) to place an Icon after the label.
-  </span>
+Use the `trailingIcon` prop with any [icon class](/company/docs/packages/rimelight-ui/architecture/icons/) to place an Icon after the label.
+
+<ComponentShowcase>
 
 <div class="flex flex-wrap items-center gap-md">
   <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
@@ -283,10 +280,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Avatar
 
-<ComponentShowcase title="Avatar">
-  <span slot="description">
-    Use the `avatar` prop to show an [Avatar](/company/docs/packages/rimelight-ui/components/element/avatar/) inside the Button.
-  </span>
+Use the `avatar` prop to show an [Avatar](/company/docs/packages/rimelight-ui/components/element/avatar/) inside the Button.
+
+<ComponentShowcase>
 
 <div class="flex flex-wrap items-center gap-md">
   <RLAButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
@@ -321,10 +317,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Loading
 
-<ComponentShowcase
-  title="Loading"
-  description="Use the `loading` prop to show a loading icon and disable the Button."
->
+Use the `loading` prop to show a loading icon and disable the Button.
+
+<ComponentShowcase>
   <div class="flex flex-wrap items-center gap-md">
     <RLAButton label="Loading" loading />
   </div>
@@ -355,10 +350,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Loading Auto
 
-<ComponentShowcase
-  title="Loading Auto"
-  description="Use the `loadingAuto` prop to show the loading icon automatically while the click promise is pending."
->
+Use the `loadingAuto` prop to show the loading icon automatically while the click promise is pending.
+
+<ComponentShowcase>
   <div class="flex flex-wrap items-center gap-md">
     <RLAButton
       id="loading-auto-demo"
@@ -398,10 +392,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Square
 
-<ComponentShowcase
-  title="Square"
-  description="Use the `square` prop to render a square Button with equal padding."
->
+Use the `square` prop to render a square Button with equal padding.
+
+<ComponentShowcase>
   <div class="flex flex-wrap items-center gap-md">
     <RLAButton square>
       <span class="i-lucide-star size-5" />
@@ -441,10 +434,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Rounded
 
-<ComponentShowcase
-  title="Rounded"
-  description="Use the `rounded` prop to apply fully rounded pill-shaped corners."
->
+Use the `rounded` prop to apply fully rounded pill-shaped corners.
+
+<ComponentShowcase>
   <div class="flex flex-wrap items-center gap-md">
     <RLAButton label="Rounded" rounded />
     <RLAButton leadingIcon="i-lucide-plus" square rounded />
@@ -478,10 +470,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Block
 
-<ComponentShowcase
-  title="Block"
-  description="Use the `block` prop to make the Button span the full width of its container."
->
+Use the `block` prop to make the Button span the full width of its container.
+
+<ComponentShowcase>
   <RLAButton label="Full Width Button" block />
 
 <div slot="code-astro">
@@ -510,10 +501,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Link
 
-<ComponentShowcase
-  title="Link"
-  description="Use the `href` prop to render the Button as a link. You can pass any standard anchor attribute such as target, rel, etc."
->
+Use the `href` prop to render the Button as a link. You can pass any standard anchor attribute such as target, rel, etc.
+
+<ComponentShowcase>
   <div class="flex flex-wrap items-center gap-md">
     <RLAButton label="Go to Rimelight" href="https://rimelight.com" />
   </div>
@@ -544,10 +534,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Disabled
 
-<ComponentShowcase
-  title="Disabled"
-  description="Use the `disabled` prop to disable the Button."
->
+Use the `disabled` prop to disable the Button.
+
+<ComponentShowcase>
   <div class="flex flex-wrap items-center gap-md">
     <RLAButton label="Disabled" disabled />
   </div>
@@ -578,10 +567,9 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
 ### Active
 
-<ComponentShowcase
-  title="Active"
-  description="Use the `active` prop along with `activeVariant` and `activeColor` to override the Button appearance when selected."
->
+Use the `active` prop along with `activeVariant` and `activeColor` to override the Button appearance when selected.
+
+<ComponentShowcase>
   <div class="flex items-center gap-1">
     <RLAButton variant="ghost" label="Overview" active activeVariant="soft" />
     <RLAButton variant="ghost" label="Analytics" />

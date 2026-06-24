@@ -46,10 +46,11 @@ A full-width announcement bar designed to sit at the top of the page. Supports a
 
 ## Examples
 
-<ComponentShowcase
-  title="With Actions"
-  description="Pass an `actions` array to render CTA links inside the banner. Each action accepts `label`, `href`, and `variant`."
->
+### With Actions
+
+Pass an `actions` array to render CTA links inside the banner. Each action accepts `label`, `href`, and `variant`.
+
+<ComponentShowcase>
   <RLABanner
     fixed={false}
     sticky={false}
@@ -90,10 +91,11 @@ A full-width announcement bar designed to sit at the top of the page. Supports a
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Dismissable"
-  description="Set `dismissable` to show a close button. Use `dismissId` to persist the dismissed state in localStorage so it stays hidden across page loads."
->
+### Dismissable
+
+Set `dismissable` to show a close button. Use `dismissId` to persist the dismissed state in localStorage so it stays hidden across page loads.
+
+<ComponentShowcase>
   <RLABanner fixed={false} sticky={false} dismissable dismissId="launch-banner-demo">
     You can close this banner — it will remember your choice.
   </RLABanner>
@@ -117,10 +119,11 @@ A full-width announcement bar designed to sit at the top of the page. Supports a
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Left & Right Slots"
-  description="Use the `left` and `right` named slots to place custom content on either side of the banner message."
->
+### Left & Right Slots
+
+Use the `left` and `right` named slots to place custom content on either side of the banner message.
+
+<ComponentShowcase>
   <RLABanner fixed={false} sticky={false}>
     <span slot="left">🚀</span>
     Announcing our new product launch — explore what's new.
@@ -154,10 +157,11 @@ A full-width announcement bar designed to sit at the top of the page. Supports a
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Fixed vs Sticky"
-  description="By default banners are `fixed` to the top of the viewport. Set `fixed={false}` and `sticky` to make the banner stick when scrolled to."
->
+### Fixed vs Sticky
+
+By default banners are `fixed` to the top of the viewport. Set `fixed={false}` and `sticky` to make the banner stick when scrolled to.
+
+<ComponentShowcase>
   <RLABanner fixed={false} sticky={false}>
     This banner renders inline (fixed=false, sticky=false).
   </RLABanner>

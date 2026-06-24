@@ -10,8 +10,6 @@ interface Props {
   slots?: string[];
   props?: Record<string, any>;
   class?: string;
-  title?: string;
-  description?: string;
   playground?: string;
   propsConfig?: Record<string, string[]>;
   defaultProps?: Record<string, string>;
@@ -21,8 +19,6 @@ interface Props {
 
 const {
   class: className,
-  title,
-  description,
   playground,
   component,
   componentName,
@@ -115,17 +111,6 @@ if (componentKey) {
 ---
 
 <div class={`component-showcase border border-border rounded-xl overflow-visible bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(resolvedTheme?.slots || [])}>
-  {(title || description || Astro.slots.has('description')) && (
-    <div class="px-4 py-3 border-b border-border bg-muted/10">
-      {title && <h4 class="text-sm font-semibold m-0 text-foreground">{title}</h4>}
-      {Astro.slots.has('description') ? (
-        <div class="text-xs text-muted-foreground mt-1 mb-0"><slot name="description" /></div>
-      ) : (
-        description && <p class="text-xs text-muted-foreground mt-1 mb-0">{description}</p>
-      )}
-    </div>
-  )}
-
   <!-- Dynamic Props Configuration Area -->
   {isDynamic && (
     <div class="flex flex-wrap items-center gap-6 px-4 py-3 bg-muted/20 border-b border-border justify-between w-full">
@@ -195,7 +180,7 @@ if (componentKey) {
 
   <!-- Preview Area -->
   <div class="preview-area px-4 py-6 flex items-center justify-center min-h-[120px] border-b border-border relative">
-    <div class="absolute top-[8px] right-[16px] z-10">
+    <div class="absolute top-2 right-4 z-10">
         <div class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded border border-border">Preview</div>
     </div>
     <div class="preview-slot-wrapper flex items-center justify-center w-full">
@@ -205,8 +190,8 @@ if (componentKey) {
 
   <!-- Code Block Area -->
   {Astro.slots.has('code-astro') && (
-    <div class="code-area bg-gray-950 relative border-t border-border/10">
-      <div class="absolute top-[6px] right-2 z-10">
+    <div class="code-area bg-gray-950 relative border-t border-border/10 p-4">
+      <div class="absolute top-2 right-4 z-10">
         <RLAButton class="copy-code" size="sm" variant="ghost" color="neutral" title="Copy code" square>
           <span class="i-lucide-copy size-4"></span>
         </RLAButton>
@@ -256,7 +241,7 @@ if (componentKey) {
   }
 
   .code-area :global(pre) {
-    padding: 1rem !important;
+    padding: 0 !important;
   }
 
   /* Slot Visualizer */

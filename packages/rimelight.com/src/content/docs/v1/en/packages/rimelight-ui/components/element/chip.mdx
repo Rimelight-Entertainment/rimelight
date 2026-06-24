@@ -45,9 +45,11 @@ A small dot or counter that overlays a target element to indicate status, notifi
 
 ## Examples
 
+### Colors
+
+Use the `color` prop to change the color of the chip indicator.
+
 <ComponentShowcase
-  title="Colors"
-  description="Use the `color` prop to change the color of the chip indicator."
   togglingPattern="tab-segmented"
   componentName="RLAChip"
   propsConfig={{
@@ -60,9 +62,11 @@ A small dot or counter that overlays a target element to indicate status, notifi
   <RLAChip text="5" standalone />
 </ComponentShowcase>
 
+### Sizes
+
+Use the `size` prop to control how large the chip indicator appears.
+
 <ComponentShowcase
-  title="Sizes"
-  description="Use the `size` prop to control how large the chip indicator appears."
   togglingPattern="tab-segmented"
   componentName="RLAChip"
   propsConfig={{
@@ -75,10 +79,11 @@ A small dot or counter that overlays a target element to indicate status, notifi
   <RLAChip text="3" standalone />
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Attached to an Element"
-  description="Wrap any element with `RLAChip` to position the indicator relative to it."
->
+### Attached to an Element
+
+Wrap any element with `RLAChip` to position the indicator relative to it.
+
+<ComponentShowcase>
   <div class="flex items-center gap-6">
     <RLAChip text="5" position="top-right">
       <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">A</div>
@@ -131,9 +136,11 @@ A small dot or counter that overlays a target element to indicate status, notifi
   </div>
 </ComponentShowcase>
 
+### Positions
+
+Use the `position` prop to control where the chip is anchored relative to its wrapped content.
+
 <ComponentShowcase
-  title="Positions"
-  description="Use the `position` prop to control where the chip is anchored relative to its wrapped content."
   togglingPattern="tab-segmented"
   componentName="RLAChip"
   propsConfig={{
@@ -150,10 +157,11 @@ A small dot or counter that overlays a target element to indicate status, notifi
   </RLAChip>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Inset"
-  description="Set `inset` to overlap the chip inside the element's border instead of extending beyond it."
->
+### Inset
+
+Set `inset` to overlap the chip inside the element's border instead of extending beyond it.
+
+<ComponentShowcase>
   <div class="flex items-center gap-6">
     <RLAChip text="3" position="top-right">
       <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">Default</div>
@@ -188,10 +196,11 @@ A small dot or counter that overlays a target element to indicate status, notifi
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase
-  title="Show / Hide"
-  description="Use `show` to programmatically toggle chip visibility without removing it from the DOM."
->
+### Show / Hide
+
+Use `show` to programmatically toggle chip visibility without removing it from the DOM.
+
+<ComponentShowcase>
   <div class="flex items-center gap-6">
     <RLAChip text="5" show>
       <div class="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium">On</div>

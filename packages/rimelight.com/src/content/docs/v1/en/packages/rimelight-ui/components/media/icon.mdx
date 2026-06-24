@@ -51,7 +51,11 @@ A component to display any icon from [Iconify](https://iconify.design/) collecti
 
 ## Examples
 
-<ComponentShowcase title="Sizes" description="Icons support predefined sizes via the `size` prop:">
+### Sizes
+
+Icons support predefined sizes via the `size` prop:
+
+<ComponentShowcase>
   <div class="flex flex-row items-center gap-2">
     <RLAIcon name="i-lucide-home" size="xs" />
     <RLAIcon name="i-lucide-home" size="sm" />
@@ -95,7 +99,11 @@ A component to display any icon from [Iconify](https://iconify.design/) collecti
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase title="Colors" description="Icons in mask mode use `bg-*` classes for coloring (since they use `currentColor` via background):">
+### Colors
+
+Icons in mask mode use `bg-*` classes for coloring (since they use `currentColor` via background):
+
+<ComponentShowcase>
   <div class="flex flex-row items-center gap-2">
     <RLAIcon name="i-lucide-heart" class="bg-red-500 h-6 w-6" />
     <RLAIcon name="i-lucide-star" class="bg-yellow-500 h-6 w-6" />
@@ -133,7 +141,11 @@ A component to display any icon from [Iconify](https://iconify.design/) collecti
   </div>
 </ComponentShowcase>
 
-<ComponentShowcase title="Overriding Brand Icon Colors" description="Brand icons (like `i-logos-*`) are multi-color and render in **background-image mode** by default, which means `bg-*` or `text-*` classes won't affect them. To override a brand icon's color, force **mask mode** by appending `?mask` to the icon name, then use `text-*` classes:">
+### Overriding Brand Icon Colors
+
+Brand icons (like `i-logos-*`) are multi-color and render in **background-image mode** by default, which means `bg-*` or `text-*` classes won't affect them. To override a brand icon's color, force **mask mode** by appending `?mask` to the icon name, then use `text-*` classes:
+
+<ComponentShowcase>
   <div class="flex flex-row items-center gap-2">
     <RLAIcon name="i-logos-discord-icon?mask" class="text-white h-6 w-6" />
     <RLAIcon name="i-logos-github-icon?mask" class="text-white h-6 w-6" />
