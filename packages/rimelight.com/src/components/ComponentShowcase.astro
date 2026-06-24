@@ -337,10 +337,31 @@ if (componentKey) {
           <span class="font-mono font-medium text-foreground text-xs">${slot}</span>
           ${isRendered ? '' : '<span class="text-[10px] text-destructive font-sans font-medium px-1.5 py-0.5 bg-destructive/10 rounded-full">not rendered</span>'}
         </div>
-        <div class="font-mono text-[10px] text-muted-foreground break-all whitespace-normal line-clamp-2 hover:line-clamp-none transition-all">
+        <div class="classes-container font-mono text-[10px] text-muted-foreground break-all whitespace-normal line-clamp-2 transition-all">
           ${classes || '(no classes)'}
         </div>
+        ${classes ? '<div class="expand-hint text-[9px] text-muted-foreground/60 mt-1 select-none font-sans">Click to expand</div>' : ''}
       `;
+
+      if (classes) {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const container = item.querySelector('.classes-container');
+          const hint = item.querySelector('.expand-hint');
+          if (container && hint) {
+            const isExpanded = container.classList.contains('line-clamp-none');
+            if (isExpanded) {
+              container.classList.remove('line-clamp-none');
+              container.classList.add('line-clamp-2');
+              hint.textContent = 'Click to expand';
+            } else {
+              container.classList.remove('line-clamp-2');
+              container.classList.add('line-clamp-none');
+              hint.textContent = 'Click to collapse';
+            }
+          }
+        });
+      }
 
       if (isRendered) {
         item.addEventListener('mouseenter', () => {
@@ -369,6 +390,15 @@ if (componentKey) {
       }
 
       slotsList.appendChild(item);
+
+      // Check if text is actually cropped/clamped, otherwise hide the expand hint
+      const container = item.querySelector('.classes-container');
+      const hint = item.querySelector('.expand-hint');
+      if (container && hint) {
+        if (container.scrollHeight <= container.clientHeight) {
+          hint.remove();
+        }
+      }
     });
   }
 
