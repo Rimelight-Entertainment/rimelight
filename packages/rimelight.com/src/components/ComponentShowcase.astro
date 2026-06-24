@@ -1,5 +1,6 @@
 ---
 import RLASelect from "@rimelight/ui/components/astro/RLASelect.astro";
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import { scv } from "css-variants";
 
 interface Props {
@@ -30,7 +31,14 @@ const {
   theme
 } = Astro.props;
 
-const resolvedComponentName = componentName || component || "";
+let resolvedComponentName = componentName || component || "";
+if (!resolvedComponentName) {
+  const pathSegments = Astro.url.pathname.split('/').filter(Boolean);
+  const lastSegment = pathSegments[pathSegments.length - 1];
+  if (lastSegment) {
+    resolvedComponentName = 'RLA' + lastSegment.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+  }
+}
 const isDynamic = !!propsConfig;
 const propKeys = propsConfig ? Object.keys(propsConfig) : [];
 
@@ -49,8 +57,8 @@ const componentKey = resolvedComponentName.replace(/^RL[AV]/, '').toLowerCase();
 let combinationClasses = {};
 let initialThemeClasses = {};
 
-if (isDynamic) {
-  if (!resolvedTheme && componentKey) {
+if (componentKey) {
+  if (!resolvedTheme) {
     try {
       const module = await import(`../../../ui/src/themes/${componentKey}.theme.ts`);
       resolvedTheme = module.default;
@@ -70,30 +78,32 @@ if (isDynamic) {
       };
       initialThemeClasses = resolver(initialVariants);
 
-      // Generate classes for all combinations of configured props
-      const keys = Object.keys(propsConfig || {});
-      const getCombinations = (index, current) => {
-        if (index === keys.length) {
-          const activeVariants = {
-            ...resolvedTheme.defaultVariants,
-            ...defaultProps,
-            ...current
-          };
-          const resolved = resolver(activeVariants);
-          const keyStr = keys.map(k => `${k}:${current[k]}`).join('|');
-          combinationClasses[keyStr] = resolved;
-          return;
-        }
+      if (isDynamic) {
+        // Generate classes for all combinations of configured props
+        const keys = Object.keys(propsConfig || {});
+        const getCombinations = (index, current) => {
+          if (index === keys.length) {
+            const activeVariants = {
+              ...resolvedTheme.defaultVariants,
+              ...defaultProps,
+              ...current
+            };
+            const resolved = resolver(activeVariants);
+            const keyStr = keys.map(k => `${k}:${current[k]}`).join('|');
+            combinationClasses[keyStr] = resolved;
+            return;
+          }
+          
+          const key = keys[index];
+          const vals = propsConfig[key] || [];
+          vals.forEach(val => {
+            current[key] = val;
+            getCombinations(index + 1, { ...current });
+          });
+        };
         
-        const key = keys[index];
-        const vals = propsConfig[key] || [];
-        vals.forEach(val => {
-          current[key] = val;
-          getCombinations(index + 1, { ...current });
-        });
-      };
-      
-      getCombinations(0, {});
+        getCombinations(0, {});
+      }
     } catch (err) {
       console.error(`Failed to pre-resolve classes for: ${resolvedComponentName}`, err);
     }
@@ -101,7 +111,7 @@ if (isDynamic) {
 }
 ---
 
-<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)}>
+<div class={`component-showcase border border-border rounded-xl overflow-hidden bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(resolvedTheme?.slots || [])}>
   {(title || description) && (
     <div class="px-4 py-3 border-b border-border bg-muted/10">
       {title && <h4 class="text-sm font-semibold m-0 text-foreground">{title}</h4>}
@@ -124,14 +134,14 @@ if (isDynamic) {
                 size="sm"
               />
               {togglingPattern === "icon" && propsConfig[prop].length > 1 && (
-                <button class="compare-prop-btn p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title={`Compare all ${prop}s`}>
+                <RLAButton class="compare-prop-btn" size="sm" variant="ghost" color="neutral" title={`Compare all ${prop}s`} square>
                   <span class="i-lucide-layout-grid size-3.5"></span>
-                </button>
+                </RLAButton>
               )}
               {togglingPattern === "pill-toggle" && propsConfig[prop].length > 1 && (
-                <button class="compare-prop-btn px-2 py-0.5 text-[10px] font-semibold border border-border/60 rounded-full text-muted-foreground hover:text-foreground hover:bg-accent/30 transition-colors" title={`Compare all ${prop}s`}>
+                <RLAButton class="compare-prop-btn" size="xs" variant="outline" color="neutral" rounded title={`Compare all ${prop}s`}>
                   Compare
-                </button>
+                </RLAButton>
               )}
             </div>
           </div>
@@ -141,8 +151,8 @@ if (isDynamic) {
       <!-- Segmented Control for Layout Mode -->
       {togglingPattern === "tab-segmented" && (
         <div class="flex items-center gap-1 bg-muted/40 p-0.5 rounded-lg border border-border/40 mode-segmented-control ml-auto">
-          <button class="mode-tab active px-2.5 py-0.5 text-xs font-medium rounded-md bg-background text-foreground shadow-xs border border-border/40" data-mode="single">Single Preview</button>
-          <button class="mode-tab px-2.5 py-0.5 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/30 transition-colors" data-mode="compare">Compare All</button>
+          <RLAButton class="mode-tab active bg-background text-foreground shadow-xs border border-border/40" size="xs" variant="ghost" color="neutral" data-mode="single">Single Preview</RLAButton>
+          <RLAButton class="mode-tab text-muted-foreground" size="xs" variant="ghost" color="neutral" data-mode="compare">Compare All</RLAButton>
         </div>
       )}
     </div>
@@ -152,18 +162,29 @@ if (isDynamic) {
   <div class="controls-area px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between gap-4">
     <div class="flex flex-wrap items-center gap-4">
       <div class="flex items-center gap-2">
-         <button class="showcase-tab active px-3 py-1 text-xs font-medium rounded-md bg-background text-foreground shadow-sm border border-border" data-lang="astro">Astro</button>
-         <button class="showcase-tab px-3 py-1 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" data-lang="vue">Vue</button>
+         <RLAButton class="showcase-tab active bg-background text-foreground shadow-sm border border-border" size="sm" variant="ghost" color="neutral" data-lang="astro">Astro</RLAButton>
+         <RLAButton class="showcase-tab text-muted-foreground" size="sm" variant="ghost" color="neutral" data-lang="vue">Vue</RLAButton>
       </div>
     </div>
 
     <div class="flex items-center gap-1.5">
-         <button class="highlight-slots p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Highlight component slots">
-            <span class="i-lucide-boxes size-4"></span>
-         </button>
-         <a href={playground || "#"} target={playground ? "_blank" : undefined} rel="noopener noreferrer" class="open-playground p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Open in Playground">
+         <div class="relative inline-block highlight-slots-wrapper">
+           <RLAButton class="highlight-slots" size="sm" variant="ghost" color="neutral" title="Highlight component slots" square>
+              <span class="i-lucide-boxes size-4"></span>
+           </RLAButton>
+           <div class="slots-popover hidden absolute right-0 top-full mt-2 z-50 w-80 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-lg outline-none text-xs flex flex-col gap-3">
+             <div class="flex items-center justify-between border-b border-border pb-2">
+               <span class="font-semibold text-sm text-foreground">Theme slots</span>
+               <span class="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Visualizer</span>
+             </div>
+             <div class="slots-list flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
+               <!-- Slots populated by JS -->
+             </div>
+           </div>
+         </div>
+         <RLAButton href={playground || "#"} target={playground ? "_blank" : undefined} rel="noopener noreferrer" class="open-playground" size="sm" variant="ghost" color="neutral" title="Open in Playground" square>
             <span class="i-lucide-flask-conical size-4"></span>
-         </a>
+         </RLAButton>
     </div>
   </div>
 
@@ -180,9 +201,9 @@ if (isDynamic) {
   <!-- Code Block Area -->
   <div class="code-area bg-gray-950 relative">
     <div class="absolute top-[6px] right-2 z-10">
-      <button class="copy-code p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors" title="Copy code">
+      <RLAButton class="copy-code" size="sm" variant="ghost" color="neutral" title="Copy code" square>
         <span class="i-lucide-copy size-4"></span>
-      </button>
+      </RLAButton>
     </div>
 
     {isDynamic ? (
@@ -231,7 +252,7 @@ if (isDynamic) {
 
   /* Slot Visualizer */
   .highlight-slots.active {
-    background: #ef4444;
+    background-color: var(--color-primary-500, #ef4444);
     color: white;
   }
 </style>
@@ -240,53 +261,115 @@ if (isDynamic) {
   // Slot visualizer: refresh after dynamic content swaps
   function refreshSlotVisualizer(showcase) {
     const s = showcase.slotVis;
-    if (!s || !s.active) return;
-    if (s.panel) { s.panel.remove(); s.panel = null; }
-    if (s.overlay) { s.overlay.remove(); s.overlay = null; }
-    const pw = showcase.querySelector('.preview-slot-wrapper');
-    const pa = showcase.querySelector('.preview-area');
-    if (!pw || !pa) return;
-    const slots = new Set();
-    Array.from(pw.querySelectorAll('[data-slot]')).forEach(el => slots.add(el.getAttribute('data-slot')));
-    if (slots.size === 0) return;
-    s.panel = document.createElement('div');
-    slots.forEach(slot => {
-      const item = document.createElement('div');
-      item.textContent = slot;
-      item.style.cssText = 'cursor:pointer;padding:3px 6px;border-radius:3px;';
-      item.addEventListener('mouseenter', () => {
-        item.style.background = 'var(--color-accent)';
-        const target = pw.querySelector(`[data-slot="${slot}"]`);
-        if (!target) return;
-        const rect = target.getBoundingClientRect();
-        const areaRect = pa.getBoundingClientRect();
-        if (!s.overlay) {
-          s.overlay = document.createElement('div');
-          s.overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:2px;opacity:0;';
-          const label = document.createElement('span');
-          label.style.cssText = 'position:absolute;top:-20px;left:-2px;font-size:11px;font-weight:600;background:#ef4444;color:white;padding:1px 6px;border-radius:3px;white-space:nowrap;font-family:monospace;line-height:1.4;';
-          s.overlay.appendChild(label);
-          pa.appendChild(s.overlay);
-        }
-        s.overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
-        s.overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
-        s.overlay.style.width = (rect.width + 4) + 'px';
-        s.overlay.style.height = (rect.height + 4) + 'px';
-        s.overlay.style.opacity = '1';
-        s.overlay.querySelector('span').textContent = slot;
+    if (!s) return;
+    
+    const slotsList = showcase.querySelector('.slots-list');
+    if (!slotsList) return;
+
+    slotsList.innerHTML = '';
+
+    let themeSlots = JSON.parse(showcase.getAttribute('data-theme-slots') || '[]');
+    const previewWrapper = showcase.querySelector('.preview-slot-wrapper');
+    const previewArea = showcase.querySelector('.preview-area');
+
+    if (themeSlots.length === 0 && previewWrapper) {
+      const DOMSlots = new Set();
+      Array.from(previewWrapper.querySelectorAll('[data-slot]')).forEach(el => {
+        DOMSlots.add(el.getAttribute('data-slot'));
       });
-      item.addEventListener('mouseleave', () => {
-        item.style.background = '';
-        if (s.overlay) s.overlay.style.opacity = '0';
-      });
-      s.panel.appendChild(item);
-    });
-    const btn = showcase.querySelector('.highlight-slots');
-    if (btn) {
-      const btnRect = btn.getBoundingClientRect();
-      s.panel.style.cssText = 'position:fixed;top:' + (btnRect.bottom + 4) + 'px;right:' + (window.innerWidth - btnRect.right + 4) + 'px;z-index:2147483646;min-width:120px;background:var(--color-background);border:1px solid var(--color-border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:6px;display:flex;flex-direction:column;gap:4px;font-size:12px;font-family:monospace;color:var(--color-foreground);';
-      document.body.appendChild(s.panel);
+      const firstChild = previewWrapper.firstElementChild;
+      if (firstChild) {
+        DOMSlots.add(firstChild.getAttribute('data-slot') || 'root');
+      }
+      themeSlots = Array.from(DOMSlots).filter(Boolean);
     }
+
+    if (themeSlots.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'text-muted-foreground text-center py-4 font-sans';
+      empty.textContent = 'No theme slots defined';
+      slotsList.appendChild(empty);
+      return;
+    }
+    
+    // Get currently active classes for each slot
+    let resolvedSlots = {};
+    if (showcase.classList.contains('dynamic-showcase')) {
+      const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]');
+      const currentProps = {};
+      propKeys.forEach((prop) => {
+        const input = showcase.querySelector(`input[name="${prop}"]`);
+        if (input) currentProps[prop] = input.value;
+      });
+      const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}');
+      const keyStr = propKeys.map(k => `${k}:${currentProps[k]}`).join('|');
+      resolvedSlots = combinationClasses[keyStr] || {};
+    }
+    
+    const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}');
+    
+    themeSlots.forEach(slot => {
+      let target = null;
+      if (previewWrapper) {
+        if (slot === 'root') {
+          target = previewWrapper.querySelector('[data-slot="root"]') || previewWrapper.firstElementChild;
+        } else {
+          target = previewWrapper.querySelector(`[data-slot="${slot}"]`);
+        }
+      }
+
+      const isRendered = !!target;
+      
+      let classes = '';
+      if (isRendered) {
+        classes = target.className;
+      } else {
+        const camelSlot = slot.replace(/-([a-z])/g, g => g[1].toUpperCase());
+        classes = resolvedSlots[camelSlot] || resolvedSlots[slot] || initialThemeClasses[camelSlot] || initialThemeClasses[slot] || '';
+      }
+
+      classes = classes.split(/\s+/).filter(Boolean).join(' ');
+
+      const item = document.createElement('div');
+      item.className = 'slot-item p-2 rounded-lg hover:bg-muted/50 border border-transparent hover:border-border transition-all cursor-pointer text-left';
+      item.innerHTML = `
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <span class="font-mono font-medium text-foreground text-xs">${slot}</span>
+          ${isRendered ? '' : '<span class="text-[10px] text-destructive font-sans font-medium px-1.5 py-0.5 bg-destructive/10 rounded-full">not rendered</span>'}
+        </div>
+        <div class="font-mono text-[10px] text-muted-foreground break-all whitespace-normal line-clamp-2 hover:line-clamp-none transition-all">
+          ${classes || '(no classes)'}
+        </div>
+      `;
+
+      if (isRendered) {
+        item.addEventListener('mouseenter', () => {
+          if (!previewArea) return;
+          const rect = target.getBoundingClientRect();
+          const areaRect = previewArea.getBoundingClientRect();
+          if (!s.overlay) {
+            s.overlay = document.createElement('div');
+            s.overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:4px;opacity:0;';
+            const label = document.createElement('span');
+            label.style.cssText = 'position:absolute;top:-20px;left:-2px;font-size:11px;font-weight:600;background:#ef4444;color:white;padding:1px 6px;border-radius:3px;white-space:nowrap;font-family:monospace;line-height:1.4;';
+            s.overlay.appendChild(label);
+            previewArea.appendChild(s.overlay);
+          }
+          s.overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
+          s.overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
+          s.overlay.style.width = (rect.width + 4) + 'px';
+          s.overlay.style.height = (rect.height + 4) + 'px';
+          s.overlay.style.opacity = '1';
+          s.overlay.querySelector('span').textContent = slot;
+        });
+
+        item.addEventListener('mouseleave', () => {
+          if (s.overlay) s.overlay.style.opacity = '0';
+        });
+      }
+
+      slotsList.appendChild(item);
+    });
   }
 
   // Helper to get static/custom classes of an element (classes not managed by theme defaults)
@@ -298,7 +381,6 @@ if (isDynamic) {
   }
 
   function initShowcases() {
-    // 1. Initialize all showcases (Static & Dynamic) for tab-switching and copy functionality
     document.querySelectorAll('.component-showcase').forEach(showcase => {
       const tabs = showcase.querySelectorAll('.showcase-tab');
       const codeBlocks = showcase.querySelectorAll('.code-block');
@@ -345,70 +427,57 @@ if (isDynamic) {
       }
 
       // === Slot Visualizer ===
-      const previewWrapper = showcase.querySelector('.preview-slot-wrapper');
-      const previewArea = showcase.querySelector('.preview-area');
       const highlightBtn = showcase.querySelector('.highlight-slots');
-      const svState = showcase.slotVis = { active: false, panel: null, overlay: null };
-
-      function svClearOverlay() {
-        if (svState.overlay) svState.overlay.style.opacity = '0';
-      }
-
-      function svHighlightSlot(slotName) {
-        const target = previewWrapper.querySelector(`[data-slot="${slotName}"]`);
-        if (!target) return;
-        const rect = target.getBoundingClientRect();
-        const areaRect = previewArea.getBoundingClientRect();
-        if (!svState.overlay) {
-          svState.overlay = document.createElement('div');
-          svState.overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:2px;opacity:0;';
-          const label = document.createElement('span');
-          label.style.cssText = 'position:absolute;top:-20px;left:-2px;font-size:11px;font-weight:600;background:#ef4444;color:white;padding:1px 6px;border-radius:3px;white-space:nowrap;font-family:monospace;line-height:1.4;';
-          svState.overlay.appendChild(label);
-          previewArea.appendChild(svState.overlay);
-        }
-        svState.overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
-        svState.overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
-        svState.overlay.style.width = (rect.width + 4) + 'px';
-        svState.overlay.style.height = (rect.height + 4) + 'px';
-        svState.overlay.style.opacity = '1';
-        svState.overlay.querySelector('span').textContent = slotName;
-      }
+      const popover = showcase.querySelector('.slots-popover');
+      const svState = showcase.slotVis = { active: false, overlay: null };
 
       function svDeactivate() {
         svState.active = false;
         highlightBtn?.classList.remove('active');
-        if (svState.panel) { svState.panel.remove(); svState.panel = null; }
+        popover?.classList.add('hidden');
         if (svState.overlay) { svState.overlay.remove(); svState.overlay = null; }
       }
 
       function svActivate() {
+        document.querySelectorAll('.component-showcase').forEach(other => {
+          if (other !== showcase && other.slotVis) {
+            other.slotVis.deactivate?.();
+          }
+        });
+        
         svState.active = true;
         highlightBtn?.classList.add('active');
-        const slots = new Set();
-        const els = previewWrapper ? Array.from(previewWrapper.querySelectorAll('[data-slot]')) : [];
-        els.forEach(el => slots.add(el.getAttribute('data-slot')));
-        if (slots.size === 0) { svDeactivate(); return; }
-        svState.panel = document.createElement('div');
-        slots.forEach(slot => {
-          const item = document.createElement('div');
-          item.textContent = slot;
-          item.style.cssText = 'cursor:pointer;padding:3px 6px;border-radius:3px;';
-          item.addEventListener('mouseenter', () => { item.style.background = 'var(--color-accent)'; svHighlightSlot(slot); });
-          item.addEventListener('mouseleave', () => { item.style.background = ''; svClearOverlay(); });
-          svState.panel.appendChild(item);
-        });
-        const btnRect = highlightBtn.getBoundingClientRect();
-        svState.panel.style.cssText = 'position:fixed;top:' + (btnRect.bottom + 4) + 'px;right:' + (window.innerWidth - btnRect.right + 4) + 'px;z-index:2147483646;min-width:120px;background:var(--color-background);border:1px solid var(--color-border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:6px;display:flex;flex-direction:column;gap:4px;font-size:12px;font-family:monospace;color:var(--color-foreground);';
-        document.body.appendChild(svState.panel);
+        popover?.classList.remove('hidden');
+        refreshSlotVisualizer(showcase);
       }
 
+      svState.activate = svActivate;
+      svState.deactivate = svDeactivate;
+
       if (highlightBtn) {
-        highlightBtn.addEventListener('click', () => {
+        highlightBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
           if (svState.active) svDeactivate(); else svActivate();
         });
       }
+
+      if (popover) {
+        popover.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
     });
+
+    if (!window.hasGlobalShowcaseListener) {
+      window.hasGlobalShowcaseListener = true;
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.component-showcase').forEach(showcase => {
+          if (showcase.slotVis && showcase.slotVis.active) {
+            showcase.slotVis.deactivate();
+          }
+        });
+      });
+    }
 
     // Apply pre-resolved theme classes dynamically while preserving custom static classes
     function applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses) {
@@ -433,10 +502,8 @@ if (isDynamic) {
         const themeClasses = resolvedSlots[camelSlot] || resolvedSlots[slot] || '';
         const initialClasses = initialThemeClasses[camelSlot] || initialThemeClasses[slot] || '';
         
-        // Preserve any custom classes
         const customClasses = getCustomClasses(orig, initialClasses);
         
-        // Merge theme classes and custom classes
         const finalClasses = [...themeClasses.split(/\s+/), ...customClasses]
           .filter(Boolean)
           .join(' ')
@@ -447,7 +514,7 @@ if (isDynamic) {
       });
     }
 
-    // 3. Initialize Dynamic Showcases
+    // Initialize Dynamic Showcases
     document.querySelectorAll('.dynamic-showcase').forEach(node => {
       const showcase = node;
       const componentName = showcase.getAttribute('data-component');
@@ -467,7 +534,6 @@ if (isDynamic) {
       
       let comparedProp = null;
 
-      // Capture original template element inside slot wrapper on startup
       const originalTemplate = previewWrapper?.firstElementChild?.cloneNode(true);
 
       function updateComponent() {
@@ -475,7 +541,6 @@ if (isDynamic) {
 
         const currentProps = {};
         
-        // Find inputs (hidden inputs generated by RLASelect)
         propKeys.forEach((prop) => {
           const input = showcase.querySelector(`input[name="${prop}"]`);
           if (input) {
@@ -483,7 +548,6 @@ if (isDynamic) {
           }
         });
 
-        // If toggling pattern is select-option, check if any select has "— Compare All —"
         if (togglingPattern === "select-option") {
           comparedProp = null;
           propKeys.forEach((prop) => {
@@ -492,7 +556,6 @@ if (isDynamic) {
             }
           });
 
-          // Disable other selects if comparing
           propKeys.forEach((prop) => {
             const selectWrapper = showcase.querySelector(`.prop-control-group[data-prop="${prop}"] rla-select`);
             if (selectWrapper) {
@@ -507,7 +570,6 @@ if (isDynamic) {
           });
         }
 
-        // 1. Update preview area
         if (comparedProp && propsConfig[comparedProp]) {
           previewWrapper.innerHTML = '';
           const grid = document.createElement('div');
@@ -516,20 +578,16 @@ if (isDynamic) {
           propsConfig[comparedProp].forEach(val => {
             const clone = originalTemplate.cloneNode(true);
             
-            // Build current combination
             const activeVariants = { ...currentProps };
             activeVariants[comparedProp] = val;
             
-            // Look up pre-calculated classes
             const keyStr = propKeys.map(k => `${k}:${activeVariants[k]}`).join('|');
             const resolvedSlots = combinationClasses[keyStr];
             
-            // Apply theme classes dynamically
             if (resolvedSlots) {
               applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses);
             }
             
-            // Update label text content if applicable
             const labelEl = clone.querySelector('[data-slot="label"]') || (clone.getAttribute('data-slot') === 'label' ? clone : null);
             if (labelEl) {
               labelEl.textContent = val;
@@ -542,11 +600,9 @@ if (isDynamic) {
           previewWrapper.innerHTML = '';
           const clone = originalTemplate.cloneNode(true);
           
-          // Look up pre-calculated classes
           const keyStr = propKeys.map(k => `${k}:${currentProps[k]}`).join('|');
           const resolvedSlots = combinationClasses[keyStr];
 
-          // Apply theme classes dynamically
           if (resolvedSlots) {
             applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses);
           }
@@ -554,7 +610,6 @@ if (isDynamic) {
           previewWrapper.appendChild(clone);
         }
 
-        // 2. Generate and update code block content
         let astroCode = '';
         let vueCode = '';
         const vueComponentName = componentName.replace(/^RLA/, 'RLV');
@@ -591,11 +646,9 @@ if (isDynamic) {
         if (codeAstroElement) codeAstroElement.textContent = astroCode;
         if (codeVueElement) codeVueElement.textContent = vueCode;
 
-        // Refresh slot visualizer if active
         refreshSlotVisualizer(showcase);
       }
 
-      // Initialize compare toggles (for icon and pill-toggle patterns)
       if (togglingPattern === "icon" || togglingPattern === "pill-toggle") {
         compareButtons.forEach(btn => {
           btn.addEventListener('click', () => {
@@ -648,7 +701,6 @@ if (isDynamic) {
         });
       }
 
-      // Initialize segmented control (for tab-segmented pattern)
       if (togglingPattern === "tab-segmented") {
         modeTabs.forEach(tab => {
           tab.addEventListener('click', () => {
@@ -663,8 +715,7 @@ if (isDynamic) {
             tab.classList.remove('text-muted-foreground');
 
             if (mode === 'compare') {
-              comparedProp = propKeys[0]; // Compare the first configured prop
-              // Disable selector
+              comparedProp = propKeys[0];
               showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
                 sel.setAttribute('disabled', 'true');
                 sel.classList.add('opacity-50', 'pointer-events-none');
@@ -682,10 +733,7 @@ if (isDynamic) {
         });
       }
 
-      // Listen to change events bubbling up from rla-select hidden inputs
       showcase.addEventListener('change', updateComponent);
-
-      // Initial run
       updateComponent();
     });
   }
