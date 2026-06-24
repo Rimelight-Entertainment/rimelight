@@ -321,21 +321,31 @@ if (componentKey) {
     const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}');
     
     themeSlots.forEach(slot => {
-      let target = null;
+      let targets = [];
       if (previewWrapper) {
         if (slot === 'root') {
-          target = previewWrapper.querySelector('[data-slot="root"]') || previewWrapper.firstElementChild;
+          const roots = Array.from(previewWrapper.querySelectorAll('[data-slot="root"]'));
+          if (roots.length > 0) {
+            targets = roots;
+          } else {
+            const children = Array.from(previewWrapper.children);
+            if (children.length === 1 && (children[0].classList.contains('flex') || children[0].classList.contains('grid'))) {
+              targets = Array.from(children[0].children);
+            } else {
+              targets = children;
+            }
+          }
         } else {
           const kebabSlot = slot.replace(/([A-Z])/g, "-$1").toLowerCase();
-          target = previewWrapper.querySelector(`[data-slot="${slot}"]`) || previewWrapper.querySelector(`[data-slot="${kebabSlot}"]`);
+          targets = Array.from(previewWrapper.querySelectorAll(`[data-slot="${slot}"], [data-slot="${kebabSlot}"]`));
         }
       }
 
-      const isRendered = !!target;
+      const isRendered = targets.length > 0;
       
       let classes = '';
       if (isRendered) {
-        classes = target.className;
+        classes = targets[0].className;
       } else {
         const camelSlot = slot.replace(/-([a-z])/g, g => g[1].toUpperCase());
         classes = resolvedSlots[camelSlot] || resolvedSlots[slot] || initialThemeClasses[camelSlot] || initialThemeClasses[slot] || '';
@@ -379,26 +389,38 @@ if (componentKey) {
       if (isRendered) {
         item.addEventListener('mouseenter', () => {
           if (!previewArea) return;
-          const rect = target.getBoundingClientRect();
+          
+          if (s.overlays) {
+            s.overlays.forEach(o => o.remove());
+          }
+          s.overlays = [];
+
           const areaRect = previewArea.getBoundingClientRect();
-          if (!s.overlay) {
-            s.overlay = document.createElement('div');
-            s.overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:4px;opacity:0;';
+
+          targets.forEach(targetEl => {
+            const rect = targetEl.getBoundingClientRect();
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:4px;';
             const label = document.createElement('span');
             label.style.cssText = 'position:absolute;top:-20px;left:-2px;font-size:11px;font-weight:600;background:#ef4444;color:white;padding:1px 6px;border-radius:3px;white-space:nowrap;font-family:monospace;line-height:1.4;';
-            s.overlay.appendChild(label);
-            previewArea.appendChild(s.overlay);
-          }
-          s.overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
-          s.overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
-          s.overlay.style.width = (rect.width + 4) + 'px';
-          s.overlay.style.height = (rect.height + 4) + 'px';
-          s.overlay.style.opacity = '1';
-          s.overlay.querySelector('span').textContent = slot;
+            label.textContent = slot;
+            overlay.appendChild(label);
+            
+            overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
+            overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
+            overlay.style.width = (rect.width + 4) + 'px';
+            overlay.style.height = (rect.height + 4) + 'px';
+            
+            previewArea.appendChild(overlay);
+            s.overlays.push(overlay);
+          });
         });
 
         item.addEventListener('mouseleave', () => {
-          if (s.overlay) s.overlay.style.opacity = '0';
+          if (s.overlays) {
+            s.overlays.forEach(o => o.remove());
+            s.overlays = null;
+          }
         });
       }
 
@@ -472,12 +494,15 @@ if (componentKey) {
       // === Slot Visualizer ===
       const highlightBtn = showcase.querySelector('.highlight-slots');
       const popoverContent = showcase.querySelector('.popover-content');
-      const svState = showcase.slotVis = { active: false, overlay: null };
+      const svState = showcase.slotVis = { active: false, overlays: null };
 
       function svDeactivate() {
         svState.active = false;
         highlightBtn?.classList.remove('active');
-        if (svState.overlay) { svState.overlay.remove(); svState.overlay = null; }
+        if (svState.overlays) {
+          svState.overlays.forEach(o => o.remove());
+          svState.overlays = null;
+        }
       }
 
       function svActivate() {
