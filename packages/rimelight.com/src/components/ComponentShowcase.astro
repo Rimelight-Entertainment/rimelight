@@ -44,19 +44,20 @@ const isDynamic = !!propsConfig;
 const propKeys = propsConfig ? Object.keys(propsConfig) : [];
 
 // If select-option pattern is used, we inject the special compare option to each config
-let resolvedPropsConfig = { ...propsConfig };
+let resolvedPropsConfig: Record<string, string[]> = { ...propsConfig };
 if (isDynamic && togglingPattern === "select-option") {
   resolvedPropsConfig = {};
   for (const key of propKeys) {
-    resolvedPropsConfig[key] = [...propsConfig[key], "— Compare All —"];
+    const configValues = propsConfig?.[key] || [];
+    resolvedPropsConfig[key] = [...configValues, "— Compare All —"];
   }
 }
 
 // Load theme and pre-calculate all variant classes at build-time (server-side)
 let resolvedTheme = theme;
 const componentKey = resolvedComponentName.replace(/^RL[AV]/, '').toLowerCase(); // e.g. "button"
-let combinationClasses = {};
-let initialThemeClasses = {};
+let combinationClasses: Record<string, any> = {};
+let initialThemeClasses: Record<string, string> = {};
 
 if (componentKey) {
   if (!resolvedTheme) {
@@ -82,7 +83,7 @@ if (componentKey) {
       if (isDynamic) {
         // Generate classes for all combinations of configured props
         const keys = Object.keys(propsConfig || {});
-        const getCombinations = (index, current) => {
+        const getCombinations = (index: number, current: Record<string, string>) => {
           if (index === keys.length) {
             const activeVariants = {
               ...resolvedTheme.defaultVariants,
@@ -96,8 +97,9 @@ if (componentKey) {
           }
           
           const key = keys[index];
-          const vals = propsConfig[key] || [];
-          vals.forEach(val => {
+          if (!key) return;
+          const vals = propsConfig?.[key] || [];
+          vals.forEach((val: string) => {
             current[key] = val;
             getCombinations(index + 1, { ...current });
           });
@@ -134,12 +136,12 @@ if (componentKey) {
                 name={prop}
                 size="sm"
               />
-              {togglingPattern === "icon" && propsConfig[prop].length > 1 && (
+              {togglingPattern === "icon" && propsConfig?.[prop] && propsConfig[prop].length > 1 && (
                 <RLAButton class="compare-prop-btn" size="sm" variant="ghost" color="neutral" title={`Compare all ${prop}s`} square>
                   <span class="i-lucide-layout-grid size-3.5"></span>
                 </RLAButton>
               )}
-              {togglingPattern === "pill-toggle" && propsConfig[prop].length > 1 && (
+              {togglingPattern === "pill-toggle" && propsConfig?.[prop] && propsConfig[prop].length > 1 && (
                 <RLAButton class="compare-prop-btn" size="xs" variant="outline" color="neutral" rounded title={`Compare all ${prop}s`}>
                   Compare
                 </RLAButton>
@@ -271,7 +273,7 @@ if (componentKey) {
 
 <script>
   // Slot visualizer: refresh after dynamic content swaps
-  function refreshSlotVisualizer(showcase) {
+  function refreshSlotVisualizer(showcase: any) {
     const s = showcase.slotVis;
     if (!s) return;
     
@@ -280,20 +282,20 @@ if (componentKey) {
 
     slotsList.innerHTML = '';
 
-    let themeSlots = JSON.parse(showcase.getAttribute('data-theme-slots') || '[]');
+    let themeSlots = JSON.parse(showcase.getAttribute('data-theme-slots') || '[]') as string[];
     const previewWrapper = showcase.querySelector('.preview-slot-wrapper');
     const previewArea = showcase.querySelector('.preview-area');
 
     if (themeSlots.length === 0 && previewWrapper) {
       const DOMSlots = new Set();
-      Array.from(previewWrapper.querySelectorAll('[data-slot]')).forEach(el => {
+      Array.from(previewWrapper.querySelectorAll('[data-slot]')).forEach((el: any) => {
         DOMSlots.add(el.getAttribute('data-slot'));
       });
-      const firstChild = previewWrapper.firstElementChild;
+      const firstChild = previewWrapper.firstElementChild as HTMLElement;
       if (firstChild) {
         DOMSlots.add(firstChild.getAttribute('data-slot') || 'root');
       }
-      themeSlots = Array.from(DOMSlots).filter(Boolean);
+      themeSlots = Array.from(DOMSlots).filter(Boolean) as string[];
     }
 
     if (themeSlots.length === 0) {
@@ -305,20 +307,20 @@ if (componentKey) {
     }
     
     // Get currently active classes for each slot
-    let resolvedSlots = {};
+    let resolvedSlots: any = {};
     if (showcase.classList.contains('dynamic-showcase')) {
-      const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]');
-      const currentProps = {};
-      propKeys.forEach((prop) => {
-        const input = showcase.querySelector(`input[name="${prop}"]`);
+      const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]') as string[];
+      const currentProps: Record<string, string> = {};
+      propKeys.forEach((prop: string) => {
+        const input = showcase.querySelector(`input[name="${prop}"]`) as HTMLInputElement;
         if (input) currentProps[prop] = input.value;
       });
-      const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}');
-      const keyStr = propKeys.map(k => `${k}:${currentProps[k]}`).join('|');
+      const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}') as Record<string, any>;
+      const keyStr = propKeys.map((k: string) => `${k}:${currentProps[k]}`).join('|');
       resolvedSlots = combinationClasses[keyStr] || {};
     }
     
-    const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}');
+    const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}') as Record<string, string>;
     
     // Determine which slot is the default slot for this component
     let defaultSlotName = '';
@@ -330,38 +332,39 @@ if (componentKey) {
       defaultSlotName = 'label';
     }
     
-    themeSlots.forEach(slot => {
-      let targets = [];
+    themeSlots.forEach((slot: string) => {
+      let targets: HTMLElement[] = [];
       if (previewWrapper) {
         if (slot === 'root') {
-          const roots = Array.from(previewWrapper.querySelectorAll('[data-slot="root"]'));
+          const roots = Array.from(previewWrapper.querySelectorAll('[data-slot="root"]')) as HTMLElement[];
           if (roots.length > 0) {
             targets = roots;
           } else {
-            const children = Array.from(previewWrapper.children);
-            if (children.length === 1 && (children[0].classList.contains('flex') || children[0].classList.contains('grid'))) {
-              targets = Array.from(children[0].children);
+            const children = Array.from(previewWrapper.children) as HTMLElement[];
+            const firstChild = children[0];
+            if (firstChild && children.length === 1 && (firstChild.classList.contains('flex') || firstChild.classList.contains('grid'))) {
+              targets = Array.from(firstChild.children) as HTMLElement[];
             } else {
               targets = children;
             }
           }
         } else {
           const kebabSlot = slot.replace(/([A-Z])/g, "-$1").toLowerCase();
-          targets = Array.from(previewWrapper.querySelectorAll(`[data-slot="${slot}"], [data-slot="${kebabSlot}"]`));
+          targets = Array.from(previewWrapper.querySelectorAll(`[data-slot="${slot}"], [data-slot="${kebabSlot}"]`)) as HTMLElement[];
           
           if (targets.length === 0 && (slot === 'label' || slot === 'content' || slot === 'default')) {
-            const roots = Array.from(previewWrapper.querySelectorAll('[data-slot="root"]'));
-            const actualRoots = roots.length > 0 ? roots : Array.from(previewWrapper.children);
+            const roots = Array.from(previewWrapper.querySelectorAll('[data-slot="root"]')) as HTMLElement[];
+            const actualRoots = (roots.length > 0 ? roots : Array.from(previewWrapper.children)) as HTMLElement[];
             
             // Build a list of all other slot names in kebab-case and camelCase to exclude
             const otherSlotsKebab = themeSlots
-              .filter(s => s !== slot)
-              .map(s => s.replace(/([A-Z])/g, "-$1").toLowerCase());
+              .filter((slotName: string) => slotName !== slot)
+              .map((slotName: string) => slotName.replace(/([A-Z])/g, "-$1").toLowerCase());
             const otherSlotsSet = new Set(otherSlotsKebab);
-            themeSlots.filter(s => s !== slot).forEach(s => otherSlotsSet.add(s));
+            themeSlots.filter((slotName: string) => slotName !== slot).forEach((slotName: string) => otherSlotsSet.add(slotName));
 
-            actualRoots.forEach(rootEl => {
-              Array.from(rootEl.children).forEach(child => {
+            actualRoots.forEach((rootEl: HTMLElement) => {
+              Array.from(rootEl.children).forEach((child: any) => {
                 const childSlot = child.getAttribute('data-slot');
                 if (!childSlot || childSlot === slot || childSlot === 'default') {
                   const childSlotKebab = childSlot ? childSlot.replace(/([A-Z])/g, "-$1").toLowerCase() : '';
@@ -379,9 +382,10 @@ if (componentKey) {
       
       let classes = '';
       if (isRendered) {
-        classes = targets[0].className;
+        const firstTarget = targets[0];
+        if (firstTarget) classes = firstTarget.className;
       } else {
-        const camelSlot = slot.replace(/-([a-z])/g, g => g[1].toUpperCase());
+        const camelSlot = slot.replace(/-([a-z])/g, (_, letter) => letter?.toUpperCase() || '');
         classes = resolvedSlots[camelSlot] || resolvedSlots[slot] || initialThemeClasses[camelSlot] || initialThemeClasses[slot] || '';
       }
 
@@ -425,13 +429,13 @@ if (componentKey) {
           if (!previewArea) return;
           
           if (s.overlays) {
-            s.overlays.forEach(o => o.remove());
+            s.overlays.forEach((o: any) => o.remove());
           }
           s.overlays = [];
 
           const areaRect = previewArea.getBoundingClientRect();
 
-          targets.forEach(targetEl => {
+          targets.forEach((targetEl: HTMLElement) => {
             const rect = targetEl.getBoundingClientRect();
             const overlay = document.createElement('div');
             overlay.style.cssText = 'position:absolute;pointer-events:none;z-index:10;transition:all 150ms ease;border:2px dashed #ef4444;border-radius:4px;';
@@ -452,7 +456,7 @@ if (componentKey) {
 
         item.addEventListener('mouseleave', () => {
           if (s.overlays) {
-            s.overlays.forEach(o => o.remove());
+            s.overlays.forEach((o: any) => o.remove());
             s.overlays = null;
           }
         });
@@ -472,11 +476,11 @@ if (componentKey) {
   }
 
   // Helper to get static/custom classes of an element (classes not managed by theme defaults)
-  function getCustomClasses(element, initialClassesForSlot) {
+  function getCustomClasses(element: HTMLElement, initialClassesForSlot: string) {
     if (!element) return [];
     const currentClasses = element.className.split(/\s+/).filter(Boolean);
     const initialSet = new Set(initialClassesForSlot.split(/\s+/).filter(Boolean));
-    return currentClasses.filter(c => !initialSet.has(c));
+    return currentClasses.filter((c: string) => !initialSet.has(c));
   }
 
   function initShowcases() {
@@ -528,13 +532,18 @@ if (componentKey) {
       // === Slot Visualizer ===
       const highlightBtn = showcase.querySelector('.highlight-slots');
       const popoverContent = showcase.querySelector('.popover-content');
-      const svState = showcase.slotVis = { active: false, overlays: null };
+      
+      const svState: { active: boolean; overlays: HTMLElement[] | null; activate?: () => void; deactivate?: () => void } = {
+        active: false,
+        overlays: null
+      };
+      (showcase as any).slotVis = svState;
 
       function svDeactivate() {
         svState.active = false;
         highlightBtn?.classList.remove('active');
         if (svState.overlays) {
-          svState.overlays.forEach(o => o.remove());
+          svState.overlays.forEach((o: HTMLElement) => o.remove());
           svState.overlays = null;
         }
       }
@@ -549,8 +558,9 @@ if (componentKey) {
       svState.deactivate = svDeactivate;
 
       if (popoverContent) {
-        popoverContent.addEventListener('popover-toggle', (e) => {
-          const isOpen = e.detail && e.detail.open;
+        popoverContent.addEventListener('popover-toggle', (e: Event) => {
+          const detail = (e as any).detail;
+          const isOpen = detail && detail.open;
           if (isOpen) {
             svActivate();
           } else {
@@ -561,25 +571,28 @@ if (componentKey) {
     });
 
     // Apply pre-resolved theme classes dynamically while preserving custom static classes
-    function applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses) {
+    function applyStylesToClone(clone: HTMLElement, originalTemplate: HTMLElement, resolvedSlots: Record<string, string>, initialThemeClasses: Record<string, string>) {
       if (!resolvedSlots) return;
       
-      const elementsToUpdate = [];
-      if (clone.getAttribute('data-slot')) {
-        elementsToUpdate.push({ el: clone, orig: originalTemplate, slot: clone.getAttribute('data-slot') });
+      const elementsToUpdate: { el: HTMLElement; orig: HTMLElement; slot: string }[] = [];
+      const rootSlot = clone.getAttribute('data-slot');
+      if (rootSlot) {
+        elementsToUpdate.push({ el: clone, orig: originalTemplate, slot: rootSlot });
       } else {
         elementsToUpdate.push({ el: clone, orig: originalTemplate, slot: 'root' });
       }
       
       clone.querySelectorAll('[data-slot]').forEach(el => {
         const slotName = el.getAttribute('data-slot');
-        const origEl = originalTemplate.querySelector(`[data-slot="${slotName}"]`);
-        elementsToUpdate.push({ el, orig: origEl, slot: slotName });
+        if (slotName) {
+          const origEl = originalTemplate.querySelector(`[data-slot="${slotName}"]`) as HTMLElement;
+          elementsToUpdate.push({ el: el as HTMLElement, orig: origEl || el, slot: slotName });
+        }
       });
       
       elementsToUpdate.forEach(({ el, orig, slot }) => {
         if (!el) return;
-        const camelSlot = slot.replace(/-([a-z])/g, g => g[1].toUpperCase());
+        const camelSlot = slot.replace(/-([a-z])/g, (_, letter) => letter?.toUpperCase() || '');
         const themeClasses = resolvedSlots[camelSlot] || resolvedSlots[slot] || '';
         const initialClasses = initialThemeClasses[camelSlot] || initialThemeClasses[slot] || '';
         
@@ -597,14 +610,14 @@ if (componentKey) {
 
     // Initialize Dynamic Showcases
     document.querySelectorAll('.dynamic-showcase').forEach(node => {
-      const showcase = node;
-      const componentName = showcase.getAttribute('data-component');
-      const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]');
-      const propsConfig = JSON.parse(showcase.getAttribute('data-config') || '{}');
+      const showcase = node as HTMLElement;
+      const componentName = showcase.getAttribute('data-component') || '';
+      const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]') as string[];
+      const propsConfig = JSON.parse(showcase.getAttribute('data-config') || '{}') as Record<string, string[]>;
       const togglingPattern = showcase.getAttribute('data-pattern') || 'icon';
       
-      const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}');
-      const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}');
+      const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}') as Record<string, Record<string, string>>;
+      const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}') as Record<string, string>;
       
       const codeAstroElement = showcase.querySelector('.dynamic-code-astro');
       const codeVueElement = showcase.querySelector('.dynamic-code-vue');
@@ -613,17 +626,17 @@ if (componentKey) {
       const compareButtons = showcase.querySelectorAll('.compare-prop-btn');
       const modeTabs = showcase.querySelectorAll('.mode-tab');
       
-      let comparedProp = null;
+      let comparedProp: string | null = null;
 
-      const originalTemplate = previewWrapper?.firstElementChild?.cloneNode(true);
+      const originalTemplate = previewWrapper?.firstElementChild?.cloneNode(true) as HTMLElement | undefined;
 
       function updateComponent() {
         if (!originalTemplate || !previewWrapper) return;
 
-        const currentProps = {};
+        const currentProps: Record<string, string> = {};
         
-        propKeys.forEach((prop) => {
-          const input = showcase.querySelector(`input[name="${prop}"]`);
+        propKeys.forEach((prop: string) => {
+          const input = showcase.querySelector(`input[name="${prop}"]`) as HTMLInputElement | null;
           if (input) {
             currentProps[prop] = input.value;
           }
@@ -631,13 +644,13 @@ if (componentKey) {
 
         if (togglingPattern === "select-option") {
           comparedProp = null;
-          propKeys.forEach((prop) => {
+          propKeys.forEach((prop: string) => {
             if (currentProps[prop] === "— Compare All —") {
               comparedProp = prop;
             }
           });
 
-          propKeys.forEach((prop) => {
+          propKeys.forEach((prop: string) => {
             const selectWrapper = showcase.querySelector(`.prop-control-group[data-prop="${prop}"] rla-select`);
             if (selectWrapper) {
               if (comparedProp && prop !== comparedProp) {
@@ -651,18 +664,19 @@ if (componentKey) {
           });
         }
 
-        if (comparedProp && propsConfig[comparedProp]) {
+        const valuesToCompare = comparedProp ? propsConfig[comparedProp] : undefined;
+        if (comparedProp && valuesToCompare) {
           previewWrapper.innerHTML = '';
           const grid = document.createElement('div');
           grid.className = "flex flex-wrap gap-4 items-center justify-center w-full";
           
-          propsConfig[comparedProp].forEach(val => {
-            const clone = originalTemplate.cloneNode(true);
+          valuesToCompare.forEach((val: string) => {
+            const clone = originalTemplate.cloneNode(true) as HTMLElement;
             
-            const activeVariants = { ...currentProps };
-            activeVariants[comparedProp] = val;
+            const activeVariants: Record<string, string> = { ...currentProps };
+            activeVariants[comparedProp as string] = val;
             
-            const keyStr = propKeys.map(k => `${k}:${activeVariants[k]}`).join('|');
+            const keyStr = propKeys.map((k: string) => `${k}:${activeVariants[k]}`).join('|');
             const resolvedSlots = combinationClasses[keyStr];
             
             if (resolvedSlots) {
@@ -679,9 +693,9 @@ if (componentKey) {
           previewWrapper.appendChild(grid);
         } else {
           previewWrapper.innerHTML = '';
-          const clone = originalTemplate.cloneNode(true);
+          const clone = originalTemplate.cloneNode(true) as HTMLElement;
           
-          const keyStr = propKeys.map(k => `${k}:${currentProps[k]}`).join('|');
+          const keyStr = propKeys.map((k: string) => `${k}:${currentProps[k]}`).join('|');
           const resolvedSlots = combinationClasses[keyStr];
 
           if (resolvedSlots) {
@@ -695,12 +709,12 @@ if (componentKey) {
         let vueCode = '';
         const vueComponentName = componentName.replace(/^RLA/, 'RLV');
 
-        if (comparedProp && propsConfig[comparedProp]) {
+        if (comparedProp && valuesToCompare) {
           let astroBody = '';
           let vueBody = '';
-          propsConfig[comparedProp].forEach(val => {
+          valuesToCompare.forEach((val: string) => {
             let propString = '';
-            propKeys.forEach((key) => {
+            propKeys.forEach((key: string) => {
               const pVal = key === comparedProp ? val : currentProps[key];
               if (pVal) propString += ` ${key}="${pVal}"`;
             });
@@ -714,7 +728,7 @@ if (componentKey) {
           vueCode = `\x3cscript setup\x3e\nimport ${vueComponentName} from "@rimelight/ui/components/vue/${vueComponentName}.vue";\n\x3c/script\x3e\n\n\x3ctemplate\x3e\n  \x3cdiv class="flex gap-4"\x3e\n${vueBody}  \x3c/div\x3e\n\x3c/template\x3e`;
         } else {
           let propString = '';
-          propKeys.forEach((key) => {
+          propKeys.forEach((key: string) => {
             const val = currentProps[key];
             if (val) propString += ` ${key}="${val}"`;
           });
@@ -796,7 +810,7 @@ if (componentKey) {
             tab.classList.remove('text-muted-foreground');
 
             if (mode === 'compare') {
-              comparedProp = propKeys[0];
+              comparedProp = propKeys[0] || null;
               showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
                 sel.setAttribute('disabled', 'true');
                 sel.classList.add('opacity-50', 'pointer-events-none');

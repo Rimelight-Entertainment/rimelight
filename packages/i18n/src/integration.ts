@@ -50,6 +50,7 @@ export function rimelightI18n(options?: RimelightI18nOptions): any {
                   if (id === "virtual:rimelight-i18n-config") {
                     return "\0" + id
                   }
+                  return null
                 },
                 load(id) {
                   if (id === "\0virtual:rimelight-i18n-config") {
@@ -58,6 +59,7 @@ export function rimelightI18n(options?: RimelightI18nOptions): any {
                       export const defaultLocale = ${JSON.stringify(defaultLocale)};
                     `
                   }
+                  return null
                 }
               }
             ]

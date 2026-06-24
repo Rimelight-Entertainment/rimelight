@@ -37,11 +37,12 @@ const classes = resolveClasses(popover, {
 <script>
   function initPopovers() {
     document.querySelectorAll('[data-slot="popover-container"]').forEach(container => {
-      if (container["dataset"] && container["dataset"].popoverInitialized) return;
-      if (container["dataset"]) container["dataset"].popoverInitialized = "true";
+      const el = container as any;
+      if (el.dataset && el.dataset.popoverInitialized) return;
+      if (el.dataset) el.dataset.popoverInitialized = "true";
 
       const trigger = container.querySelector('.popover-trigger');
-      const content = container.querySelector('.popover-content');
+      const content = container.querySelector('.popover-content') as HTMLElement;
 
       if (!trigger || !content) return;
 
@@ -50,28 +51,29 @@ const classes = resolveClasses(popover, {
         const isOpen = !content.classList.contains('hidden');
         
         document.querySelectorAll('.popover-content').forEach(otherContent => {
-          if (otherContent !== content && !otherContent.classList.contains('hidden')) {
-            otherContent.classList.add('hidden');
-            otherContent["style"].left = '';
-            otherContent["style"].right = '';
-            otherContent["style"].transform = '';
-            otherContent.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+          const other = otherContent as HTMLElement;
+          if (other !== content && !other.classList.contains('hidden')) {
+            other.classList.add('hidden');
+            other.style.left = '';
+            other.style.right = '';
+            other.style.transform = '';
+            other.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
           }
         });
 
         if (isOpen) {
           content.classList.add('hidden');
-          content["style"].left = '';
-          content["style"].right = '';
-          content["style"].transform = '';
+          content.style.left = '';
+          content.style.right = '';
+          content.style.transform = '';
           content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
         } else {
           content.classList.remove('hidden');
 
           // Reset styles to measure original computed bounds
-          content["style"].left = '';
-          content["style"].right = '';
-          content["style"].transform = '';
+          content.style.left = '';
+          content.style.right = '';
+          content.style.transform = '';
 
           const rect = content.getBoundingClientRect();
           const viewportWidth = window.innerWidth;
@@ -90,9 +92,9 @@ const classes = resolveClasses(popover, {
                                !content.classList.contains('right-0') && 
                                !content.classList.contains('left-0');
             if (isCentered) {
-              content["style"].transform = `translateX(calc(-50% + ${shift}px))`;
+              content.style.transform = `translateX(calc(-50% + ${shift}px))`;
             } else {
-              content["style"].transform = `translateX(${shift}px)`;
+              content.style.transform = `translateX(${shift}px)`;
             }
           }
 
@@ -106,16 +108,18 @@ const classes = resolveClasses(popover, {
     });
   }
 
-  if (!window["hasGlobalPopoverListener"]) {
-    window["hasGlobalPopoverListener"] = true;
+  const win = window as any;
+  if (!win.hasGlobalPopoverListener) {
+    win.hasGlobalPopoverListener = true;
     document.addEventListener('click', () => {
       document.querySelectorAll('.popover-content').forEach(content => {
-        if (!content.classList.contains('hidden')) {
-          content.classList.add('hidden');
-          content["style"].left = '';
-          content["style"].right = '';
-          content["style"].transform = '';
-          content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+        const c = content as HTMLElement;
+        if (!c.classList.contains('hidden')) {
+          c.classList.add('hidden');
+          c.style.left = '';
+          c.style.right = '';
+          c.style.transform = '';
+          c.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
         }
       });
     });
