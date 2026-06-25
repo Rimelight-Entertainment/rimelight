@@ -3,6 +3,7 @@ import RLASelect from "@rimelight/ui/components/astro/RLASelect.astro";
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
 import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
 import { scv } from "css-variants";
+import RLASeparator from "@rimelight/ui/components/astro/RLASeparator.astro";
 
 interface Props {
   component?: string;
@@ -68,7 +69,7 @@ if (componentKey) {
   if (resolvedTheme) {
     try {
       const resolver = scv(resolvedTheme);
-      
+
       // Calculate baseline classes for initial/default variants
       const initialVariants = {
         ...resolvedTheme.defaultVariants,
@@ -91,7 +92,7 @@ if (componentKey) {
             combinationClasses[keyStr] = resolved;
             return;
           }
-          
+
           const key = keys[index];
           if (!key) return;
           const vals = propsConfig?.[key] || [];
@@ -100,7 +101,7 @@ if (componentKey) {
             getCombinations(index + 1, { ...current });
           });
         };
-        
+
         getCombinations(0, {});
       }
     } catch (err) {
@@ -150,24 +151,20 @@ if (componentKey) {
     </div>
   )}
 
-  <!-- Tabs & Actions Controls Area -->
-  <div class="controls-area px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between gap-4">
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="flex items-center gap-2">
+  <!-- Tabs & Actions -->
+  <div class="controls-area p-sm border-b border-border flex items-center justify-between gap-md">
+      <div class="flex items-center gap-sm">
          <RLAButton class="showcase-tab active bg-background text-foreground shadow-sm border border-border" size="sm" variant="ghost" color="neutral" data-lang="astro">Astro</RLAButton>
-         <RLAButton class="showcase-tab text-muted-foreground" size="sm" variant="ghost" color="neutral" data-lang="vue">Vue</RLAButton>
+         <RLAButton class="showcase-tab" size="sm" variant="ghost" color="neutral" data-lang="vue">Vue</RLAButton>
       </div>
-    </div>
 
     <div class="flex items-center gap-1.5">
          <RLAPopover class="highlight-slots-wrapper" placement="bottom" ui={{ content: "right-0 w-80 text-xs flex flex-col gap-3" }}>
             <RLAButton slot="trigger" class="highlight-slots" size="sm" variant="ghost" color="neutral" title="Highlight component slots" square>
                <span class="i-lucide-boxes size-4"></span>
             </RLAButton>
-            <div class="flex items-center justify-between border-b border-border pb-2">
-              <span class="font-semibold text-sm text-foreground">Theme slots</span>
-              <span class="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Visualizer</span>
-            </div>
+            <span class="font-semibold text-sm text-foreground">Slots</span>
+            <RLASeparator />
             <div class="slots-list flex flex-col gap-3 max-h-60 overflow-y-auto pr-1">
               <!-- Slots populated by JS -->
             </div>
@@ -188,13 +185,11 @@ if (componentKey) {
     </div>
   </div>
 
-  <!-- Code Block Area -->
+  <!-- Code Sample -->
   {Astro.slots.has('code-astro') && (
-    <div class="code-area bg-gray-950 relative border-t border-border/10 p-4">
-      <div class="absolute top-2 right-4 z-10">
-        <RLAButton class="copy-code" size="sm" variant="ghost" color="neutral" title="Copy code" square>
-          <span class="i-lucide-copy size-4"></span>
-        </RLAButton>
+    <div class="code-area relative p-4">
+      <div class="absolute top-2 right-2 z-10">
+        <RLAButton icon="i-lucide-copy" class="copy-code" size="sm" variant="ghost" color="neutral" />
       </div>
 
       <div class="code-block" data-lang="astro">
@@ -256,7 +251,7 @@ if (componentKey) {
   function refreshSlotVisualizer(showcase: any) {
     const s = showcase.slotVis;
     if (!s) return;
-    
+
     const slotsList = showcase.querySelector('.slots-list');
     if (!slotsList) return;
 
@@ -285,7 +280,7 @@ if (componentKey) {
       slotsList.appendChild(empty);
       return;
     }
-    
+
     // Get currently active classes for each slot
     let resolvedSlots: any = {};
     if (showcase.classList.contains('dynamic-showcase')) {
@@ -299,9 +294,9 @@ if (componentKey) {
       const keyStr = propKeys.map((k: string) => `${k}:${currentProps[k]}`).join('|');
       resolvedSlots = combinationClasses[keyStr] || {};
     }
-    
+
     const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}') as Record<string, string>;
-    
+
     // Determine which slot is the default slot for this component
     let defaultSlotName = '';
     if (themeSlots.includes('default')) {
@@ -311,7 +306,7 @@ if (componentKey) {
     } else if (themeSlots.includes('label')) {
       defaultSlotName = 'label';
     }
-    
+
     themeSlots.forEach((slot: string) => {
       let targets: HTMLElement[] = [];
       if (previewWrapper) {
@@ -331,11 +326,11 @@ if (componentKey) {
         } else {
           const kebabSlot = slot.replace(/([A-Z])/g, "-$1").toLowerCase();
           targets = Array.from(previewWrapper.querySelectorAll(`[data-slot="${slot}"], [data-slot="${kebabSlot}"]`)) as HTMLElement[];
-          
+
           if (targets.length === 0 && (slot === 'label' || slot === 'content' || slot === 'default')) {
             const roots = Array.from(previewWrapper.querySelectorAll('[data-slot="root"]')) as HTMLElement[];
             const actualRoots = (roots.length > 0 ? roots : Array.from(previewWrapper.children)) as HTMLElement[];
-            
+
             // Build a list of all other slot names in kebab-case and camelCase to exclude
             const otherSlotsKebab = themeSlots
               .filter((slotName: string) => slotName !== slot)
@@ -359,7 +354,7 @@ if (componentKey) {
       }
 
       const isRendered = targets.length > 0;
-      
+
       let classes = '';
       if (isRendered) {
         const firstTarget = targets[0];
@@ -407,7 +402,7 @@ if (componentKey) {
       if (isRendered) {
         item.addEventListener('mouseenter', () => {
           if (!previewArea) return;
-          
+
           if (s.overlays) {
             s.overlays.forEach((o: any) => o.remove());
           }
@@ -423,12 +418,12 @@ if (componentKey) {
             label.style.cssText = 'position:absolute;top:-20px;left:-2px;font-size:11px;font-weight:600;background:#ef4444;color:white;padding:1px 6px;border-radius:3px;white-space:nowrap;font-family:monospace;line-height:1.4;';
             label.textContent = slot;
             overlay.appendChild(label);
-            
+
             overlay.style.top = (rect.top - areaRect.top - 2) + 'px';
             overlay.style.left = (rect.left - areaRect.left - 2) + 'px';
             overlay.style.width = (rect.width + 4) + 'px';
             overlay.style.height = (rect.height + 4) + 'px';
-            
+
             previewArea.appendChild(overlay);
             s.overlays.push(overlay);
           });
@@ -512,7 +507,7 @@ if (componentKey) {
       // === Slot Visualizer ===
       const highlightBtn = showcase.querySelector('.highlight-slots');
       const popoverContent = showcase.querySelector('.popover-content');
-      
+
       const svState: { active: boolean; overlays: HTMLElement[] | null; activate?: () => void; deactivate?: () => void } = {
         active: false,
         overlays: null
@@ -553,7 +548,7 @@ if (componentKey) {
     // Apply pre-resolved theme classes dynamically while preserving custom static classes
     function applyStylesToClone(clone: HTMLElement, originalTemplate: HTMLElement, resolvedSlots: Record<string, string>, initialThemeClasses: Record<string, string>) {
       if (!resolvedSlots) return;
-      
+
       const elementsToUpdate: { el: HTMLElement; orig: HTMLElement; slot: string }[] = [];
       const rootSlot = clone.getAttribute('data-slot');
       if (rootSlot) {
@@ -561,7 +556,7 @@ if (componentKey) {
       } else {
         elementsToUpdate.push({ el: clone, orig: originalTemplate, slot: 'root' });
       }
-      
+
       clone.querySelectorAll('[data-slot]').forEach(el => {
         const slotName = el.getAttribute('data-slot');
         if (slotName) {
@@ -569,21 +564,21 @@ if (componentKey) {
           elementsToUpdate.push({ el: el as HTMLElement, orig: origEl || el, slot: slotName });
         }
       });
-      
+
       elementsToUpdate.forEach(({ el, orig, slot }) => {
         if (!el) return;
         const camelSlot = slot.replace(/-([a-z])/g, (_, letter) => letter?.toUpperCase() || '');
         const themeClasses = resolvedSlots[camelSlot] || resolvedSlots[slot] || '';
         const initialClasses = initialThemeClasses[camelSlot] || initialThemeClasses[slot] || '';
-        
+
         const customClasses = getCustomClasses(orig, initialClasses);
-        
+
         const finalClasses = [...themeClasses.split(/\s+/), ...customClasses]
           .filter(Boolean)
           .join(' ')
           .replace(/\s+/g, ' ')
           .trim();
-          
+
         el.className = finalClasses;
       });
     }
@@ -594,15 +589,15 @@ if (componentKey) {
       const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]') as string[];
       const propsConfig = JSON.parse(showcase.getAttribute('data-config') || '{}') as Record<string, string[]>;
       const togglingPattern = showcase.getAttribute('data-pattern') || 'icon';
-      
+
       const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}') as Record<string, Record<string, string>>;
       const initialThemeClasses = JSON.parse(showcase.getAttribute('data-initial-theme') || '{}') as Record<string, string>;
-      
+
       const previewWrapper = showcase.querySelector('.preview-slot-wrapper');
-      
+
       const compareButtons = showcase.querySelectorAll('.compare-prop-btn');
       const modeTabs = showcase.querySelectorAll('.mode-tab');
-      
+
       let comparedProp: string | null = null;
 
       const originalTemplate = previewWrapper?.firstElementChild?.cloneNode(true) as HTMLElement | undefined;
@@ -611,7 +606,7 @@ if (componentKey) {
         if (!originalTemplate || !previewWrapper) return;
 
         const currentProps: Record<string, string> = {};
-        
+
         propKeys.forEach((prop: string) => {
           const input = showcase.querySelector(`input[name="${prop}"]`) as HTMLInputElement | null;
           if (input) {
@@ -646,39 +641,39 @@ if (componentKey) {
           previewWrapper.innerHTML = '';
           const grid = document.createElement('div');
           grid.className = "flex flex-wrap gap-4 items-center justify-center w-full";
-          
+
           valuesToCompare.forEach((val: string) => {
             const clone = originalTemplate.cloneNode(true) as HTMLElement;
-            
+
             const activeVariants: Record<string, string> = { ...currentProps };
             activeVariants[comparedProp as string] = val;
-            
+
             const keyStr = propKeys.map((k: string) => `${k}:${activeVariants[k]}`).join('|');
             const resolvedSlots = combinationClasses[keyStr];
-            
+
             if (resolvedSlots) {
               applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses);
             }
-            
+
             const labelEl = clone.querySelector('[data-slot="label"]') || (clone.getAttribute('data-slot') === 'label' ? clone : null);
             if (labelEl) {
               labelEl.textContent = val;
             }
-            
+
             grid.appendChild(clone);
           });
           previewWrapper.appendChild(grid);
         } else {
           previewWrapper.innerHTML = '';
           const clone = originalTemplate.cloneNode(true) as HTMLElement;
-          
+
           const keyStr = propKeys.map((k: string) => `${k}:${currentProps[k]}`).join('|');
           const resolvedSlots = combinationClasses[keyStr];
 
           if (resolvedSlots) {
             applyStylesToClone(clone, originalTemplate, resolvedSlots, initialThemeClasses);
           }
-          
+
           previewWrapper.appendChild(clone);
         }
 
@@ -690,7 +685,7 @@ if (componentKey) {
           btn.addEventListener('click', () => {
             const propGroup = btn.closest('.prop-control-group');
             const propName = propGroup?.getAttribute('data-prop');
-            
+
             if (!propName) return;
 
             if (comparedProp === propName) {
@@ -718,7 +713,7 @@ if (componentKey) {
                 btn.classList.remove('text-muted-foreground', 'border-border/60');
                 btn.classList.add('bg-primary-500', 'text-white', 'border-primary-500');
               }
-              
+
               showcase.querySelectorAll('.prop-control-group').forEach(group => {
                 const name = group.getAttribute('data-prop');
                 const selectWrapper = group.querySelector('rla-select');
@@ -731,7 +726,7 @@ if (componentKey) {
                 }
               });
             }
-            
+
             updateComponent();
           });
         });
