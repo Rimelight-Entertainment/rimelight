@@ -25,6 +25,10 @@
       "custom_domain": true
     }
   ],
+  "vars": {
+    "CONSTRUCTION_MODE": "false",
+    "CONSTRUCTION_AUTH": "false"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
@@ -49,10 +53,6 @@
       "migrations_dir": "./drizzle"
     }
   ],
-  "vars": {
-    "CONSTRUCTION_MODE": "false",
-    "CONSTRUCTION_AUTH": "false"
-  },
   "durable_objects": {
     "bindings": [
       {
