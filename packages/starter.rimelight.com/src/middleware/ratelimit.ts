@@ -1,17 +1,16 @@
-import { defineMiddleware } from "astro:middleware"
 import { env } from "cloudflare:workers"
 
 // Routes that require rate limiting
 const SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"]
 
 // Middleware to enforce rate limits on sensitive endpoints
-export const ratelimit = defineMiddleware(async (context, next) => {
-  const isSensitive = SENSITIVE_ROUTES.some((path) => context.url.pathname.includes(path))
+export const ratelimit = async (c: any, next: any) => {
+  const isSensitive = SENSITIVE_ROUTES.some((path) => c.req.path.includes(path))
   if (!isSensitive) {
     return next()
   }
 
-  const bindings = env as Record<string, any>
+  const bindings = (c.env ?? env) as Record<string, any>
   const limiter = bindings?.MY_RATE_LIMITER
 
   if (!limiter) {
@@ -19,22 +18,19 @@ export const ratelimit = defineMiddleware(async (context, next) => {
     return next()
   }
 
-  const clientIP = context.request.headers.get("CF-Connecting-IP") || "unknown"
+  const clientIP = c.req.header("CF-Connecting-IP") || "unknown"
 
   try {
     const { success } = await limiter.limit({ key: clientIP })
     if (!success) {
-      return new Response(
-        JSON.stringify({
+      return c.json(
+        {
           error: "Too Many Requests",
           message: "Rate limit exceeded. Please try again later."
-        }),
+        },
+        429,
         {
-          status: 429,
-          headers: {
-            "Content-Type": "application/json",
-            "Retry-After": "60"
-          }
+          "Retry-After": "60"
         }
       )
     }
@@ -42,5 +38,5 @@ export const ratelimit = defineMiddleware(async (context, next) => {
     console.error("[Rate Limit Error]", error)
   }
 
-  return next()
-})
+  await next()
+}

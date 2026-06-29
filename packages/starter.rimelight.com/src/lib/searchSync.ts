@@ -1,4 +1,3 @@
-import type { APIRoute } from "astro"
 import { getCollection } from "astro:content"
 import { db } from "@/db"
 import * as schema from "@/db/schema"
@@ -240,7 +239,6 @@ export async function doSearchSync() {
   }
 
   // --- PART 4: Clean up removed items ---
-  // Fetch all IDs currently in the D1 index
   const allExisting = await db
     .select({
       id: schema.searchIndex.id,
@@ -272,36 +270,5 @@ export async function doSearchSync() {
   return {
     upserted: toUpsert.length,
     deleted: staleIds.length
-  }
-}
-
-export const GET: APIRoute = async ({ request }) => {
-  const url = new URL(request.url)
-  const token = url.searchParams.get("token")
-  const syncToken = import.meta.env.SYNC_TOKEN ?? process.env.SYNC_TOKEN
-
-  // Secure token validation in production
-  if (import.meta.env.PROD && (!syncToken || token !== syncToken)) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" }
-    })
-  }
-
-  try {
-    const result = await doSearchSync()
-    return new Response(
-      JSON.stringify({
-        success: true,
-        ...result
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    )
-  } catch (error: any) {
-    console.error("[Search Sync API Global Error]:", error)
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    })
   }
 }

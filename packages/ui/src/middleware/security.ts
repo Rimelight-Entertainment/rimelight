@@ -9,29 +9,50 @@ function assertManifest(obj: unknown): asserts obj is Record<string, string> {
 }
 
 function addSecurityHeaders(response: Response, origin?: string): Response {
-  const headers = new Headers(response.headers)
-  headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
-  headers.set("X-Content-Type-Options", "nosniff")
-  headers.set("X-Frame-Options", "DENY")
-  headers.set("Cross-Origin-Resource-Policy", "same-origin")
-  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
-  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
-  if (origin) {
-    headers.set(
-      "Link",
-      [
-        `<${origin}/sitemap-index.xml>; rel="sitemap"`,
-        `<${origin}/llms.txt>; rel="llms"`,
-        `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
-        `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`
-      ].join(", ")
-    )
+  try {
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.set("X-Content-Type-Options", "nosniff")
+    response.headers.set("X-Frame-Options", "DENY")
+    response.headers.set("Cross-Origin-Resource-Policy", "same-origin")
+    response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+    response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
+    if (origin) {
+      response.headers.set(
+        "Link",
+        [
+          `<${origin}/sitemap-index.xml>; rel="sitemap"`,
+          `<${origin}/llms.txt>; rel="llms"`,
+          `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
+          `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`
+        ].join(", ")
+      )
+    }
+    return response
+  } catch {
+    const headers = new Headers(response.headers)
+    headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
+    headers.set("X-Content-Type-Options", "nosniff")
+    headers.set("X-Frame-Options", "DENY")
+    headers.set("Cross-Origin-Resource-Policy", "same-origin")
+    headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+    headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
+    if (origin) {
+      headers.set(
+        "Link",
+        [
+          `<${origin}/sitemap-index.xml>; rel="sitemap"`,
+          `<${origin}/llms.txt>; rel="llms"`,
+          `<${origin}/.well-known/api-catalog>; rel="api-catalog"`,
+          `<${origin}/rss.xml>; rel="alternate"; type="application/rss+xml"`
+        ].join(", ")
+      )
+    }
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    })
   }
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers
-  })
 }
 
 /**

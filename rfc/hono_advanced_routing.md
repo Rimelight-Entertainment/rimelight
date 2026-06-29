@@ -1,6 +1,6 @@
 # RFC-0005: Advanced Routing and Pipeline Composition with Hono and Astro 7
 
-- **Status**: **Draft**
+- **Status**: **Implemented**
 - **Author(s)**: Antigravity / @idant
 - **Created**: 2026-06-22
 - **Last Updated**: 2026-06-22
