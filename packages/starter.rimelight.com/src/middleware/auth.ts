@@ -1,61 +1,66 @@
 import { defineMiddleware } from "astro:middleware"
 import { env } from "cloudflare:workers"
+import { auth as betterAuth } from "@/auth/auth"
 
-const IGNORED_ROUTES = ["/docs/"]
-const PROTECTED_ROUTES = ["/internal"]
+// Routes to be skipped by this middleware
+const WHITELISTED_ROUTES: string[] = []
 
+// Routes that require authentication
+const PROTECTED_ROUTES: string[] = ["/admin", "/dashboard"]
+
+// Static path redirects
+const REDIRECT_ROUTES: Record<string, string> = {
+  "/auth": "/auth/sign-in"
+}
+
+// Manages database/blob bindings, resolves user sessions, and enforces access control rules
 export const auth = defineMiddleware(async (context, next) => {
-  if (env && (env as Record<string, any>).DB) {
-    globalThis.DB = (env as Record<string, any>).DB
+  // Bind environment variables/resources to globals if present
+  const bindings = env as Record<string, any>
+  if (bindings?.DB) {
+    globalThis.DB = bindings.DB
   }
-  if (env && (env as Record<string, any>).BLOB) {
-    // eslint-disable-next-line typescript/no-unsafe-type-assertion
-    ;(globalThis as any).BLOB = (env as Record<string, any>).BLOB
-  }
-
-  if (context.url.pathname.includes("/admin")) {
-    const authHeader = context.request.headers.get("Authorization")
-    const adminPassword = (env as Record<string, any>)?.ADMIN_PASSWORD || "admin"
-    const expected = `Basic ${btoa(`admin:${adminPassword}`)}`
-
-    if (authHeader !== expected) {
-      return new Response("Unauthorized", {
-        status: 401,
-        headers: { "WWW-Authenticate": 'Basic realm="Admin"' }
-      })
-    }
+  if (bindings?.BLOB) {
+    globalThis.BLOB = bindings.BLOB
   }
 
-  const isIgnored = IGNORED_ROUTES.some((path) => context.url.pathname.includes(path))
+  const isSkippedPath = WHITELISTED_ROUTES.some((path) => context.url.pathname.includes(path))
   const isProtected = PROTECTED_ROUTES.some((path) => context.url.pathname.startsWith(path))
 
-  if (isIgnored) {
+  // Populate user and session in context locals
+  if (isSkippedPath) {
     context.locals.user = null
     context.locals.session = null
   } else {
-    const betterAuth = (await import("@/auth/auth")).auth
-    const isAuthed = await betterAuth.api.getSession({ headers: context.request.headers })
-    context.locals.user = isAuthed?.user ?? null
-    context.locals.session = isAuthed?.session ?? null
+    const session = await betterAuth.api.getSession({ headers: context.request.headers })
+    context.locals.user = session?.user ?? null
+    context.locals.session = session?.session ?? null
   }
 
-  if (context.url.pathname === "/auth") {
-    return context.redirect("/auth/sign-in")
+  // Handle static redirects
+  const staticRedirect = REDIRECT_ROUTES[context.url.pathname]
+  if (staticRedirect) {
+    return context.redirect(staticRedirect)
   }
 
-  if (
-    (context.url.pathname === "/auth/sign-in" || context.url.pathname === "/auth/sign-up") &&
-    context.locals.session
-  ) {
+  // Enforce access control for admin routes
+  if (context.url.pathname.includes("/admin")) {
+    if (!context.locals.session) {
+      return context.redirect("/auth/sign-in")
+    }
+    const user = context.locals.user as (import("better-auth").User & { role?: string }) | null
+    if (user?.role !== "admin") {
+      return new Response("Forbidden", { status: 403 })
+    }
+  }
+
+  const isAuthPage = context.url.pathname === "/auth/sign-in" || context.url.pathname === "/auth/sign-up"
+  if (isAuthPage && context.locals.session) {
     return context.redirect("/")
   }
 
   if (isProtected && !context.locals.session) {
     return context.redirect("/auth/sign-in")
-  }
-
-  if (context.url.pathname.includes("/construction") && context.locals.session) {
-    return context.redirect("/")
   }
 
   return next()

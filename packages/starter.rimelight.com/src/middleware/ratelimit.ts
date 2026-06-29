@@ -1,18 +1,21 @@
 import { defineMiddleware } from "astro:middleware"
 import { env } from "cloudflare:workers"
 
+// Routes that require rate limiting
 const SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"]
 
+// Middleware to enforce rate limits on sensitive endpoints
 export const ratelimit = defineMiddleware(async (context, next) => {
   const isSensitive = SENSITIVE_ROUTES.some((path) => context.url.pathname.includes(path))
   if (!isSensitive) {
     return next()
   }
 
-  // eslint-disable-next-line typescript/no-unsafe-type-assertion
-  const limiter = (env as any)?.MY_RATE_LIMITER
+  const bindings = env as Record<string, any>
+  const limiter = bindings?.MY_RATE_LIMITER
+
   if (!limiter) {
-    // Falls back/fails-open during local dev if the mock binding is not active
+    // Falls back (fails-open) during local development if the mock binding is not active
     return next()
   }
 
