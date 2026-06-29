@@ -8,7 +8,7 @@ export interface BadgeConfig {
     | "note"
     | "tip"
     | "caution"
-    | "danger"
+    | "error"
     | "success"
     | "default"
   class?: string

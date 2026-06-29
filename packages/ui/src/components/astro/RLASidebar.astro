@@ -41,7 +41,7 @@ function normalizeBadge(badge: any) {
     const v = badge.variant.toLowerCase()
     if (v === "tip" || v === "success") { color = "success"; variant = "soft" }
     else if (v === "caution" || v === "warning") { color = "warning"; variant = "soft" }
-    else if (v === "danger") { color = "danger"; variant = "soft" }
+    else if (v === "error") { color = "error"; variant = "soft" }
     else if (v === "note" || v === "default") { color = "primary"; variant = "soft" }
   }
   return { text: badge.text || "", color, variant: variant as "solid" | "outline" | "soft", class: badge.class || "" }

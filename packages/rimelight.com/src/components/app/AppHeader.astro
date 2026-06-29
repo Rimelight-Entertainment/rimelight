@@ -22,8 +22,6 @@ const session = await auth.api.getSession({
   headers: Astro.request.headers
 });
 
-
-
 const messages = useI18n(Astro, "app_header", {
 	"left-links_grand-tale_label": "Grand Tale",
 	"link-groups_center_grand-tale_main_title": "Game",
@@ -71,7 +69,6 @@ const messages = useI18n(Astro, "app_header", {
 	"link-groups_center_company_main_news_blog": "Blog",
 	"links_company_resources_title": "Resources",
 	"link-groups_right_company_resources_docs": "Documentation",
-	"link-groups_right_company_resources_api": "API",
 	"link-groups_right_company_resources_branding": "Branding",
 	"link-groups_right_company_resources_legal": "Legal",
 	"link-groups_right_company_resources_contact": "Contact",
@@ -262,10 +259,6 @@ const leftLinks: NavigationMenuItem[] = [
 					{
             label: messages["link-groups_right_company_resources_docs"],
             to: getRelativeLocaleUrl('/company/docs')
-          },
-					{
-            label: messages["link-groups_right_company_resources_api"],
-            to: getRelativeLocaleUrl('/company/docs/api/overview/introduction')
           }
 				]
 			}
@@ -580,11 +573,6 @@ const compResourcesGroup: LinkGroupProps = {
       label: messages["link-groups_right_company_resources_docs"],
       href: getRelativeLocaleUrl('/company/docs'),
       leadingIcon: "i-lucide-file-text"
-    },
-		{
-      label: messages["link-groups_right_company_resources_api"],
-      href: getRelativeLocaleUrl('/company/docs/api/overview/introduction'),
-      leadingIcon: "i-lucide-file-code"
     },
 		{
       label: messages["link-groups_right_company_resources_branding"],
