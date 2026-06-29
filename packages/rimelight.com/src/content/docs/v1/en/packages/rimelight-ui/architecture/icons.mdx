@@ -5,9 +5,7 @@ description: "How Rimelight UI handles icons."
 
 import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 
-## Engine: UnoCSS Icons Preset
-
-Rimelight UI leverages **@unocss/preset-icons** to provide a pure CSS icon system. Icons are rendered using CSS masks or background images, allowing you to use any [Iconify](https://iconify.design/) collection with just a class name.
+Rimelight UI automatically registers the **[@unocss/preset-icons](https://unocss.dev/presets/icons)** preset, providing a pure CSS icon system allowing you to use any [Iconify](https://iconify.design/) collection with just a class name.
 
 ## Usage
 
@@ -106,3 +104,11 @@ The preset automatically detects installed icon sets in your project.
 ## Performance
 
 Since `@unocss/preset-icons` generates icons as pure CSS (using mask or background-image), there are no JavaScript runtime costs. Only the icons you actually use are included in your CSS output. The icon data is loaded from `@iconify-json/*` packages at build time.
+
+## Theme
+
+Many components in Rimelight UI use icons by default. You can customize the default icons in the integration configuration:
+
+## Compatibility
+
+Rimelight UI icons are generally compatible with any other icon implementation, just not within its component props. Other icon solutions may still be used within component slots as with any other Astro component.

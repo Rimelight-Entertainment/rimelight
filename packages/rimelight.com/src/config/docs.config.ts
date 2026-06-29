@@ -33,35 +33,19 @@ export default defineDocsConfig({
             items: [
               {
                 label: "Introduction",
-                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/",
-                badge: {
-                  text: "Slop",
-                  variant: "error"
-                }
+                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/"
               },
               {
                 label: "TypeScript",
-                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/typescript/",
-                badge: {
-                  text: "Slop",
-                  variant: "error"
-                }
+                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/typescript/"
               },
               {
                 label: "Verse",
-                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/verse/",
-                badge: {
-                  text: "Slop",
-                  variant: "error"
-                }
+                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/verse/"
               },
               {
                 label: "C++",
-                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/cpp/",
-                badge: {
-                  text: "Slop",
-                  variant: "error"
-                }
+                href: "/{locale}/company/docs/overview/contributing/coding-style-guide/cpp/"
               }
             ]
           }
@@ -1735,11 +1719,7 @@ export default defineDocsConfig({
                 items: [
                   {
                     label: "Introduction",
-                    href: "/{locale}/company/docs/packages/rimelight-unreal/overview/introduction/",
-                    badge: {
-                      text: "Slop",
-                      variant: "error"
-                    }
+                    href: "/{locale}/company/docs/packages/rimelight-unreal/overview/introduction/"
                   }
                 ]
               }
@@ -1758,11 +1738,7 @@ export default defineDocsConfig({
             items: [
               {
                 label: "Introduction",
-                href: "/{locale}/company/docs/api/overview/introduction/",
-                badge: {
-                  text: "Slop",
-                  variant: "error"
-                }
+                href: "/{locale}/company/docs/api/overview/introduction/"
               }
             ]
           },
@@ -1772,19 +1748,11 @@ export default defineDocsConfig({
             items: [
               {
                 label: "Rimelight Account",
-                href: "/{locale}/company/docs/api/reference/rimelight-account/",
-                badge: {
-                  text: "Slop",
-                  variant: "error"
-                }
+                href: "/{locale}/company/docs/api/reference/rimelight-account/"
               },
               {
                 label: "Grand Tale",
-                href: "/{locale}/company/docs/api/reference/grand-tale/",
-                badge: {
-                  text: "Slop",
-                  variant: "error"
-                }
+                href: "/{locale}/company/docs/api/reference/grand-tale/"
               }
             ]
           }
