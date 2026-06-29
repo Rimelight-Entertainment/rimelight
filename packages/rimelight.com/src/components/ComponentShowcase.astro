@@ -109,6 +109,11 @@ if (componentKey) {
     }
   }
 }
+
+const hasAstroCode = Astro.slots.has('code-astro');
+const hasVueCode = Astro.slots.has('code-vue');
+const hasCode = hasAstroCode || hasVueCode;
+const defaultCodeLang = hasAstroCode ? 'astro' : 'vue';
 ---
 
 <div class={`component-showcase border border-border rounded-xl overflow-visible bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(resolvedTheme?.slots || [])}>
@@ -153,10 +158,16 @@ if (componentKey) {
 
   <!-- Tabs & Actions -->
   <div class="controls-area p-sm border-b border-border flex items-center justify-between gap-md">
-      <div class="flex items-center gap-sm">
-         <RLAButton class="showcase-tab active bg-background text-foreground shadow-sm border border-border" size="sm" variant="ghost" color="neutral" data-lang="astro">Astro</RLAButton>
-         <RLAButton class="showcase-tab" size="sm" variant="ghost" color="neutral" data-lang="vue">Vue</RLAButton>
-      </div>
+      {hasCode && (
+        <div class="flex items-center gap-sm">
+          {hasAstroCode && (
+            <RLAButton class="showcase-tab active bg-background text-foreground shadow-sm border border-border" size="sm" variant="ghost" color="neutral" data-lang="astro">Astro</RLAButton>
+          )}
+          {hasVueCode && (
+            <RLAButton class={`showcase-tab ${defaultCodeLang === 'vue' ? 'active bg-background text-foreground shadow-sm border border-border' : ''}`} size="sm" variant="ghost" color="neutral" data-lang="vue">Vue</RLAButton>
+          )}
+        </div>
+      )}
 
     <div class="flex items-center gap-1.5">
          <RLAPopover class="highlight-slots-wrapper" placement="bottom" ui={{ content: "right-0 w-80 text-xs flex flex-col gap-3" }}>
@@ -186,17 +197,19 @@ if (componentKey) {
   </div>
 
   <!-- Code Sample -->
-  {Astro.slots.has('code-astro') && (
+  {hasCode && (
     <div class="code-area relative p-4">
       <div class="absolute top-2 right-2 z-10">
         <RLAButton icon="i-lucide-copy" class="copy-code" size="sm" variant="ghost" color="neutral" />
       </div>
 
-      <div class="code-block" data-lang="astro">
-        <slot name="code-astro" />
-      </div>
-      {Astro.slots.has('code-vue') && (
-        <div class="code-block hidden" data-lang="vue">
+      {hasAstroCode && (
+        <div class="code-block" data-lang="astro">
+          <slot name="code-astro" />
+        </div>
+      )}
+      {hasVueCode && (
+        <div class="code-block" data-lang="vue">
           <slot name="code-vue" />
         </div>
       )}
@@ -486,6 +499,17 @@ if (componentKey) {
           });
         });
       });
+
+      // Initialize code block visibility from active tab
+      const activeTab = showcase.querySelector('.showcase-tab.active');
+      const activeLang = activeTab?.getAttribute('data-lang');
+      if (activeLang) {
+        codeBlocks.forEach(block => {
+          if (block.getAttribute('data-lang') !== activeLang) {
+            block.classList.add('hidden');
+          }
+        });
+      }
 
       // Copy code behavior
       if (copyBtn) {
