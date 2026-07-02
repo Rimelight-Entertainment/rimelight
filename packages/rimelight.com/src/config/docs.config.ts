@@ -1633,44 +1633,6 @@ export default defineDocsConfig({
                 ]
               },
               {
-                label: "Composables",
-                collapsed: true,
-                items: [
-                  {
-                    label: "useHotkeys",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/composables/usehotkeys/",
-                    badge: {
-                      text: "Slop",
-                      variant: "error"
-                    }
-                  },
-                  {
-                    label: "useOverlay",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/composables/useoverlay/",
-                    badge: {
-                      text: "Slop",
-                      variant: "error"
-                    }
-                  },
-                  {
-                    label: "useToast",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/composables/usetoast/",
-                    badge: {
-                      text: "Slop",
-                      variant: "error"
-                    }
-                  },
-                  {
-                    label: "useUi",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/composables/useui/",
-                    badge: {
-                      text: "Slop",
-                      variant: "error"
-                    }
-                  }
-                ]
-              },
-              {
                 label: "Agents",
                 collapsed: true,
                 items: [

@@ -44,6 +44,52 @@ This component is currently under development.
   </div>
 </ComponentShowcase>
 
+## Programmatic Usage (`useToast`)
+
+If you want to trigger toast notifications dynamically from JavaScript/TypeScript (e.g., inside Vue `setup` scripts or client-side interactive modules), you can use the `useToast` composable.
+
+### Import & Usage
+
+```vue
+<script setup lang="ts">
+import { useToast } from "@rimelight/ui"
+
+const toast = useToast()
+
+function notify() {
+  toast.add({
+    title: "Success",
+    description: "Your settings have been saved successfully.",
+    color: "success",
+    icon: "i-lucide-check"
+  })
+}
+</script>
+
+<template>
+  <button @click="notify">Trigger Toast</button>
+</template>
+```
+
+### Composable API
+
+#### `add(options)`
+
+Adds a new toast notification to the queue. Returns the created toast object.
+
+| Option        | Type         | Description                                                                                                       |
+| :------------ | :----------- | :---------------------------------------------------------------------------------------------------------------- |
+| `title`       | `string`     | The title heading of the toast.                                                                                   |
+| `description` | `string`     | The detail message text.                                                                                          |
+| `color`       | `ThemeColor` | The semantic color variant (`primary`, `success`, `error`, etc.).                                                 |
+| `icon`        | `string`     | Lucide icon identifier (e.g., `i-lucide-check`).                                                                  |
+| `timeout`     | `number`     | Display time in milliseconds before auto-dismissing (defaults to `5000`ms, set to `0` to keep open indefinitely). |
+| `callback`    | `function`   | Optional callback function called when the toast is dismissed.                                                    |
+
+#### `remove(id)`
+
+Removes a specific toast by its unique ID.
+
 ## Examples
 
 ## API

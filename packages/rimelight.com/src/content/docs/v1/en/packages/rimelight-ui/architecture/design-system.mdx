@@ -3,6 +3,8 @@ title: "Design System"
 description: "Rimelight UI's design system uses UnoCSS and CSS Variants for high-performance theming and simple customization."
 ---
 
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
+
 ## UnoCSS
 
 Rimelight UI ships a UnoCSS preset that can be consumed directly in your project. This lets you adopt the same design tokens and typography options without duplicating configuration.
@@ -139,9 +141,11 @@ When you configure custom colors, Rimelight UI generates CSS variables at build 
 
 Components use these variables through UnoCSS utility classes like `bg-primary-500` or `text-primary-foreground`.
 
-:::note
-The color system generates all shade variants (50, 100, 200...950) for each semantic color, enabling components to use the appropriate shade for any state (hover, focus, subtle backgrounds, etc.).
-:::
+<RLACallout color="info" title="Note">
+  The color system generates all shade variants (50, 100, 200...950) for each semantic color,
+  enabling components to use the appropriate shade for any state (hover, focus, subtle backgrounds,
+  etc.).
+</RLACallout>
 
 Rimelight UI is designed to be a flexible and powerful bridge between different web technologies. This page explains the core architectural decisions and mechanisms that power the library.
 
@@ -156,7 +160,7 @@ The primary entry point is the `ui()` function, which returns an array of Astro 
 
 To allow components to access global UI configuration without complex prop drilling, Rimelight UI uses a **Vite virtual module**.
 
-1. When the integration starts, it merges the user's `ui` overrides with the `defaultUIConfig` using `defu`.
+1. When the integration starts, it merges the user's `ui` overrides with the `defaultUIConfig` using [defu](https://www.npmjs.com/package/defu).
 2. It creates a virtual module named `virtual:rimelight-ui`.
 3. This module exports a `getUIConfig()` function that returns the merged configuration.
 
@@ -244,19 +248,23 @@ ui({
 
 ### How Merging Works Under the Hood
 
-The library uses a smart merging strategy powered by `defu` to combine the configuration layers.
+The library uses a smart merging strategy powered by [defu](https://www.npmjs.com/package/defu) to combine the configuration layers.
 
-When a component renders (e.g., `RLVButton.vue`), it follows these steps:
+When a component renders (e.g., `RLAButton.astro`), it follows these steps:
 
 1. It fetches the global configuration from the `virtual:rimelight-ui` module.
-2. It uses `defu` to merge the local `:ui` prop with the global component configuration.
+2. It uses [defu](https://www.npmjs.com/package/defu) to merge the local `:ui` prop with the global component configuration.
 3. It passes the current variant props (like `color="primary"`) into the `css-variants` function to generate the base classes.
 4. Finally, it uses a class merging utility to intelligently combine the base variant classes with any classes provided in the merged `ui` overrides, resolving any conflicts (e.g., if the theme sets `px-4` but the override sets `px-8`, the override wins).
 
-:::note
-Rimelight UI is actively building out its native, highly-optimized components (like `RLAButton` and `RLVHeader`).
-:::
+### Custom Components & `useUi`
 
-### Important Notes for Astro Users
+If you are building custom components for your project and want them to support the same global and instance-level overrides as native Rimelight UI components, you can use the `useUi` helper.
 
-For components that are purely presentational (like `RLAIcon`), you can omit the client directive to have them rendered statically on the server.
+Import the utility from `@rimelight/ui/utils`:
+
+```ts
+import { useUi } from "@rimelight/ui/utils"
+
+const mergedUI = useUi("my-component", Astro.props.ui)
+```
