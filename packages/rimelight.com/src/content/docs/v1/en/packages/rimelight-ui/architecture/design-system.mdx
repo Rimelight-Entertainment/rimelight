@@ -246,7 +246,7 @@ ui({
 </RLAButton>
 ```
 
-### How Merging Works Under the Hood
+### Configuration Merging
 
 The library uses a smart merging strategy powered by [defu](https://www.npmjs.com/package/defu) to combine the configuration layers.
 
@@ -256,15 +256,3 @@ When a component renders (e.g., `RLAButton.astro`), it follows these steps:
 2. It uses [defu](https://www.npmjs.com/package/defu) to merge the local `:ui` prop with the global component configuration.
 3. It passes the current variant props (like `color="primary"`) into the `css-variants` function to generate the base classes.
 4. Finally, it uses a class merging utility to intelligently combine the base variant classes with any classes provided in the merged `ui` overrides, resolving any conflicts (e.g., if the theme sets `px-4` but the override sets `px-8`, the override wins).
-
-### Custom Components & `useUi`
-
-If you are building custom components for your project and want them to support the same global and instance-level overrides as native Rimelight UI components, you can use the `useUi` helper.
-
-Import the utility from `@rimelight/ui/utils`:
-
-```ts
-import { useUi } from "@rimelight/ui/utils"
-
-const mergedUI = useUi("my-component", Astro.props.ui)
-```
