@@ -55,7 +55,7 @@ cleanupShortcuts()
 >
 
   <div role="tabpanel" data-value="astro">
-    Astro `<script>` tags have no component unmount event. For View Transitions, `astro:after-swap` fires before the new page renders — that's the right moment to call cleanup:
+    Astro `<script>` tags have no component unmount event. For View Transitions, `astro:after-swap` fires before the new page renders - that's the right moment to call cleanup:
 
     ```astro
     // SearchTrigger.astro
@@ -255,9 +255,29 @@ Shortcut keys are expressed as strings, following the [KeyboardEvent.key API](ht
   Documentation](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values).
 </RLACallout>
 
-### Modifier combinations — `_` (underscore)
+### Special Keys
 
-Use underscore to express simultaneous modifier + key combos. Modifiers are: `meta` / `command`, `ctrl`, `alt` / `option`, `shift`.
+Use the lowercased [`KeyboardEvent.key`](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values) value as the key string:
+
+| Key string                                           | Triggers on   |
+| ---------------------------------------------------- | ------------- |
+| `escape`                                             | Esc           |
+| `enter`                                              | Enter         |
+| `space`                                              | Space         |
+| `tab`                                                | Tab           |
+| `backspace`                                          | Backspace     |
+| `delete`                                             | Delete        |
+| `arrowup` / `arrowdown` / `arrowleft` / `arrowright` | Arrow keys    |
+| `f1` - `f12`                                         | Function keys |
+
+### Modifier combinations - `_` (underscore)
+
+Use underscore to express simultaneous modifier + key combos. The supported modifiers are:
+
+- `meta` / `command`
+- `ctrl`
+- `alt` / `option`
+- `shift`
 
 ```ts
 defineShortcuts({
@@ -288,24 +308,11 @@ defineShortcuts({
 })
 ```
 
-`meta` means `Ctrl` on Windows/Linux and `⌘` on macOS — you never need to register `ctrl_k` and `meta_k` separately.
+`meta` means `Ctrl` on Windows/Linux and `⌘` on macOS - you never need to register `ctrl_k` and `meta_k` separately.
 
-**Special keys** — use the lowercased [`KeyboardEvent.key`](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values) value as the key string:
+### Sequential chains - `-` (hyphen)
 
-| Key string                                           | Triggers on   |
-| ---------------------------------------------------- | ------------- |
-| `escape`                                             | Esc           |
-| `enter`                                              | Enter         |
-| `space`                                              | Space         |
-| `tab`                                                | Tab           |
-| `backspace`                                          | Backspace     |
-| `delete`                                             | Delete        |
-| `arrowup` / `arrowdown` / `arrowleft` / `arrowright` | Arrow keys    |
-| `f1` – `f12`                                         | Function keys |
-
-### Sequential chains — `-` (hyphen)
-
-Use hyphen to express keys pressed **one after the other** within the chain delay window (default 800 ms):
+Use hyphen to express keys pressed **one after the other** within the chain delay window (default 800 ms). Sequential shortcuts ignore modifier state - they match the bare key sequence only.
 
 ```ts
 defineShortcuts({
@@ -324,34 +331,46 @@ defineShortcuts({
 })
 ```
 
-Sequential shortcuts ignore modifier state — they match the bare key sequence only.
+## Configuration & API Reference
 
----
-
-## Core Shortcut Properties
+You can customize shortcut behavior by defining properties on each shortcut, or by passing options as the second argument to `defineShortcuts`.
 
 ```typescript
 export interface ShortcutConfig {
   handler: (e: KeyboardEvent) => void
-  usingInput?: boolean | string // behaviour while an input is focused
-  label?: string // human-readable action label, e.g. "Toggle Theme"
-  description?: string // brief summary of what the shortcut does
-  category?: string // grouping key, defaults to "system"
-  order?: number // sort priority within a category (higher = first)
+  // Behaviour while an input is focused (default: false)
+  usingInput?: boolean | string
+  // Human-readable action label (e.g. "Toggle Theme")
+  label?: string
+  // Brief summary of what the shortcut does
+  description?: string
+  // Grouping key (default: "system")
+  category?: string
+  // Sort priority within a category (higher = first)
+  order?: number
+}
+
+export interface ShortcutsOptions {
+  // Milliseconds to wait for sequential keys (default: 800)
+  chainDelay?: number
 }
 ```
 
-### `usingInput`
+For example, to configure a tighter 400ms delay window for sequential chains:
 
-By default, every shortcut is **suppressed** while an `<input>`, `<textarea>`, or `contenteditable` element has focus.
+```ts
+defineShortcuts(config, { chainDelay: 400 })
+```
+
+### Input Scoping (`usingInput`)
+
+By default, every shortcut is **suppressed** while an `<input>`, `<textarea>`, or `contenteditable` element has focus. You can override this behavior:
 
 | Value             | Behaviour                                                                             |
 | ----------------- | ------------------------------------------------------------------------------------- |
 | `false` (default) | Shortcut is disabled while any input is focused                                       |
 | `true`            | Shortcut fires regardless of focus state                                              |
 | `"name"` (string) | Shortcut fires **only** when the focused input's `name` attribute matches this string |
-
-A common pattern is scoping `Enter` to trigger a search only while the search input is focused, and `Escape` to clear it regardless of what's active:
 
 ```ts
 defineShortcuts({
@@ -361,39 +380,40 @@ defineShortcuts({
     label: "Search",
     description: "Submits the search query",
     category: "Navigation"
-  },
-  escape: {
-    handler: () => clearSearch(),
-    usingInput: true, // fires even when any input is focused
-    label: "Clear Search",
-    description: "Clears the active search query and closes the search overlay",
-    category: "Navigation"
   }
 })
 ```
 
-### `category` and `order`
+### Sorting and Categories
 
-`category` groups shortcuts in the cheat sheet UI. If omitted it defaults to `"system"`. `order` controls sort position within a category — higher values appear first. When orders are equal or absent, items sort alphabetically by `label` or key id.
+- **`category`**: Groups shortcuts in the cheat sheet UI. If omitted, it defaults to `"system"`.
+- **`order`**: Controls sort position within a category (higher values appear first). When orders are equal or absent, items sort alphabetically by `label` or key ID.
 
-## Options: `chainDelay`
+## Cheat Sheet UI & Central Registry
 
-`defineShortcuts` accepts an optional second argument:
+All active shortcuts that specify a `label` or `description` are automatically tracked in a reactive store. Shortcuts with neither field are still active but invisible to the registry (useful for private/internal bindings).
 
-```typescript
-export interface ShortcutsOptions {
-  chainDelay?: number // milliseconds to wait for the next key in a chain (default: 800)
-}
+### Shortcuts Component
+
+To display a live cheat sheet of all active shortcuts, render `<RLAShortcuts />` globally in your main layout. It opens when the user presses `?` and groups shortcuts automatically by their `category`.
+
+```astro
+---
+// AppLayout.astro
+import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
+---
+<!doctype html>
+<html>
+  <body>
+    <slot />
+    <RLAShortcuts />
+  </body>
+</html>
 ```
 
-```ts
-// Tighter 400ms window for sequential shortcuts
-defineShortcuts(config, { chainDelay: 400 })
-```
+### Accessing the Registry
 
-## Central Registry (`activeShortcutsStore`)
-
-All shortcuts that specify a `label` or `description` are automatically tracked in a reactive Nano Store. Shortcuts with neither field are still active but invisible to the registry (useful for private/internal bindings).
+For custom integrations (such as a command palette), you can subscribe directly to the active shortcuts store:
 
 ```typescript
 import { activeShortcutsStore } from "@rimelight/ui/utils"
@@ -405,28 +425,6 @@ activeShortcutsStore.subscribe((shortcuts) => {
 
 Because registration and cleanup are linked to component mount/unmount lifecycles, this store always reflects exactly what shortcuts are currently usable on the screen.
 
-## Shortcuts Component
-
-To display a live cheat sheet of all active shortcuts, render `<RLAShortcuts />` globally in your main layout:
-
-```astro
----
-// AppLayout.astro
-import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
----
-<!doctype html>
-<html>
-  <body>
-    <slot />
-    <!-- Place at the bottom of the body -->
-    <RLAShortcuts />
-  </body>
-</html>
-```
-
-- **Global Key**: The cheat sheet opens when the user presses `?`.
-- **Categorization**: Shortcuts are grouped automatically by their `category` property.
-
 ## Examples
 
 A real page typically mixes all three shortcut types. All entries with a `label` automatically appear in the `<RLAShortcuts />` cheat sheet:
@@ -435,7 +433,7 @@ A real page typically mixes all three shortcut types. All entries with a `label`
 import { defineShortcuts } from "@rimelight/ui/utils"
 
 const cleanupShortcuts = defineShortcuts({
-  // Plain key — no modifier needed
+  // Plain key - no modifier needed
   "?": {
     handler: () => openHelpModal(),
     label: "Help",
@@ -443,7 +441,7 @@ const cleanupShortcuts = defineShortcuts({
     category: "General"
   },
 
-  // Modifier combo — Ctrl+K on Windows/Linux, ⌘K on macOS
+  // Modifier combo - Ctrl+K on Windows/Linux, ⌘K on macOS
   "meta_k": {
     handler: () => openCommandPalette(),
     label: "Command Palette",
@@ -451,7 +449,7 @@ const cleanupShortcuts = defineShortcuts({
     category: "General"
   },
 
-  // Sequential chains — press g, then d or s
+  // Sequential chains - press g, then d or s
   "g-d": {
     handler: () => navigate("/dashboard"),
     label: "Go to Dashboard",
