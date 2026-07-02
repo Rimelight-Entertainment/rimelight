@@ -67,7 +67,6 @@
     "@unocss/astro": "^66.7.2",
     "css-variants": "2.3.5",
     "defu": "6.1.7",
-    "embla-carousel": "8.6.0",
     "nanostores": "1.3.0",
     "vite-plugin-virtual": "^0.5.0",
     "vue": "3.5.38"

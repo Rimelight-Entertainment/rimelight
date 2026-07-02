@@ -3,17 +3,94 @@ title: "Carousel"
 description: "This component is currently under development."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLACarousel from "@rimelight/ui/components/astro/RLACarousel.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+export const demoSlides = [
+  {
+    imageSrc:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80",
+    title: "Beautiful Nature",
+    description: "Discover the serenity of pristine wilderness environments."
+  },
+  {
+    imageSrc:
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop&q=80",
+    title: "Mountain Ridges",
+    description: "Breathtaking heights and fresh alpine air await."
+  },
+  {
+    imageSrc:
+      "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop&q=80",
+    title: "Forest Pathways",
+    description: "Take a walk along peaceful paths in ancient woodlands."
+  }
+]
 
 ## Usage
 
+Basic usage of the Carousel component using the `slides` prop.
+
+<ComponentShowcase>
+  <RLACarousel slides={demoSlides} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLACarousel from "@rimelight/ui/components/astro/RLACarousel.astro";
+
+    const slides = [
+      {
+        imageSrc: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80",
+        title: "Beautiful Nature",
+        description: "Discover the serenity of pristine wilderness environments."
+      },
+      {
+        imageSrc: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop&q=80",
+        title: "Mountain Ridges",
+        description: "Breathtaking heights and fresh alpine air await."
+      },
+      {
+        imageSrc: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop&q=80",
+        title: "Forest Pathways",
+        description: "Take a walk along peaceful paths in ancient woodlands."
+      }
+    ];
+    ---
+
+    <RLACarousel slides={slides} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Autoplay
+
+Use the `autoplay` prop to enable automatic sliding.
+
+<ComponentShowcase>
+  <RLACarousel slides={demoSlides} autoplay={true} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLACarousel from "@rimelight/ui/components/astro/RLACarousel.astro";
+
+    const slides = [/* ... */];
+    ---
+
+    <RLACarousel slides={slides} autoplay={true} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 
