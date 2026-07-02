@@ -391,16 +391,16 @@ export default defineDocsConfig({
                     }
                   },
                   {
-                    label: "Colors",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/colors/",
+                    label: "Color Mode",
+                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/color-mode/",
                     badge: {
                       text: "Slop",
                       variant: "error"
                     }
                   },
                   {
-                    label: "Color Mode",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/color-mode/",
+                    label: "Colors",
+                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/colors/",
                     badge: {
                       text: "Slop",
                       variant: "error"
@@ -415,16 +415,8 @@ export default defineDocsConfig({
                     }
                   },
                   {
-                    label: "Internationalization (i18n)",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/i18n/",
-                    badge: {
-                      text: "Slop",
-                      variant: "error"
-                    }
-                  },
-                  {
-                    label: "Server-Side Rendering (SSR)",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/ssr/",
+                    label: "Variants",
+                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/variants/",
                     badge: {
                       text: "Slop",
                       variant: "error"
@@ -439,8 +431,8 @@ export default defineDocsConfig({
                     }
                   },
                   {
-                    label: "Variants",
-                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/variants/",
+                    label: "Internationalization (i18n)",
+                    href: "/{locale}/company/docs/packages/rimelight-ui/architecture/i18n/",
                     badge: {
                       text: "Slop",
                       variant: "error"

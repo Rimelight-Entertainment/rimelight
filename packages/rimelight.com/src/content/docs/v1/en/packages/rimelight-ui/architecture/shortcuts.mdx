@@ -3,119 +3,277 @@ title: "Keyboard Shortcuts"
 description: "Registering, managing, and listing keyboard shortcuts globally in Rimelight UI."
 ---
 
-Rimelight UI includes a unified, cross-platform keyboard shortcuts (hotkeys) system that works seamlessly in both server-rendered Astro pages (vanilla JS) and client-side interactive Vue components.
+import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
+import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro"
+
+Rimelight UI includes a unified keyboard shortcuts (hotkeys) system that works across all frontend frameworks.
+
+<RLACallout color="warning" title="Client-side JavaScript">
+  Keyboard shortcuts are inherently a client-side feature, and their usage therefore implies
+  shipping a minor JavaScript bundle to the client.
+</RLACallout>
 
 It automatically handles:
 
-- **Cross-Platform Normalization**: e.g., mapping `meta` (Command) to `ctrl` on Windows/Linux.
-- **Input Exclusion**: Disabling hotkeys automatically while the user is typing in forms/inputs.
-- **Layout Independence**: Bypassing browser key-translation issues for key combinations containing the `Alt` modifier.
-- **Sequential Key Chaining**: e.g., pressing `g` then `d` sequentially.
-- **Centralized Registry**: Storing all active keybinds in a global reactive store so they can be listed dynamically (e.g. in a shortcuts modal or command palette).
+- **Cross-OS Normalization**: Using `meta` as a platform-agnostic modifier means `Ctrl` on Windows/Linux is automatically promoted to `⌘` (Command) on macOS.
+- **Input Exclusion**: Disabling hotkeys automatically while the user is typing in inputs, textareas, or contenteditable elements.
+- **Sequential Key Chaining**: Pressing, for example, `g` then `d` sequentially within a configurable time window.
+- **Centralized Registry**: Storing all active keybinds in a reactive store so they can be listed dynamically (e.g., in a shortcut modal or command palette).
 
----
+## Usage
 
-## Vanilla JS / TS Usage
+Shortcuts may be assigned using the `defineShortcuts` function. It registers listeners on `window`, adds defined shortcuts to the global store, and returns a cleanup function that removes those listeners and unregisters the shortcuts from the store when called.
 
-To register keyboard shortcuts in Astro components, import `defineShortcuts` inside a standard `<script>` tag. It returns a cleanup function to unregister the listeners.
+```ts
+import { defineShortcuts } from "@rimelight/ui/utils"
 
-```astro
----
-// SearchTrigger.astro
-import RLAInput from "./RLAInput.astro";
----
-<button id="search-trigger">Open Search</button>
+const cleanupShortcuts = defineShortcuts({
+  // Registers Ctrl/Cmd + K as a shortcut
+  meta_k: {
+    handler: () => openSearch(),
+    label: "Open Search",
+    description: "Opens the global website search modal",
+    category: "Navigation"
+  }
+})
 
-<script>
-  import { defineShortcuts } from "@rimelight/ui/utils";
-
-  const trigger = document.getElementById("search-trigger");
-
-  const cleanup = defineShortcuts({
-    // Modifier combination (Command+K on macOS, Ctrl+K on Windows/Linux)
-    meta_k: {
-      handler: () => trigger?.click(),
-      label: "Open Search",
-      description: "Opens the global website search modal",
-      category: "Navigation"
-    }
-  });
-
-  // Clean up when leaving the page (essential for Astro View Transitions)
-  document.addEventListener("astro:after-swap", cleanup);
-</script>
+// Call cleanupShortcuts() whenever the shortcuts should no longer be active
+cleanupShortcuts()
 ```
 
----
+`defineShortcuts` returns a plain function, which can be passed to whichever lifecycle hook your framework provides for component unmount.
 
-## Vue Composable Usage
+<RLATabs
+  items={[
+    {label:"Astro",value:"astro"},
+    {label:"Vue",value:"vue"},
+    {label:"Svelte",value:"svelte"},
+    {label:"Solid",value:"solid"}
+  ]}
+>
 
-Inside Vue components, use the `useShortcuts` composable. It automatically handles cleanup when the component is unmounted.
+  <div role="tabpanel" data-value="astro">
+    Astro `<script>` tags have no component unmount event. For View Transitions, `astro:after-swap` fires before the new page renders — that's the right moment to call cleanup:
+
+    ```astro
+    ---
+    // SearchTrigger.astro
+    ---
+    <button id="search-trigger">Open Search</button>
+
+    <script>
+      import { defineShortcuts } from "@rimelight/ui/utils"
+
+      const trigger = document.getElementById("search-trigger")
+
+      const cleanupShortcuts = defineShortcuts({
+        meta_k: {
+          handler: () => trigger?.click(),
+          label: "Open Search",
+          description: "Opens the global website search modal",
+          category: "Navigation"
+        }
+      })
+
+      // Required for Astro View Transitions
+      document.addEventListener("astro:after-swap", cleanupShortcuts)
+    </script>
+    ```
+
+</div>
+<div role="tabpanel" data-value="vue" class="hidden">
 
 ```vue
 <script setup>
-import { useShortcuts } from "@rimelight/ui/composables"
+import { onUnmounted } from "vue"
+import { defineShortcuts } from "@rimelight/ui/utils"
 
-useShortcuts({
-  // Simultaneous Alt + T toggle shortcut
-  meta_alt_t: {
-    handler: () => toggleTheme(),
-    label: "Toggle Theme",
-    description: "Switch between light and dark theme mode",
-    category: "System"
+const cleanup = defineShortcuts({
+  meta_k: {
+    handler: () => openSearch(),
+    label: "Open Search",
+    category: "Navigation"
   }
 })
+
+onUnmounted(cleanup)
 </script>
 ```
+
+</div>
+<div role="tabpanel" data-value="svelte" class="hidden">
+
+```svelte
+<script>
+import { onDestroy } from "svelte"
+import { defineShortcuts } from "@rimelight/ui/utils"
+
+const cleanup = defineShortcuts({
+  meta_k: {
+    handler: () => openSearch(),
+    label: "Open Search",
+    category: "Navigation"
+  }
+})
+
+onDestroy(cleanup)
+</script>
+```
+
+</div>
+<div role="tabpanel" data-value="solid" class="hidden">
+
+```ts
+import { onCleanup } from "solid-js"
+import { defineShortcuts } from "@rimelight/ui/utils"
+
+const cleanup = defineShortcuts({
+  meta_k: {
+    handler: () => openSearch(),
+    label: "Open Search",
+    category: "Navigation"
+  }
+})
+
+onCleanup(cleanup)
+```
+
+</div>
+</RLATabs>
+
+## Key Syntax
+
+Shortcut keys are expressed as strings, following the [KeyboardEvent.key API](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values). The separator character determines the shortcut type:
+
+<RLACallout color="info" title="Key Combinations">
+  For a complete list of available shortcut keys, refer to the [KeyboardEvent.key API
+  Documentation](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values).
+</RLACallout>
+
+### Modifier combinations — `_` (underscore)
+
+Use underscore to express simultaneous modifier + key combos. Modifiers are: `meta` / `command`, `ctrl`, `alt` / `option`, `shift`.
+
+```ts
+defineShortcuts({
+  "meta_k": { handler: openSearch }, // Ctrl+K on Windows/Linux, ⌘K on macOS
+  "meta_shift_p": { handler: openPalette }, // Ctrl+Shift+P on Windows/Linux, ⌘⇧P on macOS
+  "alt_t": { handler: toggleSomething },
+  "?": { handler: openHelp } // plain key, no modifiers
+})
+```
+
+`meta` means `Ctrl` on Windows/Linux and `⌘` on macOS — you never need to register `ctrl_k` and `meta_k` separately.
+
+**Special keys** — use the lowercased [`KeyboardEvent.key`](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values) value as the key string:
+
+| Key string                                           | Triggers on   |
+| ---------------------------------------------------- | ------------- |
+| `escape`                                             | Esc           |
+| `enter`                                              | Enter         |
+| `space`                                              | Space         |
+| `tab`                                                | Tab           |
+| `backspace`                                          | Backspace     |
+| `delete`                                             | Delete        |
+| `arrowup` / `arrowdown` / `arrowleft` / `arrowright` | Arrow keys    |
+| `f1` – `f12`                                         | Function keys |
+
+### Sequential chains — `-` (hyphen)
+
+Use hyphen to express keys pressed **one after the other** within the chain delay window (default 800 ms):
+
+```ts
+defineShortcuts({
+  "g-d": { handler: () => navigate("/dashboard"), label: "Go to Dashboard" },
+  "g-s": { handler: () => navigate("/settings"), label: "Go to Settings" }
+})
+```
+
+Sequential shortcuts ignore modifier state — they match the bare key sequence only.
 
 ---
 
 ## Core Shortcut Properties
 
-When registering a shortcut, you can pass either a handler function or a configuration object:
-
 ```typescript
 export interface ShortcutConfig {
   handler: (e: KeyboardEvent) => void
-  usingInput?: boolean | string // Enable shortcut inside input/textarea elements
-  label?: string // Human-readable action label (e.g. "Toggle Theme")
-  description?: string // Brief summary of what the shortcut does
-  category?: string // Section category grouping (e.g. "navigation", defaults to "system")
-  order?: number // Numeric sorting priority (higher values sorted first)
+  usingInput?: boolean | string // behaviour while an input is focused
+  label?: string // human-readable action label, e.g. "Toggle Theme"
+  description?: string // brief summary of what the shortcut does
+  category?: string // grouping key, defaults to "system"
+  order?: number // sort priority within a category (higher = first)
 }
 ```
 
-- **`usingInput`**: By default, shortcuts are ignored if the active element is an input, textarea, or contenteditable. Set `usingInput: true` to bypass this filter (e.g., allowing `Escape` to close a search modal even when focusing the search field).
-- **`category`**: The category identifier to group the shortcut under. If not specified, it defaults to `"system"`.
-- **`order`**: An optional numeric value (acting like a `z-index`) defining the sorting order of shortcuts within their category. Shortcuts with higher order values appear first. When orders are equal or undefined, items are sorted alphabetically by their label or id.
+### `usingInput`
 
----
+By default, every shortcut is **suppressed** while an `<input>`, `<textarea>`, or `contenteditable` element has focus.
+
+| Value             | Behaviour                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------- |
+| `false` (default) | Shortcut is disabled while any input is focused                                       |
+| `true`            | Shortcut fires regardless of focus state                                              |
+| `"name"` (string) | Shortcut fires **only** when the focused input's `name` attribute matches this string |
+
+A common pattern is scoping `Enter` to trigger a search only while the search input is focused, and `Escape` to clear it regardless of what's active:
+
+```ts
+defineShortcuts({
+  enter: {
+    handler: () => performSearch(),
+    usingInput: "query", // only fires when <input name="query"> is focused
+    label: "Search"
+  },
+  escape: {
+    handler: () => clearSearch(),
+    usingInput: true, // fires even when any input is focused
+    label: "Clear Search"
+  }
+})
+```
+
+### `category` and `order`
+
+`category` groups shortcuts in the cheat sheet UI. If omitted it defaults to `"system"`. `order` controls sort position within a category — higher values appear first. When orders are equal or absent, items sort alphabetically by `label` or key id.
+
+## Options: `chainDelay`
+
+`defineShortcuts` accepts an optional second argument:
+
+```typescript
+export interface ShortcutsOptions {
+  chainDelay?: number // milliseconds to wait for the next key in a chain (default: 800)
+}
+```
+
+```ts
+// Tighter 400ms window for sequential shortcuts
+defineShortcuts(config, { chainDelay: 400 })
+```
 
 ## Central Registry (`activeShortcutsStore`)
 
-All documented shortcuts (i.e. those specifying a `label` or `description`) are dynamically tracked in a reactive **Nano Store**:
+All shortcuts that specify a `label` or `description` are automatically tracked in a reactive Nano Store. Shortcuts with neither field are still active but invisible to the registry (useful for private/internal bindings).
 
 ```typescript
 import { activeShortcutsStore } from "@rimelight/ui/utils"
 
-// Subscribe to active shortcuts
 activeShortcutsStore.subscribe((shortcuts) => {
-  console.log("Active shortcuts on this page:", shortcuts)
+  console.log("Active shortcuts:", shortcuts)
 })
 ```
 
-Because registration and cleanup are linked to component mount/unmount lifecycles, this store always reflects exactly what shortcuts are currently usable on the screen at any given time.
+Because registration and cleanup are linked to component mount/unmount lifecycles, this store always reflects exactly what shortcuts are currently usable on the screen.
 
----
+## Shortcuts Component
 
-## The Shortcuts Component (`<RLAShortcuts />`)
-
-To display a beautiful, auto-updating cheat sheet of all active keyboard shortcuts to your users, render the `<RLAShortcuts />` component globally in your main layout:
+To display a live cheat sheet of all active shortcuts, render `<RLAShortcuts />` globally in your main layout:
 
 ```astro
 ---
 // AppLayout.astro
-import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro";
+import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
 ---
 <!doctype html>
 <html>
@@ -127,5 +285,41 @@ import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro";
 </html>
 ```
 
-- **Global Key**: Renders a backdrop-blurred modal cheatsheet that toggles open when the user presses the `?` key.
-- **Categorization**: Groups shortcuts automatically by the `category` property configured during registration.
+- **Global Key**: The cheat sheet opens when the user presses `?`.
+- **Categorization**: Shortcuts are grouped automatically by their `category` property.
+
+## Examples
+
+A real page typically mixes all three shortcut types. All entries with a `label` automatically appear in the `<RLAShortcuts />` cheat sheet:
+
+```ts
+import { defineShortcuts } from "@rimelight/ui/utils"
+
+const cleanup = defineShortcuts({
+  // Plain key — no modifier needed
+  "?": {
+    handler: () => openHelpModal(),
+    label: "Help",
+    category: "General"
+  },
+
+  // Modifier combo — Ctrl+K on Windows/Linux, ⌘K on macOS
+  "meta_k": {
+    handler: () => openCommandPalette(),
+    label: "Command Palette",
+    category: "General"
+  },
+
+  // Sequential chains — press g, then d or s
+  "g-d": {
+    handler: () => navigate("/dashboard"),
+    label: "Go to Dashboard",
+    category: "Navigation"
+  },
+  "g-s": {
+    handler: () => navigate("/settings"),
+    label: "Go to Settings",
+    category: "Navigation"
+  }
+})
+```
