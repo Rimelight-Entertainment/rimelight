@@ -41,6 +41,16 @@ const cleanupShortcuts = defineShortcuts({
 cleanupShortcuts()
 ```
 
+For simple shortcuts that do not require metadata (such as labels or descriptions for the cheat sheet UI), you can use the shorthand syntax by passing the handler function directly:
+
+```ts
+import { defineShortcuts } from "@rimelight/ui/utils"
+
+const cleanupShortcuts = defineShortcuts({
+  meta_k: () => openSearch()
+})
+```
+
 `defineShortcuts` returns a plain function, which can be passed to whichever lifecycle hook your framework provides for component unmount.
 
 <RLATabs
@@ -55,35 +65,55 @@ cleanupShortcuts()
 >
 
   <div role="tabpanel" data-value="astro">
-    Astro `<script>` tags have no component unmount event. For View Transitions, `astro:after-swap` fires before the new page renders - that's the right moment to call cleanup:
+    Astro components don't have standard component unmount hooks. To handle cleanup (especially when using View Transitions), wrap your interactive elements in a Custom Element (Web Component) and leverage its native lifecycle callbacks:
 
     ```astro
     // SearchTrigger.astro
     ---
     ---
 
-    <button id="search-trigger">Open Search</button>
+    <search-trigger>
+      <button>Open Search</button>
+    </search-trigger>
 
     <script>
       import { defineShortcuts } from "@rimelight/ui/utils"
 
-      const trigger = document.getElementById("search-trigger")
+      class SearchTrigger extends HTMLElement {
+        private cleanup: (() => void) | null = null
 
-      function openSearch() {
-        // Function implementation
+        connectedCallback() {
+          const button = this.querySelector("button")
+
+          function openSearch() {
+            // Function implementation
+          }
+
+          button?.addEventListener("click", openSearch)
+
+          const cleanupShortcuts = defineShortcuts({
+            "meta_k": {
+              handler: () => openSearch(),
+              label: "Open Search",
+              description: "Opens the global website search modal",
+              category: "Navigation"
+            }
+          })
+
+          this.cleanup = () => {
+            button?.removeEventListener("click", openSearch)
+            cleanupShortcuts()
+          }
+        }
+
+        disconnectedCallback() {
+          this.cleanup?.()
+        }
       }
 
-      const cleanupShortcuts = defineShortcuts({
-        meta_k: {
-          handler: () => openSearch(),
-          label: "Open Search",
-          description: "Opens the global website search modal",
-          category: "Navigation"
-        }
-      })
-
-      // Required for Astro View Transitions
-      document.addEventListener("astro:after-swap", cleanupShortcuts)
+      if (!customElements.get("search-trigger")) {
+        customElements.define("search-trigger", SearchTrigger)
+      }
     </script>
     ```
 
@@ -104,7 +134,7 @@ cleanupShortcuts()
 
       useEffect(() => {
         const cleanupShortcuts = defineShortcuts({
-          meta_k: {
+          "meta_k": {
             handler: () => openSearch(),
             label: "Open Search",
             description: "Opens the global website search modal",
@@ -139,7 +169,7 @@ cleanupShortcuts()
 
     export class SearchTriggerComponent implements OnDestroy {
       private cleanupShortcuts = defineShortcuts({
-        meta_k: {
+        "meta_k": {
           handler: () => this.openSearch(),
           label: "Open Search",
           description: "Opens the global website search modal",
@@ -171,7 +201,7 @@ cleanupShortcuts()
       }
 
       const cleanupShortcuts = defineShortcuts({
-        meta_k: {
+        "meta_k": {
           handler: () => openSearch(),
           label: "Open Search",
           description: "Opens the global website search modal",
@@ -201,7 +231,7 @@ cleanupShortcuts()
       }
 
       const cleanupShortcuts = defineShortcuts({
-        meta_k: {
+        "meta_k": {
           handler: () => openSearch(),
           label: "Open Search",
           description: "Opens the global website search modal",
@@ -229,7 +259,7 @@ cleanupShortcuts()
       }
 
       const cleanupShortcuts = defineShortcuts({
-        meta_k: {
+        "meta_k": {
           handler: () => openSearch(),
           label: "Open Search",
           description: "Opens the global website search modal",
@@ -278,6 +308,11 @@ Use underscore to express simultaneous modifier + key combos. The supported modi
 - `ctrl`
 - `alt` / `option`
 - `shift`
+
+<RLACallout color="info" title="Modifier Order Independence">
+  The order of modifiers in key combinations does not matter. For example, `"meta_shift_p"` and
+  `"shift_meta_p"` are parsed identically by the system.
+</RLACallout>
 
 ```ts
 defineShortcuts({
@@ -335,10 +370,10 @@ defineShortcuts({
 
 You can customize shortcut behavior by defining properties on each shortcut, or by passing options as the second argument to `defineShortcuts`.
 
-```typescript
+```ts
 export interface ShortcutConfig {
   handler: (e: KeyboardEvent) => void
-  // Behaviour while an input is focused (default: false)
+  // Behavior while an input is focused (default: false)
   usingInput?: boolean | string
   // Human-readable action label (e.g. "Toggle Theme")
   label?: string
@@ -359,14 +394,19 @@ export interface ShortcutsOptions {
 For example, to configure a tighter 400ms delay window for sequential chains:
 
 ```ts
-defineShortcuts(config, { chainDelay: 400 })
+const cleanupShortcuts = defineShortcuts(
+  {
+    "g-d": () => navigate("/dashboard")
+  },
+  { chainDelay: 400 }
+)
 ```
 
 ### Input Scoping (`usingInput`)
 
 By default, every shortcut is **suppressed** while an `<input>`, `<textarea>`, or `contenteditable` element has focus. You can override this behavior:
 
-| Value             | Behaviour                                                                             |
+| Value             | Behavior                                                                              |
 | ----------------- | ------------------------------------------------------------------------------------- |
 | `false` (default) | Shortcut is disabled while any input is focused                                       |
 | `true`            | Shortcut fires regardless of focus state                                              |
@@ -415,7 +455,7 @@ import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
 
 For custom integrations (such as a command palette), you can subscribe directly to the active shortcuts store:
 
-```typescript
+```ts
 import { activeShortcutsStore } from "@rimelight/ui/utils"
 
 activeShortcutsStore.subscribe((shortcuts) => {
