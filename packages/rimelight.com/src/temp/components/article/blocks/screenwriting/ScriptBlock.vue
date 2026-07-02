@@ -1,87 +1,77 @@
 <template>
   <Block
-      :id="block.id"
-      :type="block.type"
-      :is-editable="isEditable"
-      :draggable="draggable"
-      :nestable="nestable"
-      :is-templated="isTemplated"
-      @drag-start="editorCallbacks?.onDragStart"
-      @duplicate="editorCallbacks?.duplicateBlock"
-      @delete="editorCallbacks?.deleteBlock"
-      @insert-block-above="editorCallbacks?.onInsertBlockAbove"
-      @insert-block-below="editorCallbacks?.onInsertBlockBelow"
+    :id="block.id"
+    :type="block.type"
+    :is-editable="isEditable"
+    :draggable="draggable"
+    :nestable="nestable"
+    :is-templated="isTemplated"
+    @drag-start="editorCallbacks?.onDragStart"
+    @duplicate="editorCallbacks?.duplicateBlock"
+    @delete="editorCallbacks?.deleteBlock"
+    @insert-block-above="editorCallbacks?.onInsertBlockAbove"
+    @insert-block-below="editorCallbacks?.onInsertBlockBelow"
   >
     <div
-        class="flex flex-col gap-md border border-rimelight-primary-500 bg-rimelight-primary-800 p-lg shadow-lg"
+      class="flex flex-col gap-md border border-rimelight-primary-500 bg-rimelight-primary-800 p-lg shadow-lg"
     >
-      <span class="text-3xl font-bold text-rimelight-primary-100">
-        Script Block
-      </span>
+      <span class="text-3xl font-bold text-rimelight-primary-100"> Script Block </span>
 
       <div class="flex flex-col gap-sm rounded-md">
-        <span class="text-xl font-bold text-rimelight-primary-100">
-          Overview
-        </span>
+        <span class="text-xl font-bold text-rimelight-primary-100"> Overview </span>
 
         <div class="flex flex-col gap-xs">
-          <span class="text-base font-bold text-rimelight-primary-100">
-            Title
-          </span>
+          <span class="text-base font-bold text-rimelight-primary-100"> Title </span>
           <EditableText
-              :value="titleContent"
-              @update:value="handleTitleChange"
-              :is-editable="isEditable"
-              placeholder="Title"
-              :is-multiline="false"
-              :character-limit="24"
-              :supported-marks="['bold', 'italic']"
-              class="text-rimelight-neutral-50"
-              :editor-callbacks="editorCallbacks"
+            :value="titleContent"
+            @update:value="handleTitleChange"
+            :is-editable="isEditable"
+            placeholder="Title"
+            :is-multiline="false"
+            :character-limit="24"
+            :supported-marks="['bold', 'italic']"
+            class="text-rimelight-neutral-50"
+            :editor-callbacks="editorCallbacks"
           />
         </div>
 
         <div class="flex flex-col gap-xs">
-          <span class="text-base font-bold text-rimelight-primary-100">
-            Synopsis
-          </span>
+          <span class="text-base font-bold text-rimelight-primary-100"> Synopsis </span>
           <EditableText
-              :value="synopsisContent"
-              @update:value="handleSynopsisChange"
-              :is-editable="isEditable"
-              placeholder="Synopsis"
-              :is-multiline="true"
-              :character-limit="256"
-              :supported-marks="['bold', 'italic', 'underline']"
-              class="text-rimelight-primary-100"
-              :editor-callbacks="editorCallbacks"
+            :value="synopsisContent"
+            @update:value="handleSynopsisChange"
+            :is-editable="isEditable"
+            placeholder="Synopsis"
+            :is-multiline="true"
+            :character-limit="256"
+            :supported-marks="['bold', 'italic', 'underline']"
+            class="text-rimelight-primary-100"
+            :editor-callbacks="editorCallbacks"
           />
         </div>
       </div>
 
       <div class="flex flex-col gap-sm rounded-md">
-        <span class="text-xl font-semibold text-rimelight-primary-100">
-          Characters
-        </span>
+        <span class="text-xl font-semibold text-rimelight-primary-100"> Characters </span>
 
         <div v-if="isEditable" class="flex gap-sm">
           <EditableText
-              :value="newCharacterName"
-              @update:value="handleNewCharacterNameChange"
-              :is-editable="isEditable"
-              placeholder="Add Character"
-              :character-limit="64"
-              :is-multiline="false"
-              :supported-marks="[]"
-              class="flex-grow"
-              :editor-callbacks="editorCallbacks"
+            :value="newCharacterName"
+            @update:value="handleNewCharacterNameChange"
+            :is-editable="isEditable"
+            placeholder="Add Character"
+            :character-limit="64"
+            :is-multiline="false"
+            :supported-marks="[]"
+            class="flex-grow"
+            :editor-callbacks="editorCallbacks"
           />
           <Button
-              @click="handleAddCharacter"
-              variant="primary"
-              size="sm"
-              text="Add Character"
-              :disabled="newCharacterNameText.trim() === ''"
+            @click="handleAddCharacter"
+            variant="primary"
+            size="sm"
+            text="Add Character"
+            :disabled="newCharacterNameText.trim() === ''"
           />
         </div>
 
@@ -90,352 +80,315 @@
             No characters added yet.
           </span>
           <div
-              v-for="char in characters"
-              :key="char"
-              class="flex w-fit items-center gap-sm border border-rimelight-primary-500 bg-rimelight-primary-700 p-sm px-2 text-sm text-rimelight-primary-100"
+            v-for="char in characters"
+            :key="char"
+            class="flex w-fit items-center gap-sm border border-rimelight-primary-500 bg-rimelight-primary-700 p-sm px-2 text-sm text-rimelight-primary-100"
           >
             {{ char }}
             <Button
-                v-if="isEditable"
-                type="button"
-                @click="handleRemoveCharacter(char)"
-                variant="ghost"
-                size="xs"
-                start-icon="delete"
-                aria-label="Remove Character"
-                class="hover:text-rimelight-error text-rimelight-primary-100"
+              v-if="isEditable"
+              type="button"
+              @click="handleRemoveCharacter(char)"
+              variant="ghost"
+              size="xs"
+              start-icon="delete"
+              aria-label="Remove Character"
+              class="hover:text-rimelight-error text-rimelight-primary-100"
             />
           </div>
         </div>
       </div>
 
       <div class="flex flex-col gap-sm">
-        <span class="text-xl font-bold text-rimelight-primary-100">
-          Structure
-        </span>
+        <span class="text-xl font-bold text-rimelight-primary-100"> Structure </span>
 
         <div class="flex flex-col gap-sm">
-          <span class="text-lg font-bold text-rimelight-primary-100">
-            Plots
-          </span>
+          <span class="text-lg font-bold text-rimelight-primary-100"> Plots </span>
 
           <div class="flex flex-col gap-xs">
-            <span class="text-base font-bold text-rimelight-primary-100">
-              A Plot
-            </span>
+            <span class="text-base font-bold text-rimelight-primary-100"> A Plot </span>
             <EditableText
-                :value="aPlotContent"
-                @update:value="handleAPlotChange"
-                :is-editable="isEditable"
-                placeholder="A Plot"
-                :is-multiline="true"
-                :supported-marks="['bold', 'italic', 'underline']"
-                class="text-rimelight-neutral-50"
-                :editor-callbacks="editorCallbacks"
+              :value="aPlotContent"
+              @update:value="handleAPlotChange"
+              :is-editable="isEditable"
+              placeholder="A Plot"
+              :is-multiline="true"
+              :supported-marks="['bold', 'italic', 'underline']"
+              class="text-rimelight-neutral-50"
+              :editor-callbacks="editorCallbacks"
             />
           </div>
 
           <div class="flex flex-col gap-xs">
-            <span class="text-base font-bold text-rimelight-primary-100">
-              B Plot
-            </span>
+            <span class="text-base font-bold text-rimelight-primary-100"> B Plot </span>
             <EditableText
-                :value="bPlotContent"
-                @update:value="handleBPlotChange"
-                :is-editable="isEditable"
-                placeholder="B Plot"
-                :is-multiline="true"
-                :supported-marks="['bold', 'italic', 'underline']"
-                class="text-rimelight-neutral-50"
-                :editor-callbacks="editorCallbacks"
+              :value="bPlotContent"
+              @update:value="handleBPlotChange"
+              :is-editable="isEditable"
+              placeholder="B Plot"
+              :is-multiline="true"
+              :supported-marks="['bold', 'italic', 'underline']"
+              class="text-rimelight-neutral-50"
+              :editor-callbacks="editorCallbacks"
             />
           </div>
 
           <div class="flex flex-col gap-xs">
-            <span class="text-base font-bold text-rimelight-primary-100">
-              C Plot
-            </span>
+            <span class="text-base font-bold text-rimelight-primary-100"> C Plot </span>
             <EditableText
-                :value="cPlotContent"
-                @update:value="handleCPlotChange"
-                :is-editable="isEditable"
-                placeholder="C Plot"
-                :is-multiline="true"
-                :supported-marks="['bold', 'italic', 'underline']"
-                class="text-rimelight-neutral-50"
-                :editor-callbacks="editorCallbacks"
+              :value="cPlotContent"
+              @update:value="handleCPlotChange"
+              :is-editable="isEditable"
+              placeholder="C Plot"
+              :is-multiline="true"
+              :supported-marks="['bold', 'italic', 'underline']"
+              class="text-rimelight-neutral-50"
+              :editor-callbacks="editorCallbacks"
             />
           </div>
         </div>
 
         <div class="flex flex-col gap-sm">
-          <span class="text-lg font-semibold text-rimelight-primary-100">
-            Stinger
-          </span>
+          <span class="text-lg font-semibold text-rimelight-primary-100"> Stinger </span>
           <EditableText
-              :value="stingerContent"
-              @update:value="handleStingerChange"
-              :is-editable="isEditable"
-              placeholder="Stinger"
-              :is-multiline="true"
-              :supported-marks="['bold', 'italic', 'underline']"
-              class="text-rimelight-primary-100"
-              :editor-callbacks="editorCallbacks"
+            :value="stingerContent"
+            @update:value="handleStingerChange"
+            :is-editable="isEditable"
+            placeholder="Stinger"
+            :is-multiline="true"
+            :supported-marks="['bold', 'italic', 'underline']"
+            class="text-rimelight-primary-100"
+            :editor-callbacks="editorCallbacks"
           />
         </div>
       </div>
 
       <span class="text-xl font-bold text-rimelight-primary-100">Act 1</span>
       <BlockSlot
-          :blocks="block.slots?.act1 || []"
-          :is-editable="isEditable"
-          :editor-callbacks="editorCallbacks"
-          class=""
-          :allowed-blocks="['scene']"
-          :parent-id="id"
-          :parent-block-type="block.type"
-          :render-blocks="renderBlocks"
-          :parent-nesting-level="nestingLevel"
-          :dragged-block-type="draggedBlockType"
-          :is-child-allowed-in-parent="isChildAllowedInParent"
-          slot-name="act1"
+        :blocks="block.slots?.act1 || []"
+        :is-editable="isEditable"
+        :editor-callbacks="editorCallbacks"
+        class=""
+        :allowed-blocks="['scene']"
+        :parent-id="id"
+        :parent-block-type="block.type"
+        :render-blocks="renderBlocks"
+        :parent-nesting-level="nestingLevel"
+        :dragged-block-type="draggedBlockType"
+        :is-child-allowed-in-parent="isChildAllowedInParent"
+        slot-name="act1"
       />
       <span class="text-xl font-bold text-rimelight-primary-100">Act 2</span>
       <BlockSlot
-          :blocks="block.slots?.act2 || []"
-          :is-editable="isEditable"
-          :editor-callbacks="editorCallbacks"
-          class=""
-          :allowed-blocks="['scene']"
-          :parent-id="id"
-          :parent-block-type="block.type"
-          :render-blocks="renderBlocks"
-          :parent-nesting-level="nestingLevel"
-          :dragged-block-type="draggedBlockType"
-          :is-child-allowed-in-parent="isChildAllowedInParent"
-          slot-name="act2"
+        :blocks="block.slots?.act2 || []"
+        :is-editable="isEditable"
+        :editor-callbacks="editorCallbacks"
+        class=""
+        :allowed-blocks="['scene']"
+        :parent-id="id"
+        :parent-block-type="block.type"
+        :render-blocks="renderBlocks"
+        :parent-nesting-level="nestingLevel"
+        :dragged-block-type="draggedBlockType"
+        :is-child-allowed-in-parent="isChildAllowedInParent"
+        slot-name="act2"
       />
       <span class="text-xl font-bold text-rimelight-primary-100">Act 3</span>
       <BlockSlot
-          :blocks="block.slots?.act3 || []"
-          :is-editable="isEditable"
-          :editor-callbacks="editorCallbacks"
-          class=""
-          :allowed-blocks="['scene']"
-          :parent-id="id"
-          :parent-block-type="block.type"
-          :render-blocks="renderBlocks"
-          :parent-nesting-level="nestingLevel"
-          :dragged-block-type="draggedBlockType"
-          :is-child-allowed-in-parent="isChildAllowedInParent"
-          slot-name="act3"
+        :blocks="block.slots?.act3 || []"
+        :is-editable="isEditable"
+        :editor-callbacks="editorCallbacks"
+        class=""
+        :allowed-blocks="['scene']"
+        :parent-id="id"
+        :parent-block-type="block.type"
+        :render-blocks="renderBlocks"
+        :parent-nesting-level="nestingLevel"
+        :dragged-block-type="draggedBlockType"
+        :is-child-allowed-in-parent="isChildAllowedInParent"
+        slot-name="act3"
       />
     </div>
   </Block>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import type { PropType } from "vue";
-import type { GenericBlockComponentProps } from "~/config/blocks/blockSchema";
-import type {
-  ScriptBlockAttrs,
-  ScriptBlockData,
-  TextNode,
-  InlineNode,
-} from "@/types/blocks";
-import BlockSlot from "@/components/article/base/BlockSlot.vue";
-import EditableText from "@/components/article/base/EditableText.vue";
-import Button from "@/components/base/Button.vue";
-import Block from "@/components/article/base/Block.vue";
+import { ref, computed } from "vue"
+import type { PropType } from "vue"
+import type { GenericBlockComponentProps } from "~/config/blocks/blockSchema"
+import type { ScriptBlockAttrs, ScriptBlockData, TextNode, InlineNode } from "@/types/blocks"
+import BlockSlot from "@/components/article/base/BlockSlot.vue"
+import EditableText from "@/components/article/base/EditableText.vue"
+import Button from "@/components/base/Button.vue"
+import Block from "@/components/article/base/Block.vue"
 
 const props = defineProps({
   block: {
-    type: Object as PropType<
-        GenericBlockComponentProps<ScriptBlockData>["block"]
-    >,
-    required: true,
+    type: Object as PropType<GenericBlockComponentProps<ScriptBlockData>["block"]>,
+    required: true
   },
   isEditable: {
     type: Boolean,
-    default: false,
+    default: false
   },
   editorCallbacks: {
-    type: Object as PropType<
-        GenericBlockComponentProps<ScriptBlockData>["editorCallbacks"]
-    >,
-    default: () => ({}),
+    type: Object as PropType<GenericBlockComponentProps<ScriptBlockData>["editorCallbacks"]>,
+    default: () => ({})
   },
   nestingLevel: {
     type: Number,
-    default: 0,
+    default: 0
   },
   renderBlocks: {
-    type: Function as PropType<
-        GenericBlockComponentProps<ScriptBlockData>["renderBlocks"]
-    >,
-    required: true,
+    type: Function as PropType<GenericBlockComponentProps<ScriptBlockData>["renderBlocks"]>,
+    required: true
   },
   draggedBlockType: {
-    type: String as PropType<
-        GenericBlockComponentProps<ScriptBlockData>["draggedBlockType"]
-    >,
-    default: null,
+    type: String as PropType<GenericBlockComponentProps<ScriptBlockData>["draggedBlockType"]>,
+    default: null
   },
   isChildAllowedInParent: {
     type: Function as PropType<
-        GenericBlockComponentProps<ScriptBlockData>["isChildAllowedInParent"]
+      GenericBlockComponentProps<ScriptBlockData>["isChildAllowedInParent"]
     >,
-    default: () => true,
+    default: () => true
   },
   draggable: {
     type: Boolean,
-    default: false,
+    default: false
   },
   nestable: {
     type: Boolean,
-    default: false,
+    default: false
   },
   isTemplated: {
     type: Boolean,
-    default: false,
-  },
-});
+    default: false
+  }
+})
 
-const { id, attrs } = props.block;
+const { id, attrs } = props.block
 
 // Use computed properties to ensure reactivity for content that might change via block updates
-const characters = computed<string[]>(
-    () => (attrs?.characters || []) as string[],
-);
+const characters = computed<string[]>(() => (attrs?.characters || []) as string[])
 const aPlotContent = computed<Array<TextNode | InlineNode>>(() =>
-    Array.isArray(attrs?.aPlot) ? attrs.aPlot : [],
-);
+  Array.isArray(attrs?.aPlot) ? attrs.aPlot : []
+)
 const bPlotContent = computed<Array<TextNode | InlineNode>>(() =>
-    Array.isArray(attrs?.bPlot) ? attrs.bPlot : [],
-);
+  Array.isArray(attrs?.bPlot) ? attrs.bPlot : []
+)
 const cPlotContent = computed<Array<TextNode | InlineNode>>(() =>
-    Array.isArray(attrs?.cPlot) ? attrs.cPlot : [],
-);
+  Array.isArray(attrs?.cPlot) ? attrs.cPlot : []
+)
 const stingerContent = computed<Array<TextNode | InlineNode>>(() =>
-    Array.isArray(attrs?.stinger) ? attrs.stinger : [],
-);
+  Array.isArray(attrs?.stinger) ? attrs.stinger : []
+)
 const titleContent = computed<Array<TextNode | InlineNode>>(() =>
-    Array.isArray(attrs?.title) ? attrs.title : [],
-);
+  Array.isArray(attrs?.title) ? attrs.title : []
+)
 const synopsisContent = computed<Array<TextNode | InlineNode>>(() =>
-    Array.isArray(attrs?.synopsis) ? attrs.synopsis : [],
-);
+  Array.isArray(attrs?.synopsis) ? attrs.synopsis : []
+)
 
-const newCharacterName = ref<Array<TextNode | InlineNode>>([
-  { type: "text", text: "" },
-]);
+const newCharacterName = ref<Array<TextNode | InlineNode>>([{ type: "text", text: "" }])
 
 const newCharacterNameText = computed(() =>
-    newCharacterName.value
-        .map((node) => (node.type === "text" ? node.text : ""))
-        .join(""),
-);
+  newCharacterName.value.map((node) => (node.type === "text" ? node.text : "")).join("")
+)
 
-const handleNewCharacterNameChange = (
-    newContent: Array<TextNode | InlineNode>,
-) => {
-  newCharacterName.value = newContent;
-};
+const handleNewCharacterNameChange = (newContent: Array<TextNode | InlineNode>) => {
+  newCharacterName.value = newContent
+}
 
 const handleAddCharacter = () => {
-  const characterToAdd = newCharacterNameText.value.trim();
+  const characterToAdd = newCharacterNameText.value.trim()
   if (characterToAdd && !characters.value.includes(characterToAdd)) {
-    const updatedCharacters = [...characters.value, characterToAdd].sort(
-        (a, b) => a.localeCompare(b),
-    );
+    const updatedCharacters = [...characters.value, characterToAdd].toSorted((a, b) =>
+      a.localeCompare(b)
+    )
     props.editorCallbacks?.updateBlock?.(id, {
       attrs: {
         ...attrs,
-        characters: updatedCharacters,
-      } as ScriptBlockAttrs,
-    });
-    newCharacterName.value = [{ type: "text", text: "" }];
+        characters: updatedCharacters
+      } as ScriptBlockAttrs
+    })
+    newCharacterName.value = [{ type: "text", text: "" }]
   }
-};
+}
 
 const handleRemoveCharacter = (characterToRemove: string) => {
-  const updatedCharacters = characters.value.filter(
-      (char) => char !== characterToRemove,
-  );
+  const updatedCharacters = characters.value.filter((char) => char !== characterToRemove)
 
   if (props.editorCallbacks?.updateBlock) {
     props.editorCallbacks.updateBlock(id, {
       attrs: {
         ...attrs,
-        characters: updatedCharacters,
-      } as ScriptBlockAttrs,
-    });
+        characters: updatedCharacters
+      } as ScriptBlockAttrs
+    })
   } else {
-    console.warn(`ScriptBlock ${id}: editorCallbacks.updateBlock is undefined.`);
+    console.warn(`ScriptBlock ${id}: editorCallbacks.updateBlock is undefined.`)
   }
 
   if (props.editorCallbacks?.onCharacterRemovedFromScript) {
-    props.editorCallbacks.onCharacterRemovedFromScript(characterToRemove, id);
+    props.editorCallbacks.onCharacterRemovedFromScript(characterToRemove, id)
   } else {
-    console.warn(
-        `ScriptBlock ${id}: editorCallbacks.onCharacterRemovedFromScript is undefined.`,
-    );
+    console.warn(`ScriptBlock ${id}: editorCallbacks.onCharacterRemovedFromScript is undefined.`)
   }
-};
+}
 
 // Handlers for Plot and Stinger content changes
 const handleAPlotChange = (newContent: Array<TextNode | InlineNode>) => {
   props.editorCallbacks?.updateBlock?.(id, {
     attrs: {
       ...attrs,
-      aPlot: newContent,
-    } as ScriptBlockAttrs,
-  });
-};
+      aPlot: newContent
+    } as ScriptBlockAttrs
+  })
+}
 
 const handleBPlotChange = (newContent: Array<TextNode | InlineNode>) => {
   props.editorCallbacks?.updateBlock?.(id, {
     attrs: {
       ...attrs,
-      bPlot: newContent,
-    } as ScriptBlockAttrs,
-  });
-};
+      bPlot: newContent
+    } as ScriptBlockAttrs
+  })
+}
 
 const handleCPlotChange = (newContent: Array<TextNode | InlineNode>) => {
   props.editorCallbacks?.updateBlock?.(id, {
     attrs: {
       ...attrs,
-      cPlot: newContent,
-    } as ScriptBlockAttrs,
-  });
-};
+      cPlot: newContent
+    } as ScriptBlockAttrs
+  })
+}
 
 const handleStingerChange = (newContent: Array<TextNode | InlineNode>) => {
   props.editorCallbacks?.updateBlock?.(id, {
     attrs: {
       ...attrs,
-      stinger: newContent,
-    } as ScriptBlockAttrs,
-  });
-};
+      stinger: newContent
+    } as ScriptBlockAttrs
+  })
+}
 
 const handleTitleChange = (newContent: Array<TextNode | InlineNode>) => {
   props.editorCallbacks?.updateBlock?.(id, {
     attrs: {
       ...attrs,
-      title: newContent,
-    } as ScriptBlockAttrs,
-  });
-};
+      title: newContent
+    } as ScriptBlockAttrs
+  })
+}
 
 const handleSynopsisChange = (newContent: Array<TextNode | InlineNode>) => {
   props.editorCallbacks?.updateBlock?.(id, {
     attrs: {
       ...attrs,
-      synopsis: newContent,
-    } as ScriptBlockAttrs,
-  });
-};
+      synopsis: newContent
+    } as ScriptBlockAttrs
+  })
+}
 </script>

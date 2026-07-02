@@ -14,8 +14,14 @@ function addSecurityHeaders(response: Response, origin?: string): Response {
     response.headers.set("X-Content-Type-Options", "nosniff")
     response.headers.set("X-Frame-Options", "DENY")
     response.headers.set("Cross-Origin-Resource-Policy", "same-origin")
-    response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
-    response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
+    response.headers.set(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains; preload"
+    )
+    response.headers.set(
+      "Permissions-Policy",
+      "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    )
     if (origin) {
       response.headers.set(
         "Link",
@@ -35,7 +41,10 @@ function addSecurityHeaders(response: Response, origin?: string): Response {
     headers.set("X-Frame-Options", "DENY")
     headers.set("Cross-Origin-Resource-Policy", "same-origin")
     headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
-    headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
+    headers.set(
+      "Permissions-Policy",
+      "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    )
     if (origin) {
       headers.set(
         "Link",

@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import Label from '@/components/base/Label.vue';
-import EditableSelect from '@/components/article/base/EditableSelect.vue';
+import Label from "@/components/base/Label.vue"
+import EditableSelect from "@/components/article/base/EditableSelect.vue"
 
 interface EnumPropertyProps {
-  label: string;
-  value: string | undefined;
-  options: string[];
-  isEditable: boolean;
-  blockId: string;
+  label: string
+  value: string | undefined
+  options: string[]
+  isEditable: boolean
+  blockId: string
 }
 
-const props = defineProps<EnumPropertyProps>();
+const props = defineProps<EnumPropertyProps>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', newValue: string | undefined): void;
-}>();
+  (e: "update:modelValue", newValue: string | undefined): void
+}>()
 
 const handleSelectChange = (newValue: string) => {
-  const finalValue = newValue === '' ? undefined : newValue;
-  emit('update:modelValue', finalValue);
-};
+  const finalValue = newValue === "" ? undefined : newValue
+  emit("update:modelValue", finalValue)
+}
 </script>
 
 <template>
@@ -28,14 +28,14 @@ const handleSelectChange = (newValue: string) => {
   </dt>
   <dd class="w-full">
     <EditableSelect
-        :value="props.value || ''"
-        :options="(props.options as readonly string[])"
-        @update:modelValue="handleSelectChange"
-        :is-editable="props.isEditable"
-        :placeholder="`Select ${props.label}`"
-        alignment="start"
-        class="w-full text-sm"
-        :block-id="props.blockId"
+      :value="props.value || ''"
+      :options="props.options as readonly string[]"
+      @update:modelValue="handleSelectChange"
+      :is-editable="props.isEditable"
+      :placeholder="`Select ${props.label}`"
+      alignment="start"
+      class="w-full text-sm"
+      :block-id="props.blockId"
     />
   </dd>
 </template>

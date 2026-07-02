@@ -1,58 +1,56 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import Label from '@/components/base/Label.vue';
-import EditableText from '@/components/article/base/EditableText.vue';
-import type { TextNode, InlineNode } from '@/types/Block';
-import Button from '@/components/base/Button.vue';
-import LayoutBox from '@/components/base/LayoutBox.vue';
+import { ref, watch, computed } from "vue"
+import Label from "@/components/base/Label.vue"
+import EditableText from "@/components/article/base/EditableText.vue"
+import type { TextNode, InlineNode } from "@/types/Block"
+import Button from "@/components/base/Button.vue"
+import LayoutBox from "@/components/base/LayoutBox.vue"
 
 interface TextArrayPropertyProps {
-  label: string;
-  value: Array<string | Array<TextNode | InlineNode>> | undefined;
-  isEditable: boolean;
+  label: string
+  value: Array<string | Array<TextNode | InlineNode>> | undefined
+  isEditable: boolean
 }
 
-const props = defineProps<TextArrayPropertyProps>();
+const props = defineProps<TextArrayPropertyProps>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', newValue: Array<string | Array<TextNode | InlineNode>>): void;
-}>();
+  (e: "update:modelValue", newValue: Array<string | Array<TextNode | InlineNode>>): void
+}>()
 
-const internalValues = ref<Array<string | Array<TextNode | InlineNode>>>(
-    props.value || []
-);
+const internalValues = ref<Array<string | Array<TextNode | InlineNode>>>(props.value || [])
 
 watch(
-    () => props.value,
-    (newValue) => {
-      internalValues.value = newValue || [];
-    },
-    { deep: true, immediate: true }
-);
+  () => props.value,
+  (newValue) => {
+    internalValues.value = newValue || []
+  },
+  { deep: true, immediate: true }
+)
 
 const handleItemChange = (newValue: Array<TextNode | InlineNode>, index: number) => {
-  const updatedValues = [...internalValues.value];
-  updatedValues[index] = newValue;
-  internalValues.value = updatedValues;
-  emit('update:modelValue', updatedValues);
-};
+  const updatedValues = [...internalValues.value]
+  updatedValues[index] = newValue
+  internalValues.value = updatedValues
+  emit("update:modelValue", updatedValues)
+}
 
 const handleAddItem = () => {
-  const emptyItem: string = '';
-  const updatedValues = [...internalValues.value, emptyItem];
-  internalValues.value = updatedValues;
-  emit('update:modelValue', updatedValues);
-};
+  const emptyItem: string = ""
+  const updatedValues = [...internalValues.value, emptyItem]
+  internalValues.value = updatedValues
+  emit("update:modelValue", updatedValues)
+}
 
 const handleRemoveItem = (index: number) => {
-  const updatedValues = internalValues.value.filter((_, i) => i !== index);
-  internalValues.value = updatedValues;
-  emit('update:modelValue', updatedValues);
-};
+  const updatedValues = internalValues.value.filter((_, i) => i !== index)
+  internalValues.value = updatedValues
+  emit("update:modelValue", updatedValues)
+}
 
 const shouldRender = computed(() => {
-  return (internalValues.value && internalValues.value.length > 0) || props.isEditable;
-});
+  return (internalValues.value && internalValues.value.length > 0) || props.isEditable
+})
 </script>
 
 <template>
@@ -60,14 +58,14 @@ const shouldRender = computed(() => {
     <dt class="flex flex-row items-center">
       <Label :text="props.label" />
       <Button
-          v-if="props.isEditable"
-          type="button"
-          @click="handleAddItem"
-          variant="primary"
-          size="xs"
-          start-icon="add"
-          title="Add item"
-          class="ml-auto"
+        v-if="props.isEditable"
+        type="button"
+        @click="handleAddItem"
+        variant="primary"
+        size="xs"
+        start-icon="add"
+        title="Add item"
+        class="ml-auto"
       />
     </dt>
     <dd>
@@ -75,22 +73,22 @@ const shouldRender = computed(() => {
         <li v-for="(item, index) in internalValues" :key="index">
           <LayoutBox direction="horizontal" gap="sm">
             <EditableText
-                :value="item"
-                @update:modelValue="(newValue) => handleItemChange(newValue, index)"
-                :is-editable="props.isEditable"
-                :character-limit="256"
-                :supported-marks="[]"
-                class="w-full text-sm"
-                root-tag="span"
+              :value="item"
+              @update:modelValue="(newValue) => handleItemChange(newValue, index)"
+              :is-editable="props.isEditable"
+              :character-limit="256"
+              :supported-marks="[]"
+              class="w-full text-sm"
+              root-tag="span"
             />
             <Button
-                v-if="props.isEditable"
-                type="button"
-                @click="handleRemoveItem(index)"
-                variant="danger"
-                size="xs"
-                start-icon="delete"
-                title="Remove item"
+              v-if="props.isEditable"
+              type="button"
+              @click="handleRemoveItem(index)"
+              variant="danger"
+              size="xs"
+              start-icon="delete"
+              title="Remove item"
             />
           </LayoutBox>
         </li>

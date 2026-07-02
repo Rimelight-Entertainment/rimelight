@@ -32,13 +32,9 @@ export interface EditorCallbacks {
       blockId: string
       offset: number
     },
-    slotName?: string | null | undefined
+    slotName?: string | null
   ) => void
-  insertBlockIntoParent?: (
-    newBlock: BlockData,
-    parentId: string,
-    slotName: string
-  ) => void
+  insertBlockIntoParent?: (newBlock: BlockData, parentId: string, slotName: string) => void
   updateBlock?: (blockId: string, newData: Partial<BlockData>) => void
   duplicateBlock?: (blockId: string) => void
   deleteBlock?: (blockId: string) => void
@@ -63,23 +59,14 @@ export interface EditorCallbacks {
       x: number
       y: number
     },
-    targetSlotName?: string | null | undefined
+    targetSlotName?: string | null
   ) => void
   onInsertBlockAbove?: (blockId: string, slotName?: string) => void
   onInsertBlockBelow?: (blockId: string, slotName?: string) => void
   getAvailableCharactersForDialogue?: (dialogueBlockId: string) => string[]
-  onCharacterRemovedFromScript?: (
-    characterName: string,
-    scriptBlockId: string
-  ) => void
-  showMessage?: (
-    message: string,
-    type: `info` | `warning` | `error` | `success`
-  ) => void
-  isChildAllowedInParent: (
-    childBlockType: string,
-    parentBlockType: string
-  ) => boolean
+  onCharacterRemovedFromScript?: (characterName: string, scriptBlockId: string) => void
+  showMessage?: (message: string, type: `info` | `warning` | `error` | `success`) => void
+  isChildAllowedInParent: (childBlockType: string, parentBlockType: string) => boolean
   onImageUpload?: (
     blockId: string,
     file: File,
@@ -147,9 +134,7 @@ const BlockSchema: BlockSchemaType = {
     draggable: true,
     selectable: true,
     nestable: true,
-    create: createSectionBlock as (
-      initialData?: Partial<SectionBlockData>
-    ) => SectionBlockData
+    create: createSectionBlock as (initialData?: Partial<SectionBlockData>) => SectionBlockData
   },
   paragraph: {
     component: ParagraphBlock,
@@ -175,9 +160,7 @@ const BlockSchema: BlockSchemaType = {
     draggable: true,
     selectable: true,
     nestable: false,
-    create: createCalloutBlock as (
-      initialData?: Partial<CalloutBlockData>
-    ) => CalloutBlockData
+    create: createCalloutBlock as (initialData?: Partial<CalloutBlockData>) => CalloutBlockData
   },
   image: {
     component: ImageBlock,
@@ -189,9 +172,7 @@ const BlockSchema: BlockSchemaType = {
     draggable: true,
     selectable: true,
     nestable: false,
-    create: createImageBlock as (
-      initialData?: Partial<ImageBlockData>
-    ) => ImageBlockData
+    create: createImageBlock as (initialData?: Partial<ImageBlockData>) => ImageBlockData
   },
   script: {
     component: ScriptBlock,
@@ -203,9 +184,7 @@ const BlockSchema: BlockSchemaType = {
     draggable: true,
     selectable: true,
     nestable: true,
-    create: createScriptBlock as (
-      initialData?: Partial<ScriptBlockData>
-    ) => ScriptBlockData
+    create: createScriptBlock as (initialData?: Partial<ScriptBlockData>) => ScriptBlockData
   },
   scene: {
     component: SceneBlock,
@@ -217,9 +196,7 @@ const BlockSchema: BlockSchemaType = {
     draggable: true,
     selectable: true,
     nestable: true,
-    create: createSceneBlock as (
-      initialData?: Partial<SceneBlockData>
-    ) => SceneBlockData
+    create: createSceneBlock as (initialData?: Partial<SceneBlockData>) => SceneBlockData
   },
   dialogue: {
     component: DialogueBlock,
@@ -231,18 +208,11 @@ const BlockSchema: BlockSchemaType = {
     draggable: true,
     selectable: true,
     nestable: false,
-    create: createDialogueBlock as (
-      initialData?: Partial<DialogueBlockData>
-    ) => DialogueBlockData
+    create: createDialogueBlock as (initialData?: Partial<DialogueBlockData>) => DialogueBlockData
   }
 }
 
-export const CategoryOrder: string[] = [
-  `Text`,
-  `Structure`,
-  `Media`,
-  `Screenwriting`
-]
+export const CategoryOrder: string[] = [`Text`, `Structure`, `Media`, `Screenwriting`]
 
 export const topLevelAllowedBlocks: BlockData[`type`][] = [
   `paragraph`,

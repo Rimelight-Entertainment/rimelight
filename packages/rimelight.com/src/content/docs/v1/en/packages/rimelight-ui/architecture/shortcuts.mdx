@@ -46,6 +46,8 @@ cleanupShortcuts()
 <RLATabs
   items={[
     {label:"Astro",value:"astro"},
+    {label:"React",value:"react"},
+    {label:"Angular",value:"angular"},
     {label:"Vue",value:"vue"},
     {label:"Svelte",value:"svelte"},
     {label:"Solid",value:"solid"}
@@ -56,9 +58,10 @@ cleanupShortcuts()
     Astro `<script>` tags have no component unmount event. For View Transitions, `astro:after-swap` fires before the new page renders — that's the right moment to call cleanup:
 
     ```astro
-    ---
     // SearchTrigger.astro
     ---
+    ---
+
     <button id="search-trigger">Open Search</button>
 
     <script>
@@ -66,9 +69,13 @@ cleanupShortcuts()
 
       const trigger = document.getElementById("search-trigger")
 
+      function openSearch() {
+        // Function implementation
+      }
+
       const cleanupShortcuts = defineShortcuts({
         meta_k: {
-          handler: () => trigger?.click(),
+          handler: () => openSearch(),
           label: "Open Search",
           description: "Opens the global website search modal",
           category: "Navigation"
@@ -80,65 +87,163 @@ cleanupShortcuts()
     </script>
     ```
 
-</div>
-<div role="tabpanel" data-value="vue" class="hidden">
+  </div>
 
-```vue
-<script setup>
-import { onUnmounted } from "vue"
-import { defineShortcuts } from "@rimelight/ui/utils"
+  <div role="tabpanel" data-value="react">
+    React manages side effects and cleanup within a `useEffect` hook:
 
-const cleanup = defineShortcuts({
-  meta_k: {
-    handler: () => openSearch(),
-    label: "Open Search",
-    category: "Navigation"
-  }
-})
+    ```tsx
+    // SearchTrigger.tsx
+    import { useEffect } from "react"
+    import { defineShortcuts } from "@rimelight/ui/utils"
 
-onUnmounted(cleanup)
-</script>
-```
+    export default function SearchTrigger() {
+      function openSearch() {
+        // Function implementation
+      }
 
-</div>
-<div role="tabpanel" data-value="svelte" class="hidden">
+      useEffect(() => {
+        const cleanupShortcuts = defineShortcuts({
+          meta_k: {
+            handler: () => openSearch(),
+            label: "Open Search",
+            description: "Opens the global website search modal",
+            category: "Navigation"
+          }
+        })
 
-```svelte
-<script>
-import { onDestroy } from "svelte"
-import { defineShortcuts } from "@rimelight/ui/utils"
+        return cleanupShortcuts
+      }, [])
 
-const cleanup = defineShortcuts({
-  meta_k: {
-    handler: () => openSearch(),
-    label: "Open Search",
-    category: "Navigation"
-  }
-})
+      return <button onClick={openSearch}>Open Search</button>
+    }
+    ```
 
-onDestroy(cleanup)
-</script>
-```
+  </div>
 
-</div>
-<div role="tabpanel" data-value="solid" class="hidden">
+  <div role="tabpanel" data-value="angular">
+    Angular components manage lifecycle cleanup within the `ngOnDestroy` hook:
 
-```ts
-import { onCleanup } from "solid-js"
-import { defineShortcuts } from "@rimelight/ui/utils"
+    ```ts
+    // SearchTrigger.ts
+    import { Component, OnDestroy } from "@angular/core"
+    import { defineShortcuts } from "@rimelight/ui/utils"
 
-const cleanup = defineShortcuts({
-  meta_k: {
-    handler: () => openSearch(),
-    label: "Open Search",
-    category: "Navigation"
-  }
-})
+    @Component({
+      selector: "app-search-trigger",
+      standalone: true,
+      template: `
+        <button (click)="openSearch()">Open Search</button>
+      `
+    })
 
-onCleanup(cleanup)
-```
+    export class SearchTriggerComponent implements OnDestroy {
+      private cleanupShortcuts = defineShortcuts({
+        meta_k: {
+          handler: () => this.openSearch(),
+          label: "Open Search",
+          description: "Opens the global website search modal",
+          category: "Navigation"
+        }
+      })
 
-</div>
+      openSearch() {
+        // Function implementation
+      }
+
+      ngOnDestroy() {
+        this.cleanupShortcuts()
+      }
+    }
+    ```
+
+  </div>
+
+  <div role="tabpanel" data-value="vue">
+    ```vue
+    // SearchTrigger.vue
+    <script setup lang="ts">
+      import { onUnmounted } from "vue"
+      import { defineShortcuts } from "@rimelight/ui/utils"
+
+      function openSearch() {
+        // Function implementation
+      }
+
+      const cleanupShortcuts = defineShortcuts({
+        meta_k: {
+          handler: () => openSearch(),
+          label: "Open Search",
+          description: "Opens the global website search modal",
+          category: "Navigation"
+        }
+      })
+
+      onUnmounted(cleanupShortcuts)
+    </script>
+
+    <template>
+      <button @click="openSearch">Open Search</button>
+    </template>
+    ```
+
+  </div>
+
+  <div role="tabpanel" data-value="svelte">
+    ```svelte
+    // SearchTrigger.svelte
+    <script>
+      import { onDestroy } from "svelte"
+      import { defineShortcuts } from "@rimelight/ui/utils"
+
+      function openSearch() {
+        // Function implementation
+      }
+
+      const cleanupShortcuts = defineShortcuts({
+        meta_k: {
+          handler: () => openSearch(),
+          label: "Open Search",
+          description: "Opens the global website search modal",
+          category: "Navigation"
+        }
+      })
+
+      onDestroy(cleanupShortcuts)
+    </script>
+
+    <button on:click={openSearch}>Open Search</button>
+    ```
+
+  </div>
+
+  <div role="tabpanel" data-value="solid">
+    ```tsx
+    // SearchTrigger.tsx
+    import { onCleanup } from "solid-js"
+    import { defineShortcuts } from "@rimelight/ui/utils"
+
+    export default function SearchTrigger() {
+      function openSearch() {
+        // Function implementation
+      }
+
+      const cleanupShortcuts = defineShortcuts({
+        meta_k: {
+          handler: () => openSearch(),
+          label: "Open Search",
+          description: "Opens the global website search modal",
+          category: "Navigation"
+        }
+      })
+
+      onCleanup(cleanupShortcuts)
+
+      return <button onClick={openSearch}>Open Search</button>
+    }
+    ```
+
+  </div>
 </RLATabs>
 
 ## Key Syntax
@@ -156,10 +261,30 @@ Use underscore to express simultaneous modifier + key combos. Modifiers are: `me
 
 ```ts
 defineShortcuts({
-  "meta_k": { handler: openSearch }, // Ctrl+K on Windows/Linux, ⌘K on macOS
-  "meta_shift_p": { handler: openPalette }, // Ctrl+Shift+P on Windows/Linux, ⌘⇧P on macOS
-  "alt_t": { handler: toggleSomething },
-  "?": { handler: openHelp } // plain key, no modifiers
+  "meta_k": {
+    handler: () => openSearch(),
+    label: "Open Search",
+    description: "Opens the global website search modal",
+    category: "Navigation"
+  },
+  "meta_shift_p": {
+    handler: () => openPalette(),
+    label: "Command Palette",
+    description: "Opens the global command palette",
+    category: "Navigation"
+  },
+  "alt_t": {
+    handler: () => toggleSomething(),
+    label: "Toggle Panel",
+    description: "Toggles the side panel",
+    category: "General"
+  },
+  "?": {
+    handler: () => openHelp(),
+    label: "Help",
+    description: "Opens the keyboard shortcuts cheat sheet",
+    category: "General"
+  }
 })
 ```
 
@@ -184,8 +309,18 @@ Use hyphen to express keys pressed **one after the other** within the chain dela
 
 ```ts
 defineShortcuts({
-  "g-d": { handler: () => navigate("/dashboard"), label: "Go to Dashboard" },
-  "g-s": { handler: () => navigate("/settings"), label: "Go to Settings" }
+  "g-d": {
+    handler: () => navigate("/dashboard"),
+    label: "Go to Dashboard",
+    description: "Navigates to the main user dashboard",
+    category: "Navigation"
+  },
+  "g-s": {
+    handler: () => navigate("/settings"),
+    label: "Go to Settings",
+    description: "Navigates to the account settings page",
+    category: "Navigation"
+  }
 })
 ```
 
@@ -223,12 +358,16 @@ defineShortcuts({
   enter: {
     handler: () => performSearch(),
     usingInput: "query", // only fires when <input name="query"> is focused
-    label: "Search"
+    label: "Search",
+    description: "Submits the search query",
+    category: "Navigation"
   },
   escape: {
     handler: () => clearSearch(),
     usingInput: true, // fires even when any input is focused
-    label: "Clear Search"
+    label: "Clear Search",
+    description: "Clears the active search query and closes the search overlay",
+    category: "Navigation"
   }
 })
 ```
@@ -295,11 +434,12 @@ A real page typically mixes all three shortcut types. All entries with a `label`
 ```ts
 import { defineShortcuts } from "@rimelight/ui/utils"
 
-const cleanup = defineShortcuts({
+const cleanupShortcuts = defineShortcuts({
   // Plain key — no modifier needed
   "?": {
     handler: () => openHelpModal(),
     label: "Help",
+    description: "Opens the keyboard shortcuts cheat sheet",
     category: "General"
   },
 
@@ -307,6 +447,7 @@ const cleanup = defineShortcuts({
   "meta_k": {
     handler: () => openCommandPalette(),
     label: "Command Palette",
+    description: "Opens the global command palette",
     category: "General"
   },
 
@@ -314,12 +455,17 @@ const cleanup = defineShortcuts({
   "g-d": {
     handler: () => navigate("/dashboard"),
     label: "Go to Dashboard",
+    description: "Navigates to the main user dashboard",
     category: "Navigation"
   },
   "g-s": {
     handler: () => navigate("/settings"),
     label: "Go to Settings",
+    description: "Navigates to the account settings page",
     category: "Navigation"
   }
 })
+
+// Call cleanupShortcuts() when shortcuts are no longer needed
+cleanupShortcuts()
 ```

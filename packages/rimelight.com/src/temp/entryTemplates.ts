@@ -1,16 +1,29 @@
-import { EntryType, EntryCategory } from "~/types/Entry";
-import type { PropertyPanelSchema, PolicyProperties, SpeciesProperties, CharacterProperties, ObjectProperties, TaleProperties, ItemProperties, SkillProperties, HeroProperties, CardProperties, SeriesProperties, EpisodeProperties } from "../../types/Entry";
-import type { BlockData, SectionBlockData } from "../../types/blocks";
-import { ulid } from "ulid";
+import { EntryType, EntryCategory } from "~/types/Entry"
+import type {
+  PropertyPanelSchema,
+  PolicyProperties,
+  SpeciesProperties,
+  CharacterProperties,
+  ObjectProperties,
+  TaleProperties,
+  ItemProperties,
+  SkillProperties,
+  HeroProperties,
+  CardProperties,
+  SeriesProperties,
+  EpisodeProperties
+} from "../../types/Entry"
+import type { BlockData, SectionBlockData } from "../../types/blocks"
+import { ulid } from "ulid"
 
 export interface EntryTemplate {
-  entryType: EntryType;
-  defaultTitle: string;
-  defaultCategories: EntryCategory[];
-  defaultTags: string[];
-  defaultProperties: Record<string, unknown>;
-  defaultBlocks: BlockData[];
-  propertyPanelSchema?: Record<string, Record<string, PropertyPanelSchema>>;
+  entryType: EntryType
+  defaultTitle: string
+  defaultCategories: EntryCategory[]
+  defaultTags: string[]
+  defaultProperties: Record<string, unknown>
+  defaultBlocks: BlockData[]
+  propertyPanelSchema?: Record<string, Record<string, PropertyPanelSchema>>
 }
 
 export const entryTemplates: Record<EntryType, EntryTemplate> = {
@@ -20,7 +33,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultCategories: [EntryCategory.UNCATEGORIZED],
     defaultTags: [],
     defaultProperties: {},
-    defaultBlocks: [],
+    defaultBlocks: []
   },
   [EntryType.POLICY]: {
     entryType: EntryType.POLICY,
@@ -29,7 +42,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTags: [],
     defaultProperties: {} as PolicyProperties,
     propertyPanelSchema: {},
-    defaultBlocks: [],
+    defaultBlocks: []
   },
   [EntryType.SPECIES]: {
     entryType: EntryType.SPECIES,
@@ -40,15 +53,15 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
       name: "",
       averageLifespan: "Years",
       averageWeight: 0,
-      diet: "",
+      diet: ""
     } as SpeciesProperties,
     propertyPanelSchema: {
       Naming: {
         name: {
           label: "Name",
           type: "text",
-          order: 10,
-        },
+          order: 10
+        }
       },
       Characteristics: {
         averageLifespan: {
@@ -63,63 +76,57 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
             "Years",
             "Decades",
             "Centuries",
-            "Millennia",
+            "Millennia"
           ],
-          order: 20,
+          order: 20
         },
         averageWeight: {
           label: "Average Weight (kg)",
           type: "number",
-          order: 40,
+          order: 40
         },
         diet: {
           label: "Diet",
           type: "enum",
-          options: [
-            "Omnivorous",
-            "Carnivorous",
-            "Herbivorous",
-            "Fungivorous",
-            "Spritavorous",
-          ],
-          order: 30,
-        },
+          options: ["Omnivorous", "Carnivorous", "Herbivorous", "Fungivorous", "Spritavorous"],
+          order: 30
+        }
       },
       _uncategorized_: {
         status: {
           label: "Status",
           type: "enum",
           options: ["Extinct", "Extant"],
-          order: 50,
-        },
-      },
+          order: 50
+        }
+      }
     },
     defaultBlocks: [
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Physiology",
+          title: "Physiology"
         },
-        isTemplated: true,
+        isTemplated: true
       } as SectionBlockData,
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Culture",
+          title: "Culture"
         },
-        isTemplated: true,
+        isTemplated: true
       } as SectionBlockData,
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.CHARACTER]: {
     entryType: EntryType.CHARACTER,
@@ -145,170 +152,170 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
       equipment: [],
       pets: [],
       mounts: [],
-      favouriteFood: "",
+      favouriteFood: ""
     } as CharacterProperties,
     propertyPanelSchema: {
       Naming: {
         name: {
           label: "Name",
           type: "text",
-          order: 10,
+          order: 10
         },
         pronouns: {
           label: "Pronouns",
           type: "enum",
           options: ["He / Him", "She / Her", "They / Them"],
-          order: 20,
+          order: 20
         },
         title: {
           label: "Title",
           type: "text",
-          order: 30,
+          order: 30
         },
         aliases: {
           label: "Aliases",
           type: "text-array",
-          order: 40,
+          order: 40
         },
         flavourText: {
           label: "Flavour Text",
           type: "text",
-          order: 50,
-        },
+          order: 50
+        }
       },
       Characteristics: {
         species: {
           label: "Species",
           type: "entry",
           allowedEntryTypes: [EntryType.SPECIES],
-          order: 60,
+          order: 60
         },
         sex: {
           label: "Sex",
           type: "enum",
           options: ["Male", "Female", "None"],
-          order: 70,
+          order: 70
         },
         height: {
           label: "Height (cm)",
           type: "number",
-          order: 80,
+          order: 80
         },
         weight: {
           label: "Weight (kg)",
           type: "number",
-          order: 90,
-        },
+          order: 90
+        }
       },
       Timeline: {
         dateOfBirth: {
           label: "Date of Birth",
           type: "text",
-          order: 100,
+          order: 100
         },
         dateOfDeath: {
           label: "Date of Death",
           type: "text",
-          order: 110,
+          order: 110
         },
         placeOfBirth: {
           label: "Place of Birth",
           type: "text",
-          order: 120,
+          order: 120
         },
         placeOfDeath: {
           label: "Place of Death",
           type: "text",
-          order: 130,
-        },
+          order: 130
+        }
       },
       Affiliations: {
         formerAffiliations: {
           label: "Former Affiliations",
           type: "text-array",
-          order: 130,
+          order: 130
         },
         currentAffiliations: {
           label: "Current Affiliations",
           type: "text-array",
-          order: 140,
-        },
+          order: 140
+        }
       },
       _uncategorized_: {
         equipment: {
           label: "Equipment",
           type: "text-array",
-          order: 150,
+          order: 150
         },
         pets: {
           label: "Pets",
           type: "entry-array",
           allowedEntryTypes: [EntryType.CHARACTER],
-          order: 160,
+          order: 160
         },
         mounts: {
           label: "Mounts",
           type: "text-array",
-          order: 170,
+          order: 170
         },
         favouriteFood: {
           label: "Favourite Food",
           type: "entry",
           allowedEntryTypes: [EntryType.SPECIES],
-          order: 180,
-        },
-      },
+          order: 180
+        }
+      }
     },
     defaultBlocks: [
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Appearance",
+          title: "Appearance"
         },
-        isTemplated: true,
+        isTemplated: true
       } as SectionBlockData,
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Personality",
+          title: "Personality"
         },
-        isTemplated: true,
+        isTemplated: true
       } as SectionBlockData,
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Abilities",
+          title: "Abilities"
         },
-        isTemplated: true,
+        isTemplated: true
       } as SectionBlockData,
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Biography",
+          title: "Biography"
         },
-        isTemplated: true,
+        isTemplated: true
       } as SectionBlockData,
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Relationships",
+          title: "Relationships"
         },
-        isTemplated: true,
+        isTemplated: true
       } as SectionBlockData,
       {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.OBJECT]: {
     entryType: EntryType.OBJECT,
@@ -322,11 +329,11 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.TALE]: {
     entryType: EntryType.TALE,
@@ -340,11 +347,11 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.ITEM]: {
     entryType: EntryType.ITEM,
@@ -358,11 +365,11 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.SKILL]: {
     entryType: EntryType.SKILL,
@@ -376,11 +383,11 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.HERO]: {
     entryType: EntryType.HERO,
@@ -394,11 +401,11 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.CARD]: {
     entryType: EntryType.CARD,
@@ -409,7 +416,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
       name: "",
       alignment: "",
       type: "",
-      flavourText: "",
+      flavourText: ""
     } as CardProperties,
     propertyPanelSchema: {},
     defaultBlocks: [
@@ -417,11 +424,11 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.SERIES]: {
     entryType: EntryType.SERIES,
@@ -435,11 +442,11 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
+        isTemplated: true
+      } as SectionBlockData
+    ]
   },
   [EntryType.EPISODE]: {
     entryType: EntryType.EPISODE,
@@ -453,10 +460,10 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
         id: ulid(),
         type: "section",
         attrs: {
-          title: "Trivia",
+          title: "Trivia"
         },
-        isTemplated: true,
-      } as SectionBlockData,
-    ],
-  },
-};
+        isTemplated: true
+      } as SectionBlockData
+    ]
+  }
+}

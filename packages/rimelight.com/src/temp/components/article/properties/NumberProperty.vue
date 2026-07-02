@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import Label from '@/components/base/Label.vue';
-import Input from '@/components/base/Input.vue';
+import Label from "@/components/base/Label.vue"
+import Input from "@/components/base/Input.vue"
 
 interface NumberPropertyProps {
-  label: string;
-  value: number | undefined;
-  isEditable: boolean;
+  label: string
+  value: number | undefined
+  isEditable: boolean
 }
 
-const props = defineProps<NumberPropertyProps>();
+const props = defineProps<NumberPropertyProps>()
 
 // Define the emitting for v-model support
 const emit = defineEmits<{
-  (e: 'update:modelValue', newValue: number | undefined): void;
-}>();
+  (e: "update:modelValue", newValue: number | undefined): void
+}>()
 
 const handleChange = (event: Event) => {
-  const stringValue = (event.target as HTMLInputElement).value;
-  const numericValue = stringValue === '' ? undefined : Number(stringValue);
-  emit('update:modelValue', numericValue);
-};
+  const stringValue = (event.target as HTMLInputElement).value
+  const numericValue = stringValue === "" ? undefined : Number(stringValue)
+  emit("update:modelValue", numericValue)
+}
 </script>
 
 <template>
@@ -28,11 +28,11 @@ const handleChange = (event: Event) => {
   </dt>
   <dd class="w-full">
     <Input
-        type="number"
-        :value="props.value ?? ''"
-        @input="handleChange"
-        :disabled="!props.isEditable"
-        placeholder="Enter number..."
+      type="number"
+      :value="props.value ?? ''"
+      @input="handleChange"
+      :disabled="!props.isEditable"
+      placeholder="Enter number..."
     />
   </dd>
 </template>

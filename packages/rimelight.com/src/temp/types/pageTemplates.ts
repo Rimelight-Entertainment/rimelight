@@ -75,13 +75,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
         diet: {
           label: `Diet`,
           type: `enum`,
-          options: [
-            `Omnivorous`,
-            `Carnivorous`,
-            `Herbivorous`,
-            `Fungivorous`,
-            `Spritavorous`
-          ],
+          options: [`Omnivorous`, `Carnivorous`, `Herbivorous`, `Fungivorous`, `Spritavorous`],
           order: 30
         }
       },
