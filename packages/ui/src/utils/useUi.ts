@@ -1,4 +1,4 @@
-import defu from "defu"
+import { merge } from "./merge"
 import { getUIConfig } from "virtual:rimelight-ui"
 import type { DefaultUIConfig } from "../themes"
 
@@ -8,7 +8,7 @@ export function useUi(
 ): Record<string, string | undefined> {
   const globalConfig = getUIConfig()
   const defaults = globalConfig[componentName] ?? {}
-  const merged = defu(uiProp ?? {}, defaults)
+  const merged = merge(uiProp ?? {}, defaults)
 
   return Object.fromEntries(
     Object.entries(merged).map(([key, value]) => [

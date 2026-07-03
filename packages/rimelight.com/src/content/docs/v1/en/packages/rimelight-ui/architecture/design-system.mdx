@@ -160,7 +160,7 @@ The primary entry point is the `ui()` function, which returns an array of Astro 
 
 To allow components to access global UI configuration without complex prop drilling, Rimelight UI uses a **Vite virtual module**.
 
-1. When the integration starts, it merges the user's `ui` overrides with the `defaultUIConfig` using [defu](https://www.npmjs.com/package/defu).
+1. When the integration starts, it merges the user's `ui` overrides with the `defaultUIConfig` using a custom recursive merge utility.
 2. It creates a virtual module named `virtual:rimelight-ui`.
 3. This module exports a `getUIConfig()` function that returns the merged configuration.
 
@@ -213,7 +213,7 @@ export const buttonTheme = {
 
 One of the most powerful features of Rimelight UI is the ability to override component styles at multiple levels. The `:ui` prop allows you to target specific "slots" (elements) within a component.
 
-We use a smart merging strategy powered by [defu](https://www.npmjs.com/package/defu) to combine overrides across three distinct layers, with each subsequent layer taking priority:
+We use a smart merging strategy powered by a custom recursive merge utility to combine overrides across three distinct layers, with each subsequent layer taking priority:
 
 1. **Layer 1: Component Theme**
    The baseline styles and variants defined in the component's `.theme.ts` file. These are the "factory defaults."
@@ -247,6 +247,6 @@ ui({
 When a component (such as `RLAButton.astro`) renders, it resolves these layers in the following order:
 
 1. It fetches the global configuration (Layer 2) from the `virtual:rimelight-ui` module.
-2. It uses [defu](https://www.npmjs.com/package/defu) to merge the local `:ui` prop (Layer 3) with the fetched global configuration.
+2. It uses the recursive merge utility to merge the local `:ui` prop (Layer 3) with the fetched global configuration.
 3. It passes the active variant props (e.g., `color="primary"`) to the `css-variants` engine to generate the base classes (Layer 1).
 4. Finally, it uses a class merging utility to combine the base variant classes with the merged overrides, resolving conflicts so that higher-priority layers (like local overrides) win (e.g., overriding `px-4` with `px-8`).

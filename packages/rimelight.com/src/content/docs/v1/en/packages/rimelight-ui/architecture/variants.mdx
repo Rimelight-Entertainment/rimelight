@@ -108,7 +108,7 @@ This indirection is what allows color theming to work without hard-coding indivi
 
 Components use two internal helpers — `resolveClasses` and `useUi` — to apply themes and merge per-instance overrides.
 
-**`useUi(componentName, uiProp)`** reads the global UI config (from `virtual:rimelight-ui`) and merges it with the `ui` prop passed directly to the component using `defu`. The result is a flat `Record<string, string>` of slot overrides.
+**`useUi(componentName, uiProp)`** reads the global UI config (from `virtual:rimelight-ui`) and merges it with the `ui` prop passed directly to the component using a recursive merge utility. The result is a flat `Record<string, string>` of slot overrides.
 
 **`resolveClasses(themeFn, variants, mergedUI, rootClass?)`** calls the `scv`-compiled theme function with the active variant values, then concatenates each slot's resolved classes with its matching override from `mergedUI` (using `cx` from `css-variants`).
 

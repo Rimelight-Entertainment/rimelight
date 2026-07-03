@@ -65,7 +65,6 @@
     "@iconify-json/lucide": "1.2.113",
     "@unocss/astro": "^66.7.2",
     "css-variants": "2.3.5",
-    "defu": "6.1.7",
     "nanostores": "1.3.0"
   },
   "devDependencies": {

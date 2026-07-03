@@ -1,7 +1,7 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import vue from "@astrojs/vue"
-import defu from "defu"
+import { merge } from "../utils/merge"
 import { defaultUIConfig } from "../themes"
 import type { ComponentTheme } from "../utils/defineTheme"
 import rimelightUiPreset, {
@@ -43,8 +43,8 @@ export interface UIOptions {
       }
   >
   /**
-   * Global UI overrides applied to all components. Merged with defaults via `defu` (first arg
-   * wins).
+   * Global UI overrides applied to all components. Merged with defaults via our custom recursive
+   * merge utility (first arg wins).
    */
   ui?: UIConfigOverrides
   /**
@@ -105,7 +105,7 @@ export interface UIOptions {
  *   })
  */
 export function ui(options: UIOptions = {}): AstroIntegration[] {
-  const resolvedUI = defu(options.ui ?? {}, defaultUIConfig)
+  const resolvedUI = merge(options.ui ?? {}, defaultUIConfig)
   const coreColors = [
     "primary",
     "secondary",
