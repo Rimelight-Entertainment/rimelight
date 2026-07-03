@@ -1,4 +1,4 @@
-import { security as astroSecurity } from "@rimelight/ui/middleware"
+import { security as astroSecurity } from "@rimelight/security/middleware"
 import { getFetchState } from "astro/hono"
 
 export const security = async (c: any, next: any) => {

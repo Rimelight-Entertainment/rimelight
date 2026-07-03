@@ -44,8 +44,6 @@
     "./docs/*": "./src/docs/*",
     "./plugins": "./src/plugins/index.ts",
     "./plugins/*": "./src/plugins/*",
-    "./middleware": "./src/middleware/index.ts",
-    "./middleware/*": "./src/middleware/*",
     "./types": "./src/types/index.ts",
     "./types/*": "./src/types/*",
     "./presets": "./src/presets/index.ts",

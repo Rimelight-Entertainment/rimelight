@@ -451,6 +451,41 @@ import RLAShortcuts from "@rimelight/ui/components/astro/RLAShortcuts.astro"
 </html>
 ```
 
+### Configuring Category Labels & Order
+
+By default, category headers are capitalized strings matching the `category` field defined in your shortcuts. You can customize the human-readable labels and determine the category display order in one of two ways:
+
+#### 1. Via Astro Integration (Global)
+
+Configure categories globally in your `astro.config.mjs` via the `ui` integration options. The order of keys in the `categories` object defines their display order in the cheat sheet.
+
+```js
+// astro.config.mjs
+import { defineConfig } from "astro/config"
+import { ui } from "@rimelight/ui/integrations"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      shortcuts: {
+        categories: {
+          general: { label: "General System" },
+          navigation: { label: "Navigation & Menus" }
+        }
+      }
+    })
+  ]
+})
+```
+
+#### 2. Via Component Props (Instance level)
+
+Alternatively, you can pass a `categories` prop directly to the `<RLAShortcuts />` component to override labels:
+
+```astro
+<RLAShortcuts categories={{ navigation: "Jump to", general: "Basic Controls" }} />
+```
+
 ### Accessing the Registry
 
 For custom integrations (such as a command palette), you can subscribe directly to the active shortcuts store:
