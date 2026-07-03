@@ -10,7 +10,6 @@ import rimelightUiPreset, {
   type ColorConfigValue,
   type RimelightPresetOptions
 } from "../presets"
-import { extractAllMeta } from "../docs/extractAll"
 
 export interface CategoryConfig {
   label: string
@@ -74,11 +73,6 @@ export interface UIOptions {
         dark?: Record<string, string>
       }
   >
-  /**
-   * When `true`, auto-generates missing `light`/`dark` mode buckets from flat color values using
-   * `color-mix(in oklch, ...)`. Explicitly provided buckets always take precedence. Defaults to
-   * `true`.
-   */
   autogenerateColorModes?: boolean
 }
 
@@ -137,7 +131,6 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   const resolvedVirtualModuleId = "\0" + virtualModuleId
 
   async function setViteConfig(updateConfig: (config: Record<string, unknown>) => void) {
-    const docsMeta = await extractAllMeta()
     updateConfig({
       vite: {
         optimizeDeps: {
@@ -151,7 +144,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
             name: "vite-plugin-rimelight-ui-virtual",
             enforce: "pre",
             resolveId(id: string) {
-              if (id === virtualModuleId || id === "virtual:rimelight-ui-docs-meta") {
+              if (id === virtualModuleId) {
                 return "\0" + id
               }
               return null
@@ -159,9 +152,6 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
             load(id: string) {
               if (id === resolvedVirtualModuleId) {
                 return `export const getUIConfig = () => (${JSON.stringify(resolvedConfig)});`
-              }
-              if (id === "\0virtual:rimelight-ui-docs-meta") {
-                return `export default ${JSON.stringify(docsMeta)}`
               }
               return null
             }

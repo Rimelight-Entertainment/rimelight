@@ -12,10 +12,6 @@ interface StarlightAddonsConfig {
   share?: boolean
 }
 
-declare module "virtual:rimelight-ui-docs-meta" {
-  const meta: Record<string, unknown>
-  export default meta
-}
 
 
 declare namespace App {

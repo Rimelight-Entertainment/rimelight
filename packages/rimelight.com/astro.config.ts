@@ -8,6 +8,48 @@ import { defineSecurity } from "@rimelight/security/config"
 import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
 import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
+import { fileURLToPath } from "node:url"
+import { extractAllMeta } from "./src/docs/extractAll"
+
+function localDocsIntegration() {
+  return {
+    name: "rimelight-docs-integration",
+    hooks: {
+      "astro:config:setup": async ({ updateConfig }: { updateConfig: (config: any) => void }) => {
+        const docsMeta = await extractAllMeta()
+        updateConfig({
+          vite: {
+            resolve: {
+              alias: {
+                "@rimelight/ui/docs/components": fileURLToPath(
+                  new URL("./src/docs/components", import.meta.url)
+                )
+              }
+            },
+            plugins: [
+              {
+                name: "vite-plugin-rimelight-ui-docs-meta",
+                enforce: "pre",
+                resolveId(id: string) {
+                  if (id === "virtual:rimelight-ui-docs-meta") {
+                    return "\0" + id
+                  }
+                  return null
+                },
+                load(id: string) {
+                  if (id === "\0virtual:rimelight-ui-docs-meta") {
+                    return `export default ${JSON.stringify(docsMeta)}`
+                  }
+                  return null
+                }
+              }
+            ]
+          }
+        })
+      }
+    }
+  }
+}
 
 export default defineConfig({
   experimental: {
@@ -121,6 +163,8 @@ export default defineConfig({
         }
       }
     }),
+
+    localDocsIntegration(),
 
     sri()
   ]

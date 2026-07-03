@@ -450,9 +450,6 @@ importers:
       solid-js:
         specifier: 1.9.13
         version: 1.9.13
-      tsx:
-        specifier: 4.22.4
-        version: 4.22.4
       typescript:
         specifier: 6.0.3
         version: 6.0.3

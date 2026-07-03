@@ -7,23 +7,7 @@ import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
 
 ## UnoCSS
 
-Rimelight UI ships a UnoCSS preset that can be consumed directly in your project. This lets you adopt the same design tokens and typography options without duplicating configuration.
-
-```ts
-// uno.config.ts
-import { defineConfig } from "unocss"
-import rimelightUiPreset from "@rimelight/ui/presets"
-
-export default defineConfig({
-  presets: [
-    rimelightUiPreset({
-      /* Options */
-    })
-  ]
-})
-```
-
-- Internally, the preset includes and extends UnoCSS presets [Wind4](https://unocss.dev/presets/wind4) and [Typography](https://unocss.dev/presets/typography). You can override or extend the preset in your project by adding additional UnoCSS presets, rules, or theme tokens as according to their [documentation](https://unocss.dev/guide/).
+Rimelight UI uses internally a UnoCSS preset that includes and extends UnoCSS presets [Wind4](https://unocss.dev/presets/wind4) and [Typography](https://unocss.dev/presets/typography). your project by adding additional UnoCSS presets, rules, or theme tokens as according to their [documentation](https://unocss.dev/guide/).
 
 Exports
 
