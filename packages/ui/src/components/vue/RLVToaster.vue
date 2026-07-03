@@ -1,8 +1,20 @@
 <script setup lang="ts">
-import { useToast } from "../../composables/useToast"
+import { ref, onMounted, onUnmounted } from "vue"
+import { toastsStore, removeToast } from "../../utils"
 import RLVToast from "./RLVToast.vue"
 
-const { toasts, remove } = useToast()
+const toasts = ref(toastsStore.get())
+let unsubscribe: (() => void) | null = null
+
+onMounted(() => {
+  unsubscribe = toastsStore.subscribe((val) => {
+    toasts.value = val
+  })
+})
+
+onUnmounted(() => {
+  unsubscribe?.()
+})
 </script>
 
 <template>
@@ -22,7 +34,7 @@ const { toasts, remove } = useToast()
         :key="toast.id"
         v-bind="toast"
         class="pointer-events-auto"
-        @close="remove"
+        @close="removeToast"
       />
     </TransitionGroup>
   </div>

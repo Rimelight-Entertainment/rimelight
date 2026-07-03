@@ -22,7 +22,7 @@ const resolvedClasses = computed(() =>
 
 const variantIcons: Record<string, string> = {
   default: "i-lucide-bell",
-  destructive: "i-lucide-alert-circle",
+  error: "i-lucide-alert-circle",
   success: "i-lucide-check-circle-2",
   warning: "i-lucide-alert-triangle",
   info: "i-lucide-info"

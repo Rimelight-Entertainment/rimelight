@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { useToast } from "@rimelight/ui/composables"
+import { addToast } from "@rimelight/ui/utils"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
@@ -89,7 +89,7 @@ const styles = computed(() => {
 /* endregion */
 
 /* region State */
-const toast = useToast()
+
 const color = computed(() => {
   if (hex) return hex
   if (rgb) return rgb
@@ -104,13 +104,13 @@ const color = computed(() => {
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
-    toast.add({
+    addToast({
       title: t("swatch.color_copied"),
       description: text,
       color: "primary"
     })
   } catch {
-    toast.add({
+    addToast({
       title: t("swatch.color_copy_failed"),
       description: t("swatch.copy_error_description"),
       color: "danger"

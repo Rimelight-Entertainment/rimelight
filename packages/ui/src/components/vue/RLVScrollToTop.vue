@@ -3,8 +3,8 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ScrollToTopProps } from "../../types/components/scroll-to-top"
 import scrollToTopTheme from "../../themes/scroll-to-top.theme"
-import { useScrollToTop } from "../../composables/useScrollToTop"
-import { computed, onMounted, onUnmounted, watch, useAttrs } from "vue"
+import { trackScroll, scrollToTop as scrollToTopFn } from "../../utils"
+import { ref, computed, onMounted, onUnmounted, watch, useAttrs } from "vue"
 
 const attrs = useAttrs()
 const scrollToTop = scv(scrollToTopTheme)
@@ -21,13 +21,8 @@ const {
 
 const classes = resolveClasses(scrollToTop, { color }, useUi("scrollToTop", uiProp), className)
 
-const {
-  isVisible,
-  scrollPercentage,
-  scrollToTop: scrollToTopFn
-} = useScrollToTop({
-  threshold
-})
+const isVisible = ref(false)
+const scrollPercentage = ref(0)
 
 const instanceId = `rla-vue-${Math.random().toString(36).slice(2, 8)}`
 const gaugeBorderWidth = progressWidth * 0.5
@@ -49,16 +44,23 @@ function updateCssVars() {
 
 watch(scrollPercentage, updateCssVars)
 
+let unsubscribe: (() => void) | null = null
+
 onMounted(() => {
   const nonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute("content") ?? ""
   styleEl = document.createElement("style")
   if (nonce) styleEl.setAttribute("nonce", nonce)
   document.head.appendChild(styleEl)
-  updateCssVars()
+
+  unsubscribe = trackScroll({ threshold }, (state) => {
+    isVisible.value = state.isVisible
+    scrollPercentage.value = state.scrollPercentage
+  })
 })
 
 onUnmounted(() => {
   if (styleEl) styleEl.remove()
+  unsubscribe?.()
 })
 </script>
 

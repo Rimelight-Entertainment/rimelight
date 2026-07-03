@@ -64,9 +64,7 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 </rla-scroll-to-top>
 
 <script>
-  function onClick() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  import { trackScroll, scrollToTop } from "../../utils/scroll"
 
   class RLAScrollToTop extends HTMLElement {
     private cleanupScroll: (() => void) | null = null;
@@ -95,12 +93,12 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
         return this.styleEl;
       };
 
-      const updateStyles = () => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const scrollPercentage = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      innerElement.dataset.rlaInstance = String(id);
 
-        if (scrollTop > threshold) {
+      button.addEventListener('click', scrollToTop);
+
+      const unsubscribe = trackScroll({ threshold }, (state) => {
+        if (state.isVisible) {
           innerElement.classList.add('visible');
         } else {
           innerElement.classList.remove('visible');
@@ -113,23 +111,16 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
             background-color: #000;
           }
           .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-progress {
-            --gauge-progress: ${scrollPercentage};
+            --gauge-progress: ${state.scrollPercentage};
             --gauge-stroke-width: ${gaugeBorderWidth}px;
             --gauge-color: var(--color-${color}-500);
           }
         `;
-      };
-
-      innerElement.dataset.rlaInstance = String(id);
-
-      button.addEventListener('click', onClick);
-
-      window.addEventListener('scroll', updateStyles, { passive: true });
-      updateStyles();
+      });
 
       this.cleanupScroll = () => {
-        button.removeEventListener('click', onClick);
-        window.removeEventListener('scroll', updateStyles);
+        button.removeEventListener('click', scrollToTop);
+        unsubscribe();
         if (this.styleEl) {
           this.styleEl.remove();
           this.styleEl = null;

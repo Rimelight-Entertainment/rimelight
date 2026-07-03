@@ -3,7 +3,7 @@ import { computed, inject, provide, useAttrs } from "vue"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
-import { useToast } from "@rimelight/ui/composables"
+import { addToast } from "@rimelight/ui/utils"
 import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 
 /* region Props */
@@ -102,7 +102,7 @@ const styles = computed(() => {
 /* endregion */
 
 /* region State */
-const toast = useToast()
+
 const sectionId = computed(() => slugify(title))
 const sectionHash = computed(() => `#${sectionId.value}`)
 const fullSectionUrl = computed(() => {
@@ -125,9 +125,9 @@ function slugify(text: string): string {
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
-    toast.add({ title: "Heading copied to clipboard!", description: text, color: "primary" })
+    addToast({ title: "Heading copied to clipboard!", description: text, color: "primary" })
   } catch {
-    toast.add({
+    addToast({
       title: "Failed to copy heading to clipboard.",
       description: "An unexpected error occurred. Please try again.",
       color: "danger"

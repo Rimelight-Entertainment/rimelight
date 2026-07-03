@@ -11,7 +11,7 @@ export interface ToastProps {
   /**
    * Visual variant.
    */
-  variant?: "default" | "destructive" | "success" | "warning" | "info"
+  variant?: "default" | "error" | "success" | "warning" | "info"
   /**
    * Action button label.
    */
