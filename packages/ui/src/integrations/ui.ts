@@ -11,7 +11,6 @@ import rimelightUiPreset, {
   type RimelightPresetOptions
 } from "../presets"
 import { extractAllMeta } from "../docs/extractAll"
-import virtual from "vite-plugin-virtual"
 
 export interface CategoryConfig {
   label: string
@@ -149,22 +148,24 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
         },
         plugins: [
           {
-            name: "vite-plugin-rimelight-ui-config",
+            name: "vite-plugin-rimelight-ui-virtual",
             enforce: "pre",
             resolveId(id: string) {
-              if (id === virtualModuleId) return resolvedVirtualModuleId
+              if (id === virtualModuleId || id === "virtual:rimelight-ui-docs-meta") {
+                return "\0" + id
+              }
               return null
             },
             load(id: string) {
               if (id === resolvedVirtualModuleId) {
                 return `export const getUIConfig = () => (${JSON.stringify(resolvedConfig)});`
               }
+              if (id === "\0virtual:rimelight-ui-docs-meta") {
+                return `export default ${JSON.stringify(docsMeta)}`
+              }
               return null
             }
-          },
-          virtual({
-            "virtual:rimelight-ui-docs-meta": `export default ${JSON.stringify(docsMeta)}`
-          })
+          }
         ]
       }
     })

@@ -66,8 +66,7 @@
     "@unocss/astro": "^66.7.2",
     "css-variants": "2.3.5",
     "defu": "6.1.7",
-    "nanostores": "1.3.0",
-    "vite-plugin-virtual": "^0.5.0"
+    "nanostores": "1.3.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
