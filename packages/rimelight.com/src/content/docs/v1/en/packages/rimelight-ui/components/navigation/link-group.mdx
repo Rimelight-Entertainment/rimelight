@@ -1,6 +1,6 @@
 ---
 title: "Link Group"
-description: "A group of navigational links, typically used in footers."
+description: "A themed group of navigational links, typically used in footer columns or sidebars."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,19 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-A group of navigational links, typically used in footers.
+The `LinkGroup` component displays a header title followed by a list of links. It is commonly used to structure links in footer grids, navigation sidebars, or directories.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLALinkGroup title="Resources" links={[{ label: "Docs", href: "/docs" }, { label: "GitHub", href: "https://github.com" }]} />
+  <RLALinkGroup
+    title="Resources"
+    links={[
+      { label: "Documentation", href: "/docs" },
+      { label: "GitHub Repository", href: "https://github.com" },
+      { label: "Community Chat", href: "https://discord.gg" }
+    ]}
+  />
 
   <div slot="code-astro">
     ```astro
@@ -24,8 +31,9 @@ A group of navigational links, typically used in footers.
     import RLALinkGroup from "@rimelight/ui/components/astro/RLALinkGroup.astro";
 
     const links = [
-      { label: "Docs", href: "/docs" },
-      { label: "GitHub", href: "https://github.com" }
+      { label: "Documentation", href: "/docs" },
+      { label: "GitHub Repository", href: "https://github.com" },
+      { label: "Community Chat", href: "https://discord.gg" }
     ];
     ---
 
@@ -36,6 +44,40 @@ A group of navigational links, typically used in footers.
 </ComponentShowcase>
 
 ## Examples
+
+### Title with Icon and Link
+
+You can configure the group title to have icons or be a link itself.
+
+<ComponentShowcase>
+  <RLALinkGroup
+    title={{
+      label: "Our Products",
+      href: "/products",
+      leadingIcon: "i-lucide-package"
+    }}
+    links={[
+      { label: "Rimelight UI", href: "/products/ui" },
+      { label: "Vite Plus", href: "/products/vite-plus" }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLALinkGroup
+      title={{
+        label: "Our Products",
+        href: "/products",
+        leadingIcon: "i-lucide-package"
+      }}
+      links={[
+        { label: "Rimelight UI", href: "/products/ui" },
+        { label: "Vite Plus", href: "/products/vite-plus" }
+      ]}
+    />
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

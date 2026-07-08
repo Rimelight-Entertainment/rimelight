@@ -1,19 +1,96 @@
 ---
 title: "Table"
-description: "This component is currently under development."
+description: "A responsive table component for organizing data into structured rows and columns."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLATable from "@rimelight/ui/components/astro/RLATable.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+export const demoHeaders = ["Name", "Email", "Role"]
+export const demoRows = [
+  ["Jane Doe", "jane@example.com", "Admin"],
+  ["John Smith", "john@example.com", "Developer"],
+  ["Alice Johnson", "alice@example.com", "Designer"]
+]
+
+The Table component organizes and displays structured datasets, offering built-in styling for borders, striping, and interactive hover states.
 
 ## Usage
 
+Define a list of `headers` and `rows` using the props.
+
+<ComponentShowcase>
+  <RLATable headers={demoHeaders} rows={demoRows} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATable from "@rimelight/ui/components/astro/RLATable.astro";
+
+    const headers = ["Name", "Email", "Role"];
+    const rows = [
+      ["Jane Doe", "jane@example.com", "Admin"],
+      ["John Smith", "john@example.com", "Developer"],
+      ["Alice Johnson", "alice@example.com", "Designer"]
+    ];
+    ---
+
+    <RLATable headers={headers} rows={rows} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Striped Rows
+
+Set the `striped` prop to true to alternate row backgrounds.
+
+<ComponentShowcase>
+  <RLATable striped headers={demoHeaders} rows={demoRows} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATable from "@rimelight/ui/components/astro/RLATable.astro";
+
+    const headers = ["Name", "Email", "Role"];
+    const rows = [/* ... */];
+    ---
+
+    <RLATable striped headers={headers} rows={rows} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Bordered Layout
+
+Set the `bordered` prop to true to render borders between all columns and rows.
+
+<ComponentShowcase>
+  <RLATable bordered headers={demoHeaders} rows={demoRows} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATable from "@rimelight/ui/components/astro/RLATable.astro";
+
+    const headers = ["Name", "Email", "Role"];
+    const rows = [/* ... */];
+    ---
+
+    <RLATable bordered headers={headers} rows={rows} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

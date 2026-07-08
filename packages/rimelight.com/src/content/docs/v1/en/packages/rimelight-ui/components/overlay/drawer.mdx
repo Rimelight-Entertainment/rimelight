@@ -1,6 +1,6 @@
 ---
 title: "Drawer"
-description: "This component is currently under development."
+description: "A panel that slides in from the edge of the screen."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,15 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Drawer component that slides out from any edge of the viewport.
 
 ## Usage
 
+How to use the Drawer component.
+
 <ComponentShowcase>
   <RLADrawer triggerLabel="Open Drawer" title="Drawer Title" description="Drawer Description">
-    <div class="p-4">Drawer Content</div>
+    <div class="p-4 text-center">Drawer Content</div>
   </RLADrawer>
 
   <div slot="code-astro">
@@ -27,7 +29,7 @@ This component is currently under development.
     ---
 
     <RLADrawer triggerLabel="Open Drawer" title="Drawer Title" description="Drawer Description">
-      <div class="p-4">Drawer Content</div>
+      <div class="p-4 text-center">Drawer Content</div>
     </RLADrawer>
     ```
 
@@ -35,6 +37,48 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Direction
+
+Use the `direction` prop to control which side of the screen the drawer slides in from. It supports `"top"`, `"right"`, `"bottom"`, and `"left"`.
+
+<ComponentShowcase>
+  <div class="flex flex-wrap gap-2">
+    <RLADrawer direction="left" triggerLabel="Open Left" title="Left Drawer" description="Drawer sliding from the left">
+      <div class="p-4">Content on the left</div>
+    </RLADrawer>
+
+    <RLADrawer direction="right" triggerLabel="Open Right" title="Right Drawer" description="Drawer sliding from the right">
+      <div class="p-4">Content on the right</div>
+    </RLADrawer>
+
+    <RLADrawer direction="top" triggerLabel="Open Top" title="Top Drawer" description="Drawer sliding from the top">
+      <div class="p-4">Content on the top</div>
+    </RLADrawer>
+
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADrawer from "@rimelight/ui/components/astro/RLADrawer.astro";
+    ---
+
+    <RLADrawer direction="left" triggerLabel="Open Left" title="Left Drawer" description="Drawer sliding from the left">
+      <div class="p-4">Content on the left</div>
+    </RLADrawer>
+
+    <RLADrawer direction="right" triggerLabel="Open Right" title="Right Drawer" description="Drawer sliding from the right">
+      <div class="p-4">Content on the right</div>
+    </RLADrawer>
+
+    <RLADrawer direction="top" triggerLabel="Open Top" title="Top Drawer" description="Drawer sliding from the top">
+      <div class="p-4">Content on the top</div>
+    </RLADrawer>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

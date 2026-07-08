@@ -5,9 +5,9 @@ description: "A component to display the site logo with different variants and c
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro"
-import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
+import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
@@ -25,19 +25,6 @@ A versatile logo component that renders a site logo from your configuration, sup
     ---
 
     <RLALogo variant="logomark" />
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue";
-    </script>
-
-    <template>
-      <RLVLogo variant="logomark" />
-    </template>
     ```
 
   </div>
@@ -61,22 +48,6 @@ A versatile logo component that renders a site logo from your configuration, sup
 
     <RLALogo variant="logomark" />
     <RLALogo variant="logotype" />
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue";
-    </script>
-
-    <template>
-      <div class="flex flex-col gap-4">
-        <RLVLogo variant="logomark" />
-        <RLVLogo variant="logotype" />
-      </div>
-    </template>
     ```
 
   </div>
@@ -104,25 +75,6 @@ A versatile logo component that renders a site logo from your configuration, sup
       <RLALogo variant="logomark" mode="white" />
     </div>
     <RLALogo variant="logomark" mode="black" />
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVLogo from "@rimelight/ui/components/vue/RLVLogo.vue";
-    </script>
-
-    <template>
-      <div class="flex flex-col gap-4">
-        <RLVLogo variant="logomark" mode="color" />
-        <div class="bg-black p-2 inline-block">
-          <RLVLogo variant="logomark" mode="white" />
-        </div>
-        <RLVLogo variant="logomark" mode="black" />
-      </div>
-    </template>
     ```
 
   </div>
@@ -164,6 +116,10 @@ export default defineConfig({
 ### Slots
 
 <ApiSlots component="logo" />
+
+### Emits
+
+<ApiEmits component="logo" />
 
 ## Theme
 

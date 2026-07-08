@@ -1,6 +1,6 @@
 ---
 title: "Tooltip"
-description: "This component is currently under development."
+description: "A small popover that appears on hover or focus."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Tooltip component that provides helper text when hovering over or focusing an element.
 
 ## Usage
+
+How to use the Tooltip component.
 
 <ComponentShowcase>
   <RLATooltip content="Tooltip Content">
@@ -35,6 +37,87 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Placement
+
+Use the `placement` prop to change the orientation of the tooltip relative to the target element. Supported values are `"top"`, `"bottom"`, `"left"`, and `"right"`.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4">
+    <RLATooltip content="Top Tooltip" placement="top">
+      <button class="px-3 py-1.5 border rounded text-sm">Top</button>
+    </RLATooltip>
+
+    <RLATooltip content="Bottom Tooltip" placement="bottom">
+      <button class="px-3 py-1.5 border rounded text-sm">Bottom</button>
+    </RLATooltip>
+
+    <RLATooltip content="Left Tooltip" placement="left">
+      <button class="px-3 py-1.5 border rounded text-sm">Left</button>
+    </RLATooltip>
+
+    <RLATooltip content="Right Tooltip" placement="right">
+      <button class="px-3 py-1.5 border rounded text-sm">Right</button>
+    </RLATooltip>
+
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATooltip from "@rimelight/ui/components/astro/RLATooltip.astro";
+    ---
+
+    <RLATooltip content="Top Tooltip" placement="top">
+      <button class="px-3 py-1.5 border rounded text-sm">Top</button>
+    </RLATooltip>
+
+    <RLATooltip content="Bottom Tooltip" placement="bottom">
+      <button class="px-3 py-1.5 border rounded text-sm">Bottom</button>
+    </RLATooltip>
+
+    <RLATooltip content="Left Tooltip" placement="left">
+      <button class="px-3 py-1.5 border rounded text-sm">Left</button>
+    </RLATooltip>
+
+    <RLATooltip content="Right Tooltip" placement="right">
+      <button class="px-3 py-1.5 border rounded text-sm">Right</button>
+    </RLATooltip>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Custom Content Slot
+
+Instead of passing a string to the `content` prop, you can render rich HTML elements inside the tooltip using the `content` slot.
+
+<ComponentShowcase>
+  <RLATooltip placement="top">
+    <button class="px-4 py-2 border rounded">Hover for details</button>
+    <div slot="content" class="flex items-center gap-1.5 text-xs text-info font-medium">
+      <span class="i-lucide-info size-4" />
+      <span>Advanced Configuration Mode</span>
+    </div>
+  </RLATooltip>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATooltip from "@rimelight/ui/components/astro/RLATooltip.astro";
+    ---
+
+    <RLATooltip placement="top">
+      <button class="px-4 py-2 border rounded">Hover for details</button>
+      <div slot="content" class="flex items-center gap-1.5 text-xs text-info font-medium">
+        <span class="i-lucide-info size-4" />
+        <span>Advanced Configuration Mode</span>
+      </div>
+    </RLATooltip>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

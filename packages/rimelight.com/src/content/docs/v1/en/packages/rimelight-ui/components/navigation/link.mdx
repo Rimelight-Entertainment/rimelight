@@ -1,6 +1,6 @@
 ---
 title: "Link"
-description: "This component is currently under development."
+description: "A wrapper component for hyperlink navigation with automatic external link detection and accessibility features."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,7 +11,7 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Link` component wraps standard anchor navigation. It automatically detects external URLs to apply secure targets (`target="_blank"`, `rel="noopener noreferrer"`) and appends an external-link icon.
 
 ## Usage
 
@@ -31,6 +31,24 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### External Links
+
+External URLs (starting with `http`, `https`, or `//`) automatically render with target `_blank` and an external link icon.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2">
+    <RLALink href="https://rimelight.com">Visit Rimelight</RLALink>
+    <RLALink href="https://rimelight.com" noExternalIcon>Visit Rimelight (No Icon)</RLALink>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="https://rimelight.com">Visit Rimelight</RLALink>
+    <RLALink href="https://rimelight.com" noExternalIcon>Visit Rimelight (No Icon)</RLALink>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

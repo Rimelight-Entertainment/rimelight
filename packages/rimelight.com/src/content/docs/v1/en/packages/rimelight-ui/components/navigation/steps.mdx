@@ -8,6 +8,7 @@ import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
 import RLAPackageManagers from "@rimelight/ui/components/astro/RLAPackageManagers.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
+import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
@@ -156,6 +157,7 @@ Each `<li>` accepts arbitrary Astro content — components, code blocks, images,
 
     ```typescript
     import { ui } from "@rimelight/ui/integrations"
+    import { defineConfig } from "astro/config"
     export default defineConfig({ integrations: [ui()] })
     ```
   </li>
@@ -219,6 +221,10 @@ Use the `size` prop to adjust indicator size and step spacing.
 ### Slots
 
 <ApiSlots component="steps" />
+
+### Emits
+
+<ApiEmits component="steps" />
 
 ## Theme
 

@@ -1,19 +1,44 @@
 ---
 title: "DashboardResizeHandle"
-description: "This component is currently under development."
+description: "A divider component used to resize dashboard panels."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardResizeHandle from "@rimelight/ui/components/astro/RLADashboardResizeHandle.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardResizeHandle component acts as a visual and interactive handle to resize adjacent panels within a layout.
 
 ## Usage
 
-## Examples
+Use the DashboardResizeHandle component between resizable panels.
+
+<ComponentShowcase>
+  <div class="flex h-24 border border-neutral-200 rounded">
+    <div class="w-1/2 p-4 text-sm text-neutral-600">Left Panel</div>
+    <RLADashboardResizeHandle class="w-1 bg-neutral-200 hover:bg-primary-500 cursor-col-resize transition-colors" />
+    <div class="w-1/2 p-4 text-sm text-neutral-600">Right Panel</div>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardResizeHandle from "@rimelight/ui/components/astro/RLADashboardResizeHandle.astro";
+    ---
+
+    <div class="flex h-24 border border-neutral-200 rounded">
+      <div class="w-1/2 p-4 text-sm text-neutral-600">Left Panel</div>
+      <RLADashboardResizeHandle class="w-1 bg-neutral-200 hover:bg-primary-500 cursor-col-resize transition-colors" />
+      <div class="w-1/2 p-4 text-sm text-neutral-600">Right Panel</div>
+    </div>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,6 +1,6 @@
 ---
 title: "Prose"
-description: "This component is currently under development."
+description: "A wrapper component that applies typographic styling to raw HTML or markdown content."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,18 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Prose` component automatically styles headings, paragraphs, links, quotes, and lists inside it, which is ideal for rendering markdown articles or rich text content.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAProse>
-    <p>Prose content goes here.</p>
+    <h1>This is a heading</h1>
+    <p>This is a paragraph with some <strong>bold</strong> text and a <a href="#">link</a>.</p>
+    <ul>
+      <li>First bullet</li>
+      <li>Second bullet</li>
+    </ul>
   </RLAProse>
 
   <div slot="code-astro">
@@ -27,7 +32,12 @@ This component is currently under development.
     ---
 
     <RLAProse>
-      <p>Prose content goes here.</p>
+      <h1>This is a heading</h1>
+      <p>This is a paragraph with some <strong>bold</strong> text and a <a href="#">link</a>.</p>
+      <ul>
+        <li>First bullet</li>
+        <li>Second bullet</li>
+      </ul>
     </RLAProse>
     ```
 

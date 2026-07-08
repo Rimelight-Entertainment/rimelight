@@ -5,7 +5,6 @@ description: "A Button element that can trigger an action or act as a link."
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -29,19 +28,6 @@ How to use the Button component in its simplest form.
     ```
 
   </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-      import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Button" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ## Examples
@@ -60,19 +46,6 @@ Use the `label` prop to set the label of the Button.
     ---
 
     <RLAButton label="Button" />
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Button" />
-    </template>
     ```
 
   </div>
@@ -115,19 +88,6 @@ Use the `color` prop to change the color of the Button.
     ```
 
   </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton color="primary" label="Button" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Variant
@@ -153,19 +113,6 @@ Use the `variant` prop to change the variant of the Button.
     ---
 
     <RLAButton variant="solid" label="Button" />
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton variant="solid" label="Button" />
-    </template>
     ```
 
   </div>
@@ -197,19 +144,6 @@ Use the `size` prop to change the size of the Button.
     ```
 
   </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton size="md" label="Button" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Leading Icon
@@ -231,19 +165,6 @@ Use the `leadingIcon` prop with any [icon class](/company/docs/packages/rimeligh
   <RLAButton leadingIcon="i-lucide-download" label="Download" />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton leading-icon="i-lucide-download" label="Download" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Trailing Icon
@@ -265,19 +186,6 @@ Use the `trailingIcon` prop with any [icon class](/company/docs/packages/rimelig
   <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Continue" trailing-icon="i-lucide-arrow-right" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Avatar
@@ -301,20 +209,6 @@ Use the `avatar` prop to show an [Avatar](/company/docs/packages/rimelight-ui/co
   <RLAButton avatar="https://i.pravatar.cc/150?img=3" />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
-      <RLVButton avatar="https://i.pravatar.cc/150?img=3" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Loading
@@ -335,19 +229,6 @@ Use the `loading` prop to show a loading icon and disable the Button.
   <RLAButton label="Loading" loading />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Loading" loading />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Loading Auto
@@ -370,23 +251,6 @@ Use the `loadingAuto` prop to show the loading icon automatically while the clic
     ---
 
     <RLAButton label="Submit" loadingAuto onclick="return new Promise(resolve => setTimeout(resolve, 2000))" />
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-
-    async function onClick() {
-      return new Promise(resolve => setTimeout(resolve, 2000));
-    }
-    </script>
-
-    <template>
-      <RLVButton label="Submit" loading-auto @click="onClick" />
-    </template>
     ```
 
   </div>
@@ -416,22 +280,6 @@ Use the `square` prop to render a square Button with equal padding.
   <RLAButton leadingIcon="i-lucide-plus" square />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton square>
-        <span class="i-lucide-star size-5" />
-      </RLVButton>
-      <RLVButton leading-icon="i-lucide-plus" square />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Rounded
@@ -454,20 +302,6 @@ Use the `rounded` prop to apply fully rounded pill-shaped corners.
   <RLAButton leadingIcon="i-lucide-plus" square rounded />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Rounded" rounded />
-      <RLVButton leading-icon="i-lucide-plus" square rounded />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Block
@@ -486,19 +320,6 @@ Use the `block` prop to make the Button span the full width of its container.
   <RLAButton label="Full Width Button" block />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Full Width Button" block />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Link
@@ -519,19 +340,6 @@ Use the `href` prop to render the Button as a link. You can pass any standard an
   <RLAButton label="Go to Rimelight" href="https://rimelight.com" />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Go to Rimelight" href="https://rimelight.com" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Disabled
@@ -552,19 +360,6 @@ Use the `disabled` prop to disable the Button.
   <RLAButton label="Disabled" disabled />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton label="Disabled" disabled />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ### Active
@@ -589,21 +384,6 @@ Use the `active` prop along with `activeVariant` and `activeColor` to override t
   <RLAButton variant="ghost" label="Reports" />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue";
-    </script>
-
-    <template>
-      <RLVButton variant="ghost" label="Overview" active active-variant="soft" />
-      <RLVButton variant="ghost" label="Analytics" />
-      <RLVButton variant="ghost" label="Reports" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ## API

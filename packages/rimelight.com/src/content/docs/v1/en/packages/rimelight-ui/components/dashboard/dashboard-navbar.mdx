@@ -1,19 +1,48 @@
 ---
 title: "DashboardNavbar"
-description: "This component is currently under development."
+description: "A navigation bar component for dashboards."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardNavbar from "@rimelight/ui/components/astro/RLADashboardNavbar.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardNavbar component provides a header bar for dashboard pages, usually containing navigation links, search, or user settings.
 
 ## Usage
 
-## Examples
+Use the DashboardNavbar component at the top of your dashboard layout.
+
+<ComponentShowcase>
+  <RLADashboardNavbar class="flex items-center justify-between p-4 bg-white border-b border-neutral-200">
+    <span class="font-semibold text-neutral-800">Console</span>
+    <div class="flex items-center gap-4 text-sm text-neutral-500">
+      <span>Documentation</span>
+      <span>Settings</span>
+    </div>
+  </RLADashboardNavbar>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardNavbar from "@rimelight/ui/components/astro/RLADashboardNavbar.astro";
+    ---
+
+    <RLADashboardNavbar class="flex items-center justify-between p-4 bg-white border-b border-neutral-200">
+      <span class="font-semibold text-neutral-800">Console</span>
+      <div class="flex items-center gap-4 text-sm text-neutral-500">
+        <span>Documentation</span>
+        <span>Settings</span>
+      </div>
+    </RLADashboardNavbar>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

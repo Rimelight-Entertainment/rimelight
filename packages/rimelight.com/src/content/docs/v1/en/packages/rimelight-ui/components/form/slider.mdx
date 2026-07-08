@@ -1,6 +1,6 @@
 ---
 title: "Slider"
-description: "This component is currently under development."
+description: "A slider component that allows users to select a value or range of values by sliding a thumb along a track."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A slider component that allows users to select a value or range of values by sliding a thumb along a track.
 
 ## Usage
 
+How to use the Slider component in its simplest form.
+
 <ComponentShowcase>
-  <RLASlider />
+  <RLASlider value={50} class="w-full max-w-xs" />
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +26,32 @@ This component is currently under development.
     import RLASlider from "@rimelight/ui/components/astro/RLASlider.astro";
     ---
 
-    <RLASlider />
+    <RLASlider value={50} class="w-full max-w-xs" />
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Range and Step Customization
+
+You can define custom `min`, `max`, and `step` values for the slider.
+
+<ComponentShowcase>
+  <RLASlider min={0} max={10} step={2} value={6} class="w-full max-w-xs" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASlider from "@rimelight/ui/components/astro/RLASlider.astro";
+    ---
+
+    <RLASlider min={0} max={10} step={2} value={6} class="w-full max-w-xs" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

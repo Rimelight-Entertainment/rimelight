@@ -1,6 +1,6 @@
 ---
 title: "Confirm"
-description: "This component is currently under development."
+description: "A dialog component for confirming user actions."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Confirm component that prompts users for confirmation before completing an action.
 
 ## Usage
+
+How to use the Confirm component in its simplest form.
 
 <ComponentShowcase>
   <RLAConfirm triggerLabel="Delete" title="Are you sure?" description="This action cannot be undone." />
@@ -31,6 +33,71 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Destructive Variant
+
+Use the `variant="destructive"` prop to style the confirmation dialog for destructive actions.
+
+<ComponentShowcase>
+  <RLAConfirm variant="destructive" triggerLabel="Delete Account" title="Delete Account?" description="This will permanently delete your account." actionLabel="Delete" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
+    ---
+
+    <RLAConfirm variant="destructive" triggerLabel="Delete Account" title="Delete Account?" description="This will permanently delete your account." actionLabel="Delete" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Custom Labels
+
+Use `actionLabel` and `cancelLabel` to customize the button labels.
+
+<ComponentShowcase>
+  <RLAConfirm triggerLabel="Export Data" title="Export data?" description="Your export will begin shortly." actionLabel="Proceed" cancelLabel="Go Back" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
+    ---
+
+    <RLAConfirm triggerLabel="Export Data" title="Export data?" description="Your export will begin shortly." actionLabel="Proceed" cancelLabel="Go Back" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Custom Trigger Slot
+
+You can use the `trigger` slot to provide a custom trigger element instead of `triggerLabel`.
+
+<ComponentShowcase>
+  <RLAConfirm title="Confirm Action" description="Please confirm to continue.">
+    <button slot="trigger" class="px-4 py-2 bg-neutral text-neutral-foreground rounded hover:bg-neutral/80">
+      Open Confirm Dialog
+    </button>
+  </RLAConfirm>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
+    ---
+
+    <RLAConfirm title="Confirm Action" description="Please confirm to continue.">
+      <button slot="trigger" class="px-4 py-2 bg-neutral text-neutral-foreground rounded hover:bg-neutral/80">
+        Open Confirm Dialog
+      </button>
+    </RLAConfirm>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

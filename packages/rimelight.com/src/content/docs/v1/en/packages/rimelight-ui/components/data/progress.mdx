@@ -1,19 +1,88 @@
 ---
 title: "Progress"
-description: "This component is currently under development."
+description: "A progress bar component that visualizes completion status of a task or process."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Progress component displays a linear progress bar indicating the status of a task or operation.
 
 ## Usage
 
+Use the Progress component with `value` and `max` props.
+
+<ComponentShowcase>
+  <RLAProgress value={60} max={100} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro";
+    ---
+
+    <RLAProgress value={60} max={100} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Color
+
+Customize the color of the progress bar using the `color` prop.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-4 w-full">
+    <RLAProgress value={30} color="success" />
+    <RLAProgress value={50} color="warning" />
+    <RLAProgress value={80} color="error" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro";
+    ---
+
+    <RLAProgress value={30} color="success" />
+    <RLAProgress value={50} color="warning" />
+    <RLAProgress value={80} color="error" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Size
+
+Set the height of the progress bar using the `size` prop. Supported values are `sm`, `md` (default), and `lg`.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-4 w-full">
+    <RLAProgress value={75} size="sm" />
+    <RLAProgress value={75} size="md" />
+    <RLAProgress value={75} size="lg" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro";
+    ---
+
+    <RLAProgress value={75} size="sm" />
+    <RLAProgress value={75} size="md" />
+    <RLAProgress value={75} size="lg" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

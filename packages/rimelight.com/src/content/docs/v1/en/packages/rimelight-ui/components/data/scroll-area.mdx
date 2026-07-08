@@ -1,19 +1,96 @@
 ---
-title: "ScrollArea"
-description: "This component is currently under development."
+title: "Scroll Area"
+description: "A customizable scroll container featuring smooth custom scrollbars and hover-triggered display."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAScrollArea from "@rimelight/ui/components/astro/RLAScrollArea.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Scroll Area component provides customized, styled scrollbars for large blocks of text or lists, replacing generic browser scrollbars.
 
 ## Usage
 
+Wrap large content in the Scroll Area component and define a constraint height.
+
+<ComponentShowcase>
+  <RLAScrollArea height={180} class="border rounded p-4 max-w-sm">
+    <div class="space-y-4 pr-3">
+      <h4 class="font-bold text-sm">Terms of Service</h4>
+      <p class="text-xs text-muted-foreground">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+      <p class="text-xs text-muted-foreground">
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+      <p class="text-xs text-muted-foreground">
+        Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.
+      </p>
+    </div>
+  </RLAScrollArea>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAScrollArea from "@rimelight/ui/components/astro/RLAScrollArea.astro";
+    ---
+
+    <RLAScrollArea height={180} class="border rounded p-4 max-w-sm">
+      <div class="space-y-4 pr-3">
+        <h4 class="font-bold text-sm">Terms of Service</h4>
+        <p class="text-xs text-muted-foreground">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+        </p>
+        <p class="text-xs text-muted-foreground">
+          Duis aute irure dolor in reprehenderit in voluptate...
+        </p>
+      </div>
+    </RLAScrollArea>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Horizontal Scroll
+
+Set the `orientation` prop to `horizontal` (or `both`) to support horizontal layouts.
+
+<ComponentShowcase>
+  <RLAScrollArea orientation="horizontal" class="border rounded p-4 max-w-sm">
+    <div class="flex gap-4 w-[600px]">
+      <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 1</div>
+      <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 2</div>
+      <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 3</div>
+      <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 4</div>
+      <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 5</div>
+    </div>
+  </RLAScrollArea>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAScrollArea from "@rimelight/ui/components/astro/RLAScrollArea.astro";
+    ---
+
+    <RLAScrollArea orientation="horizontal" class="border rounded p-4 max-w-sm">
+      <div class="flex gap-4 w-[600px]">
+        <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 1</div>
+        <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 2</div>
+        <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 3</div>
+        <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 4</div>
+        <div class="bg-card border p-4 rounded text-center w-28 shrink-0">Item 5</div>
+      </div>
+    </RLAScrollArea>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

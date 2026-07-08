@@ -1,6 +1,6 @@
 ---
-title: "PinInput"
-description: "This component is currently under development."
+title: "Pin Input"
+description: "A multi-input field component optimized for entering PINs, OTP codes, or verification codes."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A multi-input field component optimized for entering PINs, OTP codes, or verification codes.
 
 ## Usage
+
+How to use the Pin Input component in its simplest form.
 
 <ComponentShowcase>
   <RLAPinInput />
@@ -31,6 +33,25 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Styled Wrapper
+
+You can customize the layout of the wrapper.
+
+<ComponentShowcase>
+  <RLAPinInput class="flex items-center gap-2" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPinInput from "@rimelight/ui/components/astro/RLAPinInput.astro";
+    ---
+
+    <RLAPinInput class="flex items-center gap-2" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

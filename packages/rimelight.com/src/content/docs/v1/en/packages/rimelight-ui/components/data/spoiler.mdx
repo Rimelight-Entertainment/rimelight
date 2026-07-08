@@ -1,19 +1,43 @@
 ---
 title: "Spoiler"
-description: "This component is currently under development."
+description: "A component for obscuring sensitive or spoiler content until the user chooses to reveal it."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLASpoiler from "@rimelight/ui/components/astro/RLASpoiler.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Spoiler component hides text or images with a blur or dark background until hovered, focused, or clicked.
 
 ## Usage
 
-## Examples
+Wrap the text you want to hide in the Spoiler component. You can toggle visibility by using Tailwind's interactive state utilities (e.g. blur classes that vanish on hover/click).
+
+<ComponentShowcase>
+  <p>
+    The killer in the movie was actually the <RLASpoiler class="inline-block bg-current rounded px-1 text-transparent hover:text-foreground hover:bg-transparent cursor-pointer transition-colors duration-200">main character's brother</RLASpoiler>!
+  </p>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASpoiler from "@rimelight/ui/components/astro/RLASpoiler.astro";
+    ---
+
+    <p>
+      The killer in the movie was actually the
+      <RLASpoiler class="inline-block bg-current rounded px-1 text-transparent hover:text-foreground hover:bg-transparent cursor-pointer transition-colors duration-200">
+        main character's brother
+      </RLASpoiler>!
+    </p>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,6 +1,6 @@
 ---
 title: "Fieldset"
-description: "This component is currently under development."
+description: "A container element used to group several controls and labels within a web form."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,16 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Fieldset` component is a themed block container designed for grouping related form controls to improve accessibility and visual structure.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAFieldset>
-    Fieldset content
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium">Username</label>
+      <input type="text" class="border p-1 rounded" placeholder="john_doe" />
+    </div>
   </RLAFieldset>
 
   <div slot="code-astro">
@@ -27,7 +30,10 @@ This component is currently under development.
     ---
 
     <RLAFieldset>
-      Fieldset content
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium">Username</label>
+        <input type="text" class="border p-1 rounded" placeholder="john_doe" />
+      </div>
     </RLAFieldset>
     ```
 

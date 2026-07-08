@@ -28,19 +28,6 @@ Display a user's profile picture, initials, or a fallback icon. Supports badge i
     ```
 
   </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVAvatar from "@rimelight/ui/components/vue/RLVAvatar.vue";
-    </script>
-
-    <template>
-      <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ## Examples
@@ -99,17 +86,6 @@ When no `src` is provided, the avatar shows `initials` or a default user icon as
   <RLAAvatar color="neutral" />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVAvatar initials="JD" color="primary" />
-      <RLVAvatar initials="AB" color="secondary" />
-      <RLVAvatar initials="RL" color="success" />
-      <RLVAvatar color="neutral" />
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Badge Indicator
@@ -156,17 +132,6 @@ Use the `badge` prop to show a status dot. Control its color with `badgeColor` a
   />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" :badge="true" badge-color="success" badge-position="bottom-right" />
-      <RLVAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" :badge="true" badge-color="warning" badge-position="top-right" />
-      <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" :badge="true" badge-color="error" badge-position="bottom-left" />
-      <RLVAvatar src="https://i.pravatar.cc/150?img=4" alt="User 4" :badge="5" badge-color="primary" badge-position="top-left" />
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Badge Positions
@@ -212,15 +177,6 @@ Provide `title` and `subtitle` props to render a horizontal profile card alongsi
   />
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" title="Jane Doe" subtitle="Product Designer" />
-      <RLVAvatar src="https://i.pravatar.cc/150?img=8" alt="John Smith" title="John Smith" subtitle="Engineering Lead" />
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ## API

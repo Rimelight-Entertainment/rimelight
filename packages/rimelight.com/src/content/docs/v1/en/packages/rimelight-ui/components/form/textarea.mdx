@@ -1,6 +1,6 @@
 ---
 title: "Textarea"
-description: "This component is currently under development."
+description: "A multi-line text input control for getting user feedback, comments, or longer text entries."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A multi-line text input control for getting user feedback, comments, or longer text entries.
 
 ## Usage
 
+How to use the Textarea component in its simplest form.
+
 <ComponentShowcase>
-  <RLATextarea placeholder="Type here..." />
+  <RLATextarea placeholder="Enter your comments here..." />
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +26,51 @@ This component is currently under development.
     import RLATextarea from "@rimelight/ui/components/astro/RLATextarea.astro";
     ---
 
-    <RLATextarea placeholder="Type here..." />
+    <RLATextarea placeholder="Enter your comments here..." />
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Custom Rows
+
+Use the `rows` prop to define the default height of the input area.
+
+<ComponentShowcase>
+  <RLATextarea placeholder="A taller text area..." rows={8} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATextarea from "@rimelight/ui/components/astro/RLATextarea.astro";
+    ---
+
+    <RLATextarea placeholder="A taller text area..." rows={8} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Error State
+
+Use the `error` prop to display the textarea in a validation failure state.
+
+<ComponentShowcase>
+  <RLATextarea placeholder="Required field" error />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATextarea from "@rimelight/ui/components/astro/RLATextarea.astro";
+    ---
+
+    <RLATextarea placeholder="Required field" error />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

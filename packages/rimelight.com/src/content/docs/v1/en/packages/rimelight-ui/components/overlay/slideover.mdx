@@ -1,6 +1,6 @@
 ---
 title: "Slideover"
-description: "This component is currently under development."
+description: "A panel that slides in from the left or right edge of the screen."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Slideover component that displays content in a panel sliding in from the side of the screen.
 
 ## Usage
+
+How to use the Slideover component.
 
 <ComponentShowcase>
   <RLASlideover triggerLabel="Open Slideover" title="Slideover Title" description="Slideover Description">
@@ -35,6 +37,75 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Side Placement
+
+Use the `side` prop to determine which edge the panel slides in from. It supports `"left"` and `"right"`.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4">
+    <RLASlideover side="left" triggerLabel="Open Left Slideover" title="Left Panel" description="Panel sliding from left">
+      <div class="p-4">Left panel content.</div>
+    </RLASlideover>
+
+    <RLASlideover side="right" triggerLabel="Open Right Slideover" title="Right Panel" description="Panel sliding from right">
+      <div class="p-4">Right panel content.</div>
+    </RLASlideover>
+
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
+    ---
+
+    <RLASlideover side="left" triggerLabel="Open Left Slideover" title="Left Panel" description="Panel sliding from left">
+      <div class="p-4">Left panel content.</div>
+    </RLASlideover>
+
+    <RLASlideover side="right" triggerLabel="Open Right Slideover" title="Right Panel" description="Panel sliding from right">
+      <div class="p-4">Right panel content.</div>
+    </RLASlideover>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Footer Slot
+
+You can add navigation links or button actions inside the bottom of the slideover panel using the `footer` slot.
+
+<ComponentShowcase>
+  <RLASlideover triggerLabel="Open Details" title="Item details" description="Review details and submit.">
+    <div class="p-4 text-sm">
+      Detailed information about the selected workflow or project configuration goes here.
+    </div>
+    <div slot="footer" class="flex gap-2 w-full">
+      <button class="flex-1 px-4 py-2 border rounded text-sm hover:bg-neutral/10" data-dialog-close>Cancel</button>
+      <button class="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90" data-dialog-close>Submit</button>
+    </div>
+  </RLASlideover>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASlideover from "@rimelight/ui/components/astro/RLASlideover.astro";
+    ---
+
+    <RLASlideover triggerLabel="Open Details" title="Item details" description="Review details and submit.">
+      <div class="p-4 text-sm">
+        Detailed information about the selected workflow or project configuration goes here.
+      </div>
+      <div slot="footer" class="flex gap-2 w-full">
+        <button class="flex-1 px-4 py-2 border rounded text-sm hover:bg-neutral/10" data-dialog-close>Cancel</button>
+        <button class="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90" data-dialog-close>Submit</button>
+      </div>
+    </RLASlideover>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

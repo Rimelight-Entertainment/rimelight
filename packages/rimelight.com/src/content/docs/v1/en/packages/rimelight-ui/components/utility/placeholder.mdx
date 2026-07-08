@@ -5,19 +5,20 @@ description: "A placeholder component with a decorative SVG pattern overlay, use
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAPlaceholder from "@rimelight/ui/components/astro/RLAPlaceholder.astro"
-import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-A placeholder component with a decorative SVG pattern overlay, useful for empty states or loading skeletons.
+The Placeholder component displays a striped diagonal SVG pattern overlay. It is typically used to represent loading skeletons, empty layout blocks, or content blocks under construction.
 
 ## Usage
 
+How to use the Placeholder component in its simplest form.
+
 <ComponentShowcase>
-  <RLAPlaceholder class="h-32 flex items-center justify-center">
+  <RLAPlaceholder class="h-32 flex items-center justify-center border border-border rounded-lg">
     Placeholder Content
   </RLAPlaceholder>
 
@@ -27,30 +28,17 @@ A placeholder component with a decorative SVG pattern overlay, useful for empty 
     import RLAPlaceholder from "@rimelight/ui/components/astro/RLAPlaceholder.astro";
     ---
 
-    <RLAPlaceholder class="h-32 flex items-center justify-center">
+    <RLAPlaceholder class="h-32 flex items-center justify-center border border-border rounded-lg">
       Placeholder Content
     </RLAPlaceholder>
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue";
-    </script>
-
-    <template>
-      <RLVPlaceholder class="h-32 flex items-center justify-center">
-        Placeholder Content
-      </RLVPlaceholder>
-    </template>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this decorative placeholder component.
 
 ## API
 

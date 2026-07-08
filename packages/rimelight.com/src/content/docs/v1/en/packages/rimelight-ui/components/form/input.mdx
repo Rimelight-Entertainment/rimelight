@@ -1,20 +1,21 @@
 ---
 title: "Input"
-description: "This component is currently under development."
+description: "A text field control for getting user input, supporting icons, sizes, colors, and validation states."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A text field control for getting user input, supporting icons, sizes, colors, and validation states.
 
 ## Usage
+
+How to use the Input component in its simplest form.
 
 <ComponentShowcase>
   <RLAInput placeholder="Type here..." />
@@ -29,22 +30,74 @@ This component is currently under development.
     ```
 
   </div>
+</ComponentShowcase>
 
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue";
-    </script>
+## Examples
 
-    <template>
-      <RLVInput placeholder="Type here..." />
-    </template>
+### Icons
+
+Use `leadingIcon` and `trailingIcon` props to display icons inside the input.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-4 w-full max-w-xs">
+    <RLAInput placeholder="Search..." leadingIcon="i-lucide-search" />
+    <RLAInput placeholder="Password" type="password" trailingIcon="i-lucide-lock" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    ---
+
+    <RLAInput placeholder="Search..." leadingIcon="i-lucide-search" />
+    <RLAInput placeholder="Password" type="password" trailingIcon="i-lucide-lock" />
     ```
 
   </div>
 </ComponentShowcase>
 
-## Examples
+### Error State
+
+Use the `error` prop to apply validation styling.
+
+<ComponentShowcase>
+  <RLAInput placeholder="Incorrect value" error />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    ---
+
+    <RLAInput placeholder="Incorrect value" error />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Disabled and Readonly
+
+Disable the input or make it read-only.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-4 w-full max-w-xs">
+    <RLAInput value="Disabled text" disabled />
+    <RLAInput value="Readonly text" readonly />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    ---
+
+    <RLAInput value="Disabled text" disabled />
+    <RLAInput value="Readonly text" readonly />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

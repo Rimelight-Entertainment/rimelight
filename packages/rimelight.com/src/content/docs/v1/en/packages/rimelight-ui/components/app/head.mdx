@@ -1,19 +1,67 @@
 ---
 title: "Head"
-description: "This component is currently under development."
+description: "An SEO-friendly HTML <head> manager component with View Transitions, RSS feed integration, and automatic Open Graph configuration."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAHead from "@rimelight/ui/components/astro/RLAHead.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Head component provides a unified shell for configuring SEO tags, Open Graph and Twitter cards, viewport configuration, canonical URLs, and RSS feeds.
 
 ## Usage
 
+Use the Head component inside the HTML `<head>` tag of your page layouts.
+
+<ComponentShowcase>
+  <div class="p-6 text-center text-muted text-sm border border-dashed rounded-lg">
+    The Head component manages document metadata, scripts, and links within the HTML <code>&lt;head&gt;</code> element.
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAHead from "@rimelight/ui/components/astro/RLAHead.astro";
+    ---
+
+    <head>
+      <RLAHead
+        title="Home Page"
+        description="Welcome to my custom Rimelight UI website."
+        transitions={true}
+      />
+    </head>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### View Transitions
+
+Enable or disable Astro's View Transitions using the `transitions` prop.
+
+<ComponentShowcase>
+  <div class="p-6 text-center text-muted text-sm border border-dashed rounded-lg">
+    View transitions are enabled by default, rendering Astro's <code>&lt;ClientRouter /&gt;</code>.
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAHead from "@rimelight/ui/components/astro/RLAHead.astro";
+    ---
+
+    <RLAHead title="No Transitions" transitions={false} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

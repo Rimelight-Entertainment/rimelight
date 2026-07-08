@@ -1,6 +1,6 @@
 ---
 title: "Collapsible"
-description: "This component is currently under development."
+description: "A details-disclosure element that lets users toggle the visibility of content."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,15 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Collapsible` component is built on top of the native `<details>` and `<summary>` elements, providing a smooth accordion-like behavior for hiding and showing content.
 
 ## Usage
 
 <ComponentShowcase>
   <RLACollapsible label="Click to expand">
-    <p>Collapsible content goes here.</p>
+    <p class="text-sm text-muted-foreground p-md">
+      Collapsible content goes here.
+    </p>
   </RLACollapsible>
 
   <div slot="code-astro">
@@ -35,6 +37,46 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Initially Open
+
+Use the `open` prop to render the collapsible content expanded by default.
+
+<ComponentShowcase>
+  <RLACollapsible label="Expanded by default" open>
+    <p class="text-sm text-muted-foreground p-md">
+      This content is visible as soon as the page loads.
+    </p>
+  </RLACollapsible>
+
+  <div slot="code-astro">
+    ```astro
+    <RLACollapsible label="Expanded by default" open>
+      <p>This content is visible as soon as the page loads.</p>
+    </RLACollapsible>
+    ```
+  </div>
+</ComponentShowcase>
+
+### With Icon
+
+Use the `icon` prop to display an icon before the label.
+
+<ComponentShowcase>
+  <RLACollapsible label="Advanced Settings" icon="i-lucide-settings">
+    <p class="text-sm text-muted-foreground p-md">
+      Configure your application settings here.
+    </p>
+  </RLACollapsible>
+
+  <div slot="code-astro">
+    ```astro
+    <RLACollapsible label="Advanced Settings" icon="i-lucide-settings">
+      <p>Configure your application settings here.</p>
+    </RLACollapsible>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,19 +1,123 @@
 ---
 title: "Marquee"
-description: "This component is currently under development."
+description: "An infinite scrolling component that moves content horizontally or vertically, perfect for logos, reviews, or news tickers."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Marquee component enables smooth, continuous scrolling of items. It automatically clones the slotted content to ensure seamless loop transitions.
 
 ## Usage
 
+Place items inside the Marquee container. By default, it scrolls to the left at a moderate speed and pauses on hover.
+
+<ComponentShowcase>
+  <RLAMarquee class="py-2 border-y">
+    <span class="text-sm font-semibold mx-4">✦ Interactive design</span>
+    <span class="text-sm font-semibold mx-4">✦ Lightning-fast rendering</span>
+    <span class="text-sm font-semibold mx-4">✦ Astro support</span>
+    <span class="text-sm font-semibold mx-4">✦ Zero-JS option</span>
+  </RLAMarquee>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro";
+    ---
+
+    <RLAMarquee class="py-2 border-y">
+      <span class="text-sm font-semibold mx-4">✦ Interactive design</span>
+      <span class="text-sm font-semibold mx-4">✦ Lightning-fast rendering</span>
+      <span class="text-sm font-semibold mx-4">✦ Astro support</span>
+      <span class="text-sm font-semibold mx-4">✦ Zero-JS option</span>
+    </RLAMarquee>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Direction
+
+Set the scroll direction to `right`, `up`, or `down`.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-6 w-full">
+    <RLAMarquee direction="right" class="py-2 border-y">
+      <span class="text-sm mx-4">Scrolling Right 1</span>
+      <span class="text-sm mx-4">Scrolling Right 2</span>
+      <span class="text-sm mx-4">Scrolling Right 3</span>
+    </RLAMarquee>
+
+    <RLAMarquee direction="up" class="border p-4 flex justify-center">
+      <div class="flex flex-col gap-4 text-center">
+        <span class="text-sm font-bold">Feedback #1</span>
+        <span class="text-sm font-bold">Feedback #2</span>
+        <span class="text-sm font-bold">Feedback #3</span>
+      </div>
+    </RLAMarquee>
+
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro";
+    ---
+
+    {/* Scrolling Right */}
+    <RLAMarquee direction="right" class="py-2 border-y">
+      <span class="text-sm mx-4">Scrolling Right 1</span>
+      <span class="text-sm mx-4">Scrolling Right 2</span>
+      <span class="text-sm mx-4">Scrolling Right 3</span>
+    </RLAMarquee>
+
+    {/* Scrolling Up (Requires a parent/marquee height set, defaults to h-80 inside layout theme) */}
+    <RLAMarquee direction="up" class="border p-4 flex justify-center">
+      <div class="flex flex-col gap-4 text-center">
+        <span class="text-sm font-bold">Feedback #1</span>
+        <span class="text-sm font-bold">Feedback #2</span>
+        <span class="text-sm font-bold">Feedback #3</span>
+      </div>
+    </RLAMarquee>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Speed and Pause On Hover
+
+Use the `speed` prop (in seconds for one full loop, default is `40`) and `pauseOnHover` to customize behaviour.
+
+<ComponentShowcase>
+  <RLAMarquee speed={15} pauseOnHover={false} class="py-2 border-y">
+    <span class="text-sm mx-4">Super Fast Marquee ⚡</span>
+    <span class="text-sm mx-4">No Pause on Hover ⚡</span>
+    <span class="text-sm mx-4">Continuous Motion ⚡</span>
+  </RLAMarquee>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro";
+    ---
+
+    <RLAMarquee speed={15} pauseOnHover={false} class="py-2 border-y">
+      <span class="text-sm mx-4">Super Fast Marquee ⚡</span>
+      <span class="text-sm mx-4">No Pause on Hover ⚡</span>
+      <span class="text-sm mx-4">Continuous Motion ⚡</span>
+    </RLAMarquee>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

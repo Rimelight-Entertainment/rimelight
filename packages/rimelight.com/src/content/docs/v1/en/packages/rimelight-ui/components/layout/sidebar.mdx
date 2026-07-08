@@ -1,6 +1,6 @@
 ---
 title: "Sidebar"
-description: "This component is currently under development."
+description: "A customizable navigation sidebar layout component supporting nested menus, icons, badges, and headers/footers."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,30 +11,82 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Sidebar layout component providing vertical navigation, support for active states, badges, collapsed states, and icons.
 
 ## Usage
 
+How to use the Sidebar component in its simplest form.
+
 <ComponentShowcase>
-  <RLASidebar items={[{ label: "Home", href: "#", icon: "i-lucide-home" }]} />
+  <RLASidebar
+    logo="My Project"
+    items={[
+      { label: "Home", href: "#", icon: "i-lucide-home", active: true },
+      { label: "Dashboard", href: "#", icon: "i-lucide-layout-dashboard" },
+      { label: "Settings", href: "#", icon: "i-lucide-settings" }
+    ]}
+  />
 
   <div slot="code-astro">
     ```astro
     ---
     import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
 
-    const items = [
-      { label: "Home", href: "#", icon: "i-lucide-home" }
+    const navItems = [
+      { label: "Home", href: "#", icon: "i-lucide-home", active: true },
+      { label: "Dashboard", href: "#", icon: "i-lucide-layout-dashboard" },
+      { label: "Settings", href: "#", icon: "i-lucide-settings" }
     ];
     ---
 
-    <RLASidebar items={items} />
+    <RLASidebar logo="My Project" items={navItems} />
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Nested Items
+
+The Sidebar supports nested list items for hierarchical navigation.
+
+<ComponentShowcase>
+  <RLASidebar
+    items={[
+      {
+        label: "Resources",
+        icon: "i-lucide-folder",
+        children: [
+          { label: "Guides", href: "#", icon: "i-lucide-book" },
+          { label: "API Reference", href: "#", icon: "i-lucide-code" }
+        ]
+      }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
+
+    const navItems = [
+      {
+        label: "Resources",
+        icon: "i-lucide-folder",
+        children: [
+          { label: "Guides", href: "#", icon: "i-lucide-book" },
+          { label: "API Reference", href: "#", icon: "i-lucide-code" }
+        ]
+      }
+    ];
+    ---
+
+    <RLASidebar items={navItems} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,17 +1,44 @@
 ---
 title: "ChatPalette"
-description: "This component is currently under development."
+description: "A quick selection panel or popover for choosing chat prompts, prompts templates, or models."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAChatPalette from "@rimelight/ui/components/astro/RLAChatPalette.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The ChatPalette component is a contextual wrapper used for displaying suggested prompts, action buttons, or model selection panels inside the chat assistant UI.
 
 ## Usage
+
+Use the ChatPalette component to offer quick action choices to users.
+
+<ComponentShowcase>
+  <RLAChatPalette class="border rounded-lg p-4 bg-card flex flex-col gap-2 max-w-sm">
+    <div class="text-xs font-semibold text-muted mb-1">SUGGESTED ACTIONS</div>
+    <button class="text-left text-sm p-2 hover:bg-muted rounded border">Summarize this page</button>
+    <button class="text-left text-sm p-2 hover:bg-muted rounded border">Write a professional email</button>
+  </RLAChatPalette>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChatPalette from "@rimelight/ui/components/astro/RLAChatPalette.astro";
+    ---
+
+    <RLAChatPalette class="border rounded-lg p-4 bg-card flex flex-col gap-2">
+      <div class="text-xs font-semibold text-muted mb-1">SUGGESTED ACTIONS</div>
+      <button class="text-left text-sm p-2 hover:bg-muted rounded border">Summarize this page</button>
+      <button class="text-left text-sm p-2 hover:bg-muted rounded border">Write a professional email</button>
+    </RLAChatPalette>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

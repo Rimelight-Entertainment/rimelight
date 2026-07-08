@@ -1,19 +1,87 @@
 ---
 title: "Rating"
-description: "This component is currently under development."
+description: "A component for showing customer reviews, ratings, or feedback scores using icons."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLARating from "@rimelight/ui/components/astro/RLARating.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Rating component is a wrapper used to group star icons or scoring indicators for products and reviews.
 
 ## Usage
 
+Place rating icons inside the default slot of the Rating component.
+
+<ComponentShowcase>
+  <RLARating class="flex gap-1 text-amber-500">
+    <span class="i-lucide-star size-5 fill-current" />
+    <span class="i-lucide-star size-5 fill-current" />
+    <span class="i-lucide-star size-5 fill-current" />
+    <span class="i-lucide-star size-5 fill-current" />
+    <span class="i-lucide-star size-5 text-muted-foreground" />
+  </RLARating>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLARating from "@rimelight/ui/components/astro/RLARating.astro";
+    ---
+
+    <RLARating class="flex gap-1 text-amber-500">
+      <span class="i-lucide-star size-5 fill-current" />
+      <span class="i-lucide-star size-5 fill-current" />
+      <span class="i-lucide-star size-5 fill-current" />
+      <span class="i-lucide-star size-5 fill-current" />
+      <span class="i-lucide-star size-5 text-muted-foreground" />
+    </RLARating>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Read-Only with Decimal Score
+
+Display a numerical value alongside the visual representation.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-2">
+    <RLARating class="flex gap-0.5 text-amber-500">
+      <span class="i-lucide-star size-4 fill-current" />
+      <span class="i-lucide-star size-4 fill-current" />
+      <span class="i-lucide-star size-4 fill-current" />
+      <span class="i-lucide-star size-4 fill-current" />
+      <span class="i-lucide-star-half size-4 fill-current" />
+    </RLARating>
+    <span class="text-sm font-semibold">4.8 out of 5</span>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLARating from "@rimelight/ui/components/astro/RLARating.astro";
+    ---
+
+    <div class="flex items-center gap-2">
+      <RLARating class="flex gap-0.5 text-amber-500">
+        <span class="i-lucide-star size-4 fill-current" />
+        <span class="i-lucide-star size-4 fill-current" />
+        <span class="i-lucide-star size-4 fill-current" />
+        <span class="i-lucide-star size-4 fill-current" />
+        <span class="i-lucide-star-half size-4 fill-current" />
+      </RLARating>
+      <span class="text-sm font-semibold">4.8 out of 5</span>
+    </div>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

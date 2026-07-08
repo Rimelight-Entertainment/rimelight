@@ -1,6 +1,6 @@
 ---
 title: "Listbox"
-description: "This component is currently under development."
+description: "A listbox component that presents a list of options for users to select."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,18 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A listbox component that presents a list of options for users to select.
 
 ## Usage
 
+How to use the Listbox component in its simplest form.
+
 <ComponentShowcase>
-  <RLAListbox />
+  <RLAListbox>
+    <div class="p-2 hover:bg-muted cursor-pointer text-sm">Option 1</div>
+    <div class="p-2 hover:bg-muted cursor-pointer text-sm">Option 2</div>
+    <div class="p-2 hover:bg-muted cursor-pointer text-sm">Option 3</div>
+  </RLAListbox>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +30,42 @@ This component is currently under development.
     import RLAListbox from "@rimelight/ui/components/astro/RLAListbox.astro";
     ---
 
-    <RLAListbox />
+    <RLAListbox>
+      <div class="p-2 hover:bg-muted cursor-pointer text-sm">Option 1</div>
+      <div class="p-2 hover:bg-muted cursor-pointer text-sm">Option 2</div>
+      <div class="p-2 hover:bg-muted cursor-pointer text-sm">Option 3</div>
+    </RLAListbox>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Styled Container
+
+You can style the listbox container to match your design requirements.
+
+<ComponentShowcase>
+  <RLAListbox class="border border-border rounded-xl divide-y divide-border overflow-hidden max-w-xs">
+    <div class="p-3 hover:bg-muted cursor-pointer text-sm">Item A</div>
+    <div class="p-3 hover:bg-muted cursor-pointer text-sm">Item B</div>
+  </RLAListbox>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAListbox from "@rimelight/ui/components/astro/RLAListbox.astro";
+    ---
+
+    <RLAListbox class="border border-border rounded-xl divide-y divide-border overflow-hidden max-w-xs">
+      <div class="p-3 hover:bg-muted cursor-pointer text-sm">Item A</div>
+      <div class="p-3 hover:bg-muted cursor-pointer text-sm">Item B</div>
+    </RLAListbox>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

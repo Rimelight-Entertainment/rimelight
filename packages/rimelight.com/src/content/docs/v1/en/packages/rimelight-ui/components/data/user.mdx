@@ -1,19 +1,50 @@
 ---
 title: "User"
-description: "This component is currently under development."
+description: "A profile information wrapper component used to represent a user with an avatar, name, and description."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAUser from "@rimelight/ui/components/astro/RLAUser.astro"
+import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The User component is a wrapper container designed to display user profile details, integrating an avatar alongside user meta information.
 
 ## Usage
 
-## Examples
+Place user details (e.g. `RLAAvatar` and name text) inside the default slot of the User component.
+
+<ComponentShowcase>
+  <RLAUser class="flex items-center gap-3">
+    <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" size="md" />
+    <div class="flex flex-col">
+      <span class="text-sm font-semibold text-foreground">Jane Doe</span>
+      <span class="text-xs text-muted-foreground">Software Engineer</span>
+    </div>
+  </RLAUser>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAUser from "@rimelight/ui/components/astro/RLAUser.astro";
+    import RLAAvatar from "@rimelight/ui/components/astro/RLAAvatar.astro";
+    ---
+
+    <RLAUser class="flex items-center gap-3">
+      <RLAAvatar src="https://i.pravatar.cc/150?img=3" alt="Jane Doe" size="md" />
+      <div class="flex flex-col">
+        <span class="text-sm font-semibold text-foreground">Jane Doe</span>
+        <span class="text-xs text-muted-foreground">Software Engineer</span>
+      </div>
+    </RLAUser>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

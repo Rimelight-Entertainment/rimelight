@@ -1,6 +1,6 @@
 ---
 title: "ContextMenu"
-description: "This component is currently under development."
+description: "An overlay menu that appears on right-click."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,15 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Context Menu component that is triggered when a user right-clicks on a target area.
 
 ## Usage
 
+How to use the Context Menu component.
+
 <ComponentShowcase>
   <RLAContextMenu>
-    <div class="p-8 border border-dashed rounded text-center">Right-click here</div>
+    <div class="p-8 border border-dashed rounded text-center cursor-context-menu">Right-click here</div>
   </RLAContextMenu>
 
   <div slot="code-astro">
@@ -27,7 +29,7 @@ This component is currently under development.
     ---
 
     <RLAContextMenu>
-      <div class="p-8 border border-dashed rounded text-center">Right-click here</div>
+      <div class="p-8 border border-dashed rounded text-center cursor-context-menu">Right-click here</div>
     </RLAContextMenu>
     ```
 
@@ -35,6 +37,33 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Custom Styled Context Menu Target
+
+You can apply any classes or elements to the target content.
+
+<ComponentShowcase>
+  <RLAContextMenu class="shadow-sm">
+    <div class="p-12 bg-primary/10 text-primary rounded-lg text-center font-semibold cursor-context-menu">
+      Right-click in this zone
+    </div>
+  </RLAContextMenu>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAContextMenu from "@rimelight/ui/components/astro/RLAContextMenu.astro";
+    ---
+
+    <RLAContextMenu class="shadow-sm">
+      <div class="p-12 bg-primary/10 text-primary rounded-lg text-center font-semibold cursor-context-menu">
+        Right-click in this zone
+      </div>
+    </RLAContextMenu>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,19 +1,81 @@
 ---
 title: "Empty"
-description: "This component is currently under development."
+description: "A placeholder component for displaying empty states when no data is available."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAEmpty from "@rimelight/ui/components/astro/RLAEmpty.astro"
+import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Empty component is used to show a friendly placeholder screen when a query returns no results, a list is empty, or an action needs to be initiated.
 
 ## Usage
 
+Place titles, descriptions, and action buttons inside the default slot of the Empty component.
+
+<ComponentShowcase>
+  <RLAEmpty>
+    <div class="flex flex-col items-center text-center p-8 max-w-sm mx-auto">
+      <span class="i-lucide-folder-open size-12 text-muted-foreground mb-4" />
+      <h3 class="text-lg font-semibold mb-1">No projects found</h3>
+      <p class="text-sm text-muted-foreground mb-6">You haven't created any projects yet. Get started by creating your first one.</p>
+      <RLAButton label="Create Project" leadingIcon="i-lucide-plus" />
+    </div>
+  </RLAEmpty>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAEmpty from "@rimelight/ui/components/astro/RLAEmpty.astro";
+    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    ---
+
+    <RLAEmpty>
+      <div class="flex flex-col items-center text-center p-8 max-w-sm mx-auto">
+        <span class="i-lucide-folder-open size-12 text-muted-foreground mb-4" />
+        <h3 class="text-lg font-semibold mb-1">No projects found</h3>
+        <p class="text-sm text-muted-foreground mb-6">You haven't created any projects yet. Get started by creating your first one.</p>
+        <RLAButton label="Create Project" leadingIcon="i-lucide-plus" />
+      </div>
+    </RLAEmpty>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Simple Text Placeholder
+
+A basic representation without action buttons or icons.
+
+<ComponentShowcase>
+  <RLAEmpty>
+    <div class="text-center p-6 text-muted-foreground text-sm">
+      No items to display.
+    </div>
+  </RLAEmpty>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAEmpty from "@rimelight/ui/components/astro/RLAEmpty.astro";
+    ---
+
+    <RLAEmpty>
+      <div class="text-center p-6 text-muted-foreground text-sm">
+        No items to display.
+      </div>
+    </RLAEmpty>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

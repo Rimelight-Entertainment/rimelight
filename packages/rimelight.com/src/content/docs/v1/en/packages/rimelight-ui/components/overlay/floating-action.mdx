@@ -1,6 +1,6 @@
 ---
 title: "FloatingAction"
-description: "This component is currently under development."
+description: "A button component that floats on top of the viewport contents."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,15 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Floating Action Button (FAB) component that floats in a fixed position on the screen to trigger a primary action.
 
 ## Usage
 
+How to use the FloatingAction component.
+
 <ComponentShowcase>
   <RLAFloatingAction>
-    <button class="bg-primary text-primary-foreground p-4 rounded-full shadow-lg">
+    <button class="bg-primary text-primary-foreground p-4 rounded-full shadow-lg hover:scale-105 transition-transform" aria-label="Add item">
       <span class="i-lucide-plus size-6" />
     </button>
   </RLAFloatingAction>
@@ -29,7 +31,7 @@ This component is currently under development.
     ---
 
     <RLAFloatingAction>
-      <button class="bg-primary text-primary-foreground p-4 rounded-full shadow-lg">
+      <button class="bg-primary text-primary-foreground p-4 rounded-full shadow-lg hover:scale-105 transition-transform" aria-label="Add item">
         <span class="i-lucide-plus size-6" />
       </button>
     </RLAFloatingAction>
@@ -39,6 +41,35 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Position and Custom Styling
+
+You can use standard utility classes to style the container or child button, such as placing it at custom locations or adding a badge.
+
+<ComponentShowcase>
+  <RLAFloatingAction class="right-8 bottom-8">
+    <button class="bg-success text-success-foreground px-4 py-2.5 rounded-full shadow-lg hover:bg-success/90 flex items-center gap-2 font-medium" aria-label="Help">
+      <span class="i-lucide-message-circle size-5" />
+      <span>Support</span>
+    </button>
+  </RLAFloatingAction>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAFloatingAction from "@rimelight/ui/components/astro/RLAFloatingAction.astro";
+    ---
+
+    <RLAFloatingAction class="right-8 bottom-8">
+      <button class="bg-success text-success-foreground px-4 py-2.5 rounded-full shadow-lg hover:bg-success/90 flex items-center gap-2 font-medium" aria-label="Help">
+        <span class="i-lucide-message-circle size-5" />
+        <span>Support</span>
+      </button>
+    </RLAFloatingAction>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

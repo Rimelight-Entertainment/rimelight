@@ -1,20 +1,21 @@
 ---
 title: "Toast"
-description: "This component is currently under development."
+description: "A temporary notification toast component that slides into view."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro"
-import RLVToast from "@rimelight/ui/components/vue/RLVToast.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Toast component used to display brief, temporary notifications to the user.
 
 ## Usage
+
+How to use the Toast component in Astro.
 
 <ComponentShowcase>
   <RLAToast title="Success" description="Your profile has been saved." />
@@ -29,68 +30,78 @@ This component is currently under development.
     ```
 
   </div>
+</ComponentShowcase>
 
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVToast from "@rimelight/ui/components/vue/RLVToast.vue";
-    </script>
+## Examples
 
-    <template>
-      <RLVToast title="Success" description="Your profile has been saved." />
-    </template>
+### Variants
+
+Use the `variant` prop to change the semantic style of the Toast. Supported variants are `"success"`, `"error"`, `"warning"`, `"info"`, and `"default"`.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 w-full max-w-md">
+    <RLAToast variant="success" title="Success" description="Operation completed successfully." />
+    <RLAToast variant="error" title="Error" description="An error occurred while saving." />
+    <RLAToast variant="warning" title="Warning" description="Please check your connection." />
+    <RLAToast variant="info" title="Info" description="A new update is available." />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+    ---
+
+    <RLAToast variant="success" title="Success" description="Operation completed successfully." />
+    <RLAToast variant="error" title="Error" description="An error occurred while saving." />
+    <RLAToast variant="warning" title="Warning" description="Please check your connection." />
+    <RLAToast variant="info" title="Info" description="A new update is available." />
     ```
 
   </div>
 </ComponentShowcase>
 
-## Programmatic Usage (`useToast`)
+### Action Button
 
-If you want to trigger toast notifications dynamically from JavaScript/TypeScript (e.g., inside Vue `setup` scripts or client-side interactive modules), you can use the `useToast` composable.
+Use the `actionLabel` prop to add an action button to the Toast.
 
-### Import & Usage
+<ComponentShowcase>
+  <RLAToast title="Update Available" description="Version 2.0 is now available." actionLabel="Update Now" />
 
-```vue
-<script setup lang="ts">
-import { useToast } from "@rimelight/ui"
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+    ---
 
-const toast = useToast()
+    <RLAToast title="Update Available" description="Version 2.0 is now available." actionLabel="Update Now" />
+    ```
 
-function notify() {
-  toast.add({
-    title: "Success",
-    description: "Your settings have been saved successfully.",
-    color: "success",
-    icon: "i-lucide-check"
-  })
-}
-</script>
+  </div>
+</ComponentShowcase>
 
-<template>
-  <button @click="notify">Trigger Toast</button>
-</template>
-```
+### Dismissable and Duration
 
-### Composable API
+By default, toasts are dismissable and disappear after 5000ms. Use `dismissable={false}` to hide the close button, or set `duration={0}` to prevent auto-dismissal.
 
-#### `add(options)`
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 w-full max-w-md">
+    <RLAToast title="Persistent" description="This notification will not auto-dismiss." duration={0} />
+    <RLAToast title="Non-dismissable" description="This notification cannot be manually closed." dismissable={false} />
+  </div>
 
-Adds a new toast notification to the queue. Returns the created toast object.
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+    ---
 
-| Option        | Type         | Description                                                                                                       |
-| :------------ | :----------- | :---------------------------------------------------------------------------------------------------------------- |
-| `title`       | `string`     | The title heading of the toast.                                                                                   |
-| `description` | `string`     | The detail message text.                                                                                          |
-| `color`       | `ThemeColor` | The semantic color variant (`primary`, `success`, `error`, etc.).                                                 |
-| `icon`        | `string`     | Lucide icon identifier (e.g., `i-lucide-check`).                                                                  |
-| `timeout`     | `number`     | Display time in milliseconds before auto-dismissing (defaults to `5000`ms, set to `0` to keep open indefinitely). |
-| `callback`    | `function`   | Optional callback function called when the toast is dismissed.                                                    |
+    <RLAToast title="Persistent" description="This notification will not auto-dismiss." duration={0} />
+    <RLAToast title="Non-dismissable" description="This notification cannot be manually closed." dismissable={false} />
+    ```
 
-#### `remove(id)`
-
-Removes a specific toast by its unique ID.
-
-## Examples
+  </div>
+</ComponentShowcase>
 
 ## API
 

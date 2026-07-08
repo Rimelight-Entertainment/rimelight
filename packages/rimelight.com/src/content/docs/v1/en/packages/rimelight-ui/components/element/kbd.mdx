@@ -1,6 +1,6 @@
 ---
 title: "Kbd"
-description: "This component is currently under development."
+description: "A keyboard input indicator for representing user input, shortcuts, or hotkeys."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,7 +11,7 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Kbd` component renders keyboard shortcuts or hotkeys with custom sizing, coloring, and border styling.
 
 ## Usage
 
@@ -31,6 +31,44 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Sizes
+
+Use the `size` prop to change the size of the keyboard indicator.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-2">
+    <RLAKbd size="sm">Ctrl</RLAKbd>
+    <RLAKbd size="md">Ctrl</RLAKbd>
+    <RLAKbd size="lg">Ctrl</RLAKbd>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLAKbd size="sm">Ctrl</RLAKbd>
+    <RLAKbd size="md">Ctrl</RLAKbd>
+    <RLAKbd size="lg">Ctrl</RLAKbd>
+    ```
+  </div>
+</ComponentShowcase>
+
+### Variants
+
+Use the `variant` prop to adjust the visual appearance.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-2">
+    <RLAKbd variant="solid">Alt</RLAKbd>
+    <RLAKbd variant="outline">Shift</RLAKbd>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLAKbd variant="solid">Alt</RLAKbd>
+    <RLAKbd variant="outline">Shift</RLAKbd>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

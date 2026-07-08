@@ -1,6 +1,6 @@
 ---
-title: "RadioGroup"
-description: "This component is currently under development."
+title: "Radio Group"
+description: "A component that allows users to select a single option from a set of mutually exclusive choices."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,23 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A component that allows users to select a single option from a set of mutually exclusive choices.
 
 ## Usage
 
+How to use the Radio Group component in its simplest form.
+
 <ComponentShowcase>
-  <RLARadioGroup />
+  <RLARadioGroup class="flex flex-col gap-2">
+    <label class="flex items-center gap-2 text-sm cursor-pointer">
+      <input type="radio" name="options" value="1" />
+      Option 1
+    </label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer">
+      <input type="radio" name="options" value="2" />
+      Option 2
+    </label>
+  </RLARadioGroup>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +35,59 @@ This component is currently under development.
     import RLARadioGroup from "@rimelight/ui/components/astro/RLARadioGroup.astro";
     ---
 
-    <RLARadioGroup />
+    <RLARadioGroup class="flex flex-col gap-2">
+      <label class="flex items-center gap-2 text-sm cursor-pointer">
+        <input type="radio" name="options" value="1" />
+        Option 1
+      </label>
+      <label class="flex items-center gap-2 text-sm cursor-pointer">
+        <input type="radio" name="options" value="2" />
+        Option 2
+      </label>
+    </RLARadioGroup>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Horizontal Layout
+
+You can customize the layout direction using standard Tailwind layout utilities.
+
+<ComponentShowcase>
+  <RLARadioGroup class="flex items-center gap-4">
+    <label class="flex items-center gap-2 text-sm cursor-pointer">
+      <input type="radio" name="layout" value="horizontal" checked />
+      Horizontal
+    </label>
+    <label class="flex items-center gap-2 text-sm cursor-pointer">
+      <input type="radio" name="layout" value="vertical" />
+      Vertical
+    </label>
+  </RLARadioGroup>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLARadioGroup from "@rimelight/ui/components/astro/RLARadioGroup.astro";
+    ---
+
+    <RLARadioGroup class="flex items-center gap-4">
+      <label class="flex items-center gap-2 text-sm cursor-pointer">
+        <input type="radio" name="layout" value="horizontal" checked />
+        Horizontal
+      </label>
+      <label class="flex items-center gap-2 text-sm cursor-pointer">
+        <input type="radio" name="layout" value="vertical" />
+        Vertical
+      </label>
+    </RLARadioGroup>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

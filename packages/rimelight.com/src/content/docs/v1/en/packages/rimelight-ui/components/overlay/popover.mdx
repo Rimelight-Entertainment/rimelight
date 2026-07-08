@@ -1,6 +1,6 @@
 ---
 title: "Popover"
-description: "This component is currently under development."
+description: "A popover overlay that displays rich content on click."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,14 +11,17 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Popover component that displays content in a floating container relative to a trigger button, activated by clicking.
 
 ## Usage
 
+How to use the Popover component.
+
 <ComponentShowcase>
   <RLAPopover triggerLabel="Open Popover">
-    <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
-      Popover Content
+    <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md max-w-sm">
+      <h4 class="font-medium text-sm">Popover Title</h4>
+      <p class="text-xs text-muted-foreground mt-1">This popover contains rich, interactive HTML content.</p>
     </div>
   </RLAPopover>
 
@@ -29,8 +32,9 @@ This component is currently under development.
     ---
 
     <RLAPopover triggerLabel="Open Popover">
-      <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
-        Popover Content
+      <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md max-w-sm">
+        <h4 class="font-medium text-sm">Popover Title</h4>
+        <p class="text-xs text-muted-foreground mt-1">This popover contains rich, interactive HTML content.</p>
       </div>
     </RLAPopover>
     ```
@@ -39,6 +43,85 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Placement
+
+Use the `placement` prop to position the popover content. It supports values like `"top"`, `"bottom"`, `"left"`, and `"right"`.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4">
+    <RLAPopover triggerLabel="Popover Top" placement="top">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Opened above the trigger
+      </div>
+    </RLAPopover>
+
+    <RLAPopover triggerLabel="Popover Right" placement="right">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Opened to the right of the trigger
+      </div>
+    </RLAPopover>
+
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
+    ---
+
+    <RLAPopover triggerLabel="Popover Top" placement="top">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Opened above the trigger
+      </div>
+    </RLAPopover>
+
+    <RLAPopover triggerLabel="Popover Right" placement="right">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Opened to the right of the trigger
+      </div>
+    </RLAPopover>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Custom Trigger Slot
+
+Use the `trigger` slot to use a custom element or button style to toggle the popover.
+
+<ComponentShowcase>
+  <RLAPopover>
+    <button slot="trigger" class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/95">
+      <span class="i-lucide-info size-4" />
+      <span>More Information</span>
+    </button>
+    <div class="p-4 bg-popover rounded border shadow-md text-sm max-w-xs">
+      <p class="font-semibold">Info Panel</p>
+      <p class="text-xs text-muted-foreground mt-1">You can put forms, text, links, or other interactive details here.</p>
+    </div>
+  </RLAPopover>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPopover from "@rimelight/ui/components/astro/RLAPopover.astro";
+    ---
+
+    <RLAPopover>
+      <button slot="trigger" class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/95">
+        <span class="i-lucide-info size-4" />
+        <span>More Information</span>
+      </button>
+      <div class="p-4 bg-popover rounded border shadow-md text-sm max-w-xs">
+        <p class="font-semibold">Info Panel</p>
+        <p class="text-xs text-muted-foreground mt-1">You can put forms, text, links, or other interactive details here.</p>
+      </div>
+    </RLAPopover>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

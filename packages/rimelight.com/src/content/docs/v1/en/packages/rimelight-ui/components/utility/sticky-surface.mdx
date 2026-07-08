@@ -1,6 +1,6 @@
 ---
 title: "Sticky Surface"
-description: "A utility component that pins content to a specific position within its container."
+description: "A layout utility component that sticks to a specific vertical offset within its container when scrolling."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,14 +11,20 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-A utility component that pins content to a specific position within its container.
+The Sticky Surface component pins its contents vertically within a parent container once the page scrolls past its position.
 
 ## Usage
 
+How to use the Sticky Surface component in its simplest form.
+
 <ComponentShowcase>
-  <RLAStickySurface offsetTop={20}>
-    <div class="p-4 bg-muted rounded">Sticky Content</div>
-  </RLAStickySurface>
+  <div class="h-48 overflow-y-auto border border-border rounded-lg p-md relative bg-neutral-50 dark:bg-neutral-900">
+    <div class="h-24 bg-neutral-200 dark:bg-neutral-800 p-sm rounded mb-md">Scrollable Header Content</div>
+    <RLAStickySurface offsetTop={10} class="sticky">
+      <div class="p-4 bg-primary text-primary-foreground font-bold rounded shadow-sm">I stick to the top!</div>
+    </RLAStickySurface>
+    <div class="h-64 bg-neutral-200 dark:bg-neutral-800 p-sm rounded mt-md">More scrollable contents to demonstrate stickiness...</div>
+  </div>
 
   <div slot="code-astro">
     ```astro
@@ -26,15 +32,21 @@ A utility component that pins content to a specific position within its containe
     import RLAStickySurface from "@rimelight/ui/components/astro/RLAStickySurface.astro";
     ---
 
-    <RLAStickySurface offsetTop={20}>
-      <div class="p-4 bg-muted rounded">Sticky Content</div>
-    </RLAStickySurface>
+    <div class="relative">
+      <RLAStickySurface offsetTop={10} class="sticky">
+        <div class="p-4 bg-primary text-primary-foreground font-bold rounded shadow-sm">
+          I stick to the top!
+        </div>
+      </RLAStickySurface>
+    </div>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this basic layout utility.
 
 ## API
 

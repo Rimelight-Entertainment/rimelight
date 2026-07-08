@@ -1,6 +1,6 @@
 ---
 title: "NavigationMenu"
-description: "This component is currently under development."
+description: "A header navigation component supporting hover dropdowns, megamenus, active link tracking, and custom slots."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,24 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `NavigationMenu` component provides a structured menu layout. In horizontal mode, it supports animated dropdown viewports that hover gracefully.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLANavigationMenu items={[{ label: "Home", href: "/" }, { label: "About", href: "/about" }]} />
+  <RLANavigationMenu
+    items={[
+      { label: "Home", href: "/" },
+      {
+        label: "Resources",
+        children: [
+          { label: "Documentation", description: "Learn how to use Rimelight", href: "/docs" },
+          { label: "Playground", description: "Experiment in the browser", href: "/playground" }
+        ]
+      },
+      { label: "Blog", href: "/blog" }
+    ]}
+  />
 
   <div slot="code-astro">
     ```astro
@@ -25,7 +37,14 @@ This component is currently under development.
 
     const items = [
       { label: "Home", href: "/" },
-      { label: "About", href: "/about" }
+      {
+        label: "Resources",
+        children: [
+          { label: "Documentation", description: "Learn how to use Rimelight", href: "/docs" },
+          { label: "Playground", description: "Experiment in the browser", href: "/playground" }
+        ]
+      },
+      { label: "Blog", href: "/blog" }
     ];
     ---
 
@@ -36,6 +55,36 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Vertical Menu
+
+Use `orientation="vertical"` to list navigation links in a sidebar structure.
+
+<ComponentShowcase>
+  <div class="w-64 border p-md rounded">
+    <RLANavigationMenu
+      orientation="vertical"
+      items={[
+        { label: "Dashboard", href: "/dashboard", icon: "i-lucide-home" },
+        { label: "Settings", href: "/settings", icon: "i-lucide-settings" },
+        { label: "Users", href: "/users", icon: "i-lucide-users" }
+      ]}
+    />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLANavigationMenu
+      orientation="vertical"
+      items={[
+        { label: "Dashboard", href: "/dashboard", icon: "i-lucide-home" },
+        { label: "Settings", href: "/settings", icon: "i-lucide-settings" },
+        { label: "Users", href: "/users", icon: "i-lucide-users" }
+      ]}
+    />
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

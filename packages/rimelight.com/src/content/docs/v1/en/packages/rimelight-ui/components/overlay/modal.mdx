@@ -1,6 +1,6 @@
 ---
 title: "Modal"
-description: "This component is currently under development."
+description: "A dialog window that overlays the main content."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Modal component that overlay a dialog box over the screen content, requiring user interaction before returning to the main application.
 
 ## Usage
+
+How to use the Modal component.
 
 <ComponentShowcase>
   <RLAModal triggerLabel="Open Modal" title="Modal Title" description="Modal Description">
@@ -35,6 +37,81 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Sizes
+
+Use the `size` prop to control the maximum width of the Modal. It supports `"sm"`, `"md"`, `"lg"`, and `"xl"`.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4">
+    <RLAModal size="sm" triggerLabel="Open Small Modal" title="Small Modal" description="A narrow modal window">
+      <div class="p-4">Small modal content area.</div>
+    </RLAModal>
+
+    <RLAModal size="lg" triggerLabel="Open Large Modal" title="Large Modal" description="A wider modal window">
+      <div class="p-4">Large modal content area with more spacing and layout space.</div>
+    </RLAModal>
+
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro";
+    ---
+
+    <RLAModal size="sm" triggerLabel="Open Small Modal" title="Small Modal" description="A narrow modal window">
+      <div class="p-4">Small modal content area.</div>
+    </RLAModal>
+
+    <RLAModal size="lg" triggerLabel="Open Large Modal" title="Large Modal" description="A wider modal window">
+      <div class="p-4">Large modal content area with more spacing and layout space.</div>
+    </RLAModal>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Footer Slot
+
+You can add a footer section at the bottom of the modal using the `footer` slot.
+
+<ComponentShowcase>
+  <RLAModal triggerLabel="Edit Settings" title="System Settings" description="Configure your system configuration.">
+    <div class="p-4 flex flex-col gap-3">
+      <label class="flex flex-col gap-1 text-sm font-medium">
+        Profile Username
+        <input type="text" value="user_1" class="border p-2 rounded text-sm bg-background" />
+      </label>
+    </div>
+    <div slot="footer" class="flex justify-end gap-2 w-full">
+      <button class="px-4 py-2 border rounded text-sm hover:bg-neutral/10" data-dialog-close>Cancel</button>
+      <button class="px-4 py-2 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90" data-dialog-close>Save changes</button>
+    </div>
+  </RLAModal>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro";
+    ---
+
+    <RLAModal triggerLabel="Edit Settings" title="System Settings" description="Configure your system configuration.">
+      <div class="p-4 flex flex-col gap-3">
+        <label class="flex flex-col gap-1 text-sm font-medium">
+          Profile Username
+          <input type="text" value="user_1" class="border p-2 rounded text-sm bg-background" />
+        </label>
+      </div>
+      <div slot="footer" class="flex justify-end gap-2 w-full">
+        <button class="px-4 py-2 border rounded text-sm hover:bg-neutral/10" data-dialog-close>Cancel</button>
+        <button class="px-4 py-2 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90" data-dialog-close>Save changes</button>
+      </div>
+    </RLAModal>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

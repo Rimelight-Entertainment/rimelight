@@ -1,6 +1,6 @@
 ---
 title: "PageHeader"
-description: "This component is currently under development."
+description: "A header container for displaying page titles, subtitles, and breadcrumbs."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `PageHeader` component wraps the header content at the top of a page.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAPageHeader>
-    <h1>Page Title</h1>
+    <h1 class="text-2xl font-bold">Settings</h1>
+    <p class="text-sm text-muted-foreground">Manage your application preferences.</p>
   </RLAPageHeader>
 
   <div slot="code-astro">
@@ -27,7 +28,8 @@ This component is currently under development.
     ---
 
     <RLAPageHeader>
-      <h1>Page Title</h1>
+      <h1 class="text-2xl font-bold">Settings</h1>
+      <p class="text-sm text-muted-foreground">Manage your application preferences.</p>
     </RLAPageHeader>
     ```
 

@@ -1,6 +1,6 @@
 ---
 title: "Page"
-description: "This component is currently under development."
+description: "A wrapper component for establishing standard page bounds, margins, and responsiveness."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,15 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Page` component acts as the main wrapper for your website pages, standardizing responsive margins, maximum bounds, and background styling.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAPage>
-    Page Content
+    <div class="p-md text-sm border rounded">
+      Page Content
+    </div>
   </RLAPage>
 
   <div slot="code-astro">
@@ -27,7 +29,7 @@ This component is currently under development.
     ---
 
     <RLAPage>
-      Page Content
+      <div>Page Content</div>
     </RLAPage>
     ```
 

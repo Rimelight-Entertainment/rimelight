@@ -1,19 +1,42 @@
 ---
 title: "DashboardSearchButton"
-description: "This component is currently under development."
+description: "A button used to open or trigger dashboard search."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardSearchButton from "@rimelight/ui/components/astro/RLADashboardSearchButton.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardSearchButton component is a pre-styled button intended to trigger search bars, overlays, or modal dialogs within a dashboard.
 
 ## Usage
 
-## Examples
+Use the DashboardSearchButton component as a visual trigger for command palettes or search actions.
+
+<ComponentShowcase>
+  <RLADashboardSearchButton class="flex items-center gap-2 px-3 py-1.5 border border-neutral-300 rounded text-neutral-500 hover:border-neutral-400 transition-colors cursor-pointer">
+    <span class="i-lucide-search size-4" />
+    <span class="text-sm">Search documentation...</span>
+  </RLADashboardSearchButton>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardSearchButton from "@rimelight/ui/components/astro/RLADashboardSearchButton.astro";
+    ---
+
+    <RLADashboardSearchButton class="flex items-center gap-2 px-3 py-1.5 border border-neutral-300 rounded text-neutral-500 hover:border-neutral-400 transition-colors cursor-pointer">
+      <span class="i-lucide-search size-4" />
+      <span class="text-sm">Search documentation...</span>
+    </RLADashboardSearchButton>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

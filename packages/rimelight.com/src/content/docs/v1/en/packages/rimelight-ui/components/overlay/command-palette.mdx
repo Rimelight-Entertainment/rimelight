@@ -1,6 +1,6 @@
 ---
 title: "CommandPalette"
-description: "This component is currently under development."
+description: "A Command Palette overlay component for searching and navigating."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Command Palette component that displays a search input and list of actions to navigate or trigger commands.
 
 ## Usage
+
+How to use the Command Palette component.
 
 <ComponentShowcase>
   <RLACommandPalette>
@@ -35,6 +37,35 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Custom Content
+
+You can render any custom content inside the Command Palette.
+
+<ComponentShowcase>
+  <RLACommandPalette class="border border-primary/20 rounded-lg">
+    <div class="p-6 text-center">
+      <p class="font-medium">Search for commands...</p>
+      <p class="text-sm text-muted-foreground mt-1">Press ESC to exit</p>
+    </div>
+  </RLACommandPalette>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLACommandPalette from "@rimelight/ui/components/astro/RLACommandPalette.astro";
+    ---
+
+    <RLACommandPalette class="border border-primary/20 rounded-lg">
+      <div class="p-6 text-center">
+        <p class="font-medium">Search for commands...</p>
+        <p class="text-sm text-muted-foreground mt-1">Press ESC to exit</p>
+      </div>
+    </RLACommandPalette>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

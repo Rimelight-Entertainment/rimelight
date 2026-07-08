@@ -1,19 +1,131 @@
 ---
 title: "Accordion"
-description: "This component is currently under development."
+description: "A collapsible content panel that displays information in a compact, organized layout."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAAccordion from "@rimelight/ui/components/astro/RLAAccordion.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Accordion component allows users to toggle the visibility of content sections. It can be used to display FAQs, details, or other collapsible information.
 
 ## Usage
 
+Use the Accordion with an `items` array, or as a single collapsible element using the `summary` prop and slot content.
+
+<ComponentShowcase>
+  <RLAAccordion
+    items={[
+      { label: "What is Rimelight UI?", content: "Rimelight UI is a modern, lightweight component library built for fast web development." },
+      { label: "Is it compatible with Astro?", content: "Yes! Rimelight UI is designed with first-class support for Astro components." }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAAccordion from "@rimelight/ui/components/astro/RLAAccordion.astro";
+    ---
+
+    <RLAAccordion
+      items={[
+        { label: "What is Rimelight UI?", content: "Rimelight UI is a modern, lightweight component library built for fast web development." },
+        { label: "Is it compatible with Astro?", content: "Yes! Rimelight UI is designed with first-class support for Astro components." }
+      ]}
+    />
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Single Accordion with Default Slot
+
+You can also use a single accordion item by passing a `summary` prop and putting the content in the default slot.
+
+<ComponentShowcase>
+  <RLAAccordion summary="Click to expand details">
+    <p>This content is rendered inside the default slot of the Accordion component.</p>
+  </RLAAccordion>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAAccordion from "@rimelight/ui/components/astro/RLAAccordion.astro";
+    ---
+
+    <RLAAccordion summary="Click to expand details">
+      <p>This content is rendered inside the default slot of the Accordion component.</p>
+    </RLAAccordion>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Multiple Open Allowed
+
+By default, only one item in the accordion group can be open at a time. Set `multiple` to `true` to allow multiple items to be expanded simultaneously.
+
+<ComponentShowcase>
+  <RLAAccordion
+    multiple
+    items={[
+      { label: "Section 1", content: "You can keep this open..." },
+      { label: "Section 2", content: "...and open this section at the same time." }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAAccordion from "@rimelight/ui/components/astro/RLAAccordion.astro";
+    ---
+
+    <RLAAccordion
+      multiple
+      items={[
+        { label: "Section 1", content: "You can keep this open..." },
+        { label: "Section 2", content: "...and open this section at the same time." }
+      ]}
+    />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Items with Icons
+
+Items in the `items` array can include leading icons.
+
+<ComponentShowcase>
+  <RLAAccordion
+    items={[
+      { label: "Settings", content: "Configure your application preferences.", icon: "i-lucide-settings" },
+      { label: "Profile", content: "Manage your personal profile details.", icon: "i-lucide-user" }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAAccordion from "@rimelight/ui/components/astro/RLAAccordion.astro";
+    ---
+
+    <RLAAccordion
+      items={[
+        { label: "Settings", content: "Configure your application preferences.", icon: "i-lucide-settings" },
+        { label: "Profile", content: "Manage your personal profile details.", icon: "i-lucide-user" }
+      ]}
+    />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

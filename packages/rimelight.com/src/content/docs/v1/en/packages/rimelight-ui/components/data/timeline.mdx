@@ -1,19 +1,101 @@
 ---
 title: "Timeline"
-description: "This component is currently under development."
+description: "A component for displaying chronological lists of events, history logs, or processes."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLATimeline from "@rimelight/ui/components/astro/RLATimeline.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Timeline component arranges events in chronological order, styled with a vertical connector line.
 
 ## Usage
 
-## Examples
+Use the Timeline component as the main wrapper, and build the nodes using standard markup matching the theme slot classes.
+
+<ComponentShowcase>
+  <RLATimeline>
+    <div class="relative pb-6">
+      {/* Indicator Dot */}
+      <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
+        <div class="h-2 w-2 rounded-full bg-primary-500" />
+      </div>
+      {/* Header */}
+      <div class="flex items-center justify-between gap-4 mb-1">
+        <h4 class="font-bold text-sm text-foreground">Project Started</h4>
+        <span class="text-xs text-muted-foreground">July 1, 2026</span>
+      </div>
+      {/* Content */}
+      <div class="text-sm text-muted-foreground">
+        Initialized repository with Vite+ and Rimelight UI.
+      </div>
+    </div>
+
+    <div class="relative pb-2">
+      {/* Indicator Dot */}
+      <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
+        <div class="h-2 w-2 rounded-full bg-primary-500" />
+      </div>
+      {/* Header */}
+      <div class="flex items-center justify-between gap-4 mb-1">
+        <h4 class="font-bold text-sm text-foreground">Documentation Updated</h4>
+        <span class="text-xs text-muted-foreground">July 8, 2026</span>
+      </div>
+      {/* Content */}
+      <div class="text-sm text-muted-foreground">
+        Rewrote component docs using the Astro-only button pattern.
+      </div>
+    </div>
+
+  </RLATimeline>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATimeline from "@rimelight/ui/components/astro/RLATimeline.astro";
+    ---
+
+    <RLATimeline>
+      <div class="relative pb-6">
+        {/* Indicator Dot */}
+        <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
+          <div class="h-2 w-2 rounded-full bg-primary-500" />
+        </div>
+        {/* Header */}
+        <div class="flex items-center justify-between gap-4 mb-1">
+          <h4 class="font-bold text-sm text-foreground">Project Started</h4>
+          <span class="text-xs text-muted-foreground">July 1, 2026</span>
+        </div>
+        {/* Content */}
+        <div class="text-sm text-muted-foreground">
+          Initialized repository with Vite+ and Rimelight UI.
+        </div>
+      </div>
+
+      <div class="relative pb-2">
+        {/* Indicator Dot */}
+        <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
+          <div class="h-2 w-2 rounded-full bg-primary-500" />
+        </div>
+        {/* Header */}
+        <div class="flex items-center justify-between gap-4 mb-1">
+          <h4 class="font-bold text-sm text-foreground">Documentation Updated</h4>
+          <span class="text-xs text-muted-foreground">July 8, 2026</span>
+        </div>
+        {/* Content */}
+        <div class="text-sm text-muted-foreground">
+          Rewrote component docs using the Astro-only button pattern.
+        </div>
+      </div>
+    </RLATimeline>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

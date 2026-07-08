@@ -1,17 +1,52 @@
 ---
 title: "ChatMessages"
-description: "This component is currently under development."
+description: "A scrollable stream container designed to organize multiple ChatMessage components."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAChatMessages from "@rimelight/ui/components/astro/RLAChatMessages.astro"
+import RLAChatMessage from "@rimelight/ui/components/astro/RLAChatMessage.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The ChatMessages component acts as the message stream layer within a chat view, holding the log of conversational turns.
 
 ## Usage
+
+Use the ChatMessages component to group and align chat message items.
+
+<ComponentShowcase>
+  <RLAChatMessages class="flex flex-col gap-md max-h-[300px] overflow-y-auto p-4 border rounded-lg">
+    <RLAChatMessage class="bg-muted p-3 rounded-md self-end max-w-[70%]">
+      Can I customize the styles of the chat bubble?
+    </RLAChatMessage>
+    <RLAChatMessage class="bg-primary/15 p-3 rounded-md self-start max-w-[70%]">
+      Yes! You can pass custom classes or override the Tailwind styling theme.
+    </RLAChatMessage>
+  </RLAChatMessages>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChatMessages from "@rimelight/ui/components/astro/RLAChatMessages.astro";
+    import RLAChatMessage from "@rimelight/ui/components/astro/RLAChatMessage.astro";
+    ---
+
+    <RLAChatMessages class="flex flex-col gap-md">
+      <RLAChatMessage class="bg-muted p-3 rounded-md self-end">
+        Can I customize the styles of the chat bubble?
+      </RLAChatMessage>
+      <RLAChatMessage class="bg-primary/15 p-3 rounded-md self-start">
+        Yes! You can pass custom classes or override the Tailwind styling theme.
+      </RLAChatMessage>
+    </RLAChatMessages>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

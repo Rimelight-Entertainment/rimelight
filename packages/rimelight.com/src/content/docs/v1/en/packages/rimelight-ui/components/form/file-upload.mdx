@@ -1,6 +1,6 @@
 ---
-title: "FileUpload"
-description: "This component is currently under development."
+title: "File Upload"
+description: "A drag-and-drop file upload area supporting click to upload, custom icons, titles, descriptions, and file type restrictions."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A drag-and-drop file upload area supporting click to upload, custom icons, titles, descriptions, and file type restrictions.
 
 ## Usage
+
+How to use the File Upload component in its simplest form.
 
 <ComponentShowcase>
   <RLAFileUpload />
@@ -31,6 +33,44 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Accept Specific Types
+
+Use the `accept` prop to restrict uploaded file types.
+
+<ComponentShowcase>
+  <RLAFileUpload accept=".pdf,.docx" description="PDF and DOCX only" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAFileUpload from "@rimelight/ui/components/astro/RLAFileUpload.astro";
+    ---
+
+    <RLAFileUpload accept=".pdf,.docx" description="PDF and DOCX only" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Disabled
+
+Use the `disabled` prop to prevent interactions.
+
+<ComponentShowcase>
+  <RLAFileUpload disabled />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAFileUpload from "@rimelight/ui/components/astro/RLAFileUpload.astro";
+    ---
+
+    <RLAFileUpload disabled />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,6 +1,6 @@
 ---
 title: "Video"
-description: "This component is currently under development."
+description: "A high-performance, lazy-loading YouTube video player component."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,16 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Video component renders a YouTube video player that lazy-loads its iframe. It fetches the high-quality video thumbnail at build time and only instantiates the iframe when the user clicks the play button, saving network bandwidth.
 
 ## Usage
 
+How to use the Video component in its simplest form.
+
 <ComponentShowcase>
-  <RLAVideo src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up" />
+  <div class="max-w-xl">
+    <RLAVideo src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up" />
+  </div>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +28,17 @@ This component is currently under development.
     import RLAVideo from "@rimelight/ui/components/astro/RLAVideo.astro";
     ---
 
-    <RLAVideo src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up" />
+    <div class="max-w-xl">
+      <RLAVideo src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up" />
+    </div>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this video component.
 
 ## API
 

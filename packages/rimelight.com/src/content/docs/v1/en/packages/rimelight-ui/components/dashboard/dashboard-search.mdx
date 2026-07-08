@@ -1,19 +1,42 @@
 ---
 title: "DashboardSearch"
-description: "This component is currently under development."
+description: "An input container for dashboard search features."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardSearch from "@rimelight/ui/components/astro/RLADashboardSearch.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardSearch component acts as an input area for entering queries and filtering dashboard items.
 
 ## Usage
 
-## Examples
+Use the DashboardSearch component to build a dedicated search field for your dashboard navbar or sidebar.
+
+<ComponentShowcase>
+  <RLADashboardSearch class="relative flex items-center w-full max-w-sm">
+    <span class="absolute left-3 i-lucide-search size-4 text-neutral-400" />
+    <input type="text" placeholder="Search..." class="pl-9 pr-4 py-1.5 w-full border border-neutral-300 rounded focus:outline-none focus:border-primary-500" />
+  </RLADashboardSearch>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardSearch from "@rimelight/ui/components/astro/RLADashboardSearch.astro";
+    ---
+
+    <RLADashboardSearch class="relative flex items-center w-full max-w-sm">
+      <span class="absolute left-3 i-lucide-search size-4 text-neutral-400" />
+      <input type="text" placeholder="Search..." class="pl-9 pr-4 py-1.5 w-full border border-neutral-300 rounded focus:outline-none focus:border-primary-500" />
+    </RLADashboardSearch>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

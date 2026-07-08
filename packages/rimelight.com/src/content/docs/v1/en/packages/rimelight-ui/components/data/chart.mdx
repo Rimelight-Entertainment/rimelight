@@ -1,19 +1,115 @@
 ---
 title: "Chart"
-description: "This component is currently under development."
+description: "A component for visualizing data using various chart types including bar, line, area, pie, and donut."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+export const salesData = [
+  { label: "Jan", value: 400 },
+  { label: "Feb", value: 300 },
+  { label: "Mar", value: 600 },
+  { label: "Apr", value: 800 },
+  { label: "May", value: 500 }
+]
+
+export const marketShareData = [
+  { label: "Astro", value: 45 },
+  { label: "React", value: 30 },
+  { label: "Vue", value: 15 },
+  { label: "Svelte", value: 10 }
+]
+
+The Chart component simplifies data visualization by rendering responsive charts entirely on the server.
 
 ## Usage
 
+Use the Chart component with a type (defaults to `bar`) and a `data` array.
+
+<ComponentShowcase>
+  <RLAChart title="Monthly Sales" data={salesData} />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro";
+
+    const salesData = [
+      { label: "Jan", value: 400 },
+      { label: "Feb", value: 300 },
+      { label: "Mar", value: 600 },
+      { label: "Apr", value: 800 },
+      { label: "May", value: 500 }
+    ];
+    ---
+
+    <RLAChart title="Monthly Sales" data={salesData} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Line and Area Charts
+
+Use the `type="line"` or `type="area"` prop to render a line/area chart.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-6 w-full">
+    <RLAChart type="line" title="Line Chart" data={salesData} />
+    <RLAChart type="area" title="Area Chart" data={salesData} />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro";
+
+    const salesData = [/* ... */];
+    ---
+
+    <RLAChart type="line" title="Line Chart" data={salesData} />
+    <RLAChart type="area" title="Area Chart" data={salesData} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Pie and Donut Charts
+
+Use `type="pie"` or `type="donut"` to display proportional data parts.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-6 w-full md:flex-row">
+    <RLAChart type="pie" title="Market Share (Pie)" data={marketShareData} class="flex-1" />
+    <RLAChart type="donut" title="Market Share (Donut)" data={marketShareData} class="flex-1" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro";
+
+    const marketShareData = [
+      { label: "Astro", value: 45 },
+      { label: "React", value: 30 },
+      { label: "Vue", value: 15 },
+      { label: "Svelte", value: 10 }
+    ];
+    ---
+
+    <RLAChart type="pie" title="Market Share" data={marketShareData} />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

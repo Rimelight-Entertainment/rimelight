@@ -1,17 +1,40 @@
 ---
 title: "App"
-description: "This component is currently under development."
+description: "A main application wrapper component that sets up the global structure and layout container."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAApp from "@rimelight/ui/components/astro/RLAApp.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The App component acts as the root layout container for your application, establishing the foundational box hierarchy and styling environment.
 
 ## Usage
+
+Use the App component to wrap your application page or layout structure.
+
+<ComponentShowcase>
+  <RLAApp>
+    <div class="p-6">Application Content</div>
+  </RLAApp>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAApp from "@rimelight/ui/components/astro/RLAApp.astro";
+    ---
+
+    <RLAApp>
+      <div class="p-6">Application Content</div>
+    </RLAApp>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

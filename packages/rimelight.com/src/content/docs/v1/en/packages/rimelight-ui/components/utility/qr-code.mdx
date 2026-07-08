@@ -1,6 +1,6 @@
 ---
 title: "QR Code"
-description: "This component is currently under development."
+description: "A styled container wrapper component for QR codes."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,18 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The QR Code component is a styled container wrapper designed to hold and present QR code images or vectors nicely within your UI layouts.
 
 ## Usage
 
+How to use the QR Code component wrapper to present a QR code image.
+
 <ComponentShowcase>
-  <RLAQrCode value="https://rimelight.com" />
+  <div class="flex justify-center">
+    <RLAQrCode class="p-4 bg-white border border-border rounded-xl shadow-sm w-fit">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://rimelight.com" alt="QR Code" width="150" height="150" />
+    </RLAQrCode>
+  </div>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +30,17 @@ This component is currently under development.
     import RLAQrCode from "@rimelight/ui/components/astro/RLAQrCode.astro";
     ---
 
-    <RLAQrCode value="https://rimelight.com" />
+    <RLAQrCode class="p-4 bg-white border border-border rounded-xl shadow-sm w-fit">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://rimelight.com" alt="QR Code" width="150" height="150" />
+    </RLAQrCode>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this basic wrapper component.
 
 ## API
 

@@ -1,19 +1,40 @@
 ---
 title: "DashboardPanel"
-description: "This component is currently under development."
+description: "A panel layout component for dashboards."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardPanel from "@rimelight/ui/components/astro/RLADashboardPanel.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardPanel component defines a main content panel or workspace region within a dashboard layout.
 
 ## Usage
 
-## Examples
+Use the DashboardPanel component to isolate distinct regions of your user interface.
+
+<ComponentShowcase>
+  <RLADashboardPanel class="p-6 bg-neutral-50 rounded-lg min-h-[150px] flex items-center justify-center border border-neutral-200">
+    <span class="text-neutral-500">Main Content Panel</span>
+  </RLADashboardPanel>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardPanel from "@rimelight/ui/components/astro/RLADashboardPanel.astro";
+    ---
+
+    <RLADashboardPanel class="p-6 bg-neutral-50 rounded-lg min-h-[150px] flex items-center justify-center border border-neutral-200">
+      <span class="text-neutral-500">Main Content Panel</span>
+    </RLADashboardPanel>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

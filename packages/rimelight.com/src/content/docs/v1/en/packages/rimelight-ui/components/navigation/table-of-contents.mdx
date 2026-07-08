@@ -1,6 +1,6 @@
 ---
 title: "TableOfContents"
-description: "This component is currently under development."
+description: "A navigation component that lists the headers/sections of the page with active tracking."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,18 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `TableOfContents` component parses a list of headings and outputs an active-tracked sidebar outline. It also supports a collapsible mobile layout.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLATableOfContents headings={[{ depth: 2, slug: "usage", text: "Usage" }, { depth: 3, slug: "examples", text: "Examples" }]} />
+  <RLATableOfContents
+    headings={[
+      { depth: 2, slug: "usage", text: "Usage" },
+      { depth: 2, slug: "examples", text: "Examples" },
+      { depth: 3, slug: "collapsible-example", text: "Collapsible Example" }
+    ]}
+  />
 
   <div slot="code-astro">
     ```astro
@@ -25,7 +31,8 @@ This component is currently under development.
 
     const headings = [
       { depth: 2, slug: "usage", text: "Usage" },
-      { depth: 3, slug: "examples", text: "Examples" }
+      { depth: 2, slug: "examples", text: "Examples" },
+      { depth: 3, slug: "collapsible-example", text: "Collapsible Example" }
     ];
     ---
 
@@ -36,6 +43,32 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Collapsible Mode
+
+Set the `collapsible` prop to true to render the TOC inside a details disclosure button, ideal for mobile header structures.
+
+<ComponentShowcase>
+  <RLATableOfContents
+    collapsible
+    headings={[
+      { depth: 2, slug: "usage", text: "Usage" },
+      { depth: 2, slug: "examples", text: "Examples" }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLATableOfContents
+      collapsible
+      headings={[
+        { depth: 2, slug: "usage", text: "Usage" },
+        { depth: 2, slug: "examples", text: "Examples" }
+      ]}
+    />
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

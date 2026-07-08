@@ -1,6 +1,6 @@
 ---
 title: "Pagination"
-description: "This component is currently under development."
+description: "A navigation component for paginating through multi-page content."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,12 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Pagination` component displays next/prev arrows and a list of page links with automatic ellipsis generation for long listings.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLAPagination currentPage={1} totalPages={5} />
+  <RLAPagination currentPage={2} totalPages={10} baseUrl="?page=" />
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +24,27 @@ This component is currently under development.
     import RLAPagination from "@rimelight/ui/components/astro/RLAPagination.astro";
     ---
 
-    <RLAPagination currentPage={1} totalPages={5} />
+    <RLAPagination currentPage={2} totalPages={10} baseUrl="?page=" />
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Edge States (First Page)
+
+The component automatically disables the "Previous" arrow when on page 1.
+
+<ComponentShowcase>
+  <RLAPagination currentPage={1} totalPages={5} />
+
+  <div slot="code-astro">
+    ```astro
+    <RLAPagination currentPage={1} totalPages={5} />
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

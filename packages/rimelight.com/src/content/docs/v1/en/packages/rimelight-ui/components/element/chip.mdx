@@ -28,19 +28,6 @@ A small dot or counter that overlays a target element to indicate status, notifi
     ```
 
   </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVChip from "@rimelight/ui/components/vue/RLVChip.vue";
-    </script>
-
-    <template>
-      <RLVChip text="99+" :standalone="true" />
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ## Examples
@@ -115,25 +102,6 @@ Wrap any element with `RLAChip` to position the indicator relative to it.
   </RLAChip>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVChip text="5" position="top-right">
-        <div>A</div>
-      </RLVChip>
-      <RLVChip text="2" position="bottom-right" color="success">
-        <div>B</div>
-      </RLVChip>
-      <RLVChip text="9" position="top-left" color="warning">
-        <div>C</div>
-      </RLVChip>
-      <RLVChip position="bottom-left" color="error" :inset="true">
-        <div>D</div>
-      </RLVChip>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Positions
@@ -181,19 +149,6 @@ Set `inset` to overlap the chip inside the element's border instead of extending
   </RLAChip>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVChip text="3" position="top-right">
-        <div>Default</div>
-      </RLVChip>
-      <RLVChip text="3" position="top-right" :inset="true">
-        <div>Inset</div>
-      </RLVChip>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Show / Hide
@@ -220,19 +175,6 @@ Use `show` to programmatically toggle chip visibility without removing it from t
   </RLAChip>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVChip text="5" :show="true">
-        <div>On</div>
-      </RLVChip>
-      <RLVChip text="5" :show="false">
-        <div>Off</div>
-      </RLVChip>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ## API

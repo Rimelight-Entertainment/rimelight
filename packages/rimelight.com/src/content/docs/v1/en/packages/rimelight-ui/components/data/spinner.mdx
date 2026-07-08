@@ -1,19 +1,94 @@
 ---
 title: "Spinner"
-description: "This component is currently under development."
+description: "A loading spinner component for displaying an indeterminate wait time."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLASpinner from "@rimelight/ui/components/astro/RLASpinner.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Spinner component displays an animated loading indicator, typically used during asynchronous processes.
 
 ## Usage
 
+Use the Spinner component on its own or inside other elements like buttons.
+
+<ComponentShowcase>
+  <RLASpinner />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASpinner from "@rimelight/ui/components/astro/RLASpinner.astro";
+    ---
+
+    <RLASpinner />
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Size
+
+Change the size of the spinner using the `size` prop. Supported values are `xs`, `sm`, `md`, `lg`, and `xl`.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4">
+    <RLASpinner size="xs" />
+    <RLASpinner size="sm" />
+    <RLASpinner size="md" />
+    <RLASpinner size="lg" />
+    <RLASpinner size="xl" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASpinner from "@rimelight/ui/components/astro/RLASpinner.astro";
+    ---
+
+    <RLASpinner size="xs" />
+    <RLASpinner size="sm" />
+    <RLASpinner size="md" />
+    <RLASpinner size="lg" />
+    <RLASpinner size="xl" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Color
+
+Set the color using the `color` prop or fall back to the text color of the parent container using `color="current"`.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4 text-emerald-500">
+    <RLASpinner color="primary" />
+    <RLASpinner color="success" />
+    <RLASpinner color="error" />
+    <RLASpinner color="current" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASpinner from "@rimelight/ui/components/astro/RLASpinner.astro";
+    ---
+
+    <RLASpinner color="primary" />
+    <RLASpinner color="success" />
+    <RLASpinner color="error" />
+    <RLASpinner color="current" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,6 +1,6 @@
 ---
 title: "Compare"
-description: "This component is currently under development."
+description: "A container component to show side-by-side or before-and-after visual comparisons."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,14 +11,22 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Compare component provides a structured wrapper to compare two blocks of content, such as side-by-side text, images, or feature lists.
 
 ## Usage
 
+How to use the Compare component in its simplest form.
+
 <ComponentShowcase>
-  <RLACompare>
-    <div>Left Content</div>
-    <div>Right Content</div>
+  <RLACompare class="grid grid-cols-2 gap-md p-md border border-border rounded-lg bg-neutral-50 dark:bg-neutral-900">
+    <div class="p-lg bg-red-500/10 border border-red-500/20 rounded text-center">
+      <h4 class="font-bold text-red-500">Before</h4>
+      <p class="text-sm mt-2 text-muted-foreground">Original implementation with performance bottlenecks.</p>
+    </div>
+    <div class="p-lg bg-green-500/10 border border-green-500/20 rounded text-center">
+      <h4 class="font-bold text-green-500">After</h4>
+      <p class="text-sm mt-2 text-muted-foreground">Optimized implementation using native lazy-loading.</p>
+    </div>
   </RLACompare>
 
   <div slot="code-astro">
@@ -27,9 +35,15 @@ This component is currently under development.
     import RLACompare from "@rimelight/ui/components/astro/RLACompare.astro";
     ---
 
-    <RLACompare>
-      <div>Left Content</div>
-      <div>Right Content</div>
+    <RLACompare class="grid grid-cols-2 gap-md p-md border border-border rounded-lg bg-neutral-50 dark:bg-neutral-900">
+      <div class="p-lg bg-red-500/10 border border-red-500/20 rounded text-center">
+        <h4 class="font-bold text-red-500">Before</h4>
+        <p class="text-sm mt-2 text-muted-foreground">Original implementation with performance bottlenecks.</p>
+      </div>
+      <div class="p-lg bg-green-500/10 border border-green-500/20 rounded text-center">
+        <h4 class="font-bold text-green-500">After</h4>
+        <p class="text-sm mt-2 text-muted-foreground">Optimized implementation using native lazy-loading.</p>
+      </div>
     </RLACompare>
     ```
 
@@ -37,6 +51,8 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this basic component.
 
 ## API
 

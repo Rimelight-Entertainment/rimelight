@@ -1,19 +1,40 @@
 ---
 title: "DashboardSidebarToggle"
-description: "This component is currently under development."
+description: "A toggle button component for dashboard sidebars."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardSidebarToggle from "@rimelight/ui/components/astro/RLADashboardSidebarToggle.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardSidebarToggle component provides a trigger to expand or collapse the dashboard sidebar.
 
 ## Usage
 
-## Examples
+Use the DashboardSidebarToggle component in your dashboard header or navbar to control the visibility of the sidebar.
+
+<ComponentShowcase>
+  <RLADashboardSidebarToggle class="p-2 border border-neutral-300 rounded hover:bg-neutral-100 cursor-pointer w-fit">
+    <span class="i-lucide-menu size-5 text-neutral-600" />
+  </RLADashboardSidebarToggle>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardSidebarToggle from "@rimelight/ui/components/astro/RLADashboardSidebarToggle.astro";
+    ---
+
+    <RLADashboardSidebarToggle class="p-2 border border-neutral-300 rounded hover:bg-neutral-100 cursor-pointer w-fit">
+      <span class="i-lucide-menu size-5 text-neutral-600" />
+    </RLADashboardSidebarToggle>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,6 +1,6 @@
 ---
-title: "InputTime"
-description: "This component is currently under development."
+title: "Input Time"
+description: "A time input component that allows users to select or enter a specific time value."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A time input component that allows users to select or enter a specific time value.
 
 ## Usage
+
+How to use the Input Time component in its simplest form.
 
 <ComponentShowcase>
   <RLAInputTime />
@@ -31,6 +33,25 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Styled Wrapper
+
+You can customize the layout of the wrapper.
+
+<ComponentShowcase>
+  <RLAInputTime class="w-full max-w-xs" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInputTime from "@rimelight/ui/components/astro/RLAInputTime.astro";
+    ---
+
+    <RLAInputTime class="w-full max-w-xs" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

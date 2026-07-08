@@ -5,7 +5,6 @@ description: "A top-of-page announcement bar with optional actions, dismiss supp
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLABanner from "@rimelight/ui/components/astro/RLABanner.astro"
-import RLVBanner from "@rimelight/ui/components/vue/RLVBanner.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
@@ -26,19 +25,6 @@ A full-width announcement bar designed to sit at the top of the page. Supports a
     ---
 
     <RLABanner>We just launched v2.0 — check it out!</RLABanner>
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVBanner from "@rimelight/ui/components/vue/RLVBanner.vue";
-    </script>
-
-    <template>
-      <RLVBanner>We just launched v2.0 — check it out!</RLVBanner>
-    </template>
     ```
 
   </div>
@@ -74,21 +60,6 @@ Pass an `actions` array to render CTA links inside the banner. Each action accep
   </RLABanner>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVBanner
-        :actions="[
-          { label: 'Read More', href: '/blog', variant: 'solid' },
-          { label: 'Dismiss', href: '#', variant: 'ghost' }
-        ]"
-      >
-        🎉 New features are now available.
-      </RLVBanner>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Dismissable
@@ -107,16 +78,6 @@ Set `dismissable` to show a close button. Use `dismissId` to persist the dismiss
   </RLABanner>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVBanner :dismissable="true" dismiss-id="launch-banner-v1">
-        You can close this banner — it will remember your choice.
-      </RLVBanner>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Left & Right Slots
@@ -141,20 +102,6 @@ Use the `left` and `right` named slots to place custom content on either side of
   </RLABanner>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVBanner>
-        <template #left>🚀</template>
-        Announcing our new product launch — explore what's new.
-        <template #right>
-          <a href="/launch">Learn more</a>
-        </template>
-      </RLVBanner>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Fixed vs Sticky
@@ -179,25 +126,6 @@ By default banners are `fixed` to the top of the viewport. Set `fixed={false}` a
     <RLABanner fixed={false} sticky={false}>
       Renders in document flow.
     </RLABanner>
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVBanner>
-        Always visible at the top of the page.
-      </RLVBanner>
-
-      <RLVBanner :fixed="false" :sticky="true">
-        Sticks when you scroll to it.
-      </RLVBanner>
-
-      <RLVBanner :fixed="false" :sticky="false">
-        Renders in document flow.
-      </RLVBanner>
-    </template>
     ```
 
   </div>

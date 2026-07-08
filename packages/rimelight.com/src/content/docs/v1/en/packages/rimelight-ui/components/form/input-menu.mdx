@@ -1,6 +1,6 @@
 ---
-title: "InputMenu"
-description: "This component is currently under development."
+title: "Input Menu"
+description: "A dropdown menu input with built-in search/filter functionality for selecting items."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A dropdown menu input with built-in search/filter functionality for selecting items.
 
 ## Usage
 
+How to use the Input Menu component in its simplest form.
+
 <ComponentShowcase>
-  <RLAInputMenu />
+  <RLAInputMenu items={["Apple", "Banana", "Cherry"]} placeholder="Select fruit..." />
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +26,67 @@ This component is currently under development.
     import RLAInputMenu from "@rimelight/ui/components/astro/RLAInputMenu.astro";
     ---
 
-    <RLAInputMenu />
+    <RLAInputMenu items={["Apple", "Banana", "Cherry"]} placeholder="Select fruit..." />
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### With Label
+
+Add a label to describe the dropdown field.
+
+<ComponentShowcase>
+  <RLAInputMenu
+    label="Choose your favorite fruit"
+    items={["Apple", "Banana", "Cherry"]}
+    placeholder="Select fruit..."
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInputMenu from "@rimelight/ui/components/astro/RLAInputMenu.astro";
+    ---
+
+    <RLAInputMenu
+      label="Choose your favorite fruit"
+      items={["Apple", "Banana", "Cherry"]}
+      placeholder="Select fruit..."
+    />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Disabled
+
+Use the `disabled` prop to prevent interaction.
+
+<ComponentShowcase>
+  <RLAInputMenu
+    disabled
+    items={["Apple", "Banana", "Cherry"]}
+    placeholder="Select fruit..."
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInputMenu from "@rimelight/ui/components/astro/RLAInputMenu.astro";
+    ---
+
+    <RLAInputMenu
+      disabled
+      items={["Apple", "Banana", "Cherry"]}
+      placeholder="Select fruit..."
+    />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

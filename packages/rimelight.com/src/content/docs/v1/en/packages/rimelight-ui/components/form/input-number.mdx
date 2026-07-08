@@ -1,6 +1,6 @@
 ---
-title: "InputNumber"
-description: "This component is currently under development."
+title: "Input Number"
+description: "A number input component that allows users to select, type, or increment/decrement numerical values."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A number input component that allows users to select, type, or increment/decrement numerical values.
 
 ## Usage
 
+How to use the Input Number component in its simplest form.
+
 <ComponentShowcase>
-  <RLAInputNumber />
+  <RLAInputNumber placeholder="0" />
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +26,32 @@ This component is currently under development.
     import RLAInputNumber from "@rimelight/ui/components/astro/RLAInputNumber.astro";
     ---
 
-    <RLAInputNumber />
+    <RLAInputNumber placeholder="0" />
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Styled Wrapper
+
+You can customize the layout of the wrapper.
+
+<ComponentShowcase>
+  <RLAInputNumber class="w-full max-w-xs" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInputNumber from "@rimelight/ui/components/astro/RLAInputNumber.astro";
+    ---
+
+    <RLAInputNumber class="w-full max-w-xs" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

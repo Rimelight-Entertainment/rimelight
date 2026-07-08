@@ -1,6 +1,6 @@
 ---
 title: "PricingPlan"
-description: "This component is currently under development."
+description: "A card container for displaying individual pricing tier options."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,14 +11,22 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `PricingPlan` component wraps a single pricing plan column or card, standardizing padding, borders, and highlight states.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAPricingPlan>
-    <h3>Starter</h3>
-    <p>$19/month</p>
+    <div class="p-lg flex flex-col items-center text-center">
+      <h3 class="text-lg font-bold">Starter</h3>
+      <p class="text-3xl font-black my-md">$19<span class="text-sm font-normal">/month</span></p>
+      <ul class="text-sm text-muted-foreground flex flex-col gap-2 mb-lg">
+        <li>1 User</li>
+        <li>10 Projects</li>
+        <li>Basic Support</li>
+      </ul>
+      <button class="px-md py-sm bg-primary text-white rounded w-full">Choose Plan</button>
+    </div>
   </RLAPricingPlan>
 
   <div slot="code-astro">

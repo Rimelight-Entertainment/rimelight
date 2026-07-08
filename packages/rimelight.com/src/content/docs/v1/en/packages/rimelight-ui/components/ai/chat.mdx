@@ -1,17 +1,44 @@
 ---
 title: "Chat"
-description: "This component is currently under development."
+description: "A shell container for wrapping AI chat applications and workspace layouts."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAChat from "@rimelight/ui/components/astro/RLAChat.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Chat component acts as the main layout container for building AI chat feeds and agent conversational interfaces.
 
 ## Usage
+
+Use the Chat component to wrap your messages stream and input prompt sections.
+
+<ComponentShowcase>
+  <RLAChat>
+    <div class="p-6 text-center border border-dashed rounded-lg text-muted">
+      Chat Container
+    </div>
+  </RLAChat>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChat from "@rimelight/ui/components/astro/RLAChat.astro";
+    ---
+
+    <RLAChat>
+      <div class="p-6 text-center border border-dashed rounded-lg text-muted">
+        Chat Container
+      </div>
+    </RLAChat>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

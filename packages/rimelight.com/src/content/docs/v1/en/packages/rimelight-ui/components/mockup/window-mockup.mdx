@@ -1,6 +1,6 @@
 ---
-title: "WindowMockup"
-description: "This component is currently under development."
+title: "Window Mockup"
+description: "A mockup component to display content inside a simulated OS window frame."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,18 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Window Mockup component allows you to wrap content in a generic operating system window shell, complete with control buttons (close, minimize, maximize) on the title bar.
 
 ## Usage
 
+How to use the Window Mockup component in its simplest form.
+
 <ComponentShowcase>
-  <RLAWindowMockup>
-    <div class="p-4 bg-muted text-muted-foreground text-center">Window Content</div>
+  <RLAWindowMockup class="border border-border rounded-lg overflow-hidden shadow-lg">
+    <div class="p-8 bg-neutral-50 dark:bg-neutral-900 text-center">
+      <h3 class="text-lg font-bold">App Window</h3>
+      <p class="text-sm text-muted-foreground mt-2">This content is hosted inside an OS-style window frame.</p>
+    </div>
   </RLAWindowMockup>
 
   <div slot="code-astro">
@@ -26,8 +31,11 @@ This component is currently under development.
     import RLAWindowMockup from "@rimelight/ui/components/astro/RLAWindowMockup.astro";
     ---
 
-    <RLAWindowMockup>
-      <div class="p-4 bg-muted text-muted-foreground text-center">Window Content</div>
+    <RLAWindowMockup class="border border-border rounded-lg overflow-hidden shadow-lg">
+      <div class="p-8 bg-neutral-50 dark:bg-neutral-900 text-center">
+        <h3 class="text-lg font-bold">App Window</h3>
+        <p class="text-sm text-muted-foreground mt-2">This content is hosted inside an OS-style window frame.</p>
+      </div>
     </RLAWindowMockup>
     ```
 
@@ -35,6 +43,8 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this basic mockup component.
 
 ## API
 

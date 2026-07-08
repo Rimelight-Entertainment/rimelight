@@ -1,24 +1,28 @@
 ---
 title: "PageSection"
-description: "This component is currently under development."
+description: "A content section component supporting background visuals, leading icons, headers, footers, and links."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro"
-import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `PageSection` component helps layout large sections on your page, such as hero blocks, features listings, or newsletter subscription CTAs.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLAPageSection title="Section Title" description="Section Description">
-    Section Content
+  <RLAPageSection
+    title="Section Title"
+    description="This is the main description detailing what this section covers."
+  >
+    <div class="p-md bg-muted rounded text-sm text-center">
+      Section body content goes here.
+    </div>
   </RLAPageSection>
 
   <div slot="code-astro">
@@ -27,30 +31,94 @@ This component is currently under development.
     import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
     ---
 
-    <RLAPageSection title="Section Title" description="Section Description">
-      Section Content
+    <RLAPageSection
+      title="Section Title"
+      description="This is the main description detailing what this section covers."
+    >
+      <div>Section body content goes here.</div>
     </RLAPageSection>
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVSection from "@rimelight/ui/components/vue/RLVSection.vue";
-    </script>
-
-    <template>
-      <RLVSection title="Section Title" description="Section Description">
-        Section Content
-      </RLVSection>
-    </template>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Hero Variant
+
+Set `variant="hero"` to render the title as an `<h1>` heading with larger typography suited for page entries.
+
+<ComponentShowcase>
+  <RLAPageSection
+    variant="hero"
+    headline="NEW RELEASE"
+    title="The Next-Gen UI Component Suite"
+    description="Build accessible, beautiful layouts in minutes using modern integrations."
+    links={[
+      { label: "Get Started", href: "/docs", variant: "solid", color: "primary" },
+      { label: "GitHub", href: "https://github.com", variant: "outline", color: "neutral" }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLAPageSection
+      variant="hero"
+      headline="NEW RELEASE"
+      title="The Next-Gen UI Component Suite"
+      description="Build accessible, beautiful layouts in minutes using modern integrations."
+      links={[
+        { label: "Get Started", href: "/docs", variant: "solid", color: "primary" },
+        { label: "GitHub", href: "https://github.com", variant: "outline", color: "neutral" }
+      ]}
+    />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Horizontal Layout
+
+Set `orientation="horizontal"` to align the section headers beside the default content slot.
+
+<ComponentShowcase>
+  <RLAPageSection
+    orientation="horizontal"
+    title="Key Features"
+    description="Everything you need to deliver production-ready apps."
+  >
+    <div class="grid grid-cols-2 gap-4">
+      <div class="p-4 border rounded">
+        <h4 class="font-bold">Fast</h4>
+        <p class="text-xs text-muted-foreground">Built on Vite and optimized for speed.</p>
+      </div>
+      <div class="p-4 border rounded">
+        <h4 class="font-bold">Accessible</h4>
+        <p class="text-xs text-muted-foreground">Follows strict WAI-ARIA guidelines.</p>
+      </div>
+    </div>
+  </RLAPageSection>
+
+  <div slot="code-astro">
+    ```astro
+    <RLAPageSection
+      orientation="horizontal"
+      title="Key Features"
+      description="Everything you need to deliver production-ready apps."
+    >
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <h4>Fast</h4>
+          <p>Built on Vite and optimized for speed.</p>
+        </div>
+        <div>
+          <h4>Accessible</h4>
+          <p>Follows strict WAI-ARIA guidelines.</p>
+        </div>
+      </div>
+    </RLAPageSection>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

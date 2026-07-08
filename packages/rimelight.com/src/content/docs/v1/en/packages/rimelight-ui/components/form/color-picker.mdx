@@ -1,6 +1,6 @@
 ---
-title: "ColorPicker"
-description: "This component is currently under development."
+title: "Color Picker"
+description: "A color picker component that allows users to select colors from a visual interface."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,16 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A color picker component that allows users to select colors from a visual interface.
 
 ## Usage
 
+How to use the Color Picker component in its simplest form.
+
 <ComponentShowcase>
-  <RLAColorPicker />
+  <RLAColorPicker>
+    Custom Color Picker Content
+  </RLAColorPicker>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +28,38 @@ This component is currently under development.
     import RLAColorPicker from "@rimelight/ui/components/astro/RLAColorPicker.astro";
     ---
 
-    <RLAColorPicker />
+    <RLAColorPicker>
+      Custom Color Picker Content
+    </RLAColorPicker>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Custom Content
+
+You can nest other color components inside the Color Picker.
+
+<ComponentShowcase>
+  <RLAColorPicker class="p-4 border border-border rounded-xl">
+    <div class="text-sm font-semibold">Select Color</div>
+  </RLAColorPicker>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAColorPicker from "@rimelight/ui/components/astro/RLAColorPicker.astro";
+    ---
+
+    <RLAColorPicker class="p-4 border border-border rounded-xl">
+      <div class="text-sm font-semibold">Select Color</div>
+    </RLAColorPicker>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,19 +1,50 @@
 ---
 title: "DashboardSidebarCollapse"
-description: "This component is currently under development."
+description: "A collapsible wrapper container for dashboard sidebar items."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardSidebarCollapse from "@rimelight/ui/components/astro/RLADashboardSidebarCollapse.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardSidebarCollapse component is used to manage expandable/collapsible lists of sub-navigation options in the sidebar.
 
 ## Usage
 
-## Examples
+Use the DashboardSidebarCollapse component inside sidebars to nest layout menus.
+
+<ComponentShowcase>
+  <RLADashboardSidebarCollapse class="border border-neutral-200 rounded p-4 max-w-[240px]">
+    <div class="font-medium text-sm text-neutral-800">Advanced Settings</div>
+    <ul class="mt-2 pl-4 text-xs text-neutral-500 space-y-1">
+      <li>API Keys</li>
+      <li>Webhooks</li>
+      <li>Team Permissions</li>
+    </ul>
+  </RLADashboardSidebarCollapse>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardSidebarCollapse from "@rimelight/ui/components/astro/RLADashboardSidebarCollapse.astro";
+    ---
+
+    <RLADashboardSidebarCollapse class="border border-neutral-200 rounded p-4 max-w-[240px]">
+      <div class="font-medium text-sm text-neutral-800">Advanced Settings</div>
+      <ul class="mt-2 pl-4 text-xs text-neutral-500 space-y-1">
+        <li>API Keys</li>
+        <li>Webhooks</li>
+        <li>Team Permissions</li>
+      </ul>
+    </RLADashboardSidebarCollapse>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

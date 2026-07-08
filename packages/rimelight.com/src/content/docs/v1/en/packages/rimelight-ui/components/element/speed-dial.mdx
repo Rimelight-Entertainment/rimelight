@@ -1,6 +1,6 @@
 ---
 title: "SpeedDial"
-description: "This component is currently under development."
+description: "A floating action button that expands to reveal multiple quick action options."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `SpeedDial` component is a container designed to group multiple floating actions together.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLASpeedDial />
+  <RLASpeedDial>
+    <button class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center">+</button>
+  </RLASpeedDial>
 
   <div slot="code-astro">
     ```astro
@@ -24,7 +26,9 @@ This component is currently under development.
     import RLASpeedDial from "@rimelight/ui/components/astro/RLASpeedDial.astro";
     ---
 
-    <RLASpeedDial />
+    <RLASpeedDial>
+      <button>+</button>
+    </RLASpeedDial>
     ```
 
   </div>

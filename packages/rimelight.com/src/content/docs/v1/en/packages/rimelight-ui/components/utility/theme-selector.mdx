@@ -1,6 +1,6 @@
 ---
-title: "ThemeSelector"
-description: "This component is currently under development."
+title: "Theme Selector"
+description: "A theme toggle button component to switch between light and dark modes."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,16 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Theme Selector component renders an icon button that toggles the application between light and dark visual themes. It stores the user's preference in localStorage and also listens to a keyboard shortcut (`Meta + Alt + T`) to trigger toggling.
 
 ## Usage
 
+How to use the Theme Selector component in its simplest form.
+
 <ComponentShowcase>
-  <RLAThemeSelector />
+  <div class="flex items-center justify-center p-md border border-border rounded-lg bg-neutral-50 dark:bg-neutral-900">
+    <RLAThemeSelector />
+  </div>
 
   <div slot="code-astro">
     ```astro
@@ -31,6 +35,31 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Custom Size
+
+Use the `size` prop to customize the dimensions of the theme toggler.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-md justify-center p-md border border-border rounded-lg bg-neutral-50 dark:bg-neutral-900">
+    <RLAThemeSelector size="sm" />
+    <RLAThemeSelector size="md" />
+    <RLAThemeSelector size="lg" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAThemeSelector from "@rimelight/ui/components/astro/RLAThemeSelector.astro";
+    ---
+
+    <RLAThemeSelector size="sm" />
+    <RLAThemeSelector size="md" />
+    <RLAThemeSelector size="lg" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

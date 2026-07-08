@@ -1,6 +1,6 @@
 ---
 title: "FieldGroup"
-description: "This component is currently under development."
+description: "A wrapper to group related form controls together, supporting prepend and append add-ons."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,13 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `FieldGroup` component allows you to attach icons, labels, or buttons before or after an input field in a unified border and background wrap.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLAFieldGroup>
-    <input type="text" placeholder="Search..." />
+  <RLAFieldGroup prepend="$">
+    <input type="text" class="bg-transparent border-0 outline-none w-full px-2" placeholder="0.00" />
   </RLAFieldGroup>
 
   <div slot="code-astro">
@@ -26,8 +26,8 @@ This component is currently under development.
     import RLAFieldGroup from "@rimelight/ui/components/astro/RLAFieldGroup.astro";
     ---
 
-    <RLAFieldGroup>
-      <input type="text" placeholder="Search..." />
+    <RLAFieldGroup prepend="$">
+      <input type="text" class="bg-transparent border-none outline-none w-full px-2" placeholder="0.00" />
     </RLAFieldGroup>
     ```
 
@@ -35,6 +35,24 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Prepend and Append
+
+You can use both `prepend` and `append` to wrap a control from both sides.
+
+<ComponentShowcase>
+  <RLAFieldGroup prepend="https://" append=".com">
+    <input type="text" class="bg-transparent border-0 outline-none w-full px-2" placeholder="mysite" />
+  </RLAFieldGroup>
+
+  <div slot="code-astro">
+    ```astro
+    <RLAFieldGroup prepend="https://" append=".com">
+      <input type="text" class="bg-transparent border-none outline-none w-full px-2" placeholder="mysite" />
+    </RLAFieldGroup>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

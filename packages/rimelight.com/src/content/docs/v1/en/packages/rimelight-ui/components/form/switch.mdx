@@ -1,6 +1,6 @@
 ---
 title: "Switch"
-description: "This component is currently under development."
+description: "A switch component that allows users to toggle between checked and unchecked states."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A switch component that allows users to toggle between checked and unchecked states.
 
 ## Usage
 
+How to use the Switch component in its simplest form.
+
 <ComponentShowcase>
-  <RLASwitch />
+  <RLASwitch label="Toggle feature" />
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +26,51 @@ This component is currently under development.
     import RLASwitch from "@rimelight/ui/components/astro/RLASwitch.astro";
     ---
 
-    <RLASwitch />
+    <RLASwitch label="Toggle feature" />
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Checked
+
+Use the `checked` prop to pre-select the switch.
+
+<ComponentShowcase>
+  <RLASwitch label="Active by default" checked />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASwitch from "@rimelight/ui/components/astro/RLASwitch.astro";
+    ---
+
+    <RLASwitch label="Active by default" checked />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Disabled
+
+Use the `disabled` prop to prevent interaction.
+
+<ComponentShowcase>
+  <RLASwitch label="Locked setting" disabled />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASwitch from "@rimelight/ui/components/astro/RLASwitch.astro";
+    ---
+
+    <RLASwitch label="Locked setting" disabled />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

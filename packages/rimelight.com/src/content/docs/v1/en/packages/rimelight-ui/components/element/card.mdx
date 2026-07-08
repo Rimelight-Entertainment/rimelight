@@ -1,6 +1,6 @@
 ---
 title: "Card"
-description: "This component is currently under development."
+description: "A flexible container component for displaying grouped content like images, headers, text, and actions."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,14 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Card` component is a flexible and content-agnostic container. It can render images, custom header/footer areas, or act as an interactive link.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLACard title="Card Title" description="Card description goes here." />
+  <RLACard title="Card Title" description="This is the default card layout with a title and description.">
+    Card content goes here.
+  </RLACard>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +26,83 @@ This component is currently under development.
     import RLACard from "@rimelight/ui/components/astro/RLACard.astro";
     ---
 
-    <RLACard title="Card Title" description="Card description goes here." />
+    <RLACard title="Card Title" description="This is the default card layout with a title and description.">
+      Card content goes here.
+    </RLACard>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### With Media
+
+Use the `mediaSrc` prop to display an image at the top of the card.
+
+<ComponentShowcase>
+  <RLACard
+    title="Beautiful Landscape"
+    description="A breathtaking view of the mountains at sunset."
+    mediaSrc="https://picsum.photos/id/1018/400/250"
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLACard
+      title="Beautiful Landscape"
+      description="A breathtaking view of the mountains at sunset."
+      mediaSrc="https://picsum.photos/id/1018/400/250"
+    />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Image Overlay
+
+Set `overlay` to true to overlay title and description text directly on top of the media image.
+
+<ComponentShowcase>
+  <RLACard
+    title="City Lights"
+    description="Exploring the night life of Tokyo."
+    mediaSrc="https://picsum.photos/id/1016/400/250"
+    overlay
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLACard
+      title="City Lights"
+      description="Exploring the night life of Tokyo."
+      mediaSrc="https://picsum.photos/id/1016/400/250"
+      overlay
+    />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Interactive Card (Link)
+
+Provide an `href` prop to render the card container as an anchor (`<a>`) tag.
+
+<ComponentShowcase>
+  <RLACard
+    title="Interactive Card"
+    description="Clicking anywhere on this card will navigate to rimelight.com."
+    href="https://rimelight.com"
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLACard
+      title="Interactive Card"
+      description="Clicking anywhere on this card will navigate to rimelight.com."
+      href="https://rimelight.com"
+    />
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

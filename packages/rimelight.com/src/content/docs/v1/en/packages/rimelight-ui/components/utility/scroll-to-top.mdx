@@ -1,23 +1,27 @@
 ---
-title: "ScrollToTop"
-description: "A scroll-to-top button with a progress indicator that appears when the user scrolls down the page."
+title: "Scroll To Top"
+description: "A scroll-to-top button with an optional visual progress indicator that appears when the user scrolls down."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro"
-import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-A scroll-to-top button with a progress indicator that appears when the user scrolls down the page.
+The Scroll To Top component renders a floating action button that fades in once the user scrolls past a specified vertical threshold. Clicking the button smoothly scrolls the page back to the top.
 
 ## Usage
 
+How to use the Scroll To Top component in its simplest form.
+
 <ComponentShowcase>
-  <RLAScrollToTop />
+  <div class="h-32 flex items-center justify-center text-muted-foreground italic">
+    Scroll down the page to see the button appear in the bottom-right corner.
+  </div>
+  <RLAScrollToTop threshold={50} />
 
   <div slot="code-astro">
     ```astro
@@ -25,26 +29,36 @@ A scroll-to-top button with a progress indicator that appears when the user scro
     import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro";
     ---
 
+    <!-- Floats in the bottom-right corner of the page -->
     <RLAScrollToTop />
-    ```
-
-  </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue";
-    </script>
-
-    <template>
-      <RLVScrollToTop />
-    </template>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Scroll Progress Ring
+
+Use the `showProgress` prop to display a radial gauge around the button representing the current page scroll percentage.
+
+<ComponentShowcase>
+  <div class="h-32 flex items-center justify-center text-muted-foreground italic">
+    Scroll down to see the progress ring fill up.
+  </div>
+  <RLAScrollToTop threshold={50} showProgress={true} color="success" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro";
+    ---
+
+    <RLAScrollToTop showProgress={true} color="success" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

@@ -1,20 +1,21 @@
 ---
 title: "Checkbox"
-description: "This component is currently under development."
+description: "A checkbox component that allows users to select one or more options."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLACheckbox from "@rimelight/ui/components/astro/RLACheckbox.astro"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A checkbox component that allows users to select one or more options.
 
 ## Usage
+
+How to use the Checkbox component in its simplest form.
 
 <ComponentShowcase>
   <RLACheckbox label="Checkbox" />
@@ -29,22 +30,47 @@ This component is currently under development.
     ```
 
   </div>
+</ComponentShowcase>
 
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue";
-    </script>
+## Examples
 
-    <template>
-      <RLVCheckbox label="Checkbox" />
-    </template>
+### Checked
+
+Use the `checked` prop to pre-select the checkbox.
+
+<ComponentShowcase>
+  <RLACheckbox label="Pre-checked Checkbox" checked />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLACheckbox from "@rimelight/ui/components/astro/RLACheckbox.astro";
+    ---
+
+    <RLACheckbox label="Pre-checked Checkbox" checked />
     ```
 
   </div>
 </ComponentShowcase>
 
-## Examples
+### Disabled
+
+Use the `disabled` prop to disable the checkbox.
+
+<ComponentShowcase>
+  <RLACheckbox label="Disabled Checkbox" disabled />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLACheckbox from "@rimelight/ui/components/astro/RLACheckbox.astro";
+    ---
+
+    <RLACheckbox label="Disabled Checkbox" disabled />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

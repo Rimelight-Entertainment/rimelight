@@ -1,6 +1,6 @@
 ---
 title: "Watermark"
-description: "This component is currently under development."
+description: "A component wrapper to overlay security or status watermarks onto content."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,23 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Watermark component is a wrapper used to overlay a watermark text or logo pattern across its contents for copyright, security, or draft labeling purposes.
 
 ## Usage
 
+How to use the Watermark component in its simplest form.
+
 <ComponentShowcase>
-  <RLAWatermark>
-    <div class="h-32 flex items-center justify-center border">Content Area</div>
+  <RLAWatermark class="relative overflow-hidden border border-border rounded-lg bg-neutral-50 dark:bg-neutral-900 p-lg">
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 select-none">
+      <span class="text-4xl font-black rotate-[-30deg] uppercase tracking-widest text-neutral-500">Confidential</span>
+    </div>
+    <div class="relative z-10">
+      <h3 class="text-lg font-bold">Document Title</h3>
+      <p class="text-sm text-muted-foreground mt-2">
+        This is a sensitive document containing draft contents protected by a text watermark overlay.
+      </p>
+    </div>
   </RLAWatermark>
 
   <div slot="code-astro">
@@ -26,8 +36,18 @@ This component is currently under development.
     import RLAWatermark from "@rimelight/ui/components/astro/RLAWatermark.astro";
     ---
 
-    <RLAWatermark>
-      <div class="h-32 flex items-center justify-center border">Content Area</div>
+    <RLAWatermark class="relative overflow-hidden border border-border rounded-lg bg-neutral-50 dark:bg-neutral-900 p-lg">
+      <!-- Watermark Overlay -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 select-none">
+        <span class="text-4xl font-black rotate-[-30deg] uppercase tracking-widest text-neutral-500">Confidential</span>
+      </div>
+      <!-- Protected Content -->
+      <div class="relative z-10">
+        <h3 class="text-lg font-bold">Document Title</h3>
+        <p class="text-sm text-muted-foreground mt-2">
+          This is a sensitive document containing draft contents protected by a text watermark overlay.
+        </p>
+      </div>
     </RLAWatermark>
     ```
 
@@ -35,6 +55,8 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this basic wrapper component.
 
 ## API
 

@@ -1,17 +1,52 @@
 ---
 title: "ChatTool"
-description: "This component is currently under development."
+description: "A wrapper component for displaying tool calls, function executions, and output states."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAChatTool from "@rimelight/ui/components/astro/RLAChatTool.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The ChatTool component wraps rendering blocks for agent tool calls, showing function parameters and return values.
 
 ## Usage
+
+Use the ChatTool component to format AI tool use events.
+
+<ComponentShowcase>
+  <RLAChatTool class="border rounded-md p-3 bg-muted/50 flex flex-col gap-2 max-w-md">
+    <div class="flex items-center gap-2 text-xs font-semibold text-primary">
+      <span class="i-lucide-wrench size-3.5"></span>
+      <span>CALLING TOOL: <code>get_weather</code></span>
+    </div>
+    <div class="text-xs font-mono bg-muted p-2 rounded">
+      {"{"} "location": "San Francisco, CA" {"}"}
+    </div>
+  </RLAChatTool>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChatTool from "@rimelight/ui/components/astro/RLAChatTool.astro";
+    ---
+
+    <RLAChatTool class="border rounded-md p-3 bg-muted/50 flex flex-col gap-2">
+      <div class="flex items-center gap-2 text-xs font-semibold text-primary">
+        <span class="i-lucide-wrench size-3.5"></span>
+        <span>CALLING TOOL: <code>get_weather</code></span>
+      </div>
+      <div class="text-xs font-mono bg-muted p-2 rounded">
+        {"{"} "location": "San Francisco, CA" {"}"}
+      </div>
+    </RLAChatTool>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

@@ -1,6 +1,6 @@
 ---
-title: "InputTags"
-description: "This component is currently under development."
+title: "Input Tags"
+description: "A tags input component that allows users to enter and manage lists of tag/badge values."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A tags input component that allows users to enter and manage lists of tag/badge values.
 
 ## Usage
+
+How to use the Input Tags component in its simplest form.
 
 <ComponentShowcase>
   <RLAInputTags />
@@ -31,6 +33,25 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Styled Wrapper
+
+You can customize the layout of the wrapper.
+
+<ComponentShowcase>
+  <RLAInputTags class="w-full max-w-xs" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInputTags from "@rimelight/ui/components/astro/RLAInputTags.astro";
+    ---
+
+    <RLAInputTags class="w-full max-w-xs" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

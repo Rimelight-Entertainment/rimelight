@@ -1,6 +1,6 @@
 ---
 title: "PricingTable"
-description: "This component is currently under development."
+description: "A container wrapper for organizing multiple pricing plans side-by-side."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,22 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `PricingTable` component aligns multiple `PricingPlan` cards side-by-side in a responsive grid.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAPricingTable>
-    <div>Pricing Table Content</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-md w-full">
+      <div class="border p-lg rounded flex flex-col items-center">
+        <h3>Starter</h3>
+        <p>$19/mo</p>
+      </div>
+      <div class="border p-lg rounded flex flex-col items-center">
+        <h3>Pro</h3>
+        <p>$49/mo</p>
+      </div>
+    </div>
   </RLAPricingTable>
 
   <div slot="code-astro">
@@ -27,7 +36,10 @@ This component is currently under development.
     ---
 
     <RLAPricingTable>
-      <div>Pricing Table Content</div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>Plan 1</div>
+        <div>Plan 2</div>
+      </div>
     </RLAPricingTable>
     ```
 

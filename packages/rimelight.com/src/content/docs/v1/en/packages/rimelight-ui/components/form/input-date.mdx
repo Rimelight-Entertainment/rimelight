@@ -1,6 +1,6 @@
 ---
-title: "InputDate"
-description: "This component is currently under development."
+title: "Input Date"
+description: "A date input component that allows users to select or type a specific date."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A date input component that allows users to select or type a specific date.
 
 ## Usage
+
+How to use the Input Date component in its simplest form.
 
 <ComponentShowcase>
   <RLAInputDate />
@@ -31,6 +33,25 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Styled Wrapper
+
+You can customize the layout of the wrapper.
+
+<ComponentShowcase>
+  <RLAInputDate class="w-full max-w-xs" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAInputDate from "@rimelight/ui/components/astro/RLAInputDate.astro";
+    ---
+
+    <RLAInputDate class="w-full max-w-xs" />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

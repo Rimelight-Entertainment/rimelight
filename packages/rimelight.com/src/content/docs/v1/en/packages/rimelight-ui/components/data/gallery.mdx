@@ -1,19 +1,83 @@
 ---
 title: "Gallery"
-description: "This component is currently under development."
+description: "A layout wrapper component for showcasing images, cards, or other media items in a responsive grid."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAGallery from "@rimelight/ui/components/astro/RLAGallery.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Gallery component is a flexible container designed to group and display media files, project cards, or portfolios in a consistent layout.
 
 ## Usage
 
+Use the Gallery component as a container for your grid items.
+
+<ComponentShowcase>
+  <RLAGallery class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <img class="w-full aspect-square object-cover rounded" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&auto=format&fit=crop&q=80" alt="Nature" />
+    <img class="w-full aspect-square object-cover rounded" src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&auto=format&fit=crop&q=80" alt="Mountain" />
+    <img class="w-full aspect-square object-cover rounded" src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=300&auto=format&fit=crop&q=80" alt="Forest" />
+  </RLAGallery>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAGallery from "@rimelight/ui/components/astro/RLAGallery.astro";
+    ---
+
+    <RLAGallery class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <img class="w-full aspect-square object-cover rounded" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&auto=format&fit=crop&q=80" alt="Nature" />
+      <img class="w-full aspect-square object-cover rounded" src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&auto=format&fit=crop&q=80" alt="Mountain" />
+      <img class="w-full aspect-square object-cover rounded" src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=300&auto=format&fit=crop&q=80" alt="Forest" />
+    </RLAGallery>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## Examples
+
+### Custom Masonry/Ratio layout
+
+Since the Gallery component accepts normal grid and size utility classes, you can style the layout to support different aspect ratios.
+
+<ComponentShowcase>
+  <RLAGallery class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="bg-card p-4 border rounded">
+      <h3 class="font-bold text-lg">Project Alpha</h3>
+      <p class="text-sm text-muted-foreground">A clean design language built on top of modern tools.</p>
+    </div>
+    <div class="bg-card p-4 border rounded">
+      <h3 class="font-bold text-lg">Project Beta</h3>
+      <p class="text-sm text-muted-foreground">Responsive layouts optimized for low bandwidth.</p>
+    </div>
+  </RLAGallery>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAGallery from "@rimelight/ui/components/astro/RLAGallery.astro";
+    ---
+
+    <RLAGallery class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="bg-card p-4 border rounded">
+        <h3 class="font-bold text-lg">Project Alpha</h3>
+        <p class="text-sm text-muted-foreground">A clean design language built on top of modern tools.</p>
+      </div>
+      <div class="bg-card p-4 border rounded">
+        <h3 class="font-bold text-lg">Project Beta</h3>
+        <p class="text-sm text-muted-foreground">Responsive layouts optimized for low bandwidth.</p>
+      </div>
+    </RLAGallery>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

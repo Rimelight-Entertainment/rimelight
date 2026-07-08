@@ -1,17 +1,40 @@
 ---
 title: "ChatPromptSubmit"
-description: "This component is currently under development."
+description: "A trigger button specifically styled and configured to submit chat prompts."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAChatPromptSubmit from "@rimelight/ui/components/astro/RLAChatPromptSubmit.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The ChatPromptSubmit component wraps prompt submission triggers, matching the look and feel of Rimelight UI chat systems.
 
 ## Usage
+
+Use the ChatPromptSubmit component within a chat prompt container.
+
+<ComponentShowcase>
+  <RLAChatPromptSubmit class="bg-primary text-white p-2 rounded-md hover:bg-primary/95 flex items-center justify-center">
+    <span class="i-lucide-arrow-up size-4"></span>
+  </RLAChatPromptSubmit>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChatPromptSubmit from "@rimelight/ui/components/astro/RLAChatPromptSubmit.astro";
+    ---
+
+    <RLAChatPromptSubmit class="bg-primary text-white p-2 rounded-md hover:bg-primary/95">
+      <span class="i-lucide-arrow-up size-4"></span>
+    </RLAChatPromptSubmit>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

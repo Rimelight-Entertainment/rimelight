@@ -1,6 +1,6 @@
 ---
 title: "Dock"
-description: "This component is currently under development."
+description: "A shell-like menu bar component for quick access to tools."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,15 +11,17 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A Dock component that renders a list of items/icons inside a modern, responsive shell-like navigation bar.
 
 ## Usage
+
+How to use the Dock component.
 
 <ComponentShowcase>
   <RLADock>
     <div class="p-2 bg-muted rounded-md flex gap-2">
-      <span class="i-lucide-home size-6" />
-      <span class="i-lucide-settings size-6" />
+      <span class="i-lucide-home size-6 cursor-pointer hover:text-primary" />
+      <span class="i-lucide-settings size-6 cursor-pointer hover:text-primary" />
     </div>
   </RLADock>
 
@@ -31,8 +33,8 @@ This component is currently under development.
 
     <RLADock>
       <div class="p-2 bg-muted rounded-md flex gap-2">
-        <span class="i-lucide-home size-6" />
-        <span class="i-lucide-settings size-6" />
+        <span class="i-lucide-home size-6 cursor-pointer hover:text-primary" />
+        <span class="i-lucide-settings size-6 cursor-pointer hover:text-primary" />
       </div>
     </RLADock>
     ```
@@ -41,6 +43,55 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Expanded Dock Items
+
+Docks are commonly used with more items and tooltips/labels.
+
+<ComponentShowcase>
+  <RLADock>
+    <div class="p-2 bg-muted rounded-full flex gap-3 shadow-lg border border-neutral/20">
+      <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Home">
+        <span class="i-lucide-home size-5" />
+      </button>
+      <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Search">
+        <span class="i-lucide-search size-5" />
+      </button>
+      <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Notifications">
+        <span class="i-lucide-bell size-5" />
+      </button>
+      <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Settings">
+        <span class="i-lucide-settings size-5" />
+      </button>
+    </div>
+  </RLADock>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADock from "@rimelight/ui/components/astro/RLADock.astro";
+    ---
+
+    <RLADock>
+      <div class="p-2 bg-muted rounded-full flex gap-3 shadow-lg border border-neutral/20">
+        <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Home">
+          <span class="i-lucide-home size-5" />
+        </button>
+        <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Search">
+          <span class="i-lucide-search size-5" />
+        </button>
+        <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Notifications">
+          <span class="i-lucide-bell size-5" />
+        </button>
+        <button class="p-2 rounded-full hover:bg-neutral/10" aria-label="Settings">
+          <span class="i-lucide-settings size-5" />
+        </button>
+      </div>
+    </RLADock>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

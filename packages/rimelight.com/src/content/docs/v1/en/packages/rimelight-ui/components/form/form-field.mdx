@@ -1,44 +1,98 @@
 ---
-title: "FormField"
-description: "This component is currently under development."
+title: "Form Field"
+description: "A wrapper component that provides a label, description, required indicator, and error messages for form controls."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A wrapper component that provides a label, description, required indicator, and error messages for form controls.
 
 ## Usage
 
+How to use the Form Field component to wrap an input.
+
 <ComponentShowcase>
-  <RLAFormField label="Username" />
+  <RLAFormField label="Username" id="username">
+    <RLAInput id="username" placeholder="Enter your username" />
+  </RLAFormField>
 
   <div slot="code-astro">
     ```astro
     ---
     import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro";
+    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
     ---
 
-    <RLAFormField label="Username" />
+    <RLAFormField label="Username" id="username">
+      <RLAInput id="username" placeholder="Enter your username" />
+    </RLAFormField>
     ```
 
   </div>
+</ComponentShowcase>
 
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue";
-    </script>
+## Examples
 
-    <template>
-      <RLVFormField label="Username" />
-    </template>
+### Required
+
+Use the `required` prop to show a required asterisk next to the label.
+
+<ComponentShowcase>
+  <RLAFormField label="Email" id="email" required>
+    <RLAInput id="email" type="email" placeholder="you@example.com" />
+  </RLAFormField>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro";
+    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    ---
+
+    <RLAFormField label="Email" id="email" required>
+      <RLAInput id="email" type="email" placeholder="you@example.com" />
+    </RLAFormField>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Error and Description
+
+Use the `description` and `error` props to provide help text and validation errors.
+
+<ComponentShowcase>
+  <RLAFormField
+    label="Password"
+    id="password"
+    description="Must be at least 8 characters long."
+    error="Password is too short"
+  >
+    <RLAInput id="password" type="password" />
+  </RLAFormField>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro";
+    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    ---
+
+    <RLAFormField
+      label="Password"
+      id="password"
+      description="Must be at least 8 characters long."
+      error="Password is too short"
+    >
+      <RLAInput id="password" type="password" />
+    </RLAFormField>
     ```
 
   </div>

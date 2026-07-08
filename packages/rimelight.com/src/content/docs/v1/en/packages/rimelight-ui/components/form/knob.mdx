@@ -1,6 +1,6 @@
 ---
 title: "Knob"
-description: "This component is currently under development."
+description: "A rotary knob input control that allows users to adjust values by rotating or clicking."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+A rotary knob input control that allows users to adjust values by rotating or clicking.
 
 ## Usage
+
+How to use the Knob component in its simplest form.
 
 <ComponentShowcase>
   <RLAKnob />
@@ -31,6 +33,29 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### Custom Content
+
+You can nest other components or values inside the Knob.
+
+<ComponentShowcase>
+  <RLAKnob class="size-16 flex items-center justify-center border border-border rounded-full">
+    <span class="text-xs font-semibold">50%</span>
+  </RLAKnob>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAKnob from "@rimelight/ui/components/astro/RLAKnob.astro";
+    ---
+
+    <RLAKnob class="size-16 flex items-center justify-center border border-border rounded-full">
+      <span class="text-xs font-semibold">50%</span>
+    </RLAKnob>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

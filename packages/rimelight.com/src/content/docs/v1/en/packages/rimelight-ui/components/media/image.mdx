@@ -1,6 +1,6 @@
 ---
 title: "Image"
-description: "This component is currently under development."
+description: "A responsive image component featuring a built-in interactive lightbox with metadata display and download options."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,16 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Image component renders an optimized image that opens a metadata-rich lightbox modal when clicked. It supports native Astro image optimization, responsive source switching, and user-initiated downloads.
 
 ## Usage
 
+How to use the Image component in its simplest form.
+
 <ComponentShowcase>
-  <RLAImage src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809" alt="Colorful gradient" />
+  <div class="max-w-sm">
+    <RLAImage src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809" alt="Colorful gradient" />
+  </div>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +28,48 @@ This component is currently under development.
     import RLAImage from "@rimelight/ui/components/astro/RLAImage.astro";
     ---
 
-    <RLAImage src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809" alt="Colorful gradient" />
+    <div class="max-w-sm">
+      <RLAImage src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809" alt="Colorful gradient" />
+    </div>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+### Hiding Metadata
+
+You can disable specific pieces of metadata in the lightbox using the `meta*` boolean props.
+
+<ComponentShowcase>
+  <div class="max-w-sm">
+    <RLAImage
+      src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809"
+      alt="Colorful gradient"
+      metaSource={false}
+      metaDimensions={false}
+      metaDownload={false}
+    />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAImage from "@rimelight/ui/components/astro/RLAImage.astro";
+    ---
+
+    <RLAImage
+      src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809"
+      alt="Colorful gradient"
+      metaSource={false}
+      metaDimensions={false}
+      metaDownload={false}
+    />
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

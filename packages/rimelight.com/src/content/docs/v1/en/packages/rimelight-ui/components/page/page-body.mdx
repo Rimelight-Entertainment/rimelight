@@ -1,6 +1,6 @@
 ---
 title: "PageBody"
-description: "This component is currently under development."
+description: "A container for the primary/main content area of a page."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,13 +11,15 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `PageBody` component wraps the primary/main content area of your page grid.
 
 ## Usage
 
 <ComponentShowcase>
   <RLAPageBody>
-    Body Content
+    <div class="p-md text-sm border rounded">
+      Body Content
+    </div>
   </RLAPageBody>
 
   <div slot="code-astro">
@@ -27,7 +29,7 @@ This component is currently under development.
     ---
 
     <RLAPageBody>
-      Body Content
+      <div>Body Content</div>
     </RLAPageBody>
     ```
 

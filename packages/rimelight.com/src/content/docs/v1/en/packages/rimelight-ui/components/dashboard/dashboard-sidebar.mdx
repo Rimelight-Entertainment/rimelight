@@ -1,19 +1,50 @@
 ---
 title: "DashboardSidebar"
-description: "This component is currently under development."
+description: "A sidebar container for dashboard navigation."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLADashboardSidebar from "@rimelight/ui/components/astro/RLADashboardSidebar.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The DashboardSidebar component provides a collapsible side panel typically used to hold dashboard navigation links and menus.
 
 ## Usage
 
-## Examples
+Use the DashboardSidebar component as the main navigation panel on the left side of your dashboard page.
+
+<ComponentShowcase>
+  <RLADashboardSidebar class="w-60 h-64 border border-neutral-200 bg-neutral-50 flex flex-col p-4">
+    <div class="font-bold mb-4">Console Navigation</div>
+    <nav class="flex flex-col gap-2">
+      <a href="#" class="text-sm font-semibold text-neutral-800">Dashboard</a>
+      <a href="#" class="text-sm text-neutral-500 hover:text-neutral-800">Analytics</a>
+      <a href="#" class="text-sm text-neutral-500 hover:text-neutral-800">Settings</a>
+    </nav>
+  </RLADashboardSidebar>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLADashboardSidebar from "@rimelight/ui/components/astro/RLADashboardSidebar.astro";
+    ---
+
+    <RLADashboardSidebar class="w-60 h-64 border border-neutral-200 bg-neutral-50 flex flex-col p-4">
+      <div class="font-bold mb-4">Console Navigation</div>
+      <nav class="flex flex-col gap-2">
+        <a href="#" class="text-sm font-semibold text-neutral-800">Dashboard</a>
+        <a href="#" class="text-sm text-neutral-500 hover:text-neutral-800">Analytics</a>
+        <a href="#" class="text-sm text-neutral-500 hover:text-neutral-800">Settings</a>
+      </nav>
+    </RLADashboardSidebar>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

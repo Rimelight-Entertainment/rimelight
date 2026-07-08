@@ -1,19 +1,40 @@
 ---
 title: "3D Hover"
-description: "This component is currently under development."
+description: "A component wrapper that applies a 3D parallax hover effect to its children."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLA3dHover from "@rimelight/ui/components/astro/RLA3dHover.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The 3D Hover component creates an interactive 3D card tilt effect that responds to cursor movement.
 
 ## Usage
 
-## Examples
+Wrap any block element with `RLA3dHover` to apply the tilt hover effect.
+
+<ComponentShowcase>
+  <RLA3dHover class="w-64 h-40 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-lg select-none cursor-pointer">
+    Tilt Me!
+  </RLA3dHover>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLA3dHover from "@rimelight/ui/components/astro/RLA3dHover.astro";
+    ---
+
+    <RLA3dHover class="w-64 h-40 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-lg select-none cursor-pointer">
+      Tilt Me!
+    </RLA3dHover>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

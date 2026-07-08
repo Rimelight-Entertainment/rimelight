@@ -1,17 +1,50 @@
 ---
 title: "ChatMessage"
-description: "This component is currently under development."
+description: "A message bubble wrapper for user inputs and AI assistant outputs."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAChatMessage from "@rimelight/ui/components/astro/RLAChatMessage.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The ChatMessage component wraps a single response or query bubble in a conversation thread.
 
 ## Usage
+
+Use the ChatMessage component to format conversation turns.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-4 w-full">
+    <RLAChatMessage class="bg-muted p-4 rounded-lg self-end max-w-[80%]">
+      Hello! How can I build a custom layout with Rimelight UI?
+    </RLAChatMessage>
+    <RLAChatMessage class="bg-primary/10 p-4 rounded-lg self-start max-w-[80%]">
+      You can use our layout components like App, Header, Main, and Footer to create semantic page wraps.
+    </RLAChatMessage>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAChatMessage from "@rimelight/ui/components/astro/RLAChatMessage.astro";
+    ---
+
+    <div class="flex flex-col gap-4">
+      <RLAChatMessage class="bg-muted p-4 rounded-lg self-end">
+        Hello! How can I build a custom layout with Rimelight UI?
+      </RLAChatMessage>
+      <RLAChatMessage class="bg-primary/10 p-4 rounded-lg self-start">
+        You can use our layout components like App, Header, Main, and Footer to create semantic page wraps.
+      </RLAChatMessage>
+    </div>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## Examples
 

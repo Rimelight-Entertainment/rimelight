@@ -1,6 +1,6 @@
 ---
-title: "Hover Card"
-description: "A card that appears when hovering over an element."
+title: "HoverCard"
+description: "A card that appears when hovering over a trigger element."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,14 +11,17 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-A card that appears when hovering over an element.
+A Hover Card component that displays additional content when a user hovers over a trigger element.
 
 ## Usage
 
+How to use the Hover Card component in its simplest form.
+
 <ComponentShowcase>
   <RLAHoverCard triggerLabel="Hover me">
-    <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
-      Hover Card Content
+    <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md max-w-xs">
+      <p class="font-semibold text-sm">Rimelight UI</p>
+      <p class="text-xs text-muted-foreground mt-1">A modern UI library for Astro and Vue projects.</p>
     </div>
   </RLAHoverCard>
 
@@ -29,8 +32,9 @@ A card that appears when hovering over an element.
     ---
 
     <RLAHoverCard triggerLabel="Hover me">
-      <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md">
-        Hover Card Content
+      <div class="p-4 bg-popover text-popover-foreground rounded border shadow-md max-w-xs">
+        <p class="font-semibold text-sm">Rimelight UI</p>
+        <p class="text-xs text-muted-foreground mt-1">A modern UI library for Astro and Vue projects.</p>
       </div>
     </RLAHoverCard>
     ```
@@ -39,6 +43,89 @@ A card that appears when hovering over an element.
 </ComponentShowcase>
 
 ## Examples
+
+### Placement
+
+Use the `placement` prop to adjust where the card appears relative to the trigger. Supported positions include `"top"`, `"bottom"`, `"left"`, and `"right"`.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4">
+    <RLAHoverCard triggerLabel="Top Placement" placement="top">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Content on top
+      </div>
+    </RLAHoverCard>
+
+    <RLAHoverCard triggerLabel="Right Placement" placement="right">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Content on right
+      </div>
+    </RLAHoverCard>
+
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro";
+    ---
+
+    <RLAHoverCard triggerLabel="Top Placement" placement="top">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Content on top
+      </div>
+    </RLAHoverCard>
+
+    <RLAHoverCard triggerLabel="Right Placement" placement="right">
+      <div class="p-3 bg-popover rounded border shadow-sm text-sm">
+        Content on right
+      </div>
+    </RLAHoverCard>
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Custom Trigger Slot
+
+You can override the trigger element entirely using the `trigger` slot.
+
+<ComponentShowcase>
+  <RLAHoverCard>
+    <a href="#" slot="trigger" class="text-primary hover:underline font-medium">
+      @rimelight
+    </a>
+    <div class="p-4 bg-popover rounded border shadow-md text-sm max-w-xs flex gap-3">
+      <div class="size-10 bg-neutral/20 rounded-full shrink-0 flex items-center justify-center font-bold">R</div>
+      <div>
+        <p class="font-semibold">Rimelight Entertainment</p>
+        <p class="text-xs text-muted-foreground">Building the future of interactive web experiences.</p>
+      </div>
+    </div>
+  </RLAHoverCard>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro";
+    ---
+
+    <RLAHoverCard>
+      <a href="#" slot="trigger" class="text-primary hover:underline font-medium">
+        @rimelight
+      </a>
+      <div class="p-4 bg-popover rounded border shadow-md text-sm max-w-xs flex gap-3">
+        <div class="size-10 bg-neutral/20 rounded-full shrink-0 flex items-center justify-center font-bold">R</div>
+        <div>
+          <p class="font-semibold">Rimelight Entertainment</p>
+          <p class="text-xs text-muted-foreground">Building the future of interactive web experiences.</p>
+        </div>
+      </div>
+    </RLAHoverCard>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

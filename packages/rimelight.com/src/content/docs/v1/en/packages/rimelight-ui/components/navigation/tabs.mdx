@@ -1,6 +1,6 @@
 ---
 title: "Tabs"
-description: "This component is currently under development."
+description: "A tabbed navigation component to switch between multiple panels of content."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,14 +11,23 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The `Tabs` component organizes content into logical panels, allowing users to toggle between different views without page refreshes.
 
 ## Usage
 
 <ComponentShowcase>
-  <RLATabs items={[{ label: "Tab 1", value: "tab1" }, { label: "Tab 2", value: "tab2" }]}>
-    <div role="tabpanel" data-value="tab1">Content 1</div>
-    <div role="tabpanel" data-value="tab2">Content 2</div>
+  <RLATabs
+    items={[
+      { label: "Account", value: "account" },
+      { label: "Password", value: "password" }
+    ]}
+  >
+    <div role="tabpanel" data-value="account" class="p-md border border-t-0 rounded-b">
+      Manage your account details and profile information here.
+    </div>
+    <div role="tabpanel" data-value="password" class="p-md border border-t-0 rounded-b">
+      Change your password and manage security keys here.
+    </div>
   </RLATabs>
 
   <div slot="code-astro">
@@ -27,14 +36,18 @@ This component is currently under development.
     import RLATabs from "@rimelight/ui/components/astro/RLATabs.astro";
 
     const items = [
-      { label: "Tab 1", value: "tab1" },
-      { label: "Tab 2", value: "tab2" }
+      { label: "Account", value: "account" },
+      { label: "Password", value: "password" }
     ];
     ---
 
     <RLATabs items={items}>
-      <div role="tabpanel" data-value="tab1">Content 1</div>
-      <div role="tabpanel" data-value="tab2">Content 2</div>
+      <div role="tabpanel" data-value="account">
+        Manage your account details and profile information here.
+      </div>
+      <div role="tabpanel" data-value="password">
+        Change your password and manage security keys here.
+      </div>
     </RLATabs>
     ```
 
@@ -42,6 +55,40 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### With Icons and Disabled States
+
+You can add icons to tabs or disable individual tab buttons.
+
+<ComponentShowcase>
+  <RLATabs
+    items={[
+      { label: "Profile", value: "profile", icon: "i-lucide-user" },
+      { label: "Settings", value: "settings", icon: "i-lucide-settings" },
+      { label: "Billing", value: "billing", icon: "i-lucide-credit-card", disabled: true }
+    ]}
+  >
+    <div role="tabpanel" data-value="profile" class="p-md border border-t-0 rounded-b">Profile settings</div>
+    <div role="tabpanel" data-value="settings" class="p-md border border-t-0 rounded-b">Application settings</div>
+    <div role="tabpanel" data-value="billing" class="p-md border border-t-0 rounded-b">Billing details</div>
+  </RLATabs>
+
+  <div slot="code-astro">
+    ```astro
+    <RLATabs
+      items={[
+        { label: "Profile", value: "profile", icon: "i-lucide-user" },
+        { label: "Settings", value: "settings", icon: "i-lucide-settings" },
+        { label: "Billing", value: "billing", icon: "i-lucide-credit-card", disabled: true }
+      ]}
+    >
+      <div role="tabpanel" data-value="profile">Profile settings</div>
+      <div role="tabpanel" data-value="settings">Application settings</div>
+      <div role="tabpanel" data-value="billing">Billing details</div>
+    </RLATabs>
+    ```
+  </div>
+</ComponentShowcase>
 
 ## API
 

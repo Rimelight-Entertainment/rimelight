@@ -38,24 +38,6 @@ import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
     ```
 
   </div>
-
-  <div slot="code-vue">
-    ```vue
-    <script setup>
-    import RLVAvatarGroup from "@rimelight/ui/components/vue/RLVAvatarGroup.vue";
-    import RLVAvatar from "@rimelight/ui/components/vue/RLVAvatar.vue";
-    </script>
-
-    <template>
-      <RLVAvatarGroup>
-        <RLVAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
-        <RLVAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
-        <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
-      </RLVAvatarGroup>
-    </template>
-    ```
-
-  </div>
 </ComponentShowcase>
 
 ## Examples
@@ -82,19 +64,6 @@ Use `initials` and `color` on each `Avatar` when no profile image is available.
   </RLAAvatarGroup>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVAvatarGroup>
-        <RLVAvatar initials="JD" color="primary" />
-        <RLVAvatar initials="AB" color="secondary" />
-        <RLVAvatar initials="CD" color="success" />
-        <RLVAvatar initials="EF" color="warning" />
-      </RLVAvatarGroup>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ### Larger Group with Overflow
@@ -123,21 +92,6 @@ Stack as many avatars as needed. Use an initials avatar to indicate how many mem
   </RLAAvatarGroup>
   ```
 </div>
-
-  <div slot="code-vue">
-    ```vue
-    <template>
-      <RLVAvatarGroup>
-        <RLVAvatar src="https://i.pravatar.cc/150?img=1" alt="User 1" />
-        <RLVAvatar src="https://i.pravatar.cc/150?img=2" alt="User 2" />
-        <RLVAvatar src="https://i.pravatar.cc/150?img=3" alt="User 3" />
-        <RLVAvatar src="https://i.pravatar.cc/150?img=4" alt="User 4" />
-        <RLVAvatar src="https://i.pravatar.cc/150?img=5" alt="User 5" />
-        <RLVAvatar initials="+8" color="neutral" />
-      </RLVAvatarGroup>
-    </template>
-    ```
-  </div>
 </ComponentShowcase>
 
 ## API

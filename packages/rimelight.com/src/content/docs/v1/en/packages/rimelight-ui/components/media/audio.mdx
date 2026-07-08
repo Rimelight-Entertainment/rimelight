@@ -1,6 +1,6 @@
 ---
 title: "Audio"
-description: "This component is currently under development."
+description: "A styled wrapper component for audio playback."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,12 +11,16 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+An Audio component wrapper used to style and structure audio player elements.
 
 ## Usage
 
+How to use the Audio component wrapper to wrap a native audio element.
+
 <ComponentShowcase>
-  <RLAAudio src="audio.mp3" controls />
+  <RLAAudio class="w-full max-w-md">
+    <audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" controls class="w-full" />
+  </RLAAudio>
 
   <div slot="code-astro">
     ```astro
@@ -24,13 +28,17 @@ This component is currently under development.
     import RLAAudio from "@rimelight/ui/components/astro/RLAAudio.astro";
     ---
 
-    <RLAAudio src="audio.mp3" controls />
+    <RLAAudio class="w-full max-w-md">
+      <audio src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" controls class="w-full" />
+    </RLAAudio>
     ```
 
   </div>
 </ComponentShowcase>
 
 ## Examples
+
+No additional examples are required for this basic wrapper component.
 
 ## API
 

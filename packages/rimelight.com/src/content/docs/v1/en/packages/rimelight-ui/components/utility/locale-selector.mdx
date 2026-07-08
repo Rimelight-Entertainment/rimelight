@@ -1,6 +1,6 @@
 ---
-title: "LocaleSelector"
-description: "This component is currently under development."
+title: "Locale Selector"
+description: "A dropdown selector component for switching application locales and languages."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,9 +11,11 @@ import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Locale Selector component renders a select dropdown populated with localized language choices. When selected, it automatically updates the page URL to navigate to the translated version of the current route.
 
 ## Usage
+
+How to use the Locale Selector component in its simplest form.
 
 <ComponentShowcase>
   <RLALocaleSelector locales={[{ code: "en", label: "English" }, { code: "fr", label: "Français" }]} />
@@ -36,6 +38,34 @@ This component is currently under development.
 </ComponentShowcase>
 
 ## Examples
+
+### With Custom Label Slot
+
+You can add a custom label next to the dropdown using the `label` slot.
+
+<ComponentShowcase>
+  <RLALocaleSelector locales={[{ code: "en", label: "English" }, { code: "fr", label: "Français" }]}>
+    <span slot="label" class="text-xs uppercase tracking-wide text-muted-foreground mr-2">Language:</span>
+  </RLALocaleSelector>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+
+    const locales = [
+      { code: "en", label: "English" },
+      { code: "fr", label: "Français" }
+    ];
+    ---
+
+    <RLALocaleSelector locales={locales}>
+      <span slot="label" class="text-xs uppercase tracking-wide text-muted-foreground mr-2">Language:</span>
+    </RLALocaleSelector>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 

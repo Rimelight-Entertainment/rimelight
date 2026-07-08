@@ -1,19 +1,98 @@
 ---
 title: "Tree"
-description: "This component is currently under development."
+description: "A component for showing hierarchical data structures, like folder trees or navigation hierarchies."
 ---
 
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLATree from "@rimelight/ui/components/astro/RLATree.astro"
 import ApiProps from "@rimelight/ui/docs/components/ApiProps.astro"
 import ApiSlots from "@rimelight/ui/docs/components/ApiSlots.astro"
 import ApiEmits from "@rimelight/ui/docs/components/ApiEmits.astro"
 import ApiTheme from "@rimelight/ui/docs/components/ApiTheme.astro"
 import ApiChangelog from "@rimelight/ui/docs/components/ApiChangelog.astro"
 
-This component is currently under development.
+The Tree component is a container wrapper for rendering hierarchical list structures such as sitemaps, nested folders, or organizational charts.
 
 ## Usage
 
-## Examples
+Nesting HTML elements, detail tags, or list items inside the default slot of the Tree component.
+
+<ComponentShowcase>
+  <RLATree class="space-y-2 select-none max-w-sm border rounded p-4 bg-card text-sm">
+    <details open class="group">
+      <summary class="flex items-center gap-2 cursor-pointer font-medium hover:text-primary-400">
+        <span class="i-lucide-folder size-4 text-muted-foreground group-open:hidden" />
+        <span class="i-lucide-folder-open size-4 text-primary-500 hidden group-open:block" />
+        src
+      </summary>
+      <div class="pl-6 border-l ml-2 mt-2 space-y-2">
+        <details class="group">
+          <summary class="flex items-center gap-2 cursor-pointer font-medium hover:text-primary-400">
+            <span class="i-lucide-folder size-4 text-muted-foreground group-open:hidden" />
+            <span class="i-lucide-folder-open size-4 text-primary-500 hidden group-open:block" />
+            components
+          </summary>
+          <div class="pl-6 border-l ml-2 mt-2 space-y-2 text-muted-foreground">
+            <div class="flex items-center gap-2">
+              <span class="i-lucide-file size-4 text-muted-foreground" />
+              Button.astro
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="i-lucide-file size-4 text-muted-foreground" />
+              Card.astro
+            </div>
+          </div>
+        </details>
+        <div class="flex items-center gap-2 text-muted-foreground">
+          <span class="i-lucide-file size-4 text-muted-foreground" />
+          index.ts
+        </div>
+      </div>
+    </details>
+  </RLATree>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLATree from "@rimelight/ui/components/astro/RLATree.astro";
+    ---
+
+    <RLATree class="space-y-2 select-none max-w-sm border rounded p-4 bg-card text-sm">
+      <details open class="group">
+        <summary class="flex items-center gap-2 cursor-pointer font-medium hover:text-primary-400">
+          <span class="i-lucide-folder size-4 text-muted-foreground group-open:hidden" />
+          <span class="i-lucide-folder-open size-4 text-primary-500 hidden group-open:block" />
+          src
+        </summary>
+        <div class="pl-6 border-l ml-2 mt-2 space-y-2">
+          <details class="group">
+            <summary class="flex items-center gap-2 cursor-pointer font-medium hover:text-primary-400">
+              <span class="i-lucide-folder size-4 text-muted-foreground group-open:hidden" />
+              <span class="i-lucide-folder-open size-4 text-primary-500 hidden group-open:block" />
+              components
+            </summary>
+            <div class="pl-6 border-l ml-2 mt-2 space-y-2 text-muted-foreground">
+              <div class="flex items-center gap-2">
+                <span class="i-lucide-file size-4 text-muted-foreground" />
+                Button.astro
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="i-lucide-file size-4 text-muted-foreground" />
+                Card.astro
+              </div>
+            </div>
+          </details>
+          <div class="flex items-center gap-2 text-muted-foreground">
+            <span class="i-lucide-file size-4 text-muted-foreground" />
+            index.ts
+          </div>
+        </div>
+      </details>
+    </RLATree>
+    ```
+
+  </div>
+</ComponentShowcase>
 
 ## API
 
