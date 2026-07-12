@@ -7,7 +7,8 @@ import { sri } from "@rimelight/security"
 import { defineSecurity } from "@rimelight/security/config"
 import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
-import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
+import { defineConfig, fontProviders, svgoOptimizer } from "astro/config"
+import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 
 export default defineConfig({
   experimental: {
@@ -44,7 +45,7 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare(),
   cache: {
-    provider: memoryCache()
+    provider: cacheCloudflare()
   },
   routeRules: {
     "/api/[...path]": {

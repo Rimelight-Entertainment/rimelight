@@ -7,7 +7,8 @@ import { sri } from "@rimelight/security"
 import { defineSecurity } from "@rimelight/security/config"
 import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
-import { defineConfig, fontProviders, memoryCache, svgoOptimizer } from "astro/config"
+import { defineConfig, fontProviders, svgoOptimizer } from "astro/config"
+import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import { fileURLToPath } from "node:url"
 import { extractAllMeta } from "./src/docs/extractAll"
 
@@ -72,6 +73,9 @@ export default defineConfig({
   vite: {
     define: {
       "import.meta.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
+    },
+    build: {
+      cssMinify: "esbuild"
     }
   },
 
@@ -83,7 +87,7 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare(),
   cache: {
-    provider: memoryCache()
+    provider: cacheCloudflare()
   },
   routeRules: {
     "/api/[...path]": {

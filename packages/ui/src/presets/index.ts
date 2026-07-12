@@ -40,11 +40,11 @@ function resolveColorModes(
 
   const modeLight =
     typeof raw.light === "object" && raw.light !== null
-      ? ({ ...raw.light } as ColorShades)
+      ? ({ ...raw.light })
       : ({} as ColorShades)
   const modeDark =
     typeof raw.dark === "object" && raw.dark !== null
-      ? ({ ...raw.dark } as ColorShades)
+      ? ({ ...raw.dark })
       : ({} as ColorShades)
 
   const modeKeys = new Set(["light", "dark"])

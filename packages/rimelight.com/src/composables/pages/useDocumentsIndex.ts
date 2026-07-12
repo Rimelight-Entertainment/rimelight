@@ -47,7 +47,7 @@ export function useDocumentsIndex(
 
   const drafts = usePaginatedPages({
     key: "documents-drafts",
-    type: "Document" as PageType,
+    type: "Document",
     status: "draft",
     initialLimit: draftsInitialLimit,
     nextLimit,
@@ -56,7 +56,7 @@ export function useDocumentsIndex(
 
   const documents = usePaginatedPages({
     key: "documents-published",
-    type: "Document" as PageType,
+    type: "Document",
     status: "published",
     initialLimit: documentsInitialLimit,
     nextLimit,

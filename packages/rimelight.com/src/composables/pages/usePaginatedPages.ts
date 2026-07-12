@@ -24,7 +24,7 @@ export interface UsePaginatedPagesReturn {
 
 export function usePaginatedPages(options: UsePaginatedPagesOptions) {
   const {
-    type = "Default" as PageType,
+    type = "Default",
     status,
     initialLimit = 10,
     nextLimit = 9,

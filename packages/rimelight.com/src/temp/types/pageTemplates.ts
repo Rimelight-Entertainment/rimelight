@@ -41,7 +41,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
       averageLifespan: `Years`,
       averageWeight: 0,
       diet: ``
-    } as SpeciesProperties,
+    },
     propertyPanelSchema: {
       Naming: {
         name: {
@@ -139,7 +139,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
       pets: [],
       mounts: [],
       favouriteFood: ``
-    } as CharacterProperties,
+    },
     propertyPanelSchema: {
       Naming: {
         name: {
@@ -307,7 +307,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
     articleType: ArticleType.OBJECT,
     defaultTitle: `New Object`,
     defaultTags: [],
-    defaultProperties: {} as ObjectProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -324,7 +324,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
     articleType: ArticleType.TALE,
     defaultTitle: `New Tale`,
     defaultTags: [],
-    defaultProperties: {} as TaleProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -341,7 +341,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
     articleType: ArticleType.ITEM,
     defaultTitle: `New Item`,
     defaultTags: [],
-    defaultProperties: {} as ItemProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -358,7 +358,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
     articleType: ArticleType.SKILL,
     defaultTitle: `New Skill`,
     defaultTags: [],
-    defaultProperties: {} as SkillProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -375,7 +375,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
     articleType: ArticleType.HERO,
     defaultTitle: `New Hero`,
     defaultTags: [],
-    defaultProperties: {} as HeroProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -397,7 +397,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
       alignment: ``,
       type: ``,
       flavourText: ``
-    } as CardProperties,
+    },
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -414,7 +414,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
     articleType: ArticleType.SERIES,
     defaultTitle: `New Series`,
     defaultTags: [],
-    defaultProperties: {} as SeriesProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -431,7 +431,7 @@ export const articleTemplates: Record<ArticleType, ArticleTemplate> = {
     articleType: ArticleType.EPISODE,
     defaultTitle: `New Episode`,
     defaultTags: [],
-    defaultProperties: {} as EpisodeProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {

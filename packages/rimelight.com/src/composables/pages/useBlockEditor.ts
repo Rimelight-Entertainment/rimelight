@@ -84,7 +84,7 @@ function createDefaultBlock(type: Block["type"]): Block {
         id,
         type: "ParagraphBlock",
         props: { text: [] }
-      } as Block
+      }
   }
 }
 

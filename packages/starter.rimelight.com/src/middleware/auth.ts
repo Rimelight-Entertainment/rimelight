@@ -50,7 +50,7 @@ export const auth = async (c: any, next: any) => {
     if (!state.locals.session) {
       return c.redirect("/auth/sign-in")
     }
-    const user = state.locals.user as (import("better-auth").User & { role?: string }) | null
+    const user = state.locals.user
     if (user?.role !== "admin") {
       return c.text("Forbidden", 403)
     }

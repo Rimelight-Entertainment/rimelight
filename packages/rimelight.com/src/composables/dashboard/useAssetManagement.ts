@@ -62,7 +62,7 @@ export function useAssetManagement() {
         console.error("Failed to load assets", error)
         return
       }
-      assets.value = (data as Asset[]) || []
+      assets.value = (data) || []
       status.value = "success"
     } catch (err) {
       status.value = "error"

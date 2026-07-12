@@ -195,7 +195,7 @@ export function defineShortcuts(
         shiftKey,
         altKey,
         usingInput
-      } as Shortcut
+      }
     })
     .filter((item): item is Shortcut => item != null)
 

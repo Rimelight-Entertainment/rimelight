@@ -40,7 +40,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Policy",
     defaultCategories: [EntryCategory.POLICY],
     defaultTags: [],
-    defaultProperties: {} as PolicyProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: []
   },
@@ -54,7 +54,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
       averageLifespan: "Years",
       averageWeight: 0,
       diet: ""
-    } as SpeciesProperties,
+    },
     propertyPanelSchema: {
       Naming: {
         name: {
@@ -153,7 +153,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
       pets: [],
       mounts: [],
       favouriteFood: ""
-    } as CharacterProperties,
+    },
     propertyPanelSchema: {
       Naming: {
         name: {
@@ -322,7 +322,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Object",
     defaultCategories: [EntryCategory.OBJECT],
     defaultTags: [],
-    defaultProperties: {} as ObjectProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -340,7 +340,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Tale",
     defaultCategories: [EntryCategory.TALE],
     defaultTags: [],
-    defaultProperties: {} as TaleProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -358,7 +358,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Item",
     defaultCategories: [EntryCategory.ITEM],
     defaultTags: [],
-    defaultProperties: {} as ItemProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -376,7 +376,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Skill",
     defaultCategories: [EntryCategory.SKILL],
     defaultTags: [],
-    defaultProperties: {} as SkillProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -394,7 +394,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Hero",
     defaultCategories: [EntryCategory.HERO],
     defaultTags: [],
-    defaultProperties: {} as HeroProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -417,7 +417,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
       alignment: "",
       type: "",
       flavourText: ""
-    } as CardProperties,
+    },
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -435,7 +435,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Series",
     defaultCategories: [EntryCategory.SERIES],
     defaultTags: [],
-    defaultProperties: {} as SeriesProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {
@@ -453,7 +453,7 @@ export const entryTemplates: Record<EntryType, EntryTemplate> = {
     defaultTitle: "New Episode",
     defaultCategories: [EntryCategory.EPISODE],
     defaultTags: [],
-    defaultProperties: {} as EpisodeProperties,
+    defaultProperties: {},
     propertyPanelSchema: {},
     defaultBlocks: [
       {

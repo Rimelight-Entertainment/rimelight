@@ -25,7 +25,7 @@ export const createCalloutTheme = (colors: readonly string[] = defaultColors) =>
       color: {
         ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
         neutral: { root: "" }
-      } as Record<string, { root: string }>,
+      },
       theme: {
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }

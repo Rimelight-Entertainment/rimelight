@@ -4,6 +4,9 @@
   "main": "./src/worker.ts",
   "compatibility_date": "2026-05-01",
   "compatibility_flags": ["global_fetch_strictly_public", "nodejs_compat"],
+  "cache": {
+    "enabled": true
+  },
   "observability": {
     "enabled": true,
     "logs": {

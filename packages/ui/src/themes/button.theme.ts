@@ -28,7 +28,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
       color: {
         ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
         neutral: { root: "" }
-      } as Record<string, { root: string | string[] }>,
+      },
       size: {
         xs: {
           root: "text-xs gap-1 [&_svg]:size-4",

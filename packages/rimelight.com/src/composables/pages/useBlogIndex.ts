@@ -47,7 +47,7 @@ export function useBlogIndex(
 
   const drafts = usePaginatedPages({
     key: "blog-drafts",
-    type: "BlogPost" as PageType,
+    type: "BlogPost",
     status: "draft",
     initialLimit: draftsInitialLimit,
     nextLimit,
@@ -56,7 +56,7 @@ export function useBlogIndex(
 
   const posts = usePaginatedPages({
     key: "blog-posts",
-    type: "BlogPost" as PageType,
+    type: "BlogPost",
     status: "published",
     initialLimit: postsInitialLimit,
     nextLimit,
