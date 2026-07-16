@@ -9,9 +9,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@rimelight/ui/docs/components/*": ["./src/docs/components/*"]
+      "@/*": ["./src/*"]
     },
+    "allowArbitraryExtensions": true,
     "jsx": "preserve"
   }
 }

@@ -25,9 +25,9 @@ minimumReleaseAgeExclude:
   - vitest
   - "@vitest/*"
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@latest
+  vite: npm:@voidzero-dev/vite-plus-core@0.2.4
   vitest: 4.1.9
-  vite-plus: latest
+  vite-plus: 0.2.4
 overrides:
   kysely: "0.28.17"
   ws: "^8.21.0"
@@ -37,6 +37,7 @@ overrides:
   undici: "7.28.0"
   vite: "catalog:"
   vitest: "catalog:"
+  vite-plus: "catalog:"
 peerDependencyRules:
   allowAny:
     - vite

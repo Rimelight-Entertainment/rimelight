@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@iconify-json/lucide": "1.2.117",
-    "@unocss/astro": "^66.7.5",
+    "@unocss/astro": "66.7.5",
     "css-variants": "2.3.5",
     "nanostores": "1.4.0"
   },
@@ -98,5 +98,5 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@11.8.0"
+  "packageManager": "pnpm@11.9.0"
 }

@@ -20,13 +20,6 @@ function localDocsIntegration() {
         const docsMeta = await extractAllMeta()
         updateConfig({
           vite: {
-            resolve: {
-              alias: {
-                "@rimelight/ui/docs/components": fileURLToPath(
-                  new URL("./src/docs/components", import.meta.url)
-                )
-              }
-            },
             plugins: [
               {
                 name: "vite-plugin-rimelight-ui-docs-meta",
