@@ -56,6 +56,7 @@ export default defineConfig({
   experimental: {
     contentIntellisense: true,
     clientPrerender: true,
+    collectionStorage: "chunked",
     svgOptimizer: svgoOptimizer({
       plugins: [
         "preset-default",

@@ -1,16 +1,17 @@
 import { env } from "cloudflare:workers"
+import type { Context } from "hono"
 
 // Routes that require rate limiting
 const SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"]
 
 // Middleware to enforce rate limits on sensitive endpoints
-export const ratelimit = async (c: any, next: any) => {
+export const ratelimit = async (c: Context<{ Bindings: ENV }>, next: any) => {
   const isSensitive = SENSITIVE_ROUTES.some((path) => c.req.path.includes(path))
   if (!isSensitive) {
     return next()
   }
 
-  const bindings = (c.env ?? env) as Record<string, any>
+  const bindings = c.env ?? env
   const limiter = bindings?.MY_RATE_LIMITER
 
   if (!limiter) {
@@ -38,5 +39,5 @@ export const ratelimit = async (c: any, next: any) => {
     console.error("[Rate Limit Error]", error)
   }
 
-  await next()
+  return await next()
 }

@@ -39,13 +39,9 @@ function resolveColorModes(
   const raw = entry as Record<string, unknown>
 
   const modeLight =
-    typeof raw.light === "object" && raw.light !== null
-      ? ({ ...raw.light })
-      : ({} as ColorShades)
+    typeof raw.light === "object" && raw.light !== null ? { ...raw.light } : ({} as ColorShades)
   const modeDark =
-    typeof raw.dark === "object" && raw.dark !== null
-      ? ({ ...raw.dark })
-      : ({} as ColorShades)
+    typeof raw.dark === "object" && raw.dark !== null ? { ...raw.dark } : ({} as ColorShades)
 
   const modeKeys = new Set(["light", "dark"])
   const flatShades: ColorShades = {}

@@ -91,6 +91,60 @@ export interface SecurityConfigOptions {
  *   }
  *   ```
  */
+type DirectiveItem = { resource: string; kind?: "element" | "attribute" }
+type DirectiveInput = string[] | DirectiveItem[] | { resources?: string[] } | null | undefined
+
+const normalizeDirective = (input: DirectiveInput): DirectiveItem[] => {
+  if (!input) return []
+  if (Array.isArray(input)) {
+    return input.map((item) => {
+      if (typeof item === "string") {
+        return { resource: item, kind: "element" }
+      }
+      return item
+    })
+  }
+  if (typeof input === "object" && "resources" in input && Array.isArray(input.resources)) {
+    return input.resources.map((res) => ({ resource: res, kind: "element" }))
+  }
+  return []
+}
+
+function mergeDirective(current: any, incoming: any): any {
+  if (!current && !incoming) return undefined
+
+  const currentNormalized = normalizeDirective(current)
+  const incomingNormalized = normalizeDirective(incoming)
+
+  const mergedMap = new Map<string, DirectiveItem>()
+  for (const item of [...currentNormalized, ...incomingNormalized]) {
+    const key = `${item.resource}::${item.kind || "element"}`
+    mergedMap.set(key, item)
+  }
+
+  const mergedList = Array.from(mergedMap.values())
+
+  const currentWasArray = Array.isArray(current)
+  const incomingWasArray = Array.isArray(incoming)
+
+  if (
+    !currentWasArray &&
+    !incomingWasArray &&
+    current &&
+    typeof current === "object" &&
+    incoming &&
+    typeof incoming === "object" &&
+    !("length" in current) &&
+    !("length" in incoming)
+  ) {
+    return {
+      resources: mergedList.map((item) => item.resource)
+    }
+  }
+
+  return mergedList
+}
+
 export function defineSecurity(options: SecurityConfigOptions): AstroSecurityConfig {
   const { domain, overrides } = options
   const domainWithWildcard = `**.${domain}`
@@ -194,29 +248,11 @@ export function defineSecurity(options: SecurityConfigOptions): AstroSecurityCon
       }
 
       if (csp.scriptDirective || currentCsp.scriptDirective) {
-        mergedCsp.scriptDirective = {
-          ...currentCsp.scriptDirective,
-          ...csp.scriptDirective,
-          resources: Array.from(
-            new Set([
-              ...(currentCsp.scriptDirective?.resources || []),
-              ...(csp.scriptDirective?.resources || [])
-            ])
-          )
-        }
+        mergedCsp.scriptDirective = mergeDirective(currentCsp.scriptDirective, csp.scriptDirective)
       }
 
       if (csp.styleDirective || currentCsp.styleDirective) {
-        mergedCsp.styleDirective = {
-          ...currentCsp.styleDirective,
-          ...csp.styleDirective,
-          resources: Array.from(
-            new Set([
-              ...(currentCsp.styleDirective?.resources || []),
-              ...(csp.styleDirective?.resources || [])
-            ])
-          )
-        }
+        mergedCsp.styleDirective = mergeDirective(currentCsp.styleDirective, csp.styleDirective)
       }
 
       securityConfig.csp = mergedCsp

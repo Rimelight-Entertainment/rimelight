@@ -145,7 +145,7 @@ export function defineShortcuts(
 
   // Pre-parse the shortcuts configuration
   const parsedShortcuts: Shortcut[] = Object.entries(config)
-    .map(([key, shortcutConfig]) => {
+    .map(([key, shortcutConfig]): Shortcut | null => {
       if (!shortcutConfig) return null
 
       let handler: Handler
@@ -197,7 +197,7 @@ export function defineShortcuts(
         usingInput
       }
     })
-    .filter((item): item is Shortcut => item != null)
+    .filter((item): item is Shortcut => item !== null)
 
   // Register documented shortcuts to the store
   const itemsToRegister: RegisteredShortcut[] = Object.entries(config).flatMap(

@@ -6,7 +6,7 @@ import { waitUntil } from "cloudflare:workers"
 import { auth } from "@/auth/auth"
 import { doSearchSync } from "@/lib/searchSync"
 
-const api = new Hono()
+const api = new Hono<{ Bindings: ENV }>()
 
 // 1. Better-Auth Handler
 api.on(["GET", "POST"], "/auth/*", async (c) => {
@@ -130,7 +130,7 @@ api.get("/assets/:key{.*}", async (c) => {
     return c.text("Missing asset key", 400)
   }
 
-  const bucket = (c.env as any)?.BLOB ?? globalThis.BLOB
+  const bucket = c.env?.BLOB ?? globalThis.BLOB
   if (!bucket) {
     return c.text("R2 binding not available", 500)
   }
@@ -164,7 +164,7 @@ api.get("/chat/:id", async (c) => {
     return c.text("Expected WebSocket upgrade", 426)
   }
 
-  const chatRoomNamespace = (c.env as any)?.ChatRoom ?? (globalThis as any).ChatRoom
+  const chatRoomNamespace = c.env?.ChatRoom ?? globalThis.ChatRoom
   if (!chatRoomNamespace) {
     return c.text("ChatRoom Durable Object namespace not bound", 500)
   }
@@ -177,15 +177,15 @@ api.get("/chat/:id", async (c) => {
 
 // 6. Upload API
 api.post("/upload", async (c) => {
-  const bucket = (c.env as any)?.BLOB ?? globalThis.BLOB
+  const bucket = c.env?.BLOB ?? globalThis.BLOB
   if (!bucket) {
     return c.json({ error: "R2 binding not available" }, 500)
   }
 
   try {
     const formData = await c.req.formData()
-    const file = formData.get("file") as File
-    if (!file) {
+    const file = formData.get("file")
+    if (!file || typeof file === "string") {
       return c.json({ error: "No file provided" }, 400)
     }
 

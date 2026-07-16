@@ -23,13 +23,7 @@ export interface UsePaginatedPagesReturn {
 }
 
 export function usePaginatedPages(options: UsePaginatedPagesOptions) {
-  const {
-    type = "Default",
-    status,
-    initialLimit = 10,
-    nextLimit = 9,
-    immediate = true
-  } = options
+  const { type = "Default", status, initialLimit = 10, nextLimit = 9, immediate = true } = options
 
   const allPages = ref<Page[]>([])
   const offset = ref<number>(0)

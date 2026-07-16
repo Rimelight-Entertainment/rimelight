@@ -48,6 +48,12 @@ export default defineConfig({
       "no-console": "off",
       "vite-plus/prefer-vite-plus-imports": "error",
       "no-restricted-globals": "error",
+      "import/no-unassigned-import": [
+        "error",
+        {
+          allow: ["**/*.css", "**/*.sass", "**/*.scss", "**/*.less", "**/*.styl"]
+        }
+      ],
       "typescript/consistent-type-imports": "error",
       "e18e/prefer-array-from-map": "error",
       "e18e/prefer-timer-args": "error",

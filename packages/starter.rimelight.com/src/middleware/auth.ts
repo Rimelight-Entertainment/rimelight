@@ -1,6 +1,7 @@
 import { getFetchState } from "astro/hono"
 import { env } from "cloudflare:workers"
 import { auth as betterAuth } from "@/auth/auth"
+import type { Context } from "hono"
 
 // Routes to be skipped by this middleware
 const WHITELISTED_ROUTES: string[] = []
@@ -14,9 +15,9 @@ const REDIRECT_ROUTES: Record<string, string> = {
 }
 
 // Manages database/blob bindings, resolves user sessions, and enforces access control rules
-export const auth = async (c: any, next: any) => {
+export const auth = async (c: Context<{ Bindings: ENV }>, next: any) => {
   // Bind environment variables/resources to globals if present
-  const bindings = (c.env ?? env) as Record<string, any>
+  const bindings = c.env ?? env
   if (bindings?.DB) {
     globalThis.DB = bindings.DB
   }
@@ -65,5 +66,5 @@ export const auth = async (c: any, next: any) => {
     return c.redirect("/auth/sign-in")
   }
 
-  await next()
+  return await next()
 }
