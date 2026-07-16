@@ -20,4 +20,9 @@ const classes = resolveClasses(audio, {}, useUi("audio", uiProp), className);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />
+  {Astro.slots.has("transcript") && (
+    <div class="mt-2 text-sm text-zinc-400" data-slot="transcript">
+      <slot name="transcript" />
+    </div>
+  )}
 </div>

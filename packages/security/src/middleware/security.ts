@@ -31,6 +31,7 @@ function addSecurityHeaders(response: Response, origin?: string): Response {
       "Permissions-Policy",
       "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
     )
+    response.headers.set("No-Vary-Search", 'except=("q" "search" "locale")')
     if (origin) {
       response.headers.set(
         "Link",
@@ -54,6 +55,7 @@ function addSecurityHeaders(response: Response, origin?: string): Response {
       "Permissions-Policy",
       "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
     )
+    headers.set("No-Vary-Search", 'except=("q" "search" "locale")')
     if (origin) {
       headers.set(
         "Link",

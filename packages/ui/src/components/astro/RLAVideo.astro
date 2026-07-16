@@ -164,6 +164,11 @@ const ariaLabel = isPlayable ? "Play YouTube Video" : "YouTube Video Unavailable
     </slot>
   </button>
 </div>
+{Astro.slots.has("transcript") && (
+  <div class="mt-2 text-sm text-zinc-400" data-slot="transcript">
+    <slot name="transcript" />
+  </div>
+)}
 
 <script is:inline>
   (() => {

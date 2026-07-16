@@ -110,3 +110,11 @@ export function createTranslationLoader(
     return Object.assign({}, ...results)
   }
 }
+
+/**
+ * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale
+ * using the native browser Intl.PluralRules API.
+ */
+export function getPluralCategory(count: number, locale: string = "en"): Intl.LDMLPluralRule {
+  return new Intl.PluralRules(locale).select(count)
+}

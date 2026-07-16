@@ -20,6 +20,10 @@ export interface TableProps {
    */
   bordered?: boolean
   /**
+   * Accessible description or title of the table.
+   */
+  caption?: string
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

@@ -188,6 +188,14 @@ export default definePreset((options?: RimelightPresetOptions) => {
       // Resets color-scheme back to reactive — follows the page-level preference
       // (i.e. whatever is set on <html>). Use inside a pinned wrapper to opt a subtree back out.
       ["rl-auto", { "color-scheme": "light dark", "color": "var(--foreground)" }],
+      // Visibility-aware rendering utility to prevent unsafe inline style attributes in strict CSPs
+      [
+        "rla-visibility-aware",
+        {
+          "content-visibility": "auto",
+          "contain-intrinsic-size": "var(--rla-contain-intrinsic-size, auto 500px)"
+        }
+      ],
       [
         /^(text)-(default|inverted|muted|dimmed|toned|highlighted)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
@@ -495,6 +503,97 @@ ${lightDarkLines}
         }
         .light {
           color-scheme: light;
+        }
+
+        /* Accessibility fallback for hidden="until-found" in older/non-supporting browsers */
+        @supports not (content-visibility: hidden) {
+          [hidden="until-found"] {
+            display: none !important;
+          }
+        }
+
+        /* ── Global body reset ───────────────────────────────────────────── */
+        body {
+          background-color: var(--background);
+          color: var(--foreground);
+          font-family: var(--font-sans);
+        }
+
+        /* ── Keyboard component ──────────────────────────────────────────── */
+        .keyboard-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 16px;
+          border-radius: 12px;
+          width: 100%;
+          max-width: 100%;
+          margin: 16px 0;
+          box-sizing: border-box;
+        }
+        .keyboard-container {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+        .keyboard-svg {
+          width: 100%;
+          height: auto;
+          max-width: 900px;
+        }
+        .kb-key-label {
+          font-family: var(--font-mono, monospace);
+          font-size: 10px;
+          font-weight: 600;
+          pointer-events: none;
+          user-select: none;
+        }
+
+        /* ── Gamepad component ───────────────────────────────────────────── */
+        .gamepad-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 48px;
+          border-radius: 24px;
+          width: 100%;
+          max-width: 100%;
+          margin: 24px 0;
+          box-sizing: border-box;
+          container-type: inline-size;
+          border: 1px solid #1a1a2e;
+        }
+        .gamepad-container {
+          width: 100%;
+          max-width: 440px;
+        }
+        .gamepad-svg {
+          width: 100%;
+          height: auto;
+        }
+        .gp-btn rect,
+        .gp-btn circle {
+          fill: #1e1e30;
+          stroke: #33334d;
+          stroke-width: 1;
+          transition: all 0.2s ease;
+        }
+        .btn-label {
+          fill: #555570;
+          font-size: 10px;
+          font-family: var(--font-sans, system-ui);
+          font-weight: 800;
+          pointer-events: none;
+          line-height: 1;
+        }
+        .gp-btn.active rect,
+        .gp-btn.active circle {
+          fill: var(--hl-color, #00c16a);
+          stroke: #ffffff33;
+          stroke-width: 1.5;
+        }
+        .gp-btn.active .btn-label {
+          fill: #fff;
         }
         `
         }

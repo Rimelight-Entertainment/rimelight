@@ -59,5 +59,13 @@ export interface PageSectionProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any
+  /**
+   * Set content-visibility for offscreen render painting optimization.
+   */
+  contentVisibility?: "auto" | "visible"
+  /**
+   * Dynamic intrinsic size fallback for content-visibility layout stability.
+   */
+  containIntrinsicSize?: string
   [key: string]: unknown
 }
