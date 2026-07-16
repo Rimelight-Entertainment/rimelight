@@ -19,13 +19,14 @@ export function unflatten(flat: FlattenedTranslations): ComponentsJSON {
   for (const [key, value] of Object.entries(flat)) {
     const parts = key.split(".")
     if (parts.length < 2) continue
-    const component = parts[0]
+    const component: string = parts[0] ?? ""
+    if (!component) continue
     const translationKey = parts.slice(1).join(".")
 
     if (!(component in result)) {
       result[component] = {}
     }
-    result[component][translationKey] = value
+    result[component]![translationKey] = value
   }
   return result
 }

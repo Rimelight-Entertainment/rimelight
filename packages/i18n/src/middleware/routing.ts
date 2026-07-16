@@ -10,13 +10,14 @@ function getPreferredLocale(acceptLanguage: string | null): string {
     .split(",")
     .map((lang) => {
       const parts = lang.split(";")
-      const code = parts[0].trim().toLowerCase()
-      const base = code.split("-")[0]
+      const code = (parts[0] ?? "").trim().toLowerCase()
+      const base = code.split("-")[0] ?? ""
       let q = 1.0
-      if (parts[1]) {
-        const qMatch = parts[1].match(/q=([0-9.]+)/)
+      const qualityPart = parts[1]
+      if (qualityPart) {
+        const qMatch = qualityPart.match(/q=([0-9.]+)/)
         if (qMatch) {
-          q = parseFloat(qMatch[1])
+          q = parseFloat(qMatch[1] ?? "1")
         }
       }
       return { code, base, q }
@@ -27,8 +28,9 @@ function getPreferredLocale(acceptLanguage: string | null): string {
     if (SUPPORTED_LOCALES.has(item.code)) {
       return item.code
     }
-    if (SUPPORTED_LOCALES.has(item.base)) {
-      return item.base
+    const base: string = item.base
+    if (SUPPORTED_LOCALES.has(base)) {
+      return base
     }
   }
 
