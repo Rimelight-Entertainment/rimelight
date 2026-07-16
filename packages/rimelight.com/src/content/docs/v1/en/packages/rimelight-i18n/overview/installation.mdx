@@ -1,0 +1,125 @@
+---
+title: "Installation"
+description: "How to install and configure @rimelight/i18n in your Astro project."
+---
+
+import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
+import RLAPackageManagers from "@rimelight/ui/components/astro/RLAPackageManagers.astro"
+
+To use `@rimelight/i18n` in an Astro project, install the package, register the integration, and create translation JSON files.
+
+## Installation
+
+<RLASteps>
+  <li>
+    **Install the package**
+
+    Add `@rimelight/i18n` to your project using your preferred package manager:
+
+    <RLAPackageManagers pkg="@rimelight/i18n" type="add" />
+
+  </li>
+
+  <li>
+    **Set up Astro i18n config**
+
+    Configure your locales in `astro.config.mjs`:
+
+    ```typescript
+    // astro.config.mjs
+    import { rimelightI18n } from "@rimelight/i18n/integration"
+    import { defineConfig } from "astro/config"
+
+    export default defineConfig({
+      i18n: {
+        defaultLocale: "en",
+        locales: ["en", "pt", "es"],
+        routing: {
+          prefixDefaultLocale: true
+        }
+      },
+      integrations: [
+        rimelightI18n()
+      ]
+    })
+    ```
+
+  </li>
+
+  <li>
+    **Create translation files**
+
+    Create a JSON file per locale in `src/translations/` with component-scoped keys:
+
+    ```json
+    {
+      "app_header": {
+        "title": "My App",
+        "subtitle": "Welcome"
+      },
+      "page_home": {
+        "greeting": "Hello, world!"
+      }
+    }
+    ```
+
+    Pass the translations to the integration:
+
+    ```typescript
+    import en from "./src/translations/en.json"
+    import pt from "./src/translations/pt.json"
+
+    export default defineConfig({
+      integrations: [
+        rimelightI18n({
+          translations: { en, pt }
+        })
+      ]
+    })
+    ```
+
+  </li>
+
+  <li>
+    **Use translations in pages**
+
+    Import `useI18n` from `@rimelight/i18n` and call it with inline fallbacks:
+
+    ```astro
+    ---
+    import { useI18n } from "@rimelight/i18n"
+
+    const messages = useI18n(Astro, "page_home", {
+      greeting: "Hello, world!"
+    })
+    ---
+
+    <h1>{messages.greeting}</h1>
+    ```
+
+  </li>
+</RLASteps>
+
+## Translation files
+
+Translation files are plain JSON objects keyed by component name. Each component key maps to an object of string key-value pairs. The JSON files are the source of truth — inline base translations passed to `useI18n()` act as runtime fallbacks.
+
+```
+src/translations/
+├── en.json
+├── pt.json
+└── es.json
+```
+
+## Dynamic loading (optional)
+
+For server-side dynamic translation loading (e.g. from Cloudflare KV), pass a `translationLoader` path:
+
+```typescript
+rimelightI18n({
+  translations: { en, pt },
+  translationLoader: "./src/i18n/loader.ts"
+})
+```
+
+The loader module should export a default function matching the `TranslationLoader` type from `@nanostores/i18n`.

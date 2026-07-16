@@ -8,7 +8,7 @@ import {
   clearCache,
   getI18nInstance,
   getFormatterInstance
-} from "astro-nanostores-i18n:runtime"
+} from "@rimelight/i18n:runtime"
 import type { Translations } from "@nanostores/i18n"
 
 export { currentLocale, useFormat, clearCache, getI18nInstance, getFormatterInstance }

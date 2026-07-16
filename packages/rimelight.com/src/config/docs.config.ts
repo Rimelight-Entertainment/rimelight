@@ -1665,6 +1665,33 @@ export default defineDocsConfig({
             ]
           },
           {
+            label: "i18n",
+            collapsed: true,
+            items: [
+              {
+                label: "Overview",
+                items: [
+                  {
+                    label: "Introduction",
+                    href: "/{locale}/company/docs/packages/rimelight-i18n/overview/introduction/",
+                    badge: {
+                      text: "Slop",
+                      variant: "error"
+                    }
+                  },
+                  {
+                    label: "Installation",
+                    href: "/{locale}/company/docs/packages/rimelight-i18n/overview/installation/",
+                    badge: {
+                      text: "Slop",
+                      variant: "error"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
             label: "Rimelight Unreal",
             collapsed: true,
             items: [

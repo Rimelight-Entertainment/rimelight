@@ -1,0 +1,45 @@
+---
+title: "Introduction"
+description: "@rimelight/i18n is a lightweight internationalization package for Astro built on nanostores."
+---
+
+## What is @rimelight/i18n?
+
+`@rimelight/i18n` is a lightweight internationalization (i18n) package for Astro websites built on top of [`@nanostores/i18n`](https://github.com/nanostores/i18n) and [`nanostores`](https://github.com/nanostores/nanostores). It provides a reactive translation system that integrates seamlessly with Astro's built-in i18n routing.
+
+The package handles three concerns:
+
+- **Translation lookup** — synchronous (`useI18n`) and asynchronous (`useI18nAsync`) APIs with automatic fallback to inline defaults
+- **Locale state** — a reactive `currentLocale` store that stays in sync with the request locale
+- **URL generation** — locale-aware `getRelativeLocaleUrl` with automatic or explicit locale prefixing
+
+At build time, the package can optionally seed a KV store with translations for server-side dynamic loading.
+
+## Features
+
+- **Reactive** — translations update automatically when the locale changes
+- **SSR-first** — works out of the box with Astro's server-side rendering
+- **Fallback-safe** — every `useI18n` call includes inline defaults, so missing JSON keys never cause blank text
+- **Dynamic loader** — optional async translation loader for KV-backed or API-driven locales
+- **Zero-runtime CLI** — no code generation step; translation JSON files are the source of truth
+- **Editor autocomplete** — type declarations are injected automatically for virtual modules
+
+## How it works
+
+The `rimelightI18n()` Astro integration registers two Vite virtual modules:
+
+1. **`@rimelight/i18n:runtime`** — the initialization entry point that calls `initializeI18n()` with your pre-loaded translations and configuration
+2. **`virtual:rimelight-i18n-config`** — exposes `locales` and `defaultLocale` for use in loader scripts
+
+The runtime is built on `@nanostores/i18n` with a critical `wrapLoader` wrapper that prevents the `translationsLoading` promise from hanging indefinitely when translation components are missing from a locale's JSON.
+
+## Architecture
+
+```
+Astro page import @rimelight/i18n
+  → index.ts imports @rimelight/i18n:runtime (virtual module)
+    → virtual module calls initializeI18n() with config
+      → runtime.ts provides the implementation
+```
+
+All ~200 lines of the runtime are owned inline in the `@rimelight/i18n` package — no external translation CLI or compiler dependency is needed.

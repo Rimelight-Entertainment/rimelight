@@ -45,7 +45,6 @@
     "@types/chroma-js": "3.1.2",
     "@vueuse/core": "14.3.0",
     "astro": "7.1.0",
-    "astro-nanostores-i18n": "1.0.0",
     "better-auth": "1.6.23",
     "chroma-js": "3.2.0",
     "css-variants": "2.3.5",
