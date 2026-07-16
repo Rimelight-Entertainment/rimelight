@@ -8,6 +8,15 @@ function assertManifest(obj: unknown): asserts obj is Record<string, string> {
   if (!obj || typeof obj !== "object") throw new Error("Expected manifest")
 }
 
+// Assert and pre-compile regular expressions once at startup
+assertManifest(manifest)
+
+const manifestRegexes = Object.entries(manifest).map(([url, hash]) => ({
+  hash,
+  scriptRegex: new RegExp(`(<script[^>]+src=["']${url}["'][^>]*)(/?>)`, "g"),
+  linkRegex: new RegExp(`(<link[^>]+href=["']${url}["'][^>]*)(/?>)`, "g")
+}))
+
 function addSecurityHeaders(response: Response, origin?: string): Response {
   try {
     response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
@@ -77,10 +86,12 @@ export const security = defineMiddleware(async (context, next) => {
   const response = await next()
   const contentType = response.headers.get("content-type") || ""
 
+  // Early return for non-HTML responses (avoid body parsing/corruption/overhead)
+  if (!contentType.includes("text/html")) {
+    return addSecurityHeaders(response, context.url.origin)
+  }
+
   if (import.meta.env.DEV) {
-    if (!contentType.includes("text/html")) {
-      return addSecurityHeaders(response, context.url.origin)
-    }
     const cleanHeaders = new Headers(response.headers)
     cleanHeaders.delete("content-security-policy")
     let modifiedHtml = await response.text()
@@ -130,29 +141,35 @@ export const security = defineMiddleware(async (context, next) => {
 
   if (typeof HTMLRewriter !== "undefined") {
     let rewriter = new HTMLRewriter()
-      .on("script[src]", {
-        element(el: any) {
-          const src = el.getAttribute("src")
-          if (src && manifest[src]) {
-            el.setAttribute("integrity", manifest[src])
-            el.setAttribute("crossorigin", "anonymous")
+
+    // Only register handlers if there are items to hash
+    if (manifestRegexes.length > 0) {
+      rewriter = rewriter
+        .on("script[src]", {
+          element(el: any) {
+            const src = el.getAttribute("src")
+            if (src && manifest[src]) {
+              el.setAttribute("integrity", manifest[src])
+              el.setAttribute("crossorigin", "anonymous")
+            }
           }
-        }
-      })
-      .on('link[rel="stylesheet"][href]', {
-        element(el: any) {
-          const href = el.getAttribute("href")
-          if (href && manifest[href]) {
-            el.setAttribute("integrity", manifest[href])
-            el.setAttribute("crossorigin", "anonymous")
+        })
+        .on('link[rel="stylesheet"][href]', {
+          element(el: any) {
+            const href = el.getAttribute("href")
+            if (href && manifest[href]) {
+              el.setAttribute("integrity", manifest[href])
+              el.setAttribute("crossorigin", "anonymous")
+            }
           }
-        }
-      })
-      .on('meta[http-equiv="content-security-policy" i]', {
-        element(el: any) {
-          el.remove()
-        }
-      })
+        })
+    }
+
+    rewriter = rewriter.on('meta[http-equiv="content-security-policy" i]', {
+      element(el: any) {
+        el.remove()
+      }
+    })
 
     if (nonceValue) {
       rewriter = rewriter
@@ -195,19 +212,15 @@ export const security = defineMiddleware(async (context, next) => {
     ""
   )
 
-  assertManifest(manifest)
-
-  const entries = Object.entries(manifest)
-  for (const [url, hash] of entries) {
+  // Use pre-compiled regexes
+  for (const { hash, scriptRegex, linkRegex } of manifestRegexes) {
     if (!hash) continue
 
-    const scriptRegex = new RegExp(`(<script[^>]+src=["']${url}["'][^>]*)(/?>)`, "g")
     modifiedHtml = modifiedHtml.replace(
       scriptRegex,
       `$1 integrity="${hash}" crossorigin="anonymous"$2`
     )
 
-    const linkRegex = new RegExp(`(<link[^>]+href=["']${url}["'][^>]*)(/?>)`, "g")
     modifiedHtml = modifiedHtml.replace(
       linkRegex,
       `$1 integrity="${hash}" crossorigin="anonymous"$2`
