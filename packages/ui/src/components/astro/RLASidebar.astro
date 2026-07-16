@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { SidebarProps, SidebarItem } from "../../types"
 import sidebarThemeDefault from "../../themes/sidebar.theme"
 import RLABadge from "./RLABadge.astro"
+import RLAIcon from "./RLAIcon.astro"
 
 const sidebarTheme = sidebarThemeDefault
 const sidebar = scv(sidebarTheme)
@@ -61,7 +62,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
         <slot name="header">
           {logo && (
             <span data-slot="sidebar-logo" class="flex items-center gap-2">
-              <span class="i-lucide-layers size-5 text-primary" />
+              <RLAIcon name="layers" class="size-5 text-primary" />
               <span class="truncate">{logo}</span>
             </span>
           )}
@@ -88,7 +89,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
         class="fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-background border border-border shadow-sm hover:bg-muted transition-colors"
         aria-label="Toggle sidebar"
       >
-        <span class="i-lucide-panel-left size-4" />
+        <RLAIcon name="panelLeft" class="size-4" />
       </button>
     )}
 
@@ -127,7 +128,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
                     {t(b.text)}
                   </RLABadge>
                 )}
-                <span class="i-lucide-chevron-right size-3 ml-auto transition-transform group-open/details:rotate-90" />
+                <RLAIcon name="chevronRight" class="size-3 ml-auto transition-transform group-open/details:rotate-90" />
               </summary>
               <div class={`mt-0.5 ${indentClass} flex flex-col gap-0.5`}>
                 <Astro.self items={item.children} t={t} _depth={_depth + 1} />

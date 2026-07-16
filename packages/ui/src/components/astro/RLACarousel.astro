@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { CarouselProps } from "../../types"
 import carouselThemeDefault, { createCarouselTheme } from "../../themes/carousel.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const carouselTheme = uiConfig.colors ? createCarouselTheme() : carouselThemeDefault
@@ -46,10 +47,10 @@ const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
     </div>
 
     <button class={classes.buttonPrev} data-slot="prev-button" type="button" aria-label="Previous slide">
-      <span class="i-lucide-chevron-left size-5" aria-hidden="true" />
+      <RLAIcon name="chevronLeft" class="size-5" aria-hidden="true" />
     </button>
     <button class={classes.buttonNext} data-slot="next-button" type="button" aria-label="Next slide">
-      <span class="i-lucide-chevron-right size-5" aria-hidden="true" />
+      <RLAIcon name="chevronRight" class="size-5" aria-hidden="true" />
     </button>
   </div>
 </rla-carousel>

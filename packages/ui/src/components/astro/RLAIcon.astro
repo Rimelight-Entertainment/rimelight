@@ -1,6 +1,6 @@
 ---
 import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils"
+import { useUi, resolveClasses, resolveIcon } from "../../utils"
 import type { IconProps } from "../../types"
 import iconThemeDefault, { createIconTheme } from "../../themes/icon.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
@@ -19,6 +19,7 @@ const {
 } = Astro.props as IconProps
 
 const classes = resolveClasses(icon, { size }, useUi("icon", uiProp), className)
+const resolved = resolveIcon(name)
 ---
 
 <span
@@ -27,5 +28,10 @@ const classes = resolveClasses(icon, { size }, useUi("icon", uiProp), className)
   aria-hidden="true"
   {...rest}
 >
-  <span class={name} />
+  {resolved.isClass ? (
+    <span class={resolved.content} />
+  ) : (
+    <Fragment set:html={resolved.content} />
+  )}
 </span>
+

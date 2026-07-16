@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { AccordionProps } from "../../types"
 import accordionThemeDefault, { createAccordionTheme } from "../../themes/accordion.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const accordionTheme = uiConfig.colors ? createAccordionTheme() : accordionThemeDefault
@@ -13,7 +14,7 @@ const {
   items,
   summary,
   multiple = false,
-  trailingIcon = "i-lucide-chevron-down",
+  trailingIcon = "chevronDown",
   disabled = false,
   name,
   ui: uiProp,
@@ -57,7 +58,9 @@ const groupName = name || (!multiple ? `accordion-${Math.random().toString(36).s
 
             {itemTrailingIcon && (
               <span class={classes.trailingIcon} data-slot="trailing-icon">
-                <span class={cx(itemTrailingIcon)} aria-hidden="true" />
+                <slot name="trailing-icon">
+                  <RLAIcon name={itemTrailingIcon} />
+                </slot>
               </span>
             )}
           </summary>
@@ -80,7 +83,9 @@ const groupName = name || (!multiple ? `accordion-${Math.random().toString(36).s
       <span class={classes.label} data-slot="label">{summary}</span>
       {trailingIcon && (
         <span class={classes.trailingIcon} data-slot="trailing-icon">
-          <span class={cx(trailingIcon)} aria-hidden="true" />
+          <slot name="trailing-icon">
+            <RLAIcon name={trailingIcon} />
+          </slot>
         </span>
       )}
     </summary>

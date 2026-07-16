@@ -3,6 +3,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { CollapsibleProps } from "../../types"
 import collapsibleThemeDefault, { createCollapsibleTheme } from "../../themes/collapsible.theme"
+import RLAIcon from "./RLAIcon.astro"
 
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -32,7 +33,7 @@ const classes = resolveClasses(collapsible, {
         {icon && <span class={icon} />}
         {label}
       </span>
-      <span class="i-lucide-chevron-down transition-transform duration-200 group-open:rotate-180" />
+      <RLAIcon name="chevronDown" class="transition-transform duration-200 group-open:rotate-180" />
     </slot>
   </summary>
   <div class={classes.content} data-slot="content">

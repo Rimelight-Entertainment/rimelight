@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { TableOfContentsProps } from "../../types"
 import tableOfContentsThemeDefault, { createTableOfContentsTheme } from "../../themes/table-of-contents.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const tableOfContentsTheme = uiConfig.colors ? createTableOfContentsTheme() : tableOfContentsThemeDefault
@@ -41,10 +42,10 @@ const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) =
     <details class:list={[className]} data-rla-toc-collapsible data-container-selector={containerSelector} data-heading-selector={headingSelector} {...rest}>
       <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-foreground cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
         <span class="flex items-center gap-2">
-          <span class="i-lucide-list size-4 text-primary shrink-0" />
+          <RLAIcon name="list" class="size-4 text-primary shrink-0" />
           <span>On this page</span>
         </span>
-        <span class="rla-toc-chevron i-lucide-chevron-down size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
+        <RLAIcon name="chevronDown" class="rla-toc-chevron size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
       </summary>
       <div class="px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-border/50 bg-background">
         <ul class="flex flex-col gap-0.5 pb-8">

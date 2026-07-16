@@ -1,6 +1,7 @@
 ---
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
+import RLAIcon from "./RLAIcon.astro"
 import type { NavigationMenuProps } from "../../types"
 import navigationMenuThemeDefault, { createNavigationMenuTheme } from "../../themes/navigation-menu.theme"
 
@@ -61,7 +62,7 @@ await Promise.all(
               >
                 {item.icon && <span class={item.icon + " mr-1.5 size-4"} />}
                 {item.label}
-                <span class="i-lucide-chevron-down ml-1 size-3.5 transition-transform duration-200" aria-hidden="true" />
+                <RLAIcon name="chevronDown" class="ml-1 size-3.5 transition-transform duration-200" aria-hidden="true" data-chevron />
               </button>
             ) : (
               <a
@@ -181,7 +182,7 @@ await Promise.all(
 
         trigger.setAttribute("aria-expanded", "true");
         trigger.setAttribute("data-state", "open");
-        const icon = trigger.querySelector(".i-lucide-chevron-down");
+        const icon = trigger.querySelector("[data-chevron]");
         if (icon) (icon as HTMLElement).style.transform = "rotate(180deg)";
       };
 
@@ -204,7 +205,7 @@ await Promise.all(
         if (trigger) {
           trigger.setAttribute("aria-expanded", "false");
           trigger.setAttribute("data-state", "closed");
-          const icon = trigger.querySelector(".i-lucide-chevron-down");
+          const icon = trigger.querySelector("[data-chevron]");
           if (icon) (icon as HTMLElement).style.transform = "";
         }
 

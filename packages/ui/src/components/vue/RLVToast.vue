@@ -4,6 +4,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ToastProps } from "../../types/components/toast"
 import toastTheme from "../../themes/toast.theme"
+import RLVIcon from "./RLVIcon.vue"
 
 const toast = scv(toastTheme)
 
@@ -21,11 +22,11 @@ const resolvedClasses = computed(() =>
 )
 
 const variantIcons: Record<string, string> = {
-  default: "i-lucide-bell",
-  error: "i-lucide-alert-circle",
-  success: "i-lucide-check-circle-2",
-  warning: "i-lucide-alert-triangle",
-  info: "i-lucide-info"
+  default: "bell",
+  error: "circleX",
+  success: "circleCheck",
+  warning: "alertTriangle",
+  info: "info"
 }
 
 const icon = computed(() => variantIcons[props.variant] ?? variantIcons.default!)
@@ -39,7 +40,7 @@ const icon = computed(() => variantIcons[props.variant] ?? variantIcons.default!
     aria-live="assertive"
     aria-atomic="true"
   >
-    <span :class="[icon, 'size-4 shrink-0 mt-0.5']" aria-hidden="true" />
+    <RLVIcon :name="icon" class="size-4 shrink-0 mt-0.5" aria-hidden="true" />
 
     <div class="flex flex-col gap-0.5 flex-1 min-w-0">
       <div v-if="title" :class="resolvedClasses.title" data-slot="title">
@@ -75,7 +76,7 @@ const icon = computed(() => variantIcons[props.variant] ?? variantIcons.default!
       aria-label="Dismiss notification"
       @click="emit('close', id)"
     >
-      <span class="i-lucide-x size-3.5" aria-hidden="true" />
+      <RLVIcon name="close" class="size-3.5" aria-hidden="true" />
     </button>
   </div>
 </template>

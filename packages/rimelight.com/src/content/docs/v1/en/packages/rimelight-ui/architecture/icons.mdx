@@ -4,6 +4,9 @@ description: "How Rimelight UI handles icons."
 ---
 
 import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
+import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro"
+import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro"
+import RLACard from "@rimelight/ui/components/astro/RLACard.astro"
 
 Rimelight UI automatically registers the **[@unocss/preset-icons](https://unocss.dev/presets/icons)** preset, providing a pure CSS icon system allowing you to use any [Iconify](https://iconify.design/) collection with just a class name.
 
@@ -91,6 +94,91 @@ By default, we recommend using the **Lucide** collection for a consistent and mo
 
 You can browse all available icons at [icones.js.org](https://icones.js.org/).
 
+## Default Decoupled Icons
+
+Rimelight UI ships with a tiny, zero-dependency set of default optimized SVG icons directly embedded inside the library. Downstream consumers do not need to install or configure any third-party icon packages for core components to function out-of-the-box.
+
+Here is the complete list of default icons included in the library:
+
+---
+
+export const iconsList = [
+  "alertTriangle",
+  "alignLeft",
+  "arrowLeft",
+  "arrowRight",
+  "bell",
+  "check",
+  "chevronDown",
+  "chevronLeft",
+  "chevronRight",
+  "chevronsUpDown",
+  "circleCheck",
+  "circleX",
+  "close",
+  "copy",
+  "download",
+  "externalLink",
+  "fileQuestion",
+  "gripHorizontal",
+  "gripVertical",
+  "hardDrive",
+  "image",
+  "imageUpscale",
+  "info",
+  "layers",
+  "list",
+  "loaderCircle",
+  "moon",
+  "panelLeft",
+  "play",
+  "quote",
+  "search",
+  "share",
+  "sun",
+  "uploadCloud",
+  "user"
+]
+
+<RLAGrid cols={6} gap="md" class="my-6">
+  {iconsList.map((key) => (
+    <RLACard
+      ui={{
+        root: "h-full",
+        body: "flex flex-col items-center justify-center text-center p-4 h-full"
+      }}
+    >
+      <div class="size-6 text-primary flex items-center justify-center mb-2">
+        <RLAIcon name={key} size="sm" />
+      </div>
+      <span class="text-xs font-mono text-neutral-500 break-all">{key}</span>
+    </RLACard>
+  ))}
+</RLAGrid>
+
+## Global Customization
+
+You can customize the default icons globally in your `astro.config.ts` integration options. You can map any default key to custom iconify classes or raw SVG strings:
+
+```ts
+import { defineConfig } from "astro/config"
+import { ui } from "@rimelight/ui/integrations"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      icons: {
+        chevronDown: "i-heroicons-chevron-down-20-solid",
+        close: "i-lucide-x",
+        loaderCircle: "i-svg-spinners-clock"
+      }
+    })
+  ]
+})
+```
+
+These overrides are automatically integrated and safelisted by UnoCSS at build time.
+
 ## Setup
 
 To use additional icon collections, install the corresponding `@iconify-json/*` package:
@@ -104,10 +192,6 @@ The preset automatically detects installed icon sets in your project.
 ## Performance
 
 Since `@unocss/preset-icons` generates icons as pure CSS (using mask or background-image), there are no JavaScript runtime costs. Only the icons you actually use are included in your CSS output. The icon data is loaded from `@iconify-json/*` packages at build time.
-
-## Theme
-
-Many components in Rimelight UI use icons by default. You can customize the default icons in the integration configuration:
 
 ## Compatibility
 

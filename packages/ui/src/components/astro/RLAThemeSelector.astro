@@ -5,6 +5,7 @@ import type { ThemeSelectorProps } from "../../types"
 import themeSelectorThemeDefault, { createThemeSelectorTheme } from "../../themes/theme-selector.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 import RLAButton from "./RLAButton.astro"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const themeSelectorTheme = uiConfig.colors ? createThemeSelectorTheme() : themeSelectorThemeDefault
@@ -31,8 +32,8 @@ const classes = resolveClasses(themeSelector, {
             square
             aria-label="Toggle theme"
     >
-        <span class:list={[classes.sun]} />
-        <span class:list={[classes.moon]} />
+        <RLAIcon name="sun" class={classes.sun} />
+        <RLAIcon name="moon" class={classes.moon} />
     </RLAButton>
 </rla-theme-selector>
 

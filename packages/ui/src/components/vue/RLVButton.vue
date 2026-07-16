@@ -4,7 +4,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ButtonProps } from "../../types/components/button"
 import buttonTheme from "../../themes/button.theme"
-
+import RLVIcon from "./RLVIcon.vue"
 const attrs = useAttrs()
 const button = scv(buttonTheme)
 
@@ -34,12 +34,12 @@ const isTrailing = computed(
 )
 
 const showLeadingIcon = computed(() => {
-  if (loading) return "i-lucide-loader-circle"
+  if (loading) return "loaderCircle"
   return leadingIcon
 })
 
 const showTrailingIcon = computed(() => {
-  if (loading) return "i-lucide-loader-circle"
+  if (loading) return "loaderCircle"
   return trailingIcon
 })
 
@@ -83,7 +83,7 @@ const Tag = href ? "a" : "button"
   <component v-bind="attrs" :is="Tag" :href="href" :class="resolvedClasses.root" data-slot="root">
     <slot name="leading" :ui="resolvedClasses">
       <span v-if="isLeading" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
-        <span :class="[showLeadingIcon, leadingIconClass]" aria-hidden="true" />
+        <RLVIcon :name="showLeadingIcon" :class="leadingIconClass" />
       </span>
     </slot>
 
@@ -98,7 +98,7 @@ const Tag = href ? "a" : "button"
 
     <slot name="trailing" :ui="resolvedClasses">
       <span v-if="isTrailing" :class="resolvedClasses.trailingIcon" data-slot="trailing-icon">
-        <span :class="[showTrailingIcon, trailingIconClass]" aria-hidden="true" />
+        <RLVIcon :name="showTrailingIcon" :class="trailingIconClass" />
       </span>
     </slot>
   </component>

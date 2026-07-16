@@ -10,6 +10,7 @@ export interface Props {
 }
 
 const { prev, next } = Astro.props;
+import RLAIcon from "./RLAIcon.astro"
 ---
 
 {(prev || next) && (
@@ -17,7 +18,7 @@ const { prev, next } = Astro.props;
     {prev ? (
       <a href={prev.href} class="flex flex-col gap-1 text-left group no-underline max-w-[45%]">
         <span class="text-xs text-muted-foreground font-medium flex items-center gap-1 group-hover:text-primary transition-colors">
-          <span class="i-lucide-arrow-left size-3" /> Previous
+          <RLAIcon name="arrowLeft" class="size-3" /> Previous
         </span>
         <span class="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">
           {prev.label}
@@ -28,7 +29,7 @@ const { prev, next } = Astro.props;
     {next ? (
       <a href={next.href} class="flex flex-col gap-1 text-right group no-underline max-w-[45%]">
         <span class="text-xs text-muted-foreground font-medium flex items-center justify-end gap-1 group-hover:text-primary transition-colors">
-          Next <span class="i-lucide-arrow-right size-3" />
+          Next <RLAIcon name="arrowRight" class="size-3" />
         </span>
         <span class="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">
           {next.label}

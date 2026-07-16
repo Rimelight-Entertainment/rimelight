@@ -3,6 +3,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { DropdownMenuProps } from "../../types"
 import dropdownMenuThemeDefault, { createDropdownMenuTheme } from "../../themes/dropdown-menu.theme"
+import RLAIcon from "./RLAIcon.astro"
 
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -36,7 +37,7 @@ const classes = resolveClasses(dropdownMenu, {
       <slot name="trigger">
         {icon && <span class={icon} />}
         {label}
-        <span class="ml-2 i-lucide-chevron-down opacity-50" />
+        <RLAIcon name="chevronDown" class="ml-2 opacity-50" />
       </slot>
     </button>
 

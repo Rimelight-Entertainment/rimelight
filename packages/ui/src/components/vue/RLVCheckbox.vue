@@ -4,7 +4,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { CheckboxProps } from "../../types/components/checkbox"
 import checkboxTheme from "../../themes/checkbox.theme"
-
+import RLVIcon from "./RLVIcon.vue"
 const checkbox = scv(checkboxTheme)
 
 const props = withDefaults(defineProps<CheckboxProps & { modelValue?: boolean }>(), {
@@ -59,7 +59,7 @@ function onChange(event: Event) {
         @change="onChange"
       />
       <span v-if="checked" :class="resolvedClasses.indicator" data-slot="indicator">
-        <span class="i-lucide-check h-3 w-3 text-white" />
+        <RLVIcon name="check" class="h-3 w-3 text-white" />
       </span>
     </div>
     <span v-if="label" :class="resolvedClasses.label" data-slot="label">

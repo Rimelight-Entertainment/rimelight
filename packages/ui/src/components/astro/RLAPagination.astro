@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { PaginationProps } from "../../types"
 import paginationThemeDefault, { createPaginationTheme } from "../../themes/pagination.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const paginationTheme = uiConfig.colors ? createPaginationTheme() : paginationThemeDefault
@@ -51,7 +52,7 @@ const pages = getPageNumbers()
         aria-label="Go to previous page"
         aria-disabled={currentPage === 1}
       >
-        <span class="i-lucide-chevron-left size-4" aria-hidden="true" />
+        <RLAIcon name="chevronLeft" class="size-4" aria-hidden="true" />
       </a>
     </li>
 
@@ -89,7 +90,7 @@ const pages = getPageNumbers()
         aria-label="Go to next page"
         aria-disabled={currentPage === totalPages}
       >
-        <span class="i-lucide-chevron-right size-4" aria-hidden="true" />
+        <RLAIcon name="chevronRight" class="size-4" aria-hidden="true" />
       </a>
     </li>
   </ul>

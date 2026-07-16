@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { DrawerProps } from "../../types"
 import drawerThemeDefault, { createDrawerTheme } from "../../themes/drawer.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const drawerTheme = uiConfig.colors ? createDrawerTheme() : drawerThemeDefault
@@ -58,7 +59,7 @@ const dialogId = `rla-drawer-${Math.random().toString(36).substring(2, 9)}`
       data-dialog-close={dialogId}
       aria-label="Close drawer"
     >
-      <span class="i-lucide-x size-4" aria-hidden="true" />
+      <RLAIcon name="close" class="size-4" aria-hidden="true" />
     </button>
 
     <div class={classes.header} data-slot="header">

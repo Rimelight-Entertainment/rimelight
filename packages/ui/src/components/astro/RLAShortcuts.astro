@@ -1,5 +1,6 @@
 ---
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 interface Props {
   categories?: Record<string, string>
@@ -40,7 +41,7 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
       <div class="rla-shortcuts-header">
         <h3 id={`${modalId}-title`} class="rla-shortcuts-title">Keyboard Shortcuts</h3>
         <button class="rla-shortcuts-close" aria-label="Close shortcuts help">
-          <span class="i-lucide-x w-4 h-4"></span>
+          <RLAIcon name="close" class="w-4 h-4" />
         </button>
       </div>
 

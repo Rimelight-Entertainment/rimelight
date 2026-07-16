@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { SearchProps } from "../../types"
 import searchThemeDefault, { createSearchTheme } from "../../themes/search.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 import RLAInput from "./RLAInput.astro"
 import RLAKbd from "./RLAKbd.astro"
 import RLAButton from "./RLAButton.astro"
@@ -62,7 +63,7 @@ const emptyId = `search-empty-${uniqueId}`
       square
       aria-label="Open Search"
     >
-      <span class="i-lucide-search w-5 h-5" />
+      <RLAIcon name="search" class="w-5 h-5" />
     </RLAButton>
   )}
 
@@ -84,11 +85,11 @@ const emptyId = `search-empty-${uniqueId}`
             trailing: "absolute right-0 flex items-center gap-2"
           }}
         >
-          <span slot="leading" class={classes.headerIcon} />
+          <RLAIcon name="search" class={classes.headerIcon} slot="leading" />
           <div slot="trailing" class="flex items-center gap-2">
             <RLAKbd size="sm">Esc</RLAKbd>
             <button id={`${modalId}-close`} class={classes.close} aria-label="Close search">
-              <span class={classes.closeIcon}></span>
+              <RLAIcon name="close" class={classes.closeIcon} />
             </button>
           </div>
         </RLAInput>

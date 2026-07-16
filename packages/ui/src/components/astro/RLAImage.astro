@@ -3,6 +3,7 @@ import { getImage } from "astro:assets"
 import type { ImageMetadata } from "astro"
 import Image from "astro/components/Image.astro"
 import Picture from "astro/components/Picture.astro"
+import RLAIcon from "./RLAIcon.astro"
 import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { ImageProps } from "../../types"
@@ -130,7 +131,7 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaSource && (
                 <div class="flex flex-row gap-xs items-center">
-                  <span class="i-lucide-image size-4 shrink-0 text-muted-foreground" />
+                  <RLAIcon name="image" class="size-4 shrink-0 text-muted-foreground" />
                   <span class="text-muted-foreground">Source:</span>
                   <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
                 </div>
@@ -139,7 +140,7 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaFormat && (
                 <div class="flex flex-row gap-xs items-center">
-                  <span class="i-lucide-file-question-mark size-4 shrink-0 text-muted-foreground" />
+                  <RLAIcon name="fileQuestion" class="size-4 shrink-0 text-muted-foreground" />
                   <span class="text-muted-foreground">Format:</span>
                   <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
                 </div>
@@ -148,7 +149,7 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaDimensions && (
                 <div class="flex flex-row gap-xs items-center">
-                  <span class="i-lucide-image-upscale size-4 shrink-0 text-muted-foreground" />
+                  <RLAIcon name="imageUpscale" class="size-4 shrink-0 text-muted-foreground" />
                   <span class="text-muted-foreground">Dimensions:</span>
                   <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
                 </div>
@@ -157,7 +158,7 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaSize && (
                 <div class="flex flex-row gap-xs items-center">
-                  <span class="i-lucide-hard-drive size-4 shrink-0 text-muted-foreground" />
+                  <RLAIcon name="hardDrive" class="size-4 shrink-0 text-muted-foreground" />
                   <span class="text-muted-foreground">Size:</span>
                   <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
                 </div>
@@ -166,7 +167,7 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaAlt && (
                 <div class="flex flex-row gap-xs items-center">
-                  <span class="i-lucide-align-left size-4 shrink-0 text-muted-foreground" />
+                  <RLAIcon name="alignLeft" class="size-4 shrink-0 text-muted-foreground" />
                   <span class="text-muted-foreground">Alt:</span>
                   <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
                 </div>
@@ -181,7 +182,7 @@ const initialSize = preMetadata?.size ?? undefined
                 class={classes.download}
                 data-image-download
               >
-                <span class="i-lucide-download size-4 shrink-0" />
+                <RLAIcon name="download" class="size-4 shrink-0" />
                 Download Original
               </button>
             )
@@ -194,7 +195,7 @@ const initialSize = preMetadata?.size ?? undefined
             class={classes.closeButton}
             aria-label="Close"
           >
-            <span class="i-lucide-x size-4" />
+            <RLAIcon name="close" class="size-4" />
           </button>
         </form>
       </div>

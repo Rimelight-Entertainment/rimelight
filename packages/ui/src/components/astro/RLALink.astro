@@ -1,5 +1,6 @@
 ---
 import type { LinkProps } from "../../types"
+import RLAIcon from "./RLAIcon.astro"
 
 const {
   to,
@@ -22,7 +23,7 @@ const isExternal = !!(external || (linkHref && (linkHref.startsWith('http://') |
 const linkTarget = target || (isExternal ? "_blank" : undefined);
 const linkRel = rel || (isExternal ? "noopener noreferrer" : undefined);
 
-const showExternalIcon = isExternal && !noExternalIcon && !trailingIcon ? (externalIcon || "i-lucide-external-link") : trailingIcon;
+const showExternalIcon = isExternal && !noExternalIcon && !trailingIcon ? (externalIcon || "externalLink") : trailingIcon;
 ---
 <a
   href={linkHref}
@@ -34,7 +35,7 @@ const showExternalIcon = isExternal && !noExternalIcon && !trailingIcon ? (exter
 >
   <slot />
   {showExternalIcon && (
-    <span class={showExternalIcon} aria-hidden="true" />
+    <RLAIcon name={showExternalIcon} aria-hidden="true" />
   )}
   {isExternal && !ariaLabel && (
     <span class="sr-only"> (opens in a new tab)</span>

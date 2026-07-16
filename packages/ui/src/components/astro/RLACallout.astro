@@ -5,6 +5,7 @@ import type { CalloutProps } from "../../types"
 import calloutThemeDefault, { createCalloutTheme } from "../../themes/callout.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 import RLAAvatar from "./RLAAvatar.astro"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const calloutTheme = uiConfig.colors ? createCalloutTheme(uiConfig.colors) : calloutThemeDefault
@@ -26,10 +27,10 @@ const {
 } = Astro.props as CalloutProps
 
 const colorToIcon: Record<string, string | undefined> = {
-  error: "i-lucide-circle-x",
-  warning: "i-lucide-triangle-alert",
-  info: "i-lucide-info",
-  success: "i-lucide-circle-check",
+  error: "circleX",
+  warning: "alertTriangle",
+  info: "info",
+  success: "circleCheck",
   primary: undefined,
   secondary: undefined,
   commentary: undefined,
@@ -58,7 +59,7 @@ const classes = resolveClasses(callout, {
   <slot name="icon">
     {resolvedIcon && (
       <span class={classes.icon} data-slot="icon">
-        <span class={cx(resolvedIcon)} aria-hidden="true" />
+        <RLAIcon name={resolvedIcon} />
       </span>
     )}
   </slot>
@@ -89,7 +90,7 @@ const classes = resolveClasses(callout, {
         <slot name="close">
           {close && (
             <button class={classes.close} data-slot="close">
-              <span class="i-lucide-x size-4" />
+              <RLAIcon name="close" class="size-4" />
             </button>
           )}
         </slot>

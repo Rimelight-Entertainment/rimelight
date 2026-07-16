@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { BreadcrumbProps } from "../../types"
 import breadcrumbThemeDefault, { createBreadcrumbTheme } from "../../themes/breadcrumb.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const breadcrumbTheme = uiConfig.colors ? createBreadcrumbTheme() : breadcrumbThemeDefault
@@ -12,7 +13,7 @@ const breadcrumb = scv(breadcrumbTheme)
 
 const {
   items,
-  separatorIcon = "i-lucide-chevron-right",
+  separatorIcon = "chevronRight",
   ui: uiProp,
   class: className,
   ...rest
@@ -36,7 +37,7 @@ const classes = resolveClasses(breadcrumb, {}, useUi("breadcrumb", uiProp), clas
           )}
           {idx < items.length - 1 && (
             <span class={classes.separator} data-slot="separator" aria-hidden="true">
-              <span class={separatorIcon} />
+              <RLAIcon name={separatorIcon} />
             </span>
           )}
         </li>

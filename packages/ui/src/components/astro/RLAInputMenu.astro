@@ -3,6 +3,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { InputMenuProps } from "../../types"
 import inputMenuThemeDefault, { createInputMenuTheme } from "../../themes/input-menu.theme"
+import RLAIcon from "./RLAIcon.astro"
 
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -51,7 +52,7 @@ const initialLabel = selectedItem ? selectedItem.label : ""
         data-inputMenu-trigger
       >
         <span data-inputMenu-value>{initialLabel || placeholder}</span>
-        <span class="i-lucide-chevrons-up-down opacity-50" />
+        <RLAIcon name="chevronsUpDown" class="opacity-50" />
       </button>
 
       <div class={classes.content + " hidden"} data-inputMenu-dropdown data-slot="content">
@@ -71,7 +72,7 @@ const initialLabel = selectedItem ? selectedItem.label : ""
               data-inputMenu-item
             >
               <span class={classes.itemText}>{item.label}</span>
-              <span class={classes.itemIcon + " hidden i-lucide-check"} data-check-icon />
+              <RLAIcon name="check" class={classes.itemIcon + " hidden"} data-check-icon />
             </div>
           ))}
         </div>

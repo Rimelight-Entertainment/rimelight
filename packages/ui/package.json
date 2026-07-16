@@ -57,7 +57,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@iconify-json/lucide": "1.2.117",
     "@unocss/astro": "66.7.5",
     "css-variants": "2.3.5",
     "nanostores": "1.4.0"

@@ -5,6 +5,7 @@ import type { SplitterProps } from "../../types"
 import splitterThemeDefault, { createSplitterTheme } from "../../themes/splitter.theme"
 
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const splitterTheme = uiConfig.colors ? createSplitterTheme() : splitterThemeDefault
@@ -73,12 +74,9 @@ await Promise.all(
             tabindex={0}
             aria-label="Resize panels"
           >
-            <span
-              class={
-                direction === "horizontal"
-                  ? "i-lucide-grip-vertical size-3.5 text-muted-foreground/50"
-                  : "i-lucide-grip-horizontal size-3.5 text-muted-foreground/50"
-              }
+            <RLAIcon
+              name={direction === "horizontal" ? "gripVertical" : "gripHorizontal"}
+              class="size-3.5 text-muted-foreground/50"
               aria-hidden="true"
             />
           </div>

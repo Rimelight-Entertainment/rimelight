@@ -5,6 +5,7 @@ import type { VideoProps } from "../../types"
 import videoThemeDefault, { createVideoTheme } from "../../themes/video.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 import Image from "astro/components/Image.astro"
+import RLAIcon from "./RLAIcon.astro"
 
 const PLACEHOLDER_THUMBNAIL = "/assets/placeholder.webp";
 const YOUTUBE_EMBED_BASE = "https://www.youtube.com/embed/";
@@ -118,7 +119,7 @@ const video = scv(videoTheme)
 const {
   src,
   title = "YouTube Video Player",
-  icon = "i-lucide-play",
+  icon = "play",
   ui: uiProp,
   class: className,
   ...rest
@@ -159,7 +160,7 @@ const ariaLabel = isPlayable ? "Play YouTube Video" : "YouTube Video Unavailable
     />
 
     <slot name="icon">
-      <span class:list={[classes.icon, icon]} aria-hidden="true" />
+      <RLAIcon name={icon} class={classes.icon} aria-hidden="true" />
     </slot>
   </button>
 </div>

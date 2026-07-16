@@ -5,6 +5,7 @@ import type { ToastProps } from "../../types"
 import toastThemeDefault, { createToastTheme } from "../../themes/toast.theme"
 
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const toastTheme = uiConfig.colors ? createToastTheme() : toastThemeDefault
@@ -28,11 +29,11 @@ const classes = resolveClasses(toast, {
 }, useUi("toast", uiProp), className)
 
 const variantIcons: Record<string, string> = {
-  default: "i-lucide-bell",
-  error: "i-lucide-alert-circle",
-  success: "i-lucide-check-circle-2",
-  warning: "i-lucide-alert-triangle",
-  info: "i-lucide-info",
+  default: "bell",
+  error: "circleX",
+  success: "circleCheck",
+  warning: "alertTriangle",
+  info: "info",
 }
 
 const icon = variantIcons[variant] ?? variantIcons.default!
@@ -50,7 +51,7 @@ const icon = variantIcons[variant] ?? variantIcons.default!
   {...rest}
 >
   {/* Icon */}
-  <span class={icon + " size-4 shrink-0 mt-0.5"} aria-hidden="true" />
+  <RLAIcon name={icon} class="size-4 shrink-0 mt-0.5" aria-hidden="true" />
 
   {/* Text body */}
   <div class="flex flex-col gap-0.5 flex-1 min-w-0">
@@ -92,7 +93,7 @@ const icon = variantIcons[variant] ?? variantIcons.default!
       data-toast-close
       aria-label="Dismiss notification"
     >
-      <span class="i-lucide-x size-3.5" aria-hidden="true" />
+      <RLAIcon name="close" class="size-3.5" aria-hidden="true" />
     </button>
   )}
 </div>

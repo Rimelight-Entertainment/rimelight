@@ -4,6 +4,7 @@ import { useUi, resolveClasses } from "../../utils"
 import type { AvatarProps } from "../../types"
 import avatarThemeDefault, { createAvatarTheme } from "../../themes/avatar.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "./RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const avatarTheme = uiConfig.colors ? createAvatarTheme(uiConfig.colors) : avatarThemeDefault
@@ -62,7 +63,7 @@ const hasTextLayout = !!(title || subtitle)
               {avatarFallback}
             </slot>
             {!avatarFallback && !Astro.slots.has("fallback") && (
-              <span class={cx(classes.icon, "i-lucide-user")} aria-hidden="true" />
+              <RLAIcon name="user" class={classes.icon} aria-hidden="true" />
             )}
           </span>
         )}
@@ -114,7 +115,7 @@ const hasTextLayout = !!(title || subtitle)
             {avatarFallback}
           </slot>
           {!avatarFallback && !Astro.slots.has("fallback") && (
-            <span class={cx(classes.icon, "i-lucide-user")} aria-hidden="true" />
+            <RLAIcon name="user" class={classes.icon} aria-hidden="true" />
           )}
         </span>
       )}

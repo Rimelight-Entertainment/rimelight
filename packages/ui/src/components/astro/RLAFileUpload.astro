@@ -3,6 +3,7 @@ import { scv } from "css-variants"
 import { useUi, resolveClasses } from "../../utils"
 import type { FileUploadProps } from "../../types"
 import fileUploadThemeDefault, { createFileUploadTheme } from "../../themes/file-upload.theme"
+import RLAIcon from "./RLAIcon.astro"
 
 import { getUIConfig } from "virtual:rimelight-ui"
 
@@ -16,7 +17,7 @@ const {
   disabled = false,
   title = "Drop files here or click to upload",
   description = "Supports any file type",
-  icon = "i-lucide-upload-cloud",
+  icon = "uploadCloud",
   color = "primary",
   ui: uiProp,
   class: className,
@@ -54,7 +55,7 @@ const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
 
     <div class={classes.content} data-slot="content">
       <slot name="icon">
-        <span class={classes.icon + " " + icon} aria-hidden="true" />
+        <RLAIcon name={icon} class={classes.icon} aria-hidden="true" />
       </slot>
 
       <slot>

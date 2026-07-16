@@ -74,6 +74,41 @@ export interface UIOptions {
       }
   >
   autogenerateColorModes?: boolean
+  /**
+   * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
+   */
+  icons?: RimelightIcons
+}
+
+export interface RimelightIcons {
+  chevronDown?: string
+  chevronRight?: string
+  chevronLeft?: string
+  chevronsUpDown?: string
+  close?: string
+  check?: string
+  copy?: string
+  externalLink?: string
+  share?: string
+  user?: string
+  image?: string
+  fileQuestion?: string
+  uploadCloud?: string
+  loaderCircle?: string
+  search?: string
+  info?: string
+  alertTriangle?: string
+  circleX?: string
+  circleCheck?: string
+  bell?: string
+  arrowLeft?: string
+  arrowRight?: string
+  quote?: string
+  gripVertical?: string
+  gripHorizontal?: string
+  layers?: string
+  panelLeft?: string
+  [key: string]: string | undefined
 }
 
 /**
@@ -124,7 +159,8 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     ...resolvedUI,
     logos: options.logos ?? {},
     colors: mergedColors,
-    shortcuts: options.shortcuts ?? {}
+    shortcuts: options.shortcuts ?? {},
+    icons: options.icons ?? {}
   }
 
   const virtualModuleId = "virtual:rimelight-ui"
@@ -174,6 +210,9 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   return [
     UnoCSS({
       presets: [rimelightUiPreset(presetOptions)],
+      safelist: Object.values(options.icons ?? {}).filter(
+        (v): v is string => typeof v === "string" && v.startsWith("i-")
+      ),
       content: {
         pipeline: {
           include: [
