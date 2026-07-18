@@ -4,7 +4,7 @@ description: "An SEO-friendly HTML <head> manager component with View Transition
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAHead from "@rimelight/ui/components/astro/RLAHead.astro"
+import RLAHead from "@rimelight/ui/components/head/RLAHead.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -25,7 +25,7 @@ Use the Head component inside the HTML `<head>` tag of your page layouts.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAHead from "@rimelight/ui/components/astro/RLAHead.astro";
+    import RLAHead from "@rimelight/ui/components/head/RLAHead.astro";
     ---
 
     <head>
@@ -54,7 +54,7 @@ Enable or disable Astro's View Transitions using the `transitions` prop.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAHead from "@rimelight/ui/components/astro/RLAHead.astro";
+    import RLAHead from "@rimelight/ui/components/head/RLAHead.astro";
     ---
 
     <RLAHead title="No Transitions" transitions={false} />

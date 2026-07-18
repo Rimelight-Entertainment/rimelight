@@ -4,7 +4,7 @@ description: "A dropdown menu for displaying a list of options or actions."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLADropdownMenu from "@rimelight/ui/components/astro/RLADropdownMenu.astro"
+import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -31,7 +31,7 @@ How to use the Dropdown Menu component.
   <div slot="code-astro">
     ```astro
     ---
-    import RLADropdownMenu from "@rimelight/ui/components/astro/RLADropdownMenu.astro";
+    import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 
     const items = [
       { label: "Profile", shortcut: "⇧⌘P", icon: "i-lucide-user" },
@@ -76,7 +76,7 @@ Use the `size` prop to change the size of the trigger and items. Supported value
   <div slot="code-astro">
     ```astro
     ---
-    import RLADropdownMenu from "@rimelight/ui/components/astro/RLADropdownMenu.astro";
+    import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 
     const items = [
       { label: "View Info" },
@@ -111,7 +111,7 @@ You can override the trigger element entirely using the `trigger` slot.
   <div slot="code-astro">
     ```astro
     ---
-    import RLADropdownMenu from "@rimelight/ui/components/astro/RLADropdownMenu.astro";
+    import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 
     const items = [
       { label: "Profile" },

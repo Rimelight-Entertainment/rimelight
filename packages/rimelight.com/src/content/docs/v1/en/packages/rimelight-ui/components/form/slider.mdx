@@ -4,7 +4,7 @@ description: "A slider component that allows users to select a value or range of
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLASlider from "@rimelight/ui/components/astro/RLASlider.astro"
+import RLASlider from "@rimelight/ui/components/slider/RLASlider.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -23,7 +23,7 @@ How to use the Slider component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLASlider from "@rimelight/ui/components/astro/RLASlider.astro";
+    import RLASlider from "@rimelight/ui/components/slider/RLASlider.astro";
     ---
 
     <RLASlider value={50} class="w-full max-w-xs" />
@@ -44,7 +44,7 @@ You can define custom `min`, `max`, and `step` values for the slider.
   <div slot="code-astro">
     ```astro
     ---
-    import RLASlider from "@rimelight/ui/components/astro/RLASlider.astro";
+    import RLASlider from "@rimelight/ui/components/slider/RLASlider.astro";
     ---
 
     <RLASlider min={0} max={10} step={2} value={6} class="w-full max-w-xs" />

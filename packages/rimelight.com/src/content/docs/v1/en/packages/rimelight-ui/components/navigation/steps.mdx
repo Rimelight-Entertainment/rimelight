@@ -4,8 +4,8 @@ description: "A documentation component for presenting sequential, numbered step
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro"
-import RLAPackageManagers from "@rimelight/ui/components/astro/RLAPackageManagers.astro"
+import RLASteps from "@rimelight/ui/components/steps/RLASteps.astro"
+import RLAPackageManagers from "@rimelight/ui/components/package-managers/RLAPackageManagers.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -34,7 +34,7 @@ A layout component for structured, numbered sequences. Useful in documentation, 
   <div slot="code-astro">
     ```astro
     ---
-    import RLASteps from "@rimelight/ui/components/astro/RLASteps.astro";
+    import RLASteps from "@rimelight/ui/components/steps/RLASteps.astro";
     ---
 
     <RLASteps>
@@ -136,7 +136,7 @@ Each `<li>` accepts arbitrary Astro content — components, code blocks, images,
 
     ```astro
     ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
     ---
 
     <RLAButton label="Hello world" color="primary" />
@@ -165,7 +165,7 @@ Each `<li>` accepts arbitrary Astro content — components, code blocks, images,
     **Import and use components**
 
     ```astro
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
     ```
   </li>
 </RLASteps>

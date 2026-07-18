@@ -4,7 +4,7 @@ description: "A resizable container split into multiple panels either horizontal
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLASplitter from "@rimelight/ui/components/astro/RLASplitter.astro"
+import RLASplitter from "@rimelight/ui/components/splitter/RLASplitter.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -26,7 +26,7 @@ How to use the Splitter component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLASplitter from "@rimelight/ui/components/astro/RLASplitter.astro";
+    import RLASplitter from "@rimelight/ui/components/splitter/RLASplitter.astro";
     ---
 
     <RLASplitter class="h-64 border border-border rounded-md overflow-hidden">
@@ -57,7 +57,7 @@ Use the `direction="vertical"` prop to split panels vertically.
   <div slot="code-astro">
     ```astro
     ---
-    import RLASplitter from "@rimelight/ui/components/astro/RLASplitter.astro";
+    import RLASplitter from "@rimelight/ui/components/splitter/RLASplitter.astro";
     ---
 
     <RLASplitter direction="vertical" class="h-64 border border-border rounded-md overflow-hidden">
@@ -86,7 +86,7 @@ Set the initial panel sizes as percentages using the `defaultSizes` prop.
   <div slot="code-astro">
     ```astro
     ---
-    import RLASplitter from "@rimelight/ui/components/astro/RLASplitter.astro";
+    import RLASplitter from "@rimelight/ui/components/splitter/RLASplitter.astro";
     ---
 
     <RLASplitter defaultSizes={[30, 70]} class="h-64 border border-border rounded-md overflow-hidden">

@@ -4,7 +4,7 @@ description: "A responsive table component for organizing data into structured r
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLATable from "@rimelight/ui/components/astro/RLATable.astro"
+import RLATable from "@rimelight/ui/components/table/RLATable.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -30,7 +30,7 @@ Define a list of `headers` and `rows` using the props.
   <div slot="code-astro">
     ```astro
     ---
-    import RLATable from "@rimelight/ui/components/astro/RLATable.astro";
+    import RLATable from "@rimelight/ui/components/table/RLATable.astro";
 
     const headers = ["Name", "Email", "Role"];
     const rows = [
@@ -58,7 +58,7 @@ Set the `striped` prop to true to alternate row backgrounds.
   <div slot="code-astro">
     ```astro
     ---
-    import RLATable from "@rimelight/ui/components/astro/RLATable.astro";
+    import RLATable from "@rimelight/ui/components/table/RLATable.astro";
 
     const headers = ["Name", "Email", "Role"];
     const rows = [/* ... */];
@@ -80,7 +80,7 @@ Set the `bordered` prop to true to render borders between all columns and rows.
   <div slot="code-astro">
     ```astro
     ---
-    import RLATable from "@rimelight/ui/components/astro/RLATable.astro";
+    import RLATable from "@rimelight/ui/components/table/RLATable.astro";
 
     const headers = ["Name", "Email", "Role"];
     const rows = [/* ... */];

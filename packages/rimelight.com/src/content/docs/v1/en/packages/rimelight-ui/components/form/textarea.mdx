@@ -4,7 +4,7 @@ description: "A multi-line text input control for getting user feedback, comment
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLATextarea from "@rimelight/ui/components/astro/RLATextarea.astro"
+import RLATextarea from "@rimelight/ui/components/textarea/RLATextarea.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -23,7 +23,7 @@ How to use the Textarea component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLATextarea from "@rimelight/ui/components/astro/RLATextarea.astro";
+    import RLATextarea from "@rimelight/ui/components/textarea/RLATextarea.astro";
     ---
 
     <RLATextarea placeholder="Enter your comments here..." />
@@ -44,7 +44,7 @@ Use the `rows` prop to define the default height of the input area.
   <div slot="code-astro">
     ```astro
     ---
-    import RLATextarea from "@rimelight/ui/components/astro/RLATextarea.astro";
+    import RLATextarea from "@rimelight/ui/components/textarea/RLATextarea.astro";
     ---
 
     <RLATextarea placeholder="A taller text area..." rows={8} />
@@ -63,7 +63,7 @@ Use the `error` prop to display the textarea in a validation failure state.
   <div slot="code-astro">
     ```astro
     ---
-    import RLATextarea from "@rimelight/ui/components/astro/RLATextarea.astro";
+    import RLATextarea from "@rimelight/ui/components/textarea/RLATextarea.astro";
     ---
 
     <RLATextarea placeholder="Required field" error />

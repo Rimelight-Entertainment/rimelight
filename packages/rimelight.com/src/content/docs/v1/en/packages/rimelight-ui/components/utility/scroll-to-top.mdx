@@ -4,7 +4,7 @@ description: "A scroll-to-top button with an optional visual progress indicator 
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro"
+import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -26,7 +26,7 @@ How to use the Scroll To Top component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro";
+    import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro";
     ---
 
     <!-- Floats in the bottom-right corner of the page -->
@@ -51,7 +51,7 @@ Use the `showProgress` prop to display a radial gauge around the button represen
   <div slot="code-astro">
     ```astro
     ---
-    import RLAScrollToTop from "@rimelight/ui/components/astro/RLAScrollToTop.astro";
+    import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro";
     ---
 
     <RLAScrollToTop showProgress={true} color="success" />

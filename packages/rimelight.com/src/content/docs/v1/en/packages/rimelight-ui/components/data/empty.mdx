@@ -4,8 +4,8 @@ description: "A placeholder component for displaying empty states when no data i
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAEmpty from "@rimelight/ui/components/astro/RLAEmpty.astro"
-import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+import RLAEmpty from "@rimelight/ui/components/empty/RLAEmpty.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -31,8 +31,8 @@ Place titles, descriptions, and action buttons inside the default slot of the Em
   <div slot="code-astro">
     ```astro
     ---
-    import RLAEmpty from "@rimelight/ui/components/astro/RLAEmpty.astro";
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    import RLAEmpty from "@rimelight/ui/components/empty/RLAEmpty.astro";
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
     ---
 
     <RLAEmpty>
@@ -64,7 +64,7 @@ A basic representation without action buttons or icons.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAEmpty from "@rimelight/ui/components/astro/RLAEmpty.astro";
+    import RLAEmpty from "@rimelight/ui/components/empty/RLAEmpty.astro";
     ---
 
     <RLAEmpty>

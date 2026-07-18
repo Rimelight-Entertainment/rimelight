@@ -4,7 +4,7 @@ description: "A placeholder component used to mimic the layout of loading conten
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLASkeleton from "@rimelight/ui/components/astro/RLASkeleton.astro"
+import RLASkeleton from "@rimelight/ui/components/skeleton/RLASkeleton.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -29,7 +29,7 @@ Use the Skeleton component to design a loading layout matching your actual conte
   <div slot="code-astro">
     ```astro
     ---
-    import RLASkeleton from "@rimelight/ui/components/astro/RLASkeleton.astro";
+    import RLASkeleton from "@rimelight/ui/components/skeleton/RLASkeleton.astro";
     ---
 
     <div class="flex items-center gap-4 w-full max-w-sm">
@@ -69,7 +69,7 @@ Use the `shape` prop to change the corner radius of the skeleton element. Suppor
   <div slot="code-astro">
     ```astro
     ---
-    import RLASkeleton from "@rimelight/ui/components/astro/RLASkeleton.astro";
+    import RLASkeleton from "@rimelight/ui/components/skeleton/RLASkeleton.astro";
     ---
 
     <RLASkeleton shape="circle" class="size-16" />

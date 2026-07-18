@@ -52,14 +52,15 @@ if (isDynamic && togglingPattern === "select-option") {
 
 // Load theme and pre-calculate all variant classes at build-time (server-side)
 let resolvedTheme = theme;
-const componentKey = resolvedComponentName.replace(/^RL[AV]/, '').toLowerCase(); // e.g. "button"
+const componentNameWithoutPrefix = resolvedComponentName.replace(/^RL[AV]/, '');
+const componentKey = componentNameWithoutPrefix.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(); // e.g. "button" or "input-number"
 let combinationClasses: Record<string, any> = {};
 let initialThemeClasses: Record<string, string> = {};
 
 if (componentKey) {
   if (!resolvedTheme) {
     try {
-      const module = await import(`../../../ui/src/themes/${componentKey}.theme.ts`);
+      const module = await import(`../../../ui/src/components/${componentKey}/${componentKey}.theme.ts`);
       resolvedTheme = module.default;
     } catch (e) {
       console.warn(`Could not load theme for component: ${resolvedComponentName}`);

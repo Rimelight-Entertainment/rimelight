@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from "node:fs"
+import { existsSync, readdirSync, statSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta } from "./types"
@@ -19,68 +19,75 @@ function getComponentNameFromFilename(filename: string): string {
 
 export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
   const componentsDir = path.join(uiRoot, "src", "components")
-  const themesDir = path.join(uiRoot, "src", "themes")
 
-  const vueDir = path.join(componentsDir, "vue")
-  const astroDir = path.join(componentsDir, "astro")
+  const vueComponents = new Map<string, { folder: string; filename: string }>()
+  const astroComponents = new Map<string, { folder: string; filename: string }>()
 
-  const vueFiles = existsSync(vueDir)
-    ? readdirSync(vueDir).filter((f: string) => f.endsWith(".vue"))
-    : []
-  const astroFiles = existsSync(astroDir)
-    ? readdirSync(astroDir).filter((f: string) => f.endsWith(".astro") && f !== "Head.astro")
-    : []
-
-  const vueComponents = new Map<string, string>()
-  const astroComponents = new Map<string, string>()
-
-  for (const f of vueFiles) vueComponents.set(getComponentNameFromFilename(f), f)
-  for (const f of astroFiles) astroComponents.set(getComponentNameFromFilename(f), f)
+  if (existsSync(componentsDir)) {
+    const folders = readdirSync(componentsDir)
+    for (const folder of folders) {
+      const folderPath = path.join(componentsDir, folder)
+      if (statSync(folderPath).isDirectory()) {
+        const files = readdirSync(folderPath)
+        for (const f of files) {
+          if (f.endsWith(".vue") && f.startsWith("RLV")) {
+            const compName = getComponentNameFromFilename(f)
+            vueComponents.set(compName, { folder, filename: f })
+          } else if (f.endsWith(".astro") && f.startsWith("RLA") && f !== "Head.astro") {
+            const compName = getComponentNameFromFilename(f)
+            astroComponents.set(compName, { folder, filename: f })
+          }
+        }
+      }
+    }
+  }
 
   const allNames = new Set([...vueComponents.keys(), ...astroComponents.keys()])
   const result: Record<string, ComponentMeta> = {}
 
   await Promise.all(
     [...allNames].toSorted().map(async (name) => {
-      const vueFile = vueComponents.get(name)
-      const astroFile = astroComponents.get(name)
+      const vue = vueComponents.get(name)
+      const astro = astroComponents.get(name)
 
       let props: PropMeta[] = []
       let slots: SlotMeta[] = []
       let emits: EmitMeta[] = []
       const frameworks: ("astro" | "vue")[] = []
 
-      if (vueFile) {
+      if (vue) {
         frameworks.push("vue")
         try {
-          const vueMeta = extractVueMeta(path.join(vueDir, vueFile))
+          const vueMeta = extractVueMeta(path.join(componentsDir, vue.folder, vue.filename))
           props = vueMeta.props
           slots = vueMeta.slots
           emits = vueMeta.emits
         } catch (err) {
-          console.warn(`[docs] Failed to extract Vue meta for ${vueFile}:`, err)
+          console.warn(`[docs] Failed to extract Vue meta for ${vue.filename}:`, err)
         }
       }
 
-      if (astroFile) {
+      if (astro) {
         frameworks.push("astro")
-        if (!vueFile) {
+        if (!vue) {
           try {
-            const astroMeta = extractAstroMeta(path.join(astroDir, astroFile))
+            const astroMeta = extractAstroMeta(
+              path.join(componentsDir, astro.folder, astro.filename)
+            )
             props = astroMeta.props
             slots = astroMeta.slots
           } catch (err) {
-            console.warn(`[docs] Failed to extract Astro meta for ${astroFile}:`, err)
+            console.warn(`[docs] Failed to extract Astro meta for ${astro.filename}:`, err)
           }
         }
       }
 
-      const theme = await extractThemeMeta(name, themesDir)
+      const theme = await extractThemeMeta(name, componentsDir)
 
       result[pascalToKebab(name)] = {
         name,
-        astroComponent: astroFile ?? null,
-        vueComponent: vueFile ?? null,
+        astroComponent: astro ? astro.filename : null,
+        vueComponent: vue ? vue.filename : null,
         frameworks,
         props,
         slots,

@@ -4,7 +4,7 @@ description: "A text field control for getting user input, supporting icons, siz
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro"
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -23,7 +23,7 @@ How to use the Input component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
     ---
 
     <RLAInput placeholder="Type here..." />
@@ -47,7 +47,7 @@ Use `leadingIcon` and `trailingIcon` props to display icons inside the input.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
     ---
 
     <RLAInput placeholder="Search..." leadingIcon="i-lucide-search" />
@@ -67,7 +67,7 @@ Use the `error` prop to apply validation styling.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
     ---
 
     <RLAInput placeholder="Incorrect value" error />
@@ -89,7 +89,7 @@ Disable the input or make it read-only.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
     ---
 
     <RLAInput value="Disabled text" disabled />

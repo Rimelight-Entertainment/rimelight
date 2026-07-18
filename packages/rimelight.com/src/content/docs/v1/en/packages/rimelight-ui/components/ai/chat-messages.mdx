@@ -4,8 +4,8 @@ description: "A scrollable stream container designed to organize multiple ChatMe
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAChatMessages from "@rimelight/ui/components/astro/RLAChatMessages.astro"
-import RLAChatMessage from "@rimelight/ui/components/astro/RLAChatMessage.astro"
+import RLAChatMessages from "@rimelight/ui/components/chat-messages/RLAChatMessages.astro"
+import RLAChatMessage from "@rimelight/ui/components/chat-message/RLAChatMessage.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -31,8 +31,8 @@ Use the ChatMessages component to group and align chat message items.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAChatMessages from "@rimelight/ui/components/astro/RLAChatMessages.astro";
-    import RLAChatMessage from "@rimelight/ui/components/astro/RLAChatMessage.astro";
+    import RLAChatMessages from "@rimelight/ui/components/chat-messages/RLAChatMessages.astro";
+    import RLAChatMessage from "@rimelight/ui/components/chat-message/RLAChatMessage.astro";
     ---
 
     <RLAChatMessages class="flex flex-col gap-md">

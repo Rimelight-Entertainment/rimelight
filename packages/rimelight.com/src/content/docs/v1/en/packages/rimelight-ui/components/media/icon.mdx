@@ -4,8 +4,8 @@ description: "Display icons from any Iconify collection using UnoCSS."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro"
-import RLACallout from "@rimelight/ui/components/astro/RLACallout.astro"
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
+import RLACallout from "@rimelight/ui/components/callout/RLACallout.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -28,7 +28,7 @@ How to use the Icon component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
+    import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
     ---
 
     <RLAIcon name="i-lucide-home" />
@@ -55,7 +55,7 @@ Icons support predefined sizes via the `size` prop:
   <div slot="code-astro">
     ```astro
     ---
-    import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
+    import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
     ---
 
     <RLAIcon name="i-lucide-home" size="xs" />
@@ -82,7 +82,7 @@ Icons in mask mode use `bg-*` classes for coloring (since they use `currentColor
   <div slot="code-astro">
     ```astro
     ---
-    import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
+    import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
     ---
 
     <RLAIcon name="i-lucide-heart" class="bg-red-500 h-6 w-6" />
@@ -106,7 +106,7 @@ Brand icons (like `i-logos-*`) are multi-color and render in background-image mo
   <div slot="code-astro">
     ```astro
     ---
-    import RLAIcon from "@rimelight/ui/components/astro/RLAIcon.astro";
+    import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
     ---
 
     <RLAIcon name="i-logos-discord-icon?mask" class="text-white h-6 w-6" />

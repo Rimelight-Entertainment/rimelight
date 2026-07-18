@@ -4,7 +4,7 @@ description: "A dialog component for confirming user actions."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro"
+import RLAConfirm from "@rimelight/ui/components/confirm/RLAConfirm.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -23,7 +23,7 @@ How to use the Confirm component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
+    import RLAConfirm from "@rimelight/ui/components/confirm/RLAConfirm.astro";
     ---
 
     <RLAConfirm triggerLabel="Delete" title="Are you sure?" description="This action cannot be undone." />
@@ -44,7 +44,7 @@ Use the `variant="destructive"` prop to style the confirmation dialog for destru
   <div slot="code-astro">
     ```astro
     ---
-    import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
+    import RLAConfirm from "@rimelight/ui/components/confirm/RLAConfirm.astro";
     ---
 
     <RLAConfirm variant="destructive" triggerLabel="Delete Account" title="Delete Account?" description="This will permanently delete your account." actionLabel="Delete" />
@@ -63,7 +63,7 @@ Use `actionLabel` and `cancelLabel` to customize the button labels.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
+    import RLAConfirm from "@rimelight/ui/components/confirm/RLAConfirm.astro";
     ---
 
     <RLAConfirm triggerLabel="Export Data" title="Export data?" description="Your export will begin shortly." actionLabel="Proceed" cancelLabel="Go Back" />
@@ -86,7 +86,7 @@ You can use the `trigger` slot to provide a custom trigger element instead of `t
   <div slot="code-astro">
     ```astro
     ---
-    import RLAConfirm from "@rimelight/ui/components/astro/RLAConfirm.astro";
+    import RLAConfirm from "@rimelight/ui/components/confirm/RLAConfirm.astro";
     ---
 
     <RLAConfirm title="Confirm Action" description="Please confirm to continue.">

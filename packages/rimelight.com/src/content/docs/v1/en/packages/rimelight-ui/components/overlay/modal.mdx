@@ -4,7 +4,7 @@ description: "A dialog window that overlays the main content."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro"
+import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -25,7 +25,7 @@ How to use the Modal component.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro";
+    import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro";
     ---
 
     <RLAModal triggerLabel="Open Modal" title="Modal Title" description="Modal Description">
@@ -57,7 +57,7 @@ Use the `size` prop to control the maximum width of the Modal. It supports `"sm"
   <div slot="code-astro">
     ```astro
     ---
-    import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro";
+    import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro";
     ---
 
     <RLAModal size="sm" triggerLabel="Open Small Modal" title="Small Modal" description="A narrow modal window">
@@ -93,7 +93,7 @@ You can add a footer section at the bottom of the modal using the `footer` slot.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAModal from "@rimelight/ui/components/astro/RLAModal.astro";
+    import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro";
     ---
 
     <RLAModal triggerLabel="Edit Settings" title="System Settings" description="Configure your system configuration.">

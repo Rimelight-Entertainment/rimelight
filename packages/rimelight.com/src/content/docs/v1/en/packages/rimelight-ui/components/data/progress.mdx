@@ -4,7 +4,7 @@ description: "A progress bar component that visualizes completion status of a ta
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro"
+import RLAProgress from "@rimelight/ui/components/progress/RLAProgress.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -23,7 +23,7 @@ Use the Progress component with `value` and `max` props.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro";
+    import RLAProgress from "@rimelight/ui/components/progress/RLAProgress.astro";
     ---
 
     <RLAProgress value={60} max={100} />
@@ -48,7 +48,7 @@ Customize the color of the progress bar using the `color` prop.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro";
+    import RLAProgress from "@rimelight/ui/components/progress/RLAProgress.astro";
     ---
 
     <RLAProgress value={30} color="success" />
@@ -73,7 +73,7 @@ Set the height of the progress bar using the `size` prop. Supported values are `
   <div slot="code-astro">
     ```astro
     ---
-    import RLAProgress from "@rimelight/ui/components/astro/RLAProgress.astro";
+    import RLAProgress from "@rimelight/ui/components/progress/RLAProgress.astro";
     ---
 
     <RLAProgress value={75} size="sm" />

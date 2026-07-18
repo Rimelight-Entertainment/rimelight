@@ -4,7 +4,7 @@ description: "A routing-agnostic dropdown for switching application locales. Wor
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro"
+import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -33,7 +33,7 @@ component has no dependency on Astro's routing or any i18n library.
   <div slot="code-astro">
     ```astro
     ---
-    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
     ---
 
     <RLALocaleSelector
@@ -67,7 +67,7 @@ When your project uses Astro's built-in i18n routing, compute `href` values serv
   <div slot="code-astro">
     ```astro
     ---
-    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
     import { getRelativeLocaleUrl } from "astro:i18n";
 
     // Strip the locale prefix to get the bare path, then rebuild for each locale.
@@ -102,7 +102,7 @@ also keeps the `currentLocale` nanostores atom in sync.
   <div slot="code-astro">
     ```astro
     ---
-    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
     import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
     const basePath = Astro.url.pathname.replace(/^\/[^/]+/, '') || '/';
@@ -137,7 +137,7 @@ Omit `locales` entirely and the component will read the list from Astro's
   <div slot="code-astro">
     ```astro
     ---
-    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
     // No locales prop — auto-detected from Astro i18n config
     ---
 
@@ -165,7 +165,7 @@ Add a descriptive label beside the dropdown using the `label` slot.
   <div slot="code-astro">
     ```astro
     ---
-    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
     ---
 
     <RLALocaleSelector locales={locales} currentLocale={Astro.currentLocale}>

@@ -4,7 +4,7 @@ description: "A card that appears when hovering over a trigger element."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro"
+import RLAHoverCard from "@rimelight/ui/components/hover-card/RLAHoverCard.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -28,7 +28,7 @@ How to use the Hover Card component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro";
+    import RLAHoverCard from "@rimelight/ui/components/hover-card/RLAHoverCard.astro";
     ---
 
     <RLAHoverCard triggerLabel="Hover me">
@@ -67,7 +67,7 @@ Use the `placement` prop to adjust where the card appears relative to the trigge
   <div slot="code-astro">
     ```astro
     ---
-    import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro";
+    import RLAHoverCard from "@rimelight/ui/components/hover-card/RLAHoverCard.astro";
     ---
 
     <RLAHoverCard triggerLabel="Top Placement" placement="top">
@@ -107,7 +107,7 @@ You can override the trigger element entirely using the `trigger` slot.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAHoverCard from "@rimelight/ui/components/astro/RLAHoverCard.astro";
+    import RLAHoverCard from "@rimelight/ui/components/hover-card/RLAHoverCard.astro";
     ---
 
     <RLAHoverCard>

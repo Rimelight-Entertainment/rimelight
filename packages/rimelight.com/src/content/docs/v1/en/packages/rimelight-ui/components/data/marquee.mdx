@@ -4,7 +4,7 @@ description: "An infinite scrolling component that moves content horizontally or
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro"
+import RLAMarquee from "@rimelight/ui/components/marquee/RLAMarquee.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -28,7 +28,7 @@ Place items inside the Marquee container. By default, it scrolls to the left at 
   <div slot="code-astro">
     ```astro
     ---
-    import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro";
+    import RLAMarquee from "@rimelight/ui/components/marquee/RLAMarquee.astro";
     ---
 
     <RLAMarquee class="py-2 border-y">
@@ -69,7 +69,7 @@ Set the scroll direction to `right`, `up`, or `down`.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro";
+    import RLAMarquee from "@rimelight/ui/components/marquee/RLAMarquee.astro";
     ---
 
     {/* Scrolling Right */}
@@ -106,7 +106,7 @@ Use the `speed` prop (in seconds for one full loop, default is `40`) and `pauseO
   <div slot="code-astro">
     ```astro
     ---
-    import RLAMarquee from "@rimelight/ui/components/astro/RLAMarquee.astro";
+    import RLAMarquee from "@rimelight/ui/components/marquee/RLAMarquee.astro";
     ---
 
     <RLAMarquee speed={15} pauseOnHover={false} class="py-2 border-y">

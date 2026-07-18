@@ -4,7 +4,7 @@ description: "A temporary notification toast component that slides into view."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro"
+import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -23,7 +23,7 @@ How to use the Toast component in Astro.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
     ---
 
     <RLAToast title="Success" description="Your profile has been saved." />
@@ -49,7 +49,7 @@ Use the `variant` prop to change the semantic style of the Toast. Supported vari
   <div slot="code-astro">
     ```astro
     ---
-    import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
     ---
 
     <RLAToast variant="success" title="Success" description="Operation completed successfully." />
@@ -71,7 +71,7 @@ Use the `actionLabel` prop to add an action button to the Toast.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
     ---
 
     <RLAToast title="Update Available" description="Version 2.0 is now available." actionLabel="Update Now" />
@@ -93,7 +93,7 @@ By default, toasts are dismissable and disappear after 5000ms. Use `dismissable=
   <div slot="code-astro">
     ```astro
     ---
-    import RLAToast from "@rimelight/ui/components/astro/RLAToast.astro";
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
     ---
 
     <RLAToast title="Persistent" description="This notification will not auto-dismiss." duration={0} />

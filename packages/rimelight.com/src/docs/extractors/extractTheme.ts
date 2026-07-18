@@ -1,25 +1,16 @@
-import { existsSync, readdirSync } from "node:fs"
+import { existsSync } from "node:fs"
 import path from "node:path"
 import { execSync } from "node:child_process"
 import type { ThemeMeta } from "../types"
 
 export async function extractThemeMeta(
   componentName: string,
-  themesDir: string
+  componentsDir: string
 ): Promise<ThemeMeta | null> {
-  if (!existsSync(themesDir)) return null
+  const kebabName = componentName.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()
+  const themePath = path.join(componentsDir, kebabName, `${kebabName}.theme.ts`)
 
-  const themeFiles = readdirSync(themesDir).filter((f) => f.endsWith(".theme.ts"))
-  let themePath: string | null = null
-  for (const file of themeFiles) {
-    const baseName = file.replace(".theme.ts", "")
-    if (baseName === componentName.toLowerCase()) {
-      themePath = path.join(themesDir, file)
-      break
-    }
-  }
-
-  if (!themePath || !existsSync(themePath)) return null
+  if (!existsSync(themePath)) return null
 
   try {
     const fileUrl = "file:///" + themePath.replace(/\\/g, "/")

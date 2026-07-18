@@ -4,7 +4,7 @@ description: "A component for visualizing data using various chart types includi
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro"
+import RLAChart from "@rimelight/ui/components/chart/RLAChart.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -38,7 +38,7 @@ Use the Chart component with a type (defaults to `bar`) and a `data` array.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro";
+    import RLAChart from "@rimelight/ui/components/chart/RLAChart.astro";
 
     const salesData = [
       { label: "Jan", value: 400 },
@@ -70,7 +70,7 @@ Use the `type="line"` or `type="area"` prop to render a line/area chart.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro";
+    import RLAChart from "@rimelight/ui/components/chart/RLAChart.astro";
 
     const salesData = [/* ... */];
     ---
@@ -95,7 +95,7 @@ Use `type="pie"` or `type="donut"` to display proportional data parts.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAChart from "@rimelight/ui/components/astro/RLAChart.astro";
+    import RLAChart from "@rimelight/ui/components/chart/RLAChart.astro";
 
     const marketShareData = [
       { label: "Astro", value: 45 },

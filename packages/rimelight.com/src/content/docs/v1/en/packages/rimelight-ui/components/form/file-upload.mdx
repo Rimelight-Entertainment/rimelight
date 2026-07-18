@@ -4,7 +4,7 @@ description: "A drag-and-drop file upload area supporting click to upload, custo
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAFileUpload from "@rimelight/ui/components/astro/RLAFileUpload.astro"
+import RLAFileUpload from "@rimelight/ui/components/file-upload/RLAFileUpload.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -23,7 +23,7 @@ How to use the File Upload component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAFileUpload from "@rimelight/ui/components/astro/RLAFileUpload.astro";
+    import RLAFileUpload from "@rimelight/ui/components/file-upload/RLAFileUpload.astro";
     ---
 
     <RLAFileUpload />
@@ -44,7 +44,7 @@ Use the `accept` prop to restrict uploaded file types.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAFileUpload from "@rimelight/ui/components/astro/RLAFileUpload.astro";
+    import RLAFileUpload from "@rimelight/ui/components/file-upload/RLAFileUpload.astro";
     ---
 
     <RLAFileUpload accept=".pdf,.docx" description="PDF and DOCX only" />
@@ -63,7 +63,7 @@ Use the `disabled` prop to prevent interactions.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAFileUpload from "@rimelight/ui/components/astro/RLAFileUpload.astro";
+    import RLAFileUpload from "@rimelight/ui/components/file-upload/RLAFileUpload.astro";
     ---
 
     <RLAFileUpload disabled />

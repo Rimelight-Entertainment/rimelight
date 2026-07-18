@@ -4,8 +4,8 @@ description: "A wrapper component that provides a label, description, required i
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro"
-import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro"
+import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro"
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -26,8 +26,8 @@ How to use the Form Field component to wrap an input.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro";
-    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro";
+    import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
     ---
 
     <RLAFormField label="Username" id="username">
@@ -52,8 +52,8 @@ Use the `required` prop to show a required asterisk next to the label.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro";
-    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro";
+    import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
     ---
 
     <RLAFormField label="Email" id="email" required>
@@ -81,8 +81,8 @@ Use the `description` and `error` props to provide help text and validation erro
   <div slot="code-astro">
     ```astro
     ---
-    import RLAFormField from "@rimelight/ui/components/astro/RLAFormField.astro";
-    import RLAInput from "@rimelight/ui/components/astro/RLAInput.astro";
+    import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro";
+    import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
     ---
 
     <RLAFormField

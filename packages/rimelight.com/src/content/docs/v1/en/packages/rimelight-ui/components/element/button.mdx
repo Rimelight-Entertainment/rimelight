@@ -4,7 +4,7 @@ description: "A Button element that can trigger an action or act as a link."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -21,7 +21,7 @@ How to use the Button component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
     ---
 
     <RLAButton label="Button" />
@@ -42,7 +42,7 @@ Use the `label` prop to set the label of the Button.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
     ---
 
     <RLAButton label="Button" />
@@ -81,7 +81,7 @@ Use the `color` prop to change the color of the Button.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
     ---
 
     <RLAButton color="primary" label="Button" />
@@ -109,7 +109,7 @@ Use the `variant` prop to change the variant of the Button.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
     ---
 
     <RLAButton variant="solid" label="Button" />
@@ -137,7 +137,7 @@ Use the `size` prop to change the size of the Button.
   <div slot="code-astro">
     ```astro
     ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
     ---
 
     <RLAButton size="md" label="Button" />
@@ -159,7 +159,7 @@ Use the `leadingIcon` prop with any [icon class](/company/docs/packages/rimeligh
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton leadingIcon="i-lucide-download" label="Download" />
@@ -180,7 +180,7 @@ Use the `trailingIcon` prop with any [icon class](/company/docs/packages/rimelig
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton label="Continue" trailingIcon="i-lucide-arrow-right" />
@@ -202,7 +202,7 @@ Use the `avatar` prop to show an [Avatar](/company/docs/packages/rimelight-ui/co
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton avatar="https://i.pravatar.cc/150?img=3" label="Jane Doe" />
@@ -223,7 +223,7 @@ Use the `loading` prop to show a loading icon and disable the Button.
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton label="Loading" loading />
@@ -247,7 +247,7 @@ Use the `loadingAuto` prop to show the loading icon automatically while the clic
   <div slot="code-astro">
     ```astro
     ---
-    import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
     ---
 
     <RLAButton label="Submit" loadingAuto onclick="return new Promise(resolve => setTimeout(resolve, 2000))" />
@@ -271,7 +271,7 @@ Use the `square` prop to render a square Button with equal padding.
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton square>
@@ -295,7 +295,7 @@ Use the `rounded` prop to apply fully rounded pill-shaped corners.
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton label="Rounded" rounded />
@@ -314,7 +314,7 @@ Use the `block` prop to make the Button span the full width of its container.
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton label="Full Width Button" block />
@@ -334,7 +334,7 @@ Use the `href` prop to render the Button as a link. You can pass any standard an
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton label="Go to Rimelight" href="https://rimelight.com" />
@@ -354,7 +354,7 @@ Use the `disabled` prop to disable the Button.
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton label="Disabled" disabled />
@@ -376,7 +376,7 @@ Use the `active` prop along with `activeVariant` and `activeColor` to override t
 <div slot="code-astro">
   ```astro
   ---
-  import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
+  import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
   ---
 
   <RLAButton variant="ghost" label="Overview" active activeVariant="soft" />

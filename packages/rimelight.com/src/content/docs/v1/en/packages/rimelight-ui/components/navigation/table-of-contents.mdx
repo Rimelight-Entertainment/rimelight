@@ -4,7 +4,7 @@ description: "A navigation component that lists the headers/sections of the page
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLATableOfContents from "@rimelight/ui/components/astro/RLATableOfContents.astro"
+import RLATableOfContents from "@rimelight/ui/components/table-of-contents/RLATableOfContents.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -27,7 +27,7 @@ The `TableOfContents` component parses a list of headings and outputs an active-
   <div slot="code-astro">
     ```astro
     ---
-    import RLATableOfContents from "@rimelight/ui/components/astro/RLATableOfContents.astro";
+    import RLATableOfContents from "@rimelight/ui/components/table-of-contents/RLATableOfContents.astro";
 
     const headings = [
       { depth: 2, slug: "usage", text: "Usage" },

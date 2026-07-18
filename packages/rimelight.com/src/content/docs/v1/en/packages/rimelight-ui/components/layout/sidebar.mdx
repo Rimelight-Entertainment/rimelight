@@ -4,7 +4,7 @@ description: "A customizable navigation sidebar layout component supporting nest
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro"
+import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -30,7 +30,7 @@ How to use the Sidebar component in its simplest form.
   <div slot="code-astro">
     ```astro
     ---
-    import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
+    import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro";
 
     const navItems = [
       { label: "Home", href: "#", icon: "i-lucide-home", active: true },
@@ -68,7 +68,7 @@ The Sidebar supports nested list items for hierarchical navigation.
   <div slot="code-astro">
     ```astro
     ---
-    import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
+    import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro";
 
     const navItems = [
       {

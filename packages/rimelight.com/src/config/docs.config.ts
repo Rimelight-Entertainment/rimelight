@@ -793,8 +793,17 @@ export default defineDocsConfig({
                         }
                       },
                       {
-                        label: "InputOTP",
-                        href: "/{locale}/company/docs/packages/rimelight-ui/components/form/pin-input/",
+                        label: "InputPin",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-pin/",
+                        badge: {
+                          text: "Slop",
+                          variant: "error"
+                        }
+                      },
+
+                      {
+                        label: "InputRating",
+                        href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-rating/",
                         badge: {
                           text: "Slop",
                           variant: "error"

@@ -107,9 +107,9 @@ api.get("/github/changelog", async (c) => {
   }
 
   const paths = [
-    `packages/ui/src/components/vue/RLV${pascalName}.vue`,
-    `packages/ui/src/components/astro/RLA${pascalName}.astro`,
-    `packages/ui/src/themes/${component}.theme.ts`
+    `packages/ui/src/components/${component}/RLV${pascalName}.vue`,
+    `packages/ui/src/components/${component}/RLA${pascalName}.astro`,
+    `packages/ui/src/components/${component}/${component}.theme.ts`
   ]
 
   try {

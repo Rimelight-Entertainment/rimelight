@@ -4,7 +4,7 @@ description: "A navigation helper that displays the current page's location with
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
-import RLABreadcrumb from "@rimelight/ui/components/astro/RLABreadcrumb.astro"
+import RLABreadcrumb from "@rimelight/ui/components/breadcrumb/RLABreadcrumb.astro"
 import ApiProps from "@/docs/components/ApiProps.astro"
 import ApiSlots from "@/docs/components/ApiSlots.astro"
 import ApiEmits from "@/docs/components/ApiEmits.astro"
@@ -27,7 +27,7 @@ The `Breadcrumb` component renders a structured path indicating the hierarchy of
   <div slot="code-astro">
     ```astro
     ---
-    import RLABreadcrumb from "@rimelight/ui/components/astro/RLABreadcrumb.astro";
+    import RLABreadcrumb from "@rimelight/ui/components/breadcrumb/RLABreadcrumb.astro";
 
     const items = [
       { label: "Home", href: "/" },
