@@ -8,7 +8,7 @@ import rimelightUiPreset, { uiSrcGlob, uiFilesystemGlob } from "./presets"
 import type { RimelightPresetOptions } from "./presets"
 
 export type { UIConfig } from "./config/ui.config"
-export type { RimelightIcons } from "./icons"
+export type { RimelightIcons } from "./icons/defaults"
 
 export function ui(options: UIConfig = {}): AstroIntegration[] {
   let astroLogger: any = null
