@@ -54,16 +54,18 @@ bun add @rimelight/ui
 
 ```typescript
 // astro.config.ts
-import { ui } from "@rimelight/ui/integrations"
+import { ui } from "@rimelight/ui"
 import { defineConfig } from "astro/config"
 
 export default defineConfig({
   integrations: [
     ui({
       // Optional: Provide global UI overrides
-      ui: {
-        button: {
-          defaultVariants: { variant: "primary" }
+      components: {
+        themes: {
+          button: {
+            defaultVariants: { variant: "primary" }
+          }
         }
       }
     })

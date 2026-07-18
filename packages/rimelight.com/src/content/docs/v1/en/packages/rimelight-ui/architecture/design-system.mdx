@@ -207,12 +207,14 @@ We use a smart merging strategy powered by a custom recursive merge utility to c
 
 ```typescript
 ui({
-  ui: {
-    button: {
-      // Override defaults or apply to all buttons globally
-      defaultVariants: { size: "lg" },
-      slots: {
-        root: "rounded-full px-8"
+  components: {
+    themes: {
+      button: {
+        // Override defaults or apply to all buttons globally
+        defaultVariants: { size: "lg" },
+        slots: {
+          root: "rounded-full px-8"
+        }
       }
     }
   }

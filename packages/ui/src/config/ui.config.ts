@@ -62,10 +62,15 @@ export interface UIOptions {
       }
   >
   /**
-   * Global UI overrides applied to all components. Merged with defaults via our custom recursive
-   * merge utility (first arg wins).
+   * Global component configuration overrides.
    */
-  ui?: UIConfigOverrides
+  components?: {
+    /**
+     * Global UI overrides applied to all components. Merged with defaults via our custom recursive
+     * merge utility (first arg wins).
+     */
+    themes?: UIConfigOverrides
+  }
   /**
    * Custom colors. Each color can be:
    *

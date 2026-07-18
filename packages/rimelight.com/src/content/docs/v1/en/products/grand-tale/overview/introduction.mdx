@@ -100,12 +100,14 @@ import { defineConfig } from "astro/config"
 export default defineConfig({
   integrations: [
     ui({
-      ui: {
-        button: {
-          defaultVariants: {
-            variant: "solid",
-            color: "primary",
-            size: "md"
+      components: {
+        themes: {
+          button: {
+            defaultVariants: {
+              variant: "solid",
+              color: "primary",
+              size: "md"
+            }
           }
         }
       }

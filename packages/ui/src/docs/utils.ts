@@ -356,7 +356,9 @@ export default defineConfig({
   integrations: [
     ui({
       components: {
-        ${componentName}: ${JSON.stringify(componentConfig, null, 6).replace(/\n/g, "\n        ")}
+        themes: {
+          ${componentName}: ${JSON.stringify(componentConfig, null, 10).replace(/\n/g, "\n          ")}
+        }
       }
     })
   ]

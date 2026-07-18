@@ -35,8 +35,10 @@ import { defineConfig } from "astro/config"
 export default defineConfig({
   integrations: [
     ui({
-      ui: {
-        ${componentName}: ${JSON.stringify(componentConfig, null, 6).replace(/\n/g, "\n        ")}
+      components: {
+        themes: {
+          ${componentName}: ${JSON.stringify(componentConfig, null, 10).replace(/\n/g, "\n          ")}
+        }
       }
     })
   ]

@@ -27,16 +27,18 @@ To use Rimelight UI in an Astro project, install the package and register the in
 
     ```typescript
     // astro.config.ts
-    import { ui } from "@rimelight/ui/integrations"
+    import { ui } from "@rimelight/ui"
     import { defineConfig } from "astro/config"
 
     export default defineConfig({
       integrations: [
         ui({
           // Optional: provide global UI overrides
-          ui: {
-            button: {
-              defaultVariants: { color: "secondary" }
+          components: {
+            themes: {
+              button: {
+                defaultVariants: { color: "secondary" }
+              }
             }
           }
         })

@@ -85,22 +85,20 @@ A versatile logo component that renders a site logo from your configuration, sup
 The logo component fetches its image sources from the `@rimelight/ui` global configuration. You can configure your logos in your `astro.config.mjs`:
 
 ```typescript
-import { ui } from "@rimelight/ui/integrations"
+import { ui } from "@rimelight/ui"
 
 export default defineConfig({
   integrations: [
     ui({
-      ui: {
-        logos: {
-          logomark: {
-            color: "/images/logo-color.svg",
-            white: "/images/logo-white.svg",
-            black: "/images/logo-black.svg"
-          },
-          logotype: "/images/logotype.png",
-          // You can also use an UnoCSS icon class directly:
-          icon: "i-heroicons-home"
-        }
+      logos: {
+        logomark: {
+          color: "/images/logo-color.svg",
+          white: "/images/logo-white.svg",
+          black: "/images/logo-black.svg"
+        },
+        logotype: "/images/logotype.png",
+        // You can also use an UnoCSS icon class directly:
+        icon: "i-heroicons-home"
       }
     })
   ]

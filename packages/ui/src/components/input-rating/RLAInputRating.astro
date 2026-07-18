@@ -126,6 +126,12 @@ const itemSize = sizeMap[size] || "1.25rem"
 </rla-input-rating>
 
 <script>
+  function getWidthForVal(val: number, itemIndex: number) {
+    if (val >= itemIndex) return "100%"
+    if (val <= itemIndex - 1) return "0%"
+    return `${(val - (itemIndex - 1)) * 100}%`
+  }
+
   class RLAInputRating extends HTMLElement {
     private cleanup: (() => void) | null = null
 
@@ -148,12 +154,6 @@ const itemSize = sizeMap[size] || "1.25rem"
 
       let selectedValue = parseFloat(input?.value || '0')
       let hoveredValue: number | null = null
-
-      function getWidthForVal(val: number, itemIndex: number) {
-        if (val >= itemIndex) return "100%"
-        if (val <= itemIndex - 1) return "0%"
-        return `${(val - (itemIndex - 1)) * 100}%`
-      }
 
       function updateVisuals(val: number) {
         items.forEach((item) => {

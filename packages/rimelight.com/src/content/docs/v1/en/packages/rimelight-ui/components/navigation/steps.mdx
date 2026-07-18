@@ -120,7 +120,7 @@ Each `<li>` accepts arbitrary Astro content — components, code blocks, images,
     In your `astro.config.ts`, add the `ui()` integration:
 
     ```typescript
-    import { ui } from "@rimelight/ui/integrations"
+    import { ui } from "@rimelight/ui"
     import { defineConfig } from "astro/config"
 
     export default defineConfig({
@@ -156,7 +156,7 @@ Each `<li>` accepts arbitrary Astro content — components, code blocks, images,
     **Register the integration**
 
     ```typescript
-    import { ui } from "@rimelight/ui/integrations"
+    import { ui } from "@rimelight/ui"
     import { defineConfig } from "astro/config"
     export default defineConfig({ integrations: [ui()] })
     ```
