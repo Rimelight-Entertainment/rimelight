@@ -107,6 +107,34 @@ You can add navigation links or button actions inside the bottom of the slideove
   </div>
 </ComponentShowcase>
 
+### Unmount on Hide
+
+Set `unmountOnHide` to `false` to keep the content mounted in the DOM when the Slideover is closed. This preserves form input state, scroll position, and active media elements.
+
+<ComponentShowcase>
+  <RLASlideover unmountOnHide={false} triggerLabel="Keep State Slideover" title="Stateful Slideover" description="Input value will survive open/close cycles">
+    <div class="p-4 flex flex-col gap-2">
+      <p class="text-sm text-muted-foreground">Type something, close, and reopen the slideover:</p>
+      <input type="text" placeholder="Type here..." class="border p-2 rounded text-sm bg-background" />
+    </div>
+  </RLASlideover>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASlideover from "@rimelight/ui/components/slideover/RLASlideover.astro";
+    ---
+
+    <RLASlideover unmountOnHide={false} triggerLabel="Keep State Slideover" title="Stateful Slideover">
+      <div class="p-4">
+        <input type="text" placeholder="Type here..." class="border p-2 rounded text-sm bg-background" />
+      </div>
+    </RLASlideover>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## API
 
 ### Props

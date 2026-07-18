@@ -195,6 +195,17 @@ You can override any of those slots at the call site via the `ui` prop:
 }}>
 ```
 
+### Function Overrides
+
+For precise control, slot overrides within the `ui` prop can also accept a `(defaults) => classes` builder function. The function receives the resolved default classes as its parameter and returns the replacement classes string. This completely replaces the default styling for that slot instead of merging with it:
+
+```astro
+<!-- Replaces the default button classes entirely with custom text size and font weight -->
+<RLAButton ui={{
+  base: (defaults) => "text-3xl font-bold"
+}} />
+```
+
 ## TypeScript Support
 
 Because themes are exported as TypeScript objects typed by `defineTheme`, you get full autocomplete when defining variants:
@@ -297,3 +308,29 @@ You can locally remap a color for a specific subtree by redefining the CSS varia
   <RLAButton color="primary">Purple Button</RLAButton>
 </div>
 ```
+
+## Unstyled Mode
+
+Rimelight UI supports a global `unstyled` theme option, allowing you to strip default component-level CSS theme classes entirely so you can supply your own layout/cosmetic styling from scratch.
+
+### Enabling Unstyled Mode
+
+You can enable it globally in your project UI configuration options:
+
+```typescript
+// astro.config.ts or global UI integration settings
+import { ui } from "@rimelight/ui"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      unstyled: true
+    })
+  ]
+})
+```
+
+When `unstyled: true` is set, `resolveClasses` skips loading the theme variant defaults (e.g. from `.theme.ts` files). The component slots will contain only the class overrides supplied through the component's `class` or `ui` properties.
+
+> [!WARNING]
+> This strips structural classes too (positioning, transitions, flex/grid), not just cosmetic ones. Layout-heavy components like `Modal`, `Drawer`, `Slideover`, or `Calendar` will need you to re-supply their layouts.

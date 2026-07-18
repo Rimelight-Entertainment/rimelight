@@ -13,6 +13,7 @@ const {
   items = [],
   side = "left",
   collapsible = "none",
+  variant = "sidebar",
   logo,
   ui: uiProp,
   class: className,
@@ -23,7 +24,8 @@ const {
 
 const classes = resolveClasses(sidebar, {
   side,
-  collapsible
+  collapsible,
+  variant
 }, useUi("sidebar", uiProp), className)
 
 const hasActiveChild = (item: SidebarItem): boolean => {

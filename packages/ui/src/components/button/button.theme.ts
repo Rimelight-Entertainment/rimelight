@@ -88,7 +88,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof def
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +
@@ -98,7 +98,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof def
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +
@@ -108,7 +108,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof def
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +
@@ -118,7 +118,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof def
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +
@@ -128,7 +128,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof def
       })),
       ...colors.map((color) => ({
         variant: "ghost" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +
@@ -138,7 +138,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof def
       })),
       ...colors.map((color) => ({
         variant: "link" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +

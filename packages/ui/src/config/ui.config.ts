@@ -41,6 +41,10 @@ export interface RimelightIcons {
 
 export interface UIOptions {
   /**
+   * Whether to strip default theme classes from all components (bringing your own styling).
+   */
+  unstyled?: boolean
+  /**
    * Configuration for keyboard shortcuts.
    */
   shortcuts?: {
@@ -70,6 +74,10 @@ export interface UIOptions {
      * merge utility (first arg wins).
      */
     themes?: UIConfigOverrides
+    /**
+     * Default prop values overrides for components.
+     */
+    props?: Record<string, Record<string, any>>
   }
   /**
    * Custom colors. Each color can be:

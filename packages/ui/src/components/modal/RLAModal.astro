@@ -22,6 +22,7 @@ const {
   size = "md",
   ui: uiProp,
   class: className,
+  unmountOnHide = true,
   ...rest
 } = Astro.props as ModalProps & { size?: "sm" | "md" | "lg" | "xl" }
 
@@ -54,6 +55,7 @@ const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
     data-lock-scroll={lockScroll ? "true" : "false"}
     data-close-on-escape={closeOnEscape ? "true" : "false"}
     data-close-on-click-outside={closeOnClickOutside ? "true" : "false"}
+    data-unmount-on-hide={unmountOnHide ? "true" : "false"}
     {...rest}
   >
     <button
@@ -95,6 +97,10 @@ const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
         if (dialogId) {
           const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
           if (dialog) {
+            // Restore content if it was unmounted/cleared
+            if (dialog.getAttribute('data-unmount-on-hide') === 'true' && (dialog as any)._rla_saved_html) {
+              dialog.innerHTML = (dialog as any)._rla_saved_html;
+            }
             if (typeof dialog.showModal === 'function') {
               dialog.showModal();
             } else if (typeof (dialog as any).showmodal === 'function') {
@@ -109,7 +115,21 @@ const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
         const dialogId = closeTrigger.getAttribute('data-dialog-close');
         if (dialogId) {
           const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
-          dialog?.close();
+          if (dialog) {
+            dialog.close();
+            // Clear content if unmountOnHide is true
+            if (dialog.getAttribute('data-unmount-on-hide') === 'true') {
+              if (!(dialog as any)._rla_saved_html) {
+                (dialog as any)._rla_saved_html = dialog.innerHTML;
+              }
+              // Keep only the close button to ensure it can be reopened/closed properly
+              const closeBtn = dialog.querySelector('[data-slot="close-button"]');
+              dialog.innerHTML = '';
+              if (closeBtn) {
+                dialog.appendChild(closeBtn);
+              }
+            }
+          }
         }
       }
 
@@ -122,9 +142,42 @@ const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
           e.clientX <= rect.left + rect.width
         );
         if (!isInModal) {
-          (target as HTMLDialogElement).close();
+          const dialog = target as HTMLDialogElement;
+          dialog.close();
+          if (dialog.getAttribute('data-unmount-on-hide') === 'true') {
+            if (!(dialog as any)._rla_saved_html) {
+              (dialog as any)._rla_saved_html = dialog.innerHTML;
+            }
+            const closeBtn = dialog.querySelector('[data-slot="close-button"]');
+            dialog.innerHTML = '';
+            if (closeBtn) {
+              dialog.appendChild(closeBtn);
+            }
+          }
         }
       }
+    });
+
+    // Handle dialog escape key
+    document.addEventListener('cancel', (e) => {
+      const dialog = e.target as HTMLDialogElement | null;
+      if (dialog && dialog.tagName === 'DIALOG') {
+        if (dialog.getAttribute('data-unmount-on-hide') === 'true') {
+          if (!(dialog as any)._rla_saved_html) {
+            (dialog as any)._rla_saved_html = dialog.innerHTML;
+          }
+          const closeBtn = dialog.querySelector('[data-slot="close-button"]');
+          dialog.innerHTML = '';
+          if (closeBtn) {
+            dialog.appendChild(closeBtn);
+          }
+        }
+      }
+    });
+
+    // Save initial HTML for dialogs that unmount on hide
+    document.querySelectorAll('dialog[data-unmount-on-hide="true"]').forEach(dialog => {
+      (dialog as any)._rla_saved_html = dialog.innerHTML;
     });
   }
 </script>

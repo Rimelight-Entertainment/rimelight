@@ -18,6 +18,7 @@ const {
   triggerLabel,
   ui: uiProp,
   class: className,
+  unmountOnHide = true,
   ...rest
 } = Astro.props as SlideoverProps
 
@@ -48,6 +49,7 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
     class={classes.content}
     data-slot="content"
     data-close-on-click-outside="true"
+    data-unmount-on-hide={unmountOnHide ? "true" : "false"}
     {...rest}
   >
     <button
@@ -136,6 +138,10 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
         if (dialogId) {
           const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
           if (dialog) {
+            // Restore content if it was unmounted/cleared
+            if (dialog.getAttribute('data-unmount-on-hide') === 'true' && (dialog as any)._rla_saved_html) {
+              dialog.innerHTML = (dialog as any)._rla_saved_html;
+            }
             if (typeof dialog.showModal === 'function') {
               dialog.showModal();
             } else if (typeof (dialog as any).showmodal === 'function') {
@@ -150,7 +156,20 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
         const dialogId = closeTrigger.getAttribute('data-dialog-close');
         if (dialogId) {
           const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
-          dialog?.close();
+          if (dialog) {
+            dialog.close();
+            // Clear content if unmountOnHide is true
+            if (dialog.getAttribute('data-unmount-on-hide') === 'true') {
+              if (!(dialog as any)._rla_saved_html) {
+                (dialog as any)._rla_saved_html = dialog.innerHTML;
+              }
+              const closeBtn = dialog.querySelector('[data-slot="close-button"]');
+              dialog.innerHTML = '';
+              if (closeBtn) {
+                dialog.appendChild(closeBtn);
+              }
+            }
+          }
         }
       }
 
@@ -163,9 +182,40 @@ const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
           e.clientX <= rect.left + rect.width
         );
         if (!isInModal) {
-          (target as HTMLDialogElement).close();
+          const dialog = target as HTMLDialogElement;
+          dialog.close();
+          if (dialog.getAttribute('data-unmount-on-hide') === 'true') {
+            if (!(dialog as any)._rla_saved_html) {
+              (dialog as any)._rla_saved_html = dialog.innerHTML;
+            }
+            const closeBtn = dialog.querySelector('[data-slot="close-button"]');
+            dialog.innerHTML = '';
+            if (closeBtn) {
+              dialog.appendChild(closeBtn);
+            }
+          }
         }
       }
+    });
+
+    document.addEventListener('cancel', (e) => {
+      const dialog = e.target as HTMLDialogElement | null;
+      if (dialog && dialog.tagName === 'DIALOG') {
+        if (dialog.getAttribute('data-unmount-on-hide') === 'true') {
+          if (!(dialog as any)._rla_saved_html) {
+            (dialog as any)._rla_saved_html = dialog.innerHTML;
+          }
+          const closeBtn = dialog.querySelector('[data-slot="close-button"]');
+          dialog.innerHTML = '';
+          if (closeBtn) {
+            dialog.appendChild(closeBtn);
+          }
+        }
+      }
+    });
+
+    document.querySelectorAll('dialog[data-unmount-on-hide="true"]').forEach(dialog => {
+      (dialog as any)._rla_saved_html = dialog.innerHTML;
     });
   }
 </script>

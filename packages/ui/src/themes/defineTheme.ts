@@ -2,7 +2,7 @@ export interface ComponentTheme {
   slots: string[]
   base: Record<string, string | string[]>
   variants?: Record<string, Record<string, Record<string, string | string[]>>>
-  compoundVariants?: Record<string, unknown>[]
+  compoundVariants?: any[]
   defaultVariants?: Record<string, unknown>
 }
 

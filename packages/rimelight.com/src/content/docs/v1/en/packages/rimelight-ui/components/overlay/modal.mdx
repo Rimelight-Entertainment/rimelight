@@ -113,6 +113,34 @@ You can add a footer section at the bottom of the modal using the `footer` slot.
   </div>
 </ComponentShowcase>
 
+### Unmount on Hide
+
+Set `unmountOnHide` to `false` to keep the content mounted in the DOM when the Modal is closed. This preserves form input state, scroll position, and active media elements.
+
+<ComponentShowcase>
+  <RLAModal unmountOnHide={false} triggerLabel="Keep State Modal" title="Stateful Modal" description="Input value will survive open/close cycles">
+    <div class="p-4 flex flex-col gap-2">
+      <p class="text-sm text-muted-foreground">Type something, close, and reopen the modal:</p>
+      <input type="text" placeholder="Type here..." class="border p-2 rounded text-sm bg-background" />
+    </div>
+  </RLAModal>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro";
+    ---
+
+    <RLAModal unmountOnHide={false} triggerLabel="Keep State Modal" title="Stateful Modal">
+      <div class="p-4">
+        <input type="text" placeholder="Type here..." class="border p-2 rounded text-sm bg-background" />
+      </div>
+    </RLAModal>
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## API
 
 ### Props

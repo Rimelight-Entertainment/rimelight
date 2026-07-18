@@ -506,6 +506,20 @@ ${lightDarkLines}
           font-family: var(--font-sans);
         }
 
+        /* ── Uniform focus styles ────────────────────────────────────────── */
+        *,
+        ::before,
+        ::after {
+          /* Setup default ring/outline parameters or halo */
+          --un-ring-color: var(--primary);
+        }
+
+        *:focus-visible,
+        *:has(> a:focus-visible) {
+          outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
+          outline-offset: 2px;
+        }
+
         /* ── Keyboard component ──────────────────────────────────────────── */
         .keyboard-wrapper {
           display: flex;

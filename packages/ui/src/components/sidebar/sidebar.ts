@@ -48,6 +48,10 @@ export interface SidebarProps {
    */
   collapsible?: "icon" | "offcanvas" | "none"
   /**
+   * The visual style variant of the sidebar.
+   */
+  variant?: "sidebar" | "floating" | "inset"
+  /**
    * Header logo or text.
    */
   logo?: string

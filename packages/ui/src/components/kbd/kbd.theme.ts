@@ -32,14 +32,14 @@ export const createKbdTheme = <const C extends readonly string[] = typeof defaul
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +
@@ -49,14 +49,14 @@ export const createKbdTheme = <const C extends readonly string[] = typeof defaul
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root: "rl-color-" + color + " text-[var(--rl-text)] bg-[var(--rl-bg)]/10"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +

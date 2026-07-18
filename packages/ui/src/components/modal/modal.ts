@@ -35,5 +35,9 @@ export interface ModalProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any
+  /**
+   * Keep content mounted in the DOM when hidden.
+   */
+  unmountOnHide?: boolean
   [key: string]: unknown
 }

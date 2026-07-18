@@ -35,14 +35,14 @@ export const createCalloutTheme = <const C extends readonly string[] = typeof de
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +
@@ -52,14 +52,14 @@ export const createCalloutTheme = <const C extends readonly string[] = typeof de
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color: color,
+        color: color as any,
         classNames: {
           root:
             "rl-color-" +

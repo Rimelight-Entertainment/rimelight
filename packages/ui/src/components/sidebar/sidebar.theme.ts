@@ -27,11 +27,21 @@ export const createSidebarTheme = () =>
         },
         offcanvas: { root: "-translate-x-full" },
         none: {}
+      },
+      variant: {
+        sidebar: {},
+        floating: {
+          root: "m-4 rounded-xl border border-border shadow-md h-[calc(100vh-2rem)] bg-background/95 backdrop-blur"
+        },
+        inset: {
+          root: "bg-muted/40 border-none p-2"
+        }
       }
     },
     defaultVariants: {
       side: "left",
-      collapsible: "none"
+      collapsible: "none",
+      variant: "sidebar"
     }
   })
 

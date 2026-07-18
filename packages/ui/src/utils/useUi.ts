@@ -2,12 +2,12 @@ import { merge } from "./merge"
 // @ts-ignore - virtual module resolved by Astro integration
 import { getUIConfig } from "virtual:rimelight-ui"
 
-const mergeCache = new WeakMap<object, Record<string, string | undefined>>()
+const mergeCache = new WeakMap<object, Record<string, string | Function | undefined>>()
 
 export function useUi(
   componentName: string,
-  uiProp?: Record<string, string | undefined>
-): Record<string, string | undefined> {
+  uiProp?: Record<string, string | Function | undefined>
+): Record<string, string | Function | undefined> {
   const globalConfig = getUIConfig()
   const defaults = globalConfig[componentName]
 
@@ -21,10 +21,12 @@ export function useUi(
   if (cached) return cached
 
   const merged = merge(uiProp, defaults)
-  const result: Record<string, string | undefined> = {}
+  const result: Record<string, string | Function | undefined> = {}
   for (const key of Object.keys(merged)) {
     const value = merged[key]
-    if (typeof value === "string") result[key] = value
+    if (typeof value === "string" || typeof value === "function") {
+      result[key] = value
+    }
   }
 
   mergeCache.set(uiProp, result)

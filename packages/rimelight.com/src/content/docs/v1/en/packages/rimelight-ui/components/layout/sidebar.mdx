@@ -88,6 +88,58 @@ The Sidebar supports nested list items for hierarchical navigation.
   </div>
 </ComponentShowcase>
 
+### Collapsible Modes
+
+The Sidebar supports multiple collapsible states via the `collapsible` prop. Options include `"none"` (always visible), `"icon"` (collapses to narrow bar showing only icons), and `"offcanvas"` (translates completely off-screen on mobile).
+
+<ComponentShowcase>
+  <RLASidebar
+    collapsible="icon"
+    logo="Workspace"
+    items={[
+      { label: "Home", href: "#", icon: "i-lucide-home" },
+      { label: "Dashboard", href: "#", icon: "i-lucide-layout-dashboard" }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro";
+    ---
+
+    <RLASidebar collapsible="icon" logo="Workspace" items={navItems} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Visual Variants
+
+Change the appearance of the sidebar using the `variant` prop. Options include `"sidebar"` (default), `"floating"` (adds margins and background glassmorphism), and `"inset"` (styled for layout embedded contexts).
+
+<ComponentShowcase>
+  <RLASidebar
+    variant="floating"
+    logo="Floating Side"
+    items={[
+      { label: "Home", href: "#", icon: "i-lucide-home" },
+      { label: "Dashboard", href: "#", icon: "i-lucide-layout-dashboard" }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro";
+    ---
+
+    <RLASidebar variant="floating" logo="Floating Side" items={navItems} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
 ## API
 
 ### Props
