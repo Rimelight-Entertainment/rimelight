@@ -73,11 +73,15 @@ const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
       const N = originalSlides.length;
       if (N === 0) return;
 
-      // Clone first and last slides for seamless looping
-      const firstClone = originalSlides[0].cloneNode(true) as HTMLElement;
-      const lastClone = originalSlides[N - 1].cloneNode(true) as HTMLElement;
+      const firstSlide = originalSlides[0];
+      const lastSlide = originalSlides[N - 1];
+      if (!firstSlide || !lastSlide) return;
 
-      container.insertBefore(lastClone, originalSlides[0]);
+      // Clone first and last slides for seamless looping
+      const firstClone = firstSlide.cloneNode(true) as HTMLElement;
+      const lastClone = lastSlide.cloneNode(true) as HTMLElement;
+
+      container.insertBefore(lastClone, firstSlide);
       container.appendChild(firstClone);
 
       // Add draggable="false" to all images inside clones as well

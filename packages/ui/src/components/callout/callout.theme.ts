@@ -1,7 +1,9 @@
 import { defaultColors } from "../../config/colors"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createCalloutTheme = (colors: readonly string[] = defaultColors) =>
+export const createCalloutTheme = <const C extends readonly string[] = typeof defaultColors>(
+  colors: C = defaultColors as unknown as C
+) =>
   defineTheme({
     slots: ["root", "body", "icon", "title", "content", "avatar", "avatarSize", "actions", "close"],
     base: {
@@ -22,10 +24,9 @@ export const createCalloutTheme = (colors: readonly string[] = defaultColors) =>
         soft: { root: "" },
         subtle: { root: "" }
       },
-      color: {
-        ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
-        neutral: { root: "" }
-      },
+      color: Object.fromEntries(
+        [...colors, "neutral"].map((color) => [color, { root: "" }])
+      ) as Record<C[number] | "neutral", { root: string }>,
       theme: {
         light: { root: "rl-light" },
         dark: { root: "rl-dark" }
@@ -34,14 +35,14 @@ export const createCalloutTheme = (colors: readonly string[] = defaultColors) =>
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color,
+        color: color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -51,14 +52,14 @@ export const createCalloutTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color,
+        color: color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +

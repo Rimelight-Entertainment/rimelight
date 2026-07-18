@@ -53,6 +53,13 @@ const sizeMap = {
   xl: "1.75rem"
 }
 const itemSize = sizeMap[size] || "1.25rem"
+
+const ratingItems = Array.from({ length }, (_, idx) => {
+  const i = idx + 1;
+  const initWidth = defaultValue >= i ? "100%" : defaultValue <= i - 1 ? "0%" : `${(defaultValue - (i - 1)) * 100}%`;
+  const isActive = defaultValue >= i - 0.99 ? "active" : "inactive";
+  return { i, initWidth, isActive };
+});
 ---
 
 <rla-input-rating
@@ -85,43 +92,31 @@ const itemSize = sizeMap[size] || "1.25rem"
       class="rating-hidden-input"
     />
 
-    {
-      Array.from({ length }).map((_, idx) => {
-        const i = idx + 1;
-        let initWidth = "0%";
-        if (defaultValue >= i) initWidth = "100%";
-        else if (defaultValue <= i - 1) initWidth = "0%";
-        else initWidth = `${(defaultValue - (i - 1)) * 100}%`;
+    {ratingItems.map(({ i, initWidth, isActive }) => (
+      <div
+        class:list={["input-rating-item", classes.item]}
+        data-slot="item"
+        data-index={i}
+        style={`--item-size: ${itemSize}; width: ${itemSize}; height: ${itemSize};`}
+      >
+        <div class={classes.emptyIcon} data-slot="emptyIcon">
+          <slot name="item">
+            <RLAIcon name={emptyIcon || icon} size={size} class={classes.icon} />
+          </slot>
+        </div>
 
-        const isActive = defaultValue >= i - 0.99 ? "active" : "inactive";
-
-        return (
-          <div
-            class:list={["input-rating-item", classes.item]}
-            data-slot="item"
-            data-index={i}
-            style={`--item-size: ${itemSize}; width: ${itemSize}; height: ${itemSize};`}
-          >
-            <div class={classes.emptyIcon} data-slot="emptyIcon">
-              <slot name="item" index={i} filled={false}>
-                <RLAIcon name={emptyIcon || icon} size={size} class={classes.icon} />
-              </slot>
-            </div>
-
-            <div
-              class:list={["rating-item-indicator", classes.indicator]}
-              data-slot="indicator"
-              style={`width: ${initWidth}`}
-              data-state={isActive}
-            >
-              <slot name="item" index={i} filled={true}>
-                <RLAIcon name={icon} size={size} class={classes.icon} />
-              </slot>
-            </div>
-          </div>
-        );
-      })
-    }
+        <div
+          class:list={["rating-item-indicator", classes.indicator]}
+          data-slot="indicator"
+          style={`width: ${initWidth}`}
+          data-state={isActive}
+        >
+          <slot name="item">
+            <RLAIcon name={icon} size={size} class={classes.icon} />
+          </slot>
+        </div>
+      </div>
+    ))}
   </div>
 </rla-input-rating>
 
@@ -153,7 +148,6 @@ const itemSize = sizeMap[size] || "1.25rem"
       if (disabled || readonly) return
 
       let selectedValue = parseFloat(input?.value || '0')
-      let hoveredValue: number | null = null
 
       function updateVisuals(val: number) {
         items.forEach((item) => {
@@ -184,14 +178,12 @@ const itemSize = sizeMap[size] || "1.25rem"
 
         const onMouseMove = (event: MouseEvent) => {
           const val = getValueFromEvent(event, item, idx)
-          hoveredValue = val
           if (hoverable) {
             updateVisuals(val)
           }
         }
 
         const onMouseLeave = () => {
-          hoveredValue = null
           updateVisuals(selectedValue)
         }
 

@@ -1,7 +1,9 @@
 import { defaultColors } from "../../config/colors"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createChipTheme = (colors: readonly string[] = defaultColors) =>
+export const createChipTheme = <const C extends readonly string[] = typeof defaultColors>(
+  colors: C = defaultColors as unknown as C
+) =>
   defineTheme({
     slots: ["root", "base"],
     base: {
@@ -9,10 +11,12 @@ export const createChipTheme = (colors: readonly string[] = defaultColors) =>
       base: "rounded-full ring ring-bg flex items-center justify-center text-inverted font-medium whitespace-nowrap"
     },
     variants: {
-      color: {
-        ...Object.fromEntries(colors.map((color) => [color, { base: `bg-${color}` }])),
-        neutral: { base: "bg-inverted" }
-      },
+      color: Object.fromEntries(
+        [...colors, "neutral"].map((color) => [
+          color,
+          { base: color === "neutral" ? "bg-inverted" : `bg-${color}` }
+        ])
+      ) as Record<C[number] | "neutral", { base: string }>,
       size: {
         "3xs": { base: "h-[4px] min-w-[4px] text-[4px]" },
         "2xs": { base: "h-[5px] min-w-[5px] text-[5px]" },

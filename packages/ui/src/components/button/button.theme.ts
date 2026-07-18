@@ -1,7 +1,9 @@
 import { defaultColors } from "../../config/colors"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
+export const createButtonTheme = <const C extends readonly string[] = typeof defaultColors>(
+  colors: C = defaultColors as unknown as C
+) =>
   defineTheme({
     slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
@@ -25,10 +27,9 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
         ghost: { root: "" },
         link: { root: "" }
       },
-      color: {
-        ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
-        neutral: { root: "" }
-      },
+      color: Object.fromEntries(
+        [...colors, "neutral"].map((color) => [color, { root: "" }])
+      ) as Record<C[number] | "neutral", { root: string }>,
       size: {
         xs: {
           root: "text-xs gap-1 [&_svg]:size-4",
@@ -87,7 +88,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -97,7 +98,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -107,7 +108,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -117,7 +118,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -127,7 +128,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "ghost" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -137,7 +138,7 @@ export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "link" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +

@@ -1,7 +1,9 @@
 import { defaultColors } from "../../config/colors"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createInputRatingTheme = (colors: readonly string[] = defaultColors) =>
+export const createInputRatingTheme = <const C extends readonly string[] = typeof defaultColors>(
+  colors: C = defaultColors as unknown as C
+) =>
   defineTheme({
     slots: ["root", "item", "indicator", "icon", "emptyIcon"],
     base: {
@@ -32,22 +34,21 @@ export const createInputRatingTheme = (colors: readonly string[] = defaultColors
         lg: { item: "size-6" },
         xl: { item: "size-7" }
       },
-      color: {
-        ...Object.fromEntries(
-          colors.map((color) => [
-            color,
-            {
-              root: "rl-color-" + color,
-              indicator: "text-[var(--rl-bg)]",
-              item: "focus-visible:outline-[var(--rl-ring)]"
-            }
-          ])
-        ),
-        neutral: {
-          indicator: "text-highlighted",
-          item: "focus-visible:outline-inverted"
-        }
-      },
+      color: Object.fromEntries(
+        [...colors, "neutral"].map((color) => [
+          color,
+          color === "neutral"
+            ? {
+                indicator: "text-highlighted",
+                item: "focus-visible:outline-inverted"
+              }
+            : {
+                root: "rl-color-" + color,
+                indicator: "text-[var(--rl-bg)]",
+                item: "focus-visible:outline-[var(--rl-ring)]"
+              }
+        ])
+      ) as Record<C[number] | "neutral", { root?: string; indicator: string; item: string }>,
       readonly: {
         true: {
           root: "cursor-default",
@@ -74,7 +75,7 @@ export const createInputRatingTheme = (colors: readonly string[] = defaultColors
       {
         readonly: false,
         disabled: false,
-        class: {
+        classNames: {
           item: "hover:scale-110"
         }
       }

@@ -1,7 +1,9 @@
 import { defaultColors } from "../../config/colors"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createBadgeTheme = (colors: readonly string[] = defaultColors) =>
+export const createBadgeTheme = <const C extends readonly string[] = typeof defaultColors>(
+  colors: C = defaultColors as unknown as C
+) =>
   defineTheme({
     slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
@@ -19,10 +21,9 @@ export const createBadgeTheme = (colors: readonly string[] = defaultColors) =>
         soft: { root: "" },
         subtle: { root: "" }
       },
-      color: {
-        ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
-        neutral: { root: "" }
-      },
+      color: Object.fromEntries(
+        [...colors, "neutral"].map((color) => [color, { root: "" }])
+      ) as Record<C[number] | "neutral", { root: string }>,
       size: {
         xs: {
           root: "text-[8px]/3 px-1 py-0.5 gap-1 rounded-sm",
@@ -71,14 +72,14 @@ export const createBadgeTheme = (colors: readonly string[] = defaultColors) =>
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color,
+        color: color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -88,14 +89,14 @@ export const createBadgeTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color,
+        color: color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +

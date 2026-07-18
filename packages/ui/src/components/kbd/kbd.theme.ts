@@ -1,17 +1,18 @@
 import { defaultColors } from "../../config/colors"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createKbdTheme = (colors: readonly string[] = defaultColors) =>
+export const createKbdTheme = <const C extends readonly string[] = typeof defaultColors>(
+  colors: C = defaultColors as unknown as C
+) =>
   defineTheme({
     slots: ["root"],
     base: {
       root: "inline-flex items-center justify-center px-1 rounded-sm font-medium font-sans uppercase"
     },
     variants: {
-      color: {
-        ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
-        neutral: { root: "" }
-      },
+      color: Object.fromEntries(
+        [...colors, "neutral"].map((color) => [color, { root: "" }])
+      ) as Record<C[number] | "neutral", { root: string }>,
       variant: {
         solid: { root: "" },
         outline: { root: "" },
@@ -31,14 +32,14 @@ export const createKbdTheme = (colors: readonly string[] = defaultColors) =>
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color,
+        color: color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
@@ -48,14 +49,14 @@ export const createKbdTheme = (colors: readonly string[] = defaultColors) =>
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color,
+        color: color,
         classNames: {
           root: "rl-color-" + color + " text-[var(--rl-text)] bg-[var(--rl-bg)]/10"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color,
+        color: color,
         classNames: {
           root:
             "rl-color-" +
