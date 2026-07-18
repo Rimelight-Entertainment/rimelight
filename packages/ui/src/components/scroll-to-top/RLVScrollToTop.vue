@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils"
+import { useUi } from "../../utils/useUi"
+import { resolveClasses } from "../../utils/resolveClasses"
 import type { ScrollToTopProps } from "./scroll-to-top"
 import scrollToTopTheme from "./scroll-to-top.theme"
-import { trackScroll, scrollToTop as scrollToTopFn } from "../../utils"
+import { trackScroll, scrollToTop as scrollToTopFn } from "../../utils/scroll"
 import { ref, computed, onMounted, onUnmounted, watch, useAttrs } from "vue"
 
 const attrs = useAttrs()

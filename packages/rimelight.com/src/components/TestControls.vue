@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { addToast } from "@rimelight/ui/utils"
+import { addToast } from "@rimelight/ui/utils/toast"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 function triggerToast(variant: "default" | "success" | "destructive" | "warning" | "info") {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { addToast } from "@rimelight/ui/utils"
+import { addToast } from "@rimelight/ui/utils/toast"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"

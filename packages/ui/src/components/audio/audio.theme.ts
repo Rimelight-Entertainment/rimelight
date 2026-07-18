@@ -1,4 +1,4 @@
-import { defineTheme } from "../../themes/defineTheme"
+import { defineTheme } from "../../types/theme"
 
 export const createAudioTheme = () =>
   defineTheme({

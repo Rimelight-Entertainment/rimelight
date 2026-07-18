@@ -1,7 +1,7 @@
 import { basename } from "node:path"
-import type { ComponentTheme } from "./defineTheme"
+import type { ComponentTheme } from "./types/theme"
 
-const themeModules = import.meta.glob<{ default: ComponentTheme }>("../components/**/*.theme.ts", {
+const themeModules = import.meta.glob<{ default: ComponentTheme }>("./components/**/*.theme.ts", {
   eager: true
 })
 

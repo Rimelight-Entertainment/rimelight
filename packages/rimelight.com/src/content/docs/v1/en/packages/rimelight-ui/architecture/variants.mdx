@@ -116,7 +116,8 @@ Here's how `RLAButton.astro` actually uses them:
 
 ```typescript
 import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils"
+import { useUi } from "../../utils/useUi"
+import { resolveClasses } from "../../utils/resolveClasses"
 import buttonThemeDefault, { createButtonTheme } from "../../themes/button.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
 

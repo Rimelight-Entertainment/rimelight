@@ -1,4 +1,4 @@
-import type { ThemeColor } from "../../themes/theme"
+import type { ThemeColor } from "../../types/theme"
 import type { LinkProps } from "../link/link"
 
 export interface NavigationMenuItem extends Omit<LinkProps, "type" | "raw" | "custom"> {

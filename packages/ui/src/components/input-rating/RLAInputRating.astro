@@ -1,6 +1,7 @@
 ---
 import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils"
+import { useUi } from "../../utils/useUi"
+import { resolveClasses } from "../../utils/resolveClasses"
 import type { InputRatingProps } from "./input-rating"
 import inputRatingThemeDefault, { createInputRatingTheme } from "./input-rating.theme"
 import { getUIConfig } from "virtual:rimelight-ui"
@@ -37,7 +38,7 @@ const classes = resolveClasses(
   {
     orientation,
     size,
-    color,
+    color: color as any,
     readonly,
     disabled
   },

@@ -1,5 +1,5 @@
 import type { UserConfig } from "unocss"
-import type { ComponentTheme } from "../themes/defineTheme"
+import type { ComponentTheme } from "../types/theme"
 import type { RimelightIcons } from "../icons/defaults"
 
 export interface UIConfig {

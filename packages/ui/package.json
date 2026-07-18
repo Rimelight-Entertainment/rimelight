@@ -29,13 +29,11 @@
   "exports": {
     ".": "./src/ui.ts",
     "./components/*": "./src/components/*",
-    "./themes": "./src/themes/index.ts",
+    "./themes": "./src/themes.ts",
     "./config/*": "./src/config/*",
-    "./utils": "./src/utils/index.ts",
     "./utils/*": "./src/utils/*",
+    "./types/*": "./src/types/*",
     "./icons/*": "./src/icons/*",
-    "./plugins": "./src/plugins/index.ts",
-    "./plugins/*": "./src/plugins/*",
     "./presets": "./src/presets/index.ts",
     "./presets/*": "./src/presets/*",
     "./*": "./src/*"

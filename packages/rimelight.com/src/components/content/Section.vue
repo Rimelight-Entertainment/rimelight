@@ -3,7 +3,7 @@ import { computed, inject, provide, useAttrs } from "vue"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
-import { addToast } from "@rimelight/ui/utils"
+import { addToast } from "@rimelight/ui/utils/toast"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */

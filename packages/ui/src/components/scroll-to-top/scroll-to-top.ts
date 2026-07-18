@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../themes/theme"
+import type { Theme, ThemeColor } from "../../types/theme"
 
 export interface ScrollToTopProps {
   /**

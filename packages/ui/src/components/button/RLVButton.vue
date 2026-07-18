@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useSlots, useAttrs } from "vue"
 import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils"
+import { useUi } from "../../utils/useUi"
+import { resolveClasses } from "../../utils/resolveClasses"
 import type { ButtonProps } from "./button"
 import buttonTheme from "./button.theme"
 import RLVIcon from "../icon/RLVIcon.vue"

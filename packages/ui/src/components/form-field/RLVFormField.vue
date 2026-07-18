@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useSlots } from "vue"
 import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils"
+import { useUi } from "../../utils/useUi"
+import { resolveClasses } from "../../utils/resolveClasses"
 import type { FormFieldProps } from "./form-field"
 import formFieldTheme from "./form-field.theme"
 

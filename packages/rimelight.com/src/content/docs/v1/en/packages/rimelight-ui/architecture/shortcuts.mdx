@@ -25,7 +25,7 @@ It automatically handles:
 Shortcuts may be assigned using the `defineShortcuts` function. It registers listeners on `window`, adds defined shortcuts to the global store, and returns a cleanup function that removes those listeners and unregisters the shortcuts from the store when called.
 
 ```ts
-import { defineShortcuts } from "@rimelight/ui/utils"
+import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
 const cleanupShortcuts = defineShortcuts({
   // Registers Ctrl/Cmd + K as a shortcut
@@ -44,7 +44,7 @@ cleanupShortcuts()
 For simple shortcuts that do not require metadata (such as labels or descriptions for the cheat sheet UI), you can use the shorthand syntax by passing the handler function directly:
 
 ```ts
-import { defineShortcuts } from "@rimelight/ui/utils"
+import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
 const cleanupShortcuts = defineShortcuts({
   meta_k: () => openSearch()
@@ -77,7 +77,7 @@ const cleanupShortcuts = defineShortcuts({
     </search-trigger>
 
     <script>
-      import { defineShortcuts } from "@rimelight/ui/utils"
+      import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
       class SearchTrigger extends HTMLElement {
         private cleanup: (() => void) | null = null
@@ -125,7 +125,7 @@ const cleanupShortcuts = defineShortcuts({
     ```tsx
     // SearchTrigger.tsx
     import { useEffect } from "react"
-    import { defineShortcuts } from "@rimelight/ui/utils"
+    import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
     export default function SearchTrigger() {
       function openSearch() {
@@ -157,7 +157,7 @@ const cleanupShortcuts = defineShortcuts({
     ```ts
     // SearchTrigger.ts
     import { Component, OnDestroy } from "@angular/core"
-    import { defineShortcuts } from "@rimelight/ui/utils"
+    import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
     @Component({
       selector: "app-search-trigger",
@@ -194,7 +194,7 @@ const cleanupShortcuts = defineShortcuts({
     // SearchTrigger.vue
     <script setup lang="ts">
       import { onUnmounted } from "vue"
-      import { defineShortcuts } from "@rimelight/ui/utils"
+      import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
       function openSearch() {
         // Function implementation
@@ -224,7 +224,7 @@ const cleanupShortcuts = defineShortcuts({
     // SearchTrigger.svelte
     <script>
       import { onDestroy } from "svelte"
-      import { defineShortcuts } from "@rimelight/ui/utils"
+      import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
       function openSearch() {
         // Function implementation
@@ -251,7 +251,7 @@ const cleanupShortcuts = defineShortcuts({
     ```tsx
     // SearchTrigger.tsx
     import { onCleanup } from "solid-js"
-    import { defineShortcuts } from "@rimelight/ui/utils"
+    import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
     export default function SearchTrigger() {
       function openSearch() {
@@ -491,7 +491,7 @@ Alternatively, you can pass a `categories` prop directly to the `<RLAShortcuts /
 For custom integrations (such as a command palette), you can subscribe directly to the active shortcuts store:
 
 ```ts
-import { activeShortcutsStore } from "@rimelight/ui/utils"
+import { activeShortcutsStore } from "@rimelight/ui/utils/shortcuts"
 
 activeShortcutsStore.subscribe((shortcuts) => {
   console.log("Active shortcuts:", shortcuts)
@@ -505,7 +505,7 @@ Because registration and cleanup are linked to component mount/unmount lifecycle
 A real page typically mixes all three shortcut types. All entries with a `label` automatically appear in the `<RLAShortcuts />` cheat sheet:
 
 ```ts
-import { defineShortcuts } from "@rimelight/ui/utils"
+import { defineShortcuts } from "@rimelight/ui/utils/shortcuts"
 
 const cleanupShortcuts = defineShortcuts({
   // Plain key - no modifier needed

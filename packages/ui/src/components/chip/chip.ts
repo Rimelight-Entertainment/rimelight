@@ -1,4 +1,4 @@
-import type { Theme } from "../../themes/theme"
+import type { Theme } from "../../types/theme"
 
 export interface ChipProps {
   /**

@@ -1,5 +1,5 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../themes/defineTheme"
+import { defineTheme } from "../../types/theme"
 
 export const createKbdTheme = <const C extends readonly string[] = typeof colorConfig.colors>(
   colors: C = colorConfig.colors as unknown as C

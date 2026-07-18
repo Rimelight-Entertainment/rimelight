@@ -1,4 +1,4 @@
-import type { ThemeColor } from "../../themes/theme"
+import type { ThemeColor } from "../../types/theme"
 export interface SelectProps {
   /**
    * List of options.
