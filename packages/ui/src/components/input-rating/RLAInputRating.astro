@@ -1,0 +1,273 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputRatingProps } from "./input-rating"
+import inputRatingThemeDefault, { createInputRatingTheme } from "./input-rating.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+const uiConfig = getUIConfig()
+const inputRatingTheme = uiConfig.colors ? createInputRatingTheme(uiConfig.colors) : inputRatingThemeDefault
+
+const inputRating = scv(inputRatingTheme)
+
+const {
+  id,
+  readonly = false,
+  icon = "star",
+  emptyIcon,
+  color = "primary",
+  size = "md",
+  orientation = "horizontal",
+  step = 1,
+  disabled = false,
+  required = false,
+  name,
+  defaultValue = 0,
+  length = 5,
+  clearable = false,
+  hoverable = false,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputRatingProps
+
+const classes = resolveClasses(
+  inputRating,
+  {
+    orientation,
+    size,
+    color,
+    readonly,
+    disabled
+  },
+  useUi("inputRating", uiProp),
+  className
+)
+
+const sizeMap = {
+  xs: "0.75rem",
+  sm: "1rem",
+  md: "1.25rem",
+  lg: "1.5rem",
+  xl: "1.75rem"
+}
+const itemSize = sizeMap[size] || "1.25rem"
+---
+
+<rla-input-rating
+  data-step={step}
+  data-length={length}
+  data-clearable={clearable ? "true" : "false"}
+  data-hoverable={hoverable ? "true" : "false"}
+  data-disabled={disabled ? "true" : "false"}
+  data-readonly={readonly ? "true" : "false"}
+>
+  <div
+    class={classes.root}
+    data-slot="root"
+    id={id}
+    role="slider"
+    aria-valuenow={defaultValue}
+    aria-valuemin="0"
+    aria-valuemax={length}
+    aria-readonly={readonly ? "true" : "false"}
+    aria-disabled={disabled ? "true" : "false"}
+    tabindex={(disabled || readonly) ? undefined : "0"}
+    {...rest}
+  >
+    <input
+      type="hidden"
+      name={name}
+      value={defaultValue}
+      required={required}
+      disabled={disabled}
+      class="rating-hidden-input"
+    />
+
+    {
+      Array.from({ length }).map((_, idx) => {
+        const i = idx + 1;
+        let initWidth = "0%";
+        if (defaultValue >= i) initWidth = "100%";
+        else if (defaultValue <= i - 1) initWidth = "0%";
+        else initWidth = `${(defaultValue - (i - 1)) * 100}%`;
+
+        const isActive = defaultValue >= i - 0.99 ? "active" : "inactive";
+
+        return (
+          <div
+            class:list={["input-rating-item", classes.item]}
+            data-slot="item"
+            data-index={i}
+            style={`--item-size: ${itemSize}; width: ${itemSize}; height: ${itemSize};`}
+          >
+            <div class={classes.emptyIcon} data-slot="emptyIcon">
+              <slot name="item" index={i} filled={false}>
+                <RLAIcon name={emptyIcon || icon} size={size} class={classes.icon} />
+              </slot>
+            </div>
+
+            <div
+              class:list={["rating-item-indicator", classes.indicator]}
+              data-slot="indicator"
+              style={`width: ${initWidth}`}
+              data-state={isActive}
+            >
+              <slot name="item" index={i} filled={true}>
+                <RLAIcon name={icon} size={size} class={classes.icon} />
+              </slot>
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</rla-input-rating>
+
+<script>
+  class RLAInputRating extends HTMLElement {
+    private cleanup: (() => void) | null = null
+
+    connectedCallback() {
+      this.style.display = 'contents'
+      const root = this.querySelector('[data-slot="root"]') as HTMLElement | null
+      if (!root) return
+
+      const input = this.querySelector('.rating-hidden-input') as HTMLInputElement | null
+      const items = this.querySelectorAll('.input-rating-item') as NodeListOf<HTMLElement>
+
+      const step = parseFloat(this.dataset.step || '1')
+      const length = parseInt(this.dataset.length || '5')
+      const clearable = this.dataset.clearable === 'true'
+      const hoverable = this.dataset.hoverable === 'true'
+      const disabled = this.dataset.disabled === 'true'
+      const readonly = this.dataset.readonly === 'true'
+
+      if (disabled || readonly) return
+
+      let selectedValue = parseFloat(input?.value || '0')
+      let hoveredValue: number | null = null
+
+      function getWidthForVal(val: number, itemIndex: number) {
+        if (val >= itemIndex) return "100%"
+        if (val <= itemIndex - 1) return "0%"
+        return `${(val - (itemIndex - 1)) * 100}%`
+      }
+
+      function updateVisuals(val: number) {
+        items.forEach((item) => {
+          const idx = parseInt(item.dataset.index || '0')
+          const indicator = item.querySelector('.rating-item-indicator') as HTMLElement | null
+          if (indicator) {
+            indicator.style.width = getWidthForVal(val, idx)
+            indicator.setAttribute('data-state', val >= idx - 0.99 ? 'active' : 'inactive')
+          }
+        })
+        root!.setAttribute('aria-valuenow', val.toString())
+      }
+
+      function getValueFromEvent(event: MouseEvent, item: HTMLElement, index: number) {
+        const rect = item.getBoundingClientRect()
+        const x = (event.clientX - rect.left) / rect.width
+        const steppedX = Math.ceil(x / step) * step
+        const val = index - 1 + steppedX
+        return Math.min(Math.max(val, 0), length)
+      }
+
+      const mouseMoveListeners = new Map<HTMLElement, (e: MouseEvent) => void>()
+      const mouseLeaveListeners = new Map<HTMLElement, () => void>()
+      const clickListeners = new Map<HTMLElement, (e: MouseEvent) => void>()
+
+      items.forEach((item) => {
+        const idx = parseInt(item.dataset.index || '0')
+
+        const onMouseMove = (event: MouseEvent) => {
+          const val = getValueFromEvent(event, item, idx)
+          hoveredValue = val
+          if (hoverable) {
+            updateVisuals(val)
+          }
+        }
+
+        const onMouseLeave = () => {
+          hoveredValue = null
+          updateVisuals(selectedValue)
+        }
+
+        const onClick = (event: MouseEvent) => {
+          const val = getValueFromEvent(event, item, idx)
+          let finalVal = val
+          if (clearable && selectedValue === val) {
+            finalVal = 0
+          }
+          selectedValue = finalVal
+          if (input) {
+            input.value = finalVal.toString()
+            input.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+          updateVisuals(finalVal)
+        }
+
+        item.addEventListener('mousemove', onMouseMove)
+        item.addEventListener('mouseleave', onMouseLeave)
+        item.addEventListener('click', onClick)
+
+        mouseMoveListeners.set(item, onMouseMove)
+        mouseLeaveListeners.set(item, onMouseLeave)
+        clickListeners.set(item, onClick)
+      })
+
+      const onKeyDown = (event: KeyboardEvent) => {
+        let newVal = selectedValue
+        if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+          newVal = Math.min(selectedValue + step, length)
+          event.preventDefault()
+        } else if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+          newVal = Math.max(selectedValue - step, 0)
+          event.preventDefault()
+        } else if (event.key === "Home") {
+          newVal = 0
+          event.preventDefault()
+        } else if (event.key === "End") {
+          newVal = length
+          event.preventDefault()
+        }
+
+        if (newVal !== selectedValue) {
+          selectedValue = newVal
+          if (input) {
+            input.value = newVal.toString()
+            input.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+          updateVisuals(newVal)
+        }
+      }
+
+      root.addEventListener('keydown', onKeyDown)
+
+      this.cleanup = () => {
+        items.forEach((item) => {
+          const move = mouseMoveListeners.get(item)
+          const leave = mouseLeaveListeners.get(item)
+          const click = clickListeners.get(item)
+          if (move) item.removeEventListener('mousemove', move)
+          if (leave) item.removeEventListener('mouseleave', leave)
+          if (click) item.removeEventListener('click', click)
+        })
+        root.removeEventListener('keydown', onKeyDown)
+      }
+    }
+
+    disconnectedCallback() {
+      if (this.cleanup) {
+        this.cleanup()
+        this.cleanup = null
+      }
+    }
+  }
+
+  if (!customElements.get('rla-input-rating')) {
+    customElements.define('rla-input-rating', RLAInputRating)
+  }
+</script>
