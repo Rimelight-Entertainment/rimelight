@@ -85,8 +85,8 @@ const socials: ButtonProps[] = [
 ];
 
 const targetLanguages = [
-  { code: 'en', label: 'English' },
-  { code: 'pt', label: "Português" }
+  { code: 'en', label: 'English', href: getRelativeLocaleUrl('en', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
+  { code: 'pt', label: "Português", href: getRelativeLocaleUrl('pt', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
 ];
 ---
 
@@ -114,7 +114,7 @@ const targetLanguages = [
   <div slot="right" class="flex flex-col items-center lg:items-end flex-1 justify-between gap-sm">
     <div class="flex flex-col gap-sm items-center lg:items-end">
       <RLAThemeSelector />
-      <RLALocaleSelector locales={targetLanguages} />
+      <RLALocaleSelector locales={targetLanguages} currentLocale={Astro.currentLocale} />
     </div>
     <div class="flex flex-row flex-wrap gap-sm justify-center lg:justify-end items-center lg:items-end">
       {socials.map((social) => (

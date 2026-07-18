@@ -1,4 +1,4 @@
-import type { ComponentTheme } from "../utils/defineTheme"
+import type { ComponentTheme } from "./defineTheme"
 
 const themeModules = import.meta.glob<{ default: ComponentTheme }>("./*.theme.ts", { eager: true })
 

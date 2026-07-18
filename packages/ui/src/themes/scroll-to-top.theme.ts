@@ -1,4 +1,4 @@
-import { defineTheme } from "../utils/defineTheme"
+import { defineTheme } from "./defineTheme"
 
 export const createScrollToTopTheme = (colors: readonly string[] = ["primary", "secondary"]) =>
   defineTheme({

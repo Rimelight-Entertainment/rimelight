@@ -1,5 +1,5 @@
 import { defaultColors } from "../presets/defaults"
-import { defineTheme } from "../utils/defineTheme"
+import { defineTheme } from "./defineTheme"
 
 export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({

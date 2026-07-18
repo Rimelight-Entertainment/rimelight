@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../theme"
+import type { Theme, ThemeColor } from "../../themes/theme"
 
 export interface ColorAreaProps {
   colorSpace?: "hsl" | "rgb" | "hsb"

@@ -1,5 +1,4 @@
-import { DEFAULT_ICONS } from "./icons"
-// @ts-ignore
+import { DEFAULT_ICONS } from "./defaults"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 /**

@@ -24,7 +24,7 @@ const {
 let resolvedHref = href;
 if (href === "/") {
   try {
-    const { getRelativeLocaleUrl } = await import("@rimelight/i18n");
+    const { getRelativeLocaleUrl } = await import("astro:i18n");
     resolvedHref = Astro.currentLocale
       ? getRelativeLocaleUrl(Astro.currentLocale, "/")
       : getRelativeLocaleUrl("/");

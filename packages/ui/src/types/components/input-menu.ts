@@ -1,4 +1,4 @@
-import type { ThemeColor } from "../theme"
+import type { ThemeColor } from "../../themes/theme"
 export interface InputMenuProps {
   /**
    * The list of items in the input menu.

@@ -1,6 +1,6 @@
-export * from "./componentVariant"
-export * from "./theme"
-export * from "./docs"
+export * from "../themes/componentVariant"
+export * from "../themes/theme"
+export * from "../docs/types"
 
 export type { ThreeDHoverProps } from "./components/3d-hover"
 export type { AccordionProps } from "./components/accordion"

@@ -3,7 +3,7 @@ import ConstructionLayout from '@/layouts/ConstructionLayout.astro'
 import RLALogo from '@rimelight/ui/components/astro/RLALogo.astro'
 import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
 import ConstructionSignIn from '@/components/auth/ConstructionSignIn.astro'
-import { useI18nAsync } from '@rimelight/i18n'
+import { useI18nAsync, getRelativeLocaleUrl } from '@rimelight/i18n'
 import RLAContainer from "@rimelight/ui/components/astro/RLAContainer.astro";
 
 const constructionAuth = (import.meta.env.CONSTRUCTION_AUTH ?? process.env.CONSTRUCTION_AUTH) === "true"
@@ -23,8 +23,8 @@ const messages = await useI18nAsync(Astro, 'page_construction', {
 })
 
 const targetLanguages = [
-  { code: 'en', label: 'English' },
-  { code: 'pt', label: 'Português' },
+  { code: 'en', label: 'English', href: getRelativeLocaleUrl('en', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
+  { code: 'pt', label: 'Português', href: getRelativeLocaleUrl('pt', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
 ]
 ---
 
@@ -51,7 +51,7 @@ const targetLanguages = [
       )}
 
       <div class="flex flex-col gap-md">
-        <RLALocaleSelector locales={targetLanguages} />
+        <RLALocaleSelector locales={targetLanguages} currentLocale={Astro.currentLocale} />
         <span class="text-inverted text-sm">&copy; {new Date().getFullYear()} Rimelight Entertainment</span>
       </div>
     </RLAContainer>

@@ -1,6 +1,6 @@
 ---
 title: "Locale Selector"
-description: "A dropdown selector component for switching application locales and languages."
+description: "A routing-agnostic dropdown for switching application locales. Works with Astro i18n, @rimelight/i18n, or any custom URL strategy."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,27 +11,38 @@ import ApiEmits from "@/docs/components/ApiEmits.astro"
 import ApiTheme from "@/docs/components/ApiTheme.astro"
 import ApiChangelog from "@/docs/components/ApiChangelog.astro"
 
-The Locale Selector component renders a select dropdown populated with localized language choices. When selected, it automatically updates the page URL to navigate to the translated version of the current route.
+The Locale Selector renders a select dropdown populated with language choices. When selected,
+it navigates to the locale-specific URL for the current page. The component is **routing-agnostic**:
+you can supply pre-built URLs via the `href` field on each locale item, or let the component
+compute them automatically using Astro's built-in i18n helpers.
 
 ## Usage
 
-How to use the Locale Selector component in its simplest form.
+The simplest way to use the component — pass locale items with explicit `href` values so the
+component has no dependency on Astro's routing or any i18n library.
 
 <ComponentShowcase>
-  <RLALocaleSelector locales={[{ code: "en", label: "English" }, { code: "fr", label: "Français" }]} />
+  <RLALocaleSelector
+    locales={[
+      { code: "en", label: "English", href: "/en/docs/" },
+      { code: "pt", label: "Português", href: "/pt/docs/" }
+    ]}
+    currentLocale="en"
+  />
 
   <div slot="code-astro">
     ```astro
     ---
     import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
-
-    const locales = [
-      { code: "en", label: "English" },
-      { code: "fr", label: "Français" }
-    ];
     ---
 
-    <RLALocaleSelector locales={locales} />
+    <RLALocaleSelector
+      locales={[
+        { code: "en", label: "English", href: "/en/" },
+        { code: "pt", label: "Português", href: "/pt/" }
+      ]}
+      currentLocale="en"
+    />
     ```
 
   </div>
@@ -39,12 +50,115 @@ How to use the Locale Selector component in its simplest form.
 
 ## Examples
 
-### With Custom Label Slot
+### With Astro i18n (`getRelativeLocaleUrl`)
 
-You can add a custom label next to the dropdown using the `label` slot.
+When your project uses Astro's built-in i18n routing, compute `href` values server-side using
+`getRelativeLocaleUrl`. This preserves the current page path across locale switches.
 
 <ComponentShowcase>
-  <RLALocaleSelector locales={[{ code: "en", label: "English" }, { code: "fr", label: "Français" }]}>
+  <RLALocaleSelector
+    locales={[
+      { code: "en", label: "English", href: "/en/docs/" },
+      { code: "pt", label: "Português", href: "/pt/docs/" }
+    ]}
+    currentLocale="en"
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    import { getRelativeLocaleUrl } from "astro:i18n";
+
+    // Strip the locale prefix to get the bare path, then rebuild for each locale.
+    const basePath = Astro.url.pathname.replace(/^\/[^/]+/, '') || '/';
+
+    const locales = [
+      { code: "en", label: "English",   href: getRelativeLocaleUrl("en", basePath) },
+      { code: "pt", label: "Português", href: getRelativeLocaleUrl("pt", basePath) },
+    ];
+    ---
+
+    <RLALocaleSelector locales={locales} currentLocale={Astro.currentLocale} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### With `@rimelight/i18n`
+
+The `getRelativeLocaleUrl` re-export from `@rimelight/i18n` is a drop-in replacement that
+also keeps the `currentLocale` nanostores atom in sync.
+
+<ComponentShowcase>
+  <RLALocaleSelector
+    locales={[
+      { code: "en", label: "English", href: "/en/docs/" },
+      { code: "pt", label: "Português", href: "/pt/docs/" }
+    ]}
+    currentLocale="en"
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    import { getRelativeLocaleUrl } from "@rimelight/i18n";
+
+    const basePath = Astro.url.pathname.replace(/^\/[^/]+/, '') || '/';
+
+    const locales = [
+      { code: "en", label: "English",   href: getRelativeLocaleUrl("en", basePath) },
+      { code: "pt", label: "Português", href: getRelativeLocaleUrl("pt", basePath) },
+    ];
+    ---
+
+    <RLALocaleSelector locales={locales} currentLocale={Astro.currentLocale} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Auto-detect locales (Astro i18n only)
+
+Omit `locales` entirely and the component will read the list from Astro's
+`getRelativeLocaleUrlList()`. Locale labels default to the native language name via
+`Intl.DisplayNames`. This mode requires Astro i18n to be configured.
+
+<ComponentShowcase>
+  <RLALocaleSelector
+    locales={[
+      { code: "en", label: "English", href: "/en/docs/" },
+      { code: "pt", label: "Português", href: "/pt/docs/" }
+    ]}
+    currentLocale="en"
+  />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+    // No locales prop — auto-detected from Astro i18n config
+    ---
+
+    <RLALocaleSelector />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### With Custom Label Slot
+
+Add a descriptive label beside the dropdown using the `label` slot.
+
+<ComponentShowcase>
+  <RLALocaleSelector
+    locales={[
+      { code: "en", label: "English", href: "/en/docs/" },
+      { code: "pt", label: "Português", href: "/pt/docs/" }
+    ]}
+    currentLocale="en"
+  >
     <span slot="label" class="text-xs uppercase tracking-wide text-muted-foreground mr-2">Language:</span>
   </RLALocaleSelector>
 
@@ -52,20 +166,31 @@ You can add a custom label next to the dropdown using the `label` slot.
     ```astro
     ---
     import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
-
-    const locales = [
-      { code: "en", label: "English" },
-      { code: "fr", label: "Français" }
-    ];
     ---
 
-    <RLALocaleSelector locales={locales}>
+    <RLALocaleSelector locales={locales} currentLocale={Astro.currentLocale}>
       <span slot="label" class="text-xs uppercase tracking-wide text-muted-foreground mr-2">Language:</span>
     </RLALocaleSelector>
     ```
 
   </div>
 </ComponentShowcase>
+
+## Routing agnosticism
+
+The component makes **no assumptions** about how URLs are structured. The table below shows
+which Astro APIs are required depending on how you use it.
+
+| Usage                                        | `astro:i18n` required?         | `Astro.currentLocale` required? |
+| -------------------------------------------- | ------------------------------ | ------------------------------- |
+| `locales` with `href` + `currentLocale` prop | No ✅                          | No ✅                           |
+| `locales` with `href`, no `currentLocale`    | No ✅                          | Yes (fallback)                  |
+| `locales` without `href`                     | Yes (URL building)             | Yes (fallback)                  |
+| No `locales` (auto-detect)                   | Yes (URL building + detection) | Yes (fallback)                  |
+
+This means you can use the component with any i18n solution — `@rimelight/i18n`,
+`@astrojs/i18n`, `paraglide`, a custom cookie/subdomain strategy, or even a static
+site with manually constructed paths — as long as you supply the `href` values yourself.
 
 ## API
 
