@@ -3,12 +3,8 @@ import UnoCSS from "unocss/astro"
 import { merge } from "./utils/merge"
 import { defaultUIConfig } from "./themes"
 import { type UIOptions, coreColors } from "./config"
-import rimelightUiPreset, {
-  uiSrcGlob,
-  uiFilesystemGlob,
-  type ColorConfigValue,
-  type RimelightPresetOptions
-} from "./presets"
+import rimelightUiPreset, { uiSrcGlob, uiFilesystemGlob } from "./presets"
+import type { RimelightPresetOptions } from "./presets"
 
 export type { UIOptions, UIConfigOverrides, RimelightIcons, CategoryConfig } from "./config"
 
@@ -40,7 +36,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   let astroLogger: any = null
 
   const presetOptions: RimelightPresetOptions = {
-    colors: (options.colors ?? {}) as Record<string, ColorConfigValue>
+    colors: options.colors ?? {}
   }
   if (options.autogenerateColorModes !== undefined) {
     presetOptions.autogenerateColorModes = options.autogenerateColorModes
@@ -65,11 +61,10 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
           include: [
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
             "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
-            uiSrcGlob,
-            "../ui/src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}"
+            uiSrcGlob
           ]
         },
-        filesystem: [uiFilesystemGlob, "../ui/src/**/*", "src/components/**/*", "src/pages/**/*"]
+        filesystem: [uiFilesystemGlob, "src/components/**/*", "src/pages/**/*"]
       },
       configResolved(config) {
         logUnoConfig(config, astroLogger)
@@ -96,19 +91,13 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
  * Creates a Vite plugin to resolve and load the virtual config module.
  */
 function createVirtualModulePlugin(config: any) {
-  const virtualModuleId = "virtual:rimelight-ui"
-  const resolvedVirtualModuleId = "\0" + virtualModuleId
-
+  const id = "virtual:rimelight-ui"
   return {
     name: "vite-plugin-rimelight-ui-virtual",
     enforce: "pre" as const,
-    resolveId: (id: string) => (id === virtualModuleId ? resolvedVirtualModuleId : null),
-    load: (id: string) => {
-      if (id === resolvedVirtualModuleId) {
-        return `export const getUIConfig = () => (${JSON.stringify(config)});`
-      }
-      return null
-    }
+    resolveId: (rId: string) => (rId === id ? "\0" + id : null),
+    load: (rId: string) =>
+      rId === "\0" + id ? `export const getUIConfig = () => (${JSON.stringify(config)});` : null
   }
 }
 
@@ -123,9 +112,17 @@ function logUnoConfig(config: any, astroLogger: any) {
 
   const log = (msg: string, isWarn = false) => {
     if (isWarn) {
-      astroLogger ? astroLogger.warn(msg) : console.warn(msg)
+      if (astroLogger) {
+        astroLogger.warn(msg)
+      } else {
+        console.warn(msg)
+      }
     } else {
-      astroLogger ? astroLogger.info(msg) : console.log(msg)
+      if (astroLogger) {
+        astroLogger.info(msg)
+      } else {
+        console.log(msg)
+      }
     }
   }
 
