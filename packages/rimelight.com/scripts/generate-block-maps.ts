@@ -26,14 +26,16 @@ function generateMap(dir: string, suffix: "Renderer" | "Editor", varName: string
   const names = files.map((f) => basename(f, ".vue").replace(new RegExp(`${suffix}$`), ""))
 
   let content = `// Generated automatically. Do not edit.\n`
-  content += `import type { Component } from "vue";\n\n`
+  content += `import type { Component } from "vue"\n\n`
   content += `export const ${varName}: Record<string, () => Promise<{ default: Component }>> = {\n`
 
-  names.forEach((name) => {
-    content += `  "${name}": () => import("../components/article/blocks/${suffix.toLowerCase()}/${name}${suffix}.vue"),\n`
+  names.forEach((name, index) => {
+    const isLast = index === names.length - 1
+    const comma = isLast ? "" : ","
+    content += `  ${name}: () => import("../components/article/blocks/${suffix.toLowerCase()}/${name}${suffix}.vue")${comma}\n`
   })
 
-  content += `};\n`
+  content += `}\n`
 
   writeFileSync(resolve(outputDir, outFile), content)
   console.log(`[Block Map Gen] Generated ${names.length} entries in ${outFile}`)

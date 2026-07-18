@@ -16,8 +16,19 @@ function localDocsIntegration() {
   return {
     name: "rimelight-docs-integration",
     hooks: {
-      "astro:config:setup": async ({ updateConfig }: { updateConfig: (config: any) => void }) => {
+      "astro:config:setup": async ({
+        updateConfig,
+        logger
+      }: {
+        updateConfig: (config: any) => void
+        logger: any
+      }) => {
+        logger.info("Extracting documentation metadata from @rimelight/ui components...")
+        const startTime = Date.now()
         const docsMeta = await extractAllMeta()
+        logger.info(
+          `Documentation metadata extracted in ${((Date.now() - startTime) / 1000).toFixed(2)}s`
+        )
         updateConfig({
           vite: {
             plugins: [

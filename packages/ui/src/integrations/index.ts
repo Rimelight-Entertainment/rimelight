@@ -71,12 +71,6 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   async function setViteConfig(updateConfig: (config: Record<string, unknown>) => void) {
     updateConfig({
       vite: {
-        optimizeDeps: {
-          exclude: ["@rimelight/ui"]
-        },
-        ssr: {
-          noExternal: ["@rimelight/ui"]
-        },
         plugins: [
           {
             name: "vite-plugin-rimelight-ui-virtual",
