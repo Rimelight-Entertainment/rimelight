@@ -6,9 +6,7 @@ import type {
 } from "../components/sidebar/sidebar"
 import type { PropMeta, ThemeMeta } from "./types"
 
-export function defineDocsConfig(config: DocsConfig): DocsConfig {
-  return config
-}
+export const defineDocsConfig = <const T extends DocsConfig>(config: T): T => config
 
 export interface ResolvedSidebarItem {
   label: string

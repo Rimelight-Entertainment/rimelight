@@ -1,4 +1,4 @@
-import { defaultColors } from "../../presets/defaults"
+import { defaultColors } from "../../config/colors"
 import { defineTheme } from "../../themes/defineTheme"
 
 export const createMarqueeTheme = (_colors: readonly string[] = defaultColors) =>

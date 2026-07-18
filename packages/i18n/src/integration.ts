@@ -13,7 +13,7 @@ export function rimelightI18n(options?: RimelightI18nOptions): AstroIntegration[
   const validateExtraction = options?.validateExtraction ?? true
   const translations = options?.translations
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV"
-  const translationLoader = options?.translationLoader ?? "./src/i18n/loader.ts"
+  const translationLoader = options?.translationLoader
 
   // Normalise locale keys: "pt" → "pt-br" for nanostores compatibility
   const normalisedTranslations: Record<string, any> = {}

@@ -1,3 +1,4 @@
+import { basename } from "node:path"
 import type { ComponentTheme } from "./defineTheme"
 
 const themeModules = import.meta.glob<{ default: ComponentTheme }>("../components/**/*.theme.ts", {
@@ -9,12 +10,11 @@ function kebabToCamel(str: string): string {
 }
 
 function themeNameFromFile(path: string): string {
-  const fileName = path.replace(/^\.\/|\.theme\.ts$/g, "")
-  return kebabToCamel(fileName)
+  return kebabToCamel(basename(path, ".theme.ts"))
 }
 
 export const defaultUIConfig: Record<string, ComponentTheme> = Object.fromEntries(
   Object.entries(themeModules).map(([path, module]) => [themeNameFromFile(path), module.default])
 )
 
-export type DefaultUIConfig = typeof defaultUIConfig
+export type DefaultUIConfig = Record<string, ComponentTheme>

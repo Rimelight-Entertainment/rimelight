@@ -278,7 +278,7 @@ const cleanupShortcuts = defineShortcuts({
 
 ## Key Syntax
 
-Shortcut keys are expressed as strings, following the [KeyboardEvent.key API](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values). The separator character determines the shortcut type:
+Shortcut keys are expressed as strings, following the [KeyboardEvent.key API](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values). The separator character determines the shortcut type, with `_` as the standard notation throughout the system.
 
 <RLACallout color="info" title="Key Combinations">
   For a complete list of available shortcut keys, refer to the [KeyboardEvent.key API
@@ -347,7 +347,7 @@ defineShortcuts({
 
 ### Sequential chains - `-` (hyphen)
 
-Use hyphen to express keys pressed **one after the other** within the chain delay window (default 800 ms). Sequential shortcuts ignore modifier state - they match the bare key sequence only.
+Use hyphen to express keys pressed **one after the other** within the chain delay window (default 800 ms). Sequential shortcuts ignore modifier state - they match the bare key sequence only. Note that chain keys use `-` as a definition separator only; display rendering normalizes to `_` for the standard keyboard notation.
 
 ```ts
 defineShortcuts({

@@ -8,7 +8,7 @@ import {
   transformerDirectives,
   transformerVariantGroup
 } from "unocss"
-import { defaultColorScales, defaultColors } from "./defaults"
+import { defaultColorScales, defaultColors } from "../config/colors"
 
 const pathDirname = dirname(fileURLToPath(import.meta.url))
 export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
@@ -99,9 +99,8 @@ export interface RimelightPresetOptions {
 export default definePreset((options?: RimelightPresetOptions) => {
   const userColors = options?.colors ?? {}
   const autoGen = options?.autogenerateColorModes ?? true
-  const coreColors = [...defaultColors, "neutral"]
   const mergedColorScales = { ...defaultColorScales, ...userColors }
-  const allColors = [...new Set([...coreColors, ...Object.keys(userColors)])]
+  const allColors = [...new Set([...defaultColors, ...Object.keys(userColors)])]
 
   const resolvedColors = Object.fromEntries(
     Object.entries(mergedColorScales).map(([name, entry]) => [
@@ -145,18 +144,6 @@ export default definePreset((options?: RimelightPresetOptions) => {
       preflights: 2,
       shortcuts: 3,
       default: 4
-    },
-
-    content: {
-      pipeline: {
-        include: [
-          /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
-          "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
-          uiSrcGlob,
-          "../ui/src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}"
-        ]
-      },
-      filesystem: [uiFilesystemGlob, "../ui/src/**/*", "src/components/**/*", "src/pages/**/*"]
     },
 
     shortcuts: {

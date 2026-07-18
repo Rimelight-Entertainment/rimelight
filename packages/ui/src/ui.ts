@@ -8,30 +8,6 @@ import type { RimelightPresetOptions } from "./presets"
 
 export type { UIOptions, UIConfigOverrides, RimelightIcons, CategoryConfig } from "./config"
 
-/**
- * Astro integration for `@rimelight/ui`.
- *
- * Provides global UI configuration via a virtual module. Components import `virtual:rimelight-ui`
- * to access the merged config.
- *
- * @example
- *   // astro.config.mjs
- *   import { ui } from "@rimelight/ui"
- *
- *   export default defineConfig({
- *     integrations: [
- *       ui({
- *         components: {
- *           themes: {
- *             button: {
- *               defaultVariants: { variant: "primary" }
- *             }
- *           }
- *         }
- *       })
- *     ]
- *   })
- */
 export function ui(options: UIOptions = {}): AstroIntegration[] {
   let astroLogger: any = null
 
@@ -73,7 +49,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     {
       name: "@rimelight/ui",
       hooks: {
-        "astro:config:setup": async ({ updateConfig, logger }) => {
+        "astro:config:setup": ({ updateConfig, logger }) => {
           astroLogger = logger
           logger.info("Initializing @rimelight/ui core")
           updateConfig({

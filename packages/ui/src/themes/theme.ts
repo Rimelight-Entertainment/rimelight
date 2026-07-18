@@ -1,4 +1,4 @@
-import type { defaultColors } from "../presets/defaults"
+import type { defaultColors } from "../config/colors"
 
 export type Theme = "light" | "dark"
 

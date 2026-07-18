@@ -68,8 +68,7 @@ const kbdKeysMap: Record<string, string> = {
 
 // Convert a combination string (e.g. meta_alt_t) into platform-specific readable key symbol arrays
 export function formatShortcutKeys(keyStr: string): string[] {
-  const separator = keyStr.includes("-") ? "-" : "_"
-  const parts = keyStr.split(separator)
+  const parts = keyStr.split("_")
   return parts.map((part) => {
     const lower = part.toLowerCase()
     if (kbdKeysMap[lower] !== undefined) {
@@ -85,30 +84,25 @@ export function formatShortcutKeys(keyStr: string): string[] {
 // Reactive store containing all currently registered shortcuts on the page
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
+const specialKeysMap: Record<string, string> = {
+  space: "Space",
+  enter: "Enter",
+  escape: "Escape",
+  tab: "Tab",
+  backspace: "Backspace",
+  delete: "Delete",
+  arrowup: "ArrowUp",
+  arrowdown: "ArrowDown",
+  arrowleft: "ArrowLeft",
+  arrowright: "ArrowRight"
+}
+
 // Simple key to code conversion for layout/translation independence under Alt
 function convertKeyToCode(key: string): string {
-  if (/^[a-z]$/i.test(key)) {
-    return `Key${key.toUpperCase()}`
-  }
-  if (/^\d$/.test(key)) {
-    return `Digit${key}`
-  }
-  if (/^f\d+$/i.test(key)) {
-    return key.toUpperCase()
-  }
-  const specialKeys: Record<string, string> = {
-    space: "Space",
-    enter: "Enter",
-    escape: "Escape",
-    tab: "Tab",
-    backspace: "Backspace",
-    delete: "Delete",
-    arrowup: "ArrowUp",
-    arrowdown: "ArrowDown",
-    arrowleft: "ArrowLeft",
-    arrowright: "ArrowRight"
-  }
-  return specialKeys[key.toLowerCase()] || key
+  if (/^[a-z]$/i.test(key)) return `Key${key.toUpperCase()}`
+  if (/^\d$/.test(key)) return `Digit${key}`
+  if (/^f\d+$/i.test(key)) return key.toUpperCase()
+  return specialKeysMap[key.toLowerCase()] || key
 }
 
 // Input tag checking
@@ -127,24 +121,18 @@ function isUsingInput(activeElement: Element | null): boolean | string {
   return false
 }
 
-export function defineShortcuts(
-  config: ShortcutsConfig,
-  options: ShortcutsOptions = {}
-): () => void {
-  if (typeof window === "undefined") {
-    return () => {}
-  }
+interface ParsedShortcuts {
+  shortcuts: Shortcut[]
+  registered: RegisteredShortcut[]
+}
 
-  const chainDelay = options.chainDelay ?? 800
-  const chainedInputs: string[] = []
-  let debounceTimer: any = null
+const parseCache = new WeakMap<ShortcutsConfig, ParsedShortcuts>()
 
-  const clearChainedInput = () => {
-    chainedInputs.length = 0
-  }
+function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
+  const cached = parseCache.get(config)
+  if (cached) return cached
 
-  // Pre-parse the shortcuts configuration
-  const parsedShortcuts: Shortcut[] = Object.entries(config)
+  const shortcuts: Shortcut[] = Object.entries(config)
     .map(([key, shortcutConfig]): Shortcut | null => {
       if (!shortcutConfig) return null
 
@@ -179,33 +167,22 @@ export function defineShortcuts(
         shiftKey = parts.includes("shift")
         altKey = parts.includes("alt") || parts.includes("option")
 
-        // Normalize Cmd/Ctrl for non-macOS
         if (!macOS && metaKey && !ctrlKey) {
           metaKey = false
           ctrlKey = true
         }
       }
 
-      return {
-        key: baseKey,
-        handler,
-        chained,
-        ctrlKey,
-        metaKey,
-        shiftKey,
-        altKey,
-        usingInput
-      }
+      return { key: baseKey, handler, chained, ctrlKey, metaKey, shiftKey, altKey, usingInput }
     })
     .filter((item): item is Shortcut => item !== null)
 
-  // Register documented shortcuts to the store
-  const itemsToRegister: RegisteredShortcut[] = Object.entries(config).flatMap(
+  const registered: RegisteredShortcut[] = Object.entries(config).flatMap(
     ([key, shortcutConfig]) => {
       if (!shortcutConfig || typeof shortcutConfig !== "object") return []
 
       const { label, description, category, order } = shortcutConfig
-      if (!label && !description) return [] // only register documented shortcuts
+      if (!label && !description) return []
 
       const item: RegisteredShortcut = {
         id: `${key}-${Math.random().toString(36).slice(2, 7)}`,
@@ -218,6 +195,29 @@ export function defineShortcuts(
       return [item]
     }
   )
+
+  const result = { shortcuts, registered }
+  parseCache.set(config, result)
+  return result
+}
+
+export function defineShortcuts(
+  config: ShortcutsConfig,
+  options: ShortcutsOptions = {}
+): () => void {
+  if (typeof window === "undefined") {
+    return () => {}
+  }
+
+  const { shortcuts: parsedShortcuts, registered: itemsToRegister } = parseShortcutConfig(config)
+
+  const chainDelay = options.chainDelay ?? 800
+  const chainedInputs: string[] = []
+  let debounceTimer: ReturnType<typeof setTimeout> | undefined
+
+  const clearChainedInput = () => {
+    chainedInputs.length = 0
+  }
 
   if (itemsToRegister.length > 0) {
     activeShortcutsStore.set([...activeShortcutsStore.get(), ...itemsToRegister])

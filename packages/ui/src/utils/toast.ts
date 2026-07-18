@@ -29,9 +29,11 @@ export function addToast(toast: Toast) {
 
 export function removeToast(id: string | number) {
   const currentToasts = toastsStore.get()
-  const target = currentToasts.find((t) => t.id === id)
-  if (target && target.callback) {
-    target.callback()
-  }
-  toastsStore.set(currentToasts.filter((t) => t.id !== id))
+  const idx = currentToasts.findIndex((t) => t.id === id)
+  if (idx === -1) return
+  const target = currentToasts[idx]!
+  if (target.callback) target.callback()
+  const next = currentToasts.slice()
+  next.splice(idx, 1)
+  toastsStore.set(next)
 }
