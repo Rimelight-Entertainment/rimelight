@@ -36,10 +36,10 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   let astroLogger: any = null
 
   const presetOptions: RimelightPresetOptions = {
-    colors: options.colors ?? {}
-  }
-  if (options.autogenerateColorModes !== undefined) {
-    presetOptions.autogenerateColorModes = options.autogenerateColorModes
+    colors: options.colors ?? {},
+    ...(options.autogenerateColorModes !== undefined && {
+      autogenerateColorModes: options.autogenerateColorModes
+    })
   }
 
   const resolvedConfig = {
@@ -97,7 +97,9 @@ function createVirtualModulePlugin(config: any) {
     enforce: "pre" as const,
     resolveId: (rId: string) => (rId === id ? "\0" + id : null),
     load: (rId: string) =>
-      rId === "\0" + id ? `export const getUIConfig = () => (${JSON.stringify(config)});` : null
+      rId === "\0" + id
+        ? `const _config = ${JSON.stringify(config)}; export const getUIConfig = () => _config;`
+        : null
   }
 }
 
@@ -111,19 +113,9 @@ function logUnoConfig(config: any, astroLogger: any) {
   process.env.UNO_CONFIG_LOGGED = "true"
 
   const log = (msg: string, isWarn = false) => {
-    if (isWarn) {
-      if (astroLogger) {
-        astroLogger.warn(msg)
-      } else {
-        console.warn(msg)
-      }
-    } else {
-      if (astroLogger) {
-        astroLogger.info(msg)
-      } else {
-        console.log(msg)
-      }
-    }
+    const logger = astroLogger ?? console
+    const method = isWarn ? "warn" : astroLogger ? "info" : "log"
+    logger[method](msg)
   }
 
   log(`[UnoCSS] Presets: ${config.presets.map((p: any) => p.name).join(", ")}`)
@@ -131,10 +123,16 @@ function logUnoConfig(config: any, astroLogger: any) {
   log(`[UnoCSS] Shortcuts: ${Object.keys(config.shortcuts).length}`)
 
   const ruleNames = config.rules.map((r: any) => (Array.isArray(r) ? r[0].toString() : "dynamic"))
-  const duplicates = ruleNames.filter(
-    (item: string, index: number) => ruleNames.indexOf(item) !== index
-  )
-  const filtered = duplicates.filter((d: string) => d !== "/^(.+?)-(\\$.+)$/")
+  const seen = new Set<string>()
+  const duplicates = new Set<string>()
+  for (const name of ruleNames) {
+    if (seen.has(name)) {
+      duplicates.add(name)
+    } else {
+      seen.add(name)
+    }
+  }
+  const filtered = Array.from(duplicates).filter((d: string) => d !== "/^(.+?)-(\\$.+)$/")
 
   if (filtered.length > 0) {
     log(`[UnoCSS] Rule collisions: ${filtered.join(", ")}`, true)

@@ -1,4 +1,5 @@
 export const coreColors = [
+  "neutral",
   "primary",
   "secondary",
   "info",
