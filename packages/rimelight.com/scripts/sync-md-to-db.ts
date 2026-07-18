@@ -7,6 +7,22 @@ import { searchIndex, pages } from "../src/db/schema"
 import { sql, eq, inArray, and, isNull, isNotNull } from "drizzle-orm"
 import { type Block } from "../src/types/pages"
 
+const originalLog = console.log
+console.log = (...args: any[]) => {
+  const now = new Date()
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+  originalLog(`${timestamp} [sync-md-to-db]`, ...args)
+}
+
+const originalError = console.error
+console.error = (...args: any[]) => {
+  const now = new Date()
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+  originalError(`${timestamp} [sync-md-to-db]`, ...args)
+}
+
 // Extract text from editor content blocks for database pages
 function extractTextFromBlocks(blocks: Block[]): string {
   if (!blocks || !Array.isArray(blocks)) return ""

@@ -36,6 +36,7 @@ export type { UIOptions, UIConfigOverrides, RimelightIcons, CategoryConfig } fro
  *   })
  */
 export function ui(options: UIOptions = {}): AstroIntegration[] {
+  let astroLogger: any = null
   const resolvedUI = merge(options.ui ?? {}, defaultUIConfig)
   const coreColors = [
     "primary",
@@ -97,6 +98,7 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     name: "@rimelight/ui",
     hooks: {
       "astro:config:setup": async ({ updateConfig, logger }) => {
+        astroLogger = logger
         logger.info("Initializing @rimelight/ui core")
         await setViteConfig(updateConfig)
       }
@@ -123,15 +125,27 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
       configResolved(config) {
         if (process.env.NODE_ENV === "development" && !process.env.UNO_CONFIG_LOGGED) {
           process.env.UNO_CONFIG_LOGGED = "true"
-          console.log(`[UnoCSS] Presets: ${config.presets.map((p) => p.name).join(", ")}`)
-          console.log(`[UnoCSS] Rules: ${config.rules.length}`)
-          console.log(`[UnoCSS] Shortcuts: ${Object.keys(config.shortcuts).length}`)
+          if (astroLogger) {
+            astroLogger.info(`[UnoCSS] Presets: ${config.presets.map((p) => p.name).join(", ")}`)
+            astroLogger.info(`[UnoCSS] Rules: ${config.rules.length}`)
+            astroLogger.info(`[UnoCSS] Shortcuts: ${Object.keys(config.shortcuts).length}`)
+          } else {
+            console.log(`[UnoCSS] Presets: ${config.presets.map((p) => p.name).join(", ")}`)
+            console.log(`[UnoCSS] Rules: ${config.rules.length}`)
+            console.log(`[UnoCSS] Shortcuts: ${Object.keys(config.shortcuts).length}`)
+          }
           const ruleNames = config.rules.map((r) =>
             Array.isArray(r) ? r[0].toString() : "dynamic"
           )
           const duplicates = ruleNames.filter((item, index) => ruleNames.indexOf(item) !== index)
           const filtered = duplicates.filter((d) => d !== "/^(.+?)-(\\$.+)$/")
-          if (filtered.length > 0) console.warn(`[UnoCSS] Rule collisions: ${filtered.join(", ")}`)
+          if (filtered.length > 0) {
+            if (astroLogger) {
+              astroLogger.warn(`[UnoCSS] Rule collisions: ${filtered.join(", ")}`)
+            } else {
+              console.warn(`[UnoCSS] Rule collisions: ${filtered.join(", ")}`)
+            }
+          }
         }
       }
     }),

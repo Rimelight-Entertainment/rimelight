@@ -11,9 +11,23 @@ if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true })
 }
 
+function getTimestamp() {
+  const now = new Date()
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+}
+
+function log(msg: string) {
+  console.log(`${getTimestamp()} [block-map-gen] ${msg}`)
+}
+
+function warn(msg: string) {
+  console.warn(`${getTimestamp()} [block-map-gen] ${msg}`)
+}
+
 function generateMap(dir: string, suffix: "Renderer" | "Editor", varName: string, outFile: string) {
   if (!existsSync(dir)) {
-    console.warn(`[Block Map Gen] Directory not found: ${dir}. Skipping.`)
+    warn(`Directory not found: ${dir}. Skipping.`)
     // Write an empty/fallback file so imports don't break during initial startup
     writeFileSync(
       resolve(outputDir, outFile),
@@ -38,7 +52,7 @@ function generateMap(dir: string, suffix: "Renderer" | "Editor", varName: string
   content += `}\n`
 
   writeFileSync(resolve(outputDir, outFile), content)
-  console.log(`[Block Map Gen] Generated ${names.length} entries in ${outFile}`)
+  log(`Generated ${names.length} entries in ${outFile}`)
 }
 
 generateMap(rendererDir, "Renderer", "BLOCK_RENDERER_COMPONENT_MAP", "blockRendererMap.ts")

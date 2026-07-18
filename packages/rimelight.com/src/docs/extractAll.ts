@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url"
 import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta } from "./types"
 import { extractAstroMeta } from "./extractors/extractAstro"
 import { extractVueMeta } from "./extractors/extractVue"
-import { extractThemeMeta } from "./extractors/extractTheme"
+import { extractAllThemesMeta } from "./extractors/extractTheme"
 
 const pathDirname = path.dirname(fileURLToPath(import.meta.url))
 const uiRoot = path.resolve(pathDirname, "..", "..", "..", "ui")
@@ -43,10 +43,13 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
   }
 
   const allNames = new Set([...vueComponents.keys(), ...astroComponents.keys()])
+  const sortedNames = [...allNames].toSorted()
+
+  const themesMap = await extractAllThemesMeta(sortedNames, componentsDir)
   const result: Record<string, ComponentMeta> = {}
 
   await Promise.all(
-    [...allNames].toSorted().map(async (name) => {
+    sortedNames.map(async (name) => {
       const vue = vueComponents.get(name)
       const astro = astroComponents.get(name)
 
@@ -82,7 +85,7 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
         }
       }
 
-      const theme = await extractThemeMeta(name, componentsDir)
+      const theme = themesMap[name] || null
 
       result[pascalToKebab(name)] = {
         name,

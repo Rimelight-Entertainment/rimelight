@@ -3,45 +3,75 @@ import path from "node:path"
 import { execSync } from "node:child_process"
 import type { ThemeMeta } from "../types"
 
-export async function extractThemeMeta(
-  componentName: string,
-  componentsDir: string
-): Promise<ThemeMeta | null> {
+function getThemePath(componentName: string, componentsDir: string): string {
   const kebabName = componentName.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()
-  const themePath = path.join(componentsDir, kebabName, `${kebabName}.theme.ts`)
+  return path.join(componentsDir, kebabName, `${kebabName}.theme.ts`)
+}
 
-  if (!existsSync(themePath)) return null
+export async function extractAllThemesMeta(
+  componentNames: string[],
+  componentsDir: string
+): Promise<Record<string, ThemeMeta>> {
+  const targets: { name: string; fileUrl: string }[] = []
+
+  for (const name of componentNames) {
+    const themePath = getThemePath(name, componentsDir)
+    if (existsSync(themePath)) {
+      const fileUrl = "file:///" + themePath.replace(/\\/g, "/")
+      targets.push({ name, fileUrl })
+    }
+  }
+
+  if (targets.length === 0) return {}
 
   try {
-    const fileUrl = "file:///" + themePath.replace(/\\/g, "/")
-    // Run evaluation in a separate Node process with the tsx loader.
-    // This bypasses Vite's ModuleRunner restrictions inside Astro config setups.
-    // We pass the loader script via stdin to avoid any command line escaping issues.
-    const input = `import('${fileUrl}').then(m => console.log(JSON.stringify(m.default))).catch(err => { console.error(err); process.exit(1); })`
+    // Generate script to dynamic import all theme files concurrently
+    const input = `
+const targets = ${JSON.stringify(targets)};
+const results = {};
+Promise.all(
+  targets.map(async ({ name, fileUrl }) => {
+    try {
+      const m = await import(fileUrl);
+      results[name] = m.default;
+    } catch (err) {
+      // ignore
+    }
+  })
+).then(() => {
+  console.log(JSON.stringify(results));
+}).catch(err => {
+  console.error(err);
+  process.exit(1);
+});
+`
     const output = execSync(`"${process.execPath}" --import tsx -`, {
       input,
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "ignore"]
     })
 
-    const themeObj = JSON.parse(output.trim())
-    if (!themeObj) return null
+    const allThemesObj = JSON.parse(output.trim())
+    const results: Record<string, ThemeMeta> = {}
 
-    return {
-      slots: Array.isArray(themeObj.slots) ? themeObj.slots : [],
-      base: typeof themeObj.base === "object" && themeObj.base !== null ? themeObj.base : {},
-      variants:
-        typeof themeObj.variants === "object" && themeObj.variants !== null
-          ? themeObj.variants
-          : {},
-      compoundVariants: Array.isArray(themeObj.compoundVariants) ? themeObj.compoundVariants : [],
-      defaultVariants:
-        typeof themeObj.defaultVariants === "object" && themeObj.defaultVariants !== null
-          ? themeObj.defaultVariants
-          : {}
+    for (const [name, themeObj] of Object.entries(allThemesObj)) {
+      if (!themeObj) continue
+      const t = themeObj as any
+      results[name] = {
+        slots: Array.isArray(t.slots) ? t.slots : [],
+        base: typeof t.base === "object" && t.base !== null ? t.base : {},
+        variants: typeof t.variants === "object" && t.variants !== null ? t.variants : {},
+        compoundVariants: Array.isArray(t.compoundVariants) ? t.compoundVariants : [],
+        defaultVariants:
+          typeof t.defaultVariants === "object" && t.defaultVariants !== null
+            ? t.defaultVariants
+            : {}
+      }
     }
+
+    return results
   } catch (err) {
-    console.warn(`[docs] Failed to extract theme via child process for ${componentName}:`, err)
-    return null
+    console.warn(`[docs] Failed to extract themes in batch:`, err)
+    return {}
   }
 }
