@@ -111,4 +111,14 @@ export interface UIOptions {
    * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
    */
   icons?: RimelightIcons
+  /**
+   * Configure underlying UnoCSS presets and settings.
+   */
+  unocss?: {
+    presets?: {
+      wind?: boolean
+      typography?: boolean
+      icons?: boolean
+    }
+  }
 }

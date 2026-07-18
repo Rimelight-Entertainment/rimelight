@@ -5,6 +5,7 @@ description: "How to install and configure Rimelight UI in your project."
 
 import RLASteps from "@rimelight/ui/components/steps/RLASteps.astro"
 import RLAPackageManagers from "@rimelight/ui/components/package-managers/RLAPackageManagers.astro"
+import RLACallout from "@rimelight/ui/components/callout/RLACallout.astro"
 
 To use Rimelight UI in an Astro project, install the package and register the integration.
 
@@ -67,3 +68,23 @@ To use Rimelight UI in an Astro project, install the package and register the in
 
   </li>
 </RLASteps>
+
+## Configuration Options
+
+Below are the configuration options you can pass to the `ui()` integration:
+
+### UnoCSS Presets
+
+By default, Rimelight UI enables three presets for UnoCSS (`wind`, `typography`, and `icons`). If you want to disable any of these (for example, to prevent conflicts or reduce CSS output), you can configure them in the `unocss.presets` object:
+
+```typescript
+ui({
+  unocss: {
+    presets: {
+      wind: true, // Toggle presetWind4 (default: true)
+      typography: false, // Toggle presetTypography (default: true)
+      icons: true // Toggle presetIcons (default: true)
+    }
+  }
+})
+```

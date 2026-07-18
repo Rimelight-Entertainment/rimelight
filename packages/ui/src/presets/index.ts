@@ -94,6 +94,11 @@ const createScale = (colorName: string, shadeKeys: string[]) => ({
 export interface RimelightPresetOptions {
   colors?: Record<string, ColorConfigValue>
   autogenerateColorModes?: boolean
+  presets?: {
+    wind?: boolean
+    typography?: boolean
+    icons?: boolean
+  }
 }
 
 export default definePreset((options?: RimelightPresetOptions) => {
@@ -111,31 +116,39 @@ export default definePreset((options?: RimelightPresetOptions) => {
 
   const safelist = allColors.flatMap((color) => ["rl-color-" + color])
 
+  const enabledPresets = {
+    wind: options?.presets?.wind !== false,
+    typography: options?.presets?.typography !== false,
+    icons: options?.presets?.icons !== false
+  }
+
   return {
     name: "rimelight-ui",
     safelist,
     presets: [
-      presetWind4(),
-      presetTypography({
-        cssExtend: {
-          "h1,h2,h3,h4,h5,h6": {
-            "font-family": "var(--font-sans), system-ui, sans-serif"
-          },
-          "p,li,blockquote,code": {
-            "font-family": "var(--font-sans), system-ui, sans-serif"
-          },
-          "pre,code": {
-            "font-family": "var(--font-mono), monospace"
+      enabledPresets.wind && presetWind4(),
+      enabledPresets.typography &&
+        presetTypography({
+          cssExtend: {
+            "h1,h2,h3,h4,h5,h6": {
+              "font-family": "var(--font-sans), system-ui, sans-serif"
+            },
+            "p,li,blockquote,code": {
+              "font-family": "var(--font-sans), system-ui, sans-serif"
+            },
+            "pre,code": {
+              "font-family": "var(--font-mono), monospace"
+            }
           }
-        }
-      }),
-      presetIcons({
-        extraProperties: {
-          "display": "inline-block",
-          "vertical-align": "middle"
-        }
-      })
-    ],
+        }),
+      enabledPresets.icons &&
+        presetIcons({
+          extraProperties: {
+            "display": "inline-block",
+            "vertical-align": "middle"
+          }
+        })
+    ].filter(Boolean) as any[],
     transformers: [transformerDirectives(), transformerVariantGroup()],
 
     outputToCssLayers: true,

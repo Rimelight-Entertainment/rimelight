@@ -15,6 +15,9 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     colors: options.colors ?? {},
     ...(options.autogenerateColorModes !== undefined && {
       autogenerateColorModes: options.autogenerateColorModes
+    }),
+    ...(options.unocss?.presets !== undefined && {
+      presets: options.unocss.presets
     })
   }
 
