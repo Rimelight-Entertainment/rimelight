@@ -1,12 +1,4 @@
-import type {
-  DocsConfig,
-  BadgeConfig,
-  SidebarItem,
-  SidebarScope
-} from "../components/sidebar/sidebar"
-import type { PropMeta, ThemeMeta } from "./types"
-
-export const defineDocsConfig = <const T extends DocsConfig>(config: T): T => config
+import type { DocsConfig, SidebarItem, SidebarScope, BadgeConfig } from "./config"
 
 export interface ResolvedSidebarItem {
   label: string
@@ -26,7 +18,7 @@ export interface ResolvedScope {
   active?: boolean | undefined
 }
 
-export function formatDocsUrl(
+function formatDocsUrl(
   href: string,
   locale: string,
   activeVersion?: string,
@@ -49,64 +41,6 @@ export function formatDocsUrl(
     url = url.replace(/\/{2,}/g, "/")
   }
   return url
-}
-
-export interface DocEntry {
-  id: string
-  [key: string]: any
-}
-
-export function getDocsVersions(entries: DocEntry[], locale: string): string[] {
-  const versions = new Set<string>()
-  for (const entry of entries) {
-    const id = entry.id.replace(/\\/g, "/")
-    const parts = id.split("/")
-    // File structure is: [version]/[locale]/[...slug]
-    if (parts[1] === locale && parts[0]?.startsWith("v")) {
-      versions.add(parts[0])
-    }
-  }
-  return Array.from(versions).toSorted((a, b) => {
-    return b.localeCompare(a, undefined, { numeric: true, sensitivity: "base" })
-  })
-}
-
-export function parseDocsSlug(slug: string | undefined, versions: string[]) {
-  if (versions.length === 0) {
-    return {
-      activeVersion: "",
-      contentPath: slug || "index",
-      includeVersionInUrl: false
-    }
-  }
-
-  const defaultVersion = versions[0]
-  const isMultiVersion = versions.length > 1
-
-  if (!slug) {
-    return {
-      activeVersion: defaultVersion,
-      contentPath: "index",
-      includeVersionInUrl: isMultiVersion
-    }
-  }
-
-  const parts = slug.split("/")
-  const firstPart = parts[0]
-
-  if (firstPart && versions.includes(firstPart)) {
-    return {
-      activeVersion: firstPart,
-      contentPath: parts.slice(1).join("/") || "index",
-      includeVersionInUrl: isMultiVersion
-    }
-  }
-
-  return {
-    activeVersion: defaultVersion,
-    contentPath: slug || "index",
-    includeVersionInUrl: isMultiVersion
-  }
 }
 
 function findFirstHref(
@@ -211,7 +145,6 @@ export async function getDocsSidebar(
     }
   })
 
-  // Compute scope prefixes for active detection (separate from clickable hrefs)
   const scopePrefixes: string[] = sidebarScopes.map((scope) =>
     scope.items ? getScopePrefix(scope.items, locale, activeVersion, includeVersionInUrl) : ""
   )
@@ -315,50 +248,4 @@ export function getSurroundItems(sidebar: ResolvedSidebarItem[], currentPath: st
     next:
       currentIndex >= 0 && currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null
   }
-}
-
-export function kebabToPascal(name: string): string {
-  return name
-    .split("-")
-    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-    .join("")
-}
-
-export function filterProps(
-  props: PropMeta[],
-  options: { hide?: string[]; show?: string[] }
-): PropMeta[] {
-  if (options.show?.length) {
-    return props.filter((p) => options.show!.includes(p.name))
-  }
-  if (options.hide?.length) {
-    return props.filter((p) => !options.hide!.includes(p.name))
-  }
-  return props
-}
-
-export function generateThemeCode(componentName: string, theme: ThemeMeta): string {
-  const componentConfig: Record<string, unknown> = {
-    ...(theme.slots.length ? { slots: theme.slots } : {}),
-    ...(Object.keys(theme.base).length ? { base: theme.base } : {}),
-    ...(Object.keys(theme.variants).length ? { variants: theme.variants } : {}),
-    ...(theme.compoundVariants.length ? { compoundVariants: theme.compoundVariants } : {}),
-    ...(Object.keys(theme.defaultVariants).length ? { defaultVariants: theme.defaultVariants } : {})
-  }
-
-  return `// astro.config.ts
-import { ui } from "@rimelight/ui"
-import { defineConfig } from "astro/config"
-
-export default defineConfig({
-  integrations: [
-    ui({
-      components: {
-        themes: {
-          ${componentName}: ${JSON.stringify(componentConfig, null, 10).replace(/\n/g, "\n          ")}
-        }
-      }
-    })
-  ]
-})`
 }

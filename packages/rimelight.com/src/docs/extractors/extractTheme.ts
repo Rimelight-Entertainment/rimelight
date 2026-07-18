@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs"
 import path from "node:path"
 import { execSync } from "node:child_process"
-import type { ThemeMeta } from "../types"
+import type { ThemeMeta } from "@rimelight/docs"
 
 function getThemePath(componentName: string, componentsDir: string): string {
   const kebabName = componentName.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()

@@ -155,6 +155,12 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
 
+  packages/docs:
+    dependencies:
+      '@rimelight/ui':
+        specifier: workspace:*
+        version: link:../ui
+
   packages/i18n:
     dependencies:
       '@nanostores/i18n':
@@ -193,6 +199,9 @@ importers:
       '@neondatabase/serverless':
         specifier: 1.1.0
         version: 1.1.0
+      '@rimelight/docs':
+        specifier: workspace:*
+        version: link:../docs
       '@rimelight/i18n':
         specifier: workspace:*
         version: link:../i18n
@@ -326,6 +335,9 @@ importers:
       '@nanostores/i18n':
         specifier: 1.3.3
         version: 1.3.3(nanostores@1.4.0)
+      '@rimelight/docs':
+        specifier: workspace:*
+        version: link:../docs
       '@rimelight/i18n':
         specifier: workspace:*
         version: link:../i18n

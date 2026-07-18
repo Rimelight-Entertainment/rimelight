@@ -1,0 +1,39 @@
+{
+  "name": "@rimelight/docs",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Rimelight documentation routing, navigation, and metadata utilities.",
+  "keywords": [
+    "docs",
+    "documentation",
+    "sidebar",
+    "typescript"
+  ],
+  "homepage": "https://rimelight.com/docs",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Marchi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
+  },
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@rimelight/ui": "workspace:*"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

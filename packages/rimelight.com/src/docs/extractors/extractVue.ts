@@ -1,7 +1,7 @@
 import { readFileSync, existsSync, statSync } from "node:fs"
 import path from "node:path"
 import ts from "typescript"
-import type { PropMeta, SlotMeta, EmitMeta } from "../types"
+import type { PropMeta, SlotMeta, EmitMeta } from "@rimelight/docs"
 
 function extractScriptBlock(content: string): string | null {
   const match =

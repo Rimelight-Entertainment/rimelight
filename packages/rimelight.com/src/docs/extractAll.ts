@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, statSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta } from "./types"
+import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta } from "@rimelight/docs"
 import { extractAstroMeta } from "./extractors/extractAstro"
 import { extractVueMeta } from "./extractors/extractVue"
 import { extractAllThemesMeta } from "./extractors/extractTheme"

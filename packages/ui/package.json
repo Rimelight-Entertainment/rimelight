@@ -34,8 +34,6 @@
     "./config/*": "./src/config/*",
     "./utils": "./src/utils/index.ts",
     "./utils/*": "./src/utils/*",
-    "./docs": "./src/docs/index.ts",
-    "./docs/*": "./src/docs/*",
     "./icons": "./src/icons/index.ts",
     "./icons/*": "./src/icons/*",
     "./plugins": "./src/plugins/index.ts",

@@ -2,7 +2,7 @@
 import { getEntry, render, getCollection } from "astro:content";
 import DocsLayout from "@/layouts/DocsLayout.astro";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents";
-import { getDocsVersions, parseDocsSlug } from "@rimelight/ui/utils";
+import { getDocsVersions, parseDocsSlug } from "@rimelight/docs";
 
 const activeLocale = Astro.currentLocale ?? "en";
 

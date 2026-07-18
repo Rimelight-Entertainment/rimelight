@@ -1,4 +1,4 @@
-import { defineDocsConfig } from "@rimelight/ui/utils"
+import { defineDocsConfig } from "@rimelight/docs"
 
 export default defineDocsConfig({
   editLink: {

@@ -1,7 +1,7 @@
 ---
 import { getEntry, render, getCollection } from "astro:content";
 import DocsLayout from "@/layouts/DocsLayout.astro";
-import { getDocsVersions, parseDocsSlug } from "@rimelight/ui/utils";
+import { getDocsVersions, parseDocsSlug } from "@rimelight/docs";
 
 const activeLocale = Astro.currentLocale ?? "en";
 const { slug } = Astro.params;

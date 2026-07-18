@@ -1,4 +1,4 @@
-import type { PropMeta, ThemeMeta } from "./types"
+import type { PropMeta, ThemeMeta } from "@rimelight/docs"
 
 export function kebabToPascal(name: string): string {
   return name

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import ts from "typescript"
-import type { PropMeta, SlotMeta } from "../types"
+import type { PropMeta, SlotMeta } from "@rimelight/docs"
 
 function extractAstroPropsFromInterface(sourceFile: ts.SourceFile): PropMeta[] {
   const props: PropMeta[] = []

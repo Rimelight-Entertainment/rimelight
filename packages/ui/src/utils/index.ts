@@ -1,7 +1,6 @@
 export * from "../themes/defineTheme"
 export * from "./resolveClasses"
 export * from "./useUi.ts"
-export * from "../docs"
 export * from "./embed"
 export * from "./shortcuts"
 export * from "./color"

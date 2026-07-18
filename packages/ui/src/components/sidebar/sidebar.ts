@@ -34,26 +34,6 @@ export interface SidebarScope {
   collapsed?: boolean
 }
 
-export interface TableOfContentsConfig {
-  minHeadingLevel?: number
-  maxHeadingLevel?: number
-}
-
-export interface EditLinkConfig {
-  baseUrl: string
-}
-
-export interface DocsConfig {
-  basePath?: string
-  sidebar:
-    | (SidebarItem | SidebarScope)[]
-    | {
-        scopes: SidebarScope[]
-      }
-  editLink?: EditLinkConfig
-  tableOfContents?: false | TableOfContentsConfig
-}
-
 export interface SidebarProps {
   /**
    * The navigation links array.
