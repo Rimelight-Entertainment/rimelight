@@ -6,7 +6,8 @@ import {
   presetWind4,
   presetIcons,
   transformerDirectives,
-  transformerVariantGroup
+  transformerVariantGroup,
+  type Preset
 } from "unocss"
 import { defaultColorScales, defaultColors } from "../config/colors"
 
@@ -148,7 +149,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
             "vertical-align": "middle"
           }
         })
-    ].filter(Boolean) as any[],
+    ].filter(Boolean) as Preset[],
     transformers: [transformerDirectives(), transformerVariantGroup()],
 
     outputToCssLayers: true,

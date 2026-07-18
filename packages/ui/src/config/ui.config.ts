@@ -1,3 +1,4 @@
+import type { UserConfig } from "unocss"
 import type { ComponentTheme } from "../themes/defineTheme"
 
 export interface CategoryConfig {
@@ -112,13 +113,15 @@ export interface UIOptions {
    */
   icons?: RimelightIcons
   /**
-   * Configure underlying UnoCSS presets and settings.
+   * Configure which built-in UnoCSS presets are enabled/disabled.
    */
-  unocss?: {
-    presets?: {
-      wind?: boolean
-      typography?: boolean
-      icons?: boolean
-    }
+  presets?: {
+    wind?: boolean
+    typography?: boolean
+    icons?: boolean
   }
+  /**
+   * Custom UnoCSS configuration overrides, routed directly down to the UnoCSS instance.
+   */
+  unocss?: UserConfig
 }

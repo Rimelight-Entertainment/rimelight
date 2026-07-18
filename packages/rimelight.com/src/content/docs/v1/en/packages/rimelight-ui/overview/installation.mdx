@@ -75,16 +75,38 @@ Below are the configuration options you can pass to the `ui()` integration:
 
 ### UnoCSS Presets
 
-By default, Rimelight UI enables three presets for UnoCSS (`wind`, `typography`, and `icons`). If you want to disable any of these (for example, to prevent conflicts or reduce CSS output), you can configure them in the `unocss.presets` object:
+By default, Rimelight UI enables three presets for UnoCSS (`wind`, `typography`, and `icons`). If you want to disable any of these (for example, to prevent conflicts or reduce CSS output), you can configure them in the `presets` object:
+
+```typescript
+ui({
+  presets: {
+    wind: true, // Toggle presetWind4 (default: true)
+    typography: false, // Toggle presetTypography (default: true)
+    icons: true // Toggle presetIcons (default: true)
+  }
+})
+```
+
+### Raw UnoCSS Config
+
+If you want to configure additional UnoCSS rules, shortcuts, or add custom presets, you can pass them directly via the `unocss` property. The configuration is merged with Rimelight UI's internal defaults:
 
 ```typescript
 ui({
   unocss: {
-    presets: {
-      wind: true, // Toggle presetWind4 (default: true)
-      typography: false, // Toggle presetTypography (default: true)
-      icons: true // Toggle presetIcons (default: true)
-    }
+    presets: [
+      // Add custom presets alongside Rimelight UI's presets
+      myCustomPreset()
+    ],
+    rules: [
+      // Add custom style rules
+      [
+        /^custom-(.+)$/,
+        ([, name]) => ({
+          /* ... */
+        })
+      ]
+    ]
   }
 })
 ```

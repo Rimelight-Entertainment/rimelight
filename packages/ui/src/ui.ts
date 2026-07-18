@@ -3,6 +3,7 @@ import UnoCSS from "unocss/astro"
 import { merge } from "./utils/merge"
 import { defaultUIConfig } from "./themes"
 import { type UIOptions, coreColors } from "./config"
+import type { Preset } from "unocss"
 import rimelightUiPreset, { uiSrcGlob, uiFilesystemGlob } from "./presets"
 import type { RimelightPresetOptions } from "./presets"
 
@@ -16,8 +17,8 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     ...(options.autogenerateColorModes !== undefined && {
       autogenerateColorModes: options.autogenerateColorModes
     }),
-    ...(options.unocss?.presets !== undefined && {
-      presets: options.unocss.presets
+    ...(options.presets !== undefined && {
+      presets: options.presets
     })
   }
 
@@ -29,24 +30,60 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
     icons: options.icons ?? {}
   }
 
+  const userUnoConfig = options.unocss ?? {}
+
+  const rawPipeline =
+    userUnoConfig.content &&
+    typeof userUnoConfig.content === "object" &&
+    "pipeline" in userUnoConfig.content
+      ? userUnoConfig.content.pipeline
+      : undefined
+  const rawIncludes =
+    rawPipeline && typeof rawPipeline === "object" && "include" in rawPipeline
+      ? rawPipeline.include
+      : undefined
+  const userPipelineIncludes = rawIncludes
+    ? Array.isArray(rawIncludes)
+      ? rawIncludes
+      : [rawIncludes]
+    : []
+
+  const rawFilesystem =
+    userUnoConfig.content &&
+    typeof userUnoConfig.content === "object" &&
+    "filesystem" in userUnoConfig.content
+      ? userUnoConfig.content.filesystem
+      : undefined
+  const userFilesystem = rawFilesystem
+    ? Array.isArray(rawFilesystem)
+      ? rawFilesystem
+      : [rawFilesystem]
+    : []
+
   return [
     UnoCSS({
-      presets: [rimelightUiPreset(presetOptions)],
-      safelist: Object.values(options.icons ?? {}).filter(
-        (v): v is string => typeof v === "string" && v.startsWith("i-")
-      ),
+      ...userUnoConfig,
+      presets: [rimelightUiPreset(presetOptions), ...(userUnoConfig.presets ?? [])],
+      safelist: [
+        ...Object.values(options.icons ?? {}).filter(
+          (v): v is string => typeof v === "string" && v.startsWith("i-")
+        ),
+        ...(userUnoConfig.safelist ?? [])
+      ],
       content: {
         pipeline: {
           include: [
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
             "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
-            uiSrcGlob
+            uiSrcGlob,
+            ...userPipelineIncludes
           ]
         },
-        filesystem: [uiFilesystemGlob, "src/components/**/*", "src/pages/**/*"]
+        filesystem: [uiFilesystemGlob, "src/components/**/*", "src/pages/**/*", ...userFilesystem]
       },
       configResolved(config) {
         logUnoConfig(config, astroLogger)
+        userUnoConfig.configResolved?.(config)
       }
     }),
     {
