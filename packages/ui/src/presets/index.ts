@@ -9,7 +9,7 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import { defaultColorScales, defaultColors } from "../config/colors"
+import { colorConfig } from "../config/color.config"
 
 const pathDirname = dirname(fileURLToPath(import.meta.url))
 export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
@@ -105,8 +105,8 @@ export interface RimelightPresetOptions {
 export default definePreset((options?: RimelightPresetOptions) => {
   const userColors = options?.colors ?? {}
   const autoGen = options?.autogenerateColorModes ?? true
-  const mergedColorScales = { ...defaultColorScales, ...userColors }
-  const allColors = [...new Set([...defaultColors, ...Object.keys(userColors)])]
+  const mergedColorScales = { ...colorConfig.scales, ...userColors }
+  const allColors = [...new Set([...colorConfig.colors, ...Object.keys(userColors)])]
 
   const resolvedColors = Object.fromEntries(
     Object.entries(mergedColorScales).map(([name, entry]) => [

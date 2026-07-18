@@ -1,7 +1,7 @@
-import { defaultColors } from "../../config/colors"
+import { colorConfig } from "../../config/color.config"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createAvatarTheme = (colors: readonly string[] = defaultColors) =>
+export const createAvatarTheme = (colors: readonly string[] = colorConfig.colors) =>
   defineTheme({
     slots: ["root", "image", "fallback", "icon", "badge"],
     base: {

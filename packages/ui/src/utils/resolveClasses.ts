@@ -1,5 +1,4 @@
 import { cx } from "css-variants"
-// @ts-ignore
 import { getUIConfig } from "virtual:rimelight-ui"
 
 export function resolveClasses<T extends (...args: never[]) => Record<string, string>>(

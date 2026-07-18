@@ -1,15 +1,14 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import { merge } from "./utils/merge"
-import { defaultUIConfig } from "./themes"
-import { type UIOptions, coreColors } from "./config"
-import type { Preset } from "unocss"
+import { uiConfig } from "./themes"
+import { type UIConfig, colorConfig } from "./config"
 import rimelightUiPreset, { uiSrcGlob, uiFilesystemGlob } from "./presets"
 import type { RimelightPresetOptions } from "./presets"
 
-export type { UIOptions, UIConfigOverrides, RimelightIcons, CategoryConfig } from "./config"
+export type { UIConfig, UIConfigOverrides, RimelightIcons, CategoryConfig } from "./config"
 
-export function ui(options: UIOptions = {}): AstroIntegration[] {
+export function ui(options: UIConfig = {}): AstroIntegration[] {
   let astroLogger: any = null
 
   const presetOptions: RimelightPresetOptions = {
@@ -23,9 +22,9 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
   }
 
   const resolvedConfig = {
-    ...merge(options.components?.themes ?? {}, defaultUIConfig),
+    ...merge(options.components?.themes ?? {}, uiConfig),
     logos: options.logos ?? {},
-    colors: Array.from(new Set([...coreColors, ...Object.keys(options.colors ?? {})])),
+    colors: Array.from(new Set([...colorConfig.colors, ...Object.keys(options.colors ?? {})])),
     shortcuts: options.shortcuts ?? {},
     icons: options.icons ?? {}
   }

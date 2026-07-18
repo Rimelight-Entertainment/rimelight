@@ -1,5 +1,4 @@
 import { merge } from "./merge"
-// @ts-ignore - virtual module resolved by Astro integration
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const mergeCache = new WeakMap<object, Record<string, string | Function | undefined>>()

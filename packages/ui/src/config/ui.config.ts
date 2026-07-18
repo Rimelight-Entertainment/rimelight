@@ -40,7 +40,7 @@ export interface RimelightIcons {
   [key: string]: string | undefined
 }
 
-export interface UIOptions {
+export interface UIConfig {
   /**
    * Whether to strip default theme classes from all components (bringing your own styling).
    */

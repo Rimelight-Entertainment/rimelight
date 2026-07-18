@@ -1,7 +1,7 @@
-import { defaultColors } from "../../config/colors"
+import { colorConfig } from "../../config/color.config"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createPaginationTheme = (_colors: readonly string[] = defaultColors) =>
+export const createPaginationTheme = (_colors: readonly string[] = colorConfig.colors) =>
   defineTheme({
     slots: ["root", "list", "item", "link", "ellipsis"],
     base: {

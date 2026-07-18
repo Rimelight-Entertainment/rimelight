@@ -1,8 +1,8 @@
-import { defaultColors } from "../../config/colors"
+import { colorConfig } from "../../config/color.config"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createChipTheme = <const C extends readonly string[] = typeof defaultColors>(
-  colors: C = defaultColors as unknown as C
+export const createChipTheme = <const C extends readonly string[] = typeof colorConfig.colors>(
+  colors: C = colorConfig.colors as unknown as C
 ) =>
   defineTheme({
     slots: ["root", "base"],

@@ -1,7 +1,7 @@
-import { defaultColors } from "../../config/colors"
+import { colorConfig } from "../../config/color.config"
 import { defineTheme } from "../../themes/defineTheme"
 
-export const createHoverCardTheme = (_colors: readonly string[] = defaultColors) =>
+export const createHoverCardTheme = (_colors: readonly string[] = colorConfig.colors) =>
   defineTheme({
     slots: ["root", "trigger", "content"],
     base: {
