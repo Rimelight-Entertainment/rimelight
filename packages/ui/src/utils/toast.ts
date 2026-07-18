@@ -1,5 +1,5 @@
 import { atom } from "nanostores"
-import type { ThemeColor } from "../types"
+import type { ThemeColor } from "../themes/theme"
 
 export interface Toast {
   id?: string | number

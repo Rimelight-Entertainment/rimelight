@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DockProps } from "./dock"
+import dockThemeDefault, { createDockTheme } from "./dock.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dockTheme = uiConfig.colors ? createDockTheme() : dockThemeDefault
+
+const dock = scv(dockTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DockProps
+
+const classes = resolveClasses(dock, {}, useUi("dock", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from "vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 const isOpen = defineModel<boolean>("open", { default: false })
 const title = ref("")

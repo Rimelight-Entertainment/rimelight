@@ -1,0 +1,32 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { KbdProps } from "./kbd"
+import kbdThemeDefault, { createKbdTheme } from "./kbd.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const kbdTheme = uiConfig.colors ? createKbdTheme(uiConfig.colors) : kbdThemeDefault
+
+const kbd = scv(kbdTheme)
+
+const {
+  size = "md",
+  color = "neutral",
+  variant = "outline",
+  theme,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as KbdProps & { color?: string; variant?: string; theme?: string }
+
+const classes = resolveClasses(kbd, {
+  size,
+  color: color as "neutral",
+  variant: variant as "solid",
+  theme: theme as "dark"
+}, useUi("kbd", uiProp), className)
+---
+<kbd class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</kbd>

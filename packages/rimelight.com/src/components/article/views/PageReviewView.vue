@@ -10,7 +10,7 @@ import {
 import { usePageRegistry, useRC } from "@/composables"
 import { useI18n } from "@/composables/app/useI18n"
 import PageRenderer from "../PageRenderer.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import PageVersionSelector from "../PageVersionSelector.vue"
 /* region Props */
 export interface PageReviewViewProps {

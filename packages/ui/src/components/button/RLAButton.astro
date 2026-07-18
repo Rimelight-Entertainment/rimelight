@@ -1,0 +1,177 @@
+---
+import { scv, cx } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ButtonProps } from "./button"
+import buttonThemeDefault, { createButtonTheme } from "./button.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import RLAAvatar from "../avatar/RLAAvatar.astro"
+import RLALink from "../link/RLALink.astro"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+const uiConfig = getUIConfig()
+const buttonTheme = uiConfig.colors ? createButtonTheme(uiConfig.colors) : buttonThemeDefault
+
+const button = scv(buttonTheme)
+
+const {
+  variant = "solid",
+  color = "primary",
+  size = "md",
+  href,
+  to,
+  label,
+  leadingIcon,
+  trailingIcon,
+  avatar,
+  loading = false,
+  loadingAuto = false,
+  square = false,
+  rounded = false,
+  block = false,
+  active = false,
+  theme,
+  activeColor,
+  activeVariant,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ButtonProps & {
+  rounded?: boolean
+  activeColor?: string
+  activeVariant?: string
+}
+
+const isLeading = !!(leadingIcon || avatar || Astro.slots.has("leading") || loading)
+const isTrailing = !!(trailingIcon || Astro.slots.has("trailing")) || (loading && !isLeading)
+
+const showLeadingIcon = loading
+  ? "loaderCircle"
+  : leadingIcon
+
+const showTrailingIcon = loading
+  ? "loaderCircle"
+  : trailingIcon
+
+const leadingIconClass = loading ? "animate-spin" : ""
+const trailingIconClass = loading ? "animate-spin" : ""
+
+const classes = resolveClasses(button, {
+  variant: (active && activeVariant ? activeVariant : variant) as "solid",
+  color: (active && activeColor ? activeColor : color) as "neutral",
+  size,
+  block,
+  square: square || (!label && !Astro.slots.has("default")),
+  rounded,
+  leading: isLeading,
+  trailing: isTrailing,
+  loading,
+  active,
+  theme
+}, useUi("button", uiProp), className);
+
+const Tag = (href || to) ? RLALink : "button";
+
+const loadingAutoProps = loadingAuto ? { 'data-loading-auto': '' } : {};
+---
+<Tag
+  class={classes.root}
+  data-slot="root"
+  {...(Tag === RLALink ? { href, to, noExternalIcon: true } : {})}
+  {...loadingAutoProps}
+  {...rest}
+>
+  <slot name="leading" {...{ ui: classes }}>
+    {isLeading && (
+      <span class={classes.leadingIcon} data-slot="leading-icon">
+        {loading || leadingIcon ? (
+           <RLAIcon name={showLeadingIcon} class={leadingIconClass} />
+        ) : avatar ? (
+           <RLAAvatar
+              {...(typeof avatar === 'string' ? { src: avatar } : avatar)}
+              size={classes.leadingAvatarSize as any}
+              class={classes.leadingAvatar}
+              data-slot="leading-avatar"
+           />
+        ) : null}
+      </span>
+    )}
+  </slot>
+
+  {label !== undefined && label !== null && (
+    <span class={classes.label} data-slot="label">
+      {label}
+    </span>
+  )}
+  {!label && <slot />}
+
+  <slot name="trailing" {...{ ui: classes }}>
+    {isTrailing && (
+      <span class={classes.trailingIcon} data-slot="trailing-icon">
+        <RLAIcon name={showTrailingIcon} class={trailingIconClass} />
+      </span>
+    )}
+  </slot>
+</Tag>
+
+{loadingAuto && (
+  <script>
+    const loaderSvg = '<svg class="animate-spin w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+
+    document.querySelectorAll('button[data-loading-auto]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        if (button.getAttribute('data-loading') === 'true') return;
+
+        // Extract onclick attribute if available
+        const onClickAttr = button.getAttribute('onclick');
+        if (onClickAttr) {
+          // Temporarily disable default onclick execution to run it through our promise tracker
+          event.preventDefault();
+          event.stopImmediatePropagation();
+
+          // Construct a function to await the promise
+          try {
+            button.setAttribute('data-loading', 'true');
+            button.setAttribute('disabled', 'true');
+            
+            // To spin the icon dynamically:
+            let leadingIconSpan = button.querySelector('[data-slot="leading-icon"]');
+            let origHTML = '';
+            let isDynamicallyAdded = false;
+
+            if (!leadingIconSpan) {
+              isDynamicallyAdded = true;
+              leadingIconSpan = document.createElement('span');
+              leadingIconSpan.className = 'flex items-center justify-center shrink-0 w-4 h-4';
+              leadingIconSpan.setAttribute('data-slot', 'leading-icon');
+              leadingIconSpan.innerHTML = loaderSvg;
+              button.insertBefore(leadingIconSpan, button.firstChild);
+            } else {
+              origHTML = leadingIconSpan.innerHTML;
+              leadingIconSpan.innerHTML = loaderSvg;
+            }
+
+            // Execute the promise
+            const promiseFn = new Function('event', `
+              const fn = () => { ${onClickAttr} };
+              return fn();
+            `);
+            await promiseFn.call(button, event);
+
+            // Restore state
+            button.removeAttribute('data-loading');
+            button.removeAttribute('disabled');
+            if (isDynamicallyAdded && leadingIconSpan) {
+              leadingIconSpan.remove();
+            } else if (leadingIconSpan) {
+              leadingIconSpan.innerHTML = origHTML;
+            }
+          } catch (err) {
+            console.error(err);
+            button.removeAttribute('data-loading');
+            button.removeAttribute('disabled');
+          }
+        }
+      });
+    });
+  </script>
+)}

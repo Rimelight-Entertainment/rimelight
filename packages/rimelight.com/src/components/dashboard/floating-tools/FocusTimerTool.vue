@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, watch } from "vue"
 import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVProgress from "@rimelight/ui/components/vue/RLVProgress.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVProgress from "@rimelight/ui/components/progress/RLVProgress.vue"
 import { useRC, useFocusTimer, useToast } from "@/composables"
 
 /* region Props */

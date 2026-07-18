@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { KnobProps } from "./knob"
+import knobThemeDefault, { createKnobTheme } from "./knob.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const knobTheme = uiConfig.colors ? createKnobTheme() : knobThemeDefault
+
+const knob = scv(knobTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as KnobProps
+
+const classes = resolveClasses(knob, {}, useUi("knob", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

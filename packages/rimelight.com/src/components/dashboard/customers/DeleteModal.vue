@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useRC } from "@/composables"
 
 /* region Props */

@@ -1,0 +1,39 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { MainProps } from "./main"
+import mainThemeDefault, { createMainTheme } from "./main.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const mainTheme = uiConfig.colors ? createMainTheme() : mainThemeDefault
+
+const main = scv(mainTheme)
+
+const {
+    as = "main",
+    ui: uiProp,
+    class: className,
+    ...rest
+} = Astro.props as MainProps;
+
+const classes = resolveClasses(main, {
+    hasContent: Astro.slots.has("default")
+}, useUi("main", uiProp), className);
+
+const Tag = as;
+---
+
+<Tag
+        class:list={[classes.root, "rla-main-container"]}
+        data-slot="main"
+        {...rest}
+    >
+    <slot />
+</Tag>
+
+<style>
+  .rla-main-container {
+    padding-top: var(--rl-total-header-height, 4rem);
+  }
+</style>

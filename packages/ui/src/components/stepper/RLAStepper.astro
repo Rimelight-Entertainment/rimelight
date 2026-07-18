@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { StepperProps } from "./stepper"
+import stepperThemeDefault, { createStepperTheme } from "./stepper.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const stepperTheme = uiConfig.colors ? createStepperTheme() : stepperThemeDefault
+
+const stepper = scv(stepperTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as StepperProps
+
+const classes = resolveClasses(stepper, {}, useUi("stepper", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

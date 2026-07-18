@@ -4,9 +4,9 @@ import { getCollection } from 'astro:content';
 
 import { siteConfig } from '@/config/site.config';
 import { useI18nAsync, getRelativeLocaleUrl } from "@rimelight/i18n";
-import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro"
-import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro"
-import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro"
+import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro"
+import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
+import RLAPost from "@rimelight/ui/components/post/RLAPost.astro"
 
 const activeLocale = Astro.currentLocale ?? "en";
 

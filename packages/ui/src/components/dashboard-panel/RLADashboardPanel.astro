@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardPanelProps } from "./dashboard-panel"
+import dashboardPanelThemeDefault, { createDashboardPanelTheme } from "./dashboard-panel.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dashboardPanelTheme = uiConfig.colors ? createDashboardPanelTheme() : dashboardPanelThemeDefault
+
+const dashboardPanel = scv(dashboardPanelTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardPanelProps
+
+const classes = resolveClasses(dashboardPanel, {}, useUi("dashboardPanel", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

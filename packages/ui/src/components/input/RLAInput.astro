@@ -1,0 +1,67 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputProps } from "./input"
+import inputThemeDefault, { createInputTheme } from "./input.theme"
+
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const inputTheme = uiConfig.colors ? createInputTheme() : inputThemeDefault
+const input = scv(inputTheme)
+
+const {
+  type = "text",
+  value = "",
+  placeholder,
+  disabled = false,
+  readonly = false,
+  name,
+  required = false,
+  error = false,
+  leadingIcon,
+  trailingIcon,
+  variant = "default",
+  size = "md",
+  color = "primary",
+  theme,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputProps
+
+const hasLeading = !!leadingIcon || Astro.slots.has("leading")
+const hasTrailing = !!trailingIcon || Astro.slots.has("trailing")
+
+const classes = resolveClasses(input, {
+  variant,
+  size,
+  hasLeading,
+  hasTrailing,
+  error: !!error,
+  theme
+}, useUi("input", uiProp), className);
+---
+<div class={classes.root} data-slot="root">
+  {(leadingIcon || Astro.slots.has("leading")) && (
+    <span class={classes.leading} data-slot="leading">
+      {leadingIcon ? <span class={leadingIcon} /> : <slot name="leading" />}
+    </span>
+  )}
+  <input
+    type={type}
+    class={classes.input}
+    value={value}
+    placeholder={placeholder}
+    disabled={disabled}
+    readonly={readonly}
+    name={name}
+    required={required}
+    {...rest}
+  />
+  {(trailingIcon || Astro.slots.has("trailing")) && (
+    <span class={classes.trailing} data-slot="trailing">
+      {trailingIcon ? <span class={trailingIcon} /> : <slot name="trailing" />}
+    </span>
+  )}
+</div>

@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { FloatingActionProps } from "./floating-action"
+import floatingActionThemeDefault, { createFloatingActionTheme } from "./floating-action.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const floatingActionTheme = uiConfig.colors ? createFloatingActionTheme() : floatingActionThemeDefault
+
+const floatingAction = scv(floatingActionTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as FloatingActionProps
+
+const classes = resolveClasses(floatingAction, {}, useUi("floatingAction", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

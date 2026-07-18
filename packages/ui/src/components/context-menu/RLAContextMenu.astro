@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ContextMenuProps } from "./context-menu"
+import contextMenuThemeDefault, { createContextMenuTheme } from "./context-menu.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const contextMenuTheme = uiConfig.colors ? createContextMenuTheme() : contextMenuThemeDefault
+
+const contextMenu = scv(contextMenuTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ContextMenuProps
+
+const classes = resolveClasses(contextMenu, {}, useUi("contextMenu", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

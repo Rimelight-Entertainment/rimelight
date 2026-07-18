@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, useSlots } from "vue"
 import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useRC, useHeaderStack } from "@/composables"
 import OrganizationsMenu from "../OrganizationsMenu.vue"
 import TeamsMenu from "../TeamsMenu.vue"

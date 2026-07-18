@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { PricingPlanProps } from "./pricing-plan"
+import pricingPlanThemeDefault, { createPricingPlanTheme } from "./pricing-plan.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const pricingPlanTheme = uiConfig.colors ? createPricingPlanTheme() : pricingPlanThemeDefault
+
+const pricingPlan = scv(pricingPlanTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as PricingPlanProps
+
+const classes = resolveClasses(pricingPlan, {}, useUi("pricingPlan", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

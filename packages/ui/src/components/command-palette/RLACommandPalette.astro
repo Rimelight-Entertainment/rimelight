@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CommandPaletteProps } from "./command-palette"
+import commandPaletteThemeDefault, { createCommandPaletteTheme } from "./command-palette.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const commandPaletteTheme = uiConfig.colors ? createCommandPaletteTheme() : commandPaletteThemeDefault
+
+const commandPalette = scv(commandPaletteTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CommandPaletteProps
+
+const classes = resolveClasses(commandPalette, {}, useUi("commandPalette", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

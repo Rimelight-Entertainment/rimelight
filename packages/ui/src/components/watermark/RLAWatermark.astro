@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { WatermarkProps } from "./watermark"
+import watermarkThemeDefault, { createWatermarkTheme } from "./watermark.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const watermarkTheme = uiConfig.colors ? createWatermarkTheme() : watermarkThemeDefault
+
+const watermark = scv(watermarkTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as WatermarkProps
+
+const classes = resolveClasses(watermark, {}, useUi("watermark", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

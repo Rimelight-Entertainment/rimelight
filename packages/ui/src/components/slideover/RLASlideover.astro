@@ -1,0 +1,172 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SlideoverProps } from "./slideover"
+import slideoverThemeDefault, { createSlideoverTheme } from "./slideover.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+const uiConfig = getUIConfig()
+const slideoverTheme = uiConfig.colors ? createSlideoverTheme() : slideoverThemeDefault
+
+const slideover = scv(slideoverTheme)
+
+const {
+  side = "left",
+  title,
+  description,
+  triggerLabel,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as SlideoverProps
+
+const classes = resolveClasses(slideover, {
+  side
+}, useUi("slideover", uiProp), className)
+
+const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
+---
+<div class={classes.root} data-slot="slideover-container">
+  {triggerLabel ? (
+    <button
+      class={classes.trigger}
+      data-slot="trigger"
+      type="button"
+      data-dialog-show={dialogId}
+    >
+      {triggerLabel}
+    </button>
+  ) : (
+    <span data-dialog-show={dialogId}>
+      <slot name="trigger" />
+    </span>
+  )}
+
+  <dialog
+    id={dialogId}
+    class={classes.content}
+    data-slot="content"
+    data-close-on-click-outside="true"
+    {...rest}
+  >
+    <button
+      class={classes.closeButton}
+      data-slot="close-button"
+      type="button"
+      data-dialog-close={dialogId}
+      aria-label="Close slideover"
+    >
+      <RLAIcon name="close" class="size-4" aria-hidden="true" />
+    </button>
+
+    <div class={classes.header} data-slot="header">
+      {title && <h3 class={classes.title} data-slot="title">{title}</h3>}
+      <slot name="title" />
+      
+      {description && <p class={classes.description} data-slot="description">{description}</p>}
+      <slot name="description" />
+    </div>
+
+    <slot />
+
+    <div class={classes.footer} data-slot="footer">
+      <slot name="footer" />
+    </div>
+  </dialog>
+</div>
+
+<style is:global>
+  /* Transition/Animation support for native <dialog> slideovers */
+  dialog[data-slot="content"] {
+    transition: transform 0.3s ease, opacity 0.3s ease, display 0.3s allow-discrete, overlay 0.3s allow-discrete !important;
+    opacity: 0;
+  }
+  
+  /* Left side slideover */
+  dialog[data-slot="content"].left-0 {
+    transform: translateX(-100%);
+  }
+  
+  /* Right side slideover */
+  dialog[data-slot="content"].right-0 {
+    transform: translateX(100%);
+  }
+  
+  /* Open states */
+  dialog[data-slot="content"][open] {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+  }
+  
+  /* Starting styles for enter transitions */
+  @starting-style {
+    dialog[data-slot="content"][open].left-0 {
+      opacity: 0 !important;
+      transform: translateX(-100%) !important;
+    }
+    dialog[data-slot="content"][open].right-0 {
+      opacity: 0 !important;
+      transform: translateX(100%) !important;
+    }
+    dialog[data-slot="content"][open]::backdrop {
+      background-color: rgba(0, 0, 0, 0) !important;
+      backdrop-filter: blur(0px) !important;
+    }
+  }
+
+  /* Backdrop transition */
+  dialog[data-slot="content"]::backdrop {
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, display 0.3s allow-discrete, overlay 0.3s allow-discrete !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+</style>
+
+<script>
+  if (!(window as any).rlaDialogListenerActive) {
+    (window as any).rlaDialogListenerActive = true;
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const showTrigger = target.closest('[data-dialog-show]');
+      if (showTrigger) {
+        const dialogId = showTrigger.getAttribute('data-dialog-show');
+        if (dialogId) {
+          const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
+          if (dialog) {
+            if (typeof dialog.showModal === 'function') {
+              dialog.showModal();
+            } else if (typeof (dialog as any).showmodal === 'function') {
+              (dialog as any).showmodal();
+            }
+          }
+        }
+      }
+
+      const closeTrigger = target.closest('[data-dialog-close]');
+      if (closeTrigger) {
+        const dialogId = closeTrigger.getAttribute('data-dialog-close');
+        if (dialogId) {
+          const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
+          dialog?.close();
+        }
+      }
+
+      if (target.tagName === 'DIALOG' && target.getAttribute('data-close-on-click-outside') === 'true') {
+        const rect = target.getBoundingClientRect();
+        const isInModal = (
+          rect.top <= e.clientY &&
+          e.clientY <= rect.top + rect.height &&
+          rect.left <= e.clientX &&
+          e.clientX <= rect.left + rect.width
+        );
+        if (!isInModal) {
+          (target as HTMLDialogElement).close();
+        }
+      }
+    });
+  }
+</script>
+

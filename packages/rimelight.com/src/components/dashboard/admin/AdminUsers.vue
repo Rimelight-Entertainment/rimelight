@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, onMounted, watch } from "vue"
 import { authClient } from "@/auth/auth-client"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 interface Organization {
   id: string
   name: string

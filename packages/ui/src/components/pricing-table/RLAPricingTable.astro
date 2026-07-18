@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { PricingTableProps } from "./pricing-table"
+import pricingTableThemeDefault, { createPricingTableTheme } from "./pricing-table.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const pricingTableTheme = uiConfig.colors ? createPricingTableTheme() : pricingTableThemeDefault
+
+const pricingTable = scv(pricingTableTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as PricingTableProps
+
+const classes = resolveClasses(pricingTable, {}, useUi("pricingTable", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

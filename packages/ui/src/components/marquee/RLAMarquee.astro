@@ -1,0 +1,43 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { MarqueeProps } from "./marquee"
+import marqueeThemeDefault, { createMarqueeTheme } from "./marquee.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const marqueeTheme = uiConfig.colors ? createMarqueeTheme() : marqueeThemeDefault
+
+const marquee = scv(marqueeTheme)
+
+const {
+  direction = "left",
+  speed = 40,
+  pauseOnHover = true,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as MarqueeProps
+
+const classes = resolveClasses(marquee, {
+  direction,
+  pauseOnHover
+}, useUi("marquee", uiProp), className)
+
+const duration = `${speed}s`
+const id = `marquee-${Math.random().toString(36).substring(2, 9)}`
+---
+<div class={classes.root} data-slot="marquee-root" {...rest}>
+  <div class:list={[classes.track, id]} data-slot="track">
+    <slot />
+  </div>
+  <div class:list={[classes.track, id]} data-slot="track" aria-hidden="true">
+    <slot />
+  </div>
+</div>
+
+<style is:inline set:html={`
+  .${id} {
+    animation-duration: ${duration} !important;
+  }
+`} />

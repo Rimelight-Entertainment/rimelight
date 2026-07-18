@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch } from "vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import NoteCard from "./NoteCard.vue"
 import NoteModal from "./NoteModal.vue"
 import { useNotes } from "@/composables/dashboard/useNotes"

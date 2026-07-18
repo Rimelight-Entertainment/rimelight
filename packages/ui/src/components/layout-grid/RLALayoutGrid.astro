@@ -1,0 +1,395 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { LayoutGridProps } from "./layout-grid"
+import layoutGridThemeDefault, { createLayoutGridTheme } from "./layout-grid.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const layoutGridTheme = uiConfig.colors ? createLayoutGridTheme() : layoutGridThemeDefault
+const layoutGrid = scv(layoutGridTheme)
+
+const {
+  cols = 4,
+  smCols = 4,
+  mdCols = 8,
+  lgCols = 12,
+  xlCols = 12,
+  smBreakpoint = 640,
+  mdBreakpoint = 768,
+  lgBreakpoint = 1024,
+  xlBreakpoint = 1280,
+  gutter = [0.75, 1, 1.5, 1.5, 1.5],
+  margin = [0.75, 1, 1.5, 1.5, 1.5],
+  gridColor = "#ff0000",
+  gridOpacity = 0.1,
+  maxWidth = "1440px",
+  innerMaxWidth = "768px",
+  innerGridColor = "#10b981",
+  innerGridOpacity = 0.1,
+  showInnerBackground = true,
+  showBackground = true,
+  showFullWidth = true,
+  fullWidthGridColor = "#3b82f6",
+  fullWidthGridOpacity = 0.05,
+  showFullWidthBackground = true,
+  zIndex = 1000,
+  shortcut = "meta_shift_g",
+  devOnly = true,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as LayoutGridProps
+
+const isDev = import.meta.env.DEV
+const shouldRender = !devOnly || isDev
+
+const normalizeArray = (val: number | number[] | undefined, defaultVal: number): number[] => {
+  if (val === undefined) return [defaultVal, defaultVal, defaultVal, defaultVal, defaultVal]
+  if (!Array.isArray(val)) return [val, val, val, val, val]
+  const arr = [...val]
+  while (arr.length < 5) {
+    const lastVal = arr[arr.length - 1]
+    arr.push(lastVal !== undefined ? lastVal : defaultVal)
+  }
+  return arr
+}
+
+const gutterArray = normalizeArray(gutter, 1)
+const marginArray = normalizeArray(margin, 1)
+
+const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), className)
+---
+
+{shouldRender && (
+  <rla-layout-grid
+    class={classes.root}
+    data-cols={cols}
+    data-sm-cols={smCols}
+    data-md-cols={mdCols}
+    data-lg-cols={lgCols}
+    data-xl-cols={xlCols}
+    data-sm-breakpoint={smBreakpoint}
+    data-md-breakpoint={mdBreakpoint}
+    data-lg-breakpoint={lgBreakpoint}
+    data-xl-breakpoint={xlBreakpoint}
+    data-gutter={JSON.stringify(gutterArray)}
+    data-margin={JSON.stringify(marginArray)}
+    data-grid-color={gridColor}
+    data-grid-opacity={gridOpacity}
+    data-show-background={showBackground ? "true" : "false"}
+    data-max-width={maxWidth}
+    data-inner-max-width={innerMaxWidth}
+    data-inner-color={innerGridColor}
+    data-inner-opacity={innerGridOpacity}
+    data-show-inner-background={showInnerBackground ? "true" : "false"}
+    data-show-full-width={showFullWidth ? "true" : "false"}
+    data-full-width-color={fullWidthGridColor}
+    data-full-width-opacity={fullWidthGridOpacity}
+    data-show-full-width-background={showFullWidthBackground ? "true" : "false"}
+    data-shortcut={shortcut}
+    {...rest}
+  >
+    <aside class={classes.overlay} data-slot="overlay" style={`z-index: ${zIndex}; display: none;`} id="rla-layout-grid-overlay">
+      <!-- Container holding absolutely-positioned viewport columns -->
+      <div style="position: relative; width: 100%; height: 100%;" data-slot="columns-container"></div>
+      <div data-slot="indicator" style="position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.85); color: #fff; padding: 6px 12px; border-radius: 6px; font-family: var(--font-mono, monospace); font-size: 11px; font-weight: bold; pointer-events: none; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.5); letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;"></div>
+    </aside>
+  </rla-layout-grid>
+)}
+
+<script>
+  import { defineShortcuts } from "../../utils/shortcuts"
+
+  function hexToRgba(hex: string, alpha: number): string {
+    const cleanHex = hex.replace('#', '')
+    const num = parseInt(cleanHex, 16)
+    const r = (num >> 16) & 255
+    const g = (num >> 8) & 255
+    const b = num & 255
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  }
+
+  class RLALayoutGrid extends HTMLElement {
+    private isVisible = false
+    private gridElement: HTMLElement | null = null
+    private columnsContainer: HTMLElement | null = null
+    private indicatorElement: HTMLElement | null = null
+    private resizeObserver: ResizeObserver | null = null
+    private shortcutsCleanup: (() => void) | null = null
+    private currentBreakpoint: 'base' | 'sm' | 'md' | 'lg' | 'xl' = 'base'
+
+    constructor() {
+      super()
+      this.handleResize = this.handleResize.bind(this)
+    }
+
+    connectedCallback() {
+      this.style.display = 'contents'
+      this.gridElement = this.querySelector('[data-slot="overlay"], #rla-layout-grid-overlay') as HTMLElement
+      this.columnsContainer = this.querySelector('[data-slot="columns-container"]') as HTMLElement
+      this.indicatorElement = this.querySelector('[data-slot="indicator"]') as HTMLElement
+
+      // Restore visibility state from localStorage
+      this.isVisible = localStorage.getItem('rla-grid-visible') === 'true'
+      if (this.gridElement) {
+        this.gridElement.style.display = this.isVisible ? 'block' : 'none'
+      }
+
+      // Initialize ResizeObserver to monitor viewport changes
+      this.resizeObserver = new ResizeObserver(this.handleResize)
+      this.resizeObserver.observe(document.documentElement)
+
+      // Initialize grid
+      this.updateGrid()
+
+      // Set up shortcuts using the library system
+      const shortcutKey = this.dataset.shortcut || 'meta_shift_g'
+      this.shortcutsCleanup = defineShortcuts({
+        [shortcutKey]: {
+          handler: (e) => {
+            e.preventDefault()
+            this.toggleGrid()
+          },
+          label: "Toggle Layout Grid",
+          description: "Show or hide the development layout grid guide overlay",
+          category: "development"
+        }
+      })
+    }
+
+    disconnectedCallback() {
+      this.resizeObserver?.disconnect()
+      if (this.shortcutsCleanup) {
+        this.shortcutsCleanup()
+        this.shortcutsCleanup = null
+      }
+    }
+
+    private handleResize() {
+      const width = document.documentElement.clientWidth
+      const smBreakpoint = parseInt(this.dataset.smBreakpoint || '640')
+      const mdBreakpoint = parseInt(this.dataset.mdBreakpoint || '768')
+      const lgBreakpoint = parseInt(this.dataset.lgBreakpoint || '1024')
+      const xlBreakpoint = parseInt(this.dataset.xlBreakpoint || '1280')
+
+      let newBreakpoint: 'base' | 'sm' | 'md' | 'lg' | 'xl' = 'base'
+
+      if (width >= xlBreakpoint) {
+        newBreakpoint = 'xl'
+      } else if (width >= lgBreakpoint) {
+        newBreakpoint = 'lg'
+      } else if (width >= mdBreakpoint) {
+        newBreakpoint = 'md'
+      } else if (width >= smBreakpoint) {
+        newBreakpoint = 'sm'
+      }
+
+      this.currentBreakpoint = newBreakpoint
+      this.updateGrid()
+    }
+
+    private updateGrid() {
+      if (!this.columnsContainer) return
+
+      const width = document.documentElement.clientWidth
+      const smBreakpoint = parseInt(this.dataset.smBreakpoint || '640')
+      const mdBreakpoint = parseInt(this.dataset.mdBreakpoint || '768')
+      const lgBreakpoint = parseInt(this.dataset.lgBreakpoint || '1024')
+      const xlBreakpoint = parseInt(this.dataset.xlBreakpoint || '1280')
+
+      let breakpointIndex = 0
+      let colCount = parseInt(this.dataset.cols || '4')
+      let breakpointThreshold = 0
+
+      switch (this.currentBreakpoint) {
+        case 'xl':
+          breakpointIndex = 4
+          colCount = parseInt(this.dataset.xlCols || '12')
+          breakpointThreshold = xlBreakpoint
+          break
+        case 'lg':
+          breakpointIndex = 3
+          colCount = parseInt(this.dataset.lgCols || '12')
+          breakpointThreshold = lgBreakpoint
+          break
+        case 'md':
+          breakpointIndex = 2
+          colCount = parseInt(this.dataset.mdCols || '8')
+          breakpointThreshold = mdBreakpoint
+          break
+        case 'sm':
+          breakpointIndex = 1
+          colCount = parseInt(this.dataset.smCols || '4')
+          breakpointThreshold = smBreakpoint
+          break
+        default:
+          breakpointIndex = 0
+          colCount = parseInt(this.dataset.cols || '4')
+          breakpointThreshold = 0
+          break
+      }
+
+      const gutterArray = JSON.parse(this.dataset.gutter || '[1,1,1,1,1]')
+      const marginArray = JSON.parse(this.dataset.margin || '[1,1,1,1,1]')
+
+      const gutterValue = gutterArray[breakpointIndex] ?? gutterArray[gutterArray.length - 1]
+      const marginValue = marginArray[breakpointIndex] ?? marginArray[marginArray.length - 1]
+
+      const gridColor = this.dataset.gridColor || '#ff0000'
+      const gridOpacity = parseFloat(this.dataset.gridOpacity || '0.1')
+      const showBackground = this.dataset.showBackground === 'true'
+
+      const showFullWidth = this.dataset.showFullWidth !== 'false'
+      const fullWidthColor = this.dataset.fullWidthColor || '#3b82f6'
+      const fullWidthOpacity = parseFloat(this.dataset.fullWidthOpacity || '0.05')
+      const showFullWidthBackground = this.dataset.showFullWidthBackground === 'true'
+
+      // Convert rem spacings to pixels dynamically based on root font size
+      const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+      const marginPx = marginValue * rootFontSize
+      const gutterPx = gutterValue * rootFontSize
+
+      // Calculate max width boundaries
+      const maxWidthVal = this.dataset.maxWidth || '1440px'
+      let maxWidthPx = width
+      if (!maxWidthVal.includes('vw')) {
+        maxWidthPx = parseInt(maxWidthVal)
+      }
+
+      const innerMaxWidthVal = this.dataset.innerMaxWidth || '768px'
+      let innerMaxWidthPx = width
+      if (!innerMaxWidthVal.includes('vw')) {
+        innerMaxWidthPx = parseInt(innerMaxWidthVal)
+      }
+      const innerGridColor = this.dataset.innerColor || '#10b981'
+      const innerGridOpacity = parseFloat(this.dataset.innerOpacity || '0.1')
+      const showInnerBackground = this.dataset.showInnerBackground === 'true'
+
+      // Calculate grid properties based on container width or screen width
+      const activeWidth = width > maxWidthPx ? maxWidthPx : width
+      const innerWidth = activeWidth - 2 * marginPx
+      const colWidth = (innerWidth - (colCount - 1) * gutterPx) / colCount
+
+      // Center container boundaries (where we switch colors)
+      const containerLeft = (width - maxWidthPx) / 2
+      const containerRight = (width + maxWidthPx) / 2
+
+      // Clear container
+      this.columnsContainer.innerHTML = ''
+
+      // Set CSS custom properties on the host element and document root
+      this.style.setProperty('--rla-grid-cols', colCount.toString())
+      this.style.setProperty('--rla-grid-gap', `${gutterPx}px`)
+      this.style.setProperty('--rla-grid-margin', `${marginPx}px`)
+      this.style.setProperty('--rla-grid-max-width', maxWidthVal)
+
+      document.documentElement.style.setProperty('--rla-grid-cols', colCount.toString())
+      document.documentElement.style.setProperty('--rla-grid-gap', `${gutterPx}px`)
+      document.documentElement.style.setProperty('--rla-grid-gutter', `${gutterPx}px`)
+      document.documentElement.style.setProperty('--rla-grid-col-width', `${colWidth}px`)
+      document.documentElement.style.setProperty('--rla-grid-margin', `${marginPx}px`)
+      document.documentElement.style.setProperty('--rla-grid-max-width', maxWidthVal)
+
+      const containerStartX = width > maxWidthPx ? containerLeft + marginPx : marginPx
+      const step = colWidth + gutterPx
+
+      // Calculate total columns including outer ones
+      let totalCols = colCount
+      if (width > maxWidthPx && showFullWidth) {
+        let leftX = marginPx
+        while (leftX + colWidth < containerLeft) {
+          totalCols++
+          leftX += step
+        }
+        let rightX = width - marginPx - colWidth
+        while (rightX > containerRight) {
+          totalCols++
+          rightX -= step
+        }
+      }
+
+      if (this.indicatorElement) {
+        this.indicatorElement.innerHTML = `<span style="color: #3b82f6;">${this.currentBreakpoint.toUpperCase()} (${breakpointThreshold}px)</span> <span style="opacity: 0.35;">|</span> <span>${width}px</span> <span style="opacity: 0.35;">|</span> <span style="color: #ef4444;">${totalCols} Cols</span>`
+      }
+
+
+
+      // Create centered CSS Grid container using the exact same classes as the page container
+      const gridWrapper = document.createElement('div')
+      gridWrapper.className = "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl gap-xs sm:gap-md md:gap-xl lg:gap-xl h-full box-border grid"
+      gridWrapper.style.gridTemplateColumns = 'repeat(var(--rla-grid-cols), 1fr)'
+
+      const innerLeft = (width - innerMaxWidthPx) / 2
+      const innerRight = (width + innerMaxWidthPx) / 2
+
+      // Add container columns
+      for (let i = 0; i < colCount; i++) {
+        const colX = containerStartX + i * step
+        const colRight = colX + colWidth
+        const isInner = (colX >= innerLeft - 1) && (colRight <= innerRight + 1)
+
+        const col = document.createElement('div')
+        col.className = 'grid-column'
+        const color = isInner ? innerGridColor : gridColor
+        const opacity = isInner ? innerGridOpacity : gridOpacity
+        const bg = isInner ? showInnerBackground : showBackground
+
+        Object.assign(col.style, {
+          height: '100%',
+          borderInline: `1px solid ${color}`,
+          boxSizing: 'border-box',
+          backgroundColor: bg ? hexToRgba(color, opacity) : 'transparent'
+        })
+        gridWrapper.appendChild(col)
+      }
+
+      this.columnsContainer.appendChild(gridWrapper)
+
+      // If screen is wider than container, draw outer columns using absolute positioning
+      if (width > maxWidthPx && showFullWidth) {
+        const drawOuterColumn = (x: number) => {
+          const col = document.createElement('div')
+          col.className = 'rla-outer-column'
+          Object.assign(col.style, {
+            position: 'absolute',
+            top: '0',
+            left: `${x}px`,
+            width: `${colWidth}px`,
+            height: '100%',
+            borderInline: `1px solid ${fullWidthColor}`,
+            boxSizing: 'border-box',
+            backgroundColor: showFullWidthBackground ? hexToRgba(fullWidthColor, fullWidthOpacity) : 'transparent'
+          })
+          this.columnsContainer!.appendChild(col)
+        }
+
+        // Draw left columns starting from the viewport edge and going right
+        let leftX = marginPx
+        while (leftX + colWidth < containerLeft) {
+          drawOuterColumn(leftX)
+          leftX += step
+        }
+
+        // Draw right columns starting from the viewport edge and going left
+        let rightX = width - marginPx - colWidth
+        while (rightX > containerRight) {
+          drawOuterColumn(rightX)
+          rightX -= step
+        }
+      }
+    }
+
+    toggleGrid() {
+      this.isVisible = !this.isVisible
+      localStorage.setItem('rla-grid-visible', this.isVisible ? 'true' : 'false')
+      if (this.gridElement) {
+        this.gridElement.style.display = this.isVisible ? 'block' : 'none'
+      }
+    }
+  }
+
+  if (!customElements.get('rla-layout-grid')) {
+    customElements.define('rla-layout-grid', RLALayoutGrid)
+  }
+</script>

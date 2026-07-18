@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { TourProps } from "./tour"
+import tourThemeDefault, { createTourTheme } from "./tour.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const tourTheme = uiConfig.colors ? createTourTheme() : tourThemeDefault
+
+const tour = scv(tourTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as TourProps
+
+const classes = resolveClasses(tour, {}, useUi("tour", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

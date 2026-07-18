@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useRC } from "@/composables"
 
 export interface Todo {

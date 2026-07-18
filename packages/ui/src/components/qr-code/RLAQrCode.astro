@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { QrCodeProps } from "./qr-code"
+import qrCodeThemeDefault, { createQrCodeTheme } from "./qr-code.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const qrCodeTheme = uiConfig.colors ? createQrCodeTheme() : qrCodeThemeDefault
+
+const qrCode = scv(qrCodeTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as QrCodeProps
+
+const classes = resolveClasses(qrCode, {}, useUi("qrCode", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

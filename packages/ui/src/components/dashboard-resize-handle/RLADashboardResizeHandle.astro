@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardResizeHandleProps } from "./dashboard-resize-handle"
+import dashboardResizeHandleThemeDefault, { createDashboardResizeHandleTheme } from "./dashboard-resize-handle.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dashboardResizeHandleTheme = uiConfig.colors ? createDashboardResizeHandleTheme() : dashboardResizeHandleThemeDefault
+
+const dashboardResizeHandle = scv(dashboardResizeHandleTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardResizeHandleProps
+
+const classes = resolveClasses(dashboardResizeHandle, {}, useUi("dashboardResizeHandle", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

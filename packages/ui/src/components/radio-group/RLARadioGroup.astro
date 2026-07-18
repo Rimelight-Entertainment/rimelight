@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { RadioGroupProps } from "./radio-group"
+import radioGroupThemeDefault, { createRadioGroupTheme } from "./radio-group.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const radioGroupTheme = uiConfig.colors ? createRadioGroupTheme() : radioGroupThemeDefault
+
+const radioGroup = scv(radioGroupTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as RadioGroupProps
+
+const classes = resolveClasses(radioGroup, {}, useUi("radioGroup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

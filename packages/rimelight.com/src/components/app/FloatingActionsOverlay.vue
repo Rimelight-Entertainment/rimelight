@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, markRaw } from "vue"
 import { useFloatingActions } from "@/composables/app/useFloatingActions"
-import RLVScrollToTop from "@rimelight/ui/components/vue/RLVScrollToTop.vue"
+import RLVScrollToTop from "@rimelight/ui/components/scroll-to-top/RLVScrollToTop.vue"
 import QuickActions from "../dashboard/QuickActions.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 defineOptions({ name: "FloatingActionsOverlay" })
 

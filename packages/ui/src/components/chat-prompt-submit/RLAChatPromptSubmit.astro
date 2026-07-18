@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChatPromptSubmitProps } from "./chat-prompt-submit"
+import chatPromptSubmitThemeDefault, { createChatPromptSubmitTheme } from "./chat-prompt-submit.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const chatPromptSubmitTheme = uiConfig.colors ? createChatPromptSubmitTheme() : chatPromptSubmitThemeDefault
+
+const chatPromptSubmit = scv(chatPromptSubmitTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChatPromptSubmitProps
+
+const classes = resolveClasses(chatPromptSubmit, {}, useUi("chatPromptSubmit", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

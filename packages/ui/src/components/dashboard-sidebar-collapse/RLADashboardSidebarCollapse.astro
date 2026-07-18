@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse"
+import dashboardSidebarCollapseThemeDefault, { createDashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dashboardSidebarCollapseTheme = uiConfig.colors ? createDashboardSidebarCollapseTheme() : dashboardSidebarCollapseThemeDefault
+
+const dashboardSidebarCollapse = scv(dashboardSidebarCollapseTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardSidebarCollapseProps
+
+const classes = resolveClasses(dashboardSidebarCollapse, {}, useUi("dashboardSidebarCollapse", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

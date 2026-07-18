@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { WindowMockupProps } from "./window-mockup"
+import windowMockupThemeDefault, { createWindowMockupTheme } from "./window-mockup.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const windowMockupTheme = uiConfig.colors ? createWindowMockupTheme() : windowMockupThemeDefault
+
+const windowMockup = scv(windowMockupTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as WindowMockupProps
+
+const classes = resolveClasses(windowMockup, {}, useUi("windowMockup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

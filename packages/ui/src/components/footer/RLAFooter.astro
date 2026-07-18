@@ -1,0 +1,40 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { FooterProps } from "./footer"
+import footerThemeDefault, { createFooterTheme } from "./footer.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const footerTheme = uiConfig.colors ? createFooterTheme() : footerThemeDefault
+
+const footer = scv(footerTheme)
+
+const {
+  contain = false,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as FooterProps
+
+const classes = resolveClasses(footer, { contain }, useUi("footer", uiProp), className)
+---
+
+<footer
+  class:list={[classes.root]}
+  data-slot="root"
+  data-contain={contain ? "true" : "false"}
+  {...rest}
+>
+  <div class:list={[classes.container]} data-slot="container">
+    <div class:list={[classes.left]} data-slot="left">
+      <slot name="left" />
+    </div>
+    <div class:list={[classes.center]} data-slot="center">
+      <slot name="center" />
+    </div>
+    <div class:list={[classes.right]} data-slot="right">
+      <slot name="right" />
+    </div>
+  </div>
+</footer>

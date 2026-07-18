@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CalendarProps } from "./calendar"
+import calendarThemeDefault, { createCalendarTheme } from "./calendar.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const calendarTheme = uiConfig.colors ? createCalendarTheme() : calendarThemeDefault
+
+const calendar = scv(calendarTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CalendarProps
+
+const classes = resolveClasses(calendar, {}, useUi("calendar", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

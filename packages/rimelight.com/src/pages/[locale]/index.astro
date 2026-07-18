@@ -3,12 +3,12 @@ import AppLayout from "@/layouts/AppLayout.astro";
 import { siteConfig } from "@/config/site.config";
 import { getRelativeLocaleUrl, useI18n } from "@rimelight/i18n";
 import { getCollection } from "astro:content";
-import RLAPageSection from "@rimelight/ui/components/astro/RLAPageSection.astro";
-import RLALogo from "@rimelight/ui/components/astro/RLALogo.astro";
-import RLAButton from "@rimelight/ui/components/astro/RLAButton.astro";
-import RLAVideo from "@rimelight/ui/components/astro/RLAVideo.astro";
-import RLAGrid from "@rimelight/ui/components/astro/RLAGrid.astro";
-import RLAPost from "@rimelight/ui/components/astro/RLAPost.astro";
+import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
+import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLAVideo from "@rimelight/ui/components/video/RLAVideo.astro";
+import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro";
+import RLAPost from "@rimelight/ui/components/post/RLAPost.astro";
 import { Image } from "astro:assets";
 
 const messages = useI18n(Astro, "home", {

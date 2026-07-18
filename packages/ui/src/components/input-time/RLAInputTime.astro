@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputTimeProps } from "./input-time"
+import inputTimeThemeDefault, { createInputTimeTheme } from "./input-time.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const inputTimeTheme = uiConfig.colors ? createInputTimeTheme() : inputTimeThemeDefault
+
+const inputTime = scv(inputTimeTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputTimeProps
+
+const classes = resolveClasses(inputTime, {}, useUi("inputTime", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

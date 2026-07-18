@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, computed } from "vue"
 import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useRC, useDashboard } from "@/composables"
 import { authClient } from "@/auth/auth-client"
 

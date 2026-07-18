@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAttrs } from "vue"
-import RLVPlaceholder from "@rimelight/ui/components/vue/RLVPlaceholder.vue"
+import RLVPlaceholder from "@rimelight/ui/components/placeholder/RLVPlaceholder.vue"
 
 const attrs = useAttrs()
 

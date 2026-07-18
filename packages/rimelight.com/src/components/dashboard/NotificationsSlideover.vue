@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from "vue"
 import { formatTimeAgo } from "@vueuse/core"
 import type { Notification } from "@/types"
 import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useRC, useDashboard } from "@/composables"
 
 /* region Props */

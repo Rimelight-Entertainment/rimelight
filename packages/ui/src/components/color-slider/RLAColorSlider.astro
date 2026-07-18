@@ -1,0 +1,413 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import colorSliderThemeDefault, { createColorSliderTheme } from "./color-slider.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const colorSliderTheme = uiConfig.colors ? createColorSliderTheme(uiConfig.colors) : colorSliderThemeDefault
+const colorSlider = scv(colorSliderTheme)
+
+export interface Props {
+  channel: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"
+  colorSpace?: "hsl" | "rgb" | "hsb"
+  defaultValue?: string
+  dir?: "ltr" | "rtl"
+  disabled?: boolean
+  inverted?: boolean
+  modelValue?: string
+  name?: string
+  orientation?: "vertical" | "horizontal"
+  required?: boolean
+  step?: number
+  color?: any
+  theme?: any
+  ui?: any
+  class?: string
+}
+
+const {
+  channel,
+  colorSpace = "hsl",
+  defaultValue = "#000000",
+  dir = "ltr",
+  disabled = false,
+  inverted = false,
+  modelValue,
+  name,
+  orientation = "horizontal",
+  required,
+  step = 1,
+  color = "primary",
+  theme,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as Props
+
+const classes = resolveClasses(colorSlider, {
+  color,
+  theme
+}, useUi("colorSlider", uiProp), className)
+
+const initialValue = modelValue || defaultValue
+---
+<rla-color-slider
+  data-channel={channel}
+  data-color-space={colorSpace}
+  data-value={initialValue}
+  data-disabled={disabled ? "true" : "false"}
+  data-orientation={orientation}
+  data-inverted={inverted ? "true" : "false"}
+  data-step={step}
+  {...rest}
+>
+  <div class={classes.root} data-slot="root" data-orientation={orientation}>
+    <div class={classes.track} data-slot="track">
+      <div class={classes.thumb} data-slot="thumb" role="slider" aria-label="Color Slider Thumb"></div>
+    </div>
+    {name && <input type="hidden" name={name} value={initialValue} data-main-input />}
+  </div>
+</rla-color-slider>
+
+<script>
+  import {
+    hexToRgb,
+    rgbToHex,
+    rgbToHsl,
+    hslToRgb,
+    rgbToHsb,
+    hsbToRgb,
+    getChannelRange,
+    clamp
+  } from "../../utils/color"
+
+  if (typeof HTMLElement !== 'undefined') {
+    class RLAColorSlider extends HTMLElement {
+      private cleanup: (() => void) | null = null
+      private channel: string = "hue"
+      private colorSpace: string = "hsl"
+      private value: string = "#000000"
+      private orientation: string = "horizontal"
+      private stepValue: number = 1
+
+      connectedCallback() {
+        this.style.display = 'contents'
+        this.channel = this.getAttribute("data-channel") || "hue"
+        this.colorSpace = this.getAttribute("data-color-space") || "hsl"
+        this.value = this.getAttribute("data-value") || "#000000"
+        this.orientation = this.getAttribute("data-orientation") || "horizontal"
+        this.stepValue = parseFloat(this.getAttribute("data-step") || "1")
+
+        const root = this.querySelector('[data-slot="root"]') as HTMLElement
+        const track = this.querySelector('[data-slot="track"]') as HTMLElement
+        const thumb = this.querySelector('[data-slot="thumb"]') as HTMLElement
+
+        if (!track || !thumb) return
+
+        const updateUI = () => {
+          const disabled = this.getAttribute("data-disabled") === "true"
+          if (disabled) {
+            root.classList.add("opacity-50", "pointer-events-none")
+          } else {
+            root.classList.remove("opacity-50", "pointer-events-none")
+          }
+
+          const rgb = hexToRgb(this.value)
+          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2])
+          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2])
+
+          const range = getChannelRange(this.channel)
+          let channelVal = 0
+
+          if (this.colorSpace === "hsl") {
+            const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
+            channelVal = index !== -1 ? hsl[index]! : 0
+          } else if (this.colorSpace === "hsb") {
+            const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
+            channelVal = index !== -1 ? hsb[index]! : 0
+          } else if (this.colorSpace === "rgb") {
+            const index = ["red", "green", "blue"].indexOf(this.channel)
+            channelVal = index !== -1 ? rgb[index]! : 0
+          }
+
+          let pct = ((channelVal - range.min) / (range.max - range.min)) * 100
+          if (this.getAttribute("data-inverted") === "true") {
+            pct = 100 - pct
+          }
+
+          if (this.orientation === "horizontal") {
+            thumb.style.left = `${pct}%`
+            thumb.style.top = "50%"
+            thumb.style.transform = "translate(-50%, -50%)"
+          } else {
+            thumb.style.left = "50%"
+            thumb.style.top = `${100 - pct}%`
+            thumb.style.transform = "translate(-50%, -50%)"
+          }
+
+          const dir = this.orientation === "horizontal" ? "to right" : "to top"
+          if (this.channel === "hue") {
+            track.style.background = `linear-gradient(${dir}, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)`
+          } else {
+            let startHex = "#000000"
+            let endHex = "#ffffff"
+
+            if (this.colorSpace === "hsl") {
+              const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
+              if (index !== -1) {
+                let startHsl = [...hsl] as [number, number, number]
+                let endHsl = [...hsl] as [number, number, number]
+                startHsl[index] = range.min
+                endHsl[index] = range.max
+                const startRgb = hslToRgb(startHsl[0], startHsl[1], startHsl[2])
+                const endRgb = hslToRgb(endHsl[0], endHsl[1], endHsl[2])
+                startHex = rgbToHex(startRgb[0], startRgb[1], startRgb[2])
+                endHex = rgbToHex(endRgb[0], endRgb[1], endRgb[2])
+              }
+            } else if (this.colorSpace === "hsb") {
+              const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
+              if (index !== -1) {
+                let startHsb = [...hsb] as [number, number, number]
+                let endHsb = [...hsb] as [number, number, number]
+                startHsb[index] = range.min
+                endHsb[index] = range.max
+                const startRgb = hsbToRgb(startHsb[0], startHsb[1], startHsb[2])
+                const endRgb = hsbToRgb(endHsb[0], endHsb[1], endHsb[2])
+                startHex = rgbToHex(startRgb[0], startRgb[1], startRgb[2])
+                endHex = rgbToHex(endRgb[0], endRgb[1], endRgb[2])
+              }
+            } else if (this.colorSpace === "rgb") {
+              const index = ["red", "green", "blue"].indexOf(this.channel)
+              if (index !== -1) {
+                let startRgb = [...rgb] as [number, number, number]
+                let endRgb = [...rgb] as [number, number, number]
+                startRgb[index] = range.min
+                endRgb[index] = range.max
+                startHex = rgbToHex(startRgb[0], startRgb[1], startRgb[2])
+                endHex = rgbToHex(endRgb[0], endRgb[1], endRgb[2])
+              }
+            }
+
+            track.style.background = `linear-gradient(${dir}, ${startHex}, ${endHex})`
+          }
+
+          thumb.style.backgroundColor = this.value
+
+          const mainInput = this.querySelector("[data-main-input]") as HTMLInputElement
+          if (mainInput) mainInput.value = this.value
+        }
+
+        updateUI()
+
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === "attributes") {
+              if (mutation.attributeName === "data-value") {
+                const newVal = this.getAttribute("data-value") || "#000000"
+                if (newVal !== this.value) {
+                  this.value = newVal
+                  updateUI()
+                }
+              }
+              if (mutation.attributeName === "data-disabled") {
+                updateUI()
+              }
+            }
+          })
+        })
+        observer.observe(this, { attributes: true })
+
+        let isDragging = false
+
+        const handlePointer = (e: PointerEvent) => {
+          if (this.getAttribute("data-disabled") === "true") return
+          const rect = track.getBoundingClientRect()
+          let pct = 0
+
+          if (this.orientation === "horizontal") {
+            pct = clamp((e.clientX - rect.left) / rect.width, 0, 1)
+          } else {
+            pct = 1 - clamp((e.clientY - rect.top) / rect.height, 0, 1)
+          }
+
+          if (this.getAttribute("data-inverted") === "true") {
+            pct = 1 - pct
+          }
+
+          const range = getChannelRange(this.channel)
+          const stepSize = this.stepValue
+          let targetVal = range.min + pct * (range.max - range.min)
+
+          targetVal = Math.round(targetVal / stepSize) * stepSize
+          targetVal = clamp(targetVal, range.min, range.max)
+
+          const rgb = hexToRgb(this.value)
+          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]) as number[]
+          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2]) as number[]
+          let newRgb = [...rgb] as number[]
+
+          if (this.colorSpace === "hsl") {
+            const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
+            if (index !== -1) hsl[index] = targetVal
+            newRgb = hslToRgb(hsl[0]!, hsl[1]!, hsl[2]!)
+          } else if (this.colorSpace === "hsb") {
+            const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
+            if (index !== -1) hsb[index] = targetVal
+            newRgb = hsbToRgb(hsb[0]!, hsb[1]!, hsb[2]!)
+          } else if (this.colorSpace === "rgb") {
+            const index = ["red", "green", "blue"].indexOf(this.channel)
+            if (index !== -1) newRgb[index] = targetVal
+          }
+
+          const newValue = rgbToHex(newRgb[0]!, newRgb[1]!, newRgb[2]!)
+          if (newValue !== this.value) {
+            this.value = newValue
+            this.setAttribute("data-value", newValue)
+            updateUI()
+
+            this.dispatchEvent(new CustomEvent("change", { detail: newValue }))
+            this.dispatchEvent(new CustomEvent("update:modelValue", { detail: newValue }))
+
+            const rootId = this.getAttribute("id")
+            if (rootId) {
+              document.querySelectorAll(`[data-color-link="${rootId}"]`).forEach((el) => {
+                el.setAttribute("data-value", newValue)
+              })
+            }
+          }
+        }
+
+        const onPointerDown = (e: PointerEvent) => {
+          isDragging = true
+          track.setPointerCapture(e.pointerId)
+          handlePointer(e)
+        }
+
+        const onPointerMove = (e: PointerEvent) => {
+          if (!isDragging) return
+          handlePointer(e)
+        }
+
+        const onPointerUp = (e: PointerEvent) => {
+          if (!isDragging) return
+          isDragging = false
+          track.releasePointerCapture(e.pointerId)
+          this.dispatchEvent(new CustomEvent("changeEnd", { detail: this.value }))
+        }
+
+        track.addEventListener("pointerdown", onPointerDown)
+        track.addEventListener("pointermove", onPointerMove)
+        track.addEventListener("pointerup", onPointerUp)
+
+        const onKeyDown = (e: KeyboardEvent) => {
+          if (this.getAttribute("data-disabled") === "true") return
+          const isShift = e.shiftKey
+          const stepMultiplier = isShift ? 10 : 1
+          const stepSize = this.stepValue * stepMultiplier
+
+          const range = getChannelRange(this.channel)
+          const rgb = hexToRgb(this.value)
+          let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2])
+          let hsb = rgbToHsb(rgb[0], rgb[1], rgb[2])
+
+          let channelVal = 0
+          if (this.colorSpace === "hsl") {
+            const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
+            channelVal = index !== -1 ? hsl[index]! : 0
+          } else if (this.colorSpace === "hsb") {
+            const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
+            channelVal = index !== -1 ? hsb[index]! : 0
+          } else if (this.colorSpace === "rgb") {
+            const index = ["red", "green", "blue"].indexOf(this.channel)
+            channelVal = index !== -1 ? rgb[index]! : 0
+          }
+
+          let handled = false
+          let newVal = channelVal
+
+          if (this.orientation === "horizontal") {
+            if (e.key === "ArrowLeft") {
+              newVal = channelVal - stepSize
+              handled = true
+            } else if (e.key === "ArrowRight") {
+              newVal = channelVal + stepSize
+              handled = true
+            }
+          } else {
+            if (e.key === "ArrowDown") {
+              newVal = channelVal - stepSize
+              handled = true
+            } else if (e.key === "ArrowUp") {
+              newVal = channelVal + stepSize
+              handled = true
+            }
+          }
+
+          if (e.key === "Home") {
+            newVal = range.min
+            handled = true
+          } else if (e.key === "End") {
+            newVal = range.max
+            handled = true
+          } else if (e.key === "PageUp") {
+            newVal = channelVal + stepSize * 10
+            handled = true
+          } else if (e.key === "PageDown") {
+            newVal = channelVal - stepSize * 10
+            handled = true
+          }
+
+          if (handled) {
+            e.preventDefault()
+            newVal = clamp(newVal, range.min, range.max)
+
+            let newRgb = [...rgb] as number[]
+            if (this.colorSpace === "hsl") {
+              const index = ["hue", "saturation", "lightness"].indexOf(this.channel)
+              if (index !== -1) hsl[index] = newVal
+              newRgb = hslToRgb(hsl[0]!, hsl[1]!, hsl[2]!)
+            } else if (this.colorSpace === "hsb") {
+              const index = ["hue", "saturation", "brightness"].indexOf(this.channel)
+              if (index !== -1) hsb[index] = newVal
+              newRgb = hsbToRgb(hsb[0]!, hsb[1]!, hsb[2]!)
+            } else if (this.colorSpace === "rgb") {
+              const index = ["red", "green", "blue"].indexOf(this.channel)
+              if (index !== -1) newRgb[index] = newVal
+            }
+
+            const newValue = rgbToHex(newRgb[0]!, newRgb[1]!, newRgb[2]!)
+            if (newValue !== this.value) {
+              this.value = newValue
+              this.setAttribute("data-value", newValue)
+              updateUI()
+              this.dispatchEvent(new CustomEvent("change", { detail: newValue }))
+            }
+          }
+        }
+
+        thumb.setAttribute("tabindex", "0")
+        thumb.addEventListener("keydown", onKeyDown)
+
+        this.cleanup = () => {
+          track.removeEventListener("pointerdown", onPointerDown)
+          track.removeEventListener("pointermove", onPointerMove)
+          track.removeEventListener("pointerup", onPointerUp)
+          thumb.removeEventListener("keydown", onKeyDown)
+          observer.disconnect()
+        }
+      }
+
+      disconnectedCallback() {
+        if (this.cleanup) {
+          this.cleanup()
+          this.cleanup = null
+        }
+      }
+    }
+
+    if (!customElements.get("rla-color-slider")) {
+      customElements.define("rla-color-slider", RLAColorSlider)
+    }
+  }
+</script>

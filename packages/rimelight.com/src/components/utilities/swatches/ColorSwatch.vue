@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { addToast } from "@rimelight/ui/utils"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
 export interface ColorSwatchProps {

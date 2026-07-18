@@ -1,0 +1,36 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { BadgeProps } from "./badge"
+import badgeThemeDefault, { createBadgeTheme } from "./badge.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const badgeTheme = uiConfig.colors ? createBadgeTheme(uiConfig.colors) : badgeThemeDefault
+const badge = scv(badgeTheme)
+
+const {
+  variant = "solid",
+  color = "primary",
+  size = "md",
+  shape = "pill",
+  label,
+  theme,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as BadgeProps & { label?: string }
+
+const resolvedVariant = (variant === "ghost") ? "soft" : ((variant === "solid" || variant === "outline" || variant === "soft" || variant === "subtle") ? variant : "solid")
+
+const classes = resolveClasses(badge, {
+  variant: resolvedVariant as "solid",
+  color: color as "neutral",
+  size,
+  shape,
+  theme
+}, useUi("badge", uiProp), className)
+---
+<span class={classes.root} data-slot="root" {...rest}>
+  <slot>{label}</slot>
+</span>

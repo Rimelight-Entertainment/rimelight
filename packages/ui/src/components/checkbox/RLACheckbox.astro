@@ -1,0 +1,53 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CheckboxProps } from "./checkbox"
+import checkboxThemeDefault, { createCheckboxTheme } from "./checkbox.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const checkboxTheme = uiConfig.colors ? createCheckboxTheme(uiConfig.colors) : checkboxThemeDefault
+
+const checkbox = scv(checkboxTheme)
+
+const {
+  checked = false,
+  disabled = false,
+  name,
+  label,
+  color = "primary",
+  size = "md",
+  theme,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CheckboxProps
+
+const classes = resolveClasses(checkbox, {
+  color,
+  size,
+  checked,
+  theme
+}, useUi("checkbox", uiProp), className);
+---
+<label class={classes.root} data-slot="root">
+  <input
+    type="checkbox"
+    class={classes.input}
+    checked={checked}
+    disabled={disabled}
+    name={name}
+    {...rest}
+  />
+  <div class={classes.box} data-slot="box">
+    <div class={classes.indicator} data-slot="indicator">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="size-3"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
+  </div>
+  {label !== undefined && label !== null && (
+    <span class={classes.label} data-slot="label">
+      {label}
+    </span>
+  )}
+  {!label && <slot />}
+</label>

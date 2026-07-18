@@ -1,0 +1,42 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { CollapsibleProps } from "./collapsible"
+import collapsibleThemeDefault, { createCollapsibleTheme } from "./collapsible.theme"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const collapsibleTheme = uiConfig.colors ? createCollapsibleTheme() : collapsibleThemeDefault
+const collapsible = scv(collapsibleTheme)
+
+const {
+  open = false,
+  label = "Toggle",
+  icon,
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as CollapsibleProps
+
+const classes = resolveClasses(collapsible, {
+  open
+}, useUi("collapsible", uiProp), className);
+---
+<details class={classes.root} open={open ? true : undefined} data-slot="root" {...rest}>
+  <summary class={classes.trigger} data-slot="trigger">
+    <slot name="trigger">
+      <span class="flex items-center gap-2">
+        {icon && <span class={icon} />}
+        {label}
+      </span>
+      <RLAIcon name="chevronDown" class="transition-transform duration-200 group-open:rotate-180" />
+    </slot>
+  </summary>
+  <div class={classes.content} data-slot="content">
+    <slot />
+  </div>
+</details>

@@ -4,7 +4,7 @@ import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
 import { addToast } from "@rimelight/ui/utils"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
 export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6

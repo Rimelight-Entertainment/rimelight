@@ -11,9 +11,9 @@ import BlockEditor from "./blocks/BlockEditor.vue"
 import PageSurroundComponent from "./PageSurround.vue"
 import DeletePageModal from "./modals/DeletePageModal.vue"
 import PageTreeModal from "./modals/PageTreeModal.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 import PageVersionSelector from "./PageVersionSelector.vue"
 
 /* region Props */

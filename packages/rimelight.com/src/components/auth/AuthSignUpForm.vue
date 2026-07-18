@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { reactive, ref, computed } from "vue"
 import { z } from "astro/zod"
-import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVProgress from "@rimelight/ui/components/vue/RLVProgress.vue"
-import RLVIcon from "@rimelight/ui/components/vue/RLVIcon.vue"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import RLVForm from "@rimelight/ui/components/form/RLVForm.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVProgress from "@rimelight/ui/components/progress/RLVProgress.vue"
+import RLVIcon from "@rimelight/ui/components/icon/RLVIcon.vue"
+import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
 import { normalizeUsername, RESTRICTED_SET } from "@/auth/restricted-usernames"
 
 const { messages = {} } = defineProps<{

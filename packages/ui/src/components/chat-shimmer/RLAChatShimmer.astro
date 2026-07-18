@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChatShimmerProps } from "./chat-shimmer"
+import chatShimmerThemeDefault, { createChatShimmerTheme } from "./chat-shimmer.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const chatShimmerTheme = uiConfig.colors ? createChatShimmerTheme() : chatShimmerThemeDefault
+
+const chatShimmer = scv(chatShimmerTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChatShimmerProps
+
+const classes = resolveClasses(chatShimmer, {}, useUi("chatShimmer", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

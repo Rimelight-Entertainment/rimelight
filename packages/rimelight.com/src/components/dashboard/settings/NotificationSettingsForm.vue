@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
+import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
 
 const state = reactive<{
   [key: string]: boolean

@@ -1,0 +1,27 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { LabelProps } from "./label"
+import labelThemeDefault, { createLabelTheme } from "./label.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const labelTheme = uiConfig.colors ? createLabelTheme() : labelThemeDefault
+
+const label = scv(labelTheme)
+
+const {
+  for: htmlFor,
+  size = "md",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as LabelProps
+
+const classes = resolveClasses(label, {
+  size
+}, useUi("label", uiProp), className)
+---
+<label class={classes.root} data-slot="root" for={htmlFor} {...rest}>
+  <slot />
+</label>

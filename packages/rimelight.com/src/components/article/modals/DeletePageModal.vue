@@ -3,9 +3,9 @@ import { ref, watch, computed } from "vue"
 import { useI18n } from "@/composables/app/useI18n"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 
 /* region Props */
 export interface DeletePageModalProps {

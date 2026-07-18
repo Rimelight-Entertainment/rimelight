@@ -1,0 +1,159 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SidebarProps, SidebarItem } from "./sidebar"
+import sidebarThemeDefault from "./sidebar.theme"
+import RLABadge from "../badge/RLABadge.astro"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+const sidebarTheme = sidebarThemeDefault
+const sidebar = scv(sidebarTheme)
+
+const {
+  items = [],
+  side = "left",
+  collapsible = "none",
+  logo,
+  ui: uiProp,
+  class: className,
+  t = (key: string) => key,
+  _depth = 0,
+  ...rest
+} = Astro.props as SidebarProps & { t?: (key: string) => string; _depth?: number }
+
+const classes = resolveClasses(sidebar, {
+  side,
+  collapsible
+}, useUi("sidebar", uiProp), className)
+
+const hasActiveChild = (item: SidebarItem): boolean => {
+  if (item.active) return true
+  return (item.children ?? []).some(c => hasActiveChild(c))
+}
+
+function normalizeBadge(badge: any) {
+  if (!badge) return null
+  if (typeof badge === "string") {
+    return { text: badge, color: "primary", variant: "soft" as const, class: "" }
+  }
+  let color = badge.color || "primary"
+  let variant = badge.variant || "soft"
+  if (badge.variant) {
+    const v = badge.variant.toLowerCase()
+    if (v === "tip" || v === "success") { color = "success"; variant = "soft" }
+    else if (v === "caution" || v === "warning") { color = "warning"; variant = "soft" }
+    else if (v === "error") { color = "error"; variant = "soft" }
+    else if (v === "note" || v === "default") { color = "primary"; variant = "soft" }
+  }
+  return { text: badge.text || "", color, variant: variant as "solid" | "outline" | "soft", class: badge.class || "" }
+}
+
+const isRoot = _depth === 0
+// Indentation per depth level
+const indentClass = _depth === 0 ? "ml-6" : _depth === 1 ? "ml-4" : "ml-3"
+const textSizeClass = _depth === 0 ? "" : "text-xs"
+---
+
+{isRoot ? (
+  <>
+    <aside class={classes.root} data-slot="root" data-sidebar {...rest}>
+      <!-- Header -->
+      <div class={classes.header} data-slot="header">
+        <slot name="header">
+          {logo && (
+            <span data-slot="sidebar-logo" class="flex items-center gap-2">
+              <RLAIcon name="layers" class="size-5 text-primary" />
+              <span class="truncate">{logo}</span>
+            </span>
+          )}
+        </slot>
+      </div>
+
+      <!-- Body -->
+      <div class={classes.content} data-slot="content">
+        <slot>
+          <Astro.self items={items} t={t} _depth={1} ui={uiProp} />
+        </slot>
+      </div>
+
+      <!-- Footer -->
+      <div class={classes.footer} data-slot="footer">
+        <slot name="footer" />
+      </div>
+    </aside>
+
+    {collapsible === "offcanvas" && (
+      <button
+        type="button"
+        data-sidebar-toggle
+        class="fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-background border border-border shadow-sm hover:bg-muted transition-colors"
+        aria-label="Toggle sidebar"
+      >
+        <RLAIcon name="panelLeft" class="size-4" />
+      </button>
+    )}
+
+    <script>
+      document.querySelectorAll("[data-sidebar-toggle]").forEach(toggle => {
+        toggle.addEventListener("click", () => {
+          const sidebar = document.querySelector("[data-sidebar]");
+          if (!sidebar) return;
+          sidebar.classList.toggle("-translate-x-full");
+        });
+      });
+    </script>
+  </>
+) : (
+  <div class="flex flex-col gap-0.5">
+    {items.map((item: SidebarItem) => {
+      const hasChildren = item.children && item.children.length > 0
+      const isActive = item.active || hasActiveChild(item)
+      const b = normalizeBadge(item.badge)
+      return (
+        <div class={_depth === 1 ? classes.item : ""} data-slot={_depth === 1 ? "item" : undefined}>
+          {hasChildren ? (
+            <details open={isActive} class="group/details">
+              <summary
+                class={
+                  (_depth === 1 ? classes.itemLink : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ${textSizeClass}`) +
+                  (isActive ? " text-foreground bg-muted" : "") +
+                  " list-none cursor-pointer"
+                }
+                data-slot="item-summary"
+              >
+                {item.icon && <span class={(_depth === 1 ? classes.itemIcon : "size-3.5 shrink-0") + " " + item.icon} aria-hidden="true" />}
+                <span data-slot="item-text" class="truncate flex-1">{t(item.label)}</span>
+                {b && (
+                  <RLABadge variant={b.variant} color={b.color} size="xs" class={"ml-auto select-none " + b.class} data-slot="item-badge">
+                    {t(b.text)}
+                  </RLABadge>
+                )}
+                <RLAIcon name="chevronRight" class="size-3 ml-auto transition-transform group-open/details:rotate-90" />
+              </summary>
+              <div class={`mt-0.5 ${indentClass} flex flex-col gap-0.5`}>
+                <Astro.self items={item.children} t={t} _depth={_depth + 1} />
+              </div>
+            </details>
+          ) : (
+            <a
+              href={item.href ?? "#"}
+              class={
+                (_depth === 1 ? classes.itemLink : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ${textSizeClass}`) +
+                (isActive ? " text-foreground bg-muted" : "")
+              }
+              aria-current={isActive ? "page" : undefined}
+            >
+              {item.icon && <span class={(_depth === 1 ? classes.itemIcon : "size-3.5 shrink-0") + " " + item.icon} aria-hidden="true" />}
+              <span data-slot="item-text" class="truncate flex-1">{t(item.label)}</span>
+              {b && (
+                <RLABadge variant={b.variant} color={b.color} size="xs" class={"ml-auto select-none " + b.class} data-slot="item-badge">
+                  {t(b.text)}
+                </RLABadge>
+              )}
+            </a>
+          )}
+        </div>
+      )
+    })}
+  </div>
+)}

@@ -1,4 +1,9 @@
-import type { DocsConfig, BadgeConfig, SidebarItem, SidebarScope } from "../types"
+import type {
+  DocsConfig,
+  BadgeConfig,
+  SidebarItem,
+  SidebarScope
+} from "../components/sidebar/sidebar"
 import type { PropMeta, ThemeMeta } from "./types"
 
 export function defineDocsConfig(config: DocsConfig): DocsConfig {

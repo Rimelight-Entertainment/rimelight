@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChatPaletteProps } from "./chat-palette"
+import chatPaletteThemeDefault, { createChatPaletteTheme } from "./chat-palette.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const chatPaletteTheme = uiConfig.colors ? createChatPaletteTheme() : chatPaletteThemeDefault
+
+const chatPalette = scv(chatPaletteTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChatPaletteProps
+
+const classes = resolveClasses(chatPalette, {}, useUi("chatPalette", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

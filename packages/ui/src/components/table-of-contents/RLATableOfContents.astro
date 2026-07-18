@@ -1,0 +1,159 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { TableOfContentsProps } from "./table-of-contents"
+import tableOfContentsThemeDefault, { createTableOfContentsTheme } from "./table-of-contents.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+const uiConfig = getUIConfig()
+const tableOfContentsTheme = uiConfig.colors ? createTableOfContentsTheme() : tableOfContentsThemeDefault
+
+const tableOfContents = scv(tableOfContentsTheme)
+
+const {
+  headings,
+  tableOfContents: tableOfContentsConfig,
+  ui: uiProp,
+  class: className,
+  collapsible = false,
+  containerSelector = ".markdown-content",
+  ...rest
+} = Astro.props as TableOfContentsProps
+
+const classes = resolveClasses(tableOfContents, {}, useUi("tableOfContents", uiProp), className);
+
+if (tableOfContentsConfig === false) {
+  // Render nothing
+}
+
+const minLevel = tableOfContentsConfig ? (tableOfContentsConfig.minHeadingLevel ?? 2) : 2;
+const maxLevel = tableOfContentsConfig ? (tableOfContentsConfig.maxHeadingLevel ?? 3) : 3;
+
+const filteredHeadings = tableOfContentsConfig !== false
+  ? headings.filter(h => h.depth >= minLevel && h.depth <= maxLevel)
+  : [];
+
+const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) => `:scope > h${minLevel + i}`).join(", ");
+---
+
+{tableOfContentsConfig !== false && filteredHeadings.length > 0 && (
+  collapsible ? (
+    <details class:list={[className]} data-rla-toc-collapsible data-container-selector={containerSelector} data-heading-selector={headingSelector} {...rest}>
+      <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-foreground cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
+        <span class="flex items-center gap-2">
+          <RLAIcon name="list" class="size-4 text-primary shrink-0" />
+          <span>On this page</span>
+        </span>
+        <RLAIcon name="chevronDown" class="rla-toc-chevron size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
+      </summary>
+      <div class="px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-border/50 bg-background">
+        <ul class="flex flex-col gap-0.5 pb-8">
+          {filteredHeadings.map(heading => (
+            <li class:list={[heading.depth === 3 && "pl-4"]}>
+              <a
+                href={`#${heading.slug}`}
+                class:list={[
+                  "toc-link block py-1.5 text-sm transition-colors hover:text-primary no-underline",
+                  heading.depth === 2 ? "text-foreground font-medium" : "text-muted-foreground"
+                ]}
+                data-rla-toc-link
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
+  ) : (
+    <div class={classes.root} data-slot="root" data-container-selector={containerSelector} data-heading-selector={headingSelector} {...rest}>
+      <div class={classes.container} data-slot="container">
+        <h4 class={classes.title} data-slot="title">On this page</h4>
+        <ul class:list={[classes.list, "mt-2xl flex flex-col gap-3xs"]} data-slot="list">
+          {filteredHeadings.map(heading => (
+            <li
+              class:list={[
+                classes.item,
+                heading.depth === 2 && "pl-3xs",
+                heading.depth === 3 && "pl-6",
+                heading.depth >= 4 && "pl-9"
+              ]}
+              data-slot="item"
+            >
+              <a
+                href={`#${heading.slug}`}
+                class:list={["toc-link", classes.link]}
+                data-slot="link"
+              >
+                <span class={classes.linkText} data-slot="link-text">{heading.text}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+)}
+
+<style is:global>
+  .toc-active {
+    color: var(--primary);
+    font-weight: 600;
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    // ── Collapsible TOC behaviour (chevron + close-on-link-click) ──
+    function initCollapsibleTocs() {
+      document.querySelectorAll('[data-rla-toc-collapsible]').forEach(function(details) {
+        var chevron = details.querySelector('.rla-toc-chevron');
+        details.addEventListener('toggle', function() {
+          if (chevron) chevron.style.transform = details.open ? 'rotate(180deg)' : '';
+        });
+        details.querySelectorAll('[data-rla-toc-link]').forEach(function(link) {
+          link.addEventListener('click', function() { details.open = false; });
+        });
+      });
+    }
+
+    // ── Active-heading tracker (desktop sidebar) ──
+    function updateActiveHeading() {
+      var root = document.querySelector('[data-slot="root"][data-container-selector]');
+      if (!root) return;
+      var links = root.querySelectorAll(".toc-link");
+      if (links.length === 0) return;
+
+      var threshold = window.innerHeight * 0.5;
+      var activeId = null;
+
+      for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute("href");
+        if (!href || href.charAt(0) !== "#") continue;
+        var id = href.substring(1);
+        var heading = document.getElementById(id);
+        if (heading && heading.getBoundingClientRect().top <= threshold) {
+          activeId = id;
+        }
+      }
+
+      for (var j = 0; j < links.length; j++) {
+        links[j].classList.remove("toc-active");
+      }
+      if (activeId) {
+        var targetLink = root.querySelector('a[href="#' + activeId + '"].toc-link');
+        if (targetLink) targetLink.classList.add("toc-active");
+      }
+    }
+
+    initCollapsibleTocs();
+    updateActiveHeading();
+
+    window.addEventListener("scroll", updateActiveHeading, { passive: true });
+    document.addEventListener("astro:after-swap", function() {
+      initCollapsibleTocs();
+      updateActiveHeading();
+    });
+  })();
+</script>

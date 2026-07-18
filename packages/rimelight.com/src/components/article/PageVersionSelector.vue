@@ -4,7 +4,7 @@ import { useRC, useToast } from "@/composables"
 import { useI18n } from "@/composables/app/useI18n"
 import { scv, cx } from "css-variants"
 import type { PageVersion } from "@/types/pages"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue" /* region Props */
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue" /* region Props */
 export interface PageVersionSelectorProps {
   pageId: string
   isAdmin?: boolean

@@ -1,0 +1,136 @@
+---
+import { scv, cx } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { AvatarProps } from "./avatar"
+import avatarThemeDefault, { createAvatarTheme } from "./avatar.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+const uiConfig = getUIConfig()
+const avatarTheme = uiConfig.colors ? createAvatarTheme(uiConfig.colors) : avatarThemeDefault
+
+const avatar = scv(avatarTheme)
+
+const {
+  src,
+  alt = "",
+  fallback,
+  initials,
+  title,
+  subtitle,
+  label,
+  size = "md",
+  badge = false,
+  badgeColor = "success",
+  badgePosition = "bottom-right",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as AvatarProps & {
+  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left"
+  badgeColor?: string
+}
+
+const classes = resolveClasses(avatar, {
+  size,
+  color: (Astro.props.color || "neutral") as "neutral",
+  badgePosition: badgePosition as "bottom-right"
+}, useUi("avatar", uiProp), className)
+
+const avatarFallback = fallback || initials
+const hasTextLayout = !!(title || subtitle)
+---
+{hasTextLayout ? (
+  <div class="flex items-center gap-3" data-slot="profile-wrapper">
+    <span
+      class={classes.root}
+      data-slot="root"
+      aria-label={label || title}
+      role={label || title ? "img" : undefined}
+      {...rest}
+    >
+      <slot>
+        {src ? (
+          <img
+            src={src}
+            alt={alt}
+            class={classes.image}
+            data-slot="image"
+          />
+        ) : (
+          <span class={classes.fallback} data-slot="fallback">
+            <slot name="fallback">
+              {avatarFallback}
+            </slot>
+            {!avatarFallback && !Astro.slots.has("fallback") && (
+              <RLAIcon name="user" class={classes.icon} aria-hidden="true" />
+            )}
+          </span>
+        )}
+      </slot>
+
+      <slot name="badge">
+        {badge && (
+          <span
+            class={cx(classes.badge, badgeColor && (typeof badgeColor === 'string' && badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
+            data-slot="badge"
+          >
+            {typeof badge === 'string' || typeof badge === 'number' ? badge : null}
+          </span>
+        )}
+      </slot>
+    </span>
+    <div class="flex flex-col leading-tight">
+      {title && (
+        <span class="font-medium text-sm text-[var(--foreground)]" data-slot="title">
+          {title}
+        </span>
+      )}
+      {subtitle && (
+        <span class="text-xs text-[var(--muted-foreground)]" data-slot="subtitle">
+          {subtitle}
+        </span>
+      )}
+    </div>
+  </div>
+) : (
+  <span
+    class={classes.root}
+    data-slot="root"
+    aria-label={label}
+    role={label ? "img" : undefined}
+    {...rest}
+  >
+    <slot>
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          class={classes.image}
+          data-slot="image"
+        />
+      ) : (
+        <span class={classes.fallback} data-slot="fallback">
+          <slot name="fallback">
+            {avatarFallback}
+          </slot>
+          {!avatarFallback && !Astro.slots.has("fallback") && (
+            <RLAIcon name="user" class={classes.icon} aria-hidden="true" />
+          )}
+        </span>
+      )}
+    </slot>
+
+    <slot name="badge">
+      {badge && (
+        <span
+          class={cx(classes.badge, badgeColor && (typeof badgeColor === 'string' && badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
+          data-slot="badge"
+        >
+          {typeof badge === 'string' || typeof badge === 'number' ? badge : null}
+        </span>
+      )}
+    </slot>
+  </span>
+)}
+

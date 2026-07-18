@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ContainerProps } from "./container"
+import containerThemeDefault, { createContainerTheme } from "./container.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const containerTheme = uiConfig.colors ? createContainerTheme() : containerThemeDefault
+
+const container = scv(containerTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ContainerProps
+
+const classes = resolveClasses(container, {}, useUi("container", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

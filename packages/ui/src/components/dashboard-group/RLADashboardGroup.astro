@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardGroupProps } from "./dashboard-group"
+import dashboardGroupThemeDefault, { createDashboardGroupTheme } from "./dashboard-group.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dashboardGroupTheme = uiConfig.colors ? createDashboardGroupTheme() : dashboardGroupThemeDefault
+
+const dashboardGroup = scv(dashboardGroupTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardGroupProps
+
+const classes = resolveClasses(dashboardGroup, {}, useUi("dashboardGroup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

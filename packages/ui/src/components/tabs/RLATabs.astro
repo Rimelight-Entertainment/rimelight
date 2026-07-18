@@ -1,0 +1,159 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { TabsProps } from "./tabs"
+import tabsThemeDefault, { createTabsTheme } from "./tabs.theme"
+
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const tabsTheme = uiConfig.colors ? createTabsTheme() : tabsThemeDefault
+const tabs = scv(tabsTheme)
+
+const {
+  items = [],
+  value = "",
+  variant = "solid",
+  orientation = "horizontal",
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as TabsProps
+
+const classes = resolveClasses(tabs, {
+  variant,
+  orientation,
+  size
+}, useUi("tabs", uiProp), className);
+
+const initialValue = value || (items.length > 0 ? items[0]?.value : "")
+---
+<rla-tabs {...rest}>
+  <div class={classes.root} data-slot="root" data-tabs-container data-value={initialValue}>
+    <div class={classes.list} data-slot="list" role="tablist">
+      {items.map((item) => {
+        const active = item.value === initialValue
+        return (
+          <button
+            type="button"
+            class={classes.trigger}
+            data-slot="trigger"
+            role="tab"
+            data-value={item.value}
+            data-state={active ? "active" : "inactive"}
+            disabled={item.disabled}
+          >
+            {item.icon && <span class={item.icon + " mr-2"} />}
+            {item.label}
+          </button>
+        )
+      })}
+    </div>
+    <div class="flex-1">
+      <slot>
+        {items.map(item => {
+          const active = item.value === initialValue
+          return (
+            <div
+              class={classes.content}
+              data-slot="content"
+              role="tabpanel"
+              data-value={item.value}
+              hidden={active ? undefined : "until-found"}
+            >
+              {item.content}
+            </div>
+          )
+        })}
+      </slot>
+    </div>
+  </div>
+</rla-tabs>
+
+<script>
+  if (typeof HTMLElement !== 'undefined') {
+    class RLATabs extends HTMLElement {
+      private tabsCleanup: (() => void) | null = null;
+
+      connectedCallback() {
+        this.style.display = 'contents';
+        const container = this.querySelector("[data-tabs-container]") as HTMLElement | null;
+        if (!container) return;
+
+        const containerValue = container.dataset.value;
+        const triggers = container.querySelectorAll("[role=tab]");
+        const panels = container.querySelectorAll("[role=tabpanel]");
+
+        triggers.forEach(trigger => {
+          const val = (trigger as HTMLButtonElement).dataset.value;
+          trigger.setAttribute("data-state", val === containerValue ? "active" : "inactive");
+        });
+
+        panels.forEach(panel => {
+          const val = (panel as HTMLElement).dataset.value;
+          if (val === containerValue) {
+            panel.removeAttribute("hidden");
+          } else {
+            panel.setAttribute("hidden", "until-found");
+          }
+        });
+
+        const clickCleanups: (() => void)[] = [];
+        const beforeMatchCleanups: (() => void)[] = [];
+
+        // Watch for browser Find-in-Page auto-expands
+        panels.forEach(panel => {
+          const onBeforeMatch = () => {
+            const targetValue = (panel as HTMLElement).dataset.value;
+            const trigger = container.querySelector(`[role=tab][data-value="${targetValue}"]`) as HTMLButtonElement | null;
+            if (trigger) {
+              trigger.click();
+            }
+          };
+          panel.addEventListener("beforematch", onBeforeMatch);
+          beforeMatchCleanups.push(() => panel.removeEventListener("beforematch", onBeforeMatch));
+        });
+
+        triggers.forEach(triggerNode => {
+          const trigger = triggerNode as HTMLButtonElement;
+          const onClick = () => {
+            const targetValue = trigger.dataset.value;
+
+            triggers.forEach(tNode => {
+              const t = tNode as HTMLButtonElement;
+              t.setAttribute("data-state", t.dataset.value === targetValue ? "active" : "inactive");
+            });
+
+            panels.forEach(panel => {
+              if ((panel as HTMLElement).dataset.value === targetValue) {
+                panel.removeAttribute("hidden");
+              } else {
+                panel.setAttribute("hidden", "until-found");
+              }
+            });
+          };
+          trigger.addEventListener("click", onClick);
+          clickCleanups.push(() => trigger.removeEventListener("click", onClick));
+        });
+
+        this.tabsCleanup = () => {
+          clickCleanups.forEach(fn => fn());
+          beforeMatchCleanups.forEach(fn => fn());
+        };
+      }
+
+      disconnectedCallback() {
+        if (this.tabsCleanup) {
+          this.tabsCleanup();
+          this.tabsCleanup = null;
+        }
+      }
+    }
+
+    if (!customElements.get('rla-tabs')) {
+      customElements.define('rla-tabs', RLATabs);
+    }
+  }
+</script>

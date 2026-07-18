@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { MeterProps } from "./meter"
+import meterThemeDefault, { createMeterTheme } from "./meter.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const meterTheme = uiConfig.colors ? createMeterTheme() : meterThemeDefault
+
+const meter = scv(meterTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as MeterProps
+
+const classes = resolveClasses(meter, {}, useUi("meter", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

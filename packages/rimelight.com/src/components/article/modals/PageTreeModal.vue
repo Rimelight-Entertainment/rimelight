@@ -5,7 +5,7 @@ import { scv, cx } from "css-variants"
 import { getLocalizedContent } from "@/utils/page"
 import { useI18n } from "@/composables/app/useI18n"
 import type { Page } from "@/types/pages"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
 export interface TreeItem {

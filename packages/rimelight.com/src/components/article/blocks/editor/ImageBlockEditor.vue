@@ -3,8 +3,8 @@ import { ref, watch, computed, onUnmounted } from "vue"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
 import type { ImageBlockProps } from "@/types/blocks"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 
 /* region Props */
 export interface ImageBlockEditorProps extends ImageBlockProps {

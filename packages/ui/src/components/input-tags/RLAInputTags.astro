@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { InputTagsProps } from "./input-tags"
+import inputTagsThemeDefault, { createInputTagsTheme } from "./input-tags.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const inputTagsTheme = uiConfig.colors ? createInputTagsTheme() : inputTagsThemeDefault
+
+const inputTags = scv(inputTagsTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as InputTagsProps
+
+const classes = resolveClasses(inputTags, {}, useUi("inputTags", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

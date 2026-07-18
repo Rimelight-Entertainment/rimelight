@@ -2,10 +2,10 @@
 import { z } from "astro/zod"
 import { ref, reactive, computed } from "vue"
 import { scv, cx } from "css-variants"
-import RLVForm from "@rimelight/ui/components/vue/RLVForm.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVForm from "@rimelight/ui/components/form/RLVForm.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useRC, useToast } from "@/composables"
 
 /* region Props */

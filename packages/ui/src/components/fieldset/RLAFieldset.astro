@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { FieldsetProps } from "./fieldset"
+import fieldsetThemeDefault, { createFieldsetTheme } from "./fieldset.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const fieldsetTheme = uiConfig.colors ? createFieldsetTheme() : fieldsetThemeDefault
+
+const fieldset = scv(fieldsetTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as FieldsetProps
+
+const classes = resolveClasses(fieldset, {}, useUi("fieldset", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

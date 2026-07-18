@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { TreeProps } from "./tree"
+import treeThemeDefault, { createTreeTheme } from "./tree.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const treeTheme = uiConfig.colors ? createTreeTheme() : treeThemeDefault
+
+const tree = scv(treeTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as TreeProps
+
+const classes = resolveClasses(tree, {}, useUi("tree", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

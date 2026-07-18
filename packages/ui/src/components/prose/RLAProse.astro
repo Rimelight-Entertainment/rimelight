@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ProseProps } from "./prose"
+import proseThemeDefault, { createProseTheme } from "./prose.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const proseTheme = uiConfig.colors ? createProseTheme() : proseThemeDefault
+
+const prose = scv(proseTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ProseProps
+
+const classes = resolveClasses(prose, {}, useUi("prose", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

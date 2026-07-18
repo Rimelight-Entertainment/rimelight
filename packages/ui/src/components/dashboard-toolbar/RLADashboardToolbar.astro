@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardToolbarProps } from "./dashboard-toolbar"
+import dashboardToolbarThemeDefault, { createDashboardToolbarTheme } from "./dashboard-toolbar.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dashboardToolbarTheme = uiConfig.colors ? createDashboardToolbarTheme() : dashboardToolbarThemeDefault
+
+const dashboardToolbar = scv(dashboardToolbarTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardToolbarProps
+
+const classes = resolveClasses(dashboardToolbar, {}, useUi("dashboardToolbar", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

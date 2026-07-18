@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChatReasoningProps } from "./chat-reasoning"
+import chatReasoningThemeDefault, { createChatReasoningTheme } from "./chat-reasoning.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const chatReasoningTheme = uiConfig.colors ? createChatReasoningTheme() : chatReasoningThemeDefault
+
+const chatReasoning = scv(chatReasoningTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChatReasoningProps
+
+const classes = resolveClasses(chatReasoning, {}, useUi("chatReasoning", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

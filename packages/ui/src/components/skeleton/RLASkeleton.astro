@@ -1,0 +1,24 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { SkeletonProps } from "./skeleton"
+import skeletonThemeDefault, { createSkeletonTheme } from "./skeleton.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const skeletonTheme = uiConfig.colors ? createSkeletonTheme() : skeletonThemeDefault
+
+const skeleton = scv(skeletonTheme)
+
+const {
+  shape = "rounded",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as SkeletonProps
+
+const classes = resolveClasses(skeleton, {
+  shape
+}, useUi("skeleton", uiProp), className)
+---
+<div class={classes.root} data-slot="root" {...rest} />

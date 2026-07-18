@@ -1,0 +1,117 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { LogoProps } from "./logo"
+import logoThemeDefault, { createLogoTheme } from "./logo.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const logoTheme = uiConfig.colors ? createLogoTheme() : logoThemeDefault
+
+const logo = scv(logoTheme)
+
+const {
+  variant = "logomark",
+  mode,
+  theme,
+  href = "/",
+  alt,
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as LogoProps;
+
+let resolvedHref = href;
+if (href === "/") {
+  try {
+    const { getRelativeLocaleUrl } = await import("astro:i18n");
+    resolvedHref = Astro.currentLocale
+      ? getRelativeLocaleUrl(Astro.currentLocale, "/")
+      : getRelativeLocaleUrl("/");
+  } catch {
+    if (Astro.currentLocale) {
+      resolvedHref = `/${Astro.currentLocale}/`;
+    }
+  }
+}
+
+const classes = resolveClasses(logo, {}, useUi("logo", uiProp), className);
+
+const globalConfig = getUIConfig();
+const rcLogos = globalConfig.logos as Record<string, any>;
+
+let logoSrc: string | null = null;
+let darkSrc: string | null = null;
+let lightSrc: string | null = null;
+
+const logoFiles = import.meta.glob<{ default: any }>("/src/assets/**/*.{svg,png,jpg,jpeg,webp,gif}", { eager: true });
+
+function resolveLogo(pathStr: string | null | undefined): any {
+  if (!pathStr) return null;
+  let lookupPath = pathStr;
+  if (lookupPath.startsWith("./")) {
+    lookupPath = lookupPath.substring(1);
+  } else if (!lookupPath.startsWith("/")) {
+    lookupPath = "/" + lookupPath;
+  }
+  const file = logoFiles[lookupPath];
+  if (file) {
+    return file.default?.src || file.default;
+  }
+  return pathStr;
+}
+
+if (rcLogos && typeof rcLogos === "object") {
+  let src = rcLogos[variant];
+  if (src && typeof src === "object") {
+    if (mode) {
+      logoSrc = resolveLogo(src[mode] || src.color);
+    } else {
+      logoSrc = resolveLogo(src.color || src.black || src.white);
+      darkSrc = resolveLogo(src.white || src.color);
+      lightSrc = resolveLogo(src.black || src.color);
+    }
+  } else if (typeof src === "string") {
+    logoSrc = resolveLogo(src);
+  }
+}
+
+const startsWithUrlPrefix = logoSrc && (logoSrc.startsWith("http") || logoSrc.startsWith("/") || logoSrc.startsWith("."));
+const isIcon = logoSrc && !startsWithUrlPrefix && (logoSrc.includes(":") || logoSrc.startsWith("i-"));
+const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
+---
+
+<a
+  class={classes.root}
+  href={resolvedHref}
+  aria-label={alt || variant}
+  data-slot="root"
+  {...rest}
+>
+  {logoSrc ? (
+    isIcon ? (
+      <span class:list={[logoSrc, "size-full block shrink-0"]} aria-hidden="true" />
+    ) : hasAutoMode ? (
+      <>
+        <img
+          src={lightSrc}
+          alt={alt || ""}
+          class="size-full block object-contain shrink-0 dark:hidden"
+        />
+        <img
+          src={darkSrc}
+          alt={alt || ""}
+          class="size-full hidden object-contain shrink-0 dark:block"
+        />
+      </>
+    ) : (
+      <img
+        src={logoSrc}
+        alt={alt || ""}
+        class="size-full block object-contain shrink-0"
+      />
+    )
+  ) : (
+    <slot />
+  )}
+</a>

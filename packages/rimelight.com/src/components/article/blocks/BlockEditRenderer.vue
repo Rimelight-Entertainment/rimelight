@@ -6,7 +6,7 @@ import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
 import { BLOCK_EDITOR_COMPONENT_MAP } from "@/generated/blockEditorMap"
 import BlockComponent from "./Block.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
 export interface BlockEditRendererProps {

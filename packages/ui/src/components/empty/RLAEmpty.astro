@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { EmptyProps } from "./empty"
+import emptyThemeDefault, { createEmptyTheme } from "./empty.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const emptyTheme = uiConfig.colors ? createEmptyTheme() : emptyThemeDefault
+
+const empty = scv(emptyTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as EmptyProps
+
+const classes = resolveClasses(empty, {}, useUi("empty", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

@@ -1,10 +1,10 @@
 ---
 import ConstructionLayout from '@/layouts/ConstructionLayout.astro'
-import RLALogo from '@rimelight/ui/components/astro/RLALogo.astro'
-import RLALocaleSelector from "@rimelight/ui/components/astro/RLALocaleSelector.astro";
+import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro"
+import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
 import ConstructionSignIn from '@/components/auth/ConstructionSignIn.astro'
 import { useI18nAsync, getRelativeLocaleUrl } from '@rimelight/i18n'
-import RLAContainer from "@rimelight/ui/components/astro/RLAContainer.astro";
+import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
 
 const constructionAuth = (import.meta.env.CONSTRUCTION_AUTH ?? process.env.CONSTRUCTION_AUTH) === "true"
 

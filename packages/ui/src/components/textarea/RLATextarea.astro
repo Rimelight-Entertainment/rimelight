@@ -1,0 +1,45 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { TextareaProps } from "./textarea"
+import textareaThemeDefault, { createTextareaTheme } from "./textarea.theme"
+
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const textareaTheme = uiConfig.colors ? createTextareaTheme() : textareaThemeDefault
+const textarea = scv(textareaTheme)
+
+const {
+  value = "",
+  placeholder,
+  disabled = false,
+  readonly = false,
+  name,
+  required = false,
+  rows = 4,
+  error = false,
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as TextareaProps
+
+const classes = resolveClasses(textarea, {
+  size,
+  error: !!error
+}, useUi("textarea", uiProp), className);
+---
+<div class={classes.root} data-slot="root">
+  <textarea
+    class={classes.textarea}
+    placeholder={placeholder}
+    disabled={disabled}
+    readonly={readonly}
+    name={name}
+    required={required}
+    rows={rows}
+    {...rest}
+  >{value}</textarea>
+</div>

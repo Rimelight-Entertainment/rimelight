@@ -29,10 +29,7 @@
   "exports": {
     ".": "./src/integrations/index.ts",
     "./components/*": "./src/components/*",
-    "./components/astro/*": "./src/components/astro/*",
-    "./components/vue/*": "./src/components/vue/*",
     "./themes": "./src/themes/index.ts",
-    "./themes/*": "./src/themes/*",
     "./config": "./src/config/index.ts",
     "./config/*": "./src/config/*",
     "./utils": "./src/utils/index.ts",
@@ -44,8 +41,6 @@
     "./icons/*": "./src/icons/*",
     "./plugins": "./src/plugins/index.ts",
     "./plugins/*": "./src/plugins/*",
-    "./types": "./src/types/index.ts",
-    "./types/*": "./src/types/*",
     "./presets": "./src/presets/index.ts",
     "./presets/*": "./src/presets/*",
     "./*": "./src/*"

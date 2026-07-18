@@ -2,10 +2,10 @@
 import { ref, computed, watch } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 import { useRC, useAssetManagement, useAuth, useToast } from "@/composables"
 
 /* region Props */

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { ref, reactive, watch, onMounted } from "vue"
 import draggable from "vuedraggable"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
 
 const props = defineProps<{
   boardId: string

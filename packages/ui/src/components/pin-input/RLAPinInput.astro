@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { PinInputProps } from "./pin-input"
+import pinInputThemeDefault, { createPinInputTheme } from "./pin-input.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const pinInputTheme = uiConfig.colors ? createPinInputTheme() : pinInputThemeDefault
+
+const pinInput = scv(pinInputTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as PinInputProps
+
+const classes = resolveClasses(pinInput, {}, useUi("pinInput", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

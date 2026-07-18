@@ -1,12 +1,12 @@
 ---
 import AppLayout from "./AppLayout.astro";
-import RLASidebar from "@rimelight/ui/components/astro/RLASidebar.astro";
-import RLATableOfContents from "@rimelight/ui/components/astro/RLATableOfContents.astro";
-import RLASurround from "@rimelight/ui/components/astro/RLASurround.astro";
-import RLASelect from "@rimelight/ui/components/astro/RLASelect.astro";
+import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro";
+import RLATableOfContents from "@rimelight/ui/components/table-of-contents/RLATableOfContents.astro";
+import RLASurround from "@rimelight/ui/components/surround/RLASurround.astro";
+import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/ui/utils";
 import docsConfig from "@/config/docs.config";
-import type { TableOfContentsConfig } from "@rimelight/ui/types";
+import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents";
 import { useI18n } from "@rimelight/i18n";
 
 interface Props {

@@ -1,0 +1,227 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ChartProps, ChartDataPoint } from "./chart"
+import chartThemeDefault, { createChartTheme } from "./chart.theme"
+
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const chartTheme = uiConfig.colors ? createChartTheme() : chartThemeDefault
+const chart = scv(chartTheme)
+
+const {
+  type = "bar",
+  data = [],
+  title,
+  height = 280,
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as ChartProps
+
+const classes = resolveClasses(chart, {}, useUi("chart", uiProp), className)
+
+// Compute derived values on the server so we don't do heavy JS on the client
+const max = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1
+const total = data.reduce((sum, d) => sum + d.value, 0)
+
+// Palette for chart segments/bars when no per-item color given
+const palette = [
+  "hsl(221 83% 53%)", // blue
+  "hsl(262 83% 58%)", // violet
+  "hsl(142 76% 36%)", // green
+  "hsl(32 95% 44%)",  // amber
+  "hsl(0 84% 60%)",   // red
+  "hsl(187 85% 43%)", // cyan
+]
+
+const getColor = (item: ChartDataPoint, index: number) =>
+  item.color ?? palette[index % palette.length]
+
+// Build pie/donut SVG path segments
+const PIE_R = 80
+const PIE_CX = 100
+const PIE_CY = 100
+const DONUT_INNER_R = 45
+
+const polarToCartesian = (cx: number, cy: number, r: number, angleDeg: number) => {
+  const rad = (angleDeg - 90) * (Math.PI / 180)
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }
+}
+
+const describeArc = (cx: number, cy: number, r: number, start: number, end: number) => {
+  const s = polarToCartesian(cx, cy, r, start)
+  const e = polarToCartesian(cx, cy, r, end)
+  const largeArc = end - start > 180 ? 1 : 0
+  return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`
+}
+
+let pieCursor = 0
+const pieSlices = data.map((item, i) => {
+  const angle = (item.value / (total || 1)) * 360
+  const start = pieCursor
+  const end = pieCursor + angle
+  pieCursor = end
+  return { item, i, start, end }
+})
+
+// Build line chart SVG points
+const LINE_W = 400
+const LINE_H = 160
+const LINE_PAD = 32
+const linePoints = data.map((d, i) => {
+  const x = data.length < 2
+    ? LINE_PAD
+    : LINE_PAD + (i / (data.length - 1)) * (LINE_W - LINE_PAD * 2)
+  const y = LINE_H - LINE_PAD - ((d.value / (max || 1)) * (LINE_H - LINE_PAD * 2))
+  return { x, y, d, i }
+})
+const linePath = linePoints.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ")
+const areaPath = linePoints.length > 0
+  ? linePath +
+    ` L ${linePoints[linePoints.length - 1]!.x} ${LINE_H - LINE_PAD}` +
+    ` L ${linePoints[0]!.x} ${LINE_H - LINE_PAD} Z`
+  : ""
+const id = `chart-${Math.random().toString(36).substring(2, 9)}`
+---
+
+<style is:inline set:html={`
+  .${id} { min-height: ${height}px; }
+  .${id} [data-slot="container"] { height: ${height - 60}px; gap: 6px; align-items: flex-end; }
+  .${id} .rla-chart-line-wrap { height: ${height - 60}px; }
+  .${id} .rla-chart-pie-wrap { height: ${height - 60}px; }
+`} />
+
+<div class:list={[classes.root, id]} data-slot="root" {...rest}>
+  {title && <div class={classes.title} data-slot="title">{title}</div>}
+
+  {/* Bar Chart */}
+  {type === "bar" && (
+    <div class={classes.container} data-slot="container">
+      {data.map((item, i) => {
+        const pct = max > 0 ? (item.value / max) * 100 : 0
+        return (
+          <div class="flex flex-col items-center gap-1 flex-1 group">
+            <span class="text-[10px] text-muted-foreground font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+              {item.value}
+            </span>
+            <div class:list={[classes.bar, "h-full w-full overflow-hidden !bg-transparent"]} title={`${item.label}: ${item.value}`}>
+              <svg class="h-full w-full overflow-visible" viewBox="0 0 20 100" preserveAspectRatio="none">
+                <rect x="0" y={100 - pct} width="20" height={pct} fill={getColor(item, i)} rx="2" />
+              </svg>
+            </div>
+            <span class={classes.axis}>{item.label}</span>
+          </div>
+        )
+      })}
+    </div>
+  )}
+
+  {/* Line / Area Chart */}
+  {(type === "line" || type === "area") && (
+    <div class="relative w-full rla-chart-line-wrap">
+      <svg
+        class={classes.svg}
+        viewBox={`0 0 ${LINE_W} ${LINE_H}`}
+        preserveAspectRatio="none"
+        aria-label={title ?? "Line chart"}
+      >
+        {/* Grid lines */}
+        {[0, 0.25, 0.5, 0.75, 1].map(t => {
+          const y = LINE_PAD + t * (LINE_H - LINE_PAD * 2)
+          return <line x1={LINE_PAD} y1={y} x2={LINE_W - LINE_PAD} y2={y} stroke="currentColor" stroke-opacity="0.08" />
+        })}
+
+        {/* Area fill */}
+        {type === "area" && (
+          <path d={areaPath} fill={palette[0]!} fill-opacity="0.15" />
+        )}
+
+        {/* Line */}
+        <path d={linePath} class={classes.line} stroke={palette[0]!} stroke-width="2.5" />
+
+        {/* Dots */}
+        {linePoints.map(p => (
+          <circle
+            cx={p.x}
+            cy={p.y}
+            r="4"
+            fill={getColor(p.d, p.i)}
+            stroke="white"
+            stroke-width="1.5"
+          >
+            <title>{p.d.label}: {p.d.value}</title>
+          </circle>
+        ))}
+
+        {/* X axis labels */}
+        {linePoints.map(p => (
+          <text x={p.x} y={LINE_H - 4} text-anchor="middle" class={classes.axis}>{p.d.label}</text>
+        ))}
+      </svg>
+    </div>
+  )}
+
+  {/* Pie / Donut Chart */}
+  {(type === "pie" || type === "donut") && (
+    <div class="flex items-center gap-6 justify-center rla-chart-pie-wrap">
+      <svg
+        viewBox="0 0 200 200"
+        class="h-full w-auto max-h-48"
+        aria-label={title ?? "Pie chart"}
+      >
+        {pieSlices.map(({ item, i, start, end }) => {
+          const isFullCircle = Math.abs(end - start - 360) < 0.01
+          const d = isFullCircle
+            ? `M ${PIE_CX} ${PIE_CY - PIE_R} A ${PIE_R} ${PIE_R} 0 1 1 ${PIE_CX - 0.001} ${PIE_CY - PIE_R} Z`
+            : describeArc(PIE_CX, PIE_CY, PIE_R, start, end) +
+              ` L ${PIE_CX} ${PIE_CY} Z`
+          return (
+            <path
+              d={d}
+              fill={getColor(item, i)}
+              class="transition-opacity hover:opacity-85 cursor-pointer"
+            >
+              <title>{item.label}: {item.value}</title>
+            </path>
+          )
+        })}
+        {type === "donut" && (
+          <circle cx={PIE_CX} cy={PIE_CY} r={DONUT_INNER_R} fill="var(--color-card, white)" />
+        )}
+      </svg>
+
+      {/* Legend */}
+      <div class="flex flex-col gap-1.5">
+        {data.map((item, i) => (
+          <div class="flex items-center gap-2 text-xs text-muted-foreground">
+            <svg class="size-3 shrink-0" viewBox="0 0 10 10">
+              <rect width="10" height="10" rx="2" fill={getColor(item, i)} />
+            </svg>
+            <span>{item.label}</span>
+            <span class="ml-1 font-mono text-foreground">{item.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* Custom slot for fully custom chart content */}
+  <slot />
+
+  {/* Legend row for bar/line */}
+  {(type === "bar" || type === "line" || type === "area") && data.length > 0 && (
+    <div class={classes.legend} data-slot="legend">
+      {data.map((item, i) => (
+        <div class="flex items-center gap-1.5">
+          <svg class="size-2.5 shrink-0" viewBox="0 0 10 10">
+            <circle cx="5" cy="5" r="5" fill={getColor(item, i)} />
+          </svg>
+          <span>{item.label}</span>
+        </div>
+      ))}
+    </div>
+  )}
+</div>

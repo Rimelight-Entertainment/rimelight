@@ -7,7 +7,7 @@ import { useI18n } from "@/composables/app/useI18n"
 import { scv, cx } from "css-variants"
 import BlockEditRenderer from "./BlockEditRenderer.vue"
 import AddBlockModal from "./AddBlockModal.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
 export interface BlockEditorProps {

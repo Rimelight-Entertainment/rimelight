@@ -1,0 +1,275 @@
+---
+import { getImage } from "astro:assets"
+import type { ImageMetadata } from "astro"
+import Image from "astro/components/Image.astro"
+import Picture from "astro/components/Picture.astro"
+import RLAIcon from "../icon/RLAIcon.astro"
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { ImageProps } from "./image"
+import imageThemeDefault, { createImageTheme } from "./image.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const imageTheme = uiConfig.colors ? createImageTheme() : imageThemeDefault
+
+const img = scv(imageTheme)
+
+const {
+  src,
+  mobileSrc,
+  desktopSrc,
+  breakpoint,
+  formats,
+  alt = "",
+  height,
+  width,
+  loading = "lazy",
+  fit = "cover",
+  metadata: preMetadata,
+  open,
+  ui: uiProp,
+  class: className,
+  metaSource = true,
+  metaFormat = true,
+  metaDimensions = true,
+  metaSize = true,
+  metaAlt = true,
+  metaDownload = true,
+  ...rest
+} = Astro.props as ImageProps
+
+const classes = resolveClasses(img, {}, useUi("image", uiProp), className)
+
+const isResponsive = !!(mobileSrc && desktopSrc)
+const isFormatFallback = !isResponsive && !!(formats && formats.length > 0)
+const breakpointVal = breakpoint ?? 768
+
+let mobileImg = null
+let desktopImg = null
+
+if (isResponsive) {
+  mobileImg = await getImage({
+    src: mobileSrc!,
+    format: "webp",
+  })
+  desktopImg = await getImage({
+    src: desktopSrc!,
+    format: "webp",
+  })
+}
+
+const activeSrc = isResponsive ? desktopSrc : src
+const isMetadata = typeof activeSrc !== "string" && activeSrc !== undefined
+const imgWidth = width ?? (isMetadata ? (activeSrc as any).width : undefined)
+const imgHeight = height ?? (isMetadata ? (activeSrc as any).height : undefined)
+const imgFormat = isMetadata ? (activeSrc as any).format : (preMetadata?.format ?? undefined)
+const rawName = activeSrc
+  ? (typeof activeSrc === "string" ? activeSrc.split("/").pop() || "image" : (activeSrc as any).src.split("/").pop() || "image")
+  : "image"
+const fileName = rawName.split("?")[0]
+const fileExtension = imgFormat?.toUpperCase() || (fileName.includes(".") ? fileName.split(".").pop()?.toUpperCase() : "IMG")
+const initialSize = preMetadata?.size ?? undefined
+---
+
+<rla-image {...rest}>
+  <div class={classes.root} data-slot="root">
+    <slot name="trigger">
+      <button
+        type="button"
+        class={classes.trigger}
+        data-image-trigger
+      >
+        {isResponsive && mobileImg && desktopImg ? (
+          <picture>
+            <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+            <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+            <img src={desktopImg.src} alt={alt} loading={loading} class="w-full h-full object-cover rounded-lg" />
+          </picture>
+        ) : isFormatFallback ? (
+          typeof src === "string" ? (
+            <Picture src={src} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
+          ) : (
+            <Picture src={src as ImageMetadata} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
+          )
+        ) : (
+          typeof src === "string" ? (
+            <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
+          ) : (
+            <Image src={src as ImageMetadata} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
+          )
+        )}
+      </button>
+    </slot>
+
+    <dialog
+      class={classes.dialog}
+      data-image-dialog
+    >
+      <div class="flex flex-col bg-background text-foreground max-h-[90vh]">
+        <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
+          {isResponsive && mobileImg && desktopImg ? (
+            <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
+              <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+              <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+              <img src={desktopImg.src} alt={alt} class={classes.image} data-modal-img />
+            </picture>
+          ) : (
+            <img
+              src={typeof src === "string" ? src : src!.src}
+              alt={alt}
+              class={classes.image}
+              data-modal-img
+            />
+          )}
+        </div>
+
+        <hr class="border-border mx-4 mb-3 shrink-0" />
+
+        <div class={classes.fileInfo}>
+          <div class="flex flex-col gap-xs text-sm">
+            {
+              metaSource && (
+                <div class="flex flex-row gap-xs items-center">
+                  <RLAIcon name="image" class="size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Source:</span>
+                  <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
+                </div>
+              )
+            }
+            {
+              metaFormat && (
+                <div class="flex flex-row gap-xs items-center">
+                  <RLAIcon name="fileQuestion" class="size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Format:</span>
+                  <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
+                </div>
+              )
+            }
+            {
+              metaDimensions && (
+                <div class="flex flex-row gap-xs items-center">
+                  <RLAIcon name="imageUpscale" class="size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Dimensions:</span>
+                  <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
+                </div>
+              )
+            }
+            {
+              metaSize && (
+                <div class="flex flex-row gap-xs items-center">
+                  <RLAIcon name="hardDrive" class="size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Size:</span>
+                  <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
+                </div>
+              )
+            }
+            {
+              metaAlt && (
+                <div class="flex flex-row gap-xs items-center">
+                  <RLAIcon name="alignLeft" class="size-4 shrink-0 text-muted-foreground" />
+                  <span class="text-muted-foreground">Alt:</span>
+                  <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
+                </div>
+              )
+            }
+          </div>
+
+          {
+            metaDownload && (
+              <button
+                type="button"
+                class={classes.download}
+                data-image-download
+              >
+                <RLAIcon name="download" class="size-4 shrink-0" />
+                Download Original
+              </button>
+            )
+          }
+        </div>
+
+        <form method="dialog" class="absolute top-2 right-2">
+          <button
+            type="submit"
+            class={classes.closeButton}
+            aria-label="Close"
+          >
+            <RLAIcon name="close" class="size-4" />
+          </button>
+        </form>
+      </div>
+    </dialog>
+  </div>
+</rla-image>
+
+<script>
+  class RLAImage extends HTMLElement {
+    connectedCallback() {
+      this.style.display = 'contents';
+      const trigger = this.querySelector("[data-image-trigger]");
+      if (!trigger) return;
+
+      const dialog = this.querySelector("[data-image-dialog]") as HTMLDialogElement | null;
+      if (!dialog) return;
+
+      const sizeEl = this.querySelector("[data-metadata-size]");
+      const formatEl = this.querySelector("[data-metadata-format]");
+      let fetched = false;
+
+      trigger.addEventListener("click", () => {
+        if (!fetched) {
+          fetched = true;
+          const imgEl = dialog.querySelector("[data-modal-img]");
+          if (imgEl) {
+            const src = imgEl.getAttribute("src");
+            if (src) {
+              fetch(src).then(r => r.blob()).then(blob => {
+                if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB";
+                if (formatEl && blob.type) {
+                  const mime = blob.type.split("/").pop()?.toUpperCase();
+                  if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime;
+                }
+                return;
+              }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable"; });
+            }
+          }
+        }
+        dialog.showModal();
+      });
+
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+
+      const downloadBtn = dialog.querySelector("[data-image-download]");
+      if (downloadBtn) {
+        downloadBtn.addEventListener("click", async () => {
+          const img = dialog.querySelector("img");
+          const imgSrc = img?.getAttribute("src");
+          if (!imgSrc) return;
+          try {
+            const response = await fetch(imgSrc);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            const triggerImg = trigger.querySelector("img");
+            const srcAttr = triggerImg ? triggerImg.getAttribute("src") || "" : "";
+            link.download = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          } catch (err) {
+            console.error("Download failed", err);
+          }
+        });
+      }
+    }
+  }
+
+  if (!customElements.get('rla-image')) {
+    customElements.define('rla-image', RLAImage);
+  }
+</script>

@@ -1,0 +1,38 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { FieldGroupProps } from "./field-group"
+import fieldGroupThemeDefault, { createFieldGroupTheme } from "./field-group.theme"
+
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const fieldGroupTheme = uiConfig.colors ? createFieldGroupTheme() : fieldGroupThemeDefault
+const fieldGroup = scv(fieldGroupTheme)
+
+const {
+  prepend,
+  append,
+  size = "md",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as FieldGroupProps
+
+const classes = resolveClasses(fieldGroup, {
+  size
+}, useUi("fieldGroup", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  {prepend && (
+    <div class={classes.prepend} data-slot="prepend">
+      {prepend}
+    </div>
+  )}
+  <slot />
+  {append && (
+    <div class={classes.append} data-slot="append">
+      {append}
+    </div>
+  )}
+</div>

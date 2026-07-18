@@ -1,0 +1,37 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses, resolveIcon } from "../../utils"
+import type { IconProps } from "./icon"
+import iconThemeDefault, { createIconTheme } from "./icon.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const iconTheme = uiConfig.colors ? createIconTheme() : iconThemeDefault
+
+const icon = scv(iconTheme)
+
+const {
+  name,
+  size = "md",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as IconProps
+
+const classes = resolveClasses(icon, { size }, useUi("icon", uiProp), className)
+const resolved = resolveIcon(name)
+---
+
+<span
+  class={classes.root}
+  data-slot="root"
+  aria-hidden="true"
+  {...rest}
+>
+  {resolved.isClass ? (
+    <span class={resolved.content} />
+  ) : (
+    <Fragment set:html={resolved.content} />
+  )}
+</span>
+

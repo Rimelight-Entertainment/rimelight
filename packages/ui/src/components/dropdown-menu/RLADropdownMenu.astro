@@ -1,0 +1,110 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DropdownMenuProps } from "./dropdown-menu"
+import dropdownMenuThemeDefault, { createDropdownMenuTheme } from "./dropdown-menu.theme"
+import RLAIcon from "../icon/RLAIcon.astro"
+
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dropdownMenuTheme = uiConfig.colors ? createDropdownMenuTheme() : dropdownMenuThemeDefault
+const dropdownMenu = scv(dropdownMenuTheme)
+
+const {
+  items = [],
+  label = "Options",
+  icon,
+  size = "md",
+  color = "primary",
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DropdownMenuProps
+
+const classes = resolveClasses(dropdownMenu, {
+  size
+}, useUi("dropdownMenu", uiProp), className);
+---
+<rla-dropdown-menu {...rest}>
+  <div class={classes.root} data-slot="root" data-dropdown-menu>
+    <button
+      type="button"
+      class={classes.trigger}
+      data-slot="trigger"
+      data-dropdown-trigger
+    >
+      <slot name="trigger">
+        {icon && <span class={icon} />}
+        {label}
+        <RLAIcon name="chevronDown" class="ml-2 opacity-50" />
+      </slot>
+    </button>
+
+    <div class={classes.content + " hidden"} data-slot="content" data-dropdown-content>
+      <slot>
+        {items.map(item => {
+          if (item.type === "separator") {
+            return <div class={classes.separator} />
+          }
+          if (item.type === "label") {
+            return <div class={classes.label}>{item.label}</div>
+          }
+          return (
+            <button
+              type="button"
+              class={classes.item}
+              data-slot="item"
+              disabled={item.disabled}
+            >
+              {item.icon && <span class={item.icon + " mr-2 size-4 text-muted-foreground"} />}
+              <span>{item.label}</span>
+              {item.shortcut && <span class={classes.shortcut}>{item.shortcut}</span>}
+            </button>
+          )
+        })}
+      </slot>
+    </div>
+  </div>
+</rla-dropdown-menu>
+
+<script>
+  class RLADropdownMenu extends HTMLElement {
+    private dropdownCleanup: (() => void) | null = null;
+
+    connectedCallback() {
+      this.style.display = 'contents';
+      const trigger = this.querySelector("[data-dropdown-trigger]") as HTMLElement | null;
+      const content = this.querySelector("[data-dropdown-content]") as HTMLElement | null;
+
+      if (!trigger || !content) return;
+
+      const onTriggerClick = (e: MouseEvent) => {
+        e.stopPropagation();
+        content.classList.toggle("hidden");
+      };
+      trigger.addEventListener("click", onTriggerClick);
+
+      const onDocumentClick = () => {
+        content.classList.add("hidden");
+      };
+      document.addEventListener("click", onDocumentClick);
+
+      this.dropdownCleanup = () => {
+        trigger.removeEventListener("click", onTriggerClick);
+        document.removeEventListener("click", onDocumentClick);
+      };
+    }
+
+    disconnectedCallback() {
+      if (this.dropdownCleanup) {
+        this.dropdownCleanup();
+        this.dropdownCleanup = null;
+      }
+    }
+  }
+
+  if (!customElements.get('rla-dropdown-menu')) {
+    customElements.define('rla-dropdown-menu', RLADropdownMenu);
+  }
+</script>

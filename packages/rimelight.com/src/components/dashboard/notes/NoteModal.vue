@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch, onMounted, onUnmounted } from "vue"
 import { scv, cx } from "css-variants"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVCheckbox from "@rimelight/ui/components/vue/RLVCheckbox.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
 import { useRC } from "@/composables"
 
 export interface Label {

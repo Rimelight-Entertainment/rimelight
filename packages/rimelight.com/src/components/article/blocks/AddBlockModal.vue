@@ -5,8 +5,8 @@ import { useRC } from "@/composables"
 import { useI18n } from "@/composables/app/useI18n"
 import { scv, cx } from "css-variants"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 
 /* region Props */
 export interface AddBlockModalProps {

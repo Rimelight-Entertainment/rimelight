@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { RatingProps } from "./rating"
+import ratingThemeDefault, { createRatingTheme } from "./rating.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const ratingTheme = uiConfig.colors ? createRatingTheme() : ratingThemeDefault
+
+const rating = scv(ratingTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as RatingProps
+
+const classes = resolveClasses(rating, {}, useUi("rating", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

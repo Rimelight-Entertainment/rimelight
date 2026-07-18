@@ -1,0 +1,23 @@
+---
+import { scv } from "css-variants"
+import { useUi, resolveClasses } from "../../utils"
+import type { DashboardNavbarProps } from "./dashboard-navbar"
+import dashboardNavbarThemeDefault, { createDashboardNavbarTheme } from "./dashboard-navbar.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const dashboardNavbarTheme = uiConfig.colors ? createDashboardNavbarTheme() : dashboardNavbarThemeDefault
+
+const dashboardNavbar = scv(dashboardNavbarTheme)
+
+const {
+  ui: uiProp,
+  class: className,
+  ...rest
+} = Astro.props as DashboardNavbarProps
+
+const classes = resolveClasses(dashboardNavbar, {}, useUi("dashboardNavbar", uiProp), className);
+---
+<div class={classes.root} data-slot="root" {...rest}>
+  <slot />
+</div>

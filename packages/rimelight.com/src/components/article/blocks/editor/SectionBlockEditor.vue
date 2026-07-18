@@ -6,7 +6,7 @@ import { useRC } from "@/composables"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
 import BlockEditor from "../BlockEditor.vue"
 import Section from "../../../content/Section.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 
 /* region Props */
 export interface SectionBlockEditorProps extends SectionBlockProps {

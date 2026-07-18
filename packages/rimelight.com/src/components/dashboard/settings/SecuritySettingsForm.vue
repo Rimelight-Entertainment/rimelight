@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { reactive, ref, watch } from "vue"
-import RLVFormField from "@rimelight/ui/components/vue/RLVFormField.vue"
-import RLVInput from "@rimelight/ui/components/vue/RLVInput.vue"
-import RLVButton from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useAuth } from "@/composables/auth/useAuth"
 import { authClient } from "@/auth/auth-client"
 
