@@ -47,7 +47,7 @@ function normalizeBadge(badge: any) {
     else if (v === "error") { color = "error"; variant = "soft" }
     else if (v === "note" || v === "default") { color = "primary"; variant = "soft" }
   }
-  return { text: badge.text || "", color, variant: variant as "solid" | "outline" | "soft", class: badge.class || "" }
+  return { text: badge.text || badge.label || "", color, variant: variant as "solid" | "outline" | "soft", class: badge.class || "" }
 }
 
 const isRoot = _depth === 0

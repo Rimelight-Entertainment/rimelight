@@ -11,7 +11,7 @@ export type {
   DocsConfig,
   EditLinkConfig,
   TableOfContentsConfig,
-  BadgeConfig,
+  BadgeProps,
   SidebarItem,
   SidebarScope
 } from "./config"

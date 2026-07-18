@@ -1,10 +1,10 @@
-import type { DocsConfig, SidebarItem, SidebarScope, BadgeConfig } from "./config"
+import type { DocsConfig, SidebarItem, SidebarScope, BadgeProps } from "./config"
 
 export interface ResolvedSidebarItem {
   label: string
   href?: string | undefined
   icon?: string | undefined
-  badge?: string | BadgeConfig | undefined
+  badge?: string | BadgeProps | undefined
   active?: boolean | undefined
   children?: ResolvedSidebarItem[] | undefined
   collapsed?: boolean | undefined

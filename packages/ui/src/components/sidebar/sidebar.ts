@@ -1,24 +1,10 @@
-export interface BadgeConfig {
-  text: string
-  color?: string
-  variant?:
-    | "solid"
-    | "outline"
-    | "soft"
-    | "note"
-    | "tip"
-    | "caution"
-    | "error"
-    | "success"
-    | "default"
-  class?: string
-}
+import type { BadgeProps } from "../badge/badge"
 
 export interface SidebarItem {
   label: string
   href?: string
   icon?: string
-  badge?: string | BadgeConfig
+  badge?: string | BadgeProps
   active?: boolean
   children?: SidebarItem[]
   items?: SidebarItem[]

@@ -1,4 +1,5 @@
-import type { BadgeConfig, SidebarItem, SidebarScope } from "@rimelight/ui/config"
+import type { SidebarItem, SidebarScope } from "@rimelight/ui/components/sidebar/sidebar.ts"
+import type { BadgeProps } from "@rimelight/ui/components/badge/badge.ts"
 
 export interface EditLinkConfig {
   baseUrl: string
@@ -21,4 +22,4 @@ export interface DocsConfig {
 }
 
 export const defineDocsConfig = <const T extends DocsConfig>(config: T): T => config
-export type { BadgeConfig, SidebarItem, SidebarScope }
+export type { BadgeProps, SidebarItem, SidebarScope }

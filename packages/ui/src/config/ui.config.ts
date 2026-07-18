@@ -1,44 +1,6 @@
 import type { UserConfig } from "unocss"
 import type { ComponentTheme } from "../themes/defineTheme"
-
-export interface CategoryConfig {
-  label: string
-}
-
-export interface UIConfigOverrides {
-  [key: string]: Partial<ComponentTheme>
-}
-
-export interface RimelightIcons {
-  chevronDown?: string
-  chevronRight?: string
-  chevronLeft?: string
-  chevronsUpDown?: string
-  close?: string
-  check?: string
-  copy?: string
-  externalLink?: string
-  share?: string
-  user?: string
-  image?: string
-  fileQuestion?: string
-  uploadCloud?: string
-  loaderCircle?: string
-  search?: string
-  info?: string
-  alertTriangle?: string
-  circleX?: string
-  circleCheck?: string
-  bell?: string
-  arrowLeft?: string
-  arrowRight?: string
-  quote?: string
-  gripVertical?: string
-  gripHorizontal?: string
-  layers?: string
-  panelLeft?: string
-  [key: string]: string | undefined
-}
+import type { RimelightIcons } from "../icons"
 
 export interface UIConfig {
   /**
@@ -49,7 +11,7 @@ export interface UIConfig {
    * Configuration for keyboard shortcuts.
    */
   shortcuts?: {
-    categories?: Record<string, CategoryConfig>
+    categories?: Record<string, { label: string }>
   }
   /**
    * Configuration for the Logo component variants.
@@ -74,7 +36,7 @@ export interface UIConfig {
      * Global UI overrides applied to all components. Merged with defaults via our custom recursive
      * merge utility (first arg wins).
      */
-    themes?: UIConfigOverrides
+    themes?: Record<string, Partial<ComponentTheme>>
     /**
      * Default prop values overrides for components.
      */

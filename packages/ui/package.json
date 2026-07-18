@@ -30,7 +30,6 @@
     ".": "./src/ui.ts",
     "./components/*": "./src/components/*",
     "./themes": "./src/themes/index.ts",
-    "./config": "./src/config/index.ts",
     "./config/*": "./src/config/*",
     "./utils": "./src/utils/index.ts",
     "./utils/*": "./src/utils/*",

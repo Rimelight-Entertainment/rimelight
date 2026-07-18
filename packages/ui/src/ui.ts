@@ -2,11 +2,13 @@ import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import { merge } from "./utils/merge"
 import { uiConfig } from "./themes"
-import { type UIConfig, colorConfig } from "./config"
+import type { UIConfig } from "./config/ui.config"
+import { colorConfig } from "./config/color.config"
 import rimelightUiPreset, { uiSrcGlob, uiFilesystemGlob } from "./presets"
 import type { RimelightPresetOptions } from "./presets"
 
-export type { UIConfig, UIConfigOverrides, RimelightIcons, CategoryConfig } from "./config"
+export type { UIConfig } from "./config/ui.config"
+export type { RimelightIcons } from "./icons"
 
 export function ui(options: UIConfig = {}): AstroIntegration[] {
   let astroLogger: any = null
