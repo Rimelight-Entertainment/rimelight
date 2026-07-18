@@ -38,42 +38,20 @@ export type { UIOptions, UIConfigOverrides, RimelightIcons, CategoryConfig } fro
  */
 export function ui(options: UIOptions = {}): AstroIntegration[] {
   let astroLogger: any = null
-  const resolvedUI = merge(options.components?.themes ?? {}, defaultUIConfig)
-
-  const userColors = (options.colors ?? {}) as Record<string, ColorConfigValue>
-  const userColorNames = Object.keys(userColors)
-  const mergedColors = [...new Set([...coreColors, ...userColorNames])]
 
   const presetOptions: RimelightPresetOptions = {
-    colors: userColors
+    colors: (options.colors ?? {}) as Record<string, ColorConfigValue>
   }
   if (options.autogenerateColorModes !== undefined) {
     presetOptions.autogenerateColorModes = options.autogenerateColorModes
   }
 
   const resolvedConfig = {
-    ...resolvedUI,
+    ...merge(options.components?.themes ?? {}, defaultUIConfig),
     logos: options.logos ?? {},
-    colors: mergedColors,
+    colors: Array.from(new Set([...coreColors, ...Object.keys(options.colors ?? {})])),
     shortcuts: options.shortcuts ?? {},
     icons: options.icons ?? {}
-  }
-
-  const virtualModuleId = "virtual:rimelight-ui"
-  const resolvedVirtualModuleId = "\0" + virtualModuleId
-
-  const vitePlugin = {
-    name: "vite-plugin-rimelight-ui-virtual",
-    enforce: "pre" as const,
-    resolveId(id: string) {
-      return id === virtualModuleId ? resolvedVirtualModuleId : null
-    },
-    load(id: string) {
-      if (id === resolvedVirtualModuleId) {
-        return `export const getUIConfig = () => (${JSON.stringify(resolvedConfig)});`
-      }
-      return null
-    }
   }
 
   return [
@@ -105,13 +83,33 @@ export function ui(options: UIOptions = {}): AstroIntegration[] {
           logger.info("Initializing @rimelight/ui core")
           updateConfig({
             vite: {
-              plugins: [vitePlugin]
+              plugins: [createVirtualModulePlugin(resolvedConfig)]
             }
           })
         }
       }
     }
   ]
+}
+
+/**
+ * Creates a Vite plugin to resolve and load the virtual config module.
+ */
+function createVirtualModulePlugin(config: any) {
+  const virtualModuleId = "virtual:rimelight-ui"
+  const resolvedVirtualModuleId = "\0" + virtualModuleId
+
+  return {
+    name: "vite-plugin-rimelight-ui-virtual",
+    enforce: "pre" as const,
+    resolveId: (id: string) => (id === virtualModuleId ? resolvedVirtualModuleId : null),
+    load: (id: string) => {
+      if (id === resolvedVirtualModuleId) {
+        return `export const getUIConfig = () => (${JSON.stringify(config)});`
+      }
+      return null
+    }
+  }
 }
 
 /**
