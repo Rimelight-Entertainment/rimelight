@@ -197,5 +197,19 @@ export function extractAstroMeta(filePath: string): { props: PropMeta[]; slots: 
   }
   if (!slots.length) slots.push({ name: "default", bindings: {}, description: "" })
 
-  return { props, slots }
+  // Deduplicate props and slots by name
+  const uniquePropsMap = new Map<string, PropMeta>()
+  for (const p of props) {
+    uniquePropsMap.set(p.name, p)
+  }
+
+  const uniqueSlotsMap = new Map<string, SlotMeta>()
+  for (const s of slots) {
+    uniqueSlotsMap.set(s.name, s)
+  }
+
+  return {
+    props: Array.from(uniquePropsMap.values()),
+    slots: Array.from(uniqueSlotsMap.values())
+  }
 }

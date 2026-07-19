@@ -28,18 +28,6 @@ defineSlots<{
   trailing(props: {}): any
 }>()
 
-// ---- Router: detect vue-router via global properties ----
-// Vue Router 4 defines `$route` as a getter on globalProperties that
-// returns `router.currentRoute.value` — reading it inside computed()
-// properly tracks the reactive ref dependency.
-const $route = computed(() => {
-  try {
-    return instance?.appContext.config.globalProperties.$route ?? null
-  } catch {
-    return null
-  }
-})
-
 // ---- i18n: injected localePath function (provided by parent or Astro wrapper) ----
 const localePath = inject<(path: string, locale?: string) => string>("rimelight:localePath", null)
 
@@ -77,22 +65,6 @@ const linkRel = computed(() => {
   return undefined
 })
 
-// ---- Active state detection ----
-const isLinkActive = computed(() => {
-  if (props.active !== undefined) return props.active
-
-  const currentRoute = $route.value
-  if (!currentRoute || !linkHref.value || isExternal.value) return false
-
-  const currentPath: string = typeof currentRoute.path === "string" ? currentRoute.path : ""
-  const linkPath = typeof linkHref.value === "string" ? linkHref.value : ""
-
-  if (!linkPath) return false
-
-  if (props.exact || linkPath === "/") return currentPath === linkPath
-  return currentPath.startsWith(linkPath)
-})
-
 const isLeading = computed(() => !!props.leadingIcon)
 
 const showTrailingIcon = computed(() => {
@@ -100,12 +72,6 @@ const showTrailingIcon = computed(() => {
     return props.externalIcon || "externalLink"
   }
   return props.trailingIcon
-})
-
-const themeActive = computed(() => {
-  if (props.active !== undefined) return props.active
-  if (isLinkActive.value) return true
-  return undefined
 })
 
 const resolvedClasses = computed(() => {
@@ -122,8 +88,8 @@ const resolvedClasses = computed(() => {
     linkScv,
     {
       theme: props.theme,
-      ...(themeActive.value !== undefined ? { active: themeActive.value } : {}),
-      ...(props.disabled ? { disabled: true } : {})
+      ...(props.active !== undefined ? { active: props.active } : {}),
+      disabled: !!props.disabled
     },
     useUi("link", props.ui),
     props.class
@@ -155,7 +121,7 @@ const prefetchAttr = computed(() => {
     :target="linkTarget"
     :rel="linkRel"
     :aria-label="props.ariaLabel"
-    :aria-current="isLinkActive && exact ? ariaCurrentValue : undefined"
+    :aria-current="props.active ? ariaCurrentValue : undefined"
     :aria-disabled="disabled ? 'true' : undefined"
     :data-astro-prefetch="prefetchAttr"
     :class="resolvedClasses.root"
@@ -180,7 +146,7 @@ const prefetchAttr = computed(() => {
     >
       {{ props.label }}
     </span>
-    <slot v-else :active="isLinkActive" />
+    <slot v-else :active="props.active" />
 
     <slot name="trailing">
       <span v-if="showTrailingIcon" :class="resolvedClasses.trailingIcon" data-slot="trailing-icon">

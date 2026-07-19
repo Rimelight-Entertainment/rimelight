@@ -1,6 +1,6 @@
 ---
 title: "Link"
-description: "A wrapper component for hyperlink navigation with automatic external link detection, accessibility features, i18n, prefetching, and active-route detection."
+description: "A wrapper component for hyperlink navigation with additional features."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -255,7 +255,7 @@ Enable Astro's built-in prefetching by setting the `prefetch` prop. Accepts `tru
   </div>
 </ComponentShowcase>
 
-### i18n Auto-Localization
+### Locale
 
 When Astro i18n is configured, the link automatically localizes paths to the current locale. Set `locale` to `false` to disable, or pass a specific locale code.
 
@@ -311,36 +311,6 @@ Force the active state with the `active` prop.
   <div slot="code-solid">
     ```tsx
     <RLSLink href="/" active label="Home" />
-    ```
-  </div>
-</ComponentShowcase>
-
-### Exact Active Matching
-
-When the `exact` prop is set, the link is only active if the current path is an exact match.
-
-<ComponentShowcase>
-  <div class="flex flex-col gap-2 items-start">
-    <RLALink href="/docs" exact label="Exact Match" />
-    <RLALink href="/docs" label="Prefix Match" />
-  </div>
-
-  <div slot="code-astro">
-    ```astro
-    <RLALink href="/docs" exact label="Exact Match" />
-    <RLALink href="/docs" label="Prefix Match" />
-    ```
-  </div>
-  <div slot="code-vue">
-    ```vue
-    <RLVLink href="/docs" exact label="Exact Match" />
-    <RLVLink href="/docs" label="Prefix Match" />
-    ```
-  </div>
-  <div slot="code-solid">
-    ```tsx
-    <RLSLink href="/docs" exact label="Exact Match" />
-    <RLSLink href="/docs" label="Prefix Match" />
     ```
   </div>
 </ComponentShowcase>
@@ -429,24 +399,24 @@ Provide an `ariaLabel` for screen readers. When set on an external link, the "(o
 
 ### Aria Current Value
 
-Customize the `aria-current` value when the link is active using the `ariaCurrentValue` prop. Defaults to `"page"`.
+Customize the `aria-current` value when the link is active using the `ariaCurrentValue` prop.
 
 <ComponentShowcase>
-  <RLALink href="/" exact ariaCurrentValue="page" label="Home" />
+  <RLALink href="/" active ariaCurrentValue="page" label="Home" />
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="/" exact ariaCurrentValue="page" label="Home" />
+    <RLALink href="/" active ariaCurrentValue="page" label="Home" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="/" exact ariaCurrentValue="page" label="Home" />
+    <RLVLink href="/" active ariaCurrentValue="page" label="Home" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="/" exact ariaCurrentValue="page" label="Home" />
+    <RLSLink href="/" active={true} ariaCurrentValue="page" label="Home" />
     ```
   </div>
 </ComponentShowcase>

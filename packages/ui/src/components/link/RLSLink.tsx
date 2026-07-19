@@ -27,7 +27,6 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     "prefetch",
     "locale",
     "active",
-    "exact",
     "disabled",
     "raw",
     "ariaLabel",
@@ -68,23 +67,11 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     return undefined
   })
 
-  const isLinkActive = createMemo(() => {
-    if (props.active !== undefined) return props.active
-    if (isExternal()) return false
-    return false
-  })
-
   const showTrailingIcon = createMemo(() => {
     if (isExternal() && !props.noExternalIcon && !props.trailingIcon) {
       return props.externalIcon || "externalLink"
     }
     return props.trailingIcon
-  })
-
-  const themeActive = createMemo(() => {
-    if (props.active !== undefined) return props.active
-    if (isLinkActive()) return true
-    return undefined
   })
 
   const classes = createMemo(() => {
@@ -96,8 +83,8 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       linkScv,
       {
         theme: props.theme,
-        ...(themeActive() !== undefined ? { active: themeActive() } : {}),
-        ...(props.disabled ? { disabled: true } : {})
+        ...(props.active !== undefined ? { active: props.active } : {}),
+        disabled: !!props.disabled
       },
       useUi("link", props.ui),
       props.class
@@ -126,7 +113,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       target={linkTarget()}
       rel={linkRel()}
       aria-label={props.ariaLabel}
-      aria-current={isLinkActive() && props.exact ? props.ariaCurrentValue || "page" : undefined}
+      aria-current={props.active ? props.ariaCurrentValue || "page" : undefined}
       aria-disabled={props.disabled ? "true" : undefined}
       data-astro-prefetch={prefetchAttr()}
       onClick={onClick}

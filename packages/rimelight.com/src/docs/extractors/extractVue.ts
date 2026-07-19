@@ -431,5 +431,39 @@ export function extractVueMeta(filePath: string): {
     slots.push({ name: "default", bindings: {}, description: "" })
   }
 
-  return { props, slots, emits }
+  // Deduplicate and merge props, slots, emits by name
+  const uniquePropsMap = new Map<string, PropMeta>()
+  for (const p of props) {
+    const existing = uniquePropsMap.get(p.name)
+    if (existing) {
+      const mergedProp: PropMeta = {
+        ...existing,
+        ...p,
+        description: p.description || existing.description
+      }
+      const defaultVal = p.default !== undefined ? p.default : existing.default
+      if (defaultVal !== undefined) {
+        mergedProp.default = defaultVal
+      }
+      uniquePropsMap.set(p.name, mergedProp)
+    } else {
+      uniquePropsMap.set(p.name, p)
+    }
+  }
+
+  const uniqueSlotsMap = new Map<string, SlotMeta>()
+  for (const s of slots) {
+    uniqueSlotsMap.set(s.name, s)
+  }
+
+  const uniqueEmitsMap = new Map<string, EmitMeta>()
+  for (const e of emits) {
+    uniqueEmitsMap.set(e.name, e)
+  }
+
+  return {
+    props: Array.from(uniquePropsMap.values()),
+    slots: Array.from(uniqueSlotsMap.values()),
+    emits: Array.from(uniqueEmitsMap.values())
+  }
 }

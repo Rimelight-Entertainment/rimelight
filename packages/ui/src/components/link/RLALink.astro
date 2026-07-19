@@ -24,7 +24,6 @@ const {
   prefetch,
   locale,
   active,
-  exact,
   disabled,
   raw,
   ariaLabel,
@@ -43,23 +42,14 @@ if (rawHref && locale !== false &&
     !rawHref.startsWith("https://") &&
     !rawHref.startsWith("//")) {
   try {
-    const rimelight = await import("@rimelight/i18n")
+    const astro = await import("astro:i18n")
     if (typeof locale === "string") {
-      localizedHref = rimelight.getRelativeLocaleUrl(locale, rawHref)
+      localizedHref = astro.getRelativeLocaleUrl(locale, rawHref)
     } else {
-      localizedHref = rimelight.getRelativeLocaleUrl(rawHref)
+      localizedHref = astro.getRelativeLocaleUrl(rawHref)
     }
   } catch {
-    try {
-      const astro = await import("astro:i18n")
-      if (typeof locale === "string") {
-        localizedHref = astro.getRelativeLocaleUrl(locale, rawHref)
-      } else {
-        localizedHref = astro.getRelativeLocaleUrl(rawHref)
-      }
-    } catch {
-      // i18n not configured — leave href as-is
-    }
+    // i18n not configured — leave href as-is
   }
 }
 
@@ -84,21 +74,6 @@ const showTrailingIcon = isExternal && !noExternalIcon && !trailingIcon
   ? (externalIcon || "externalLink")
   : trailingIcon
 
-// ---- Active state ----
-const linkActive = active !== undefined
-  ? active
-  : !!(rawHref && !isExternal && Astro.url.pathname && (
-      exact || rawHref === "/"
-        ? Astro.url.pathname === rawHref
-        : Astro.url.pathname.startsWith(rawHref)
-    ))
-
-const themeActive = active !== undefined
-  ? active
-  : linkActive
-    ? true
-    : undefined
-
 // ---- Classes ----
 const classes = raw
   ? {
@@ -111,8 +86,8 @@ const classes = raw
       link,
       {
         theme,
-        ...(themeActive !== undefined ? { active: themeActive } : {}),
-        ...(disabled ? { disabled: true } : {})
+        ...(active !== undefined ? { active } : {}),
+        disabled: !!disabled
       },
       useUi("link", uiProp),
       className
@@ -131,7 +106,7 @@ const prefetchAttr = prefetch
   target={linkTarget}
   rel={linkRel}
   aria-label={ariaLabel}
-  aria-current={linkActive && exact ? ariaCurrentValue : undefined}
+  aria-current={active ? ariaCurrentValue : undefined}
   aria-disabled={disabled ? "true" : undefined}
   data-astro-prefetch={prefetchAttr}
   {...rest}

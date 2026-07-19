@@ -68,12 +68,6 @@ export interface LinkProps {
    */
   active?: boolean
   /**
-   * Only matches the link as active if the path is an exact match.
-   *
-   * @default false
-   */
-  exact?: boolean
-  /**
    * Disables the link, preventing navigation and applying disabled styling.
    *
    * @default false
