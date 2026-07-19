@@ -24,7 +24,7 @@ const {
   disabled,
   raw,
   ariaLabel,
-  ariaCurrentValue = "page",
+  ariaCurrentValue,
   theme,
   ui: uiProp,
   class: className,
@@ -60,7 +60,7 @@ const defaultSlotHtml = Astro.slots.has("default")
   aria-label={ariaLabel}
   aria-current={attrs.ariaCurrent}
   aria-disabled={disabled ? "true" : undefined}
-  data-astro-prefetch={prefetch ? (typeof prefetch === "string" ? prefetch : "viewport") : undefined}
+  data-astro-prefetch={attrs.prefetchAttr}
   {...rest}
 >
   <slot name="leading">

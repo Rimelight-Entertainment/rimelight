@@ -18,11 +18,18 @@ export function resolveLinkAttrs(props: Partial<LinkProps>) {
 
   const ariaCurrent = props.active ? (props.ariaCurrentValue ?? "page") : undefined
 
+  const prefetchAttr = props.prefetch
+    ? typeof props.prefetch === "string"
+      ? props.prefetch
+      : "viewport"
+    : undefined
+
   return {
     isExternal,
     showTrailingIcon,
     target,
     rel,
-    ariaCurrent
+    ariaCurrent,
+    prefetchAttr
   }
 }

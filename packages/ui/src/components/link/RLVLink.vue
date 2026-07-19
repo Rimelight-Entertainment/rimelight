@@ -48,13 +48,7 @@ const resolvedClasses = computed(() => {
     :aria-label="props.ariaLabel"
     :aria-current="attrs.ariaCurrent"
     :aria-disabled="props.disabled ? 'true' : undefined"
-    :data-astro-prefetch="
-      props.prefetch
-        ? typeof props.prefetch === 'string'
-          ? props.prefetch
-          : 'viewport'
-        : undefined
-    "
+    :data-astro-prefetch="attrs.prefetchAttr"
     :class="resolvedClasses.root"
     data-slot="root"
   >

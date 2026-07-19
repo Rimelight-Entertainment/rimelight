@@ -69,13 +69,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       aria-label={props.ariaLabel}
       aria-current={attrs().ariaCurrent}
       aria-disabled={props.disabled ? "true" : undefined}
-      data-astro-prefetch={
-        props.prefetch
-          ? typeof props.prefetch === "string"
-            ? props.prefetch
-            : "viewport"
-          : undefined
-      }
+      data-astro-prefetch={attrs().prefetchAttr}
       {...rest}
     >
       {props.leading ? (

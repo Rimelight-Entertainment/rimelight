@@ -16,7 +16,7 @@ export const createLinkTheme = () =>
       },
       disabled: {
         true: { root: "cursor-not-allowed opacity-75" },
-        false: { root: "hover:text-primary" }
+        false: {}
       },
       theme: {
         light: { root: "rl-light" },
@@ -27,7 +27,12 @@ export const createLinkTheme = () =>
       {
         active: false,
         disabled: false,
-        classNames: { root: ["hover:text-default", "transition-colors"] }
+        classNames: { root: ["hover:text-default"] }
+      },
+      {
+        active: true,
+        disabled: false,
+        classNames: { root: ["hover:text-primary"] }
       }
     ]
   })
