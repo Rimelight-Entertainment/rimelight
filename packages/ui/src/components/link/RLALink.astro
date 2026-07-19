@@ -1,6 +1,16 @@
 ---
+import { scv } from "css-variants"
+import { useUi } from "../../utils/useUi"
+import { resolveClasses } from "../../utils/resolveClasses"
 import type { LinkProps } from "./link"
+import linkThemeDefault, { createLinkTheme } from "./link.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
 import RLAIcon from "../icon/RLAIcon.astro"
+
+const uiConfig = getUIConfig()
+const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
+
+const link = scv(linkTheme)
 
 const {
   to,
@@ -12,9 +22,11 @@ const {
   rel,
   trailingIcon,
   noExternalIcon,
+  theme,
+  ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as LinkProps & { noExternalIcon?: boolean }
+} = Astro.props as LinkProps & { noExternalIcon?: boolean; theme?: string }
 
 const linkHref = href || (typeof to === 'string' ? to : undefined);
 
@@ -24,18 +36,20 @@ const linkTarget = target || (isExternal ? "_blank" : undefined);
 const linkRel = rel || (isExternal ? "noopener noreferrer" : undefined);
 
 const showExternalIcon = isExternal && !noExternalIcon && !trailingIcon ? (externalIcon || "externalLink") : trailingIcon;
+
+const classes = resolveClasses(link, { theme }, useUi("link", uiProp), className);
 ---
 <a
   href={linkHref}
   target={linkTarget}
   rel={linkRel}
   aria-label={ariaLabel}
-  class={className}
+  class={classes.root}
   {...rest}
 >
   <slot />
   {showExternalIcon && (
-    <RLAIcon name={showExternalIcon} aria-hidden="true" />
+    <RLAIcon name={showExternalIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
   )}
   {isExternal && !ariaLabel && (
     <span class="sr-only"> (opens in a new tab)</span>

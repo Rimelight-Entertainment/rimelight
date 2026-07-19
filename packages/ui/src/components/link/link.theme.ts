@@ -4,7 +4,7 @@ export const createLinkTheme = () =>
   defineTheme({
     slots: ["root"],
     base: {
-      root: ""
+      root: "inline-flex items-center gap-1 leading-none"
     },
     variants: {},
     defaultVariants: {}
