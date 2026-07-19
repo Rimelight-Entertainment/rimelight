@@ -11,7 +11,11 @@ const uiConfig = getUIConfig()
 const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
 const linkScv = scv(linkTheme)
 
-type RLSLinkProps = LinkProps & { children?: JSX.Element }
+type RLSLinkProps = LinkProps & {
+  children?: JSX.Element
+  leading?: JSX.Element
+  trailing?: JSX.Element
+}
 
 const RLSLink: Component<RLSLinkProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
@@ -25,7 +29,6 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     "target",
     "rel",
     "prefetch",
-    "locale",
     "active",
     "disabled",
     "raw",
@@ -34,31 +37,14 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     "theme",
     "ui",
     "class",
-    "children"
+    "children",
+    "leading",
+    "trailing"
   ])
 
-  const linkHref = createMemo(() => props.href)
-
-  const localizedHref = createMemo(() => {
-    const path = linkHref()
-    if (!path || props.locale === false) return path
-    if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("//"))
-      return path
-    return path
-  })
-
   const isExternal = createMemo(
-    () =>
-      !!(
-        props.external ||
-        (linkHref() &&
-          (linkHref()!.startsWith("http://") ||
-            linkHref()!.startsWith("https://") ||
-            linkHref()!.startsWith("//")))
-      )
+    () => !!(props.external || (props.href && /^(?:https?:)?\/\//.test(props.href)))
   )
-
-  const linkTarget = createMemo(() => props.target || (isExternal() ? "_blank" : undefined))
 
   const linkRel = createMemo(() => {
     if (props.rel === null || props.rel === "") return undefined
@@ -91,12 +77,6 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     )
   })
 
-  const prefetchAttr = createMemo(() => {
-    if (!props.prefetch) return undefined
-    if (typeof props.prefetch === "string") return props.prefetch
-    return "viewport"
-  })
-
   function onClick(e: MouseEvent) {
     if (props.disabled) {
       e.stopPropagation()
@@ -109,17 +89,25 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     <a
       class={classes().root}
       data-slot="root"
-      href={!props.disabled ? localizedHref() : undefined}
-      target={linkTarget()}
+      href={!props.disabled ? props.href : undefined}
+      target={props.target || (isExternal() ? "_blank" : undefined)}
       rel={linkRel()}
       aria-label={props.ariaLabel}
       aria-current={props.active ? props.ariaCurrentValue || "page" : undefined}
       aria-disabled={props.disabled ? "true" : undefined}
-      data-astro-prefetch={prefetchAttr()}
+      data-astro-prefetch={
+        props.prefetch
+          ? typeof props.prefetch === "string"
+            ? props.prefetch
+            : "viewport"
+          : undefined
+      }
       onClick={onClick}
       {...rest}
     >
-      {props.leadingIcon ? (
+      {props.leading ? (
+        props.leading
+      ) : props.leadingIcon ? (
         <span class={classes().leadingIcon} data-slot="leading-icon">
           <RLSIcon
             name={props.leadingIcon}
@@ -138,7 +126,9 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
         props.children
       )}
 
-      {showTrailingIcon() ? (
+      {props.trailing ? (
+        props.trailing
+      ) : showTrailingIcon() ? (
         <span class={classes().trailingIcon} data-slot="trailing-icon">
           <RLSIcon
             name={showTrailingIcon()!}

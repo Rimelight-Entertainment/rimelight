@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs, getCurrentInstance, inject } from "vue"
+import { computed } from "vue"
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
@@ -10,16 +10,12 @@ import RLVIcon from "../icon/RLVIcon.vue"
 
 defineOptions({ name: "RLVLink" })
 
-const attrs = useAttrs()
-const instance = getCurrentInstance()
-
 const uiConfig = getUIConfig()
 const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
 const linkScv = scv(linkTheme)
 
 const props = withDefaults(defineProps<LinkProps>(), {
-  ariaCurrentValue: "page",
-  locale: undefined
+  ariaCurrentValue: "page"
 })
 
 defineSlots<{
@@ -28,32 +24,8 @@ defineSlots<{
   trailing(props: {}): any
 }>()
 
-// ---- i18n: injected localePath function (provided by parent or Astro wrapper) ----
-const localePath = inject<(path: string, locale?: string) => string>("rimelight:localePath", null)
-
-// ---- Core computed ----
-const linkHref = computed(() => props.href)
-
-const localizedHref = computed(() => {
-  const path = linkHref.value
-  if (!path || props.locale === false) return path
-  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("//"))
-    return path
-  if (localePath) {
-    return typeof props.locale === "string" ? localePath(path, props.locale) : localePath(path)
-  }
-  return path
-})
-
 const isExternal = computed(
-  () =>
-    !!(
-      props.external ||
-      (linkHref.value &&
-        (linkHref.value.startsWith("http://") ||
-          linkHref.value.startsWith("https://") ||
-          linkHref.value.startsWith("//")))
-    )
+  () => !!(props.external || (props.href && /^(?:https?:)?\/\//.test(props.href)))
 )
 
 const linkTarget = computed(() => props.target || (isExternal.value ? "_blank" : undefined))
@@ -116,8 +88,7 @@ const prefetchAttr = computed(() => {
 <template>
   <!-- Render anchor element -->
   <a
-    v-bind="attrs"
-    :href="!disabled ? localizedHref : undefined"
+    :href="!disabled ? props.href : undefined"
     :target="linkTarget"
     :rel="linkRel"
     :aria-label="props.ariaLabel"

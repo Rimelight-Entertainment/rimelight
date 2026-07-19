@@ -55,13 +55,6 @@ export interface LinkProps {
    */
   prefetch?: boolean | "hover" | "tap" | "load" | "viewport"
   /**
-   * Auto-localizes the href when Astro i18n is configured. Pass `false` to disable, or a locale
-   * code (e.g. `"pt"`) to localize to a specific language.
-   *
-   * @default undefined
-   */
-  locale?: boolean | string
-  /**
    * Applies active styling to the link.
    *
    * @default undefined

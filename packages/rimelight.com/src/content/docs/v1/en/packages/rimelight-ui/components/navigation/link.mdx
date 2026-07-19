@@ -255,40 +255,6 @@ Enable Astro's built-in prefetching by setting the `prefetch` prop. Accepts `tru
   </div>
 </ComponentShowcase>
 
-### Locale
-
-When Astro i18n is configured, the link automatically localizes paths to the current locale. Set `locale` to `false` to disable, or pass a specific locale code.
-
-<ComponentShowcase>
-  <div class="flex flex-col gap-2 items-start">
-    <RLALink href="/docs" label="Auto-localized" />
-    <RLALink href="/docs" locale={false} label="Not localized" />
-    <RLALink href="/docs" locale="pt" label="Portuguese" />
-  </div>
-
-  <div slot="code-astro">
-    ```astro
-    <RLALink href="/docs" label="Auto-localized" />
-    <RLALink href="/docs" locale={false} label="Not localized" />
-    <RLALink href="/docs" locale="pt" label="Portuguese" />
-    ```
-  </div>
-  <div slot="code-vue">
-    ```vue
-    <RLVLink href="/docs" label="Auto-localized" />
-    <RLVLink href="/docs" locale="false" label="Not localized" />
-    <RLVLink href="/docs" locale="pt" label="Portuguese" />
-    ```
-  </div>
-  <div slot="code-solid">
-    ```tsx
-    <RLSLink href="/docs" label="Auto-localized" />
-    <RLSLink href="/docs" locale={false} label="Not localized" />
-    <RLSLink href="/docs" locale="pt" label="Portuguese" />
-    ```
-  </div>
-</ComponentShowcase>
-
 ### Active State
 
 Force the active state with the `active` prop.

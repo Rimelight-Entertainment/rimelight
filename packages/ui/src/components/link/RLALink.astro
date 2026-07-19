@@ -22,7 +22,6 @@ const {
   target,
   rel,
   prefetch,
-  locale,
   active,
   disabled,
   raw,
@@ -33,32 +32,9 @@ const {
   class: className,
   ...rest
 } = Astro.props as LinkProps & { "client:load"?: never; "client:idle"?: never; "client:visible"?: never; "client:media"?: never; "client:only"?: never }
-const rawHref = href
-
-// ---- i18n auto-localization ----
-let localizedHref = rawHref
-if (rawHref && locale !== false &&
-    !rawHref.startsWith("http://") &&
-    !rawHref.startsWith("https://") &&
-    !rawHref.startsWith("//")) {
-  try {
-    const astro = await import("astro:i18n")
-    if (typeof locale === "string") {
-      localizedHref = astro.getRelativeLocaleUrl(locale, rawHref)
-    } else {
-      localizedHref = astro.getRelativeLocaleUrl(rawHref)
-    }
-  } catch {
-    // i18n not configured — leave href as-is
-  }
-}
 
 // ---- External detection ----
-const isExternal = !!(external ||
-  (rawHref &&
-    (rawHref.startsWith("http://") ||
-      rawHref.startsWith("https://") ||
-      rawHref.startsWith("//"))))
+const isExternal = !!(external || (href && /^(?:https?:)?\/\//.test(href)))
 
 const linkTarget = target || (isExternal ? "_blank" : undefined)
 
@@ -102,7 +78,7 @@ const prefetchAttr = prefetch
 <a
   class={classes.root}
   data-slot="root"
-  href={disabled ? undefined : localizedHref}
+  href={disabled ? undefined : href}
   target={linkTarget}
   rel={linkRel}
   aria-label={ariaLabel}
@@ -111,11 +87,13 @@ const prefetchAttr = prefetch
   data-astro-prefetch={prefetchAttr}
   {...rest}
 >
-  {leadingIcon && (
-    <span class={classes.leadingIcon} data-slot="leading-icon">
-      <RLAIcon name={leadingIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
-    </span>
-  )}
+  <slot name="leading">
+    {leadingIcon && (
+      <span class={classes.leadingIcon} data-slot="leading-icon">
+        <RLAIcon name={leadingIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+      </span>
+    )}
+  </slot>
 
   {label !== undefined && label !== null ? (
     <span class={classes.label} data-slot="label">{label}</span>
@@ -123,16 +101,18 @@ const prefetchAttr = prefetch
     <slot />
   )}
 
-  {showTrailingIcon && (
-    <span class={classes.trailingIcon} data-slot="trailing-icon">
-      <RLAIcon
-        name={showTrailingIcon}
-        size="sm"
-        class="!-translate-y-[1.5px]"
-        aria-hidden="true"
-      />
-    </span>
-  )}
+  <slot name="trailing">
+    {showTrailingIcon && (
+      <span class={classes.trailingIcon} data-slot="trailing-icon">
+        <RLAIcon
+          name={showTrailingIcon}
+          size="sm"
+          class="!-translate-y-[1.5px]"
+          aria-hidden="true"
+        />
+      </span>
+    )}
+  </slot>
 
   {isExternal && !ariaLabel && (
     <span class="sr-only" data-slot="external-hint">
