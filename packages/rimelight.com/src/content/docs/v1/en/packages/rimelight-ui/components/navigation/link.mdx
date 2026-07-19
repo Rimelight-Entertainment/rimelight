@@ -1,6 +1,6 @@
 ---
 title: "Link"
-description: "A wrapper component for hyperlink navigation with automatic external link detection and accessibility features."
+description: "A wrapper component for hyperlink navigation with automatic external link detection, accessibility features, i18n, prefetching, and active-route detection."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,14 +11,12 @@ import ApiEmits from "@/docs/components/ApiEmits.astro"
 import ApiTheme from "@/docs/components/ApiTheme.astro"
 import ApiChangelog from "@/docs/components/ApiChangelog.astro"
 
-The `Link` component wraps standard anchor navigation. It automatically detects external URLs to apply secure targets (`target="_blank"`, `rel="noopener noreferrer"`) and appends an external-link icon.
-
 ## Usage
 
-Use the `label` prop to set the link text.
+How to use the Link component in its simplest form.
 
 <ComponentShowcase>
-  <RLALink href="/" label="Home" />
+  <RLALink label="Link" href="/" />
 
   <div slot="code-astro">
     ```astro
@@ -26,27 +24,7 @@ Use the `label` prop to set the link text.
     import RLALink from "@rimelight/ui/components/link/RLALink.astro";
     ---
 
-    <RLALink href="/" label="Home" />
-    ```
-
-  </div>
-  <div slot="code-vue">
-    ```vue
-    <script setup lang="ts">
-    import RLVLink from "@rimelight/ui/components/link/RLVLink.vue"
-    </script>
-
-    <template>
-      <RLVLink href="/" label="Home" />
-    </template>
-    ```
-
-  </div>
-  <div slot="code-solid">
-    ```tsx
-    import RLSLink from "@rimelight/ui/components/link/RLSLink"
-
-    <RLSLink href="/" label="Home" />
+    <RLALink label="Home" href="/" />
     ```
 
   </div>
@@ -54,31 +32,74 @@ Use the `label` prop to set the link text.
 
 ## Examples
 
-### Tag
+### Label
 
-Use the `tag` prop to render the link as a different HTML element.
+Use the `label` prop to set the label of the Link.
 
 <ComponentShowcase>
-  <RLALink href="/" tag="span" label="Home" />
+  <RLALink label="Home" href="/" />
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="/" tag="span" label="Home" />
+    ---
+    import RLALink from "@rimelight/ui/components/link/RLALink.astro";
+    ---
+
+    <RLALink label="Home" href="/" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Leading Icon
+
+Add an icon before the link label using the `leadingIcon` prop.
+
+<ComponentShowcase>
+  <RLALink href="/" leadingIcon="i-lucide-home" label="Home" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/" leadingIcon="i-lucide-home" label="Home" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="/" tag="span" label="Home" />
+    <RLVLink href="/" leadingIcon="i-lucide-home" label="Home" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="/" tag="span" label="Home" />
+    <RLSLink href="/" leadingIcon="i-lucide-home" label="Home" />
     ```
   </div>
 </ComponentShowcase>
 
-### No External Icon
+### Trailing Icon
+
+Add a trailing icon to the link by passing an icon name.
+
+<ComponentShowcase>
+  <RLALink href="/" trailingIcon="i-lucide-arrow-right" label="Home" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/" trailingIcon="i-lucide-arrow-right" label="Home" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/" trailingIcon="i-lucide-arrow-right" label="Home" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/" trailingIcon="i-lucide-arrow-right" label="Home" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### External Icon
 
 By default, external URLs (starting with `http`, `https`, or `//`) automatically render with target `_blank` and an external link icon. This can be disabled by the `noExternalIcon` prop.
 
@@ -108,67 +129,280 @@ By default, external URLs (starting with `http`, `https`, or `//`) automatically
   </div>
 </ComponentShowcase>
 
-### Link Variants
-
-Use the `variant` prop to change the visual style of the link.
-
-<ComponentShowcase
-  togglingPattern="tab-segmented"
-  componentName="RLALink"
-  propsConfig={{
-    variant: ["solid", "outline", "soft", "ghost"]
-  }}
-  defaultProps={{
-    variant: "solid"
-  }}
->
-  <RLALink href="/" label="Home" />
-</ComponentShowcase>
-
 ### Custom External Icon
 
 Override the default external link icon with a custom icon name.
 
 <ComponentShowcase>
-  <RLALink href="https://rimelight.com" externalIcon="arrowUpRight" label="Home" />
+  <RLALink href="https://rimelight.com" externalIcon="i-lucide-globe" label="Home" />
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="https://rimelight.com" externalIcon="arrowUpRight" label="Home" />
+    <RLALink href="https://rimelight.com" externalIcon="i-lucide-globe" label="Home" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="https://rimelight.com" externalIcon="arrowUpRight" label="Home" />
+    <RLVLink href="https://rimelight.com" externalIcon="i-lucide-globe" label="Home" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="https://rimelight.com" externalIcon="arrowUpRight" label="Home" />
+    <RLSLink href="https://rimelight.com" externalIcon="i-lucide-globe" label="Home" />
     ```
   </div>
 </ComponentShowcase>
 
-### Trailing Icon
+### Force External
 
-Add a trailing icon to the link by passing an icon name.
+Mark any link as external with the `external` prop, even if the URL is relative.
 
 <ComponentShowcase>
-  <RLALink href="/getting-started" trailingIcon="arrowRight" label="Home" />
+  <RLALink href="/" external label="Home" />
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="/getting-started" trailingIcon="arrowRight" label="Home" />
+    <RLALink href="/" external label="Home" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="/getting-started" trailingIcon="arrowRight" label="Home" />
+    <RLVLink href="/" external="true" label="Home" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="/getting-started" trailingIcon="arrowRight" label="Home" />
+    <RLSLink href="/" external label="Home" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Target
+
+Override the default `target` attribute. External links default to `"_blank"`; set to `"_self"` or any other value as needed.
+
+<ComponentShowcase>
+  <RLALink href="https://rimelight.com" target="_self" label="Home" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="https://rimelight.com" target="_self" label="Home" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="https://rimelight.com" target="_self" label="Home" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="https://rimelight.com" target="_self" label="Home" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### No Rel
+
+By default, external links are set to `rel="noopener noreferrer"`. Suppress the automatic `rel` attribute by passing `rel=""`.
+
+<ComponentShowcase>
+  <RLALink href="https://rimelight.com" rel="" label="Home" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="https://rimelight.com" rel="" label="Home" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="https://rimelight.com" rel="" label="Home" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="https://rimelight.com" rel="" label="Home" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Prefetch
+
+Enable Astro's built-in prefetching by setting the `prefetch` prop. Accepts `true` (defaults to `"viewport"`) or a specific trigger: `"hover"`, `"tap"`, `"load"`, or `"viewport"`.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 items-start">
+    <RLALink href="/getting-started" prefetch label="Prefetch (viewport)" />
+    <RLALink href="/installation" prefetch="hover" label="Prefetch on hover" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/getting-started" prefetch label="Prefetch (viewport)" />
+    <RLALink href="/installation" prefetch="hover" label="Prefetch on hover" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/getting-started" prefetch label="Prefetch (viewport)" />
+    <RLVLink href="/installation" prefetch="hover" label="Prefetch on hover" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/getting-started" prefetch label="Prefetch (viewport)" />
+    <RLSLink href="/installation" prefetch="hover" label="Prefetch on hover" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### i18n Auto-Localization
+
+When `@rimelight/i18n` or Astro i18n is configured, the link automatically localizes paths to the current locale. Set `locale` to `false` to disable, or pass a specific locale code.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 items-start">
+    <RLALink href="/docs" label="Auto-localized" />
+    <RLALink href="/docs" locale={false} label="Not localized" />
+    <RLALink href="/docs" locale="pt" label="Portuguese" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/docs" label="Auto-localized" />
+    <RLALink href="/docs" locale={false} label="Not localized" />
+    <RLALink href="/docs" locale="pt" label="Portuguese" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/docs" label="Auto-localized" />
+    <RLVLink href="/docs" locale="false" label="Not localized" />
+    <RLVLink href="/docs" locale="pt" label="Portuguese" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/docs" label="Auto-localized" />
+    <RLSLink href="/docs" locale={false} label="Not localized" />
+    <RLSLink href="/docs" locale="pt" label="Portuguese" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Active State
+
+Force the active state with the `active` prop. The component can also auto-detect it from the current route (Astro: `Astro.url`, Vue: `vue-router`).
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 items-start">
+    <RLALink href="/" active label="Active Link" />
+    <RLALink href="/" label="Default Link" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/" active label="Active Link" />
+    <RLALink href="/" label="Default Link" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/" active label="Active Link" />
+    <RLVLink href="/" label="Default Link" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/" active label="Active Link" />
+    <RLSLink href="/" label="Default Link" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Exact Active Matching
+
+When the `exact` prop is set, the link is only active if the current path is an exact match.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 items-start">
+    <RLALink href="/docs" exact label="Exact Match" />
+    <RLALink href="/docs" label="Prefix Match" />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/docs" exact label="Exact Match" />
+    <RLALink href="/docs" label="Prefix Match" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/docs" exact label="Exact Match" />
+    <RLVLink href="/docs" label="Prefix Match" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/docs" exact label="Exact Match" />
+    <RLSLink href="/docs" label="Prefix Match" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Disabled
+
+The `disabled` prop prevents navigation, adds `aria-disabled`, and applies disabled styling.
+
+<ComponentShowcase>
+  <RLALink href="/" disabled label="Cannot Click" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/" disabled label="Cannot Click" />
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/" disabled label="Cannot Click" />
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/" disabled label="Cannot Click" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Raw Mode
+
+When `raw` is set, only `class` is applied — all theme styles are skipped. Use this when wrapping custom content like images or cards where the link's default layout classes would interfere.
+
+<ComponentShowcase>
+  <div class="flex items-center gap-4">
+    <RLALink href="/" raw>
+      <img src="https://placehold.co/48" alt="" class="rounded-md" />
+    </RLALink>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/" raw>
+      <img src="https://placehold.co/48" alt="" />
+    </RLALink>
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/" raw>
+      <img src="https://placehold.co/48" alt="" />
+    </RLVLink>
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/" raw>
+      <img src="https://placehold.co/48" alt="" />
+    </RLSLink>
     ```
   </div>
 </ComponentShowcase>
@@ -197,26 +431,26 @@ Provide an `ariaLabel` for screen readers. When set on an external link, the "(o
   </div>
 </ComponentShowcase>
 
-### Force External
+### Aria Current Value
 
-Mark any link as external with the `external` prop, even if the URL is relative.
+Customize the `aria-current` value when the link is active using the `ariaCurrentValue` prop. Defaults to `"page"`.
 
 <ComponentShowcase>
-  <RLALink href="/docs" external label="Home" />
+  <RLALink href="/docs" exact ariaCurrentValue="page" label="Docs" />
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="/docs" external label="Home" />
+    <RLALink href="/docs" exact ariaCurrentValue="page" label="Docs" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="/docs" :external="true" label="Home" />
+    <RLVLink href="/docs" exact ariaCurrentValue="page" label="Docs" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="/docs" external label="Home" />
+    <RLSLink href="/docs" exact ariaCurrentValue="page" label="Docs" />
     ```
   </div>
 </ComponentShowcase>

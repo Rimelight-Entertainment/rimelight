@@ -15,26 +15,30 @@ type RLSLinkProps = LinkProps & { children?: JSX.Element }
 
 const RLSLink: Component<RLSLinkProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
-    "to",
+    "label",
+    "leadingIcon",
+    "trailingIcon",
     "href",
     "external",
-    "label",
-    "ariaLabel",
     "externalIcon",
+    "noExternalIcon",
     "target",
     "rel",
-    "trailingIcon",
-    "noExternalIcon",
-    "tag",
+    "prefetch",
+    "locale",
+    "active",
+    "exact",
+    "disabled",
+    "raw",
+    "ariaLabel",
+    "ariaCurrentValue",
     "theme",
     "ui",
     "class",
     "children"
   ])
 
-  const linkHref = createMemo(
-    () => props.href || (typeof props.to === "string" ? props.to : undefined)
-  )
+  const linkHref = createMemo(() => props.href)
 
   const isExternal = createMemo(
     () =>
@@ -48,18 +52,51 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
   )
 
   const linkTarget = createMemo(() => props.target || (isExternal() ? "_blank" : undefined))
-  const linkRel = createMemo(() => props.rel || (isExternal() ? "noopener noreferrer" : undefined))
 
-  const showExternalIcon = createMemo(() => {
+  const linkRel = createMemo(() => {
+    if (props.rel === null || props.rel === "") return undefined
+    if (props.rel !== undefined) return props.rel
+    if (isExternal() || (props.target && props.target !== "_self")) return "noopener noreferrer"
+    return undefined
+  })
+
+  const isLinkActive = createMemo(() => {
+    if (props.active !== undefined) return props.active
+    if (isExternal()) return false
+    return false
+  })
+
+  const isLeading = createMemo(() => !!(props.leadingIcon))
+
+  const showTrailingIcon = createMemo(() => {
     if (isExternal() && !props.noExternalIcon && !props.trailingIcon) {
       return props.externalIcon || "externalLink"
     }
     return props.trailingIcon
   })
 
-  const classes = createMemo(() =>
-    resolveClasses(linkScv, { theme: props.theme }, useUi("link", props.ui), props.class)
-  )
+  const themeActive = createMemo(() => {
+    if (props.active !== undefined) return props.active
+    if (isLinkActive()) return true
+    return undefined
+  })
+
+  const classes = createMemo(() => {
+    if (props.raw) {
+      return { root: props.class || "", label: "", leadingIcon: "", trailingIcon: "" }
+    }
+
+    return resolveClasses(
+      linkScv,
+      {
+        theme: props.theme,
+        ...(themeActive() !== undefined ? { active: themeActive() } : {}),
+        ...(props.disabled ? { disabled: true } : {})
+      },
+      useUi("link", props.ui),
+      props.class
+    )
+  })
 
   const iconEl = createMemo(() => {
     const icon = showExternalIcon()
@@ -68,18 +105,40 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     ) : null
   })
 
-  const LinkTag: any = props.tag || "a"
+  const prefetchAttr = createMemo(() => {
+    if (!props.prefetch) return undefined
+    if (typeof props.prefetch === "string") return props.prefetch
+    return "viewport"
+  })
+
+  function onClick(e: MouseEvent) {
+    if (props.disabled) {
+      e.stopPropagation()
+      e.preventDefault()
+      return
+    }
+  }
 
   return (
-    <LinkTag
+    <a
       class={classes().root}
       data-slot="root"
-      href={LinkTag === "a" ? linkHref() : undefined}
-      target={LinkTag === "a" ? linkTarget() : undefined}
-      rel={LinkTag === "a" ? linkRel() : undefined}
-      aria-label={LinkTag === "a" ? props.ariaLabel : undefined}
+      href={!props.disabled ? linkHref() : undefined}
+      target={linkTarget()}
+      rel={linkRel()}
+      aria-label={props.ariaLabel}
+      aria-current={isLinkActive() && props.exact ? props.ariaCurrentValue || "page" : undefined}
+      aria-disabled={props.disabled ? "true" : undefined}
+      data-astro-prefetch={prefetchAttr()}
+      onClick={onClick}
       {...rest}
     >
+      {props.leadingIcon ? (
+        <span class={classes().leadingIcon} data-slot="leading-icon">
+          <RLSIcon name={props.leadingIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+        </span>
+      ) : null}
+
       {props.label !== undefined && props.label !== null ? (
         <span class={classes().label} data-slot="label">
           {props.label}
@@ -87,14 +146,20 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       ) : (
         props.children
       )}
-      {iconEl()}
+
+      {showTrailingIcon() ? (
+        <span class={classes().trailingIcon} data-slot="trailing-icon">
+          <RLSIcon name={showTrailingIcon()!} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+        </span>
+      ) : null}
+
       {isExternal() && !props.ariaLabel && (
         <span class="sr-only" data-slot="external-hint">
           {" "}
           (opens in a new tab)
         </span>
       )}
-    </LinkTag>
+    </a>
   )
 }
 

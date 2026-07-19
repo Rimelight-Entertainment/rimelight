@@ -2,80 +2,89 @@ import type { Theme } from "../../types/component"
 
 export interface LinkProps {
   /**
-   * The HTML tag or component to render the link as. Defaults to "a".
-   */
-  tag?: any
-  /**
-   * Route path or location object for client-side navigation.
-   */
-  to?: string | object
-  /**
-   * Direct URL the link points to.
-   */
-  href?: string
-  /**
-   * Where to open the linked URL.
-   */
-  target?: string
-  /**
-   * Relationship of the linked URL.
-   */
-  rel?: string
-  /**
-   * Forces the link to be treated as an external link.
-   */
-  external?: boolean
-  /**
-   * Replaces the current history entry instead of pushing a new one.
-   */
-  replace?: boolean
-  /**
-   * Applies active styling to the link.
-   */
-  active?: boolean
-  /**
-   * Only matches the link as active if the path is an exact match.
-   */
-  exact?: boolean
-  /**
-   * Controls how query strings are compared for active matching.
-   */
-  exactQuery?: boolean | "partial"
-  /**
-   * Controls how the URL hash is compared for active matching.
-   */
-  exactHash?: boolean
-  /**
-   * CSS class applied when the link is inactive.
-   */
-  inactiveClass?: string
-  /**
-   * CSS class applied when the link is active.
-   */
-  activeClass?: string
-  /**
    * The text label displayed inside the link. Alternative to passing children via the default slot.
    */
   label?: string
   /**
-   * Screen reader accessibility label. Will automatically append " (opens in a new tab)" for
-   * external links if not customized
+   * Icon name displayed before the link label.
    */
-  ariaLabel?: string
+  leadingIcon?: string
   /**
-   * Custom external link icon name
-   */
-  externalIcon?: string
-  /**
-   * Trailing icon name shown after the link label
+   * Icon name displayed after the link label. Replaces the external icon when set.
    */
   trailingIcon?: string
   /**
-   * Suppress the automatic external link icon
+   * The URL the link points to.
+   */
+  href?: string
+  /**
+   * Forces the link to be treated as an external link.
+   * @default false
+   */
+  external?: boolean
+  /**
+   * Custom external link icon name.
+   * @default "externalLink"
+   */
+  externalIcon?: string
+  /**
+   * Suppress the automatic external link icon.
+   * @default false
    */
   noExternalIcon?: boolean
   /**
-   * Force a color-scheme context on the link
+   * Where to open the linked URL. External links default to `"_blank"`.
+   * @default undefined
+   */
+  target?: string
+  /**
+   * Relationship of the linked URL. External links default to `"noopener noreferrer"`.
+   * Set to empty string to suppress the attribute entirely.
+   * @default undefined
+   */
+  rel?: string | null
+  /**
+   * Enables Astro's built-in prefetch strategy.
+   * @default undefined;
+   */
+  prefetch?: boolean | "hover" | "tap" | "load" | "viewport"
+  /**
+   * Auto-localizes the href when Astro i18n is configured.
+   * Pass `false` to disable, or a locale code (e.g. `"pt"`) to localize to a specific language.
+   * @default undefined
+   */
+  locale?: boolean | string
+  /**
+   * Applies active styling to the link.
+   * @default undefined
+   */
+  active?: boolean
+  /**
+   * Only matches the link as active if the path is an exact match.
+   * @default false
+   */
+  exact?: boolean
+  /**
+   * Disables the link, preventing navigation and applying disabled styling.
+   * @default false
+   */
+  disabled?: boolean
+  /**
+   * When true, only `class` is applied — all default theme styles are skipped.
+   * @default false
+   */
+  raw?: boolean
+  /**
+   * Screen reader accessibility label. When omitted on external links, "(opens in a new tab)" is appended automatically.
+   */
+  ariaLabel?: string
+  /**
+   * The value of `aria-current` when the link is the active/current page.
+   * @default "page"
+   */
+  ariaCurrentValue?: string
+  /**
+   * Force a color-scheme context on the component.
    */
   theme?: Theme
   /**

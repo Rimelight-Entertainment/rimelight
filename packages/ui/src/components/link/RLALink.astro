@@ -9,56 +9,156 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 const uiConfig = getUIConfig()
 const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
-
 const link = scv(linkTheme)
 
 const {
-  to,
+  label,
+  leadingIcon,
+  trailingIcon,
   href,
   external,
-  label,
-  ariaLabel,
   externalIcon,
+  noExternalIcon,
   target,
   rel,
-  trailingIcon,
-  noExternalIcon,
-  tag,
+  prefetch,
+  locale,
+  active,
+  exact,
+  disabled,
+  raw,
+  ariaLabel,
+  ariaCurrentValue = "page",
   theme,
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as LinkProps
+} = Astro.props as LinkProps & { "client:load"?: never; "client:idle"?: never; "client:visible"?: never; "client:media"?: never; "client:only"?: never }
+const rawHref = href
 
-const Tag = tag || "a"
+// ---- i18n auto-localization ----
+let localizedHref = rawHref
+if (rawHref && locale !== false) {
+  try {
+    const rimelight = await import("@rimelight/i18n")
+    if (typeof locale === "string") {
+      localizedHref = rimelight.getRelativeLocaleUrl(locale, rawHref)
+    } else {
+      localizedHref = rimelight.getRelativeLocaleUrl(rawHref)
+    }
+  } catch {
+    try {
+      const astro = await import("astro:i18n")
+      if (typeof locale === "string") {
+        localizedHref = astro.getRelativeLocaleUrl(locale, rawHref)
+      } else {
+        localizedHref = astro.getRelativeLocaleUrl(rawHref)
+      }
+    } catch {
+      // i18n not configured — leave href as-is
+    }
+  }
+}
 
-const linkHref = href || (typeof to === 'string' ? to : undefined);
+// ---- External detection ----
+const isExternal = !!(external ||
+  (rawHref &&
+    (rawHref.startsWith("http://") ||
+      rawHref.startsWith("https://") ||
+      rawHref.startsWith("//"))))
 
-const isExternal = !!(external || (linkHref && (linkHref.startsWith('http://') || linkHref.startsWith('https://') || linkHref.startsWith('//'))));
+const linkTarget = target || (isExternal ? "_blank" : undefined)
 
-const linkTarget = target || (isExternal ? "_blank" : undefined);
-const linkRel = rel || (isExternal ? "noopener noreferrer" : undefined);
+const linkRel = rel === null || rel === ""
+  ? undefined
+  : rel !== undefined
+    ? rel
+    : isExternal || (target && target !== "_self")
+      ? "noopener noreferrer"
+      : undefined
 
-const showExternalIcon = isExternal && !noExternalIcon && !trailingIcon ? (externalIcon || "externalLink") : trailingIcon;
+const showTrailingIcon = isExternal && !noExternalIcon && !trailingIcon
+  ? (externalIcon || "externalLink")
+  : trailingIcon
 
-const classes = resolveClasses(link, { theme }, useUi("link", uiProp), className);
+// ---- Active state ----
+const linkActive = active !== undefined
+  ? active
+  : !!(rawHref && !isExternal && Astro.url.pathname && (
+      exact || rawHref === "/"
+        ? Astro.url.pathname === rawHref
+        : Astro.url.pathname.startsWith(rawHref)
+    ))
+
+const themeActive = active !== undefined
+  ? active
+  : linkActive
+    ? true
+    : undefined
+
+// ---- Classes ----
+const classes = raw
+  ? {
+      root: className || "",
+      label: "",
+      leadingIcon: "",
+      trailingIcon: ""
+    }
+  : resolveClasses(
+      link,
+      {
+        theme,
+        ...(themeActive !== undefined ? { active: themeActive } : {}),
+        ...(disabled ? { disabled: true } : {})
+      },
+      useUi("link", uiProp),
+      className
+    )
+
+// ---- Prefetch ----
+const prefetchAttr = prefetch
+  ? typeof prefetch === "string" ? prefetch : "viewport"
+  : undefined
 ---
 
-<Tag
+<a
   class={classes.root}
   data-slot="root"
-  {...(Tag === "a" ? { href: linkHref, target: linkTarget, rel: linkRel, "aria-label": ariaLabel } : {})}
+  href={disabled ? undefined : localizedHref}
+  target={linkTarget}
+  rel={linkRel}
+  aria-label={ariaLabel}
+  aria-current={linkActive && exact ? ariaCurrentValue : undefined}
+  aria-disabled={disabled ? "true" : undefined}
+  data-astro-prefetch={prefetchAttr}
   {...rest}
 >
+  {leadingIcon && (
+    <span class={classes.leadingIcon} data-slot="leading-icon">
+      <RLAIcon name={leadingIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+    </span>
+  )}
+
   {label !== undefined && label !== null ? (
     <span class={classes.label} data-slot="label">{label}</span>
   ) : (
     <slot />
   )}
-  {showExternalIcon && (
-    <RLAIcon name={showExternalIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+
+  {showTrailingIcon && (
+    <span class={classes.trailingIcon} data-slot="trailing-icon">
+      <RLAIcon
+        name={showTrailingIcon}
+        size="sm"
+        class="!-translate-y-[1.5px]"
+        aria-hidden="true"
+      />
+    </span>
   )}
+
   {isExternal && !ariaLabel && (
-    <span class="sr-only" data-slot="external-hint"> (opens in a new tab)</span>
+    <span class="sr-only" data-slot="external-hint">
+      (opens in a new tab)
+    </span>
   )}
-</Tag>
+</a>

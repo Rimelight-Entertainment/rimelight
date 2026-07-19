@@ -2,9 +2,9 @@ import { defineTheme } from "../../utils/defineTheme"
 
 export const createLinkTheme = () =>
   defineTheme({
-    slots: ["root", "label"],
+    slots: ["root", "label", "leadingIcon", "trailingIcon"],
     base: {
-      root: "outline-primary/25 focus-visible:outline-3 rounded-md inline-flex items-center gap-1 leading-none",
+      root: "outline-primary/25 focus-visible:outline-3 rounded-md inline-flex items-center gap-1 leading-none hover:text-primary transition-colors",
       label: ""
     },
     variants: {
