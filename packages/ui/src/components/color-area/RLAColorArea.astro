@@ -2,11 +2,10 @@
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
+import { resolveTheme } from "../../utils/resolveTheme"
 import colorAreaThemeDefault, { createColorAreaTheme } from "./color-area.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const colorAreaTheme = resolveTheme(colorAreaThemeDefault, createColorAreaTheme)
 
-const uiConfig = getUIConfig()
-const colorAreaTheme = uiConfig.colors ? createColorAreaTheme(uiConfig.colors) : colorAreaThemeDefault
 const colorArea = scv(colorAreaTheme)
 
 export interface Props {

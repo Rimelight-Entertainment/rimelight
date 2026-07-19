@@ -3,15 +3,12 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { SearchProps } from "./search"
-import searchThemeDefault, { createSearchTheme } from "./search.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import searchTheme from "./search.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 import RLAInput from "../input/RLAInput.astro"
 import RLAKbd from "../kbd/RLAKbd.astro"
 import RLAButton from "../button/RLAButton.astro"
 
-const uiConfig = getUIConfig()
-const searchTheme = uiConfig.colors ? createSearchTheme() : searchThemeDefault
 
 const search = scv(searchTheme)
 

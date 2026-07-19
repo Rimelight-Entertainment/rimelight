@@ -4,12 +4,9 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import RLAIcon from "../icon/RLAIcon.astro"
 import type { NavigationMenuProps } from "./navigation-menu"
-import navigationMenuThemeDefault, { createNavigationMenuTheme } from "./navigation-menu.theme"
+import navigationMenuTheme from "./navigation-menu.theme"
 
-import { getUIConfig } from "virtual:rimelight-ui"
 
-const uiConfig = getUIConfig()
-const navigationMenuTheme = uiConfig.colors ? createNavigationMenuTheme() : navigationMenuThemeDefault
 const navigationMenu = scv(navigationMenuTheme)
 
 const {

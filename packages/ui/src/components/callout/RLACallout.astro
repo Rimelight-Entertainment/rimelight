@@ -3,13 +3,12 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { CalloutProps } from "./callout"
+import { resolveTheme } from "../../utils/resolveTheme"
 import calloutThemeDefault, { createCalloutTheme } from "./callout.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const calloutTheme = resolveTheme(calloutThemeDefault, createCalloutTheme)
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const calloutTheme = uiConfig.colors ? createCalloutTheme(uiConfig.colors) : calloutThemeDefault
 const callout = scv(calloutTheme)
 
 const {

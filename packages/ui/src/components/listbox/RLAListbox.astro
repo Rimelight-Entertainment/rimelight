@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ListboxProps } from "./listbox"
-import listboxThemeDefault, { createListboxTheme } from "./listbox.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import listboxTheme from "./listbox.theme"
 
-const uiConfig = getUIConfig()
-const listboxTheme = uiConfig.colors ? createListboxTheme() : listboxThemeDefault
 
 const listbox = scv(listboxTheme)
 

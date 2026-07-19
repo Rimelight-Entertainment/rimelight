@@ -4,11 +4,8 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import { resolveIcon } from "./resolver"
 import type { IconProps } from "./icon"
-import iconThemeDefault, { createIconTheme } from "./icon.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import iconTheme from "./icon.theme"
 
-const uiConfig = getUIConfig()
-const iconTheme = uiConfig.colors ? createIconTheme() : iconThemeDefault
 
 const icon = scv(iconTheme)
 

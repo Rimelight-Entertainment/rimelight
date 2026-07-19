@@ -3,12 +3,9 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { TableOfContentsProps } from "./table-of-contents"
-import tableOfContentsThemeDefault, { createTableOfContentsTheme } from "./table-of-contents.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import tableOfContentsTheme from "./table-of-contents.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const tableOfContentsTheme = uiConfig.colors ? createTableOfContentsTheme() : tableOfContentsThemeDefault
 
 const tableOfContents = scv(tableOfContentsTheme)
 

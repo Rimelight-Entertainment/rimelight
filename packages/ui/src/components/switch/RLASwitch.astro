@@ -3,11 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { SwitchProps } from "./switch"
+import { resolveTheme } from "../../utils/resolveTheme"
 import switchThemeDefault, { createSwitchTheme } from "./switch.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const switchTheme = resolveTheme(switchThemeDefault, createSwitchTheme)
 
-const uiConfig = getUIConfig()
-const switchTheme = uiConfig.colors ? createSwitchTheme(uiConfig.colors) : switchThemeDefault
 
 const switchFn = scv(switchTheme)
 

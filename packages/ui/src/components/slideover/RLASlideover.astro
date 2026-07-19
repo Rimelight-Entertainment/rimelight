@@ -3,12 +3,11 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { SlideoverProps } from "./slideover"
+import { resolveTheme } from "../../utils/resolveTheme"
 import slideoverThemeDefault, { createSlideoverTheme } from "./slideover.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const slideoverTheme = resolveTheme(slideoverThemeDefault, createSlideoverTheme)
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const slideoverTheme = uiConfig.colors ? createSlideoverTheme() : slideoverThemeDefault
 
 const slideover = scv(slideoverTheme)
 

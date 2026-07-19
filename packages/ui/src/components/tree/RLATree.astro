@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { TreeProps } from "./tree"
-import treeThemeDefault, { createTreeTheme } from "./tree.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import treeTheme from "./tree.theme"
 
-const uiConfig = getUIConfig()
-const treeTheme = uiConfig.colors ? createTreeTheme() : treeThemeDefault
 
 const tree = scv(treeTheme)
 

@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardResizeHandleProps } from "./dashboard-resize-handle"
-import dashboardResizeHandleThemeDefault, { createDashboardResizeHandleTheme } from "./dashboard-resize-handle.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import dashboardResizeHandleTheme from "./dashboard-resize-handle.theme"
 
-const uiConfig = getUIConfig()
-const dashboardResizeHandleTheme = uiConfig.colors ? createDashboardResizeHandleTheme() : dashboardResizeHandleThemeDefault
 
 const dashboardResizeHandle = scv(dashboardResizeHandleTheme)
 

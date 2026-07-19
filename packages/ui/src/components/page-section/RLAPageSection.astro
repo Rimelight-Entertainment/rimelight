@@ -3,13 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { PageSectionProps } from "./page-section"
-import pageSectionThemeDefault, { createPageSectionTheme } from "./page-section.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import pageSectionTheme from "./page-section.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 import RLAButton from "../button/RLAButton.astro"
 
-const uiConfig = getUIConfig()
-const pageSectionTheme = uiConfig.colors ? createPageSectionTheme() : pageSectionThemeDefault
 
 const pageSection = scv(pageSectionTheme)
 

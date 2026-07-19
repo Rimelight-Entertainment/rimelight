@@ -2,11 +2,10 @@
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
+import { resolveTheme } from "../../utils/resolveTheme"
 import colorFieldThemeDefault, { createColorFieldTheme } from "./color-field.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const colorFieldTheme = resolveTheme(colorFieldThemeDefault, createColorFieldTheme)
 
-const uiConfig = getUIConfig()
-const colorFieldTheme = uiConfig.colors ? createColorFieldTheme(uiConfig.colors) : colorFieldThemeDefault
 const colorField = scv(colorFieldTheme)
 
 export interface Props {

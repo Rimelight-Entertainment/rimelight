@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { PhoneMockupProps } from "./phone-mockup"
-import phoneMockupThemeDefault, { createPhoneMockupTheme } from "./phone-mockup.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import phoneMockupTheme from "./phone-mockup.theme"
 
-const uiConfig = getUIConfig()
-const phoneMockupTheme = uiConfig.colors ? createPhoneMockupTheme() : phoneMockupThemeDefault
 
 const phoneMockup = scv(phoneMockupTheme)
 

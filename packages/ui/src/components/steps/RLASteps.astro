@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { StepsProps } from "./steps"
-import stepsThemeDefault, { createStepsTheme } from "./steps.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import stepsTheme from "./steps.theme"
 
-const uiConfig = getUIConfig()
-const stepsTheme = uiConfig.colors ? createStepsTheme() : stepsThemeDefault
 
 const steps = scv(stepsTheme)
 

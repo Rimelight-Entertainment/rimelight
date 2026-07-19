@@ -2,11 +2,10 @@
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
+import { resolveTheme } from "../../utils/resolveTheme"
 import colorSliderThemeDefault, { createColorSliderTheme } from "./color-slider.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const colorSliderTheme = resolveTheme(colorSliderThemeDefault, createColorSliderTheme)
 
-const uiConfig = getUIConfig()
-const colorSliderTheme = uiConfig.colors ? createColorSliderTheme(uiConfig.colors) : colorSliderThemeDefault
 const colorSlider = scv(colorSliderTheme)
 
 export interface Props {

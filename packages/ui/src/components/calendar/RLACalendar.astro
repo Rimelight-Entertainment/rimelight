@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { CalendarProps } from "./calendar"
-import calendarThemeDefault, { createCalendarTheme } from "./calendar.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import calendarTheme from "./calendar.theme"
 
-const uiConfig = getUIConfig()
-const calendarTheme = uiConfig.colors ? createCalendarTheme() : calendarThemeDefault
 
 const calendar = scv(calendarTheme)
 

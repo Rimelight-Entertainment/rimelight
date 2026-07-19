@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ScrollToTopProps } from "./scroll-to-top"
-import scrollToTopThemeDefault, { createScrollToTopTheme } from "./scroll-to-top.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import scrollToTopTheme from "./scroll-to-top.theme"
 
-const uiConfig = getUIConfig()
-const scrollToTopTheme = uiConfig.colors ? createScrollToTopTheme(uiConfig.colors) : scrollToTopThemeDefault
 
 const scrollToTop = scv(scrollToTopTheme)
 

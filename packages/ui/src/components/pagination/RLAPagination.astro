@@ -3,12 +3,11 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { PaginationProps } from "./pagination"
+import { resolveTheme } from "../../utils/resolveTheme"
 import paginationThemeDefault, { createPaginationTheme } from "./pagination.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const paginationTheme = resolveTheme(paginationThemeDefault, createPaginationTheme)
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const paginationTheme = uiConfig.colors ? createPaginationTheme() : paginationThemeDefault
 
 const pagination = scv(paginationTheme)
 

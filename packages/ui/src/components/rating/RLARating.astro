@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { RatingProps } from "./rating"
-import ratingThemeDefault, { createRatingTheme } from "./rating.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import ratingTheme from "./rating.theme"
 
-const uiConfig = getUIConfig()
-const ratingTheme = uiConfig.colors ? createRatingTheme() : ratingThemeDefault
 
 const rating = scv(ratingTheme)
 

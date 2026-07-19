@@ -3,14 +3,13 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ButtonProps } from "./button"
+import { resolveTheme } from "../../utils/resolveTheme"
 import buttonThemeDefault, { createButtonTheme } from "./button.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const buttonTheme = resolveTheme(buttonThemeDefault, createButtonTheme)
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLALink from "../link/RLALink.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const buttonTheme = uiConfig.colors ? createButtonTheme(uiConfig.colors) : buttonThemeDefault
 
 const button = scv(buttonTheme)
 

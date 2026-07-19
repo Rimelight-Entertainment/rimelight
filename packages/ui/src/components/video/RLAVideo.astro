@@ -3,8 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { VideoProps } from "./video"
-import videoThemeDefault, { createVideoTheme } from "./video.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import videoTheme from "./video.theme"
 import Image from "astro/components/Image.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
@@ -112,8 +111,6 @@ function getYoutubeEmbedUrl(rawUrl: string): string | null {
   return id ? `${YOUTUBE_EMBED_BASE}${id}?autoplay=1` : null;
 }
 
-const uiConfig = getUIConfig()
-const videoTheme = uiConfig.colors ? createVideoTheme() : videoThemeDefault
 
 const video = scv(videoTheme)
 

@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { TooltipProps } from "./tooltip"
-import tooltipThemeDefault, { createTooltipTheme } from "./tooltip.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import tooltipTheme from "./tooltip.theme"
 
-const uiConfig = getUIConfig()
-const tooltipTheme = uiConfig.colors ? createTooltipTheme() : tooltipThemeDefault
 
 const tooltip = scv(tooltipTheme)
 

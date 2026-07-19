@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { GridProps } from "./grid"
-import gridThemeDefault, { createGridTheme } from "./grid.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import gridTheme from "./grid.theme"
 
-const uiConfig = getUIConfig()
-const gridTheme = uiConfig.colors ? createGridTheme() : gridThemeDefault
 
 const grid = scv(gridTheme)
 

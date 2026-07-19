@@ -3,11 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { CheckboxProps } from "./checkbox"
+import { resolveTheme } from "../../utils/resolveTheme"
 import checkboxThemeDefault, { createCheckboxTheme } from "./checkbox.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const checkboxTheme = resolveTheme(checkboxThemeDefault, createCheckboxTheme)
 
-const uiConfig = getUIConfig()
-const checkboxTheme = uiConfig.colors ? createCheckboxTheme(uiConfig.colors) : checkboxThemeDefault
 
 const checkbox = scv(checkboxTheme)
 

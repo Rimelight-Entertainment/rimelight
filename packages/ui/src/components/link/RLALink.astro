@@ -3,12 +3,9 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { LinkProps } from "./link"
-import linkThemeDefault, { createLinkTheme } from "./link.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import linkTheme from "./link.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
 const link = scv(linkTheme)
 
 const {
@@ -35,18 +32,12 @@ const {
 
 const isExternal = !!(external || (href && /^(?:https?:)?\/\//.test(href)))
 
-
 const showTrailingIcon = isExternal && !noExternalIcon && !trailingIcon
   ? (externalIcon || "externalLink")
   : trailingIcon
 
 const classes = raw
-  ? {
-      root: className || "",
-      label: "",
-      leadingIcon: "",
-      trailingIcon: ""
-    }
+  ? ({ root: className || "" } as Record<string, string>)
   : resolveClasses(
       link,
       {

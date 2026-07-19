@@ -3,12 +3,11 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ModalProps } from "./modal"
+import { resolveTheme } from "../../utils/resolveTheme"
 import modalThemeDefault, { createModalTheme } from "./modal.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const modalTheme = resolveTheme(modalThemeDefault, createModalTheme)
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const modalTheme = uiConfig.colors ? createModalTheme() : modalThemeDefault
 
 const modal = scv(modalTheme)
 

@@ -3,11 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { LabelProps } from "./label"
+import { resolveTheme } from "../../utils/resolveTheme"
 import labelThemeDefault, { createLabelTheme } from "./label.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const labelTheme = resolveTheme(labelThemeDefault, createLabelTheme)
 
-const uiConfig = getUIConfig()
-const labelTheme = uiConfig.colors ? createLabelTheme() : labelThemeDefault
 
 const label = scv(labelTheme)
 

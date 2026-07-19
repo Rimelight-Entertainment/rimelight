@@ -3,12 +3,9 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ScrollAreaProps } from "./scroll-area"
-import scrollAreaThemeDefault, { createScrollAreaTheme } from "./scroll-area.theme"
+import scrollAreaTheme from "./scroll-area.theme"
 
-import { getUIConfig } from "virtual:rimelight-ui"
 
-const uiConfig = getUIConfig()
-const scrollAreaTheme = uiConfig.colors ? createScrollAreaTheme() : scrollAreaThemeDefault
 const scrollArea = scv(scrollAreaTheme)
 
 const {

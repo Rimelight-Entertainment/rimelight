@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ChatToolProps } from "./chat-tool"
-import chatToolThemeDefault, { createChatToolTheme } from "./chat-tool.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import chatToolTheme from "./chat-tool.theme"
 
-const uiConfig = getUIConfig()
-const chatToolTheme = uiConfig.colors ? createChatToolTheme() : chatToolThemeDefault
 
 const chatTool = scv(chatToolTheme)
 

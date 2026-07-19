@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardPanelProps } from "./dashboard-panel"
-import dashboardPanelThemeDefault, { createDashboardPanelTheme } from "./dashboard-panel.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import dashboardPanelTheme from "./dashboard-panel.theme"
 
-const uiConfig = getUIConfig()
-const dashboardPanelTheme = uiConfig.colors ? createDashboardPanelTheme() : dashboardPanelThemeDefault
 
 const dashboardPanel = scv(dashboardPanelTheme)
 

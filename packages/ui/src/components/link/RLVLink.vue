@@ -4,15 +4,12 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { LinkProps } from "./link"
-import linkThemeDefault, { createLinkTheme } from "./link.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import linkTheme from "./link.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 
-defineOptions({ name: "RLVLink" })
+const link = scv(linkTheme)
 
-const uiConfig = getUIConfig()
-const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
-const linkScv = scv(linkTheme)
+defineOptions({ name: "RLVLink" })
 
 const {
   label,
@@ -52,16 +49,11 @@ const showTrailingIcon = computed(() => {
 
 const resolvedClasses = computed(() => {
   if (raw) {
-    return {
-      root: className || "",
-      label: "",
-      leadingIcon: "",
-      trailingIcon: ""
-    }
+    return { root: className || "" } as Record<string, string>
   }
 
   return resolveClasses(
-    linkScv,
+    link,
     {
       theme,
       ...(active !== undefined ? { active } : {}),
@@ -72,7 +64,6 @@ const resolvedClasses = computed(() => {
   )
 })
 
-// ---- Handlers ----
 function onClick(e: MouseEvent) {
   if (disabled) {
     e.stopPropagation()
@@ -83,7 +74,6 @@ function onClick(e: MouseEvent) {
 </script>
 
 <template>
-  <!-- Render anchor element -->
   <a
     :href="!disabled ? href : undefined"
     :target="target || (isExternal ? '_blank' : undefined)"

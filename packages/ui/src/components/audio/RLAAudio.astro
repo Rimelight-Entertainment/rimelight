@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { AudioProps } from "./audio"
-import audioThemeDefault, { createAudioTheme } from "./audio.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import audioTheme from "./audio.theme"
 
-const uiConfig = getUIConfig()
-const audioTheme = uiConfig.colors ? createAudioTheme() : audioThemeDefault
 
 const audio = scv(audioTheme)
 

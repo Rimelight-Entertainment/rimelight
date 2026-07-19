@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ContextMenuProps } from "./context-menu"
-import contextMenuThemeDefault, { createContextMenuTheme } from "./context-menu.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import contextMenuTheme from "./context-menu.theme"
 
-const uiConfig = getUIConfig()
-const contextMenuTheme = uiConfig.colors ? createContextMenuTheme() : contextMenuThemeDefault
 
 const contextMenu = scv(contextMenuTheme)
 

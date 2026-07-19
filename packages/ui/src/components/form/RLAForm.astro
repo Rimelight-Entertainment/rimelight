@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { FormProps } from "./form"
-import formThemeDefault, { createFormTheme } from "./form.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import formTheme from "./form.theme"
 
-const uiConfig = getUIConfig()
-const formTheme = uiConfig.colors ? createFormTheme() : formThemeDefault
 
 const form = scv(formTheme)
 

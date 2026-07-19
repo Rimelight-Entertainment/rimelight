@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DockProps } from "./dock"
-import dockThemeDefault, { createDockTheme } from "./dock.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import dockTheme from "./dock.theme"
 
-const uiConfig = getUIConfig()
-const dockTheme = uiConfig.colors ? createDockTheme() : dockThemeDefault
 
 const dock = scv(dockTheme)
 

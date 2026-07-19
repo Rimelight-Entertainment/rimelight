@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { CompareProps } from "./compare"
-import compareThemeDefault, { createCompareTheme } from "./compare.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import compareTheme from "./compare.theme"
 
-const uiConfig = getUIConfig()
-const compareTheme = uiConfig.colors ? createCompareTheme() : compareThemeDefault
 
 const compare = scv(compareTheme)
 

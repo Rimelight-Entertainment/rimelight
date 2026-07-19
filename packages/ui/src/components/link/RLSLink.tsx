@@ -3,13 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { LinkProps } from "./link"
-import linkThemeDefault, { createLinkTheme } from "./link.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import linkTheme from "./link.theme"
 import RLSIcon from "../icon/RLSIcon"
 
-const uiConfig = getUIConfig()
-const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
-const linkScv = scv(linkTheme)
+const link = scv(linkTheme)
 
 type RLSLinkProps = LinkProps & {
   children?: JSX.Element
@@ -53,13 +50,13 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     return props.trailingIcon
   })
 
-  const classes = createMemo(() => {
+  const classes = createMemo<Record<string, string>>(() => {
     if (props.raw) {
-      return { root: props.class || "", label: "", leadingIcon: "", trailingIcon: "" }
+      return { root: props.class || "" }
     }
 
     return resolveClasses(
-      linkScv,
+      link,
       {
         theme: props.theme,
         ...(props.active !== undefined ? { active: props.active } : {}),

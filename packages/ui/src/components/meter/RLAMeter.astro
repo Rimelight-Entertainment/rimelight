@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { MeterProps } from "./meter"
-import meterThemeDefault, { createMeterTheme } from "./meter.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import meterTheme from "./meter.theme"
 
-const uiConfig = getUIConfig()
-const meterTheme = uiConfig.colors ? createMeterTheme() : meterThemeDefault
 
 const meter = scv(meterTheme)
 

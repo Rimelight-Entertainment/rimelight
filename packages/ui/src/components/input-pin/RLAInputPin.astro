@@ -3,11 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { InputPinProps } from "./input-pin"
+import { resolveTheme } from "../../utils/resolveTheme"
 import inputPinThemeDefault, { createInputPinTheme } from "./input-pin.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const inputPinTheme = resolveTheme(inputPinThemeDefault, createInputPinTheme)
 
-const uiConfig = getUIConfig()
-const inputPinTheme = uiConfig.colors ? createInputPinTheme() : inputPinThemeDefault
 
 const inputPin = scv(inputPinTheme)
 

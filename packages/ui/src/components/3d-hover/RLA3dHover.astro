@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ThreeDHoverProps } from "./3d-hover"
-import hover3dThemeDefault, { create3dHoverTheme } from "./3d-hover.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import hover3dTheme from "./3d-hover.theme"
 
-const uiConfig = getUIConfig()
-const hover3dTheme = uiConfig.colors ? create3dHoverTheme() : hover3dThemeDefault
 
 const hover3d = scv(hover3dTheme)
 

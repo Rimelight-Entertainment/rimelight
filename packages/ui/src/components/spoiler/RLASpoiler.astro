@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { SpoilerProps } from "./spoiler"
-import spoilerThemeDefault, { createSpoilerTheme } from "./spoiler.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import spoilerTheme from "./spoiler.theme"
 
-const uiConfig = getUIConfig()
-const spoilerTheme = uiConfig.colors ? createSpoilerTheme() : spoilerThemeDefault
 
 const spoiler = scv(spoilerTheme)
 

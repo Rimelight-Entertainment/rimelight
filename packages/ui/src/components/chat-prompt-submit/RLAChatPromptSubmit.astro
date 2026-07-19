@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ChatPromptSubmitProps } from "./chat-prompt-submit"
-import chatPromptSubmitThemeDefault, { createChatPromptSubmitTheme } from "./chat-prompt-submit.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import chatPromptSubmitTheme from "./chat-prompt-submit.theme"
 
-const uiConfig = getUIConfig()
-const chatPromptSubmitTheme = uiConfig.colors ? createChatPromptSubmitTheme() : chatPromptSubmitThemeDefault
 
 const chatPromptSubmit = scv(chatPromptSubmitTheme)
 

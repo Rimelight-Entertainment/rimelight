@@ -3,14 +3,11 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { PostProps } from "./post"
-import postThemeDefault, { createPostTheme } from "./post.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import postTheme from "./post.theme"
 import type { ImageMetadata } from "astro"
 import Image from "astro/components/Image.astro"
 import RLABadge from "../badge/RLABadge.astro"
 
-const uiConfig = getUIConfig()
-const postTheme = uiConfig.colors ? createPostTheme() : postThemeDefault
 
 const post = scv(postTheme)
 

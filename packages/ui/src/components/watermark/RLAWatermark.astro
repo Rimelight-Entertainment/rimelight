@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { WatermarkProps } from "./watermark"
-import watermarkThemeDefault, { createWatermarkTheme } from "./watermark.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import watermarkTheme from "./watermark.theme"
 
-const uiConfig = getUIConfig()
-const watermarkTheme = uiConfig.colors ? createWatermarkTheme() : watermarkThemeDefault
 
 const watermark = scv(watermarkTheme)
 

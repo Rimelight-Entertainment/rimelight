@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { TimelineProps } from "./timeline"
-import timelineThemeDefault, { createTimelineTheme } from "./timeline.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import timelineTheme from "./timeline.theme"
 
-const uiConfig = getUIConfig()
-const timelineTheme = uiConfig.colors ? createTimelineTheme() : timelineThemeDefault
 
 const timeline = scv(timelineTheme)
 

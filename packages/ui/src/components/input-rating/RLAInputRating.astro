@@ -3,12 +3,11 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { InputRatingProps } from "./input-rating"
+import { resolveTheme } from "../../utils/resolveTheme"
 import inputRatingThemeDefault, { createInputRatingTheme } from "./input-rating.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const inputRatingTheme = resolveTheme(inputRatingThemeDefault, createInputRatingTheme)
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const inputRatingTheme = uiConfig.colors ? createInputRatingTheme(uiConfig.colors) : inputRatingThemeDefault
 
 const inputRating = scv(inputRatingTheme)
 

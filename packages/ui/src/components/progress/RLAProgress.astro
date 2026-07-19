@@ -3,11 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ProgressProps } from "./progress"
+import { resolveTheme } from "../../utils/resolveTheme"
 import progressThemeDefault, { createProgressTheme } from "./progress.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const progressTheme = resolveTheme(progressThemeDefault, createProgressTheme)
 
-const uiConfig = getUIConfig()
-const progressTheme = uiConfig.colors ? createProgressTheme(uiConfig.colors) : progressThemeDefault
 const progress = scv(progressTheme)
 
 const {

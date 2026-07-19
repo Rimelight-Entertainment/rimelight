@@ -3,12 +3,11 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { BreadcrumbProps } from "./breadcrumb"
+import { resolveTheme } from "../../utils/resolveTheme"
 import breadcrumbThemeDefault, { createBreadcrumbTheme } from "./breadcrumb.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const breadcrumbTheme = resolveTheme(breadcrumbThemeDefault, createBreadcrumbTheme)
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const breadcrumbTheme = uiConfig.colors ? createBreadcrumbTheme() : breadcrumbThemeDefault
 
 const breadcrumb = scv(breadcrumbTheme)
 

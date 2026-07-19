@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { ContainerProps } from "./container"
-import containerThemeDefault, { createContainerTheme } from "./container.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import containerTheme from "./container.theme"
 
-const uiConfig = getUIConfig()
-const containerTheme = uiConfig.colors ? createContainerTheme() : containerThemeDefault
 
 const container = scv(containerTheme)
 

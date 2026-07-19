@@ -3,13 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { SelectProps } from "./select"
-import selectThemeDefault, { createSelectTheme } from "./select.theme"
+import selectTheme from "./select.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-import { getUIConfig } from "virtual:rimelight-ui"
 
-const uiConfig = getUIConfig()
-const selectTheme = uiConfig.colors ? createSelectTheme() : selectThemeDefault
 const select = scv(selectTheme)
 
 const {

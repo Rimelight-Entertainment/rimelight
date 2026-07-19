@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { FooterProps } from "./footer"
-import footerThemeDefault, { createFooterTheme } from "./footer.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import footerTheme from "./footer.theme"
 
-const uiConfig = getUIConfig()
-const footerTheme = uiConfig.colors ? createFooterTheme() : footerThemeDefault
 
 const footer = scv(footerTheme)
 

@@ -3,11 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { HoverCardProps } from "./hover-card"
+import { resolveTheme } from "../../utils/resolveTheme"
 import hoverCardThemeDefault, { createHoverCardTheme } from "./hover-card.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const hoverCardTheme = resolveTheme(hoverCardThemeDefault, createHoverCardTheme)
 
-const uiConfig = getUIConfig()
-const hoverCardTheme = uiConfig.colors ? createHoverCardTheme() : hoverCardThemeDefault
 
 const hoverCard = scv(hoverCardTheme)
 

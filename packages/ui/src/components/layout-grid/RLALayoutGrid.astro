@@ -3,11 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { LayoutGridProps } from "./layout-grid"
-import layoutGridThemeDefault, { createLayoutGridTheme } from "./layout-grid.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+import layoutGridTheme from "./layout-grid.theme"
 
-const uiConfig = getUIConfig()
-const layoutGridTheme = uiConfig.colors ? createLayoutGridTheme() : layoutGridThemeDefault
 const layoutGrid = scv(layoutGridTheme)
 
 const {

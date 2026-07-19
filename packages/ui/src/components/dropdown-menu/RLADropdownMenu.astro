@@ -3,13 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DropdownMenuProps } from "./dropdown-menu"
-import dropdownMenuThemeDefault, { createDropdownMenuTheme } from "./dropdown-menu.theme"
+import dropdownMenuTheme from "./dropdown-menu.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-import { getUIConfig } from "virtual:rimelight-ui"
 
-const uiConfig = getUIConfig()
-const dropdownMenuTheme = uiConfig.colors ? createDropdownMenuTheme() : dropdownMenuThemeDefault
 const dropdownMenu = scv(dropdownMenuTheme)
 
 const {

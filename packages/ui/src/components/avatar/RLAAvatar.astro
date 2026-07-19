@@ -3,12 +3,11 @@ import { scv, cx } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { AvatarProps } from "./avatar"
+import { resolveTheme } from "../../utils/resolveTheme"
 import avatarThemeDefault, { createAvatarTheme } from "./avatar.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
+const avatarTheme = resolveTheme(avatarThemeDefault, createAvatarTheme)
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const uiConfig = getUIConfig()
-const avatarTheme = uiConfig.colors ? createAvatarTheme(uiConfig.colors) : avatarThemeDefault
 
 const avatar = scv(avatarTheme)
 
