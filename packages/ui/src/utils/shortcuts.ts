@@ -49,8 +49,8 @@ const macOS =
 const kbdKeysMap: Record<string, string> = {
   meta: macOS ? "⌘" : "Ctrl",
   command: macOS ? "⌘" : "Ctrl",
-  ctrl: macOS ? "Ctrl" : "Ctrl",
-  control: macOS ? "Ctrl" : "Ctrl",
+  ctrl: "Ctrl",
+  control: "Ctrl",
   alt: macOS ? "⌥" : "Alt",
   option: macOS ? "⌥" : "Alt",
   shift: macOS ? "⇧" : "Shift",

@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../types/theme"
+import type { Theme, ThemeColor } from "../../types/component"
 
 export interface ColorFieldProps {
   channel?: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"

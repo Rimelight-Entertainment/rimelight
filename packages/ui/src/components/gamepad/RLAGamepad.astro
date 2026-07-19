@@ -176,3 +176,51 @@ const mainButtons: Button[] = [
       </div>
   )}
 </div>
+
+<style is:global>
+  .gamepad-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    border-radius: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.5rem 0;
+    box-sizing: border-box;
+    container-type: inline-size;
+    border: 1px solid #1a1a2e;
+  }
+  .gamepad-container {
+    width: 100%;
+    max-width: 27.5rem;
+  }
+  .gamepad-svg {
+    width: 100%;
+    height: auto;
+  }
+  .gp-btn rect,
+  .gp-btn circle {
+    fill: #1e1e30;
+    stroke: #33334d;
+    stroke-width: 1;
+    transition: all 0.2s ease;
+  }
+  .btn-label {
+    fill: #555570;
+    font-size: 0.625rem;
+    font-family: var(--font-sans, system-ui);
+    font-weight: 800;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .gp-btn.active rect,
+  .gp-btn.active circle {
+    fill: var(--hl-color, #00c16a);
+    stroke: #ffffff33;
+    stroke-width: 1.5;
+  }
+  .gp-btn.active .btn-label {
+    fill: #fff;
+  }
+</style>

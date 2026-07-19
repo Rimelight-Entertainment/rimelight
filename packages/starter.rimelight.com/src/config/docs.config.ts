@@ -1,6 +1,7 @@
 import { defineDocsConfig } from "@rimelight/docs"
+import type { DocsConfig } from "@rimelight/docs"
 
-export default defineDocsConfig({
+const config: DocsConfig = {
   editLink: {
     baseUrl:
       "https://github.com/rimelight/rimelight/edit/main/packages/playground/src/content/docs/"
@@ -35,4 +36,6 @@ export default defineDocsConfig({
       ]
     }
   ]
-})
+}
+
+export default defineDocsConfig(config)

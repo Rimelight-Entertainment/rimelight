@@ -1,4 +1,4 @@
-import { DEFAULT_ICONS } from "./defaults"
+import { DEFAULT_ICONS } from "../../icons/defaults"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 export interface ResolvedIcon {

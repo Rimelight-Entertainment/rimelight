@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../types/theme"
+import type { Theme, ThemeColor } from "../../types/component"
 
 export interface InputProps {
   /**
@@ -54,7 +54,7 @@ export interface InputProps {
    */
   color?: ThemeColor
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
   theme?: Theme
   /**

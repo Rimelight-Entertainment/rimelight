@@ -1,5 +1,5 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../types/theme"
+import { defineTheme } from "../../themes"
 
 export const createAspectRatioTheme = (_colors: readonly string[] = colorConfig.colors) =>
   defineTheme({

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../types/theme"
+import { defineTheme } from "../../themes"
 
 export const createFormTheme = () =>
   defineTheme({

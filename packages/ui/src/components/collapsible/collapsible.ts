@@ -1,4 +1,4 @@
-import type { ThemeColor } from "../../types/theme"
+import type { ThemeColor } from "../../types/component"
 export interface CollapsibleProps {
   /**
    * Controlled open state.

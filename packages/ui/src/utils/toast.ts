@@ -1,5 +1,5 @@
 import { atom } from "nanostores"
-import type { ThemeColor } from "../types/theme"
+import type { ThemeColor } from "../types/component"
 
 export interface Toast {
   id?: string | number
@@ -29,11 +29,8 @@ export function addToast(toast: Toast) {
 
 export function removeToast(id: string | number) {
   const currentToasts = toastsStore.get()
-  const idx = currentToasts.findIndex((t) => t.id === id)
-  if (idx === -1) return
-  const target = currentToasts[idx]!
+  const target = currentToasts.find((t) => t.id === id)
+  if (!target) return
   if (target.callback) target.callback()
-  const next = currentToasts.slice()
-  next.splice(idx, 1)
-  toastsStore.set(next)
+  toastsStore.set(currentToasts.filter((t) => t.id !== id))
 }

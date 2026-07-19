@@ -1,13 +1,15 @@
 import { cx } from "css-variants"
 import { getUIConfig } from "virtual:rimelight-ui"
 
+// Hoisted once at module load — getUIConfig() returns a static frozen object.
+const uiConfig = getUIConfig()
+
 export function resolveClasses<T extends (...args: never[]) => Record<string, string>>(
   themeFn: T,
   variants: Parameters<T>[0],
   mergedUI: Record<string, string | Function | undefined>,
   rootClass?: string
 ): Record<string, string> {
-  const uiConfig = getUIConfig()
   const isUnstyled = uiConfig?.unstyled === true
 
   const resolved = isUnstyled ? {} : themeFn(variants)

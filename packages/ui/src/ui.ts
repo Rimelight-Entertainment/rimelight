@@ -9,6 +9,7 @@ import type { RimelightPresetOptions } from "./presets"
 
 export type { UIConfig } from "./config/ui.config"
 export type { RimelightIcons } from "./icons/defaults"
+export { defineTheme } from "./themes"
 
 export function ui(options: UIConfig = {}): AstroIntegration[] {
   let astroLogger: any = null
@@ -33,33 +34,13 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
 
   const userUnoConfig = options.unocss ?? {}
 
-  const rawPipeline =
-    userUnoConfig.content &&
-    typeof userUnoConfig.content === "object" &&
-    "pipeline" in userUnoConfig.content
-      ? userUnoConfig.content.pipeline
-      : undefined
-  const rawIncludes =
-    rawPipeline && typeof rawPipeline === "object" && "include" in rawPipeline
-      ? rawPipeline.include
-      : undefined
-  const userPipelineIncludes = rawIncludes
-    ? Array.isArray(rawIncludes)
-      ? rawIncludes
-      : [rawIncludes]
+  const contentObj = typeof userUnoConfig.content === "object" ? userUnoConfig.content : null
+  const rawIncludes = (contentObj as any)?.pipeline?.include
+  const userPipelineIncludes: (string | RegExp)[] = rawIncludes
+    ? ([rawIncludes].flat() as (string | RegExp)[])
     : []
-
-  const rawFilesystem =
-    userUnoConfig.content &&
-    typeof userUnoConfig.content === "object" &&
-    "filesystem" in userUnoConfig.content
-      ? userUnoConfig.content.filesystem
-      : undefined
-  const userFilesystem = rawFilesystem
-    ? Array.isArray(rawFilesystem)
-      ? rawFilesystem
-      : [rawFilesystem]
-    : []
+  const rawFilesystem = (contentObj as any)?.filesystem
+  const userFilesystem: string[] = rawFilesystem ? ([rawFilesystem].flat() as string[]) : []
 
   return [
     UnoCSS({

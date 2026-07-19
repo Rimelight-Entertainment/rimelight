@@ -1,5 +1,5 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../types/theme"
+import { defineTheme } from "../../themes"
 
 export const createCheckboxTheme = (colors: readonly string[] = colorConfig.colors) =>
   defineTheme({

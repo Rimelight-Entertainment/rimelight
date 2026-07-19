@@ -1,8 +1,8 @@
-import type { Theme } from "../../types/theme"
+import type { Theme } from "../../types/component"
 
 export interface ChipProps {
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
   theme?: Theme
   /**

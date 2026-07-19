@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../types/theme"
+import type { Theme, ThemeColor } from "../../types/component"
 import type { LinkProps } from "../link/link"
 
 export interface ButtonProps extends LinkProps {
@@ -59,7 +59,7 @@ export interface ButtonProps extends LinkProps {
    */
   activeVariant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link"
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
   theme?: Theme
   /**

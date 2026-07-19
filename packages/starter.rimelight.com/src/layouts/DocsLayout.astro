@@ -11,7 +11,7 @@ import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/docs";
 import type { ResolvedSidebarItem } from "@rimelight/docs";
 import docsConfig from "@/config/docs.config";
-import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents";
+import type { TableOfContentsConfig } from "@rimelight/docs";
 
 
 function normalizeBadge(badge: any) {
@@ -102,7 +102,7 @@ const prev = prevOverride ?? surround.prev;
 const next = nextOverride ?? surround.next;
 
 // Resolve TOC config: per-page overrides site default
-const globalToc = docsConfig.tableOfContents ?? { minHeadingLevel: 2, maxHeadingLevel: 3 };
+const globalToc = (docsConfig as import('@rimelight/docs').DocsConfig).tableOfContents ?? { minHeadingLevel: 2, maxHeadingLevel: 3 };
 const resolvedToc = tocOverride !== undefined ? tocOverride : globalToc;
 
 // Resolve edit URL: per-page > config base > disabled

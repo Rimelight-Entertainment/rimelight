@@ -105,15 +105,17 @@ export interface RimelightPresetOptions {
 export default definePreset((options?: RimelightPresetOptions) => {
   const userColors = options?.colors ?? {}
   const autoGen = options?.autogenerateColorModes ?? true
-  const mergedColorScales = { ...colorConfig.scales, ...userColors }
   const allColors = [...new Set([...colorConfig.colors, ...Object.keys(userColors)])]
 
-  const resolvedColors = Object.fromEntries(
-    Object.entries(mergedColorScales).map(([name, entry]) => [
-      name,
-      resolveColorModes(entry, autoGen)
-    ])
+  // Built-in scales already have explicit {light, dark} buckets — pass through directly.
+  // Only user-provided colors need resolveColorModes (they may be flat shades or partial modes).
+  const resolvedBuiltins = Object.fromEntries(
+    Object.entries(colorConfig.scales).map(([name, entry]) => [name, entry])
   )
+  const resolvedUserColors = Object.fromEntries(
+    Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
+  )
+  const resolvedColors = { ...resolvedBuiltins, ...resolvedUserColors }
 
   const safelist = allColors.flatMap((color) => ["rl-color-" + color])
 
@@ -161,7 +163,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
     },
 
     shortcuts: {
-      "container": "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl",
+      "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl lg:px-xl",
       "sr-only":
         "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
     },
@@ -366,13 +368,15 @@ export default definePreset((options?: RimelightPresetOptions) => {
           // Single pass: emit light-dark() for every color shade.
           // The browser resolves each call based on the element's inherited color-scheme.
           const lightDarkLines = Object.entries(resolvedColors)
-            .flatMap(([color, modes]) =>
-              Object.keys(modes.light).map((shade) => {
-                const l = modes.light[shade]
-                const d = modes.dark[shade] ?? modes.light[shade]
+            .flatMap(([color, modes]) => {
+              const light = modes.light as Record<string, string>
+              const dark = (modes.dark ?? modes.light) as Record<string, string>
+              return Object.keys(light).map((shade) => {
+                const l = light[shade]
+                const d = dark[shade] ?? l
                 return `            --color-${color}-${shade}: light-dark(${l}, ${d});`
               })
-            )
+            })
             .join("\n")
 
           return `
@@ -450,8 +454,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
           --font-mono: "Noto Sans Mono", monospace;
 
           --ui-header-height: 4rem;
-          --ui-container: 80rem;
-          --rl-container: 1440px;
+          --rl-container: 90rem;
 
           /* Text / background / border / ring semantic tokens using responsive neutral variables */
           --text-color-default: var(--color-neutral-700);
@@ -534,82 +537,6 @@ ${lightDarkLines}
           outline-offset: 2px;
         }
 
-        /* ── Keyboard component ──────────────────────────────────────────── */
-        .keyboard-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 16px;
-          border-radius: 12px;
-          width: 100%;
-          max-width: 100%;
-          margin: 16px 0;
-          box-sizing: border-box;
-        }
-        .keyboard-container {
-          width: 100%;
-          display: flex;
-          justify-content: center;
-        }
-        .keyboard-svg {
-          width: 100%;
-          height: auto;
-          max-width: 900px;
-        }
-        .kb-key-label {
-          font-family: var(--font-mono, monospace);
-          font-size: 10px;
-          font-weight: 600;
-          pointer-events: none;
-          user-select: none;
-        }
-
-        /* ── Gamepad component ───────────────────────────────────────────── */
-        .gamepad-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 48px;
-          border-radius: 24px;
-          width: 100%;
-          max-width: 100%;
-          margin: 24px 0;
-          box-sizing: border-box;
-          container-type: inline-size;
-          border: 1px solid #1a1a2e;
-        }
-        .gamepad-container {
-          width: 100%;
-          max-width: 440px;
-        }
-        .gamepad-svg {
-          width: 100%;
-          height: auto;
-        }
-        .gp-btn rect,
-        .gp-btn circle {
-          fill: #1e1e30;
-          stroke: #33334d;
-          stroke-width: 1;
-          transition: all 0.2s ease;
-        }
-        .btn-label {
-          fill: #555570;
-          font-size: 10px;
-          font-family: var(--font-sans, system-ui);
-          font-weight: 800;
-          pointer-events: none;
-          line-height: 1;
-        }
-        .gp-btn.active rect,
-        .gp-btn.active circle {
-          fill: var(--hl-color, #00c16a);
-          stroke: #ffffff33;
-          stroke-width: 1.5;
-        }
-        .gp-btn.active .btn-label {
-          fill: #fff;
-        }
         `
         }
       }

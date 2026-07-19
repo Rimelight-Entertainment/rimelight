@@ -317,3 +317,34 @@ if (variant === 'full') {
       </div>
   )}
 </div>
+
+<style is:global>
+  .keyboard-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0;
+    box-sizing: border-box;
+  }
+  .keyboard-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .keyboard-svg {
+    width: 100%;
+    height: auto;
+    max-width: 56.25rem;
+  }
+  .kb-key-label {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.625rem;
+    font-weight: 600;
+    pointer-events: none;
+    user-select: none;
+  }
+</style>

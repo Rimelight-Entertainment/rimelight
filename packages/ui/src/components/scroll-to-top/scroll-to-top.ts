@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../types/theme"
+import type { Theme, ThemeColor } from "../../types/component"
 
 export interface ScrollToTopProps {
   /**
@@ -22,7 +22,7 @@ export interface ScrollToTopProps {
    */
   showProgress?: boolean
   /**
-   * Theme mode override — pins colors to flat, light, or dark mode.
+   * Theme mode override â€” pins colors to flat, light, or dark mode.
    */
   theme?: Theme
   /**
