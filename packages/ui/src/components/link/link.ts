@@ -95,7 +95,7 @@ export interface LinkProps {
    *
    * @default "page"
    */
-  ariaCurrentValue?: string
+  ariaCurrentValue?: "page" | "step" | "location" | "date" | "time" | "true" | "false" | boolean
   /**
    * Force a color-scheme context on the component.
    */
