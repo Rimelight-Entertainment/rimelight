@@ -49,6 +49,8 @@ const linkHref = computed(() => props.href)
 const localizedHref = computed(() => {
   const path = linkHref.value
   if (!path || props.locale === false) return path
+  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("//"))
+    return path
   if (localePath) {
     return typeof props.locale === "string" ? localePath(path, props.locale) : localePath(path)
   }
@@ -91,7 +93,7 @@ const isLinkActive = computed(() => {
   return currentPath.startsWith(linkPath)
 })
 
-const isLeading = computed(() => !!(props.leadingIcon))
+const isLeading = computed(() => !!props.leadingIcon)
 
 const showTrailingIcon = computed(() => {
   if (isExternal.value && !props.noExternalIcon && !props.trailingIcon) {
@@ -162,7 +164,12 @@ const prefetchAttr = computed(() => {
   >
     <slot name="leading">
       <span v-if="isLeading" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
-        <RLVIcon :name="props.leadingIcon" size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+        <RLVIcon
+          :name="props.leadingIcon"
+          size="sm"
+          class="!-translate-y-[1.5px]"
+          aria-hidden="true"
+        />
       </span>
     </slot>
 
@@ -177,7 +184,12 @@ const prefetchAttr = computed(() => {
 
     <slot name="trailing">
       <span v-if="showTrailingIcon" :class="resolvedClasses.trailingIcon" data-slot="trailing-icon">
-        <RLVIcon :name="showTrailingIcon" size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+        <RLVIcon
+          :name="showTrailingIcon"
+          size="sm"
+          class="!-translate-y-[1.5px]"
+          aria-hidden="true"
+        />
       </span>
     </slot>
 

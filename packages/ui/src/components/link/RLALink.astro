@@ -38,7 +38,10 @@ const rawHref = href
 
 // ---- i18n auto-localization ----
 let localizedHref = rawHref
-if (rawHref && locale !== false) {
+if (rawHref && locale !== false &&
+    !rawHref.startsWith("http://") &&
+    !rawHref.startsWith("https://") &&
+    !rawHref.startsWith("//")) {
   try {
     const rimelight = await import("@rimelight/i18n")
     if (typeof locale === "string") {

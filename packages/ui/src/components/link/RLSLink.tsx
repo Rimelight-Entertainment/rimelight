@@ -40,6 +40,14 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
 
   const linkHref = createMemo(() => props.href)
 
+  const localizedHref = createMemo(() => {
+    const path = linkHref()
+    if (!path || props.locale === false) return path
+    if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("//"))
+      return path
+    return path
+  })
+
   const isExternal = createMemo(
     () =>
       !!(
@@ -65,8 +73,6 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     if (isExternal()) return false
     return false
   })
-
-  const isLeading = createMemo(() => !!(props.leadingIcon))
 
   const showTrailingIcon = createMemo(() => {
     if (isExternal() && !props.noExternalIcon && !props.trailingIcon) {
@@ -98,13 +104,6 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     )
   })
 
-  const iconEl = createMemo(() => {
-    const icon = showExternalIcon()
-    return icon ? (
-      <RLSIcon name={icon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
-    ) : null
-  })
-
   const prefetchAttr = createMemo(() => {
     if (!props.prefetch) return undefined
     if (typeof props.prefetch === "string") return props.prefetch
@@ -123,7 +122,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     <a
       class={classes().root}
       data-slot="root"
-      href={!props.disabled ? linkHref() : undefined}
+      href={!props.disabled ? localizedHref() : undefined}
       target={linkTarget()}
       rel={linkRel()}
       aria-label={props.ariaLabel}
@@ -135,7 +134,12 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     >
       {props.leadingIcon ? (
         <span class={classes().leadingIcon} data-slot="leading-icon">
-          <RLSIcon name={props.leadingIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+          <RLSIcon
+            name={props.leadingIcon}
+            size="sm"
+            class="!-translate-y-[1.5px]"
+            aria-hidden="true"
+          />
         </span>
       ) : null}
 
@@ -149,7 +153,12 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
 
       {showTrailingIcon() ? (
         <span class={classes().trailingIcon} data-slot="trailing-icon">
-          <RLSIcon name={showTrailingIcon()!} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+          <RLSIcon
+            name={showTrailingIcon()!}
+            size="sm"
+            class="!-translate-y-[1.5px]"
+            aria-hidden="true"
+          />
         </span>
       ) : null}
 

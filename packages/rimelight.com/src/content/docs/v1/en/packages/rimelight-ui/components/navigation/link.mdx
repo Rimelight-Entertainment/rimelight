@@ -257,7 +257,7 @@ Enable Astro's built-in prefetching by setting the `prefetch` prop. Accepts `tru
 
 ### i18n Auto-Localization
 
-When `@rimelight/i18n` or Astro i18n is configured, the link automatically localizes paths to the current locale. Set `locale` to `false` to disable, or pass a specific locale code.
+When Astro i18n is configured, the link automatically localizes paths to the current locale. Set `locale` to `false` to disable, or pass a specific locale code.
 
 <ComponentShowcase>
   <div class="flex flex-col gap-2 items-start">
@@ -291,30 +291,26 @@ When `@rimelight/i18n` or Astro i18n is configured, the link automatically local
 
 ### Active State
 
-Force the active state with the `active` prop. The component can also auto-detect it from the current route (Astro: `Astro.url`, Vue: `vue-router`).
+Force the active state with the `active` prop.
 
 <ComponentShowcase>
   <div class="flex flex-col gap-2 items-start">
-    <RLALink href="/" active label="Active Link" />
-    <RLALink href="/" label="Default Link" />
+    <RLALink href="/" active label="Home" />
   </div>
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="/" active label="Active Link" />
-    <RLALink href="/" label="Default Link" />
+    <RLALink href="/" active label="Home" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="/" active label="Active Link" />
-    <RLVLink href="/" label="Default Link" />
+    <RLVLink href="/" active label="Home" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="/" active label="Active Link" />
-    <RLSLink href="/" label="Default Link" />
+    <RLSLink href="/" active label="Home" />
     ```
   </div>
 </ComponentShowcase>
@@ -354,21 +350,21 @@ When the `exact` prop is set, the link is only active if the current path is an 
 The `disabled` prop prevents navigation, adds `aria-disabled`, and applies disabled styling.
 
 <ComponentShowcase>
-  <RLALink href="/" disabled label="Cannot Click" />
+  <RLALink href="/" disabled label="Home" />
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="/" disabled label="Cannot Click" />
+    <RLALink href="/" disabled label="Home" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="/" disabled label="Cannot Click" />
+    <RLVLink href="/" disabled label="Home" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="/" disabled label="Cannot Click" />
+    <RLSLink href="/" disabled label="Home" />
     ```
   </div>
 </ComponentShowcase>
@@ -436,21 +432,21 @@ Provide an `ariaLabel` for screen readers. When set on an external link, the "(o
 Customize the `aria-current` value when the link is active using the `ariaCurrentValue` prop. Defaults to `"page"`.
 
 <ComponentShowcase>
-  <RLALink href="/docs" exact ariaCurrentValue="page" label="Docs" />
+  <RLALink href="/" exact ariaCurrentValue="page" label="Home" />
 
   <div slot="code-astro">
     ```astro
-    <RLALink href="/docs" exact ariaCurrentValue="page" label="Docs" />
+    <RLALink href="/" exact ariaCurrentValue="page" label="Home" />
     ```
   </div>
   <div slot="code-vue">
     ```vue
-    <RLVLink href="/docs" exact ariaCurrentValue="page" label="Docs" />
+    <RLVLink href="/" exact ariaCurrentValue="page" label="Home" />
     ```
   </div>
   <div slot="code-solid">
     ```tsx
-    <RLSLink href="/docs" exact ariaCurrentValue="page" label="Docs" />
+    <RLSLink href="/" exact ariaCurrentValue="page" label="Home" />
     ```
   </div>
 </ComponentShowcase>
