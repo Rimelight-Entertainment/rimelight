@@ -46,20 +46,21 @@ const classes = raw
       className
     )
 
-const defaultSlotHtml = Astro.slots.has("default")
-  ? await Astro.slots.render("default", [{ active: !!active }])
-  : "";
+const defaultSlotHtml =
+  (label === undefined || label === null) && Astro.slots.has("default")
+    ? await Astro.slots.render("default", [{ active: !!active }])
+    : "";
 ---
 
 <a
   class={classes.root}
   data-slot="root"
-  href={disabled ? undefined : href}
+  href={attrs.href}
   target={attrs.target}
   rel={attrs.rel}
   aria-label={ariaLabel}
   aria-current={attrs.ariaCurrent}
-  aria-disabled={disabled ? "true" : undefined}
+  aria-disabled={attrs.ariaDisabled}
   data-astro-prefetch={attrs.prefetchAttr}
   {...rest}
 >

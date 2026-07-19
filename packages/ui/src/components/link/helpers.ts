@@ -11,12 +11,14 @@ export function resolveLinkAttrs(props: Partial<LinkProps>) {
   const target = props.target || (isExternal ? "_blank" : undefined)
 
   const rel =
-    props.rel === null || props.rel === ""
+    props.rel === "" || props.rel === null
       ? undefined
       : (props.rel ??
         (isExternal || (target && target !== "_self") ? "noopener noreferrer" : undefined))
 
-  const ariaCurrent = props.active ? (props.ariaCurrentValue ?? "page") : undefined
+  const rawAriaCurrent = props.active ? (props.ariaCurrentValue ?? "page") : undefined
+  const ariaCurrent =
+    rawAriaCurrent === true ? "true" : rawAriaCurrent === false ? "false" : rawAriaCurrent
 
   const prefetchAttr = props.prefetch
     ? typeof props.prefetch === "string"
@@ -24,12 +26,17 @@ export function resolveLinkAttrs(props: Partial<LinkProps>) {
       : "viewport"
     : undefined
 
+  const href = props.disabled ? undefined : props.href
+  const ariaDisabled: "true" | undefined = props.disabled ? "true" : undefined
+
   return {
     isExternal,
     showTrailingIcon,
     target,
     rel,
     ariaCurrent,
-    prefetchAttr
+    prefetchAttr,
+    href,
+    ariaDisabled
   }
 }

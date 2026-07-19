@@ -4,7 +4,14 @@ export interface LinkGroupProps {
   /**
    * Backward compatible title property.
    */
-  title?: string | { label: string; leadingIcon?: string; trailingIcon?: string; href?: string }
+  title?:
+    | string
+    | {
+        label: string
+        leadingIcon?: string
+        trailingIcon?: string
+        href?: string
+      }
   /**
    * The direct text label of the group heading.
    */
@@ -21,10 +28,6 @@ export interface LinkGroupProps {
    * Hyperlink target URL for the group heading.
    */
   href?: string
-  /**
-   * Router/locale link target for the group heading.
-   */
-  to?: string | object
   /**
    * The links in the group. Supports full button/link properties.
    */

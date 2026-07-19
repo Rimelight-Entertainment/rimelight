@@ -63,12 +63,12 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     <a
       class={classes().root}
       data-slot="root"
-      href={!props.disabled ? props.href : undefined}
+      href={attrs().href}
       target={attrs().target}
       rel={attrs().rel}
       aria-label={props.ariaLabel}
       aria-current={attrs().ariaCurrent}
-      aria-disabled={props.disabled ? "true" : undefined}
+      aria-disabled={attrs().ariaDisabled}
       data-astro-prefetch={attrs().prefetchAttr}
       {...rest}
     >

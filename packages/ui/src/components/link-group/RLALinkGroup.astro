@@ -16,7 +16,6 @@ const {
   leadingIcon,
   trailingIcon,
   href,
-  to,
   links = [],
   theme,
   ui: uiProp,
@@ -30,7 +29,6 @@ const headingLabel = label || (typeof title === "object" ? title.label : (typeof
 const headingLeadingIcon = leadingIcon || (typeof title === "object" ? title.leadingIcon : undefined);
 const headingTrailingIcon = trailingIcon || (typeof title === "object" ? title.trailingIcon : undefined);
 const headingHref = href || (typeof title === "object" ? title.href : undefined);
-const headingTo = to || (typeof title === "object" ? (title as any).to : undefined);
 
 const linksProp = links ?? [];
 const normalizedLinks = Array.isArray(linksProp) ? linksProp : [linksProp];
@@ -61,8 +59,8 @@ const overrideLinkClass = classes.link
 <div class={classes.root} data-slot="root" {...rest}>
   {headingLabel && (
     <h4 class={classes.title} data-slot="title">
-      {headingHref || headingTo ? (
-        <a href={headingHref || (typeof headingTo === 'string' ? headingTo : undefined)} class="hover:underline flex items-center gap-1.5">
+      {headingHref ? (
+        <a href={headingHref} class="hover:underline flex items-center gap-1.5">
           {headingLeadingIcon && <span class={headingLeadingIcon} />}
           <span>{headingLabel}</span>
           {headingTrailingIcon && <span class={headingTrailingIcon} />}
@@ -86,9 +84,7 @@ const overrideLinkClass = classes.link
             class:list={[overrideLinkClass, "w-full !justify-start"]}
             data-slot="link"
             {...link}
-          >
-            {link.label}
-          </RLALink>
+          />
         </li>
       ))}
     </slot>

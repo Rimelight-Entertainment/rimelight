@@ -42,12 +42,12 @@ const resolvedClasses = computed(() => {
 
 <template>
   <a
-    :href="!props.disabled ? props.href : undefined"
+    :href="attrs.href"
     :target="attrs.target"
     :rel="attrs.rel"
     :aria-label="props.ariaLabel"
     :aria-current="attrs.ariaCurrent"
-    :aria-disabled="props.disabled ? 'true' : undefined"
+    :aria-disabled="attrs.ariaDisabled"
     :data-astro-prefetch="attrs.prefetchAttr"
     :class="resolvedClasses.root"
     data-slot="root"
@@ -65,7 +65,7 @@ const resolvedClasses = computed(() => {
     >
       {{ props.label }}
     </span>
-    <slot v-else :active="props.active" />
+    <slot v-else :active="!!props.active" />
 
     <slot name="trailing">
       <span
@@ -78,7 +78,7 @@ const resolvedClasses = computed(() => {
     </slot>
 
     <span v-if="attrs.isExternal && !props.ariaLabel" class="sr-only" data-slot="external-hint">
-      (opens in a new tab)</span
-    >
+      (opens in a new tab)
+    </span>
   </a>
 </template>
