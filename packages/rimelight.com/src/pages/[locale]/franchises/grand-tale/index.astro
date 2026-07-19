@@ -1,5 +1,5 @@
 ---
-import AppLayout from "@/layouts/AppLayout.astro";
+import GrandTaleLayout from "@/layouts/GrandTaleLayout.astro";
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
 import RLAVideo from "@rimelight/ui/components/video/RLAVideo.astro";
 
@@ -47,7 +47,7 @@ const overviewLinks = [
 ];
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
+<GrandTaleLayout title={messages.title} description={messages.description}>
   <!-- Hero Section -->
   <RLAPageSection
     variant="hero"
@@ -123,4 +123,4 @@ const overviewLinks = [
       </div>
     </div>
   </section>
-</AppLayout>
+</GrandTaleLayout>

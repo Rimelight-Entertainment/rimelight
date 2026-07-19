@@ -1,5 +1,5 @@
 ---
-import AppLayout from "@/layouts/AppLayout.astro";
+import GrandTaleLayout from "@/layouts/GrandTaleLayout.astro";
 import RLAAccordion from "@rimelight/ui/components/accordion/RLAAccordion.astro";
 import { useI18n } from "@rimelight/i18n";
 
@@ -26,7 +26,7 @@ const faqItems = [
 ];
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
+<GrandTaleLayout title={messages.title} description={messages.description}>
   <div class="flex flex-col gap-16 md:gap-24 pb-24 bg-neutral-950 text-white">
     <!-- Hero Section -->
     <section class="flex flex-col items-center justify-center text-center px-4 py-24 md:py-32 gap-6 relative overflow-hidden">
@@ -87,4 +87,4 @@ const faqItems = [
       </div>
     </section>
   </div>
-</AppLayout>
+</GrandTaleLayout>

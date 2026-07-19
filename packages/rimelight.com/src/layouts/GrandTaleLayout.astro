@@ -1,0 +1,18 @@
+---
+import AppLayout from './AppLayout.astro';
+import GrandTaleHeader from '@/components/franchises/grand-tale/GrandTaleHeader.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = 'Grand Tale', description = 'Grand Tale' } = Astro.props;
+---
+
+<AppLayout title={title} description={description}>
+	<GrandTaleHeader />
+	<div class="bg-grand-tale-primary-900 min-h-screen">
+		<slot />
+	</div>
+</AppLayout>

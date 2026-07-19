@@ -1,5 +1,5 @@
 ---
-import AppLayout from "@/layouts/AppLayout.astro";
+import GuidesLayout from "@/layouts/GuidesLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { useI18n } from "@rimelight/i18n";
 
@@ -22,7 +22,7 @@ const messages = useI18n(Astro, "grand_tale_build_planners", {
 });
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
+<GuidesLayout title={messages.title} description={messages.description}>
   <div class="py-24 bg-neutral-950 text-white min-h-screen">
     <div class="max-w-4xl mx-auto px-4 space-y-16">
       <section class="space-y-6">
@@ -82,4 +82,4 @@ const messages = useI18n(Astro, "grand_tale_build_planners", {
       </section>
     </div>
   </div>
-</AppLayout>
+</GuidesLayout>

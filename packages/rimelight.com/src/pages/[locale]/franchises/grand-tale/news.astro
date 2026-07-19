@@ -1,5 +1,5 @@
 ---
-import AppLayout from "@/layouts/AppLayout.astro";
+import GrandTaleLayout from "@/layouts/GrandTaleLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { useI18n } from "@rimelight/i18n";
 
@@ -38,7 +38,7 @@ const newsItems = [
 ];
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
+<GrandTaleLayout title={messages.title} description={messages.description}>
   <div class="py-24 bg-neutral-950 min-h-[80vh]">
     <div class="max-w-4xl mx-auto px-4 space-y-12">
       <div class="space-y-4">
@@ -81,4 +81,4 @@ const newsItems = [
       </div>
     </div>
   </div>
-</AppLayout>
+</GrandTaleLayout>

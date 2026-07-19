@@ -1,0 +1,57 @@
+---
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
+
+const categories = [
+	{ label: "All Products", icon: "i-lucide-grid-3x3", to: "/store" },
+	{ label: "Digital Goods", icon: "i-lucide-zap", to: "/store/digital" },
+];
+
+const supportLinks = [
+	{ label: "Shipping Policy", to: "/legal/shipping-policy" },
+	{ label: "Contact Support", to: "/franchises/grand-tale/support" },
+];
+---
+
+<div class="flex flex-col gap-6 p-4">
+	<div class="flex flex-col gap-3">
+		<h3 class="text-xs font-black uppercase tracking-widest text-gray-400 px-4">
+			Browse
+		</h3>
+		<nav class="flex flex-col gap-1">
+			{categories.map((cat) => (
+				<a
+					href={getRelativeLocaleUrl(cat.to)}
+					class="text-sm font-medium text-gray-600 hover:text-primary-500 px-4 py-2 transition-colors"
+				>
+					{cat.label}
+				</a>
+			))}
+		</nav>
+	</div>
+
+	<div class="rounded-2xl bg-primary-500/5 border border-primary-500/10 p-5 flex flex-col gap-1">
+		<span class="text-xs font-bold text-primary-500/60 uppercase tracking-tight">
+			Active Offers
+		</span>
+		<span class="text-2xl font-black text-primary-600">10% OFF</span>
+		<p class="text-[10px] text-gray-500 leading-tight">
+			Apply 'RIMELIGHT' at checkout for your first order.
+		</p>
+	</div>
+
+	<div class="flex flex-col gap-3 mt-auto">
+		<h3 class="text-xs font-black uppercase tracking-widest text-gray-400 px-4">
+			Help Center
+		</h3>
+		<nav class="flex flex-col gap-1 px-4 text-sm">
+			{supportLinks.map((link) => (
+				<a
+					href={getRelativeLocaleUrl(link.to)}
+					class="text-gray-500 hover:text-primary-500 transition-colors py-1"
+				>
+					{link.label}
+				</a>
+			))}
+		</nav>
+	</div>
+</div>
