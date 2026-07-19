@@ -82,8 +82,6 @@ const overrideLinkClass = classes.link
       {normalizedLinks.map((link) => (
         <li class={classes.item} data-slot="item">
           <RLALink
-            variant={link.variant ?? "ghost"}
-            color={link.color ?? "neutral"}
             theme={link.theme ?? theme}
             class:list={[overrideLinkClass, "w-full !justify-start"]}
             data-slot="link"

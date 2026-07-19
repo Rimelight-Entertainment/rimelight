@@ -5,6 +5,7 @@ import { resolveClasses } from "../../utils/resolveClasses"
 import type { LinkProps } from "./link"
 import linkTheme from "./link.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
+import { resolveLinkAttrs } from "./helpers"
 
 const link = scv(linkTheme)
 
@@ -30,11 +31,7 @@ const {
   ...rest
 } = Astro.props as LinkProps
 
-const isExternal = !!(external || (href && /^(?:https?:)?\/\//.test(href)))
-
-const showTrailingIcon = isExternal && !noExternalIcon && !trailingIcon
-  ? (externalIcon || "externalLink")
-  : trailingIcon
+const attrs = resolveLinkAttrs(Astro.props)
 
 const classes = raw
   ? ({ root: className || "" } as Record<string, string>)
@@ -48,16 +45,20 @@ const classes = raw
       useUi("link", uiProp),
       className
     )
+
+const defaultSlotHtml = Astro.slots.has("default")
+  ? await Astro.slots.render("default", [{ active: !!active }])
+  : "";
 ---
 
 <a
   class={classes.root}
   data-slot="root"
   href={disabled ? undefined : href}
-  target={target || (isExternal ? "_blank" : undefined)}
-  rel={rel === null || rel === "" ? undefined : (rel ?? (isExternal || (target && target !== "_self") ? "noopener noreferrer" : undefined))}
+  target={attrs.target}
+  rel={attrs.rel}
   aria-label={ariaLabel}
-  aria-current={active ? ariaCurrentValue : undefined}
+  aria-current={attrs.ariaCurrent}
   aria-disabled={disabled ? "true" : undefined}
   data-astro-prefetch={prefetch ? (typeof prefetch === "string" ? prefetch : "viewport") : undefined}
   {...rest}
@@ -65,7 +66,7 @@ const classes = raw
   <slot name="leading">
     {leadingIcon && (
       <span class={classes.leadingIcon} data-slot="leading-icon">
-        <RLAIcon name={leadingIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
+        <RLAIcon name={leadingIcon} size="sm" aria-hidden="true" />
       </span>
     )}
   </slot>
@@ -73,23 +74,22 @@ const classes = raw
   {label !== undefined && label !== null ? (
     <span class={classes.label} data-slot="label">{label}</span>
   ) : (
-    <slot />
+    <Fragment set:html={defaultSlotHtml} />
   )}
 
   <slot name="trailing">
-    {showTrailingIcon && (
+    {attrs.showTrailingIcon && (
       <span class={classes.trailingIcon} data-slot="trailing-icon">
         <RLAIcon
-          name={showTrailingIcon}
+          name={attrs.showTrailingIcon}
           size="sm"
-          class="!-translate-y-[1.5px]"
           aria-hidden="true"
         />
       </span>
     )}
   </slot>
 
-  {isExternal && !ariaLabel && (
+  {attrs.isExternal && !ariaLabel && (
     <span class="sr-only" data-slot="external-hint">
       (opens in a new tab)
     </span>
