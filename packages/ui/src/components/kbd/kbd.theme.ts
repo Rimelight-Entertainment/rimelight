@@ -1,18 +1,19 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 
-export const createKbdTheme = <const C extends readonly string[] = typeof colorConfig.colors>(
-  colors: C = colorConfig.colors as unknown as C
-) =>
-  defineTheme({
+export const createKbdTheme = (colors: readonly string[] = colorConfig.colors) => {
+  const colorVariants: Record<string, { root: string }> = { neutral: { root: "" } }
+  for (const c of colors) {
+    colorVariants[c] = { root: "" }
+  }
+
+  return defineTheme({
     slots: ["root"],
     base: {
       root: "inline-flex items-center justify-center px-1 rounded-sm font-medium font-sans uppercase"
     },
     variants: {
-      color: Object.fromEntries(
-        [...colors, "neutral"].map((color) => [color, { root: "" }])
-      ) as Record<C[number] | "neutral", { root: string }>,
+      color: colorVariants,
       variant: {
         solid: { root: "" },
         outline: { root: "" },
@@ -32,14 +33,14 @@ export const createKbdTheme = <const C extends readonly string[] = typeof colorC
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color: color as any,
+        color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -49,14 +50,14 @@ export const createKbdTheme = <const C extends readonly string[] = typeof colorC
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color: color as any,
+        color,
         classNames: {
           root: "rl-color-" + color + " text-[var(--rl-text)] bg-[var(--rl-bg)]/10"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -91,5 +92,6 @@ export const createKbdTheme = <const C extends readonly string[] = typeof colorC
       size: "md"
     }
   })
+}
 
 export default createKbdTheme()

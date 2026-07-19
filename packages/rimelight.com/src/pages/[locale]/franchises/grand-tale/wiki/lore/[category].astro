@@ -23,31 +23,23 @@ const categoryToType: Record<string, string> = {
 
 const pageType = categoryToType[category] || 'Character';
 
-// Fetch pages of this type on server
-let pages = [];
+let pages: any[] = [];
 try {
-	const res = await fetch(new URL(`/api/pages?type=${pageType}&status=published&limit=1000&orderBy=title&order=asc`, Astro.url.origin).toString());
+	const apiUrl = new URL(`/api/pages?type=${pageType}&limit=1000&orderBy=title&order=asc`, Astro.url.origin).toString();
+	const res = await fetch(apiUrl);
 	if (res.ok) {
 		pages = await res.json() as any[];
 	}
 } catch (e) {
-	// Fallback mock pages if api fails
-	pages = [
-		{
-			id: '1',
-			slug: `franchises/grand-tale/wiki/lore/${category}/sample`,
-			title: { en: `Sample ${pageType} Article` },
-			description: { en: `This is a sample description for ${pageType} category.` },
-			icon: 'lucide:file-text'
-		}
-	];
+	console.error("[Lore Category] Error fetching pages:", e);
+	pages = [];
 }
 ---
 
 <WikiLayout title={`${categoryLabel} | Grand Tale Wiki`}>
 	<div class="space-y-6">
 		<section class="space-y-4">
-			<div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest">
+			<div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest rounded-full">
 				{pageType}
 			</div>
 			<h1 class="text-4xl font-extrabold uppercase tracking-tight text-white leading-none">
@@ -70,31 +62,43 @@ try {
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-neutral-850">
-					{pages.map((page) => (
-						<tr class="hover:bg-neutral-900/30 transition-colors">
-							<td class="p-4 flex items-center gap-3">
-								<span class:list={[page.icon ? page.icon.replace('lucide:', 'i-lucide-') : 'i-lucide-file-text', 'size-5 text-indigo-500 shrink-0']} />
-								<a
-									href={getRelativeLocaleUrl(`/${page.slug}`)}
-									class="font-bold text-white hover:text-indigo-400 uppercase transition-colors"
-								>
-									{page.title[activeLocale] || page.title.en}
-								</a>
-							</td>
-							<td class="p-4 text-neutral-400 truncate max-w-md">
-								{page.description[activeLocale] || page.description.en || '---'}
-							</td>
-							<td class="p-4 text-right">
-								<a
-									href={getRelativeLocaleUrl(`/${page.slug}`)}
-									class="inline-flex items-center gap-2 text-xs text-indigo-500 font-bold uppercase hover:text-indigo-400 transition-colors"
-								>
-									Read More
-									<span class="i-lucide-arrow-right size-3"></span>
-								</a>
+					{pages.length > 0 ? (
+						pages.map((page) => {
+							const titleStr = typeof page.title === 'string' ? page.title : (page.title?.[activeLocale] || page.title?.en || page.slug);
+							const descStr = typeof page.description === 'string' ? page.description : (page.description?.[activeLocale] || page.description?.en || '---');
+							return (
+								<tr class="hover:bg-neutral-900/30 transition-colors">
+									<td class="p-4 flex items-center gap-3">
+										<span class:list={[page.icon ? page.icon.replace('lucide:', 'i-lucide-') : 'i-lucide-file-text', 'size-5 text-indigo-500 shrink-0']} />
+										<a
+											href={getRelativeLocaleUrl(`/${page.slug}`)}
+											class="font-bold text-white hover:text-indigo-400 uppercase transition-colors"
+										>
+											{titleStr}
+										</a>
+									</td>
+									<td class="p-4 text-neutral-400 truncate max-w-md">
+										{descStr}
+									</td>
+									<td class="p-4 text-right">
+										<a
+											href={getRelativeLocaleUrl(`/${page.slug}`)}
+											class="inline-flex items-center gap-2 text-xs text-indigo-500 font-bold uppercase hover:text-indigo-400 transition-colors"
+										>
+											Read More
+											<span class="i-lucide-arrow-right size-3"></span>
+										</a>
+									</td>
+								</tr>
+							);
+						})
+					) : (
+						<tr>
+							<td colspan="3" class="p-8 text-center text-neutral-500">
+								No {category.toLowerCase()} entries found.
 							</td>
 						</tr>
-					))}
+					)}
 				</tbody>
 			</table>
 		</div>

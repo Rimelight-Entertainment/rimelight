@@ -1,5 +1,5 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 
 export const createProgressTheme = (colors: readonly string[] = colorConfig.colors) =>
   defineTheme({

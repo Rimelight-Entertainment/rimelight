@@ -1,4 +1,4 @@
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 
 export const createErrorTheme = () =>
   defineTheme({

@@ -16,7 +16,7 @@ export default defineDocsConfig({
             href: "/{locale}/company/docs/overview/getting-started/",
             badge: {
               text: "Slop",
-              variant: "error"
+              color: "error"
             }
           },
           {
@@ -24,7 +24,7 @@ export default defineDocsConfig({
             href: "/{locale}/company/docs/overview/contributing/",
             badge: {
               text: "Slop",
-              variant: "error"
+              color: "error"
             }
           },
           {
@@ -65,7 +65,7 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/website/overview/introduction/",
                 badge: {
                   text: "Slop",
-                  variant: "error"
+                  color: "error"
                 }
               },
               {
@@ -73,7 +73,7 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/website/overview/structure/",
                 badge: {
                   text: "Slop",
-                  variant: "error"
+                  color: "error"
                 }
               },
               {
@@ -81,7 +81,7 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/website/overview/localization/",
                 badge: {
                   text: "Slop",
-                  variant: "error"
+                  color: "error"
                 }
               },
               {
@@ -89,7 +89,7 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/website/overview/internationalization/",
                 badge: {
                   text: "Slop",
-                  variant: "error"
+                  color: "error"
                 }
               },
               {
@@ -97,7 +97,7 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/website/overview/deployment/",
                 badge: {
                   text: "Slop",
-                  variant: "error"
+                  color: "error"
                 }
               }
             ]
@@ -118,7 +118,7 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/products/overview/introduction/",
                 badge: {
                   text: "Slop",
-                  variant: "error"
+                  color: "error"
                 }
               }
             ]
@@ -136,7 +136,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/overview/introduction/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -150,7 +150,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/core/control-scheme/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -164,7 +164,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/code/overview/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -178,7 +178,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/writing/overview/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -192,7 +192,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/art/overview/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -200,7 +200,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/art/file-specifications/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -208,7 +208,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/art/references/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -222,7 +222,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/sound/overview/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -230,7 +230,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/sound/file-specifications/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -238,7 +238,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/sound/references/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -252,7 +252,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/overview/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -260,7 +260,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/en/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -268,7 +268,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/ar/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -276,7 +276,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/es/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -284,7 +284,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/fr/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -292,7 +292,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/ja/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -300,7 +300,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/ko/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -308,7 +308,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/pt/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -316,7 +316,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/ro/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -324,7 +324,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/products/grand-tale/internationalization/zh_cn/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -347,7 +347,7 @@ export default defineDocsConfig({
                 href: "/{locale}/company/docs/packages/overview/introduction/",
                 badge: {
                   text: "Slop",
-                  variant: "error"
+                  color: "error"
                 }
               }
             ]
@@ -365,7 +365,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/overview/introduction/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -373,7 +373,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/overview/installation/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -387,7 +387,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/design-system/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -395,7 +395,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/color-mode/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -403,7 +403,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/colors/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -411,7 +411,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/icons/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -419,7 +419,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/variants/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -427,7 +427,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/shortcuts/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -435,7 +435,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/architecture/i18n/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -449,7 +449,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/components/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -461,7 +461,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/app/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -469,7 +469,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/error/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -477,7 +477,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/footer/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -485,7 +485,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/head/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -493,7 +493,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/header/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -501,7 +501,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/app/main/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -515,7 +515,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/layout/container/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -523,7 +523,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/layout/sidebar/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -531,7 +531,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/layout/splitter/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -545,7 +545,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/callout/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -553,7 +553,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/avatar/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -561,7 +561,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/avatar-group/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -569,7 +569,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/badge/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -577,7 +577,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/banner/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -585,7 +585,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/button/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -593,7 +593,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/calendar/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -601,7 +601,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/card/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -609,7 +609,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/chip/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -617,7 +617,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/collapsible/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -625,7 +625,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/field-group/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -633,7 +633,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/fieldset/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -641,7 +641,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/kbd/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -649,7 +649,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/label/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -657,7 +657,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/logo/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -665,7 +665,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/separator/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -673,7 +673,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/element/speed-dial/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -687,7 +687,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/media/audio/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -695,7 +695,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/media/icon/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -703,7 +703,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/media/image/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -711,7 +711,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/media/video/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -725,7 +725,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/checkbox/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -733,7 +733,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/color-picker/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -741,7 +741,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/file-upload/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -749,7 +749,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/form/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -757,7 +757,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/form-field/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -765,7 +765,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -773,7 +773,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-date/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -781,7 +781,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-menu/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -789,7 +789,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-number/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -797,7 +797,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-pin/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
 
@@ -806,7 +806,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-rating/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -814,7 +814,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-tags/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -822,7 +822,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/input-time/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -830,7 +830,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/knob/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -838,7 +838,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/listbox/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -846,7 +846,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/password/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -854,7 +854,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/radio-group/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -862,7 +862,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/select/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -870,7 +870,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/slider/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -878,7 +878,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/switch/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -886,7 +886,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/textarea/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -894,7 +894,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/color-area/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -902,7 +902,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/color-field/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -910,7 +910,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/form/color-slider/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -924,7 +924,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/accordion/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -932,7 +932,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/carousel/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -940,7 +940,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/chart/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -948,7 +948,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/empty/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -956,7 +956,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/gallery/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -964,7 +964,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/marquee/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -972,7 +972,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/meter/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -980,7 +980,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/progress/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -988,7 +988,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/quote/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -996,7 +996,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/rating/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1004,7 +1004,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/scroll-area/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1012,7 +1012,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/skeleton/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1020,7 +1020,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/spinner/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1028,7 +1028,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/spoiler/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1036,7 +1036,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/table/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1044,7 +1044,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/timeline/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1052,7 +1052,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/tree/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1060,7 +1060,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/data/user/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1074,7 +1074,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/breadcrumb/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1082,7 +1082,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/link/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1090,7 +1090,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/link-group/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1098,7 +1098,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/navigation-menu/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1106,7 +1106,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/pagination/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1114,7 +1114,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/stepper/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1122,7 +1122,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/steps/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1130,7 +1130,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/table-of-contents/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1138,7 +1138,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/navigation/tabs/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1152,7 +1152,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/confirm/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1160,7 +1160,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/context-menu/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1168,7 +1168,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/command-palette/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1176,7 +1176,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/dock/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1184,7 +1184,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/drawer/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1192,7 +1192,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/dropdown-menu/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1200,7 +1200,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/floating-action/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1208,7 +1208,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/hover-card/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1216,7 +1216,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/modal/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1224,7 +1224,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/popover/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1232,7 +1232,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/slideover/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1240,7 +1240,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/toast/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1248,7 +1248,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/overlay/tooltip/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1262,7 +1262,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/page/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1270,7 +1270,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/page-aside/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1278,7 +1278,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/page-body/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1286,7 +1286,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/page-header/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1294,7 +1294,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/page-section/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1302,7 +1302,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/post/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1310,7 +1310,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/pricing-plan/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1318,7 +1318,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/pricing-table/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1326,7 +1326,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/page/prose/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1340,7 +1340,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-group/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1348,7 +1348,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-navbar/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1356,7 +1356,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-panel/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1364,7 +1364,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-resize-handle/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1372,7 +1372,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-search/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1380,7 +1380,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-search-button/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1388,7 +1388,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-sidebar/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1396,7 +1396,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-sidebar-collapse/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1404,7 +1404,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-sidebar-toggle/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1412,7 +1412,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/dashboard/dashboard-toolbar/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1426,7 +1426,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/editor/editor/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1440,7 +1440,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1448,7 +1448,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-message/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1456,7 +1456,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-messages/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1464,7 +1464,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-palette/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1472,7 +1472,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-prompt/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1480,7 +1480,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-prompt-submit/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1488,7 +1488,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-reasoning/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1496,7 +1496,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-shimmer/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1504,7 +1504,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/ai/chat-tool/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1518,7 +1518,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/effect/3d-hover/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1532,7 +1532,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/mockup/browser-mockup/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1540,7 +1540,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/mockup/phone-mockup/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1548,7 +1548,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/mockup/window-mockup/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1562,7 +1562,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/aspect-ratio/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1570,7 +1570,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/compare/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1578,7 +1578,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/locale-selector/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1586,7 +1586,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/placeholder/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1594,7 +1594,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/qr-code/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1602,7 +1602,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/scroll-to-top/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1610,7 +1610,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/sticky-surface/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1618,7 +1618,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/theme-selector/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1626,7 +1626,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/tour/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       },
                       {
@@ -1634,7 +1634,7 @@ export default defineDocsConfig({
                         href: "/{locale}/company/docs/packages/rimelight-ui/components/utility/watermark/",
                         badge: {
                           text: "Slop",
-                          variant: "error"
+                          color: "error"
                         }
                       }
                     ]
@@ -1650,7 +1650,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/agents/llms-txt/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -1658,7 +1658,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/agents/mcp-server/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -1666,7 +1666,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-ui/agents/skills/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]
@@ -1685,7 +1685,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-i18n/overview/introduction/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   },
                   {
@@ -1693,7 +1693,7 @@ export default defineDocsConfig({
                     href: "/{locale}/company/docs/packages/rimelight-i18n/overview/installation/",
                     badge: {
                       text: "Slop",
-                      variant: "error"
+                      color: "error"
                     }
                   }
                 ]

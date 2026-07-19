@@ -7,6 +7,7 @@ import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
 import BlockEditor from "../BlockEditor.vue"
 import Section from "../../../content/Section.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
 export interface SectionBlockEditorProps extends SectionBlockProps {
@@ -23,6 +24,7 @@ const {
   rc: rcProp,
   title,
   description,
+  mainArticleSlug,
   children,
   level
 } = defineProps<SectionBlockEditorProps>()
@@ -54,6 +56,7 @@ const styles = computed(() => {
 /* region State */
 const localTitle = ref(title)
 const localDescription = ref(description || "")
+const localMainArticleSlug = ref(mainArticleSlug || "")
 const editorApi = inject<any>("block-editor-api")
 const parentLevel = inject(
   SECTION_LEVEL_KEY,
@@ -104,6 +107,15 @@ watch(
     }
   }
 )
+
+watch(
+  () => mainArticleSlug,
+  (newVal) => {
+    if (newVal !== localMainArticleSlug.value) {
+      localMainArticleSlug.value = newVal || ""
+    }
+  }
+)
 /* endregion */
 
 /* region Logic */
@@ -129,6 +141,17 @@ const commitDescriptionOnBlur = () => {
 
 const handleChildrenMutation = () => {
   console.log("[SectionBlockEditor] Mutation event received (handled by setter)")
+}
+
+const openLinkPageModal = ref(false)
+const commitMainArticleSlug = (slug: string) => {
+  localMainArticleSlug.value = slug
+  if (editorApi && id) editorApi.updateBlockProps(id, { mainArticleSlug: slug || undefined })
+  openLinkPageModal.value = false
+}
+const removeMainArticleLink = () => {
+  localMainArticleSlug.value = ""
+  if (editorApi && id) editorApi.updateBlockProps(id, { mainArticleSlug: undefined })
 }
 /* endregion */
 </script>
@@ -159,12 +182,39 @@ const handleChildrenMutation = () => {
       </template>
 
       <template #default>
-        <BlockEditor
-          v-model="localChildren"
-          :container-id="id"
-          @mutation="handleChildrenMutation"
-          @end="handleChildrenMutation"
-        />
+        <div class="flex flex-col gap-2">
+          <div
+            v-if="localMainArticleSlug"
+            class="flex items-center gap-2 text-xs text-dimmed bg-neutral-50 dark:bg-neutral-900/50 rounded px-3 py-1.5"
+          >
+            <span class="i-lucide-link size-3 shrink-0" />
+            <span
+              >Linked to: <strong>{{ localMainArticleSlug }}</strong></span
+            >
+            <RLVButton
+              color="neutral"
+              variant="ghost"
+              leading-icon="i-lucide-x"
+              class="!p-0.5 ml-auto"
+              @click="removeMainArticleLink"
+            />
+          </div>
+          <div v-else>
+            <RLVButton
+              label="Link to article"
+              variant="subtle"
+              color="neutral"
+              leading-icon="i-lucide-link"
+              @click="openLinkPageModal = true"
+            />
+          </div>
+          <BlockEditor
+            v-model="localChildren"
+            :container-id="id"
+            @mutation="handleChildrenMutation"
+            @end="handleChildrenMutation"
+          />
+        </div>
       </template>
     </Section>
   </div>

@@ -40,15 +40,15 @@ function normalizeBadge(badge: any) {
     return { text: badge, color: "primary", variant: "soft" as const, class: "" }
   }
   let color = badge.color || "primary"
-  let variant = badge.variant || "soft"
+  let badgeVariant = badge.variant || "soft"
   if (badge.variant) {
     const v = badge.variant.toLowerCase()
-    if (v === "tip" || v === "success") { color = "success"; variant = "soft" }
-    else if (v === "caution" || v === "warning") { color = "warning"; variant = "soft" }
-    else if (v === "error") { color = "error"; variant = "soft" }
-    else if (v === "note" || v === "default") { color = "primary"; variant = "soft" }
+    if (v === "tip" || v === "success") { color = "success"; badgeVariant = "soft" }
+    else if (v === "caution" || v === "warning") { color = "warning"; badgeVariant = "soft" }
+    else if (v === "error") { color = "error"; badgeVariant = "soft" }
+    else if (v === "note" || v === "default") { color = "primary"; badgeVariant = "soft" }
   }
-  return { text: badge.text || badge.label || "", color, variant: variant as "solid" | "outline" | "soft", class: badge.class || "" }
+  return { text: badge.text || badge.label || "", color, variant: badgeVariant as "solid" | "outline" | "soft", class: badge.class || "" }
 }
 
 const isRoot = _depth === 0

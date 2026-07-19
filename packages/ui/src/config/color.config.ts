@@ -281,7 +281,20 @@ export const colorScales = {
   }
 } as const
 
+export const colorNames = [
+  "neutral",
+  "primary",
+  "secondary",
+  "info",
+  "success",
+  "warning",
+  "error",
+  "commentary",
+  "ideation",
+  "source"
+] as const satisfies ReadonlyArray<keyof typeof colorScales>
+
 export const colorConfig = {
   scales: colorScales,
-  colors: Object.keys(colorScales) as ReadonlyArray<keyof typeof colorScales>
+  colors: colorNames
 }

@@ -11,9 +11,10 @@ if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true })
 }
 
+const pad = (n: number) => n.toString().padStart(2, "0")
+
 function getTimestamp() {
   const now = new Date()
-  const pad = (n: number) => n.toString().padStart(2, "0")
   return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
 }
 

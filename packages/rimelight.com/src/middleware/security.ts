@@ -10,10 +10,13 @@ export const security = async (c: any, next: any) => {
     },
     locals: getFetchState(c).locals
   }
-  const response = await astroSecurity(context as any, async () => {
-    await next()
-    return c.res
-  })
+  const response = await astroSecurity(
+    context as unknown as Parameters<typeof astroSecurity>[0],
+    async () => {
+      await next()
+      return c.res
+    }
+  )
   if (response instanceof Response && response !== c.res) {
     c.res = response
   }

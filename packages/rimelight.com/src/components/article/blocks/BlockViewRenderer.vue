@@ -43,8 +43,7 @@ const asyncRendererMap = Object.fromEntries(
 
 const resolveBlockComponent = (type?: string) => {
   if (!type) return "div"
-  const cleanType = type.replace(/Block$/, "")
-  return asyncRendererMap[cleanType] || "div"
+  return asyncRendererMap[type] || "div"
 }
 /* endregion */
 

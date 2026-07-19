@@ -49,7 +49,8 @@ function createDefaultBlock(type: Block["type"]): Block {
         props: {
           level: 2,
           title: "New Section",
-          children: []
+          description: "",
+          children: [] as Block[]
         }
       }
     case "ParagraphBlock":
@@ -76,6 +77,46 @@ function createDefaultBlock(type: Block["type"]): Block {
         props: {
           src: "https://placehold.co/600x400",
           alt: "Placeholder Image"
+        }
+      }
+
+    case "ScriptBlock":
+      return {
+        id,
+        type: "ScriptBlock",
+        props: {
+          title: "New Script",
+          synopsis: "",
+          characters: [],
+          aPlot: "",
+          bPlot: "",
+          cPlot: "",
+          stinger: "",
+          children: [] as Block[]
+        }
+      }
+
+    case "SceneBlock":
+      return {
+        id,
+        type: "SceneBlock",
+        props: {
+          location: "",
+          timeOfDay: "OTHER" as const,
+          setting: "OTHER" as const,
+          transition: "NONE" as const,
+          description: "",
+          children: [] as Block[]
+        }
+      }
+
+    case "DialogueBlock":
+      return {
+        id,
+        type: "DialogueBlock",
+        props: {
+          character: "",
+          line: ""
         }
       }
 

@@ -34,13 +34,34 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
 
   const userUnoConfig = options.unocss ?? {}
 
-  const contentObj = typeof userUnoConfig.content === "object" ? userUnoConfig.content : null
-  const rawIncludes = (contentObj as any)?.pipeline?.include
-  const userPipelineIncludes: (string | RegExp)[] = rawIncludes
-    ? ([rawIncludes].flat() as (string | RegExp)[])
-    : []
-  const rawFilesystem = (contentObj as any)?.filesystem
-  const userFilesystem: string[] = rawFilesystem ? ([rawFilesystem].flat() as string[]) : []
+  const contentObj =
+    userUnoConfig.content && typeof userUnoConfig.content === "object"
+      ? userUnoConfig.content
+      : null
+  const pipeline =
+    contentObj &&
+    "pipeline" in contentObj &&
+    typeof contentObj.pipeline === "object" &&
+    contentObj.pipeline !== null
+      ? contentObj.pipeline
+      : null
+  const rawIncludes = pipeline && "include" in pipeline ? pipeline.include : undefined
+  let userPipelineIncludes: (string | RegExp)[] = []
+  if (Array.isArray(rawIncludes)) {
+    userPipelineIncludes = rawIncludes.filter(
+      (item): item is string | RegExp => typeof item === "string" || item instanceof RegExp
+    )
+  } else if (typeof rawIncludes === "string" || rawIncludes instanceof RegExp) {
+    userPipelineIncludes = [rawIncludes]
+  }
+
+  const rawFilesystem = contentObj && "filesystem" in contentObj ? contentObj.filesystem : undefined
+  let userFilesystem: string[] = []
+  if (Array.isArray(rawFilesystem)) {
+    userFilesystem = rawFilesystem.filter((item): item is string => typeof item === "string")
+  } else if (typeof rawFilesystem === "string") {
+    userFilesystem = [rawFilesystem]
+  }
 
   return [
     UnoCSS({

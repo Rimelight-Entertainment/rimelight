@@ -10,7 +10,7 @@ export const i18n = async (c: any, next: any) => {
     },
     locals: getFetchState(c).locals
   }
-  const response = await astroI18n(context as any, async () => {
+  const response = await astroI18n(context, async () => {
     await next()
     return c.res
   })

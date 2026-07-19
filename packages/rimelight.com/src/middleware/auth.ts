@@ -39,5 +39,5 @@ export const auth = async (c: any, next: any) => {
     return c.redirect("/")
   }
 
-  await next()
+  return await next()
 }

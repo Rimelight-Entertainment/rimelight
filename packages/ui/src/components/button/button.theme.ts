@@ -1,10 +1,13 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 
-export const createButtonTheme = <const C extends readonly string[] = typeof colorConfig.colors>(
-  colors: C = colorConfig.colors as unknown as C
-) =>
-  defineTheme({
+export const createButtonTheme = (colors: readonly string[] = colorConfig.colors) => {
+  const colorVariants: Record<string, { root: string }> = { neutral: { root: "" } }
+  for (const c of colors) {
+    colorVariants[c] = { root: "" }
+  }
+
+  return defineTheme({
     slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
       root: [
@@ -27,9 +30,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
         ghost: { root: "" },
         link: { root: "" }
       },
-      color: Object.fromEntries(
-        [...colors, "neutral"].map((color) => [color, { root: "" }])
-      ) as Record<C[number] | "neutral", { root: string }>,
+      color: colorVariants,
       size: {
         xs: {
           root: "text-xs gap-1 [&_svg]:size-4",
@@ -88,7 +89,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -98,7 +99,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -108,7 +109,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -118,7 +119,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -128,7 +129,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
       })),
       ...colors.map((color) => ({
         variant: "ghost" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -138,7 +139,7 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
       })),
       ...colors.map((color) => ({
         variant: "link" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -220,5 +221,6 @@ export const createButtonTheme = <const C extends readonly string[] = typeof col
       size: "md"
     }
   })
+}
 
 export default createButtonTheme()

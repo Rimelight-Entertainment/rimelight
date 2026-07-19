@@ -1,10 +1,13 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 
-export const createBadgeTheme = <const C extends readonly string[] = typeof colorConfig.colors>(
-  colors: C = colorConfig.colors as unknown as C
-) =>
-  defineTheme({
+export const createBadgeTheme = (colors: readonly string[] = colorConfig.colors) => {
+  const colorVariants: Record<string, { root: string }> = { neutral: { root: "" } }
+  for (const c of colors) {
+    colorVariants[c] = { root: "" }
+  }
+
+  return defineTheme({
     slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
       root: "font-medium inline-flex items-center gap-1.5 transition-all duration-150 select-none",
@@ -21,9 +24,7 @@ export const createBadgeTheme = <const C extends readonly string[] = typeof colo
         soft: { root: "" },
         subtle: { root: "" }
       },
-      color: Object.fromEntries(
-        [...colors, "neutral"].map((color) => [color, { root: "" }])
-      ) as Record<C[number] | "neutral", { root: string }>,
+      color: colorVariants,
       size: {
         xs: {
           root: "text-[8px]/3 px-1 py-0.5 gap-1 rounded-sm",
@@ -72,14 +73,14 @@ export const createBadgeTheme = <const C extends readonly string[] = typeof colo
     compoundVariants: [
       ...colors.map((color) => ({
         variant: "solid" as const,
-        color: color as any,
+        color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
         }
       })),
       ...colors.map((color) => ({
         variant: "outline" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -89,14 +90,14 @@ export const createBadgeTheme = <const C extends readonly string[] = typeof colo
       })),
       ...colors.map((color) => ({
         variant: "soft" as const,
-        color: color as any,
+        color,
         classNames: {
           root: "rl-color-" + color + " bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
         }
       })),
       ...colors.map((color) => ({
         variant: "subtle" as const,
-        color: color as any,
+        color,
         classNames: {
           root:
             "rl-color-" +
@@ -165,5 +166,6 @@ export const createBadgeTheme = <const C extends readonly string[] = typeof colo
       shape: "pill"
     }
   })
+}
 
 export default createBadgeTheme()

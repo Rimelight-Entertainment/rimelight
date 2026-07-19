@@ -4,8 +4,6 @@ import type { BlockType } from "@/types/blocks"
 import { BLOCK_RENDERER_COMPONENT_MAP } from "@/generated/blockRendererMap"
 import { BLOCK_EDITOR_COMPONENT_MAP } from "@/generated/blockEditorMap"
 
-type ComponentImporter = () => Promise<{ default: Component }>
-
 /**
  * Maps the block type string from the database to a dynamically imported Vue component.
  *

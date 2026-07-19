@@ -1,6 +1,13 @@
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 
-export type BlockType = "SectionBlock" | "ParagraphBlock" | "CalloutBlock" | "ImageBlock"
+export type BlockType =
+  | "SectionBlock"
+  | "ParagraphBlock"
+  | "CalloutBlock"
+  | "ImageBlock"
+  | "ScriptBlock"
+  | "SceneBlock"
+  | "DialogueBlock"
 
 export interface BaseBlock {
   id: string
@@ -13,6 +20,7 @@ export interface SectionBlockProps {
   level: HeadingLevel
   title: string
   description?: string
+  mainArticleSlug?: string
   children: Block[]
 }
 
@@ -42,6 +50,36 @@ export interface ImageBlockProps {
   caption?: string
 }
 
+export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER"
+export type Setting = "INTERIOR" | "EXTERIOR" | "OTHER"
+export type Transition = "CUT_TO" | "CUT_BACK_TO" | "FADE_TO" | "NONE"
+
+export interface ScriptBlockProps {
+  title: string
+  synopsis: string
+  characters: string[]
+  aPlot: string
+  bPlot: string
+  cPlot: string
+  stinger: string
+  children: Block[]
+}
+
+export interface SceneBlockProps {
+  location: string
+  timeOfDay: TimeOfDay
+  setting: Setting
+  transition: Transition
+  description: string
+  children: Block[]
+}
+
+export interface DialogueBlockProps {
+  character: string
+  parenthetical?: string
+  line: string
+}
+
 export interface SectionBlock extends BaseBlock {
   type: "SectionBlock"
   props: SectionBlockProps
@@ -62,7 +100,29 @@ export interface ImageContentBlock extends BaseBlock {
   props: ImageBlockProps
 }
 
-export type Block = SectionBlock | ParagraphContentBlock | CalloutContentBlock | ImageContentBlock
+export interface ScriptContentBlock extends BaseBlock {
+  type: "ScriptBlock"
+  props: ScriptBlockProps
+}
+
+export interface SceneContentBlock extends BaseBlock {
+  type: "SceneBlock"
+  props: SceneBlockProps
+}
+
+export interface DialogueContentBlock extends BaseBlock {
+  type: "DialogueBlock"
+  props: DialogueBlockProps
+}
+
+export type Block =
+  | SectionBlock
+  | ParagraphContentBlock
+  | CalloutContentBlock
+  | ImageContentBlock
+  | ScriptContentBlock
+  | SceneContentBlock
+  | DialogueContentBlock
 
 export type InlineContentType = "text" | "link" | "mention"
 

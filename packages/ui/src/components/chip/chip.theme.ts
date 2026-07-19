@@ -1,22 +1,20 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 
-export const createChipTheme = <const C extends readonly string[] = typeof colorConfig.colors>(
-  colors: C = colorConfig.colors as unknown as C
-) =>
-  defineTheme({
+export const createChipTheme = (colors: readonly string[] = colorConfig.colors) => {
+  const colorVariants: Record<string, { base: string }> = { neutral: { base: "bg-inverted" } }
+  for (const c of colors) {
+    colorVariants[c] = { base: `bg-${c}` }
+  }
+
+  return defineTheme({
     slots: ["root", "base"],
     base: {
       root: "relative inline-flex items-center justify-center shrink-0",
       base: "rounded-full ring ring-bg flex items-center justify-center text-inverted font-medium whitespace-nowrap"
     },
     variants: {
-      color: Object.fromEntries(
-        [...colors, "neutral"].map((color) => [
-          color,
-          { base: color === "neutral" ? "bg-inverted" : `bg-${color}` }
-        ])
-      ) as Record<C[number] | "neutral", { base: string }>,
+      color: colorVariants,
       size: {
         "3xs": { base: "h-[4px] min-w-[4px] text-[4px]" },
         "2xs": { base: "h-[5px] min-w-[5px] text-[5px]" },
@@ -73,5 +71,6 @@ export const createChipTheme = <const C extends readonly string[] = typeof color
       position: "top-right"
     }
   })
+}
 
 export default createChipTheme()

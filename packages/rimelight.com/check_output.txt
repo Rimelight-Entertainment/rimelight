@@ -1,0 +1,1767 @@
+[1m[94mpass:[39m[0m All 436 files are correctly formatted [2m(2761ms, 8 threads)[0m
+! promise(always-return): Each then() should return a value or throw
+     ,-[src/temp/components/article/blocks/media/ImageBlock.vue:166:17]
+ 165 |             deleteImageFromServer(oldFileName)
+ 166 | ,->           .then((success) => {
+ 167 | |               if (!success) {
+ 168 | |                 console.error(`Failed to delete old image ${oldFileName} during replacement.`)
+ 169 | |               } else {
+ 170 | |                 console.log(`Successfully deleted old image: ${oldFileName}`)
+ 171 | |               }
+ 172 | `->           })
+ 173 |               .catch((err) => {
+     `----
+
+  x eslint(no-unused-vars): Type 'PageType' is imported but never used.
+   ,-[src/composables/pages/useDocumentsIndex.ts:2:15]
+ 1 | import { computed, reactive, ref, watch, type Ref } from "vue"
+ 2 | import type { PageType } from "@/types/pages"
+   :               ^^^^|^^^
+   :                   `-- 'PageType' is imported here
+ 3 | import { usePaginatedPages } from "./usePaginatedPages"
+   `----
+  help: Consider removing this import.
+
+  x import(no-cycle): Dependency cycle detected
+   ,-[src/temp/types/blocks/block.ts:1:33]
+ 1 | import type { BlockTypes } from "./index"
+   :                                 ^^^^^^^^^
+ 2 | import { blocksRegistry } from "./index"
+   `----
+  help: Refactor to remove the cycle. Consider extracting shared code into a separate module that both files can import.
+  note: These paths form a cycle:
+           ╭──▶ ./index (src/temp/types/blocks/index.ts)
+           │         ⬇ imports
+           │    ./block (src/temp/types/blocks/block.ts)
+           ╰─────────╯ imports the current file
+
+  x eslint(no-unused-vars): Identifier 'blocksRegistry' is imported but never used.
+   ,-[src/temp/types/blocks/block.ts:2:10]
+ 1 | import type { BlockTypes } from "./index"
+ 2 | import { blocksRegistry } from "./index"
+   :          ^^^^^^^|^^^^^^
+   :                 `-- 'blocksRegistry' is imported here
+ 3 | 
+   `----
+  help: Consider removing this import.
+
+  x import(no-cycle): Dependency cycle detected
+    ,-[src/temp/types/blocks/index.ts:9:15]
+  8 | 
+  9 | export * from "./block"
+    :               ^^^^^^^^^
+ 10 | export * from "./paragraphBlock"
+    `----
+  help: Refactor to remove the cycle. Consider extracting shared code into a separate module that both files can import.
+  note: These paths form a cycle:
+           ╭──▶ ./block (src/temp/types/blocks/block.ts)
+           │         ⬇ imports
+           │    ./index (src/temp/types/blocks/index.ts)
+           ╰─────────╯ imports the current file
+
+  x eslint(no-unused-vars): Type 'PageType' is imported but never used.
+   ,-[src/composables/pages/useBlogIndex.ts:2:15]
+ 1 | import { computed, reactive, ref, watch, type Ref } from "vue"
+ 2 | import type { PageType } from "@/types/pages"
+   :               ^^^^|^^^
+   :                   `-- 'PageType' is imported here
+ 3 | import { usePaginatedPages } from "./usePaginatedPages"
+   `----
+  help: Consider removing this import.
+
+  ! unicorn(consistent-function-scoping): Function `pad` does not capture any variables from its parent scope
+    ,-[scripts/generate-block-maps.ts:16:9]
+ 13 | 
+ 14 | function getTimestamp() {
+    :          ^^^^^^|^^^^^
+    :                `-- Outer scope where this function is defined
+ 15 |   const now = new Date()
+ 16 |   const pad = (n: number) => n.toString().padStart(2, "0")
+    :         ^|^
+    :          `-- This function does not use any variables from the parent function
+ 17 |   return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+    `----
+  help: Move `pad` to the outer scope to avoid recreating it on every call.
+
+  x eslint(no-unused-vars): Type 'SpeciesProperties' is imported but never used.
+   ,-[src/temp/types/pageTemplates.ts:4:8]
+ 3 |   type PropertyPanelSchema,
+ 4 |   type SpeciesProperties,
+   :        ^^^^^^^^|^^^^^^^^
+   :                `-- 'SpeciesProperties' is imported here
+ 5 |   type CharacterProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'CharacterProperties' is imported but never used.
+   ,-[src/temp/types/pageTemplates.ts:5:8]
+ 4 |   type SpeciesProperties,
+ 5 |   type CharacterProperties,
+   :        ^^^^^^^^^|^^^^^^^^^
+   :                 `-- 'CharacterProperties' is imported here
+ 6 |   type ObjectProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'ObjectProperties' is imported but never used.
+   ,-[src/temp/types/pageTemplates.ts:6:8]
+ 5 |   type CharacterProperties,
+ 6 |   type ObjectProperties,
+   :        ^^^^^^^^|^^^^^^^
+   :                `-- 'ObjectProperties' is imported here
+ 7 |   type TaleProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'TaleProperties' is imported but never used.
+   ,-[src/temp/types/pageTemplates.ts:7:8]
+ 6 |   type ObjectProperties,
+ 7 |   type TaleProperties,
+   :        ^^^^^^^|^^^^^^
+   :               `-- 'TaleProperties' is imported here
+ 8 |   type ItemProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'ItemProperties' is imported but never used.
+   ,-[src/temp/types/pageTemplates.ts:8:8]
+ 7 |   type TaleProperties,
+ 8 |   type ItemProperties,
+   :        ^^^^^^^|^^^^^^
+   :               `-- 'ItemProperties' is imported here
+ 9 |   type SkillProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'SkillProperties' is imported but never used.
+    ,-[src/temp/types/pageTemplates.ts:9:8]
+  8 |   type ItemProperties,
+  9 |   type SkillProperties,
+    :        ^^^^^^^|^^^^^^^
+    :               `-- 'SkillProperties' is imported here
+ 10 |   type HeroProperties,
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'HeroProperties' is imported but never used.
+    ,-[src/temp/types/pageTemplates.ts:10:8]
+  9 |   type SkillProperties,
+ 10 |   type HeroProperties,
+    :        ^^^^^^^|^^^^^^
+    :               `-- 'HeroProperties' is imported here
+ 11 |   type CardProperties,
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'CardProperties' is imported but never used.
+    ,-[src/temp/types/pageTemplates.ts:11:8]
+ 10 |   type HeroProperties,
+ 11 |   type CardProperties,
+    :        ^^^^^^^|^^^^^^
+    :               `-- 'CardProperties' is imported here
+ 12 |   type SeriesProperties,
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'SeriesProperties' is imported but never used.
+    ,-[src/temp/types/pageTemplates.ts:12:8]
+ 11 |   type CardProperties,
+ 12 |   type SeriesProperties,
+    :        ^^^^^^^^|^^^^^^^
+    :                `-- 'SeriesProperties' is imported here
+ 13 |   type EpisodeProperties
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'EpisodeProperties' is imported but never used.
+    ,-[src/temp/types/pageTemplates.ts:13:8]
+ 12 |   type SeriesProperties,
+ 13 |   type EpisodeProperties
+    :        ^^^^^^^^|^^^^^^^^
+    :                `-- 'EpisodeProperties' is imported here
+ 14 | } from "../../types/article/article"
+    `----
+  help: Consider removing this import.
+
+  ! unicorn(consistent-function-scoping): Function `pad` does not capture any variables from its parent scope
+    ,-[scripts/generate-social-cards.ts:15:9]
+ 12 | const originalLog = console.log
+ 13 | console.log = (...args: any[]) => {
+    : ^^^^^|^^^^^
+    :      `-- Outer scope where this function is defined
+ 14 |   const now = new Date()
+ 15 |   const pad = (n: number) => n.toString().padStart(2, "0")
+    :         ^|^
+    :          `-- This function does not use any variables from the parent arrow function
+ 16 |   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+    `----
+  help: Move `pad` to the outer scope to avoid recreating it on every call.
+
+  ! unicorn(consistent-function-scoping): Function `pad` does not capture any variables from its parent scope
+    ,-[scripts/generate-social-cards.ts:23:9]
+ 20 | const originalError = console.error
+ 21 | console.error = (...args: any[]) => {
+    : ^^^^^^|^^^^^^
+    :       `-- Outer scope where this function is defined
+ 22 |   const now = new Date()
+ 23 |   const pad = (n: number) => n.toString().padStart(2, "0")
+    :         ^|^
+    :          `-- This function does not use any variables from the parent arrow function
+ 24 |   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+    `----
+  help: Move `pad` to the outer scope to avoid recreating it on every call.
+
+  ! eslint(no-shadow): 'c' is already declared in the upper scope.
+     ,-[src/api/index.ts:89:37]
+  88 | // 3. GitHub Changelog API
+  89 | api.get("/github/changelog", async (c) => {
+     :                                     |
+     :                                     `-- shadowed declaration is here
+  90 |   const component = c.req.query("component")
+  91 |   if (!component) {
+  92 |     return c.json({ error: "Component name is required" }, 400)
+  93 |   }
+  94 | 
+  95 |   const pascalName = component
+  96 |     .split("-")
+  97 |     .map((seg) => seg.charAt(0).toUpperCase() + seg.slice(1))
+  98 |     .join("")
+  99 | 
+ 100 |   const token = import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN
+ 101 |   const headers: Record<string, string> = {
+ 102 |     "User-Agent": "Rimelight-Docs-Changelog",
+ 103 |     "Accept": "application/vnd.github.v3+json"
+ 104 |   }
+ 105 |   if (token) {
+ 106 |     headers["Authorization"] = `Bearer ${token}`
+ 107 |   }
+ 108 | 
+ 109 |   const paths = [
+ 110 |     `packages/ui/src/components/${component}/RLV${pascalName}.vue`,
+ 111 |     `packages/ui/src/components/${component}/RLA${pascalName}.astro`,
+ 112 |     `packages/ui/src/components/${component}/${component}.theme.ts`
+ 113 |   ]
+ 114 | 
+ 115 |   try {
+ 116 |     const allCommitsPromises = paths.map(async (p) => {
+ 117 |       const apiUrl = `https://api.github.com/repos/Rimelight-Entertainment/rimelight/commits?path=${encodeURIComponent(p)}&per_page=50`
+ 118 |       const res = await fetch(apiUrl, { headers })
+ 119 |       if (!res.ok) return []
+ 120 |       const data = await res.json()
+ 121 |       if (!Array.isArray(data)) return []
+ 122 |       return data.map((c: any) => ({
+     :                        |
+     :                        `-- 'c' is declared here
+ 123 |         sha: c.sha,
+     `----
+  help: Consider renaming 'c' to avoid shadowing the variable from the outer scope.
+
+  ! oxc(no-map-spread): Spreading to modify object properties in `map` calls is inefficient
+     ,-[src/api/index.ts:386:15]
+ 385 |     return c.json(
+ 386 |       results.map((row) => ({
+     :               ^|^
+     :                `-- This map call spreads an object
+ 387 |         ...row,
+     :         ^^^|^^
+     :            `-- This spread allocates a new value on each iteration
+ 388 |         blocks: row.content?.blocks || [],
+     `----
+  help: If in-place mutation is acceptable, use `Object.assign` or direct property assignment instead of spreading
+  note: `Object.assign` mutates the first argument. Disable this rule if copy-on-write behavior is required.
+
+  x eslint(no-unused-vars): Type alias 'ComponentImporter' is declared but never used.
+   ,-[src/utils/blockMapper.ts:7:6]
+ 6 | 
+ 7 | type ComponentImporter = () => Promise<{ default: Component }>
+   :      ^^^^^^^^|^^^^^^^^
+   :              `-- 'ComponentImporter' is declared here
+ 8 | 
+   `----
+  help: Consider removing this declaration.
+
+  ! unicorn(consistent-function-scoping): Function `pad` does not capture any variables from its parent scope
+    ,-[scripts/sync-md-to-db.ts:13:9]
+ 10 | const originalLog = console.log
+ 11 | console.log = (...args: any[]) => {
+    : ^^^^^|^^^^^
+    :      `-- Outer scope where this function is defined
+ 12 |   const now = new Date()
+ 13 |   const pad = (n: number) => n.toString().padStart(2, "0")
+    :         ^|^
+    :          `-- This function does not use any variables from the parent arrow function
+ 14 |   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+    `----
+  help: Move `pad` to the outer scope to avoid recreating it on every call.
+
+  ! unicorn(consistent-function-scoping): Function `pad` does not capture any variables from its parent scope
+    ,-[scripts/sync-md-to-db.ts:21:9]
+ 18 | const originalError = console.error
+ 19 | console.error = (...args: any[]) => {
+    : ^^^^^^|^^^^^^
+    :       `-- Outer scope where this function is defined
+ 20 |   const now = new Date()
+ 21 |   const pad = (n: number) => n.toString().padStart(2, "0")
+    :         ^|^
+    :          `-- This function does not use any variables from the parent arrow function
+ 22 |   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+    `----
+  help: Move `pad` to the outer scope to avoid recreating it on every call.
+
+  x eslint(no-unused-vars): Type 'PolicyProperties' is imported but never used.
+   ,-[src/temp/entryTemplates.ts:4:3]
+ 3 |   PropertyPanelSchema,
+ 4 |   PolicyProperties,
+   :   ^^^^^^^^|^^^^^^^
+   :           `-- 'PolicyProperties' is imported here
+ 5 |   SpeciesProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'SpeciesProperties' is imported but never used.
+   ,-[src/temp/entryTemplates.ts:5:3]
+ 4 |   PolicyProperties,
+ 5 |   SpeciesProperties,
+   :   ^^^^^^^^|^^^^^^^^
+   :           `-- 'SpeciesProperties' is imported here
+ 6 |   CharacterProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'CharacterProperties' is imported but never used.
+   ,-[src/temp/entryTemplates.ts:6:3]
+ 5 |   SpeciesProperties,
+ 6 |   CharacterProperties,
+   :   ^^^^^^^^^|^^^^^^^^^
+   :            `-- 'CharacterProperties' is imported here
+ 7 |   ObjectProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'ObjectProperties' is imported but never used.
+   ,-[src/temp/entryTemplates.ts:7:3]
+ 6 |   CharacterProperties,
+ 7 |   ObjectProperties,
+   :   ^^^^^^^^|^^^^^^^
+   :           `-- 'ObjectProperties' is imported here
+ 8 |   TaleProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'TaleProperties' is imported but never used.
+   ,-[src/temp/entryTemplates.ts:8:3]
+ 7 |   ObjectProperties,
+ 8 |   TaleProperties,
+   :   ^^^^^^^|^^^^^^
+   :          `-- 'TaleProperties' is imported here
+ 9 |   ItemProperties,
+   `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'ItemProperties' is imported but never used.
+    ,-[src/temp/entryTemplates.ts:9:3]
+  8 |   TaleProperties,
+  9 |   ItemProperties,
+    :   ^^^^^^^|^^^^^^
+    :          `-- 'ItemProperties' is imported here
+ 10 |   SkillProperties,
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'SkillProperties' is imported but never used.
+    ,-[src/temp/entryTemplates.ts:10:3]
+  9 |   ItemProperties,
+ 10 |   SkillProperties,
+    :   ^^^^^^^|^^^^^^^
+    :          `-- 'SkillProperties' is imported here
+ 11 |   HeroProperties,
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'HeroProperties' is imported but never used.
+    ,-[src/temp/entryTemplates.ts:11:3]
+ 10 |   SkillProperties,
+ 11 |   HeroProperties,
+    :   ^^^^^^^|^^^^^^
+    :          `-- 'HeroProperties' is imported here
+ 12 |   CardProperties,
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'CardProperties' is imported but never used.
+    ,-[src/temp/entryTemplates.ts:12:3]
+ 11 |   HeroProperties,
+ 12 |   CardProperties,
+    :   ^^^^^^^|^^^^^^
+    :          `-- 'CardProperties' is imported here
+ 13 |   SeriesProperties,
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'SeriesProperties' is imported but never used.
+    ,-[src/temp/entryTemplates.ts:13:3]
+ 12 |   CardProperties,
+ 13 |   SeriesProperties,
+    :   ^^^^^^^^|^^^^^^^
+    :           `-- 'SeriesProperties' is imported here
+ 14 |   EpisodeProperties
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Type 'EpisodeProperties' is imported but never used.
+    ,-[src/temp/entryTemplates.ts:14:3]
+ 13 |   SeriesProperties,
+ 14 |   EpisodeProperties
+    :   ^^^^^^^^|^^^^^^^^
+    :           `-- 'EpisodeProperties' is imported here
+ 15 | } from "../../types/Entry"
+    `----
+  help: Consider removing this import.
+
+  x eslint(no-unused-vars): Identifier 'fileURLToPath' is imported but never used.
+    ,-[astro.config.ts:14:10]
+ 13 | import { cacheCloudflare } from "@astrojs/cloudflare/cache"
+ 14 | import { fileURLToPath } from "node:url"
+    :          ^^^^^^|^^^^^^
+    :                `-- 'fileURLToPath' is imported here
+ 15 | import { extractAllMeta } from "./src/docs/extractAll"
+    `----
+  help: Consider removing this import.
+
+  x typescript(TS6133): 'fileURLToPath' is declared but its value is never read.
+    ,-[astro.config.ts:14:10]
+ 13 | import { cacheCloudflare } from "@astrojs/cloudflare/cache"
+ 14 | import { fileURLToPath } from "node:url"
+    :          ^^^^^^^^^^^^^
+ 15 | import { extractAllMeta } from "./src/docs/extractAll"
+    `----
+
+  x typescript(TS2339): Property 'runtime' does not exist on type 'Locals'.
+    ,-[src/api/index.ts:18:24]
+ 17 |   const state = getFetchState(c)
+ 18 |   return (state.locals.runtime?.env ?? c.env) as CloudflareEnv | undefined
+    :                        ^^^^^^^
+ 19 | }
+    `----
+
+  x typescript(TS6196): 'PageType' is declared but never used.
+   ,-[src/composables/pages/useBlogIndex.ts:2:15]
+ 1 | import { computed, reactive, ref, watch, type Ref } from "vue"
+ 2 | import type { PageType } from "@/types/pages"
+   :               ^^^^^^^^
+ 3 | import { usePaginatedPages } from "./usePaginatedPages"
+   `----
+
+  x typescript(TS6196): 'PageType' is declared but never used.
+   ,-[src/composables/pages/useDocumentsIndex.ts:2:15]
+ 1 | import { computed, reactive, ref, watch, type Ref } from "vue"
+ 2 | import type { PageType } from "@/types/pages"
+   :               ^^^^^^^^
+ 3 | import { usePaginatedPages } from "./usePaginatedPages"
+   `----
+
+  x typescript(TS2307): Cannot find module '~/types/Entry' or its corresponding type declarations.
+   ,-[src/temp/entryTemplates.ts:1:42]
+ 1 | import { EntryType, EntryCategory } from "~/types/Entry"
+   :                                          ^^^^^^^^^^^^^^^
+ 2 | import type {
+   `----
+
+  x typescript(TS6196): 'PolicyProperties' is declared but never used.
+   ,-[src/temp/entryTemplates.ts:4:3]
+ 3 |   PropertyPanelSchema,
+ 4 |   PolicyProperties,
+   :   ^^^^^^^^^^^^^^^^
+ 5 |   SpeciesProperties,
+   `----
+
+  x typescript(TS6196): 'SpeciesProperties' is declared but never used.
+   ,-[src/temp/entryTemplates.ts:5:3]
+ 4 |   PolicyProperties,
+ 5 |   SpeciesProperties,
+   :   ^^^^^^^^^^^^^^^^^
+ 6 |   CharacterProperties,
+   `----
+
+  x typescript(TS6196): 'CharacterProperties' is declared but never used.
+   ,-[src/temp/entryTemplates.ts:6:3]
+ 5 |   SpeciesProperties,
+ 6 |   CharacterProperties,
+   :   ^^^^^^^^^^^^^^^^^^^
+ 7 |   ObjectProperties,
+   `----
+
+  x typescript(TS6196): 'ObjectProperties' is declared but never used.
+   ,-[src/temp/entryTemplates.ts:7:3]
+ 6 |   CharacterProperties,
+ 7 |   ObjectProperties,
+   :   ^^^^^^^^^^^^^^^^
+ 8 |   TaleProperties,
+   `----
+
+  x typescript(TS6196): 'TaleProperties' is declared but never used.
+   ,-[src/temp/entryTemplates.ts:8:3]
+ 7 |   ObjectProperties,
+ 8 |   TaleProperties,
+   :   ^^^^^^^^^^^^^^
+ 9 |   ItemProperties,
+   `----
+
+  x typescript(TS6196): 'ItemProperties' is declared but never used.
+    ,-[src/temp/entryTemplates.ts:9:3]
+  8 |   TaleProperties,
+  9 |   ItemProperties,
+    :   ^^^^^^^^^^^^^^
+ 10 |   SkillProperties,
+    `----
+
+  x typescript(TS6196): 'SkillProperties' is declared but never used.
+    ,-[src/temp/entryTemplates.ts:10:3]
+  9 |   ItemProperties,
+ 10 |   SkillProperties,
+    :   ^^^^^^^^^^^^^^^
+ 11 |   HeroProperties,
+    `----
+
+  x typescript(TS6196): 'HeroProperties' is declared but never used.
+    ,-[src/temp/entryTemplates.ts:11:3]
+ 10 |   SkillProperties,
+ 11 |   HeroProperties,
+    :   ^^^^^^^^^^^^^^
+ 12 |   CardProperties,
+    `----
+
+  x typescript(TS6196): 'CardProperties' is declared but never used.
+    ,-[src/temp/entryTemplates.ts:12:3]
+ 11 |   HeroProperties,
+ 12 |   CardProperties,
+    :   ^^^^^^^^^^^^^^
+ 13 |   SeriesProperties,
+    `----
+
+  x typescript(TS6196): 'SeriesProperties' is declared but never used.
+    ,-[src/temp/entryTemplates.ts:13:3]
+ 12 |   CardProperties,
+ 13 |   SeriesProperties,
+    :   ^^^^^^^^^^^^^^^^
+ 14 |   EpisodeProperties
+    `----
+
+  x typescript(TS6196): 'EpisodeProperties' is declared but never used.
+    ,-[src/temp/entryTemplates.ts:14:3]
+ 13 |   SeriesProperties,
+ 14 |   EpisodeProperties
+    :   ^^^^^^^^^^^^^^^^^
+ 15 | } from "../../types/Entry"
+    `----
+
+  x typescript(TS2307): Cannot find module '../../types/Entry' or its corresponding type declarations.
+    ,-[src/temp/entryTemplates.ts:15:8]
+ 14 |   EpisodeProperties
+ 15 | } from "../../types/Entry"
+    :        ^^^^^^^^^^^^^^^^^^^
+ 16 | import type { BlockData, SectionBlockData } from "../../types/blocks"
+    `----
+
+  x typescript(TS2307): Cannot find module '../../types/blocks' or its corresponding type declarations.
+    ,-[src/temp/entryTemplates.ts:16:50]
+ 15 | } from "../../types/Entry"
+ 16 | import type { BlockData, SectionBlockData } from "../../types/blocks"
+    :                                                  ^^^^^^^^^^^^^^^^^^^^
+ 17 | import { ulid } from "ulid"
+    `----
+
+  x typescript(TS2307): Cannot find module 'ulid' or its corresponding type declarations.
+    ,-[src/temp/entryTemplates.ts:17:22]
+ 16 | import type { BlockData, SectionBlockData } from "../../types/blocks"
+ 17 | import { ulid } from "ulid"
+    :                      ^^^^^^
+ 18 | 
+    `----
+
+  x typescript(TS2307): Cannot find module '@/types/Page' or its corresponding type declarations.
+   ,-[src/temp/composables/usePropertyPanel.ts:2:31]
+ 1 | import { computed, type Ref } from "vue"
+ 2 | import type { PageData } from "@/types/Page"
+   :                               ^^^^^^^^^^^^^^
+ 3 | 
+   `----
+
+  x typescript(TS2307): Cannot find module '~/config/blocks/blockSchema' or its corresponding type declarations.
+   ,-[src/temp/composables/useRenderBlocks.ts:2:25]
+ 1 | import { h, type VNode } from "vue"
+ 2 | import BlockSchema from "~/config/blocks/blockSchema"
+   :                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 3 | import BlockSlot from "@/components/article/base/BlockSlot.vue"
+   `----
+
+  x typescript(TS2305): Module '"@/types/blocks"' has no exported member 'BlockData'.
+   ,-[src/temp/composables/useRenderBlocks.ts:4:15]
+ 3 | import BlockSlot from "@/components/article/base/BlockSlot.vue"
+ 4 | import type { BlockData } from "@/types/blocks"
+   :               ^^^^^^^^^
+ 5 | import type { EditorCallbacks, GenericBlockComponentProps } from "~/config/blocks/blockSchema"
+   `----
+
+  x typescript(TS2307): Cannot find module '~/config/blocks/blockSchema' or its corresponding type declarations.
+   ,-[src/temp/composables/useRenderBlocks.ts:5:66]
+ 4 | import type { BlockData } from "@/types/blocks"
+ 5 | import type { EditorCallbacks, GenericBlockComponentProps } from "~/config/blocks/blockSchema"
+   :                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 6 | 
+   `----
+
+  x typescript(TS7006): Parameter 'childBlocks' implicitly has an 'any' type.
+    ,-[src/temp/composables/useRenderBlocks.ts:46:24]
+ 45 |         isEditable: isEditable,
+ 46 |         renderBlocks: (childBlocks, isEdit, callbacks, level) =>
+    :                        ^^^^^^^^^^^
+ 47 |           useRenderBlocks(
+    `----
+
+  x typescript(TS7006): Parameter 'isEdit' implicitly has an 'any' type.
+    ,-[src/temp/composables/useRenderBlocks.ts:46:37]
+ 45 |         isEditable: isEditable,
+ 46 |         renderBlocks: (childBlocks, isEdit, callbacks, level) =>
+    :                                     ^^^^^^
+ 47 |           useRenderBlocks(
+    `----
+
+  x typescript(TS7006): Parameter 'callbacks' implicitly has an 'any' type.
+    ,-[src/temp/composables/useRenderBlocks.ts:46:45]
+ 45 |         isEditable: isEditable,
+ 46 |         renderBlocks: (childBlocks, isEdit, callbacks, level) =>
+    :                                             ^^^^^^^^^
+ 47 |           useRenderBlocks(
+    `----
+
+  x typescript(TS7006): Parameter 'level' implicitly has an 'any' type.
+    ,-[src/temp/composables/useRenderBlocks.ts:46:56]
+ 45 |         isEditable: isEditable,
+ 46 |         renderBlocks: (childBlocks, isEdit, callbacks, level) =>
+    :                                                        ^^^^^
+ 47 |           useRenderBlocks(
+    `----
+
+  x typescript(TS2305): Module '"@/types/blocks"' has no exported member 'BlockData'.
+   ,-[src/temp/types/blockSchema.ts:3:15]
+ 2 | 
+ 3 | import type { BlockData } from "@/types/blocks"
+   :               ^^^^^^^^^
+ 4 | import type { SectionBlockData } from "@/types/blocks/sectionBlock"
+   `----
+
+  x typescript(TS2307): Cannot find module '@/types/blocks/sectionBlock' or its corresponding type declarations.
+   ,-[src/temp/types/blockSchema.ts:4:39]
+ 3 | import type { BlockData } from "@/types/blocks"
+ 4 | import type { SectionBlockData } from "@/types/blocks/sectionBlock"
+   :                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 5 | import type { ParagraphBlockData } from "@/types/blocks/paragraphBlock"
+   `----
+
+  x typescript(TS2307): Cannot find module '@/types/blocks/paragraphBlock' or its corresponding type declarations.
+   ,-[src/temp/types/blockSchema.ts:5:41]
+ 4 | import type { SectionBlockData } from "@/types/blocks/sectionBlock"
+ 5 | import type { ParagraphBlockData } from "@/types/blocks/paragraphBlock"
+   :                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 6 | import type { CalloutBlockData } from "@/types/blocks/calloutBlock"
+   `----
+
+  x typescript(TS2307): Cannot find module '@/types/blocks/calloutBlock' or its corresponding type declarations.
+   ,-[src/temp/types/blockSchema.ts:6:39]
+ 5 | import type { ParagraphBlockData } from "@/types/blocks/paragraphBlock"
+ 6 | import type { CalloutBlockData } from "@/types/blocks/calloutBlock"
+   :                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 7 | import type { ImageBlockData } from "@/types/blocks/imageBlock"
+   `----
+
+  x typescript(TS2307): Cannot find module '@/types/blocks/imageBlock' or its corresponding type declarations.
+   ,-[src/temp/types/blockSchema.ts:7:37]
+ 6 | import type { CalloutBlockData } from "@/types/blocks/calloutBlock"
+ 7 | import type { ImageBlockData } from "@/types/blocks/imageBlock"
+   :                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 8 | import type { ScriptBlockData } from "@/types/blocks/scriptBlock"
+   `----
+
+  x typescript(TS2307): Cannot find module '@/types/blocks/scriptBlock' or its corresponding type declarations.
+   ,-[src/temp/types/blockSchema.ts:8:38]
+ 7 | import type { ImageBlockData } from "@/types/blocks/imageBlock"
+ 8 | import type { ScriptBlockData } from "@/types/blocks/scriptBlock"
+   :                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 9 | import type { SceneBlockData } from "@/types/blocks/sceneBlock"
+   `----
+
+  x typescript(TS2307): Cannot find module '@/types/blocks/sceneBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:9:37]
+  8 | import type { ScriptBlockData } from "@/types/blocks/scriptBlock"
+  9 | import type { SceneBlockData } from "@/types/blocks/sceneBlock"
+    :                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 10 | import type { DialogueBlockData } from "@/types/blocks/dialogueBlock"
+    `----
+
+  x typescript(TS2307): Cannot find module '@/types/blocks/dialogueBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:10:40]
+  9 | import type { SceneBlockData } from "@/types/blocks/sceneBlock"
+ 10 | import type { DialogueBlockData } from "@/types/blocks/dialogueBlock"
+    :                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 11 | 
+    `----
+
+  x typescript(TS2307): Cannot find module '~/utils/blocks/createSectionBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:12:36]
+ 11 | 
+ 12 | import { createSectionBlock } from "~/utils/blocks/createSectionBlock"
+    :                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 13 | import { createParagraphBlock } from "~/utils/blocks/createParagraphBlock"
+    `----
+
+  x typescript(TS2307): Cannot find module '~/utils/blocks/createParagraphBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:13:38]
+ 12 | import { createSectionBlock } from "~/utils/blocks/createSectionBlock"
+ 13 | import { createParagraphBlock } from "~/utils/blocks/createParagraphBlock"
+    :                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 14 | import { createCalloutBlock } from "~/utils/blocks/createCalloutBlock"
+    `----
+
+  x typescript(TS2307): Cannot find module '~/utils/blocks/createCalloutBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:14:36]
+ 13 | import { createParagraphBlock } from "~/utils/blocks/createParagraphBlock"
+ 14 | import { createCalloutBlock } from "~/utils/blocks/createCalloutBlock"
+    :                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 15 | import { createImageBlock } from "~/utils/blocks/createImageBlock"
+    `----
+
+  x typescript(TS2307): Cannot find module '~/utils/blocks/createImageBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:15:34]
+ 14 | import { createCalloutBlock } from "~/utils/blocks/createCalloutBlock"
+ 15 | import { createImageBlock } from "~/utils/blocks/createImageBlock"
+    :                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 16 | import { createScriptBlock } from "~/utils/blocks/createScriptBlock"
+    `----
+
+  x typescript(TS2307): Cannot find module '~/utils/blocks/createScriptBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:16:35]
+ 15 | import { createImageBlock } from "~/utils/blocks/createImageBlock"
+ 16 | import { createScriptBlock } from "~/utils/blocks/createScriptBlock"
+    :                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 17 | import { createSceneBlock } from "~/utils/blocks/createSceneBlock"
+    `----
+
+  x typescript(TS2307): Cannot find module '~/utils/blocks/createSceneBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:17:34]
+ 16 | import { createScriptBlock } from "~/utils/blocks/createScriptBlock"
+ 17 | import { createSceneBlock } from "~/utils/blocks/createSceneBlock"
+    :                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 18 | import { createDialogueBlock } from "~/utils/blocks/createDialogueBlock"
+    `----
+
+  x typescript(TS2307): Cannot find module '~/utils/blocks/createDialogueBlock' or its corresponding type declarations.
+    ,-[src/temp/types/blockSchema.ts:18:37]
+ 17 | import { createSceneBlock } from "~/utils/blocks/createSceneBlock"
+ 18 | import { createDialogueBlock } from "~/utils/blocks/createDialogueBlock"
+    :                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 19 | 
+    `----
+
+  x typescript(TS2304): Cannot find name 'IconName'.
+     ,-[src/temp/types/blockSchema.ts:104:9]
+ 103 |   component: Component
+ 104 |   icon: IconName
+     :         ^^^^^^^^
+ 105 |   category: string
+     `----
+
+  x typescript(TS6133): 'SpeciesProperties' is declared but its value is never read.
+   ,-[src/temp/types/pageTemplates.ts:4:8]
+ 3 |   type PropertyPanelSchema,
+ 4 |   type SpeciesProperties,
+   :        ^^^^^^^^^^^^^^^^^
+ 5 |   type CharacterProperties,
+   `----
+
+  x typescript(TS6133): 'CharacterProperties' is declared but its value is never read.
+   ,-[src/temp/types/pageTemplates.ts:5:8]
+ 4 |   type SpeciesProperties,
+ 5 |   type CharacterProperties,
+   :        ^^^^^^^^^^^^^^^^^^^
+ 6 |   type ObjectProperties,
+   `----
+
+  x typescript(TS6133): 'ObjectProperties' is declared but its value is never read.
+   ,-[src/temp/types/pageTemplates.ts:6:8]
+ 5 |   type CharacterProperties,
+ 6 |   type ObjectProperties,
+   :        ^^^^^^^^^^^^^^^^
+ 7 |   type TaleProperties,
+   `----
+
+  x typescript(TS6133): 'TaleProperties' is declared but its value is never read.
+   ,-[src/temp/types/pageTemplates.ts:7:8]
+ 6 |   type ObjectProperties,
+ 7 |   type TaleProperties,
+   :        ^^^^^^^^^^^^^^
+ 8 |   type ItemProperties,
+   `----
+
+  x typescript(TS6133): 'ItemProperties' is declared but its value is never read.
+   ,-[src/temp/types/pageTemplates.ts:8:8]
+ 7 |   type TaleProperties,
+ 8 |   type ItemProperties,
+   :        ^^^^^^^^^^^^^^
+ 9 |   type SkillProperties,
+   `----
+
+  x typescript(TS6133): 'SkillProperties' is declared but its value is never read.
+    ,-[src/temp/types/pageTemplates.ts:9:8]
+  8 |   type ItemProperties,
+  9 |   type SkillProperties,
+    :        ^^^^^^^^^^^^^^^
+ 10 |   type HeroProperties,
+    `----
+
+  x typescript(TS6133): 'HeroProperties' is declared but its value is never read.
+    ,-[src/temp/types/pageTemplates.ts:10:8]
+  9 |   type SkillProperties,
+ 10 |   type HeroProperties,
+    :        ^^^^^^^^^^^^^^
+ 11 |   type CardProperties,
+    `----
+
+  x typescript(TS6133): 'CardProperties' is declared but its value is never read.
+    ,-[src/temp/types/pageTemplates.ts:11:8]
+ 10 |   type HeroProperties,
+ 11 |   type CardProperties,
+    :        ^^^^^^^^^^^^^^
+ 12 |   type SeriesProperties,
+    `----
+
+  x typescript(TS6133): 'SeriesProperties' is declared but its value is never read.
+    ,-[src/temp/types/pageTemplates.ts:12:8]
+ 11 |   type CardProperties,
+ 12 |   type SeriesProperties,
+    :        ^^^^^^^^^^^^^^^^
+ 13 |   type EpisodeProperties
+    `----
+
+  x typescript(TS6133): 'EpisodeProperties' is declared but its value is never read.
+    ,-[src/temp/types/pageTemplates.ts:13:8]
+ 12 |   type SeriesProperties,
+ 13 |   type EpisodeProperties
+    :        ^^^^^^^^^^^^^^^^^
+ 14 | } from "../../types/article/article"
+    `----
+
+  x typescript(TS2307): Cannot find module '../../types/article/article' or its corresponding type declarations.
+    ,-[src/temp/types/pageTemplates.ts:14:8]
+ 13 |   type EpisodeProperties
+ 14 | } from "../../types/article/article"
+    :        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 15 | import type { BlockData, SectionBlockData } from "../../types/blocks/index"
+    `----
+
+  x typescript(TS2307): Cannot find module '../../types/blocks/index' or its corresponding type declarations.
+    ,-[src/temp/types/pageTemplates.ts:15:50]
+ 14 | } from "../../types/article/article"
+ 15 | import type { BlockData, SectionBlockData } from "../../types/blocks/index"
+    :                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 16 | import { v7 as uuidv7 } from "uuid"
+    `----
+
+  x typescript(TS2307): Cannot find module 'uuid' or its corresponding type declarations.
+    ,-[src/temp/types/pageTemplates.ts:16:30]
+ 15 | import type { BlockData, SectionBlockData } from "../../types/blocks/index"
+ 16 | import { v7 as uuidv7 } from "uuid"
+    :                              ^^^^^^
+ 17 | 
+    `----
+
+  x typescript(TS2305): Module '"@/types/blocks"' has no exported member 'BlockData'.
+   ,-[src/temp/types/article/article.ts:1:15]
+ 1 | import type { BlockData } from "@/types/blocks"
+   :               ^^^^^^^^^
+ 2 | 
+   `----
+
+  x typescript(TS2304): Cannot find name 'EntryType'.
+    ,-[src/temp/types/article/article.ts:10:9]
+  9 |   title: string
+ 10 |   type: EntryType
+    :         ^^^^^^^^^
+ 11 | }
+    `----
+
+  x typescript(TS2304): Cannot find name 'EntryType'.
+    ,-[src/temp/types/article/article.ts:41:9]
+ 40 |   title: string
+ 41 |   type: EntryType
+    :         ^^^^^^^^^
+ 42 |   tags: string[]
+    `----
+
+  x typescript(TS2304): Cannot find name 'EntryCategory'.
+    ,-[src/temp/types/article/article.ts:43:15]
+ 42 |   tags: string[]
+ 43 |   categories: EntryCategory[]
+    :               ^^^^^^^^^^^^^
+ 44 |   properties: Record<string, unknown>
+    `----
+
+  x typescript(TS2304): Cannot find name 'EntryType'.
+    ,-[src/temp/types/article/article.ts:50:14]
+ 49 | interface BaseEntryTemplate {
+ 50 |   entryType: EntryType
+    :              ^^^^^^^^^
+ 51 |   defaultTitle: string
+    `----
+
+  x typescript(TS2304): Cannot find name 'EntryCategory'.
+    ,-[src/temp/types/article/article.ts:52:22]
+ 51 |   defaultTitle: string
+ 52 |   defaultCategories: EntryCategory[]
+    :                      ^^^^^^^^^^^^^
+ 53 |   defaultTags: string[]
+    `----
+
+  x typescript(TS2304): Cannot find name 'PropertyPanelSchema'.
+    ,-[src/temp/types/article/article.ts:56:55]
+ 55 |   defaultBlocks: BlockData[]
+ 56 |   propertyPanelSchema?: Record<string, Record<string, PropertyPanelSchema>>
+    :                                                       ^^^^^^^^^^^^^^^^^^^
+ 57 | }
+    `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:137:14]
+ 136 | export interface SpeciesEntryTemplate extends BaseEntryTemplate {
+ 137 |   entryType: EntryType.SPECIES
+     :              ^^^^^^^^^
+ 138 |   defaultProperties: SpeciesProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:142:14]
+ 141 | export interface CharacterEntryTemplate extends BaseEntryTemplate {
+ 142 |   entryType: EntryType.CHARACTER
+     :              ^^^^^^^^^
+ 143 |   defaultProperties: CharacterProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:147:14]
+ 146 | export interface TaleEntryTemplate extends BaseEntryTemplate {
+ 147 |   entryType: EntryType.TALE
+     :              ^^^^^^^^^
+ 148 |   defaultProperties: TaleProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:152:14]
+ 151 | export interface ItemEntryTemplate extends BaseEntryTemplate {
+ 152 |   entryType: EntryType.ITEM
+     :              ^^^^^^^^^
+ 153 |   defaultProperties: ItemProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:157:14]
+ 156 | export interface SkillEntryTemplate extends BaseEntryTemplate {
+ 157 |   entryType: EntryType.SKILL
+     :              ^^^^^^^^^
+ 158 |   defaultProperties: SkillProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:162:14]
+ 161 | export interface HeroEntryTemplate extends BaseEntryTemplate {
+ 162 |   entryType: EntryType.HERO
+     :              ^^^^^^^^^
+ 163 |   defaultProperties: HeroProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:167:14]
+ 166 | export interface CardEntryTemplate extends BaseEntryTemplate {
+ 167 |   entryType: EntryType.CARD
+     :              ^^^^^^^^^
+ 168 |   defaultProperties: CardProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:172:14]
+ 171 | export interface SeriesEntryTemplate extends BaseEntryTemplate {
+ 172 |   entryType: EntryType.SERIES
+     :              ^^^^^^^^^
+ 173 |   defaultProperties: SeriesProperties
+     `----
+
+  x typescript(TS2503): Cannot find namespace 'EntryType'.
+     ,-[src/temp/types/article/article.ts:177:14]
+ 176 | export interface EpisodeEntryTemplate extends BaseEntryTemplate {
+ 177 |   entryType: EntryType.EPISODE
+     :              ^^^^^^^^^
+ 178 |   defaultProperties: EpisodeProperties
+     `----
+
+  x typescript(TS6133): 'blocksRegistry' is declared but its value is never read.
+   ,-[src/temp/types/blocks/block.ts:2:10]
+ 1 | import type { BlockTypes } from "./index"
+ 2 | import { blocksRegistry } from "./index"
+   :          ^^^^^^^^^^^^^^
+ 3 | 
+   `----
+
+  x typescript(TS6196): 'ComponentImporter' is declared but never used.
+   ,-[src/utils/blockMapper.ts:7:6]
+ 6 | 
+ 7 | type ComponentImporter = () => Promise<{ default: Component }>
+   :      ^^^^^^^^^^^^^^^^^
+ 8 | 
+   `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to `any` detected: consider using a more specific type to ensure safety.
+    ,-[src/docs/extractors/extractTheme.ts:59:17]
+ 58 |       if (!themeObj) continue
+ 59 |       const t = themeObj as any
+    :                 ^^^^^^^^^^^^^^^
+ 60 |       results[name] = {
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+    ,-[src/api/index.ts:18:10]
+ 17 |   const state = getFetchState(c)
+ 18 |   return (state.locals.runtime?.env ?? c.env) as CloudflareEnv | undefined
+    :          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 19 | }
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to `any` detected: consider using a more specific type to ensure safety.
+    ,-[src/middleware/i18n.ts:13:36]
+ 12 |   }
+ 13 |   const response = await astroI18n(context as any, async () => {
+    :                                    ^^^^^^^^^^^^^^
+ 14 |     await next()
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to `any` detected: consider using a more specific type to ensure safety.
+    ,-[src/middleware/security.ts:13:40]
+ 12 |   }
+ 13 |   const response = await astroSecurity(context as any, async () => {
+    :                                        ^^^^^^^^^^^^^^
+ 14 |     await next()
+    `----
+
+  ! typescript(consistent-return): Async function 'auth' expected a return value.
+    ,-[src/middleware/auth.ts:7:21]
+  6 |     
+  7 | ,-> export const auth = async (c: any, next: any) => {
+  8 | |     const url = new URL(c.req.url)
+  9 | |     const isIgnored = IGNORED_ROUTES.some((path) => url.pathname.includes(path))
+ 10 | |     const isProtected = PROTECTED_ROUTES.some((path) => url.pathname.startsWith(path))
+ 11 | |   
+ 12 | |     const state = getFetchState(c)
+ 13 | |   
+ 14 | |     if (isIgnored) {
+ 15 | |       state.locals.user = null
+ 16 | |       state.locals.session = null
+ 17 | |     } else {
+ 18 | |       const isAuthed = await betterAuth.api.getSession({ headers: c.req.raw.headers })
+ 19 | |       state.locals.user = isAuthed?.user ?? null
+ 20 | |       state.locals.session = isAuthed?.session ?? null
+ 21 | |     }
+ 22 | |   
+ 23 | |     if (url.pathname === "/auth") {
+ 24 | |       return c.redirect("/auth/sign-in")
+ 25 | |     }
+ 26 | |   
+ 27 | |     if (
+ 28 | |       (url.pathname === "/auth/sign-in" || url.pathname === "/auth/sign-up") &&
+ 29 | |       state.locals.session
+ 30 | |     ) {
+ 31 | |       return c.redirect("/")
+ 32 | |     }
+ 33 | |   
+ 34 | |     if (isProtected && !state.locals.session) {
+ 35 | |       return c.redirect("/auth/sign-in")
+ 36 | |     }
+ 37 | |   
+ 38 | |     if (url.pathname.includes("/construction") && state.locals.session) {
+ 39 | |       return c.redirect("/")
+ 40 | |     }
+ 41 | |   
+ 42 | |     await next()
+ 43 | `-> }
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type '"draft" | "published" | undefined' is more narrow than the original type.
+     ,-[src/api/index.ts:351:20]
+ 350 |     const type = c.req.query("type")
+ 351 |     const status = c.req.query("status") as "published" | "draft" | undefined
+     :                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 352 |     const limitVal = Math.max(1, parseInt(c.req.query("limit") || "50") || 50)
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to `any` detected: consider using a more specific type to ensure safety.
+     ,-[src/api/index.ts:413:45]
+ 412 |       if (typesList.length > 0) {
+ 413 |         conditions.push(inArray(pages.type, typesList as any[]))
+     :                                             ^^^^^^^^^^^^^^^^^^
+ 414 |       }
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:105:7]
+ 104 |         defaultBlocks: [
+ 105 | ,->       {
+ 106 | |           id: ulid(),
+ 107 | |           type: "section",
+ 108 | |           attrs: {
+ 109 | |             title: "Physiology"
+ 110 | |           },
+ 111 | |           isTemplated: true
+ 112 | `->       } as SectionBlockData,
+ 113 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:113:7]
+ 112 |           } as SectionBlockData,
+ 113 | ,->       {
+ 114 | |           id: ulid(),
+ 115 | |           type: "section",
+ 116 | |           attrs: {
+ 117 | |             title: "Culture"
+ 118 | |           },
+ 119 | |           isTemplated: true
+ 120 | `->       } as SectionBlockData,
+ 121 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:121:7]
+ 120 |           } as SectionBlockData,
+ 121 | ,->       {
+ 122 | |           id: ulid(),
+ 123 | |           type: "section",
+ 124 | |           attrs: {
+ 125 | |             title: "Trivia"
+ 126 | |           },
+ 127 | |           isTemplated: true
+ 128 | `->       } as SectionBlockData
+ 129 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:270:7]
+ 269 |         defaultBlocks: [
+ 270 | ,->       {
+ 271 | |           id: ulid(),
+ 272 | |           type: "section",
+ 273 | |           attrs: {
+ 274 | |             title: "Appearance"
+ 275 | |           },
+ 276 | |           isTemplated: true
+ 277 | `->       } as SectionBlockData,
+ 278 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:278:7]
+ 277 |           } as SectionBlockData,
+ 278 | ,->       {
+ 279 | |           id: ulid(),
+ 280 | |           type: "section",
+ 281 | |           attrs: {
+ 282 | |             title: "Personality"
+ 283 | |           },
+ 284 | |           isTemplated: true
+ 285 | `->       } as SectionBlockData,
+ 286 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:286:7]
+ 285 |           } as SectionBlockData,
+ 286 | ,->       {
+ 287 | |           id: ulid(),
+ 288 | |           type: "section",
+ 289 | |           attrs: {
+ 290 | |             title: "Abilities"
+ 291 | |           },
+ 292 | |           isTemplated: true
+ 293 | `->       } as SectionBlockData,
+ 294 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:294:7]
+ 293 |           } as SectionBlockData,
+ 294 | ,->       {
+ 295 | |           id: ulid(),
+ 296 | |           type: "section",
+ 297 | |           attrs: {
+ 298 | |             title: "Biography"
+ 299 | |           },
+ 300 | |           isTemplated: true
+ 301 | `->       } as SectionBlockData,
+ 302 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:302:7]
+ 301 |           } as SectionBlockData,
+ 302 | ,->       {
+ 303 | |           id: ulid(),
+ 304 | |           type: "section",
+ 305 | |           attrs: {
+ 306 | |             title: "Relationships"
+ 307 | |           },
+ 308 | |           isTemplated: true
+ 309 | `->       } as SectionBlockData,
+ 310 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:310:7]
+ 309 |           } as SectionBlockData,
+ 310 | ,->       {
+ 311 | |           id: ulid(),
+ 312 | |           type: "section",
+ 313 | |           attrs: {
+ 314 | |             title: "Trivia"
+ 315 | |           },
+ 316 | |           isTemplated: true
+ 317 | `->       } as SectionBlockData
+ 318 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:328:7]
+ 327 |         defaultBlocks: [
+ 328 | ,->       {
+ 329 | |           id: ulid(),
+ 330 | |           type: "section",
+ 331 | |           attrs: {
+ 332 | |             title: "Trivia"
+ 333 | |           },
+ 334 | |           isTemplated: true
+ 335 | `->       } as SectionBlockData
+ 336 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:346:7]
+ 345 |         defaultBlocks: [
+ 346 | ,->       {
+ 347 | |           id: ulid(),
+ 348 | |           type: "section",
+ 349 | |           attrs: {
+ 350 | |             title: "Trivia"
+ 351 | |           },
+ 352 | |           isTemplated: true
+ 353 | `->       } as SectionBlockData
+ 354 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:364:7]
+ 363 |         defaultBlocks: [
+ 364 | ,->       {
+ 365 | |           id: ulid(),
+ 366 | |           type: "section",
+ 367 | |           attrs: {
+ 368 | |             title: "Trivia"
+ 369 | |           },
+ 370 | |           isTemplated: true
+ 371 | `->       } as SectionBlockData
+ 372 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:382:7]
+ 381 |         defaultBlocks: [
+ 382 | ,->       {
+ 383 | |           id: ulid(),
+ 384 | |           type: "section",
+ 385 | |           attrs: {
+ 386 | |             title: "Trivia"
+ 387 | |           },
+ 388 | |           isTemplated: true
+ 389 | `->       } as SectionBlockData
+ 390 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:400:7]
+ 399 |         defaultBlocks: [
+ 400 | ,->       {
+ 401 | |           id: ulid(),
+ 402 | |           type: "section",
+ 403 | |           attrs: {
+ 404 | |             title: "Trivia"
+ 405 | |           },
+ 406 | |           isTemplated: true
+ 407 | `->       } as SectionBlockData
+ 408 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:423:7]
+ 422 |         defaultBlocks: [
+ 423 | ,->       {
+ 424 | |           id: ulid(),
+ 425 | |           type: "section",
+ 426 | |           attrs: {
+ 427 | |             title: "Trivia"
+ 428 | |           },
+ 429 | |           isTemplated: true
+ 430 | `->       } as SectionBlockData
+ 431 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:441:7]
+ 440 |         defaultBlocks: [
+ 441 | ,->       {
+ 442 | |           id: ulid(),
+ 443 | |           type: "section",
+ 444 | |           attrs: {
+ 445 | |             title: "Trivia"
+ 446 | |           },
+ 447 | |           isTemplated: true
+ 448 | `->       } as SectionBlockData
+ 449 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/entryTemplates.ts:459:7]
+ 458 |         defaultBlocks: [
+ 459 | ,->       {
+ 460 | |           id: ulid(),
+ 461 | |           type: "section",
+ 462 | |           attrs: {
+ 463 | |             title: "Trivia"
+ 464 | |           },
+ 465 | |           isTemplated: true
+ 466 | `->       } as SectionBlockData
+ 467 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+     ,-[src/temp/types/blockSchema.ts:137:13]
+ 136 |     nestable: true,
+ 137 |     create: createSectionBlock as (initialData?: Partial<SectionBlockData>) => SectionBlockData
+     :             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 138 |   },
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+     ,-[src/temp/types/blockSchema.ts:149:13]
+ 148 |         nestable: false,
+ 149 | ,->     create: createParagraphBlock as (
+ 150 | |         initialData?: Partial<ParagraphBlockData>
+ 151 | `->     ) => ParagraphBlockData
+ 152 |       },
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+     ,-[src/temp/types/blockSchema.ts:163:13]
+ 162 |     nestable: false,
+ 163 |     create: createCalloutBlock as (initialData?: Partial<CalloutBlockData>) => CalloutBlockData
+     :             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 164 |   },
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+     ,-[src/temp/types/blockSchema.ts:175:13]
+ 174 |     nestable: false,
+ 175 |     create: createImageBlock as (initialData?: Partial<ImageBlockData>) => ImageBlockData
+     :             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 176 |   },
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+     ,-[src/temp/types/blockSchema.ts:187:13]
+ 186 |     nestable: true,
+ 187 |     create: createScriptBlock as (initialData?: Partial<ScriptBlockData>) => ScriptBlockData
+     :             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 188 |   },
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+     ,-[src/temp/types/blockSchema.ts:199:13]
+ 198 |     nestable: true,
+ 199 |     create: createSceneBlock as (initialData?: Partial<SceneBlockData>) => SceneBlockData
+     :             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 200 |   },
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion from error typed detected: consider using type guards or a safer assertion.
+     ,-[src/temp/types/blockSchema.ts:211:13]
+ 210 |     nestable: false,
+ 211 |     create: createDialogueBlock as (initialData?: Partial<DialogueBlockData>) => DialogueBlockData
+     :             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 212 |   }
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:92:7]
+  91 |         defaultBlocks: [
+  92 | ,->       {
+  93 | |           id: uuidv7(),
+  94 | |           type: `section`,
+  95 | |           attrs: {
+  96 | |             title: `Physiology`
+  97 | |           },
+  98 | |           isTemplated: true
+  99 | `->       } as SectionBlockData,
+ 100 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:100:7]
+  99 |           } as SectionBlockData,
+ 100 | ,->       {
+ 101 | |           id: uuidv7(),
+ 102 | |           type: `section`,
+ 103 | |           attrs: {
+ 104 | |             title: `Culture`
+ 105 | |           },
+ 106 | |           isTemplated: true
+ 107 | `->       } as SectionBlockData,
+ 108 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:108:7]
+ 107 |           } as SectionBlockData,
+ 108 | ,->       {
+ 109 | |           id: uuidv7(),
+ 110 | |           type: `section`,
+ 111 | |           attrs: {
+ 112 | |             title: `Trivia`
+ 113 | |           },
+ 114 | |           isTemplated: true
+ 115 | `->       } as SectionBlockData
+ 116 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:256:7]
+ 255 |         defaultBlocks: [
+ 256 | ,->       {
+ 257 | |           id: uuidv7(),
+ 258 | |           type: `section`,
+ 259 | |           attrs: {
+ 260 | |             title: `Appearance`
+ 261 | |           },
+ 262 | |           isTemplated: true
+ 263 | `->       } as SectionBlockData,
+ 264 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:264:7]
+ 263 |           } as SectionBlockData,
+ 264 | ,->       {
+ 265 | |           id: uuidv7(),
+ 266 | |           type: `section`,
+ 267 | |           attrs: {
+ 268 | |             title: `Personality`
+ 269 | |           },
+ 270 | |           isTemplated: true
+ 271 | `->       } as SectionBlockData,
+ 272 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:272:7]
+ 271 |           } as SectionBlockData,
+ 272 | ,->       {
+ 273 | |           id: uuidv7(),
+ 274 | |           type: `section`,
+ 275 | |           attrs: {
+ 276 | |             title: `Abilities`
+ 277 | |           },
+ 278 | |           isTemplated: true
+ 279 | `->       } as SectionBlockData,
+ 280 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:280:7]
+ 279 |           } as SectionBlockData,
+ 280 | ,->       {
+ 281 | |           id: uuidv7(),
+ 282 | |           type: `section`,
+ 283 | |           attrs: {
+ 284 | |             title: `Biography`
+ 285 | |           },
+ 286 | |           isTemplated: true
+ 287 | `->       } as SectionBlockData,
+ 288 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:288:7]
+ 287 |           } as SectionBlockData,
+ 288 | ,->       {
+ 289 | |           id: uuidv7(),
+ 290 | |           type: `section`,
+ 291 | |           attrs: {
+ 292 | |             title: `Relationships`
+ 293 | |           },
+ 294 | |           isTemplated: true
+ 295 | `->       } as SectionBlockData,
+ 296 |           {
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:296:7]
+ 295 |           } as SectionBlockData,
+ 296 | ,->       {
+ 297 | |           id: uuidv7(),
+ 298 | |           type: `section`,
+ 299 | |           attrs: {
+ 300 | |             title: `Trivia`
+ 301 | |           },
+ 302 | |           isTemplated: true
+ 303 | `->       } as SectionBlockData
+ 304 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:313:7]
+ 312 |         defaultBlocks: [
+ 313 | ,->       {
+ 314 | |           id: uuidv7(),
+ 315 | |           type: `section`,
+ 316 | |           attrs: {
+ 317 | |             title: `Trivia`
+ 318 | |           },
+ 319 | |           isTemplated: true
+ 320 | `->       } as SectionBlockData
+ 321 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:330:7]
+ 329 |         defaultBlocks: [
+ 330 | ,->       {
+ 331 | |           id: uuidv7(),
+ 332 | |           type: `section`,
+ 333 | |           attrs: {
+ 334 | |             title: `Trivia`
+ 335 | |           },
+ 336 | |           isTemplated: true
+ 337 | `->       } as SectionBlockData
+ 338 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:347:7]
+ 346 |         defaultBlocks: [
+ 347 | ,->       {
+ 348 | |           id: uuidv7(),
+ 349 | |           type: `section`,
+ 350 | |           attrs: {
+ 351 | |             title: `Trivia`
+ 352 | |           },
+ 353 | |           isTemplated: true
+ 354 | `->       } as SectionBlockData
+ 355 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:364:7]
+ 363 |         defaultBlocks: [
+ 364 | ,->       {
+ 365 | |           id: uuidv7(),
+ 366 | |           type: `section`,
+ 367 | |           attrs: {
+ 368 | |             title: `Trivia`
+ 369 | |           },
+ 370 | |           isTemplated: true
+ 371 | `->       } as SectionBlockData
+ 372 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:381:7]
+ 380 |         defaultBlocks: [
+ 381 | ,->       {
+ 382 | |           id: uuidv7(),
+ 383 | |           type: `section`,
+ 384 | |           attrs: {
+ 385 | |             title: `Trivia`
+ 386 | |           },
+ 387 | |           isTemplated: true
+ 388 | `->       } as SectionBlockData
+ 389 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:403:7]
+ 402 |         defaultBlocks: [
+ 403 | ,->       {
+ 404 | |           id: uuidv7(),
+ 405 | |           type: `section`,
+ 406 | |           attrs: {
+ 407 | |             title: `Trivia`
+ 408 | |           },
+ 409 | |           isTemplated: true
+ 410 | `->       } as SectionBlockData
+ 411 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:420:7]
+ 419 |         defaultBlocks: [
+ 420 | ,->       {
+ 421 | |           id: uuidv7(),
+ 422 | |           type: `section`,
+ 423 | |           attrs: {
+ 424 | |             title: `Trivia`
+ 425 | |           },
+ 426 | |           isTemplated: true
+ 427 | `->       } as SectionBlockData
+ 428 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe assertion to error typed detected: consider using a more specific type to ensure safety.
+     ,-[src/temp/types/pageTemplates.ts:437:7]
+ 436 |         defaultBlocks: [
+ 437 | ,->       {
+ 438 | |           id: uuidv7(),
+ 439 | |           type: `section`,
+ 440 | |           attrs: {
+ 441 | |             title: `Trivia`
+ 442 | |           },
+ 443 | |           isTemplated: true
+ 444 | `->       } as SectionBlockData
+ 445 |         ]
+     `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'SectionBlockData' is more narrow than the original type.
+    ,-[src/temp/types/blocks/index.ts:28:12]
+ 27 | export const blocksRegistry = {
+ 28 |   section: {} as SectionBlockData,
+    :            ^^^^^^^^^^^^^^^^^^^^^^
+ 29 |   paragraph: {} as ParagraphBlockData,
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'ParagraphBlockData' is more narrow than the original type.
+    ,-[src/temp/types/blocks/index.ts:29:14]
+ 28 |   section: {} as SectionBlockData,
+ 29 |   paragraph: {} as ParagraphBlockData,
+    :              ^^^^^^^^^^^^^^^^^^^^^^^^
+ 30 |   callout: {} as CalloutBlockData,
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'CalloutBlockData' is more narrow than the original type.
+    ,-[src/temp/types/blocks/index.ts:30:12]
+ 29 |   paragraph: {} as ParagraphBlockData,
+ 30 |   callout: {} as CalloutBlockData,
+    :            ^^^^^^^^^^^^^^^^^^^^^^
+ 31 |   image: {} as ImageBlockData,
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'ImageBlockData' is more narrow than the original type.
+    ,-[src/temp/types/blocks/index.ts:31:10]
+ 30 |   callout: {} as CalloutBlockData,
+ 31 |   image: {} as ImageBlockData,
+    :          ^^^^^^^^^^^^^^^^^^^^
+ 32 |   script: {} as ScriptBlockData,
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'ScriptBlockData' is more narrow than the original type.
+    ,-[src/temp/types/blocks/index.ts:32:11]
+ 31 |   image: {} as ImageBlockData,
+ 32 |   script: {} as ScriptBlockData,
+    :           ^^^^^^^^^^^^^^^^^^^^^
+ 33 |   scene: {} as SceneBlockData,
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'SceneBlockData' is more narrow than the original type.
+    ,-[src/temp/types/blocks/index.ts:33:10]
+ 32 |   script: {} as ScriptBlockData,
+ 33 |   scene: {} as SceneBlockData,
+    :          ^^^^^^^^^^^^^^^^^^^^
+ 34 |   dialogue: {} as DialogueBlockData
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'DialogueBlockData' is more narrow than the original type.
+    ,-[src/temp/types/blocks/index.ts:34:13]
+ 33 |   scene: {} as SceneBlockData,
+ 34 |   dialogue: {} as DialogueBlockData
+    :             ^^^^^^^^^^^^^^^^^^^^^^^
+ 35 | }
+    `----
+
+  ! typescript(no-unsafe-type-assertion): Unsafe type assertion: type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' is more narrow than the original type.
+    ,-[src/temp/composables/useRenderBlocks.ts:31:10]
+ 30 |     
+ 31 | ,->   return blocks
+ 32 | |       .filter((block) => block !== null && block !== undefined)
+ 33 | |       .map((block) => {
+ 34 | |         const blockSchemaEntry = BlockSchema[block.type]
+ 35 | |   
+ 36 | |         if (!blockSchemaEntry) {
+ 37 | |           console.warn(`No schema entry found for block type: ${block.type}`)
+ 38 | |           return null
+ 39 | |         }
+ 40 | |   
+ 41 | |         const BlockComponent = blockSchemaEntry.component
+ 42 | |   
+ 43 | |         const specificBlockComponentProps: GenericBlockComponentProps = {
+ 44 | |           block: block,
+ 45 | |           isEditable: isEditable,
+ 46 | |           renderBlocks: (childBlocks, isEdit, callbacks, level) =>
+ 47 | |             useRenderBlocks(
+ 48 | |               childBlocks,
+ 49 | |               isEdit,
+ 50 | |               callbacks,
+ 51 | |               level,
+ 52 | |               draggedBlockType,
+ 53 | |               isChildAllowedInParent
+ 54 | |             ),
+ 55 | |           editorCallbacks: editorCallbacks,
+ 56 | |           nestingLevel: currentNestingLevel,
+ 57 | |           draggedBlockType: draggedBlockType,
+ 58 | |           isChildAllowedInParent: isChildAllowedInParent,
+ 59 | |           draggable: blockSchemaEntry.draggable ?? false,
+ 60 | |           nestable: blockSchemaEntry.nestable ?? false,
+ 61 | |           isTemplated: block.isTemplated ?? false
+ 62 | |         }
+ 63 | |   
+ 64 | |         const renderedSlots =
+ 65 | |           blockSchemaEntry.nestable && "slots" in block && block.slots
+ 66 | |             ? Object.entries(block.slots).map(([slotName, slotBlocks]) =>
+ 67 | |                 h(BlockSlot, {
+ 68 | |                   key: `${block.id}-${slotName}`,
+ 69 | |                   blocks: slotBlocks,
+ 70 | |                   isEditable: isEditable,
+ 71 | |                   editorCallbacks: editorCallbacks,
+ 72 | |                   parentId: block.id,
+ 73 | |                   parentBlockType: block.type,
+ 74 | |                   renderBlocks: useRenderBlocks,
+ 75 | |                   parentNestingLevel: currentNestingLevel,
+ 76 | |                   draggedBlockType: draggedBlockType,
+ 77 | |                   isChildAllowedInParent: isChildAllowedInParent || (() => true),
+ 78 | |                   slotName: slotName
+ 79 | |                 })
+ 80 | |               )
+ 81 | |             : null
+ 82 | |         return h(
+ 83 | |           BlockComponent,
+ 84 | |           {
+ 85 | |             key: block.id,
+ 86 | |             ...specificBlockComponentProps
+ 87 | |           },
+ 88 | |           renderedSlots ? { default: () => renderedSlots } : undefined
+ 89 | |         )
+ 90 | |       })
+ 91 | `->     .filter(Boolean) as VNode[]
+ 92 |     }
+    `----
+
+Found 102 errors and 64 warnings in 322 files (3.2s, 8 threads)

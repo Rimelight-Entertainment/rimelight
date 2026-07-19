@@ -11,7 +11,6 @@ import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
 import { defineConfig, fontProviders, svgoOptimizer } from "astro/config"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
-import { fileURLToPath } from "node:url"
 import { extractAllMeta } from "./src/docs/extractAll"
 
 function localDocsIntegration() {

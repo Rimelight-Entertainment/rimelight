@@ -143,7 +143,7 @@ export default defineConfig({
         command: "pnpm audit --audit-level=moderate"
       },
       "check:vp": {
-        command: "vp check"
+        command: "vp check --fix"
       },
       "check": {
         dependsOn: ["audit", "check:vp"],

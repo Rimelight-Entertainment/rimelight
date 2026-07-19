@@ -118,8 +118,7 @@ const asyncEditorMap = Object.fromEntries(
 
 const resolveBlockEditor = (type?: string) => {
   if (!type) return "div"
-  const cleanType = type.replace(/Block$/, "")
-  return asyncEditorMap[cleanType] || "div"
+  return asyncEditorMap[type] || "div"
 }
 /* endregion */
 

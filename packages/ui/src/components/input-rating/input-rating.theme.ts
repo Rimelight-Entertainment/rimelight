@@ -1,12 +1,22 @@
 import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 
-export const createInputRatingTheme = <
-  const C extends readonly string[] = typeof colorConfig.colors
->(
-  colors: C = colorConfig.colors as unknown as C
-) =>
-  defineTheme({
+export const createInputRatingTheme = (colors: readonly string[] = colorConfig.colors) => {
+  const colorVariants: Record<string, { root?: string; indicator: string; item: string }> = {
+    neutral: {
+      indicator: "text-highlighted",
+      item: "focus-visible:outline-inverted"
+    }
+  }
+  for (const c of colors) {
+    colorVariants[c] = {
+      root: "rl-color-" + c,
+      indicator: "text-[var(--rl-bg)]",
+      item: "focus-visible:outline-[var(--rl-ring)]"
+    }
+  }
+
+  return defineTheme({
     slots: ["root", "item", "indicator", "icon", "emptyIcon"],
     base: {
       root: "inline-flex select-none",
@@ -36,21 +46,7 @@ export const createInputRatingTheme = <
         lg: { item: "size-6" },
         xl: { item: "size-7" }
       },
-      color: Object.fromEntries(
-        [...colors, "neutral"].map((color) => [
-          color,
-          color === "neutral"
-            ? {
-                indicator: "text-highlighted",
-                item: "focus-visible:outline-inverted"
-              }
-            : {
-                root: "rl-color-" + color,
-                indicator: "text-[var(--rl-bg)]",
-                item: "focus-visible:outline-[var(--rl-ring)]"
-              }
-        ])
-      ) as Record<C[number] | "neutral", { root?: string; indicator: string; item: string }>,
+      color: colorVariants,
       readonly: {
         true: {
           root: "cursor-default",
@@ -83,5 +79,6 @@ export const createInputRatingTheme = <
       }
     ]
   })
+}
 
 export default createInputRatingTheme()

@@ -128,30 +128,32 @@ export default definePreset((options?: RimelightPresetOptions) => {
   return {
     name: "rimelight-ui",
     safelist,
-    presets: [
-      enabledPresets.wind && presetWind4(),
-      enabledPresets.typography &&
-        presetTypography({
-          cssExtend: {
-            "h1,h2,h3,h4,h5,h6": {
-              "font-family": "var(--font-sans), system-ui, sans-serif"
-            },
-            "p,li,blockquote,code": {
-              "font-family": "var(--font-sans), system-ui, sans-serif"
-            },
-            "pre,code": {
-              "font-family": "var(--font-mono), monospace"
+    presets: (
+      [
+        enabledPresets.wind && presetWind4(),
+        enabledPresets.typography &&
+          presetTypography({
+            cssExtend: {
+              "h1,h2,h3,h4,h5,h6": {
+                "font-family": "var(--font-sans), system-ui, sans-serif"
+              },
+              "p,li,blockquote,code": {
+                "font-family": "var(--font-sans), system-ui, sans-serif"
+              },
+              "pre,code": {
+                "font-family": "var(--font-mono), monospace"
+              }
             }
-          }
-        }),
-      enabledPresets.icons &&
-        presetIcons({
-          extraProperties: {
-            "display": "inline-block",
-            "vertical-align": "middle"
-          }
-        })
-    ].filter(Boolean) as Preset[],
+          }),
+        enabledPresets.icons &&
+          presetIcons({
+            extraProperties: {
+              "display": "inline-block",
+              "vertical-align": "middle"
+            }
+          })
+      ] as const
+    ).filter((p): p is Preset => Boolean(p)),
     transformers: [transformerDirectives(), transformerVariantGroup()],
 
     outputToCssLayers: true,

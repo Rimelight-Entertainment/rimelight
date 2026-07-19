@@ -1,5 +1,4 @@
 import { computed, reactive, ref, watch, type Ref } from "vue"
-import type { PageType } from "@/types/pages"
 import { usePaginatedPages } from "./usePaginatedPages"
 import { actions } from "astro:actions"
 

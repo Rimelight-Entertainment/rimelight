@@ -1,4 +1,4 @@
-import { defineTheme } from "../../themes"
+import { defineTheme } from "../../utils/defineTheme"
 export const createLocaleSelectorTheme = () =>
   defineTheme({
     slots: ["root", "label", "wrapper", "select", "option", "iconWrapper"],

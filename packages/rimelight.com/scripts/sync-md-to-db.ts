@@ -7,10 +7,11 @@ import { searchIndex, pages } from "../src/db/schema"
 import { sql, eq, inArray, and, isNull, isNotNull } from "drizzle-orm"
 import { type Block } from "../src/types/pages"
 
+const pad = (n: number) => n.toString().padStart(2, "0")
+
 const originalLog = console.log
 console.log = (...args: any[]) => {
   const now = new Date()
-  const pad = (n: number) => n.toString().padStart(2, "0")
   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
   originalLog(`${timestamp} [sync-md-to-db]`, ...args)
 }
@@ -18,7 +19,6 @@ console.log = (...args: any[]) => {
 const originalError = console.error
 console.error = (...args: any[]) => {
   const now = new Date()
-  const pad = (n: number) => n.toString().padStart(2, "0")
   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
   originalError(`${timestamp} [sync-md-to-db]`, ...args)
 }

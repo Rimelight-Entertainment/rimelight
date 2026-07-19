@@ -9,10 +9,11 @@ const CONTENT_DIRS = readdirSync(CONTENT_ROOT, { withFileTypes: true })
   .map((d) => join(CONTENT_ROOT, d.name))
 const OUTPUT_DIR = "public/social-cards"
 
+const pad = (n: number) => n.toString().padStart(2, "0")
+
 const originalLog = console.log
 console.log = (...args: any[]) => {
   const now = new Date()
-  const pad = (n: number) => n.toString().padStart(2, "0")
   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
   originalLog(`${timestamp} [generate-social-cards]`, ...args)
 }
@@ -20,7 +21,6 @@ console.log = (...args: any[]) => {
 const originalError = console.error
 console.error = (...args: any[]) => {
   const now = new Date()
-  const pad = (n: number) => n.toString().padStart(2, "0")
   const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
   originalError(`${timestamp} [generate-social-cards]`, ...args)
 }
