@@ -34,7 +34,7 @@ const {
 const attrs = resolveLinkAttrs(Astro.props)
 
 const classes = raw
-  ? ({ root: className || "" } as Record<string, string>)
+  ? { root: className || "" }
   : resolveClasses(
       link,
       {
@@ -45,11 +45,6 @@ const classes = raw
       useUi("link", uiProp),
       className
     )
-
-const defaultSlotHtml =
-  (label === undefined || label === null) && Astro.slots.has("default")
-    ? await Astro.slots.render("default", [{ active: !!active }])
-    : "";
 ---
 
 <a
@@ -75,7 +70,7 @@ const defaultSlotHtml =
   {label !== undefined && label !== null ? (
     <span class={classes.label} data-slot="label">{label}</span>
   ) : (
-    <Fragment set:html={defaultSlotHtml} />
+    <slot />
   )}
 
   <slot name="trailing">

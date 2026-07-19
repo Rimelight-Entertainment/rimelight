@@ -2,7 +2,11 @@ import type { LinkProps } from "../link/link"
 
 export interface LinkGroupProps {
   /**
-   * Backward compatible title property.
+   * The direct text label of the group heading.
+   */
+  label?: string
+  /**
+   * @deprecated Use `label` instead to avoid conflicts with native HTML tooltip attribute.
    */
   title?:
     | string
@@ -12,10 +16,6 @@ export interface LinkGroupProps {
         trailingIcon?: string
         href?: string
       }
-  /**
-   * The direct text label of the group heading.
-   */
-  label?: string
   /**
    * Leading icon of the group heading.
    */

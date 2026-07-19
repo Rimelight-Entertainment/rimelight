@@ -8,6 +8,9 @@ import linkGroupTheme from "./link-group.theme"
 import RLALink from "../link/RLALink.astro"
 
 
+import RLAIcon from "../icon/RLAIcon.astro"
+
+
 const linkGroup = scv(linkGroupTheme)
 
 const {
@@ -30,11 +33,12 @@ const headingLeadingIcon = leadingIcon || (typeof title === "object" ? title.lea
 const headingTrailingIcon = trailingIcon || (typeof title === "object" ? title.trailingIcon : undefined);
 const headingHref = href || (typeof title === "object" ? title.href : undefined);
 
-const linksProp = links ?? [];
-const normalizedLinks = Array.isArray(linksProp) ? linksProp : [linksProp];
+if (label && typeof title === "string") {
+  rest.title = title;
+}
 
-// Prefix utility classes in classes.link with `!` to cleanly override conflicting text colors in RLAButton's base classes.
-// For default or light themes, do not force base text classes so RLAButton's own light/dark mode styles can adapt naturally.
+const normalizedLinks = Array.isArray(links) ? links : [links];
+
 const isPinnedDark = theme === "dark";
 const overrideLinkClass = classes.link
     ? classes.link
@@ -61,15 +65,15 @@ const overrideLinkClass = classes.link
     <h4 class={classes.title} data-slot="title">
       {headingHref ? (
         <a href={headingHref} class="hover:underline flex items-center gap-1.5">
-          {headingLeadingIcon && <span class={headingLeadingIcon} />}
+          {headingLeadingIcon && <RLAIcon name={headingLeadingIcon} size="sm" />}
           <span>{headingLabel}</span>
-          {headingTrailingIcon && <span class={headingTrailingIcon} />}
+          {headingTrailingIcon && <RLAIcon name={headingTrailingIcon} size="sm" />}
         </a>
       ) : (
         <span class="flex items-center gap-1.5">
-          {headingLeadingIcon && <span class={headingLeadingIcon} />}
+          {headingLeadingIcon && <RLAIcon name={headingLeadingIcon} size="sm" />}
           <span>{headingLabel}</span>
-          {headingTrailingIcon && <span class={headingTrailingIcon} />}
+          {headingTrailingIcon && <RLAIcon name={headingTrailingIcon} size="sm" />}
         </span>
       )}
     </h4>

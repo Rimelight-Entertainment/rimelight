@@ -1,7 +1,9 @@
 import type { LinkProps } from "./link"
 
+const EXTERNAL_URL_RE = /^(?:https?:)?\/\//
+
 export function resolveLinkAttrs(props: Partial<LinkProps>) {
-  const isExternal = !!(props.external || (props.href && /^(?:https?:)?\/\//.test(props.href)))
+  const isExternal = !!(props.external || (props.href && EXTERNAL_URL_RE.test(props.href)))
 
   const showTrailingIcon =
     isExternal && !props.noExternalIcon && !props.trailingIcon
@@ -20,11 +22,14 @@ export function resolveLinkAttrs(props: Partial<LinkProps>) {
   const ariaCurrent =
     rawAriaCurrent === true ? "true" : rawAriaCurrent === false ? "false" : rawAriaCurrent
 
-  const prefetchAttr = props.prefetch
-    ? typeof props.prefetch === "string"
-      ? props.prefetch
-      : "viewport"
-    : undefined
+  const prefetchAttr =
+    props.prefetch !== undefined
+      ? props.prefetch === true
+        ? "viewport"
+        : props.prefetch === false
+          ? "false"
+          : props.prefetch
+      : undefined
 
   const href = props.disabled ? undefined : props.href
   const ariaDisabled: "true" | undefined = props.disabled ? "true" : undefined

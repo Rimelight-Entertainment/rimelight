@@ -10,12 +10,12 @@ import { resolveLinkAttrs } from "./helpers"
 
 const link = scv(linkTheme)
 
-defineOptions({ name: "RLVLink" })
+defineOptions({ name: "RLVLink", inheritAttrs: false })
 
 const props = defineProps<LinkProps>()
 
 defineSlots<{
-  default(props: { active: boolean }): any
+  default(props: {}): any
   leading(props: {}): any
   trailing(props: {}): any
 }>()
@@ -42,6 +42,7 @@ const resolvedClasses = computed(() => {
 
 <template>
   <a
+    v-bind="$attrs"
     :href="attrs.href"
     :target="attrs.target"
     :rel="attrs.rel"
@@ -58,14 +59,14 @@ const resolvedClasses = computed(() => {
       </span>
     </slot>
 
+    <slot v-if="$slots.default" />
     <span
-      v-if="props.label !== undefined && props.label !== null"
+      v-else-if="props.label !== undefined && props.label !== null"
       :class="resolvedClasses.label"
       data-slot="label"
     >
       {{ props.label }}
     </span>
-    <slot v-else :active="!!props.active" />
 
     <slot name="trailing">
       <span

@@ -10,7 +10,7 @@ import { resolveLinkAttrs } from "./helpers"
 const link = scv(linkTheme)
 
 type RLSLinkProps = LinkProps & {
-  children?: JSX.Element | ((props: { active: boolean }) => JSX.Element)
+  children?: JSX.Element
   leading?: JSX.Element
   trailing?: JSX.Element
 }
@@ -80,15 +80,13 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
         </span>
       ) : null}
 
-      {props.label !== undefined && props.label !== null ? (
+      {props.children !== undefined && props.children !== null ? (
+        props.children
+      ) : props.label !== undefined && props.label !== null ? (
         <span class={classes().label} data-slot="label">
           {props.label}
         </span>
-      ) : typeof props.children === "function" ? (
-        (props.children as Function)({ active: !!props.active })
-      ) : (
-        props.children
-      )}
+      ) : null}
 
       {props.trailing ? (
         props.trailing
