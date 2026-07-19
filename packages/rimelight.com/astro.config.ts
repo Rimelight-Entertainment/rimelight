@@ -161,7 +161,9 @@ export default defineConfig({
 
     vue(),
 
-    solid(),
+    solid({
+      include: ["**/solid/**", "**/*.tsx"]
+    }),
 
     ui({
       logos: {

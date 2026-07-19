@@ -30,7 +30,8 @@ export interface ComponentMeta {
   name: string
   astroComponent: string | null
   vueComponent: string | null
-  frameworks: ("astro" | "vue")[]
+  solidComponent: string | null
+  frameworks: ("astro" | "vue" | "solid")[]
   props: PropMeta[]
   slots: SlotMeta[]
   emits: EmitMeta[]

@@ -26,7 +26,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as LinkProps & { noExternalIcon?: boolean; theme?: string }
+} = Astro.props as LinkProps
 
 const linkHref = href || (typeof to === 'string' ? to : undefined);
 

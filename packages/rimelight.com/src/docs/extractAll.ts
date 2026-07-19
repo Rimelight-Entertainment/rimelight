@@ -14,14 +14,15 @@ function pascalToKebab(name: string): string {
 }
 
 function getComponentNameFromFilename(filename: string): string {
-  return filename.replace(/^(RLA|RLV)/, "").replace(/\.(astro|vue)$/, "")
+  return filename.replace(/^(RLA|RLV|RLS)/, "").replace(/\.(astro|vue|tsx)$/, "")
 }
 
 export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
   const componentsDir = path.join(uiRoot, "src", "components")
 
-  const vueComponents = new Map<string, { folder: string; filename: string }>()
   const astroComponents = new Map<string, { folder: string; filename: string }>()
+  const vueComponents = new Map<string, { folder: string; filename: string }>()
+  const solidComponents = new Map<string, { folder: string; filename: string }>()
 
   if (existsSync(componentsDir)) {
     const folders = readdirSync(componentsDir)
@@ -33,6 +34,9 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
           if (f.endsWith(".vue") && f.startsWith("RLV")) {
             const compName = getComponentNameFromFilename(f)
             vueComponents.set(compName, { folder, filename: f })
+          } else if (f.endsWith(".tsx") && f.startsWith("RLS")) {
+            const compName = getComponentNameFromFilename(f)
+            solidComponents.set(compName, { folder, filename: f })
           } else if (f.endsWith(".astro") && f.startsWith("RLA") && f !== "Head.astro") {
             const compName = getComponentNameFromFilename(f)
             astroComponents.set(compName, { folder, filename: f })
@@ -42,7 +46,11 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
     }
   }
 
-  const allNames = new Set([...vueComponents.keys(), ...astroComponents.keys()])
+  const allNames = new Set([
+    ...vueComponents.keys(),
+    ...solidComponents.keys(),
+    ...astroComponents.keys()
+  ])
   const sortedNames = [...allNames].toSorted()
 
   const themesMap = await extractAllThemesMeta(sortedNames, componentsDir)
@@ -51,12 +59,13 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
   await Promise.all(
     sortedNames.map(async (name) => {
       const vue = vueComponents.get(name)
+      const solid = solidComponents.get(name)
       const astro = astroComponents.get(name)
 
       let props: PropMeta[] = []
       let slots: SlotMeta[] = []
       let emits: EmitMeta[] = []
-      const frameworks: ("astro" | "vue")[] = []
+      const frameworks: ("astro" | "vue" | "solid")[] = []
 
       if (vue) {
         frameworks.push("vue")
@@ -68,6 +77,10 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
         } catch (err) {
           console.warn(`[docs] Failed to extract Vue meta for ${vue.filename}:`, err)
         }
+      }
+
+      if (solid) {
+        frameworks.push("solid")
       }
 
       if (astro) {
@@ -91,6 +104,7 @@ export async function extractAllMeta(): Promise<Record<string, ComponentMeta>> {
         name,
         astroComponent: astro ? astro.filename : null,
         vueComponent: vue ? vue.filename : null,
+        solidComponent: solid ? solid.filename : null,
         frameworks,
         props,
         slots,

@@ -113,8 +113,9 @@ if (componentKey) {
 
 const hasAstroCode = Astro.slots.has('code-astro');
 const hasVueCode = Astro.slots.has('code-vue');
-const hasCode = hasAstroCode || hasVueCode;
-const defaultCodeLang = hasAstroCode ? 'astro' : 'vue';
+const hasSolidCode = Astro.slots.has('code-solid');
+const hasCode = hasAstroCode || hasVueCode || hasSolidCode;
+const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
 ---
 
 <div class={`component-showcase border border-border rounded-xl overflow-visible bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(resolvedTheme?.slots || [])}>
@@ -167,6 +168,9 @@ const defaultCodeLang = hasAstroCode ? 'astro' : 'vue';
           {hasVueCode && (
             <RLAButton class={`showcase-tab ${defaultCodeLang === 'vue' ? 'active bg-background text-foreground shadow-sm border border-border' : ''}`} size="sm" variant="ghost" color="neutral" data-lang="vue">Vue</RLAButton>
           )}
+          {hasSolidCode && (
+            <RLAButton class={`showcase-tab ${defaultCodeLang === 'tsx' ? 'active bg-background text-foreground shadow-sm border border-border' : ''}`} size="sm" variant="ghost" color="neutral" data-lang="tsx">Solid</RLAButton>
+          )}
         </div>
       )}
 
@@ -212,6 +216,11 @@ const defaultCodeLang = hasAstroCode ? 'astro' : 'vue';
       {hasVueCode && (
         <div class="code-block" data-lang="vue">
           <slot name="code-vue" />
+        </div>
+      )}
+      {hasSolidCode && (
+        <div class="code-block" data-lang="tsx">
+          <slot name="code-solid" />
         </div>
       )}
     </div>

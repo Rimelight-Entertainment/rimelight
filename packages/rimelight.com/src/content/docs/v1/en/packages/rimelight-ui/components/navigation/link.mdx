@@ -28,6 +28,26 @@ The `Link` component wraps standard anchor navigation. It automatically detects 
     ```
 
   </div>
+  <div slot="code-vue">
+    ```vue
+    <script setup lang="ts">
+    import RLVLink from "@rimelight/ui/components/link/RLVLink.vue"
+    </script>
+
+    <template>
+      <RLVLink href="/">Go to Home</RLVLink>
+    </template>
+    ```
+
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    import RLSLink from "@rimelight/ui/components/link/RLSLink"
+
+    <RLSLink href="/">Go to Home</RLSLink>
+    ```
+
+  </div>
 </ComponentShowcase>
 
 ## Examples
@@ -46,6 +66,160 @@ External URLs (starting with `http`, `https`, or `//`) automatically render with
     ```astro
     <RLALink href="https://rimelight.com">Visit Rimelight</RLALink>
     <RLALink href="https://rimelight.com" noExternalIcon>Visit Rimelight (No Icon)</RLALink>
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="https://rimelight.com">Visit Rimelight</RLVLink>
+    <RLVLink href="https://rimelight.com" :noExternalIcon="true">Visit Rimelight (No Icon)</RLVLink>
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="https://rimelight.com">Visit Rimelight</RLSLink>
+    <RLSLink href="https://rimelight.com" noExternalIcon>Visit Rimelight (No Icon)</RLSLink>
+    ```
+  </div>
+</ComponentShowcase>
+
+### Link Variants
+
+Use the `variant` prop to change the visual style of the link.
+
+<ComponentShowcase
+  togglingPattern="tab-segmented"
+  componentName="RLALink"
+  propsConfig={{
+    variant: ["solid", "outline", "soft", "ghost"]
+  }}
+  defaultProps={{
+    variant: "solid"
+  }}
+>
+  <RLALink href="/">Link</RLALink>
+</ComponentShowcase>
+
+### Custom External Icon
+
+Override the default external link icon with a custom icon name.
+
+<ComponentShowcase>
+  <RLALink href="https://rimelight.com" externalIcon="arrowUpRight">Visit Rimelight</RLALink>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="https://rimelight.com" externalIcon="arrowUpRight">
+      Visit Rimelight
+    </RLALink>
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="https://rimelight.com" externalIcon="arrowUpRight">
+      Visit Rimelight
+    </RLVLink>
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="https://rimelight.com" externalIcon="arrowUpRight">
+      Visit Rimelight
+    </RLSLink>
+    ```
+  </div>
+</ComponentShowcase>
+
+### Trailing Icon
+
+Add a trailing icon to the link by passing an icon name.
+
+<ComponentShowcase>
+  <RLALink href="/getting-started" trailingIcon="arrowRight">Getting Started</RLALink>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/getting-started" trailingIcon="arrowRight">
+      Getting Started
+    </RLALink>
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/getting-started" trailingIcon="arrowRight">
+      Getting Started
+    </RLVLink>
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/getting-started" trailingIcon="arrowRight">
+      Getting Started
+    </RLSLink>
+    ```
+  </div>
+</ComponentShowcase>
+
+### Accessible Label
+
+Provide an `ariaLabel` for screen readers. When set on an external link, the "(opens in a new tab)" hint is suppressed in favor of your custom label.
+
+<ComponentShowcase>
+  <RLALink href="https://rimelight.com" ariaLabel="Visit the Rimelight homepage">
+    Visit Rimelight
+  </RLALink>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink
+      href="https://rimelight.com"
+      ariaLabel="Visit the Rimelight homepage"
+    >
+      Visit Rimelight
+    </RLALink>
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink
+      href="https://rimelight.com"
+      ariaLabel="Visit the Rimelight homepage"
+    >
+      Visit Rimelight
+    </RLVLink>
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink
+      href="https://rimelight.com"
+      ariaLabel="Visit the Rimelight homepage"
+    >
+      Visit Rimelight
+    </RLSLink>
+    ```
+  </div>
+</ComponentShowcase>
+
+### Force External
+
+Mark any link as external with the `external` prop, even if the URL is relative.
+
+<ComponentShowcase>
+  <RLALink href="/docs" external>Docs (opens in new tab)</RLALink>
+
+  <div slot="code-astro">
+    ```astro
+    <RLALink href="/docs" external>Docs (opens in new tab)</RLALink>
+    ```
+  </div>
+  <div slot="code-vue">
+    ```vue
+    <RLVLink href="/docs" :external="true">Docs (opens in new tab)</RLVLink>
+    ```
+  </div>
+  <div slot="code-solid">
+    ```tsx
+    <RLSLink href="/docs" external>Docs (opens in new tab)</RLSLink>
     ```
   </div>
 </ComponentShowcase>

@@ -21,6 +21,18 @@ export interface LinkProps {
    */
   externalIcon?: string
   /**
+   * Trailing icon name shown after the link label
+   */
+  trailingIcon?: string
+  /**
+   * Suppress the automatic external link icon
+   */
+  noExternalIcon?: boolean
+  /**
+   * Force a color-scheme context on the link
+   */
+  theme?: string
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any
