@@ -2,12 +2,31 @@ import { defineTheme } from "../../utils/defineTheme"
 
 export const createLinkTheme = () =>
   defineTheme({
-    slots: ["root"],
+    slots: ["root", "label"],
     base: {
-      root: "inline-flex items-center gap-1 leading-none"
+      root: "outline-primary/25 focus-visible:outline-3 rounded-md inline-flex items-center gap-1 leading-none",
+      label: ""
     },
-    variants: {},
-    defaultVariants: {}
+    variants: {
+      active: {
+        true: { root: "text-primary" },
+        false: { root: "text-muted" }
+      },
+      disabled: {
+        true: { root: "cursor-not-allowed opacity-75" }
+      },
+      theme: {
+        light: { root: "rl-light" },
+        dark: { root: "rl-dark" }
+      }
+    },
+    compoundVariants: [
+      {
+        active: false,
+        disabled: false,
+        classNames: { root: ["hover:text-default", "transition-colors"] }
+      }
+    ]
   })
 
 export default createLinkTheme()

@@ -18,12 +18,14 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     "to",
     "href",
     "external",
+    "label",
     "ariaLabel",
     "externalIcon",
     "target",
     "rel",
     "trailingIcon",
     "noExternalIcon",
+    "tag",
     "theme",
     "ui",
     "class",
@@ -66,20 +68,33 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     ) : null
   })
 
+  const LinkTag: any = props.tag || "a"
+
   return (
-    <a
-      href={linkHref()}
-      target={linkTarget()}
-      rel={linkRel()}
-      aria-label={props.ariaLabel}
+    <LinkTag
       class={classes().root}
       data-slot="root"
+      href={LinkTag === "a" ? linkHref() : undefined}
+      target={LinkTag === "a" ? linkTarget() : undefined}
+      rel={LinkTag === "a" ? linkRel() : undefined}
+      aria-label={LinkTag === "a" ? props.ariaLabel : undefined}
       {...rest}
     >
-      {props.children}
+      {props.label !== undefined && props.label !== null ? (
+        <span class={classes().label} data-slot="label">
+          {props.label}
+        </span>
+      ) : (
+        props.children
+      )}
       {iconEl()}
-      {isExternal() && !props.ariaLabel && <span class="sr-only"> (opens in a new tab)</span>}
-    </a>
+      {isExternal() && !props.ariaLabel && (
+        <span class="sr-only" data-slot="external-hint">
+          {" "}
+          (opens in a new tab)
+        </span>
+      )}
+    </LinkTag>
   )
 }
 

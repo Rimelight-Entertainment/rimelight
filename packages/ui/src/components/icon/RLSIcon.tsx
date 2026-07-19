@@ -15,7 +15,7 @@ const RLSIcon: Component<IconProps> = (allProps) => {
     resolveClasses(iconScv, { size: props.size ?? "md" }, useUi("icon", props.ui), props.class)
   )
   return (
-    <span class={classes().root} data-slot="root" aria-hidden="true" {...rest}>
+    <span class={classes().root} data-slot="icon" aria-hidden="true" {...rest}>
       {resolved().isClass ? (
         <span class={resolved().content} />
       ) : (

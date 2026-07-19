@@ -16,17 +16,21 @@ const {
   to,
   href,
   external,
+  label,
   ariaLabel,
   externalIcon,
   target,
   rel,
   trailingIcon,
   noExternalIcon,
+  tag,
   theme,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as LinkProps
+
+const Tag = tag || "a"
 
 const linkHref = href || (typeof to === 'string' ? to : undefined);
 
@@ -39,19 +43,22 @@ const showExternalIcon = isExternal && !noExternalIcon && !trailingIcon ? (exter
 
 const classes = resolveClasses(link, { theme }, useUi("link", uiProp), className);
 ---
-<a
-  href={linkHref}
-  target={linkTarget}
-  rel={linkRel}
-  aria-label={ariaLabel}
+
+<Tag
   class={classes.root}
+  data-slot="root"
+  {...(Tag === "a" ? { href: linkHref, target: linkTarget, rel: linkRel, "aria-label": ariaLabel } : {})}
   {...rest}
 >
-  <slot />
+  {label !== undefined && label !== null ? (
+    <span class={classes.label} data-slot="label">{label}</span>
+  ) : (
+    <slot />
+  )}
   {showExternalIcon && (
     <RLAIcon name={showExternalIcon} size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
   )}
   {isExternal && !ariaLabel && (
-    <span class="sr-only"> (opens in a new tab)</span>
+    <span class="sr-only" data-slot="external-hint"> (opens in a new tab)</span>
   )}
-</a>
+</Tag>

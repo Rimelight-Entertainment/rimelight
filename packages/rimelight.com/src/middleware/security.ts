@@ -2,6 +2,9 @@ import type { APIContext } from "astro"
 import { security as astroSecurity } from "@rimelight/security/middleware"
 import { getFetchState } from "astro/hono"
 
+const mockGetActionResult: any = () => undefined
+const mockCallAction: any = () => Promise.resolve(undefined)
+
 export const security = async (c: any, next: any) => {
   const state = getFetchState(c)
   const context: APIContext = {
@@ -39,8 +42,8 @@ export const security = async (c: any, next: any) => {
       insertScriptHash() {}
     },
     logger: { info() {}, warn() {}, error() {} },
-    getActionResult: (() => undefined) as any,
-    callAction: (() => Promise.resolve(undefined)) as any,
+    getActionResult: mockGetActionResult,
+    callAction: mockCallAction,
     rewrite: async () => new Response()
   }
   const response = await astroSecurity(context, async () => {

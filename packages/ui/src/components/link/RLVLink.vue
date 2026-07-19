@@ -18,6 +18,8 @@ const linkScv = scv(linkTheme)
 
 const props = defineProps<LinkProps>()
 
+const linkTag = computed(() => props.tag || "a")
+
 const linkHref = computed(() => props.href || (typeof props.to === "string" ? props.to : undefined))
 
 const isExternal = computed(
@@ -47,16 +49,24 @@ const resolvedClasses = computed(() =>
 </script>
 
 <template>
-  <a
+  <component
+    :is="linkTag"
     v-bind="attrs"
-    :href="linkHref"
-    :target="linkTarget"
-    :rel="linkRel"
-    :aria-label="props.ariaLabel"
+    :href="linkTag === 'a' ? linkHref : undefined"
+    :target="linkTag === 'a' ? linkTarget : undefined"
+    :rel="linkTag === 'a' ? linkRel : undefined"
+    :aria-label="linkTag === 'a' ? props.ariaLabel : undefined"
     :class="resolvedClasses.root"
     data-slot="root"
   >
-    <slot />
+    <span
+      v-if="props.label !== undefined && props.label !== null"
+      :class="resolvedClasses.label"
+      data-slot="label"
+    >
+      {{ props.label }}
+    </span>
+    <slot v-else />
     <RLVIcon
       v-if="showExternalIcon"
       :name="showExternalIcon"
@@ -64,6 +74,8 @@ const resolvedClasses = computed(() =>
       class="!-translate-y-[1.5px]"
       aria-hidden="true"
     />
-    <span v-if="isExternal && !props.ariaLabel" class="sr-only"> (opens in a new tab)</span>
-  </a>
+    <span v-if="isExternal && !props.ariaLabel" class="sr-only" data-slot="external-hint">
+      (opens in a new tab)</span
+    >
+  </component>
 </template>
