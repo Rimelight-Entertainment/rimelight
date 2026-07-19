@@ -1,22 +1,52 @@
+import type { APIContext } from "astro"
 import { security as astroSecurity } from "@rimelight/security/middleware"
 import { getFetchState } from "astro/hono"
 
 export const security = async (c: any, next: any) => {
-  const context = {
+  const state = getFetchState(c)
+  const context: APIContext = {
     request: c.req.raw,
     url: new URL(c.req.url),
-    redirect: (path: string, status?: number) => {
-      return c.redirect(path, status ?? 302)
+    redirect: (path: string, status?: number) => c.redirect(path, status ?? 302),
+    locals: state.locals,
+    cookies: state.cookies,
+    site: undefined,
+    generator: "",
+    clientAddress: "",
+    session: undefined,
+    cache: {
+      enabled: false,
+      set() {},
+      tags: [],
+      options: Object.freeze({}),
+      invalidate() {
+        return Promise.resolve()
+      }
     },
-    locals: getFetchState(c).locals
+    originPathname: new URL(c.req.url).pathname,
+    params: {},
+    props: {},
+    preferredLocale: undefined,
+    preferredLocaleList: undefined,
+    currentLocale: undefined,
+    isPrerendered: false,
+    routePattern: "",
+    csp: {
+      insertDirective() {},
+      insertStyleResource() {},
+      insertStyleHash() {},
+      insertScriptResource() {},
+      insertScriptHash() {}
+    },
+    logger: { info() {}, warn() {}, error() {} },
+    getActionResult: (() => undefined) as any,
+    callAction: (() => Promise.resolve(undefined)) as any,
+    rewrite: async () => new Response()
   }
-  const response = await astroSecurity(
-    context as unknown as Parameters<typeof astroSecurity>[0],
-    async () => {
-      await next()
-      return c.res
-    }
-  )
+  const response = await astroSecurity(context, async () => {
+    await next()
+    return c.res
+  })
   if (response instanceof Response && response !== c.res) {
     c.res = response
   }
