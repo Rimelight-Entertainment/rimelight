@@ -31,7 +31,7 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as LinkProps & { "client:load"?: never; "client:idle"?: never; "client:visible"?: never; "client:media"?: never; "client:only"?: never }
+} = Astro.props as LinkProps
 
 const isExternal = !!(external || (href && /^(?:https?:)?\/\//.test(href)))
 
