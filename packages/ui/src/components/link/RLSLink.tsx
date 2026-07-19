@@ -46,13 +46,6 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     () => !!(props.external || (props.href && /^(?:https?:)?\/\//.test(props.href)))
   )
 
-  const linkRel = createMemo(() => {
-    if (props.rel === null || props.rel === "") return undefined
-    if (props.rel !== undefined) return props.rel
-    if (isExternal() || (props.target && props.target !== "_self")) return "noopener noreferrer"
-    return undefined
-  })
-
   const showTrailingIcon = createMemo(() => {
     if (isExternal() && !props.noExternalIcon && !props.trailingIcon) {
       return props.externalIcon || "externalLink"
@@ -91,7 +84,14 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       data-slot="root"
       href={!props.disabled ? props.href : undefined}
       target={props.target || (isExternal() ? "_blank" : undefined)}
-      rel={linkRel()}
+      rel={
+        props.rel === null || props.rel === ""
+          ? undefined
+          : (props.rel ??
+            (isExternal() || (props.target && props.target !== "_self")
+              ? "noopener noreferrer"
+              : undefined))
+      }
       aria-label={props.ariaLabel}
       aria-current={props.active ? props.ariaCurrentValue || "page" : undefined}
       aria-disabled={props.disabled ? "true" : undefined}

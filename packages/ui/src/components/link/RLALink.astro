@@ -33,24 +33,13 @@ const {
   ...rest
 } = Astro.props as LinkProps & { "client:load"?: never; "client:idle"?: never; "client:visible"?: never; "client:media"?: never; "client:only"?: never }
 
-// ---- External detection ----
 const isExternal = !!(external || (href && /^(?:https?:)?\/\//.test(href)))
 
-const linkTarget = target || (isExternal ? "_blank" : undefined)
-
-const linkRel = rel === null || rel === ""
-  ? undefined
-  : rel !== undefined
-    ? rel
-    : isExternal || (target && target !== "_self")
-      ? "noopener noreferrer"
-      : undefined
 
 const showTrailingIcon = isExternal && !noExternalIcon && !trailingIcon
   ? (externalIcon || "externalLink")
   : trailingIcon
 
-// ---- Classes ----
 const classes = raw
   ? {
       root: className || "",
@@ -68,23 +57,18 @@ const classes = raw
       useUi("link", uiProp),
       className
     )
-
-// ---- Prefetch ----
-const prefetchAttr = prefetch
-  ? typeof prefetch === "string" ? prefetch : "viewport"
-  : undefined
 ---
 
 <a
   class={classes.root}
   data-slot="root"
   href={disabled ? undefined : href}
-  target={linkTarget}
-  rel={linkRel}
+  target={target || (isExternal ? "_blank" : undefined)}
+  rel={rel === null || rel === "" ? undefined : (rel ?? (isExternal || (target && target !== "_self") ? "noopener noreferrer" : undefined))}
   aria-label={ariaLabel}
   aria-current={active ? ariaCurrentValue : undefined}
   aria-disabled={disabled ? "true" : undefined}
-  data-astro-prefetch={prefetchAttr}
+  data-astro-prefetch={prefetch ? (typeof prefetch === "string" ? prefetch : "viewport") : undefined}
   {...rest}
 >
   <slot name="leading">

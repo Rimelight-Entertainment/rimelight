@@ -14,9 +14,26 @@ const uiConfig = getUIConfig()
 const linkTheme = uiConfig.colors ? createLinkTheme() : linkThemeDefault
 const linkScv = scv(linkTheme)
 
-const props = withDefaults(defineProps<LinkProps>(), {
-  ariaCurrentValue: "page"
-})
+const {
+  label,
+  leadingIcon,
+  trailingIcon,
+  href,
+  external,
+  externalIcon,
+  noExternalIcon,
+  target,
+  rel,
+  prefetch,
+  active,
+  disabled,
+  raw,
+  ariaLabel,
+  ariaCurrentValue = "page",
+  theme,
+  ui: uiProp,
+  class: className
+} = defineProps<LinkProps>()
 
 defineSlots<{
   default(props: { active: boolean }): any
@@ -24,32 +41,19 @@ defineSlots<{
   trailing(props: {}): any
 }>()
 
-const isExternal = computed(
-  () => !!(props.external || (props.href && /^(?:https?:)?\/\//.test(props.href)))
-)
-
-const linkTarget = computed(() => props.target || (isExternal.value ? "_blank" : undefined))
-
-const linkRel = computed(() => {
-  if (props.rel === null || props.rel === "") return undefined
-  if (props.rel !== undefined) return props.rel
-  if (isExternal.value || (props.target && props.target !== "_self")) return "noopener noreferrer"
-  return undefined
-})
-
-const isLeading = computed(() => !!props.leadingIcon)
+const isExternal = computed(() => !!(external || (href && /^(?:https?:)?\/\//.test(href))))
 
 const showTrailingIcon = computed(() => {
-  if (isExternal.value && !props.noExternalIcon && !props.trailingIcon) {
-    return props.externalIcon || "externalLink"
+  if (isExternal.value && !noExternalIcon && !trailingIcon) {
+    return externalIcon || "externalLink"
   }
-  return props.trailingIcon
+  return trailingIcon
 })
 
 const resolvedClasses = computed(() => {
-  if (props.raw) {
+  if (raw) {
     return {
-      root: props.class || "",
+      root: className || "",
       label: "",
       leadingIcon: "",
       trailingIcon: ""
@@ -59,65 +63,60 @@ const resolvedClasses = computed(() => {
   return resolveClasses(
     linkScv,
     {
-      theme: props.theme,
-      ...(props.active !== undefined ? { active: props.active } : {}),
-      disabled: !!props.disabled
+      theme,
+      ...(active !== undefined ? { active } : {}),
+      disabled: !!disabled
     },
-    useUi("link", props.ui),
-    props.class
+    useUi("link", uiProp),
+    className
   )
 })
 
 // ---- Handlers ----
 function onClick(e: MouseEvent) {
-  if (props.disabled) {
+  if (disabled) {
     e.stopPropagation()
     e.preventDefault()
     return
   }
 }
-
-// ---- Prefetch attribute ----
-const prefetchAttr = computed(() => {
-  if (!props.prefetch) return undefined
-  if (typeof props.prefetch === "string") return props.prefetch
-  return "viewport"
-})
 </script>
 
 <template>
   <!-- Render anchor element -->
   <a
-    :href="!disabled ? props.href : undefined"
-    :target="linkTarget"
-    :rel="linkRel"
-    :aria-label="props.ariaLabel"
-    :aria-current="props.active ? ariaCurrentValue : undefined"
+    :href="!disabled ? href : undefined"
+    :target="target || (isExternal ? '_blank' : undefined)"
+    :rel="
+      rel === null || rel === ''
+        ? undefined
+        : (rel ??
+          (isExternal || (target && target !== '_self') ? 'noopener noreferrer' : undefined))
+    "
+    :aria-label="ariaLabel"
+    :aria-current="active ? ariaCurrentValue : undefined"
     :aria-disabled="disabled ? 'true' : undefined"
-    :data-astro-prefetch="prefetchAttr"
+    :data-astro-prefetch="
+      prefetch ? (typeof prefetch === 'string' ? prefetch : 'viewport') : undefined
+    "
     :class="resolvedClasses.root"
     data-slot="root"
     @click="onClick"
   >
     <slot name="leading">
-      <span v-if="isLeading" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
-        <RLVIcon
-          :name="props.leadingIcon"
-          size="sm"
-          class="!-translate-y-[1.5px]"
-          aria-hidden="true"
-        />
+      <span v-if="leadingIcon" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
+        <RLVIcon :name="leadingIcon" size="sm" class="!-translate-y-[1.5px]" aria-hidden="true" />
       </span>
     </slot>
 
     <span
-      v-if="props.label !== undefined && props.label !== null"
+      v-if="label !== undefined && label !== null"
       :class="resolvedClasses.label"
       data-slot="label"
     >
-      {{ props.label }}
+      {{ label }}
     </span>
-    <slot v-else :active="props.active" />
+    <slot v-else :active="active" />
 
     <slot name="trailing">
       <span v-if="showTrailingIcon" :class="resolvedClasses.trailingIcon" data-slot="trailing-icon">
@@ -130,7 +129,7 @@ const prefetchAttr = computed(() => {
       </span>
     </slot>
 
-    <span v-if="isExternal && !props.ariaLabel" class="sr-only" data-slot="external-hint">
+    <span v-if="isExternal && !ariaLabel" class="sr-only" data-slot="external-hint">
       (opens in a new tab)</span
     >
   </a>
