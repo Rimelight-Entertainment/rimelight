@@ -1,7 +1,7 @@
 {
   "name": "@rimelight/security",
   "version": "0.0.2",
-  "private": true,
+  "private": false,
   "description": "Rimelight Entertainment Security Middleware and Utilities.",
   "type": "module",
   "exports": {
@@ -9,6 +9,9 @@
     "./middleware": "./src/middleware/index.ts",
     "./config": "./src/config/index.ts",
     "./*": "./src/*"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "astro": "7.1.0",
