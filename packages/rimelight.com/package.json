@@ -32,7 +32,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.1.3",
+    "@astrojs/cloudflare": "14.1.4",
     "@astrojs/mdx": "7.0.3",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.3",
@@ -46,7 +46,7 @@
     "@rimelight/ui": "workspace:*",
     "@types/chroma-js": "3.1.2",
     "@vueuse/core": "14.3.0",
-    "astro": "7.1.0",
+    "astro": "7.1.3",
     "better-auth": "1.6.23",
     "chroma-js": "3.2.0",
     "css-variants": "2.3.5",
@@ -59,10 +59,10 @@
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2",
     "vite-plugin-virtual": "^0.5.0",
-    "vue": "3.5.39",
-    "vue-router": "5.1.0",
+    "vue": "3.5.40",
+    "vue-router": "5.2.0",
     "vuedraggable": "2.24.3",
-    "wrangler": "4.110.0"
+    "wrangler": "4.112.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
@@ -77,7 +77,7 @@
     "tsx": "4.23.1",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vite-plus": "0.2.4"
+    "vite-plus": "0.2.5"
   },
   "engines": {
     "node": ">=25.2.1"
