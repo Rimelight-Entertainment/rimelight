@@ -1,21 +1,195 @@
 ---
-import { scv } from "css-variants"
+import { scv, cx } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
-import type { TimelineProps } from "./timeline"
-import timelineTheme from "./timeline.theme"
-
+import type { TimelineProps, TimelineItem } from "./timeline"
+import { resolveTheme } from "../../utils/resolveTheme"
+import timelineThemeDefault, { createTimelineTheme } from "./timeline.theme"
+const timelineTheme = resolveTheme(timelineThemeDefault, createTimelineTheme)
+import RLAAvatar from "../avatar/RLAAvatar.astro"
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const timeline = scv(timelineTheme)
 
 const {
+  as: Component = "div",
+  items,
+  size = "md",
+  color = "primary",
+  orientation = "vertical",
+  valueKey = "value",
+  defaultValue,
+  modelValue,
+  reverse = false,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as TimelineProps
 
-const classes = resolveClasses(timeline, {}, useUi("timeline", uiProp), className);
+const classes = resolveClasses(
+  timeline,
+  {
+    orientation,
+    size,
+    color,
+    reverse
+  },
+  useUi("timeline", uiProp),
+  className
+)
+
+const activeVal = modelValue !== undefined ? modelValue : defaultValue
+
+function getItemValue(item: TimelineItem, index: number) {
+  return item[valueKey] !== undefined ? item[valueKey] : index
+}
+
+function getItemState(item: TimelineItem, index: number): "active" | "completed" | undefined {
+  if (activeVal === undefined) return undefined
+
+  let currentIndex = -1
+  if (items && items.length > 0) {
+    if (typeof activeVal === "string") {
+      currentIndex = items.findIndex((i) => getItemValue(i, items.indexOf(i)) === activeVal)
+    } else if (typeof activeVal === "number") {
+      if (reverse) {
+        currentIndex = items.length - 1 - activeVal
+      } else {
+        currentIndex = activeVal
+      }
+    }
+  }
+
+  if (currentIndex === -1) return undefined
+  if (index === currentIndex) return "active"
+
+  if (reverse) {
+    return index > currentIndex ? "completed" : undefined
+  } else {
+    return index < currentIndex ? "completed" : undefined
+  }
+}
+
+function getSlotName(item: TimelineItem, slotType: string): string {
+  return item.slot ? `${item.slot}-${slotType}` : slotType
+}
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+
+<Component
+  data-orientation={orientation}
+  data-slot="root"
+  class={classes.root}
+  {...rest}
+>
+  {items && items.length > 0 ? (
+    items.map((item, index) => {
+      const state = getItemState(item, index)
+      const isLast = index === items.length - 1
+
+      const itemIndicatorSlot = getSlotName(item, "indicator")
+      const itemWrapperSlot = getSlotName(item, "wrapper")
+      const itemDateSlot = getSlotName(item, "date")
+      const itemTitleSlot = getSlotName(item, "title")
+      const itemDescriptionSlot = getSlotName(item, "description")
+
+      const hasCustomIndicator = Astro.slots.has(itemIndicatorSlot) || (item.slot && Astro.slots.has("indicator"))
+      const hasCustomWrapper = Astro.slots.has(itemWrapperSlot) || (item.slot && Astro.slots.has("wrapper"))
+      const hasCustomDate = Astro.slots.has(itemDateSlot) || (item.slot && Astro.slots.has("date"))
+      const hasCustomTitle = Astro.slots.has(itemTitleSlot) || (item.slot && Astro.slots.has("title"))
+      const hasCustomDescription = Astro.slots.has(itemDescriptionSlot) || (item.slot && Astro.slots.has("description"))
+
+      return (
+        <div
+          data-slot="item"
+          class={cx(classes.item, item.ui?.item, item.class)}
+          data-state={state}
+        >
+          <div
+            data-slot="container"
+            class={cx(classes.container, item.ui?.container)}
+          >
+            <RLAAvatar
+              size={size as any}
+              src={item.avatar?.src}
+              alt={item.avatar?.alt}
+              {...(typeof item.avatar === "object" ? item.avatar : {})}
+              data-slot="indicator"
+              class={cx(classes.indicator, item.ui?.indicator)}
+              ui={{ icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted", fallback: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted" }}
+            >
+              {hasCustomIndicator ? (
+                <slot name={itemIndicatorSlot} item={item}>
+                  <slot name="indicator" item={item} />
+                </slot>
+              ) : item.icon ? (
+                <RLAIcon name={item.icon} class="text-inherit" />
+              ) : null}
+            </RLAAvatar>
+
+            {!isLast && (
+              <div
+                data-slot="separator"
+                class={cx(classes.separator, item.ui?.separator)}
+                data-orientation={orientation}
+              />
+            )}
+          </div>
+
+          <div
+            data-slot="wrapper"
+            class={cx(classes.wrapper, item.ui?.wrapper)}
+          >
+            {hasCustomWrapper ? (
+              <slot name={itemWrapperSlot} item={item}>
+                <slot name="wrapper" item={item} />
+              </slot>
+            ) : (
+              <>
+                {(item.date || hasCustomDate) && (
+                  <div
+                    data-slot="date"
+                    class={cx(classes.date, item.ui?.date)}
+                  >
+                    <slot name={itemDateSlot} item={item}>
+                      <slot name="date" item={item}>
+                        {item.date}
+                      </slot>
+                    </slot>
+                  </div>
+                )}
+
+                {(item.title || hasCustomTitle) && (
+                  <div
+                    data-slot="title"
+                    class={cx(classes.title, item.ui?.title)}
+                  >
+                    <slot name={itemTitleSlot} item={item}>
+                      <slot name="title" item={item}>
+                        {item.title}
+                      </slot>
+                    </slot>
+                  </div>
+                )}
+
+                {(item.description || hasCustomDescription) && (
+                  <div
+                    data-slot="description"
+                    class={cx(classes.description, item.ui?.description)}
+                  >
+                    <slot name={itemDescriptionSlot} item={item}>
+                      <slot name="description" item={item}>
+                        {item.description}
+                      </slot>
+                    </slot>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )
+    })
+  ) : (
+    <slot />
+  )}
+</Component>

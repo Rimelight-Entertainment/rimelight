@@ -1,6 +1,6 @@
 ---
 title: "Timeline"
-description: "A component for displaying chronological lists of events, history logs, or processes."
+description: "A component that displays a sequence of events with dates, titles, icons or avatars."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -11,89 +11,216 @@ import ApiEmits from "@/docs/components/ApiEmits.astro"
 import ApiTheme from "@/docs/components/ApiTheme.astro"
 import ApiChangelog from "@/docs/components/ApiChangelog.astro"
 
-The Timeline component arranges events in chronological order, styled with a vertical connector line.
+export const sampleItems = [
+  {
+    date: "Mar 15, 2025",
+    title: "Project Kickoff",
+    description:
+      "Kicked off the project with team alignment. Set up project milestones and allocated resources.",
+    icon: "i-lucide-rocket"
+  },
+  {
+    date: "Mar 22, 2025",
+    title: "Design Phase",
+    description:
+      "User research and design workshops. Created wireframes and prototypes for user testing.",
+    icon: "i-lucide-palette"
+  },
+  {
+    date: "Mar 29, 2025",
+    title: "Development Sprint",
+    description:
+      "Frontend and backend development. Implemented core features and integrated with APIs.",
+    icon: "i-lucide-code"
+  },
+  {
+    date: "Apr 5, 2025",
+    title: "Testing & Deployment",
+    description: "QA testing and performance optimization. Deployed the application to production.",
+    icon: "i-lucide-check-circle"
+  }
+]
+
+export const alternatingItems = [
+  {
+    date: "Mar 15, 2025",
+    title: "Project Kickoff",
+    icon: "i-lucide-rocket",
+    value: "kickoff"
+  },
+  {
+    date: "Mar 22, 2025",
+    title: "Design Phase",
+    icon: "i-lucide-palette",
+    value: "design"
+  },
+  {
+    date: "Mar 29, 2025",
+    title: "Development Sprint",
+    icon: "i-lucide-code",
+    value: "development"
+  },
+  {
+    date: "Apr 5, 2025",
+    title: "Testing & Deployment",
+    icon: "i-lucide-check-circle",
+    value: "deployment"
+  }
+]
 
 ## Usage
 
-Use the Timeline component as the main wrapper, and build the nodes using standard markup matching the theme slot classes.
+Use the Timeline component to display a list of items in a timeline.
 
 <ComponentShowcase>
-  <RLATimeline>
-    <div class="relative pb-6">
-      {/* Indicator Dot */}
-      <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
-        <div class="h-2 w-2 rounded-full bg-primary-500" />
-      </div>
-      {/* Header */}
-      <div class="flex items-center justify-between gap-4 mb-1">
-        <h4 class="font-bold text-sm text-foreground">Project Started</h4>
-        <span class="text-xs text-muted-foreground">July 1, 2026</span>
-      </div>
-      {/* Content */}
-      <div class="text-sm text-muted-foreground">
-        Initialized repository with Vite+ and Rimelight UI.
-      </div>
-    </div>
-
-    <div class="relative pb-2">
-      {/* Indicator Dot */}
-      <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
-        <div class="h-2 w-2 rounded-full bg-primary-500" />
-      </div>
-      {/* Header */}
-      <div class="flex items-center justify-between gap-4 mb-1">
-        <h4 class="font-bold text-sm text-foreground">Documentation Updated</h4>
-        <span class="text-xs text-muted-foreground">July 8, 2026</span>
-      </div>
-      {/* Content */}
-      <div class="text-sm text-muted-foreground">
-        Rewrote component docs using the Astro-only button pattern.
-      </div>
-    </div>
-
-  </RLATimeline>
+  <RLATimeline items={sampleItems} class="w-96" />
 
   <div slot="code-astro">
     ```astro
     ---
-    import RLATimeline from "@rimelight/ui/components/timeline/RLATimeline.astro";
+    import RLATimeline from "@rimelight/ui/components/timeline/RLATimeline.astro"
+
+    const items = [
+      {
+        date: "Mar 15, 2025",
+        title: "Project Kickoff",
+        description: "Kicked off the project with team alignment. Set up project milestones and allocated resources.",
+        icon: "i-lucide-rocket"
+      },
+      {
+        date: "Mar 22, 2025",
+        title: "Design Phase",
+        description: "User research and design workshops. Created wireframes and prototypes for user testing.",
+        icon: "i-lucide-palette"
+      },
+      {
+        date: "Mar 29, 2025",
+        title: "Development Sprint",
+        description: "Frontend and backend development. Implemented core features and integrated with APIs.",
+        icon: "i-lucide-code"
+      },
+      {
+        date: "Apr 5, 2025",
+        title: "Testing & Deployment",
+        description: "QA testing and performance optimization. Deployed the application to production.",
+        icon: "i-lucide-check-circle"
+      }
+    ]
     ---
 
-    <RLATimeline>
-      <div class="relative pb-6">
-        {/* Indicator Dot */}
-        <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
-          <div class="h-2 w-2 rounded-full bg-primary-500" />
-        </div>
-        {/* Header */}
-        <div class="flex items-center justify-between gap-4 mb-1">
-          <h4 class="font-bold text-sm text-foreground">Project Started</h4>
-          <span class="text-xs text-muted-foreground">July 1, 2026</span>
-        </div>
-        {/* Content */}
-        <div class="text-sm text-muted-foreground">
-          Initialized repository with Vite+ and Rimelight UI.
-        </div>
-      </div>
-
-      <div class="relative pb-2">
-        {/* Indicator Dot */}
-        <div class="absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-slate-950 ring-2 ring-slate-800">
-          <div class="h-2 w-2 rounded-full bg-primary-500" />
-        </div>
-        {/* Header */}
-        <div class="flex items-center justify-between gap-4 mb-1">
-          <h4 class="font-bold text-sm text-foreground">Documentation Updated</h4>
-          <span class="text-xs text-muted-foreground">July 8, 2026</span>
-        </div>
-        {/* Content */}
-        <div class="text-sm text-muted-foreground">
-          Rewrote component docs using the Astro-only button pattern.
-        </div>
-      </div>
-    </RLATimeline>
+    <RLATimeline items={items} class="w-96" />
     ```
 
+  </div>
+</ComponentShowcase>
+
+## Examples
+
+### Items
+
+Use the `items` prop as an array of objects with options like `date`, `title`, `description`, `icon`, `avatar`, `value`, `slot`, `class`, and `ui`.
+
+<ComponentShowcase>
+  <RLATimeline defaultValue={2} items={sampleItems} class="w-96" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLATimeline defaultValue={2} items={items} class="w-96" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Color
+
+Use the `color` prop to change the color of the active items in a Timeline.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-6 w-96">
+    <div>
+      <p class="text-xs font-semibold text-muted-foreground mb-2">Primary (Default)</p>
+      <RLATimeline color="primary" defaultValue={2} items={sampleItems} />
+    </div>
+    <div>
+      <p class="text-xs font-semibold text-muted-foreground mb-2">Neutral</p>
+      <RLATimeline color="neutral" defaultValue={2} items={sampleItems} />
+    </div>
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    <!-- Primary (Default) -->
+    <RLATimeline color="primary" defaultValue={2} items={items} class="w-96" />
+
+    <!-- Neutral -->
+    <RLATimeline color="neutral" defaultValue={2} items={items} class="w-96" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Size
+
+Use the `size` prop to change the size of the Timeline.
+
+<ComponentShowcase>
+  <RLATimeline size="xs" defaultValue={2} items={sampleItems} class="w-96" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLATimeline size="xs" defaultValue={2} items={items} class="w-96" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Orientation
+
+Use the `orientation` prop to change the orientation of the Timeline. Defaults to `vertical`.
+
+<ComponentShowcase>
+  <RLATimeline orientation="horizontal" defaultValue={2} items={sampleItems} class="w-full" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLATimeline orientation="horizontal" defaultValue={2} items={items} class="w-full" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Reverse
+
+Use the `reverse` prop to reverse the direction of the Timeline.
+
+<ComponentShowcase>
+  <RLATimeline reverse defaultValue={2} orientation="vertical" items={sampleItems} class="w-full" />
+
+  <div slot="code-astro">
+    ```astro
+    <RLATimeline reverse defaultValue={2} orientation="vertical" items={items} class="w-full" />
+    ```
+  </div>
+</ComponentShowcase>
+
+### With alternating layout
+
+Use the `ui` prop to create a Timeline with an alternating layout.
+
+<ComponentShowcase>
+  <RLATimeline
+    items={alternatingItems}
+    defaultValue={2}
+    ui={{ item: 'even:flex-row-reverse even:-translate-x-[calc(100%-2rem)] even:text-right' }}
+    class="translate-x-[calc(50%-1rem)]"
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLATimeline
+      items={items}
+      defaultValue={2}
+      ui={{ item: 'even:flex-row-reverse even:-translate-x-[calc(100%-2rem)] even:text-right' }}
+      class="translate-x-[calc(50%-1rem)]"
+    />
+    ```
   </div>
 </ComponentShowcase>
 

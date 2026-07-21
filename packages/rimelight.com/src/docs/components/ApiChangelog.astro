@@ -1,10 +1,5 @@
 ---
 import RLATimeline from "@rimelight/ui/components/timeline/RLATimeline.astro"
-import { scv } from "css-variants"
-import { useUi } from "@rimelight/ui/utils/useUi.ts"
-import { resolveClasses } from "@rimelight/ui/utils/resolveClasses.ts"
-import timelineThemeDefault, { createTimelineTheme } from "@rimelight/ui/components/timeline/timeline.theme.ts"
-import { getUIConfig } from "virtual:rimelight-ui"
 
 interface Props {
   component: string
@@ -13,14 +8,9 @@ interface Props {
 }
 
 const { component, ui: uiProp, class: className } = Astro.props
-
-const uiConfig = getUIConfig()
-const timelineTheme = uiConfig.colors ? createTimelineTheme() : timelineThemeDefault
-const timeline = scv(timelineTheme)
-const classes = resolveClasses(timeline, {}, useUi("timeline", uiProp), className);
 ---
 
-<div class="api-changelog-container group" data-component={component} data-theme-classes={JSON.stringify(classes)}>
+<div class="api-changelog-container group" data-component={component}>
   <!-- Loading skeleton -->
   <div class="api-changelog-loading py-6 flex flex-col gap-4">
     <div class="animate-pulse h-4 bg-gray-800 rounded w-1/4"></div>
@@ -30,10 +20,7 @@ const classes = resolveClasses(timeline, {}, useUi("timeline", uiProp), classNam
   
   <!-- Timeline Content -->
   <div class="api-changelog-content hidden">
-    <RLATimeline ui={uiProp} class={className}>
-      <!-- Dynamic timeline items insert here -->
-      <div class="api-changelog-list flex flex-col space-y-8"></div>
-    </RLATimeline>
+    <div class="api-changelog-timeline-target"></div>
   </div>
   
   <div class="api-changelog-empty hidden text-sm italic text-gray-500 py-2">
@@ -61,15 +48,13 @@ const classes = resolveClasses(timeline, {}, useUi("timeline", uiProp), classNam
         container.setAttribute('data-changelog-ready', 'true');
 
         const component = container.getAttribute('data-component');
-        const themeClassesJson = container.getAttribute('data-theme-classes');
-        const themeClasses = themeClassesJson ? JSON.parse(themeClassesJson) : {};
 
         const loadingEl = container.querySelector('.api-changelog-loading') as HTMLElement;
         const contentEl = container.querySelector('.api-changelog-content') as HTMLElement;
-        const listEl = container.querySelector('.api-changelog-list') as HTMLElement;
+        const targetEl = container.querySelector('.api-changelog-timeline-target') as HTMLElement;
         const emptyEl = container.querySelector('.api-changelog-empty') as HTMLElement;
 
-        if (!component || !loadingEl || !contentEl || !listEl || !emptyEl) return;
+        if (!component || !loadingEl || !contentEl || !targetEl || !emptyEl) return;
 
         try {
           const res = await fetch(`/api/github/changelog?component=${component}`);
@@ -83,54 +68,80 @@ const classes = resolveClasses(timeline, {}, useUi("timeline", uiProp), classNam
             return;
           }
 
-          let html = '';
-          for (const item of data) {
-            const dateStr = item.published_at 
-              ? new Date(item.published_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-              : 'Unreleased';
+          // Flatten releases into timeline items for each version release and commit entry
+          const timelineItems: Array<{ type: 'tag' | 'commit'; versionTag?: string; sha?: string; message?: string }> = [];
 
-            html += `
-              <div class="${themeClasses.node || 'relative timeline-node'}">
-                <!-- Dot Indicator -->
-                <span class="${themeClasses.dot || 'absolute -left-[33px] top-[2px] flex h-4 w-4 items-center justify-center rounded-full bg-gray-950 ring-2 ring-gray-800'}">
-                  <span class="${themeClasses.dotInner || 'h-2 w-2 rounded-full bg-primary-500'}"></span>
-                </span>
-                
-                <div class="${themeClasses.header || 'flex items-center justify-between gap-4 mb-3'}">
-                  <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-primary-500/10 text-primary-400 border border-primary-500/20">
-                      ${escapeHtml(item.tag === 'unreleased' ? 'Soon' : item.tag)}
+          data.forEach((release: any) => {
+            if (release.tag) {
+              timelineItems.push({
+                type: 'tag',
+                versionTag: release.tag === 'unreleased' ? 'Soon' : release.tag
+              });
+            }
+
+            if (release.commits && Array.isArray(release.commits)) {
+              release.commits.forEach((commit: any) => {
+                timelineItems.push({
+                  type: 'commit',
+                  sha: commit.sha,
+                  message: commit.message
+                });
+              });
+            }
+          });
+
+          let rootHtml = `<div data-orientation="vertical" data-slot="root" class="flex flex-col">`;
+          
+          timelineItems.forEach((item, index) => {
+            const isLast = index === timelineItems.length - 1;
+
+            if (item.type === 'tag') {
+              rootHtml += `
+                <div data-slot="item" class="group relative flex flex-1 gap-3">
+                  <div data-slot="container" class="relative flex items-center flex-col shrink-0">
+                    <span data-slot="indicator" class="inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative size-6 text-xs text-primary-400 bg-primary-500/10 border border-primary-500/20 my-1">
+                      <span class="i-lucide-tag size-3.5"></span>
+                    </span>
+                    ${!isLast ? `<div data-slot="separator" class="flex-1 bg-elevated w-0.5 min-h-[16px]"></div>` : ''}
+                  </div>
+                  <div data-slot="wrapper" class="w-full py-1">
+                    <div data-slot="title" class="font-medium text-highlighted text-sm flex items-center">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-primary-500/10 text-primary-400 border border-primary-500/20">
+                        ${escapeHtml(item.versionTag || '')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            } else {
+              const cleanedMessage = (item.message || '')
+                .replace(/#(\d+)/g, '<a href="https://github.com/Rimelight-Entertainment/rimelight/issues/$1" target="_blank" class="text-primary-400 hover:underline">#$1</a>')
+                .replace(/`(.*?)`/g, '<code class="text-xs px-1.5 py-0.5 bg-gray-900 border border-gray-800 rounded font-mono text-gray-300">$1</code>');
+
+              rootHtml += `
+                <div data-slot="item" class="group relative flex flex-1 gap-3">
+                  <div data-slot="container" class="relative flex items-center flex-col shrink-0">
+                    <span data-slot="indicator" class="inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative size-6 text-xs text-muted bg-transparent">
+                      <span class="size-1.5 rounded-full bg-gray-700"></span>
+                    </span>
+                    ${!isLast ? `<div data-slot="separator" class="flex-1 bg-elevated w-0.5 min-h-[16px]"></div>` : ''}
+                  </div>
+                  <div data-slot="wrapper" class="w-full py-1 flex items-start gap-2 text-sm">
+                    <a href="https://github.com/Rimelight-Entertainment/rimelight/commit/${item.sha}" target="_blank" class="font-mono text-xs px-1.5 py-0.5 bg-gray-900 border border-gray-800 rounded text-gray-400 hover:text-gray-200 hover:border-gray-700 shrink-0">
+                      ${item.sha ? item.sha.slice(0, 7) : ''}
+                    </a>
+                    <span class="text-gray-300 text-sm leading-snug pt-0.5">
+                      ${cleanedMessage}
                     </span>
                   </div>
-                  
-                  <time class="text-xs text-gray-500 font-normal">
-                    ${escapeHtml(dateStr)}
-                  </time>
                 </div>
-                
-                <ul class="${themeClasses.content || 'space-y-2 text-sm text-gray-400'}">
-                  ${item.commits.map((commit: any) => {
-                    const cleanedMessage = commit.message
-                      .replace(/#(\d+)/g, '<a href="https://github.com/Rimelight-Entertainment/rimelight/issues/$1" target="_blank" class="text-primary-400 hover:underline">#$1</a>')
-                      .replace(/`(.*?)`/g, '<code class="text-xs px-1 bg-gray-900 border border-gray-800 rounded font-mono text-gray-300">$1</code>');
+              `;
+            }
+          });
 
-                    return `
-                      <li class="flex items-start gap-2">
-                        <a href="https://github.com/Rimelight-Entertainment/rimelight/commit/${commit.sha}" target="_blank" class="font-mono text-xs text-gray-500 hover:text-gray-300 hover:underline shrink-0 pt-0.5">
-                          ${commit.sha.slice(0, 7)}
-                        </a>
-                        <span class="text-gray-300">
-                          ${cleanedMessage}
-                        </span>
-                      </li>
-                    `;
-                  }).join('')}
-                </ul>
-              </div>
-            `;
-          }
+          rootHtml += `</div>`;
 
-          listEl.innerHTML = html;
+          targetEl.innerHTML = rootHtml;
           contentEl.classList.remove('hidden');
         } catch (err) {
           loadingEl.classList.add('hidden');
@@ -143,6 +154,8 @@ const classes = resolveClasses(timeline, {}, useUi("timeline", uiProp), classNam
 
   if (typeof document !== 'undefined') {
     loadChangelog();
+    document.addEventListener('astro:page-load', loadChangelog);
     document.addEventListener('astro:after-swap', loadChangelog);
+    document.addEventListener('DOMContentLoaded', loadChangelog);
   }
 </script>

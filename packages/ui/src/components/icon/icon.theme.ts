@@ -4,7 +4,14 @@ export const createIconTheme = () =>
   defineTheme({
     slots: ["root"],
     base: {
-      root: ["inline-block", "align-middle"]
+      root: [
+        "shrink-0",
+        "inline-flex",
+        "items-center",
+        "justify-center",
+        "align-middle",
+        "leading-none"
+      ]
     },
     variants: {
       size: {
