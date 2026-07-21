@@ -1,30 +1,34 @@
 import { getFetchState } from "astro/hono"
 import { languages } from "@/config/i18n.config"
 
-// Routes to be skipped by this middleware
 const WHITELISTED_ROUTES = ["/construction", "/api/auth"]
 
-// If construction mode is enabled, redirects any non-whitelisted page to `construction.astro`
+const getLocaleFromPath = (path: string) => {
+  return languages.find((loc) => path === `/${loc}` || path.startsWith(`/${loc}/`)) ?? "en"
+}
+
 export const construction = async (c: any, next: any) => {
   const constructionMode =
     (import.meta.env.CONSTRUCTION_MODE ?? process.env.CONSTRUCTION_MODE) === "true"
 
-  if (!constructionMode) {
-    if (c.req.path.includes("/construction")) {
-      return c.redirect("/")
+  const state = getFetchState(c)
+  const localePrefix = getLocaleFromPath(c.req.path)
+
+  const isConstructionPage = c.req.path === `/${localePrefix}/construction` || c.req.path === "/construction"
+
+  if (isConstructionPage) {
+    if (!constructionMode || state.locals.session) {
+      return c.redirect(`/${localePrefix}`)
     }
     return next()
   }
 
-  const state = getFetchState(c)
+  if (!constructionMode) {
+    return next()
+  }
 
   const isSkippedPath = WHITELISTED_ROUTES.some((path) => c.req.path.includes(path))
   if (isSkippedPath) {
-    if (c.req.path.includes("/construction")) {
-      if (state.locals.session) {
-        return c.redirect("/")
-      }
-    }
     return next()
   }
 
@@ -32,7 +36,6 @@ export const construction = async (c: any, next: any) => {
     return next()
   }
 
-  const localePrefix = languages.find((loc) => c.req.path.startsWith(`/${loc}/`)) ?? "en"
   const redirectTo = encodeURIComponent(c.req.path + new URL(c.req.url).search)
   return c.redirect(`/${localePrefix}/construction?redirect=${redirectTo}`)
 }

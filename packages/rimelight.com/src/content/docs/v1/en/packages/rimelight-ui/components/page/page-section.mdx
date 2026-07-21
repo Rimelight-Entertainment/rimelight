@@ -1,6 +1,6 @@
 ---
 title: "PageSection"
-description: "A content section component supporting background visuals, leading icons, headers, footers, and links."
+description: "A content section component supporting background visuals, leading icons, headers, footers, links, and layout slots."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -20,7 +20,7 @@ The `PageSection` component helps layout large sections on your page, such as he
     title="Section Title"
     description="This is the main description detailing what this section covers."
   >
-    <div class="p-md bg-muted rounded text-sm text-center">
+    <div class="p-4 bg-muted rounded text-sm text-center">
       Section body content goes here.
     </div>
   </RLAPageSection>
@@ -43,6 +43,38 @@ The `PageSection` component helps layout large sections on your page, such as he
 </ComponentShowcase>
 
 ## Examples
+
+### Section Content Below Header Group (`slot="content"`)
+
+Use `slot="content"` to place items (like tabs or filter bars) full-width below the header group (title, description, links, actions, and default side slot).
+
+<ComponentShowcase>
+  <RLAPageSection
+    orientation="horizontal"
+    title="Blog & Articles"
+    description="Browse development logs and personal posts."
+  >
+    <button class="px-3 py-1.5 border rounded text-xs">Filter</button>
+    <div slot="content" class="mt-4 p-4 border rounded">
+      Full width section content below header and action slot.
+    </div>
+  </RLAPageSection>
+
+  <div slot="code-astro">
+    ```astro
+    <RLAPageSection
+      orientation="horizontal"
+      title="Blog & Articles"
+      description="Browse development logs and personal posts."
+    >
+      <button>Filter</button>
+      <div slot="content">
+        Full width section content below header and action slot.
+      </div>
+    </RLAPageSection>
+    ```
+  </div>
+</ComponentShowcase>
 
 ### Hero Variant
 
@@ -141,3 +173,4 @@ Set `orientation="horizontal"` to align the section headers beside the default c
 ## Changelog
 
 <ApiChangelog component="page-section" />
+

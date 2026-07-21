@@ -52,7 +52,7 @@ const tabsItems = [
 
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
 	<RLAPageSection title={(messages as any).title} description={(messages as any).description}>
-		<RLATabs items={tabsItems} variant="underline">
+		<RLATabs slot="content" items={tabsItems} variant="underline">
 			<div role="tabpanel" data-value="all" class="hidden">
 				<RLAGrid cols={4}>
 					{posts.map((post, index) => (

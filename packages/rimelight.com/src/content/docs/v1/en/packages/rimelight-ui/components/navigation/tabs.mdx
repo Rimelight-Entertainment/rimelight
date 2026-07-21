@@ -1,6 +1,6 @@
 ---
 title: "Tabs"
-description: "A tabbed navigation component to switch between multiple panels of content."
+description: "A set of tab panels that are displayed one at a time."
 ---
 
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
@@ -18,14 +18,14 @@ The `Tabs` component organizes content into logical panels, allowing users to to
 <ComponentShowcase>
   <RLATabs
     items={[
-      { label: "Account", value: "account" },
-      { label: "Password", value: "password" }
+      { label: "Account", value: "account", icon: "i-lucide-user" },
+      { label: "Password", value: "password", icon: "i-lucide-lock" }
     ]}
   >
-    <div role="tabpanel" data-value="account" class="p-md border border-t-0 rounded-b">
+    <div role="tabpanel" data-value="account" class="p-4 border border-t-0 rounded-b">
       Manage your account details and profile information here.
     </div>
-    <div role="tabpanel" data-value="password" class="p-md border border-t-0 rounded-b">
+    <div role="tabpanel" data-value="password" class="p-4 border border-t-0 rounded-b">
       Change your password and manage security keys here.
     </div>
   </RLATabs>
@@ -36,8 +36,8 @@ The `Tabs` component organizes content into logical panels, allowing users to to
     import RLATabs from "@rimelight/ui/components/tabs/RLATabs.astro";
 
     const items = [
-      { label: "Account", value: "account" },
-      { label: "Password", value: "password" }
+      { label: "Account", value: "account", icon: "i-lucide-user" },
+      { label: "Password", value: "password", icon: "i-lucide-lock" }
     ];
     ---
 
@@ -50,42 +50,163 @@ The `Tabs` component organizes content into logical panels, allowing users to to
       </div>
     </RLATabs>
     ```
+  </div>
+</ComponentShowcase>
 
+### Items
+
+Use the `items` prop as an array of objects with properties like `label`, `value`, `icon`, `badge`, `disabled`, and `content`.
+
+### Content
+
+Set the `content` prop to `false` to turn the Tabs into a toggle-only tab bar without rendering content panels automatically.
+
+<ComponentShowcase>
+  <RLATabs
+    content={false}
+    items={[
+      { label: "Overview", value: "overview" },
+      { label: "Analytics", value: "analytics" },
+      { label: "Reports", value: "reports" }
+    ]}
+  />
+
+  <div slot="code-astro">
+    ```astro
+    <RLATabs
+      content={false}
+      items={[
+        { label: "Overview", value: "overview" },
+        { label: "Analytics", value: "analytics" },
+        { label: "Reports", value: "reports" }
+      ]}
+    />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Variant
+
+Use the `variant` prop to toggle between `pill` and `underline` tab styles.
+
+<ComponentShowcase>
+  <RLATabs
+    variant="underline"
+    items={[
+      { label: "Account", value: "account" },
+      { label: "Password", value: "password" }
+    ]}
+  >
+    <div role="tabpanel" data-value="account" class="p-4">Account content panel.</div>
+    <div role="tabpanel" data-value="password" class="p-4">Password content panel.</div>
+  </RLATabs>
+
+  <div slot="code-astro">
+    ```astro
+    <RLATabs
+      variant="underline"
+      items={[
+        { label: "Account", value: "account" },
+        { label: "Password", value: "password" }
+      ]}
+    >
+      <div role="tabpanel" data-value="account">Account content panel.</div>
+      <div role="tabpanel" data-value="password">Password content panel.</div>
+    </RLATabs>
+    ```
+  </div>
+</ComponentShowcase>
+
+### Size
+
+Use the `size` prop (`xs`, `sm`, `md`, `lg`, `xl`) to change the scale of the tabs.
+
+<ComponentShowcase>
+  <RLATabs
+    size="sm"
+    variant="pill"
+    items={[
+      { label: "General", value: "general" },
+      { label: "Security", value: "security" }
+    ]}
+  >
+    <div role="tabpanel" data-value="general" class="p-3 text-sm">General options</div>
+    <div role="tabpanel" data-value="security" class="p-3 text-sm">Security options</div>
+  </RLATabs>
+
+  <div slot="code-astro">
+    ```astro
+    <RLATabs
+      size="sm"
+      variant="pill"
+      items={[
+        { label: "General", value: "general" },
+        { label: "Security", value: "security" }
+      ]}
+    />
+    ```
+  </div>
+</ComponentShowcase>
+
+### Orientation
+
+Use the `orientation` prop to align tabs vertically (`vertical`) or horizontally (`horizontal`).
+
+<ComponentShowcase>
+  <RLATabs
+    orientation="vertical"
+    variant="pill"
+    items={[
+      { label: "Profile", value: "profile", icon: "i-lucide-user" },
+      { label: "Notifications", value: "notifications", icon: "i-lucide-bell" }
+    ]}
+  >
+    <div role="tabpanel" data-value="profile" class="p-4">Profile configuration.</div>
+    <div role="tabpanel" data-value="notifications" class="p-4">Notification preferences.</div>
+  </RLATabs>
+
+  <div slot="code-astro">
+    ```astro
+    <RLATabs
+      orientation="vertical"
+      variant="pill"
+      items={[
+        { label: "Profile", value: "profile", icon: "i-lucide-user" },
+        { label: "Notifications", value: "notifications", icon: "i-lucide-bell" }
+      ]}
+    />
+    ```
   </div>
 </ComponentShowcase>
 
 ## Examples
 
-### With Icons and Disabled States
+### With Badges, Icons, and Disabled Items
 
-You can add icons to tabs or disable individual tab buttons.
+You can add icons and badges to individual tab items, or set items as disabled.
 
 <ComponentShowcase>
   <RLATabs
     items={[
-      { label: "Profile", value: "profile", icon: "i-lucide-user" },
-      { label: "Settings", value: "settings", icon: "i-lucide-settings" },
-      { label: "Billing", value: "billing", icon: "i-lucide-credit-card", disabled: true }
+      { label: "Inbox", value: "inbox", icon: "i-lucide-mail", badge: "12" },
+      { label: "Updates", value: "updates", icon: "i-lucide-refresh-cw", badge: "New" },
+      { label: "Archived", value: "archived", icon: "i-lucide-archive", disabled: true }
     ]}
   >
-    <div role="tabpanel" data-value="profile" class="p-md border border-t-0 rounded-b">Profile settings</div>
-    <div role="tabpanel" data-value="settings" class="p-md border border-t-0 rounded-b">Application settings</div>
-    <div role="tabpanel" data-value="billing" class="p-md border border-t-0 rounded-b">Billing details</div>
+    <div role="tabpanel" data-value="inbox" class="p-4">Your messages and inbox items.</div>
+    <div role="tabpanel" data-value="updates" class="p-4">System updates and changelog.</div>
+    <div role="tabpanel" data-value="archived" class="p-4">Archived messages.</div>
   </RLATabs>
 
   <div slot="code-astro">
     ```astro
     <RLATabs
       items={[
-        { label: "Profile", value: "profile", icon: "i-lucide-user" },
-        { label: "Settings", value: "settings", icon: "i-lucide-settings" },
-        { label: "Billing", value: "billing", icon: "i-lucide-credit-card", disabled: true }
+        { label: "Inbox", value: "inbox", icon: "i-lucide-mail", badge: "12" },
+        { label: "Updates", value: "updates", icon: "i-lucide-refresh-cw", badge: "New" },
+        { label: "Archived", value: "archived", icon: "i-lucide-archive", disabled: true }
       ]}
-    >
-      <div role="tabpanel" data-value="profile">Profile settings</div>
-      <div role="tabpanel" data-value="settings">Application settings</div>
-      <div role="tabpanel" data-value="billing">Billing details</div>
-    </RLATabs>
+    />
     ```
   </div>
 </ComponentShowcase>
@@ -111,3 +232,4 @@ You can add icons to tabs or disable individual tab buttons.
 ## Changelog
 
 <ApiChangelog component="tabs" />
+
