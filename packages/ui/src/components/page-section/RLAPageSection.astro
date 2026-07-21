@@ -42,6 +42,7 @@ const classes = resolveClasses(pageSection, {
 }, useUi("pageSection", uiProp), className);
 
 const hasDefaultSlot = Astro.slots.has("default");
+const hasContentSlot = Astro.slots.has("content");
 
 const Tag = as;
 const TitleTag = variant === "hero" ? "h1" : "h2";
@@ -152,7 +153,14 @@ const TitleTag = variant === "hero" ? "h1" : "h2";
     ) : orientation === "horizontal" ? (
       <div class="hidden lg:block" />
     ) : null}
+
+    {hasContentSlot && (
+      <div class="col-span-full w-full">
+        <slot name="content" />
+      </div>
+    )}
   </div>
 
   <slot name="bottom" />
 </Tag>
+

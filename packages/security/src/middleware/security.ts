@@ -79,8 +79,9 @@ function addSecurityHeaders(response: Response, origin?: string): Response {
  * Security Middleware: Injects SRI integrity attributes and security headers.
  */
 export const security = defineMiddleware(async (context, next) => {
-  // HTTP to HTTPS redirect only in production
-  if (import.meta.env.PROD && context.request.url.startsWith("http://")) {
+  // HTTP to HTTPS redirect only in production based on x-forwarded-proto
+  const proto = context.request.headers.get("x-forwarded-proto")
+  if (import.meta.env.PROD && proto === "http") {
     const httpsUrl = context.request.url.replace(/^http:/, "https:")
     return Response.redirect(httpsUrl, 301)
   }

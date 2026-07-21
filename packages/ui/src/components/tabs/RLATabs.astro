@@ -2,71 +2,96 @@
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
-import type { TabsProps } from "./tabs"
+import type { TabsProps, TabItem } from "./tabs"
 import tabsTheme from "./tabs.theme"
-
+import RLABadge from "../badge/RLABadge.astro"
 
 const tabs = scv(tabsTheme)
 
 const {
   items = [],
   value = "",
-  variant = "solid",
+  defaultValue = "",
+  variant = "pill",
   orientation = "horizontal",
   size = "md",
   color = "primary",
+  content = true,
+  unmountOnHide = true,
+  valueKey = "value",
+  labelKey = "label",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as TabsProps
 
+// Normalize variant names for backward compatibility (solid -> pill, pills -> pill, underline -> underline, link -> underline)
+const normalizedVariant = (variant === "solid" || variant === "pills") ? "pill" : (variant === "link" ? "underline" : variant);
+
 const classes = resolveClasses(tabs, {
-  variant,
+  variant: normalizedVariant,
   orientation,
   size
 }, useUi("tabs", uiProp), className);
 
-const initialValue = value || (items.length > 0 ? items[0]?.value : "")
+const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valueKey] ?? items[0].value ?? "0") : "")
 ---
-<rla-tabs {...rest}>
+<rla-tabs {...rest} data-orientation={orientation} data-variant={normalizedVariant}>
   <div class={classes.root} data-slot="root" data-tabs-container data-value={initialValue}>
     <div class={classes.list} data-slot="list" role="tablist">
-      {items.map((item) => {
-        const active = item.value === initialValue
+      <div class={classes.indicator} data-slot="indicator" style="display: none;"></div>
+      {items.map((item, index) => {
+        const itemVal = item[valueKey] ?? item.value ?? String(index)
+        const itemLabel = item[labelKey] ?? item.label
+        const active = itemVal === initialValue
         return (
           <button
             type="button"
             class={classes.trigger}
             data-slot="trigger"
             role="tab"
-            data-value={item.value}
+            data-value={itemVal}
             data-state={active ? "active" : "inactive"}
             disabled={item.disabled}
           >
-            {item.icon && <span class={item.icon + " mr-2"} />}
-            {item.label}
+            {item.icon && <span class={item.icon + " " + classes.leadingIcon} data-slot="leadingIcon" />}
+            {itemLabel && <span class={classes.label} data-slot="label">{itemLabel}</span>}
+            {item.badge !== undefined && item.badge !== null && (
+              <RLABadge
+                size="sm"
+                variant="subtle"
+                color="neutral"
+                class={classes.trailingBadge}
+                data-slot="trailingBadge"
+              >
+                {typeof item.badge === "object" ? item.badge.label : item.badge}
+              </RLABadge>
+            )}
           </button>
         )
       })}
     </div>
-    <div class="flex-1">
-      <slot>
-        {items.map(item => {
-          const active = item.value === initialValue
-          return (
-            <div
-              class={classes.content}
-              data-slot="content"
-              role="tabpanel"
-              data-value={item.value}
-              hidden={active ? undefined : "until-found"}
-            >
-              {item.content}
-            </div>
-          )
-        })}
-      </slot>
-    </div>
+    {content && (
+      <div class="flex-1">
+        <slot>
+          {items.map((item, index) => {
+            const itemVal = item[valueKey] ?? item.value ?? String(index)
+            const active = itemVal === initialValue
+            return (
+              <div
+                class={classes.content}
+                data-slot="content"
+                role="tabpanel"
+                data-value={itemVal}
+                hidden={active ? undefined : "until-found"}
+              >
+                {item.content}
+              </div>
+            )
+          })}
+        </slot>
+      </div>
+    )}
   </div>
 </rla-tabs>
 
@@ -74,19 +99,59 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
   if (typeof HTMLElement !== 'undefined') {
     class RLATabs extends HTMLElement {
       private tabsCleanup: (() => void) | null = null;
+      private resizeObserver: ResizeObserver | null = null;
 
       connectedCallback() {
         this.style.display = 'contents';
         const container = this.querySelector("[data-tabs-container]") as HTMLElement | null;
         if (!container) return;
 
+        const list = container.querySelector("[data-slot=list]") as HTMLElement | null;
+        const indicator = container.querySelector("[data-slot=indicator]") as HTMLElement | null;
+        const orientation = this.dataset.orientation || "horizontal";
+        const isVertical = orientation === "vertical";
+
+        const updateIndicator = (activeTrigger: HTMLElement | null) => {
+          if (!indicator || !list || !activeTrigger) {
+            if (indicator) indicator.style.display = 'none';
+            return;
+          }
+
+          const listRect = list.getBoundingClientRect();
+          const triggerRect = activeTrigger.getBoundingClientRect();
+
+          if (triggerRect.width === 0 && triggerRect.height === 0) {
+            indicator.style.display = 'none';
+            return;
+          }
+
+          indicator.style.display = 'block';
+
+          if (isVertical) {
+            const top = triggerRect.top - listRect.top + list.scrollTop;
+            const height = triggerRect.height;
+            indicator.style.transform = `translateY(${top}px)`;
+            indicator.style.height = `${height}px`;
+          } else {
+            const left = triggerRect.left - listRect.left + list.scrollLeft;
+            const width = triggerRect.width;
+            indicator.style.transform = `translateX(${left}px)`;
+            indicator.style.width = `${width}px`;
+          }
+        };
+
         const containerValue = container.dataset.value;
         const triggers = container.querySelectorAll("[role=tab]");
         const panels = container.querySelectorAll("[role=tabpanel]");
 
+        let activeTrigger: HTMLElement | null = null;
+
         triggers.forEach(trigger => {
-          const val = (trigger as HTMLButtonElement).dataset.value;
-          trigger.setAttribute("data-state", val === containerValue ? "active" : "inactive");
+          const el = trigger as HTMLElement;
+          const val = el.dataset.value;
+          const isActive = val === containerValue;
+          el.setAttribute("data-state", isActive ? "active" : "inactive");
+          if (isActive) activeTrigger = el;
         });
 
         panels.forEach(panel => {
@@ -97,6 +162,17 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
             panel.setAttribute("hidden", "until-found");
           }
         });
+
+        // Initialize indicator position
+        requestAnimationFrame(() => updateIndicator(activeTrigger));
+
+        if (window.ResizeObserver && list) {
+          this.resizeObserver = new ResizeObserver(() => {
+            const currentActive = list.querySelector("[role=tab][data-state=active]") as HTMLElement | null;
+            updateIndicator(currentActive);
+          });
+          this.resizeObserver.observe(list);
+        }
 
         const clickCleanups: (() => void)[] = [];
         const beforeMatchCleanups: (() => void)[] = [];
@@ -117,11 +193,14 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
         triggers.forEach(triggerNode => {
           const trigger = triggerNode as HTMLButtonElement;
           const onClick = () => {
+            if (trigger.disabled) return;
             const targetValue = trigger.dataset.value;
 
             triggers.forEach(tNode => {
               const t = tNode as HTMLButtonElement;
-              t.setAttribute("data-state", t.dataset.value === targetValue ? "active" : "inactive");
+              const isTarget = t.dataset.value === targetValue;
+              t.setAttribute("data-state", isTarget ? "active" : "inactive");
+              if (isTarget) updateIndicator(t);
             });
 
             panels.forEach(panel => {
@@ -139,6 +218,10 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
         this.tabsCleanup = () => {
           clickCleanups.forEach(fn => fn());
           beforeMatchCleanups.forEach(fn => fn());
+          if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
+          }
         };
       }
 
@@ -155,3 +238,4 @@ const initialValue = value || (items.length > 0 ? items[0]?.value : "")
     }
   }
 </script>
+

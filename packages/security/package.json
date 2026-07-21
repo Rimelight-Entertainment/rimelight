@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/security",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "description": "Rimelight Entertainment Security Middleware and Utilities.",
   "type": "module",

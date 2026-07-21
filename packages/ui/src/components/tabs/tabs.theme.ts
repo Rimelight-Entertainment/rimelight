@@ -2,51 +2,79 @@ import { defineTheme } from "../../utils/defineTheme"
 
 export const createTabsTheme = () =>
   defineTheme({
-    slots: ["root", "list", "trigger", "content"],
+    slots: ["root", "list", "indicator", "trigger", "leadingIcon", "leadingAvatar", "label", "trailingBadge", "content"],
     base: {
-      root: "w-full flex flex-col gap-4",
-      list: "inline-flex items-center justify-start rounded-md bg-muted p-1 text-muted-foreground",
+      root: "flex gap-2 w-full",
+      list: "relative flex p-1 group items-center min-w-0",
+      indicator: "absolute transition-[translate,width,height,top,left] duration-200 ease-out pointer-events-none",
       trigger:
-        "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:text-foreground cursor-pointer",
-      content:
-        "mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        "group relative inline-flex items-center justify-center min-w-0 whitespace-nowrap font-medium transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 focus-visible:outline-none data-[state=inactive]:text-muted-foreground hover:data-[state=inactive]:text-foreground",
+      leadingIcon: "shrink-0",
+      leadingAvatar: "shrink-0",
+      label: "truncate",
+      trailingBadge: "shrink-0",
+      content: "w-full focus-visible:outline-none"
     },
     variants: {
       variant: {
-        solid: {
-          list: "bg-muted p-1 rounded-lg",
-          trigger:
-            "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+        pill: {
+          list: "bg-muted/60 dark:bg-muted/40 rounded-lg p-1",
+          trigger: "grow rounded-md data-[state=active]:text-foreground z-10",
+          indicator: "bg-background rounded-md shadow-xs top-1 bottom-1 h-[calc(100%-8px)]"
         },
         underline: {
-          list: "bg-transparent border-b border-border rounded-none p-0 gap-4",
-          trigger:
-            "rounded-none border-b-2 border-transparent px-1 pb-3 pt-2 data-[state=active]:border-primary data-[state=active]:text-foreground hover:border-muted-foreground/30"
+          list: "bg-transparent border-b border-border p-0 gap-2 -mb-px",
+          trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
+          indicator: "bg-primary rounded-full -bottom-px h-0.5 left-0"
         },
-        pills: {
-          list: "bg-transparent p-0 gap-2",
-          trigger:
-            "rounded-full px-4 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-white"
+        link: {
+          list: "bg-transparent border-b border-border p-0 gap-2 -mb-px",
+          trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
+          indicator: "bg-primary rounded-full -bottom-px h-0.5 left-0"
         }
       },
       orientation: {
-        horizontal: { root: "flex-col", list: "w-full" },
+        horizontal: {
+          root: "flex-col",
+          list: "w-full",
+          indicator: "",
+          trigger: "justify-center"
+        },
         vertical: {
           root: "flex-row gap-6",
-          list: "flex-col items-stretch h-full w-48 border-r border-border rounded-none bg-transparent"
+          list: "flex-col items-stretch w-48 border-r border-border p-0",
+          trigger: "justify-start text-left"
         }
       },
       size: {
-        sm: { trigger: "text-xs px-2.5 py-1" },
-        md: { trigger: "text-sm px-3.5 py-1.5" },
-        lg: { trigger: "text-base px-4.5 py-2" }
+        xs: {
+          trigger: "px-2 py-1 text-xs gap-1",
+          leadingIcon: "size-3.5"
+        },
+        sm: {
+          trigger: "px-2.5 py-1.5 text-xs gap-1.5",
+          leadingIcon: "size-4"
+        },
+        md: {
+          trigger: "px-3 py-1.5 text-sm gap-1.5",
+          leadingIcon: "size-4"
+        },
+        lg: {
+          trigger: "px-3.5 py-2 text-sm gap-2",
+          leadingIcon: "size-5"
+        },
+        xl: {
+          trigger: "px-4 py-2.5 text-base gap-2",
+          leadingIcon: "size-5"
+        }
       }
     },
     defaultVariants: {
-      variant: "solid",
+      variant: "pill",
       orientation: "horizontal",
       size: "md"
     }
   })
 
 export default createTabsTheme()
+
