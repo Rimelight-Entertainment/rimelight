@@ -306,7 +306,7 @@ Use the `rounded` prop to apply fully rounded pill-shaped corners.
 
 ### Block
 
-Use the `block` prop to make the Button span the full width of its container.
+Use the `block` prop to make the Button stretch to full width.
 
 <ComponentShowcase>
   <RLAButton label="Full Width Button" block />
@@ -320,6 +320,40 @@ Use the `block` prop to make the Button span the full width of its container.
   <RLAButton label="Full Width Button" block />
   ```
 </div>
+</ComponentShowcase>
+
+### Justify
+
+Use the `justify` prop to align content inside the Button container (`start`, `center`, `end`, `between`, `around`, `evenly`).
+
+<ComponentShowcase
+  togglingPattern="tab-segmented"
+  componentName="RLAButton"
+  propsConfig={{
+    justify: [
+      "start",
+      "center",
+      "end",
+      "between"
+    ]
+  }}
+  defaultProps={{
+    block: true,
+    justify: "start"
+  }}
+>
+  <RLAButton label="Left Aligned Content" block justify="start" leadingIcon="i-lucide-arrow-left" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+    ---
+
+    <RLAButton label="Left Aligned Content" block justify="start" leadingIcon="i-lucide-arrow-left" />
+    ```
+
+  </div>
 </ComponentShowcase>
 
 ### Link

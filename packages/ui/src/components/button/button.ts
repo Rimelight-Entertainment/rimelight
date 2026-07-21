@@ -47,6 +47,10 @@ export interface ButtonProps extends LinkProps {
    */
   block?: boolean
   /**
+   * Horizontal alignment of content inside the button flex container
+   */
+  justify?: "start" | "center" | "end" | "between" | "around" | "evenly"
+  /**
    * Applies active state styling
    */
   active?: boolean

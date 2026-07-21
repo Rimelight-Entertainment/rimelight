@@ -11,7 +11,7 @@ export const createButtonTheme = (colors: readonly string[] = colorConfig.colors
     slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
     base: {
       root: [
-        "group inline-flex items-center justify-center font-medium ws-nowrap no-underline disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+        "group inline-flex items-center font-medium ws-nowrap no-underline disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
         "transition-colors outline-none",
         "aria-invalid:border-error-500 aria-invalid:ring-error-500/20"
       ],
@@ -63,8 +63,16 @@ export const createButtonTheme = (colors: readonly string[] = colorConfig.colors
           trailingIcon: "size-7"
         }
       },
+      justify: {
+        start: { root: "justify-start" },
+        center: { root: "justify-center" },
+        end: { root: "justify-end" },
+        between: { root: "justify-between" },
+        around: { root: "justify-around" },
+        evenly: { root: "justify-evenly" }
+      },
       block: {
-        true: { root: "w-full justify-center", trailingIcon: "ms-auto" }
+        true: { root: "w-full", trailingIcon: "ms-auto" }
       },
       square: {
         true: {},
@@ -218,7 +226,8 @@ export const createButtonTheme = (colors: readonly string[] = colorConfig.colors
     defaultVariants: {
       variant: "solid",
       color: "primary",
-      size: "md"
+      size: "md",
+      justify: "center"
     }
   })
 }
