@@ -202,14 +202,14 @@ export default definePreset((options?: RimelightPresetOptions) => {
         }
       ],
       [
-        /^(text)-(default|inverted|muted|dimmed|toned|highlighted)(?:\/(\d+))?$/,
+        /^(text)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? { color: `color-mix(in srgb, var(--text-color-${name}) ${opacity}%, transparent)` }
             : { color: `var(--text-color-${name})` }
       ],
       [
-        /^(bg)-(default|inverted|muted|elevated|accented)(?:\/(\d+))?$/,
+        /^(bg)-(default|muted|elevated|accented|dimmed|toned|highlighted)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? {
@@ -218,7 +218,20 @@ export default definePreset((options?: RimelightPresetOptions) => {
             : { "background-color": `var(--background-color-${name})` }
       ],
       [
-        /^(ring)-(default|inverted|muted|accented)(?:\/(\d+))?$/,
+        /^bg-inverted(?:\/(\d+))?$/,
+        ([, opacity]) =>
+          opacity
+            ? {
+                "background-color": `color-mix(in srgb, var(--background-color-inverted) ${opacity}%, transparent)`,
+                "color": "var(--text-color-inverted)"
+              }
+            : {
+                "background-color": "var(--background-color-inverted)",
+                "color": "var(--text-color-inverted)"
+              }
+      ],
+      [
+        /^(ring)-(default|muted|elevated|accented|dimmed|toned|highlighted|inverted)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? {
@@ -227,7 +240,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
             : { "--un-ring-color": `var(--ring-color-${name})` }
       ],
       [
-        /^(border)-(default|inverted|muted|accented)(?:\/(\d+))?$/,
+        /^(border)-(default|muted|elevated|accented|dimmed|toned|highlighted|inverted)(?:\/(\d+))?$/,
         ([, , name, opacity]) =>
           opacity
             ? {
@@ -460,24 +473,41 @@ export default definePreset((options?: RimelightPresetOptions) => {
 
           /* Text / background / border / ring semantic tokens using responsive neutral variables */
           --text-color-default: var(--color-neutral-700);
-          --text-color-muted: var(--color-neutral-500);
-          --text-color-dimmed: var(--color-neutral-400);
-          --text-color-toned: var(--color-neutral-600);
+          --text-color-muted: var(--color-neutral-600);
+          --text-color-dimmed: var(--color-neutral-500);
+          --text-color-toned: var(--color-neutral-800);
           --text-color-highlighted: var(--color-neutral-950);
-          --text-color-inverted: light-dark(#ffffff, var(--color-neutral-50));
+          --text-color-elevated: var(--color-neutral-800);
+          --text-color-accented: var(--color-neutral-900);
+          --text-color-inverted: var(--color-neutral-50);
+
           --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
           --background-color-muted: var(--color-neutral-100);
           --background-color-elevated: var(--color-neutral-200);
           --background-color-accented: var(--color-neutral-300);
+          --background-color-dimmed: var(--color-neutral-400);
+          --background-color-toned: var(--color-neutral-800);
+          --background-color-highlighted: var(--color-neutral-900);
           --background-color-inverted: var(--color-neutral-950);
+
           --border-color-default: var(--color-neutral-200);
           --border-color-muted: var(--color-neutral-100);
+          --border-color-elevated: var(--color-neutral-200);
           --border-color-accented: var(--color-neutral-300);
+          --border-color-dimmed: var(--color-neutral-400);
+          --border-color-toned: var(--color-neutral-800);
+          --border-color-highlighted: var(--color-neutral-900);
           --border-color-inverted: var(--color-neutral-950);
+
           --ring-color-default: var(--color-neutral-200);
           --ring-color-muted: var(--color-neutral-100);
+          --ring-color-elevated: var(--color-neutral-200);
           --ring-color-accented: var(--color-neutral-300);
+          --ring-color-dimmed: var(--color-neutral-400);
+          --ring-color-toned: var(--color-neutral-800);
+          --ring-color-highlighted: var(--color-neutral-900);
           --ring-color-inverted: var(--color-neutral-950);
+
           --divide-color-default: var(--color-neutral-200);
           --divide-color-inverted: var(--color-neutral-950);
 

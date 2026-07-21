@@ -2,11 +2,22 @@ import { defineTheme } from "../../utils/defineTheme"
 
 export const createTabsTheme = () =>
   defineTheme({
-    slots: ["root", "list", "indicator", "trigger", "leadingIcon", "leadingAvatar", "label", "trailingBadge", "content"],
+    slots: [
+      "root",
+      "list",
+      "indicator",
+      "trigger",
+      "leadingIcon",
+      "leadingAvatar",
+      "label",
+      "trailingBadge",
+      "content"
+    ],
     base: {
       root: "flex gap-2 w-full",
       list: "relative flex p-1 group items-center min-w-0",
-      indicator: "absolute transition-[translate,width,height,top,left] duration-200 ease-out pointer-events-none",
+      indicator:
+        "absolute transition-[translate,width,height,top,left] duration-200 ease-out pointer-events-none",
       trigger:
         "group relative inline-flex items-center justify-center min-w-0 whitespace-nowrap font-medium transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 focus-visible:outline-none data-[state=inactive]:text-muted-foreground hover:data-[state=inactive]:text-foreground",
       leadingIcon: "shrink-0",
@@ -77,4 +88,3 @@ export const createTabsTheme = () =>
   })
 
 export default createTabsTheme()
-

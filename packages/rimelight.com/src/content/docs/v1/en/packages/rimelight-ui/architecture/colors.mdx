@@ -3,7 +3,11 @@ title: "Colors"
 description: "How Rimelight UI handles colors, how to register custom colors, and what the system generates for you."
 ---
 
+import ColorMatrixVisualizer from "@/components/utilities/colors/ColorMatrixVisualizer"
+
 The `@rimelight/ui` color system is built on a **dynamic, factory-based architecture** with a single source of truth. You define your colors once in `astro.config.ts`, and the library handles the rest — CSS variables using `light-dark()`, UnoCSS theme mappings, component variants, and safelisting.
+
+<ColorMatrixVisualizer client:load />
 
 Register a new color (like `blurple`) and every supported component automatically gains `solid`, `outline`, `soft`, `subtle`, `ghost`, and `link` variants for it — with no additional code.
 
@@ -297,6 +301,21 @@ ui({
 ```
 
 No CSS files or `@theme` blocks needed.
+
+## Refining Color Semantics & Recommendations
+
+To eliminate dark-on-dark or light-on-light contrast issues when using color modes and theme overrides (`rl-light`, `rl-dark`, `theme="dark"`), adhere to these architectural recommendations:
+
+### 1. Match Container Scope with Text Tokens
+
+- **`bg-default` containers**: Always pair with `text-default`, `text-muted`, or `text-toned`.
+- **`bg-inverted` containers**: Pair with `text-inverted` or wrap the subtree in `class="rl-dark"` so all semantic child tokens (`text-default`, `text-muted`) dynamically re-evaluate against dark background values.
+- **Section Pinning Rule**: When creating dark cards or footers inside a light page, apply `class="rl-dark"` to the wrapper element instead of only styling background utilities. This automatically recalibrates `color-scheme`, ensuring `light-dark()` and semantic tokens resolve with optimal contrast.
+
+### 2. Component Variant Contrast Guidelines
+
+- **`solid` Variant**: Emits `text-white` on `bg-500`. For custom scales with bright or yellow 500 shades, set explicit `light`/`dark` overrides in `astro.config.ts` or use `--rl-text-solid` for customized contrast text.
+- **`soft` & `subtle` Variants**: Reference `text-[var(--rl-text)]` with a 10% opacity background (`bg-[var(--rl-bg)]/10`). Because `--rl-text` points to `600`, it maintains high contrast across both light and dark modes without muddying background opacities.
 
 ## Theme Source Reference
 

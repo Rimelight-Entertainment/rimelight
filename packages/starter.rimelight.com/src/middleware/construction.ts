@@ -14,7 +14,8 @@ export const construction = async (c: any, next: any) => {
   const state = getFetchState(c)
   const localePrefix = getLocaleFromPath(c.req.path)
 
-  const isConstructionPage = c.req.path === `/${localePrefix}/construction` || c.req.path === "/construction"
+  const isConstructionPage =
+    c.req.path === `/${localePrefix}/construction` || c.req.path === "/construction"
 
   if (isConstructionPage) {
     if (!constructionMode || state.locals.session) {
