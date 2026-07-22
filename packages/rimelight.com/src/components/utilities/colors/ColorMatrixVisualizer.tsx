@@ -28,8 +28,8 @@ const SEMANTIC_TEXTS = [
   { name: "toned", cls: "text-toned", label: "Toned" },
   { name: "highlighted", cls: "text-highlighted", label: "Highlighted" },
   { name: "inverted", cls: "text-inverted", label: "Inverted" },
-  { name: "primary-600", cls: "text-[var(--color-primary-600)]", label: "Primary 600" },
-  { name: "success-600", cls: "text-[var(--color-success-600)]", label: "Success 600" }
+  { name: "primary-600", cls: "text-primary-600", label: "Primary 600" },
+  { name: "success-600", cls: "text-success-600", label: "Success 600" }
 ]
 
 const SEMANTIC_BACKGROUNDS = [
@@ -41,8 +41,8 @@ const SEMANTIC_BACKGROUNDS = [
   { name: "toned", cls: "bg-toned", label: "Toned" },
   { name: "highlighted", cls: "bg-highlighted", label: "Highlighted" },
   { name: "inverted", cls: "bg-inverted", label: "Inverted" },
-  { name: "primary-50", cls: "bg-[var(--color-primary-50)]", label: "Primary 50" },
-  { name: "primary-500", cls: "bg-[var(--color-primary-500)]", label: "Primary 500" }
+  { name: "primary-50", cls: "bg-primary-50", label: "Primary 50" },
+  { name: "primary-500", cls: "bg-primary-500", label: "Primary 500" }
 ]
 
 const SHADES = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"] as const
@@ -248,19 +248,37 @@ export default function ColorMatrixVisualizer(props: ColorMatrixVisualizerProps)
                                     : componentThemeProp() === "dark"
                                       ? "rl-dark"
                                       : ""
-                                }  ${
-                                  variant === "solid"
-                                    ? "bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)]"
-                                    : variant === "outline"
-                                      ? "ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10"
-                                      : variant === "soft"
-                                        ? "text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15"
-                                        : variant === "subtle"
-                                          ? "text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15"
-                                          : variant === "ghost"
-                                            ? "text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10"
-                                            : "text-[var(--rl-text)] hover:underline"
                                 }`}
+                                style={
+                                  variant === "solid"
+                                    ? { "background-color": "var(--rl-bg)", "color": "white" }
+                                    : variant === "outline"
+                                      ? {
+                                          "border-color":
+                                            "color-mix(in srgb, var(--rl-border) 50%, transparent)",
+                                          "color": "var(--rl-text)"
+                                        }
+                                      : variant === "soft"
+                                        ? {
+                                            "background-color":
+                                              "color-mix(in srgb, var(--rl-bg) 10%, transparent)",
+                                            "color": "var(--rl-text)"
+                                          }
+                                        : variant === "subtle"
+                                          ? {
+                                              "background-color":
+                                                "color-mix(in srgb, var(--rl-bg) 10%, transparent)",
+                                              "border-color":
+                                                "color-mix(in srgb, var(--rl-border) 25%, transparent)",
+                                              "color": "var(--rl-text)"
+                                            }
+                                          : variant === "ghost"
+                                            ? { color: "var(--rl-text)" }
+                                            : {
+                                                "color": "var(--rl-text)",
+                                                "text-decoration": "underline"
+                                              }
+                                }
                               >
                                 Button
                               </button>
@@ -456,7 +474,11 @@ export default function ColorMatrixVisualizer(props: ColorMatrixVisualizerProps)
                 <div class="flex items-center justify-between border-b border-neutral-200/50 pb-3">
                   <h3 class={`text-lg font-bold ${sandboxText()}`}>Custom Component Card</h3>
                   <span
-                    class={`text-xs px-2.5 py-1 rounded-full font-medium rl-color-${sandboxColor()} bg-[var(--rl-bg)]/10 text-[var(--rl-text)]`}
+                    class={`text-xs px-2.5 py-1 rounded-full font-medium rl-color-${sandboxColor()}`}
+                    style={{
+                      "background-color": "color-mix(in srgb, var(--rl-bg) 10%, transparent)",
+                      "color": "var(--rl-text)"
+                    }}
                   >
                     {sandboxColor()} tag
                   </span>
@@ -469,17 +491,23 @@ export default function ColorMatrixVisualizer(props: ColorMatrixVisualizerProps)
 
                 <div class="flex flex-wrap items-center gap-3 pt-2">
                   <button
-                    class={`px-4 py-2 text-sm font-semibold rounded-lg rl-color-${sandboxColor()} bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] shadow-sm`}
+                    class={`px-4 py-2 text-sm font-semibold rounded-lg rl-color-${sandboxColor()} text-white shadow-sm`}
+                    style={{ "background-color": "var(--rl-bg)" }}
                   >
                     Primary Action
                   </button>
                   <button
-                    class={`px-4 py-2 text-sm font-semibold rounded-lg rl-color-${sandboxColor()} ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10`}
+                    class={`px-4 py-2 text-sm font-semibold rounded-lg rl-color-${sandboxColor()} border`}
+                    style={{
+                      "border-color": "color-mix(in srgb, var(--rl-border) 50%, transparent)",
+                      "color": "var(--rl-text)"
+                    }}
                   >
                     Outline Action
                   </button>
                   <button
-                    class={`px-4 py-2 text-sm font-semibold rounded-lg rl-color-${sandboxColor()} text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10`}
+                    class={`px-4 py-2 text-sm font-semibold rounded-lg rl-color-${sandboxColor()}`}
+                    style={{ color: "var(--rl-text)" }}
                   >
                     Ghost Action
                   </button>

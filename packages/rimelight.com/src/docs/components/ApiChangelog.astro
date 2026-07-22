@@ -1,13 +1,11 @@
 ---
-import RLATimeline from "@rimelight/ui/components/timeline/RLATimeline.astro"
-
 interface Props {
   component: string
   ui?: any
   class?: any
 }
 
-const { component, ui: uiProp, class: className } = Astro.props
+const { component } = Astro.props
 ---
 
 <div class="api-changelog-container group" data-component={component}>

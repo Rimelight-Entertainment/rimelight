@@ -5,6 +5,7 @@ import RLAMain from "@rimelight/ui/components/main/RLAMain.astro"
 import AppFooter from '@/components/app/AppFooter.astro';
 import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro"
 import RLAShortcuts from "@rimelight/ui/components/shortcuts/RLAShortcuts.astro"
+import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro"
 import { siteConfig } from '@/config/site.config';
 import { Font } from 'astro:assets';
 import { currentLocale } from '@rimelight/i18n';
@@ -45,6 +46,7 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 		<AppFooter />
 		<RLAScrollToTop showProgress={true} />
 		<RLAShortcuts />
+		<RLAToaster />
 		<script is:inline data-astro-rerun>
 			(function() {
 				'use strict';

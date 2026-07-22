@@ -29,19 +29,19 @@ export interface TabsProps<T extends TabItem = TabItem> {
   /**
    * Tab variant.
    *
-   * @defaultValue "pill"
+   * @default "pill"
    */
   variant?: "pill" | "underline" | "link" | "solid" | "pills"
   /**
    * Layout orientation.
    *
-   * @defaultValue "horizontal"
+   * @default "horizontal"
    */
   orientation?: "horizontal" | "vertical"
   /**
    * Size scale.
    *
-   * @defaultValue "md"
+   * @default "md"
    */
   size?: "xs" | "sm" | "md" | "lg" | "xl"
   /**
@@ -51,26 +51,26 @@ export interface TabsProps<T extends TabItem = TabItem> {
   /**
    * Whether to render content panels automatically. Set to false for tab bar only.
    *
-   * @defaultValue true
+   * @default true
    */
   content?: boolean
   /**
    * Unmount hidden tab panels from DOM. Defaults to true. If false, panel is hidden via
    * CSS/attribute.
    *
-   * @defaultValue true
+   * @default true
    */
   unmountOnHide?: boolean
   /**
    * Property key for value on item object.
    *
-   * @defaultValue "value"
+   * @default "value"
    */
   valueKey?: string
   /**
    * Property key for label on item object.
    *
-   * @defaultValue "label"
+   * @default "label"
    */
   labelKey?: string
   /**

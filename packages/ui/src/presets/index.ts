@@ -358,10 +358,10 @@ export default definePreset((options?: RimelightPresetOptions) => {
       animation: {
         keyframes: {
           "accordion-down":
-            "{ from { height: 0; } to { height: var(--starwind-accordion-content-height); } }",
+            "from { height: 0; } to { height: var(--starwind-accordion-content-height); }",
           "accordion-up":
-            "{ from { height: var(--starwind-accordion-content-height); } to { height: 0; } }",
-          "marquee": "{ from { transform: translateX(0); } to { transform: translateX(-100%); } }"
+            "from { height: var(--starwind-accordion-content-height); } to { height: 0; }",
+          "marquee": "from { transform: translateX(0); } to { transform: translateX(-100%); }"
         },
         durations: {
           "accordion-down": "0.2s",

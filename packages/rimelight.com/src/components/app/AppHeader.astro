@@ -373,13 +373,13 @@ const actions: ButtonProps[] = [
 	{
     color: "neutral",
 		variant: "outline",
-		to: getRelativeLocaleUrl('/auth/sign-up'),
+		href: getRelativeLocaleUrl('/auth/sign-up'),
 		label: messages["actions_sign-up"]
 	},
 	{
 		variant: "solid",
 		color: "primary",
-		to: getRelativeLocaleUrl('/auth/sign-in'),
+		href: getRelativeLocaleUrl('/auth/sign-in'),
 		label: messages["actions_sign-in"]
 	}
 ];
@@ -740,7 +740,7 @@ const storeAssistanceGroup: LinkGroupProps = {
         variant="link"
         theme="flat"
         ui={{
-          viewportWrapper: 'top-[var(--rl-total-header-height,64px)] flex fixed w-screen left-0 right-0 z-[150] mt-0 bg-transparent',
+          viewportWrapper: 'top-[var(--rl-total-header-height,64px)] flex fixed w-screen left-0 right-0 z-[150] mt-0 bg-transparent pointer-events-none',
           viewport: 'w-screen rounded-none border-none shadow-xl mt-0 pointer-events-auto overflow-hidden',
           link: 'text-white transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400'
         }}
@@ -995,7 +995,7 @@ const storeAssistanceGroup: LinkGroupProps = {
       />
       <div class="hidden md:flex flex-row gap-md">
         {session ? (
-          <RLAPopover placement="bottom" class="relative group/popover">
+          <RLAPopover placement="bottom-end" class="relative group/popover">
             <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
               <div class="relative">
                 <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
@@ -1025,7 +1025,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl('/dashboard')}
+                  href={getRelativeLocaleUrl('/dashboard')}
                   leadingIcon="i-lucide-layout-dashboard"
                   label={messages["user_dropdown_dashboard"]}
                 />
@@ -1034,7 +1034,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl('/dashboard/profile')}
+                  href={getRelativeLocaleUrl('/dashboard/profile')}
                   leadingIcon="i-lucide-user"
                   label={messages["user_dropdown_profile"]}
                 />
@@ -1043,7 +1043,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl('/dashboard/settings')}
+                  href={getRelativeLocaleUrl('/dashboard/settings')}
                   leadingIcon="i-lucide-cog"
                   label={messages["user_dropdown_settings"]}
                 />
@@ -1057,7 +1057,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start text-error-500 hover:text-error-600"
-                  to={getRelativeLocaleUrl('/auth/sign-out')}
+                  href={getRelativeLocaleUrl('/auth/sign-out')}
                   leadingIcon="i-lucide-log-out"
                   label={messages["user_dropdown_sign-out"]}
                 />
@@ -1101,7 +1101,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl('/dashboard')}
+                  href={getRelativeLocaleUrl('/dashboard')}
                   leadingIcon="i-lucide-layout-dashboard"
                   label={messages["user_dropdown_dashboard"]}
                 />
@@ -1110,7 +1110,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl('/dashboard/profile')}
+                  href={getRelativeLocaleUrl('/dashboard/profile')}
                   leadingIcon="i-lucide-user"
                   label={messages["user_dropdown_profile"]}
                 />
@@ -1119,7 +1119,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start"
-                  to={getRelativeLocaleUrl('/dashboard/settings')}
+                  href={getRelativeLocaleUrl('/dashboard/settings')}
                   leadingIcon="i-lucide-cog"
                   label={messages["user_dropdown_settings"]}
                 />
@@ -1129,7 +1129,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   variant="ghost"
                   block={true}
                   class="!justify-start text-error-500 hover:text-error-600"
-                  to={getRelativeLocaleUrl('/auth/sign-out')}
+                  href={getRelativeLocaleUrl('/auth/sign-out')}
                   leadingIcon="i-lucide-log-out"
                   label={messages["user_dropdown_sign-out"]}
                 />

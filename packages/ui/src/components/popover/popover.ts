@@ -10,7 +10,11 @@ export interface PopoverProps {
   /**
    * The placement of the popover relative to trigger.
    */
-  placement?: "top" | "bottom" | "left" | "right"
+  placement?: "top" | "bottom" | "bottom-end" | "bottom-start" | "left" | "right"
+  /**
+   * Trigger mode: 'click', 'hover', or 'both'.
+   */
+  mode?: "click" | "hover" | "both"
   /**
    * Slot-specific CSS class overrides.
    */

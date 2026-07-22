@@ -103,6 +103,62 @@ By default, toasts are dismissable and disappear after 5000ms. Use `dismissable=
   </div>
 </ComponentShowcase>
 
+### Global Toaster & Reactive Store (`RLAToaster`)
+
+For app-wide toasts, mount `<RLAToaster />` globally inside your root layout (`AppLayout.astro`).
+
+```astro
+---
+import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
+---
+
+<AppLayout>
+  <slot />
+  <RLAToaster />
+</AppLayout>
+```
+
+#### Programmatic Dispatch (`addToast`)
+
+Trigger toasts dynamically from any client script or component using the Nanostores store:
+
+```ts
+import { addToast } from "@rimelight/ui/stores/toast"
+
+addToast({
+  title: "Profile updated",
+  description: "Your changes have been saved.",
+  variant: "success"
+})
+```
+
+#### Cross-Page / Redirect Toasts
+
+To trigger a toast notification on the destination page after a page redirect:
+
+##### Option 1: Session Storage Payload
+
+```ts
+// Set pending toast payload before redirecting
+sessionStorage.setItem(
+  "pending_toast",
+  JSON.stringify({
+    title: "Signed in successfully",
+    description: "Welcome back!",
+    variant: "success"
+  })
+)
+
+window.location.href = "/dashboard"
+```
+
+##### Option 2: Generic URL Query Parameters
+
+```ts
+// Redirect with query parameters - RLAToaster automatically displays and cleans the URL
+window.location.href = "/dashboard?toast_title=Signed%20in%20successfully&toast_variant=success"
+```
+
 ## API
 
 ### Props

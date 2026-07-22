@@ -1,0 +1,56 @@
+---
+---
+
+<div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+<script>
+  import { toasts, removeToast, addToast } from "@/stores/toast"
+
+  const container = document.getElementById("toast-container")
+
+  // Check URL params for pending redirect toasts
+  function checkUrlToasts() {
+    const url = new URL(window.location.href)
+    if (url.searchParams.has("signed_in")) {
+      url.searchParams.delete("signed_in")
+      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""))
+      addToast({ title: "Signed in successfully", description: "Welcome back!", variant: "success" })
+    } else if (url.searchParams.has("new")) {
+      url.searchParams.delete("new")
+      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""))
+      addToast({ title: "Account created successfully", description: "Please sign in to continue.", variant: "success" })
+    }
+  }
+
+  checkUrlToasts()
+  document.addEventListener("astro:page-load", checkUrlToasts)
+
+  toasts.subscribe((list) => {
+    if (!container) return
+    container.innerHTML = ""
+    list.forEach((t) => {
+      const el = document.createElement("div")
+      const isError = t.variant === "error"
+      const bgClass = isError
+        ? "bg-error-900 text-error-100 border-error-700"
+        : "bg-neutral-900 text-white border-neutral-800 dark:bg-neutral-800"
+      const iconSvg = isError
+        ? `<svg class="size-4 shrink-0 text-error-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>`
+        : `<svg class="size-4 shrink-0 text-success-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`
+
+      el.className = `pointer-events-auto flex items-start gap-3 p-4 rounded-lg border shadow-xl transition-all duration-300 ${bgClass}`
+      el.innerHTML = `
+        ${iconSvg}
+        <div class="flex flex-col gap-0.5 flex-1 min-w-0">
+          <div class="font-semibold text-sm">${t.title}</div>
+          ${t.description ? `<div class="text-xs opacity-90">${t.description}</div>` : ""}
+        </div>
+        <button type="button" class="text-neutral-400 hover:text-white p-0.5 rounded focus:outline-none" aria-label="Close">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      `
+      el.querySelector("button")?.addEventListener("click", () => removeToast(t.id))
+      container.appendChild(el)
+    })
+  })
+</script>

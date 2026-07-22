@@ -5,14 +5,14 @@ import { resolveClasses } from "../../utils/resolveClasses"
 import type { PopoverProps } from "./popover"
 import { resolveTheme } from "../../utils/resolveTheme"
 import popoverThemeDefault, { createPopoverTheme } from "./popover.theme"
+
 const popoverTheme = resolveTheme(popoverThemeDefault, createPopoverTheme)
-
-
 const popover = scv(popoverTheme)
 
 const {
   triggerLabel,
   placement = "bottom",
+  mode = "both",
   ui: uiProp,
   class: className,
   ...rest
@@ -22,7 +22,7 @@ const classes = resolveClasses(popover, {
   placement
 }, useUi("popover", uiProp), className)
 ---
-<div class={classes.root} data-slot="popover-container" data-placement={placement} {...rest}>
+<div class={`group/popover ${classes.root}`} data-slot="popover-container" data-placement={placement} data-mode={mode} {...rest}>
   <div class={`${classes.trigger} popover-trigger`} data-slot="trigger">
     <slot name="trigger">
       {triggerLabel && <button type="button" class="cursor-pointer">{triggerLabel}</button>}
@@ -35,96 +35,139 @@ const classes = resolveClasses(popover, {
 </div>
 
 <script>
-  function initPopovers() {
-    document.querySelectorAll('[data-slot="popover-container"]').forEach(container => {
-      const el = container as any;
-      if (el.dataset && el.dataset.popoverInitialized) return;
-      if (el.dataset) el.dataset.popoverInitialized = "true";
+  function openPopover(container: Element, content: HTMLElement) {
+    document.querySelectorAll('.popover-content').forEach(other => {
+      if (other !== content && !other.classList.contains('hidden')) {
+        other.classList.add('hidden');
+        (other as HTMLElement).style.transform = '';
+        other.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+      }
+    });
 
-      const trigger = container.querySelector('.popover-trigger');
-      const content = container.querySelector('.popover-content') as HTMLElement;
+    content.classList.remove('hidden');
+    content.style.transform = '';
 
-      if (!trigger || !content) return;
+    const rect = content.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    let shift = 0;
+    const safetyMargin = 16;
+    if (rect.right > viewportWidth - safetyMargin) {
+      shift = (viewportWidth - safetyMargin) - rect.right;
+    } else if (rect.left < safetyMargin) {
+      shift = safetyMargin - rect.left;
+    }
 
-      trigger.addEventListener('click', (e) => {
+    const placement = container.getAttribute('data-placement') || 'bottom';
+    const isCentered = (placement === 'top' || placement === 'bottom') &&
+                       !content.classList.contains('right-0') &&
+                       !content.classList.contains('left-0');
+
+    if (shift !== 0) {
+      if (isCentered) {
+        content.style.transform = `translateX(calc(-50% + ${shift}px))`;
+      } else {
+        content.style.transform = `translateX(${shift}px)`;
+      }
+    }
+
+    content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: true } }));
+  }
+
+  function closePopover(content: HTMLElement) {
+    if (!content.classList.contains('hidden')) {
+      content.classList.add('hidden');
+      content.style.transform = '';
+      content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+    }
+  }
+
+  function setupPopoverListeners() {
+    const win = window as any;
+    if (win.hasGlobalPopoverListeners) return;
+    win.hasGlobalPopoverListeners = true;
+
+    let hoverTimeout: any = null;
+
+    document.addEventListener('mouseover', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const container = target.closest('[data-slot="popover-container"]') as HTMLElement | null;
+      if (container) {
+        const mode = container.getAttribute('data-mode') || 'both';
+        if (mode === 'hover' || mode === 'both') {
+          if (hoverTimeout) clearTimeout(hoverTimeout);
+          const content = container.querySelector('.popover-content') as HTMLElement | null;
+          if (content && content.classList.contains('hidden')) {
+            openPopover(container, content);
+          }
+        }
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const container = target.closest('[data-slot="popover-container"]') as HTMLElement | null;
+      if (container) {
+        const mode = container.getAttribute('data-mode') || 'both';
+        if (mode === 'hover' || mode === 'both') {
+          const related = e.relatedTarget as HTMLElement | null;
+          if (related && container.contains(related)) return;
+
+          const content = container.querySelector('.popover-content') as HTMLElement | null;
+          if (content && !content.classList.contains('hidden')) {
+            hoverTimeout = setTimeout(() => {
+              closePopover(content);
+            }, 150);
+          }
+        }
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const trigger = target.closest('.popover-trigger') as HTMLElement | null;
+      if (trigger) {
         e.stopPropagation();
+        const container = trigger.closest('[data-slot="popover-container"]');
+        if (!container) return;
+
+        const content = container.querySelector('.popover-content') as HTMLElement | null;
+        if (!content) return;
+
         const isOpen = !content.classList.contains('hidden');
-        
-        document.querySelectorAll('.popover-content').forEach(otherContent => {
-          const other = otherContent as HTMLElement;
-          if (other !== content && !other.classList.contains('hidden')) {
-            other.classList.add('hidden');
-            other.style.left = '';
-            other.style.right = '';
-            other.style.transform = '';
-            other.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
-          }
-        });
-
         if (isOpen) {
-          content.classList.add('hidden');
-          content.style.left = '';
-          content.style.right = '';
-          content.style.transform = '';
-          content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
+          closePopover(content);
         } else {
-          content.classList.remove('hidden');
-
-          // Reset styles to measure original computed bounds
-          content.style.left = '';
-          content.style.right = '';
-          content.style.transform = '';
-
-          const rect = content.getBoundingClientRect();
-          const viewportWidth = window.innerWidth;
-          const placement = container.getAttribute('data-placement') || 'bottom';
-          
-          let shift = 0;
-          const safetyMargin = 24;
-          if (rect.right > viewportWidth - safetyMargin) {
-            shift = (viewportWidth - safetyMargin) - rect.right;
-          } else if (rect.left < safetyMargin) {
-            shift = safetyMargin - rect.left;
-          }
-
-          if (shift !== 0) {
-            const isCentered = (placement === 'top' || placement === 'bottom') && 
-                               !content.classList.contains('right-0') && 
-                               !content.classList.contains('left-0');
-            if (isCentered) {
-              content.style.transform = `translateX(calc(-50% + ${shift}px))`;
-            } else {
-              content.style.transform = `translateX(${shift}px)`;
-            }
-          }
-
-          content.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: true } }));
+          openPopover(container, content);
         }
-      });
+        return;
+      }
 
-      content.addEventListener('click', (e) => {
-        e.stopPropagation();
+      if (target.closest('.popover-content')) {
+        const isActionLink = target.closest('a') || target.closest('button[data-close-popover]');
+        if (isActionLink) {
+          document.querySelectorAll('.popover-content').forEach(other => {
+            closePopover(other as HTMLElement);
+          });
+        }
+        return;
+      }
+
+      document.querySelectorAll('.popover-content').forEach(other => {
+        closePopover(other as HTMLElement);
       });
     });
   }
 
-  const win = window as any;
-  if (!win.hasGlobalPopoverListener) {
-    win.hasGlobalPopoverListener = true;
-    document.addEventListener('click', () => {
-      document.querySelectorAll('.popover-content').forEach(content => {
-        const c = content as HTMLElement;
-        if (!c.classList.contains('hidden')) {
-          c.classList.add('hidden');
-          c.style.left = '';
-          c.style.right = '';
-          c.style.transform = '';
-          c.dispatchEvent(new CustomEvent('popover-toggle', { detail: { open: false } }));
-        }
-      });
-    });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPopoverListeners);
+  } else {
+    setupPopoverListeners();
   }
-
-  document.addEventListener('astro:page-load', initPopovers);
-  initPopovers();
+  document.addEventListener('astro:page-load', setupPopoverListeners);
 </script>
