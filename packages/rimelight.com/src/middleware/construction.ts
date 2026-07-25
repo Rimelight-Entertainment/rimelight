@@ -1,7 +1,7 @@
 import { getFetchState } from "astro/hono"
 import { languages } from "@/config/i18n.config"
 
-const WHITELISTED_ROUTES = ["/construction", "/api/auth"]
+const WHITELISTED_ROUTES = ["/construction", "/api/auth", "/api/construction-guest"]
 
 const getLocaleFromPath = (path: string) => {
   return languages.find((loc) => path === `/${loc}` || path.startsWith(`/${loc}/`)) ?? "en"
