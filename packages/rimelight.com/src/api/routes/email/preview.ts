@@ -23,7 +23,7 @@ api.post("/test", async (c) => {
   }
 
   try {
-    const env = (c.env ?? (await getCloudflareEnv(c)))
+    const env = c.env ?? (await getCloudflareEnv(c))
     const recipient = env?.EMAIL_TEST_RECIPIENT
     if (!recipient) {
       return c.json({ error: "EMAIL_TEST_RECIPIENT is not configured." }, 500)
