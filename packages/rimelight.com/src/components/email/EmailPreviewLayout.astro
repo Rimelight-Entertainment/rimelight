@@ -4,9 +4,10 @@ import BlankLayout from "@/layouts/BlankLayout.astro"
 interface Props {
   title: string
   notes?: string[]
+  template: "verification" | "password-reset" | "signup-notification"
 }
 
-const { title, notes = [] } = Astro.props
+const { title, notes = [], template } = Astro.props
 const locale = Astro.currentLocale ?? "en"
 ---
 
@@ -27,8 +28,14 @@ const locale = Astro.currentLocale ?? "en"
       .email-preview-notes h2 { margin: 0 0 8px; font-size: 1rem; color: #78350f; }
       .email-preview-notes ul { margin: 0; padding-left: 20px; }
       .email-preview-back-link { display: block; text-align: center; margin-top: 24px; color: #374151; }
+      .email-preview-actions { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 20px; }
+      .email-preview-actions button { padding: 10px 20px; border: 0; border-radius: 6px; background: #111827; color: #ffffff; cursor: pointer; font: inherit; font-size: 14px; }
+      .email-preview-actions button:hover { background: #374151; }
+      .email-preview-actions button:disabled { cursor: wait; opacity: .65; }
+      .email-preview-actions span { color: #166534; font-size: 13px; }
+      .email-preview-actions span.error { color: #b91c1c; }
     </style>
-    <main class="email-preview-container">
+    <main class="email-preview-container" data-email-locale={locale}>
       <header><h1>{title}</h1></header>
       <div class="email-preview-frame">
         <span class="email-preview-label">PREVIEW MODE</span>
@@ -36,6 +43,10 @@ const locale = Astro.currentLocale ?? "en"
           <span class="email-preview-boundary-label">EMAIL CONTENT</span>
           <slot />
         </div>
+      </div>
+      <div class="email-preview-actions">
+        <button type="button" data-email-test={template} style="display:inline-block;padding:10px 20px;border:0;border-radius:6px;background:#111827;color:#ffffff;font:inherit;font-size:14px;cursor:pointer;">Send Test Email</button>
+        <span data-email-status={template} role="status"></span>
       </div>
       {notes.length > 0 && (
         <div class="email-preview-notes">
@@ -46,3 +57,40 @@ const locale = Astro.currentLocale ?? "en"
       <a href={`/${locale}/dev/email`} class="email-preview-back-link">← Back to preview index</a>
     </main>
 </BlankLayout>
+
+<script>
+  const previewRoot = document.querySelector<HTMLElement>("[data-email-locale]")
+  const locale = previewRoot?.dataset.emailLocale ?? "en"
+  const template = document.querySelector<HTMLButtonElement>("[data-email-test]")?.dataset.emailTest
+  const button = document.querySelector<HTMLButtonElement>("[data-email-test]")
+  const status = document.querySelector<HTMLElement>("[data-email-status]")
+
+  button?.addEventListener("click", async () => {
+    if (!button || !status) return
+    button.disabled = true
+    status.className = ""
+    status.textContent = "Sending..."
+
+    try {
+      const response = await fetch(`/api/email/preview/test`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ template, locale })
+      })
+      const raw = await response.text()
+      let result: { ok?: boolean; error?: string }
+      try {
+        result = JSON.parse(raw) as { ok?: boolean; error?: string }
+      } catch {
+        throw new Error(raw || `Request failed with status ${response.status}`)
+      }
+      if (!response.ok) throw new Error(result.error ?? "Unable to send test email")
+      status.textContent = "Test email sent."
+    } catch (error) {
+      status.className = "error"
+      status.textContent = error instanceof Error ? error.message : "Unable to send test email"
+    } finally {
+      button.disabled = false
+    }
+  })
+</script>

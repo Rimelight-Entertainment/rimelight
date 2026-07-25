@@ -2,6 +2,7 @@ interface CloudflareEnv {
   BLOB: R2Bucket
   R2: R2Bucket
   EMAIL: SendEmail
+  EMAIL_TEST_RECIPIENT?: string
 }
 
 export function isCloudflareEnv(env: unknown): env is CloudflareEnv {

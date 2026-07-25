@@ -53,6 +53,7 @@
   "vars": {
     "CONSTRUCTION_MODE": "true",
     "CONSTRUCTION_AUTH": "true",
-    "EMAIL_DOMAIN": "rimelight.com"
+    "EMAIL_DOMAIN": "rimelight.com",
+    "EMAIL_TEST_RECIPIENT": "testing9.agreed505@passmail.net"
   }
 }
