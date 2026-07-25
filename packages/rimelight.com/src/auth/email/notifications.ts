@@ -1,23 +1,24 @@
 // src/auth/email/notifications.ts
 
 import { sendEmail } from "."
+import { renderSignupNotificationEmail } from "./render"
+import { getEmailMessages } from "./messages"
 
-export async function sendExistingUserSignUpNotification({ user }: { user: { email: string } }) {
-  const subject = "Sign-up attempt with your email"
+export interface ExistingUserSignUpNotificationOptions {
+  user: { email: string }
+  locale?: string
+}
 
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h1>Security Notice</h1>
-      <p>Someone tried to create an account using your email address.</p>
-      <p>If this was you, please <a href="/auth/sign-in">sign in</a> instead.</p>
-      <p style="color: #666; font-size: 14px;">If not, you can safely ignore this email.</p>
-    </div>
-  `
+export async function sendExistingUserSignUpNotification({ user, locale }: ExistingUserSignUpNotificationOptions) {
+  const messages = getEmailMessages(locale)
+  const subject = messages.signupNotification.subject
+
+  const html = await renderSignupNotificationEmail("/auth/sign-in", locale)
 
   return sendEmail({
     to: user.email,
     subject,
-    text: "Someone tried to create an account using your email address. If this was you, try signing in instead.",
+    text: `${messages.signupNotification.description} ${messages.signupNotification.sign_in_prefix} ${messages.signupNotification.sign_in} ${messages.signupNotification.sign_in_suffix}`,
     html,
   })
 }
