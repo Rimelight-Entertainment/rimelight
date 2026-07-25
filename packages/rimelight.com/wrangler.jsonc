@@ -44,8 +44,15 @@
       "id": "e1ae79418e4c4532a9344102bf663861"
     }
   ],
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "remote": true
+    }
+  ],
   "vars": {
     "CONSTRUCTION_MODE": "true",
-    "CONSTRUCTION_AUTH": "true"
+    "CONSTRUCTION_AUTH": "true",
+    "EMAIL_DOMAIN": "rimelight.com"
   }
 }

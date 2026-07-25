@@ -7,6 +7,10 @@ import { eq, and, count } from "drizzle-orm"
 import { user as userTable } from "@/db/schema/auth"
 import { normalizeUsername, RESTRICTED_SET } from "@/auth/restricted-usernames"
 import { APIError } from "better-auth/api"
+import { sendVerificationEmail } from "./email/verification"
+import { sendPasswordResetEmail } from "./email/password-reset"
+import { sendExistingUserSignUpNotification } from "./email/notifications"
+import { createSyntheticUser } from "./customSyntheticUser"
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -14,19 +18,20 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true,
+    autoSignIn: false,
     requireEmailVerification: true,
     minPasswordLength: 8,
-    maxPasswordLength: 128
+    maxPasswordLength: 128,
+    customSyntheticUser: createSyntheticUser,
+    sendResetPassword: sendPasswordResetEmail,
+    onExistingUserSignUp: sendExistingUserSignUpNotification,
+  },
+  emailVerification: {
+    sendVerificationEmail: sendVerificationEmail,
   },
   user: {
     changeEmail: {
       enabled: true
-    },
-    emailVerification: {
-      // sendChangeEmailConfirmation: async ({ user, newEmail, url, token }) => {
-      //     // Send change email confirmation to the old email
-      // },
     },
     deleteUser: {
       enabled: true

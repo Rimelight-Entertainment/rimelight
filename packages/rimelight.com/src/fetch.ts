@@ -8,8 +8,9 @@ import { construction } from "./middleware/construction"
 
 const app = new Hono()
 
-// 1. Localization & Routing
-app.use(i18n)
+
+// 1. Register Hono API Sub-routing
+app.route("/api", api)
 
 // 2. Security Headers and SRI injection
 app.use(security)
@@ -17,11 +18,11 @@ app.use(security)
 // 3. Security Boundary: Global Auth Middleware
 app.use(auth)
 
+// 2. Localization & Routing
+app.use(i18n)
+
 // 4. Global Construction Middleware
 app.use(construction)
-
-// 5. Register Hono API Sub-routing
-app.route("/api", api)
 
 // 6. Astro Lifecycle Execution (Actions and Page rendering)
 app.use(actions())
