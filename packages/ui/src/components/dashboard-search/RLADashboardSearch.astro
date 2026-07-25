@@ -4,18 +4,99 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSearchProps } from "./dashboard-search"
 import dashboardSearchTheme from "./dashboard-search.theme"
-
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const dashboardSearch = scv(dashboardSearchTheme)
 
 const {
+  shortcut = "meta_k",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as DashboardSearchProps
 
-const classes = resolveClasses(dashboardSearch, {}, useUi("dashboardSearch", uiProp), className);
+const classes = resolveClasses(dashboardSearch, { fullscreen: false, size: "md" }, useUi("dashboardSearch", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+
+<template id="dashboard-search-template">
+  <div data-dashboard-search data-slot="modal" class={classes.modal + " fixed inset-0 z-50 flex items-start justify-center sm:pt-16"} style="display:none">
+    <div class="fixed inset-0 bg-background/80 backdrop-blur-sm" data-dashboard-search-close></div>
+    <div class="relative w-full bg-default border border-default sm:rounded-xl shadow-2xl overflow-hidden" class:list={classes.modal}>
+      <div class="flex items-center gap-2 border-b border-default px-4">
+        <RLAIcon name="search" class="size-5 shrink-0 text-muted" />
+        <input
+          type="text"
+          data-dashboard-search-input
+          placeholder="Search..."
+          class="flex-1 h-12 bg-transparent border-0 outline-none text-default placeholder:text-muted"
+        />
+        <button type="button" data-dashboard-search-close class="shrink-0 size-8 flex items-center justify-center rounded-md hover:bg-muted text-muted">
+          <RLAIcon name="close" class="size-4" />
+        </button>
+      </div>
+      <div class="p-4 text-sm text-muted text-center">
+        Type to search...
+      </div>
+    </div>
+  </div>
+</template>
+
+<div data-dashboard-search-target>
   <slot />
 </div>
+
+<script>
+  (function() {
+    const template = document.getElementById('dashboard-search-template');
+    if (!template) return;
+
+    let searchEl = null;
+    const shortcutKey = 'k';
+
+    const open = () => {
+      if (searchEl) return;
+      searchEl = template.content.cloneNode(true).firstElementChild;
+      document.body.appendChild(searchEl);
+
+      const input = searchEl.querySelector('[data-dashboard-search-input]');
+      const closeBtns = searchEl.querySelectorAll('[data-dashboard-search-close]');
+      const overlay = searchEl.querySelector('[data-dashboard-search-close]');
+
+      setTimeout(() => input?.focus(), 50);
+
+      closeBtns.forEach(btn => {
+        btn.addEventListener('click', close);
+      });
+
+      searchEl.addEventListener('click', (e) => {
+        if (e.target === searchEl) close();
+      });
+    };
+
+    const close = () => {
+      if (searchEl) {
+        searchEl.remove();
+        searchEl = null;
+      }
+    };
+
+    const toggle = () => {
+      if (searchEl) close();
+      else open();
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === shortcutKey) {
+        e.preventDefault();
+        toggle();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-dashboard-search-button]');
+      if (btn) toggle();
+    });
+
+    window.dashboardSearch = { open, close, toggle };
+  })();
+</script>

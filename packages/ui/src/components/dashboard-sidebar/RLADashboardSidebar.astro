@@ -5,17 +5,120 @@ import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSidebarProps } from "./dashboard-sidebar"
 import dashboardSidebarTheme from "./dashboard-sidebar.theme"
 
-
 const dashboardSidebar = scv(dashboardSidebarTheme)
 
 const {
+  side = "left",
+  collapsible = false,
+  collapsed = false,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as DashboardSidebarProps
 
-const classes = resolveClasses(dashboardSidebar, {}, useUi("dashboardSidebar", uiProp), className);
+const classes = resolveClasses(dashboardSidebar, {
+  side,
+  collapsed: collapsible && collapsed
+}, useUi("dashboardSidebar", uiProp), className);
+
+const collapsedWidth = "4rem";
+const defaultWidth = "16rem";
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
+
+<div
+  data-dashboard-sidebar
+  data-side={side}
+  data-collapsible={collapsible ? "true" : "false"}
+  data-collapsed={collapsible && collapsed ? "true" : "false"}
+  data-slot="root"
+  class={classes.root}
+  {...rest}
+  style={`--width: ${defaultWidth}; --collapsed-width: ${collapsedWidth}`}
+>
+  <div data-slot="header" class={classes.header}>
+    <slot name="header" />
+  </div>
+
+  <div data-slot="body" class={classes.body}>
+    <slot />
+  </div>
+
+  <div data-slot="footer" class={classes.footer}>
+    <slot name="footer" />
+  </div>
 </div>
+
+<div data-dashboard-sidebar-overlay data-slot="overlay" class={classes.overlay + " fixed inset-0 z-40 bg-background/80 backdrop-blur-sm transition-opacity duration-300 hidden"} />
+
+<div
+  data-dashboard-sidebar-mobile
+  data-slot="content"
+  class={classes.content + " fixed inset-y-0 left-0 z-50 w-64 bg-default shadow-xl border-e border-default transform -translate-x-full transition-transform duration-300"}
+>
+  <div data-slot="header" class={classes.header + " " + "sm:px-6"} data-menu>
+    <slot name="header" />
+  </div>
+  <div data-slot="body" class={classes.body + " " + "sm:px-6"} data-menu>
+    <slot />
+  </div>
+  <div data-slot="footer" class={classes.footer + " " + "sm:px-6"} data-menu>
+    <slot name="footer" />
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sidebar = document.querySelector('[data-dashboard-sidebar]');
+    if (!sidebar) return;
+
+    const collapsible = sidebar.dataset.collapsible === 'true';
+    const mobilePanel = document.querySelector('[data-dashboard-sidebar-mobile]');
+    const overlay = document.querySelector('[data-dashboard-sidebar-overlay]');
+
+    const toggleMobile = () => {
+      if (!mobilePanel || !overlay) return;
+      const isOpen = mobilePanel.classList.toggle('translate-x-0');
+      mobilePanel.classList.toggle('-translate-x-full', !isOpen);
+      overlay.classList.toggle('hidden', !isOpen);
+    };
+
+    const collapseSidebar = (val) => {
+      if (!collapsible) return;
+      const isCollapsed = val !== undefined ? val : sidebar.dataset.collapsed !== 'true';
+      sidebar.dataset.collapsed = isCollapsed ? 'true' : 'false';
+      sidebar.style.setProperty('--width', isCollapsed ? '4rem' : '16rem');
+
+      document.querySelectorAll('[data-dashboard-toggle="collapse"]').forEach(btn => {
+        btn.querySelectorAll('[data-dashboard-collapse-icon]').forEach(el => {
+          el.classList.toggle('hidden', el.matches(isCollapsed ? '[data-expanded]' : '[data-collapsed]'));
+        });
+      });
+    };
+
+    document.addEventListener('click', (e) => {
+      const toggle = e.target.closest('[data-dashboard-toggle]');
+      if (toggle) {
+        const side = toggle.dataset.dashboardToggle;
+        if (side === 'mobile') toggleMobile();
+        if (side === 'collapse') collapseSidebar();
+      }
+
+      const navItem = e.target.closest('[data-dashboard-nav]');
+      if (navItem) {
+        const container = navItem.closest('[data-dashboard-nav-container]');
+        if (container) {
+          container.querySelectorAll('[data-dashboard-nav]').forEach(item => {
+            item.classList.remove('bg-muted', 'text-highlighted');
+            item.classList.add('text-default', 'hover:text-highlighted', 'hover:bg-muted');
+          });
+          navItem.classList.remove('text-default', 'hover:text-highlighted', 'hover:bg-muted');
+          navItem.classList.add('bg-muted', 'text-highlighted');
+        }
+      }
+    });
+
+    overlay?.addEventListener('click', toggleMobile);
+
+    window.dashboardSidebar = { toggleMobile, collapseSidebar };
+  })();
+</script>

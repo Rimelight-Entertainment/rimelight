@@ -4,18 +4,27 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSidebarToggleProps } from "./dashboard-sidebar-toggle"
 import dashboardSidebarToggleTheme from "./dashboard-sidebar-toggle.theme"
-
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const dashboardSidebarToggle = scv(dashboardSidebarToggleTheme)
 
 const {
+  icon = "menu",
+  side = "left",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as DashboardSidebarToggleProps
 
-const classes = resolveClasses(dashboardSidebarToggle, {}, useUi("dashboardSidebarToggle", uiProp), className);
+const classes = resolveClasses(dashboardSidebarToggle, { side }, useUi("dashboardSidebarToggle", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+<button
+  type="button"
+  data-dashboard-toggle="mobile"
+  class={classes.root}
+  data-slot="root"
+  aria-label="Toggle sidebar"
+  {...rest}
+>
+  <RLAIcon name={icon} class="size-5" />
+</button>

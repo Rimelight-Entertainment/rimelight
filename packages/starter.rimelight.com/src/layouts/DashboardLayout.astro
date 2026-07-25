@@ -1,0 +1,176 @@
+---
+import RLAHead from "@rimelight/ui/components/head/RLAHead.astro";
+import AppHeader from '@/components/app/AppHeader.astro';
+import RLABanner from "@rimelight/ui/components/banner/RLABanner.astro";
+import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
+import AppFooter from '@/components/app/AppFooter.astro';
+import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro";
+import RLAShortcuts from "@rimelight/ui/components/shortcuts/RLAShortcuts.astro";
+import RLALayoutGrid from "@rimelight/ui/components/layout-grid/RLALayoutGrid.astro";
+import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
+import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import { siteConfig } from '@/config/site.config';
+import { Font } from 'astro:assets';
+import { currentLocale, useI18n, getRelativeLocaleUrl } from '@rimelight/i18n';
+
+currentLocale.set(Astro.currentLocale ?? 'en');
+
+interface DashboardLayoutProps {
+	title: string;
+	description: string;
+	noindex?: boolean;
+	is404?: boolean;
+	robots?: string;
+	languageAlternates?: Array<{ hreflang: string; href: string }>;
+	ogImageSrc?: string;
+	ogImageAlt?: string;
+}
+
+const { title, description, noindex, is404, robots, languageAlternates, ogImageSrc, ogImageAlt } = Astro.props as DashboardLayoutProps;
+
+const localeMap: Record<string, string> = {
+	en: 'en_US',
+	pt: 'pt_BR',
+	es: 'es_ES',
+};
+const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
+
+const messages = useI18n(Astro, "app_layout", {
+	skipToContent: "Skip to main content"
+});
+
+const cookieMessages = useI18n(Astro, "cookie_notice", {
+	title: "Cookie Notice",
+	description_prefix: "This site doesn't actually use cookies, but this is how a cookie notice would be done, as per a ",
+	cookie_policy_label: "Cookie Policy",
+	description_suffix: ".",
+	allow_all: "Allow all",
+	deny_all: "Deny all"
+});
+
+const hasConsent = Astro.cookies.has("cookie-consent");
+---
+
+<!doctype html>
+<html lang={Astro.currentLocale || 'en'}>
+	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
+		<slot name="head" slot="head" />
+		<Font cssVariable="--font-sans" preload={true} slot="head" />
+		<Font cssVariable="--font-serif" preload={true} slot="head" />
+		<Font cssVariable="--font-mono" preload={true} slot="head" />
+	</RLAHead>
+	<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
+	<body class="isolate">
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
+			{messages.skipToContent}
+		</a>
+
+		<!-- Fixed header layers: banner + app header (both position:fixed, out of flow) -->
+		<div id="dashboard-header-wrapper">
+			<RLABanner
+				contain={false}
+				dismissable
+				dismissId="v2-announcement"
+				class="bg-primary text-primary-foreground font-medium"
+				actions={[
+					{ label: "Learn more", href: "/docs", variant: "solid" },
+					{ label: "What's new", href: "/changelog", variant: "outline" }
+				]}
+			>
+				New: Rimelight v2 is out
+			</RLABanner>
+			<AppHeader />
+		</div>
+
+		<!-- Dashboard area: pushed down by margin-top equal to measured fixed header height.
+		     Height is exactly the remaining viewport so header + dashboard = 100vh.
+		     Footer lives below and appears on scroll. -->
+		<RLAMain id="main-content" class="dashboard-viewport-area flex flex-col min-w-0">
+			<slot />
+		</RLAMain>
+
+		<!-- Footer below the fold -->
+		<AppFooter />
+
+		<RLAScrollToTop showProgress={true} />
+		<RLAShortcuts />
+		<RLALayoutGrid />
+		<RLAToaster />
+
+		{!hasConsent && (
+			<div id="cookie-notice-container" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300">
+				<RLAToast title={cookieMessages.title} dismissable={false} class="pointer-events-auto shadow-2xl border-border bg-background/95 backdrop-blur-sm">
+					<span slot="description">
+						{cookieMessages.description_prefix}
+						<a href={getRelativeLocaleUrl('/legal/cookie-policy')} class="underline hover:text-primary transition-colors font-medium">{cookieMessages.cookie_policy_label}</a>
+						{cookieMessages.description_suffix}
+					</span>
+					<Fragment slot="actions">
+						<RLAButton id="cookie-allow" variant="solid" color="success" size="sm">
+							{cookieMessages.allow_all}
+						</RLAButton>
+						<RLAButton id="cookie-deny" variant="solid" color="error" size="sm">
+							{cookieMessages.deny_all}
+						</RLAButton>
+					</Fragment>
+				</RLAToast>
+			</div>
+		)}
+
+		<script>
+			function initCookieNotice() {
+				const container = document.getElementById("cookie-notice-container");
+				if (!container) return;
+
+				const allowBtn = container.querySelector("#cookie-allow");
+				const denyBtn = container.querySelector("#cookie-deny");
+
+				const setCookieAndDismiss = (consentValue: string) => {
+					const maxAge = 365 * 24 * 60 * 60;
+					document.cookie = `cookie-consent=${consentValue}; path=/; max-age=${maxAge}; SameSite=Lax`;
+
+					container.classList.add("opacity-0", "translate-y-4");
+					container.addEventListener("transitionend", () => {
+						container.remove();
+					}, { once: true });
+				};
+
+				allowBtn?.addEventListener("click", () => setCookieAndDismiss("allowed"));
+				denyBtn?.addEventListener("click", () => setCookieAndDismiss("denied"));
+			}
+
+			initCookieNotice();
+			document.addEventListener("astro:after-swap", initCookieNotice);
+		</script>
+	</body>
+</html>
+
+
+<style is:global>
+	html, body {
+		margin: 0;
+		padding: 0;
+	}
+
+	/*
+	 * Dashboard main area sits directly below the fixed header layers.
+	 * --rl-total-header-height is maintained by the UI's headerStack system.
+	 *
+	 * We use padding-top with height: 100vh so:
+	 *   - The main element stays fixed at 100vh in document flow (from y=0 to y=100vh)
+	 *   - Content starts below fixed headers (offset by padding-top)
+	 *   - No layout shifts or resizing on refresh or navigation
+	 *   - Footer sits naturally right after the 100vh block (below the fold)
+	 */
+	.dashboard-viewport-area {
+		box-sizing: border-box;
+		padding-top: var(--rl-total-header-height, 4rem) !important;
+		margin-top: 0 !important;
+		height: 100vh !important;
+		min-height: 100vh !important;
+		max-height: 100vh !important;
+		overflow: hidden;
+		transform: translate(0);
+	}
+</style>

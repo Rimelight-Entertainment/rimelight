@@ -1,11 +1,13 @@
 export interface DashboardSidebarProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
+  side?: "left" | "right"
+  collapsible?: boolean
+  collapsed?: boolean
+  resizable?: boolean
+  defaultSize?: number
+  minSize?: number
+  maxSize?: number
+  collapsedSize?: number
   ui?: any
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any
   [key: string]: unknown
 }

@@ -2,12 +2,29 @@ import { defineTheme } from "../../utils/defineTheme"
 
 export const createDashboardNavbarTheme = () =>
   defineTheme({
-    slots: ["root"],
+    slots: ["root", "left", "icon", "title", "center", "right", "toggle"],
     base: {
-      root: ""
+      root: "h-(--ui-header-height) shrink-0 flex items-center justify-between border-b border-default px-4 sm:px-6 gap-1.5",
+      left: "flex items-center gap-1.5 min-w-0",
+      icon: "shrink-0 size-5 self-center me-1.5",
+      title: "flex items-center gap-1.5 font-semibold text-highlighted truncate",
+      center: "hidden lg:flex",
+      right: "flex items-center shrink-0 gap-1.5",
+      toggle: ""
     },
-    variants: {},
-    defaultVariants: {}
+    variants: {
+      toggleSide: {
+        left: {
+          toggle: ""
+        },
+        right: {
+          toggle: ""
+        }
+      }
+    },
+    defaultVariants: {
+      toggleSide: "left"
+    }
   })
 
 export default createDashboardNavbarTheme()

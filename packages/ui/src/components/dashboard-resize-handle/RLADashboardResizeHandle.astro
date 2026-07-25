@@ -5,10 +5,10 @@ import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardResizeHandleProps } from "./dashboard-resize-handle"
 import dashboardResizeHandleTheme from "./dashboard-resize-handle.theme"
 
-
 const dashboardResizeHandle = scv(dashboardResizeHandleTheme)
 
 const {
+  as: Tag = "div",
   ui: uiProp,
   class: className,
   ...rest
@@ -16,6 +16,11 @@ const {
 
 const classes = resolveClasses(dashboardResizeHandle, {}, useUi("dashboardResizeHandle", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<Tag
+  role="separator"
+  data-slot="root"
+  class={classes.root}
+  {...rest}
+>
   <slot />
-</div>
+</Tag>

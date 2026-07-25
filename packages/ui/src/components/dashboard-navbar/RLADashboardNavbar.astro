@@ -4,18 +4,62 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardNavbarProps } from "./dashboard-navbar"
 import dashboardNavbarTheme from "./dashboard-navbar.theme"
-
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const dashboardNavbar = scv(dashboardNavbarTheme)
 
 const {
+  as: Tag = "div",
+  icon,
+  title,
+  toggle = true,
+  toggleSide = "left",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as DashboardNavbarProps
 
-const classes = resolveClasses(dashboardNavbar, {}, useUi("dashboardNavbar", uiProp), className);
+const classes = resolveClasses(dashboardNavbar, { toggleSide }, useUi("dashboardNavbar", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+
+<Tag class={classes.root} data-slot="root" {...rest}>
+  <div data-slot="left" class={classes.left}>
+    {toggle && toggleSide === "left" && (
+      <button type="button" data-dashboard-toggle="mobile" class={classes.toggle + " lg:hidden"} data-slot="toggle" aria-label="Toggle sidebar">
+        <RLAIcon name="menu" class="size-5" />
+      </button>
+    )}
+
+    <slot name="left">
+      <slot name="leading">
+        {icon && (
+          <RLAIcon name={icon} class={classes.icon} data-slot="icon" />
+        )}
+      </slot>
+
+      <h1 data-slot="title" class={classes.title}>
+        <slot name="title">
+          {title}
+        </slot>
+      </h1>
+
+      <slot name="trailing" />
+    </slot>
+  </div>
+
+  {Astro.slots.has("default") && (
+    <div data-slot="center" class={classes.center}>
+      <slot />
+    </div>
+  )}
+
+  <div data-slot="right" class={classes.right}>
+    <slot name="right" />
+
+    {toggle && toggleSide === "right" && (
+      <button type="button" data-dashboard-toggle="mobile" class={classes.toggle + " lg:hidden"} data-slot="toggle" aria-label="Toggle sidebar">
+        <RLAIcon name="menu" class="size-5" />
+      </button>
+    )}
+  </div>
+</Tag>

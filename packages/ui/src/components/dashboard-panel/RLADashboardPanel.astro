@@ -5,19 +5,36 @@ import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardPanelProps } from "./dashboard-panel"
 import dashboardPanelTheme from "./dashboard-panel.theme"
 
-
 const dashboardPanel = scv(dashboardPanelTheme)
 
 const {
+  resizable = false,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as DashboardPanelProps
 
-const classes = resolveClasses(dashboardPanel, {}, useUi("dashboardPanel", uiProp), className);
+const classes = resolveClasses(dashboardPanel, {
+  size: false
+}, useUi("dashboardPanel", uiProp), className);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
-  <slot name="header" />
-  <slot name="body" />
-  <slot />
+  <slot>
+    <slot name="header" />
+
+    <div data-slot="body" class={classes.body}>
+      <slot name="body" />
+    </div>
+
+    <slot name="footer" />
+  </slot>
 </div>
+
+{resizable && (
+  <slot name="resize-handle">
+    <div
+      data-slot="handle"
+      class={classes.handle + " hidden lg:block touch-none select-none cursor-ew-resize relative before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:z-1"}
+    />
+  </slot>
+)}

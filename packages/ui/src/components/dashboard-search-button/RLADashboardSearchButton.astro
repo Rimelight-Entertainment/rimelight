@@ -4,18 +4,51 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSearchButtonProps } from "./dashboard-search-button"
 import dashboardSearchButtonTheme from "./dashboard-search-button.theme"
+import RLAIcon from "../icon/RLAIcon.astro"
 
+const searchIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" width="100%" height="100%"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`
 
 const dashboardSearchButton = scv(dashboardSearchButtonTheme)
 
 const {
+  icon,
+  label = "Search",
+  collapsed = false,
+  kbds = [{ value: "meta" }, { value: "k" }],
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as DashboardSearchButtonProps
 
-const classes = resolveClasses(dashboardSearchButton, {}, useUi("dashboardSearchButton", uiProp), className);
+const classes = resolveClasses(dashboardSearchButton, { collapsed }, useUi("dashboardSearchButton", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+
+<button
+  type="button"
+  data-dashboard-search-button
+  class={classes.base}
+  data-slot="root"
+  {...rest}
+>
+  {icon !== false && (
+    <RLAIcon name={typeof icon === 'string' ? icon : 'search'} class="size-5 shrink-0 text-muted" />
+  )}
+
+  <span data-slot="label" class={classes.label}>
+    {label}
+  </span>
+
+  <span data-slot="trailing" class={classes.trailing}>
+    <slot name="trailing">
+      {kbds && kbds.length > 0 && (
+        <span class="flex items-center gap-0.5">
+          {kbds.map((kbd, i) => {
+            const value = typeof kbd === 'string' ? kbd : kbd.value;
+            const label = value === 'meta' ? '⌘' : value === 'k' ? 'K' : value;
+            return <kbd key={i} class="inline-flex items-center justify-center rounded border border-default bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted min-w-[20px] h-5">{label}</kbd>;
+          })}
+        </span>
+      )}
+    </slot>
+  </span>
+</button>

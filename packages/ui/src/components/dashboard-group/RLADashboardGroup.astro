@@ -5,10 +5,10 @@ import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardGroupProps } from "./dashboard-group"
 import dashboardGroupTheme from "./dashboard-group.theme"
 
-
 const dashboardGroup = scv(dashboardGroupTheme)
 
 const {
+  as: Tag = "div",
   ui: uiProp,
   class: className,
   ...rest
@@ -16,6 +16,6 @@ const {
 
 const classes = resolveClasses(dashboardGroup, {}, useUi("dashboardGroup", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<Tag class={classes.root} data-slot="root" {...rest}>
   <slot />
-</div>
+</Tag>

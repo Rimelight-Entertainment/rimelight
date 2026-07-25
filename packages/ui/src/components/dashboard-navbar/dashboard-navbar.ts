@@ -1,11 +1,10 @@
 export interface DashboardNavbarProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
+  as?: string
+  icon?: string
+  title?: string
+  toggle?: boolean
+  toggleSide?: "left" | "right"
   ui?: any
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any
   [key: string]: unknown
 }

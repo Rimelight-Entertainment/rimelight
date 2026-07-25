@@ -1,11 +1,9 @@
 export interface DashboardSearchButtonProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
+  icon?: string | false
+  label?: string
+  collapsed?: boolean
+  kbds?: Array<string | { value: string; variant?: string }>
   ui?: any
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any
   [key: string]: unknown
 }

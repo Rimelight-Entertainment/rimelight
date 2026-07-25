@@ -1,11 +1,7 @@
 export interface DashboardSidebarToggleProps {
-  /**
-   * Slot-specific CSS class overrides.
-   */
+  icon?: string
+  side?: "left" | "right"
   ui?: any
-  /**
-   * Additional CSS classes to apply to the root element.
-   */
   class?: any
   [key: string]: unknown
 }

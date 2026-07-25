@@ -5,10 +5,10 @@ import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardToolbarProps } from "./dashboard-toolbar"
 import dashboardToolbarTheme from "./dashboard-toolbar.theme"
 
-
 const dashboardToolbar = scv(dashboardToolbarTheme)
 
 const {
+  as: Tag = "div",
   ui: uiProp,
   class: className,
   ...rest
@@ -16,6 +16,14 @@ const {
 
 const classes = resolveClasses(dashboardToolbar, {}, useUi("dashboardToolbar", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+<Tag class={classes.root} data-slot="root" {...rest}>
+  <slot>
+    <div data-slot="left" class={classes.left}>
+      <slot name="left" />
+    </div>
+
+    <div data-slot="right" class={classes.right}>
+      <slot name="right" />
+    </div>
+  </slot>
+</Tag>

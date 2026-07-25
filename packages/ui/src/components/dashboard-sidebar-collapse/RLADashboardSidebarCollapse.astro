@@ -4,18 +4,28 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse"
 import dashboardSidebarCollapseTheme from "./dashboard-sidebar-collapse.theme"
-
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const dashboardSidebarCollapse = scv(dashboardSidebarCollapseTheme)
 
 const {
+  icon = "i-lucide-panel-left",
+  side = "left",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as DashboardSidebarCollapseProps
 
-const classes = resolveClasses(dashboardSidebarCollapse, {}, useUi("dashboardSidebarCollapse", uiProp), className);
+const classes = resolveClasses(dashboardSidebarCollapse, { side }, useUi("dashboardSidebarCollapse", uiProp), className);
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot />
-</div>
+<button
+  type="button"
+  data-dashboard-toggle="collapse"
+  class={classes.root}
+  data-slot="root"
+  aria-label="Collapse sidebar"
+  {...rest}
+>
+  <RLAIcon name="i-lucide-panel-left" class="size-5" data-dashboard-collapse-icon data-expanded />
+  <RLAIcon name="i-lucide-panel-right" class="size-5 hidden" data-dashboard-collapse-icon data-collapsed />
+</button>

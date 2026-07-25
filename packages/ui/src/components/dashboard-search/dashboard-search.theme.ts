@@ -2,12 +2,28 @@ import { defineTheme } from "../../utils/defineTheme"
 
 export const createDashboardSearchTheme = () =>
   defineTheme({
-    slots: ["root"],
+    slots: ["modal", "input"],
     base: {
-      root: ""
+      modal: "",
+      input: ""
     },
-    variants: {},
-    defaultVariants: {}
+    variants: {
+      fullscreen: {
+        false: {
+          modal: "sm:max-w-3xl h-full sm:h-[28rem]"
+        }
+      },
+      size: {
+        xs: {},
+        sm: {},
+        md: {},
+        lg: {},
+        xl: {}
+      }
+    },
+    defaultVariants: {
+      size: "md"
+    }
   })
 
 export default createDashboardSearchTheme()
