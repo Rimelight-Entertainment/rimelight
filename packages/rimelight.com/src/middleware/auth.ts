@@ -17,23 +17,31 @@ export const auth = async (c: any, next: any) => {
     state.locals.session = null
   } else {
     const isAuthed = await betterAuth.api.getSession({ headers: c.req.raw.headers })
-    const guest = !isAuthed?.session && await isConstructionGuest(c)
-    state.locals.user = isAuthed?.user ?? (guest ? {
-      id: "construction-guest",
-      email: "guest",
-      name: "Guest",
-      emailVerified: true,
-      createdAt: new Date(0),
-      updatedAt: new Date(0)
-    } as any : null)
-    state.locals.session = isAuthed?.session ?? (guest ? {
-      id: "construction-guest",
-      userId: "construction-guest",
-      token: "construction-guest",
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      createdAt: new Date(0),
-      updatedAt: new Date(0)
-    } as any : null)
+    const guest = !isAuthed?.session && (await isConstructionGuest(c))
+    state.locals.user =
+      isAuthed?.user ??
+      (guest
+        ? ({
+            id: "construction-guest",
+            email: "guest",
+            name: "Guest",
+            emailVerified: true,
+            createdAt: new Date(0),
+            updatedAt: new Date(0)
+          })
+        : null)
+    state.locals.session =
+      isAuthed?.session ??
+      (guest
+        ? ({
+            id: "construction-guest",
+            userId: "construction-guest",
+            token: "construction-guest",
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+            createdAt: new Date(0),
+            updatedAt: new Date(0)
+          })
+        : null)
   }
 
   if (url.pathname === "/auth") {

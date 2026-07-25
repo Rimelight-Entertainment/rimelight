@@ -7,17 +7,31 @@ const api = new Hono()
 
 api.get("/pages/versions/page/:pageId", async (c) => {
   try {
-    const versions = await db.select().from(pageVersions).where(eq(pageVersions.pageId, c.req.param("pageId"))).where(isNull(pageVersions.deletedAt)).orderBy(desc(pageVersions.createdAt))
+    const versions = await db
+      .select()
+      .from(pageVersions)
+      .where(eq(pageVersions.pageId, c.req.param("pageId")))
+      .where(isNull(pageVersions.deletedAt))
+      .orderBy(desc(pageVersions.createdAt))
     return c.json(versions)
-  } catch (err: any) { return c.json({ error: err.message }, 500) }
+  } catch (err: any) {
+    return c.json({ error: err.message }, 500)
+  }
 })
 
 api.get("/pages/versions/:id", async (c) => {
   try {
-    const [version] = await db.select().from(pageVersions).where(eq(pageVersions.id, c.req.param("id"))).where(isNull(pageVersions.deletedAt)).limit(1)
+    const [version] = await db
+      .select()
+      .from(pageVersions)
+      .where(eq(pageVersions.id, c.req.param("id")))
+      .where(isNull(pageVersions.deletedAt))
+      .limit(1)
     if (!version) return c.json({ error: "Version not found" }, 404)
     return c.json(version)
-  } catch (err: any) { return c.json({ error: err.message }, 500) }
+  } catch (err: any) {
+    return c.json({ error: err.message }, 500)
+  }
 })
 
 export default api

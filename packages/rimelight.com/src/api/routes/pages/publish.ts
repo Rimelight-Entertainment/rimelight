@@ -7,9 +7,14 @@ const api = new Hono()
 
 api.post("/pages/id/:id/publish", async (c) => {
   try {
-    await db.update(pages).set({ postedAt: new Date(), updatedAt: new Date() }).where(eq(pages.id, c.req.param("id")))
+    await db
+      .update(pages)
+      .set({ postedAt: new Date(), updatedAt: new Date() })
+      .where(eq(pages.id, c.req.param("id")))
     return c.json({ success: true })
-  } catch (err: any) { return c.json({ error: err.message }, 500) }
+  } catch (err: any) {
+    return c.json({ error: err.message }, 500)
+  }
 })
 
 export default api

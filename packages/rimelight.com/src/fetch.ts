@@ -8,7 +8,6 @@ import { construction } from "./middleware/construction"
 
 const app = new Hono()
 
-
 // 1. Register Hono API Sub-routing
 app.route("/api", api)
 

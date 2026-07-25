@@ -23,7 +23,7 @@ api.post("/test", async (c) => {
   }
 
   try {
-    const env = (c.env ?? await getCloudflareEnv(c)) as { EMAIL_TEST_RECIPIENT?: string } | undefined
+    const env = (c.env ?? (await getCloudflareEnv(c)))
     const recipient = env?.EMAIL_TEST_RECIPIENT
     if (!recipient) {
       return c.json({ error: "EMAIL_TEST_RECIPIENT is not configured." }, 500)
@@ -57,7 +57,10 @@ api.post("/test", async (c) => {
 
     return c.json({ ok: true, recipient, template: body.template })
   } catch (error) {
-    return c.json({ error: error instanceof Error ? error.message : "Unable to send test email." }, 500)
+    return c.json(
+      { error: error instanceof Error ? error.message : "Unable to send test email." },
+      500
+    )
   }
 })
 

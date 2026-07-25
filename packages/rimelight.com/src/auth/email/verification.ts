@@ -19,6 +19,6 @@ export async function sendVerificationEmail({ user, url, locale }: VerificationE
     to: user.email,
     subject,
     text: `${messages.verification.description} ${url}`,
-    html,
+    html
   })
 }

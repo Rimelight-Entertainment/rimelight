@@ -6,12 +6,7 @@ interface CloudflareEnv {
 }
 
 export function isCloudflareEnv(env: unknown): env is CloudflareEnv {
-  return (
-    typeof env === "object" &&
-    env !== null &&
-    "BLOB" in env &&
-    "R2" in env
-  )
+  return typeof env === "object" && env !== null && "BLOB" in env && "R2" in env
 }
 
 export async function getCloudflareEnv(c: any): Promise<CloudflareEnv | undefined> {

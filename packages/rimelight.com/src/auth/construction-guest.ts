@@ -20,10 +20,16 @@ const getConfig = (env?: GuestEnv) => ({
 })
 
 const encode = (value: Uint8Array) =>
-  btoa(String.fromCharCode(...value)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")
+  btoa(String.fromCharCode(...value))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "")
 
 const decode = (value: string) => {
-  const padded = value.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(value.length / 4) * 4, "=")
+  const padded = value
+    .replace(/-/g, "+")
+    .replace(/_/g, "/")
+    .padEnd(Math.ceil(value.length / 4) * 4, "=")
   return Uint8Array.from(atob(padded), (char) => char.charCodeAt(0))
 }
 
@@ -35,7 +41,10 @@ const sign = async (payload: string, secret: string) => {
     false,
     ["sign", "verify"]
   )
-  return { key, signature: await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload)) }
+  return {
+    key,
+    signature: await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload))
+  }
 }
 
 export const isConstructionGuest = async (c: any) => {
@@ -48,7 +57,12 @@ export const isConstructionGuest = async (c: any) => {
     if (!encodedPayload || !encodedSignature) return false
     const payload = new TextDecoder().decode(decode(encodedPayload))
     const { key } = await sign(payload, secret)
-    const valid = await crypto.subtle.verify("HMAC", key, decode(encodedSignature), new TextEncoder().encode(payload))
+    const valid = await crypto.subtle.verify(
+      "HMAC",
+      key,
+      decode(encodedSignature),
+      new TextEncoder().encode(payload)
+    )
     return valid && JSON.parse(payload).expiresAt > Date.now()
   } catch {
     return false
@@ -62,18 +76,32 @@ export const signInConstructionGuest = async (
   rememberMe = true
 ) => {
   const config = getConfig(c.env)
-  if (!config.email || !config.password || !config.secret || email !== config.email || password !== config.password) {
+  if (
+    !config.email ||
+    !config.password ||
+    !config.secret ||
+    email !== config.email ||
+    password !== config.password
+  ) {
     return false
   }
 
-  const payload = JSON.stringify({ email: config.email, expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7 })
-  const { signature } = await sign(payload, config.secret)
-  setCookie(c, CONSTRUCTION_GUEST_COOKIE, encode(new TextEncoder().encode(payload)) + "." + encode(new Uint8Array(signature)), {
-    httpOnly: true,
-    secure: true,
-    sameSite: "Lax",
-    path: "/",
-    ...(rememberMe ? { maxAge: 60 * 60 * 24 * 7 } : {})
+  const payload = JSON.stringify({
+    email: config.email,
+    expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7
   })
+  const { signature } = await sign(payload, config.secret)
+  setCookie(
+    c,
+    CONSTRUCTION_GUEST_COOKIE,
+    encode(new TextEncoder().encode(payload)) + "." + encode(new Uint8Array(signature)),
+    {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      path: "/",
+      ...(rememberMe ? { maxAge: 60 * 60 * 24 * 7 } : {})
+    }
+  )
   return true
 }

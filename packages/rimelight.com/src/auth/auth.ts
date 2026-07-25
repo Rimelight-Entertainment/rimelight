@@ -24,10 +24,10 @@ export const auth = betterAuth({
     maxPasswordLength: 128,
     customSyntheticUser: createSyntheticUser,
     sendResetPassword: sendPasswordResetEmail,
-    onExistingUserSignUp: sendExistingUserSignUpNotification,
+    onExistingUserSignUp: sendExistingUserSignUpNotification
   },
   emailVerification: {
-    sendVerificationEmail: sendVerificationEmail,
+    sendVerificationEmail: sendVerificationEmail
   },
   user: {
     changeEmail: {

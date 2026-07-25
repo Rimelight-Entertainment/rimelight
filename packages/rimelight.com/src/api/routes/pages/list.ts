@@ -23,11 +23,28 @@ api.get("/pages", async (c) => {
     else if (status === "draft") conditions.push(sql`${pages.postedAt} IS NULL`)
 
     const orderFn = orderVal === "asc" ? asc : desc
-    const orderColumn = orderByVal === "title" ? pages.title : orderByVal === "createdAt" ? pages.createdAt : pages.postedAt
+    const orderColumn =
+      orderByVal === "title"
+        ? pages.title
+        : orderByVal === "createdAt"
+          ? pages.createdAt
+          : pages.postedAt
 
-    const results = await db.select().from(pages).where(sql`${conditions.join(" AND ")}`).orderBy(orderFn(orderColumn)).limit(limitVal).offset(offsetVal)
+    const results = await db
+      .select()
+      .from(pages)
+      .where(sql`${conditions.join(" AND ")}`)
+      .orderBy(orderFn(orderColumn))
+      .limit(limitVal)
+      .offset(offsetVal)
 
-    return c.json(results.map(row => ({ ...row, blocks: row.content?.blocks || [], properties: row.content?.properties || {} })))
+    return c.json(
+      results.map((row) => ({
+        ...row,
+        blocks: row.content?.blocks || [],
+        properties: row.content?.properties || {}
+      }))
+    )
   } catch (err: any) {
     return c.json({ error: err.message }, 500)
   }
@@ -45,7 +62,11 @@ api.get("/pages/list", async (c) => {
       if (typesList.length > 0) conditions.push(inArray(pages.type, typesList))
     }
 
-    const results = await db.select({ id: pages.id, title: pages.title, slug: pages.slug, type: pages.type }).from(pages).where(sql`${conditions.join(" AND ")}`).orderBy(asc(pages.slug))
+    const results = await db
+      .select({ id: pages.id, title: pages.title, slug: pages.slug, type: pages.type })
+      .from(pages)
+      .where(sql`${conditions.join(" AND ")}`)
+      .orderBy(asc(pages.slug))
     return c.json(results)
   } catch (err: any) {
     return c.json({ error: err.message }, 500)

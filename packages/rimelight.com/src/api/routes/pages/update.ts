@@ -11,15 +11,18 @@ api.put("/pages/id/:id", async (c) => {
     const body = await c.req.json()
     const { title, description, tags, blocks, properties, type, slug } = body
 
-    await db.update(pages).set({
-      ...(title ? { title } : {}),
-      ...(description ? { description } : {}),
-      ...(tags ? { tags } : {}),
-      ...(slug ? { slug } : {}),
-      ...(type ? { type } : {}),
-      content: { blocks: blocks || [], properties: properties || {} },
-      updatedAt: new Date()
-    }).where(eq(pages.id, id))
+    await db
+      .update(pages)
+      .set({
+        ...(title ? { title } : {}),
+        ...(description ? { description } : {}),
+        ...(tags ? { tags } : {}),
+        ...(slug ? { slug } : {}),
+        ...(type ? { type } : {}),
+        content: { blocks: blocks || [], properties: properties || {} },
+        updatedAt: new Date()
+      })
+      .where(eq(pages.id, id))
 
     return c.json({ success: true })
   } catch (err: any) {

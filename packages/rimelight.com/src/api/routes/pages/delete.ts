@@ -7,9 +7,14 @@ const api = new Hono()
 
 api.delete("/pages/id/:id", async (c) => {
   try {
-    await db.update(pages).set({ deletedAt: new Date() }).where(eq(pages.id, c.req.param("id")))
+    await db
+      .update(pages)
+      .set({ deletedAt: new Date() })
+      .where(eq(pages.id, c.req.param("id")))
     return c.json({ success: true })
-  } catch (err: any) { return c.json({ error: err.message }, 500) }
+  } catch (err: any) {
+    return c.json({ error: err.message }, 500)
+  }
 })
 
 export default api

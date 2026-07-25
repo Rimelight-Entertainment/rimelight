@@ -26,14 +26,10 @@ export interface SyntheticUserData {
 }
 
 /**
- * Builds a synthetic user object for sign-up enumeration protection.
- * Matches the exact field order and defaults of a real database record.
+ * Builds a synthetic user object for sign-up enumeration protection. Matches the exact field order
+ * and defaults of a real database record.
  */
-export function createSyntheticUser({
-                                      coreFields,
-                                      additionalFields,
-                                      id,
-                                    }: SyntheticUserData) {
+export function createSyntheticUser({ coreFields, additionalFields, id }: SyntheticUserData) {
   return {
     ...coreFields,
     role: "user",
@@ -46,6 +42,6 @@ export function createSyntheticUser({
     availability: additionalFields.availability ?? "available",
     status: additionalFields.status ?? "",
     publicKey: additionalFields.publicKey,
-    id,
+    id
   }
 }

@@ -31,18 +31,18 @@
     "test": "pnpm -r test"
   },
   "dependencies": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.5"
+    "vite": "catalog:"
   },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.5.1",
     "@types/node": "26.1.1",
     "@unocss/eslint-plugin": "66.7.5",
     "eslint-plugin-regexp": "3.1.1",
-    "pkg-pr-new": "0.0.78",
-    "vite-plus": "0.2.5"
+    "pkg-pr-new": "0.0.79",
+    "vite-plus": "catalog:"
   },
   "engines": {
     "node": ">=25.2.1"
   },
-  "packageManager": "pnpm@11.9.0"
+  "packageManager": "pnpm@11.17.0"
 }

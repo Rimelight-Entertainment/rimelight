@@ -24,7 +24,7 @@ export async function sendEmail({ to, subject, text, html }: EmailPayload) {
     from: `noreply@${domain}`,
     subject,
     text,
-    html: html ?? text,
+    html: html ?? text
   })
 
   console.log(`[email] ✅ Sent to ${to}, messageId: ${response.messageId}`)

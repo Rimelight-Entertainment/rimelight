@@ -20,7 +20,7 @@ api.put("/assets/:key{.*}", async (c) => {
   const env = await getCloudflareEnv(c)
   const BLOB = env?.BLOB
   if (!BLOB) {
-    console.warn("[R2 Assets] Cloudflare R2 bucket (BLOB) not bound for PUT.");
+    console.warn("[R2 Assets] Cloudflare R2 bucket (BLOB) not bound for PUT.")
     return c.json({ success: true, localMock: true })
   }
 
