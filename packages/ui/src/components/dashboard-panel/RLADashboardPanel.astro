@@ -17,5 +17,7 @@ const {
 const classes = resolveClasses(dashboardPanel, {}, useUi("dashboardPanel", uiProp), className);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
+  <slot name="header" />
+  <slot name="body" />
   <slot />
 </div>
