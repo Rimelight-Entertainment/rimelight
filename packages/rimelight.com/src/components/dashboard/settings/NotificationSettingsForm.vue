@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue"
 import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
-import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
+import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 
 const state = reactive<{
   [key: string]: boolean
@@ -74,7 +74,7 @@ function onChange() {
             :description="field.description"
             class="flex-1"
           />
-          <RLVCheckbox v-model="state[field.name]" @change="onChange" />
+          <RLACheckbox v-model="state[field.name]" @change="onChange" />
         </div>
       </div>
     </div>

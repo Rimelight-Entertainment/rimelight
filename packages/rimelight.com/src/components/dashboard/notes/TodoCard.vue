@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
-import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
+import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import { useRC } from "@/composables"
 
@@ -98,7 +98,7 @@ defineOptions({ name: "TodoCard" })
     <div :class="styles.contentWrapper">
       <div :class="styles.checkWrapper">
         <template v-if="!todo.isArchived">
-          <RLVCheckbox
+          <RLACheckbox
             :model-value="todo.completed"
             @update:model-value="(val: boolean) => emit('toggle', val === true)"
           />

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { ParagraphBlockProps } from "../../types/blocks"
-import { richTextToHtml, parseHtmlToRichText } from "../utils/richTextHelpers"
+import { richTextToHtml, parseHtmlToRichText } from "../../utils/richTextHelpers"
 
 const props = defineProps<{ props: ParagraphBlockProps }>()
 const emit = defineEmits<{ "update:props": [value: ParagraphBlockProps] }>()

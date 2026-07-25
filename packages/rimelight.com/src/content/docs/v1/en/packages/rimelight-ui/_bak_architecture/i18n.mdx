@@ -1,0 +1,22 @@
+---
+title: "Internationalization (i18n)"
+description: "Supporting multiple languages in Rimelight UI components."
+---
+
+Rimelight UI is designed with internationalization in mind, ensuring that components are accessible and localized for a global audience.
+
+## Localizing Components
+
+When using Rimelight UI components, you can pass localized strings to any text-based prop (like `label`, `title`, or `description`).
+
+```astro
+---
+const { t } = Astro.props.i18n; // Assuming an i18n integration
+---
+
+<RLAButton label={t('actions.save')} />
+```
+
+## Planned Features
+
+We are working on a native localization engine for Rimelight UI that will automatically handle common UI strings (like "Close", "Open", "Loading") based on the current page locale.

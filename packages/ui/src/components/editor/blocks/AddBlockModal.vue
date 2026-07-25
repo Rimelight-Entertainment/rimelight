@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, inject } from "vue"
-import { BLOCK_DEFINITIONS, CATEGORY_ORDER, type BlockDefinition } from "./utils/blocks"
-import { useI18n } from "./utils/editorHelpers"
+import { BLOCK_DEFINITIONS, CATEGORY_ORDER, type BlockDefinition } from "../utils/blocks"
+import { useI18n } from "../utils/editorHelpers"
 import { scv, cx } from "css-variants"
-import { SECTION_LEVEL_KEY } from "./composables/injectionKeys"
+import { SECTION_LEVEL_KEY } from "../composables/injectionKeys"
 import RLVButton from "../../button/RLVButton.vue"
 import RLVInput from "../../input/RLVInput.vue"
 

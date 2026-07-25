@@ -3,7 +3,7 @@ import { computed, reactive, ref, watch, onMounted, onUnmounted } from "vue"
 import { scv, cx } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
-import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
+import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 import { useRC } from "@/composables"
 
 export interface Label {
@@ -379,7 +379,7 @@ defineOptions({ name: "NoteModal" })
                       class="flex items-center justify-between px-2 py-1 rounded-lg text-xs hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors"
                     >
                       <span class="truncate">{{ l.name }}</span>
-                      <RLVCheckbox
+                      <RLACheckbox
                         :model-value="state.labels.includes(l.id)"
                         @update:model-value="toggleLabel(l.id)"
                       />

@@ -1,0 +1,58 @@
+---
+title: "MCP Server"
+description: "Use Rimelight UI components in your AI assistants with Model Context Protocol support."
+---
+
+## What is MCP?
+
+MCP (Model Context Protocol) is a standardized protocol that enables AI assistants to access external data sources and tools. Rimelight UI provides an MCP server that allows AI assistants like Claude Code, Cursor, and Windsurf to access component information, source code, and usage examples directly.
+
+## Available Resources
+
+The Rimelight UI MCP server provides the following resources for discovery:
+
+- **`resource://rimelight-ui/components`**: Browse all available native components.
+- **`resource://rimelight-ui/documentation`**: Browse all documentation pages.
+
+## Available Tools
+
+The MCP server provides the following tools:
+
+- **`search_components`**: Search for Rimelight UI components.
+- **`get_component`**: Retrieves component documentation, props, and examples.
+- **`search_documentation`**: Search through the Rimelight UI documentation.
+
+## Configuration
+
+You can configure the Rimelight UI MCP server in your favorite AI assistant using our remote endpoint: `https://rimelight.com/mcp`
+
+### Cursor
+
+1. Open Cursor and go to **Settings** > **Tools & MCP**.
+2. Add a new MCP server:
+   - **Name:** `rimelight-ui`
+   - **Type:** `http`
+   - **URL:** `https://rimelight.com/mcp`
+
+### Claude Desktop
+
+Modify your `claude_desktop_config.json` file:
+
+```json
+{
+  "mcpServers": {
+    "rimelight-ui": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://rimelight.com/mcp"]
+    }
+  }
+}
+```
+
+## Usage Examples
+
+Once configured, you can ask your AI assistant:
+
+- "What are the props for RLAButton?"
+- "Show me an example of using RLVHeader in an Astro page."
+- "How do I override the primary color in Rimelight UI?"

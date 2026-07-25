@@ -1,0 +1,337 @@
+---
+title: "Variants"
+description: "How Rimelight UI uses CSS Variants to define and customize component themes."
+---
+
+Rimelight UI uses [css-variants](https://css-variants.vercel.app) to manage component theming. This allows the definition of component variants (like `size`, `color`, or `variant`) that can be customized at runtime with full TypeScript support.
+
+## Theme Structure
+
+Each component has a corresponding `.theme.ts` file that defines its styling. The theme defines:
+
+- **slots**: The elements within the component that can be individually styled
+- **base**: The base classes applied to each slot
+- **variants**: Available options for each prop (color, size, variant, etc.)
+- **compoundVariants**: Combinations of variants that produce specific styles
+- **defaultVariants**: Default values to use if not specified
+
+Here's an abbreviated example from the Button component:
+
+```typescript
+import { defaultColors } from "../presets/defaults"
+import { defineTheme } from "../utils/defineTheme"
+
+export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
+  defineTheme({
+    slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
+
+    base: {
+      root: [
+        "group inline-flex items-center justify-center font-medium ws-nowrap no-underline disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75",
+        "transition-colors outline-none",
+        "aria-invalid:border-error-500 aria-invalid:ring-error-500/20"
+      ],
+      label: "truncate",
+      leadingIcon: "shrink-0 flex items-center justify-center",
+      leadingAvatar: "shrink-0",
+      leadingAvatarSize: "",
+      trailingIcon: "shrink-0 flex items-center justify-center"
+    },
+
+    variants: {
+      variant: {
+        solid: { root: "" },
+        outline: { root: "" },
+        soft: { root: "" },
+        subtle: { root: "" },
+        ghost: { root: "" },
+        link: { root: "" }
+      },
+      color: {
+        ...Object.fromEntries(colors.map((color) => [color, { root: "" }])),
+        neutral: { root: "" }
+      } as Record<string, { root: string | string[] }>,
+      size: {
+        xs: { root: "text-xs gap-1 [&_svg]:size-4" /* … */ },
+        md: { root: "text-base gap-2 [&_svg]:size-5" /* … */ }
+        // …
+      }
+    },
+
+    // Each compoundVariant applies an `rl-color-<color>` marker class which
+    // triggers a UnoCSS rule that populates --rl-bg, --rl-bg-hover, --rl-text,
+    // --rl-ring, and --rl-border from the corresponding --color-<color>-* scale.
+    compoundVariants: [
+      ...colors.map((color) => ({
+        variant: "solid" as const,
+        color,
+        classNames: {
+          root:
+            "rl-color-" +
+            color +
+            " bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)]" +
+            " focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]"
+        }
+      }))
+      // outline, soft, subtle, ghost, link follow the same pattern …
+    ],
+
+    defaultVariants: {
+      variant: "solid",
+      color: "primary",
+      size: "md"
+    }
+  })
+
+export default createButtonTheme()
+```
+
+The `rl-color-<color>` UnoCSS rule is defined in the preset and maps each semantic color to a set of component-scoped CSS custom properties:
+
+```typescript
+// packages/ui/src/presets/index.ts — simplified
+;[
+  /^rl-color-(.+)$/,
+  ([, color]) => ({
+    "--rl-bg": `var(--color-${color}-500)`,
+    "--rl-bg-hover": `var(--color-${color}-600)`,
+    "--rl-text": `var(--color-${color}-600)`,
+    "--rl-ring": `var(--color-${color}-500)`,
+    "--rl-border": `var(--color-${color}-500)`
+  })
+]
+```
+
+This indirection is what allows color theming to work without hard-coding individual Tailwind-style utility classes for every color.
+
+## Using the Theme
+
+Components use two internal helpers — `resolveClasses` and `useUi` — to apply themes and merge per-instance overrides.
+
+**`useUi(componentName, uiProp)`** reads the global UI config (from `virtual:rimelight-ui`) and merges it with the `ui` prop passed directly to the component using a recursive merge utility. The result is a flat `Record<string, string>` of slot overrides.
+
+**`resolveClasses(themeFn, variants, mergedUI, rootClass?)`** calls the `scv`-compiled theme function with the active variant values, then concatenates each slot's resolved classes with its matching override from `mergedUI` (using `cx` from `css-variants`).
+
+Here's how `RLAButton.astro` actually uses them:
+
+```typescript
+import { scv } from "css-variants"
+import { useUi } from "../../utils/useUi"
+import { resolveClasses } from "../../utils/resolveClasses"
+import buttonThemeDefault, { createButtonTheme } from "../../themes/button.theme"
+import { getUIConfig } from "virtual:rimelight-ui"
+
+const uiConfig = getUIConfig()
+const buttonTheme = uiConfig.colors ? createButtonTheme(uiConfig.colors) : buttonThemeDefault
+
+// Pass the theme object directly — no manual field spreading needed.
+const button = scv(buttonTheme)
+
+const {
+  variant = "solid",
+  color = "primary",
+  size = "md",
+  ui: uiProp,
+  class: className
+  // …
+} = Astro.props
+
+const classes = resolveClasses(
+  button,
+  { variant, color, size /* … */ },
+  useUi("button", uiProp),
+  className // appended to the root slot
+)
+```
+
+`classes` is then a `Record<string, string>` where each key is a slot name. Slots are applied directly as class strings on the rendered elements:
+
+```astro
+<button class={classes.root}>
+  <span class={classes.leadingIcon}>…</span>
+  <span class={classes.label}>…</span>
+</button>
+```
+
+> **Note**: class merging is done with plain `cx` (string concatenation of truthy values). Conflicting utility classes are **not** deduplicated — they rely on normal CSS cascade/source-order. If you need conflict resolution, apply overrides at a higher specificity or order them intentionally.
+
+## Slot Targeting
+
+In complex components with multiple elements, each element is exposed as a slot in the theme. You can target any slot using the `ui` prop. Here's an example using the Header component, which exposes six slots:
+
+```typescript
+// header.theme.ts
+defineTheme({
+  slots: ["root", "content", "container", "left", "center", "right"],
+  base: {
+    root: "w-full",
+    content: "w-full",
+    container:
+      "flex flex-row items-center justify-between gap-4xs h-16 md:h-18 px-xs sm:px-md md:px-xl",
+    left: "flex-1 min-w-0 flex items-center justify-start truncate",
+    center: "flex-none flex items-center justify-center mx-4",
+    right: "flex-1 min-w-0 flex items-center justify-end truncate"
+  },
+  variants: {
+    contain: {
+      true: { container: "mx-auto max-w-90rem" },
+      false: { container: "max-w-none" }
+    },
+    sticky: {
+      true: { root: "sticky top-0 inset-x-0 z-50" },
+      false: { root: "" }
+    }
+  },
+  defaultVariants: { contain: true, sticky: true, fixed: false }
+})
+```
+
+You can override any of those slots at the call site via the `ui` prop:
+
+```astro
+<RLAHeader ui={{
+  root: "border-b border-default",
+  left: "gap-4",
+  right: "gap-2"
+}}>
+```
+
+### Function Overrides
+
+For precise control, slot overrides within the `ui` prop can also accept a `(defaults) => classes` builder function. The function receives the resolved default classes as its parameter and returns the replacement classes string. This completely replaces the default styling for that slot instead of merging with it:
+
+```astro
+<!-- Replaces the default button classes entirely with custom text size and font weight -->
+<RLAButton ui={{
+  base: (defaults) => "text-3xl font-bold"
+}} />
+```
+
+## TypeScript Support
+
+Because themes are exported as TypeScript objects typed by `defineTheme`, you get full autocomplete when defining variants:
+
+```typescript
+// Autocomplete knows exact valid values
+color: "primary" // ✓ valid
+color: "invalid" // ✗ TypeScript error
+```
+
+## Semantic Color Variables
+
+Each color scale is emitted as a set of CSS custom properties in the format `--color-<color>-<shade>`. Values are expressed as `light-dark()` so the browser picks the correct shade based on the inherited `color-scheme`.
+
+The available semantic colors are: `primary`, `secondary`, `info`, `success`, `warning`, `error`, `commentary`, `ideation`, `source`, and `neutral`.
+
+```css
+:root {
+  /* Each shade resolves to its light or dark value based on color-scheme */
+  --color-primary-50: light-dark(#ffffff, oklch(0.15 0.04 260));
+  --color-primary-500: light-dark(#0064d7, oklch(0.53 0.21 260));
+  --color-primary-950: light-dark(#000000, oklch(0.93 0.02 260));
+
+  /* Neutral uses pure-grey oklch values */
+  --color-neutral-100: light-dark(oklch(97% 0 0), oklch(20% 0 0));
+  --color-neutral-800: light-dark(oklch(26.9% 0 0), oklch(78% 0 0));
+}
+```
+
+In addition to the color scales, the preset also exposes semantic tokens for common surface, text, border, and ring roles:
+
+```css
+:root {
+  /* Text */
+  --text-color-default: var(--color-neutral-700);
+  --text-color-muted: var(--color-neutral-500);
+  --text-color-inverted: light-dark(#ffffff, var(--color-neutral-50));
+
+  /* Backgrounds */
+  --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
+  --background-color-elevated: var(--color-neutral-200);
+  --background-color-accented: var(--color-neutral-300);
+
+  /* Borders & rings */
+  --border-color-default: var(--color-neutral-200);
+  --ring-color-accented: var(--color-neutral-300);
+
+  /* Layout */
+  --ui-header-height: 4rem;
+  --ui-container: 80rem;
+  --rl-container: 1440px;
+}
+```
+
+These are all accessible as UnoCSS utilities via the custom rules defined in the preset (e.g. `text-default`, `bg-elevated`, `ring-accented`).
+
+## Usage in Custom CSS
+
+Because these are standard CSS custom properties, you can reference them in your own styles:
+
+```css
+.custom-card {
+  background-color: var(--background-color-elevated);
+  border: 1px solid var(--border-color-default);
+  color: var(--text-color-default);
+}
+```
+
+## Overriding
+
+### Global Overrides
+
+You can supply additional colors or override the color scales via the integration in `astro.config.ts`:
+
+```typescript
+import { ui } from "@rimelight/ui"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      colors: {
+        // Replace the primary scale with a custom one
+        primary: {
+          light: { "500": "#7c3aed", "600": "#6d28d9" },
+          dark: { "500": "#a78bfa", "600": "#c4b5fd" }
+        }
+      }
+    })
+  ]
+})
+```
+
+### Local Overrides
+
+You can locally remap a color for a specific subtree by redefining the CSS variable within a scope:
+
+```html
+<div style="--color-primary-500: #7c3aed; --color-primary-600: #6d28d9;">
+  <!-- All primary-colored components inside here will now look purple -->
+  <RLAButton color="primary">Purple Button</RLAButton>
+</div>
+```
+
+## Unstyled Mode
+
+Rimelight UI supports a global `unstyled` theme option, allowing you to strip default component-level CSS theme classes entirely so you can supply your own layout/cosmetic styling from scratch.
+
+### Enabling Unstyled Mode
+
+You can enable it globally in your project UI configuration options:
+
+```typescript
+// astro.config.ts or global UI integration settings
+import { ui } from "@rimelight/ui"
+
+export default defineConfig({
+  integrations: [
+    ui({
+      unstyled: true
+    })
+  ]
+})
+```
+
+When `unstyled: true` is set, `resolveClasses` skips loading the theme variant defaults (e.g. from `.theme.ts` files). The component slots will contain only the class overrides supplied through the component's `class` or `ui` properties.
+
+> [!WARNING]
+> This strips structural classes too (positioning, transitions, flex/grid), not just cosmetic ones. Layout-heavy components like `Modal`, `Drawer`, `Slideover`, or `Calendar` will need you to re-supply their layouts.

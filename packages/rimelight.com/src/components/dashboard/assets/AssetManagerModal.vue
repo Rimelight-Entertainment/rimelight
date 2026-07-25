@@ -3,7 +3,7 @@ import { ref, computed, watch } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { scv, cx } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import RLVCheckbox from "@rimelight/ui/components/checkbox/RLVCheckbox.vue"
+import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 import { useRC, useAssetManagement, useAuth, useToast } from "@/composables"
@@ -704,7 +704,7 @@ defineOptions({
                     <div
                       class="absolute top-2 left-0 right-0 z-20 flex items-center justify-between px-2"
                     >
-                      <RLVCheckbox
+                      <RLACheckbox
                         :model-value="selectedKeys.includes(itemObj.key)"
                         @update:model-value="toggleSelection(itemObj.key)"
                         @click.stop

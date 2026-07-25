@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { provide, ref, computed } from "vue"
 import type { Block } from "../types/blocks"
-import { useBlockEditor } from "./composables/useBlockEditor"
-import { type BlockDefinition } from "./utils/blocks"
-import { useI18n } from "./utils/editorHelpers"
+import { useBlockEditor } from "../composables/useBlockEditor"
+import { type BlockDefinition } from "../utils/blocks"
+import { useI18n } from "../utils/editorHelpers"
 import { scv, cx } from "css-variants"
 import BlockEditRenderer from "./BlockEditRenderer.vue"
 import AddBlockModal from "./AddBlockModal.vue"
