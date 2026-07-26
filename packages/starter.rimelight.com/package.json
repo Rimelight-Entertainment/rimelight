@@ -41,7 +41,6 @@
     "@rimelight/ui": "workspace:^0.0.42",
     "astro": "7.1.3",
     "better-auth": "1.6.24",
-    "dotenv": "17.4.2",
     "drizzle-orm": "0.45.2",
     "hono": "4.12.31",
     "nanostores": "1.4.1",
