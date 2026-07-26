@@ -8,6 +8,13 @@ importers:
       '@pnpm/pacquet':
         specifier: 0.11.12
         version: 0.11.12
+    packageManagerDependencies:
+      '@pnpm/exe':
+        specifier: 12.0.0-alpha.21
+        version: 12.0.0-alpha.21
+      pnpm:
+        specifier: 12.0.0-alpha.21
+        version: 12.0.0-alpha.21
 
 packages:
 
@@ -55,8 +62,62 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@pnpm/exe.darwin-arm64@12.0.0-alpha.21':
+    resolution: {integrity: sha512-htN4V0Rp09hATY/iRi/rPsW2JAA1xEJDO88oyk+U5y7y/AkmAGY8vPMbzyn9a64SWG2DQ2sDVvanjZzJl8fJbA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@pnpm/exe.darwin-x64@12.0.0-alpha.21':
+    resolution: {integrity: sha512-X/PMw4flt0M5sPm2iRdDBhyG5B573D83wcas4nXqjGRhhs1rkSwwEefSqJdgKuQWnriAs+MoUQcpZwOX/AtZ3A==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@pnpm/exe.linux-arm64-musl@12.0.0-alpha.21':
+    resolution: {integrity: sha512-4JDnh+nOiYDKSke8Paos2QziSLwVzqJIJ6jgyC4bTOGxSf/VG2bHrUJrUN7GBdIvb2thfOsL6UgBQ/qHhr/3GQ==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@pnpm/exe.linux-arm64@12.0.0-alpha.21':
+    resolution: {integrity: sha512-IxkciU38hrjhSfQN15lcUmy2PsvH/Jvy06MQXuBNQL2q6ru4Z8rAFjem6G8BJfmQrY03U440zNObKuZutm0S/w==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@pnpm/exe.linux-x64-musl@12.0.0-alpha.21':
+    resolution: {integrity: sha512-8lrSEAxQeCYdTNzLIGglhJTgLNDBWlFuGHBlwL+ftiBts+bNCVqS31ZX6O2/V+MCFyM4PjkOdxmWf/wdp58TxA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@pnpm/exe.linux-x64@12.0.0-alpha.21':
+    resolution: {integrity: sha512-5YPpAqyx6wlNyAOjb65+dPAGTyka/KxQ56Ost0cpxrpfCShurxdiL00rTbHIs/HEGU4thqFz3tILv6bcGBl/Aw==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@pnpm/exe.win32-arm64@12.0.0-alpha.21':
+    resolution: {integrity: sha512-GBoDyfpOT1duVxQEMSsSlTE6w6yCZyk6LXNTJnUGBKZM3c2ml+9xdbMQhZjVlm4S8/vr7PBsWLeVvVlWfSmRqA==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@pnpm/exe.win32-x64@12.0.0-alpha.21':
+    resolution: {integrity: sha512-Lg6+4EJSW/Mf5hifyadKsiUO1Ngir+z4596t+KuXlaB4BOW1YUXEJ+M7IAUhG+qVvsRL5LBTTeSrODqOx288IQ==}
+    cpu: [x64]
+    os: [win32]
+
+  '@pnpm/exe@12.0.0-alpha.21':
+    resolution: {integrity: sha512-DaSQ71MQVv1jVw0pAqnCdaMBSbDmNpOZSfd7Lt8ikkGGmIHVGyOrIsukZXUzvhyHvAko2rBwjTdneIwVh2layA==}
+    engines: {node: '>=18.*'}
+    hasBin: true
+
   '@pnpm/pacquet@0.11.12':
     resolution: {integrity: sha512-/1mL6IEu3EiVhGc5vpispCjkmtTlOgLrTOuS4H6qcngoyB5ISHDg8Ops19nPU7vbl3aF2ER8+EVj4nZ4oPw+WA==}
+
+  pnpm@12.0.0-alpha.21:
+    resolution: {integrity: sha512-6YdWM5/Es6G/Bn4dcqHJh506Hkfn8VGpQ/9vspHeYu795La5wgh2gMK7kUb58d/U8s8fj1MVoglXyFnor9a19A==}
+    engines: {node: '>=18.*'}
+    hasBin: true
 
 snapshots:
 
@@ -84,6 +145,41 @@ snapshots:
   '@pacquet/win32-x64@0.11.12':
     optional: true
 
+  '@pnpm/exe.darwin-arm64@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe.darwin-x64@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe.linux-arm64-musl@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe.linux-arm64@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe.linux-x64-musl@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe.linux-x64@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe.win32-arm64@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe.win32-x64@12.0.0-alpha.21':
+    optional: true
+
+  '@pnpm/exe@12.0.0-alpha.21':
+    optionalDependencies:
+      '@pnpm/exe.darwin-arm64': 12.0.0-alpha.21
+      '@pnpm/exe.darwin-x64': 12.0.0-alpha.21
+      '@pnpm/exe.linux-arm64': 12.0.0-alpha.21
+      '@pnpm/exe.linux-arm64-musl': 12.0.0-alpha.21
+      '@pnpm/exe.linux-x64': 12.0.0-alpha.21
+      '@pnpm/exe.linux-x64-musl': 12.0.0-alpha.21
+      '@pnpm/exe.win32-arm64': 12.0.0-alpha.21
+      '@pnpm/exe.win32-x64': 12.0.0-alpha.21
+
   '@pnpm/pacquet@0.11.12':
     optionalDependencies:
       '@pacquet/darwin-arm64': 0.11.12
@@ -94,6 +190,17 @@ snapshots:
       '@pacquet/linux-x64-musl': 0.11.12
       '@pacquet/win32-arm64': 0.11.12
       '@pacquet/win32-x64': 0.11.12
+
+  pnpm@12.0.0-alpha.21:
+    optionalDependencies:
+      '@pnpm/exe.darwin-arm64': 12.0.0-alpha.21
+      '@pnpm/exe.darwin-x64': 12.0.0-alpha.21
+      '@pnpm/exe.linux-arm64': 12.0.0-alpha.21
+      '@pnpm/exe.linux-arm64-musl': 12.0.0-alpha.21
+      '@pnpm/exe.linux-x64': 12.0.0-alpha.21
+      '@pnpm/exe.linux-x64-musl': 12.0.0-alpha.21
+      '@pnpm/exe.win32-arm64': 12.0.0-alpha.21
+      '@pnpm/exe.win32-x64': 12.0.0-alpha.21
 
 ---
 lockfileVersion: '9.0'
@@ -115,7 +222,7 @@ importers:
     devDependencies:
       '@e18e/eslint-plugin':
         specifier: 0.5.1
-        version: 0.5.1(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))
+        version: 0.5.1(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))
       '@types/node':
         specifier: 26.1.1
         version: 26.1.1
@@ -211,7 +318,7 @@ importers:
         version: 7.1.3(@astrojs/markdown-remark@7.2.1(supports-color@10.2.2))(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.2)(@types/node@26.1.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)
       better-auth:
         specifier: 1.6.25
-        version: 1.6.25(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4))(solid-js@1.9.14)(vitest@4.1.10(@types/node@26.1.1)(@vitest/browser-preview@4.1.10)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)))(vue@3.5.40(typescript@6.0.3))
+        version: 1.6.25(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4))(solid-js@1.9.14)(vitest@4.1.10)(vue@3.5.40(typescript@6.0.3))
       chroma-js:
         specifier: 3.2.0
         version: 3.2.0
@@ -222,8 +329,8 @@ importers:
         specifier: 0.45.2
         version: 0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)
       hono:
-        specifier: 4.12.31
-        version: 4.12.31
+        specifier: 4.12.32
+        version: 4.12.32
       nanostores:
         specifier: 1.4.1
         version: 1.4.1
@@ -250,8 +357,8 @@ importers:
         specifier: 1.10.10
         version: 1.10.10
       '@e18e/eslint-plugin':
-        specifier: 0.5.1
-        version: 0.5.1(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))
+        specifier: 0.6.0
+        version: 0.6.0(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.6(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))
       '@iconify-json/logos':
         specifier: 1.2.11
         version: 1.2.11
@@ -280,8 +387,8 @@ importers:
         specifier: 66.7.5
         version: 66.7.5(@unocss/astro@66.7.5(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)))(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
       vite-plus:
-        specifier: 0.2.5
-        version: 0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)
+        specifier: 0.2.6
+        version: 0.2.6(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)
 
   packages/security:
     devDependencies:
@@ -326,7 +433,7 @@ importers:
         version: 7.1.3(@astrojs/markdown-remark@7.2.1(supports-color@10.2.2))(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.2)(@types/node@26.1.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)
       better-auth:
         specifier: 1.6.25
-        version: 1.6.25(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4))(solid-js@1.9.14)(vitest@4.1.10(@types/node@26.1.1)(@vitest/browser-preview@4.1.10)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)))(vue@3.5.40(typescript@6.0.3))
+        version: 1.6.25(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4))(solid-js@1.9.14)(vitest@4.1.10)(vue@3.5.40(typescript@6.0.3))
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)
@@ -935,6 +1042,17 @@ packages:
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
       oxlint: ^1.68.0
+    peerDependenciesMeta:
+      eslint:
+        optional: true
+      oxlint:
+        optional: true
+
+  '@e18e/eslint-plugin@0.6.0':
+    resolution: {integrity: sha512-JQkeXoZA12f9WM2H4t4IobIRqlPvYLeNAjZF6raFu2vmD5YoyuzKmwsLZNJ4g/39c3v1Se2ad3o+oq4y2et/RA==}
+    peerDependencies:
+      eslint: ^9.0.0 || ^10.0.0
+      oxlint: ^1.72.0
     peerDependenciesMeta:
       eslint:
         optional: true
@@ -4000,6 +4118,10 @@ packages:
     resolution: {integrity: sha512-zJIHFrl6bq3RDd2YusFNCDlM8qUprxKswyi/OPzPyzKDdyBXDqWx8bZlZ7R+saTdSTatUmb3O7K4SspGPaEOQg==}
     engines: {node: '>=16.9.0'}
 
+  hono@4.12.32:
+    resolution: {integrity: sha512-XcuyW9qE2kJn07PkecMOBd5Vq/hMy7mmGw+idz1yblbg9N17ijJODrvPkn7/dwL3Kulj8LcRJ69DLOWf91dRUg==}
+    engines: {node: '>=16.9.0'}
+
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
 
@@ -6247,16 +6369,16 @@ snapshots:
       eslint: 10.7.0(jiti@2.7.0)(supports-color@10.2.2)
       oxlint: 1.75.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0))
 
-  '@e18e/eslint-plugin@0.5.1(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))':
+  '@e18e/eslint-plugin@0.5.1(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.6(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))':
     dependencies:
       empathic: 2.0.1
       module-replacements: 3.1.0
       semver: 7.8.5
     optionalDependencies:
       eslint: 10.7.0(jiti@2.7.0)(supports-color@10.2.2)
-      oxlint: 1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0))
+      oxlint: 1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.6(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0))
 
-  '@e18e/eslint-plugin@0.5.1(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.6(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))':
+  '@e18e/eslint-plugin@0.6.0(eslint@10.7.0(jiti@2.7.0)(supports-color@10.2.2))(oxlint@1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.6(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)))':
     dependencies:
       empathic: 2.0.1
       module-replacements: 3.1.0
@@ -8197,7 +8319,7 @@ snapshots:
 
   baseline-browser-mapping@2.11.1: {}
 
-  better-auth@1.6.25(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4))(solid-js@1.9.14)(vitest@4.1.10(@types/node@26.1.1)(@vitest/browser-preview@4.1.10)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0)))(vue@3.5.40(typescript@6.0.3)):
+  better-auth@1.6.25(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4))(solid-js@1.9.14)(vitest@4.1.10)(vue@3.5.40(typescript@6.0.3)):
     dependencies:
       '@better-auth/core': 1.6.25(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-call@1.3.7(zod@4.4.3))(jose@6.2.4)(kysely@0.29.4)(nanostores@1.4.1)
       '@better-auth/drizzle-adapter': 1.6.25(@better-auth/core@1.6.25(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-call@1.3.7(zod@4.4.3))(jose@6.2.4)(kysely@0.29.4)(nanostores@1.4.1))(@better-auth/utils@0.4.2)(drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4))
@@ -8857,6 +8979,8 @@ snapshots:
       space-separated-tokens: 2.0.2
 
   hono@4.12.31: {}
+
+  hono@4.12.32: {}
 
   hookable@5.5.3: {}
 
@@ -9744,31 +9868,6 @@ snapshots:
       '@oxlint/binding-win32-ia32-msvc': 1.75.0
       '@oxlint/binding-win32-x64-msvc': 1.75.0
       oxlint-tsgolint: 0.24.0
-      vite-plus: 0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)
-    optional: true
-
-  oxlint@1.75.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)):
-    optionalDependencies:
-      '@oxlint/binding-android-arm-eabi': 1.75.0
-      '@oxlint/binding-android-arm64': 1.75.0
-      '@oxlint/binding-darwin-arm64': 1.75.0
-      '@oxlint/binding-darwin-x64': 1.75.0
-      '@oxlint/binding-freebsd-x64': 1.75.0
-      '@oxlint/binding-linux-arm-gnueabihf': 1.75.0
-      '@oxlint/binding-linux-arm-musleabihf': 1.75.0
-      '@oxlint/binding-linux-arm64-gnu': 1.75.0
-      '@oxlint/binding-linux-arm64-musl': 1.75.0
-      '@oxlint/binding-linux-ppc64-gnu': 1.75.0
-      '@oxlint/binding-linux-riscv64-gnu': 1.75.0
-      '@oxlint/binding-linux-riscv64-musl': 1.75.0
-      '@oxlint/binding-linux-s390x-gnu': 1.75.0
-      '@oxlint/binding-linux-x64-gnu': 1.75.0
-      '@oxlint/binding-linux-x64-musl': 1.75.0
-      '@oxlint/binding-openharmony-arm64': 1.75.0
-      '@oxlint/binding-win32-arm64-msvc': 1.75.0
-      '@oxlint/binding-win32-ia32-msvc': 1.75.0
-      '@oxlint/binding-win32-x64-msvc': 1.75.0
-      oxlint-tsgolint: 7.0.2001
       vite-plus: 0.2.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))(yaml@2.9.0)
     optional: true
 

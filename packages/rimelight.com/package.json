@@ -21,6 +21,7 @@
   },
   "type": "module",
   "scripts": {
+    "prepare": "vp config",
     "generate-types": "wrangler types",
     "astro": "astro",
     "predev": "tsx scripts/generate-block-maps.ts",
@@ -40,34 +41,28 @@
     "@astrojs/vue": "7.0.1",
     "@nanostores/i18n": "1.3.3",
     "@neondatabase/serverless": "1.1.0",
-    "@rimelight/docs": "workspace:^0.0.1",
-    "@rimelight/i18n": "workspace:^0.0.4",
-    "@rimelight/security": "workspace:^0.0.3",
-    "@rimelight/ui": "workspace:^0.0.42",
+    "@rimelight/docs": "workspace:*",
+    "@rimelight/i18n": "workspace:*",
+    "@rimelight/security": "workspace:*",
+    "@rimelight/ui": "workspace:*",
     "@types/chroma-js": "3.1.2",
-    "@vueuse/core": "14.3.0",
     "astro": "7.1.3",
-    "better-auth": "1.6.24",
+    "better-auth": "1.6.25",
     "chroma-js": "3.2.0",
     "css-variants": "2.3.5",
-    "dotenv": "17.4.2",
     "drizzle-orm": "0.45.2",
-    "hono": "4.12.31",
+    "hono": "4.12.32",
     "nanostores": "1.4.1",
     "sharp": "0.35.3",
     "solid-js": "1.9.14",
-    "turndown": "^7.2.4",
-    "turndown-plugin-gfm": "^1.0.2",
-    "vite-plugin-virtual": "^0.5.0",
     "vue": "3.5.40",
-    "vue-router": "5.2.0",
     "vuedraggable": "2.24.3",
-    "wrangler": "4.113.0"
+    "wrangler": "4.114.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
     "@astrojs/ts-plugin": "1.10.10",
-    "@e18e/eslint-plugin": "0.5.1",
+    "@e18e/eslint-plugin": "0.6.0",
     "@iconify-json/logos": "1.2.11",
     "@iconify-json/lucide": "1.2.118",
     "@types/node": "26.1.1",
@@ -77,10 +72,10 @@
     "tsx": "4.23.1",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vite-plus": "catalog:"
+    "vite-plus": "0.2.6"
   },
   "engines": {
     "node": ">=25.2.1"
   },
-  "packageManager": "pnpm@11.17.0"
+  "packageManager": "pnpm@12.0.0-alpha.21"
 }
