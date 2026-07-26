@@ -1,33 +1,33 @@
 import { Hono } from "hono"
-import { actions, pages } from "astro/hono"
-import api from "@/api"
-import { ratelimit } from "@/api/middleware/ratelimit"
-import { i18n } from "@/api/middleware/i18n"
 import { security } from "@/api/middleware/security"
+import { ratelimit } from "@/api/middleware/ratelimit"
 import { auth } from "@/api/middleware/auth"
 import { construction } from "@/api/middleware/construction"
+import api from "@/api"
+import { i18n } from "@/api/middleware/i18n"
+import { actions, pages } from "astro/hono"
 
 const app = new Hono()
 
-// Rate Limit
-app.use(ratelimit)
-
-// Localization
-app.use(i18n)
-
-// Security
+// 1. Security Middleware
 app.use(security)
 
-// Auth
+// 2. Rate Limiting Middleware
+app.use(ratelimit)
+
+// 3. Auth Middleware
 app.use(auth)
 
-// Construction Mode
+// 4. Construction Mode Middleware
 app.use(construction)
 
-// Routing
+// 5. Hono API Routing
 app.route("/api", api)
 
-// Astro Lifecycle
+// 6. Localization & Routing Middleware
+app.use(i18n)
+
+// 7. Astro Actions & Pages
 app.use(actions())
 app.use(pages())
 

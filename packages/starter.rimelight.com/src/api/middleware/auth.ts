@@ -1,69 +1,66 @@
 import { getFetchState } from "astro/hono"
-import { env } from "cloudflare:workers"
 import { auth as betterAuth } from "@/auth/auth"
-import type { Context } from "hono"
+import { isConstructionGuest } from "@/auth/construction-guest"
 
-// Routes to be skipped by this middleware
-const WHITELISTED_ROUTES: string[] = []
+const IGNORED_ROUTES = ["/docs/"]
+const PROTECTED_ROUTES = ["/internal"]
 
-// Routes that require authentication
-const PROTECTED_ROUTES: string[] = ["/admin", "/dashboard"]
-
-// Static path redirects
-const REDIRECT_ROUTES: Record<string, string> = {
-  "/auth": "/auth/sign-in"
-}
-
-// Manages database/blob bindings, resolves user sessions, and enforces access control rules
-export const auth = async (c: Context<{ Bindings: ENV }>, next: any) => {
-  // Bind environment variables/resources to globals if present
-  const bindings = c.env ?? env
-  if (bindings?.DB) {
-    globalThis.DB = bindings.DB
-  }
-  if (bindings?.BLOB) {
-    globalThis.BLOB = bindings.BLOB
-  }
-
-  const isSkippedPath = WHITELISTED_ROUTES.some((path) => c.req.path.includes(path))
-  const isProtected = PROTECTED_ROUTES.some((path) => c.req.path.startsWith(path))
+export const auth = async (c: any, next: any) => {
+  const url = new URL(c.req.url)
+  const isIgnored = IGNORED_ROUTES.some((path) => url.pathname.includes(path))
+  const isProtected = PROTECTED_ROUTES.some((path) => url.pathname.startsWith(path))
 
   const state = getFetchState(c)
 
-  // Populate user and session in context locals
-  if (isSkippedPath) {
+  if (isIgnored) {
     state.locals.user = null
     state.locals.session = null
   } else {
-    const session = await betterAuth.api.getSession({ headers: c.req.raw.headers })
-    state.locals.user = session?.user ?? null
-    state.locals.session = session?.session ?? null
+    const isAuthed = await betterAuth.api.getSession({ headers: c.req.raw.headers })
+    const guest = !isAuthed?.session && (await isConstructionGuest(c))
+    state.locals.user =
+      isAuthed?.user ??
+      (guest
+        ? {
+            id: "construction-guest",
+            email: "guest",
+            name: "Guest",
+            emailVerified: true,
+            createdAt: new Date(0),
+            updatedAt: new Date(0)
+          }
+        : null)
+    state.locals.session =
+      isAuthed?.session ??
+      (guest
+        ? {
+            id: "construction-guest",
+            userId: "construction-guest",
+            token: "construction-guest",
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+            createdAt: new Date(0),
+            updatedAt: new Date(0)
+          }
+        : null)
   }
 
-  // Handle static redirects
-  const staticRedirect = REDIRECT_ROUTES[c.req.path]
-  if (staticRedirect) {
-    return c.redirect(staticRedirect)
+  if (url.pathname === "/auth") {
+    return c.redirect("/auth/sign-in")
   }
 
-  // Enforce access control for admin routes
-  if (c.req.path.includes("/admin")) {
-    if (!state.locals.session) {
-      return c.redirect("/auth/sign-in")
-    }
-    const user = state.locals.user
-    if (user?.role !== "admin") {
-      return c.text("Forbidden", 403)
-    }
-  }
-
-  const isAuthPage = c.req.path === "/auth/sign-in" || c.req.path === "/auth/sign-up"
-  if (isAuthPage && state.locals.session) {
+  if (
+    (url.pathname === "/auth/sign-in" || url.pathname === "/auth/sign-up") &&
+    state.locals.session
+  ) {
     return c.redirect("/")
   }
 
   if (isProtected && !state.locals.session) {
     return c.redirect("/auth/sign-in")
+  }
+
+  if (url.pathname.includes("/construction") && state.locals.session) {
+    return c.redirect("/")
   }
 
   return await next()

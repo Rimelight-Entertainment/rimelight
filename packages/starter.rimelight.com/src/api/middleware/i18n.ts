@@ -2,7 +2,7 @@ import { i18n as astroI18n } from "@rimelight/i18n/middleware"
 import { getFetchState } from "astro/hono"
 
 export const i18n = async (c: any, next: any) => {
-  const context: any = {
+  const context = {
     request: c.req.raw,
     url: new URL(c.req.url),
     redirect: (path: string, status?: number) => {
