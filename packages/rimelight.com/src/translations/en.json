@@ -849,8 +849,7 @@
   "email_common": {
     "website": "Website",
     "contact": "Contact",
-    "privacy": "Privacy",
-    "footer": "Rimelight. All rights reserved."
+    "privacy": "Privacy"
   },
   "email_verification": {
     "subject": "Verify your email address",

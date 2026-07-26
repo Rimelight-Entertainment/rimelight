@@ -1,5 +1,5 @@
 ---
-import EmailTemplateLayout from "./EmailTemplateLayout.astro"
+import EmailTemplate from "./EmailTemplate.astro"
 import type { EmailMessages } from "@/auth/email/messages"
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 const { url, messages } = Astro.props
 ---
 
-<EmailTemplateLayout bannerAlt="Verify your Rimelight email" common={messages.common}>
+<EmailTemplate bannerAlt="Verify your Rimelight email" common={messages.common}>
 <div style="font-family: Arial, sans-serif; color: #333;">
   <h1 style="color: #333; font-size: 22px; margin-bottom: 16px;">{messages.verification.title}</h1>
   <p style="color: #555; font-size: 15px; line-height: 1.5; margin-bottom: 20px;">
@@ -27,4 +27,4 @@ const { url, messages } = Astro.props
     {url}
   </p>
 </div>
-</EmailTemplateLayout>
+</EmailTemplate>

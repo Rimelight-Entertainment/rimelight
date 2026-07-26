@@ -6,7 +6,7 @@ interface Props {
   common: EmailMessages["common"]
 }
 
-const { bannerAlt = "Rimelight", common } = Astro.props
+const { bannerAlt = "Rimelight Entertainment", common } = Astro.props
 const baseUrl = import.meta.env.DEV ? Astro.url : (Astro.site ?? Astro.url)
 const bannerSrc = new URL("/email/placeholder.webp", baseUrl).href
 ---
@@ -32,7 +32,7 @@ const bannerSrc = new URL("/email/placeholder.webp", baseUrl).href
             <a href="https://rimelight.com/contact" style="color:#ffffff; text-decoration:none;">{common.contact}</a>
             <span style="color:#777777; padding:0 8px;">|</span>
             <a href="https://rimelight.com/privacy" style="color:#ffffff; text-decoration:none;">{common.privacy}</a>
-            <p style="margin:12px 0 0; color:#aaaaaa;">{common.footer}</p>
+            <p style="margin:12px 0 0; color:#aaaaaa;">© {new Date().getFullYear()} Rimelight Entertainment</p>
           </td>
         </tr>
       </table>
