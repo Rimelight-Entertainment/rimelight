@@ -94,9 +94,6 @@ export default defineConfig({
   cache: {
     provider: cacheCloudflare()
   },
-  markdown: {
-    syntaxHighlight: "prism"
-  },
   routeRules: {
     "/api/[...path]": {
       swr: 600 // 10 minutes stale-while-revalidate
@@ -139,6 +136,10 @@ export default defineConfig({
 
   image: {
     domains: ["rimelight.com", "cdn.rimelight.com"]
+  },
+
+  markdown: {
+    syntaxHighlight: "prism"
   },
 
   integrations: [

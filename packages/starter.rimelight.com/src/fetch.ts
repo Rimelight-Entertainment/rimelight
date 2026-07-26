@@ -1,11 +1,11 @@
 import { Hono } from "hono"
 import { actions, pages } from "astro/hono"
 import api from "@/api"
-import { ratelimit } from "./middleware/ratelimit"
-import { i18n } from "./middleware/i18n"
-import { security } from "./middleware/security"
-import { auth } from "./middleware/auth"
-import { construction } from "./middleware/construction"
+import { ratelimit } from "@/api/middleware/ratelimit"
+import { i18n } from "@/api/middleware/i18n"
+import { security } from "@/api/middleware/security"
+import { auth } from "@/api/middleware/auth"
+import { construction } from "@/api/middleware/construction"
 
 const app = new Hono()
 

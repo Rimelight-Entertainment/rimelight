@@ -1,10 +1,10 @@
 import { Hono } from "hono"
 import { actions, pages } from "astro/hono"
 import api from "@/api"
-import { i18n } from "./middleware/i18n"
-import { security } from "./middleware/security"
-import { auth } from "./middleware/auth"
-import { construction } from "./middleware/construction"
+import { i18n } from "@/api/middleware/i18n"
+import { security } from "@/api/middleware/security"
+import { auth } from "@/api/middleware/auth"
+import { construction } from "@/api/middleware/construction"
 
 const app = new Hono()
 
@@ -17,10 +17,10 @@ app.use(security)
 // 3. Security Boundary: Global Auth Middleware
 app.use(auth)
 
-// 2. Localization & Routing
+// 4. Localization & Routing
 app.use(i18n)
 
-// 4. Global Construction Middleware
+// 5. Global Construction Middleware
 app.use(construction)
 
 // 6. Astro Lifecycle Execution (Actions and Page rendering)
