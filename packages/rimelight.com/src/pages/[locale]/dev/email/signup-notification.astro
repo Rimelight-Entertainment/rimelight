@@ -7,6 +7,6 @@ const signInUrl = "http://localhost:4321/auth/sign-in"
 const messages = getEmailMessages(Astro.params.locale)
 ---
 
-<EmailPreviewLayout template="signup-notification" title="Sign-up Notification" notes={["Sent when someone attempts to sign up with an existing email", "No session is created"]}>
+<EmailPreviewLayout template="signup-notification" title="Sign-up Notification">
   <SignupNotificationEmail signInUrl={signInUrl} messages={messages} />
 </EmailPreviewLayout>

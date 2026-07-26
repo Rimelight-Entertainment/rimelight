@@ -10,7 +10,6 @@ import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLALink from "../link/RLALink.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-
 const button = scv(buttonTheme)
 
 const {
@@ -134,7 +133,7 @@ const loadingAutoProps = loadingAuto ? { 'data-loading-auto': '' } : {};
           try {
             button.setAttribute('data-loading', 'true');
             button.setAttribute('disabled', 'true');
-            
+
             // To spin the icon dynamically:
             let leadingIconSpan = button.querySelector('[data-slot="leading-icon"]');
             let origHTML = '';
