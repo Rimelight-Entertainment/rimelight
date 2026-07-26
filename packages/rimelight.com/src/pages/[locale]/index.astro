@@ -35,13 +35,12 @@ const messages = useI18n(Astro, "home", {
   home_ctaActionsExploreCareers: "Explore Careers"
 });
 
-// Import assets from the project
-import HeroBg from "@/assets/images/placeholder_home_hero_background.png";
-import CompanyBg from "@/assets/images/placeholder_home_company_background.jpg";
-import ProjectsBg from "@/assets/images/placeholder_home_projects_background.jpg";
-import GrandTaleImg from "@/assets/images/placeholder_home_projects_grand-tale.png";
-import NewsBg from "@/assets/images/placeholder_home_news_background.jpg";
-import CtaBg from "@/assets/images/placeholder_home_cta_background.jpg";
+const HeroBg = "https://cdn.rimelight.com/Images/placeholder_home_hero_background.png";
+const CompanyBg = "https://cdn.rimelight.com/Images/placeholder_home_company_background.jpg";
+const ProjectsBg = "https://cdn.rimelight.com/Images/placeholder_home_projects_background.jpg";
+const GrandTaleImg = "https://cdn.rimelight.com/Images/placeholder_home_projects_grand-tale.png";
+const NewsBg = "https://cdn.rimelight.com/Images/placeholder_home_news_background.jpg";
+const CtaBg = "https://cdn.rimelight.com/Images/placeholder_home_cta_background.jpg";
 
 // Fetch the 3 latest blog posts
 const activeLocale = Astro.currentLocale ?? "en";
@@ -105,6 +104,8 @@ const ctaLinks = [
             alt="Hero Background"
             class="h-full w-full object-cover"
             loading="eager"
+            width={1999}
+            height={833}
         />
         <div class="absolute inset-0 bg-black/45" />
       </div>
@@ -126,6 +127,8 @@ const ctaLinks = [
             src={CompanyBg}
             alt="Company Background"
             class="h-full w-full object-cover opacity-10"
+            width={9000}
+            height={4000}
         />
         <div class="absolute inset-0 bg-black/90" />
       </div>
@@ -168,6 +171,8 @@ const ctaLinks = [
             src={ProjectsBg}
             alt="Projects Background"
             class="h-full w-full object-cover opacity-15"
+            width={5000}
+            height={3542}
         />
         <div class="absolute inset-0 bg-neutral-950/80" />
       </div>
@@ -179,11 +184,13 @@ const ctaLinks = [
         >
           <div class="relative h-full w-full overflow-hidden isolate transition-transform duration-700 ease-out group-hover:scale-[1.02] rounded-[inherit] will-change-transform bg-neutral-900">
             <div class="absolute inset-0 z-0 overflow-hidden rounded-[inherit]">
-              <Image
-                  alt="Grand Tale"
-                  src={GrandTaleImg}
-                  class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 will-change-transform opacity-75"
-              />
+            <Image
+                alt="Grand Tale"
+                src={GrandTaleImg}
+                class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 will-change-transform opacity-75"
+                width={900}
+                height={1512}
+            />
               <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
             </div>
 
@@ -235,6 +242,8 @@ const ctaLinks = [
             src={NewsBg}
             alt="News Background"
             class="h-full w-full object-cover opacity-15"
+            width={1320}
+            height={743}
         />
         <div class="absolute inset-0 bg-black/85" />
       </div>
@@ -287,6 +296,8 @@ const ctaLinks = [
             src={CtaBg}
             alt="CTA Background"
             class="h-full w-full object-cover opacity-20"
+            width={3000}
+            height={2000}
         />
         <div class="absolute inset-0 bg-neutral-950/80" />
       </div>

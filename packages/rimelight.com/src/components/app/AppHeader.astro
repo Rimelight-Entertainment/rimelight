@@ -14,10 +14,10 @@ import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-import placeholderGrandTale from "../../assets/images/placeholder_header_grand-tale.jpg";
-import placeholderCommunity from "../../assets/images/placeholder_header_community.jpg";
-import placeholderCompany from "../../assets/images/placeholder_header_company.jpg";
-import placeholderStore from "../../assets/images/placeholder_header_store.jpg";
+const placeholderGrandTale = "https://cdn.rimelight.com/Images/placeholder_header_grand-tale.jpg";
+const placeholderCommunity = "https://cdn.rimelight.com/Images/placeholder_header_community.jpg";
+const placeholderCompany = "https://cdn.rimelight.com/Images/placeholder_header_company.jpg";
+const placeholderStore = "https://cdn.rimelight.com/Images/placeholder_header_store.jpg";
 
 const { auth } = await import("@/auth/auth");
   const session = await auth.api.getSession({
@@ -750,7 +750,7 @@ const storeAssistanceGroup: LinkGroupProps = {
           <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
             <img
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderGrandTale.src}
+              src={placeholderGrandTale}
             />
 
             <div class="flex flex-col gap-sm flex-2">
@@ -776,7 +776,7 @@ const storeAssistanceGroup: LinkGroupProps = {
           <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
             <img
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderCommunity.src}
+              src={placeholderCommunity}
             />
 
             <div class="flex flex-col gap-sm flex-2">
@@ -797,7 +797,7 @@ const storeAssistanceGroup: LinkGroupProps = {
           <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
             <img
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderCompany.src}
+              src={placeholderCompany}
             />
 
             <div class="flex flex-col gap-sm flex-2">
@@ -820,7 +820,7 @@ const storeAssistanceGroup: LinkGroupProps = {
           <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
             <img
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderStore.src}
+              src={placeholderStore}
             />
 
             <div class="flex flex-col gap-sm flex-2">
@@ -874,7 +874,7 @@ const storeAssistanceGroup: LinkGroupProps = {
             <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <img
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderGrandTale.src}
+                src={placeholderGrandTale}
               />
 
               <div class="flex flex-col gap-sm flex-2">
@@ -900,7 +900,7 @@ const storeAssistanceGroup: LinkGroupProps = {
             <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <img
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderCommunity.src}
+                src={placeholderCommunity}
               />
 
               <div class="flex flex-col gap-sm flex-2">
@@ -921,7 +921,7 @@ const storeAssistanceGroup: LinkGroupProps = {
             <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <img
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderCompany.src}
+                src={placeholderCompany}
               />
 
               <div class="flex flex-col gap-sm flex-2">
@@ -944,7 +944,7 @@ const storeAssistanceGroup: LinkGroupProps = {
             <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <img
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderStore.src}
+                src={placeholderStore}
               />
 
               <div class="flex flex-col gap-sm flex-2">
