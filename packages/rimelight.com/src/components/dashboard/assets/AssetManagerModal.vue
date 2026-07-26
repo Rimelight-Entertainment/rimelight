@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from "vue"
-import { useClipboard } from "@vueuse/core"
 import { scv, cx } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
@@ -18,7 +17,6 @@ export interface AssetManagerModalProps {
 
 const { rc: rcProp, selectionMode = false } = defineProps<AssetManagerModalProps>()
 const { rc } = useRC("AssetManagerModal", rcProp)
-const { copy } = useClipboard()
 const toast = useToast()
 
 const t = (key: string, data?: any) => {
@@ -480,7 +478,7 @@ function getAssetUrl(key: string): string {
 async function copyAssetUrl(key: string) {
   try {
     const url = getAssetUrl(key)
-    await copy(url)
+    await navigator.clipboard.writeText(url)
     toast.add({
       title: t("modals.assetManager.item.copy_url_success"),
       description: url,
