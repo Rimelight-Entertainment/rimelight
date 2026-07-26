@@ -13,6 +13,7 @@ import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-gr
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { Image } from "astro:assets";
 
 const placeholderGrandTale = "https://cdn.rimelight.com/Images/placeholder_header_grand-tale.jpg";
 const placeholderCommunity = "https://cdn.rimelight.com/Images/placeholder_header_community.jpg";
@@ -747,15 +748,19 @@ const storeAssistanceGroup: LinkGroupProps = {
       >
         <!-- Grand Tale Mega Menu -->
         <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-            <img
-              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderGrandTale}
-            />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <Image
+                src={placeholderGrandTale}
+                alt=""
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                width={320}
+                height={128}
+                loading="eager"
+              />
 
-            <div class="flex flex-col gap-sm flex-2">
-              <div class="grid grid-cols-2 gap-xl gap-y-4">
-                <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-2 gap-xl gap-y-4">
+                  <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
                 <div class="flex flex-col gap-lg">
                   <RLALinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
                   <RLALinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
@@ -773,15 +778,19 @@ const storeAssistanceGroup: LinkGroupProps = {
 
         <!-- Community Mega Menu -->
         <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-            <img
-              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderCommunity}
-            />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <Image
+                src={placeholderCommunity}
+                alt=""
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                width={320}
+                height={128}
+                loading="eager"
+              />
 
-            <div class="flex flex-col gap-sm flex-2">
-              <div class="grid grid-cols-2 gap-1">
-                <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-2 gap-1">
+                  <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
                 <RLALinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
               </div>
             </div>
@@ -794,15 +803,19 @@ const storeAssistanceGroup: LinkGroupProps = {
 
         <!-- Company Mega Menu -->
         <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-            <img
-              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderCompany}
-            />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <Image
+                src={placeholderCompany}
+                alt=""
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                width={320}
+                height={128}
+                loading="eager"
+              />
 
-            <div class="flex flex-col gap-sm flex-2">
-              <div class="grid grid-cols-3 gap-1">
-                <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-3 gap-1">
+                  <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
                 <RLALinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
                 <RLALinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
               </div>
@@ -817,15 +830,19 @@ const storeAssistanceGroup: LinkGroupProps = {
 
         <!-- Store Mega Menu -->
         <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-          <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-            <img
-              class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderStore}
-            />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+              <Image
+                src={placeholderStore}
+                alt=""
+                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                width={320}
+                height={128}
+                loading="eager"
+              />
 
-            <div class="flex flex-col gap-sm flex-2">
-              <div class="grid grid-cols-3 gap-xl gap-y-4">
-                <div class="flex flex-col gap-lg">
+              <div class="flex flex-col gap-sm flex-2">
+                <div class="grid grid-cols-3 gap-xl gap-y-4">
+                  <div class="flex flex-col gap-lg">
                   <RLALinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
                 <div class="flex flex-col gap-lg">
@@ -871,15 +888,19 @@ const storeAssistanceGroup: LinkGroupProps = {
         >
           <!-- Grand Tale Mobile Mega Menu -->
           <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <img
-                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderGrandTale}
-              />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                <Image
+                  src={placeholderGrandTale}
+                  alt=""
+                  class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                  width={320}
+                  height={128}
+                  loading="eager"
+                />
 
-              <div class="flex flex-col gap-sm flex-2">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
-                  <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
+                <div class="flex flex-col gap-sm flex-2">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-xl gap-y-4">
+                    <RLALinkGroup {...grandTaleLinkGroup} ui={{ title: "!text-primary-500" }} />
                   <div class="flex flex-col gap-lg">
                     <RLALinkGroup {...grandTaleSeriesLinkGroup} ui={{ title: "!text-primary-500" }} />
                     <RLALinkGroup {...grandTaleBooksLinkGroup} ui={{ title: "!text-primary-500" }} />
@@ -897,15 +918,19 @@ const storeAssistanceGroup: LinkGroupProps = {
 
           <!-- Community Mobile Mega Menu -->
           <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <img
-                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderCommunity}
-              />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                <Image
+                  src={placeholderCommunity}
+                  alt=""
+                  class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                  width={320}
+                  height={128}
+                  loading="eager"
+                />
 
-              <div class="flex flex-col gap-sm flex-2">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                  <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
+                <div class="flex flex-col gap-sm flex-2">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                    <RLALinkGroup {...commForumsGroup} ui={{ title: "!text-primary-500" }} />
                   <RLALinkGroup {...commEventsGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
               </div>
@@ -918,15 +943,19 @@ const storeAssistanceGroup: LinkGroupProps = {
 
           <!-- Company Mobile Mega Menu -->
           <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <img
-                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderCompany}
-              />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                <Image
+                  src={placeholderCompany}
+                  alt=""
+                  class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                  width={320}
+                  height={128}
+                  loading="eager"
+                />
 
-              <div class="flex flex-col gap-sm flex-2">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                  <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
+                <div class="flex flex-col gap-sm flex-2">
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
+                    <RLALinkGroup {...compStudioGroup} ui={{ title: "!text-primary-500" }} />
                   <RLALinkGroup {...compCareersGroup} ui={{ title: "!text-primary-500" }} />
                   <RLALinkGroup {...compNewsGroup} ui={{ title: "!text-primary-500" }} />
                 </div>
@@ -941,15 +970,19 @@ const storeAssistanceGroup: LinkGroupProps = {
 
           <!-- Store Mobile Mega Menu -->
           <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
-            <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <img
-                class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-                src={placeholderStore}
-              />
+<div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
+                <Image
+                  src={placeholderStore}
+                  alt=""
+                  class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
+                  width={320}
+                  height={128}
+                  loading="eager"
+                />
 
-              <div class="flex flex-col gap-sm flex-2">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-xl gap-y-4">
-                  <div class="flex flex-col gap-lg">
+                <div class="flex flex-col gap-sm flex-2">
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-xl gap-y-4">
+                    <div class="flex flex-col gap-lg">
                     <RLALinkGroup {...storeDealsGroup} ui={{ title: "!text-primary-500" }} />
                   </div>
                   <div class="flex flex-col gap-lg">

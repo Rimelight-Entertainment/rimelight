@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 
 const api = new Hono()
 
-api.post("/pages/versions/:id/approve", async (c) => {
+api.post("/:id/approve", async (c) => {
   try {
     const [version] = await db
       .select()
@@ -36,7 +36,7 @@ api.post("/pages/versions/:id/approve", async (c) => {
   }
 })
 
-api.post("/pages/versions/:id/reject", async (c) => {
+api.post("/:id/reject", async (c) => {
   try {
     await db
       .update(pageVersions)

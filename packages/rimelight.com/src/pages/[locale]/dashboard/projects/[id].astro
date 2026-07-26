@@ -12,7 +12,7 @@ const { id } = Astro.params;
 ---
 
 <DashboardLayout title="Project Board">
-	<div class="h-[calc(100vh-var(--total-header-offset,80px))] flex flex-col">
+	<div class="h-[calc(100vh-var(--rl-total-header-height,80px))] flex flex-col">
 		<BoardDetails client:only="vue" boardId={id!} />
 	</div>
 </DashboardLayout>

@@ -10,7 +10,7 @@ function requireAuth(c: any) {
   return null
 }
 
-api.put("/assets/:key{.*}", async (c) => {
+api.put("/:key{.*}", async (c) => {
   const error = requireAuth(c)
   if (error) return error
 

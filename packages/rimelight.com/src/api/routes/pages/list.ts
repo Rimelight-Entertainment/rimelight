@@ -7,7 +7,7 @@ import type { PageType } from "@/types/pages"
 const isPageType = (_t: string): _t is PageType => true
 const api = new Hono()
 
-api.get("/pages", async (c) => {
+api.get("/", async (c) => {
   try {
     const type = c.req.query("type")
     const statusInput = c.req.query("status")
@@ -50,7 +50,7 @@ api.get("/pages", async (c) => {
   }
 })
 
-api.get("/pages/list", async (c) => {
+api.get("/list", async (c) => {
   try {
     const typesParam = c.req.query("types")
     const prefix = c.req.query("prefix")

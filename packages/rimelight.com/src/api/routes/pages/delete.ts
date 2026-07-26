@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 
 const api = new Hono()
 
-api.delete("/pages/id/:id", async (c) => {
+api.delete("/id/:id", async (c) => {
   try {
     await db
       .update(pages)

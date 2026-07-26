@@ -5,7 +5,7 @@ import { eq, and, isNull, desc } from "drizzle-orm"
 
 const api = new Hono()
 
-api.get("/pages/versions/page/:pageId", async (c) => {
+api.get("/page/:pageId", async (c) => {
   try {
     const versions = await db
       .select()
@@ -18,7 +18,7 @@ api.get("/pages/versions/page/:pageId", async (c) => {
   }
 })
 
-api.get("/pages/versions/:id", async (c) => {
+api.get("/:id", async (c) => {
   try {
     const [version] = await db
       .select()

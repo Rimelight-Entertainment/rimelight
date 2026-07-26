@@ -11,7 +11,7 @@ function requireAuth(c: any) {
   return null
 }
 
-api.get("/assets/:key{.*}", async (c) => {
+api.get("/:key{.*}", async (c) => {
   const error = requireAuth(c)
   if (error) return error
 

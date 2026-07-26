@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 
 const api = new Hono()
 
-api.post("/pages/id/:id/unpublish", async (c) => {
+api.post("/id/:id/unpublish", async (c) => {
   try {
     await db
       .update(pages)

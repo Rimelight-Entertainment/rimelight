@@ -15,7 +15,7 @@ function getTool(id: string) {
 <template>
   <div
     v-if="isVisible"
-    class="fixed top-[calc(var(--total-header-offset,64px)+1.5rem)] right-6 z-[9999] flex flex-col items-end gap-4 pointer-events-none"
+    class="fixed top-[calc(var(--rl-total-header-height,64px)+1.5rem)] right-6 z-[9999] flex flex-col items-end gap-4 pointer-events-none"
   >
     <div
       v-for="id in activeToolIds"

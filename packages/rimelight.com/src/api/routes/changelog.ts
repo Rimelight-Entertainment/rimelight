@@ -2,7 +2,7 @@ import { Hono } from "hono"
 
 const api = new Hono()
 
-api.get("/github/changelog", async (c) => {
+api.get("/changelog", async (c) => {
   const component = c.req.query("component")
   if (!component) {
     return c.json({ error: "Component name is required" }, 400)

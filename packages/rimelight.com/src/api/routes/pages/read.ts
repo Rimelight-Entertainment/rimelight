@@ -5,7 +5,7 @@ import { eq, and, or, isNull } from "drizzle-orm"
 
 const api = new Hono()
 
-api.get("/pages/id/:id", async (c) => {
+api.get("/id/:id", async (c) => {
   try {
     const id = c.req.param("id")
     const [row] = await db
@@ -24,7 +24,7 @@ api.get("/pages/id/:id", async (c) => {
   }
 })
 
-api.get("/pages/find/:slug{.*}", async (c) => {
+api.get("/find/:slug{.*}", async (c) => {
   try {
     const rawSlug = c.req.param("slug") || ""
     const cleanSlug = rawSlug.replace(/^\/|\/$/g, "")

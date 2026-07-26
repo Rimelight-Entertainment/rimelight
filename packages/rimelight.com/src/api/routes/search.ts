@@ -5,7 +5,7 @@ import { sql, desc, or, like } from "drizzle-orm"
 
 const api = new Hono()
 
-api.get("/search", async (c) => {
+api.get("/", async (c) => {
   const q = c.req.query("q") || ""
 
   if (!q.trim()) {

@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 
 const api = new Hono()
 
-api.put("/pages/id/:id", async (c) => {
+api.put("/id/:id", async (c) => {
   try {
     const id = c.req.param("id")
     const body = await c.req.json()

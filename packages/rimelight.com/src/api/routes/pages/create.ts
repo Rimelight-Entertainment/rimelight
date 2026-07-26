@@ -4,7 +4,7 @@ import { pages } from "@/db/schema"
 
 const api = new Hono()
 
-api.post("/pages", async (c) => {
+api.post("/", async (c) => {
   try {
     const body = await c.req.json()
     const { title, slug, type, description, blocks, properties } = body

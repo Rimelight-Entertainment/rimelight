@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import chroma from "chroma-js"
-import { useRC, useHeaderStack } from "@/composables"
+import { useRC } from "@/composables"
 import { scv, cx } from "css-variants"
 
 /* region Props */
@@ -134,8 +134,6 @@ const styles = computed(() => {
 /* endregion */
 
 /* region State */
-const { totalHeight } = useHeaderStack()
-const stickyTop = computed(() => `${totalHeight.value + 32}px`)
 const activeTabIndex = ref(0)
 const openSections = ref<Record<string, boolean>>({})
 
@@ -300,7 +298,10 @@ function isSectionOpen(label: string) {
 
 <template>
   <div :class="styles.root">
-    <div :class="styles.tabsRoot" :style="{ '--palette-sticky-top': stickyTop }">
+    <div
+      :class="styles.tabsRoot"
+      :style="{ '--palette-sticky-top': 'calc(var(--rl-total-header-height, 64px) + 32px)' }"
+    >
       <!-- Tabs List -->
       <div :class="styles.tabsList">
         <button
