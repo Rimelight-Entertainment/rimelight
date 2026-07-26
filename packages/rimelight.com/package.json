@@ -64,7 +64,7 @@
     "@astrojs/ts-plugin": "1.10.10",
     "@e18e/eslint-plugin": "0.6.0",
     "@iconify-json/logos": "1.2.11",
-    "@iconify-json/lucide": "1.2.118",
+    "@iconify-json/lucide": "1.2.120",
     "@types/node": "26.1.1",
     "@unocss/eslint-plugin": "66.7.5",
     "drizzle-kit": "0.31.10",
