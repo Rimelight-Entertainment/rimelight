@@ -36,9 +36,6 @@ export default defineConfig({
   },
 
   site: "https://starter.rimelight.com",
-  redirects: {
-    "/.well-known/change-password": "/dashboard/settings"
-  },
   prefetch: {
     prefetchAll: true
   },

@@ -21,6 +21,7 @@
   },
   "type": "module",
   "scripts": {
+    "prepare": "vp config",
     "generate-types": "wrangler types",
     "astro": "astro",
     "predev": "tsx scripts/generate-block-maps.ts",
