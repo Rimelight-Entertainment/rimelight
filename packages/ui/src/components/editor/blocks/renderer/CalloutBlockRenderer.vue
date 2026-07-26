@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue"
-
-const BlockViewRenderer = defineAsyncComponent(() => import("../BlockViewRenderer.vue"))
+import { computed } from "vue"
+import BlockViewRenderer from "../BlockViewRenderer.vue"
 
 const props = defineProps<{ props: any }>()
 

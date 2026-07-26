@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue"
+import { computed } from "vue"
 import { useI18n } from "../../utils/editorHelpers"
 import { getLocalizedContent } from "../../utils/page"
 
-const BlockViewRenderer = defineAsyncComponent(() => import("../BlockViewRenderer.vue"))
+import BlockViewRenderer from "../BlockViewRenderer.vue"
 
 const props = defineProps<{ props: any }>()
 const { locale } = useI18n()

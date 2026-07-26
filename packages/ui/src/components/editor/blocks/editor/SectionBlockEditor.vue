@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue"
+import { computed } from "vue"
 import type { SectionBlockProps } from "../../types/blocks"
 import RLVInput from "../../../input/RLVInput.vue"
 import RLVButton from "../../../button/RLVButton.vue"
 import { useI18n } from "../../utils/editorHelpers"
 
-const BlockEditRenderer = defineAsyncComponent(() => import("../BlockEditRenderer.vue"))
+import BlockEditRenderer from "../BlockEditRenderer.vue"
 
 const props = defineProps<{ props: SectionBlockProps; containerId?: string | null }>()
 const emit = defineEmits<{ "update:props": [value: SectionBlockProps] }>()
