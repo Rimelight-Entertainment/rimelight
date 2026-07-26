@@ -175,7 +175,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
         ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
       ],
       [
-        /^rl-color-(.+)$/,
+        /^rl-color-([a-z][a-z0-9-]*)$/,
         ([, color]) => ({
           "--rl-bg": `var(--color-${color}-500)`,
           "--rl-bg-hover": `var(--color-${color}-600)`,

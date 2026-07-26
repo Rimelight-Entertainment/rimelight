@@ -3,11 +3,7 @@ title: "Colors"
 description: "How Rimelight UI handles colors, how to register custom colors, and what the system generates for you."
 ---
 
-import ColorMatrixVisualizer from "@/components/utilities/colors/ColorMatrixVisualizer"
-
 The `@rimelight/ui` color system is built on a **dynamic, factory-based architecture** with a single source of truth. You define your colors once in `astro.config.ts`, and the library handles the rest — CSS variables using `light-dark()`, UnoCSS theme mappings, component variants, and safelisting.
-
-<ColorMatrixVisualizer client:load />
 
 Register a new color (like `blurple`) and every supported component automatically gains `solid`, `outline`, `soft`, `subtle`, `ghost`, and `link` variants for it — with no additional code.
 
@@ -282,7 +278,7 @@ For pinning a single component without a wrapper:
 
 ### Decision rule
 
-> **Pinning one component?** → `theme="dark"` / `theme="light"` prop  
+> **Pinning one component?** → `theme="dark"` / `theme="light"` prop
 > **Pinning a section?** → `class="rl-dark"` / `class="rl-light"` on the wrapper
 
 ## Overriding a Built-in Color's Values

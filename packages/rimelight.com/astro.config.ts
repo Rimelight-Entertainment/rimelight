@@ -79,9 +79,6 @@ export default defineConfig({
   vite: {
     define: {
       "import.meta.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
-    },
-    build: {
-      cssMinify: "esbuild"
     }
   },
 
