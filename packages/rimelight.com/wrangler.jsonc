@@ -56,6 +56,6 @@
     "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
     "EMAIL_DOMAIN": "rimelight.com",
     "EMAIL_TEST_RECIPIENT": "test@rimelight.com",
-    "DISABLE_DOCS": "false"
+    "DISABLE_DOCS": "true"
   }
 }
