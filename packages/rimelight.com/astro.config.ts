@@ -13,6 +13,8 @@ import { defineConfig, fontProviders, svgoOptimizer } from "astro/config"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import { extractAllMeta } from "./src/docs/extractAll"
 
+const disableDocs = process.env.DISABLE_DOCS === "true"
+
 function localDocsIntegration() {
   return {
     name: "rimelight-docs-integration",
@@ -98,7 +100,12 @@ export default defineConfig({
     },
     "/[...path]": {
       maxAge: 300 // 5 minutes cache
-    }
+    },
+    ...(disableDocs
+      ? {
+          "/company/docs/[...slug]": { redirect: "/" }
+        }
+      : {})
   },
 
   security: defineSecurity({
@@ -174,7 +181,7 @@ export default defineConfig({
       }
     }),
 
-    localDocsIntegration(),
+    ...(disableDocs ? [] : [localDocsIntegration()]),
 
     sri()
   ]

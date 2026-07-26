@@ -55,6 +55,7 @@
     "CONSTRUCTION_AUTH": "true",
     "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
     "EMAIL_DOMAIN": "rimelight.com",
-    "EMAIL_TEST_RECIPIENT": "testing9.agreed505@passmail.net"
+    "EMAIL_TEST_RECIPIENT": "testing9.agreed505@passmail.net",
+    "DISABLE_DOCS": "false"
   }
 }
