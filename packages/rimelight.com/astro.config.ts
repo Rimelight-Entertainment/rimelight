@@ -94,6 +94,9 @@ export default defineConfig({
   cache: {
     provider: cacheCloudflare()
   },
+  markdown: {
+    syntaxHighlight: "prism"
+  },
   routeRules: {
     "/api/[...path]": {
       swr: 600 // 10 minutes stale-while-revalidate
