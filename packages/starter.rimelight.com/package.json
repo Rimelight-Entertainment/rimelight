@@ -62,7 +62,7 @@
     "tsx": "4.23.1",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vite-plus": "catalog:"
+    "vite-plus": "0.2.6"
   },
   "engines": {
     "node": ">=25.2.1"
