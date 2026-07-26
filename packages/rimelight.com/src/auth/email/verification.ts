@@ -15,7 +15,7 @@ export async function sendVerificationEmail({ user, url, locale }: VerificationE
 
   const html = await renderVerificationEmail(url, locale)
 
-  return sendEmail({
+  await sendEmail({
     to: user.email,
     subject,
     text: `${messages.verification.description} ${url}`,

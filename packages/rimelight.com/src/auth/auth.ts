@@ -50,36 +50,30 @@ export const auth = betterAuth({
       tag: {
         type: "string",
         required: false,
-        default: "0000",
         input: false
       },
       firstName: {
         type: "string",
         required: true,
-        default: "",
         input: true
       },
       lastName: {
         type: "string",
         required: true,
-        default: "",
         input: true
       },
       role: {
         type: "string",
         required: false,
-        default: "user",
         input: false
       },
       availability: {
         type: "string",
-        required: false,
-        default: "available"
+        required: false
       },
       status: {
         type: "string",
-        required: false,
-        default: ""
+        required: false
       },
       publicKey: {
         type: "string",

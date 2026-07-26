@@ -9,19 +9,9 @@ export interface CoreFields {
   updatedAt: Date
 }
 
-export interface AdditionalFields {
-  tag?: string
-  firstName: string
-  lastName: string
-  role?: string
-  availability?: string
-  status?: string
-  publicKey?: string
-}
-
 export interface SyntheticUserData {
   coreFields: CoreFields
-  additionalFields: AdditionalFields
+  additionalFields: Record<string, unknown>
   id: string
 }
 
@@ -36,12 +26,12 @@ export function createSyntheticUser({ coreFields, additionalFields, id }: Synthe
     banned: false,
     banReason: null,
     banExpires: null,
-    tag: additionalFields.tag ?? "0000",
-    firstName: additionalFields.firstName ?? "",
-    lastName: additionalFields.lastName ?? "",
-    availability: additionalFields.availability ?? "available",
-    status: additionalFields.status ?? "",
-    publicKey: additionalFields.publicKey,
+    tag: (additionalFields.tag as string | undefined) ?? "0000",
+    firstName: (additionalFields.firstName as string | undefined) ?? "",
+    lastName: (additionalFields.lastName as string | undefined) ?? "",
+    availability: (additionalFields.availability as string | undefined) ?? "available",
+    status: (additionalFields.status as string | undefined) ?? "",
+    publicKey: additionalFields.publicKey as string | undefined,
     id
   }
 }

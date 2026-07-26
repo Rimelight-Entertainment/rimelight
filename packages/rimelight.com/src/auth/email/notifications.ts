@@ -18,7 +18,7 @@ export async function sendExistingUserSignUpNotification({
 
   const html = await renderSignupNotificationEmail("/auth/sign-in", locale)
 
-  return sendEmail({
+  await sendEmail({
     to: user.email,
     subject,
     text: `${messages.signupNotification.description} ${messages.signupNotification.sign_in_prefix} ${messages.signupNotification.sign_in} ${messages.signupNotification.sign_in_suffix}`,

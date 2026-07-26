@@ -20,9 +20,9 @@ import placeholderCompany from "../../assets/images/placeholder_header_company.j
 import placeholderStore from "../../assets/images/placeholder_header_store.jpg";
 
 const { auth } = await import("@/auth/auth");
-const session = await auth.api.getSession({
-  headers: Astro.request.headers
-});
+  const session = await auth.api.getSession({
+    headers: Astro.request.headers
+  }) as { user: { status?: string; tag?: string; availability?: string; name?: string; image?: string | null; id?: string; email?: string; emailVerified?: boolean; createdAt?: Date; updatedAt?: Date } & Record<string, unknown> } | null;
 
 const messages = useI18n(Astro, "app_header", {
 	"left-links_grand-tale_label": "Grand Tale",

@@ -1,7 +1,7 @@
 import { Hono } from "hono"
 import { db } from "@/db"
 import { pages } from "@/db/schema"
-import { sql, desc, or, like, inArray, asc, isNull } from "drizzle-orm"
+import { sql, desc, like, inArray, asc, isNull } from "drizzle-orm"
 import type { PageType } from "@/types/pages"
 
 const isPageType = (_t: string): _t is PageType => true

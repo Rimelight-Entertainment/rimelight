@@ -100,12 +100,7 @@ export default defineConfig({
     },
     "/[...path]": {
       maxAge: 300 // 5 minutes cache
-    },
-    ...(disableDocs
-      ? {
-          "/company/docs/[...slug]": { redirect: "/" }
-        }
-      : {})
+    }
   },
 
   security: defineSecurity({

@@ -1,8 +1,7 @@
 ---
-import { getRelativeLocaleUrl } from '@rimelight/i18n'
+import { auth } from "@/auth/auth"
 
 try {
-  const { auth } = await import("@/auth/auth")
   const response = await auth.api.signOut({
     headers: Astro.request.headers,
     asResponse: true
@@ -15,5 +14,5 @@ try {
   console.error("Sign out error:", error)
 }
 
-return Astro.redirect(getRelativeLocaleUrl(Astro.currentLocale ?? 'en', '/'))
+return Astro.redirect("/")
 ---

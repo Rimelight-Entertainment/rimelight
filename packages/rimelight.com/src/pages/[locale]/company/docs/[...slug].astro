@@ -6,6 +6,11 @@ import { getDocsVersions, parseDocsSlug } from "@rimelight/docs";
 const activeLocale = Astro.currentLocale ?? "en";
 const { slug } = Astro.params;
 
+const disableDocs = import.meta.env.DISABLE_DOCS === "true";
+if (disableDocs) {
+  return Astro.redirect("/");
+}
+
 const allDocs = await getCollection("docs");
 const versions = getDocsVersions(allDocs, activeLocale);
 const { activeVersion, contentPath, includeVersionInUrl } = parseDocsSlug(slug, versions);

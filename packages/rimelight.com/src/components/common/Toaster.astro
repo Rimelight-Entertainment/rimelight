@@ -25,10 +25,10 @@
   checkUrlToasts()
   document.addEventListener("astro:page-load", checkUrlToasts)
 
-  toasts.subscribe((list) => {
+  toasts.subscribe((list: Toast[]) => {
     if (!container) return
     container.innerHTML = ""
-    list.forEach((t) => {
+    list.forEach((t: Toast) => {
       const el = document.createElement("div")
       const isError = t.variant === "error"
       const bgClass = isError

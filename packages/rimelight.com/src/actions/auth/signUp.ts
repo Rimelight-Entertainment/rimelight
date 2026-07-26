@@ -13,14 +13,12 @@ export const signUp = defineAction({
   handler: async (input) => {
     try {
       const { auth } = await import("@/auth/auth")
-      await auth.api.signUpEmail({
-        body: {
-          name: `${input.firstName} ${input.lastName}`,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          email: input.email,
-          password: input.password
-        }
+        await auth.api.signUpEmail({
+          body: {
+            name: `${input.firstName} ${input.lastName}`,
+            email: input.email,
+            password: input.password
+          }
       })
       return { success: true }
     } catch (error) {

@@ -24,7 +24,7 @@ export async function getCloudflareEnv(c: any): Promise<CloudflareEnv | undefine
     const { env: cfEnv } = await import("cloudflare:workers")
     if (cfEnv && typeof cfEnv === "object" && ("EMAIL" in cfEnv || "BLOB" in cfEnv)) {
       console.log("[getCloudflareEnv] Found on cloudflare:workers")
-      return cfEnv as CloudflareEnv
+      return cfEnv as unknown as CloudflareEnv
     }
   } catch (err) {
     console.log("[getCloudflareEnv] cloudflare:workers import failed:", err)

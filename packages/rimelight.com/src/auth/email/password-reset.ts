@@ -15,7 +15,7 @@ export async function sendPasswordResetEmail({ user, url, locale }: PasswordRese
 
   const html = await renderPasswordResetEmail(url, locale)
 
-  return sendEmail({
+  await sendEmail({
     to: user.email,
     subject,
     text: `${messages.passwordReset.description} ${url}`,

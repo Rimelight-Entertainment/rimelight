@@ -3,7 +3,7 @@ import type { Context } from "hono"
 import { sendVerificationEmail } from "@/auth/email/verification"
 import { sendPasswordResetEmail } from "@/auth/email/password-reset"
 import { sendExistingUserSignUpNotification } from "@/auth/email/notifications"
-import { getCloudflareEnv } from "../../lib/env"
+import { getCloudflareEnv, isCloudflareEnv } from "../../lib/env"
 
 const api = new Hono()
 
@@ -23,8 +23,8 @@ api.post("/test", async (c) => {
   }
 
   try {
-    const env = c.env ?? (await getCloudflareEnv(c))
-    const recipient = env?.EMAIL_TEST_RECIPIENT
+    const env = (c.env ?? (await getCloudflareEnv(c))) as CloudflareEnv
+    const recipient = env.EMAIL_TEST_RECIPIENT
     if (!recipient) {
       return c.json({ error: "EMAIL_TEST_RECIPIENT is not configured." }, 500)
     }
