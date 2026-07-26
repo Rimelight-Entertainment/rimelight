@@ -49,6 +49,7 @@
     "astro": "7.1.3",
     "better-auth": "1.6.25",
     "chroma-js": "3.2.0",
+    "css-variants": "2.3.5",
     "drizzle-orm": "0.45.2",
     "hono": "4.12.31",
     "nanostores": "1.4.1",

@@ -89,6 +89,10 @@ export default defineConfig({
     domains: ["starter.rimelight.com", "cdn.starter.rimelight.com"]
   },
 
+  markdown: {
+    syntaxHighlight: "prism"
+  },
+
   integrations: [
     rimelightI18n({
       translations: { en, pt },

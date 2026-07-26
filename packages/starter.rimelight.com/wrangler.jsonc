@@ -28,10 +28,6 @@
       "custom_domain": true
     }
   ],
-  "vars": {
-    "CONSTRUCTION_MODE": "false",
-    "CONSTRUCTION_AUTH": "false"
-  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
@@ -74,10 +70,23 @@
       }
     }
   ],
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "remote": true
+    }
+  ],
   "migrations": [
     {
       "tag": "v2",
       "new_sqlite_classes": ["ChatRoom"]
     }
-  ]
+  ],
+  "vars": {
+    "CONSTRUCTION_MODE": "false",
+    "CONSTRUCTION_AUTH": "false",
+    "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
+    "EMAIL_DOMAIN": "rimelight.com",
+    "EMAIL_TEST_RECIPIENT": "test@rimelight.com"
+  }
 }
