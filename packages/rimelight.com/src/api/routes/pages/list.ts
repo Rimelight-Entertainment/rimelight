@@ -1,7 +1,7 @@
 import { Hono } from "hono"
 import { db } from "@/db"
 import { pages } from "@/db/schema"
-import { sql, desc, like, inArray, asc, isNull } from "drizzle-orm"
+import { sql, desc, like, inArray, asc, isNull, and } from "drizzle-orm"
 import type { PageType } from "@/types/pages"
 
 const isPageType = (_t: string): _t is PageType => true
@@ -33,17 +33,18 @@ api.get("/", async (c) => {
     const results = await db
       .select()
       .from(pages)
-      .where(sql`${conditions.join(" AND ")}`)
+      .where(and(...conditions))
       .orderBy(orderFn(orderColumn))
       .limit(limitVal)
       .offset(offsetVal)
 
     return c.json(
-      results.map((row) => ({
-        ...row,
-        blocks: row.content?.blocks || [],
-        properties: row.content?.properties || {}
-      }))
+      results.map((row) =>
+        Object.assign({}, row, {
+          blocks: row.content?.blocks || [],
+          properties: row.content?.properties || {}
+        })
+      )
     )
   } catch (err: any) {
     return c.json({ error: err.message }, 500)
@@ -65,7 +66,7 @@ api.get("/list", async (c) => {
     const results = await db
       .select({ id: pages.id, title: pages.title, slug: pages.slug, type: pages.type })
       .from(pages)
-      .where(sql`${conditions.join(" AND ")}`)
+      .where(and(...conditions))
       .orderBy(asc(pages.slug))
     return c.json(results)
   } catch (err: any) {

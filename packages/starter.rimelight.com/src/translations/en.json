@@ -31,5 +31,21 @@
     "form_password_placeholder": "••••••••",
     "form_remember_me_label": "Remember me",
     "form_sign_in_button": "Sign In"
+  },
+  "email_common": "Hello,",
+  "email_verification": {
+    "subject": "Verify your email",
+    "description": "Click the link below to verify your email address:"
+  },
+  "email_password_reset": {
+    "subject": "Reset your password",
+    "description": "Click the link below to reset your password:"
+  },
+  "email_signup_notification": {
+    "subject": "Welcome aboard",
+    "description": "Someone just signed up with your email address.",
+    "sign_in_prefix": "If this was you, ",
+    "sign_in": "sign in",
+    "sign_in_suffix": " to get started."
   }
 }

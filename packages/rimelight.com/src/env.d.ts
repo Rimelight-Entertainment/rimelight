@@ -21,6 +21,12 @@ declare module '*.vue' {
   export default component;
 }
 
+declare module '*.astro' {
+  import type { AstroComponentFactory } from 'astro/runtime/server';
+  const AstroComponent: AstroComponentFactory;
+  export default AstroComponent;
+}
+
 declare module "virtual:rimelight-ui-docs-meta" {
   import type { ComponentMetaMap } from "@rimelight/docs"
   const meta: ComponentMetaMap

@@ -26,12 +26,16 @@ export function createSyntheticUser({ coreFields, additionalFields, id }: Synthe
     banned: false,
     banReason: null,
     banExpires: null,
-    tag: (additionalFields.tag as string | undefined) ?? "0000",
-    firstName: (additionalFields.firstName as string | undefined) ?? "",
-    lastName: (additionalFields.lastName as string | undefined) ?? "",
-    availability: (additionalFields.availability as string | undefined) ?? "available",
-    status: (additionalFields.status as string | undefined) ?? "",
-    publicKey: additionalFields.publicKey as string | undefined,
+    tag: typeof additionalFields.tag === "string" ? additionalFields.tag : "0000",
+    firstName: typeof additionalFields.firstName === "string" ? additionalFields.firstName : "",
+    lastName: typeof additionalFields.lastName === "string" ? additionalFields.lastName : "",
+    availability:
+      typeof additionalFields.availability === "string"
+        ? additionalFields.availability
+        : "available",
+    status: typeof additionalFields.status === "string" ? additionalFields.status : "",
+    publicKey:
+      typeof additionalFields.publicKey === "string" ? additionalFields.publicKey : undefined,
     id
   }
 }

@@ -1,6 +1,7 @@
 import { env as cfEnv } from "cloudflare:workers"
 
-const getDomain = () => (cfEnv as any)?.EMAIL_DOMAIN || "starter.rimelight.com"
+const getDomain = () =>
+  (cfEnv as { EMAIL_DOMAIN?: string })?.EMAIL_DOMAIN || "starter.rimelight.com"
 
 export interface EmailPayload {
   to: string

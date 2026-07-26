@@ -9,6 +9,7 @@ export const searchIndex = sqliteTable(
     title: text("title").notNull(),
     url: text("url").notNull(),
     bodyContent: text("body_content").notNull(),
+    searchableText: text("searchable_text").notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .$defaultFn(() => new Date())
       .notNull()

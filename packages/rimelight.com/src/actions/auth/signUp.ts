@@ -16,6 +16,8 @@ export const signUp = defineAction({
       await auth.api.signUpEmail({
         body: {
           name: `${input.firstName} ${input.lastName}`,
+          firstName: input.firstName,
+          lastName: input.lastName,
           email: input.email,
           password: input.password
         }

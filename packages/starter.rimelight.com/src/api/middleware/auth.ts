@@ -21,14 +21,15 @@ export const auth = async (c: any, next: any) => {
     state.locals.user =
       isAuthed?.user ??
       (guest
-        ? {
+        ? ({
             id: "construction-guest",
             email: "guest",
             name: "Guest",
             emailVerified: true,
+            image: null,
             createdAt: new Date(0),
             updatedAt: new Date(0)
-          }
+          } as any)
         : null)
     state.locals.session =
       isAuthed?.session ??

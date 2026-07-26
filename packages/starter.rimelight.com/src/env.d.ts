@@ -3,9 +3,14 @@
 /// <reference types="@cloudflare/workers-types" />
 
 declare global {
+    interface Env {
+      EMAIL: any;
+      EMAIL_DOMAIN: string;
+    }
     type ENV = {
       DB: any;
       BLOB: any;
+      EMAIL: any;
       ChatRoom: import("@cloudflare/workers-types").DurableObjectNamespace;
       MY_RATE_LIMITER: {
         limit: (options: { key: string }) => Promise<{ success: boolean }>;
@@ -33,4 +38,10 @@ declare module '*.vue' {
   import type { DefineComponent } from 'vue';
   const component: DefineComponent<{}, {}, unknown>;
   export default component;
+}
+
+declare module '*.astro' {
+  import type { AstroComponentFactory } from 'astro/runtime/server';
+  const AstroComponent: AstroComponentFactory;
+  export default AstroComponent;
 }
