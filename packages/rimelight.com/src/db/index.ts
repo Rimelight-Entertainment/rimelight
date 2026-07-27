@@ -2,7 +2,6 @@ import { neon } from "@neondatabase/serverless"
 import { drizzle } from "drizzle-orm/neon-http"
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http"
 import * as schema from "@/db/schema"
-import { loadEnv } from "vite-plus"
 
 export * from "@/db/schema"
 export { schema }
@@ -18,14 +17,9 @@ function createDbProxy(): NeonHttpDatabase<typeof schema> {
     get(_target, prop) {
       if (prop === "then") return undefined
 
-      let databaseUrl =
+      const databaseUrl =
         (typeof import.meta.env !== "undefined" ? import.meta.env.DATABASE_URL : undefined) ||
         process.env.DATABASE_URL
-
-      if (!databaseUrl) {
-        const env = loadEnv("development", process.cwd(), "")
-        databaseUrl = env.DATABASE_URL
-      }
 
       if (!databaseUrl) {
         throw new Error(
