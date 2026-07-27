@@ -32,7 +32,11 @@
     "form_remember_me_label": "Remember me",
     "form_sign_in_button": "Sign In"
   },
-  "email_common": "Hello,",
+  "email_common": {
+    "website": "Website",
+    "contact": "Contact",
+    "privacy": "Privacy"
+  },
   "email_verification": {
     "subject": "Verify your email",
     "description": "Click the link below to verify your email address:"
