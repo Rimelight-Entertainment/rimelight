@@ -20,5 +20,5 @@
   "peerDependencies": {
     "astro": ">=7.0.1"
   },
-  "packageManager": "pnpm@12.0.0-alpha.21"
+  "packageManager": "pnpm@11.17.0"
 }
