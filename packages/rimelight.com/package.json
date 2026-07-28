@@ -63,8 +63,6 @@
     "@e18e/eslint-plugin": "0.6.0",
     "@iconify-json/logos": "1.2.11",
     "@iconify-json/lucide": "1.2.120",
-    "@napi-rs/image": "1.14.0",
-    "@oxidized-image/astro": "1.0.0",
     "@resvg/resvg-js": "2.6.2",
     "@types/node": "26.1.1",
     "@unocss/eslint-plugin": "66.7.5",
