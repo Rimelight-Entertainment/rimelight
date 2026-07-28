@@ -95,13 +95,41 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 
       button.addEventListener('click', scrollToTop);
 
-      const unsubscribe = trackScroll({ threshold }, (state) => {
-        if (state.isVisible) {
-          innerElement.classList.add('visible');
-        } else {
-          innerElement.classList.remove('visible');
-        }
+      /**
+       * CSS scroll-state(scrollable: top) — Chrome 133+
+       *
+       * When supported, the body (or nearest scroll-state container) exposes
+       * its scrollability to CSS. The .rla-scroll-to-top-inner uses a
+       * \`@container\` scroll-state rule to hide itself when the page is already
+       * at the top. This eliminates the scroll event listener for show/hide.
+       *
+       * For browsers that don't support scroll-state() we fall back to the
+       * JS trackScroll() approach below.
+       */
+      const supportsScrollState = CSS.supports('(scroll-state(scrollable: top): 1)') ||
+        CSS.supports('selector(@container scroll-state(scrollable: top))');
 
+      if (!supportsScrollState) {
+        // JS fallback: show/hide via class toggling
+        const unsubscribeVisibility = trackScroll({ threshold }, (state) => {
+          if (state.isVisible) {
+            innerElement.classList.add('js-visible');
+          } else {
+            innerElement.classList.remove('js-visible');
+          }
+        });
+        this.cleanupScroll = () => {
+          button.removeEventListener('click', scrollToTop);
+          unsubscribeVisibility();
+          if (this.styleEl) {
+            this.styleEl.remove();
+            this.styleEl = null;
+          }
+        };
+      }
+
+      // Progress ring always needs JS (conic-gradient % calculation)
+      const unsubscribeProgress = trackScroll({ threshold }, (state) => {
         getStyleEl().textContent = `
           .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-track {
             border-width: ${gaugeBorderWidth}px;
@@ -116,14 +144,16 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
         `;
       });
 
-      this.cleanupScroll = () => {
-        button.removeEventListener('click', scrollToTop);
-        unsubscribe();
-        if (this.styleEl) {
-          this.styleEl.remove();
-          this.styleEl = null;
-        }
-      };
+      if (!this.cleanupScroll) {
+        this.cleanupScroll = () => {
+          button.removeEventListener('click', scrollToTop);
+          unsubscribeProgress();
+          if (this.styleEl) {
+            this.styleEl.remove();
+            this.styleEl = null;
+          }
+        };
+      }
     }
 
     disconnectedCallback() {
@@ -142,15 +172,53 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 </script>
 
 <style>
+  /*
+   * CSS scroll-state(scrollable: top) — Chrome 133+
+   *
+   * This declares the <body> as a scroll-state container so descendant
+   * elements can query whether the body is scrollable at the top.
+   * When the user is already at the top of the page, the button hides itself.
+   */
+  :global(body) {
+    container-type: scroll-state;
+    container-name: rla-page-scroll;
+  }
+
   .rla-scroll-to-top-inner {
+    /* Default: hidden (for JS fallback path) */
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
   }
 
-  .rla-scroll-to-top-inner.visible {
+  /* JS fallback visibility class */
+  .rla-scroll-to-top-inner.js-visible {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /*
+   * CSS scroll-state path: show the button whenever the page IS scrollable
+   * downward (i.e., user has scrolled past the top). Hide it when already at top.
+   *
+   * @container scroll-state(scrollable: top) means "the container CAN still
+   * scroll toward the top" — so we hide the button in that state because
+   * the user hasn't scrolled yet.
+   */
+  @container rla-page-scroll scroll-state(not scrollable: top) {
+    .rla-scroll-to-top-inner {
+      /* Page has been scrolled — show the button */
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  @container rla-page-scroll scroll-state(scrollable: top) {
+    .rla-scroll-to-top-inner {
+      /* Still at the top — keep it hidden */
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
   .progress-circle-base {

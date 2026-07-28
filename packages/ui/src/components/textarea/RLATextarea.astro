@@ -16,13 +16,14 @@ const {
   name,
   required = false,
   rows = 4,
+  autoGrow = false,
   error = false,
   size = "md",
   color = "primary",
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as TextareaProps
+} = Astro.props as TextareaProps & { autoGrow?: boolean }
 
 const classes = resolveClasses(textarea, {
   size,
@@ -30,6 +31,13 @@ const classes = resolveClasses(textarea, {
 }, useUi("textarea", uiProp), className);
 ---
 <div class={classes.root} data-slot="root">
+  <!--
+    field-sizing: content (Chrome 2024+) makes the textarea grow automatically.
+    - When autoGrow is true we omit `rows` (fixed row count conflicts with field-sizing)
+      and inject the CSS property via an inline style.
+    - Browsers that don't support field-sizing silently ignore the style and fall
+      back to the min-height defined in textarea.theme.ts.
+  -->
   <textarea
     class={classes.textarea}
     placeholder={placeholder}
@@ -37,7 +45,8 @@ const classes = resolveClasses(textarea, {
     readonly={readonly}
     name={name}
     required={required}
-    rows={rows}
+    rows={autoGrow ? undefined : rows}
+    style={autoGrow ? "field-sizing: content; min-height: unset;" : undefined}
     {...rest}
   >{value}</textarea>
 </div>

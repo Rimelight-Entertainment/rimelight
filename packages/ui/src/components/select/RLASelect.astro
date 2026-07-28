@@ -37,10 +37,42 @@ const normalizedItems = items.map(item => {
 const selectedItem = normalizedItems.find(item => item.value === value)
 const initialLabel = selectedItem ? selectedItem.label : ""
 ---
+
+<!--
+  Two rendering paths live side-by-side:
+
+  PATH A — Native customizable <select> (Chrome with appearance: base-select flag / stable Chrome soon)
+    Detected at runtime via @supports (appearance: base-select). The browser handles
+    keyboard navigation, screen-reader announcements, form integration, and dropdown
+    positioning with zero JavaScript.
+
+  PATH B — Custom element fallback (all other browsers)
+    The existing JS-managed dropdown. Hidden in PATH A browsers via CSS.
+-->
+
+{label && <label class={classes.label} data-slot="label" for={`rla-sel-native-${name}`}>{label}</label>}
+
+<!-- PATH A: Native customizable select -->
+<div class="rla-select-native-wrapper" data-slot="root" aria-hidden="false">
+  <select
+    id={`rla-sel-native-${name}`}
+    class={`rla-select-native ${classes.trigger}`}
+    name={name}
+    disabled={disabled}
+    data-slot="trigger"
+  >
+    {placeholder && <option value="" disabled selected={!value}>{placeholder}</option>}
+    {normalizedItems.map(item => (
+      <option value={item.value} selected={item.value === value}>
+        {item.label}
+      </option>
+    ))}
+  </select>
+</div>
+
+<!-- PATH B: Custom element fallback -->
 <rla-select {...rest}>
   <div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
-    {label && <label class={classes.label} data-slot="label">{label}</label>}
-    
     <div class="relative w-full" data-select-wrapper>
       <button
         type="button"
@@ -73,6 +105,75 @@ const initialLabel = selectedItem ? selectedItem.label : ""
     <input type="hidden" name={name} value={value} data-select-hidden-input />
   </div>
 </rla-select>
+
+<style>
+  /*
+   * PATH A: Native customizable select — shown only when the browser supports
+   * appearance: base-select. All other browsers see PATH B.
+   */
+  .rla-select-native-wrapper {
+    /* Hidden by default — shown only via @supports below */
+    display: none;
+  }
+
+  @supports (appearance: base-select) {
+    /* Show the native select, hide the custom element */
+    .rla-select-native-wrapper {
+      display: block;
+      position: relative;
+      width: 100%;
+    }
+
+    rla-select {
+      display: none !important;
+    }
+
+    /*
+     * Style the native <select> to match our design system.
+     * appearance: base-select opts into the new customizable select model
+     * which allows styling the button, picker, and options.
+     */
+    .rla-select-native {
+      appearance: base-select;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    /* Style the dropdown picker container */
+    .rla-select-native::picker(select) {
+      border-radius: 0.5rem;
+      border: 1px solid var(--color-border, #e2e8f0);
+      background: var(--color-background, #fff);
+      padding: 0.25rem;
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      margin-top: 0.25rem;
+      max-height: 15rem;
+      overflow-y: auto;
+    }
+
+    /* Style individual options */
+    .rla-select-native option {
+      padding: 0.375rem 0.5rem;
+      border-radius: 0.25rem;
+      cursor: default;
+      font-size: 0.875rem;
+      color: var(--color-foreground, inherit);
+    }
+
+    .rla-select-native option:hover,
+    .rla-select-native option:checked {
+      background: var(--color-accent, #f1f5f9);
+      color: var(--color-accent-foreground, inherit);
+    }
+
+    /* Disabled placeholder option */
+    .rla-select-native option:disabled {
+      opacity: 0.5;
+    }
+  }
+</style>
 
 <script>
   class RLASelect extends HTMLElement {

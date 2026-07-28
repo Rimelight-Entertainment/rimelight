@@ -74,6 +74,23 @@ export interface TabsProps<T extends TabItem = TabItem> {
    */
   labelKey?: string
   /**
+   * Maximum number of tab triggers to render in the tab list. Tabs beyond this cap are placed in a
+   * native popover accessible via a '+N more' overflow button at the end of the tab list.
+   *
+   * Additionally, container queries will progressively hide visible triggers from right to left as
+   * the container narrows, surfacing those in the popover as well.
+   *
+   * When undefined, all tabs are rendered in the list (original behaviour).
+   */
+  maxTabs?: number
+  /**
+   * Estimated width in pixels of each tab trigger — used to compute the container-query breakpoints
+   * that drive the responsive overflow. Increase for longer labels, decrease for icon-only tabs.
+   *
+   * @default 100
+   */
+  estimatedTabWidth?: number
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

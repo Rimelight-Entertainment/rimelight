@@ -13,17 +13,18 @@ const stickySurface = scv(stickySurfaceTheme)
 const {
   offsetTop = 0,
   zIndex = 10,
+  stuckShadow = true,
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as StickySurfaceProps
+} = Astro.props as StickySurfaceProps & { stuckShadow?: boolean }
 
 const classes = resolveClasses(stickySurface, {}, useUi("stickySurface", uiProp), className)
 const topOffset = `${offsetTop}px`
 const id = `sticky-${Math.random().toString(36).substring(2, 9)}`
 ---
 <div
-  class:list={[classes.root, id]}
+  class:list={[classes.root, id, stuckShadow && "rla-sticky-shadow"]}
   data-slot="root"
   {...rest}
 >
@@ -34,5 +35,39 @@ const id = `sticky-${Math.random().toString(36).substring(2, 9)}`
   .${id} {
     top: ${topOffset} !important;
     z-index: ${zIndex} !important;
+    /*
+     * CSS scroll-state(stuck: top) — Chrome 133+
+     *
+     * Declare this element as a scroll-state container so it can query
+     * its own stuck state. When position: sticky causes it to be pinned
+     * at the top, the browser marks it as "stuck: top".
+     */
+    container-type: scroll-state;
+    container-name: rla-sticky-${id};
   }
 `} />
+
+<!--
+  The stuck shadow is applied via a nested CSS @container scroll-state rule.
+  This is progressive enhancement — browsers that don't support scroll-state()
+  silently ignore it and the surface just has no shadow (which is fine).
+-->
+{stuckShadow && (
+  <style is:inline set:html={`
+    @container rla-sticky-${id} scroll-state(stuck: top) {
+      .${id} {
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.10), 0 1px 4px 0 rgba(0, 0, 0, 0.06);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      @container rla-sticky-${id} scroll-state(stuck: top) {
+        .${id} {
+          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.40), 0 1px 4px 0 rgba(0, 0, 0, 0.20);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+      }
+    }
+  `} />
+)}

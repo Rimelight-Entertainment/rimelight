@@ -2,9 +2,10 @@
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
-import type { TabsProps, TabItem } from "./tabs"
+import type { TabsProps } from "./tabs"
 import tabsTheme from "./tabs.theme"
 import RLABadge from "../badge/RLABadge.astro"
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const tabs = scv(tabsTheme)
 
@@ -20,12 +21,14 @@ const {
   unmountOnHide = true,
   valueKey = "value",
   labelKey = "label",
+  maxTabs,
+  estimatedTabWidth = 100,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as TabsProps
 
-// Normalize variant names for backward compatibility (solid -> pill, pills -> pill, underline -> underline, link -> underline)
+// Normalize variant names
 const normalizedVariant = (variant === "solid" || variant === "pills") ? "pill" : (variant === "link" ? "underline" : variant);
 
 const classes = resolveClasses(tabs, {
@@ -35,19 +38,58 @@ const classes = resolveClasses(tabs, {
 }, useUi("tabs", uiProp), className);
 
 const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valueKey] ?? items[0].value ?? "0") : "")
+
+// ─── Responsive CSS Item Counter + Native Popover Overflow ───────────────────
+const uid = Math.random().toString(36).substring(2, 9)
+const cName = `rla-tb-${uid}`
+const popoverId = `rla-tb-pop-${uid}`
+
+const effectiveMaxTabs = maxTabs !== undefined ? Math.max(1, maxTabs) : items.length
+const renderedListItems = items.slice(0, effectiveMaxTabs)
+const overflowItems = items.slice(effectiveMaxTabs)
+const baseHiddenCount = overflowItems.length
+const needsOverflow = items.length > 1 && orientation === "horizontal"
+
+// Generate per-instance container-query CSS for horizontal layout
+let instanceCss = ""
+if (needsOverflow && renderedListItems.length > 1) {
+  const maxBreaks = renderedListItems.length - 1
+  for (let i = 0; i < maxBreaks; i++) {
+    const hiddenItems = i + 1
+    const visibleCount = renderedListItems.length - hiddenItems
+    const maxWidth = visibleCount * estimatedTabWidth + 90
+    const hideNthChild = renderedListItems.length - i
+
+    instanceCss += `\n@container ${cName} (max-width: ${maxWidth}px) {`
+    instanceCss += `\n  [data-tb="${uid}"] { --hidden-items: ${hiddenItems}; }`
+    instanceCss += `\n  [data-tb="${uid}"] [data-slot=list] > button.hidable:nth-child(${hideNthChild + 1}) { display: none !important; }`
+    if (baseHiddenCount === 0) {
+      instanceCss += `\n  [data-tb="${uid}"] .rla-tb-overflow-hidden { display: inline-flex !important; }`
+    }
+    instanceCss += `\n}`
+  }
+}
 ---
 <rla-tabs {...rest} data-orientation={orientation} data-variant={normalizedVariant}>
-  <div class={classes.root} data-slot="root" data-tabs-container data-value={initialValue}>
+  <div
+    class:list={[classes.root, orientation === "horizontal" && "rla-tb-host"]}
+    data-slot="root"
+    data-tabs-container
+    data-value={initialValue}
+    data-tb={uid}
+    style={orientation === "horizontal" ? `container-type: inline-size; container-name: ${cName}; --base-hidden: ${baseHiddenCount}; --hidden-items: 0;` : undefined}
+  >
     <div class={classes.list} data-slot="list" role="tablist">
       <div class={classes.indicator} data-slot="indicator" style="display: none;"></div>
-      {items.map((item, index) => {
+      {renderedListItems.map((item, index) => {
         const itemVal = item[valueKey] ?? item.value ?? String(index)
         const itemLabel = item[labelKey] ?? item.label
         const active = itemVal === initialValue
+        const isHidable = needsOverflow && index > 0
         return (
           <button
             type="button"
-            class={classes.trigger}
+            class:list={[classes.trigger, isHidable && "hidable"]}
             data-slot="trigger"
             role="tab"
             data-value={itemVal}
@@ -70,7 +112,58 @@ const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valu
           </button>
         )
       })}
+
+      {needsOverflow && (
+        <div class="relative inline-flex items-center ml-auto">
+          <button
+            type="button"
+            class:list={[
+              classes.trigger,
+              "rla-tb-overflow-btn",
+              baseHiddenCount === 0 && "rla-tb-overflow-hidden"
+            ]}
+            popovertarget={popoverId}
+            data-slot="overflow-trigger"
+            aria-label="More tabs"
+          >
+            <span class="rla-tb-label">
+              +<span class="rla-tb-count"></span> more
+            </span>
+            <RLAIcon name="chevronDown" class="ml-1 size-3.5 opacity-70" />
+          </button>
+
+          <div
+            id={popoverId}
+            popover="auto"
+            class="rla-tb-popover rounded-lg border border-border bg-background p-1 shadow-lg backdrop-blur-sm"
+          >
+            <div class="flex flex-col gap-0.5 min-w-[10rem]">
+              {items.map((item, index) => {
+                const itemVal = item[valueKey] ?? item.value ?? String(index)
+                const itemLabel = item[labelKey] ?? item.label
+                const isExtra = index >= effectiveMaxTabs
+                return (
+                  <button
+                    type="button"
+                    class:list={[
+                      "w-full text-left px-3 py-1.5 text-sm rounded-md transition-colors flex items-center justify-between",
+                      "hover:bg-muted focus-visible:outline-none cursor-pointer",
+                      !isExtra && "rla-tb-pop-rendered"
+                    ]}
+                    data-tab-overflow-value={itemVal}
+                    data-popover-item
+                  >
+                    <span class="truncate">{itemLabel}</span>
+                    <RLAIcon name="check" class="size-4 opacity-0 data-[active=true]:opacity-100" />
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
     {content && (
       <div class="flex-1">
         <slot>
@@ -95,6 +188,33 @@ const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valu
   </div>
 </rla-tabs>
 
+<style is:inline set:html={instanceCss} />
+
+<style>
+  .rla-tb-host {
+    width: 100%;
+  }
+  .rla-tb-overflow-hidden {
+    display: none !important;
+  }
+  .rla-tb-count::after {
+    counter-reset: rla-tb-cnt calc(var(--base-hidden, 0) + var(--hidden-items, 0));
+    content: counter(rla-tb-cnt);
+  }
+  .rla-tb-popover {
+    margin: 0;
+    inset: auto;
+    position: absolute;
+  }
+  .rla-tb-popover:popover-open {
+    display: block;
+  }
+  /* Show items in popover if they are hidden in list or extra */
+  .rla-tb-pop-rendered {
+    display: none;
+  }
+</style>
+
 <script>
   if (typeof HTMLElement !== 'undefined') {
     class RLATabs extends HTMLElement {
@@ -115,6 +235,12 @@ const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valu
           if (!indicator || !list || !activeTrigger) {
             if (indicator) indicator.style.display = 'none';
             return;
+          }
+
+          // If active trigger is hidden due to container queries, position near overflow button
+          if (getComputedStyle(activeTrigger).display === 'none') {
+            const overflowBtn = list.querySelector('.rla-tb-overflow-btn') as HTMLElement | null;
+            if (overflowBtn) activeTrigger = overflowBtn;
           }
 
           const listRect = list.getBoundingClientRect();
@@ -143,27 +269,44 @@ const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valu
         const containerValue = container.dataset.value;
         const triggers = container.querySelectorAll("[role=tab]");
         const panels = container.querySelectorAll("[role=tabpanel]");
+        const popoverItems = container.querySelectorAll("[data-popover-item]");
 
         let activeTrigger: HTMLElement | null = null;
 
-        triggers.forEach(trigger => {
-          const el = trigger as HTMLElement;
-          const val = el.dataset.value;
-          const isActive = val === containerValue;
-          el.setAttribute("data-state", isActive ? "active" : "inactive");
-          if (isActive) activeTrigger = el;
-        });
+        const syncState = (targetValue: string | undefined) => {
+          triggers.forEach(trigger => {
+            const el = trigger as HTMLElement;
+            const val = el.dataset.value;
+            const isActive = val === targetValue;
+            el.setAttribute("data-state", isActive ? "active" : "inactive");
+            if (isActive) activeTrigger = el;
+          });
 
-        panels.forEach(panel => {
-          const val = (panel as HTMLElement).dataset.value;
-          if (val === containerValue) {
-            panel.removeAttribute("hidden");
-          } else {
-            panel.setAttribute("hidden", "until-found");
-          }
-        });
+          popoverItems.forEach(item => {
+            const el = item as HTMLElement;
+            const val = el.dataset.tabOverflowValue;
+            const check = el.querySelector('[data-name="check"]') || el.querySelector('svg');
+            if (val === targetValue) {
+              el.setAttribute("data-active", "true");
+              el.classList.add("bg-muted/80", "font-medium");
+            } else {
+              el.removeAttribute("data-active");
+              el.classList.remove("bg-muted/80", "font-medium");
+            }
+          });
 
-        // Initialize indicator position
+          panels.forEach(panel => {
+            const val = (panel as HTMLElement).dataset.value;
+            if (val === targetValue) {
+              panel.removeAttribute("hidden");
+            } else {
+              panel.setAttribute("hidden", "until-found");
+            }
+          });
+        };
+
+        syncState(containerValue);
+
         requestAnimationFrame(() => updateIndicator(activeTrigger));
 
         if (window.ResizeObserver && list) {
@@ -184,6 +327,8 @@ const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valu
             const trigger = container.querySelector(`[role=tab][data-value="${targetValue}"]`) as HTMLButtonElement | null;
             if (trigger) {
               trigger.click();
+            } else {
+              syncState(targetValue);
             }
           };
           panel.addEventListener("beforematch", onBeforeMatch);
@@ -195,24 +340,28 @@ const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valu
           const onClick = () => {
             if (trigger.disabled) return;
             const targetValue = trigger.dataset.value;
-
-            triggers.forEach(tNode => {
-              const t = tNode as HTMLButtonElement;
-              const isTarget = t.dataset.value === targetValue;
-              t.setAttribute("data-state", isTarget ? "active" : "inactive");
-              if (isTarget) updateIndicator(t);
-            });
-
-            panels.forEach(panel => {
-              if ((panel as HTMLElement).dataset.value === targetValue) {
-                panel.removeAttribute("hidden");
-              } else {
-                panel.setAttribute("hidden", "until-found");
-              }
-            });
+            syncState(targetValue);
+            updateIndicator(trigger);
           };
           trigger.addEventListener("click", onClick);
           clickCleanups.push(() => trigger.removeEventListener("click", onClick));
+        });
+
+        popoverItems.forEach(itemNode => {
+          const item = itemNode as HTMLButtonElement;
+          const onClick = () => {
+            const targetValue = item.dataset.tabOverflowValue;
+            syncState(targetValue);
+            const activeTrig = container.querySelector(`[role=tab][data-value="${targetValue}"]`) as HTMLElement | null;
+            updateIndicator(activeTrig);
+            // Hide popover after selection
+            const popover = item.closest('[popover]') as HTMLElement | null;
+            if (popover && 'hidePopover' in popover) {
+              (popover as any).hidePopover();
+            }
+          };
+          item.addEventListener("click", onClick);
+          clickCleanups.push(() => item.removeEventListener("click", onClick));
         });
 
         this.tabsCleanup = () => {
@@ -238,4 +387,3 @@ const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valu
     }
   }
 </script>
-

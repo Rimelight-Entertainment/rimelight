@@ -28,7 +28,11 @@ const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
       <div class={classes.container} data-slot="container">
         {slides ? (
           slides.map((slide) => (
-            <div class={classes.slide} data-slot="slide">
+            <div
+              class={`${classes.slide} rla-carousel-slide`}
+              data-slot="slide"
+              style="container-type: scroll-state; container-name: rla-slide;"
+            >
               <div class="relative w-full aspect-video">
                 {slide.imageSrc && <img src={slide.imageSrc} alt={slide.title || ""} class="w-full h-full object-cover rounded-lg" draggable="false" />}
                 {(slide.title || slide.description) && (
@@ -283,3 +287,39 @@ const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
     customElements.define('rla-carousel', RLACarousel);
   }
 </script>
+
+<style>
+  /*
+   * CSS scroll-state(snapped: x) — Chrome 133+
+   *
+   * Each slide is a scroll-state container. When the carousel uses
+   * scroll-snap (or the JS engine snaps to a slide), the browser marks
+   * the currently-snapped slide with snapped: x.
+   *
+   * Snapped slide  → full opacity + normal scale
+   * Off-screen slides → dimmed + slightly scaled down
+   *
+   * This is purely additive progressive enhancement. The JS engine
+   * (infinite-loop clones, pointer drag, autoplay) is unchanged.
+   * Browsers without scroll-state() support see all slides at full
+   * opacity, which matches the previous behaviour.
+   */
+  @container rla-slide scroll-state(snapped: x) {
+    .rla-carousel-slide {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  @container rla-slide not scroll-state(snapped: x) {
+    .rla-carousel-slide {
+      opacity: 0.7;
+      scale: 0.97;
+    }
+  }
+
+  /* Smooth transition between states */
+  .rla-carousel-slide {
+    transition: opacity 0.35s ease, scale 0.35s ease;
+  }
+</style>
