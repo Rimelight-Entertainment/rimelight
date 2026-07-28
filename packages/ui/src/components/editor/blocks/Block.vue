@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { inject } from "vue"
+import { inject, defineAsyncComponent } from "vue"
 import type { Block as BlockType } from "../types/blocks"
 import ParagraphBlockEditor from "./editor/ParagraphBlockEditor.vue"
-import SectionBlockEditor from "./editor/SectionBlockEditor.vue"
-import CalloutBlockEditor from "./editor/CalloutBlockEditor.vue"
 import ImageBlockEditor from "./editor/ImageBlockEditor.vue"
 import RLVButton from "../../button/RLVButton.vue"
+
+const SectionBlockEditor = defineAsyncComponent(() => import("./editor/SectionBlockEditor.vue"))
+const CalloutBlockEditor = defineAsyncComponent(() => import("./editor/CalloutBlockEditor.vue"))
 
 export interface BlockProps {
   block: BlockType

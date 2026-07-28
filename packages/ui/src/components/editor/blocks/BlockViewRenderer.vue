@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue"
 import ParagraphBlockRenderer from "./renderer/ParagraphBlockRenderer.vue"
-import SectionBlockRenderer from "./renderer/SectionBlockRenderer.vue"
-import CalloutBlockRenderer from "./renderer/CalloutBlockRenderer.vue"
 import ImageBlockRenderer from "./renderer/ImageBlockRenderer.vue"
+
+const SectionBlockRenderer = defineAsyncComponent(
+  () => import("./renderer/SectionBlockRenderer.vue")
+)
+const CalloutBlockRenderer = defineAsyncComponent(
+  () => import("./renderer/CalloutBlockRenderer.vue")
+)
 
 export interface BlockViewRendererProps {
   blocks: any[]

@@ -39,17 +39,25 @@
   },
   "email_verification": {
     "subject": "Verify your email",
-    "description": "Click the link below to verify your email address:"
+    "title": "Verify your email",
+    "description": "Click the link below to verify your email address:",
+    "button": "Verify Email",
+    "copy_link": "Or copy this link:"
   },
   "email_password_reset": {
     "subject": "Reset your password",
-    "description": "Click the link below to reset your password:"
+    "title": "Reset your password",
+    "description": "Click the link below to reset your password:",
+    "button": "Reset Password",
+    "ignore": "If you didn't request this, you can ignore this email."
   },
   "email_signup_notification": {
     "subject": "Welcome aboard",
+    "title": "Security Notice",
     "description": "Someone just signed up with your email address.",
     "sign_in_prefix": "If this was you, ",
     "sign_in": "sign in",
-    "sign_in_suffix": " to get started."
+    "sign_in_suffix": " to get started.",
+    "ignore": "If not, you can safely ignore this email."
   }
 }

@@ -12,7 +12,6 @@ import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro"
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
 
 const navItems = [
   { icon: "i-lucide-layout-dashboard", label: "Overview", href: "#", active: true, id: "overview" },
@@ -248,7 +247,7 @@ const settingsConfig = [
           <div class="rounded-lg border border-default bg-default p-6">
             <h3 class="font-semibold text-highlighted mb-4">Recent Activity Log</h3>
             <div class="space-y-3">
-              {overviewRecentActivity.map((activity, index) => (
+              {overviewRecentActivity.map((activity) => (
                 <div class="flex items-start gap-3">
                   <div class={"size-8 rounded-full flex items-center justify-center shrink-0 " + (
                     activity.type === "success" ? "bg-success/10" :
@@ -454,16 +453,16 @@ const settingsConfig = [
         <div class="rounded-lg border border-default bg-default p-6">
           <h3 class="font-semibold text-highlighted mb-6">Application Settings</h3>
           <div class="space-y-6">
-            {settingsConfig.map((section, index) => (
-              <div key={index} class="border border-default rounded-lg">
+            {settingsConfig.map((section) => (
+              <div class="border border-default rounded-lg">
                 <div class="flex items-center gap-3 px-4 py-3 bg-muted/30 border-b border-default rounded-t-lg">
                   <RLAIcon name={section.icon} class="size-5 text-muted" />
                   <h4 class="font-medium text-highlighted">{section.name}</h4>
                 </div>
                 <div class="p-4">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {section.items.map((item, itemIndex) => (
-                      <div key={itemIndex} class="flex items-center justify-between py-2">
+                    {section.items.map((item) => (
+                      <div class="flex items-center justify-between py-2">
                         <span class="text-sm text-default">{item}</span>
                         <RLAButton variant="ghost" size="sm">
                           Configure
