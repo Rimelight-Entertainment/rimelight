@@ -15,6 +15,8 @@ node_modules/
 
 # Outputs
 dist/
+public/og/
+packages/*/public/og/
 
 # Drizzle
 server/db/drizzle/*.json
