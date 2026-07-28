@@ -3,10 +3,6 @@ packages:
 configDependencies:
   "@pnpm/pacquet": 0.11.12
 linkWorkspacePackages: true
-supportedArchitectures:
-  cpu:
-    - current
-    - wasm32
 packageImportMethod: copy
 saveExact: true
 #minimumReleaseAge: 4320 # Minutes = 3 Days
