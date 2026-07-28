@@ -12,7 +12,6 @@ minimumReleaseAgeExclude:
   - brace-expansion
 overrides:
   esbuild: "0.28.1"
-  satteri: "0.8.1"
 allowBuilds:
   better-sqlite3: true
   esbuild: true
