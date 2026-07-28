@@ -21,7 +21,7 @@ export function addToast(toast: Toast) {
   if (toast.timeout !== 0) {
     setTimeout(() => {
       removeToast(id)
-    }, toast.timeout || 5000)
+    }, toast.timeout || 6000)
   }
 
   return newToast

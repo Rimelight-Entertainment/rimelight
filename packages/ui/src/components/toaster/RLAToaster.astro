@@ -1,7 +1,13 @@
 ---
 ---
 
-<div id="rla-toaster-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+<div
+  id="rla-toaster-container"
+  class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none"
+  aria-live="polite"
+  aria-atomic="false"
+  role="status"
+></div>
 
 <script>
   import { toasts, removeToast, addToast } from "../../stores/toast"
@@ -56,9 +62,30 @@
   document.addEventListener("astro:page-load", checkPendingToasts)
 
   const container = document.getElementById("rla-toaster-container")
+  const activeTimers = new Map<string, { timerId: ReturnType<typeof setTimeout> | null; startTime: number; remaining: number }>()
+
+  // Keyboard shortcut (Alt + T) to jump focus to active toasts for keyboard accessibility
+  window.addEventListener("keydown", (e) => {
+    if (e.altKey && (e.key === "t" || e.key === "T")) {
+      const firstCloseBtn = container?.querySelector<HTMLButtonElement>("button")
+      if (firstCloseBtn) {
+        e.preventDefault()
+        firstCloseBtn.focus()
+      }
+    }
+  })
 
   toasts.subscribe((list) => {
     if (!container) return
+    
+    // Cleanup old timers for removed toasts
+    for (const [id, timerData] of activeTimers.entries()) {
+      if (!list.some(t => t.id === id)) {
+        if (timerData.timerId) clearTimeout(timerData.timerId)
+        activeTimers.delete(id)
+      }
+    }
+
     container.innerHTML = ""
     list.forEach((t) => {
       const el = document.createElement("div")
@@ -67,20 +94,63 @@
         ? "bg-error-900 text-error-100 border-error-700"
         : "bg-neutral-900 text-white border-neutral-800 dark:bg-neutral-800"
       const iconSvg = isError
-        ? `<svg class="size-4 shrink-0 text-error-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>`
-        : `<svg class="size-4 shrink-0 text-success-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`
+        ? `<svg class="size-4 shrink-0 text-error-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>`
+        : `<svg class="size-4 shrink-0 text-success-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`
 
       el.className = `pointer-events-auto flex items-start gap-3 p-4 rounded-lg border shadow-xl transition-all duration-300 ${bgClass}`
+      el.setAttribute("role", isError ? "alert" : "status")
+      el.setAttribute("aria-live", isError ? "assertive" : "polite")
+      el.setAttribute("tabindex", "-1")
+
       el.innerHTML = `
         ${iconSvg}
         <div class="flex flex-col gap-0.5 flex-1 min-w-0">
           <div class="font-semibold text-sm">${t.title}</div>
           ${t.description ? `<div class="text-xs opacity-90">${t.description}</div>` : ""}
         </div>
-        <button type="button" class="text-neutral-400 hover:text-white p-0.5 rounded focus:outline-none" aria-label="Close">
-          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <button type="button" class="text-neutral-400 hover:text-white p-0.5 rounded focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Dismiss notification">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
       `
+
+      // Auto-dismiss management with pause-on-hover/focus
+      const duration = t.duration ?? 6000
+      if (duration > 0) {
+        let timerData = activeTimers.get(t.id)
+        if (!timerData) {
+          timerData = { timerId: null, startTime: Date.now(), remaining: duration }
+          activeTimers.set(t.id, timerData)
+        }
+
+        const startTimer = () => {
+          if (timerData.remaining > 0) {
+            timerData.startTime = Date.now()
+            timerData.timerId = setTimeout(() => {
+              removeToast(t.id)
+            }, timerData.remaining)
+          }
+        }
+
+        const pauseTimer = () => {
+          if (timerData.timerId !== null) {
+            clearTimeout(timerData.timerId)
+            timerData.timerId = null;
+            timerData.remaining -= Date.now() - timerData.startTime
+          }
+        }
+
+        startTimer()
+
+        el.addEventListener("mouseenter", pauseTimer)
+        el.addEventListener("mouseleave", startTimer)
+        el.addEventListener("focusin", pauseTimer)
+        el.addEventListener("focusout", (e) => {
+          if (!el.contains(e.relatedTarget as Node)) {
+            startTimer()
+          }
+        })
+      }
+
       el.querySelector("button")?.addEventListener("click", () => removeToast(t.id))
       container.appendChild(el)
     })

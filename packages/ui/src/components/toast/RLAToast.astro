@@ -14,7 +14,7 @@ const {
   description,
   variant = "default",
   actionLabel,
-  duration = 5000,
+  duration = 6000,
   color = "primary",
   ui: uiProp,
   class: className,
@@ -35,6 +35,7 @@ const variantIcons: Record<string, string> = {
 }
 
 const icon = variantIcons[variant] ?? variantIcons.default!
+const isError = variant === "error"
 ---
 
 <div
@@ -43,9 +44,10 @@ const icon = variantIcons[variant] ?? variantIcons.default!
   data-toast
   data-duration={duration}
   data-dismissable={dismissable.toString()}
-  role="alert"
-  aria-live="assertive"
+  role={isError ? "alert" : "status"}
+  aria-live={isError ? "assertive" : "polite"}
   aria-atomic="true"
+  tabindex="-1"
   {...rest}
 >
   {/* Icon */}
@@ -97,21 +99,48 @@ const icon = variantIcons[variant] ?? variantIcons.default!
 </div>
 
 <script>
-  document.querySelectorAll("[data-toast]").forEach(toast => {
+  document.querySelectorAll("[data-toast]").forEach(toastEl => {
+    const toast = toastEl as HTMLElement;
     const dismissable = toast.getAttribute("data-dismissable") !== "false";
     if (!dismissable) return;
 
     const close = toast.querySelector("[data-toast-close]");
-    const duration = parseInt((toast as HTMLElement).dataset.duration ?? "5000", 10);
+    const duration = parseInt(toast.dataset.duration ?? "6000", 10);
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+    let startTime = Date.now();
+    let remaining = duration;
 
     const dismiss = () => {
       toast.classList.add("opacity-0", "translate-y-2", "pointer-events-none");
       toast.addEventListener("transitionend", () => toast.remove(), { once: true });
     };
 
-    // Auto-dismiss
+    const startTimer = () => {
+      if (duration > 0 && remaining > 0) {
+        startTime = Date.now();
+        timerId = setTimeout(dismiss, remaining);
+      }
+    };
+
+    const pauseTimer = () => {
+      if (timerId !== null) {
+        clearTimeout(timerId);
+        timerId = null;
+        remaining -= Date.now() - startTime;
+      }
+    };
+
+    // Auto-dismiss with pause on hover & focus
     if (duration > 0) {
-      setTimeout(dismiss, duration);
+      startTimer();
+      toast.addEventListener("mouseenter", pauseTimer);
+      toast.addEventListener("mouseleave", startTimer);
+      toast.addEventListener("focusin", pauseTimer);
+      toast.addEventListener("focusout", (e) => {
+        if (!toast.contains(e.relatedTarget as Node)) {
+          startTimer();
+        }
+      });
     }
 
     // Manual close

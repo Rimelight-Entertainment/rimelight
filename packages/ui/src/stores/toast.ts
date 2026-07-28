@@ -5,18 +5,15 @@ export interface ToastItem {
   title: string
   description?: string
   variant?: "success" | "error" | "warning" | "info" | "default"
+  duration?: number
 }
 
 export const toasts = atom<ToastItem[]>([])
 
 export function addToast(toast: Omit<ToastItem, "id">) {
   const id = Math.random().toString(36).slice(2, 9)
-  const item: ToastItem = { id, ...toast }
+  const item: ToastItem = { duration: 6000, ...toast, id }
   toasts.set([...toasts.get(), item])
-
-  setTimeout(() => {
-    removeToast(id)
-  }, 4500)
 }
 
 export function removeToast(id: string) {
