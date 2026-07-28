@@ -64,10 +64,11 @@ const tabs = [
   { label: messages['sign-in_title'], path: `${localePrefix}/auth/sign-in` },
   { label: messages['sign-up_title'], path: `${localePrefix}/auth/sign-up` },
 ]
+const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || Astro.locals?.runtime?.env?.TURNSTILE_SITE_KEY || ""
 ---
 
 <AppLayout title={messages.meta_title} description={messages['sign-up_description']}>
   <AuthLayout tabs={tabs} currentPath={currentPath} backgroundMobile={bgMobile} backgroundDesktop={bgDesktop}>
-    <AuthSignUpForm messages={messages} />
+    <AuthSignUpForm messages={messages} turnstileSiteKey={turnstileSiteKey} />
   </AuthLayout>
 </AppLayout>

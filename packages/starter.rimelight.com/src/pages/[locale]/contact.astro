@@ -15,7 +15,7 @@ const messages = useI18n(Astro, "page_contact", {
   upload_form_description: "Share documents or images directly with us (PNG, JPEG, WEBP, or PDF up to 5 MB)."
 });
 
-const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "";
+const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || Astro.locals?.runtime?.env?.TURNSTILE_SITE_KEY || "";
 ---
 
 <AppLayout title={messages.title} description={messages.description}>

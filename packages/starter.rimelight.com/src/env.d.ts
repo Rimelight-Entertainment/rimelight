@@ -23,6 +23,8 @@ type ENV = {
   DB: any;
   BLOB: any;
   EMAIL: any;
+  TURNSTILE_SITE_KEY?: string;
+  TURNSTILE_SECRET_KEY?: string;
   ChatRoom: import("@cloudflare/workers-types").DurableObjectNamespace;
   MY_RATE_LIMITER: {
     limit: (options: { key: string }) => Promise<{ success: boolean }>;

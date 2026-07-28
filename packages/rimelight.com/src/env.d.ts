@@ -8,10 +8,19 @@ declare module "*.vue" {
   export default component
 }
 
+type ENV = {
+    DB?: any;
+    BLOB?: any;
+    EMAIL?: any;
+    TURNSTILE_SITE_KEY?: string;
+    TURNSTILE_SECRET_KEY?: string;
+}
+
 declare namespace App {
     interface Locals {
         user: import("better-auth").User | null;
         session: import("better-auth").Session | null;
+        runtime?: import("@astrojs/cloudflare").Runtime<ENV>;
     }
 }
 
