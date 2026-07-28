@@ -3,6 +3,7 @@ packages:
 configDependencies:
   "@pnpm/pacquet": 0.11.12
 linkWorkspacePackages: true
+packageImportMethod: copy
 saveExact: true
 #minimumReleaseAge: 4320 # Minutes = 3 Days
 minimumReleaseAgeExclude:
