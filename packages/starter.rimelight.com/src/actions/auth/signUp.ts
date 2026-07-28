@@ -1,5 +1,6 @@
 import { defineAction, ActionError } from "astro:actions"
 import { z } from "astro/zod"
+import { env } from "cloudflare:workers"
 import { throwActionAuthError } from "./utils"
 import { verifyTurnstile } from "@/lib/turnstile"
 
@@ -15,7 +16,6 @@ export const signUp = defineAction({
   handler: async (input, context) => {
     try {
       const token = input["cf-turnstile-response"]
-      const env = context.locals.runtime?.env
       const clientIP = context.request.headers.get("CF-Connecting-IP") || undefined
 
       const verification = await verifyTurnstile(token, env, clientIP)

@@ -1,5 +1,8 @@
 import { auth } from "./auth"
+import { contactActions } from "./contact"
 
 export const server = {
-  auth
+  auth,
+  contact: contactActions.contact,
+  upload: contactActions.upload
 }

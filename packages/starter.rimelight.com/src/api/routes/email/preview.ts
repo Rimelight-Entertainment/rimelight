@@ -55,6 +55,24 @@ api.post("/test", async (c) => {
         user: { email: recipient },
         locale
       })
+    } else if (body.template === "contact") {
+      const { sendEmail } = await import("@/auth/email")
+      const { renderContactEmail } = await import("@/auth/email/render")
+      const html = await renderContactEmail(
+        {
+          name: "Test User",
+          email: "test.user@example.com",
+          subject: "Test Contact Subject",
+          message: "This is a test message from the preview email tool."
+        },
+        locale
+      )
+      await sendEmail({
+        to: recipient,
+        subject: "[Preview Test] Contact Form Submission",
+        text: "Test contact message",
+        html
+      })
     } else {
       return c.json({ error: "Unknown email template." }, 400)
     }

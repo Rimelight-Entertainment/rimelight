@@ -31,5 +31,14 @@
     "form_password_placeholder": "••••••••",
     "form_remember_me_label": "Lembrar-me",
     "form_sign_in_button": "Fazer Login"
+  },
+  "page_contact": {
+    "title": "Fale Conosco",
+    "description": "Entre em contato com a equipe do site.",
+    "hero_title": "Entre em Contato",
+    "hero_description": "Tem dúvidas, feedback ou precisa de ajuda? Envie-nos uma mensagem diretamente.",
+    "contact_form_title": "Enviar uma Mensagem",
+    "upload_form_title": "Enviar um Arquivo",
+    "upload_form_description": "Compartilhe documentos ou imagens diretamente conosco (PNG, JPEG, WEBP ou PDF até 5 MB)."
   }
 }

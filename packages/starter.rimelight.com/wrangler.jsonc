@@ -87,6 +87,7 @@
     "CONSTRUCTION_AUTH": "false",
     "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
     "EMAIL_DOMAIN": "rimelight.com",
-    "EMAIL_TEST_RECIPIENT": "test@rimelight.com"
+    "EMAIL_TEST_RECIPIENT": "test@rimelight.com",
+    "CONTACT_OWNER_EMAIL": "owner@rimelight.com"
   }
 }
