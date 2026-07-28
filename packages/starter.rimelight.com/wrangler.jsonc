@@ -35,7 +35,8 @@
   "r2_buckets": [
     {
       "binding": "BLOB",
-      "bucket_name": "starter-dot-rimelight-dot-com"
+      "bucket_name": "starter-dot-rimelight-dot-com",
+      "remote": true
     }
   ],
   "kv_namespaces": [
@@ -49,7 +50,8 @@
       "binding": "DB",
       "database_name": "starter-dot-rimelight-dot-com_db",
       "database_id": "0ddfa4b5-bccb-498f-9adc-a0c24c45d4f1",
-      "migrations_dir": "./drizzle"
+      "migrations_dir": "./drizzle",
+      "remote": true
     }
   ],
   "durable_objects": {
