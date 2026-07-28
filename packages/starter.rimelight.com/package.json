@@ -44,7 +44,6 @@
     "drizzle-orm": "0.45.2",
     "hono": "4.12.32",
     "nanostores": "1.4.1",
-    "sharp": "0.35.3",
     "wrangler": "4.114.0"
   },
   "devDependencies": {
@@ -54,6 +53,8 @@
     "@iconify-json/logos": "1.2.11",
     "@iconify-json/lucide": "1.2.120",
     "@libsql/client": "0.17.4",
+    "@napi-rs/image": "1.14.0",
+    "@oxidized-image/astro": "1.0.0",
     "@resvg/resvg-js": "2.6.2",
     "@types/node": "26.1.1",
     "@unocss/eslint-plugin": "66.7.5",

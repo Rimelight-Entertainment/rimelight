@@ -9,6 +9,7 @@ import { sri } from "@rimelight/security"
 import { defineSecurity } from "@rimelight/security/config"
 import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
+import oxidizedImage from "@oxidized-image/astro"
 import { defineConfig, fontProviders, svgoOptimizer } from "astro/config"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import { extractAllMeta } from "./src/docs/extractAll"
@@ -179,6 +180,8 @@ export default defineConfig({
     }),
 
     sri(),
+
+    oxidizedImage(),
 
     localDocsIntegration()
   ]
