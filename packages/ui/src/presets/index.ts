@@ -525,13 +525,61 @@ ${lightDarkLines}
           --shiki-token-parameter: #ffab70;
           --shiki-token-punctuation: #e1e4e8;
         }
-        /* Re-declare color on semantic text elements so light-dark() re-evaluates
-           against each element's own inherited color-scheme. Without this, plain
-           text inherits a pre-computed color from body and ignores rl-dark/rl-light
-           wrappers. All rules are overridable by any utility class. */
-        p, h1, h2, h3, h4, h5, h6,
-        li, blockquote, figcaption, caption,
-        label, legend, dt, dd {
+
+        /* ── Container Style Query Property Registration ───────────────── */
+        @property --rl-contrast-color {
+          syntax: "<color>";
+          initial-value: white;
+          inherits: true;
+        }
+
+        /* ── Theme Container Detector & Sub-element Tinting ────────────── */
+        .rl-theme-container {
+          container-type: normal;
+          --rl-surface-effective: var(--rl-bg, var(--background));
+          --rl-contrast-color: contrast-color(var(--rl-surface-effective));
+          color: var(--rl-contrast-color);
+        }
+
+        .rl-theme-container > *,
+        .rl-theme-container :where(h1, h2, h3, h4, h5, h6, p, span, div, li, strong) {
+          color: inherit;
+        }
+
+        /* Dark background detected (contrast-color is white) -> Soft light subtext & subtle border */
+        @container style(--rl-contrast-color: white) {
+          .rl-theme-container .rl-subtext {
+            color: oklch(from var(--rl-surface-effective) 0.88 0.04 h) !important;
+          }
+          .rl-theme-container .rl-border-subtle {
+            border-color: oklch(from var(--rl-surface-effective) 0.45 0.08 h / 0.6) !important;
+          }
+        }
+
+        /* Light background detected (contrast-color is black) -> Deep hue-tinted subtext & soft border */
+        @container style(--rl-contrast-color: black) {
+          .rl-theme-container .rl-subtext {
+            color: oklch(from var(--rl-surface-effective) 0.32 0.07 h) !important;
+          }
+          .rl-theme-container .rl-border-subtle {
+            border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6) !important;
+          }
+        }
+
+        /* ── Adaptive Elevation (Shadow in Light, Glowing OKLCH border in Dark) ── */
+        .shadow-adaptive, .rl-elevation {
+          box-shadow:
+            /* Crisp drop shadow in light mode */
+            0 2px 8px light-dark(rgba(0, 0, 0, 0.12), transparent),
+            0 12px 32px light-dark(rgba(0, 0, 0, 0.08), transparent),
+            /* Vivid neon glowing border in dark mode */
+            inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)),
+            0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)),
+            0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8));
+        }
+
+        /* Re-declare color on semantic text elements using :where() so utility/inherited colors take precedence */
+        :where(p, h1, h2, h3, h4, h5, h6, li, blockquote, figcaption, caption, label, legend, dt, dd) {
           color: var(--foreground);
         }
         .dark {

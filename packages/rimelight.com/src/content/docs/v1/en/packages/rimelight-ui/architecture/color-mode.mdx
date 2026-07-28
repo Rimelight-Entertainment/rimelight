@@ -101,6 +101,46 @@ The `theme` prop applies `rl-dark` or `rl-light` to the component's root element
 
 When `rl-dark` is on a wrapper, all descendant components inherit `color-scheme: dark` and render in dark mode automatically — you do **not** need individual `theme` props on nested components.
 
+## Adaptive Elevation
+
+In light mode, surfaces rely on multi-layered drop shadows to express depth. In dark mode, drop shadows become invisible against dark backgrounds. Rimelight UI uses native `light-dark()` elevation swapping via the `.shadow-adaptive` (or `.rl-elevation`) utility class:
+
+```html
+<div class="shadow-adaptive bg-card rounded-2xl p-6">
+  <!-- Multi-layered drop shadows in light mode -->
+  <!-- Ambient OKLCH surface-glow border in dark mode -->
+</div>
+```
+
+- **Light Scheme**: Multi-layered soft drop shadows render cleanly; dark glowing border layers remain `transparent`.
+- **Dark Scheme**: Shadows turn `transparent`, activating a vibrant, neon glowing border mathematically derived from `oklch(from var(--rl-bg) ...)`.
+
+## Automatic Contrast & Container Style Queries
+
+Rimelight UI supports zero-JS, WCAG-compliant dynamic text contrast and sub-element palette branching via CSS `contrast-color()` and container style queries.
+
+### Automatic Contrast (`contrast-color()`)
+
+Containers using `.rl-theme-container` calculate readable text colors automatically based on their surface background (`--rl-bg` or `--background`):
+
+```html
+<!-- Custom brand surface background -->
+<div
+  class="rl-theme-container p-6 rounded-2xl"
+  style="--rl-bg: #2dd4bf; background-color: var(--rl-bg);"
+>
+  <h3>Dynamic Title</h3>
+  <p class="rl-subtext text-xs">Subtext automatically tinted to surface hue</p>
+</div>
+```
+
+### Style Query Palette Branching (`@container style()`)
+
+Rather than snapping starkly to pure black or pure white, `.rl-theme-container` registers `--rl-contrast-color` as a lightness detector. Container style queries inspect this detector to automatically compute hue-tinted secondary text (`.rl-subtext`) and borders (`.rl-border-subtle`) using OKLCH relative color syntax:
+
+- **Dark Surfaces** (`--rl-contrast-color: white`): Text resolves to clean white; `.rl-subtext` tints to soft, light hues; `.rl-border-subtle` tints to ambient glow accents.
+- **Light Surfaces** (`--rl-contrast-color: black`): Text resolves to high-contrast dark tones; `.rl-subtext` tints to rich, deep hues matching the surface's tint.
+
 ## System Preference
 
 If no `colorScheme` is set on `<html>`, the browser resolves `light-dark()` using the user's OS preference (`prefers-color-scheme` media query). The `:root { color-scheme: light dark }` declaration enables this behavior.
