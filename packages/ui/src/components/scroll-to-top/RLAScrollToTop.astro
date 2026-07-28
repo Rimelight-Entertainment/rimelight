@@ -200,24 +200,20 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
   /*
    * CSS scroll-state path: show the button whenever the page IS scrollable
    * downward (i.e., user has scrolled past the top). Hide it when already at top.
-   *
-   * @container scroll-state(scrollable: top) means "the container CAN still
-   * scroll toward the top" — so we hide the button in that state because
-   * the user hasn't scrolled yet.
    */
-  @container rla-page-scroll scroll-state(not scrollable: top) {
-    .rla-scroll-to-top-inner {
-      /* Page has been scrolled — show the button */
-      opacity: 1;
-      pointer-events: auto;
+  @supports (container-type: scroll-state) {
+    @container rla-page-scroll scroll-state(not scrollable: top) {
+      .rla-scroll-to-top-inner {
+        opacity: 1;
+        pointer-events: auto;
+      }
     }
-  }
 
-  @container rla-page-scroll scroll-state(scrollable: top) {
-    .rla-scroll-to-top-inner {
-      /* Still at the top — keep it hidden */
-      opacity: 0;
-      pointer-events: none;
+    @container rla-page-scroll scroll-state(scrollable: top) {
+      .rla-scroll-to-top-inner {
+        opacity: 0;
+        pointer-events: none;
+      }
     }
   }
 

@@ -6,15 +6,6 @@ import SignupNotificationEmail from "@/components/email/SignupNotificationEmail.
 import ContactEmail from "@/components/email/ContactEmail.astro"
 import { getEmailMessages } from "@/auth/email/messages"
 
-export function getStaticPaths() {
-  return [
-    { params: { template: "verification" } },
-    { params: { template: "password-reset" } },
-    { params: { template: "signup-notification" } },
-    { params: { template: "contact" } }
-  ]
-}
-
 const { template } = Astro.params
 const locale = Astro.currentLocale ?? "en"
 const messages = getEmailMessages(locale)
