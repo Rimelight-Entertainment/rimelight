@@ -12,6 +12,7 @@ minimumReleaseAgeExclude:
   - brace-expansion
 overrides:
   esbuild: "0.28.1"
+  vite: "npm:@voidzero-dev/vite-plus-core@0.2.6"
 allowBuilds:
   better-sqlite3: true
   esbuild: true
