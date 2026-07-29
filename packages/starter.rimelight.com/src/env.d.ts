@@ -1,8 +1,7 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
+// Enables importing `.astro` components inside `.ts` files (e.g., email rendering)
 declare module "*.astro" {
-  import type { AstroComponentFactory } from "astro/runtime/server";
-  const AstroComponent: AstroComponentFactory;
-  export default AstroComponent;
+  export default {} as import("astro/runtime/server").AstroComponentFactory;
 }
