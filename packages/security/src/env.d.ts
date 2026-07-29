@@ -1,5 +1,6 @@
-/// <reference types="astro/client" />
+/// <reference path="../.astro/types.d.ts" />
 
-declare module "virtual:sri-manifest" {
-  export const manifest: Record<string, string>
+// Enables importing .astro components inside .ts files (e.g., email rendering)
+declare module "*.astro" {
+  export default {} as import("astro/runtime/server").AstroComponentFactory;
 }
