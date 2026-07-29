@@ -5,7 +5,7 @@ export const siteConfig: SiteConfig = {
   name: "Rimelight Starter",
   description: "Welcome to my website!",
   url: "https://starter.rimelight.com",
-  ogImage: "/og/placeholder.webp",
+  ogImage: "https://cdn.rimelight.com/Images/og-placeholder.webp",
   author: "Rimelight",
   email: "",
   branding: {
@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
   },
   seo: {
     titleTemplate: "%s | Rimelight Starter",
-    ogImageFallback: "/og/placeholder.webp",
+    ogImageFallback: "https://cdn.rimelight.com/Images/og-placeholder.webp",
     maxDescriptionLength: 160
   }
 }
