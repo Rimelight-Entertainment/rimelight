@@ -16,17 +16,13 @@ interface ChatMessage {
   timestamp: number
 }
 
-type ENV = Env & {
-  ChatRoom: DurableObjectNamespace
-}
-
-class ChatRoom extends DurableObject<ENV> {
+class ChatRoom extends DurableObject<Env> {
   // Map of WebSocket -> session data
   // When the DO hibernates, this gets reconstructed in the constructor
   private sessions: Map<WebSocket, SessionAttachment>
   private messageHistory: ChatMessage[]
 
-  constructor(ctx: DurableObjectState, env: ENV) {
+  constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env)
 
     this.sessions = new Map()
@@ -258,7 +254,7 @@ class ChatRoom extends DurableObject<ENV> {
   }
 }
 
-class Document extends DurableObject<ENV> {
+class Document extends DurableObject<Env> {
   override async fetch(_request: Request): Promise<Response> {
     return new Response("Obsolete Document DO", { status: 410 })
   }
@@ -300,4 +296,4 @@ export default {
     // Pass the request directly to the Astro handler
     return handle(request, env, ctx)
   }
-} satisfies ExportedHandler<ENV>
+} satisfies ExportedHandler<Env>
