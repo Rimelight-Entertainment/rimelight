@@ -4,6 +4,7 @@ import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection
 import RLACard from "@rimelight/ui/components/card/RLACard.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { useI18n } from "@rimelight/i18n";
+import { env } from "cloudflare:workers";
 
 const messages = useI18n(Astro, "page_contact", {
   title: "Contact Us",
@@ -15,7 +16,8 @@ const messages = useI18n(Astro, "page_contact", {
   upload_form_description: "Share documents or images directly with us (PNG, JPEG, WEBP, or PDF up to 5 MB)."
 });
 
-const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || Astro.locals?.runtime?.env?.TURNSTILE_SITE_KEY || "";
+
+const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SITE_KEY || "";
 ---
 
 <AppLayout title={messages.title} description={messages.description}>
@@ -97,7 +99,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || Astro.locals?.run
               label="Send Message"
               class="mt-2"
             />
-            
+
             <p id="contact-status" class="text-sm min-h-[1.5rem] mt-2 font-medium" role="status"></p>
           </form>
         </div>
