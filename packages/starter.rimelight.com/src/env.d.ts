@@ -14,7 +14,3 @@ declare namespace App {
     runtime: import("@astrojs/cloudflare").Runtime<Env>;
   }
 }
-
-declare var DB: D1Database | undefined;
-declare var BLOB: R2Bucket | undefined;
-declare var ChatRoom: DurableObjectNamespace<import("./worker").ChatRoom> | undefined;

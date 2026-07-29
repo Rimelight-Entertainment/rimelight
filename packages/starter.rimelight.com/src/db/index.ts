@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers"
 import { drizzle } from "drizzle-orm/d1"
 import type { DrizzleD1Database } from "drizzle-orm/d1"
 import * as schema from "@/db/schema"
@@ -15,7 +16,7 @@ function createDbProxy(): DrizzleD1Database<typeof schema> {
     get(_target, prop) {
       if (prop === "then") return undefined
 
-      const d1Binding = globalThis.DB
+      const d1Binding = env?.DB
       if (!d1Binding) {
         throw new Error("[db] DB binding is not set. Bind the D1 database to the environment.")
       }
