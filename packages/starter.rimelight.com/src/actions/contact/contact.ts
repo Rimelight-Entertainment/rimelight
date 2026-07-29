@@ -9,7 +9,7 @@ export const contact = defineAction({
   accept: "form",
   input: z.object({
     "name": z.string().trim().min(1, "Please enter your name."),
-    "email": z.string().trim().email("Please enter a valid email address."),
+    "email": z.string().trim().email({ message: "Please enter a valid email address." }),
     "subject": z.string().trim().optional(),
     "message": z.string().trim().min(10, "Your message should be at least 10 characters."),
     "cf-turnstile-response": z.string().optional()
