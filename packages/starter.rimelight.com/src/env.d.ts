@@ -15,10 +15,6 @@ declare namespace App {
   }
 }
 
-declare var DB: any;
-declare var BLOB: any;
-declare var ChatRoom: any;
-
-declare module "cloudflare:workers" {
-  export const env: Env;
-}
+declare var DB: D1Database | undefined;
+declare var BLOB: R2Bucket | undefined;
+declare var ChatRoom: DurableObjectNamespace<import("./worker").ChatRoom> | undefined;
