@@ -3,12 +3,21 @@ import { defineConfig } from "vite-plus"
 export default defineConfig({
   run: {
     tasks: {
-      typegen: {
+      "check:vp": {
+        command: "vp check --fix"
+      },
+      "generate:block-maps": {
+        command: "node scripts/generate-block-maps.ts"
+      },
+      "typegen": {
         command: "wrangler types",
         input: [{ auto: true }, "!worker-configuration.d.ts"]
       },
-      check: {
-        dependsOn: ["typegen"],
+      "sync": {
+        command: "astro sync"
+      },
+      "check": {
+        dependsOn: ["check:vp", "generate:block-maps", "typegen", "sync"],
         command: "astro check",
         input: [{ auto: true }, "!.wrangler/**", "!.astro/**"]
       }
