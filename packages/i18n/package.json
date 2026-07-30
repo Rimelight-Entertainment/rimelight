@@ -15,9 +15,6 @@
     "./types": "./src/types.ts",
     "./utils": "./src/utils.ts"
   },
-  "scripts": {
-    "check": "node -e \"process.exit(0)\""
-  },
   "dependencies": {
     "@nanostores/i18n": "1.3.3",
     "nanostores": "1.4.1"
