@@ -6,15 +6,7 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { useI18n } from "@rimelight/i18n";
 import { env } from "cloudflare:workers";
 
-const messages = useI18n(Astro, "page_contact", {
-  title: "Contact Us",
-  description: "Get in touch with the website team.",
-  hero_title: "Get in Touch",
-  hero_description: "Have questions, feedback, or need help? Send us a message directly.",
-  contact_form_title: "Send a Message",
-  upload_form_title: "Upload a File",
-  upload_form_description: "Share documents or images directly with us (PNG, JPEG, WEBP, or PDF up to 5 MB)."
-});
+const messages = useI18n("page_contact");
 
 
 const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SITE_KEY || "";

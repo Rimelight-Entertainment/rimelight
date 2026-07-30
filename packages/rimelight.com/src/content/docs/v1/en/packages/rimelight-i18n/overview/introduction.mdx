@@ -9,20 +9,20 @@ description: "@rimelight/i18n is a lightweight internationalization package for 
 
 The package handles three concerns:
 
-- **Translation lookup** — synchronous (`useI18n`) and asynchronous (`useI18nAsync`) APIs with automatic fallback to inline defaults
-- **Locale state** — a reactive `currentLocale` store that stays in sync with the request locale
+- **Translation lookup** — clean dot-notation `t("component.key")` and component map `useI18n("component")` APIs relying directly on your locale JSON files
+- **Locale state** — automatic request-synced locale store and `getLocale()` helper
 - **URL generation** — locale-aware `getRelativeLocaleUrl` with automatic or explicit locale prefixing
 
 At build time, the package can optionally seed a KV store with translations for server-side dynamic loading.
 
 ## Features
 
-- **Reactive** — translations update automatically when the locale changes
-- **SSR-first** — works out of the box with Astro's server-side rendering
-- **Fallback-safe** — every `useI18n` call includes inline defaults, so missing JSON keys never cause blank text
-- **Dynamic loader** — optional async translation loader for KV-backed or API-driven locales
-- **Zero-runtime CLI** — no code generation step; translation JSON files are the source of truth
-- **Editor autocomplete** — type declarations are injected automatically for virtual modules
+- **Reactive & Lightweight** — powered by `@nanostores/i18n` with zero unnecessary boilerplate
+- **Direct String Lookups** — clean `t("component.key", { params })` API with variable interpolation
+- **No Inline Duplication** — rely strictly on `src/translations/*.json` files without re-declaring defaults in components
+- **SSR & Region Fallbacks** — smart fallback resolution (`pt-BR` → `pt` → `en`)
+- **Dynamic Loader** — optional async loader for KV-backed or API-driven locales
+- **Editor Autocomplete** — type declarations automatically injected for virtual modules
 
 ## How it works
 

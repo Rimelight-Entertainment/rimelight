@@ -1,0 +1,53 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { useI18n, t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+
+// 1. Get component message map from en.json without passing inline object or Astro
+const pageTestMessages = useI18n("page_test");
+
+// 2. Direct string key lookups using t() with parameter interpolation
+const titleDirect = t("page_test.title");
+const descriptionDirect = t("page_test.description");
+const welcomeMessage = t("page_test.welcome", { name: "Developer" });
+
+const testLinks = [
+  {
+    label: "Switch to English",
+    href: getRelativeLocaleUrl("en", "/i18n-test"),
+    color: "primary",
+    variant: "solid",
+  },
+  {
+    label: "Alternar para Português",
+    href: getRelativeLocaleUrl("pt", "/i18n-test"),
+    color: "neutral",
+    variant: "outline",
+  }
+];
+---
+
+<AppLayout title={titleDirect} description={descriptionDirect}>
+  <RLAPageSection
+    variant="hero"
+    title={titleDirect}
+    description={descriptionDirect}
+    links={testLinks}
+  >
+    <div class="flex flex-col gap-md p-lg border border-border rounded-xl bg-card">
+      <h3 class="text-xl font-semibold text-foreground">Verification Tests</h3>
+      <ul class="list-disc pl-lg space-y-sm text-muted-foreground">
+        <li>
+          <strong>Direct Key (t):</strong> <span>{welcomeMessage}</span>
+        </li>
+        <li>
+          <strong>Component Map (useI18n):</strong> <span>{pageTestMessages.title}</span>
+        </li>
+      </ul>
+      <div class="mt-md">
+        <RLAButton label="Back Home" href={getRelativeLocaleUrl("/")} variant="link" />
+      </div>
+    </div>
+  </RLAPageSection>
+</AppLayout>

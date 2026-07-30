@@ -6,7 +6,33 @@
     "links_about_label": "About",
     "links_components_label": "Components",
     "links_tests_label": "Tests",
-    "left-links_chat_label": "Chat"
+    "left-links_chat_label": "Chat",
+    "left-links_home_label": "Home",
+    "left-links_features_label": "Features",
+    "link-groups_center_foundations_label": "Foundation",
+    "link-groups_center_foundations_description": "Design tokens, color palettes, fluid typography.",
+    "link-groups_center_foundations_links_tokens": "Design Tokens",
+    "link-groups_center_foundations_links_colors": "Color Palettes",
+    "link-groups_center_foundations_links_typography": "Fluid Typography",
+    "link-groups_center_components_label": "Components",
+    "link-groups_center_components_description": "Astro and Vue library elements.",
+    "link-groups_center_components_links_astro": "Astro Elements",
+    "link-groups_center_components_links_vue": "Vue Components",
+    "link-groups_center_components_links_integrations": "Integrations",
+    "link-groups_center_integrations_label": "Integrations",
+    "link-groups_center_integrations_description": "Vite hooks, PostCSS, Lunaria, Knip.",
+    "link-groups_right_resources_label": "Resources",
+    "link-groups_right_resources_links_docs": "Documentation",
+    "link-groups_right_resources_links_github": "GitHub Repository",
+    "left-links_about_label": "About",
+    "left-links_blog_label": "Blog",
+    "left-links_docs_label": "Docs",
+    "left-links_dashboard_label": "Dashboard",
+    "actions_sign-up": "Sign Up",
+    "actions_sign-in": "Sign In",
+    "user_status_placeholder": "Set a custom status...",
+    "user_dropdown_dashboard": "Dashboard",
+    "user_dropdown_sign-out": "Sign Out"
   },
   "cookie_notice": {
     "title": "Cookie Notice",
@@ -17,7 +43,28 @@
     "deny_all": "Deny all"
   },
   "app_footer": {
-    "links_legal_cookie-policy": "Cookie Policy"
+    "links_resources_label": "Resources",
+    "links_resources_branding": "Branding",
+    "links_legal_label": "Legal",
+    "links_legal_privacy-policy": "Privacy Policy",
+    "links_legal_cookie-policy": "Cookie Policy",
+    "links_legal_other-documents": "Other Documents"
+  },
+  "page_about": {
+    "title": "About Rimelight",
+    "description": "Learn about Rimelight Entertainment and our starter template.",
+    "hero_title": "Rimelight Entertainment",
+    "hero_description": "We craft beautiful, modern, high-performance web experiences designed to scale and empower developers.",
+    "section_values_title": "Our Core Principles",
+    "section_values_description": "The ideas that drive how we build our templates and application frameworks.",
+    "value_dx_title": "Developer Experience",
+    "value_dx_description": "We believe tooling should be fast, seamless, and intuitive, getting out of your way so you can create.",
+    "value_design_title": "Design Excellence",
+    "value_design_description": "Aesthetics matter. Our components are crafted with precision, rich styling, and premium interactive details.",
+    "value_performance_title": "Built to Scale",
+    "value_performance_description": "Performance isn't an afterthought. Every line of code is optimized for lightning-fast speeds and core web vitals.",
+    "section_about_template_title": "About The Starter",
+    "section_about_template_description": "This is a unified starter template designed to bundle all our core UI elements, auth integration, localization, and robust database setups in a single place. Rather than maintaining dozens of fragments, we build one powerful base—allowing you to easily disable what you don't need."
   },
   "page_construction": {
     "meta_title": "Under Construction",
@@ -68,5 +115,25 @@
     "contact_form_title": "Send a Message",
     "upload_form_title": "Upload a File",
     "upload_form_description": "Share documents or images directly with us (PNG, JPEG, WEBP, or PDF up to 5 MB)."
+  },
+  "page_home": {
+    "section_hero_title": "Rimelight Starter Template",
+    "section_hero_description": "Look around, test, and play with some of our interactive technologies.",
+    "section_hero_link_github_label": "View on GitHub",
+    "section_hero_link_use-template_label": "Use Template",
+    "section_features_title": "One template for all your needs.",
+    "section_features_description": "We only maintain a single template including all features. Strip out what you don't need (or hide it to keep the option open) instead of browsing a multitude of options.",
+    "section_posts_title": "Latest Posts",
+    "section_posts_description": "Read the latest updates to our projects.",
+    "section_posts_view_all": "View All Posts",
+    "section_cta_title": "Wish to join us?",
+    "section_cta_description": "Explore our latest projects and get in touch.",
+    "section_cta_start": "Get Started",
+    "section_cta_contribute": "Join Us"
+  },
+  "page_test": {
+    "title": "i18n Simplification Test",
+    "description": "Demonstrating clean translation lookup with t() and useI18n() without inline boilerplate.",
+    "welcome": "Welcome {name}! Direct string lookup works seamlessly."
   }
 }

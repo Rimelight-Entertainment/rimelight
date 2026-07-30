@@ -40,5 +40,10 @@
     "contact_form_title": "Enviar uma Mensagem",
     "upload_form_title": "Enviar um Arquivo",
     "upload_form_description": "Compartilhe documentos ou imagens diretamente conosco (PNG, JPEG, WEBP ou PDF até 5 MB)."
+  },
+  "page_test": {
+    "title": "Teste de Simplificação i18n",
+    "description": "Demonstrando busca limpa de traduções com t() e useI18n() sem código repetitivo.",
+    "welcome": "Bem-vindo(a) {name}! A busca direta de texto funciona perfeitamente."
   }
 }

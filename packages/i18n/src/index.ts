@@ -3,6 +3,7 @@ import type { ComponentsJSON, KVNamespaceBinding } from "./types"
 import {
   useI18n as baseUseI18n,
   useI18nAsync as baseUseI18nAsync,
+  t,
   currentLocale,
   useFormat,
   clearCache,
@@ -11,47 +12,69 @@ import {
 } from "@rimelight/i18n:runtime"
 import type { Translations } from "@nanostores/i18n"
 
-export { currentLocale, useFormat, clearCache, getI18nInstance, getFormatterInstance }
+export { t, currentLocale, useFormat, clearCache, getI18nInstance, getFormatterInstance }
 
+import type { ComponentMessages } from "./runtime"
+
+export type { ComponentMessages }
+
+export function useI18n(componentName: string): ComponentMessages
 export function useI18n<Body extends Translations>(
   componentName: string,
   baseTranslations: Body
-): Body
+): ComponentMessages & Body
+export function useI18n(
+  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
+  componentName: string
+): ComponentMessages
 export function useI18n<Body extends Translations>(
-  astro: { currentLocale?: string | undefined } | undefined | null,
+  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
   componentName: string,
   baseTranslations: Body
-): Body
-export function useI18n(arg1: any, arg2: any, arg3?: any): any {
+): ComponentMessages & Body
+export function useI18n(arg1: any, arg2?: any, arg3?: any): any {
   if (typeof arg1 === "string") {
     return baseUseI18n(arg1, arg2)
   } else {
-    const activeLocale = arg1?.currentLocale ?? "en"
-    currentLocale.set(activeLocale)
+    const locale = arg1?.currentLocale || arg1?.params?.locale
+    if (locale) {
+      currentLocale.set(locale)
+    }
     return baseUseI18n(arg2, arg3)
   }
 }
 
+export function useI18nAsync(componentName: string): Promise<Record<string, string>>
 export function useI18nAsync<Body extends Translations>(
   componentName: string,
   baseTranslations: Body
-): Promise<Body>
+): Promise<Record<string, string> & Body>
+export function useI18nAsync(
+  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
+  componentName: string
+): Promise<Record<string, string>>
 export function useI18nAsync<Body extends Translations>(
-  astro: { currentLocale?: string | undefined } | undefined | null,
+  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
   componentName: string,
   baseTranslations: Body
-): Promise<Body>
-export function useI18nAsync(arg1: any, arg2: any, arg3?: any): any {
+): Promise<Record<string, string> & Body>
+export function useI18nAsync(arg1: any, arg2?: any, arg3?: any): any {
   if (typeof arg1 === "string") {
     return baseUseI18nAsync(arg1, arg2)
   } else {
-    const activeLocale = arg1?.currentLocale ?? "en"
-    currentLocale.set(activeLocale)
+    const locale = arg1?.currentLocale || arg1?.params?.locale
+    if (locale) {
+      currentLocale.set(locale)
+    }
     return baseUseI18nAsync(arg2, arg3)
   }
 }
 
 import { getRelativeLocaleUrl as astroGetRelativeLocaleUrl } from "astro:i18n"
+
+export function getLocale(): string {
+  return currentLocale.get() || "en"
+}
 
 export function getRelativeLocaleUrl(path: string): string
 export function getRelativeLocaleUrl(locale: string, path: string): string
@@ -59,7 +82,7 @@ export function getRelativeLocaleUrl(arg1: string, arg2?: string): string {
   if (arg2 !== undefined) {
     return astroGetRelativeLocaleUrl(arg1, arg2)
   } else {
-    const locale = currentLocale.get() || "en"
+    const locale = getLocale()
     return astroGetRelativeLocaleUrl(locale, arg1)
   }
 }

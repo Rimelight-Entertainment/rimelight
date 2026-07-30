@@ -83,18 +83,21 @@ To use `@rimelight/i18n` in an Astro project, install the package, register the 
   <li>
     **Use translations in pages**
 
-    Import `useI18n` from `@rimelight/i18n` and call it with inline fallbacks:
+    Import `t` or `useI18n` from `@rimelight/i18n`:
 
     ```astro
     ---
-    import { useI18n } from "@rimelight/i18n"
+    import { t, useI18n } from "@rimelight/i18n"
 
-    const messages = useI18n(Astro, "page_home", {
-      greeting: "Hello, world!"
-    })
+    // Direct key lookup
+    const title = t("page_home.title")
+
+    // Or component map lookup
+    const m = useI18n("page_home")
     ---
 
-    <h1>{messages.greeting}</h1>
+    <h1>{t("page_home.title")}</h1>
+    <p>{m.description}</p>
     ```
 
   </li>

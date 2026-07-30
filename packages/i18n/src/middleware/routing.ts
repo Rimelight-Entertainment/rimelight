@@ -1,4 +1,5 @@
 import { locales, defaultLocale } from "virtual:rimelight-i18n-config"
+import { currentLocale } from "../runtime"
 
 const SUPPORTED_LOCALES = new Set(locales)
 const DEFAULT_LOCALE = defaultLocale
@@ -41,6 +42,17 @@ export const i18n = async (context: any, next: any) => {
   const url = new URL(context.request.url)
   const pathname = url.pathname
 
+  // Extract active locale from request context
+  const paramLocale = context.params?.locale
+  const firstSegment = pathname.split("/").find(Boolean)
+  const activeLocale =
+    (paramLocale && SUPPORTED_LOCALES.has(paramLocale) ? paramLocale : null) ||
+    (firstSegment && SUPPORTED_LOCALES.has(firstSegment) ? firstSegment : null) ||
+    context.currentLocale ||
+    DEFAULT_LOCALE
+
+  currentLocale.set(activeLocale)
+
   // Only handle GET/HEAD requests
   if (context.request.method !== "GET" && context.request.method !== "HEAD") {
     return next()
@@ -52,8 +64,6 @@ export const i18n = async (context: any, next: any) => {
   }
 
   // Check if pathname starts with a supported locale prefix
-  const firstSegment = pathname.split("/").find(Boolean)
-
   if (firstSegment && SUPPORTED_LOCALES.has(firstSegment)) {
     return next()
   }
@@ -61,6 +71,7 @@ export const i18n = async (context: any, next: any) => {
   // Redirect to the preferred locale
   const acceptLanguage = context.request.headers.get("accept-language")
   const locale = getPreferredLocale(acceptLanguage)
+  currentLocale.set(locale)
   const targetPath = `/${locale}${pathname}${url.search}`
 
   return context.redirect(targetPath, 302)

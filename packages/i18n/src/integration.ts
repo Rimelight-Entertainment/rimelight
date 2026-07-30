@@ -15,11 +15,11 @@ export function rimelightI18n(options?: RimelightI18nOptions): AstroIntegration[
   const kvBinding = options?.kvBinding ?? "TRANSLATIONS_KV"
   const translationLoader = options?.translationLoader
 
-  // Normalise locale keys: "pt" → "pt-br" for nanostores compatibility
+  // Normalise translations passed in options
   const normalisedTranslations: Record<string, any> = {}
   if (translations) {
     for (const [locale, val] of Object.entries(translations)) {
-      normalisedTranslations[locale === "pt" ? "pt-br" : locale] = val
+      normalisedTranslations[locale] = val
     }
   }
 
@@ -49,7 +49,7 @@ export function rimelightI18n(options?: RimelightI18nOptions): AstroIntegration[
         const defaultLocale = config.i18n?.defaultLocale ?? "en"
 
         const virtualModuleContent = `\
-import { initializeI18n, useFormat, useI18n, useI18nAsync,
+import { initializeI18n, useFormat, useI18n, useI18nAsync, t,
          currentLocale, getI18nInstance, getFormatterInstance, clearCache }
   from ${JSON.stringify(runtimeSpecifier)};
 ${loaderImport}
@@ -59,7 +59,7 @@ initializeI18n({
   translations: ${JSON.stringify(normalisedTranslations)}${loaderOption}
 });
 
-export { useFormat, useI18n, useI18nAsync, currentLocale,
+export { useFormat, useI18n, useI18nAsync, t, currentLocale,
          getI18nInstance, getFormatterInstance, clearCache };
 `
 
@@ -124,8 +124,14 @@ declare module "@rimelight/i18n:runtime" {
   export const currentLocale: import('nanostores').PreinitializedWritableAtom<string> & object;
   export declare function initializeI18n(options: import('@rimelight/i18n/runtime').InitializeI18nOptions): void;
   export declare function useFormat(): import('@nanostores/i18n').Formatter;
-  export declare function useI18n<Body extends Translations>(componentName: string, baseTranslations: Body): Body;
-  export declare function useI18nAsync<Body extends Translations>(componentName: string, baseTranslations: Body): Promise<Body>;
+  export type ComponentMessages = Record<string, string>;
+  export declare function useI18n(componentName: string): ComponentMessages;
+  export declare function useI18n<Body extends Translations>(componentName: string, baseTranslations: Body): ComponentMessages & Body;
+  export declare function useI18nAsync(componentName: string): Promise<Record<string, string>>;
+  export declare function useI18nAsync<Body extends Translations>(componentName: string, baseTranslations: Body): Promise<Record<string, string> & Body>;
+  export declare function t(key: string, params?: Record<string, any>): string;
+  export declare function t(astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null, key: string, params?: Record<string, any>): string;
+  export declare function getLocale(): string;
   export declare function getI18nInstance(): ReturnType<typeof import('@nanostores/i18n').createI18n>;
   export declare function getFormatterInstance(): ReturnType<typeof import('@nanostores/i18n').formatter>;
   export declare function clearCache(locale?: string): void;

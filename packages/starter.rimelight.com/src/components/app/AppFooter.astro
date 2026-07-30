@@ -9,14 +9,7 @@ import RLAThemeSelector from "@rimelight/ui/components/theme-selector/RLAThemeSe
 import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
 import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const messages = useI18n(Astro, "app_footer", {
-  "links_resources_label": "Resources",
-  "links_resources_branding": "Branding",
-  "links_legal_label": "Legal",
-  "links_legal_privacy-policy": "Privacy Policy",
-  "links_legal_cookie-policy": "Cookie Policy",
-  "links_legal_other-documents": "Other Documents"
-});
+const messages = useI18n("app_footer");
 
 const footerGroups: LinkGroupProps[] = [
   {

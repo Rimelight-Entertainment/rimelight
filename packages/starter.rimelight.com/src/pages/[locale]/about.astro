@@ -8,27 +8,7 @@ import RLACard from "@rimelight/ui/components/card/RLACard.astro";
 import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
 import { useI18n } from '@rimelight/i18n';
 
-const messages = useI18n(Astro, 'about', {
-  title: 'About Rimelight',
-  description: 'Learn about Rimelight Entertainment and our starter template.',
-  hero_title: 'Rimelight Entertainment',
-  hero_description: 'We craft beautiful, modern, high-performance web experiences designed to scale and empower developers.',
-  
-  section_values_title: 'Our Core Principles',
-  section_values_description: 'The ideas that drive how we build our templates and application frameworks.',
-  
-  value_dx_title: 'Developer Experience',
-  value_dx_description: 'We believe tooling should be fast, seamless, and intuitive, getting out of your way so you can create.',
-  
-  value_design_title: 'Design Excellence',
-  value_design_description: 'Aesthetics matter. Our components are crafted with precision, rich styling, and premium interactive details.',
-  
-  value_performance_title: 'Built to Scale',
-  value_performance_description: 'Performance isn\'t an afterthought. Every line of code is optimized for lightning-fast speeds and core web vitals.',
-  
-  section_about_template_title: 'About The Starter',
-  section_about_template_description: 'This is a unified starter template designed to bundle all our core UI elements, auth integration, localization, and robust database setups in a single place. Rather than maintaining dozens of fragments, we build one powerful base—allowing you to easily disable what you don\'t need.'
-});
+const messages = useI18n("page_about");
 ---
 
 <AppLayout title={messages.title} description={messages.description}>

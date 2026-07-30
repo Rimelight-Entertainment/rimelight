@@ -1,10 +1,8 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
 import { siteConfig } from "@/config/site.config";
-import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n";
 import { getCollection } from "astro:content";
-
-const AboutHeroImage = "https://cdn.rimelight.com/Images/placeholder.webp";
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
 import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
@@ -12,38 +10,22 @@ import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro";
 import RLAPost from "@rimelight/ui/components/post/RLAPost.astro";
 import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
 
-const messages = useI18n(Astro, "page_home", {
-  "section_hero_title": "Rimelight Starter Template",
-  "section_hero_description": "Look around, test, and play with some of our interactive technologies.",
-  "section_hero_link_github_label": "View on GitHub",
-  "section_hero_link_use-template_label": "Use Template",
-  "section_features_title": "One template for all your needs.",
-  "section_features_description": "We only maintain a single template including all features. Strip out what you don't need (or hide it to keep the option open) instead of browsing a multitude of options.",
-  "section_posts_title": "Latest Posts",
-  "section_posts_description": "Read the latest updates to our projects.",
-  "section_posts_view_all": "View All Posts",
-  "section_cta_title": "Wish to join us?",
-  "section_cta_description": "Explore our latest projects and get in touch.",
-  "section_cta_start": "Get Started",
-  "section_cta_contribute": "Join Us",
-});
-
-const activeLocale = Astro.currentLocale ?? "en";
+const AboutHeroImage = "https://cdn.rimelight.com/Images/placeholder.webp";
 
 const latestPosts = (await getCollection("blog"))
-  .filter((post) => post.id.startsWith(`${activeLocale}/`))
+  .filter((post) => post.id.startsWith(`${getLocale()}/`))
   .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 
 const heroLinks = [
   {
-    label: messages["section_hero_link_github_label"],
+    label: t("page_home.section_hero_link_github_label"),
     href: getRelativeLocaleUrl("/blog"),
     color: "neutral",
     variant: "outline",
   },
   {
-    label: messages["section_hero_link_use-template_label"],
+    label: t("page_home.section_hero_link_use-template_label"),
     href: getRelativeLocaleUrl("/blog"),
     color: "primary",
     variant: "solid",
@@ -53,7 +35,7 @@ const heroLinks = [
 const featureLinks = [
   {
     label: "Browse Components",
-    href: `https://rimelight.com/${activeLocale}/company/docs/packages/rimelight-ui/components/`,
+    href: `https://rimelight.com/${getLocale()}/company/docs/packages/rimelight-ui/components/`,
     color: "primary",
     variant: "solid",
   }
@@ -61,13 +43,13 @@ const featureLinks = [
 
 const ctaLinks = [
   {
-    label: messages["section_cta_start"],
+    label: t("page_home.section_cta_start"),
     href: getRelativeLocaleUrl("/blog"),
     color: "primary",
     variant: "solid"
   },
   {
-    label: messages["section_cta_contribute"],
+    label: t("page_home.section_cta_contribute"),
     href: getRelativeLocaleUrl("/"),
     color: "primary",
     variant: "outline",
@@ -80,16 +62,16 @@ const ctaLinks = [
   <RLAPageSection
     variant="hero"
     reverse={true}
-    title={messages["section_hero_title"]}
-    description={messages["section_hero_description"]}
+    title={t("page_home.section_hero_title")}
+    description={t("page_home.section_hero_description")}
     links={heroLinks}
   >
     <RLALogo class="pointer-events-none h-64 w-auto" variant="logomark" />
   </RLAPageSection>
 
   <RLAPageSection
-    title={messages["section_features_title"]}
-    description={messages["section_features_description"]}
+    title={t("page_home.section_features_title")}
+    description={t("page_home.section_features_description")}
     orientation="horizontal"
     links={featureLinks}
   >
@@ -98,8 +80,8 @@ const ctaLinks = [
 
   <RLAPageSection
     orientation="vertical"
-    title={messages["section_posts_title"]}
-    description={messages["section_posts_description"]}
+    title={t("page_home.section_posts_title")}
+    description={t("page_home.section_posts_description")}
   >
     <div slot="body" class="flex flex-col gap-xl">
       <RLAGrid cols={3}>
@@ -111,7 +93,7 @@ const ctaLinks = [
               date={post.data.pubDate}
               title={post.data.title}
               description={post.data.description}
-              to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
+              to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${getLocale()}/`, "")}/`)}
             />
           ))
         }
@@ -119,7 +101,7 @@ const ctaLinks = [
 
       {latestPosts.length > 0 && (
         <RLAButton
-          label={messages["section_posts_view_all"]}
+          label={t("page_home.section_posts_view_all")}
           href={getRelativeLocaleUrl("/blog")}
           color="primary"
           variant="link"
@@ -132,8 +114,8 @@ const ctaLinks = [
   <RLAPageSection
     variant="cta"
     ctaVariant="solid"
-    title={messages["section_cta_title"]}
-    description={messages["section_cta_description"]}
+    title={t("page_home.section_cta_title")}
+    description={t("page_home.section_cta_description")}
     links={ctaLinks}
   />
 </AppLayout>
