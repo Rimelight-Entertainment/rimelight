@@ -1,10 +1,12 @@
 ---
 import WikiLayout from '@/layouts/WikiLayout.astro';
 import PageLiveView from '@/components/article/views/PageLiveView.vue';
+import { auth } from "@/auth/auth";
 
 const { slug } = Astro.params;
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 const canEdit = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
 ---
 

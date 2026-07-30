@@ -5,6 +5,7 @@ import { pages, pageVersions, searchIndex } from "@/db/schema"
 import { and, asc, desc, eq, isNotNull, isNull, sql } from "drizzle-orm"
 import { type Block, type PageType, type Localized, type Page } from "@/types/pages"
 import { PAGE_MAP } from "@/types/pageDefinitions"
+import { auth } from "@/auth/auth"
 
 function extractTextFromBlocks(blocks: Block[]): string {
   if (!blocks || !Array.isArray(blocks)) return ""
@@ -98,8 +99,15 @@ function toLocalizedOptional(
   return val ? toLocalized(val) : undefined
 }
 
-function checkOwnerOrMember(context: any) {
-  const user = context.locals.user
+async function checkOwnerOrMember(context: any) {
+  const sessionData = await auth.api.getSession({ headers: context.request.headers })
+  const user = sessionData?.user
+  if (!user) {
+    throw new ActionError({
+      code: "UNAUTHORIZED",
+      message: "Authentication required."
+    })
+  }
   const role = getRole(user)
   const isAuthorized = role === "owner" || role === "member"
   if (!isAuthorized) {
@@ -129,7 +137,8 @@ export const pageActions = {
     }),
     handler: async (input, context) => {
       const { limit, offset, type, status, orderBy: orderByField, order: orderDirection } = input
-      const user = context.locals.user
+      const sessionData = await auth.api.getSession({ headers: context.request.headers })
+      const user = sessionData?.user
       const role = getRole(user)
       const isAuthorized = role === "owner" || role === "member"
 
@@ -208,7 +217,7 @@ export const pageActions = {
       blocks: z.array(z.any()).optional()
     }),
     handler: async (input, context) => {
-      const user = checkOwnerOrMember(context)
+      const user = await checkOwnerOrMember(context)
 
       const newPage: typeof pages.$inferInsert = {
         type: input.type,
@@ -261,7 +270,7 @@ export const pageActions = {
       postedAt: z.string().or(z.date()).optional()
     }),
     handler: async (input, context) => {
-      const user = checkOwnerOrMember(context)
+      const user = await checkOwnerOrMember(context)
       const { id, ...body } = input
 
       const [existingPage] = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
@@ -321,7 +330,7 @@ export const pageActions = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      checkOwnerOrMember(context)
+      await checkOwnerOrMember(context)
 
       const [deleted] = await db
         .update(pages)
@@ -347,7 +356,7 @@ export const pageActions = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      checkOwnerOrMember(context)
+      await checkOwnerOrMember(context)
 
       const [published] = await db
         .update(pages)
@@ -373,7 +382,7 @@ export const pageActions = {
       id: z.string()
     }),
     handler: async (input, context) => {
-      checkOwnerOrMember(context)
+      await checkOwnerOrMember(context)
 
       const [unpublished] = await db
         .update(pages)
@@ -399,7 +408,7 @@ export const pageActions = {
       versionId: z.string()
     }),
     handler: async (input, context) => {
-      const user = checkOwnerOrMember(context)
+      const user = await checkOwnerOrMember(context)
 
       const [version] = await db
         .select()
@@ -457,7 +466,7 @@ export const pageActions = {
       versionId: z.string()
     }),
     handler: async (input, context) => {
-      checkOwnerOrMember(context)
+      await checkOwnerOrMember(context)
 
       const [updatedVersion] = await db
         .update(pageVersions)

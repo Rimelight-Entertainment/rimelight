@@ -1,8 +1,10 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import BoardDetails from '@/components/dashboard/projects/BoardDetails.vue';
+import ProjectDetailsContainer from '@/components/dashboard/projects/ProjectDetailsContainer.vue';
+import { auth } from "@/auth/auth";
 
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 
 if (!user) {
 	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);
@@ -13,6 +15,6 @@ const { id } = Astro.params;
 
 <DashboardLayout title="Project Board">
 	<div class="h-[calc(100vh-var(--rl-total-header-height,80px))] flex flex-col">
-		<BoardDetails client:only="vue" boardId={id!} />
+		<ProjectDetailsContainer client:only="vue" boardId={id!} />
 	</div>
 </DashboardLayout>

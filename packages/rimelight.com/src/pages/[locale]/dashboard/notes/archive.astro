@@ -1,8 +1,10 @@
 ---
 import NotesLayout from '@/layouts/NotesLayout.astro';
 import NotesArchiveContainer from '@/components/dashboard/notes/NotesArchiveContainer.vue';
+import { auth } from "@/auth/auth";
 
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 
 if (!user) {
 	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);

@@ -1,8 +1,10 @@
 ---
 import SettingsLayout from '@/layouts/SettingsLayout.astro';
-import SecuritySettingsForm from '@/components/dashboard/settings/SecuritySettingsForm.vue';
+import SecuritySettingsContainer from '@/components/dashboard/settings/SecuritySettingsContainer.vue';
+import { auth } from "@/auth/auth";
 
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 
 if (!user) {
 	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);
@@ -10,5 +12,5 @@ if (!user) {
 ---
 
 <SettingsLayout activeTab="security" title="Security Settings">
-	<SecuritySettingsForm client:only="vue" />
+	<SecuritySettingsContainer client:only="vue" />
 </SettingsLayout>

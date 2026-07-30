@@ -2,11 +2,13 @@
 import WikiLayout from '@/layouts/WikiLayout.astro';
 import PageReviewView from '@/components/article/views/PageReviewView.vue';
 import { PAGE_MAP as pageDefinitions } from '@/types/pageDefinitions';
+import { auth } from "@/auth/auth";
 
 const { slug } = Astro.params;
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
 const versionId = Astro.url.searchParams.get('version') || '';
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
 ---
 

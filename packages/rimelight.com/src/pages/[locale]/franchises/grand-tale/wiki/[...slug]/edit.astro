@@ -2,10 +2,12 @@
 import WikiLayout from '@/layouts/WikiLayout.astro';
 import PageEditView from '@/components/article/views/PageEditView.vue';
 import { PAGE_MAP as pageDefinitions } from '@/types/pageDefinitions';
+import { auth } from "@/auth/auth";
 
 const { slug } = Astro.params;
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
 ---
 

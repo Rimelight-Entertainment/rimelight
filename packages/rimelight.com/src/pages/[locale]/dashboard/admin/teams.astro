@@ -1,8 +1,10 @@
 ---
 import AdminLayout from '@/layouts/AdminLayout.astro';
-import AdminTeams from '@/components/dashboard/admin/AdminTeams.vue';
+import TeamsManagement from '@/components/dashboard/admin/TeamsManagement.vue';
+import { auth } from "@/auth/auth";
 
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 
 if (!user) {
 	return Astro.redirect(`/${Astro.currentLocale ?? 'en'}/auth/sign-in`);
@@ -10,5 +12,5 @@ if (!user) {
 ---
 
 <AdminLayout activeTab="teams" title="Manage Teams">
-	<AdminTeams client:load />
+	<TeamsManagement client:load />
 </AdminLayout>

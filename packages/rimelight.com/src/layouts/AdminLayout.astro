@@ -1,6 +1,7 @@
 ---
 import DashboardLayout from './DashboardLayout.astro';
 import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { auth } from "@/auth/auth";
 
 interface Props {
 	title?: string;
@@ -9,9 +10,9 @@ interface Props {
 
 const { title = 'Admin Panel', activeTab } = Astro.props;
 
-
 // Auth / permission check
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 if (!user || !['admin', 'owner'].includes((user as { role?: string }).role || '')) {
 	return Astro.redirect(getRelativeLocaleUrl('/dashboard'));
 }

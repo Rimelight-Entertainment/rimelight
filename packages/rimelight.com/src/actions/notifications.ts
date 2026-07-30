@@ -1,4 +1,5 @@
 import { defineAction, ActionError } from "astro:actions"
+import { auth } from "@/auth/auth"
 
 const mockNotifications = [
   {
@@ -40,7 +41,8 @@ const mockNotifications = [
 export const notifications = {
   getNotifications: defineAction({
     handler: async (_input, context) => {
-      const user = context.locals.user
+      const sessionData = await auth.api.getSession({ headers: context.request.headers })
+      const user = sessionData?.user
       if (!user) {
         throw new ActionError({
           code: "UNAUTHORIZED",

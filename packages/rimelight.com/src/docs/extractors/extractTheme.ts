@@ -45,7 +45,7 @@ Promise.all(
   process.exit(1);
 });
 `
-    const output = execSync(`"${process.execPath}" --import tsx -`, {
+    const output = execSync(`"${process.execPath}" -`, {
       input,
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "ignore"]

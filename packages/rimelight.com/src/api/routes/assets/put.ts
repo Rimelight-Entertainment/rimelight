@@ -1,12 +1,10 @@
 import { Hono } from "hono"
 import { getCloudflareEnv } from "../../lib/env"
-import { getFetchState } from "astro/hono"
 
 const api = new Hono()
 
 function requireAuth(c: any) {
-  const state = getFetchState(c)
-  if (!state.locals.user) return c.text("Unauthorized", 401)
+  if (!c.get("user")) return c.text("Unauthorized", 401)
   return null
 }
 

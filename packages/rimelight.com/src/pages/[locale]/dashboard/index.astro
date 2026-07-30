@@ -1,11 +1,10 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
 import { useI18n } from "@rimelight/i18n";
+import { auth } from "@/auth/auth";
 
-
-
-
-const user = Astro.locals.user;
+const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const user = sessionData?.user;
 if (!user) {
 	return Astro.redirect(getRelativeLocaleUrl('/auth/sign-in'));
 }

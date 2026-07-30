@@ -55,25 +55,30 @@ export const auth = betterAuth({
       firstName: {
         type: "string",
         required: true,
+        default: "",
         input: true
       },
       lastName: {
         type: "string",
         required: true,
+        default: "",
         input: true
       },
       role: {
         type: "string",
         required: false,
+        default: "user",
         input: false
       },
       availability: {
         type: "string",
-        required: false
+        required: false,
+        default: "available"
       },
       status: {
         type: "string",
-        required: false
+        required: false,
+        default: ""
       },
       publicKey: {
         type: "string",
