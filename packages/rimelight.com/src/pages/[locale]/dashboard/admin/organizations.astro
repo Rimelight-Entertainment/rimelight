@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '@/layouts/AdminLayout.astro';
-import OrganizationsManagement from '@/components/dashboard/admin/OrganizationsManagement.vue';
+import AdminOrganizations from '@/components/dashboard/admin/AdminOrganizations.vue';
 import { auth } from "@/auth/auth";
 
 const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
@@ -12,5 +12,5 @@ if (!user) {
 ---
 
 <AdminLayout activeTab="organizations" title="Manage Organizations">
-	<OrganizationsManagement client:load />
+	<AdminOrganizations client:load />
 </AdminLayout>

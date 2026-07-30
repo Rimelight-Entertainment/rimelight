@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '@/layouts/AdminLayout.astro';
-import TeamsManagement from '@/components/dashboard/admin/TeamsManagement.vue';
+import AdminTeams from '@/components/dashboard/admin/AdminTeams.vue';
 import { auth } from "@/auth/auth";
 
 const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
@@ -12,5 +12,5 @@ if (!user) {
 ---
 
 <AdminLayout activeTab="teams" title="Manage Teams">
-	<TeamsManagement client:load />
+	<AdminTeams client:load />
 </AdminLayout>

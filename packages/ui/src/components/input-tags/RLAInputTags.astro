@@ -75,10 +75,6 @@ if (needsOverflow && renderedItems.length > 1) {
 ---
 
 {normalizedItems.length > 0 ? (
-  <!--
-    Items-based rendering — CSS responsive counter path.
-    The outer div is the container-query boundary.
-  -->
   <div
     class="rla-it-host"
     style={`container-type: inline-size; container-name: ${cName};`}
@@ -91,10 +87,6 @@ if (needsOverflow && renderedItems.length > 1) {
       style={`--base-hidden: ${baseHiddenCount}; --hidden-items: 0;`}
     >
       {renderedItems.map((item, idx) => (
-        <!--
-          idx 0 is always shown.
-          idx > 0 gets `.hidable` for CSS nth-child targeting.
-        -->
         <span
           class:list={[
             classes.tag,
@@ -104,16 +96,11 @@ if (needsOverflow && renderedItems.length > 1) {
           data-slot="tag"
         >
           <span class={classes.tagLabel}>{item.label}</span>
-          {/* Hidden input preserves each tag value for form submission */}
           {name && <input type="hidden" name={name} value={item.value ?? item.label} />}
         </span>
       ))}
 
       {needsOverflow && (
-        <!--
-          "+N more" chip.
-          When base-hidden is 0, starts hidden and is revealed by container queries.
-        -->
         <span
           class:list={[
             classes.more,
@@ -140,7 +127,6 @@ if (needsOverflow && renderedItems.length > 1) {
     </div>
   </div>
 ) : (
-  <!-- Slot fallback — original behaviour when no items prop is provided -->
   <div class={classes.root} data-slot="root" {...rest}>
     <slot />
     {showInput && (

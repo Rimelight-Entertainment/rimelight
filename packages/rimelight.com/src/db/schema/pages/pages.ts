@@ -1,5 +1,10 @@
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { type Block, type Localized, type PageType, type RegisterPageTypes } from "@/types/pages"
+import {
+  type Block,
+  type Localized,
+  type PageType,
+  type RegisterPageTypes
+} from "../../../types/pages.ts"
 
 export const pages = pgTable("pages", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),

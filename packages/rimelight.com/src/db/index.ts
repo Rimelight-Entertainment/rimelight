@@ -1,9 +1,9 @@
 import { neon } from "@neondatabase/serverless"
 import { drizzle } from "drizzle-orm/neon-http"
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http"
-import * as schema from "@/db/schema"
+import * as schema from "./schema/index.ts"
 
-export * from "@/db/schema"
+export * from "./schema/index.ts"
 export { schema }
 
 function anyObject(): any {

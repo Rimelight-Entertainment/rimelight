@@ -1,2 +1,2 @@
-export * from "./auth"
-export * from "./search"
+export * from "./auth/index.ts"
+export * from "./search.ts"

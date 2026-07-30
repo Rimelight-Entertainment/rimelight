@@ -1,9 +1,16 @@
 import fs from "node:fs"
 import path from "node:path"
+
+if (!process.env.DATABASE_URL && fs.existsSync(".env")) {
+  try {
+    process.loadEnvFile(".env")
+  } catch {}
+}
+
 import { db } from "../src/db/index.ts"
 import { searchIndex, pages } from "../src/db/schema/index.ts"
 import { sql, eq, inArray, and, isNull, isNotNull } from "drizzle-orm"
-import { type Block } from "../src/types/pages"
+import { type Block } from "../src/types/pages.ts"
 
 const pad = (n: number) => n.toString().padStart(2, "0")
 
@@ -97,6 +104,11 @@ function getFilesRecursively(dir: string): string[] {
 
 async function sync() {
   console.log("Starting optimized database & markdown search_index sync...")
+
+  if (!process.env.DATABASE_URL) {
+    console.log("DATABASE_URL is not set; skipping database sync step.")
+    return
+  }
 
   // 1. Fetch all existing records from the DB to build a cache map
   const existing = await db

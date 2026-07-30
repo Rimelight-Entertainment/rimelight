@@ -1,9 +1,9 @@
 import { env } from "cloudflare:workers"
 import { drizzle } from "drizzle-orm/d1"
 import type { DrizzleD1Database } from "drizzle-orm/d1"
-import * as schema from "@/db/schema"
+import * as schema from "./schema/index.ts"
 
-export * from "@/db/schema"
+export * from "./schema/index.ts"
 export { schema }
 
 function anyObject(): any {

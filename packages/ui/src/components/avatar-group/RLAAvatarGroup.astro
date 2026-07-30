@@ -102,11 +102,6 @@ if (needsOverflow && renderedItems.length > 1) {
 ---
 
 {normalizedItems.length > 0 ? (
-  <!--
-    Items-based rendering — enables the CSS responsive counter.
-    The outer div is the scroll-state container; the inner list is the target
-    for container-query rules and custom-property inheritance.
-  -->
   <div
     class="rla-ag-host"
     style={`container-type: inline-size; container-name: ${cName};`}
@@ -119,10 +114,6 @@ if (needsOverflow && renderedItems.length > 1) {
       style={`--base-hidden: ${baseHiddenCount}; --hidden-items: 0;`}
     >
       {renderedItems.map((item, idx) => (
-        <!--
-          idx 0 is always visible.
-          idx > 0 gets the `hidable` class so CSS nth-child selectors can target it.
-        -->
         <span class:list={["rla-ag-item", needsOverflow && idx > 0 && "hidable"]}>
           <RLAAvatar
             src={item.src}
@@ -136,11 +127,6 @@ if (needsOverflow && renderedItems.length > 1) {
       ))}
 
       {needsOverflow && (
-        <!--
-          "+N more" bubble.
-          `rla-ag-more-hidden` is added only when base-hidden is 0; the
-          container queries remove it when responsive hiding kicks in.
-        -->
         <span
           class:list={[
             classes.more,
@@ -157,7 +143,6 @@ if (needsOverflow && renderedItems.length > 1) {
     </div>
   </div>
 ) : (
-  <!-- Slot fallback — preserves the original behaviour when no items prop is used -->
   <div class={classes.root} data-slot="avatar-group" {...rest}>
     <slot />
   </div>

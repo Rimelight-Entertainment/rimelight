@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '@/layouts/AdminLayout.astro';
-import UsersManagement from '@/components/dashboard/admin/UsersManagement.vue';
+import AdminUsers from '@/components/dashboard/admin/AdminUsers.vue';
 import { auth } from "@/auth/auth";
 
 const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
@@ -12,5 +12,5 @@ if (!user) {
 ---
 
 <AdminLayout activeTab="users" title="Manage Users">
-	<UsersManagement client:load />
+	<AdminUsers client:load />
 </AdminLayout>

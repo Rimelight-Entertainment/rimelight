@@ -1,8 +1,13 @@
 import { relations } from "drizzle-orm"
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { type Block, type Localized, type PageType, type RegisterPageTypes } from "@/types/pages"
+import {
+  type Block,
+  type Localized,
+  type PageType,
+  type RegisterPageTypes
+} from "../../../types/pages.ts"
 
-import { pages } from "./pages"
+import { pages } from "./pages.ts"
 
 export type PageVersionStatus = "pending" | "approved" | "rejected"
 

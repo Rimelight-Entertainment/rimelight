@@ -12,7 +12,7 @@ import {
   uniqueIndex,
   uuid
 } from "drizzle-orm/pg-core"
-import type { UserAvailability } from "@/types/user"
+import type { UserAvailability } from "../../../types/user.ts"
 
 // ============================================================================
 // Core Auth Tables

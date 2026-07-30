@@ -1,6 +1,6 @@
-import { type Block } from "./blocks"
+import { type Block } from "./blocks.ts"
 export type { Block }
-import { type Image, type Link } from "./schemas"
+import { type Image, type Link } from "./schemas.ts"
 
 export type Localized<T = string> = Record<string, T>
 

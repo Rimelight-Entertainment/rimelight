@@ -1,6 +1,6 @@
 ---
 import SettingsLayout from '@/layouts/SettingsLayout.astro';
-import ProfileSettingsContainer from '@/components/dashboard/settings/ProfileSettingsContainer.vue';
+import GeneralSettingsForm from '@/components/dashboard/settings/GeneralSettingsForm.vue';
 import { auth } from "@/auth/auth";
 
 const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
@@ -12,5 +12,5 @@ if (!user) {
 ---
 
 <SettingsLayout activeTab="general" title="General Settings">
-	<ProfileSettingsContainer client:load />
+	<GeneralSettingsForm client:load />
 </SettingsLayout>
