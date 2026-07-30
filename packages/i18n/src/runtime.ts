@@ -210,9 +210,10 @@ export function useI18n(componentName: string, baseTranslations?: Translations):
   const targetObj = store.get()
 
   return new Proxy(targetObj, {
-    get(target: Record<string, string>, prop: string | symbol): string | undefined {
+    get(target: Record<string, string>, prop: string | symbol): string {
       if (typeof prop === "symbol" || prop in Object.prototype) {
-        return Reflect.get(target, prop)
+        const val: unknown = Reflect.get(target, prop)
+        return typeof val === "string" ? val : ""
       }
       const val = target[prop] ?? baseDict[prop]
       return val ?? prop

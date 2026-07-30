@@ -12,5 +12,5 @@ declare module "astro:i18n" {
 }
 
 declare module "@rimelight/i18n:runtime" {
-  export * from "@rimelight/i18n/runtime";
+  export * from "./runtime"
 }

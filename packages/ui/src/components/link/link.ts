@@ -4,19 +4,19 @@ export interface LinkProps {
   /**
    * The text label displayed inside the link. Alternative to passing children via the default slot.
    */
-  label?: string
+  label?: string | undefined
   /**
    * Icon name displayed before the link label.
    */
-  leadingIcon?: string
+  leadingIcon?: string | undefined
   /**
    * Icon name displayed after the link label. Replaces the external icon when set.
    */
-  trailingIcon?: string
+  trailingIcon?: string | undefined
   /**
    * The URL the link points to.
    */
-  href?: string
+  href?: string | undefined
   /**
    * Forces the link to be treated as an external link.
    *

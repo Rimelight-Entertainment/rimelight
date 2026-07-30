@@ -14,9 +14,9 @@ import type { Translations } from "@nanostores/i18n"
 
 export { t, currentLocale, useFormat, clearCache, getI18nInstance, getFormatterInstance }
 
-import type { ComponentMessages } from "./runtime"
-
-export type { ComponentMessages }
+export interface ComponentMessages {
+  [key: string]: string
+}
 
 export function useI18n(componentName: string): ComponentMessages
 export function useI18n<Body extends Translations>(

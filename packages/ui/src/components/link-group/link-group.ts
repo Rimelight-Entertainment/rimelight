@@ -4,23 +4,23 @@ export interface LinkGroupProps {
   /**
    * The direct text label of the group heading.
    */
-  label?: string
+  label?: string | undefined
   /**
    * Leading icon of the group heading.
    */
-  leadingIcon?: string
+  leadingIcon?: string | undefined
   /**
    * Trailing icon of the group heading.
    */
-  trailingIcon?: string
+  trailingIcon?: string | undefined
   /**
    * Hyperlink target URL for the group heading.
    */
-  href?: string
+  href?: string | undefined
   /**
    * The links in the group. Supports full button/link properties.
    */
-  links?: LinkProps | LinkProps[]
+  links?: LinkProps | LinkProps[] | undefined
   /**
    * Slot-specific CSS class overrides.
    */

@@ -2,22 +2,22 @@ import type { ThemeColor } from "../../types/component"
 import type { LinkProps } from "../link/link"
 
 export interface NavigationMenuItem extends Omit<LinkProps, "type" | "raw" | "custom"> {
-  label?: string
-  icon?: string
-  badge?: string | number
-  avatar?: Record<string, any>
-  chip?: boolean | Record<string, any>
-  tooltip?: boolean | string | Record<string, any>
-  popover?: boolean | Record<string, any>
-  trailingIcon?: string
-  type?: "label" | "trigger" | "link"
-  slot?: string
-  value?: string
-  children?: NavigationMenuChildItem[]
-  defaultOpen?: boolean
-  open?: boolean
-  onSelect?: (e: Event) => void
-  click?: (event: MouseEvent) => void
+  label?: string | undefined
+  icon?: string | undefined
+  badge?: string | number | undefined
+  avatar?: Record<string, any> | undefined
+  chip?: boolean | Record<string, any> | undefined
+  tooltip?: boolean | string | Record<string, any> | undefined
+  popover?: boolean | Record<string, any> | undefined
+  trailingIcon?: string | undefined
+  type?: "label" | "trigger" | "link" | undefined
+  slot?: string | undefined
+  value?: string | undefined
+  children?: NavigationMenuChildItem[] | undefined
+  defaultOpen?: boolean | undefined
+  open?: boolean | undefined
+  onSelect?: ((e: Event) => void) | undefined
+  click?: ((event: MouseEvent) => void) | undefined
   /**
    * Slot-specific CSS class overrides.
    */
@@ -30,7 +30,7 @@ export interface NavigationMenuItem extends Omit<LinkProps, "type" | "raw" | "cu
 }
 
 export interface NavigationMenuChildItem extends Omit<NavigationMenuItem, "type" | "ui"> {
-  description?: string
+  description?: string | undefined
   [key: string]: any
 }
 
