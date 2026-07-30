@@ -34,17 +34,22 @@ const messages = await useI18nAsync(Astro, 'blog', {
 	title: "Blog",
 	description: "Articles, development logs, and more.",
 	categories: {
-  "development-log": "Development Log",
-  "other": "Other"
-} as any
-} as any);
+		"development-log": "Development Log",
+		"other": "Other"
+	}
+});
+
+const categoryMessages = (messages?.categories ?? {
+	"development-log": "Development Log",
+	"other": "Other"
+}) as Record<string, string>;
 
 const tabsItems = [
 	{ label: "All", value: "all" },
 	...categoryOrder
 		.filter((cat) => groupedPosts[cat]?.length)
 		.map((cat) => ({
-			label: (messages.categories as unknown as Record<string, string>)[cat],
+			label: categoryMessages[cat] ?? cat,
 			value: cat
 		}))
 ];
@@ -65,7 +70,7 @@ const tabsItems = [
 							title={post.data.title}
 							description={post.data.description}
 							to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
-							badge={(messages.categories as unknown as Record<string, string>)[post.data.type]}
+							badge={categoryMessages[post.data.type] ?? post.data.type}
 							badgeColor={badgeColorMap[post.data.type] || "primary"}
 						/>
 					))}
@@ -88,7 +93,7 @@ const tabsItems = [
 										title={post.data.title}
 										description={post.data.description}
 										to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
-										badge={(messages.categories as unknown as Record<string, string>)[category]}
+										badge={categoryMessages[category] ?? category}
 										badgeColor={badgeColorMap[category] || "primary"}
 									/>
 								))
