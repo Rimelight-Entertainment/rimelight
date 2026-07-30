@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
-import { db } from "../src/db"
-import { searchIndex, pages } from "../src/db/schema"
+import { db } from "../src/db/index.ts"
+import { searchIndex, pages } from "../src/db/schema/index.ts"
 import { sql, eq, inArray, and, isNull, isNotNull } from "drizzle-orm"
 import { type Block } from "../src/types/pages"
 
