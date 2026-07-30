@@ -68,12 +68,12 @@ const defaultWidth = "16rem";
 
 <script>
   (function() {
-    const sidebar = document.querySelector('[data-dashboard-sidebar]');
+    const sidebar = document.querySelector<HTMLElement>('[data-dashboard-sidebar]');
     if (!sidebar) return;
 
     const collapsible = sidebar.dataset.collapsible === 'true';
-    const mobilePanel = document.querySelector('[data-dashboard-sidebar-mobile]');
-    const overlay = document.querySelector('[data-dashboard-sidebar-overlay]');
+    const mobilePanel = document.querySelector<HTMLElement>('[data-dashboard-sidebar-mobile]');
+    const overlay = document.querySelector<HTMLElement>('[data-dashboard-sidebar-overlay]');
 
     const toggleMobile = () => {
       if (!mobilePanel || !overlay) return;
@@ -82,7 +82,7 @@ const defaultWidth = "16rem";
       overlay.classList.toggle('hidden', !isOpen);
     };
 
-    const collapseSidebar = (val) => {
+    const collapseSidebar = (val?: boolean) => {
       if (!collapsible) return;
       const isCollapsed = val !== undefined ? val : sidebar.dataset.collapsed !== 'true';
       sidebar.dataset.collapsed = isCollapsed ? 'true' : 'false';
@@ -95,19 +95,20 @@ const defaultWidth = "16rem";
       });
     };
 
-    document.addEventListener('click', (e) => {
-      const toggle = e.target.closest('[data-dashboard-toggle]');
+    document.addEventListener('click', (e: MouseEvent) => {
+      const target = e.target as Element | null;
+      const toggle = target?.closest<HTMLElement>('[data-dashboard-toggle]');
       if (toggle) {
         const side = toggle.dataset.dashboardToggle;
         if (side === 'mobile') toggleMobile();
         if (side === 'collapse') collapseSidebar();
       }
 
-      const navItem = e.target.closest('[data-dashboard-nav]');
+      const navItem = target?.closest<HTMLElement>('[data-dashboard-nav]');
       if (navItem) {
         const container = navItem.closest('[data-dashboard-nav-container]');
         if (container) {
-          container.querySelectorAll('[data-dashboard-nav]').forEach(item => {
+          container.querySelectorAll('[data-dashboard-nav]').forEach((item: Element) => {
             item.classList.remove('bg-muted', 'text-highlighted');
             item.classList.add('text-default', 'hover:text-highlighted', 'hover:bg-muted');
           });
@@ -119,6 +120,6 @@ const defaultWidth = "16rem";
 
     overlay?.addEventListener('click', toggleMobile);
 
-    window.dashboardSidebar = { toggleMobile, collapseSidebar };
+    (window as any).dashboardSidebar = { toggleMobile, collapseSidebar };
   })();
 </script>

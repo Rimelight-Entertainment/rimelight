@@ -6,17 +6,6 @@ export interface LinkGroupProps {
    */
   label?: string
   /**
-   * @deprecated Use `label` instead to avoid conflicts with native HTML tooltip attribute.
-   */
-  title?:
-    | string
-    | {
-        label: string
-        leadingIcon?: string
-        trailingIcon?: string
-        href?: string
-      }
-  /**
    * Leading icon of the group heading.
    */
   leadingIcon?: string

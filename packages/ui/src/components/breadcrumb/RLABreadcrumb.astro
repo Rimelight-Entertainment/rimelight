@@ -155,7 +155,7 @@ if (needsOverflow && hasMidItems) {
         )}
 
         {/* ── Middle items (hidable — oldest ancestors first) ─────────── */}
-        {renderedMidItems.map((item, idx) => (
+        {renderedMidItems.map((item) => (
           <li class:list={[classes.item, "hidable"]} data-slot="item">
             {item.href ? (
               <a href={item.href} class={classes.link} data-slot="link">

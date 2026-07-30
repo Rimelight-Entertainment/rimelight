@@ -44,7 +44,7 @@ function getItemValue(item: TimelineItem, index: number) {
   return item[valueKey] !== undefined ? item[valueKey] : index
 }
 
-function getItemState(item: TimelineItem, index: number): "active" | "completed" | undefined {
+function getItemState(_item: TimelineItem, index: number): "active" | "completed" | undefined {
   if (activeVal === undefined) return undefined
 
   let currentIndex = -1
@@ -118,8 +118,8 @@ function getSlotName(item: TimelineItem, slotType: string): string {
               ui={{ icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted", fallback: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted" }}
             >
               {hasCustomIndicator ? (
-                <slot name={itemIndicatorSlot} item={item}>
-                  <slot name="indicator" item={item} />
+                <slot name={itemIndicatorSlot}>
+                  <slot name="indicator" />
                 </slot>
               ) : item.icon ? (
                 <RLAIcon name={item.icon} class="text-inherit" />
@@ -140,8 +140,8 @@ function getSlotName(item: TimelineItem, slotType: string): string {
             class={cx(classes.wrapper, item.ui?.wrapper)}
           >
             {hasCustomWrapper ? (
-              <slot name={itemWrapperSlot} item={item}>
-                <slot name="wrapper" item={item} />
+              <slot name={itemWrapperSlot}>
+                <slot name="wrapper" />
               </slot>
             ) : (
               <>
@@ -150,8 +150,8 @@ function getSlotName(item: TimelineItem, slotType: string): string {
                     data-slot="date"
                     class={cx(classes.date, item.ui?.date)}
                   >
-                    <slot name={itemDateSlot} item={item}>
-                      <slot name="date" item={item}>
+                    <slot name={itemDateSlot}>
+                      <slot name="date">
                         {item.date}
                       </slot>
                     </slot>
@@ -163,8 +163,8 @@ function getSlotName(item: TimelineItem, slotType: string): string {
                     data-slot="title"
                     class={cx(classes.title, item.ui?.title)}
                   >
-                    <slot name={itemTitleSlot} item={item}>
-                      <slot name="title" item={item}>
+                    <slot name={itemTitleSlot}>
+                      <slot name="title">
                         {item.title}
                       </slot>
                     </slot>
@@ -176,8 +176,8 @@ function getSlotName(item: TimelineItem, slotType: string): string {
                     data-slot="description"
                     class={cx(classes.description, item.ui?.description)}
                   >
-                    <slot name={itemDescriptionSlot} item={item}>
-                      <slot name="description" item={item}>
+                    <slot name={itemDescriptionSlot}>
+                      <slot name="description">
                         {item.description}
                       </slot>
                     </slot>

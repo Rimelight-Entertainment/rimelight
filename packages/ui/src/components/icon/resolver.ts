@@ -8,10 +8,6 @@ export interface ResolvedIcon {
 
 const defaultIconsLookup = DEFAULT_ICONS as Record<string, string>
 
-/**
- * Resolves whether an icon is a CSS class or raw inline SVG string, falling back to DEFAULT_ICONS.
- * Supports both static virtual config overrides and custom dynamic overrides (e.g. props).
- */
 export function resolveIcon(iconKey?: string, customProp?: string): ResolvedIcon {
   if (!iconKey) {
     return { isClass: false, content: "" }

@@ -83,56 +83,56 @@ export const createTimelineTheme = () =>
       {
         color: "primary",
         reverse: false,
-        class: {
+        classNames: {
           separator: "group-data-[state=completed]:bg-primary"
         }
       },
       {
         color: "secondary",
         reverse: false,
-        class: {
+        classNames: {
           separator: "group-data-[state=completed]:bg-secondary"
         }
       },
       {
         color: "success",
         reverse: false,
-        class: {
+        classNames: {
           separator: "group-data-[state=completed]:bg-success"
         }
       },
       {
         color: "info",
         reverse: false,
-        class: {
+        classNames: {
           separator: "group-data-[state=completed]:bg-info"
         }
       },
       {
         color: "warning",
         reverse: false,
-        class: {
+        classNames: {
           separator: "group-data-[state=completed]:bg-warning"
         }
       },
       {
         color: "error",
         reverse: false,
-        class: {
+        classNames: {
           separator: "group-data-[state=completed]:bg-error"
         }
       },
       {
         color: "primary",
         reverse: true,
-        class: {
+        classNames: {
           separator: "group-data-[state=active]:bg-primary group-data-[state=completed]:bg-primary"
         }
       },
       {
         color: "secondary",
         reverse: true,
-        class: {
+        classNames: {
           separator:
             "group-data-[state=active]:bg-secondary group-data-[state=completed]:bg-secondary"
         }
@@ -140,42 +140,42 @@ export const createTimelineTheme = () =>
       {
         color: "success",
         reverse: true,
-        class: {
+        classNames: {
           separator: "group-data-[state=active]:bg-success group-data-[state=completed]:bg-success"
         }
       },
       {
         color: "info",
         reverse: true,
-        class: {
+        classNames: {
           separator: "group-data-[state=active]:bg-info group-data-[state=completed]:bg-info"
         }
       },
       {
         color: "warning",
         reverse: true,
-        class: {
+        classNames: {
           separator: "group-data-[state=active]:bg-warning group-data-[state=completed]:bg-warning"
         }
       },
       {
         color: "error",
         reverse: true,
-        class: {
+        classNames: {
           separator: "group-data-[state=active]:bg-error group-data-[state=completed]:bg-error"
         }
       },
       {
         color: "neutral",
         reverse: false,
-        class: {
+        classNames: {
           separator: "group-data-[state=completed]:bg-inverted"
         }
       },
       {
         color: "neutral",
         reverse: true,
-        class: {
+        classNames: {
           separator:
             "group-data-[state=active]:bg-inverted group-data-[state=completed]:bg-inverted"
         }
@@ -183,126 +183,126 @@ export const createTimelineTheme = () =>
       {
         orientation: "horizontal",
         size: "3xs",
-        class: {
+        classNames: {
           wrapper: "pe-4.5"
         }
       },
       {
         orientation: "horizontal",
         size: "2xs",
-        class: {
+        classNames: {
           wrapper: "pe-5"
         }
       },
       {
         orientation: "horizontal",
         size: "xs",
-        class: {
+        classNames: {
           wrapper: "pe-5.5"
         }
       },
       {
         orientation: "horizontal",
         size: "sm",
-        class: {
+        classNames: {
           wrapper: "pe-6"
         }
       },
       {
         orientation: "horizontal",
         size: "md",
-        class: {
+        classNames: {
           wrapper: "pe-6.5"
         }
       },
       {
         orientation: "horizontal",
         size: "lg",
-        class: {
+        classNames: {
           wrapper: "pe-7"
         }
       },
       {
         orientation: "horizontal",
         size: "xl",
-        class: {
+        classNames: {
           wrapper: "pe-7.5"
         }
       },
       {
         orientation: "horizontal",
         size: "2xl",
-        class: {
+        classNames: {
           wrapper: "pe-8"
         }
       },
       {
         orientation: "horizontal",
         size: "3xl",
-        class: {
+        classNames: {
           wrapper: "pe-8.5"
         }
       },
       {
         orientation: "vertical",
         size: "3xs",
-        class: {
+        classNames: {
           wrapper: "-mt-0.5 pb-4.5"
         }
       },
       {
         orientation: "vertical",
         size: "2xs",
-        class: {
+        classNames: {
           wrapper: "pb-5"
         }
       },
       {
         orientation: "vertical",
         size: "xs",
-        class: {
+        classNames: {
           wrapper: "mt-0.5 pb-5.5"
         }
       },
       {
         orientation: "vertical",
         size: "sm",
-        class: {
+        classNames: {
           wrapper: "mt-1 pb-6"
         }
       },
       {
         orientation: "vertical",
         size: "md",
-        class: {
+        classNames: {
           wrapper: "mt-1.5 pb-6.5"
         }
       },
       {
         orientation: "vertical",
         size: "lg",
-        class: {
+        classNames: {
           wrapper: "mt-2 pb-7"
         }
       },
       {
         orientation: "vertical",
         size: "xl",
-        class: {
+        classNames: {
           wrapper: "mt-2.5 pb-7.5"
         }
       },
       {
         orientation: "vertical",
         size: "2xl",
-        class: {
+        classNames: {
           wrapper: "mt-3 pb-8"
         }
       },
       {
         orientation: "vertical",
         size: "3xl",
-        class: {
+        classNames: {
           wrapper: "mt-3.5 pb-8.5"
         }
       }

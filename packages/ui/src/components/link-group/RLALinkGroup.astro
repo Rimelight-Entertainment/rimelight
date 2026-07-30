@@ -14,11 +14,10 @@ import RLAIcon from "../icon/RLAIcon.astro"
 const linkGroup = scv(linkGroupTheme)
 
 const {
-  title,
-  label,
-  leadingIcon,
-  trailingIcon,
-  href,
+  label: headingLabel,
+  leadingIcon: headingLeadingIcon,
+  trailingIcon: headingTrailingIcon,
+  href: headingHref,
   links = [],
   theme,
   ui: uiProp,
@@ -27,15 +26,6 @@ const {
 } = Astro.props as LinkGroupProps
 
 const classes = resolveClasses(linkGroup, { theme }, useUi("linkGroup", uiProp), className);
-
-const headingLabel = label || (typeof title === "object" ? title.label : (typeof title === "string" ? title : undefined));
-const headingLeadingIcon = leadingIcon || (typeof title === "object" ? title.leadingIcon : undefined);
-const headingTrailingIcon = trailingIcon || (typeof title === "object" ? title.trailingIcon : undefined);
-const headingHref = href || (typeof title === "object" ? title.href : undefined);
-
-if (label && typeof title === "string") {
-  rest.title = title;
-}
 
 const normalizedLinks = Array.isArray(links) ? links : [links];
 

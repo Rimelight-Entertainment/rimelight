@@ -37,7 +37,7 @@ const classes = resolveClasses(tabs, {
   size
 }, useUi("tabs", uiProp), className);
 
-const initialValue = value || defaultValue || (items.length > 0 ? (items[0][valueKey] ?? items[0].value ?? "0") : "")
+const initialValue = value || defaultValue || (items.length > 0 ? (items[0]?.[valueKey] ?? items[0]?.value ?? "0") : "")
 
 // ─── Responsive CSS Item Counter + Native Popover Overflow ───────────────────
 const uid = Math.random().toString(36).substring(2, 9)
@@ -285,7 +285,6 @@ if (needsOverflow && renderedListItems.length > 1) {
           popoverItems.forEach(item => {
             const el = item as HTMLElement;
             const val = el.dataset.tabOverflowValue;
-            const check = el.querySelector('[data-name="check"]') || el.querySelector('svg');
             if (val === targetValue) {
               el.setAttribute("data-active", "true");
               el.classList.add("bg-muted/80", "font-medium");

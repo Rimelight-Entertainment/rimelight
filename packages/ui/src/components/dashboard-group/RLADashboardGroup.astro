@@ -1,4 +1,5 @@
 ---
+import type { HTMLTag } from "astro/types"
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
@@ -8,11 +9,11 @@ import dashboardGroupTheme from "./dashboard-group.theme"
 const dashboardGroup = scv(dashboardGroupTheme)
 
 const {
-  as: Tag = "div",
+  as: Tag = "div" as HTMLTag,
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as DashboardGroupProps
+} = Astro.props as DashboardGroupProps & { as?: HTMLTag }
 
 const classes = resolveClasses(dashboardGroup, {}, useUi("dashboardGroup", uiProp), className);
 ---

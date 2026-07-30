@@ -34,8 +34,8 @@ const {
 const attrs = resolveLinkAttrs(Astro.props)
 
 const classes = raw
-  ? { root: className || "" }
-  : resolveClasses(
+  ? { root: className || "", leadingIcon: "", label: "", trailingIcon: "" }
+  : (resolveClasses(
       link,
       {
         theme,
@@ -44,7 +44,7 @@ const classes = raw
       },
       useUi("link", uiProp),
       className
-    )
+    ) as Record<string, string>)
 ---
 
 <a
