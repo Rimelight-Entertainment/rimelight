@@ -18,7 +18,7 @@ export const createPageSectionTheme = () =>
       "links"
     ],
     base: {
-      root: "relative isolate",
+      root: "relative",
       background: "absolute inset-0 -z-1 overflow-hidden",
       container:
         "mx-auto w-full max-w-[1440px] px-xs sm:px-md md:px-xl lg:px-xl flex flex-col lg:grid",

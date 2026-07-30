@@ -105,9 +105,7 @@ export function getHeaderStack(): HeaderStackManager {
             currentTop += layer.naturalHeight
           }
         }
-        if (currentTop > 0) {
-          document.documentElement.style.setProperty("--rl-total-header-height", `${currentTop}px`)
-        }
+        document.documentElement.style.setProperty("--rl-total-header-height", `${currentTop}px`)
       }
     }
   }

@@ -34,7 +34,7 @@ const zIndex = 100 - stackIndex;
   data-slot="root"
   class:list={[classes.root]}
   data-contain={contain ? "true" : "false"}
-  data-rla-header={fixed ? "true" : undefined}
+  data-rla-header="true"
   data-stack-index={stackIndex}
   data-hide-on-scroll={String(hideOnScroll)}
   data-header-layer-id={headerId}
@@ -55,11 +55,9 @@ const zIndex = 100 - stackIndex;
   </div>
 </header>
 
-{fixed && (
-  <style is:inline set:html={`
-    #${headerId} {
-      z-index: ${zIndex} !important;
-    }
-  `} />
-)}
+<style is:inline set:html={`
+  #${headerId} {
+    z-index: ${zIndex} !important;
+  }
+`} />
 

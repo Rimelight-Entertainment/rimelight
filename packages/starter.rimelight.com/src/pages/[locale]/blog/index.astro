@@ -33,16 +33,14 @@ const badgeColorMap: Record<string, string> = {
 const messages = await useI18nAsync(Astro, 'blog', {
 	title: "Blog",
 	description: "Articles, development logs, and more.",
-	categories: {
-		"development-log": "Development Log",
-		"other": "Other"
-	}
+	"categories_development-log": "Development Log",
+	"categories_other": "Other"
 });
 
-const categoryMessages = (messages?.categories ?? {
-	"development-log": "Development Log",
-	"other": "Other"
-}) as Record<string, string>;
+const categoryMessages: Record<string, string> = {
+	"development-log": messages?.["categories_development-log"] ?? "Development Log",
+	"other": messages?.["categories_other"] ?? "Other"
+};
 
 const tabsItems = [
 	{ label: "All", value: "all" },

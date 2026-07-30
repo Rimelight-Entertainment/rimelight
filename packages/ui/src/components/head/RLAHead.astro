@@ -355,14 +355,14 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
             }
             if (layer.isVisible) currentTop += layer.naturalHeight;
           }
-          if (currentTop > 0) {
-            document.documentElement.style.setProperty('--rl-total-header-height', currentTop + 'px');
-          }
+          // Always update the CSS variable (even to 0) so stale values don't persist
+          document.documentElement.style.setProperty('--rl-total-header-height', currentTop + 'px');
         }
       };
     }
     const RL = window.RLHeaderStack;
     RL.layers = [];
+    RL.update(); // Clear stale --rl-total-header-height before re-registering layers
 
     function getHeight(el) {
       if (!el) return 64;
@@ -444,6 +444,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
       var key = banner.getAttribute('data-dismiss-key');
       if (key) localStorage.setItem(key, 'true');
       banner.style.display = 'none';
+      banner.style.pointerEvents = 'none'; // Immediately prevent click-blocking
       banner.setAttribute('data-rla-banner', 'false');
       if (window.RLHeaderStack) RL.unregister(banner.id);
     }
@@ -455,6 +456,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
         var key = b.getAttribute('data-dismiss-key');
         if (key && localStorage.getItem(key) === 'true') {
           b.style.display = 'none';
+          b.style.pointerEvents = 'none'; // Prevent click-blocking on hidden banners
           b.setAttribute('data-rla-banner', 'false');
         }
       }
