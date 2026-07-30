@@ -32,8 +32,8 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.1.4",
-    "@astrojs/mdx": "7.0.3",
+    "@astrojs/cloudflare": "14.1.7",
+    "@astrojs/mdx": "7.0.5",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.3",
     "@astrojs/solid-js": "7.0.1",
@@ -45,26 +45,26 @@
     "@rimelight/security": "workspace:*",
     "@rimelight/ui": "workspace:*",
     "@types/chroma-js": "3.1.2",
-    "astro": "7.1.3",
+    "astro": "7.1.6",
     "better-auth": "1.6.25",
     "chroma-js": "3.2.0",
     "css-variants": "2.3.5",
     "drizzle-orm": "0.45.2",
     "hono": "4.12.32",
-    "nanostores": "1.4.1",
+    "nanostores": "1.4.2",
     "solid-js": "1.9.14",
     "vue": "3.5.40",
     "vuedraggable": "2.24.3",
-    "wrangler": "4.114.0"
+    "wrangler": "4.115.0"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.9",
+    "@astrojs/check": "0.9.10",
     "@astrojs/ts-plugin": "1.10.10",
     "@e18e/eslint-plugin": "0.6.0",
     "@iconify-json/logos": "1.2.11",
     "@iconify-json/lucide": "1.2.120",
     "@resvg/resvg-js": "2.6.2",
-    "@types/node": "26.1.1",
+    "@types/node": "26.1.2",
     "@unocss/eslint-plugin": "66.7.5",
     "drizzle-kit": "0.31.10",
     "eslint-plugin-regexp": "3.1.1",
@@ -76,5 +76,5 @@
   "engines": {
     "node": ">=25.2.1"
   },
-  "packageManager": "pnpm@11.17.0"
+  "packageManager": "pnpm@11.18.0"
 }

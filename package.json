@@ -32,14 +32,14 @@
   },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.6.0",
-    "@types/node": "26.1.1",
+    "@types/node": "26.1.2",
     "@unocss/eslint-plugin": "66.7.5",
     "eslint-plugin-regexp": "3.1.1",
-    "pkg-pr-new": "0.0.80",
+    "pkg-pr-new": "0.0.82",
     "vite-plus": "0.2.6"
   },
   "engines": {
     "node": ">=25.2.1"
   },
-  "packageManager": "pnpm@11.17.0"
+  "packageManager": "pnpm@11.18.0"
 }

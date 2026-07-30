@@ -5,15 +5,15 @@ This prompt is used to update dependencies in a project.
 ## Parameters:
 
 - Packages to update:
-  - [rimelight monorepo, idantity.me, queerkit.com, marcelocfilho.com]
+  - []
 - Dependencies to remove:
   - []
 - Dependencies to keep at the current version:
-  - [typescript]
+  - []
 
 ## Instructions
 
-- Adhere strictly to the commands provided, preferring `vp` over `pnpm` unless specified.
+- Adhere strictly to the commands provided. If `vp` was instructed, use `vp`. If `pnpm` was instructed, use `pnpm`.
 - Verify the current directory to ensure the correct packages are updated, not assuming the root to be a monorepository. Run the commands inside all sub-packages in any monorepositories requested – do not rely on the root.
 - Verify `pnpm-workspace.yaml` for configurations like catalogs, overrides, peer dependency rules, build allowlist, `saveExact` and `minimumReleaseAge` before changing a version.
 - Keep `workspace:*` references for internal packages and do not replace them with registry versions. Be aware some package-related changes might require updating registry versions to resolve fully.
