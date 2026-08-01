@@ -166,13 +166,13 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
 <meta name="theme-color" media="(prefers-color-scheme: light)" content={themeColor || "#ffffff"} />
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
 
-<script is:inline>
+<script>
   (function() {
     if (window.trustedTypes && trustedTypes.createPolicy) {
       trustedTypes.createPolicy('default', {
-        createHTML: function(input) { return input; },
-        createScript: function(input) { return input; },
-        createScriptURL: function(input) { return input; }
+        createHTML: function(input: string) { return input; },
+        createScript: function(input: string) { return input; },
+        createScriptURL: function(input: string) { return input; }
       });
     }
   })();
