@@ -140,10 +140,12 @@ const actions: ButtonProps[] = [
     label: messages["actions_sign-in"] ?? "Sign In"
   }
 ];
+const { stackIndex = 1 } = Astro.props;
 ---
 
 <RLAHeader
   fixed={true}
+  stackIndex={stackIndex}
   class="rl-dark scroll-header bg-black left-1/2"
 >
   <div slot="left" class="flex items-center gap-md">

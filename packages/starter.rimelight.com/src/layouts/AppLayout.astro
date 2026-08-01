@@ -69,6 +69,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 			contain={false}
 			dismissable
 			dismissId="v2-announcement"
+			stackIndex={0}
 			class="bg-primary text-primary-foreground font-medium"
 			actions={[
 				{ label: "Learn more", href: "/docs", variant: "solid" },
@@ -77,7 +78,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 		>
 			New: Rimelight v2 is out
 		</RLABanner>
-		<AppHeader />
+		<AppHeader stackIndex={1} />
 		<RLAMain id="main-content">
 			<slot />
 		</RLAMain>

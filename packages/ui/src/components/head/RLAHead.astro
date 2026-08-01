@@ -349,8 +349,11 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
             if (layer.el) {
               const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
               layer.el.style.setProperty('top', topPx);
-              layer.el.style.setProperty('opacity', layer.isVisible ? '1' : '0');
-              layer.el.style.setProperty('pointer-events', layer.isVisible ? 'auto' : 'none');
+              if (layer.isVisible) {
+                layer.el.classList.remove('opacity-0', '!pointer-events-none');
+              } else {
+                layer.el.classList.add('opacity-0', '!pointer-events-none');
+              }
               layer.el.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
             }
             if (layer.isVisible) currentTop += layer.naturalHeight;
