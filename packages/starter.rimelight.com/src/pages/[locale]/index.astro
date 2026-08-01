@@ -1,67 +1,66 @@
 ---
-import AppLayout from "@/layouts/AppLayout.astro";
-import { siteConfig } from "@/config/site.config";
-import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n";
-import { getCollection } from "astro:content";
-import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
-import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro";
-import RLAPost from "@rimelight/ui/components/post/RLAPost.astro";
-import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
-
-const AboutHeroImage = "https://cdn.rimelight.com/Images/placeholder.webp";
+import AppLayout from "@/layouts/AppLayout.astro"
+import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n"
+import { getCollection } from "astro:content"
+import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro"
+import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLALink from "@rimelight/ui/components/link/RLALink.astro"
+import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
+import RLAPost from "@rimelight/ui/components/post/RLAPost.astro"
+import RLAImage from "@rimelight/ui/components/image/RLAImage.astro"
 
 const latestPosts = (await getCollection("blog"))
   .filter((post) => post.id.startsWith(`${getLocale()}/`))
   .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+  .slice(0, 3)
 
 const heroLinks = [
   {
-    label: t("page_home.section_hero_link_github_label"),
-    href: getRelativeLocaleUrl("/blog"),
-    color: "neutral",
     variant: "outline",
+    leadingIcon: "i-lucide-github",
+    label: t("page_home.section_hero_link_github_label"),
+    href: "https://github.com/Rimelight-Entertainment/rimelight/tree/main/packages/starter.rimelight.com"
   },
   {
-    label: t("page_home.section_hero_link_use-template_label"),
-    href: getRelativeLocaleUrl("/blog"),
-    color: "primary",
     variant: "solid",
+    label: t("page_home.section_hero_link_use-template_label"),
+    trailingIcon: "i-lucide-arrow-right",
+    href: getRelativeLocaleUrl("/docs/")
   }
-];
+]
 
 const featureLinks = [
   {
-    label: "Browse Components",
-    href: `https://rimelight.com/${getLocale()}/company/docs/packages/rimelight-ui/components/`,
-    color: "primary",
-    variant: "solid",
+    variant: "outline",
+    label: t("page_home.section_features_link_browse-components_label"),
+    href: `https://rimelight.com/${getLocale()}/company/docs/packages/rimelight-ui/components/`
+  },
+  {
+    label: t("page_home.section_features_link_read-the-docs_label"),
+    trailingIcon: "i-lucide-arrow-right",
+    href: "/docs"
   }
-];
+]
 
 const ctaLinks = [
   {
-    label: t("page_home.section_cta_start"),
-    href: getRelativeLocaleUrl("/blog"),
-    color: "primary",
-    variant: "solid"
+    variant: "outline",
+    leadingIcon: "i-lucide-github",
+    label: t("page_home.section_cta_view-on-github"),
+    href: getRelativeLocaleUrl("https://github.com/Rimelight-Entertainment/rimelight")
   },
   {
-    label: t("page_home.section_cta_contribute"),
-    href: getRelativeLocaleUrl("/"),
-    color: "primary",
-    variant: "outline",
-    trailingIcon: "i-lucide-arrow-right"
+    label: t("page_home.section_cta_learn-how"),
+    trailingIcon: "i-lucide-square-arrow-out-up-right",
+    href: `https://rimelight.com/${getLocale()}/company/docs/overview/contributing/introduction`
   }
-];
+]
 ---
 
-<AppLayout title={siteConfig.name} description={siteConfig.description}>
+<AppLayout title={t("page_home.meta_title")} description={t("page_home.meta_description")}>
   <RLAPageSection
     variant="hero"
-    reverse={true}
     title={t("page_home.section_hero_title")}
     description={t("page_home.section_hero_description")}
     links={heroLinks}
@@ -70,29 +69,28 @@ const ctaLinks = [
   </RLAPageSection>
 
   <RLAPageSection
+    orientation="horizontal"
     title={t("page_home.section_features_title")}
     description={t("page_home.section_features_description")}
-    orientation="horizontal"
     links={featureLinks}
   >
-    <RLAImage src={AboutHeroImage} alt="" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />
+    <RLAImage src={"https://cdn.rimelight.com/Images/placeholder.webp"} alt="Placeholder Image" />
   </RLAPageSection>
 
   <RLAPageSection
-    orientation="vertical"
     title={t("page_home.section_posts_title")}
     description={t("page_home.section_posts_description")}
   >
-    <div slot="body" class="flex flex-col gap-xl">
+    <div class="flex flex-col gap-xl items-center">
       <RLAGrid cols={3}>
         {
           latestPosts.map((post) => (
             <RLAPost
               variant="ghost"
               image={post.data.heroImage}
-              date={post.data.pubDate}
               title={post.data.title}
               description={post.data.description}
+              date={post.data.pubDate}
               to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${getLocale()}/`, "")}/`)}
             />
           ))
@@ -100,12 +98,11 @@ const ctaLinks = [
       </RLAGrid>
 
       {latestPosts.length > 0 && (
-        <RLAButton
+        //TODO Fix why this link isn't having hover color
+        <RLALink
           label={t("page_home.section_posts_view_all")}
-          href={getRelativeLocaleUrl("/blog")}
-          color="primary"
-          variant="link"
           trailingIcon="i-lucide-arrow-right"
+          href={getRelativeLocaleUrl("/blog")}
         />
       )}
     </div>

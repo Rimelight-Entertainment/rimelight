@@ -52,7 +52,8 @@ export const createPageSectionTheme = () =>
           leading: "mb-6",
           body: "mt-10",
           footer: "mt-10",
-          links: "gap-x-6 gap-y-3"
+          links: "gap-x-6 gap-y-3",
+          wrapper: "order-1"
         },
         cta: {
           root: "rounded-xl overflow-hidden",
@@ -101,9 +102,7 @@ export const createPageSectionTheme = () =>
         }
       },
       reverse: {
-        true: {
-          wrapper: "order-last"
-        }
+        true: {}
       },
       headline: {
         true: {
@@ -123,6 +122,27 @@ export const createPageSectionTheme = () =>
       }
     },
     compoundVariants: [
+      {
+        variant: "hero",
+        reverse: true,
+        classNames: {
+          wrapper: "order-first"
+        }
+      },
+      {
+        variant: "default",
+        reverse: true,
+        classNames: {
+          wrapper: "order-last"
+        }
+      },
+      {
+        variant: "cta",
+        reverse: true,
+        classNames: {
+          wrapper: "order-last"
+        }
+      },
       {
         variant: "default",
         orientation: "vertical",

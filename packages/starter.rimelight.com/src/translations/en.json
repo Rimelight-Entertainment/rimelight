@@ -50,35 +50,6 @@
     "links_legal_cookie-policy": "Cookie Policy",
     "links_legal_other-documents": "Other Documents"
   },
-  "page_about": {
-    "title": "About Rimelight",
-    "description": "Learn about Rimelight Entertainment and our starter template.",
-    "hero_title": "Rimelight Entertainment",
-    "hero_description": "We craft beautiful, modern, high-performance web experiences designed to scale and empower developers.",
-    "section_values_title": "Our Core Principles",
-    "section_values_description": "The ideas that drive how we build our templates and application frameworks.",
-    "value_dx_title": "Developer Experience",
-    "value_dx_description": "We believe tooling should be fast, seamless, and intuitive, getting out of your way so you can create.",
-    "value_design_title": "Design Excellence",
-    "value_design_description": "Aesthetics matter. Our components are crafted with precision, rich styling, and premium interactive details.",
-    "value_performance_title": "Built to Scale",
-    "value_performance_description": "Performance isn't an afterthought. Every line of code is optimized for lightning-fast speeds and core web vitals.",
-    "section_about_template_title": "About The Starter",
-    "section_about_template_description": "This is a unified starter template designed to bundle all our core UI elements, auth integration, localization, and robust database setups in a single place. Rather than maintaining dozens of fragments, we build one powerful base—allowing you to easily disable what you don't need."
-  },
-  "page_construction": {
-    "meta_title": "Under Construction",
-    "meta_description": "This website is under construction.",
-    "title": "THIS WEBSITE IS UNDER CONSTRUCTION",
-    "description": "If you have access, please sign in.",
-    "description_no_auth": "Please return at a later stage.",
-    "form_email_label": "E-mail",
-    "form_email_placeholder": "your@email.com",
-    "form_password_label": "Password",
-    "form_password_placeholder": "••••••••",
-    "form_remember_me_label": "Remember me",
-    "form_sign_in_button": "Sign In"
-  },
   "email_common": {
     "website": "Website",
     "contact": "Contact",
@@ -107,6 +78,19 @@
     "sign_in_suffix": " to get started.",
     "ignore": "If not, you can safely ignore this email."
   },
+  "page_construction": {
+    "meta_title": "Under Construction",
+    "meta_description": "This website is under construction.",
+    "title": "THIS WEBSITE IS UNDER CONSTRUCTION",
+    "description": "If you have access, please sign in.",
+    "description_no_auth": "Please return at a later stage.",
+    "form_email_label": "E-mail",
+    "form_email_placeholder": "your@email.com",
+    "form_password_label": "Password",
+    "form_password_placeholder": "••••••••",
+    "form_remember_me_label": "Remember me",
+    "form_sign_in_button": "Sign In"
+  },
   "page_contact": {
     "title": "Contact Us",
     "description": "Get in touch with the website team.",
@@ -117,23 +101,38 @@
     "upload_form_description": "Share documents or images directly with us (PNG, JPEG, WEBP, or PDF up to 5 MB)."
   },
   "page_home": {
+    "meta_title": "Rimelight Starter Template",
+    "meta_description": "An Astro starter project based on how we operate inside Rimelight Entertainment.",
     "section_hero_title": "Rimelight Starter Template",
-    "section_hero_description": "Look around, test, and play with some of our interactive technologies.",
+    "section_hero_description": "An Astro starter project based on how we operate inside Rimelight Entertainment.",
     "section_hero_link_github_label": "View on GitHub",
     "section_hero_link_use-template_label": "Use Template",
     "section_features_title": "One template for all your needs.",
-    "section_features_description": "We only maintain a single template including all features. Strip out what you don't need (or hide it to keep the option open) instead of browsing a multitude of options.",
+    "section_features_description": "We only maintain a single template including all features. Strip out what you don't need instead of browsing a multitude of options. Includes our component library, internationalization library, and other utilities.",
+    "section_features_link_browse-components_label": "Browse Components",
+    "section_features_link_read-the-docs_label": "Read the Docs",
     "section_posts_title": "Latest Posts",
-    "section_posts_description": "Read the latest updates to our projects.",
+    "section_posts_description": "Read the latest updates to the starter template.",
     "section_posts_view_all": "View All Posts",
-    "section_cta_title": "Wish to join us?",
-    "section_cta_description": "Explore our latest projects and get in touch.",
-    "section_cta_start": "Get Started",
-    "section_cta_contribute": "Join Us"
+    "section_cta_title": "Wish to contribute?",
+    "section_cta_description": "Explore our open source projects and get in touch.",
+    "section_cta_view-on-github": "View on GitHub",
+    "section_cta_learn-how": "Learn How"
   },
-  "page_test": {
-    "title": "i18n Simplification Test",
-    "description": "Demonstrating clean translation lookup with t() and useI18n() without inline boilerplate.",
-    "welcome": "Welcome {name}! Direct string lookup works seamlessly."
+  "page_about": {
+    "title": "About Rimelight",
+    "description": "Learn about Rimelight Entertainment and our starter template.",
+    "hero_title": "Rimelight Entertainment",
+    "hero_description": "We craft beautiful, modern, high-performance web experiences designed to scale and empower developers.",
+    "section_values_title": "Our Core Principles",
+    "section_values_description": "The ideas that drive how we build our templates and application frameworks.",
+    "value_dx_title": "Developer Experience",
+    "value_dx_description": "We believe tooling should be fast, seamless, and intuitive, getting out of your way so you can create.",
+    "value_design_title": "Design Excellence",
+    "value_design_description": "Aesthetics matter. Our components are crafted with precision, rich styling, and premium interactive details.",
+    "value_performance_title": "Built to Scale",
+    "value_performance_description": "Performance isn't an afterthought. Every line of code is optimized for lightning-fast speeds and core web vitals.",
+    "section_about_template_title": "About The Starter",
+    "section_about_template_description": "This is a unified starter template designed to bundle all our core UI elements, auth integration, localization, and robust database setups in a single place. Rather than maintaining dozens of fragments, we build one powerful base—allowing you to easily disable what you don't need."
   }
 }
