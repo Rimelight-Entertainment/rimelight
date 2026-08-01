@@ -348,9 +348,9 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
             const layer = this.layers[i];
             if (layer.el) {
               const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
-              layer.el.style.top = topPx;
-              layer.el.style.opacity = layer.isVisible ? '1' : '0';
-              layer.el.style.pointerEvents = layer.isVisible ? 'auto' : 'none';
+              layer.el.style.setProperty('top', topPx);
+              layer.el.style.setProperty('opacity', layer.isVisible ? '1' : '0');
+              layer.el.style.setProperty('pointer-events', layer.isVisible ? 'auto' : 'none');
               layer.el.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
             }
             if (layer.isVisible) currentTop += layer.naturalHeight;
@@ -443,8 +443,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
     function dismissBanner(banner) {
       var key = banner.getAttribute('data-dismiss-key');
       if (key) localStorage.setItem(key, 'true');
-      banner.style.display = 'none';
-      banner.style.pointerEvents = 'none'; // Immediately prevent click-blocking
+      banner.classList.add('hidden', '!pointer-events-none');
       banner.setAttribute('data-rla-banner', 'false');
       if (window.RLHeaderStack) RL.unregister(banner.id);
     }
@@ -455,8 +454,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
         var b = banners[i];
         var key = b.getAttribute('data-dismiss-key');
         if (key && localStorage.getItem(key) === 'true') {
-          b.style.display = 'none';
-          b.style.pointerEvents = 'none'; // Prevent click-blocking on hidden banners
+          b.classList.add('hidden', '!pointer-events-none');
           b.setAttribute('data-rla-banner', 'false');
         }
       }
