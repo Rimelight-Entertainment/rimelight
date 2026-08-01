@@ -177,7 +177,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
     }
   })();
 </script>
-<script is:inline>
+<script>
   (function() {
     if (!window.initialCspNonce) {
       window.initialCspNonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
@@ -295,7 +295,7 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
   })();
 </script>
 
-<script is:inline data-astro-rerun>
+<script data-astro-rerun>
   (function() {
     'use strict';
     if (window.rlHeaderObserver) window.rlHeaderObserver.disconnect();

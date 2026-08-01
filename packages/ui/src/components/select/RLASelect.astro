@@ -38,17 +38,7 @@ const selectedItem = normalizedItems.find(item => item.value === value)
 const initialLabel = selectedItem ? selectedItem.label : ""
 ---
 
-<!--
-  Two rendering paths live side-by-side:
 
-  PATH A — Native customizable <select> (Chrome with appearance: base-select flag / stable Chrome soon)
-    Detected at runtime via @supports (appearance: base-select). The browser handles
-    keyboard navigation, screen-reader announcements, form integration, and dropdown
-    positioning with zero JavaScript.
-
-  PATH B — Custom element fallback (all other browsers)
-    The existing JS-managed dropdown. Hidden in PATH A browsers via CSS.
--->
 
 {label && <label class={classes.label} data-slot="label" for={`rla-sel-native-${name}`}>{label}</label>}
 
