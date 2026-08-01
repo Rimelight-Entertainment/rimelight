@@ -199,10 +199,15 @@ const initialSize = preMetadata?.size ?? undefined
   </div>
 </rla-image>
 
+<style>
+  rla-image {
+    display: contents;
+  }
+</style>
+
 <script>
   class RLAImage extends HTMLElement {
     connectedCallback() {
-      this.style.display = 'contents';
       const trigger = this.querySelector("[data-image-trigger]");
       if (!trigger) return;
 

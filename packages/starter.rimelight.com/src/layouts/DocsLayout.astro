@@ -416,7 +416,13 @@ const getVersionHomeUrl = (v: string) => {
       const chevron = details.querySelector(chevronClass) as HTMLElement | null;
 
       details.addEventListener('toggle', () => {
-        if (chevron) chevron.style.transform = details.open ? 'rotate(180deg)' : '';
+        if (chevron) {
+          if (details.open) {
+            chevron.classList.add('rotate-180');
+          } else {
+            chevron.classList.remove('rotate-180');
+          }
+        }
       });
       details.querySelectorAll(linkAttr).forEach(link => {
         link.addEventListener('click', () => { details.open = false; });
