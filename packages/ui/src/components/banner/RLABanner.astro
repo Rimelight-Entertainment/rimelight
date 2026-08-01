@@ -43,6 +43,7 @@ const zIndex = 200 - stackIndex;
   data-header-layer-id={bannerId}
   data-layer-type="banner"
   data-dismiss-key={`rl-banner-dismiss-${storageKey}`}
+  style={fixed ? `z-index: ${zIndex};` : undefined}
   {...rest}
 >
   <div class:list={[classes.content]} data-header-content>
@@ -130,7 +131,4 @@ const zIndex = 200 - stackIndex;
   </div>
 </div>
 
-<style is:inline set:html={`
-  ${actions.length > 0 ? `#${bannerId}:has(#${bannerId}-act:checked) .actions-open-hidden { display: none !important; }` : ''}
-  ${fixed ? `#${bannerId} { z-index: ${zIndex} !important; }` : ''}
-`} />
+
