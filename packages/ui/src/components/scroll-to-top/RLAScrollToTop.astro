@@ -66,7 +66,6 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 
   class RLAScrollToTop extends HTMLElement {
     private cleanupScroll: (() => void) | null = null;
-    private styleEl: HTMLStyleElement | null = null;
 
     connectedCallback() {
       this.style.display = 'contents';
@@ -80,16 +79,6 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
       const color = this.dataset.color || 'primary';
       const progressWidth = Number(this.dataset.progressWidth) || 6;
       const gaugeBorderWidth = progressWidth * 0.5;
-      const nonce = (document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ?? '');
-
-      const getStyleEl = () => {
-        if (!this.styleEl) {
-          this.styleEl = document.createElement('style');
-          if (nonce) this.styleEl.setAttribute('nonce', nonce);
-          document.head.appendChild(this.styleEl);
-        }
-        return this.styleEl;
-      };
 
       innerElement.dataset.rlaInstance = String(id);
 
@@ -123,32 +112,30 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
         }
       };
 
-      // Progress ring always needs JS (conic-gradient % calculation)
+      // Progress ring scroll tracking using CSS variable on the element
+      const gaugeProgressEl = innerElement.querySelector('[data-gauge-progress]') as HTMLElement | null;
+      if (gaugeProgressEl) {
+        gaugeProgressEl.style.setProperty('--gauge-stroke-width', `${gaugeBorderWidth}px`);
+        gaugeProgressEl.style.setProperty('--gauge-color', `var(--color-${color}-500)`);
+      }
+      const gaugeTrackEl = innerElement.querySelector('.gauge-track') as HTMLElement | null;
+      if (gaugeTrackEl) {
+        gaugeTrackEl.style.setProperty('border-width', `${gaugeBorderWidth}px`);
+        gaugeTrackEl.style.setProperty('border-color', `var(--color-${color}-900)`);
+        gaugeTrackEl.style.setProperty('background-color', '#000');
+      }
+
       const unsubscribeProgress = trackScroll({ threshold }, (state) => {
-        getStyleEl().textContent = `
-          .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-track {
-            border-width: ${gaugeBorderWidth}px;
-            border-color: var(--color-${color}-900);
-            background-color: #000;
-          }
-          .rla-scroll-to-top-inner[data-rla-instance="${id}"] .gauge-progress {
-            --gauge-progress: ${state.scrollPercentage};
-            --gauge-stroke-width: ${gaugeBorderWidth}px;
-            --gauge-color: var(--color-${color}-500);
-          }
-        `;
+        if (gaugeProgressEl) {
+          gaugeProgressEl.style.setProperty('--gauge-progress', String(state.scrollPercentage));
+        }
       });
 
-      if (!this.cleanupScroll) {
-        this.cleanupScroll = () => {
-          button.removeEventListener('click', scrollToTop);
-          unsubscribeProgress();
-          if (this.styleEl) {
-            this.styleEl.remove();
-            this.styleEl = null;
-          }
-        };
-      }
+      const previousCleanup = this.cleanupScroll;
+      this.cleanupScroll = () => {
+        if (previousCleanup) previousCleanup();
+        unsubscribeProgress();
+      };
     }
 
     disconnectedCallback() {

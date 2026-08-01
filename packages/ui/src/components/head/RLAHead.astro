@@ -348,13 +348,13 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
             const layer = this.layers[i];
             if (layer.el) {
               const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
-              layer.el.style.setProperty('top', topPx);
+              layer.el.dataset.topPx = topPx;
               if (layer.isVisible) {
                 layer.el.classList.remove('opacity-0', '!pointer-events-none');
               } else {
                 layer.el.classList.add('opacity-0', '!pointer-events-none');
               }
-              layer.el.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
+              document.documentElement.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
             }
             if (layer.isVisible) currentTop += layer.naturalHeight;
           }
