@@ -347,8 +347,9 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
           for (let i = 0; i < this.layers.length; i++) {
             const layer = this.layers[i];
             if (layer.el) {
-              const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
-              layer.el.dataset.topPx = topPx;
+               const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
+               layer.el.style.top = topPx;
+               layer.el.dataset.topPx = topPx;
               if (layer.isVisible) {
                 layer.el.classList.remove('opacity-0', '!pointer-events-none');
               } else {
