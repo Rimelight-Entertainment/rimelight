@@ -135,23 +135,6 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
     newHeaders.set("content-security-policy", cspHeader)
   }
 
-  const nonceValue = cspHeader ? crypto.randomUUID().replace(/-/g, "") : null
-
-  if (cspHeader && nonceValue) {
-    let newCsp = cspHeader
-    if (newCsp.includes("script-src ")) {
-      newCsp = newCsp.replace("script-src ", `script-src 'nonce-${nonceValue}' `)
-    } else {
-      newCsp = newCsp + `; script-src 'nonce-${nonceValue}'`
-    }
-    if (newCsp.includes("style-src ")) {
-      newCsp = newCsp.replace("style-src ", `style-src 'nonce-${nonceValue}' `)
-    } else {
-      newCsp = newCsp + `; style-src 'nonce-${nonceValue}'`
-    }
-    newHeaders.set("content-security-policy", newCsp)
-  }
-
   if (typeof HTMLRewriter !== "undefined") {
     let rewriter = new HTMLRewriter()
 
@@ -183,27 +166,6 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
         el.remove()
       }
     })
-
-    if (nonceValue) {
-      rewriter = rewriter
-        .on("head", {
-          element(el: any) {
-            el.append(`<meta name="csp-nonce" content="${nonceValue}">`, { html: true })
-          }
-        })
-        .on("script", {
-          element(el: any) {
-            if (!el.getAttribute("nonce")) {
-              el.setAttribute("nonce", nonceValue)
-            }
-          }
-        })
-        .on("style", {
-          element(el: any) {
-            el.setAttribute("nonce", nonceValue)
-          }
-        })
-    }
 
     return addSecurityHeaders(
       rewriter.transform(
@@ -237,21 +199,6 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
     modifiedHtml = modifiedHtml.replace(
       linkRegex,
       `$1 integrity="${hash}" crossorigin="anonymous"$2`
-    )
-  }
-
-  if (nonceValue) {
-    modifiedHtml = modifiedHtml.replace(
-      /<head([^>]*)>/i,
-      `<head$1>\n<meta name="csp-nonce" content="${nonceValue}">`
-    )
-    modifiedHtml = modifiedHtml.replace(
-      /<script(?![^>]*nonce=)([^>]*)>/gi,
-      `<script$1 nonce="${nonceValue}">`
-    )
-    modifiedHtml = modifiedHtml.replace(
-      /<style(?![^>]*nonce=)([^>]*)>/gi,
-      `<style$1 nonce="${nonceValue}">`
     )
   }
 
