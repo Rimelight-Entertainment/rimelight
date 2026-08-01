@@ -50,20 +50,19 @@
     "chroma-js": "3.2.0",
     "css-variants": "2.3.5",
     "drizzle-orm": "0.45.2",
-    "hono": "4.12.32",
+    "hono": "4.12.33",
     "nanostores": "1.4.2",
     "solid-js": "1.9.14",
     "vue": "3.5.40",
     "vuedraggable": "2.24.3",
-    "wrangler": "4.115.0"
+    "wrangler": "4.118.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@astrojs/ts-plugin": "1.10.10",
     "@e18e/eslint-plugin": "0.6.0",
     "@iconify-json/logos": "1.2.11",
-    "@iconify-json/lucide": "1.2.120",
-    "@resvg/resvg-js": "2.6.2",
+    "@iconify-json/lucide": "1.2.121",
     "@types/node": "26.1.2",
     "@unocss/eslint-plugin": "66.7.5",
     "drizzle-kit": "0.31.10",
@@ -71,7 +70,7 @@
     "satori": "0.29.0",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vite-plus": "0.2.6"
+    "vite-plus": "0.2.7"
   },
   "engines": {
     "node": ">=25.2.1"

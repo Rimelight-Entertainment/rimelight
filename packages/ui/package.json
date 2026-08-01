@@ -47,14 +47,14 @@
   "dependencies": {
     "@unocss/astro": "66.7.5",
     "css-variants": "2.3.5",
-    "nanostores": "1.4.1"
+    "nanostores": "1.4.2"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.9",
+    "@astrojs/check": "0.9.10",
     "@astrojs/solid-js": "7.0.1",
     "@astrojs/ts-plugin": "1.10.10",
     "@astrojs/vue": "7.0.1",
-    "astro": "7.1.3",
+    "astro": "7.1.6",
     "solid-js": "1.9.14",
     "typescript": "6.0.3",
     "unocss": "66.7.5",

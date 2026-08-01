@@ -42,9 +42,9 @@
     "astro": "7.1.6",
     "better-auth": "1.6.25",
     "drizzle-orm": "0.45.2",
-    "hono": "4.12.32",
+    "hono": "4.12.33",
     "nanostores": "1.4.2",
-    "wrangler": "4.115.0"
+    "wrangler": "4.118.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
