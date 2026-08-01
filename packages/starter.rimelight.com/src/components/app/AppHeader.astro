@@ -247,11 +247,11 @@ const actions: ButtonProps[] = [
   <div slot="right" class="flex items-center gap-md">
     <RLASearch />
     <RLAButton
+      id="rla-shortcuts-btn"
       variant="ghost"
       color="neutral"
       leadingIcon="i-lucide-keyboard"
       aria-label="Keyboard Shortcuts"
-      onclick="document.dispatchEvent(new CustomEvent('rla-shortcuts:open'))"
     />
     <div class="hidden md:flex flex-row gap-md">
       {session ? (
@@ -485,3 +485,14 @@ const actions: ButtonProps[] = [
     }
   }
 </style>
+
+<script>
+  function setupShortcutsBtn() {
+    const btn = document.getElementById("rla-shortcuts-btn");
+    btn?.addEventListener("click", () => {
+      document.dispatchEvent(new CustomEvent("rla-shortcuts:open"));
+    });
+  }
+  setupShortcutsBtn();
+  document.addEventListener("astro:after-swap", setupShortcutsBtn);
+</script>
