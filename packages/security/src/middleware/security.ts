@@ -122,6 +122,11 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
     )
   }
 
+  // Generate a per-request nonce. Cloudflare reads 'nonce-*' from the CSP header and
+  // automatically applies it to any scripts it injects (e.g. challenge-platform).
+  // The nonce is also stamped on every <script> tag so Astro's own scripts still load.
+  const nonce = crypto.randomUUID().replace(/-/g, "")
+
   let cspHeader = response.headers.get("content-security-policy")
   const newHeaders = new Headers(response.headers)
 
@@ -132,6 +137,10 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
       .replace(/&#x0*27;/gi, "'")
       .replace(/&quot;/g, '"')
       .replace(/&amp;/g, "&")
+
+    // Inject the nonce into script-src (additive alongside existing hashes)
+    cspHeader = cspHeader.replace(/(script-src\s)/i, `$1'nonce-${nonce}' `)
+
     newHeaders.set("content-security-policy", cspHeader)
   }
 
@@ -161,6 +170,13 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
         })
     }
 
+    // Stamp nonce on every <script> tag so Astro's own scripts are still allowed
+    rewriter = rewriter.on("script", {
+      element(el: any) {
+        el.setAttribute("nonce", nonce)
+      }
+    })
+
     rewriter = rewriter.on('meta[http-equiv="content-security-policy" i]', {
       element(el: any) {
         el.remove()
@@ -185,6 +201,12 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
   modifiedHtml = modifiedHtml.replace(
     /<meta\s[^>]*http-equiv\s*=\s*["']?content-security-policy[^>]*>/gi,
     ""
+  )
+
+  // Stamp nonce on every <script> tag (regex fallback path)
+  modifiedHtml = modifiedHtml.replace(
+    /<script(\s[^>]*)?>/gi,
+    (_match, attrs = "") => `<script${attrs} nonce="${nonce}">`
   )
 
   // Use pre-compiled regexes
