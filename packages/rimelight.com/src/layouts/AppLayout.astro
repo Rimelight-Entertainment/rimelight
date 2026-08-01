@@ -36,6 +36,7 @@ const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 		<Font cssVariable="--font-sans" preload={true} slot="head" />
 		<Font cssVariable="--font-serif" preload={true} slot="head" />
 		<Font cssVariable="--font-mono" preload={true} slot="head" />
+    <meta property="og:image" content={ogImageUrl} />
 	</RLAHead>
 	<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
 	<body class="isolate">
