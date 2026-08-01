@@ -31,7 +31,7 @@ export const createHeaderTheme = () =>
       },
       fixed: {
         true: {
-          root: "fixed left-0 right-0 transition-[top,opacity] duration-200 ease-in-out"
+          root: "fixed left-0 right-0 z-50 transition-[top,opacity] duration-200 ease-in-out"
         },
         false: {}
       }
