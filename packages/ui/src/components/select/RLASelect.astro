@@ -98,70 +98,57 @@ const initialLabel = selectedItem ? selectedItem.label : ""
 
 <style>
   /*
-   * PATH A: Native customizable select — shown only when the browser supports
-   * appearance: base-select. All other browsers see PATH B.
+   * PATH A: Native customizable select — styled using appearance: base-select
+   * which allows styling the button, picker, and options in modern browsers.
    */
   .rla-select-native-wrapper {
-    /* Hidden by default — shown only via @supports below */
-    display: none;
+    display: block;
+    position: relative;
+    width: 100%;
   }
 
-  @supports (appearance: base-select) {
-    /* Show the native select, hide the custom element */
-    .rla-select-native-wrapper {
-      display: block;
-      position: relative;
-      width: 100%;
-    }
+  rla-select {
+    display: none !important;
+  }
 
-    rla-select {
-      display: none !important;
-    }
+  .rla-select-native {
+    appearance: base-select;
+    width: 100%;
+    cursor: pointer;
+  }
 
-    /*
-     * Style the native <select> to match our design system.
-     * appearance: base-select opts into the new customizable select model
-     * which allows styling the button, picker, and options.
-     */
-    .rla-select-native {
-      appearance: base-select;
-      width: 100%;
-      cursor: pointer;
-    }
+  /* Style the dropdown picker container */
+  .rla-select-native::picker(select) {
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border, #e2e8f0);
+    background: var(--color-background, #fff);
+    padding: 0.25rem;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-top: 0.25rem;
+    max-height: 15rem;
+    overflow-y: auto;
+  }
 
-    /* Style the dropdown picker container */
-    .rla-select-native::picker(select) {
-      border-radius: 0.5rem;
-      border: 1px solid var(--color-border, #e2e8f0);
-      background: var(--color-background, #fff);
-      padding: 0.25rem;
-      box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      margin-top: 0.25rem;
-      max-height: 15rem;
-      overflow-y: auto;
-    }
+  /* Style individual options */
+  .rla-select-native option {
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.25rem;
+    cursor: default;
+    font-size: 0.875rem;
+    color: var(--color-foreground, inherit);
+  }
 
-    /* Style individual options */
-    .rla-select-native option {
-      padding: 0.375rem 0.5rem;
-      border-radius: 0.25rem;
-      cursor: default;
-      font-size: 0.875rem;
-      color: var(--color-foreground, inherit);
-    }
+  .rla-select-native option:hover,
+  .rla-select-native option:checked {
+    background: var(--color-accent, #f1f5f9);
+    color: var(--color-accent-foreground, inherit);
+  }
 
-    .rla-select-native option:hover,
-    .rla-select-native option:checked {
-      background: var(--color-accent, #f1f5f9);
-      color: var(--color-accent-foreground, inherit);
-    }
-
-    /* Disabled placeholder option */
-    .rla-select-native option:disabled {
-      opacity: 0.5;
-    }
+  /* Disabled placeholder option */
+  .rla-select-native option:disabled {
+    opacity: 0.5;
   }
 </style>
 
