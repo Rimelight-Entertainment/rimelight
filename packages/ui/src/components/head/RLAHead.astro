@@ -113,424 +113,422 @@ const isIndexable = !noindex && !is404;
 const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow';
 ---
 
-<head>
-  <!-- Basic Metadata -->
-  <meta charset={charset} />
-  <meta name="viewport" content={viewport} />
-  <meta name="generator" content={Astro.generator} />
+<!-- Basic Metadata -->
+<meta charset={charset} />
+<meta name="viewport" content={viewport} />
+<meta name="generator" content={Astro.generator} />
 
-  <!-- Sitemap -->
-  <link rel="sitemap" href="/sitemap-index.xml" />
+<!-- Sitemap -->
+<link rel="sitemap" href="/sitemap-index.xml" />
 
-  <!-- RSS Feed -->
-  {rssFeed && <link rel="alternate" type="application/rss+xml" href={rssFeed.href} title={rssFeed.title || 'RSS'} />}
+<!-- RSS Feed -->
+{rssFeed && <link rel="alternate" type="application/rss+xml" href={rssFeed.href} title={rssFeed.title || 'RSS'} />}
 
-  <!-- SEO -->
-  <title>{displayTitle}</title>
-  {safeDescription && <meta name="description" content={safeDescription} />}
-  <meta name="robots" content={robots || defaultRobots} />
-  {finalCanonical && <link rel="canonical" href={finalCanonical} />}
+<!-- SEO -->
+<title>{displayTitle}</title>
+{safeDescription && <meta name="description" content={safeDescription} />}
+<meta name="robots" content={robots || defaultRobots} />
+{finalCanonical && <link rel="canonical" href={finalCanonical} />}
 
-  <!-- i18n Alternates -->
-  {languageAlternates.map((alt) => (
-    <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
-  ))}
+<!-- i18n Alternates -->
+{languageAlternates.map((alt) => (
+  <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+))}
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content={ogType} />
-  <meta property="og:locale" content={ogLocale} />
-  <meta property="og:url" content={Astro.url.href} />
-  <meta property="og:title" content={title || siteName} />
-  {safeDescription && <meta property="og:description" content={safeDescription} />}
-  {absoluteOgImage && <meta property="og:image" content={absoluteOgImage} />}
-  {finalOgImage && <meta property="og:image:alt" content={finalOgImage.alt} />}
-  <meta property="og:site_name" content={siteName} />
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:url" content={Astro.url.href} />
+<meta property="og:title" content={title || siteName} />
+{safeDescription && <meta property="og:description" content={safeDescription} />}
+{absoluteOgImage && <meta property="og:image" content={absoluteOgImage} />}
+{finalOgImage && <meta property="og:image:alt" content={finalOgImage.alt} />}
+<meta property="og:site_name" content={siteName} />
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content={Astro.url.href} />
-  <meta property="twitter:title" content={title || siteName} />
-  {safeDescription && <meta property="twitter:description" content={safeDescription} />}
-  {absoluteOgImage && <meta property="twitter:image" content={absoluteOgImage} />}
-  {finalOgImage && <meta property="twitter:image:alt" content={finalOgImage.alt} />}
-  {twitterHandle && <meta property="twitter:site" content={twitterHandle} />}
-  {twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url.href} />
+<meta property="twitter:title" content={title || siteName} />
+{safeDescription && <meta property="twitter:description" content={safeDescription} />}
+{absoluteOgImage && <meta property="twitter:image" content={absoluteOgImage} />}
+{finalOgImage && <meta property="twitter:image:alt" content={finalOgImage.alt} />}
+{twitterHandle && <meta property="twitter:site" content={twitterHandle} />}
+{twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
 
-  <!-- Icons & Manifest -->
-  <link rel="icon" type="image/svg+xml" href={favicon} />
-  <link rel="icon" href="/favicon.ico" sizes="32x32" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+<!-- Icons & Manifest -->
+<link rel="icon" type="image/svg+xml" href={favicon} />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
 
-  <!-- Theme -->
-  <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content={themeColor || "#ffffff"} />
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
+<!-- Theme -->
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content={themeColor || "#ffffff"} />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
 
-  <script>
-    (function() {
-      if (window.trustedTypes && trustedTypes.createPolicy) {
-        trustedTypes.createPolicy('default', {
-          createHTML: function(input: string) { return input; },
-          createScript: function(input: string) { return input; },
-          createScriptURL: function(input: string) { return input; }
-        });
-      }
-    })();
-  </script>
-  <script>
-    (function() {
-      if (!window.initialCspNonce) {
-        window.initialCspNonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
-                                 Array.from(document.querySelectorAll('script')).find(function(s) { return s.nonce; })?.nonce ||
-                                 document.querySelector('script[nonce]')?.nonce ||
-                                 document.querySelector('style[nonce]')?.nonce;
-      }
+<script>
+  (function() {
+    if (window.trustedTypes && trustedTypes.createPolicy) {
+      trustedTypes.createPolicy('default', {
+        createHTML: function(input: string) { return input; },
+        createScript: function(input: string) { return input; },
+        createScriptURL: function(input: string) { return input; }
+      });
+    }
+  })();
+</script>
+<script>
+  (function() {
+    if (!window.initialCspNonce) {
+      window.initialCspNonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+                               Array.from(document.querySelectorAll('script')).find(function(s) { return s.nonce; })?.nonce ||
+                               document.querySelector('script[nonce]')?.nonce ||
+                               document.querySelector('style[nonce]')?.nonce;
+    }
 
-      var orig = document.createElement;
-      document.createElement = function(tag, opts) {
-        var el = orig.call(document, tag, opts);
-        var lowTag = tag.toLowerCase();
-        if (lowTag === 'script' || lowTag === 'style') {
-          var nonce = window.initialCspNonce;
-          if (nonce) {
-            el.setAttribute('nonce', nonce);
-            el.nonce = nonce;
-          }
-        }
-        return el;
-      };
-
-      // Synchronous DOM insertion overrides to catch cloned, imported, or createElementNS tags
-      var origAppend = Element.prototype.appendChild;
-      Element.prototype.appendChild = function(child) {
-        if (child && (child.tagName === 'SCRIPT' || child.tagName === 'STYLE')) {
-          var nonce = window.initialCspNonce;
-          if (nonce && !child.getAttribute('nonce')) {
-            child.setAttribute('nonce', nonce);
-            child.nonce = nonce;
-          }
-        }
-        return origAppend.apply(this, arguments);
-      };
-
-      var origInsert = Element.prototype.insertBefore;
-      Element.prototype.insertBefore = function(newChild, refChild) {
-        if (newChild && (newChild.tagName === 'SCRIPT' || newChild.tagName === 'STYLE')) {
-          var nonce = window.initialCspNonce;
-          if (nonce && !newChild.getAttribute('nonce')) {
-            newChild.setAttribute('nonce', nonce);
-            newChild.nonce = nonce;
-          }
-        }
-        return origInsert.apply(this, arguments);
-      };
-
-      var origAppendMethod = Element.prototype.append;
-      if (origAppendMethod) {
-        Element.prototype.append = function() {
-          for (var i = 0; i < arguments.length; i++) {
-            var arg = arguments[i];
-            if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
-              var nonce = window.initialCspNonce;
-              if (nonce && !arg.getAttribute('nonce')) {
-                arg.setAttribute('nonce', nonce);
-                arg.nonce = nonce;
-              }
-            }
-          }
-          return origAppendMethod.apply(this, arguments);
-        };
-      }
-
-      var origPrependMethod = Element.prototype.prepend;
-      if (origPrependMethod) {
-        Element.prototype.prepend = function() {
-          for (var i = 0; i < arguments.length; i++) {
-            var arg = arguments[i];
-            if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
-              var nonce = window.initialCspNonce;
-              if (nonce && !arg.getAttribute('nonce')) {
-                arg.setAttribute('nonce', nonce);
-                arg.nonce = nonce;
-              }
-            }
-          }
-          return origPrependMethod.apply(this, arguments);
-        };
-      }
-
-      function getThemePreference() {
-        var stored = localStorage.getItem('theme');
-        if (stored === 'dark' || stored === 'light') return stored;
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
-
-      function applyTheme(doc) {
-        var pref = getThemePreference();
-        doc.documentElement.classList.toggle('dark',  pref === 'dark');
-        doc.documentElement.classList.toggle('light', pref === 'light');
-      }
-
-      // Apply immediately on initial load
-      applyTheme(document);
-
-      // Apply to incoming document BEFORE the swap — eliminates the flash
-      document.addEventListener('astro:before-swap', function(e) {
-        applyTheme(e.newDocument);
+    var orig = document.createElement;
+    document.createElement = function(tag, opts) {
+      var el = orig.call(document, tag, opts);
+      var lowTag = tag.toLowerCase();
+      if (lowTag === 'script' || lowTag === 'style') {
         var nonce = window.initialCspNonce;
         if (nonce) {
-          e.newDocument.querySelectorAll('script').forEach(function(s) {
-            s.setAttribute('nonce', nonce);
-          });
-          e.newDocument.querySelectorAll('style').forEach(function(s) {
-            s.setAttribute('nonce', nonce);
-          });
+          el.setAttribute('nonce', nonce);
+          el.nonce = nonce;
         }
-      });
+      }
+      return el;
+    };
 
-      // Safety net: re-apply after swap in case anything overrides it
-      document.addEventListener('astro:after-swap', function() {
-        applyTheme(document);
-      });
-    })();
-  </script>
+    // Synchronous DOM insertion overrides to catch cloned, imported, or createElementNS tags
+    var origAppend = Element.prototype.appendChild;
+    Element.prototype.appendChild = function(child) {
+      if (child && (child.tagName === 'SCRIPT' || child.tagName === 'STYLE')) {
+        var nonce = window.initialCspNonce;
+        if (nonce && !child.getAttribute('nonce')) {
+          child.setAttribute('nonce', nonce);
+          child.nonce = nonce;
+        }
+      }
+      return origAppend.apply(this, arguments);
+    };
 
-  <script data-astro-rerun>
-    (function() {
-      'use strict';
-      if (window.rlHeaderObserver) window.rlHeaderObserver.disconnect();
+    var origInsert = Element.prototype.insertBefore;
+    Element.prototype.insertBefore = function(newChild, refChild) {
+      if (newChild && (newChild.tagName === 'SCRIPT' || newChild.tagName === 'STYLE')) {
+        var nonce = window.initialCspNonce;
+        if (nonce && !newChild.getAttribute('nonce')) {
+          newChild.setAttribute('nonce', nonce);
+          newChild.nonce = nonce;
+        }
+      }
+      return origInsert.apply(this, arguments);
+    };
 
-      if (!window.RLHeaderStack) {
-        window.RLHeaderStack = {
-          layers: [],
-          register: function(id, order, naturalHeight, isVisible, el, type) {
-            if (el && !el.isConnected) return;
-            if (type === undefined) type = el && el.getAttribute ? (el.getAttribute('data-layer-type') || 'header') : 'header';
-            let layer = this.layers.find(function(l) { return l.id === id; });
-            if (!layer) {
-              layer = { id: id, type: type, order: order, naturalHeight: naturalHeight, isVisible: isVisible, el: el };
-              this.layers.push(layer);
-              this.sortLayers();
-            } else {
-              layer.naturalHeight = naturalHeight;
-              layer.isVisible = isVisible;
-              layer.el = el;
+    var origAppendMethod = Element.prototype.append;
+    if (origAppendMethod) {
+      Element.prototype.append = function() {
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
+            var nonce = window.initialCspNonce;
+            if (nonce && !arg.getAttribute('nonce')) {
+              arg.setAttribute('nonce', nonce);
+              arg.nonce = nonce;
             }
-            if (el) {
-              el.rlNaturalHeight = naturalHeight;
-              el.rlIsVisible = isVisible;
-            }
-            this.update();
-          },
-          unregister: function(id) {
-            const layer = this.layers.find(function(l) { return l.id === id; });
-            if (layer && layer.el) {
-              const el = layer.el;
-              if (el.rlScrollListener) {
-                window.removeEventListener('scroll', el.rlScrollListener);
-              }
-              if (el.rlResizeObserver) {
-                el.rlResizeObserver.disconnect();
-              }
-            }
-            this.layers = this.layers.filter(function(l) { return l.id !== id; });
-            this.update();
-          },
-          sortLayers: function() {
-            this.layers.sort(function(a, b) {
-              if (a.type !== b.type) return a.type === 'banner' ? -1 : 1;
-              return a.order - b.order;
-            });
-          },
-          update: function() {
-            let currentTop = 0;
-            for (let i = 0; i < this.layers.length; i++) {
-              const layer = this.layers[i];
-              if (layer.el) {
-                 const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
-                 layer.el.style.top = topPx;
-                 layer.el.dataset.topPx = topPx;
-                if (layer.isVisible) {
-                  layer.el.classList.remove('opacity-0', '!pointer-events-none');
-                } else {
-                  layer.el.classList.add('opacity-0', '!pointer-events-none');
-                }
-                document.documentElement.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
-              }
-              if (layer.isVisible) currentTop += layer.naturalHeight;
-            }
-            // Always update the CSS variable (even to 0) so stale values don't persist
-            document.documentElement.style.setProperty('--rl-total-header-height', currentTop + 'px');
           }
-        };
-      }
-      const RL = window.RLHeaderStack;
-      RL.layers = [];
-      RL.update(); // Clear stale --rl-total-header-height before re-registering layers
-
-      function getHeight(el) {
-        if (!el) return 64;
-        const h = el.offsetHeight;
-        return h > 0 ? h : 64;
-      }
-
-      function initLayer(el) {
-        const id = el.id;
-        const type = el.getAttribute('data-layer-type') || 'header';
-        const stackIndex = parseInt(el.getAttribute('data-stack-index') || '0', 10);
-        const hideOnScroll = el.getAttribute('data-hide-on-scroll') === 'true';
-        const contentEl = el.querySelector('[data-header-content]');
-
-        if (el.rlManaged) {
-          const naturalHeight = el.rlNaturalHeight || getHeight(contentEl);
-          const isVisible = el.rlIsVisible !== false;
-          RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
-          return;
         }
-        el.rlManaged = true;
+        return origAppendMethod.apply(this, arguments);
+      };
+    }
 
-        let naturalHeight = getHeight(contentEl);
-        let isVisible = true;
-
-        RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
-
-        if (typeof ResizeObserver !== 'undefined' && contentEl) {
-          const ro = new ResizeObserver(function(entries) {
-            if (!el.isConnected) {
-              ro.disconnect();
-              return;
+    var origPrependMethod = Element.prototype.prepend;
+    if (origPrependMethod) {
+      Element.prototype.prepend = function() {
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
+            var nonce = window.initialCspNonce;
+            if (nonce && !arg.getAttribute('nonce')) {
+              arg.setAttribute('nonce', nonce);
+              arg.nonce = nonce;
             }
-            const h = entries[0] && entries[0].contentRect.height;
-            if (h && h > 0) {
-              naturalHeight = h;
-              RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
+          }
+        }
+        return origPrependMethod.apply(this, arguments);
+      };
+    }
+
+    function getThemePreference() {
+      var stored = localStorage.getItem('theme');
+      if (stored === 'dark' || stored === 'light') return stored;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(doc) {
+      var pref = getThemePreference();
+      doc.documentElement.classList.toggle('dark',  pref === 'dark');
+      doc.documentElement.classList.toggle('light', pref === 'light');
+    }
+
+    // Apply immediately on initial load
+    applyTheme(document);
+
+    // Apply to incoming document BEFORE the swap — eliminates the flash
+    document.addEventListener('astro:before-swap', function(e) {
+      applyTheme(e.newDocument);
+      var nonce = window.initialCspNonce;
+      if (nonce) {
+        e.newDocument.querySelectorAll('script').forEach(function(s) {
+          s.setAttribute('nonce', nonce);
+        });
+        e.newDocument.querySelectorAll('style').forEach(function(s) {
+          s.setAttribute('nonce', nonce);
+        });
+      }
+    });
+
+    // Safety net: re-apply after swap in case anything overrides it
+    document.addEventListener('astro:after-swap', function() {
+      applyTheme(document);
+    });
+  })();
+</script>
+
+<script data-astro-rerun>
+  (function() {
+    'use strict';
+    if (window.rlHeaderObserver) window.rlHeaderObserver.disconnect();
+
+    if (!window.RLHeaderStack) {
+      window.RLHeaderStack = {
+        layers: [],
+        register: function(id, order, naturalHeight, isVisible, el, type) {
+          if (el && !el.isConnected) return;
+          if (type === undefined) type = el && el.getAttribute ? (el.getAttribute('data-layer-type') || 'header') : 'header';
+          let layer = this.layers.find(function(l) { return l.id === id; });
+          if (!layer) {
+            layer = { id: id, type: type, order: order, naturalHeight: naturalHeight, isVisible: isVisible, el: el };
+            this.layers.push(layer);
+            this.sortLayers();
+          } else {
+            layer.naturalHeight = naturalHeight;
+            layer.isVisible = isVisible;
+            layer.el = el;
+          }
+          if (el) {
+            el.rlNaturalHeight = naturalHeight;
+            el.rlIsVisible = isVisible;
+          }
+          this.update();
+        },
+        unregister: function(id) {
+          const layer = this.layers.find(function(l) { return l.id === id; });
+          if (layer && layer.el) {
+            const el = layer.el;
+            if (el.rlScrollListener) {
+              window.removeEventListener('scroll', el.rlScrollListener);
             }
+            if (el.rlResizeObserver) {
+              el.rlResizeObserver.disconnect();
+            }
+          }
+          this.layers = this.layers.filter(function(l) { return l.id !== id; });
+          this.update();
+        },
+        sortLayers: function() {
+          this.layers.sort(function(a, b) {
+            if (a.type !== b.type) return a.type === 'banner' ? -1 : 1;
+            return a.order - b.order;
           });
-          ro.observe(contentEl);
-          el.rlResizeObserver = ro;
-        }
-
-        if (hideOnScroll) {
-          let lastScrollY = window.scrollY;
-          const scrollListener = function() {
-            if (!el.isConnected) {
-              window.removeEventListener('scroll', scrollListener);
-              return;
-            }
-            const current = window.scrollY;
-            const diff = current - lastScrollY;
-            if (Math.abs(diff) >= 10) {
-              const newVisible = current <= 50 ? true : diff <= 0;
-              if (newVisible !== isVisible) {
-                isVisible = newVisible;
-                RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
+        },
+        update: function() {
+          let currentTop = 0;
+          for (let i = 0; i < this.layers.length; i++) {
+            const layer = this.layers[i];
+            if (layer.el) {
+               const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
+               layer.el.style.top = topPx;
+               layer.el.dataset.topPx = topPx;
+              if (layer.isVisible) {
+                layer.el.classList.remove('opacity-0', '!pointer-events-none');
+              } else {
+                layer.el.classList.add('opacity-0', '!pointer-events-none');
               }
-              lastScrollY = current;
+              document.documentElement.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
             }
-          };
-          el.rlScrollListener = scrollListener;
-          window.addEventListener('scroll', scrollListener, { passive: true });
+            if (layer.isVisible) currentTop += layer.naturalHeight;
+          }
+          // Always update the CSS variable (even to 0) so stale values don't persist
+          document.documentElement.style.setProperty('--rl-total-header-height', currentTop + 'px');
         }
+      };
+    }
+    const RL = window.RLHeaderStack;
+    RL.layers = [];
+    RL.update(); // Clear stale --rl-total-header-height before re-registering layers
 
-        (function retry() {
-          if (!el.isConnected) return;
-          const h = getHeight(contentEl);
-          if (h !== naturalHeight) {
+    function getHeight(el) {
+      if (!el) return 64;
+      const h = el.offsetHeight;
+      return h > 0 ? h : 64;
+    }
+
+    function initLayer(el) {
+      const id = el.id;
+      const type = el.getAttribute('data-layer-type') || 'header';
+      const stackIndex = parseInt(el.getAttribute('data-stack-index') || '0', 10);
+      const hideOnScroll = el.getAttribute('data-hide-on-scroll') === 'true';
+      const contentEl = el.querySelector('[data-header-content]');
+
+      if (el.rlManaged) {
+        const naturalHeight = el.rlNaturalHeight || getHeight(contentEl);
+        const isVisible = el.rlIsVisible !== false;
+        RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
+        return;
+      }
+      el.rlManaged = true;
+
+      let naturalHeight = getHeight(contentEl);
+      let isVisible = true;
+
+      RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
+
+      if (typeof ResizeObserver !== 'undefined' && contentEl) {
+        const ro = new ResizeObserver(function(entries) {
+          if (!el.isConnected) {
+            ro.disconnect();
+            return;
+          }
+          const h = entries[0] && entries[0].contentRect.height;
+          if (h && h > 0) {
             naturalHeight = h;
             RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
           }
-          if (h > 0 && h !== 64 && contentEl && contentEl.offsetHeight > 0) return;
-          requestAnimationFrame(retry);
-        })();
+        });
+        ro.observe(contentEl);
+        el.rlResizeObserver = ro;
       }
 
-      function dismissBanner(banner) {
-        var key = banner.getAttribute('data-dismiss-key');
-        if (key) localStorage.setItem(key, 'true');
-        banner.classList.add('hidden', '!pointer-events-none');
-        banner.setAttribute('data-rla-banner', 'false');
-        if (window.RLHeaderStack) RL.unregister(banner.id);
-      }
-
-      function checkDismissed() {
-        var banners = document.querySelectorAll("[data-rla-banner='true']");
-        for (var i = 0; i < banners.length; i++) {
-          var b = banners[i];
-          var key = b.getAttribute('data-dismiss-key');
-          if (key && localStorage.getItem(key) === 'true') {
-            b.classList.add('hidden', '!pointer-events-none');
-            b.setAttribute('data-rla-banner', 'false');
+      if (hideOnScroll) {
+        let lastScrollY = window.scrollY;
+        const scrollListener = function() {
+          if (!el.isConnected) {
+            window.removeEventListener('scroll', scrollListener);
+            return;
           }
+          const current = window.scrollY;
+          const diff = current - lastScrollY;
+          if (Math.abs(diff) >= 10) {
+            const newVisible = current <= 50 ? true : diff <= 0;
+            if (newVisible !== isVisible) {
+              isVisible = newVisible;
+              RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
+            }
+            lastScrollY = current;
+          }
+        };
+        el.rlScrollListener = scrollListener;
+        window.addEventListener('scroll', scrollListener, { passive: true });
+      }
+
+      (function retry() {
+        if (!el.isConnected) return;
+        const h = getHeight(contentEl);
+        if (h !== naturalHeight) {
+          naturalHeight = h;
+          RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
+        }
+        if (h > 0 && h !== 64 && contentEl && contentEl.offsetHeight > 0) return;
+        requestAnimationFrame(retry);
+      })();
+    }
+
+    function dismissBanner(banner) {
+      var key = banner.getAttribute('data-dismiss-key');
+      if (key) localStorage.setItem(key, 'true');
+      banner.classList.add('hidden', '!pointer-events-none');
+      banner.setAttribute('data-rla-banner', 'false');
+      if (window.RLHeaderStack) RL.unregister(banner.id);
+    }
+
+    function checkDismissed() {
+      var banners = document.querySelectorAll("[data-rla-banner='true']");
+      for (var i = 0; i < banners.length; i++) {
+        var b = banners[i];
+        var key = b.getAttribute('data-dismiss-key');
+        if (key && localStorage.getItem(key) === 'true') {
+          b.classList.add('hidden', '!pointer-events-none');
+          b.setAttribute('data-rla-banner', 'false');
         }
       }
+    }
 
-      if (!window.rlBannerInit) {
-        window.rlBannerInit = true;
-        document.addEventListener('click', function(e) {
-          var btn = e.target.closest('[data-banner-close]');
-          if (!btn) return;
-          var banner = btn.closest('[data-rla-banner]');
-          if (!banner) return;
-          dismissBanner(banner);
-        });
-      }
+    if (!window.rlBannerInit) {
+      window.rlBannerInit = true;
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-banner-close]');
+        if (!btn) return;
+        var banner = btn.closest('[data-rla-banner]');
+        if (!banner) return;
+        dismissBanner(banner);
+      });
+    }
 
-      function selector() {
-        return "[data-rla-header='true'],[data-rla-banner='true']";
-      }
+    function selector() {
+      return "[data-rla-header='true'],[data-rla-banner='true']";
+    }
 
-      function startObserver() {
-        if (document.body) {
-          checkDismissed();
-          const layers = document.querySelectorAll(selector());
-          for (let i = 0; i < layers.length; i++) initLayer(layers[i]);
+    function startObserver() {
+      if (document.body) {
+        checkDismissed();
+        const layers = document.querySelectorAll(selector());
+        for (let i = 0; i < layers.length; i++) initLayer(layers[i]);
 
-          window.rlHeaderObserver = new MutationObserver(function(mutations) {
-            for (let i = 0; i < mutations.length; i++) {
-              const added = mutations[i].addedNodes;
-              for (let j = 0; j < added.length; j++) {
-                const node = added[j];
-                if (node.nodeType !== 1) continue;
-                if (node.matches && node.matches(selector())) initLayer(node);
-                if (node.querySelectorAll) {
-                  const nested = node.querySelectorAll(selector());
-                  for (let k = 0; k < nested.length; k++) initLayer(nested[k]);
-                }
-              }
-              const removed = mutations[i].removedNodes;
-              for (let j = 0; j < removed.length; j++) {
-                const node = removed[j];
-                if (node.nodeType !== 1) continue;
-                if (node.matches && node.matches(selector())) RL.unregister(node.id);
-                if (node.querySelectorAll) {
-                  const nested = node.querySelectorAll(selector());
-                  for (let k = 0; k < nested.length; k++) RL.unregister(nested[k].id);
-                }
+        window.rlHeaderObserver = new MutationObserver(function(mutations) {
+          for (let i = 0; i < mutations.length; i++) {
+            const added = mutations[i].addedNodes;
+            for (let j = 0; j < added.length; j++) {
+              const node = added[j];
+              if (node.nodeType !== 1) continue;
+              if (node.matches && node.matches(selector())) initLayer(node);
+              if (node.querySelectorAll) {
+                const nested = node.querySelectorAll(selector());
+                for (let k = 0; k < nested.length; k++) initLayer(nested[k]);
               }
             }
-          });
-          window.rlHeaderObserver.observe(document.body, { childList: true, subtree: true });
-        } else {
-          document.addEventListener('DOMContentLoaded', startObserver);
-        }
+            const removed = mutations[i].removedNodes;
+            for (let j = 0; j < removed.length; j++) {
+              const node = removed[j];
+              if (node.nodeType !== 1) continue;
+              if (node.matches && node.matches(selector())) RL.unregister(node.id);
+              if (node.querySelectorAll) {
+                const nested = node.querySelectorAll(selector());
+                for (let k = 0; k < nested.length; k++) RL.unregister(nested[k].id);
+              }
+            }
+          }
+        });
+        window.rlHeaderObserver.observe(document.body, { childList: true, subtree: true });
+      } else {
+        document.addEventListener('DOMContentLoaded', startObserver);
       }
+    }
 
-      startObserver();
-    })();
-  </script>
+    startObserver();
+  })();
+</script>
 
-  {transitions && <ClientRouter />}
+{transitions && <ClientRouter />}
 
-  {config && (
-    <script type="application/ld+json" is:inline set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": config.name,
-      "url": Astro.site ? Astro.site.toString() : config.url,
-      "description": config.description
-    })} />
-  )}
+{config && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": config.name,
+    "url": Astro.site ? Astro.site.toString() : config.url,
+    "description": config.description
+  })} />
+)}
 
-  <slot />
-</head>
+<slot />

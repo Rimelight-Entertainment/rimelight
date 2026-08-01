@@ -27,18 +27,23 @@ const localeMap: Record<string, string> = {
 	es: 'es_ES',
 };
 const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
+const ogImageUrl = (() => {
+	if (ogImageSrc) return new URL(ogImageSrc, Astro.site).toString();
+	const params = new URLSearchParams({ title, description });
+	return new URL(`/open-graph/page.png?${params.toString()}`, Astro.site).toString();
+})();
 ---
 
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
-	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
-		<slot name="head" slot="head" />
-		<Font cssVariable="--font-sans" preload={true} slot="head" />
-		<Font cssVariable="--font-serif" preload={true} slot="head" />
-		<Font cssVariable="--font-mono" preload={true} slot="head" />
-    <meta property="og:image" content={ogImageUrl} />
-	</RLAHead>
-	<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
+<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
+  <slot name="head" slot="head" />
+  <Font cssVariable="--font-sans" preload={true} slot="head" />
+  <Font cssVariable="--font-serif" preload={true} slot="head" />
+  <Font cssVariable="--font-mono" preload={true} slot="head" />
+  <meta property="og:image" content={ogImageUrl} />
+</RLAHead>
+<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
 	<body class="isolate">
 		<AppHeader />
 		<RLAMain>

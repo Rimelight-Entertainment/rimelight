@@ -50,18 +50,21 @@ const cookieMessages = useI18n(Astro, "cookie_notice", {
 });
 
 const hasConsent = Astro.cookies.has("cookie-consent");
+const ogImageUrl = (() => {
+	if (ogImageSrc) return new URL(ogImageSrc, Astro.site).toString();
+	const params = new URLSearchParams({ title, description });
+	return new URL(`/open-graph/page.png?${params.toString()}`, Astro.site).toString();
+})();
 ---
 
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
-	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
-		<slot name="head" slot="head" />
+	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates} ogImage={{ src: ogImageUrl, alt: ogImageAlt || '' }}>
 		<Font cssVariable="--font-sans" preload={true} slot="head" />
 		<Font cssVariable="--font-serif" preload={true} slot="head" />
 		<Font cssVariable="--font-mono" preload={true} slot="head" />
     <meta property="og:image" content={ogImageUrl} />
 	</RLAHead>
-	<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
 	<body class="isolate">
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
 			{messages.skipToContent}
