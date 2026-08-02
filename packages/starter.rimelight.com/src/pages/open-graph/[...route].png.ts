@@ -1,8 +1,72 @@
 import type { APIRoute } from "astro"
+import { getCollection } from "astro:content"
 import satori, { init as initYoga } from "satori/standalone"
 import { initWasm, Resvg } from "@resvg/resvg-wasm"
 import yogaWasm from "satori/yoga.wasm?module"
 import resvgWasm from "@resvg/resvg-wasm/index_bg.wasm?module"
+
+export const prerender = true
+
+export async function getStaticPaths() {
+  const blogs = await getCollection("blog").catch(() => [])
+  const docs = await getCollection("docs").catch(() => [])
+  const legals = await getCollection("legal").catch(() => [])
+
+  const paths = [
+    { params: { route: "page" }, props: {} },
+    {
+      params: { route: "default" },
+      props: {
+        title: "Rimelight Entertainment",
+        description: "Starter Kit",
+        type: "Documentation",
+        isDocs: false
+      }
+    },
+    {
+      params: { route: "wiki-default" },
+      props: { title: "Rimelight Wiki", description: "Knowledge Base", type: "Wiki", isDocs: true }
+    },
+    {
+      params: { route: "forum-default" },
+      props: {
+        title: "Rimelight Forums",
+        description: "Community Discussions",
+        type: "Community",
+        isDocs: false
+      }
+    },
+    ...blogs.map((b: any) => ({
+      params: { route: `blog/${b.id}` },
+      props: {
+        title: b.data.title,
+        description: b.data.description || "",
+        type: "Blog Post",
+        isDocs: false,
+        pubDate: b.data.pubDate ? new Date(b.data.pubDate).toLocaleDateString() : ""
+      }
+    })),
+    ...docs.map((d: any) => ({
+      params: { route: `docs/${d.id}` },
+      props: {
+        title: d.data.title,
+        description: d.data.description || "",
+        type: "Documentation",
+        isDocs: true
+      }
+    })),
+    ...legals.map((l: any) => ({
+      params: { route: `legal/${l.id}` },
+      props: {
+        title: l.data.title,
+        description: l.data.description || "",
+        type: "Legal",
+        isDocs: false
+      }
+    }))
+  ]
+  return paths
+}
 
 let initialized = false
 
@@ -277,17 +341,23 @@ function buildOgJsx(
   }
 }
 
-export const GET: APIRoute = async ({ request, params }) => {
+export const GET: APIRoute = async ({ request, params, props }) => {
   await init()
   const url = new URL(request.url)
   const routeParam = params.route ?? ""
 
-  // Extract from query params or route
-  const title = url.searchParams.get("title") || routeParam || "Rimelight Entertainment"
-  const description = url.searchParams.get("description") || ""
-  const type = url.searchParams.get("type") || ""
-  const pubDate = url.searchParams.get("pubDate") || ""
-  const isDocs = url.searchParams.get("isDocs") === "true" || routeParam.includes("docs")
+  // Extract from props, query params or route
+  const title =
+    (props as any)?.title ||
+    url.searchParams.get("title") ||
+    routeParam ||
+    "Rimelight Entertainment"
+  const description = (props as any)?.description || url.searchParams.get("description") || ""
+  const type = (props as any)?.type || url.searchParams.get("type") || ""
+  const pubDate = (props as any)?.pubDate || url.searchParams.get("pubDate") || ""
+  const isDocs =
+    (props as any)?.isDocs ??
+    (url.searchParams.get("isDocs") === "true" || routeParam.includes("docs"))
 
   const jsx = buildOgJsx(title, description, type, pubDate, isDocs)
 
