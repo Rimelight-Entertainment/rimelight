@@ -1,0 +1,23 @@
+{
+  "name": "@rimelight/seo",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Generic SEO utilities for Astro sites — sitemap and robots.txt builders",
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./sitemap": "./src/sitemap.ts",
+    "./robots": "./src/robots.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  },
+  "packageManager": "pnpm@11.18.0"
+}

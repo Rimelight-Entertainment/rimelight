@@ -12,13 +12,11 @@ export async function GET(context) {
       atom: "http://www.w3.org/2005/Atom"
     },
     customData: `<atom:link href="${new URL("/rss.xml", context.site)}" rel="self" type="application/rss+xml" />`,
-    items: blog
-      .filter((post) => post.id.startsWith("en/"))
-      .map((post) => ({
-        title: post.data.title,
-        pubDate: post.data.pubDate,
-        description: post.data.description,
-        link: `/en/company/blog/${post.id.replace("en/", "")}/`
-      }))
+    items: blog.map((post) => ({
+      title: post.data.title,
+      pubDate: post.data.pubDate,
+      description: post.data.description,
+      link: `/company/blog/${post.id}/`
+    }))
   })
 }

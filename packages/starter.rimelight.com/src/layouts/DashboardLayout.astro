@@ -27,7 +27,7 @@ interface DashboardLayoutProps {
 	ogImageAlt?: string;
 }
 
-const { title, description, noindex, is404, robots, languageAlternates, ogImageSrc, ogImageAlt } = Astro.props as DashboardLayoutProps;
+const { title, description, noindex = true, is404, robots, languageAlternates, ogImageSrc, ogImageAlt } = Astro.props as DashboardLayoutProps;
 
 const localeMap: Record<string, string> = {
 	en: 'en_US',

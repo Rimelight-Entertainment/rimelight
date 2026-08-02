@@ -1,6 +1,5 @@
 import en from "./src/translations/en.json"
 import pt from "./src/translations/pt.json"
-import sitemap from "@astrojs/sitemap"
 import mdx from "@astrojs/mdx"
 import vue from "@astrojs/vue"
 import solid from "@astrojs/solid-js"
@@ -144,15 +143,6 @@ export default defineConfig({
     rimelightI18n({
       translations: { en, pt },
       kvBinding: "rimelight-dot-com_translations"
-    }),
-    sitemap({
-      i18n: {
-        defaultLocale: "en",
-        locales: {
-          en: "en-US",
-          pt: "pt-BR"
-        }
-      }
     }),
 
     mdx(),

@@ -10,7 +10,6 @@ const config: DocsConfig = {
     {
       id: "overview",
       label: "Overview",
-      href: "/{locale}/docs/",
       icon: "i-lucide-book-open",
       items: [
         { label: "Introduction", href: "/{locale}/docs/" },

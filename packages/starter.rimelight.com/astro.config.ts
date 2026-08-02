@@ -1,6 +1,5 @@
 import en from "./src/translations/en.json"
 import pt from "./src/translations/pt.json"
-import sitemap from "@astrojs/sitemap"
 import mdx from "@astrojs/mdx"
 import { ui } from "@rimelight/ui"
 import { sri } from "@rimelight/security"
@@ -98,15 +97,6 @@ export default defineConfig({
     rimelightI18n({
       translations: { en, pt },
       kvBinding: "starter-dot-rimelight-dot-com_translations"
-    }),
-    sitemap({
-      i18n: {
-        defaultLocale: "en",
-        locales: {
-          en: "en-US",
-          pt: "pt-BR"
-        }
-      }
     }),
 
     mdx(),
