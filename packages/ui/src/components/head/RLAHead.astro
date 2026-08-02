@@ -277,15 +277,19 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
     // Apply to incoming document BEFORE the swap — eliminates the flash
     document.addEventListener('astro:before-swap', function(e) {
       applyTheme(e.newDocument);
-      var nonce = window.initialCspNonce;
-      if (nonce) {
-        e.newDocument.querySelectorAll('script').forEach(function(s) {
-          s.setAttribute('nonce', nonce);
-        });
-        e.newDocument.querySelectorAll('style').forEach(function(s) {
-          s.setAttribute('nonce', nonce);
-        });
+      // Read the nonce that the server already stamped on the incoming document.
+      // Each navigation fetches a fresh SSR response with a NEW per-request nonce in
+      // its CSP header — reusing window.initialCspNonce (the first-load nonce) would
+      // cause every subsequent navigation to fail the CSP check.
+      var incomingNonce =
+        e.newDocument.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+        Array.from(e.newDocument.querySelectorAll('script[nonce]')).find(function(s) { return s.getAttribute('nonce'); })?.getAttribute('nonce');
+      if (incomingNonce) {
+        // Keep window.initialCspNonce current so the createElement/appendChild
+        // monkey-patches (defined below) use the right nonce for this page.
+        window.initialCspNonce = incomingNonce;
       }
+      // Scripts already carry the correct server-stamped nonce — no re-stamping needed.
     });
 
     // Safety net: re-apply after swap in case anything overrides it

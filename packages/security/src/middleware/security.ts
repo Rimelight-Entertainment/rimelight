@@ -177,6 +177,14 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
       }
     })
 
+    // Inject a <meta name="csp-nonce"> so client JS can reliably read the
+    // current page's nonce (especially after View Transition navigations).
+    rewriter = rewriter.on("head", {
+      element(el: any) {
+        el.append(`<meta name="csp-nonce" content="${nonce}">`, { html: true })
+      }
+    })
+
     rewriter = rewriter.on('meta[http-equiv="content-security-policy" i]', {
       element(el: any) {
         el.remove()
@@ -201,6 +209,13 @@ export const security = defineMiddleware(async (context: APIContext, next: Middl
   modifiedHtml = modifiedHtml.replace(
     /<meta\s[^>]*http-equiv\s*=\s*["']?content-security-policy[^>]*>/gi,
     ""
+  )
+
+  // Inject a <meta name="csp-nonce"> into <head> so client JS can reliably
+  // read the current page's nonce after View Transition navigations.
+  modifiedHtml = modifiedHtml.replace(
+    /(<head(?:\s[^>]*)?>)/i,
+    `$1<meta name="csp-nonce" content="${nonce}">`
   )
 
   // Stamp nonce on every <script> tag (regex fallback path)
