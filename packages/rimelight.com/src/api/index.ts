@@ -17,6 +17,6 @@ api.route("/github", changelogRoutes)
 api.route("/assets", assetsRoutes)
 api.route("/pages", pagesRoutes)
 api.route("/pages/versions", versionRoutes)
-api.route("/email/preview", emailPreviewRoutes)
+api.route("/dev/email/preview", emailPreviewRoutes)
 
 export default api

@@ -9,6 +9,6 @@ const api = new Hono()
 api.route("/auth", authRoutes)
 api.route("/construction-guest", constructionGuestRoutes)
 api.route("/search", searchRoutes)
-api.route("/email/preview", emailPreviewRoutes)
+api.route("/dev/email/preview", emailPreviewRoutes)
 
 export default api

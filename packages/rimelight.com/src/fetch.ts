@@ -3,6 +3,7 @@ import { security } from "@/api/middleware/security"
 import { ratelimit } from "@/api/middleware/ratelimit"
 import { auth } from "@/api/middleware/auth"
 import { construction } from "@/api/middleware/construction"
+import { devOnly } from "@rimelight/security/middleware"
 import api from "@/api"
 import { i18n } from "@/api/middleware/i18n"
 import { actions, pages } from "astro/hono"
@@ -21,13 +22,16 @@ app.use(auth)
 // 4. Construction Mode Middleware
 app.use(construction)
 
-// 5. Hono API Routing
+// 5. Dev-only guard (blocks /dev/ routes and /api/dev/ routes in production)
+app.use(devOnly)
+
+// 6. Hono API Routing
 app.route("/api", api)
 
-// 6. Localization & Routing Middleware
+// 7. Localization & Routing Middleware
 app.use(i18n)
 
-// 7. Astro Actions & Pages
+// 8. Astro Actions & Pages
 app.use(actions())
 app.use(pages())
 

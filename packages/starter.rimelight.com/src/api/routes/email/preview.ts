@@ -18,10 +18,6 @@ api.get("/", (c) => c.redirect(previewUrl(c)))
 api.get("/:template", (c) => c.redirect(previewUrl(c, `/${c.req.param("template")}`)))
 
 api.post("/test", async (c) => {
-  if (!import.meta.env.DEV) {
-    return c.json({ error: "Test email sending is only available in development." }, 404)
-  }
-
   try {
     const rawEnv = c.env ?? (await getCloudflareEnv(c))
     if (!isCloudflareEnv(rawEnv)) {

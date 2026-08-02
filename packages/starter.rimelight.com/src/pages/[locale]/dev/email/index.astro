@@ -127,7 +127,7 @@ const locale = Astro.currentLocale ?? Astro.params.locale ?? "en"
       status.textContent = "Sending..."
 
       try {
-        const response = await fetch(`/api/email/preview/test`, {
+        const response = await fetch(`/api/dev/email/preview/test`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ template, locale })

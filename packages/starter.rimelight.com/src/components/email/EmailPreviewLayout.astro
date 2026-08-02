@@ -49,7 +49,7 @@ const locale = Astro.currentLocale ?? "en"
     const status = document.querySelector('[data-email-status]');
 
      try {
-       const res = await fetch('/api/email/preview/test', {
+       const res = await fetch('/api/dev/email/preview/test', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({
