@@ -1,17 +1,20 @@
 import type { APIRoute } from "astro"
-import satori from "satori"
+import satori, { init as initYoga } from "satori/standalone"
 import { initWasm, Resvg } from "@resvg/resvg-wasm"
+import yogaWasm from "satori/yoga.wasm?module"
+import resvgWasm from "@resvg/resvg-wasm/index_bg.wasm?module"
 
-let wasmInitialized = false
+let initialized = false
 
-async function initWasmModules() {
-  if (wasmInitialized) return
+async function init() {
+  if (initialized) return
+  await initYoga(yogaWasm)
   try {
-    await initWasm(fetch("https://unpkg.com/@resvg/resvg-wasm@2.6.2/index_bg.wasm"))
+    await initWasm(resvgWasm)
   } catch {
     // Already initialized
   }
-  wasmInitialized = true
+  initialized = true
 }
 let fontCache: { regular: ArrayBuffer; bold: ArrayBuffer } | null = null
 
@@ -275,8 +278,7 @@ function buildOgJsx(
 }
 
 export const GET: APIRoute = async ({ request, params }) => {
-  await initWasmModules()
-
+  await init()
   const url = new URL(request.url)
   const routeParam = params.route ?? ""
 

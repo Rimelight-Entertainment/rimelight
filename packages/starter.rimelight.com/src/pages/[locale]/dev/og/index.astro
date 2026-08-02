@@ -8,12 +8,15 @@ const pages = [
   { label: "Blog Post", title: "Announcing Starter v2", description: "A look at what's new in our update.", type: "Blog Post", isDocs: false }
 ]
 
+const bust = Date.now().toString()
+
 function ogUrl(page: typeof pages[0]) {
   const params = new URLSearchParams({
     title: page.title,
     description: page.description,
     ...(page.type ? { type: page.type } : {}),
-    ...(page.isDocs ? { isDocs: "true" } : {})
+    ...(page.isDocs ? { isDocs: "true" } : {}),
+    _t: bust
   })
   return `/open-graph/page.png?${params.toString()}`
 }
@@ -35,7 +38,7 @@ function ogUrl(page: typeof pages[0]) {
               <h2>{page.label}</h2>
               {page.type && <span class="og-badge">{page.type}</span>}
             </div>
-            <a href={url} target="_blank" class="og-image-link">
+            <a href={url} target="_blank" class="og-image-link" data-astro-prefetch="false">
               <img
                 src={url}
                 alt={`OG image for ${page.label}`}
@@ -307,11 +310,11 @@ function ogUrl(page: typeof pages[0]) {
     const params = new URLSearchParams({ title, description: desc })
     if (type) params.set("type", type)
     if (isDocs) params.set("isDocs", "true")
+    params.set("_t", Date.now().toString())
 
     sandboxImg.src = `/open-graph/page.png?${params.toString()}`
     sandboxImg.style.display = "block"
   }
 
   document.getElementById("sandbox-render")?.addEventListener("click", renderSandbox)
-  renderSandbox()
 </script>
