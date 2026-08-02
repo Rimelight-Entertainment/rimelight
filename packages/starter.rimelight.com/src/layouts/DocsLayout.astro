@@ -433,16 +433,26 @@ const getVersionHomeUrl = (v: string) => {
   document.addEventListener('astro:after-swap', initDocsBars);
 
   class RLAVersionSelector extends HTMLElement {
+    private onchangeHandler = (event: Event) => {
+      const target = event.target as HTMLSelectElement | HTMLInputElement;
+      if (!target || !target.value) return;
+      // Path A: native <select class="rla-select-native"> — always visible, this is what the user interacts with
+      // Path B: hidden input updated by the custom rla-select element
+      const isNativeSelect = target.tagName === 'SELECT' && target.classList.contains('rla-select-native');
+      const isHiddenInput = target.hasAttribute('data-select-hidden-input');
+      if (isNativeSelect || isHiddenInput) {
+        window.location.href = target.value;
+      }
+    };
+
     connectedCallback() {
-      const hiddenInput = this.querySelector('[data-select-hidden-input]') as HTMLInputElement | null;
-      if (!hiddenInput) return;
-      hiddenInput.addEventListener('change', (event) => {
-        const target = event.target as HTMLInputElement;
-        const targetUrl = target.value;
-        if (targetUrl) {
-          window.location.href = targetUrl;
-        }
-      });
+      // Delegate on `this` — change bubbles from both the native <select> and
+      // the hidden input, so we catch either render path of RLASelect.
+      this.addEventListener('change', this.onchangeHandler);
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('change', this.onchangeHandler);
     }
   }
   if (!customElements.get('rla-version-selector')) {

@@ -1,13 +1,32 @@
 ---
-title: Welcome to rimelight/playground Docs
-description: Simple documentation homepage
+title: Rimelight Starter Template
+description: A production-ready Astro starter powered by Cloudflare, Better Auth, Drizzle ORM, and the Rimelight UI component library.
 ---
 
-This is a simple documentation home page with plain text.
+The **Rimelight Starter** is a batteries-included Astro project template that wires together the entire Rimelight stack — auth, database, internationalization, open graph image generation, docs, and a full-featured UI library — so you can start shipping without boilerplate.
 
-## Features
+## What's Included
 
-- Fully native Astro documentation layout
-- Table of Contents automatically generated from headings
-- Left sidebar with nested collapsible items
-- Built-in copy-to-clipboard and link sharing
+| Feature              | Technology                                                       |
+| -------------------- | ---------------------------------------------------------------- |
+| Framework            | [Astro](https://astro.build) (server output, Cloudflare adapter) |
+| UI Components        | [Rimelight UI](https://rimelight.com) (Astro + Vue)              |
+| Authentication       | [Better Auth](https://better-auth.com)                           |
+| Database             | Cloudflare D1 (SQLite) + [Drizzle ORM](https://orm.drizzle.team) |
+| Internationalization | `@rimelight/i18n` + Cloudflare KV                                |
+| Open Graph Images    | Satori + Resvg (edge-rendered PNG)                               |
+| Docs System          | MDX content collections + versioned routing                      |
+| Deployment           | [Cloudflare Workers / Pages](https://workers.cloudflare.com)     |
+| Security             | `@rimelight/security` (CSP, SRI, secure cookies)                 |
+| Full-Text Search     | SQLite FTS5 (in-process, no SaaS)                                |
+
+## Quick Links
+
+- [Getting Started](/en/docs/getting-started/) — clone the template and run it locally
+- [Internationalization (i18n)](/en/docs/i18n/) — multi-locale routing and translations
+- [Authentication](/en/docs/auth/) — sign-up, sign-in, roles, and organizations
+- [Database](/en/docs/database/) — Drizzle schema, D1 setup, and migrations
+- [Open Graph](/en/docs/open-graph/) — automatic social share image generation
+- [Docs System](/en/docs/docs-system/) — versioned MDX docs with sidebar navigation
+- [Components](/en/docs/components/) — Rimelight UI component reference
+- [Deployment](/en/docs/deployment/) — ship to Cloudflare Workers
