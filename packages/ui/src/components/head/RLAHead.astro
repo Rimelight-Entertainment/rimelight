@@ -299,10 +299,12 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
   })();
 </script>
 
-<script data-astro-rerun>
+<script>
+  // Header stack manager — runs as a bundled external file (CSP-safe via SRI hash).
+  // No nonce needed. Cleanup/re-init is driven by Astro's View Transition events
+  // instead of data-astro-rerun, which produced an inline script that required a nonce.
   (function() {
     'use strict';
-    if (window.rlHeaderObserver) window.rlHeaderObserver.disconnect();
 
     if (!window.RLHeaderStack) {
       window.RLHeaderStack = {
@@ -368,9 +370,6 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
         }
       };
     }
-    const RL = window.RLHeaderStack;
-    RL.layers = [];
-    RL.update(); // Clear stale --rl-total-header-height before re-registering layers
 
     function getHeight(el) {
       if (!el) return 64;
@@ -378,7 +377,32 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
       return h > 0 ? h : 64;
     }
 
+    function dismissBanner(banner) {
+      var key = banner.getAttribute('data-dismiss-key');
+      if (key) localStorage.setItem(key, 'true');
+      banner.classList.add('hidden', '!pointer-events-none');
+      banner.setAttribute('data-rla-banner', 'false');
+      if (window.RLHeaderStack) window.RLHeaderStack.unregister(banner.id);
+    }
+
+    function checkDismissed() {
+      var banners = document.querySelectorAll("[data-rla-banner='true']");
+      for (var i = 0; i < banners.length; i++) {
+        var b = banners[i];
+        var key = b.getAttribute('data-dismiss-key');
+        if (key && localStorage.getItem(key) === 'true') {
+          b.classList.add('hidden', '!pointer-events-none');
+          b.setAttribute('data-rla-banner', 'false');
+        }
+      }
+    }
+
+    function selector() {
+      return "[data-rla-header='true'],[data-rla-banner='true']";
+    }
+
     function initLayer(el) {
+      const RL = window.RLHeaderStack;
       const id = el.id;
       const type = el.getAttribute('data-layer-type') || 'header';
       const stackIndex = parseInt(el.getAttribute('data-stack-index') || '0', 10);
@@ -448,41 +472,6 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
       })();
     }
 
-    function dismissBanner(banner) {
-      var key = banner.getAttribute('data-dismiss-key');
-      if (key) localStorage.setItem(key, 'true');
-      banner.classList.add('hidden', '!pointer-events-none');
-      banner.setAttribute('data-rla-banner', 'false');
-      if (window.RLHeaderStack) RL.unregister(banner.id);
-    }
-
-    function checkDismissed() {
-      var banners = document.querySelectorAll("[data-rla-banner='true']");
-      for (var i = 0; i < banners.length; i++) {
-        var b = banners[i];
-        var key = b.getAttribute('data-dismiss-key');
-        if (key && localStorage.getItem(key) === 'true') {
-          b.classList.add('hidden', '!pointer-events-none');
-          b.setAttribute('data-rla-banner', 'false');
-        }
-      }
-    }
-
-    if (!window.rlBannerInit) {
-      window.rlBannerInit = true;
-      document.addEventListener('click', function(e) {
-        var btn = e.target.closest('[data-banner-close]');
-        if (!btn) return;
-        var banner = btn.closest('[data-rla-banner]');
-        if (!banner) return;
-        dismissBanner(banner);
-      });
-    }
-
-    function selector() {
-      return "[data-rla-header='true'],[data-rla-banner='true']";
-    }
-
     function startObserver() {
       if (document.body) {
         checkDismissed();
@@ -505,21 +494,61 @@ const defaultRobots = isIndexable ? 'index, follow, max-image-preview:large' : '
             for (let j = 0; j < removed.length; j++) {
               const node = removed[j];
               if (node.nodeType !== 1) continue;
-              if (node.matches && node.matches(selector())) RL.unregister(node.id);
+              if (node.matches && node.matches(selector())) window.RLHeaderStack.unregister(node.id);
               if (node.querySelectorAll) {
                 const nested = node.querySelectorAll(selector());
-                for (let k = 0; k < nested.length; k++) RL.unregister(nested[k].id);
+                for (let k = 0; k < nested.length; k++) window.RLHeaderStack.unregister(nested[k].id);
               }
             }
           }
         });
         window.rlHeaderObserver.observe(document.body, { childList: true, subtree: true });
       } else {
-        document.addEventListener('DOMContentLoaded', startObserver);
+        document.addEventListener('DOMContentLoaded', function() { startObserver(); });
       }
     }
 
-    startObserver();
+    function setupStack() {
+      if (window.rlHeaderObserver) {
+        window.rlHeaderObserver.disconnect();
+        window.rlHeaderObserver = null;
+      }
+      const RL = window.RLHeaderStack;
+      RL.layers = [];
+      RL.update();
+      startObserver();
+    }
+
+    // Banner dismiss listener — registered once at module load, not on every navigation
+    if (!window.rlBannerInit) {
+      window.rlBannerInit = true;
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-banner-close]');
+        if (!btn) return;
+        var banner = btn.closest('[data-rla-banner]');
+        if (!banner) return;
+        dismissBanner(banner);
+      });
+    }
+
+    // Before each View Transition: disconnect the observer and clear layers so the
+    // incoming page starts with a clean slate (mirrors what data-astro-rerun did at
+    // the top of its IIFE, which ran before the next page's script executed).
+    document.addEventListener('astro:before-swap', function() {
+      if (window.rlHeaderObserver) {
+        window.rlHeaderObserver.disconnect();
+        window.rlHeaderObserver = null;
+      }
+      if (window.RLHeaderStack) {
+        window.RLHeaderStack.layers = [];
+        window.RLHeaderStack.update();
+      }
+    });
+
+    // After each View Transition (and on initial load): re-register all header/banner
+    // layers from the new DOM.
+    setupStack();
+    document.addEventListener('astro:after-swap', setupStack);
   })();
 </script>
 
