@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue"
 import { useRC, useToast } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import { scv, cx } from "css-variants"
 import type { PageVersion } from "@/types/pages"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue" /* region Props */
@@ -70,7 +70,6 @@ const isRejecting = ref<string | null>(null)
 const isReverting = ref<string | null>(null)
 const isOpen = ref(false)
 const toast = useToast()
-const { t } = useI18n()
 const pendingVersions = computed(() => {
   return versions.value.filter((v) => v.status === "pending")
 })

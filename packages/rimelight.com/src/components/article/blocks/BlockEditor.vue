@@ -3,7 +3,7 @@ import { provide, ref, computed } from "vue"
 import type { Block } from "@/types/blocks"
 import { useBlockEditor, useRC } from "@/composables"
 import { type BlockDefinition } from "@/utils/blocks"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import { scv, cx } from "css-variants"
 import BlockEditRenderer from "./BlockEditRenderer.vue"
 import AddBlockModal from "./AddBlockModal.vue"
@@ -52,7 +52,6 @@ const styles = computed(() => {
 
 /* region State */
 const blocks = defineModel<Block[]>({ required: true })
-const { t } = useI18n()
 const {
   removeBlock,
   moveBlock,

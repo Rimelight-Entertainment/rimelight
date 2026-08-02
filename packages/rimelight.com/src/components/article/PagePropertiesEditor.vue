@@ -3,7 +3,7 @@ import { computed, ref, reactive } from "vue"
 import type { Page, Link } from "@/types/pages"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import { getLocalizedContent } from "@/utils/page"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
@@ -80,7 +80,7 @@ const styles = computed(() => {
 
 /* region State */
 const page = defineModel<Page>({ required: true })
-const { t, locale } = useI18n()
+const locale = ref("en")
 
 const sortedGroups = computed(() => {
   if (!page.value?.properties) return []

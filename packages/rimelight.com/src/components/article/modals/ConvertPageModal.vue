@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 export interface PageTypeOption {
@@ -21,7 +21,6 @@ export interface ConvertPageModalEmits {
 const emit = defineEmits<ConvertPageModalEmits>()
 
 const open = defineModel<boolean>("open", { default: false })
-const { t } = useI18n()
 const selectedType = ref("")
 
 const availableOptions = computed(() => options.filter((o) => o.value !== "DEFAULT"))

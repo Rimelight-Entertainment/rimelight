@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import { getLocalizedContent } from "@/utils/page"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
@@ -25,7 +25,7 @@ export interface LinkPageModalEmits {
 const emit = defineEmits<LinkPageModalEmits>()
 
 const open = defineModel<boolean>("open", { default: false })
-const { t, locale } = useI18n()
+const locale = ref("en")
 const localSearch = ref("")
 const debouncedSearch = ref("")
 let debounceTimer: ReturnType<typeof setTimeout>

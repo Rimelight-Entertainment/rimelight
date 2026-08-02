@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, watch, computed } from "vue"
 import { getLocalizedContent } from "@/utils/page"
-import { useI18n } from "@/composables/app/useI18n"
 import { type Page } from "@/types/pages"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
@@ -51,7 +50,7 @@ const styles = computed(() => {
 /* endregion */
 
 /* region State */
-const { locale } = useI18n()
+const locale = ref("en")
 const isServer = import.meta.env.SSR
 const isClient = !isServer
 const resolver =

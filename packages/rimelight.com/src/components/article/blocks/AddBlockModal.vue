@@ -2,7 +2,7 @@
 import { ref, computed, inject } from "vue"
 import { BLOCK_DEFINITIONS, CATEGORY_ORDER, type BlockDefinition } from "@/utils/blocks"
 import { useRC } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import { scv, cx } from "css-variants"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
@@ -72,7 +72,6 @@ const styles = computed(() => {
 
 /* region State */
 const open = defineModel<boolean>("open", { default: false })
-const { t } = useI18n()
 const searchQuery = ref("")
 const sectionLevel = inject(
   SECTION_LEVEL_KEY,

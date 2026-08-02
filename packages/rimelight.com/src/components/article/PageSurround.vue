@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
@@ -73,7 +73,6 @@ const styles = computed(() => {
 /* endregion */
 
 /* region State */
-const { t } = useI18n()
 /* endregion */
 
 /* region Meta */

@@ -3,7 +3,7 @@ import { computed, inject, ref, onMounted, onUnmounted } from "vue"
 import type { CalloutBlockProps, CalloutVariant, Block } from "@/types/blocks"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import CalloutBlockRenderer from "../renderer/CalloutBlockRenderer.vue"
 import BlockEditor from "../BlockEditor.vue"
 
@@ -53,7 +53,6 @@ const styles = computed(() => {
 
 /* region State */
 const editorApi = inject<any>("block-editor-api")
-const { t } = useI18n()
 const isDropdownOpen = ref(false)
 const triggerRef = ref<HTMLElement | null>(null)
 const dropdownRef = ref<HTMLElement | null>(null)

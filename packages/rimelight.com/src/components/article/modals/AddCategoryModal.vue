@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 
 export interface CategoryInfo {
@@ -23,7 +23,6 @@ export interface AddCategoryModalEmits {
 const emit = defineEmits<AddCategoryModalEmits>()
 
 const open = defineModel<boolean>("open", { default: false })
-const { t } = useI18n()
 const searchTerm = ref("")
 const focusedIndex = ref(0)
 const inputRef = ref<HTMLInputElement | null>(null)

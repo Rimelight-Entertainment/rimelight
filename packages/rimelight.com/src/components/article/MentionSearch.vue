@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import { getLocalizedContent } from "@/utils/page"
 
 export interface MentionSearchResult {
@@ -19,7 +19,7 @@ export interface MentionSearchProps {
 
 const { searchTerm, onSelectPage, onClose, position } = defineProps<MentionSearchProps>()
 
-const { t, locale } = useI18n()
+const locale = ref("en")
 const results = ref<MentionSearchResult[]>([])
 const loading = ref(false)
 const focusedIndex = ref(0)

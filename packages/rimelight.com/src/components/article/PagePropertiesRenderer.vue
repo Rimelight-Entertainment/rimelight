@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import type { Page } from "@/types/pages"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import { getLocalizedContent } from "@/utils/page"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import PageMention from "./PageMention.vue"
@@ -82,7 +82,7 @@ const styles = computed(() => {
 
 /* region State */
 const page = defineModel<Page>({ required: true })
-const { t, locale } = useI18n()
+const locale = ref("en")
 
 // Use a computed to safely handle properties and group rendering.
 // Sorting and filtering are handled inline to avoid external dependencies.

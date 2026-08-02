@@ -3,7 +3,7 @@ import { ref, computed, watch } from "vue"
 import type { PageDefinition, PageType, Page } from "@/types/blocks"
 import { scv, cx } from "css-variants"
 import { useRC } from "@/composables"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
@@ -58,7 +58,6 @@ const styles = computed(() => {
 
 /* region State */
 const open = defineModel<boolean>("open", { default: false })
-const { t } = useI18n()
 const selectedType = ref<PageType | "">("")
 const title = ref("")
 const slug = ref("")
