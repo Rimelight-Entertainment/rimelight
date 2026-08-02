@@ -1,9 +1,6 @@
 import type { APIRoute } from "astro"
 import { getCollection } from "astro:content"
-import satori, { init as initYoga } from "satori/standalone"
-import { initWasm, Resvg } from "@resvg/resvg-wasm"
-import yogaWasm from "satori/yoga.wasm?module"
-import resvgWasm from "@resvg/resvg-wasm/index_bg.wasm?module"
+import { render } from "takumi-js"
 
 export const prerender = true
 
@@ -68,18 +65,6 @@ export async function getStaticPaths() {
   return paths
 }
 
-let initialized = false
-
-async function init() {
-  if (initialized) return
-  await initYoga(yogaWasm)
-  try {
-    await initWasm(resvgWasm)
-  } catch {
-    // Already initialized
-  }
-  initialized = true
-}
 let fontCache: { regular: ArrayBuffer; bold: ArrayBuffer } | null = null
 
 async function getFonts(): Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> {
@@ -341,29 +326,32 @@ function buildOgJsx(
   }
 }
 
-export const GET: APIRoute = async ({ request, params, props }) => {
-  await init()
+interface OgProps {
+  title?: string
+  description?: string
+  type?: string
+  pubDate?: string
+  isDocs?: boolean
+}
+
+export const GET: APIRoute<OgProps> = async ({ request, params, props }) => {
   const url = new URL(request.url)
   const routeParam = params.route ?? ""
 
   // Extract from props, query params or route
   const title =
-    (props as any)?.title ||
-    url.searchParams.get("title") ||
-    routeParam ||
-    "Rimelight Entertainment"
-  const description = (props as any)?.description || url.searchParams.get("description") || ""
-  const type = (props as any)?.type || url.searchParams.get("type") || ""
-  const pubDate = (props as any)?.pubDate || url.searchParams.get("pubDate") || ""
+    props.title || url.searchParams.get("title") || routeParam || "Rimelight Entertainment"
+  const description = props.description || url.searchParams.get("description") || ""
+  const type = props.type || url.searchParams.get("type") || ""
+  const pubDate = props.pubDate || url.searchParams.get("pubDate") || ""
   const isDocs =
-    (props as any)?.isDocs ??
-    (url.searchParams.get("isDocs") === "true" || routeParam.includes("docs"))
+    props.isDocs ?? (url.searchParams.get("isDocs") === "true" || routeParam.includes("docs"))
 
   const jsx = buildOgJsx(title, description, type, pubDate, isDocs)
 
   const { regular, bold } = await getFonts()
 
-  const svg = await satori(jsx, {
+  const pngBuffer = await render(jsx, {
     width: 1200,
     height: 630,
     fonts: [
@@ -372,15 +360,7 @@ export const GET: APIRoute = async ({ request, params, props }) => {
     ]
   })
 
-  const resvg = new Resvg(svg, {
-    fitTo: { mode: "width", value: 1200 }
-  })
-
-  const pngBuffer = resvg.render().asPng()
-  const arrayBuffer = new ArrayBuffer(pngBuffer.byteLength)
-  new Uint8Array(arrayBuffer).set(pngBuffer)
-
-  return new Response(new Blob([arrayBuffer], { type: "image/png" }), {
+  return new Response(new Blob([new Uint8Array(pngBuffer)], { type: "image/png" }), {
     status: 200,
     headers: {
       "Content-Type": "image/png",
