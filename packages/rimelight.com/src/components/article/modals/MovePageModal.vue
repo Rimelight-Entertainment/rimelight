@@ -18,7 +18,6 @@ export interface MovePageModalEmits {
 const emit = defineEmits<MovePageModalEmits>()
 
 const open = defineModel<boolean>("open", { default: false })
-const { t } = useI18n()
 
 const originalFilename = computed(() => {
   const parts = currentSlug.split("/")

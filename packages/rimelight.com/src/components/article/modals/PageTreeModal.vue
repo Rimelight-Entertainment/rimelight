@@ -3,7 +3,7 @@ import { computed, ref } from "vue"
 import { useRC } from "@/composables"
 import { scv, cx } from "css-variants"
 import { getLocalizedContent } from "@/utils/page"
-import { useI18n } from "@/composables/app/useI18n"
+import { t } from "@rimelight/i18n"
 import type { Page } from "@/types/pages"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
@@ -71,7 +71,7 @@ const styles = computed(() => {
 
 /* region State */
 const open = defineModel<boolean>("open", { default: false })
-const { t, locale } = useI18n()
+const locale = ref("en")
 const expandedNodes = ref<Record<string, boolean>>({})
 
 const treeItems = computed<TreeItem[]>(() => {
