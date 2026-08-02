@@ -8,6 +8,7 @@ import RLAShare from "@rimelight/ui/components/share/RLAShare.astro";
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/docs";
 import type { ResolvedSidebarItem } from "@rimelight/docs";
 import docsConfig from "@/config/docs.config";
@@ -181,6 +182,17 @@ const getVersionHomeUrl = (v: string) => {
             </rla-version-selector>
           </div>
         )}
+        {/* Filter input */}
+        <div class="p-3 border-b border-border/50">
+          <RLAInput
+            type="text"
+            placeholder="Filter navigation..."
+            size="sm"
+            leadingIcon="i-lucide-search"
+            class="docs-sidebar-filter"
+            autocomplete="off"
+          />
+        </div>
         {/* Scopes — vertical */}
         <div class="flex flex-col gap-1 p-3 border-b border-border/50">
           <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-wider px-1 mb-1">Scopes</span>
@@ -207,9 +219,9 @@ const getVersionHomeUrl = (v: string) => {
           })}
         </div>
         {/* Nav items — preserve groups */}
-        <ul class="flex flex-col gap-0.5 p-3">
+        <ul class="flex flex-col gap-0.5 p-3 docs-mobile-nav-list">
           {sidebarItems.map((item: ResolvedSidebarItem) => (
-            <li>
+            <li data-nav-item>
               {item.children && item.children.length > 0 ? (
                 <div>
                   <span class="block px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-2 first:mt-0">
@@ -217,7 +229,7 @@ const getVersionHomeUrl = (v: string) => {
                   </span>
                   <ul class="flex flex-col gap-0.5 ml-2">
                     {item.children.map((child: ResolvedSidebarItem) => (
-                      <li>
+                      <li data-nav-item>
                         <a
                           href={child.href ?? "#"}
                           class:list={[
@@ -228,7 +240,7 @@ const getVersionHomeUrl = (v: string) => {
                           ]}
                           data-docs-nav-link
                         >
-                          <span class="truncate">{child.label}</span>
+                          <span class="truncate" data-item-text>{child.label}</span>
                           {(() => {
                             const b = normalizeBadge(child.badge);
                             return b && (
@@ -258,7 +270,7 @@ const getVersionHomeUrl = (v: string) => {
                   ]}
                   data-docs-nav-link
                 >
-                  <span class="truncate">{item.label}</span>
+                  <span class="truncate" data-item-text>{item.label}</span>
                   {(() => {
                     const b = normalizeBadge(item.badge);
                     return b && (
@@ -335,6 +347,16 @@ const getVersionHomeUrl = (v: string) => {
           </rla-version-selector>
         </div>
       )}
+      <div class="mb-4 px-2">
+        <RLAInput
+          type="text"
+          placeholder="Filter navigation..."
+          size="sm"
+          leadingIcon="i-lucide-search"
+          class="docs-sidebar-filter"
+          autocomplete="off"
+        />
+      </div>
       <div class="flex flex-col gap-1 mb-4 border-b border-border pb-4 px-2">
         <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-1.5 px-1">Scopes</span>
         {scopes.map(scope => {
@@ -427,6 +449,56 @@ const getVersionHomeUrl = (v: string) => {
         link.addEventListener('click', () => { details.open = false; });
       });
     }
+
+    // Initialize sidebar search filter
+    const filterInputs = document.querySelectorAll('.docs-sidebar-filter input');
+    filterInputs.forEach(input => {
+      const el = input as HTMLInputElement;
+      el.addEventListener('input', () => {
+        const query = el.value.toLowerCase().trim();
+        const container = el.closest('#docs-nav-details') || el.closest('.docs-sidebar-wrapper');
+        if (!container) return;
+
+        // RLASidebar items (desktop / component rendered)
+        const sidebar = container.querySelector('.docs-nav-sidebar');
+        if (sidebar) {
+          const items = sidebar.querySelectorAll('[data-slot="item"]');
+          items.forEach(item => {
+            if (!query) {
+              (item as HTMLElement).style.display = '';
+              const details = item.querySelector('details');
+              if (details) details.open = details.hasAttribute('data-default-open');
+              return;
+            }
+
+            const allText = item.textContent?.toLowerCase() || '';
+            const matches = allText.includes(query);
+
+            (item as HTMLElement).style.display = matches ? '' : 'none';
+
+            if (matches) {
+              const details = item.querySelector('details');
+              if (details) details.open = true;
+            }
+          });
+        }
+
+        // Mobile list items (if rendered without RLASidebar component)
+        const mobileList = container.querySelector('.docs-mobile-nav-list');
+        if (mobileList) {
+          const listItems = mobileList.querySelectorAll('[data-nav-item]');
+          listItems.forEach(item => {
+            if (!query) {
+              (item as HTMLElement).style.display = '';
+              return;
+            }
+            const allText = item.textContent?.toLowerCase() || '';
+            const matches = allText.includes(query);
+            (item as HTMLElement).style.display = matches ? '' : 'none';
+          });
+        }
+      });
+    });
   }
 
   initDocsBars();

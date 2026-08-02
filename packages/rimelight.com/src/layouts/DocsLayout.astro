@@ -4,6 +4,7 @@ import RLASidebar from "@rimelight/ui/components/sidebar/RLASidebar.astro";
 import RLATableOfContents from "@rimelight/ui/components/table-of-contents/RLATableOfContents.astro";
 import RLASurround from "@rimelight/ui/components/surround/RLASurround.astro";
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/docs";
 import docsConfig from "@/config/docs.config";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/docs";
@@ -131,6 +132,17 @@ const tocHeadings = hasToc
             </rla-version-selector>
           </div>
         )}
+        {/* Filter input */}
+        <div class="p-3 border-b border-border/50">
+          <RLAInput
+            type="text"
+            placeholder={t("Filter navigation...") || "Filter navigation..."}
+            size="sm"
+            leadingIcon="i-lucide-search"
+            class="docs-sidebar-filter"
+            autocomplete="off"
+          />
+        </div>
         {/* Scopes — vertical */}
         <div class="flex flex-col gap-1 p-3 border-b border-border/50">
           <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-wider px-1 mb-1">Scopes</span>
@@ -194,6 +206,16 @@ const tocHeadings = hasToc
           </rla-version-selector>
         </div>
       )}
+      <div class="mb-4 px-2">
+        <RLAInput
+          type="text"
+          placeholder={t("Filter navigation...") || "Filter navigation..."}
+          size="sm"
+          leadingIcon="i-lucide-search"
+          class="docs-sidebar-filter"
+          autocomplete="off"
+        />
+      </div>
       <div class="flex flex-col gap-1 mb-4 border-b border-border pb-4 px-2">
         <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-1.5 px-1">Scopes</span>
         {scopes.map(scope => {
@@ -276,6 +298,41 @@ const tocHeadings = hasToc
         link.addEventListener('click', () => { details.open = false; });
       });
     }
+
+    // Initialize sidebar search filter
+    const filterInputs = document.querySelectorAll('.docs-sidebar-filter input');
+    filterInputs.forEach(input => {
+      const el = input as HTMLInputElement;
+      el.addEventListener('input', () => {
+        const query = el.value.toLowerCase().trim();
+        // Target container: either parent details or parent sidebar column
+        const container = el.closest('#docs-nav-details') || el.closest('.docs-sidebar-wrapper');
+        const sidebar = container?.querySelector('.docs-nav-sidebar');
+        if (!sidebar) return;
+
+        const items = sidebar.querySelectorAll('[data-slot="item"]');
+        items.forEach(item => {
+          if (!query) {
+            (item as HTMLElement).style.display = '';
+            const details = item.querySelector('details');
+            if (details) details.open = details.hasAttribute('data-default-open');
+            return;
+          }
+
+          const linkOrSummaryText = item.querySelector('[data-slot="item-text"]')?.textContent?.toLowerCase() || '';
+          // Check all child text items within this item element
+          const allText = item.textContent?.toLowerCase() || '';
+          const matches = allText.includes(query);
+
+          (item as HTMLElement).style.display = matches ? '' : 'none';
+
+          if (matches) {
+            const details = item.querySelector('details');
+            if (details) details.open = true;
+          }
+        });
+      });
+    });
   }
 
   initDocsBars();
