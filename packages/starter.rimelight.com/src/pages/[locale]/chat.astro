@@ -1,30 +1,10 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
-import { useI18n } from "@rimelight/i18n";
-
-const messages = useI18n(Astro, "chat_page", {
-  title: "Real-time Chat",
-  description: "Experience global, edge-rendered real-time conversations using Cloudflare Durable Objects.",
-  header: "Durable Chat Lobby",
-  status_connected: "Live",
-  status_disconnected: "Offline",
-  status_connecting: "Connecting...",
-  btn_change_nick: "Change Nickname",
-  placeholder_msg: "Send a message to the channel...",
-  btn_send: "Send",
-  channels_title: "Channels",
-  online_title: "Active Users",
-  welcome_title: "Welcome to Rimelight Chat",
-  welcome_desc: "Choose a nickname to join the real-time edge-powered lobby.",
-  nickname_label: "Display Name",
-  btn_join: "Join Chat",
-  no_users: "No other users online",
-  history_loaded: "Message history loaded"
-});
+import { t } from "@rimelight/i18n";
 
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
+<AppLayout title={t("chat_page.title")} description={t("chat_page.description")}>
   <div class="chat-demo-container min-h-[calc(100vh-var(--rl-total-header-height,64px)-80px)] flex items-center justify-center p-4 md:p-6 lg:p-8">
     
     <!-- Lobby glass card wrapper -->
@@ -35,7 +15,7 @@ const messages = useI18n(Astro, "chat_page", {
         <div>
           <!-- Channels list -->
           <div class="mb-6">
-            <h3 class="text-xs font-semibold tracking-wider text-zinc-400 uppercase mb-3">{messages.channels_title}</h3>
+            <h3 class="text-xs font-semibold tracking-wider text-zinc-400 uppercase mb-3">{t("chat_page.channels_title")}</h3>
             <div class="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
               <button class="channel-btn active" data-channel="general">
                 <span class="opacity-50">#</span> general
@@ -65,7 +45,7 @@ const messages = useI18n(Astro, "chat_page", {
             </div>
           </div>
           <button id="edit-nick-btn" class="w-full text-center py-1.5 text-xs font-medium text-indigo-400 hover:text-indigo-300 bg-white/5 hover:bg-white/10 rounded-md border border-white/5 transition-all">
-            {messages.btn_change_nick}
+            {t("chat_page.btn_change_nick")}
           </button>
         </div>
       </div>
@@ -85,7 +65,7 @@ const messages = useI18n(Astro, "chat_page", {
           <!-- Live status badge -->
           <div class="flex items-center gap-2">
             <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-zinc-600 transition-colors duration-300"></span>
-            <span id="status-text" class="text-xs font-medium text-zinc-400">{messages.status_connecting}</span>
+            <span id="status-text" class="text-xs font-medium text-zinc-400">{t("chat_page.status_connecting")}</span>
           </div>
         </div>
 
@@ -99,7 +79,7 @@ const messages = useI18n(Astro, "chat_page", {
           <input 
             type="text" 
             id="message-input" 
-            placeholder={messages.placeholder_msg} 
+            placeholder={t("chat_page.placeholder_msg")} 
             maxlength="500"
             required
             autocomplete="off"
@@ -109,7 +89,7 @@ const messages = useI18n(Astro, "chat_page", {
             type="submit" 
             class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-semibold px-5 py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/10 hover:shadow-indigo-600/20 active:scale-[0.98] cursor-pointer"
           >
-            {messages.btn_send}
+            {t("chat_page.btn_send")}
           </button>
         </form>
 
@@ -118,7 +98,7 @@ const messages = useI18n(Astro, "chat_page", {
       <!-- Side panel: Presence/Active users (hidden on mobile, visible on desktop) -->
       <div class="w-56 bg-zinc-900/40 border-l border-white/10 p-5 shrink-0 hidden lg:flex flex-col">
         <h3 class="text-xs font-semibold tracking-wider text-zinc-400 uppercase mb-3 flex items-center gap-2">
-          {messages.online_title}
+          {t("chat_page.online_title")}
           <span id="presence-count" class="bg-white/10 text-white px-2 py-0.5 rounded-full text-[10px] font-bold">0</span>
         </h3>
         <div id="presence-list" class="flex-1 overflow-y-auto flex flex-col gap-2">
@@ -130,12 +110,12 @@ const messages = useI18n(Astro, "chat_page", {
       <div id="nickname-modal" class="absolute inset-0 bg-zinc-950/95 backdrop-blur-md z-30 flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
         <div class="bg-zinc-900 border border-white/10 w-full max-w-md p-6 rounded-2xl shadow-2xl flex flex-col gap-5 transform scale-95 transition-transform duration-300">
           <div class="text-center">
-            <h2 class="text-xl font-bold text-white mb-2">{messages.welcome_title}</h2>
-            <p class="text-sm text-zinc-400">{messages.welcome_desc}</p>
+            <h2 class="text-xl font-bold text-white mb-2">{t("chat_page.welcome_title")}</h2>
+            <p class="text-sm text-zinc-400">{t("chat_page.welcome_desc")}</p>
           </div>
           <form id="nickname-form" class="flex flex-col gap-4">
             <div>
-              <label for="nickname-input" class="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">{messages.nickname_label}</label>
+              <label for="nickname-input" class="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">{t("chat_page.nickname_label")}</label>
               <input 
                 type="text" 
                 id="nickname-input" 
@@ -150,7 +130,7 @@ const messages = useI18n(Astro, "chat_page", {
               type="submit" 
               class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/10 cursor-pointer text-sm"
             >
-              {messages.btn_join}
+              {t("chat_page.btn_join")}
             </button>
           </form>
         </div>

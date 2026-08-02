@@ -4,6 +4,7 @@ import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
+import { t } from "@rimelight/i18n"
 
 interface Props {
   allowAuth?: boolean | undefined
@@ -17,13 +18,20 @@ interface Props {
 
 const {
   allowAuth = true,
-  emailLabel = "E-mail",
-  emailPlaceholder = "your@email.com",
-  passwordLabel = "Password",
-  passwordPlaceholder = "••••••••",
-  rememberMeLabel = "Remember me",
-  signInButtonLabel = "Sign In"
+  emailLabel,
+  emailPlaceholder,
+  passwordLabel,
+  passwordPlaceholder,
+  rememberMeLabel,
+  signInButtonLabel
 } = Astro.props
+
+const resolvedEmailLabel = emailLabel ?? t("page_construction.form_email_label")
+const resolvedEmailPlaceholder = emailPlaceholder ?? t("page_construction.form_email_placeholder")
+const resolvedPasswordLabel = passwordLabel ?? t("page_construction.form_password_label")
+const resolvedPasswordPlaceholder = passwordPlaceholder ?? t("page_construction.form_password_placeholder")
+const resolvedRememberMeLabel = rememberMeLabel ?? t("page_construction.form_remember_me_label")
+const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form_sign_in_button")
 ---
 
 {allowAuth ? (
@@ -33,7 +41,7 @@ const {
 
       <div class="flex flex-col gap-4">
         <RLAFormField
-          label={emailLabel}
+          label={resolvedEmailLabel}
           required
           ui={{
             label: 'text-white',
@@ -44,14 +52,14 @@ const {
             id="email-input"
             type="email"
             name="email"
-            placeholder={emailPlaceholder}
+            placeholder={resolvedEmailPlaceholder}
             class="w-full text-white"
             required
           />
         </RLAFormField>
 
         <RLAFormField
-          label={passwordLabel}
+          label={resolvedPasswordLabel}
           required
           ui={{
             label: 'text-white',
@@ -62,7 +70,7 @@ const {
             id="password-input"
             type="password"
             name="password"
-            placeholder={passwordPlaceholder}
+            placeholder={resolvedPasswordPlaceholder}
             class="w-full text-white"
             required
           />
@@ -71,7 +79,7 @@ const {
         <RLACheckbox
           id="remember-me-checkbox"
           name="rememberMe"
-          label={rememberMeLabel}
+          label={resolvedRememberMeLabel}
           checked
           ui={{
             label: 'text-white',
@@ -86,9 +94,9 @@ const {
           variant="solid"
           block
           class="text-white bg-primary-500 hover:bg-primary-600 w-full"
-          data-label={signInButtonLabel}
+          data-label={resolvedSignInButtonLabel}
         >
-          {signInButtonLabel}
+          {resolvedSignInButtonLabel}
         </RLAButton>
       </div>
     </form>

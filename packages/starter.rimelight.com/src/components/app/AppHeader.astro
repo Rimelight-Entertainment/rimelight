@@ -12,7 +12,7 @@ import RLAPopover from "@rimelight/ui/components/popover/RLAPopover.astro";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
 import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts"
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
-import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 import { auth } from "@/auth";
 
 let session: any = null;
@@ -20,57 +20,55 @@ try {
   session = await auth.api.getSession({ headers: Astro.request.headers });
 } catch (e) {}
 
-const messages = useI18n("app_header");
-
 const foundationLinkGroup: LinkGroupProps = {
-  label: messages["link-groups_center_foundations_label"],
+  label: t("app_header.link-groups_center_foundations_label"),
   leadingIcon: "i-lucide-layout",
   links: [
     {
-      label: messages["link-groups_center_foundations_links_tokens"],
+      label: t("app_header.link-groups_center_foundations_links_tokens"),
       href: getRelativeLocaleUrl('/docs/tokens')
     },
     {
-      label: messages["link-groups_center_foundations_links_colors"],
+      label: t("app_header.link-groups_center_foundations_links_colors"),
       href: getRelativeLocaleUrl('/docs/colors')
     },
     {
-      label: messages["link-groups_center_foundations_links_typography"],
+      label: t("app_header.link-groups_center_foundations_links_typography"),
       href: getRelativeLocaleUrl('/docs/typography')
     }
   ]
 };
 
 const componentsLinkGroup: LinkGroupProps = {
-  label: messages["link-groups_center_components_label"],
+  label: t("app_header.link-groups_center_components_label"),
   leadingIcon: "i-lucide-blocks",
   links: [
     {
-      label: messages["link-groups_center_components_links_astro"],
+      label: t("app_header.link-groups_center_components_links_astro"),
       href: getRelativeLocaleUrl('/docs/astro')
     },
     {
-      label: messages["link-groups_center_components_links_vue"],
+      label: t("app_header.link-groups_center_components_links_vue"),
       href: getRelativeLocaleUrl('/docs/vue')
     },
     {
-      label: messages["link-groups_center_components_links_integrations"],
+      label: t("app_header.link-groups_center_components_links_integrations"),
       href: getRelativeLocaleUrl('/docs/integrations')
     }
   ]
 };
 
 const resourcesLinkGroup: LinkGroupProps = {
-  label: messages["link-groups_right_resources_label"],
+  label: t("app_header.link-groups_right_resources_label"),
   leadingIcon: "i-lucide-library",
   links: [
     {
-      label: messages["link-groups_right_resources_links_docs"],
+      label: t("app_header.link-groups_right_resources_links_docs"),
       href: "/docs",
       leadingIcon: "i-lucide-file-text size-4"
     },
     {
-      label: messages["link-groups_right_resources_links_github"],
+      label: t("app_header.link-groups_right_resources_links_github"),
       href: "https://github.com/Rimelight-Entertainment/rimelight",
       leadingIcon: "i-logos-github-icon size-4"
     }
@@ -79,42 +77,42 @@ const resourcesLinkGroup: LinkGroupProps = {
 
 const leftLinks: NavigationMenuItem[] = [
   {
-    label: messages["left-links_features_label"],
+    label: t("app_header.left-links_features_label"),
     to: getRelativeLocaleUrl('/features'),
     slot: "features" as const,
     children: [
       {
-        label: messages["link-groups_center_foundations_label"],
-        description: messages["link-groups_center_foundations_description"]
+        label: t("app_header.link-groups_center_foundations_label"),
+        description: t("app_header.link-groups_center_foundations_description")
       },
       {
-        label: messages["link-groups_center_components_label"],
-        description: messages["link-groups_center_components_description"]
+        label: t("app_header.link-groups_center_components_label"),
+        description: t("app_header.link-groups_center_components_description")
       },
       {
-        label: messages["link-groups_center_integrations_label"],
-        description: messages["link-groups_center_integrations_description"]
+        label: t("app_header.link-groups_center_integrations_label"),
+        description: t("app_header.link-groups_center_integrations_description")
       }
     ]
   },
   {
-    label: messages["left-links_about_label"],
+    label: t("app_header.left-links_about_label"),
     to: getRelativeLocaleUrl('/about')
   },
   {
-    label: messages["left-links_blog_label"],
+    label: t("app_header.left-links_blog_label"),
     to: getRelativeLocaleUrl('/blog')
   },
   {
-    label: messages["left-links_docs_label"],
+    label: t("app_header.left-links_docs_label"),
     to: getRelativeLocaleUrl('/docs')
   },
   {
-    label: messages["left-links_dashboard_label"],
+    label: t("app_header.left-links_dashboard_label"),
     to: getRelativeLocaleUrl('/dashboard')
   },
   {
-    label: messages["left-links_chat_label"],
+    label: t("app_header.left-links_chat_label"),
     to: getRelativeLocaleUrl('/chat')
   },
   {
@@ -128,13 +126,13 @@ const actions: ButtonProps[] = [
     color: "neutral",
     variant: "outline",
     href: getRelativeLocaleUrl('/auth/sign-up'),
-    label: messages["actions_sign-up"] ?? "Sign Up"
+    label: t("app_header.actions_sign-up")
   },
   {
     variant: "solid",
     color: "primary",
     href: getRelativeLocaleUrl('/auth/sign-in'),
-    label: messages["actions_sign-in"] ?? "Sign In"
+    label: t("app_header.actions_sign-in")
   }
 ];
 const { stackIndex = 1 } = Astro.props;
@@ -274,7 +272,7 @@ const { stackIndex = 1 } = Astro.props;
                 <span class="font-semibold text-sm">
                   {session.user.name} <span class="text-xs text-neutral-400 font-mono">#{session.user.tag || '0000'}</span>
                 </span>
-                <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || messages["user_status_placeholder"] || "Set a custom status..."}</span>
+                <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || t("app_header.user_status_placeholder")}</span>
               </div>
             </div>
 
@@ -286,7 +284,7 @@ const { stackIndex = 1 } = Astro.props;
                 class="!justify-start"
                 href={getRelativeLocaleUrl('/dashboard')}
                 leadingIcon="i-lucide-layout-dashboard"
-                label={messages["user_dropdown_dashboard"] ?? "Dashboard"}
+                label={t("app_header.user_dropdown_dashboard")}
               />
             </div>
 
@@ -300,7 +298,7 @@ const { stackIndex = 1 } = Astro.props;
                 class="!justify-start text-error-500 hover:text-error-600"
                 href={getRelativeLocaleUrl('/auth/sign-out')}
                 leadingIcon="i-lucide-log-out"
-                label={messages["user_dropdown_sign-out"] ?? "Sign Out"}
+                label={t("app_header.user_dropdown_sign-out")}
               />
             </div>
           </div>
@@ -333,7 +331,7 @@ const { stackIndex = 1 } = Astro.props;
                   <span class="font-semibold text-sm">
                     {session.user.name} <span class="text-xs text-neutral-400 font-mono">#{session.user.tag || '0000'}</span>
                   </span>
-                  <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || messages["user_status_placeholder"] || "Set a custom status..."}</span>
+                  <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || t("app_header.user_status_placeholder")}</span>
                 </div>
               </div>
               <RLAButton
@@ -343,7 +341,7 @@ const { stackIndex = 1 } = Astro.props;
                 class="!justify-start"
                 href={getRelativeLocaleUrl('/dashboard')}
                 leadingIcon="i-lucide-layout-dashboard"
-                label={messages["user_dropdown_dashboard"] ?? "Dashboard"}
+                label={t("app_header.user_dropdown_dashboard")}
               />
               <div class="border-t border-neutral-200 dark:border-neutral-800 my-1"></div>
               <RLAButton
@@ -353,7 +351,7 @@ const { stackIndex = 1 } = Astro.props;
                 class="!justify-start text-error-500 hover:text-error-600"
                 href={getRelativeLocaleUrl('/auth/sign-out')}
                 leadingIcon="i-lucide-log-out"
-                label={messages["user_dropdown_sign-out"] ?? "Sign Out"}
+                label={t("app_header.user_dropdown_sign-out")}
               />
             </div>
           ) : (

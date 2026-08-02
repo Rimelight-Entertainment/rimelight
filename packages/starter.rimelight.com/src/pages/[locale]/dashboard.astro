@@ -12,23 +12,24 @@ import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro"
+import { t } from "@rimelight/i18n";
 
 const navItems = [
-  { icon: "i-lucide-layout-dashboard", label: "Overview", href: "#", active: true, id: "overview" },
-  { icon: "i-lucide-users", label: "Users", href: "#", id: "users" },
-  { icon: "i-lucide-shopping-cart", label: "Orders", href: "#", id: "orders" },
-  { icon: "i-lucide-package", label: "Products", href: "#", id: "products" },
-  { icon: "i-lucide-bar-chart-3", label: "Analytics", href: "#", id: "analytics" },
+  { icon: "i-lucide-layout-dashboard", label: t("dashboard.nav_overview"), href: "#", active: true, id: "overview" },
+  { icon: "i-lucide-users", label: t("dashboard.nav_users"), href: "#", id: "users" },
+  { icon: "i-lucide-shopping-cart", label: t("dashboard.nav_orders"), href: "#", id: "orders" },
+  { icon: "i-lucide-package", label: t("dashboard.nav_products"), href: "#", id: "products" },
+  { icon: "i-lucide-bar-chart-3", label: t("dashboard.nav_analytics"), href: "#", id: "analytics" },
 ]
 
-const settingsNavItem = { icon: "i-lucide-settings", label: "Settings", href: "#", id: "settings" }
+const settingsNavItem = { icon: "i-lucide-settings", label: t("dashboard.nav_settings"), href: "#", id: "settings" }
 
 // Separate content sections for each nav item
 const overviewStats = [
-  { label: "Total Revenue", value: "$45,231", change: "+20.1%", icon: "i-lucide-circle-dollar-sign", changeColor: "text-success" },
-  { label: "Active Users", value: "+2,350", change: "+18%", icon: "i-lucide-users", changeColor: "text-success" },
-  { label: "Conversion Rate", value: "+12.3%", change: "+2.1%", icon: "i-lucide-trending-up", changeColor: "text-success" },
-  { label: "Avg. Order", value: "$48.00", change: "+$5.00", icon: "i-lucide-shopping-bag", changeColor: "text-success" },
+  { label: t("dashboard.overview_stats_total_revenue"), value: "$45,231", change: "+20.1%", icon: "i-lucide-circle-dollar-sign", changeColor: "text-success" },
+  { label: t("dashboard.overview_stats_active_users"), value: "+2,350", change: "+18%", icon: "i-lucide-users", changeColor: "text-success" },
+  { label: t("dashboard.overview_stats_conversion_rate"), value: "+12.3%", change: "+2.1%", icon: "i-lucide-trending-up", changeColor: "text-success" },
+  { label: t("dashboard.overview_stats_avg_order"), value: "$48.00", change: "+$5.00", icon: "i-lucide-shopping-bag", changeColor: "text-success" },
 ]
 
 const overviewRecentOrders = [
@@ -82,18 +83,18 @@ const analyticsData = {
 }
 
 const settingsConfig = [
-  { name: "General Settings", icon: "i-lucide-settings", type: "group", items: ["Site Name", "Site Description", "Time Zone"] },
-  { name: "Security", icon: "i-lucide-shield", type: "group", items: ["Password Policy", "Two-Factor Auth", "Sessions"] },
-  { name: "Notifications", icon: "i-lucide-bell", type: "group", items: ["Email", "Push", "SMS"] },
+  { name: t("dashboard.settings_general"), icon: "i-lucide-settings", type: "group", items: [t("dashboard.settings_site_name"), t("dashboard.settings_site_description"), t("dashboard.settings_time_zone")] },
+  { name: t("dashboard.settings_security"), icon: "i-lucide-shield", type: "group", items: [t("dashboard.settings_password_policy"), t("dashboard.settings_two_factor"), t("dashboard.settings_sessions")] },
+  { name: t("dashboard.settings_notifications"), icon: "i-lucide-bell", type: "group", items: [t("dashboard.settings_email"), t("dashboard.settings_push"), t("dashboard.settings_sms")] },
 ]
 ---
 
-<DashboardLayout title="Dashboard" description="Application Dashboard Overview and Management">
+<DashboardLayout title={t("dashboard.meta_title")} description={t("dashboard.meta_description")}>
   <RLADashboardGroup>
   <RLADashboardSidebar side="left" collapsible>
     <Fragment slot="header">
       <RLAIcon name="i-lucide-layers" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
-      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>Your App</span>
+      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("dashboard.navbar_app_name")}</span>
       <RLADashboardSidebarCollapse side="left" class="shrink-0" />
     </Fragment>
 
@@ -132,9 +133,9 @@ const settingsConfig = [
   </RLADashboardSidebar>
 
   <RLADashboardPanel>
-    <RLADashboardNavbar slot="header" title="Dashboard Overview" icon="i-lucide-layout-dashboard">
+    <RLADashboardNavbar slot="header" title={t("dashboard.navbar_title_overview")} icon="i-lucide-layout-dashboard">
       <Fragment slot="left">
-        <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>Dashboard Analytics</h1>
+        <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>{t("dashboard.navbar_title_overview")}</h1>
       </Fragment>
       <Fragment slot="right">
         <RLASearch />
@@ -147,20 +148,20 @@ const settingsConfig = [
       <RLADashboardToolbar>
         <Fragment slot="left">
           <RLAButton variant="ghost" color="neutral" size="sm" leadingIcon="i-lucide-calendar">
-            Last 30 days
+            {t("dashboard.toolbar_last_30_days")}
           </RLAButton>
           <RLASelect defaultValue="all">
-            <option value="all">All Time</option>
-            <option value="month">This Month</option>
-            <option value="week">This Week</option>
+            <option value="all">{t("dashboard.toolbar_all_time")}</option>
+            <option value="month">{t("dashboard.toolbar_this_month")}</option>
+            <option value="week">{t("dashboard.toolbar_this_week")}</option>
           </RLASelect>
         </Fragment>
         <Fragment slot="right">
           <RLAButton variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-download">
-            Export Report
+            {t("dashboard.toolbar_export_report")}
           </RLAButton>
           <RLAButton variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-plus">
-            Add New Item
+            {t("dashboard.toolbar_add_item")}
           </RLAButton>
         </Fragment>
       </RLADashboardToolbar>

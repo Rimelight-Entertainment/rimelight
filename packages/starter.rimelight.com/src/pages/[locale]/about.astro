@@ -6,45 +6,43 @@ import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection
 import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro";
 import RLACard from "@rimelight/ui/components/card/RLACard.astro";
 import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
-import { useI18n } from '@rimelight/i18n';
-
-const messages = useI18n("page_about");
+import { t } from '@rimelight/i18n';
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
+<AppLayout title={t("page_about.title")} description={t("page_about.description")}>
   <RLAPageSection
     variant="hero"
-    title={messages.hero_title}
-    description={messages.hero_description}
+    title={t("page_about.hero_title")}
+    description={t("page_about.hero_description")}
     orientation="horizontal"
   >
     <RLAImage src={AboutHeroImage} alt="" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />
   </RLAPageSection>
 
   <RLAPageSection
-    title={messages.section_about_template_title}
-    description={messages.section_about_template_description}
+    title={t("page_about.section_about_template_title")}
+    description={t("page_about.section_about_template_description")}
     orientation="vertical"
   />
 
   <RLAPageSection
-    title={messages.section_values_title}
-    description={messages.section_values_description}
+    title={t("page_about.section_values_title")}
+    description={t("page_about.section_values_description")}
     orientation="vertical"
   >
     <div slot="body">
       <RLAGrid>
         <RLACard
-          title={messages.value_dx_title}
-          description={messages.value_dx_description}
+          title={t("page_about.value_dx_title")}
+          description={t("page_about.value_dx_description")}
         />
         <RLACard
-          title={messages.value_design_title}
-          description={messages.value_design_description}
+          title={t("page_about.value_design_title")}
+          description={t("page_about.value_design_description")}
         />
         <RLACard
-          title={messages.value_performance_title}
-          description={messages.value_performance_description}
+          title={t("page_about.value_performance_title")}
+          description={t("page_about.value_performance_description")}
         />
       </RLAGrid>
     </div>

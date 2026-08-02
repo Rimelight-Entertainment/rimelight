@@ -7,33 +7,31 @@ import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-gr
 import RLALinkGroup from "@rimelight/ui/components/link-group/RLALinkGroup.astro";
 import RLAThemeSelector from "@rimelight/ui/components/theme-selector/RLAThemeSelector.astro";
 import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
-import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
-
-const messages = useI18n("app_footer");
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const footerGroups: LinkGroupProps[] = [
   {
-    label: messages["links_resources_label"],
+    label: t("app_footer.links_resources_label"),
     links: [
       {
-        label: messages["links_resources_branding"],
+        label: t("app_footer.links_resources_branding"),
         href: getRelativeLocaleUrl("/branding")
       }
     ]
   },
   {
-    label: messages["links_legal_label"],
+    label: t("app_footer.links_legal_label"),
     links: [
       {
-        label: messages["links_legal_privacy-policy"],
+        label: t("app_footer.links_legal_privacy-policy"),
         href: getRelativeLocaleUrl("/legal/privacy-policy")
       },
       {
-        label: messages["links_legal_cookie-policy"],
+        label: t("app_footer.links_legal_cookie-policy"),
         href: getRelativeLocaleUrl("/legal/cookie-policy")
       },
       {
-        label: messages["links_legal_other-documents"],
+        label: t("app_footer.links_legal_other-documents"),
         href: getRelativeLocaleUrl("/legal")
       }
     ]

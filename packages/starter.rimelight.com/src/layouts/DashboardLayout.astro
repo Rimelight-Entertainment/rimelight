@@ -12,7 +12,7 @@ import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { siteConfig } from '@/config/site.config';
 import { Font } from 'astro:assets';
-import { currentLocale, useI18n, getRelativeLocaleUrl } from '@rimelight/i18n';
+import { currentLocale, t, getRelativeLocaleUrl } from '@rimelight/i18n';
 
 currentLocale.set(Astro.currentLocale ?? 'en');
 
@@ -36,19 +36,6 @@ const localeMap: Record<string, string> = {
 };
 const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
 
-const messages = useI18n(Astro, "app_layout", {
-	skipToContent: "Skip to main content"
-});
-
-const cookieMessages = useI18n(Astro, "cookie_notice", {
-	title: "Cookie Notice",
-	description_prefix: "This site doesn't actually use cookies, but this is how a cookie notice would be done, as per a ",
-	cookie_policy_label: "Cookie Policy",
-	description_suffix: ".",
-	allow_all: "Allow all",
-	deny_all: "Deny all"
-});
-
 const hasConsent = Astro.cookies.has("cookie-consent");
 ---
 
@@ -63,7 +50,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 	<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
 	<body class="isolate">
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
-			{messages.skipToContent}
+			{t("app_layout.skipToContent")}
 		</a>
 
 		<!-- Fixed header layers: banner + app header (both position:fixed, out of flow) -->
@@ -100,18 +87,18 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 
 		{!hasConsent && (
 			<div id="cookie-notice-container" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300">
-				<RLAToast title={cookieMessages.title} dismissable={false} class="pointer-events-auto shadow-2xl border-border bg-background/95 backdrop-blur-sm">
+				<RLAToast title={t("cookie_notice.title")} dismissable={false} class="pointer-events-auto shadow-2xl border-border bg-background/95 backdrop-blur-sm">
 					<span slot="description">
-						{cookieMessages.description_prefix}
-						<a href={getRelativeLocaleUrl('/legal/cookie-policy')} class="underline hover:text-primary transition-colors font-medium">{cookieMessages.cookie_policy_label}</a>
-						{cookieMessages.description_suffix}
+						{t("cookie_notice.description_prefix")}
+						<a href={getRelativeLocaleUrl('/legal/cookie-policy')} class="underline hover:text-primary transition-colors font-medium">{t("cookie_notice.cookie_policy_label")}</a>
+						{t("cookie_notice.description_suffix")}
 					</span>
 					<Fragment slot="actions">
 						<RLAButton id="cookie-allow" variant="solid" color="success" size="sm">
-							{cookieMessages.allow_all}
+							{t("cookie_notice.allow_all")}
 						</RLAButton>
 						<RLAButton id="cookie-deny" variant="solid" color="error" size="sm">
-							{cookieMessages.deny_all}
+							{t("cookie_notice.deny_all")}
 						</RLAButton>
 					</Fragment>
 				</RLAToast>

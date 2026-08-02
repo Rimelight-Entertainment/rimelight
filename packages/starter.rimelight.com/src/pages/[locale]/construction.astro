@@ -3,12 +3,10 @@ import ConstructionLayout from '@/layouts/ConstructionLayout.astro'
 import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro"
 import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
 import ConstructionSignIn from '@/components/auth/ConstructionSignIn.astro'
-import { useI18n, getRelativeLocaleUrl } from '@rimelight/i18n'
+import { t, getRelativeLocaleUrl } from '@rimelight/i18n'
 import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
 
 const constructionAuth = (import.meta.env.CONSTRUCTION_AUTH ?? process.env.CONSTRUCTION_AUTH) === "true"
-
-const messages = useI18n("page_construction")
 
 const targetLanguages = [
   { code: 'en', label: 'English', href: getRelativeLocaleUrl('en', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
@@ -16,26 +14,19 @@ const targetLanguages = [
 ]
 ---
 
-<ConstructionLayout title={messages.meta_title} description={messages.meta_description}>
+<ConstructionLayout title={t("page_construction.meta_title")} description={t("page_construction.meta_description")}>
   <div class="flex min-h-screen flex-col items-center justify-center bg-black">
     <RLAContainer class="flex flex-col items-center gap-md w-full max-w-md text-center">
       <RLALogo class="h-12 w-auto" variant="logomark" mode="white" />
       <h1 class="text-3xl font-bold text-inverted sm:text-4xl">
-        {messages.title}
+        {t("page_construction.title")}
       </h1>
       <p class="text-inverted">
-        {constructionAuth ? messages.description : messages.description_no_auth}
+        {constructionAuth ? t("page_construction.description") : t("page_construction.description_no_auth")}
       </p>
 
       {constructionAuth && (
-        <ConstructionSignIn
-          emailLabel={messages.form_email_label}
-          emailPlaceholder={messages.form_email_placeholder}
-          passwordLabel={messages.form_password_label}
-          passwordPlaceholder={messages.form_password_placeholder}
-          rememberMeLabel={messages.form_remember_me_label}
-          signInButtonLabel={messages.form_sign_in_button}
-        />
+        <ConstructionSignIn />
       )}
 
       <div class="flex flex-col gap-md">
