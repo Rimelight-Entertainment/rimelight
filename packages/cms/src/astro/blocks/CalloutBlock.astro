@@ -1,0 +1,23 @@
+---
+import type { BaseBlock } from "../../core/types/blocks"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block, locale = "en" } = Astro.props
+const variant = block.props.variant || "info"
+const rawText = block.props.text
+const textContent = typeof rawText === "object" ? (rawText[locale] || rawText.en || "") : (rawText || "")
+
+const variantStyles: Record<string, string> = {
+  info: "bg-blue-950/40 border-blue-500/50 text-blue-200",
+  warning: "bg-amber-950/40 border-amber-500/50 text-amber-200",
+  note: "bg-purple-950/40 border-purple-500/50 text-purple-200"
+}
+---
+
+<div class={`cms-callout p-4 my-4 rounded-lg border-l-4 ${variantStyles[variant] || variantStyles.info}`} data-block-id={block.id}>
+  <p class="m-0">{textContent}</p>
+</div>

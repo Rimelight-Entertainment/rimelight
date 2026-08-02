@@ -1,0 +1,16 @@
+---
+import type { BaseBlock } from "../../core/types/blocks"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block } = Astro.props
+const { url, alt = "", caption = "" } = block.props
+---
+
+<figure class="cms-image my-6" data-block-id={block.id}>
+  <img src={url} alt={alt} class="w-full rounded-lg object-cover shadow-lg" />
+  {caption && <figcaption class="mt-2 text-center text-sm text-gray-400">{caption}</figcaption>}
+</figure>

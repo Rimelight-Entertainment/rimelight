@@ -1,0 +1,16 @@
+---
+import type { BaseBlock } from "../../core/types/blocks"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block, locale = "en" } = Astro.props
+const rawText = block.props.text
+const textContent = typeof rawText === "object" ? (rawText[locale] || rawText.en || "") : (rawText || "")
+---
+
+<p class="cms-paragraph text-base leading-relaxed text-gray-200 my-4" data-block-id={block.id}>
+  {textContent}
+</p>
