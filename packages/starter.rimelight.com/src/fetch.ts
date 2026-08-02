@@ -6,7 +6,7 @@ import { construction } from "@/api/middleware/construction"
 import { devOnly } from "@rimelight/security/middleware"
 import api from "@/api"
 import { i18n } from "@/api/middleware/i18n"
-import { actions, pages } from "astro/hono"
+import { actions, pages, middleware, sessions, cache } from "astro/hono"
 
 const app = new Hono()
 
@@ -31,8 +31,11 @@ app.route("/api", api)
 // 7. Localization & Routing Middleware
 app.use(i18n)
 
-// 8. Astro Actions & Pages
+// 8. Astro Pipeline Handlers
+app.use(middleware())
+app.use(sessions())
 app.use(actions())
 app.use(pages())
+app.use(cache())
 
 export default app
