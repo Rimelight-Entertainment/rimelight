@@ -7,16 +7,13 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLASlideover from "@rimelight/ui/components/slideover/RLASlideover.astro";
 import RLASearch from "@rimelight/ui/components/search/RLASearch.astro";
 import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
+import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
+import RLAPopover from "@rimelight/ui/components/popover/RLAPopover.astro";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
 import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts"
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
-
-import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import RLAPopover from "@rimelight/ui/components/popover/RLAPopover.astro";
 import { auth } from "@/auth";
-
-const placeholderImage = "https://cdn.rimelight.com/Images/placeholder.webp";
 
 let session: any = null;
 try {
@@ -169,7 +166,7 @@ const { stackIndex = 1 } = Astro.props;
           <div class="bg-[var(--card)] flex flex-col lg:flex-row gap-lg p-lg flex-1">
             <RLAImage
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
-              src={placeholderImage}
+              src={"https://cdn.rimelight.com/Images/placeholder.webp"}
               alt=""
             />
 
@@ -211,7 +208,7 @@ const { stackIndex = 1 } = Astro.props;
             <div class="bg-[var(--card)] flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <RLAImage
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
-                src={placeholderImage}
+                src={"https://cdn.rimelight.com/Images/placeholder.webp"}
                 alt=""
                 ui={{
                   trigger: "absolute inset-0 w-full h-full overflow-hidden rounded-lg",

@@ -1,0 +1,324 @@
+---
+import BlankLayout from "@/layouts/BlankLayout.astro"
+
+const pages = [
+  // Static pages
+  { label: "Home", title: "Rimelight Entertainment", description: "Tell your story.", type: "", isDocs: false },
+  { label: "Company", title: "About Rimelight", description: "Creating interactive entertainment and software tools.", type: "Company", isDocs: false },
+  { label: "Products", title: "Rimelight Products & Games", description: "Explore Grand Tale and our ecosystem of open-source tools.", type: "Products", isDocs: false },
+  // Doc page example
+  { label: "Docs — Overview", title: "Getting Started", description: "Everything you need to get up and running with Rimelight.", type: "Documentation", isDocs: true },
+  { label: "Docs — API Reference", title: "API Reference", description: "Complete API reference for Rimelight integrations.", type: "Documentation", isDocs: true },
+  // Blog post example
+  { label: "Blog Post", title: "Announcing Grand Tale v2", description: "A look at what's new in our biggest update yet.", type: "Blog Post", isDocs: false },
+  // Dynamic page example
+  { label: "User Profile (Dynamic)", title: "idant", description: "View idant's profile on Rimelight.", type: "Profile", isDocs: false },
+]
+
+function ogUrl(page: typeof pages[0]) {
+  const params = new URLSearchParams({
+    title: page.title,
+    description: page.description,
+    ...(page.type ? { type: page.type } : {}),
+    ...(page.isDocs ? { isDocs: "true" } : {}),
+  })
+  return `/open-graph/page.png?${params.toString()}`
+}
+---
+
+<BlankLayout title="OG Image Preview" description="Preview Open Graph images for all pages">
+  <main class="og-preview">
+    <header class="og-header">
+      <h1>OG Image Preview</h1>
+      <p>Live previews of generated Open Graph images via <code>/open-graph/page.png</code></p>
+    </header>
+
+    <div class="og-grid">
+      {pages.map((page) => {
+        const url = ogUrl(page)
+        return (
+          <article class="og-card">
+            <div class="og-card-meta">
+              <h2>{page.label}</h2>
+              {page.type && <span class="og-badge">{page.type}</span>}
+            </div>
+            <a href={url} target="_blank" class="og-image-link">
+              <img
+                src={url}
+                alt={`OG image for ${page.label}`}
+                class="og-image"
+                width="1200"
+                height="630"
+                loading="lazy"
+              />
+              <div class="og-image-overlay">Open full size ↗</div>
+            </a>
+            <div class="og-card-footer">
+              <div class="og-meta-text">
+                <strong>{page.title}</strong>
+                {page.description && <span>{page.description}</span>}
+              </div>
+              <button
+                type="button"
+                class="og-copy-btn"
+                data-url={url}
+              >
+                Copy URL
+              </button>
+            </div>
+          </article>
+        )
+      })}
+    </div>
+
+    <section class="og-sandbox">
+      <h2>Live Sandbox</h2>
+      <p>Render a custom OG image with any title and description.</p>
+      <div class="og-sandbox-controls">
+        <label>
+          Title
+          <input id="sandbox-title" type="text" value="My Custom Page Title" maxlength="80" />
+        </label>
+        <label>
+          Description
+          <input id="sandbox-desc" type="text" value="A short description of this page." maxlength="160" />
+        </label>
+        <label>
+          Type badge
+          <input id="sandbox-type" type="text" value="" placeholder="e.g. Blog Post" maxlength="40" />
+        </label>
+        <label class="og-sandbox-checkbox">
+          <input id="sandbox-docs" type="checkbox" />
+          Docs style (gradient)
+        </label>
+        <button id="sandbox-render" type="button">Render</button>
+      </div>
+      <div class="og-sandbox-preview">
+        <img id="sandbox-img" src="" alt="Sandbox OG preview" class="og-image" width="1200" height="630" />
+      </div>
+    </section>
+  </main>
+</BlankLayout>
+
+<style>
+  :global(body) { background: #0d0d0d; color: #e5e5e5; }
+  :global(.rla-main-container) { min-height: auto; padding-top: 0; }
+
+  .og-preview {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    font-family: system-ui, sans-serif;
+  }
+
+  .og-header {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 24px;
+  }
+  .og-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 8px;
+  }
+  .og-header p { color: #888; margin: 0; font-size: 14px; }
+  .og-header code { background: #1a1a1a; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #60a5fa; }
+
+  .og-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(540px, 1fr));
+    gap: 32px;
+    margin-bottom: 64px;
+  }
+
+  .og-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .og-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px 12px;
+  }
+  .og-card-meta h2 { margin: 0; font-size: 15px; font-weight: 600; color: #fff; }
+
+  .og-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: rgba(96,165,250,0.15);
+    border: 1px solid rgba(96,165,250,0.3);
+    color: #93c5fd;
+    white-space: nowrap;
+  }
+
+  .og-image-link {
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+  .og-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200/630;
+    object-fit: cover;
+    background: #1a1a1a;
+  }
+  .og-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .og-image-link:hover .og-image-overlay { opacity: 1; }
+
+  .og-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    border-top: 1px solid #1a1a1a;
+  }
+  .og-meta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .og-meta-text strong { font-size: 13px; color: #e5e5e5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .og-meta-text span { font-size: 12px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .og-copy-btn {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #e5e5e5;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+  }
+  .og-copy-btn:hover { background: #222; border-color: #444; }
+  .og-copy-btn.copied { color: #4ade80; border-color: rgba(74,222,128,0.4); }
+
+  .og-sandbox {
+    border-top: 1px solid #222;
+    padding-top: 40px;
+  }
+  .og-sandbox h2 { font-size: 20px; font-weight: 700; color: #fff; margin: 0 0 6px; }
+  .og-sandbox > p { color: #888; font-size: 14px; margin: 0 0 24px; }
+
+  .og-sandbox-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+    margin-bottom: 24px;
+  }
+  .og-sandbox-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex: 1;
+    min-width: 180px;
+  }
+  .og-sandbox-controls input[type="text"] {
+    padding: 8px 12px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #e5e5e5;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .og-sandbox-controls input[type="text"]:focus { border-color: #60a5fa; }
+  .og-sandbox-checkbox {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px !important;
+    min-width: auto !important;
+  }
+  .og-sandbox-checkbox input { width: 16px; height: 16px; cursor: pointer; }
+  #sandbox-render {
+    padding: 9px 20px;
+    background: #60a5fa;
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  #sandbox-render:hover { background: #93c5fd; }
+
+  .og-sandbox-preview { margin-top: 8px; }
+  .og-sandbox-preview .og-image { border-radius: 8px; border: 1px solid #222; }
+  .og-sandbox-preview .og-image:not([src]) { display: none; }
+</style>
+
+<script>
+  // Copy URL buttons
+  document.querySelectorAll<HTMLButtonElement>(".og-copy-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const url = btn.dataset.url
+      if (!url) return
+      const full = new URL(url, location.origin).toString()
+      await navigator.clipboard.writeText(full)
+      btn.textContent = "Copied!"
+      btn.classList.add("copied")
+      setTimeout(() => {
+        btn.textContent = "Copy URL"
+        btn.classList.remove("copied")
+      }, 2000)
+    })
+  })
+
+  // Sandbox
+  const sandboxImg = document.getElementById("sandbox-img") as HTMLImageElement
+
+  function renderSandbox() {
+    const title = (document.getElementById("sandbox-title") as HTMLInputElement).value.trim()
+    const desc = (document.getElementById("sandbox-desc") as HTMLInputElement).value.trim()
+    const type = (document.getElementById("sandbox-type") as HTMLInputElement).value.trim()
+    const isDocs = (document.getElementById("sandbox-docs") as HTMLInputElement).checked
+
+    const params = new URLSearchParams({ title, description: desc })
+    if (type) params.set("type", type)
+    if (isDocs) params.set("isDocs", "true")
+
+    sandboxImg.src = `/open-graph/page.png?${params.toString()}`
+    sandboxImg.style.display = "block"
+  }
+
+  document.getElementById("sandbox-render")?.addEventListener("click", renderSandbox)
+  renderSandbox()
+</script>
