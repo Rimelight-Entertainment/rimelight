@@ -1,17 +1,9 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "contact", {
-  title: 'Contact Us',
-  description: 'Get in touch with Rimelight Entertainment.'
-});
+import { t } from "@rimelight/i18n";
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
-    <h1>{messages.title}</h1>
-    <p>{messages.description}</p>
+<AppLayout title={t("page_contact.title")} description={t("page_contact.description")}>
+    <h1>{t("page_contact.title")}</h1>
+    <p>{t("page_contact.description")}</p>
 </AppLayout>

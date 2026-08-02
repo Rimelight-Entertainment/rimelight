@@ -1,31 +1,10 @@
 ---
 import GuidesLayout from "@/layouts/GuidesLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-
-import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "grand_tale_guides", {
-  title: "Grand Tale Guides",
-  description: "Browse player guides, build planners, stat calculators, and beginner tips for Grand Tale.",
-  heading: "Master the Soulstream",
-  subheading: "Welcome to the ultimate guide hub for Grand Tale. Whether you're a new traveler or a seasoned hero, our community-curated guides will help you navigate the mysteries of Aethelgard.",
-  category_basics_title: "New Player Experience",
-  category_basics_desc: "Master the basics of combat, exploration, and the Soulstone system.",
-  category_basics_btn: "Explore Basics",
-  category_builds_title: "Hero Builds",
-  category_builds_desc: "In-depth analysis of hero abilities and optimal equipment synergies.",
-  category_builds_btn: "View Builds",
-  category_endgame_title: "Endgame Strategies",
-  category_endgame_desc: "Advanced tactics for raids, world bosses, and high-level competitive play.",
-  category_endgame_btn: "Master Endgame",
-  latest_title: "Latest Community Guides"
-});
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 ---
 
-<GuidesLayout title={messages.title} description={messages.description}>
+<GuidesLayout title={t("page_grand-tale_guides.title")} description={t("page_grand-tale_guides.description")}>
   <div class="py-24 bg-neutral-950 text-white min-h-screen">
     <div class="max-w-6xl mx-auto px-4 space-y-16">
       <!-- Header -->
@@ -34,10 +13,10 @@ const messages = useI18n(Astro, "grand_tale_guides", {
           Game Guides
         </div>
         <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tight leading-none">
-          {messages.heading}
+          {t("page_grand-tale_guides.heading")}
         </h1>
         <p class="text-xl md:text-2xl text-neutral-400 font-light leading-relaxed">
-          {messages.subheading}
+          {t("page_grand-tale_guides.subheading")}
         </p>
       </section>
 
@@ -52,11 +31,11 @@ const messages = useI18n(Astro, "grand_tale_guides", {
               <span class="i-lucide-graduation-cap text-primary-500 text-2xl"></span>
             </div>
             <div class="space-y-2">
-              <h2 class="text-2xl font-bold uppercase tracking-tight">{messages.category_basics_title}</h2>
-              <p class="text-neutral-400 text-sm leading-relaxed">{messages.category_basics_desc}</p>
+              <h2 class="text-2xl font-bold uppercase tracking-tight">{t("page_grand-tale_guides.category_basics_title")}</h2>
+              <p class="text-neutral-400 text-sm leading-relaxed">{t("page_grand-tale_guides.category_basics_desc")}</p>
             </div>
           </div>
-          <RLAButton label={messages.category_basics_btn} color="primary" variant="link" leadingIcon="i-lucide-arrow-right" class="px-0 font-bold uppercase tracking-wider text-xs flex items-center gap-xs mt-6 text-primary-500 hover:text-primary-400" />
+          <RLAButton label={t("page_grand-tale_guides.category_basics_btn")} color="primary" variant="link" leadingIcon="i-lucide-arrow-right" class="px-0 font-bold uppercase tracking-wider text-xs flex items-center gap-xs mt-6 text-primary-500 hover:text-primary-400" />
         </div>
 
         <!-- Hero Builds -->
@@ -66,11 +45,11 @@ const messages = useI18n(Astro, "grand_tale_guides", {
               <span class="i-lucide-swords text-primary-500 text-2xl"></span>
             </div>
             <div class="space-y-2">
-              <h2 class="text-2xl font-bold uppercase tracking-tight">{messages.category_builds_title}</h2>
-              <p class="text-neutral-400 text-sm leading-relaxed">{messages.category_builds_desc}</p>
+              <h2 class="text-2xl font-bold uppercase tracking-tight">{t("page_grand-tale_guides.category_builds_title")}</h2>
+              <p class="text-neutral-400 text-sm leading-relaxed">{t("page_grand-tale_guides.category_builds_desc")}</p>
             </div>
           </div>
-          <RLAButton label={messages.category_builds_btn} href={getRelativeLocaleUrl("/franchises/grand-tale/guides/build-planners")} color="primary" variant="link" leadingIcon="i-lucide-arrow-right" class="px-0 font-bold uppercase tracking-wider text-xs flex items-center gap-xs mt-6 text-primary-500 hover:text-primary-400" />
+          <RLAButton label={t("page_grand-tale_guides.category_builds_btn")} href={getRelativeLocaleUrl("/franchises/grand-tale/guides/build-planners")} color="primary" variant="link" leadingIcon="i-lucide-arrow-right" class="px-0 font-bold uppercase tracking-wider text-xs flex items-center gap-xs mt-6 text-primary-500 hover:text-primary-400" />
         </div>
 
         <!-- Endgame -->
@@ -80,17 +59,17 @@ const messages = useI18n(Astro, "grand_tale_guides", {
               <span class="i-lucide-crown text-primary-500 text-2xl"></span>
             </div>
             <div class="space-y-2">
-              <h2 class="text-2xl font-bold uppercase tracking-tight">{messages.category_endgame_title}</h2>
-              <p class="text-neutral-400 text-sm leading-relaxed">{messages.category_endgame_desc}</p>
+              <h2 class="text-2xl font-bold uppercase tracking-tight">{t("page_grand-tale_guides.category_endgame_title")}</h2>
+              <p class="text-neutral-400 text-sm leading-relaxed">{t("page_grand-tale_guides.category_endgame_desc")}</p>
             </div>
           </div>
-          <RLAButton label={messages.category_endgame_btn} color="primary" variant="link" leadingIcon="i-lucide-arrow-right" class="px-0 font-bold uppercase tracking-wider text-xs flex items-center gap-xs mt-6 text-primary-500 hover:text-primary-400" />
+          <RLAButton label={t("page_grand-tale_guides.category_endgame_btn")} color="primary" variant="link" leadingIcon="i-lucide-arrow-right" class="px-0 font-bold uppercase tracking-wider text-xs flex items-center gap-xs mt-6 text-primary-500 hover:text-primary-400" />
         </div>
       </div>
 
       <!-- Featured Guides -->
       <section class="space-y-8">
-        <h3 class="text-3xl font-black uppercase tracking-tight">{messages.latest_title}</h3>
+        <h3 class="text-3xl font-black uppercase tracking-tight">{t("page_grand-tale_guides.latest_title")}</h3>
         <div class="space-y-4">
           {[1, 2, 3].map((i) => (
             <div class="p-6 bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-between group hover:border-primary-500/50 transition-colors shadow-md">

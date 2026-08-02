@@ -1,6 +1,6 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { useI18n } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 import { auth } from "@/auth/auth";
 
 const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
@@ -8,22 +8,16 @@ const user = sessionData?.user;
 if (!user) {
 	return Astro.redirect(getRelativeLocaleUrl('/auth/sign-in'));
 }
-
-const messages = useI18n(Astro, "page_dashboard_home", {
-	title: 'Home',
-	welcome: 'Welcome back, {name}',
-	description: "Here's an overview of your personal dashboard."
-});
 ---
 
-<DashboardLayout title={messages.title} description={messages.description}>
+<DashboardLayout title={t("dashboard.meta_title")} description={t("dashboard.meta_description")}>
 	<div class="p-6 flex flex-col gap-4">
 		<div class="flex flex-col gap-2">
 			<h2 class="text-2xl font-bold text-neutral-900 dark:text-white">
-				{messages.welcome.replace('{name}', user.name)}
+				Welcome back, {user.name}
 			</h2>
 			<p class="text-neutral-500 dark:text-neutral-400">
-				{messages.description}
+				{t("dashboard.meta_description")}
 			</p>
 		</div>
 	</div>

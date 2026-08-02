@@ -1,17 +1,9 @@
 ---
 import GrandTaleLayout from "@/layouts/GrandTaleLayout.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "grand_tale_download", {
-  title: 'Download Grand Tale',
-  description: 'Download the client for Grand Tale.'
-});
+import { t } from "@rimelight/i18n";
 ---
 
-<GrandTaleLayout title={messages.title} description={messages.description}>
-    <h1>{messages.title}</h1>
-    <p>{messages.description}</p>
+<GrandTaleLayout title={t("page_grand-tale_download.title")} description={t("page_grand-tale_download.description")}>
+    <h1>{t("page_grand-tale_download.title")}</h1>
+    <p>{t("page_grand-tale_download.description")}</p>
 </GrandTaleLayout>

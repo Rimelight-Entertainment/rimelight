@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/AppLayout.astro';
 import { getCollection } from 'astro:content';
 import { siteConfig } from '@/config/site.config';
 
-import { useI18nAsync, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
@@ -12,25 +12,17 @@ const legalDocs = (await getCollection('legal'))
 	.toSorted(
 		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 	);
-
-
-
-const messages = await useI18nAsync(Astro, "legal", {
-    title: "Legal",
-    heading: "Legal",
-    lastUpdated: "Last updated:",
-});
 ---
 
-<AppLayout title={messages.title} description={siteConfig.description}>
+<AppLayout title={t("page_legal.meta_title")} description={siteConfig.description}>
 		<section class="legal-section">
-			<h1>{messages.heading}</h1>
+			<h1>{t("page_legal.meta_title")}</h1>
 			<ul class="legal-list">
 				{legalDocs.map((doc) => (
 					<li class="legal-item">
 						<h3><a href={getRelativeLocaleUrl(`/legal/${doc.id.replace(`${activeLocale}/`, "")}/`)}>{doc.data.title}</a></h3>
 						<p>{doc.data.description}</p>
-						<span class="date">{messages.lastUpdated} {doc.data.pubDate.toLocaleDateString()}</span>
+						<span class="date">{t("legal.lastUpdated")} {doc.data.pubDate.toLocaleDateString()}</span>
 					</li>
 				))}
 			</ul>

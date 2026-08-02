@@ -1,7 +1,7 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
 import { siteConfig } from "@/config/site.config";
-import { getRelativeLocaleUrl, useI18n } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, t } from "@rimelight/i18n";
 import { getCollection } from "astro:content";
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
 import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
@@ -10,30 +10,6 @@ import RLAVideo from "@rimelight/ui/components/video/RLAVideo.astro";
 import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro";
 import RLAPost from "@rimelight/ui/components/post/RLAPost.astro";
 import { Image } from "astro:assets";
-
-const messages = useI18n(Astro, "home", {
-  home_heroTitle: "We are Rimelight Entertainment",
-  home_heroDescription: "We are creators of Grand Tale.",
-  home_heroJoinUs: "Join Us",
-  home_heroLearnMore: "Learn More",
-  home_companyTitle: "Pushing the boundaries of {interactive}",
-  home_companyDescription: "Founded in 2023, Rimelight Entertainment is independent and player-focused. We don't just create games; we create living, breathing worlds that respect your time and intelligence.",
-  home_companyStatsTitles: "Titles in Development",
-  home_companyStatsCreators: "Global Creators",
-  home_projectsTitle: "Our Projects",
-  home_projectsTagsFranchise: "Franchise",
-  home_projectsTagsFantasy: "Fantasy",
-  home_projectsTagsSocial: "Social",
-  home_projectsContentGrandTaleDescription: "A high-fantasy social life-sim game which hosts sub-games of multiple genres.",
-  home_projectsActionsDiscover: "Discover",
-  home_newsTitle: "Latest News",
-  home_newsDescription: "Read our latest news, posts, and project updates.",
-  home_newsActionsViewAll: "View All News",
-  home_ctaTitle: "Ready to play?",
-  home_ctaDescription: "Join us and let's tell our story together.",
-  home_ctaActionsCreateAccount: "Create Account",
-  home_ctaActionsExploreCareers: "Explore Careers"
-});
 
 const HeroBg = "https://cdn.rimelight.com/Images/placeholder_home_hero_background.png";
 const CompanyBg = "https://cdn.rimelight.com/Images/placeholder_home_company_background.jpg";
@@ -52,14 +28,14 @@ const latestPosts = (await getCollection("blog"))
 // Button configurations using exact UI properties
 const heroLinks = [
   {
-    label: messages.home_heroJoinUs,
+    label: t("page_home.section_hero_actions_join-us"),
     href: getRelativeLocaleUrl("/auth/sign-up"),
     color: "blurple" as const,
     variant: "solid" as const,
     class: "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
   },
   {
-    label: messages.home_heroLearnMore,
+    label: t("page_home.section_hero_actions_learn-more"),
     href: getRelativeLocaleUrl("/company/about"),
     color: "neutral" as const,
     variant: "outline" as const,
@@ -70,14 +46,14 @@ const heroLinks = [
 
 const ctaLinks = [
   {
-    label: messages.home_ctaActionsCreateAccount,
+    label: t("page_home.section_cta_actions_create-account"),
     href: getRelativeLocaleUrl("/auth/sign-up"),
     color: "blurple" as const,
     variant: "solid" as const,
     class: "px-8 py-3 rounded-md font-bold transition-all duration-300 transform hover:scale-[1.03]"
   },
   {
-    label: messages.home_ctaActionsExploreCareers,
+    label: t("page_home.section_cta_actions_explore-careers"),
     href: getRelativeLocaleUrl("/company/careers"),
     color: "neutral" as const,
     variant: "outline" as const,
@@ -90,8 +66,8 @@ const ctaLinks = [
   <RLAPageSection
         variant="hero"
         reverse={true}
-        title={messages.home_heroTitle}
-        description={messages.home_heroDescription}
+        title={t("page_home.section_hero_title")}
+        description={t("page_home.section_hero_description")}
         links={heroLinks}
         ui={{
           title: "text-white",
@@ -115,8 +91,8 @@ const ctaLinks = [
 
     <RLAPageSection
         orientation="horizontal"
-        title={messages.home_companyTitle.replace("{interactive}", "interactive media")}
-        description={messages.home_companyDescription}
+        title={t("page_home.section_company_title").replace("{interactive}", "interactive media")}
+        description={t("page_home.section_company_description")}
         ui={{
           title: "text-white",
           description: "text-neutral-300"
@@ -137,13 +113,13 @@ const ctaLinks = [
         <div>
           <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">3+</div>
           <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-            {messages.home_companyStatsTitles}
+            {t("page_home.section_company_stats_titles")}
           </div>
         </div>
         <div>
           <div class="text-4xl lg:text-5xl font-black text-white tracking-tight">50+</div>
           <div class="text-xs text-neutral-500 font-bold uppercase tracking-widest mt-1">
-            {messages.home_companyStatsCreators}
+            {t("page_home.section_company_stats_creators")}
           </div>
         </div>
       </div>
@@ -159,7 +135,7 @@ const ctaLinks = [
 
     <RLAPageSection
         orientation="vertical"
-        title={messages.home_projectsTitle}
+        title={t("page_home.section_projects_title")}
         class="w-full relative z-10 py-24 bg-black border-t border-neutral-900"
         ui={{
           title: "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
@@ -197,13 +173,13 @@ const ctaLinks = [
             <div class="absolute inset-0 p-lg flex flex-col gap-sm justify-end z-10">
               <div class="flex gap-sm">
                 <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                  {messages.home_projectsTagsFranchise}
+                  {t("page_home.section_projects_tags_franchise")}
                 </span>
                 <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                  {messages.home_projectsTagsFantasy}
+                  {t("page_home.section_projects_tags_fantasy")}
                 </span>
                 <span class="text-white text-xs font-bold uppercase tracking-wider bg-primary-500 px-3 py-1 rounded-full shadow-md">
-                  {messages.home_projectsTagsSocial}
+                  {t("page_home.section_projects_tags_social")}
                 </span>
               </div>
 
@@ -212,11 +188,11 @@ const ctaLinks = [
               </h3>
 
               <p class="text-neutral-300 text-sm mt-1 leading-relaxed">
-                {messages.home_projectsContentGrandTaleDescription}
+                {t("page_home.section_projects_content_grand-tale_description")}
               </p>
 
               <div class="flex items-center text-primary-400 font-bold uppercase tracking-widest text-xs mt-4 group-hover:text-primary-300 transition-colors">
-                <span>{messages.home_projectsActionsDiscover}</span>
+                <span>{t("page_home.section_projects_actions_discover")}</span>
                 <svg class="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1.5 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
@@ -229,8 +205,8 @@ const ctaLinks = [
 
     <RLAPageSection
         orientation="vertical"
-        title={messages.home_newsTitle}
-        description={messages.home_newsDescription}
+        title={t("page_home.section_news_title")}
+        description={t("page_home.section_news_description")}
         class="w-full relative z-10 py-24 bg-neutral-950 border-t border-neutral-900"
         ui={{
           title: "text-white text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-center",
@@ -267,7 +243,7 @@ const ctaLinks = [
         {latestPosts.length > 0 && (
             <div class="flex justify-center mt-14">
               <RLAButton
-                  label={messages.home_newsActionsViewAll}
+                  label={t("page_home.section_news_actions_view-all")}
                   href={getRelativeLocaleUrl("/blog")}
                   color="primary"
                   variant="link"
@@ -282,8 +258,8 @@ const ctaLinks = [
     <RLAPageSection
         variant="cta"
         ctaVariant="solid"
-        title={messages.home_ctaTitle}
-        description={messages.home_ctaDescription}
+        title={t("page_home.section_cta_title")}
+        description={t("page_home.section_cta_description")}
         links={ctaLinks}
         class="w-full relative z-10 py-24 bg-black border-t border-neutral-900 rounded-none overflow-hidden"
         ui={{

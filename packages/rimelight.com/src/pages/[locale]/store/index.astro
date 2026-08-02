@@ -1,29 +1,20 @@
 ---
 import StoreLayout from "@/layouts/StoreLayout.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "store_home", {
-  title: "Store",
-  description: "Official Rimelight Entertainment merch and digital store.",
-  welcome: "Welcome to the official Rimelight Store. Merch, physical collectibles, and digital goods are coming soon."
-});
+import { t } from "@rimelight/i18n";
 ---
 
-<StoreLayout title={messages.title} description={messages.description}>
+<StoreLayout title={t("page_store.meta_title")} description={t("page_store.meta_description")}>
   <div class="py-24 bg-black min-h-[60vh] flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-b from-primary-500/10 to-transparent pointer-events-none" />
     <div class="z-10 max-w-2xl space-y-6">
       <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white uppercase">
-        {messages.title}
+        {t("page_store.meta_title")}
       </h1>
       <p class="text-xl text-neutral-300">
-        {messages.description}
+        {t("page_store.meta_description")}
       </p>
       <p class="text-neutral-500 text-sm leading-relaxed border-t border-neutral-800 pt-6">
-        {messages.welcome}
+        {t("page_store.welcome")}
       </p>
     </div>
   </div>

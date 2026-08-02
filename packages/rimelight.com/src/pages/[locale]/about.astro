@@ -4,19 +4,10 @@ import AppLayout from '@/layouts/AppLayout.astro';
 
 const AboutHeroImage = "https://cdn.rimelight.com/Images/placeholder.webp";
 import RLADate from "@rimelight/ui/components/date/RLADate.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "about", {
-  title: 'About',
-  description: 'About Rimelight Entertainment',
-  heading: 'About Me'
-});
+import { t } from "@rimelight/i18n";
 ---
 
-<AppLayout title={messages.title} description={messages.description}>
+<AppLayout title={t("page_about.title")} description={t("page_about.description")}>
 		<article>
 			<div class="hero-image">
 				<Image width={1020} height={510} src={AboutHeroImage} alt="" />
@@ -26,7 +17,7 @@ const messages = useI18n(Astro, "about", {
 					<div class="date">
 						<RLADate date={new Date('August 08 2021')} />
 					</div>
-					<h1>{messages.heading}</h1>
+					<h1>{t("page_about.hero_title")}</h1>
 					<hr />
 				</div>
 				<p>

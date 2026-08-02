@@ -6,55 +6,43 @@ import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 import RLALinkGroup from "@rimelight/ui/components/link-group/RLALinkGroup.astro";
 import RLAThemeSelector from "@rimelight/ui/components/theme-selector/RLAThemeSelector.astro";
 import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
-import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
-
-const messages = useI18n(Astro, "app_footer", {
-  "links_resources_label": "Resources",
-  "links_resources_branding": "Branding",
-  "links_legal_label": "Legal",
-  "links_legal_terms-of-service": "Terms of Service",
-  "links_legal_code-of-conduct": "Code of Conduct",
-  "links_legal_privacy-policy": "Privacy Policy",
-  "links_legal_cookie-policy": "Cookie Policy",
-  "links_legal_shipping-policy": "Shipping Policy",
-  "links_legal_other-documents": "Other Documents"
-});
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const columns = [
   {
-    label: messages["links_resources_label"],
+    label: t("app_footer.links_resources_label"),
     children: [
       {
-        label: messages["links_resources_branding"],
+        label: t("app_footer.links_resources_branding"),
         to: getRelativeLocaleUrl("/branding")
       }
     ]
   },
   {
-    label: messages["links_legal_label"],
+    label: t("app_footer.links_legal_label"),
     children: [
       {
-        label: messages["links_legal_terms-of-service"],
+        label: t("app_footer.links_legal_terms-of-service"),
         to: getRelativeLocaleUrl("/legal/terms-of-service")
       },
       {
-        label: messages["links_legal_code-of-conduct"],
+        label: t("app_footer.links_legal_code-of-conduct"),
         to: getRelativeLocaleUrl("/legal/code-of-conduct")
       },
       {
-        label: messages["links_legal_privacy-policy"],
+        label: t("app_footer.links_legal_privacy-policy"),
         to: getRelativeLocaleUrl("/legal/privacy-policy")
       },
       {
-        label: messages["links_legal_cookie-policy"],
+        label: t("app_footer.links_legal_cookie-policy"),
         to: getRelativeLocaleUrl("/legal/cookie-policy")
       },
       {
-        label: messages["links_legal_shipping-policy"],
+        label: t("app_footer.links_legal_shipping-policy"),
         to: getRelativeLocaleUrl("/legal/shipping-policy")
       },
       {
-        label: messages["links_legal_other-documents"],
+        label: t("app_footer.links_legal_other-documents"),
         to: getRelativeLocaleUrl("/legal")
       }
     ]

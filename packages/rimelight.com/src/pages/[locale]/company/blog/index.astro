@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/AppLayout.astro';
 import { getCollection } from 'astro:content';
 
 import { siteConfig } from '@/config/site.config';
-import { useI18nAsync, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro"
 import RLATabs from "@rimelight/ui/components/tabs/RLATabs.astro"
 import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
@@ -33,22 +33,18 @@ const badgeColorMap: Record<string, string> = {
   "other": "success",
 };
 
-const messages = await useI18nAsync(Astro, "blog", {
-	title: "Blog",
-	description: "Articles, development logs, and company news.",
-	categories: {
-		"company-news": "Company News",
-		"development-log": "Development Log",
-		"other": "Other"
-	} as any
-} as any);
+const categoryMessages: Record<string, string> = {
+	"company-news": t("page_company_blog.categories_company-news"),
+	"development-log": t("page_company_blog.categories_development-log"),
+	"other": t("page_company_blog.categories_other")
+};
 
 const tabsItems = [
 	{ label: "All", value: "all" },
 	...categoryOrder
 		.filter((cat) => groupedPosts[cat]?.length)
 		.map((cat) => ({
-			label: (messages.categories as unknown as Record<string, string>)[cat],
+			label: categoryMessages[cat] ?? cat,
 			value: cat
 		}))
 ];
@@ -57,8 +53,8 @@ const tabsItems = [
 <AppLayout title={siteConfig.name} description={siteConfig.description}>
 	<RLAPageSection
 		orientation="horizontal"
-		title={(messages as any).title}
-		description={(messages as any).description}
+		title={t("page_company_blog.meta_title")}
+		description={t("page_company_blog.meta_description")}
 	>
 		<div class="flex justify-end items-start h-full w-full">
 			<RLAButton
@@ -81,7 +77,7 @@ const tabsItems = [
 							title={post.data.title}
 							description={post.data.description}
 							to={getRelativeLocaleUrl(`/company/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
-							badge={(messages.categories as unknown as Record<string, string>)[post.data.type]}
+							badge={categoryMessages[post.data.type] ?? post.data.type}
 							badgeColor={badgeColorMap[post.data.type] || "primary"}
 						/>
 					))}
@@ -104,7 +100,7 @@ const tabsItems = [
 										title={post.data.title}
 										description={post.data.description}
 										to={getRelativeLocaleUrl(`/company/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
-										badge={(messages.categories as unknown as Record<string, string>)[category]}
+										badge={categoryMessages[category] ?? category}
 										badgeColor={badgeColorMap[category] || "primary"}
 									/>
 								))

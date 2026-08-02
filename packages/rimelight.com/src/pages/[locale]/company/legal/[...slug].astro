@@ -2,14 +2,7 @@
 import { getEntry, render } from 'astro:content';
 import AppLayout from '@/layouts/AppLayout.astro';
 import RLADate from "@rimelight/ui/components/date/RLADate.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "legal", {
-    lastUpdatedOn: "Last updated on",
-});
+import { t } from "@rimelight/i18n";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
@@ -34,7 +27,7 @@ const { title, description, pubDate, updatedDate } = post.data;
 						{
 							updatedDate && (
 								<div class="last-updated-on mt-1 text-xs">
-									{messages.lastUpdatedOn} <RLADate date={updatedDate} />
+									{t("legal.lastUpdatedOn")} <RLADate date={updatedDate} />
 								</div>
 							)
 						}

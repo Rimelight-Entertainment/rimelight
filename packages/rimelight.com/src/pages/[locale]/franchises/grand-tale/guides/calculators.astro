@@ -1,53 +1,33 @@
 ---
 import GuidesLayout from "@/layouts/GuidesLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "grand_tale_calculators", {
-  title: "Game Calculators",
-  description: "Crunch the numbers to gain a competitive edge in Grand Tale.",
-  heading: "Game Calculators",
-  subheading: "Crunch the numbers to gain a competitive edge. From damage optimization to survival thresholds, our math tools do the heavy lifting for you.",
-  calc1_title: "DPS Calculator",
-  calc1_desc: "Calculate your true damage per second based on attack speed, crit rate, and elemental scaling.",
-  calc2_title: "Effective HP (EHP)",
-  calc2_desc: "Determine your actual survivability against physical and magical hits by factoring in armor and resistances.",
-  calc3_title: "Resonance Finder",
-  calc3_desc: "Identify the optimal Soulstone combinations to trigger your hero's secret passive abilities.",
-  calc4_title: "Resource Yield",
-  calc4_desc: "Estimate materials gathered per hour based on your current tool tier and gathering efficiency stats.",
-  suggest_title: "Have a complex formula suggestion?",
-  suggest_btn: "Submit Calculation Request"
-});
+import { t } from "@rimelight/i18n";
 
 const calculators = [
   {
-    title: messages.calc1_title,
+    title: t("page_grand-tale_guides_calculators.calc1_title"),
     icon: "i-lucide-swords",
-    description: messages.calc1_desc
+    description: t("page_grand-tale_guides_calculators.calc1_desc")
   },
   {
-    title: messages.calc2_title,
+    title: t("page_grand-tale_guides_calculators.calc2_title"),
     icon: "i-lucide-shield",
-    description: messages.calc2_desc
+    description: t("page_grand-tale_guides_calculators.calc2_desc")
   },
   {
-    title: messages.calc3_title,
+    title: t("page_grand-tale_guides_calculators.calc3_title"),
     icon: "i-lucide-sparkles",
-    description: messages.calc3_desc
+    description: t("page_grand-tale_guides_calculators.calc3_desc")
   },
   {
-    title: messages.calc4_title,
+    title: t("page_grand-tale_guides_calculators.calc4_title"),
     icon: "i-lucide-pickaxe",
-    description: messages.calc4_desc
+    description: t("page_grand-tale_guides_calculators.calc4_desc")
   }
 ];
 ---
 
-<GuidesLayout title={messages.title} description={messages.description}>
+<GuidesLayout title={t("page_grand-tale_guides_calculators.title")} description={t("page_grand-tale_guides_calculators.description")}>
   <div class="py-24 bg-neutral-950 text-white min-h-screen">
     <div class="max-w-4xl mx-auto px-4 space-y-16">
       <section class="space-y-6">
@@ -56,10 +36,10 @@ const calculators = [
         </div>
         <h1 class="text-5xl font-black uppercase tracking-tight leading-none">
           Game <br />
-          <span class="text-primary-500">{messages.heading}</span>
+          <span class="text-primary-500">{t("page_grand-tale_guides_calculators.heading")}</span>
         </h1>
         <p class="text-xl text-neutral-400 leading-relaxed font-light">
-          {messages.subheading}
+          {t("page_grand-tale_guides_calculators.subheading")}
         </p>
       </section>
 
@@ -87,8 +67,8 @@ const calculators = [
 
       <!-- Formula suggestion card -->
       <div class="bg-neutral-900/50 border-2 border-dashed border-neutral-800 rounded-2xl p-8 text-center shadow-lg max-w-2xl mx-auto">
-        <p class="text-neutral-500 text-sm mb-2">{messages.suggest_title}</p>
-        <RLAButton label={messages.suggest_btn} color="primary" variant="link" class="font-bold text-primary-500 hover:text-primary-400 transition-colors" />
+        <p class="text-neutral-500 text-sm mb-2">{t("page_grand-tale_guides_calculators.suggest_title")}</p>
+        <RLAButton label={t("page_grand-tale_guides_calculators.suggest_btn")} color="primary" variant="link" class="font-bold text-primary-500 hover:text-primary-400 transition-colors" />
       </div>
     </div>
   </div>

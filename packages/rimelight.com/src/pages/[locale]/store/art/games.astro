@@ -1,17 +1,9 @@
 ---
 import StoreLayout from "@/layouts/StoreLayout.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "store_art_games", {
-  title: 'Games',
-  description: 'Browse physical games and board games.'
-});
+import { t } from "@rimelight/i18n";
 ---
 
-<StoreLayout title={messages.title} description={messages.description}>
-    <h1>{messages.title}</h1>
-    <p>{messages.description}</p>
+<StoreLayout title={t("page_store.meta_title")} description={t("page_store.meta_description")}>
+    <h1>{t("page_store.meta_title")}</h1>
+    <p>{t("page_store.meta_description")}</p>
 </StoreLayout>

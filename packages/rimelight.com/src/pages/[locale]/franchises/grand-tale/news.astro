@@ -1,17 +1,7 @@
 ---
 import GrandTaleLayout from "@/layouts/GrandTaleLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "grand_tale_news", {
-  title: "Grand Tale News",
-  description: "Read official news transmissions and development updates for Grand Tale.",
-  heading: "Transmissions",
-  read_btn: "Read Transmission"
-});
+import { t } from "@rimelight/i18n";
 
 const newsItems = [
   {
@@ -38,12 +28,12 @@ const newsItems = [
 ];
 ---
 
-<GrandTaleLayout title={messages.title} description={messages.description}>
+<GrandTaleLayout title={t("page_grand-tale_news.title")} description={t("page_grand-tale_news.description")}>
   <div class="py-24 bg-neutral-950 min-h-[80vh]">
     <div class="max-w-4xl mx-auto px-4 space-y-12">
       <div class="space-y-4">
         <h1 class="text-4xl md:text-5xl font-black uppercase tracking-tight text-white">
-          {messages.heading}
+          {t("page_grand-tale_news.heading")}
         </h1>
         <div class="h-1 w-20 bg-primary-500" />
       </div>
@@ -70,7 +60,7 @@ const newsItems = [
                 {item.excerpt}
               </p>
               <RLAButton
-                label={messages.read_btn}
+                label={t("page_grand-tale_news.read_btn")}
                 color="primary"
                 variant="link"
                 class="font-semibold text-primary-500 hover:text-primary-400 transition-colors flex items-center gap-xs"

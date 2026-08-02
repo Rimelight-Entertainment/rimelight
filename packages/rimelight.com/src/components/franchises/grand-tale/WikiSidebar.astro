@@ -1,56 +1,34 @@
 ---
 
-import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
-
-
-
-const messages = useI18n(Astro, "wiki_sidebar", {
-	wiki: 'Wiki',
-	getting_started: 'Getting Started',
-	contribution_guide: 'Contribution Guide',
-	lore: 'Lore',
-	timeline: 'Timeline',
-	characters: 'Characters',
-	locations: 'Locations',
-	species: 'Species',
-	objects: 'Objects',
-	groups: 'Groups',
-	game: 'Game Information',
-	tales: 'Tales',
-	items: 'Items',
-	quests: 'Quests',
-	skills: 'Skills',
-	settings: 'Settings',
-	series: 'Series'
-});
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const sections = [
 	{
-		label: messages.wiki,
+		label: t("wiki_sidebar.wiki"),
 		items: [
-			{ label: messages.getting_started, to: '/franchises/grand-tale/wiki/getting-started' },
-			{ label: messages.contribution_guide, to: '/franchises/grand-tale/wiki/contribution-guide' }
+			{ label: t("wiki_sidebar.getting_started"), to: '/franchises/grand-tale/wiki/getting-started' },
+			{ label: t("wiki_sidebar.contribution_guide"), to: '/franchises/grand-tale/wiki/contribution-guide' }
 		]
 	},
 	{
-		label: messages.lore,
+		label: t("wiki_sidebar.lore"),
 		items: [
-			{ label: messages.timeline, to: '/franchises/grand-tale/wiki/lore/timeline' },
-			{ label: messages.characters, to: '/franchises/grand-tale/wiki/lore/characters' },
-			{ label: messages.locations, to: '/franchises/grand-tale/wiki/lore/locations' },
-			{ label: messages.species, to: '/franchises/grand-tale/wiki/lore/species' },
-			{ label: messages.objects, to: '/franchises/grand-tale/wiki/lore/objects' },
-			{ label: messages.groups, to: '/franchises/grand-tale/wiki/lore/groups' }
+			{ label: t("wiki_sidebar.timeline"), to: '/franchises/grand-tale/wiki/lore/timeline' },
+			{ label: t("wiki_sidebar.characters"), to: '/franchises/grand-tale/wiki/lore/characters' },
+			{ label: t("wiki_sidebar.locations"), to: '/franchises/grand-tale/wiki/lore/locations' },
+			{ label: t("wiki_sidebar.species"), to: '/franchises/grand-tale/wiki/lore/species' },
+			{ label: t("wiki_sidebar.objects"), to: '/franchises/grand-tale/wiki/lore/objects' },
+			{ label: t("wiki_sidebar.groups"), to: '/franchises/grand-tale/wiki/lore/groups' }
 		]
 	},
 	{
-		label: messages.game,
+		label: t("wiki_sidebar.game"),
 		items: [
-			{ label: messages.tales, to: '/franchises/grand-tale/wiki/game/tales' },
-			{ label: messages.items, to: '/franchises/grand-tale/wiki/game/items' },
-			{ label: messages.quests, to: '/franchises/grand-tale/wiki/game/quests' },
-			{ label: messages.skills, to: '/franchises/grand-tale/wiki/game/skills' },
-			{ label: messages.settings, to: '/franchises/grand-tale/wiki/game/settings' }
+			{ label: t("wiki_sidebar.tales"), to: '/franchises/grand-tale/wiki/game/tales' },
+			{ label: t("wiki_sidebar.items"), to: '/franchises/grand-tale/wiki/game/items' },
+			{ label: t("wiki_sidebar.quests"), to: '/franchises/grand-tale/wiki/game/quests' },
+			{ label: t("wiki_sidebar.skills"), to: '/franchises/grand-tale/wiki/game/skills' },
+			{ label: t("wiki_sidebar.settings"), to: '/franchises/grand-tale/wiki/game/settings' }
 		]
 	}
 ];

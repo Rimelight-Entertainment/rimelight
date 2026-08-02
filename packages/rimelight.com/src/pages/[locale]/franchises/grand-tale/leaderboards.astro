@@ -1,16 +1,6 @@
 ---
 import GrandTaleLayout from "@/layouts/GrandTaleLayout.astro";
-import { useI18n } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "grand_tale_leaderboards", {
-  title: "Grand Tale Leaderboards",
-  description: "View top adventurers, power levels, speedruns, and active guilds in Grand Tale.",
-  heading: "Global Standings",
-  subheading: "The top adventurers across all realms."
-});
+import { t } from "@rimelight/i18n";
 
 const leaders = [
   { rank: 1, name: "IllidanStormrage", soul: "Voidweaver", level: 99, power: 12500 },
@@ -21,15 +11,15 @@ const leaders = [
 ];
 ---
 
-<GrandTaleLayout title={messages.title} description={messages.description}>
+<GrandTaleLayout title={t("page_grand-tale_leaderboards.title")} description={t("page_grand-tale_leaderboards.description")}>
   <div class="py-24 bg-neutral-950 min-h-[80vh]">
     <div class="max-w-4xl mx-auto px-4 space-y-12">
       <div class="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-neutral-900 pb-8">
         <div class="space-y-4">
           <h1 class="text-4xl md:text-5xl font-black uppercase tracking-tight text-white">
-            {messages.heading}
+            {t("page_grand-tale_leaderboards.heading")}
           </h1>
-          <p class="text-neutral-400">{messages.subheading}</p>
+          <p class="text-neutral-400">{t("page_grand-tale_leaderboards.subheading")}</p>
         </div>
       </div>
 

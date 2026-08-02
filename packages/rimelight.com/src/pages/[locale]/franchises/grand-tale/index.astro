@@ -2,33 +2,11 @@
 import GrandTaleLayout from "@/layouts/GrandTaleLayout.astro";
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
 import RLAVideo from "@rimelight/ui/components/video/RLAVideo.astro";
-
-import { useI18n, getRelativeLocaleUrl } from "@rimelight/i18n";
-
-
-
-
-const messages = useI18n(Astro, "grand_tale_home", {
-  title: "Grand Tale",
-  description: "Experience Grand Tale, an epic journey through a shattered world where every choice resonates through eternity.",
-  hero_title: "An Epic RPG Journey",
-  hero_description: "Immerse yourself in a living, breathing high-fantasy world.",
-  hero_btn: "Play Now",
-  overview_title: "Explore Shattered Realms",
-  overview_description: "Discover deep mechanics, tactical combat, and a rich player-driven economy.",
-  overview_btn: "Learn More",
-  overview_trailer: "Watch Trailer",
-  feature1_title: "Tactical Combat",
-  feature1_desc: "Master diverse class pathways and synergistic abilities in tactical combat.",
-  feature2_title: "Living World",
-  feature2_desc: "Watch the world respond to community events, faction choices, and server achievements.",
-  feature3_title: "Deep Economy",
-  feature3_desc: "Engage in free trade, crafting systems, and player-driven resource markets."
-});
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const heroLinks = [
   {
-    label: messages.hero_btn,
+    label: t("page_grand-tale_home.hero_btn"),
     href: getRelativeLocaleUrl("/franchises/grand-tale/download"),
     color: "primary" as const,
     variant: "solid" as const,
@@ -38,7 +16,7 @@ const heroLinks = [
 
 const overviewLinks = [
   {
-    label: messages.overview_btn,
+    label: t("page_grand-tale_home.overview_btn"),
     href: getRelativeLocaleUrl("/franchises/grand-tale/about"),
     color: "primary" as const,
     variant: "solid" as const,
@@ -47,12 +25,12 @@ const overviewLinks = [
 ];
 ---
 
-<GrandTaleLayout title={messages.title} description={messages.description}>
+<GrandTaleLayout title={t("page_grand-tale_home.hero_title")} description={t("page_grand-tale_home.hero_description")}>
   <!-- Hero Section -->
   <RLAPageSection
     variant="hero"
-    title={messages.hero_title}
-    description={messages.hero_description}
+    title={t("page_grand-tale_home.hero_title")}
+    description={t("page_grand-tale_home.hero_description")}
     links={heroLinks}
     ui={{
       title: "text-white text-5xl lg:text-7xl font-black uppercase tracking-tight",
@@ -76,8 +54,8 @@ const overviewLinks = [
   <!-- Overview Section -->
   <RLAPageSection
     orientation="horizontal"
-    title={messages.overview_title}
-    description={messages.overview_description}
+    title={t("page_grand-tale_home.overview_title")}
+    description={t("page_grand-tale_home.overview_description")}
     links={overviewLinks}
     ui={{
       title: "text-white text-4xl font-extrabold uppercase",
@@ -109,16 +87,16 @@ const overviewLinks = [
     <div class="max-w-6xl mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
-          <h3 class="text-xl font-bold text-white uppercase mb-4">{messages.feature1_title}</h3>
-          <p class="text-neutral-400 text-sm leading-relaxed">{messages.feature1_desc}</p>
+          <h3 class="text-xl font-bold text-white uppercase mb-4">{t("page_grand-tale_home.feature1_title")}</h3>
+          <p class="text-neutral-400 text-sm leading-relaxed">{t("page_grand-tale_home.feature1_desc")}</p>
         </div>
         <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
-          <h3 class="text-xl font-bold text-white uppercase mb-4">{messages.feature2_title}</h3>
-          <p class="text-neutral-400 text-sm leading-relaxed">{messages.feature2_desc}</p>
+          <h3 class="text-xl font-bold text-white uppercase mb-4">{t("page_grand-tale_home.feature2_title")}</h3>
+          <p class="text-neutral-400 text-sm leading-relaxed">{t("page_grand-tale_home.feature2_desc")}</p>
         </div>
         <div class="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-8 shadow-lg hover:border-primary-500/50 transition-colors">
-          <h3 class="text-xl font-bold text-white uppercase mb-4">{messages.feature3_title}</h3>
-          <p class="text-neutral-400 text-sm leading-relaxed">{messages.feature3_desc}</p>
+          <h3 class="text-xl font-bold text-white uppercase mb-4">{t("page_grand-tale_home.feature3_title")}</h3>
+          <p class="text-neutral-400 text-sm leading-relaxed">{t("page_grand-tale_home.feature3_desc")}</p>
         </div>
       </div>
     </div>
