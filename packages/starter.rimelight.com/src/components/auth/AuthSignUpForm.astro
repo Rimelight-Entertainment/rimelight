@@ -12,38 +12,28 @@ interface Props {
 
 const { turnstileSiteKey = "" } = Astro.props as Props
 
-const stepTitles = [
-  t("page_auth_sign-up.auth_stepper_identity"),
-  t("page_auth_sign-up.auth_stepper_security"),
-  t("page_auth_sign-up.auth_stepper_preferences")
+import RLAStepper from "@rimelight/ui/components/stepper/RLAStepper.astro"
+import type { StepperItem } from "@rimelight/ui/components/stepper/stepper"
+
+const stepperItems: StepperItem[] = [
+  { title: t("page_auth_sign-up.auth_stepper_identity"), icon: "user" },
+  { title: t("page_auth_sign-up.auth_stepper_security"), icon: "lock" },
+  { title: t("page_auth_sign-up.auth_stepper_preferences"), icon: "check" }
 ]
 ---
 
 <div class="w-full flex flex-col gap-lg max-w-md" id="auth-sign-up-root">
   <p id="auth-sign-up-error" class="hidden text-sm text-error-500"></p>
 
-  <!-- Step indicators matching Nuxt UI Stepper pattern with icon support -->
-  <div class="flex items-center justify-between w-full mb-4 px-2">
-    {stepTitles.map((title, index) => {
-      const stepIcons = ["user", "lock", "check"]
-      return (
-        <div class="flex items-center gap-2 flex-1 last:flex-initial" data-step-item={index}>
-          <div
-            class="flex items-center gap-2 transition-colors cursor-pointer text-xs sm:text-sm font-medium step-indicator"
-            data-step-indicator={index}
-          >
-            <div class="size-8 rounded-full flex items-center justify-center border transition-all step-badge">
-              <RLAIcon name={stepIcons[index]} size="sm" class="step-icon" />
-            </div>
-            <span class="hidden sm:inline text-xs font-semibold step-title">{title}</span>
-          </div>
-          {index < stepTitles.length - 1 && (
-            <div class="flex-1 h-0.5 mx-2 bg-neutral-200 dark:bg-neutral-800 transition-colors step-line" data-step-line={index} />
-          )}
-        </div>
-      )
-    })}
-  </div>
+  <RLAStepper
+    id="auth-sign-up-stepper"
+    items={stepperItems}
+    defaultValue={0}
+    linear={true}
+    size="sm"
+    color="primary"
+    class="w-full mb-4"
+  />
 
   <form id="auth-sign-up-form" class="flex flex-col gap-md">
     <!-- Step 1: Identity -->
@@ -227,6 +217,8 @@ const stepTitles = [
   const errorEl = document.getElementById("auth-sign-up-error")
   const form = document.getElementById("auth-sign-up-form") as HTMLFormElement | null
 
+  const stepperEl = document.getElementById("auth-sign-up-stepper") as (HTMLElement & { goTo?: (i: number) => void }) | null
+
   function updateStepUI() {
     stepContainers.forEach((container, idx) => {
       if (container) {
@@ -240,32 +232,27 @@ const stepTitles = [
       }
     })
 
-    document.querySelectorAll("[data-step-indicator]").forEach((indicator) => {
-      const idx = Number(indicator.getAttribute("data-step-indicator"))
-      const badge = indicator.querySelector(".step-badge") as HTMLElement | null
-      const title = indicator.querySelector(".step-title") as HTMLElement | null
-      
-      if (idx === currentStep) {
-        if (badge) badge.className = "size-8 rounded-full flex items-center justify-center border transition-all bg-primary-600 border-primary-600 text-white shadow-sm"
-        if (title) title.className = "hidden sm:inline text-xs font-bold text-primary-600 dark:text-primary-400"
-      } else if (idx < currentStep) {
-        if (badge) badge.className = "size-8 rounded-full flex items-center justify-center border transition-all bg-success-500 border-success-500 text-white"
-        if (title) title.className = "hidden sm:inline text-xs font-medium text-success-600 dark:text-success-400"
-      } else {
-        if (badge) badge.className = "size-8 rounded-full flex items-center justify-center border transition-all bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-400"
-        if (title) title.className = "hidden sm:inline text-xs font-medium text-neutral-400 dark:text-neutral-500"
-      }
-    })
-
-    document.querySelectorAll("[data-step-line]").forEach((line) => {
-      const idx = Number(line.getAttribute("data-step-line"))
-      if (idx < currentStep) {
-        line.className = "flex-1 h-0.5 mx-2 bg-success-500 transition-colors"
-      } else {
-        line.className = "flex-1 h-0.5 mx-2 bg-neutral-200 dark:bg-neutral-800 transition-colors"
-      }
-    })
+    if (stepperEl && typeof stepperEl.goTo === "function") {
+      stepperEl.goTo(currentStep)
+    }
   }
+
+  stepperEl?.addEventListener("change", (e: any) => {
+    if (typeof e.detail?.index === "number") {
+      currentStep = e.detail.index
+      stepContainers.forEach((container, idx) => {
+        if (container) {
+          if (idx === currentStep) {
+            container.classList.remove("hidden")
+            container.classList.add("flex")
+          } else {
+            container.classList.add("hidden")
+            container.classList.remove("flex")
+          }
+        }
+      })
+    }
+  })
 
   updateStepUI()
 
