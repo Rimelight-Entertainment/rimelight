@@ -1,5 +1,7 @@
 ---
-import RLAHead from "@rimelight/ui/components/head/RLAHead.astro";
+import SecurityHead from "@rimelight/security/components/SecurityHead.astro";
+import SEOHead from "@rimelight/seo/components/SEOHead.astro";
+import UIHead from "@rimelight/ui/components/head/UIHead.astro";
 import { siteConfig } from '@/config/site.config';
 import { Font } from 'astro:assets';
 
@@ -13,12 +15,15 @@ const { title, description } = Astro.props as OgLayoutProps;
 
 <!doctype html>
 <html lang="en">
-  <RLAHead title={title} description={description} config={siteConfig}>
-    <slot name="head" slot="head" />
-    <Font cssVariable="--font-sans" preload={true} slot="head" />
-    <Font cssVariable="--font-serif" preload={true} slot="head" />
-    <Font cssVariable="--font-mono" preload={true} slot="head" />
-  </RLAHead>
+  <head>
+    <SecurityHead />
+    <SEOHead title={title} description={description} config={siteConfig} noindex={true} />
+    <UIHead />
+    <Font cssVariable="--font-sans" preload={true} />
+    <Font cssVariable="--font-serif" preload={true} />
+    <Font cssVariable="--font-mono" preload={true} />
+    <slot name="head" />
+  </head>
   <body>
     <slot />
   </body>

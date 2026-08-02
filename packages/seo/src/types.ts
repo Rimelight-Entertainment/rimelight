@@ -89,3 +89,131 @@ export interface UserAgentRule {
   disallow?: string[]
   allow?: string[]
 }
+
+/**
+ * Site identity and SEO defaults shared across all Rimelight Astro sites. The UI-specific overrides
+ * (component themes, shortcuts, etc.) live in UIConfig (packages/ui) and are passed directly to the
+ * ui() integration.
+ */
+export interface SiteConfig {
+  id: string
+  name: string
+  description: string
+  url: string
+  ogImage: string
+  author: string
+  email: string
+  branding: {
+    logo: {
+      alt: string
+    }
+    favicon: {
+      svg: string
+    }
+    colors: {
+      themeColor: string
+      backgroundColor: string
+    }
+  }
+  seo: {
+    titleTemplate: string
+    ogImageFallback: string
+    maxDescriptionLength: number
+    authorHandle?: string
+  }
+}
+
+/**
+ * Open Graph image with alt text
+ */
+export interface OGImage {
+  /**
+   * Image URL (relative or absolute)
+   */
+  src: string
+  /**
+   * Alt text for the image
+   */
+  alt: string
+}
+
+/**
+ * RSS feed link configuration
+ */
+export interface RSSFeed {
+  /**
+   * RSS feed URL
+   */
+  href: string
+  /**
+   * Feed title (defaults to "RSS")
+   */
+  title?: string
+}
+
+/**
+ * Props for the RLAHead Astro component. Defined here so consumers can construct head props without
+ * importing @rimelight/ui.
+ */
+export interface HeadProps {
+  /**
+   * Page title
+   */
+  title?: string
+  /**
+   * Page description
+   */
+  description?: string
+  /**
+   * Open Graph image with alt text
+   */
+  ogImage?: OGImage
+  /**
+   * Open Graph type (e.g., "website", "article")
+   */
+  ogType?: string
+  /**
+   * Open Graph locale (defaults to "en_US")
+   */
+  ogLocale?: string
+  /**
+   * Whether to prevent indexing
+   */
+  noindex?: boolean
+  /**
+   * Whether this is a 404 page
+   */
+  is404?: boolean
+  /**
+   * Robots metadata (overrides noindex/is404 logic if provided)
+   */
+  robots?: string
+  /**
+   * Canonical URL
+   */
+  canonical?: string
+  /**
+   * Language alternates for i18n
+   */
+  languageAlternates?: Array<{ hreflang: string; href: string }>
+  /**
+   * Site configuration for defaults
+   */
+  config?: SiteConfig
+  /**
+   * Whether to enable View Transitions (ClientRouter)
+   */
+  transitions?: boolean
+  /**
+   * Meta charset
+   */
+  charset?: string
+  /**
+   * Meta viewport
+   */
+  viewport?: string
+  /**
+   * RSS feed configuration
+   */
+  rssFeed?: RSSFeed
+}

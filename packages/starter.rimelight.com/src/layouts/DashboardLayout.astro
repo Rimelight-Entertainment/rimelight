@@ -1,5 +1,7 @@
 ---
-import RLAHead from "@rimelight/ui/components/head/RLAHead.astro";
+import SecurityHead from "@rimelight/security/components/SecurityHead.astro";
+import SEOHead from "@rimelight/seo/components/SEOHead.astro";
+import UIHead from "@rimelight/ui/components/head/UIHead.astro";
 import AppHeader from '@/components/app/AppHeader.astro';
 import RLABanner from "@rimelight/ui/components/banner/RLABanner.astro";
 import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
@@ -41,19 +43,31 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
-	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
-		<slot name="head" slot="head" />
-		<Font cssVariable="--font-sans" preload={true} slot="head" />
-		<Font cssVariable="--font-serif" preload={true} slot="head" />
-		<Font cssVariable="--font-mono" preload={true} slot="head" />
-	</RLAHead>
-	<meta property="og:image" content={new URL(ogImageSrc || '/og/placeholder.webp', Astro.site).toString()} />
+  <head>
+    <SecurityHead />
+    <SEOHead
+      title={title}
+      description={description}
+      config={siteConfig}
+      ogLocale={ogLocale}
+      rssFeed={{ href: '/rss.xml', title: siteConfig.name }}
+      noindex={noindex}
+      is404={is404}
+      robots={robots}
+      languageAlternates={languageAlternates}
+      ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}
+    />
+    <UIHead />
+    <Font cssVariable="--font-sans" preload={true} />
+    <Font cssVariable="--font-serif" preload={true} />
+    <Font cssVariable="--font-mono" preload={true} />
+    <slot name="head" />
+  </head>
 	<body class="isolate">
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
 			{t("app_layout.skipToContent")}
 		</a>
 
-		<!-- Fixed header layers: banner + app header (both position:fixed, out of flow) -->
 		<div id="dashboard-header-wrapper">
 			<RLABanner
 				contain={false}
@@ -70,14 +84,10 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 			<AppHeader />
 		</div>
 
-		<!-- Dashboard area: pushed down by margin-top equal to measured fixed header height.
-		     Height is exactly the remaining viewport so header + dashboard = 100vh.
-		     Footer lives below and appears on scroll. -->
 		<RLAMain id="main-content" class="dashboard-viewport-area flex flex-col min-w-0">
 			<slot />
 		</RLAMain>
 
-		<!-- Footer below the fold -->
 		<AppFooter />
 
 		<RLAScrollToTop showProgress={true} />
@@ -133,23 +143,12 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 	</body>
 </html>
 
-
 <style is:global>
 	html, body {
 		margin: 0;
 		padding: 0;
 	}
 
-	/*
-	 * Dashboard main area sits directly below the fixed header layers.
-	 * --rl-total-header-height is maintained by the UI's headerStack system.
-	 *
-	 * We use padding-top with height: 100vh so:
-	 *   - The main element stays fixed at 100vh in document flow (from y=0 to y=100vh)
-	 *   - Content starts below fixed headers (offset by padding-top)
-	 *   - No layout shifts or resizing on refresh or navigation
-	 *   - Footer sits naturally right after the 100vh block (below the fold)
-	 */
 	.dashboard-viewport-area {
 		box-sizing: border-box;
 		padding-top: var(--rl-total-header-height, 4rem) !important;

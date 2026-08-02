@@ -1,15 +1,17 @@
 ---
-import RLAHead from "@rimelight/ui/components/head/RLAHead.astro";
+import SecurityHead from "@rimelight/security/components/SecurityHead.astro";
+import SEOHead from "@rimelight/seo/components/SEOHead.astro";
+import UIHead from "@rimelight/ui/components/head/UIHead.astro";
 import AppHeader from '@/components/app/AppHeader.astro';
-import RLABanner from "@rimelight/ui/components/banner/RLABanner.astro"
-import RLAMain from "@rimelight/ui/components/main/RLAMain.astro"
+import RLABanner from "@rimelight/ui/components/banner/RLABanner.astro";
+import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
 import AppFooter from '@/components/app/AppFooter.astro';
-import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro"
-import RLAShortcuts from "@rimelight/ui/components/shortcuts/RLAShortcuts.astro"
-import RLALayoutGrid from "@rimelight/ui/components/layout-grid/RLALayoutGrid.astro"
-import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro"
-import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro"
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLAScrollToTop from "@rimelight/ui/components/scroll-to-top/RLAScrollToTop.astro";
+import RLAShortcuts from "@rimelight/ui/components/shortcuts/RLAShortcuts.astro";
+import RLALayoutGrid from "@rimelight/ui/components/layout-grid/RLALayoutGrid.astro";
+import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
+import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { siteConfig } from '@/config/site.config';
 import { Font } from 'astro:assets';
 import { currentLocale, t, getRelativeLocaleUrl } from '@rimelight/i18n';
@@ -46,13 +48,27 @@ const ogImageUrl = (() => {
 
 <!doctype html>
 <html lang={Astro.currentLocale || 'en'}>
-	<RLAHead title={title} description={description} config={siteConfig} ogLocale={ogLocale} rssFeed={{ href: '/rss.xml', title: siteConfig.name }} noindex={noindex} is404={is404} robots={robots} languageAlternates={languageAlternates} ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}>
-		<slot name="head" slot="head" />
-		<Font cssVariable="--font-sans" preload={true} slot="head" />
-		<Font cssVariable="--font-serif" preload={true} slot="head" />
-		<Font cssVariable="--font-mono" preload={true} slot="head" />
+  <head>
+    <SecurityHead />
+    <SEOHead
+      title={title}
+      description={description}
+      config={siteConfig}
+      ogLocale={ogLocale}
+      rssFeed={{ href: '/rss.xml', title: siteConfig.name }}
+      noindex={noindex}
+      is404={is404}
+      robots={robots}
+      languageAlternates={languageAlternates}
+      ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}
+    />
+    <UIHead />
+    <Font cssVariable="--font-sans" preload={true} />
+    <Font cssVariable="--font-serif" preload={true} />
+    <Font cssVariable="--font-mono" preload={true} />
     <meta property="og:image" content={ogImageUrl} />
-	</RLAHead>
+    <slot name="head" />
+  </head>
 	<body class="isolate">
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
 			{t("app_layout.skipToContent")}
@@ -109,11 +125,9 @@ const ogImageUrl = (() => {
 				const denyBtn = container.querySelector("#cookie-deny");
 
 				const setCookieAndDismiss = (consentValue: string) => {
-					// Set cookie for 1 year
 					const maxAge = 365 * 24 * 60 * 60;
 					document.cookie = `cookie-consent=${consentValue}; path=/; max-age=${maxAge}; SameSite=Lax`;
 
-					// Animate out
 					container.classList.add("opacity-0", "translate-y-4");
 					container.addEventListener("transitionend", () => {
 						container.remove();

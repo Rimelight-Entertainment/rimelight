@@ -1,0 +1,115 @@
+---
+import type { HeadProps } from "../types.js"
+import {
+  buildCanonicalUrl,
+  buildPageTitle,
+  buildSafeDescription,
+  buildRobotsMetaContent,
+  buildWebSiteSchema
+} from "../meta.js"
+
+const {
+  title,
+  description,
+  ogImage,
+  ogType = 'website',
+  ogLocale = 'en_US',
+  noindex = false,
+  is404 = false,
+  robots,
+  canonical,
+  languageAlternates = [],
+  config,
+  charset = 'utf-8',
+  viewport = 'width=device-width, initial-scale=1',
+  rssFeed,
+} = Astro.props as HeadProps
+
+// Resolve defaults from config if available
+const siteName = config?.name || 'Rimelight'
+const siteDescription = config?.description || ''
+const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || ''
+const themeColor = config?.branding?.colors?.themeColor
+const favicon = config?.branding?.favicon?.svg || '/favicon.svg'
+const twitterHandle = config?.seo?.authorHandle
+const titleTemplate = config?.seo?.titleTemplate || `%s | ${siteName}`
+
+// Calculated Values
+const displayTitle = buildPageTitle({ title, siteName, titleTemplate, is404 })
+
+const finalDescription = description || siteDescription
+const safeDescription = config?.seo?.maxDescriptionLength
+  ? buildSafeDescription(finalDescription, config.seo.maxDescriptionLength)
+  : finalDescription
+
+const finalOgImage = ogImage || (ogImageFallback ? { src: ogImageFallback, alt: siteName } : undefined)
+const absoluteOgImage = finalOgImage
+  ? new URL(finalOgImage.src, Astro.site ?? Astro.url).toString()
+  : undefined
+
+const finalCanonical = canonical
+  ? buildCanonicalUrl(canonical, Astro.site ?? Astro.url)
+  : (!is404 ? buildCanonicalUrl(Astro.url, Astro.site ?? Astro.url) : undefined)
+
+const robotsContent = buildRobotsMetaContent({ noindex, is404, override: robots })
+---
+
+<!-- Basic Metadata -->
+<meta charset={charset} />
+<meta name="viewport" content={viewport} />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Sitemap -->
+<link rel="sitemap" href="/sitemap.xml" />
+
+<!-- RSS Feed -->
+{rssFeed && <link rel="alternate" type="application/rss+xml" href={rssFeed.href} title={rssFeed.title || 'RSS'} />}
+
+<!-- SEO -->
+<title>{displayTitle}</title>
+{safeDescription && <meta name="description" content={safeDescription} />}
+<meta name="robots" content={robotsContent} />
+{finalCanonical && <link rel="canonical" href={finalCanonical} />}
+
+<!-- i18n Alternates -->
+{languageAlternates.map((alt) => (
+  <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+))}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:url" content={Astro.url.href} />
+<meta property="og:title" content={title || siteName} />
+{safeDescription && <meta property="og:description" content={safeDescription} />}
+{absoluteOgImage && <meta property="og:image" content={absoluteOgImage} />}
+{finalOgImage && <meta property="og:image:alt" content={finalOgImage.alt} />}
+<meta property="og:site_name" content={siteName} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url.href} />
+<meta property="twitter:title" content={title || siteName} />
+{safeDescription && <meta property="twitter:description" content={safeDescription} />}
+{absoluteOgImage && <meta property="twitter:image" content={absoluteOgImage} />}
+{finalOgImage && <meta property="twitter:image:alt" content={finalOgImage.alt} />}
+{twitterHandle && <meta property="twitter:site" content={twitterHandle} />}
+{twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
+
+<!-- Icons & Manifest -->
+<link rel="icon" type="image/svg+xml" href={favicon} />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<!-- Theme Metadata -->
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content={themeColor || "#ffffff"} />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
+
+<!-- Structured Data -->
+{config && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(
+    buildWebSiteSchema(config, Astro.site?.toString())
+  )} />
+)}

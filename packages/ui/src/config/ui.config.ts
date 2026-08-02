@@ -1,5 +1,4 @@
 import type { UserConfig } from "unocss"
-import type { ComponentTheme } from "../types/component"
 import type { RimelightIcons } from "../icons/defaults"
 
 export interface UIConfig {
@@ -34,9 +33,9 @@ export interface UIConfig {
   components?: {
     /**
      * Global UI overrides applied to all components. Merged with defaults via our custom recursive
-     * merge utility (first arg wins).
+     * merge utility (first arg wins). Values follow the css-variants theme override format.
      */
-    themes?: Record<string, Partial<ComponentTheme>>
+    themes?: Record<string, Record<string, unknown>>
     /**
      * Default prop values overrides for components.
      */

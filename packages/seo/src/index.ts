@@ -5,7 +5,11 @@ export type {
   SeoEntry,
   SitemapAlternate,
   SitemapUrl,
-  UserAgentRule
+  UserAgentRule,
+  SiteConfig,
+  OGImage,
+  RSSFeed,
+  HeadProps
 } from "./types.js"
 
 export {
@@ -16,3 +20,11 @@ export {
 } from "./sitemap.js"
 
 export { buildRobotsTxt } from "./robots.js"
+
+export {
+  buildCanonicalUrl,
+  buildPageTitle,
+  buildSafeDescription,
+  buildRobotsMetaContent,
+  buildWebSiteSchema
+} from "./meta.js"

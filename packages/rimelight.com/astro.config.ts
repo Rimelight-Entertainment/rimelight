@@ -154,6 +154,175 @@ export default defineConfig({
     }),
 
     ui({
+      components: {
+        themes: {
+          link: {
+            variants: {
+              active: {
+                true: "text-primary-500",
+                false: "text-muted"
+              }
+            }
+          },
+          formField: {
+            slots: {
+              description: "text-sm",
+              help: "text-xs"
+            }
+          },
+          checkbox: {
+            slots: {
+              description: "text-sm"
+            }
+          },
+          toast: {
+            slots: {
+              root: "bg-black border-none ring-0"
+            }
+          },
+          dropdownMenu: {
+            slots: {
+              content: "ring-0"
+            }
+          },
+          selectMenu: {
+            slots: {
+              content: "min-w-fit"
+            }
+          },
+          popover: {
+            slots: {
+              content: "ring-0"
+            }
+          },
+          modal: {
+            variants: {
+              fullscreen: {
+                false: {
+                  content: "ring-0 bg-muted divide-none"
+                }
+              }
+            }
+          },
+          slideover: {
+            slots: {
+              content: "bg-black"
+            }
+          },
+          banner: {
+            slots: {
+              icon: "text-default",
+              title: "text-default",
+              close: "text-default"
+            }
+          },
+          page: {
+            slots: {
+              root: "lg:gap-8"
+            }
+          },
+          pageAside: {
+            slots: {
+              root: "lg:px-4 lg:pe-0 lg:ps-0 lg:ms-0"
+            }
+          },
+          pageHeader: {
+            slots: {
+              links: "justify-end"
+            }
+          },
+          pageCTA: {
+            slots: {
+              root: "rounded-none"
+            }
+          },
+          navigationMenu: {
+            slots: {
+              separator: "my-2",
+              viewport: "ring-0"
+            },
+            variants: {
+              active: {
+                true: {
+                  childLink: "before:bg-elevated text-highlighted",
+                  childLinkIcon: "text-highlighted"
+                },
+                false: {
+                  link: "text-default",
+                  linkLeadingIcon: "text-dimmed"
+                }
+              }
+            },
+            compoundVariants: [
+              {
+                disabled: false,
+                active: false,
+                variant: "pill",
+                class: {
+                  link: ["hover:text-toned", "transition-colors"],
+                  linkLeadingIcon: ["group-hover:text-toned", "transition-colors"]
+                }
+              },
+              {
+                disabled: false,
+                active: false,
+                variant: "link",
+                class: {
+                  link: ["hover:text-toned", "transition-colors"],
+                  linkLeadingIcon: ["group-hover:text-toned", "transition-colors"]
+                }
+              },
+              {
+                orientation: "vertical",
+                collapsed: false,
+                class: {
+                  childList: "border-muted"
+                }
+              }
+            ]
+          },
+          footerColumns: {
+            slots: {
+              label: "text-white"
+            },
+            variants: {
+              active: {
+                true: { link: "text-primary-300 hover:text-primary-200" },
+                false: { link: "text-white hover:text-primary-200" }
+              }
+            }
+          },
+          dashboardGroup: {
+            base: "flex-1 flex overflow-hidden relative"
+          },
+          dashboardPanel: {
+            slots: {
+              root: "min-h-full"
+            }
+          },
+          dashboardNavbar: {
+            slots: {
+              root: "h-12",
+              title: "text-xl"
+            }
+          },
+          dashboardSidebar: {
+            slots: {
+              root: "min-h-full"
+            }
+          },
+          dashboardToolbar: {
+            slots: {
+              root: "h-12"
+            }
+          },
+          blogPost: {
+            slots: {
+              root: "rounded-none"
+            }
+          }
+        }
+      },
       logos: {
         logomark: {
           color: "./src/assets/logos/logomark_color.svg",

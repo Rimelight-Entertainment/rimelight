@@ -1,0 +1,112 @@
+---
+/**
+ * SecurityHead — Security infrastructure scripts for CSP Nonce patching & Trusted Types.
+ * Provided by @rimelight/security.
+ */
+---
+
+<!-- Trusted Types Policy -->
+<script>
+  (function() {
+    if (window.trustedTypes && trustedTypes.createPolicy) {
+      trustedTypes.createPolicy('default', {
+        createHTML: function(input: string) { return input; },
+        createScript: function(input: string) { return input; },
+        createScriptURL: function(input: string) { return input; }
+      });
+    }
+  })();
+</script>
+
+<!-- CSP Nonce Patching -->
+<script>
+  (function() {
+    if (!window.initialCspNonce) {
+      window.initialCspNonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+                               Array.from(document.querySelectorAll('script')).find(function(s) { return s.nonce; })?.nonce ||
+                               document.querySelector('script[nonce]')?.nonce ||
+                               document.querySelector('style[nonce]')?.nonce;
+    }
+
+    var orig = document.createElement;
+    document.createElement = function(tag, opts) {
+      var el = orig.call(document, tag, opts);
+      var lowTag = tag.toLowerCase();
+      if (lowTag === 'script' || lowTag === 'style') {
+        var nonce = window.initialCspNonce;
+        if (nonce) {
+          el.setAttribute('nonce', nonce);
+          el.nonce = nonce;
+        }
+      }
+      return el;
+    };
+
+    var origAppend = Element.prototype.appendChild;
+    Element.prototype.appendChild = function(child) {
+      if (child && (child.tagName === 'SCRIPT' || child.tagName === 'STYLE')) {
+        var nonce = window.initialCspNonce;
+        if (nonce && !child.getAttribute('nonce')) {
+          child.setAttribute('nonce', nonce);
+          child.nonce = nonce;
+        }
+      }
+      return origAppend.apply(this, arguments);
+    };
+
+    var origInsert = Element.prototype.insertBefore;
+    Element.prototype.insertBefore = function(newChild, refChild) {
+      if (newChild && (newChild.tagName === 'SCRIPT' || newChild.tagName === 'STYLE')) {
+        var nonce = window.initialCspNonce;
+        if (nonce && !newChild.getAttribute('nonce')) {
+          newChild.setAttribute('nonce', nonce);
+          newChild.nonce = nonce;
+        }
+      }
+      return origInsert.apply(this, arguments);
+    };
+
+    var origAppendMethod = Element.prototype.append;
+    if (origAppendMethod) {
+      Element.prototype.append = function() {
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
+            var nonce = window.initialCspNonce;
+            if (nonce && !arg.getAttribute('nonce')) {
+              arg.setAttribute('nonce', nonce);
+              arg.nonce = nonce;
+            }
+          }
+        }
+        return origAppendMethod.apply(this, arguments);
+      };
+    }
+
+    var origPrependMethod = Element.prototype.prepend;
+    if (origPrependMethod) {
+      Element.prototype.prepend = function() {
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
+            var nonce = window.initialCspNonce;
+            if (nonce && !arg.getAttribute('nonce')) {
+              arg.setAttribute('nonce', nonce);
+              arg.nonce = nonce;
+            }
+          }
+        }
+        return origPrependMethod.apply(this, arguments);
+      };
+    }
+
+    document.addEventListener('astro:before-swap', function(e) {
+      var incomingNonce =
+        e.newDocument.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+        Array.from(e.newDocument.querySelectorAll('script[nonce]')).find(function(s) { return s.getAttribute('nonce'); })?.getAttribute('nonce');
+      if (incomingNonce) {
+        window.initialCspNonce = incomingNonce;
+      }
+    });
+  })();
+</script>
