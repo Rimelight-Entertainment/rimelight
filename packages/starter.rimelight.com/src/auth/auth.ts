@@ -2,44 +2,43 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/db"
 import { admin as adminPlugin, organization as organizationPlugin } from "better-auth/plugins"
-import { ac, owner, admin, member, user } from "@/auth/permissions"
+import { ac, owner, admin, member, user as userRole } from "@/auth/permissions"
+import { cmsStatements } from "@rimelight/cms"
 import { eq, and, count } from "drizzle-orm"
 import { user as userTable } from "@/db/schema/auth"
 import { normalizeUsername, RESTRICTED_SET } from "@/auth/restricted-usernames"
 import { APIError } from "better-auth/api"
+import { sendVerificationEmail } from "./email/verification"
+import { sendPasswordResetEmail } from "./email/password-reset"
+import { sendExistingUserSignUpNotification } from "./email/notifications"
+import { createSyntheticUserWrapper } from "./customSyntheticUser"
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "sqlite"
+    provider: "pg"
   }),
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true,
+    autoSignIn: false,
     requireEmailVerification: true,
     minPasswordLength: 8,
-    maxPasswordLength: 128
+    maxPasswordLength: 128,
+    customSyntheticUser: createSyntheticUserWrapper,
+    sendResetPassword: sendPasswordResetEmail,
+    onExistingUserSignUp: async (existingUser: any) => {
+      await sendExistingUserSignUpNotification({ user: { email: existingUser.email } })
+    }
+  },
+  emailVerification: {
+    sendVerificationEmail: sendVerificationEmail,
+    autoSignInAfterVerification: true
   },
   user: {
     changeEmail: {
       enabled: true
     },
-    emailVerification: {
-      // sendChangeEmailConfirmation: async ({ user, newEmail, url, token }) => {
-      //     // Send change email confirmation to the old email
-      // },
-    },
     deleteUser: {
       enabled: true
-      // sendDeleteAccountVerification: async ({ user, url, token }, request) => {
-      // 	    await sendEmail(Odata.user.email, "Delete Account Verification", data.url)
-      // 	},
-      // 	beforeDelete: async (user) => {
-      // 	    // Perform actions before user deletion
-      // 	},
-      // 	afterDelete: async (user) => {
-      // 	    // Perform cleanup after user deletion
-      // 	}
-      // }
     },
     additionalFields: {
       tag: {
@@ -108,10 +107,13 @@ export const auth = betterAuth({
         owner,
         admin,
         member,
-        user
+        user: userRole
       }
     })
   ],
+  auth: {
+    statements: cmsStatements
+  },
   advanced: {
     useSecureCookies: true,
     cookiePrefix: "auth",
@@ -123,7 +125,6 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (userData, _ctx) => {
-          // 1. Normalize the username and check against the restricted set
           const normalizedInput = normalizeUsername(userData.name)
           if (RESTRICTED_SET.has(normalizedInput)) {
             throw new APIError("BAD_REQUEST", {
@@ -131,7 +132,6 @@ export const auth = betterAuth({
             })
           }
 
-          // 2. Generate a unique 4-digit discriminator tag
           let uniqueTag = "0000"
           const tryFindTag = async (attemptsLeft: number): Promise<string> => {
             if (attemptsLeft <= 0) return "0000"

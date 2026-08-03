@@ -1,9 +1,6 @@
 ---
 import EmailPreviewLayout from "@/components/email/EmailPreviewLayout.astro"
 import ContactEmail from "@/components/email/ContactEmail.astro"
-import { getEmailMessages } from "@/auth/email/messages"
-
-const messages = getEmailMessages(Astro.params.locale)
 ---
 
 <EmailPreviewLayout template="contact" title="Contact Form">
@@ -12,6 +9,5 @@ const messages = getEmailMessages(Astro.params.locale)
     email="jane.doe@example.com"
     subject="Inquiry about Rimelight Starter"
     message="Hello team, I am testing the contact email template preview."
-    messages={messages}
   />
 </EmailPreviewLayout>

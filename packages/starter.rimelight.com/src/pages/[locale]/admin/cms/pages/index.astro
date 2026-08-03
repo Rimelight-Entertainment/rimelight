@@ -1,0 +1,95 @@
+---
+import { auth } from "@/auth/auth"
+import AppHeader from "@/components/app/AppHeader.astro"
+import AppFooter from "@/components/app/AppFooter.astro"
+
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+
+if (!session) {
+  return Astro.redirect("/auth/sign-in")
+}
+
+// Fetch pages
+const pagesResponse = await fetch(`${Astro.site}/api/cms/pages`, {
+  headers: {
+    Cookie: Astro.request.headers.get("cookie") || ""
+  }
+})
+const { pages } = await pagesResponse.json()
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pages | CMS Admin</title>
+  </head>
+  <body>
+    <AppHeader />
+    <main class="max-w-7xl mx-auto py-12 px-4">
+      <div class="flex gap-8">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0">
+          <nav class="space-y-2">
+            <a href="/admin/cms" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Dashboard</a>
+            <a href="/admin/cms/templates" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Templates</a>
+            <a href="/admin/cms/pages" class="block px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Pages</a>
+            <a href="/admin/cms/versions" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Versions</a>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Pages</h1>
+            <a href="/admin/cms/pages/new" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Create Page</a>
+          </div>
+
+          <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                {pages.map((page: any) => (
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">{page.title}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {page.slug}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        {page.type}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      {page.publishedVersionId ? (
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Published</span>
+                      ) : (
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Draft</span>
+                      )}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <a href={`/admin/cms/pages/${page.id}/edit`} class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
+                      <a href={`/admin/cms/pages/${page.id}/preview`} class="text-gray-600 hover:text-gray-900 mr-3">Preview</a>
+                      <button class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+    <AppFooter />
+  </body>
+</html>

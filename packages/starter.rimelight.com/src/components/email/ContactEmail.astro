@@ -1,16 +1,16 @@
 ---
 import EmailTemplate from "./EmailTemplate.astro"
-import type { EmailMessages } from "@/auth/email/messages"
+import { getEmailMessages } from "@/auth/email/messages"
 
 interface Props {
   name: string
   email: string
   subject?: string
   message: string
-  messages: EmailMessages
 }
 
-const { name, email, subject, message, messages } = Astro.props
+const { name, email, subject, message } = Astro.props
+const messages = getEmailMessages()
 ---
 <EmailTemplate bannerAlt="Contact Submission" common={messages.common}>
   <div style="font-family: Arial, sans-serif; color: #333;">

@@ -5,9 +5,11 @@ import {
   adminAc,
   memberAc
 } from "better-auth/plugins/organization/access"
+import { cmsStatements } from "@rimelight/cms"
 
 export const statement = {
   ...defaultStatements,
+  ...cmsStatements,
   organization: ["create", "edit", "delete"],
   team: ["create", "edit", "delete"],
   member: ["create", "edit", "delete"],

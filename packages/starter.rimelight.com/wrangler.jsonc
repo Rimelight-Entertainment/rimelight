@@ -36,7 +36,7 @@
     {
       "binding": "BLOB",
       "bucket_name": "starter-dot-rimelight-dot-com",
-      "remote": true
+      "remote": false
     }
   ],
   "kv_namespaces": [
@@ -51,7 +51,7 @@
       "database_name": "starter-dot-rimelight-dot-com_db",
       "database_id": "0ddfa4b5-bccb-498f-9adc-a0c24c45d4f1",
       "migrations_dir": "./drizzle",
-      "remote": true
+      "remote": false
     }
   ],
   "durable_objects": {
@@ -89,7 +89,6 @@
     "CONSTRUCTION_AUTH": "false",
     "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
     "EMAIL_DOMAIN": "rimelight.com",
-    "EMAIL_TEST_RECIPIENT": "test@rimelight.com",
     "CONTACT_OWNER_EMAIL": "owner@rimelight.com"
   }
 }

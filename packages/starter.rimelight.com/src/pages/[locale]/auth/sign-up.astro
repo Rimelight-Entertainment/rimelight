@@ -16,7 +16,8 @@ const tabs = [
   { label: t('page_auth_sign-up.sign-up_title'), path: `${localePrefix}/auth/sign-up` },
 ]
 
-const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SITE_KEY || ""
+const isDev = import.meta.env.DEV
+const turnstileSiteKey = isDev ? "" : (import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SITE_KEY || "")
 ---
 
 <AppLayout title={t('page_auth_sign-up.meta_title')} description={t('page_auth_sign-up.sign-up_description')}>

@@ -18,7 +18,7 @@
     ".": "./src/index.ts",
     "./schema": "./src/schema/index.ts",
     "./core/*": "./src/core/*",
-    "./astro/*": "./src/astro/*",
+    "./astro/*": "./src/astro/*.astro",
     "./client/*": "./src/client/*",
     "./auth/*": "./src/auth/*",
     "./cache/*": "./src/cache/*",

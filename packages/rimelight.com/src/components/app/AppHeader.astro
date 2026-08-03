@@ -957,7 +957,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   <span class="font-semibold text-sm">
                     {session.user.name} <span class="text-xs text-neutral-400 font-mono">#{session.user.tag || '0000'}</span>
                   </span>
-                  <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || messages["user_status_placeholder"]}</span>
+                  <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || t("user_status_placeholder")}</span>
                 </div>
               </div>
 
@@ -969,7 +969,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start"
                   href={getRelativeLocaleUrl('/dashboard')}
                   leadingIcon="i-lucide-layout-dashboard"
-                  label={messages["user_dropdown_dashboard"]}
+                  label={t("user_dropdown_dashboard")}
                 />
                 <RLAButton
                   color="neutral"
@@ -978,7 +978,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start"
                   href={getRelativeLocaleUrl('/dashboard/profile')}
                   leadingIcon="i-lucide-user"
-                  label={messages["user_dropdown_profile"]}
+                  label={t("user_dropdown_profile")}
                 />
                 <RLAButton
                   color="neutral"
@@ -987,7 +987,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start"
                   href={getRelativeLocaleUrl('/dashboard/settings')}
                   leadingIcon="i-lucide-cog"
-                  label={messages["user_dropdown_settings"]}
+                  label={t("user_dropdown_settings")}
                 />
               </div>
 
@@ -1001,7 +1001,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start text-error-500 hover:text-error-600"
                   href={getRelativeLocaleUrl('/auth/sign-out')}
                   leadingIcon="i-lucide-log-out"
-                  label={messages["user_dropdown_sign-out"]}
+                  label={t("user_dropdown_sign-out")}
                 />
               </div>
             </div>
@@ -1035,7 +1035,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                     <span class="font-semibold text-sm">
                       {session.user.name} <span class="text-xs text-neutral-400 font-mono">#{session.user.tag || '0000'}</span>
                     </span>
-                    <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || messages["user_status_placeholder"]}</span>
+                    <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || t("user_status_placeholder")}</span>
                   </div>
                 </div>
                 <RLAButton
@@ -1045,7 +1045,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start"
                   href={getRelativeLocaleUrl('/dashboard')}
                   leadingIcon="i-lucide-layout-dashboard"
-                  label={messages["user_dropdown_dashboard"]}
+                  label={t("user_dropdown_dashboard")}
                 />
                 <RLAButton
                   color="neutral"
@@ -1054,7 +1054,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start"
                   href={getRelativeLocaleUrl('/dashboard/profile')}
                   leadingIcon="i-lucide-user"
-                  label={messages["user_dropdown_profile"]}
+                  label={t("user_dropdown_profile")}
                 />
                 <RLAButton
                   color="neutral"
@@ -1063,7 +1063,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start"
                   href={getRelativeLocaleUrl('/dashboard/settings')}
                   leadingIcon="i-lucide-cog"
-                  label={messages["user_dropdown_settings"]}
+                  label={t("user_dropdown_settings")}
                 />
                 <div class="border-t border-border my-1"></div>
                 <RLAButton
@@ -1073,7 +1073,7 @@ const storeAssistanceGroup: LinkGroupProps = {
                   class="!justify-start text-error-500 hover:text-error-600"
                   href={getRelativeLocaleUrl('/auth/sign-out')}
                   leadingIcon="i-lucide-log-out"
-                  label={messages["user_dropdown_sign-out"]}
+                  label={t("user_dropdown_sign-out")}
                 />
               </div>
             ) : (

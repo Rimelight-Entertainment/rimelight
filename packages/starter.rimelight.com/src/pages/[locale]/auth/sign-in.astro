@@ -6,8 +6,6 @@ import { t } from "@rimelight/i18n"
 const bgMobile = "https://cdn.rimelight.com/Images/auth_background_mobile.jpg"
 const bgDesktop = "https://cdn.rimelight.com/Images/auth_background_desktop.jpg"
 
-const isNewUser = new URL(Astro.request.url).searchParams.has('new')
-
 const currentPath = Astro.url.pathname
 const activeLocale = Astro.currentLocale ?? "en"
 const localePrefix = `/${activeLocale}`
@@ -18,7 +16,6 @@ const tabs = [
 ---
 
 <AppLayout title={t('page_auth_sign-in.meta_title')} description={t('page_auth_sign-in.sign-in_description')}>
-  {isNewUser && <p class="text-center text-sm text-success">{t('page_auth_sign-in.sign-in_new-user')}</p>}
   <AuthLayout tabs={tabs} currentPath={currentPath} backgroundMobile={bgMobile} backgroundDesktop={bgDesktop}>
     <AuthSignInForm />
   </AuthLayout>

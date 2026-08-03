@@ -1,7 +1,6 @@
 import { env as cfEnv } from "cloudflare:workers"
 
-const getDomain = () =>
-  (cfEnv as { EMAIL_DOMAIN?: string })?.EMAIL_DOMAIN || "starter.rimelight.com"
+const getDomain = () => cfEnv?.EMAIL_DOMAIN || "rimelight.com"
 
 export interface EmailPayload {
   to: string
@@ -14,8 +13,7 @@ export async function sendEmail({ to, subject, text, html }: EmailPayload) {
   const EMAIL = cfEnv?.EMAIL
 
   if (!EMAIL) {
-    console.error("[email] EMAIL binding not available")
-    throw new Error("EMAIL binding not available")
+    throw new Error("EMAIL binding not available - cannot send emails")
   }
 
   const domain = getDomain()
@@ -28,6 +26,6 @@ export async function sendEmail({ to, subject, text, html }: EmailPayload) {
     html: html ?? text
   })
 
-  console.log(`[email] Sent to ${to}, messageId: ${response.messageId}`)
+  console.log(`[email] ✅ Sent to ${to}, messageId: ${response.messageId}`)
   return response
 }

@@ -26,10 +26,7 @@ export const contact = defineAction({
       })
     }
 
-    const ownerEmail =
-      env.CONTACT_OWNER_EMAIL ||
-      env.EMAIL_TEST_RECIPIENT ||
-      `owner@${env.EMAIL_DOMAIN || "rimelight.com"}`
+    const ownerEmail = env.CONTACT_OWNER_EMAIL || `owner@${env.EMAIL_DOMAIN || "rimelight.com"}`
 
     const mailSubject =
       input.subject && input.subject.length > 0

@@ -1,31 +1,17 @@
 import { getCollection } from "astro:content"
 import { db } from "@/db"
 import * as schema from "@/db/schema"
-import { sql, and, isNull, isNotNull, eq } from "drizzle-orm"
+import { sql, and, isNull, isNotNull } from "drizzle-orm"
 
 // Helper to check table existence in database
 async function tableExists(tableName: string): Promise<boolean> {
   try {
-    await db.run(
-      sql`SELECT 1 FROM sqlite_master WHERE type='table' AND name = ${tableName} LIMIT 1`
+    await db.execute(
+      sql`SELECT 1 FROM information_schema.tables WHERE table_name = ${tableName} LIMIT 1`
     )
     return true
   } catch {
     return false
-  }
-}
-
-// Helper to create the FTS5 virtual table if it doesn't exist
-async function ensureFtsTable(): Promise<void> {
-  try {
-    await db.run(
-      sql`CREATE VIRTUAL TABLE IF NOT EXISTS search_index_fts USING fts5(
-        title,
-        body_content
-      )`
-    )
-  } catch (err: any) {
-    console.warn("[Sync] Failed to ensure FTS5 virtual table exists:", err.message)
   }
 }
 
@@ -68,8 +54,6 @@ export async function doSearchSync() {
     )
   }
 
-  await ensureFtsTable()
-
   const activeSourceKeys = new Set<string>()
   const toUpsert: any[] = []
 
@@ -95,6 +79,7 @@ export async function doSearchSync() {
       title: entry.data.title || "Untitled Blog Post",
       url: pageUrl,
       bodyContent: entry.body || "",
+      searchableText: `${entry.data.title || "Untitled Blog Post"} ${entry.body || ""}`,
       updatedAt: new Date()
     })
   }
@@ -120,6 +105,7 @@ export async function doSearchSync() {
       title: entry.data.title || "Untitled Documentation",
       url: pageUrl,
       bodyContent: entry.body || "",
+      searchableText: `${entry.data.title || "Untitled Documentation"} ${entry.body || ""}`,
       updatedAt: new Date()
     })
   }
@@ -145,6 +131,7 @@ export async function doSearchSync() {
       title: entry.data.title || "Untitled Legal Document",
       url: pageUrl,
       bodyContent: entry.body || "",
+      searchableText: `${entry.data.title || "Untitled Legal Document"} ${entry.body || ""}`,
       updatedAt: new Date()
     })
   }
@@ -168,7 +155,7 @@ export async function doSearchSync() {
 
     for (const row of dbPages) {
       const sourceType = "database_page"
-      const sourceId = String(row.id)
+      const sourceId = row.id
       const cacheKey = `${sourceType}:${sourceId}`
       activeSourceKeys.add(cacheKey)
 
@@ -189,13 +176,14 @@ export async function doSearchSync() {
         title,
         url: pageUrl,
         bodyContent,
+        searchableText: `${title} ${bodyContent}`,
         updatedAt: row.updatedAt ? new Date(row.updatedAt) : new Date()
       })
     }
   }
 
   // --- PART 3: Upsert records in D1 ---
-  const syncedIds: number[] = []
+  const syncedIds: string[] = []
   if (toUpsert.length > 0) {
     const chunkSize = 10
     /* eslint-disable no-await-in-loop */
@@ -205,11 +193,12 @@ export async function doSearchSync() {
         .insert(schema.searchIndex)
         .values(chunk)
         .onConflictDoUpdate({
-          target: [sql`source_type`, sql`source_id`],
+          target: [schema.searchIndex.sourceType, schema.searchIndex.sourceId],
           set: {
             title: sql`excluded.title`,
             url: sql`excluded.url`,
             bodyContent: sql`excluded.body_content`,
+            searchableText: sql`excluded.searchable_text`,
             updatedAt: sql`excluded.updated_at`
           }
         })
@@ -222,18 +211,6 @@ export async function doSearchSync() {
       if (insertedRows && insertedRows.length > 0) {
         const ids = insertedRows.map((r) => r.id)
         syncedIds.push(...ids)
-
-        // Sync FTS5 virtual table manually
-        for (const id of ids) {
-          await db.delete(schema.searchIndexFts).where(eq(schema.searchIndexFts.rowid, id))
-        }
-        await db.insert(schema.searchIndexFts).values(
-          insertedRows.map((r) => ({
-            rowid: r.id,
-            title: r.title,
-            bodyContent: r.bodyContent
-          }))
-        )
       }
     }
   }
@@ -247,7 +224,7 @@ export async function doSearchSync() {
     })
     .from(schema.searchIndex)
 
-  const staleIds: number[] = []
+  const staleIds: string[] = []
   for (const row of allExisting) {
     const cacheKey = `${row.sourceType}:${row.sourceId}`
     if (!activeSourceKeys.has(cacheKey)) {
@@ -261,9 +238,6 @@ export async function doSearchSync() {
     for (let i = 0; i < staleIds.length; i += deleteChunkSize) {
       const chunk = staleIds.slice(i, i + deleteChunkSize)
       await db.delete(schema.searchIndex).where(sql`id IN ${chunk}`)
-      for (const id of chunk) {
-        await db.delete(schema.searchIndexFts).where(eq(schema.searchIndexFts.rowid, id))
-      }
     }
   }
 

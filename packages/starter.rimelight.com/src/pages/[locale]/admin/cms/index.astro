@@ -1,0 +1,66 @@
+---
+import { auth } from "@/auth/auth"
+import AppHeader from "@/components/app/AppHeader.astro"
+import AppFooter from "@/components/app/AppFooter.astro"
+
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+
+if (!session) {
+  return Astro.redirect("/auth/sign-in")
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CMS Admin | Rimelight</title>
+  </head>
+  <body>
+    <AppHeader />
+    <main class="max-w-7xl mx-auto py-12 px-4">
+      <div class="flex gap-8">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0">
+          <nav class="space-y-2">
+            <a href="/admin/cms/templates" class="block px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Templates</a>
+            <a href="/admin/cms/pages" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Pages</a>
+            <a href="/admin/cms/versions" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Versions</a>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+          <h1 class="text-3xl font-bold mb-6">CMS Admin</h1>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow">
+              <h3 class="text-lg font-semibold mb-2">Templates</h3>
+              <p class="text-gray-600">Manage page templates</p>
+              <a href="/admin/cms/templates" class="inline-block mt-4 text-blue-600 hover:underline">Manage Templates →</a>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+              <h3 class="text-lg font-semibold mb-2">Pages</h3>
+              <p class="text-gray-600">Create and edit pages</p>
+              <a href="/admin/cms/pages" class="inline-block mt-4 text-blue-600 hover:underline">Manage Pages →</a>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+              <h3 class="text-lg font-semibold mb-2">Versions</h3>
+              <p class="text-gray-600">Review and publish versions</p>
+              <a href="/admin/cms/versions" class="inline-block mt-4 text-blue-600 hover:underline">View Versions →</a>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+            <div class="flex gap-4">
+              <a href="/admin/cms/templates/new" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create Template</a>
+              <a href="/admin/cms/pages/new" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Create Page</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <AppFooter />
+  </body>
+</html>

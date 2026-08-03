@@ -1,0 +1,122 @@
+---
+import { auth } from "@/auth/auth"
+import AppHeader from "@/components/app/AppHeader.astro"
+import AppFooter from "@/components/app/AppFooter.astro"
+
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+const id = Astro.params.id
+
+if (!session) {
+  return Astro.redirect("/auth/sign-in")
+}
+
+// Fetch page data
+const pageResponse = await fetch(`${Astro.site}/api/cms/pages/${id}`, {
+  headers: {
+    Cookie: Astro.request.headers.get("cookie") || ""
+  }
+})
+const { page, draft } = await pageResponse.json()
+
+const content = draft?.content ? JSON.parse(draft.content) : JSON.parse(page.content)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Page | CMS Admin</title>
+  </head>
+  <body>
+    <AppHeader />
+    <main class="max-w-7xl mx-auto py-12 px-4">
+      <div class="flex gap-8">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0">
+          <nav class="space-y-2">
+            <a href="/admin/cms" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Dashboard</a>
+            <a href="/admin/cms/templates" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Templates</a>
+            <a href="/admin/cms/pages" class="block px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Pages</a>
+            <a href="/admin/cms/versions" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Versions</a>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Edit: {page.title}</h1>
+            <div class="flex gap-2">
+              <a href={`/admin/cms/pages/${id}/preview`} class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Preview</a>
+              <button id="publish-btn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Publish</button>
+            </div>
+          </div>
+
+          <!-- Simple JSON Editor -->
+          <form id="editor-form" class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Blocks (JSON)</label>
+              <textarea id="blocks-editor" rows="20" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm">{JSON.stringify(content.blocks || [], null, 2)}</textarea>
+            </div>
+
+            <div class="flex gap-4">
+              <button type="button" id="save-draft-btn" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Draft</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <AppFooter />
+
+    <script>
+      const blocksEditor = document.getElementById('blocks-editor');
+      const saveDraftBtn = document.getElementById('save-draft-btn');
+      const publishBtn = document.getElementById('publish-btn');
+      
+      saveDraftBtn.addEventListener('click', async () => {
+        try {
+          const blocks = JSON.parse(blocksEditor.value);
+          const content = { blocks, properties: {} };
+          
+          const response = await fetch(`/api/cms/pages/${!id}/draft`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+          });
+
+          if (response.ok) {
+            alert('Draft saved successfully!');
+          } else {
+            alert('Failed to save draft');
+          }
+        } catch (error) {
+          alert('Invalid JSON');
+        }
+      });
+
+      publishBtn.addEventListener('click', async () => {
+        try {
+          const blocks = JSON.parse(blocksEditor.value);
+          const content = { blocks, properties: {} };
+          
+          const response = await fetch(`/api/cms/pages/${!id}/publish`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              content,
+              changeSummary: 'Published from editor'
+            })
+          });
+
+          if (response.ok) {
+            alert('Page published successfully!');
+            window.location.href = '/admin/cms/pages';
+          } else {
+            alert('Failed to publish page');
+          }
+        } catch (error) {
+          alert('Invalid JSON');
+        }
+      });
+    </script>
+  </body>
+</html>

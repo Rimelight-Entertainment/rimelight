@@ -10,8 +10,11 @@ export default defineConfig({
         command: "wrangler types",
         input: [{ auto: true }, "!worker-configuration.d.ts"]
       },
+      "sync": {
+        command: "astro sync"
+      },
       "check": {
-        dependsOn: ["check:vp", "typegen"],
+        dependsOn: ["check:vp", "typegen", "sync"],
         command: "astro check",
         input: [{ auto: true }, "!.wrangler/**", "!.astro/**"]
       }

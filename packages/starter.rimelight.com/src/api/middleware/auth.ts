@@ -50,7 +50,10 @@ export const auth = async (c: any, next: any) => {
     return c.redirect("/auth/sign-in")
   }
 
-  if ((url.pathname === "/auth/sign-in" || url.pathname === "/auth/sign-up") && session) {
+  if (
+    (url.pathname.includes("/auth/sign-in") || url.pathname.includes("/auth/sign-up")) &&
+    session
+  ) {
     return c.redirect("/")
   }
 

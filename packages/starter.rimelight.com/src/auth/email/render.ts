@@ -25,11 +25,18 @@ export async function renderSignupNotificationEmail(signInUrl: string, locale = 
   })
 }
 
-export async function renderContactEmail(
-  payload: { name: string; email: string; subject?: string | undefined; message: string },
-  locale = "en"
-) {
+export async function renderContactEmail({
+  name,
+  email,
+  subject,
+  message
+}: {
+  name: string
+  email: string
+  subject: string | undefined
+  message: string
+}) {
   return (await container).renderToString(ContactEmail, {
-    props: { ...payload, messages: getEmailMessages(locale) }
+    props: { name, email, subject, message, messages: getEmailMessages() }
   })
 }

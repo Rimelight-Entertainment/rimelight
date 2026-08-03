@@ -13,12 +13,11 @@ import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-men
 import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts"
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
-import { auth } from "@/auth";
 
-let session: any = null;
-try {
-  session = await auth.api.getSession({ headers: Astro.request.headers });
-} catch (e) {}
+const { auth } = await import("@/auth/auth");
+const session = await auth.api.getSession({
+  headers: Astro.request.headers
+}) as { user: { status?: string; tag?: string; availability?: string; name?: string; image?: string | null; id?: string; email?: string; emailVerified?: boolean; createdAt?: Date; updatedAt?: Date } & Record<string, unknown> } | null;
 
 const foundationLinkGroup: LinkGroupProps = {
   label: t("app_header.link-groups_center_foundations_label"),
@@ -286,6 +285,24 @@ const { stackIndex = 1 } = Astro.props;
                 leadingIcon="i-lucide-layout-dashboard"
                 label={t("app_header.user_dropdown_dashboard")}
               />
+              <RLAButton
+                color="neutral"
+                variant="ghost"
+                block={true}
+                class="!justify-start"
+                href={getRelativeLocaleUrl('/dashboard/profile')}
+                leadingIcon="i-lucide-user"
+                label={t("app_header.user_dropdown_profile")}
+              />
+              <RLAButton
+                color="neutral"
+                variant="ghost"
+                block={true}
+                class="!justify-start"
+                href={getRelativeLocaleUrl('/dashboard/settings')}
+                leadingIcon="i-lucide-cog"
+                label={t("app_header.user_dropdown_settings")}
+              />
             </div>
 
             <div class="border-t border-neutral-200 dark:border-neutral-800 my-1"></div>
@@ -342,6 +359,24 @@ const { stackIndex = 1 } = Astro.props;
                 href={getRelativeLocaleUrl('/dashboard')}
                 leadingIcon="i-lucide-layout-dashboard"
                 label={t("app_header.user_dropdown_dashboard")}
+              />
+              <RLAButton
+                color="neutral"
+                variant="ghost"
+                block={true}
+                class="!justify-start"
+                href={getRelativeLocaleUrl('/dashboard/profile')}
+                leadingIcon="i-lucide-user"
+                label={t("app_header.user_dropdown_profile")}
+              />
+              <RLAButton
+                color="neutral"
+                variant="ghost"
+                block={true}
+                class="!justify-start"
+                href={getRelativeLocaleUrl('/dashboard/settings')}
+                leadingIcon="i-lucide-cog"
+                label={t("app_header.user_dropdown_settings")}
               />
               <div class="border-t border-neutral-200 dark:border-neutral-800 my-1"></div>
               <RLAButton

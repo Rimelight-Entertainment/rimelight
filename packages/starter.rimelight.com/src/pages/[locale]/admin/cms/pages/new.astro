@@ -1,0 +1,133 @@
+---
+import { auth } from "@/auth/auth"
+import AppHeader from "@/components/app/AppHeader.astro"
+import AppFooter from "@/components/app/AppFooter.astro"
+
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+
+if (!session) {
+  return Astro.redirect("/auth/sign-in")
+}
+
+// Fetch templates
+const templatesResponse = await fetch(`${Astro.site}/api/cms/templates`, {
+  headers: {
+    Cookie: Astro.request.headers.get("cookie") || ""
+  }
+})
+const { templates } = await templatesResponse.json()
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Page | CMS Admin</title>
+    <style is:inline>
+      @import url("@rimelight/cms/client/styles/cms-editor.css");
+    </style>
+  </head>
+  <body>
+    <AppHeader />
+    <main class="max-w-7xl mx-auto py-12 px-4">
+      <div class="flex gap-8">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0">
+          <nav class="space-y-2">
+            <a href="/admin/cms" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Dashboard</a>
+            <a href="/admin/cms/templates" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Templates</a>
+            <a href="/admin/cms/pages" class="block px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Pages</a>
+            <a href="/admin/cms/versions" class="block px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Versions</a>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+          <h1 class="text-3xl font-bold mb-6">Create Page</h1>
+
+          <form id="page-form" class="space-y-6 mb-6">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
+                <input type="text" name="slug" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                <select name="type" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="blog">Blog Post</option>
+                  <option value="wiki">Wiki Page</option>
+                  <option value="doc">Documentation</option>
+                  <option value="announcement">Announcement</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+              <input type="text" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Template</label>
+              <select name="templateId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Blank Page</option>
+                {templates.map((template: any) => (
+                  <option value={template.id}>{template.title} ({template.pageType})</option>
+                ))}
+              </select>
+            </div>
+
+            <div class="flex gap-4">
+              <button type="button" id="create-page-btn" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">Create & Edit</button>
+              <a href="/admin/cms/pages" class="px-6 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <AppFooter />
+
+    <script>
+      const form = document.getElementById('page-form');
+      const createBtn = document.getElementById('create-page-btn');
+      
+      createBtn.addEventListener('click', async () => {
+        const formData = new FormData(form);
+        const data = {
+          slug: formData.get('slug'),
+          type: formData.get('type'),
+          title: formData.get('title'),
+          templateId: formData.get('templateId') || null,
+          templateVersion: 1,
+          content: {
+            blocks: [
+              {
+                id: crypto.randomUUID(),
+                type: 'ParagraphBlock',
+                props: { text: { en: 'Start writing your content...' } }
+              }
+            ],
+            properties: {}
+          }
+        };
+
+        try {
+          const response = await fetch('/api/cms/pages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            window.location.href = `/admin/cms/pages/${result.page.id}/edit`;
+          } else {
+            alert('Failed to create page');
+          }
+        } catch (error) {
+          alert('Error creating page');
+        }
+      });
+    </script>
+  </body>
+</html>

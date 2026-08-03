@@ -38,6 +38,7 @@
     "@astrojs/vue": "7.0.1",
     "@nanostores/i18n": "1.3.3",
     "@neondatabase/serverless": "1.1.0",
+    "@rimelight/cms": "workspace:*",
     "@rimelight/docs": "workspace:*",
     "@rimelight/i18n": "workspace:*",
     "@rimelight/security": "workspace:*",

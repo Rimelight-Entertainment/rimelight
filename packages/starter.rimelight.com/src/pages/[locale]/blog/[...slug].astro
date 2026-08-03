@@ -1,55 +1,42 @@
 ---
-import { getEntry, render } from 'astro:content';
 import AppLayout from '@/layouts/AppLayout.astro';
-import RLADate from "@rimelight/ui/components/date/RLADate.astro";
-import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
-import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
-import { t } from "@rimelight/i18n";
+import { siteConfig } from '@/config/site.config';
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
-const activeLocale = Astro.currentLocale ?? "en";
+const { slug } = Astro.params
+const activeLocale = Astro.currentLocale ?? "en"
 
-const { slug } = Astro.params;
-if (!slug) return Astro.redirect('/blog');
-const post = await getEntry('blog', `${activeLocale}/${slug}`);
+// Fetch from CMS
+const page = await db.select().from(pages).where(eq(pages.slug, slug)).limit(1)
 
-if (!post) {
-	return Astro.redirect('/404');
+if (!page[0]) {
+  return Astro.redirect('/404')
 }
 
-const { Content } = await render(post);
-const { title, description, pubDate, updatedDate, heroImage } = post.data;
+const content = JSON.parse(page[0].content)
+const userSession = Astro.locals.session
+  ? {
+      userId: Astro.locals.session.user?.id,
+      roles: [Astro.locals.session.user?.role || "user"],
+      permissions: []
+    }
+  : undefined
 
-const ogImageSrc = `/og/${post.id}.png`;
+const title = typeof page[0].title === 'string' ? page[0].title : page[0].title?.[activeLocale] || page[0].title?.en || page[0].title
+const description = content.properties?.description || siteConfig.description
+const image = content.properties?.heroImage
+const ogImageSrc = image ? image : `/og/blog/${slug}.png`
 ---
 
 <AppLayout title={title} description={description} ogImageSrc={ogImageSrc} ogImageAlt={title}>
-	<RLAContainer class="py-16 blog-container">
-		<article>
-			{heroImage && <RLAImage src={heroImage} alt="" class="hero-image mb-8" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />}
-			<div class="prose dark:prose-invert max-w-none">
-				<div class="title mb-8">
-					<div class="date text-neutral-400 mb-2 text-sm">
-						<RLADate date={pubDate} />
-						{
-							updatedDate && (
-								<div class="last-updated-on text-xs text-neutral-500 mt-1">
-									{t("blog.lastUpdatedOn")} <RLADate date={updatedDate} />
-								</div>
-							)
-						}
-					</div>
-					<h1 class="text-4xl font-extrabold text-white mb-4">{title}</h1>
-					<hr class="border-neutral-800" />
-				</div>
-				<Content />
-			</div>
-		</article>
-	</RLAContainer>
+  <article class="prose prose-lg max-w-none">
+    <PageRenderer 
+      blocks={content.blocks || []} 
+      session={userSession} 
+      locale={activeLocale}
+    />
+  </article>
 </AppLayout>
-
-<style is:global>
-  div.blog-container {
-    max-width: calc(6 * var(--rla-grid-col-width, 94px) + 7 * var(--rla-grid-gutter, 24px));
-    padding-inline: var(--rla-grid-gutter, 1.5rem);
-  }
-</style>

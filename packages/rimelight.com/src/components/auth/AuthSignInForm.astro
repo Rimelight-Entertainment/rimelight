@@ -155,6 +155,15 @@ const {
           })
 
           if (error) {
+            // If email not verified, redirect to verify-email
+            const errorMessage = (error.message || "").toLowerCase()
+            if (errorMessage.includes("email not verified") || errorMessage.includes("verify your email")) {
+              const locale = window.location.pathname.split('/')[1] || 'en'
+              const verifyEmailPath = `/${locale}/auth/verify-email?email=${encodeURIComponent(email)}`
+              window.location.href = verifyEmailPath
+              return
+            }
+            
             if (errorEl) {
               errorEl.textContent = error.message || "Failed to sign in"
               errorEl.classList.remove("hidden")

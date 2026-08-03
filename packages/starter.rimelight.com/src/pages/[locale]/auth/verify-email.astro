@@ -1,0 +1,172 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro'
+import AuthLayout from '@/layouts/AuthLayout.astro'
+import { t } from "@rimelight/i18n"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
+const bgMobile = "https://cdn.rimelight.com/Images/auth_background_mobile.jpg"
+const bgDesktop = "https://cdn.rimelight.com/Images/auth_background_desktop.jpg"
+
+const currentPath = Astro.url.pathname
+const activeLocale = Astro.currentLocale ?? "en"
+const localePrefix = `/${activeLocale}`
+const tabs = [
+  { label: t('page_auth_sign-in.sign-in_title'), path: `${localePrefix}/auth/sign-in` },
+  { label: t('page_auth_sign-in.sign-up_title'), path: `${localePrefix}/auth/sign-up` },
+]
+
+const emailParam = new URL(Astro.request.url).searchParams.get('email') || ''
+---
+
+<AppLayout title="Verify Email" description="Verify your email address">
+  <AuthLayout tabs={tabs} currentPath={currentPath} backgroundMobile={bgMobile} backgroundDesktop={bgDesktop}>
+    <div class="w-full flex flex-col gap-lg max-w-md">
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">Verify Your Email</h2>
+        <p class="text-sm text-neutral-600 dark:text-neutral-400">Please check your email and click the verification link to complete your account setup.</p>
+      </div>
+      <div class="flex justify-center">
+        <div class="text-center text-6xl">📧</div>
+      </div>
+      <div class="text-center">
+        <p id="verification-message" class="text-sm text-neutral-600 dark:text-neutral-400 mb-4"></p>
+        
+        {!emailParam && (
+          <div class="mb-4">
+            <RLAInput 
+              type="email" 
+              id="resend-email-input" 
+              placeholder="Enter your email address" 
+              class="w-full"
+            />
+          </div>
+        )}
+        
+        <RLAButton id="resend-email-btn" class="w-full">Resend Verification Email</RLAButton>
+        <p id="resend-message" class="hidden text-sm mt-2"></p>
+      </div>
+    </div>
+  </AuthLayout>
+</AppLayout>
+
+<script>
+  import { authClient } from "@/auth/auth-client"
+
+  // Get email and token from URL parameter
+  const urlParams = new URLSearchParams(window.location.search)
+  const prefillEmail = urlParams.get('email') || ''
+  const token = urlParams.get('token') || ''
+
+  const emailInput = document.getElementById("resend-email-input") as HTMLInputElement
+  if (emailInput && prefillEmail) {
+    emailInput.value = prefillEmail
+    emailInput.classList.add("hidden")
+  }
+
+  // Function to send verification email
+  async function sendVerificationEmail(email: string) {
+    const btn = document.getElementById("resend-email-btn") as HTMLButtonElement
+    const messageEl = document.getElementById("resend-message")
+    
+    if (btn) {
+      btn.disabled = true
+      btn.textContent = "Sending..."
+    }
+
+    try {
+      // Call the API to resend verification email
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        let data
+        try {
+          data = JSON.parse(text)
+        } catch {
+          data = { error: text || "Failed to resend email" }
+        }
+        
+        if (messageEl) {
+          messageEl.textContent = data.error || "Failed to resend email"
+          messageEl.classList.remove("hidden", "text-success-500")
+          messageEl.classList.add("text-error-500")
+        }
+      } else {
+        await response.json()
+        if (messageEl) {
+          messageEl.textContent = "Verification email sent successfully!"
+          messageEl.classList.remove("hidden", "text-error-500")
+          messageEl.classList.add("text-success-500")
+        }
+      }
+    } catch (err: any) {
+      if (messageEl) {
+        messageEl.textContent = err?.message || "An unexpected error occurred"
+        messageEl.classList.remove("hidden", "text-success-500")
+        messageEl.classList.add("text-error-500")
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false
+        btn.textContent = "Resend Verification Email"
+      }
+    }
+  }
+
+  // Process verification token if present
+  if (token) {
+    const verifyMessageEl = document.getElementById("verification-message")
+    if (verifyMessageEl) {
+      verifyMessageEl.textContent = "Verifying your email..."
+      
+      // Use better-auth's verifyEmail method
+      authClient.verifyEmail({
+        query: {
+          token
+        },
+        fetchOptions: {
+          onSuccess: () => {
+            verifyMessageEl.textContent = "Email verified successfully! Redirecting to sign in..."
+            verifyMessageEl.classList.add("text-success-500")
+            setTimeout(() => {
+              const locale = window.location.pathname.split('/')[1] || 'en'
+              window.location.href = `/${locale}/auth/sign-in`
+            }, 2000)
+          },
+          onError: (ctx) => {
+            verifyMessageEl.textContent = ctx.error.message || "Verification failed. Please try again."
+            verifyMessageEl.classList.add("text-error-500")
+          }
+        }
+      })
+    }
+  }
+
+  // Auto-send email if email is provided in URL (but no token)
+  if (prefillEmail && !token) {
+    sendVerificationEmail(prefillEmail)
+  }
+
+  document.getElementById("resend-email-btn")?.addEventListener("click", async (e) => {
+    e.preventDefault()
+    const email = prefillEmail || (emailInput?.value || "").trim()
+    
+    if (!email) {
+      const messageEl = document.getElementById("resend-message")
+      if (messageEl) {
+        messageEl.textContent = "Please enter your email address"
+        messageEl.classList.remove("hidden", "text-success-500")
+        messageEl.classList.add("text-error-500")
+      }
+      return
+    }
+
+    await sendVerificationEmail(email)
+  })
+</script>

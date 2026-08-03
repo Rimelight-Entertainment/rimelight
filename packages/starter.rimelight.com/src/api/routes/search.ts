@@ -1,7 +1,7 @@
 import { Hono } from "hono"
 import { db } from "@/db"
 import { searchIndex } from "@/db/schema"
-import { sql, desc, or, like } from "drizzle-orm"
+import { sql, desc, or, ilike } from "drizzle-orm"
 
 const api = new Hono()
 
@@ -30,15 +30,15 @@ api.get("/", async (c) => {
           title: searchIndex.title,
           url: searchIndex.url,
           sourceType: searchIndex.sourceType,
-          rank: sql<number>`ts_rank(${searchIndex.searchableText}, ${querySql})`,
+          rank: sql<number>`ts_rank(${searchIndex.searchVector}, ${querySql})`,
           snippet: sql<string>`ts_headline('english', ${searchIndex.bodyContent}, ${querySql}, 'StartSel=<mark>, StopSel=</mark>, MaxWords=20')`
         })
         .from(searchIndex)
         .where(
-          sql`${searchIndex.searchableText} @@ ${querySql} or ${searchIndex.title} ilike ${`%${q}%`}`
+          sql`${searchIndex.searchVector} @@ ${querySql} or ${searchIndex.title} ilike ${`%${q}%`}`
         )
         .orderBy(
-          desc(sql`ts_rank(${searchIndex.searchableText}, ${querySql})`),
+          desc(sql`ts_rank(${searchIndex.searchVector}, ${querySql})`),
           desc(searchIndex.updatedAt)
         )
         .limit(10)
@@ -53,7 +53,7 @@ api.get("/", async (c) => {
           snippet: sql<string>`substring(${searchIndex.bodyContent} from 1 for 150)`
         })
         .from(searchIndex)
-        .where(or(like(searchIndex.title, `%${q}%`), like(searchIndex.bodyContent, `%${q}%`)))
+        .where(or(ilike(searchIndex.title, `%${q}%`), ilike(searchIndex.bodyContent, `%${q}%`)))
         .orderBy(desc(searchIndex.updatedAt))
         .limit(10)
     }

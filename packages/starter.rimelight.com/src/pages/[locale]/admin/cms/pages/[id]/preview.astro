@@ -1,0 +1,58 @@
+---
+import { auth } from "@/auth/auth"
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
+import AppHeader from "@/components/app/AppHeader.astro"
+import AppFooter from "@/components/app/AppFooter.astro"
+
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+const id = Astro.params.id
+
+if (!session) {
+  return Astro.redirect("/auth/sign-in")
+}
+
+// Fetch page data
+const pageResponse = await fetch(`${Astro.site}/api/cms/pages/${id}`, {
+  headers: {
+    Cookie: Astro.request.headers.get("cookie") || ""
+  }
+})
+const { page, draft } = await pageResponse.json()
+
+const content = draft?.content ? JSON.parse(draft.content) : JSON.parse(page.content)
+const userSession = session
+  ? {
+      userId: session.user.id,
+      roles: [session.user.role || "user"],
+      permissions: []
+    }
+  : undefined
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preview: {page.title}</title>
+  </head>
+  <body>
+    <AppHeader />
+    <main class="max-w-4xl mx-auto py-12 px-4">
+      <div class="mb-6">
+        <a href={`/admin/cms/pages/${id}/edit`} class="text-blue-600 hover:underline">← Back to Editor</a>
+      </div>
+      
+      <div class="bg-blue-50 border border-blue-200 p-4 rounded mb-6">
+        <p class="text-sm text-blue-800">Preview Mode - This is how the page will appear to readers</p>
+      </div>
+
+      <PageRenderer 
+        blocks={content.blocks || []} 
+        session={userSession} 
+        locale="en"
+        class="prose prose-lg max-w-none"
+      />
+    </main>
+    <AppFooter />
+  </body>
+</html>

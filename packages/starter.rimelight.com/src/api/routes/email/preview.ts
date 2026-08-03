@@ -48,21 +48,20 @@ api.post("/test", async (c) => {
       })
     } else if (body.template === "signup-notification") {
       await sendExistingUserSignUpNotification({
-        user: { email: recipient },
+        user: {
+          email: recipient
+        },
         locale
       })
     } else if (body.template === "contact") {
       const { sendEmail } = await import("@/auth/email")
       const { renderContactEmail } = await import("@/auth/email/render")
-      const html = await renderContactEmail(
-        {
-          name: "Test User",
-          email: "test.user@example.com",
-          subject: "Test Contact Subject",
-          message: "This is a test message from the preview email tool."
-        },
-        locale
-      )
+      const html = await renderContactEmail({
+        name: "Test User",
+        email: "test.user@example.com",
+        subject: "Test Contact Subject",
+        message: "This is a test message from the preview email tool."
+      })
       await sendEmail({
         to: recipient,
         subject: "[Preview Test] Contact Form Submission",

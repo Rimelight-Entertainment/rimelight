@@ -277,7 +277,7 @@
     "auth_validation_error_title": "Validation failed",
     "auth_terms_agreement_signup": "I agree to the",
     "auth_terms_required": "You must accept the terms of service",
-    "auth_newsletter_label": "Subscribe to newsletter",
+    "auth_newsletter_label": "Subscribe to our newsletter. You may unsubscribe at any time.",
     "auth_newsletter_description": "Get the latest news and updates",
     "navigation_next": "Next",
     "navigation_previous": "Previous"
@@ -286,7 +286,7 @@
     "meta_title": "Sign in",
     "sign-in_title": "Sign in",
     "sign-in_description": "Sign in to your account",
-    "sign-in_new-user": "Your account has been created. Please sign in.",
+    "sign-in_new-user": "Your account has been created. Please check your email to confirm your account before signing in.",
     "sign-in_email": "E-mail",
     "sign-in_password": "Password",
     "sign-in_button": "Sign in",
@@ -626,18 +626,6 @@
   },
   "auth_lastname_label": {
     "auth_lastname_label": "Last Name"
-  },
-  "auth_password_confirmation_label": {
-    "auth_password_confirmation_label": "Password Confirmation"
-  },
-  "auth_terms_agreement_signup": {
-    "auth_terms_agreement_signup": "I have read and agree to the"
-  },
-  "auth_newsletter_label": {
-    "auth_newsletter_label": "Subscribe to our Newsletter."
-  },
-  "auth_newsletter_description": {
-    "auth_newsletter_description": "Unsubscribe at any time."
   },
   "auth_sign_up_button": {
     "auth_sign_up_button": "Sign Up"

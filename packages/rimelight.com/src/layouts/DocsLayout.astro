@@ -108,7 +108,7 @@ const tocHeadings = hasToc
             activeScope?.icon || "i-lucide-book-open",
             "size-4 text-primary shrink-0"
           ]} />
-          <span class="font-semibold shrink-0">{t(activeScope?.label) || "Navigation"}</span>
+          <span class="font-semibold shrink-0">{t(activeScope?.label || "navigation") || "Navigation"}</span>
           <span class="text-muted-foreground font-normal truncate hidden sm:inline">— {title}</span>
         </span>
         <span class="docs-nav-chevron i-lucide-chevron-down size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
@@ -319,7 +319,6 @@ const tocHeadings = hasToc
             return;
           }
 
-          const linkOrSummaryText = item.querySelector('[data-slot="item-text"]')?.textContent?.toLowerCase() || '';
           // Check all child text items within this item element
           const allText = item.textContent?.toLowerCase() || '';
           const matches = allText.includes(query);

@@ -1,0 +1,41 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { siteConfig } from '@/config/site.config';
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq } from "drizzle-orm"
+
+const { slug } = Astro.params
+const activeLocale = Astro.currentLocale ?? "en"
+
+// Fetch from CMS
+const page = await db.select().from(pages).where(eq(pages.slug, slug)).limit(1)
+
+if (!page[0]) {
+  return Astro.redirect('/404')
+}
+
+const content = JSON.parse(page[0].content)
+const userSession = Astro.locals.session
+  ? {
+      userId: Astro.locals.session.user?.id,
+      roles: [Astro.locals.session.user?.role || "user"],
+      permissions: []
+    }
+  : undefined
+
+const title = typeof page[0].title === 'string' ? page[0].title : page[0].title?.[activeLocale] || page[0].title?.en || page[0].title
+const description = content.properties?.description || siteConfig.description
+const image = content.properties?.heroImage
+---
+
+<AppLayout title={title} description={description}>
+  <article class="prose prose-lg max-w-none">
+    <PageRenderer 
+      blocks={content.blocks || []} 
+      session={userSession} 
+      locale={activeLocale}
+    />
+  </article>
+</AppLayout>

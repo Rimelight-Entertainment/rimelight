@@ -39,3 +39,21 @@ export function createSyntheticUser({ coreFields, additionalFields, id }: Synthe
     id
   }
 }
+
+/**
+ * Wrapper function for better-auth that converts raw userData to SyntheticUserData format
+ */
+export function createSyntheticUserWrapper(userData: any) {
+  return createSyntheticUser({
+    coreFields: {
+      name: userData.name,
+      email: userData.email,
+      emailVerified: userData.emailVerified,
+      image: userData.image,
+      createdAt: userData.createdAt,
+      updatedAt: userData.createdAt
+    },
+    additionalFields: userData,
+    id: crypto.randomUUID()
+  })
+}

@@ -35,7 +35,8 @@
   "r2_buckets": [
     {
       "binding": "BLOB",
-      "bucket_name": "rimelight-dot-com"
+      "bucket_name": "rimelight-dot-com",
+      "remote": false
     }
   ],
   "kv_namespaces": [
@@ -64,7 +65,6 @@
     "CONSTRUCTION_MODE": "true",
     "CONSTRUCTION_AUTH": "true",
     "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
-    "EMAIL_DOMAIN": "rimelight.com",
-    "EMAIL_TEST_RECIPIENT": "test@rimelight.com"
+    "EMAIL_DOMAIN": "rimelight.com"
   }
 }

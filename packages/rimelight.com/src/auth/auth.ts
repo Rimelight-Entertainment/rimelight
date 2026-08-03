@@ -2,7 +2,8 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/db"
 import { admin as adminPlugin, organization as organizationPlugin } from "better-auth/plugins"
-import { ac, owner, admin, member, user } from "@/auth/permissions"
+import { ac, owner, admin, member, user as userRole } from "@/auth/permissions"
+import { cmsStatements } from "@rimelight/cms"
 import { eq, and, count } from "drizzle-orm"
 import { user as userTable } from "@/db/schema/auth"
 import { normalizeUsername, RESTRICTED_SET } from "@/auth/restricted-usernames"
@@ -10,7 +11,7 @@ import { APIError } from "better-auth/api"
 import { sendVerificationEmail } from "./email/verification"
 import { sendPasswordResetEmail } from "./email/password-reset"
 import { sendExistingUserSignUpNotification } from "./email/notifications"
-import { createSyntheticUser } from "./customSyntheticUser"
+import { createSyntheticUserWrapper } from "./customSyntheticUser"
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -22,12 +23,15 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     minPasswordLength: 8,
     maxPasswordLength: 128,
-    customSyntheticUser: createSyntheticUser,
+    customSyntheticUser: createSyntheticUserWrapper,
     sendResetPassword: sendPasswordResetEmail,
-    onExistingUserSignUp: sendExistingUserSignUpNotification
+    onExistingUserSignUp: async (existingUser: any) => {
+      await sendExistingUserSignUpNotification({ user: { email: existingUser.email } })
+    }
   },
   emailVerification: {
-    sendVerificationEmail: sendVerificationEmail
+    sendVerificationEmail: sendVerificationEmail,
+    autoSignInAfterVerification: true
   },
   user: {
     changeEmail: {
@@ -113,10 +117,13 @@ export const auth = betterAuth({
         owner,
         admin,
         member,
-        user
+        user: userRole
       }
     })
   ],
+  auth: {
+    statements: cmsStatements
+  },
   advanced: {
     useSecureCookies: true,
     cookiePrefix: "auth",

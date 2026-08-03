@@ -1,0 +1,107 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import { siteConfig } from '@/config/site.config';
+import { t, getRelativeLocaleUrl } from '@rimelight/i18n';
+import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro"
+import RLATabs from "@rimelight/ui/components/tabs/RLATabs.astro"
+import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
+import RLAPost from "@rimelight/ui/components/post/RLAPost.astro"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq, desc, and, isNull } from "drizzle-orm"
+
+const activeLocale = Astro.currentLocale ?? "en"
+
+// Fetch CMS pages with type 'blog'
+const blogPages = await db
+  .select()
+  .from(pages)
+  .where(and(eq(pages.type, "blog"), isNull(pages.deletedAt)))
+  .orderBy(desc(pages.postedAt))
+
+const groupedPosts = blogPages.reduce<Record<string, typeof blogPages>>((acc, page) => {
+  const content = JSON.parse(page.content)
+  const type = content.properties?.category || "other"
+  if (!acc[type]) acc[type] = []
+  acc[type].push(page)
+  return acc
+}, {})
+
+const categoryOrder = ["development-log", "other"] as const
+
+const badgeColorMap: Record<string, string> = {
+  "development-log": "info",
+  "other": "success",
+}
+
+const categoryMessages: Record<string, string> = {
+  "development-log": t("blog.categories_development-log"),
+  "other": t("blog.categories_other")
+}
+
+const tabsItems = [
+  { label: "All", value: "all" },
+  ...categoryOrder
+    .filter((cat) => groupedPosts[cat]?.length)
+    .map((cat) => ({
+      label: categoryMessages[cat] ?? cat,
+      value: cat
+    }))
+]
+---
+
+<AppLayout title={siteConfig.name} description={siteConfig.description}>
+  <RLAPageSection title={t("blog.title")} description={t("blog.description")}>
+    <RLATabs slot="content" items={tabsItems} variant="underline">
+      <div role="tabpanel" data-value="all" class="hidden">
+        <RLAGrid cols={4}>
+          {blogPages.map((page, index) => {
+            const content = JSON.parse(page.content)
+            const category = content.properties?.category || "other"
+            return (
+              <RLAPost
+                variant="ghost"
+                orientation={index === 0 ? "horizontal" : "vertical"}
+                class={index === 0 ? "col-span-full mb-6" : ""}
+                image={content.properties?.heroImage}
+                date={page.postedAt}
+                title={page.title}
+                description={content.properties?.description}
+                to={getRelativeLocaleUrl(`/blog/${page.slug}/`)}
+                badge={categoryMessages[category] ?? category}
+                badgeColor={badgeColorMap[category] || "primary"}
+              />
+            )
+          })}
+        </RLAGrid>
+      </div>
+      {categoryOrder.map((category) => {
+        const categoryPages = groupedPosts[category]
+        if (!categoryPages || categoryPages.length === 0) return null
+        return (
+          <div role="tabpanel" data-value={category} class="hidden">
+            <RLAGrid cols={4}>
+              {categoryPages.map((page, index) => {
+                const content = JSON.parse(page.content)
+                return (
+                  <RLAPost
+                    variant="ghost"
+                    orientation={index === 0 ? "horizontal" : "vertical"}
+                    class={index === 0 ? "col-span-full mb-6" : ""}
+                    image={content.properties?.heroImage}
+                    date={page.postedAt}
+                    title={page.title}
+                    description={content.properties?.description}
+                    to={getRelativeLocaleUrl(`/blog/${page.slug}/`)}
+                    badge={categoryMessages[category] ?? category}
+                    badgeColor={badgeColorMap[category] || "primary"}
+                  />
+                )
+              })}
+            </RLAGrid>
+          </div>
+        )
+      })}
+    </RLATabs>
+  </RLAPageSection>
+</AppLayout>
