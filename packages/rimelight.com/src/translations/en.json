@@ -82,12 +82,7 @@
     "link-groups_right_store_assistance_customer-support": "Customer Support",
     "actions_sign-up": "Sign Up",
     "actions_sign-in": "Sign In",
-    "user_status_placeholder": "Set a custom status...",
-    "user_dropdown_profile": "Profile",
-    "user_dropdown_dashboard": "Dashboard",
-    "user_dropdown_settings": "Settings",
-    "user_dropdown_support": "Support",
-    "user_dropdown_sign-out": "Sign Out"
+    "user_status_placeholder": "Set a custom status..."
   },
   "app_footer": {
     "links_resources_label": "Resources",
@@ -546,12 +541,6 @@
   "auth_sign_in_button": {
     "auth_sign_in_button": "Sign In"
   },
-  "auth_terms_agreement": {
-    "auth_terms_agreement": "By signing in, you agree to our"
-  },
-  "auth_terms_link": {
-    "auth_terms_link": "Terms of Service"
-  },
   "auth_username_length_error": {
     "auth_username_length_error": "Username must be between 2 and 24 characters long."
   },
@@ -575,9 +564,6 @@
   },
   "auth_passwords_mismatch": {
     "auth_passwords_mismatch": "Passwords do not match."
-  },
-  "auth_terms_required": {
-    "auth_terms_required": "You must agree to the terms of service."
   },
   "auth_password_req_length": {
     "auth_password_req_length": "At least 8 characters"

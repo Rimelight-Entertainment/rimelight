@@ -1,3 +1,5 @@
+// src/auth/email/notifications.ts
+
 import { sendEmail } from "."
 import { renderSignupNotificationEmail } from "./render"
 import { getEmailMessages } from "./messages"

@@ -36,9 +36,7 @@
     "left-links_dashboard_label": "Dashboard",
     "actions_sign-up": "Sign Up",
     "actions_sign-in": "Sign In",
-    "user_status_placeholder": "Set a custom status...",
-    "user_dropdown_dashboard": "Dashboard",
-    "user_dropdown_sign-out": "Sign Out"
+    "user_status_placeholder": "Set a custom status..."
   },
   "app_layout": {
     "skipToContent": "Skip to main content"

@@ -1,4 +1,4 @@
-import { defineAction, ActionError } from "astro:actions"
+import { defineAction } from "astro:actions"
 import { z } from "astro/zod"
 import { env } from "cloudflare:workers"
 import { throwActionAuthError } from "./utils"
@@ -16,14 +16,14 @@ export const signUp = defineAction({
   handler: async (input, context) => {
     try {
       const token = input["cf-turnstile-response"]
-      const clientIP = context.request.headers.get("CF-Connecting-IP") || undefined
+      const clientIP = context?.request?.headers?.get("CF-Connecting-IP") || undefined
 
       const verification = await verifyTurnstile(token, env, clientIP)
       if (!verification.success) {
-        throw new ActionError({
-          code: "BAD_REQUEST",
-          message: verification.error || "Bot check validation failed."
-        })
+        return throwActionAuthError(
+          "BAD_REQUEST",
+          new Error(verification.error || "Bot check validation failed.")
+        )
       }
 
       const { auth } = await import("@/auth/auth")

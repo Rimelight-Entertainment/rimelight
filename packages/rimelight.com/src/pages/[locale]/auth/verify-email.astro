@@ -16,6 +16,7 @@ const tabs = [
 ]
 
 const emailParam = new URL(Astro.request.url).searchParams.get('email') || ''
+const token = new URL(Astro.request.url).searchParams.get('token') || ''
 ---
 
 <AppLayout title="Verify Email" description="Verify your email address">
@@ -29,7 +30,9 @@ const emailParam = new URL(Astro.request.url).searchParams.get('email') || ''
         <div class="text-center text-6xl">📧</div>
       </div>
       <div class="text-center">
-        <p id="verification-message" class="text-sm text-neutral-600 dark:text-neutral-400 mb-4"></p>
+        <p id="verification-message" class="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+          {token ? "Verifying your email..." : "Enter your email address below to receive a verification link."}
+        </p>
         
         {!emailParam && (
           <div class="mb-4">

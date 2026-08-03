@@ -39,6 +39,16 @@ export const auth = betterAuth({
     },
     deleteUser: {
       enabled: true
+      // sendDeleteAccountVerification: async ({ user, url, token }, request) => {
+      // 	    await sendEmail(Odata.user.email, "Delete Account Verification", data.url)
+      // 	},
+      // 	beforeDelete: async (user) => {
+      // 	    // Perform actions before user deletion
+      // 	},
+      // 	afterDelete: async (user) => {
+      // 	    // Perform cleanup after user deletion
+      // 	}
+      // }
     },
     additionalFields: {
       tag: {
@@ -125,6 +135,7 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (userData, _ctx) => {
+          // 1. Normalize the username and check against the restricted set
           const normalizedInput = normalizeUsername(userData.name)
           if (RESTRICTED_SET.has(normalizedInput)) {
             throw new APIError("BAD_REQUEST", {
@@ -132,6 +143,7 @@ export const auth = betterAuth({
             })
           }
 
+          // 2. Generate a unique 4-digit discriminator tag
           let uniqueTag = "0000"
           const tryFindTag = async (attemptsLeft: number): Promise<string> => {
             if (attemptsLeft <= 0) return "0000"

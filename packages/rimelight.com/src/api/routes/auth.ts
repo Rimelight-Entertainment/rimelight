@@ -1,6 +1,5 @@
 import { Hono } from "hono"
 import { auth } from "@/auth/auth"
-import { sendVerificationEmail } from "@/auth/email/verification"
 
 const api = new Hono()
 
@@ -12,18 +11,17 @@ api.post("/resend-verification", async (c) => {
       return c.json({ error: "Email is required" }, 400)
     }
 
-    // Generate a verification token
-    const token = crypto.randomUUID()
+    // Generate a verification token and send email using better-auth
     const acceptLanguage = c.req.header("accept-language")?.split(",")[0] || "en"
     const locale = acceptLanguage.split("-")[0] // Convert "en-US" to "en"
-    const url = `${new URL(c.req.url).origin}/${locale}/auth/verify-email?token=${token}`
-
-    // Send verification email
-    await sendVerificationEmail({
-      user: { email },
-      url,
-      token,
-      locale: c.req.header("accept-language")?.split(",")[0] || "en"
+    
+    // Use better-auth's internal method to send verification email
+    // This will generate a proper token and send it via the configured email service
+    await auth.api.sendVerificationEmail({
+      body: {
+        email
+      },
+      headers: c.req.raw.headers
     })
 
     return c.json({ success: true })
@@ -34,20 +32,7 @@ api.post("/resend-verification", async (c) => {
 })
 
 api.on(["GET", "POST"], "/*", async (c) => {
-  const response = await auth.handler(c.req.raw)
-
-  // Handle non-JSON responses
-  const contentType = response.headers.get("content-type")
-  if (!contentType || !contentType.includes("application/json")) {
-    const text = await response.text()
-    return new Response(text, { status: response.status })
-  }
-
-  const json = await response.json()
-  return new Response(JSON.stringify(json), {
-    status: response.status,
-    headers: { "Content-Type": "application/json" }
-  })
+  return auth.handler(c.req.raw)
 })
 
 export default api
