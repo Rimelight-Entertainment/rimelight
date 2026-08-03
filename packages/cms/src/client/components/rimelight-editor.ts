@@ -32,6 +32,10 @@ export class RimelightEditor extends HTMLElement {
     return this.blocks
   }
 
+  async getBlocksAsync(): Promise<BaseBlock[]> {
+    return this.blocks
+  }
+
   private render() {
     this.innerHTML = `
       <div class="cms-editor-header">
@@ -174,3 +178,5 @@ export class RimelightEditor extends HTMLElement {
 if (!customElements.get("rimelight-editor")) {
   customElements.define("rimelight-editor", RimelightEditor)
 }
+
+export { RimelightEditor }

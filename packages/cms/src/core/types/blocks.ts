@@ -9,6 +9,34 @@ export type BlockType =
   | "CodeBlock"
   | (string & {})
 
+export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER"
+export type Setting = "INTERIOR" | "EXTERIOR" | "OTHER"
+export type Transition = "CUT_TO" | "CUT_BACK_TO" | "FADE_TO" | "NONE"
+
+export interface ScriptBlockProps {
+  title: string
+  synopsis: string
+  characters: string[]
+  aPlot: string
+  bPlot: string
+  cPlot: string
+  stinger: string
+}
+
+export interface SceneBlockProps {
+  location: string
+  timeOfDay: TimeOfDay
+  setting: Setting
+  transition: Transition
+  description: string
+}
+
+export interface DialogueBlockProps {
+  character: string
+  parenthetical?: string
+  line: string
+}
+
 export interface BaseBlock {
   /**
    * Unique UUID v4 identifier

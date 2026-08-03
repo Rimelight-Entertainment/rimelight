@@ -16,9 +16,18 @@ const pageResponse = await fetch(`${Astro.site}/api/cms/pages/${id}`, {
     Cookie: Astro.request.headers.get("cookie") || ""
   }
 })
+
+if (!pageResponse.ok) {
+  const errorText = await pageResponse.text()
+  console.error('Page API error:', pageResponse.status, errorText)
+  return Astro.redirect('/admin/cms/pages')
+}
+
 const { page, draft } = await pageResponse.json()
 
-const content = draft?.content ? JSON.parse(draft.content) : JSON.parse(page.content)
+const content = draft?.content 
+  ? (typeof draft.content === 'string' ? JSON.parse(draft.content) : draft.content)
+  : (typeof page.content === 'string' ? JSON.parse(page.content) : page.content)
 ---
 
 <html lang="en">
@@ -26,6 +35,9 @@ const content = draft?.content ? JSON.parse(draft.content) : JSON.parse(page.con
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Page | CMS Admin</title>
+    <style is:inline>
+      @import url("@rimelight/cms/client/styles/cms-editor.css");
+    </style>
   </head>
   <body>
     <AppHeader />
@@ -51,54 +63,56 @@ const content = draft?.content ? JSON.parse(draft.content) : JSON.parse(page.con
             </div>
           </div>
 
-          <!-- Simple JSON Editor -->
-          <form id="editor-form" class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Blocks (JSON)</label>
-              <textarea id="blocks-editor" rows="20" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm">{JSON.stringify(content.blocks || [], null, 2)}</textarea>
-            </div>
-
-            <div class="flex gap-4">
-              <button type="button" id="save-draft-btn" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Draft</button>
-            </div>
-          </form>
+          <!-- Custom Element Editor -->
+          <div id="cms-editor-container" class="h-[600px]">
+            <rimelight-editor-layout page-id={id} initial-blocks={JSON.stringify(content.blocks || [])}></rimelight-editor-layout>
+          </div>
         </div>
       </div>
     </main>
     <AppFooter />
 
-    <script>
-      const blocksEditor = document.getElementById('blocks-editor');
-      const saveDraftBtn = document.getElementById('save-draft-btn');
-      const publishBtn = document.getElementById('publish-btn');
-      
-      saveDraftBtn.addEventListener('click', async () => {
-        try {
-          const blocks = JSON.parse(blocksEditor.value);
-          const content = { blocks, properties: {} };
-          
-          const response = await fetch(`/api/cms/pages/${!id}/draft`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content })
-          });
-
-          if (response.ok) {
-            alert('Draft saved successfully!');
-          } else {
-            alert('Failed to save draft');
+    <script type="module">
+      // Load the CMS client library
+      import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
+        defineCustomElements();
+        
+        // After elements are defined, set up the editor
+        const editorLayout = document.querySelector('rimelight-editor-layout');
+        if (editorLayout) {
+          const initialBlocksAttr = editorLayout.getAttribute('initial-blocks');
+          if (initialBlocksAttr) {
+            try {
+              const initialBlocks = JSON.parse(initialBlocksAttr);
+              // The layout component will handle this automatically
+            } catch (e) {
+              console.error('Failed to parse initial blocks:', e);
+            }
           }
-        } catch (error) {
-          alert('Invalid JSON');
         }
       });
 
+      const publishBtn = document.getElementById('publish-btn');
+      
       publishBtn.addEventListener('click', async () => {
+        const editorLayout = document.querySelector('rimelight-editor-layout');
+        if (!editorLayout) {
+          alert('Editor not loaded');
+          return;
+        }
+
+        // Access the internal editor component
+        const editorComponent = editorLayout.querySelector('#cms-editor-component');
+        if (!editorComponent) {
+          alert('Editor component not found');
+          return;
+        }
+
+        const blocks = editorComponent.getBlocks ? editorComponent.getBlocks() : [];
+        const content = { blocks, properties: {} };
+        
         try {
-          const blocks = JSON.parse(blocksEditor.value);
-          const content = { blocks, properties: {} };
-          
-          const response = await fetch(`/api/cms/pages/${!id}/publish`, {
+          const response = await fetch(`/api/cms/pages/${id}/publish`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -111,10 +125,11 @@ const content = draft?.content ? JSON.parse(draft.content) : JSON.parse(page.con
             alert('Page published successfully!');
             window.location.href = '/admin/cms/pages';
           } else {
-            alert('Failed to publish page');
+            const errorData = await response.json().catch(() => ({}));
+            alert(`Failed to publish page: ${errorData.error || 'Unknown error'}`);
           }
         } catch (error) {
-          alert('Invalid JSON');
+          alert('Error publishing page: Network error');
         }
       });
     </script>

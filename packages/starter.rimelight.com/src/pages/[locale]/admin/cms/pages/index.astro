@@ -15,6 +15,13 @@ const pagesResponse = await fetch(`${Astro.site}/api/cms/pages`, {
     Cookie: Astro.request.headers.get("cookie") || ""
   }
 })
+
+if (!pagesResponse.ok) {
+  const errorText = await pagesResponse.text()
+  console.error('Pages API error:', pagesResponse.status, errorText)
+  return Astro.redirect('/auth/sign-in')
+}
+
 const { pages } = await pagesResponse.json()
 ---
 

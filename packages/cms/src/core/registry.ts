@@ -1,3 +1,5 @@
+import type { TimeOfDay, Setting, Transition } from "./types/blocks"
+
 export interface BlockDefinition {
   type: string
   label: string
@@ -57,4 +59,41 @@ BlockRegistry.register({
   label: "Code",
   description: "Code block with syntax highlighting",
   defaultProps: { code: "", language: "typescript" }
+})
+
+BlockRegistry.register({
+  type: "ScriptBlock",
+  label: "Script",
+  description: "Script block with title, synopsis, characters, and plot tracking",
+  defaultProps: {
+    title: "",
+    synopsis: "",
+    characters: [],
+    aPlot: "",
+    bPlot: "",
+    cPlot: "",
+    stinger: ""
+  },
+  allowChildren: true
+})
+
+BlockRegistry.register({
+  type: "SceneBlock",
+  label: "Scene",
+  description: "Scene block with location, time, setting, and transition",
+  defaultProps: {
+    location: "",
+    timeOfDay: "OTHER" as TimeOfDay,
+    setting: "OTHER" as Setting,
+    transition: "NONE" as Transition,
+    description: ""
+  },
+  allowChildren: true
+})
+
+BlockRegistry.register({
+  type: "DialogueBlock",
+  label: "Dialogue",
+  description: "Dialogue block with character, parenthetical, and line",
+  defaultProps: { character: "", parenthetical: "", line: "" }
 })

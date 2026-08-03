@@ -8,6 +8,7 @@ void import("./rimelight-editor")
 
 interface RimelightEditorElement extends HTMLElement {
   setBlocks(blocks: BaseBlock[]): void
+  getBlocks(): BaseBlock[]
 }
 
 interface RimelightPreviewElement extends HTMLElement {
@@ -44,6 +45,17 @@ export class RimelightEditorLayout extends HTMLElement {
       const blocks: BaseBlock[] = customEvt.detail.blocks
       this.previewEl.setBlocks(blocks)
     })
+
+    // Load initial blocks from attribute
+    const initialBlocksAttr = this.getAttribute('initial-blocks')
+    if (initialBlocksAttr) {
+      try {
+        const initialBlocks = JSON.parse(initialBlocksAttr)
+        this.setInitialBlocks(initialBlocks)
+      } catch (e) {
+        console.error('Failed to parse initial blocks:', e)
+      }
+    }
   }
 
   setInitialBlocks(blocks: BaseBlock[]) {
@@ -54,8 +66,17 @@ export class RimelightEditorLayout extends HTMLElement {
       this.previewEl.setBlocks(blocks)
     }
   }
+
+  async getBlocks(): Promise<BaseBlock[]> {
+    if (this.editorEl && this.editorEl.getBlocks) {
+      return this.editorEl.getBlocks()
+    }
+    return []
+  }
 }
 
 if (!customElements.get("rimelight-editor-layout")) {
   customElements.define("rimelight-editor-layout", RimelightEditorLayout)
 }
+
+export { RimelightEditorLayout }

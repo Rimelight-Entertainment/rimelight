@@ -5,6 +5,16 @@ export * from "./core/types/pages"
 export * from "./core/types/templates"
 export * from "./core/types/versioning"
 
+// Re-export specific types for convenience
+export type { 
+  TimeOfDay, 
+  Setting, 
+  Transition,
+  ScriptBlockProps,
+  SceneBlockProps,
+  DialogueBlockProps 
+} from "./core/types/blocks"
+
 // Core Services & Registries
 export * from "./core/registry"
 export * from "./core/validator"

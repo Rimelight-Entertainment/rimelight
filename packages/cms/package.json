@@ -20,6 +20,7 @@
     "./core/*": "./src/core/*",
     "./astro/*": "./src/astro/*.astro",
     "./client/*": "./src/client/*",
+    "./client/loader": "./src/client/loader.ts",
     "./auth/*": "./src/auth/*",
     "./cache/*": "./src/cache/*",
     "./search/*": "./src/search/*"

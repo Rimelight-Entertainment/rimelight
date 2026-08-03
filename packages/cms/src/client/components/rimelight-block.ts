@@ -74,3 +74,5 @@ export class RimelightBlockNode extends HTMLElement {
 if (!customElements.get("rimelight-block")) {
   customElements.define("rimelight-block", RimelightBlockNode)
 }
+
+export { RimelightBlockNode as RimelightBlock }

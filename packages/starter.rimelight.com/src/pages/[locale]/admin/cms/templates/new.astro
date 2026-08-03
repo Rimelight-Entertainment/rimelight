@@ -107,10 +107,11 @@ if (!session) {
           if (response.ok) {
             window.location.href = '/admin/cms/templates';
           } else {
-            alert('Failed to create template');
+            const errorData = await response.json().catch(() => ({}));
+            alert(`Failed to create template: ${errorData.error || 'Unknown error'}`);
           }
         } catch (error) {
-          alert('Error creating template');
+          alert('Error creating template: Network error');
         }
       });
     </script>

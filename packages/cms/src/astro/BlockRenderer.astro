@@ -1,9 +1,12 @@
 ---
-import type { BaseBlock } from "../core/types/blocks"
+import type { BaseBlock } from "@rimelight/cms"
 import ParagraphBlock from "./blocks/ParagraphBlock.astro"
 import CalloutBlock from "./blocks/CalloutBlock.astro"
 import ImageBlock from "./blocks/ImageBlock.astro"
 import CodeBlock from "./blocks/CodeBlock.astro"
+import ScriptBlock from "./blocks/ScriptBlock.astro"
+import SceneBlock from "./blocks/SceneBlock.astro"
+import DialogueBlock from "./blocks/DialogueBlock.astro"
 
 interface Props {
   block: BaseBlock
@@ -22,6 +25,12 @@ const { block, locale = "en" } = Astro.props
     <ImageBlock block={block} locale={locale} />
   ) : block.type === "CodeBlock" ? (
     <CodeBlock block={block} locale={locale} />
+  ) : block.type === "ScriptBlock" ? (
+    <ScriptBlock block={block} locale={locale} />
+  ) : block.type === "SceneBlock" ? (
+    <SceneBlock block={block} locale={locale} />
+  ) : block.type === "DialogueBlock" ? (
+    <DialogueBlock block={block} locale={locale} />
   ) : block.type === "SectionBlock" ? (
     <section class="cms-section my-6" data-block-id={block.id}>
       {block.props.title && <h2 class="text-2xl font-bold mb-4">{block.props.title}</h2>}

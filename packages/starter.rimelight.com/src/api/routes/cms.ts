@@ -1,65 +1,75 @@
 import { Hono } from "hono"
 import { auth } from "@/auth/auth"
 import { db } from "@/db"
-import { pages, pageDrafts, pageDraftLocks, pageTemplates, pageVersions } from "@/db/schema"
-import { eq, desc, isNull } from "drizzle-orm"
+import { pages, pageDrafts, pageDraftLocks, pageTemplates, pageVersions, pageVersionApprovals } from "@/db/schema"
+import { eq, and, desc, isNull } from "drizzle-orm"
+import { validateServerBlockPayload } from "@rimelight/cms"
 import type { BaseBlock } from "@rimelight/cms"
 
 const cms = new Hono()
 
-function validateServerBlockPayload(
-  existingContent: any,
-  incomingContent: any
-): { valid: boolean; reason?: string } {
-  const existingTree = existingContent.blocks || []
-  const incomingTree = incomingContent.blocks || []
-  const existingTemplated = extractTemplatedBlocks(existingTree)
-  const incomingTemplated = extractTemplatedBlocks(incomingTree)
-
-  if (existingTemplated.length !== incomingTemplated.length) {
-    return { valid: false, reason: "Forbidden: One or more templated blocks were removed." }
+async function checkApprovalRequirements(pageId: string, userId: string, userRoles: string[]) {
+  // Get the page to check its template
+  const page = await db.select().from(pages).where(eq(pages.id, pageId)).limit(1)
+  if (!page[0] || !page[0].templateId) {
+    // No template = no approval requirements
+    return { canPublish: true, reason: null }
   }
 
-  for (const existingBlock of existingTemplated) {
-    const incomingBlock = incomingTemplated.find(
-      (b) => b.type === existingBlock.type && b.id === existingBlock.id
-    )
-    if (!incomingBlock) {
-      return {
-        valid: false,
-        reason: `Forbidden: Templated block ${existingBlock.type} (ID: ${existingBlock.id}) missing in payload.`
-      }
+  // Get template approval rules
+  const template = await db.select().from(pageTemplates).where(eq(pageTemplates.id, page[0].templateId!)).limit(1)
+  if (!template[0]) {
+    return { canPublish: true, reason: null }
+  }
+
+  const approvalRules = template[0].approvalRules || { allowSelfApproval: true, minApprovals: 1 }
+  const minApprovals = approvalRules.minApprovals || 1
+
+  // Get existing approvals for this page's latest pending version
+  const lastVersion = await db
+    .select()
+    .from(pageVersions)
+    .where(eq(pageVersions.pageId, pageId))
+    .orderBy(desc(pageVersions.versionNumber))
+    .limit(1)
+
+  let existingApprovals: any[] = []
+  if (lastVersion[0]) {
+    existingApprovals = await db
+      .select()
+      .from(pageVersionApprovals)
+      .where(eq(pageVersionApprovals.versionId, lastVersion[0].id))
+      .limit(10)
+  }
+
+  // Check if user has required role for approval
+  if (approvalRules.requiredRolesForApproval && approvalRules.requiredRolesForApproval.length > 0) {
+    const hasRequiredRole = userRoles.some(role => approvalRules.requiredRolesForApproval!.includes(role))
+    if (!hasRequiredRole) {
+      return { canPublish: false, reason: "User does not have required role for approval" }
     }
+  }
 
-    if (existingBlock.templatedProps === true) {
-      if (JSON.stringify(existingBlock.props) !== JSON.stringify(incomingBlock.props)) {
-        return {
-          valid: false,
-          reason: `Forbidden: Cannot modify locked properties on ${existingBlock.type}.`
-        }
-      }
-    } else if (Array.isArray(existingBlock.templatedProps)) {
-      for (const key of existingBlock.templatedProps) {
-        if (JSON.stringify(existingBlock.props[key]) !== JSON.stringify(incomingBlock.props[key])) {
-          return {
-            valid: false,
-            reason: `Forbidden: Cannot modify locked property '${key}' on ${existingBlock.type}.`
-          }
-        }
-      }
+  // Check self-approval restriction
+  const userAlreadyApproved = existingApprovals.some(a => a.userId === userId)
+  if (!approvalRules.allowSelfApproval && userAlreadyApproved) {
+    // Need at least one other approval
+    const otherApprovals = existingApprovals.filter(a => a.userId !== userId)
+    if (otherApprovals.length < minApprovals) {
+      return { canPublish: false, reason: `Self-approval not allowed. Need ${minApprovals} distinct approvers.` }
     }
   }
 
-  return { valid: true }
-}
+  // Check minimum approval count
+  const effectiveApprovals = approvalRules.allowSelfApproval 
+    ? existingApprovals.length 
+    : existingApprovals.filter(a => a.userId !== userId).length
 
-function extractTemplatedBlocks(blocks: BaseBlock[]): BaseBlock[] {
-  let result: BaseBlock[] = []
-  for (const b of blocks) {
-    if (b.isTemplated) result.push(b)
-    if (b.children?.length) result = result.concat(extractTemplatedBlocks(b.children))
+  if (effectiveApprovals < minApprovals) {
+    return { canPublish: false, reason: `Need ${minApprovals} approvals, currently have ${effectiveApprovals}` }
   }
-  return result
+
+  return { canPublish: true, reason: null }
 }
 
 // Templates
@@ -126,7 +136,13 @@ cms.get("/pages", async (c) => {
     .where(isNull(pages.deletedAt))
     .orderBy(desc(pages.createdAt))
 
-  return c.json({ pages: pagesList })
+  // Ensure content is returned as an object, not a string
+  const pagesData = pagesList.map(page => ({
+    ...page,
+    content: typeof page.content === 'string' ? JSON.parse(page.content) : page.content
+  }))
+
+  return c.json({ pages: pagesData })
 })
 
 cms.get("/pages/:id", async (c) => {
@@ -140,7 +156,18 @@ cms.get("/pages/:id", async (c) => {
 
   const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id)).limit(1)
 
-  return c.json({ page: page[0], draft: draft[0] })
+  // Ensure content is returned as an object, not a string
+  const pageData = {
+    ...page[0],
+    content: typeof page[0].content === 'string' ? JSON.parse(page[0].content) : page[0].content
+  }
+
+  const draftData = draft[0] ? {
+    ...draft[0],
+    content: typeof draft[0].content === 'string' ? JSON.parse(draft[0].content) : draft[0].content
+  } : null
+
+  return c.json({ page: pageData, draft: draftData })
 })
 
 cms.post("/pages", async (c) => {
@@ -183,8 +210,17 @@ cms.put("/pages/:id", async (c) => {
 
   // Validate block changes
   if (body.content?.blocks) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    const validation = validateServerBlockPayload(existingPage[0].content, body.content)
+    const existingContent = typeof existingPage[0].content === 'string' 
+      ? JSON.parse(existingPage[0].content) 
+      : existingPage[0].content
+    const incomingContent = typeof body.content === 'string' 
+      ? JSON.parse(body.content) 
+      : body.content
+    
+    const validation = validateServerBlockPayload(
+      existingContent.blocks || [], 
+      incomingContent.blocks || []
+    )
     if (!validation.valid) {
       return c.json({ error: validation.reason }, 403)
     }
@@ -222,8 +258,17 @@ cms.post("/pages/:id/draft", async (c) => {
 
   // Validate block changes
   if (body.content?.blocks) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    const validation = validateServerBlockPayload(existingPage[0].content, body.content)
+    const existingContent = typeof existingPage[0].content === 'string' 
+      ? JSON.parse(existingPage[0].content) 
+      : existingPage[0].content
+    const incomingContent = typeof body.content === 'string' 
+      ? JSON.parse(body.content) 
+      : body.content
+    
+    const validation = validateServerBlockPayload(
+      existingContent.blocks || [], 
+      incomingContent.blocks || []
+    )
     if (!validation.valid) {
       return c.json({ error: validation.reason }, 403)
     }
@@ -331,6 +376,13 @@ cms.post("/pages/:id/publish", async (c) => {
   const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
   if (!page[0]) return c.json({ error: "Page not found" }, 404)
 
+  // Check approval requirements
+  const userRoles = session.user.role ? [session.user.role] : []
+  const approvalCheck = await checkApprovalRequirements(id, session.user.id, userRoles)
+  if (!approvalCheck.canPublish) {
+    return c.json({ error: approvalCheck.reason }, 403)
+  }
+
   // Get current version number
   const lastVersion = await db
     .select()
@@ -365,6 +417,14 @@ cms.post("/pages/:id/publish", async (c) => {
 
   if (!version[0]) return c.json({ error: "Failed to create version" }, 500)
 
+  // Record this approval
+  await db.insert(pageVersionApprovals).values({
+    versionId: version[0].id,
+    userId: session.user.id,
+    userRole: session.user.role || "member",
+    approvedAt: new Date()
+  })
+
   // Update page with published version
   await db
     .update(pages)
@@ -377,6 +437,56 @@ cms.post("/pages/:id/publish", async (c) => {
     .where(eq(pages.id, id))
 
   return c.json({ version: version[0] })
+})
+
+// Approvals
+cms.post("/versions/:versionId/approve", async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+
+  const versionId = c.req.param("versionId")
+  
+  // Check if version exists
+  const version = await db.select().from(pageVersions).where(eq(pageVersions.id, versionId)).limit(1)
+  if (!version[0]) return c.json({ error: "Version not found" }, 404)
+
+  // Check if user already approved
+  const existingApproval = await db
+    .select()
+    .from(pageVersionApprovals)
+    .where(and(
+      eq(pageVersionApprovals.versionId, versionId),
+      eq(pageVersionApprovals.userId, session.user.id)
+    ))
+    .limit(1)
+
+  if (existingApproval[0]) {
+    return c.json({ error: "Already approved" }, 400)
+  }
+
+  // Add approval
+  await db.insert(pageVersionApprovals).values({
+    versionId,
+    userId: session.user.id,
+    userRole: session.user.role || "member",
+    approvedAt: new Date()
+  })
+
+  // Update version's approvedBy array
+  const allApprovals = await db
+    .select()
+    .from(pageVersionApprovals)
+    .where(eq(pageVersionApprovals.versionId, versionId))
+
+  await db
+    .update(pageVersions)
+    .set({
+      approvedBy: allApprovals.map(a => a.userId),
+      approvedAt: new Date()
+    })
+    .where(eq(pageVersions.id, versionId))
+
+  return c.json({ success: true })
 })
 
 export default cms

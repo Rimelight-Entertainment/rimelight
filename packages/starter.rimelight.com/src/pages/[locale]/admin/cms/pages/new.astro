@@ -15,6 +15,13 @@ const templatesResponse = await fetch(`${Astro.site}/api/cms/templates`, {
     Cookie: Astro.request.headers.get("cookie") || ""
   }
 })
+
+if (!templatesResponse.ok) {
+  const errorText = await templatesResponse.text()
+  console.error('Templates API error:', templatesResponse.status, errorText)
+  return Astro.redirect('/auth/sign-in')
+}
+
 const { templates } = await templatesResponse.json()
 ---
 
@@ -122,10 +129,11 @@ const { templates } = await templatesResponse.json()
             const result = await response.json();
             window.location.href = `/admin/cms/pages/${result.page.id}/edit`;
           } else {
-            alert('Failed to create page');
+            const errorData = await response.json().catch(() => ({}));
+            alert(`Failed to create page: ${errorData.error || 'Unknown error'}`);
           }
         } catch (error) {
-          alert('Error creating page');
+          alert('Error creating page: Network error');
         }
       });
     </script>

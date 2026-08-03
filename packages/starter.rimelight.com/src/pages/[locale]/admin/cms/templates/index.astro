@@ -15,6 +15,13 @@ const templatesResponse = await fetch(`${Astro.site}/api/cms/templates`, {
     Cookie: Astro.request.headers.get("cookie") || ""
   }
 })
+
+if (!templatesResponse.ok) {
+  const errorText = await templatesResponse.text()
+  console.error('Templates API error:', templatesResponse.status, errorText)
+  return Astro.redirect('/auth/sign-in')
+}
+
 const { templates } = await templatesResponse.json()
 ---
 
