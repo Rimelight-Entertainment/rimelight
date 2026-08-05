@@ -1,0 +1,271 @@
+---
+import { auth } from "@/auth/auth"
+import DashboardLayout from "@/layouts/DashboardLayout.astro"
+import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro"
+import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro"
+import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro"
+import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro"
+import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
+import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
+import RLASearch from "@rimelight/ui/components/search/RLASearch.astro"
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
+import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
+import { t } from "@rimelight/i18n"
+
+const cmsNavItems = [
+  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: "/admin/cms", id: "dashboard" },
+  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: "/admin/cms/templates", id: "templates" },
+  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: "/admin/cms/pages", id: "pages" },
+  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: "/admin/cms/versions", id: "versions" },
+]
+
+const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: "/admin/cms/settings", id: "settings" }
+
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+
+if (!session) {
+  return Astro.redirect("/auth/sign-in")
+}
+---
+
+<DashboardLayout title="Settings" description="CMS Settings" noindex={true}>
+  <RLADashboardGroup>
+  <RLADashboardSidebar side="left" collapsible>
+    <Fragment slot="header">
+      <RLAIcon name="i-lucide-file-stack" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
+      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
+      <RLADashboardSidebarCollapse side="left" class="shrink-0" />
+    </Fragment>
+
+    <nav class="flex flex-col gap-1" data-dashboard-nav-container>
+      {cmsNavItems.map((item) => (
+        <a
+          href={item.href}
+          data-dashboard-nav
+          data-dashboard-section={item.id}
+          class={
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors " +
+            (item.id === "settings"
+              ? "bg-muted text-highlighted"
+              : "text-default hover:text-highlighted hover:bg-muted")
+          }
+        >
+          <RLAIcon name={item.icon} class="size-5 shrink-0" />
+          <span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <Fragment slot="footer">
+      <div class="w-full" data-dashboard-nav-container>
+        <a
+          href={settingsNavItem.href}
+          data-dashboard-nav
+          data-dashboard-section={settingsNavItem.id}
+          class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-default hover:text-highlighted hover:bg-muted transition-colors w-full"
+        >
+          <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
+          <span class="truncate flex-1" data-dashboard-nav-label>{settingsNavItem.label}</span>
+        </a>
+      </div>
+    </Fragment>
+  </RLADashboardSidebar>
+
+  <RLADashboardPanel>
+    <RLADashboardNavbar slot="header" title="Settings" icon="i-lucide-settings">
+      <Fragment slot="left">
+        <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>Settings</h1>
+      </Fragment>
+      <Fragment slot="right">
+        <RLASearch />
+        <RLAButton variant="ghost" color="neutral" square leadingIcon="i-lucide-bell" aria-label="Notifications" />
+        <RLAAvatar src="https://i.pravatar.cc/40?u=admin" size="sm" class="cursor-pointer" />
+      </Fragment>
+    </RLADashboardNavbar>
+
+    <div slot="body" class="flex flex-col gap-6">
+      <RLADashboardToolbar>
+        <Fragment slot="left" />
+        <Fragment slot="right">
+          <RLAButton variant="solid" color="primary">Save Settings</RLAButton>
+        </Fragment>
+      </RLADashboardToolbar>
+
+      <div class="flex-1 overflow-y-auto min-h-0 max-w-3xl mx-auto space-y-8">
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-xl font-semibold mb-6">General Settings</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Default Locale</label>
+              <RLAInput type="text" value="en" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
+              <RLAInput type="text" value="Rimelight CMS" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Items per Page</label>
+              <RLAInput type="number" value="20" />
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-xl font-semibold mb-6">Editor Settings</h2>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-900">Auto-save Drafts</p>
+                <p class="text-sm text-gray-500">Automatically save drafts every 30 seconds</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer" checked />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-900">Require Approval for Publishing</p>
+                <p class="text-sm text-gray-500">All pages must be approved before publishing</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer" />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-900">Enable Version History</p>
+                <p class="text-sm text-gray-500">Keep track of all page versions</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer" checked />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-xl font-semibold mb-6">Block Settings</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Allowed Block Types</label>
+              <div class="flex flex-wrap gap-2">
+                {['ParagraphBlock', 'HeadingBlock', 'ImageBlock', 'CodeBlock', 'QuoteBlock', 'CalloutBlock', 'DialogueBlock', 'SceneBlock', 'ScriptBlock'].map((block) => (
+                  <span key={block} class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{block}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 border border-red-200">
+          <h2 class="text-xl font-semibold mb-6 text-red-700">Danger Zone</h2>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+              <div>
+                <p class="font-medium text-red-800">Delete All Drafts</p>
+                <p class="text-sm text-red-600">Permanently delete all unpublished drafts</p>
+              </div>
+              <RLAButton variant="outline" color="error">Delete Drafts</RLAButton>
+            </div>
+            <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+              <div>
+                <p class="font-medium text-red-800">Reset CMS</p>
+                <p class="text-sm text-red-600">Delete all pages, templates, and versions (cannot be undone)</p>
+              </div>
+              <RLAButton variant="solid" color="error">Reset CMS</RLAButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </RLADashboardPanel>
+</RLADashboardGroup>
+</DashboardLayout>
+
+<style is:global>
+  /* Hide text label when sidebar is collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
+    display: none;
+  }
+
+  /* Hide the logo icon too — only show the collapse toggle */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
+    display: none;
+  }
+
+  /* Center the collapse button in the header and remove side padding */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
+    margin: 0 auto;
+  }
+
+  /* Hide nav item text labels when collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
+    display: none;
+  }
+
+  /* Center nav icons when collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Center footer slot item when collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Dashboard container fills exactly 100% height of DashboardLayout viewport slot */
+  .fixed.inset-0.flex.overflow-hidden {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    overflow: hidden !important;
+  }
+
+  [data-dashboard-sidebar] {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  [data-dashboard-sidebar] > [data-slot="body"] {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    overflow-y: auto !important.
+  }
+
+  [data-dashboard-sidebar] > [data-slot="footer"] {
+    margin-top: auto !important.
+  }
+
+  [data-dashboard-panel] {
+    height: 100% !important.
+    min-height: 0 !important.
+    display: flex !important.
+    flex-direction: column !important.
+    flex: 1 1 0% !important.
+    min-width: 0 !important.
+    overflow: hidden !important.
+  }
+
+  [data-dashboard-panel] > [data-slot="body"] {
+    flex: 1 1 0% !important.
+    min-height: 0 !important.
+    overflow-y: auto !important.
+  }
+</style>

@@ -47,13 +47,13 @@ export class RimelightEditorLayout extends HTMLElement {
     })
 
     // Load initial blocks from attribute
-    const initialBlocksAttr = this.getAttribute('initial-blocks')
+    const initialBlocksAttr = this.getAttribute("initial-blocks")
     if (initialBlocksAttr) {
       try {
         const initialBlocks = JSON.parse(initialBlocksAttr)
         this.setInitialBlocks(initialBlocks)
       } catch (e) {
-        console.error('Failed to parse initial blocks:', e)
+        console.error("Failed to parse initial blocks:", e)
       }
     }
   }

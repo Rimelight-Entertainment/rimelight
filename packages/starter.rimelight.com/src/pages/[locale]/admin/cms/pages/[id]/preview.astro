@@ -1,8 +1,30 @@
 ---
 import { auth } from "@/auth/auth"
 import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
-import AppHeader from "@/components/app/AppHeader.astro"
-import AppFooter from "@/components/app/AppFooter.astro"
+import DashboardLayout from "@/layouts/DashboardLayout.astro"
+import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro"
+import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro"
+import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro"
+import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro"
+import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
+import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
+import RLASearch from "@rimelight/ui/components/search/RLASearch.astro"
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
+import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import { t } from "@rimelight/i18n"
+import { db } from "@/db"
+import { pages, pageDrafts } from "@/db/schema"
+import { eq } from "drizzle-orm"
+
+const cmsNavItems = [
+  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: "/admin/cms", id: "dashboard" },
+  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: "/admin/cms/templates", id: "templates" },
+  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: "/admin/cms/pages", id: "pages" },
+  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: "/admin/cms/versions", id: "versions" },
+]
+
+const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: "/admin/cms/settings", id: "settings" }
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 const id = Astro.params.id
@@ -11,15 +33,13 @@ if (!session) {
   return Astro.redirect("/auth/sign-in")
 }
 
-// Fetch page data
-const pageResponse = await fetch(`${Astro.site}/api/cms/pages/${id}`, {
-  headers: {
-    Cookie: Astro.request.headers.get("cookie") || ""
-  }
-})
-const { page, draft } = await pageResponse.json()
+// Fetch page data directly from DB
+const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
+if (!page[0]) return Astro.redirect('/admin/cms/pages')
 
-const content = draft?.content ? JSON.parse(draft.content) : JSON.parse(page.content)
+const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id)).limit(1)
+
+const content = draft[0]?.content ? JSON.parse(draft[0].content) : JSON.parse(page[0].content)
 const userSession = session
   ? {
       userId: session.user.id,
@@ -29,30 +49,165 @@ const userSession = session
   : undefined
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Preview: {page.title}</title>
-  </head>
-  <body>
-    <AppHeader />
-    <main class="max-w-4xl mx-auto py-12 px-4">
-      <div class="mb-6">
-        <a href={`/admin/cms/pages/${id}/edit`} class="text-blue-600 hover:underline">← Back to Editor</a>
-      </div>
-      
-      <div class="bg-blue-50 border border-blue-200 p-4 rounded mb-6">
-        <p class="text-sm text-blue-800">Preview Mode - This is how the page will appear to readers</p>
-      </div>
+<DashboardLayout title={`Preview: ${page[0].title}`} description="Preview CMS page" noindex={true}>
+  <RLADashboardGroup>
+  <RLADashboardSidebar side="left" collapsible>
+    <Fragment slot="header">
+      <RLAIcon name="i-lucide-file-stack" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
+      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
+      <RLADashboardSidebarCollapse side="left" class="shrink-0" />
+    </Fragment>
 
-      <PageRenderer 
-        blocks={content.blocks || []} 
-        session={userSession} 
-        locale="en"
-        class="prose prose-lg max-w-none"
-      />
-    </main>
-    <AppFooter />
-  </body>
-</html>
+    <nav class="flex flex-col gap-1" data-dashboard-nav-container>
+      {cmsNavItems.map((item) => (
+        <a
+          href={item.href}
+          data-dashboard-nav
+          data-dashboard-section={item.id}
+          class={
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors " +
+            (item.id === "pages"
+              ? "bg-muted text-highlighted"
+              : "text-default hover:text-highlighted hover:bg-muted")
+          }
+        >
+          <RLAIcon name={item.icon} class="size-5 shrink-0" />
+          <span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <Fragment slot="footer">
+      <div class="w-full" data-dashboard-nav-container>
+        <a
+          href={settingsNavItem.href}
+          data-dashboard-nav
+          data-dashboard-section={settingsNavItem.id}
+          class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-default hover:text-highlighted hover:bg-muted transition-colors w-full"
+        >
+          <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
+          <span class="truncate flex-1" data-dashboard-nav-label>{settingsNavItem.label}</span>
+        </a>
+      </div>
+    </Fragment>
+  </RLADashboardSidebar>
+
+  <RLADashboardPanel>
+    <RLADashboardNavbar slot="header" title={`Preview: ${page[0].title}`} icon="i-lucide-eye">
+      <Fragment slot="left">
+        <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>Preview: {page[0].title}</h1>
+      </Fragment>
+      <Fragment slot="right">
+        <RLASearch />
+        <RLAButton variant="ghost" color="neutral" square leadingIcon="i-lucide-bell" aria-label="Notifications" />
+        <RLAAvatar src="https://i.pravatar.cc/40?u=admin" size="sm" class="cursor-pointer" />
+      </Fragment>
+    </RLADashboardNavbar>
+
+    <div slot="body" class="flex flex-col gap-6">
+      <RLADashboardToolbar>
+        <Fragment slot="left" />
+        <Fragment slot="right">
+          <a href={`/admin/cms/pages/${id}/edit`} class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">← Back to Editor</a>
+        </Fragment>
+      </RLADashboardToolbar>
+
+      <div class="flex-1 overflow-y-auto min-h-0 max-w-4xl mx-auto p-6">
+        <div class="bg-blue-50 border border-blue-200 p-4 rounded mb-6">
+          <p class="text-sm text-blue-800">Preview Mode - This is how the page will appear to readers</p>
+        </div>
+
+        <PageRenderer 
+          blocks={content.blocks || []} 
+          session={userSession} 
+          locale="en"
+          class="prose prose-lg max-w-none"
+        />
+      </div>
+    </div>
+  </RLADashboardPanel>
+</RLADashboardGroup>
+</DashboardLayout>
+
+<style is:global>
+  /* Hide text label when sidebar is collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
+    display: none;
+  }
+
+  /* Hide the logo icon too — only show the collapse toggle */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
+    display: none;
+  }
+
+  /* Center the collapse button in the header and remove side padding */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
+    margin: 0 auto;
+  }
+
+  /* Hide nav item text labels when collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
+    display: none;
+  }
+
+  /* Center nav icons when collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Center footer slot item when collapsed */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Dashboard container fills exactly 100% height of DashboardLayout viewport slot */
+  .fixed.inset-0.flex.overflow-hidden {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    overflow: hidden !important.
+  }
+
+  [data-dashboard-sidebar] {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  [data-dashboard-sidebar] > [data-slot="body"] {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    overflow-y: auto !important.
+  }
+
+  [data-dashboard-sidebar] > [data-slot="footer"] {
+    margin-top: auto !important;
+  }
+
+  [data-dashboard-panel] {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important.
+    flex: 1 1 0% !important.
+    min-width: 0 !important.
+    overflow: hidden !important.
+  }
+
+  [data-dashboard-panel] > [data-slot="body"] {
+    flex: 1 1 0% !important.
+    min-height: 0 !important.
+    overflow-y: auto !important.
+  }
+</style>

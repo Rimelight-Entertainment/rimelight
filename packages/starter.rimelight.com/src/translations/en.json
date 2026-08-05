@@ -316,5 +316,13 @@
     "section_cta_description": "Explore our open source projects and get in touch.",
     "section_cta_view-on-github": "View on GitHub",
     "section_cta_learn-how": "Learn How"
+  },
+  "cms": {
+    "nav_dashboard": "Dashboard",
+    "nav_templates": "Templates",
+    "nav_pages": "Pages",
+    "nav_versions": "Versions",
+    "nav_settings": "Settings",
+    "sidebar_app_name": "CMS Admin"
   }
 }

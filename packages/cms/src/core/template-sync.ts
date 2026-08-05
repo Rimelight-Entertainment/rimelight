@@ -63,7 +63,7 @@ function mergeBlockProps(
   templateProps: any,
   templatedProps?: boolean | string[]
 ) {
-  if (templatedProps === true) return templateProps
+  if (templatedProps === true) return { ...templateProps }
   if (Array.isArray(templatedProps)) {
     const updated = { ...existingProps }
     for (const key of templatedProps) {
@@ -71,5 +71,5 @@ function mergeBlockProps(
     }
     return updated
   }
-  return existingProps
+  return { ...existingProps, ...templateProps }
 }

@@ -10,7 +10,8 @@ export class RimelightContentEditable extends HTMLElement {
 
     this.readOnly = this.hasAttribute("read-only")
     this.editorEl = document.createElement("div")
-    this.editorEl.className = "cms-contenteditable min-h-[60px] p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    this.editorEl.className =
+      "cms-contenteditable min-h-[60px] p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
     this.editorEl.contentEditable = this.readOnly ? "false" : "true"
 
     this.appendChild(this.editorEl)
@@ -35,7 +36,7 @@ export class RimelightContentEditable extends HTMLElement {
 
   private handleInput() {
     if (this.internalChange) return
-    
+
     const updated = this.getNodes()
     this.dispatchEvent(
       new CustomEvent("nodes-change", { detail: { nodes: updated }, bubbles: true })
@@ -50,7 +51,7 @@ export class RimelightContentEditable extends HTMLElement {
 
       const range = selection.getRangeAt(0)
       const textBefore = range.startContainer.textContent?.slice(0, range.startOffset) || ""
-      
+
       // Markdown-style shortcuts
       if (textBefore.endsWith("**")) {
         e.preventDefault()
@@ -83,7 +84,7 @@ export class RimelightContentEditable extends HTMLElement {
     e.preventDefault()
     const text = e.clipboardData?.getData("text/plain") || ""
     const html = e.clipboardData?.getData("text/html") || ""
-    
+
     if (html) {
       // Clean HTML and paste as plain text to avoid security issues
       const cleanText = this.stripHtml(html)
@@ -124,14 +125,16 @@ export class RimelightContentEditable extends HTMLElement {
           if (node.marks?.includes("italic")) str = `<em>${str}</em>`
           if (node.marks?.includes("underline")) str = `<u>${str}</u>`
           if (node.marks?.includes("strikethrough")) str = `<s>${str}</s>`
-          if (node.marks?.includes("code")) str = `<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">${str}</code>`
+          if (node.marks?.includes("code"))
+            str = `<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">${str}</code>`
           return str
         }
         if (node.type === "link") {
-          const linkText = node.children && node.children.length > 0 
-            ? this.renderNodesToHtml(node.children)
-            : escapeHtml(node.url)
-          const target = node.openInNewTab ? '_blank' : '_self'
+          const linkText =
+            node.children && node.children.length > 0
+              ? this.renderNodesToHtml(node.children)
+              : escapeHtml(node.url)
+          const target = node.openInNewTab ? "_blank" : "_self"
           return `<a href="${escapeHtml(node.url)}" target="${target}" rel="noopener noreferrer" class="text-blue-600 hover:underline">${linkText}</a>`
         }
         if (node.type === "page_mention") {
@@ -157,7 +160,7 @@ export class RimelightContentEditable extends HTMLElement {
 
       if (node.nodeType === Node.ELEMENT_NODE) {
         const el = node as HTMLElement
-        
+
         // Handle links
         if (el.tagName === "A") {
           const href = el.getAttribute("href") || ""
@@ -188,7 +191,7 @@ export class RimelightContentEditable extends HTMLElement {
         // Handle formatting (bold, italic, etc.)
         const tagName = el.tagName.toLowerCase()
         const marks: Array<"bold" | "italic" | "underline" | "strikethrough" | "code"> = []
-        
+
         if (tagName === "strong" || tagName === "b") marks.push("bold")
         if (tagName === "em" || tagName === "i") marks.push("italic")
         if (tagName === "u") marks.push("underline")
@@ -196,9 +199,9 @@ export class RimelightContentEditable extends HTMLElement {
         if (tagName === "code") marks.push("code")
 
         const children = this.parseChildrenToNodes(el)
-        
+
         // Apply marks to text children
-        children.forEach(child => {
+        children.forEach((child) => {
           if (child.type === "text" && marks.length > 0) {
             nodes.push({ ...child, marks: [...(child.marks || []), ...marks] })
           } else {
@@ -214,7 +217,7 @@ export class RimelightContentEditable extends HTMLElement {
 
   private parseChildrenToNodes(el: HTMLElement): InlineNode[] {
     const nodes: InlineNode[] = []
-    Array.from(el.childNodes).forEach(child => {
+    Array.from(el.childNodes).forEach((child) => {
       if (child.nodeType === Node.TEXT_NODE) {
         const text = child.textContent || ""
         if (text.trim()) {
@@ -224,7 +227,7 @@ export class RimelightContentEditable extends HTMLElement {
         // Simple recursive parsing for nested elements
         const childEl = child as HTMLElement
         const tagName = childEl.tagName.toLowerCase()
-        
+
         if (tagName === "strong" || tagName === "b") {
           const text = childEl.textContent || ""
           if (text) nodes.push({ type: "text", text, marks: ["bold"] })

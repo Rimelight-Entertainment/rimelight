@@ -51,5 +51,13 @@
   },
   "page_auth_sign-up": {
     "auth_newsletter_label": "Inscreva-se em nossa newsletter. Você pode cancelar a inscrição a qualquer momento."
+  },
+  "cms": {
+    "nav_dashboard": "Painel",
+    "nav_templates": "Modelos",
+    "nav_pages": "Páginas",
+    "nav_versions": "Versões",
+    "nav_settings": "Configurações",
+    "sidebar_app_name": "Admin CMS"
   }
 }

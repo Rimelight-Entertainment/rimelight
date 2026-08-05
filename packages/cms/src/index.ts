@@ -6,13 +6,13 @@ export * from "./core/types/templates"
 export * from "./core/types/versioning"
 
 // Re-export specific types for convenience
-export type { 
-  TimeOfDay, 
-  Setting, 
+export type {
+  TimeOfDay,
+  Setting,
   Transition,
   ScriptBlockProps,
   SceneBlockProps,
-  DialogueBlockProps 
+  DialogueBlockProps
 } from "./core/types/blocks"
 
 // Core Services & Registries

@@ -54,7 +54,7 @@ export class LockManager {
 
   private startHeartbeat(userId: string): void {
     this.stopHeartbeat()
-    this.heartbeatInterval = window.setInterval(async () => {
+    this.heartbeatInterval = setInterval(async () => {
       try {
         await fetch(`/api/cms/pages/${this.pageId}/lock/heartbeat`, {
           method: "POST",
@@ -64,7 +64,7 @@ export class LockManager {
       } catch {
         // Silently retry on next heartbeat interval
       }
-    }, this.heartbeatMs)
+    }, this.heartbeatMs) as unknown as number
   }
 
   stopHeartbeat(): void {

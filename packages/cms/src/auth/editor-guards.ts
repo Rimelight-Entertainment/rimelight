@@ -47,6 +47,15 @@ export function validateServerBlockPayload(
     return { valid: false, reason: "Forbidden: One or more templated blocks were removed." }
   }
 
+  for (let i = 0; i < existingTemplated.length; i++) {
+    if (
+      existingTemplated[i].id !== incomingTemplated[i].id ||
+      existingTemplated[i].type !== incomingTemplated[i].type
+    ) {
+      return { valid: false, reason: "Forbidden: Reordering of templated blocks is forbidden." }
+    }
+  }
+
   for (const existingBlock of existingTemplated) {
     const incomingBlock = incomingTemplated.find(
       (b) => b.type === existingBlock.type && b.id === existingBlock.id

@@ -7,33 +7,43 @@ describe("template-sync-worker", () => {
     // Simulate processing 100 pages in batches
     const batchSize = 10
     const totalPages = 100
-    
+
     let processedCount = 0
-    
+
     // Simulate background worker processing batches
     for (let i = 0; i < totalPages; i += batchSize) {
       const batch = Array.from({ length: Math.min(batchSize, totalPages - i) }, (_, idx) => ({
         id: `page-${i + idx}`,
         templateVersion: 1,
         blocks: [
-          { id: "anchor-1", type: "SectionBlock", isTemplated: true, props: { title: "Old Header" } }
+          {
+            id: "anchor-1",
+            type: "SectionBlock",
+            isTemplated: true,
+            props: { title: "Old Header" }
+          }
         ]
       }))
-      
+
       // Process batch
-      batch.forEach(page => {
+      batch.forEach((page) => {
         const newTemplateBlocks = [
-          { id: "anchor-1", type: "SectionBlock", isTemplated: true, props: { title: "New Header" } }
+          {
+            id: "anchor-1",
+            type: "SectionBlock",
+            isTemplated: true,
+            props: { title: "New Header" }
+          }
         ]
         page.blocks = mergeTemplateBlocks(page.blocks, newTemplateBlocks)
         page.templateVersion = 2
         processedCount++
       })
-      
+
       // Small delay to simulate async processing
-      await new Promise(resolve => setTimeout(resolve, 1))
+      await new Promise((resolve) => setTimeout(resolve, 1))
     }
-    
+
     expect(processedCount).toBe(totalPages)
   })
 
@@ -121,15 +131,15 @@ describe("template-sync-worker", () => {
 
   it("respects property-level locks during template sync", () => {
     const existingPageBlocks: BaseBlock[] = [
-      { 
-        id: "anchor-1", 
-        type: "CalloutBlock", 
+      {
+        id: "anchor-1",
+        type: "CalloutBlock",
         isTemplated: true,
         templatedProps: ["disclaimer"],
-        props: { 
+        props: {
           disclaimer: "Legal Disclaimer",
           text: "Editable content"
-        } 
+        }
       }
     ]
 
@@ -139,7 +149,7 @@ describe("template-sync-worker", () => {
         type: "CalloutBlock",
         isTemplated: true,
         templatedProps: ["disclaimer"],
-        props: { 
+        props: {
           disclaimer: "Updated Legal Disclaimer",
           text: "New template text"
         }
@@ -156,14 +166,12 @@ describe("template-sync-worker", () => {
 
   it("handles complex nested structures during sync", () => {
     const existingPageBlocks: BaseBlock[] = [
-      { 
-        id: "anchor-1", 
-        type: "SectionBlock", 
+      {
+        id: "anchor-1",
+        type: "SectionBlock",
         isTemplated: true,
         props: { title: "Section 1" },
-        children: [
-          { id: "custom-1", type: "ParagraphBlock", props: { text: "User content" } }
-        ]
+        children: [{ id: "custom-1", type: "ParagraphBlock", props: { text: "User content" } }]
       }
     ]
 
@@ -174,7 +182,12 @@ describe("template-sync-worker", () => {
         isTemplated: true,
         props: { title: "Updated Section 1" },
         children: [
-          { id: "anchor-child-1", type: "ParagraphBlock", isTemplated: true, props: { text: "Template child" } }
+          {
+            id: "anchor-child-1",
+            type: "ParagraphBlock",
+            isTemplated: true,
+            props: { text: "Template child" }
+          }
         ]
       }
     ]

@@ -1,7 +1,14 @@
 import { Hono } from "hono"
 import { auth } from "@/auth/auth"
 import { db } from "@/db"
-import { pages, pageDrafts, pageDraftLocks, pageTemplates, pageVersions, pageVersionApprovals } from "@/db/schema"
+import {
+  pages,
+  pageDrafts,
+  pageDraftLocks,
+  pageTemplates,
+  pageVersions,
+  pageVersionApprovals
+} from "@/db/schema"
 import { eq, and, desc, isNull } from "drizzle-orm"
 import { validateServerBlockPayload } from "@rimelight/cms"
 import type { BaseBlock } from "@rimelight/cms"
@@ -17,13 +24,17 @@ async function checkApprovalRequirements(pageId: string, userId: string, userRol
   }
 
   // Get template approval rules
-  const template = await db.select().from(pageTemplates).where(eq(pageTemplates.id, page[0].templateId!)).limit(1)
+  const template = await db
+    .select()
+    .from(pageTemplates)
+    .where(eq(pageTemplates.id, page[0].templateId))
+    .limit(1)
   if (!template[0]) {
     return { canPublish: true, reason: null }
   }
 
   const approvalRules = template[0].approvalRules || { allowSelfApproval: true, minApprovals: 1 }
-  const minApprovals = approvalRules.minApprovals || 1
+  const minApprovals = approvalRules.minApprovals ?? 1
 
   // Get existing approvals for this page's latest pending version
   const lastVersion = await db
@@ -44,29 +55,37 @@ async function checkApprovalRequirements(pageId: string, userId: string, userRol
 
   // Check if user has required role for approval
   if (approvalRules.requiredRolesForApproval && approvalRules.requiredRolesForApproval.length > 0) {
-    const hasRequiredRole = userRoles.some(role => approvalRules.requiredRolesForApproval!.includes(role))
+    const hasRequiredRole = userRoles.some((role) =>
+      approvalRules.requiredRolesForApproval!.includes(role)
+    )
     if (!hasRequiredRole) {
       return { canPublish: false, reason: "User does not have required role for approval" }
     }
   }
 
   // Check self-approval restriction
-  const userAlreadyApproved = existingApprovals.some(a => a.userId === userId)
+  const userAlreadyApproved = existingApprovals.some((a) => a.userId === userId)
   if (!approvalRules.allowSelfApproval && userAlreadyApproved) {
     // Need at least one other approval
-    const otherApprovals = existingApprovals.filter(a => a.userId !== userId)
+    const otherApprovals = existingApprovals.filter((a) => a.userId !== userId)
     if (otherApprovals.length < minApprovals) {
-      return { canPublish: false, reason: `Self-approval not allowed. Need ${minApprovals} distinct approvers.` }
+      return {
+        canPublish: false,
+        reason: `Self-approval not allowed. Need ${minApprovals} distinct approvers.`
+      }
     }
   }
 
   // Check minimum approval count
-  const effectiveApprovals = approvalRules.allowSelfApproval 
-    ? existingApprovals.length 
-    : existingApprovals.filter(a => a.userId !== userId).length
+  const effectiveApprovals = approvalRules.allowSelfApproval
+    ? existingApprovals.length
+    : existingApprovals.filter((a) => a.userId !== userId).length
 
   if (effectiveApprovals < minApprovals) {
-    return { canPublish: false, reason: `Need ${minApprovals} approvals, currently have ${effectiveApprovals}` }
+    return {
+      canPublish: false,
+      reason: `Need ${minApprovals} approvals, currently have ${effectiveApprovals}`
+    }
   }
 
   return { canPublish: true, reason: null }
@@ -125,6 +144,36 @@ cms.delete("/templates/:id", async (c) => {
   return c.json({ success: true })
 })
 
+// Versions
+cms.get("/versions", async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+
+  const versionsList = await db
+    .select()
+    .from(pageVersions)
+    .orderBy(desc(pageVersions.createdAt))
+    .limit(50)
+
+  // Join with pages to get page title/slug
+  const versionsWithPage = await Promise.all(
+    versionsList.map(async (version) => {
+      const page = await db
+        .select({ title: pages.title, slug: pages.slug })
+        .from(pages)
+        .where(eq(pages.id, version.pageId))
+        .limit(1)
+      return {
+        ...version,
+        pageTitle: page[0]?.title || "Unknown Page",
+        slug: page[0]?.slug || ""
+      }
+    })
+  )
+
+  return c.json({ versions: versionsWithPage })
+})
+
 // Pages
 cms.get("/pages", async (c) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers })
@@ -137,9 +186,9 @@ cms.get("/pages", async (c) => {
     .orderBy(desc(pages.createdAt))
 
   // Ensure content is returned as an object, not a string
-  const pagesData = pagesList.map(page => ({
+  const pagesData = pagesList.map((page) => ({
     ...page,
-    content: typeof page.content === 'string' ? JSON.parse(page.content) : page.content
+    content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
   }))
 
   return c.json({ pages: pagesData })
@@ -159,13 +208,16 @@ cms.get("/pages/:id", async (c) => {
   // Ensure content is returned as an object, not a string
   const pageData = {
     ...page[0],
-    content: typeof page[0].content === 'string' ? JSON.parse(page[0].content) : page[0].content
+    content: typeof page[0].content === "string" ? JSON.parse(page[0].content) : page[0].content
   }
 
-  const draftData = draft[0] ? {
-    ...draft[0],
-    content: typeof draft[0].content === 'string' ? JSON.parse(draft[0].content) : draft[0].content
-  } : null
+  const draftData = draft[0]
+    ? {
+        ...draft[0],
+        content:
+          typeof draft[0].content === "string" ? JSON.parse(draft[0].content) : draft[0].content
+      }
+    : null
 
   return c.json({ page: pageData, draft: draftData })
 })
@@ -210,15 +262,15 @@ cms.put("/pages/:id", async (c) => {
 
   // Validate block changes
   if (body.content?.blocks) {
-    const existingContent = typeof existingPage[0].content === 'string' 
-      ? JSON.parse(existingPage[0].content) 
-      : existingPage[0].content
-    const incomingContent = typeof body.content === 'string' 
-      ? JSON.parse(body.content) 
-      : body.content
-    
+    const existingContent =
+      typeof existingPage[0].content === "string"
+        ? JSON.parse(existingPage[0].content)
+        : existingPage[0].content
+    const incomingContent =
+      typeof body.content === "string" ? JSON.parse(body.content) : body.content
+
     const validation = validateServerBlockPayload(
-      existingContent.blocks || [], 
+      existingContent.blocks || [],
       incomingContent.blocks || []
     )
     if (!validation.valid) {
@@ -258,15 +310,15 @@ cms.post("/pages/:id/draft", async (c) => {
 
   // Validate block changes
   if (body.content?.blocks) {
-    const existingContent = typeof existingPage[0].content === 'string' 
-      ? JSON.parse(existingPage[0].content) 
-      : existingPage[0].content
-    const incomingContent = typeof body.content === 'string' 
-      ? JSON.parse(body.content) 
-      : body.content
-    
+    const existingContent =
+      typeof existingPage[0].content === "string"
+        ? JSON.parse(existingPage[0].content)
+        : existingPage[0].content
+    const incomingContent =
+      typeof body.content === "string" ? JSON.parse(body.content) : body.content
+
     const validation = validateServerBlockPayload(
-      existingContent.blocks || [], 
+      existingContent.blocks || [],
       incomingContent.blocks || []
     )
     if (!validation.valid) {
@@ -445,19 +497,25 @@ cms.post("/versions/:versionId/approve", async (c) => {
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const versionId = c.req.param("versionId")
-  
+
   // Check if version exists
-  const version = await db.select().from(pageVersions).where(eq(pageVersions.id, versionId)).limit(1)
+  const version = await db
+    .select()
+    .from(pageVersions)
+    .where(eq(pageVersions.id, versionId))
+    .limit(1)
   if (!version[0]) return c.json({ error: "Version not found" }, 404)
 
   // Check if user already approved
   const existingApproval = await db
     .select()
     .from(pageVersionApprovals)
-    .where(and(
-      eq(pageVersionApprovals.versionId, versionId),
-      eq(pageVersionApprovals.userId, session.user.id)
-    ))
+    .where(
+      and(
+        eq(pageVersionApprovals.versionId, versionId),
+        eq(pageVersionApprovals.userId, session.user.id)
+      )
+    )
     .limit(1)
 
   if (existingApproval[0]) {
@@ -481,7 +539,7 @@ cms.post("/versions/:versionId/approve", async (c) => {
   await db
     .update(pageVersions)
     .set({
-      approvedBy: allApprovals.map(a => a.userId),
+      approvedBy: allApprovals.map((a) => a.userId),
       approvedAt: new Date()
     })
     .where(eq(pageVersions.id, versionId))

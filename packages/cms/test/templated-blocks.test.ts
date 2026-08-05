@@ -85,7 +85,7 @@ describe("templated-blocks", () => {
         type: "CalloutBlock",
         isTemplated: true,
         templatedProps: ["disclaimer"],
-        props: { 
+        props: {
           disclaimer: "Official disclaimer",
           text: "Editable text"
         }
@@ -97,7 +97,7 @@ describe("templated-blocks", () => {
         type: "CalloutBlock",
         isTemplated: true,
         templatedProps: ["disclaimer"],
-        props: { 
+        props: {
           disclaimer: "Modified disclaimer",
           text: "Editable text"
         }
@@ -116,7 +116,7 @@ describe("templated-blocks", () => {
         type: "CalloutBlock",
         isTemplated: true,
         templatedProps: ["disclaimer"],
-        props: { 
+        props: {
           disclaimer: "Official disclaimer",
           text: "Original text"
         }
@@ -128,7 +128,7 @@ describe("templated-blocks", () => {
         type: "CalloutBlock",
         isTemplated: true,
         templatedProps: ["disclaimer"],
-        props: { 
+        props: {
           disclaimer: "Official disclaimer",
           text: "Modified text"
         }
