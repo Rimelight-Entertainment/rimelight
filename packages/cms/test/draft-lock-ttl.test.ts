@@ -7,7 +7,7 @@ describe("draft-lock-ttl", () => {
   beforeEach(() => {
     activeLock = null
 
-    globalThis.fetch = (async (url: string | URL | Request, options?: RequestInit) => {
+    globalThis.fetch = async (url: string | URL | Request, options?: RequestInit) => {
       const urlStr = typeof url === "string" ? url : url instanceof URL ? url.href : url.url
       const body = typeof options?.body === "string" ? JSON.parse(options.body) : {}
 
@@ -59,7 +59,7 @@ describe("draft-lock-ttl", () => {
       }
 
       return new Response(JSON.stringify({ error: "Not found" }), { status: 404 })
-    })
+    }
   })
 
   it("verifies lock checkout expiration after TTL", async () => {

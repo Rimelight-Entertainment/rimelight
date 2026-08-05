@@ -1,32 +1,12 @@
 ---
 import { auth } from "@/auth/auth"
-import DashboardLayout from "@/layouts/DashboardLayout.astro"
-import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro"
-import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro"
-import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro"
-import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro"
-import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
-import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
-import RLASearch from "@rimelight/ui/components/search/RLASearch.astro"
-import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
-import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro"
+import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
-import RLATextarea from "@rimelight/ui/components/textarea/RLATextarea.astro"
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro"
-import { t } from "@rimelight/i18n"
 import { db } from "@/db"
 import { pageTemplates } from "@/db/schema"
 import { desc } from "drizzle-orm"
-
-const cmsNavItems = [
-  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: "/admin/cms", id: "dashboard" },
-  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: "/admin/cms/templates", id: "templates" },
-  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: "/admin/cms/pages", id: "pages" },
-  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: "/admin/cms/versions", id: "versions" },
-]
-
-const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: "/admin/cms/settings", id: "settings" }
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
@@ -34,127 +14,76 @@ if (!session) {
   return Astro.redirect("/auth/sign-in")
 }
 
-// Fetch templates directly from DB
 const templates = await db
   .select()
   .from(pageTemplates)
   .orderBy(desc(pageTemplates.createdAt))
+
+const templateOptions = [
+  { label: "Blank Page", value: "" },
+  ...templates.map((t: any) => ({ label: `${t.title} (${t.pageType})`, value: t.id }))
+]
 ---
 
-<DashboardLayout title="Create Page" description="Create a new CMS page" noindex={true}>
-  <RLADashboardGroup>
-  <RLADashboardSidebar side="left" collapsible>
-    <Fragment slot="header">
-      <RLAIcon name="i-lucide-file-stack" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
-      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
-      <RLADashboardSidebarCollapse side="left" class="shrink-0" />
-    </Fragment>
+<CMSDashboardLayout title="Create Page" description="Create a new CMS page" activeSection="pages">
+  <Fragment slot="toolbar-right">
+    <RLAButton href="/admin/cms/pages" variant="outline" color="neutral" size="sm">
+      Cancel
+    </RLAButton>
+    <RLAButton variant="solid" color="success" size="sm" leadingIcon="i-lucide-plus" type="submit" form="page-form">
+      Create & Edit
+    </RLAButton>
+  </Fragment>
 
-    <nav class="flex flex-col gap-1" data-dashboard-nav-container>
-      {cmsNavItems.map((item) => (
-        <a
-          href={item.href}
-          data-dashboard-nav
-          data-dashboard-section={item.id}
-          class={
-            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors " +
-            (item.id === "pages"
-              ? "bg-muted text-highlighted"
-              : "text-default hover:text-highlighted hover:bg-muted")
-          }
-        >
-          <RLAIcon name={item.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
-        </a>
-      ))}
-    </nav>
-
-    <Fragment slot="footer">
-      <div class="w-full" data-dashboard-nav-container>
-        <a
-          href={settingsNavItem.href}
-          data-dashboard-nav
-          data-dashboard-section={settingsNavItem.id}
-          class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-default hover:text-highlighted hover:bg-muted transition-colors w-full"
-        >
-          <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{settingsNavItem.label}</span>
-        </a>
+  <div class="max-w-3xl mx-auto space-y-6">
+    <form id="page-form" class="bg-white p-6 rounded-lg shadow space-y-6">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
+          <RLAInput name="slug" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+          <RLASelect
+            name="type"
+            placeholder="Select or create page type..."
+            createItem={true}
+            items={[
+              { label: "Blog Post", value: "blog" },
+              { label: "Wiki Page", value: "wiki" },
+              { label: "Documentation", value: "doc" },
+              { label: "Announcement", value: "announcement" }
+            ]}
+            required
+          />
+        </div>
       </div>
-    </Fragment>
-  </RLADashboardSidebar>
 
-  <RLADashboardPanel>
-    <RLADashboardNavbar slot="header" title="Create Page" icon="i-lucide-file-plus">
-      <Fragment slot="left">
-        <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>Create Page</h1>
-      </Fragment>
-      <Fragment slot="right">
-        <RLASearch />
-        <RLAButton variant="ghost" color="neutral" square leadingIcon="i-lucide-bell" aria-label="Notifications" />
-        <RLAAvatar src="https://i.pravatar.cc/40?u=admin" size="sm" class="cursor-pointer" />
-      </Fragment>
-    </RLADashboardNavbar>
-
-    <div slot="body" class="flex flex-col gap-6">
-      <RLADashboardToolbar>
-        <Fragment slot="left" />
-        <Fragment slot="right">
-          <a href="/admin/cms/pages" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Cancel</a>
-          <RLAButton variant="solid" color="success" leadingIcon="i-lucide-plus">
-            Create & Edit
-          </RLAButton>
-        </Fragment>
-      </RLADashboardToolbar>
-
-      <div class="flex-1 overflow-y-auto min-h-0 max-w-3xl mx-auto space-y-6">
-        <form id="page-form" class="space-y-6">
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
-              <RLAInput name="slug" required />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
-              <RLASelect name="type" required>
-                <option value="blog">Blog Post</option>
-                <option value="wiki">Wiki Page</option>
-                <option value="doc">Documentation</option>
-                <option value="announcement">Announcement</option>
-              </RLASelect>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-            <RLAInput name="title" required />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Template</label>
-            <RLASelect name="templateId">
-              <option value="">Blank Page</option>
-              {templates.map((template: any) => (
-                <option value={template.id}>{template.title} ({template.pageType})</option>
-              ))}
-            </RLASelect>
-          </div>
-        </form>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+        <RLAInput name="title" required />
       </div>
-    </div>
-  </RLADashboardPanel>
-</RLADashboardGroup>
-</DashboardLayout>
 
-<style is:inline>
-  @import url("@rimelight/cms/client/styles/cms-editor.css");
-</style>
-<script>
-  const form = document.getElementById('page-form');
-  
-  document.addEventListener('click', async (e) => {
-    const btn = e.target.closest('rla-button[variant="solid"][color="success"]');
-    if (btn && !btn.disabled) {
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Template</label>
+        <RLASelect
+          name="templateId"
+          placeholder="Select template..."
+          items={templateOptions}
+        />
+      </div>
+    </form>
+  </div>
+
+  <style is:inline slot="head">
+    @import url("@rimelight/cms/client/styles/cms-editor.css");
+  </style>
+  <script>
+    const form = document.getElementById('page-form') as HTMLFormElement | null;
+    
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
       const formData = new FormData(form);
       const data = {
         slug: formData.get('slug'),
@@ -175,7 +104,6 @@ const templates = await db
       };
 
       try {
-        btn.disabled = true;
         const response = await fetch('/api/cms/pages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -191,92 +119,7 @@ const templates = await db
         }
       } catch (error) {
         alert('Error creating page: Network error');
-      } finally {
-        btn.disabled = false;
       }
-    }
-  });
-</script>
-
-<style is:global>
-  /* Hide text label when sidebar is collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
-    display: none;
-  }
-
-  /* Hide the logo icon too — only show the collapse toggle */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
-    display: none;
-  }
-
-  /* Center the collapse button in the header and remove side padding */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
-    justify-content: center;
-    gap: 0;
-    padding: 0;
-  }
-
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
-    margin: 0 auto;
-  }
-
-  /* Hide nav item text labels when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
-    display: none;
-  }
-
-  /* Center nav icons when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* Center footer slot item when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* Dashboard container fills exactly 100% height of DashboardLayout viewport slot */
-  .fixed.inset-0.flex.overflow-hidden {
-    position: relative !important;
-    inset: auto !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    overflow: hidden !important;
-  }
-
-  [data-dashboard-sidebar] {
-    height: 100% !important;
-    min-height: 0 !important;
-  }
-
-  [data-dashboard-sidebar] > [data-slot="body"] {
-    flex: 1 1 0% !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-  }
-
-  [data-dashboard-sidebar] > [data-slot="footer"] {
-    margin-top: auto !important;
-  }
-
-  [data-dashboard-panel] {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 1 0% !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  [data-dashboard-panel] > [data-slot="body"] {
-    flex: 1 1 0% !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-  }
-</style>
+    });
+  </script>
+</CMSDashboardLayout>

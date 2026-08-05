@@ -12,9 +12,6 @@ api.post("/resend-verification", async (c) => {
     }
 
     // Generate a verification token and send email using better-auth
-    const acceptLanguage = c.req.header("accept-language")?.split(",")[0] || "en"
-    const locale = acceptLanguage.split("-")[0] // Convert "en-US" to "en"
-
     // Use better-auth's internal method to send verification email
     // This will generate a proper token and send it via the configured email service
     await auth.api.sendVerificationEmail({

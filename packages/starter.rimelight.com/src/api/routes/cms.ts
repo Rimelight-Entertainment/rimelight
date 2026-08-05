@@ -11,7 +11,6 @@ import {
 } from "@/db/schema"
 import { eq, and, desc, isNull } from "drizzle-orm"
 import { validateServerBlockPayload } from "@rimelight/cms"
-import type { BaseBlock } from "@rimelight/cms"
 
 const cms = new Hono()
 

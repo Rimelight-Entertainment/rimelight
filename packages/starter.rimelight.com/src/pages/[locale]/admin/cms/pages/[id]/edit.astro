@@ -1,29 +1,10 @@
 ---
 import { auth } from "@/auth/auth"
-import DashboardLayout from "@/layouts/DashboardLayout.astro"
-import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro"
-import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro"
-import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro"
-import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro"
-import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
-import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
-import RLASearch from "@rimelight/ui/components/search/RLASearch.astro"
-import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
-import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro"
+import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
-import { t } from "@rimelight/i18n"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
-
-const cmsNavItems = [
-  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: "/admin/cms", id: "dashboard" },
-  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: "/admin/cms/templates", id: "templates" },
-  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: "/admin/cms/pages", id: "pages" },
-  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: "/admin/cms/versions", id: "versions" },
-]
-
-const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: "/admin/cms/settings", id: "settings" }
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 const id = Astro.params.id
@@ -32,112 +13,40 @@ if (!session) {
   return Astro.redirect("/auth/sign-in")
 }
 
-// Fetch page data directly from DB
-const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
+const page = await db.select().from(pages).where(eq(pages.id, id!)).limit(1)
 if (!page[0]) return Astro.redirect('/admin/cms/pages')
 
-const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id)).limit(1)
+const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
 
 const content = draft[0]?.content 
   ? (typeof draft[0].content === 'string' ? JSON.parse(draft[0].content) : draft[0].content)
   : (typeof page[0].content === 'string' ? JSON.parse(page[0].content) : page[0].content)
 ---
 
-<DashboardLayout title={`Edit: ${page[0].title}`} description="Edit CMS page" noindex={true}>
-  <RLADashboardGroup>
-  <RLADashboardSidebar side="left" collapsible>
-    <Fragment slot="header">
-      <RLAIcon name="i-lucide-file-stack" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
-      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
-      <RLADashboardSidebarCollapse side="left" class="shrink-0" />
-    </Fragment>
+<CMSDashboardLayout title={`Edit: ${page[0].title}`} description="Edit CMS page" activeSection="pages">
+  <Fragment slot="toolbar-right">
+    <RLAButton href={`/admin/cms/pages/${id}/preview`} variant="outline" color="neutral" size="sm">
+      Preview
+    </RLAButton>
+    <RLAButton variant="solid" color="success" size="sm" id="publish-btn">
+      Publish
+    </RLAButton>
+  </Fragment>
 
-    <nav class="flex flex-col gap-1" data-dashboard-nav-container>
-      {cmsNavItems.map((item) => (
-        <a
-          href={item.href}
-          data-dashboard-nav
-          data-dashboard-section={item.id}
-          class={
-            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors " +
-            (item.id === "pages"
-              ? "bg-muted text-highlighted"
-              : "text-default hover:text-highlighted hover:bg-muted")
-          }
-        >
-          <RLAIcon name={item.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
-        </a>
-      ))}
-    </nav>
+  <div class="h-full overflow-hidden">
+    <rimelight-editor-layout page-id={id} initial-blocks={JSON.stringify(content.blocks || [])}></rimelight-editor-layout>
+  </div>
 
-    <Fragment slot="footer">
-      <div class="w-full" data-dashboard-nav-container>
-        <a
-          href={settingsNavItem.href}
-          data-dashboard-nav
-          data-dashboard-section={settingsNavItem.id}
-          class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-default hover:text-highlighted hover:bg-muted transition-colors w-full"
-        >
-          <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{settingsNavItem.label}</span>
-        </a>
-      </div>
-    </Fragment>
-  </RLADashboardSidebar>
+  <style is:inline slot="head">
+    @import url("@rimelight/cms/client/styles/cms-editor.css");
+  </style>
+  <script type="module" define:vars={{ pageId: id }}>
+    import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
+      defineCustomElements();
+    });
 
-  <RLADashboardPanel>
-    <RLADashboardNavbar slot="header" title={`Edit: ${page[0].title}`} icon="i-lucide-file-pen">
-      <Fragment slot="left">
-        <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>Edit: {page[0].title}</h1>
-      </Fragment>
-      <Fragment slot="right">
-        <RLASearch />
-        <RLAButton variant="ghost" color="neutral" square leadingIcon="i-lucide-bell" aria-label="Notifications" />
-        <RLAAvatar src="https://i.pravatar.cc/40?u=admin" size="sm" class="cursor-pointer" />
-      </Fragment>
-    </RLADashboardNavbar>
-
-    <div slot="body" class="flex flex-col gap-6">
-      <RLADashboardToolbar>
-        <Fragment slot="left" />
-        <Fragment slot="right">
-          <a href={`/admin/cms/pages/${id}/preview`} class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Preview</a>
-          <RLAButton variant="solid" color="success" id="publish-btn">Publish</RLAButton>
-        </Fragment>
-      </RLADashboardToolbar>
-
-      <div class="flex-1 overflow-hidden">
-        <rimelight-editor-layout page-id={id} initial-blocks={JSON.stringify(content.blocks || [])}></rimelight-editor-layout>
-      </div>
-    </div>
-  </RLADashboardPanel>
-</RLADashboardGroup>
-</DashboardLayout>
-
-<style is:inline>
-  @import url("@rimelight/cms/client/styles/cms-editor.css");
-</style>
-<script type="module">
-  import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
-    defineCustomElements();
-    
-    const editorLayout = document.querySelector('rimelight-editor-layout');
-    if (editorLayout) {
-      const initialBlocksAttr = editorLayout.getAttribute('initial-blocks');
-      if (initialBlocksAttr) {
-        try {
-          const initialBlocks = JSON.parse(initialBlocksAttr);
-        } catch (e) {
-          console.error('Failed to parse initial blocks:', e);
-        }
-      }
-    }
-  });
-
-  document.addEventListener('click', async (e) => {
-    const publishBtn = e.target.closest('#publish-btn');
-    if (publishBtn) {
+    document.getElementById('publish-btn')?.addEventListener('click', async () => {
+      const publishBtn = document.getElementById('publish-btn');
       const editorLayout = document.querySelector('rimelight-editor-layout');
       if (!editorLayout) { alert('Editor not loaded'); return; }
       const editorComponent = editorLayout.querySelector('#cms-editor-component');
@@ -146,98 +55,24 @@ const content = draft[0]?.content
       const content = { blocks, properties: {} };
       
       try {
-        publishBtn.disabled = true;
-        const response = await fetch(`/api/cms/pages/${id}/publish`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+        if (publishBtn) publishBtn.disabled = true;
+        const response = await fetch(`/api/cms/pages/${pageId}/publish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content, changeSummary: 'Published from editor' })
         });
-        if (response.ok) { alert('Page published successfully!'); window.location.href = '/admin/cms/pages'; }
-        else { const errorData = await response.json().catch(() => ({})); alert(`Failed to publish page: ${errorData.error || 'Unknown error'}`); }
-      } catch (error) { alert('Error publishing page: Network error'); }
-      finally { publishBtn.disabled = false; }
-    }
-  });
-</script>
-
-<style is:global>
-  /* Hide text label when sidebar is collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
-    display: none;
-  }
-
-  /* Hide the logo icon too — only show the collapse toggle */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
-    display: none;
-  }
-
-  /* Center the collapse button in the header and remove side padding */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
-    justify-content: center;
-    gap: 0;
-    padding: 0;
-  }
-
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
-    margin: 0 auto;
-  }
-
-  /* Hide nav item text labels when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
-    display: none;
-  }
-
-  /* Center nav icons when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* Center footer slot item when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* Dashboard container fills exactly 100% height of DashboardLayout viewport slot */
-  .fixed.inset-0.flex.overflow-hidden {
-    position: relative !important;
-    inset: auto !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    overflow: hidden !important;
-  }
-
-  [data-dashboard-sidebar] {
-    height: 100% !important;
-    min-height: 0 !important;
-  }
-
-  [data-dashboard-sidebar] > [data-slot="body"] {
-    flex: 1 1 0% !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-  }
-
-  [data-dashboard-sidebar] > [data-slot="footer"] {
-    margin-top: auto !important;
-  }
-
-  [data-dashboard-panel] {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 1 0% !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  [data-dashboard-panel] > [data-slot="body"] {
-    flex: 1 1 0% !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-  }
-</style>
+        if (response.ok) {
+          alert('Page published successfully!');
+          window.location.href = '/admin/cms/pages';
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          alert(`Failed to publish page: ${errorData.error || 'Unknown error'}`);
+        }
+      } catch (error) {
+        alert('Error publishing page: Network error');
+      } finally {
+        if (publishBtn) publishBtn.disabled = false;
+      }
+    });
+  </script>
+</CMSDashboardLayout>

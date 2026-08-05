@@ -2,227 +2,567 @@
 import { scv } from "css-variants"
 import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
-import type { SelectProps } from "./select"
+import type { SelectProps, SelectItem } from "./select"
 import selectTheme from "./select.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
-
+import RLAAvatar from "../avatar/RLAAvatar.astro"
 
 const select = scv(selectTheme)
 
 const {
   items = [],
-  value = "",
-  placeholder = "Select item...",
+  value,
+  defaultValue,
+  modelValue,
+  placeholder = "Select option...",
   disabled = false,
+  required = false,
   name,
+  form,
   label,
   size = "md",
-  color = "primary",
+  variant = "outline",
+  color = "neutral",
+  createItem = false,
+  searchInput = true,
+  multiple = false,
+  clear = false,
+  clearIcon = "x",
+  valueKey = "value",
+  labelKey = "label",
+  descriptionKey = "description",
+  filterFields = [labelKey],
+  ignoreFilter = false,
+  icon,
+  leadingIcon = icon,
+  trailingIcon = "chevronDown",
+  selectedIcon = "check",
+  loading = false,
+  loadingIcon = "loaderCircle",
+  avatar,
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as SelectProps
 
-const classes = resolveClasses(select, {
-  size
-}, useUi("select", uiProp), className);
+const activeValue = value ?? modelValue ?? defaultValue ?? (multiple ? [] : "")
 
-const normalizedItems = items.map(item => {
-  if (typeof item === "string") {
-    return { label: item, value: item }
+const classes = resolveClasses(
+  select,
+  {
+    size,
+    variant,
+    color,
+    disabled
+  },
+  useUi("select", uiProp),
+  className
+)
+
+// Helper to normalize items
+function normalizeItems(rawItems: SelectItem[]): any[] {
+  const result: any[] = []
+
+  function processItem(item: any) {
+    if (Array.isArray(item)) {
+      item.forEach(processItem)
+      return
+    }
+    if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
+      result.push({ [labelKey]: String(item), [valueKey]: String(item) })
+      return
+    }
+    if (item && typeof item === "object") {
+      const val = item[valueKey] !== undefined ? item[valueKey] : item[labelKey]
+      const lbl = item[labelKey] !== undefined ? item[labelKey] : item[valueKey]
+      result.push({
+        ...item,
+        [labelKey]: String(lbl ?? ""),
+        [valueKey]: String(val ?? "")
+      })
+    }
   }
-  return item
-})
 
-const selectedItem = normalizedItems.find(item => item.value === value)
-const initialLabel = selectedItem ? selectedItem.label : ""
+  rawItems.forEach(processItem)
+  return result
+}
+
+const normalizedItems = normalizeItems(items)
+
+// Determine initial display text
+let initialDisplayText = placeholder
+if (multiple && Array.isArray(activeValue) && activeValue.length > 0) {
+  initialDisplayText = activeValue
+    .map((v) => normalizedItems.find((i) => i[valueKey] === v)?.[labelKey] || v)
+    .join(", ")
+} else if (!multiple && activeValue !== undefined && activeValue !== null && activeValue !== "") {
+  const found = normalizedItems.find((i) => i[valueKey] === String(activeValue))
+  initialDisplayText = found ? found[labelKey] : String(activeValue)
+}
+
+const initialValueString = Array.isArray(activeValue) ? JSON.stringify(activeValue) : String(activeValue ?? "")
+const searchPlaceholder = typeof searchInput === "object" && searchInput.placeholder ? searchInput.placeholder : "Search..."
+const isSearchable = searchInput !== false
 ---
 
+{label && <label class={classes.label} data-slot="label">{label}</label>}
 
-
-{label && <label class={classes.label} data-slot="label" for={`rla-sel-native-${name}`}>{label}</label>}
-
-<!-- PATH A: Native customizable select -->
-<div class="rla-select-native-wrapper" data-slot="root" aria-hidden="false">
-  <select
-    id={`rla-sel-native-${name}`}
-    class={`rla-select-native ${classes.trigger}`}
-    name={name}
-    disabled={disabled}
-    data-slot="trigger"
-  >
-    {placeholder && <option value="" disabled selected={!value}>{placeholder}</option>}
-    {normalizedItems.map(item => (
-      <option value={item.value} selected={item.value === value}>
-        {item.label}
-      </option>
-    ))}
-  </select>
-</div>
-
-<!-- PATH B: Custom element fallback -->
-<rla-select {...rest}>
+<rla-select
+  class="w-full block relative"
+  data-create-item={typeof createItem === "object" ? JSON.stringify(createItem) : String(createItem)}
+  data-value-key={valueKey}
+  data-label-key={labelKey}
+  data-description-key={descriptionKey}
+  data-multiple={multiple ? "true" : "false"}
+  data-filter-fields={JSON.stringify(filterFields)}
+  data-ignore-filter={ignoreFilter ? "true" : "false"}
+  data-placeholder={placeholder}
+  data-items={JSON.stringify(normalizedItems)}
+  data-selected-icon={selectedIcon}
+  {...rest}
+>
   <div class={classes.root} data-slot="root" data-disabled={disabled ? "" : undefined}>
-    <div class="relative w-full" data-select-wrapper>
-      <button
-        type="button"
-        class={classes.trigger}
-        data-slot="trigger"
-        disabled={disabled}
-        data-select-trigger
-      >
-        <span data-select-value>{initialLabel || placeholder}</span>
-        <RLAIcon name="chevronDown" class="ml-2 size-4 opacity-50" />
-      </button>
+    <!-- Hidden input for standard HTML form submission -->
+    <input
+      type="hidden"
+      name={name}
+      form={form}
+      value={initialValueString}
+      required={required}
+      data-select-hidden-input
+    />
 
-      <div class={classes.content + " hidden"} data-select-dropdown data-slot="content">
-        <div class="py-1" data-select-items>
-          {normalizedItems.map(item => (
-            <div
-              class={classes.item}
-              data-slot="item"
-              data-value={item.value}
-              data-label={item.label}
-              data-select-item
-            >
-              <span class={classes.itemText}>{item.label}</span>
-              <RLAIcon name="check" class={classes.itemIcon + " hidden"} data-check-icon />
-            </div>
-          ))}
+    <!-- Trigger Button -->
+    <button
+      type="button"
+      class={classes.trigger}
+      data-slot="trigger"
+      disabled={disabled}
+      data-select-trigger
+    >
+      <span class="inline-flex items-center gap-2 truncate flex-1 min-w-0 text-left">
+        {leadingIcon && (
+          <span class={classes.leading} data-slot="leading">
+            <RLAIcon name={leadingIcon} class={classes.leadingIcon} />
+          </span>
+        )}
+        {avatar && (
+          <span class={classes.leading} data-slot="leading">
+            <RLAAvatar {...(typeof avatar === "string" ? { src: avatar } : avatar)} class={classes.leadingAvatar} />
+          </span>
+        )}
+        <span
+          class={initialDisplayText === placeholder ? classes.placeholder : classes.value}
+          data-slot="value"
+          data-select-value-text
+        >
+          {initialDisplayText}
+        </span>
+      </span>
+
+      <span class={classes.trailing} data-slot="trailing">
+        {clear && (initialValueString !== "" && initialValueString !== "[]") && (
+          <span class={classes.trailingClear} data-select-clear-btn title="Clear selection">
+            <RLAIcon name={clearIcon} class="size-4" />
+          </span>
+        )}
+        {loading ? (
+          <RLAIcon name={loadingIcon} class={classes.trailingIcon + " animate-spin"} />
+        ) : (
+          <RLAIcon name={trailingIcon} class={classes.trailingIcon} data-select-chevron />
+        )}
+      </span>
+    </button>
+
+    <!-- Dropdown Content Menu -->
+    <div class={classes.content + " hidden"} data-slot="content" data-select-dropdown>
+      {isSearchable && (
+        <div class="p-2 border-b border-border">
+          <input
+            type="text"
+            class={classes.input}
+            placeholder={searchPlaceholder}
+            data-select-search-input
+            autocomplete="off"
+          />
         </div>
+      )}
+
+      <div class={classes.viewport} data-slot="viewport" data-select-viewport>
+        {normalizedItems.map((item) => (
+          <div
+            class={classes.item}
+            data-slot="item"
+            data-value={item[valueKey]}
+            data-label={item[labelKey]}
+            data-description={item[descriptionKey] || ""}
+            data-disabled={item.disabled ? "" : undefined}
+            data-select-item
+          >
+            {item.icon && <RLAIcon name={item.icon} class={classes.itemLeadingIcon} />}
+            {item.avatar && <RLAAvatar {...(typeof item.avatar === "string" ? { src: item.avatar } : item.avatar)} class={classes.itemLeadingAvatar} />}
+            {item.chip && <span class={classes.itemLeadingChip} style={`background-color: ${item.chip.color || 'var(--color-primary)'}`} />}
+
+            <div class={classes.itemWrapper}>
+              <span class={classes.itemLabel}>{item[labelKey]}</span>
+              {item[descriptionKey] && <span class={classes.itemDescription}>{item[descriptionKey]}</span>}
+            </div>
+
+            <RLAIcon
+              name={selectedIcon}
+              class={
+                classes.itemTrailingIcon +
+                (
+                  (multiple && Array.isArray(activeValue) && activeValue.includes(item[valueKey])) ||
+                  (!multiple && String(activeValue) === String(item[valueKey]))
+                    ? ""
+                    : " hidden"
+                )
+              }
+              data-select-check-icon
+            />
+          </div>
+        ))}
+      </div>
+
+      <div class={classes.empty + " hidden"} data-select-empty>
+        No results found.
+      </div>
+
+      <div class={classes.createOption + " hidden"} data-select-create-option>
+        <RLAIcon name="plus" class="size-4" />
+        <span>Create "<span data-select-create-text></span>"</span>
       </div>
     </div>
-    <input type="hidden" name={name} value={value} data-select-hidden-input />
   </div>
 </rla-select>
 
-<style>
-  /*
-   * PATH A: Native customizable select — styled using appearance: base-select
-   * which allows styling the button, picker, and options in modern browsers.
-   */
-  .rla-select-native-wrapper {
-    display: block;
-    position: relative;
-    width: 100%;
-  }
-
-  rla-select {
-    display: none !important;
-  }
-
-  .rla-select-native {
-    appearance: base-select;
-    width: 100%;
-    cursor: pointer;
-  }
-
-  /* Style the dropdown picker container */
-  .rla-select-native::picker(select) {
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-border, #e2e8f0);
-    background: var(--color-background, #fff);
-    padding: 0.25rem;
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    margin-top: 0.25rem;
-    max-height: 15rem;
-    overflow-y: auto;
-  }
-
-  /* Style individual options */
-  .rla-select-native option {
-    padding: 0.375rem 0.5rem;
-    border-radius: 0.25rem;
-    cursor: default;
-    font-size: 0.875rem;
-    color: var(--color-foreground, inherit);
-  }
-
-  .rla-select-native option:hover,
-  .rla-select-native option:checked {
-    background: var(--color-accent, #f1f5f9);
-    color: var(--color-accent-foreground, inherit);
-  }
-
-  /* Disabled placeholder option */
-  .rla-select-native option:disabled {
-    opacity: 0.5;
-  }
-</style>
-
 <script>
   class RLASelect extends HTMLElement {
-    private selectCleanup: (() => void) | null = null;
-    private initTimeout: any = null;
+    private hiddenInput: HTMLInputElement | null = null;
+    private triggerBtn: HTMLButtonElement | null = null;
+    private valueTextSpan: HTMLElement | null = null;
+    private clearBtn: HTMLElement | null = null;
+    private dropdown: HTMLElement | null = null;
+    private searchInputEl: HTMLInputElement | null = null;
+    private viewport: HTMLElement | null = null;
+    private emptyEl: HTMLElement | null = null;
+    private createOptionEl: HTMLElement | null = null;
+    private createTextEl: HTMLElement | null = null;
+    private chevronEl: HTMLElement | null = null;
+
+    private valueKey = "value";
+    private labelKey = "label";
+    private descriptionKey = "description";
+    private isMultiple = false;
+    private createItemSetting: any = false;
+    private filterFields: string[] = ["label"];
+    private ignoreFilter = false;
+    private placeholder = "Select option...";
+    private selectedIcon = "check";
+
+    private itemsList: any[] = [];
+    private selectedValues: string[] = [];
 
     connectedCallback() {
-      this.style.display = 'contents';
-      this.initTimeout = setTimeout(() => {
-        const wrapper = this.querySelector("[data-select-wrapper]") as HTMLElement | null;
-        if (!wrapper) return;
+      this.valueKey = this.dataset.valueKey || "value";
+      this.labelKey = this.dataset.labelKey || "label";
+      this.descriptionKey = this.dataset.descriptionKey || "description";
+      this.isMultiple = this.dataset.multiple === "true";
+      this.placeholder = this.dataset.placeholder || "Select option...";
+      this.selectedIcon = this.dataset.selectedIcon || "check";
+      this.ignoreFilter = this.dataset.ignoreFilter === "true";
 
-        const trigger = wrapper.querySelector("[data-select-trigger]") as HTMLButtonElement;
-        const dropdown = wrapper.querySelector("[data-select-dropdown]") as HTMLDivElement;
-        const items = wrapper.querySelectorAll<HTMLElement>("[data-select-item]");
-        const valueSpan = wrapper.querySelector("[data-select-value]");
-        const hiddenInput = this.querySelector("[data-select-hidden-input]") as HTMLInputElement | null;
+      try {
+        const createItemAttr = this.dataset.createItem;
+        if (createItemAttr === "true") this.createItemSetting = true;
+        else if (createItemAttr === "false") this.createItemSetting = false;
+        else if (createItemAttr === "always") this.createItemSetting = "always";
+        else if (createItemAttr) this.createItemSetting = JSON.parse(createItemAttr);
+      } catch {
+        this.createItemSetting = Boolean(this.dataset.createItem);
+      }
 
-        if (!trigger || !dropdown) return;
+      try {
+        this.filterFields = JSON.parse(this.dataset.filterFields || `["${this.labelKey}"]`);
+      } catch {
+        this.filterFields = [this.labelKey];
+      }
 
-        const onTriggerClick = (e: MouseEvent) => {
-          e.stopPropagation();
-          dropdown.classList.toggle("hidden");
-        };
-        trigger.addEventListener("click", onTriggerClick);
+      try {
+        this.itemsList = JSON.parse(this.dataset.items || "[]");
+      } catch {
+        this.itemsList = [];
+      }
 
-        const itemCleanups: (() => void)[] = [];
-        items.forEach(item => {
-          const onItemClick = (e: MouseEvent) => {
-            e.stopPropagation();
-            const val = (item as HTMLElement).dataset.value || "";
-            const label = (item as HTMLElement).dataset.label || "";
-            if (hiddenInput) {
-              hiddenInput.value = val;
-              hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
-            }
-            if (valueSpan) valueSpan.textContent = label;
-            
-            items.forEach(i => i.querySelector("[data-check-icon]")?.classList.add("hidden"));
-            item.querySelector("[data-check-icon]")?.classList.remove("hidden");
-            
-            dropdown.classList.add("hidden");
-          };
-          item.addEventListener("click", onItemClick);
-          itemCleanups.push(() => item.removeEventListener("click", onItemClick));
-        });
+      this.hiddenInput = this.querySelector("[data-select-hidden-input]");
+      this.triggerBtn = this.querySelector("[data-select-trigger]");
+      this.valueTextSpan = this.querySelector("[data-select-value-text]");
+      this.clearBtn = this.querySelector("[data-select-clear-btn]");
+      this.dropdown = this.querySelector("[data-select-dropdown]");
+      this.searchInputEl = this.querySelector("[data-select-search-input]");
+      this.viewport = this.querySelector("[data-select-viewport]");
+      this.emptyEl = this.querySelector("[data-select-empty]");
+      this.createOptionEl = this.querySelector("[data-select-create-option]");
+      this.createTextEl = this.querySelector("[data-select-create-text]");
+      this.chevronEl = this.querySelector("[data-select-chevron]");
 
-        const onDocumentClick = () => {
-          dropdown.classList.add("hidden");
-        };
-        document.addEventListener("click", onDocumentClick);
+      // Sync initial selected value
+      const initRaw = this.hiddenInput?.value || "";
+      if (this.isMultiple) {
+        try {
+          this.selectedValues = JSON.parse(initRaw);
+          if (!Array.isArray(this.selectedValues)) this.selectedValues = [];
+        } catch {
+          this.selectedValues = initRaw ? initRaw.split(",") : [];
+        }
+      } else {
+        this.selectedValues = initRaw ? [initRaw] : [];
+      }
 
-        this.selectCleanup = () => {
-          trigger.removeEventListener("click", onTriggerClick);
-          itemCleanups.forEach(fn => fn());
-          document.removeEventListener("click", onDocumentClick);
-        };
-      }, 0);
+      this.setupEventListeners();
     }
 
-    disconnectedCallback() {
-      if (this.initTimeout) {
-        clearTimeout(this.initTimeout);
+    private setupEventListeners() {
+      // Toggle dropdown on trigger click
+      this.triggerBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.toggleDropdown();
+      });
+
+      // Clear button
+      this.clearBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.clearSelection();
+      });
+
+      // Item selection clicks inside viewport
+      this.viewport?.addEventListener("click", (e) => {
+        const itemEl = (e.target as HTMLElement).closest<HTMLElement>("[data-select-item]");
+        if (itemEl && !itemEl.hasAttribute("data-disabled")) {
+          const val = itemEl.dataset.value || "";
+          const lbl = itemEl.dataset.label || val;
+          this.selectItem(val, lbl);
+        }
+      });
+
+      // Search input live filtering
+      this.searchInputEl?.addEventListener("input", () => {
+        this.filterItems(this.searchInputEl?.value || "");
+      });
+
+      // Prevent click inside search input from closing dropdown
+      this.searchInputEl?.addEventListener("click", (e) => e.stopPropagation());
+
+      // Create option click
+      this.createOptionEl?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const newText = this.searchInputEl?.value.trim() || "";
+        if (newText) {
+          this.createAndSelectItem(newText);
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!this.contains(e.target as Node)) {
+          this.closeDropdown();
+        }
+      });
+
+      // Keyboard navigation (Escape to close)
+      this.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          this.closeDropdown();
+        }
+      });
+    }
+
+    private toggleDropdown() {
+      if (this.dropdown?.classList.contains("hidden")) {
+        this.openDropdown();
+      } else {
+        this.closeDropdown();
       }
-      if (this.selectCleanup) {
-        this.selectCleanup();
-        this.selectCleanup = null;
+    }
+
+    private openDropdown() {
+      // Close all other open rla-select dropdowns
+      document.querySelectorAll("rla-select").forEach((el) => {
+        if (el !== this) {
+          el.querySelector("[data-select-dropdown]")?.classList.add("hidden");
+        }
+      });
+
+      this.dropdown?.classList.remove("hidden");
+      this.chevronEl?.classList.add("rotate-180");
+      if (this.searchInputEl) {
+        this.searchInputEl.value = "";
+        this.filterItems("");
+        setTimeout(() => this.searchInputEl?.focus(), 50);
       }
+    }
+
+    private closeDropdown() {
+      this.dropdown?.classList.add("hidden");
+      this.chevronEl?.classList.remove("rotate-180");
+    }
+
+    private selectItem(val: string, lbl: string) {
+      if (this.isMultiple) {
+        const index = this.selectedValues.indexOf(val);
+        if (index > -1) {
+          this.selectedValues.splice(index, 1);
+        } else {
+          this.selectedValues.push(val);
+        }
+      } else {
+        this.selectedValues = [val];
+        this.closeDropdown();
+      }
+
+      this.updateState();
+    }
+
+    private createAndSelectItem(newItemText: string) {
+      const newItem = {
+        [this.labelKey]: newItemText,
+        [this.valueKey]: newItemText
+      };
+
+      // Add to items list if not already present
+      if (!this.itemsList.some((i) => i[this.valueKey] === newItemText)) {
+        this.itemsList.push(newItem);
+
+        // Render new item in viewport DOM
+        if (this.viewport) {
+          const itemEl = document.createElement("div");
+          itemEl.className = "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground";
+          itemEl.setAttribute("data-slot", "item");
+          itemEl.setAttribute("data-value", newItemText);
+          itemEl.setAttribute("data-label", newItemText);
+          itemEl.setAttribute("data-select-item", "");
+
+          itemEl.innerHTML = `
+            <div class="flex-1 flex flex-col min-w-0">
+              <span class="truncate font-normal">${newItemText}</span>
+            </div>
+            <svg class="shrink-0 size-4 ms-auto text-primary hidden" data-select-check-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          `;
+          this.viewport.appendChild(itemEl);
+        }
+      }
+
+      this.selectItem(newItemText, newItemText);
+
+      // Dispatch custom 'create' event
+      this.dispatchEvent(new CustomEvent("create", { detail: { item: newItemText }, bubbles: true }));
+    }
+
+    private clearSelection() {
+      this.selectedValues = [];
+      this.updateState();
+    }
+
+    private filterItems(query: string) {
+      const q = query.toLowerCase().trim();
+      let visibleCount = 0;
+      let exactMatch = false;
+
+      const itemEls = this.viewport?.querySelectorAll<HTMLElement>("[data-select-item]");
+      itemEls?.forEach((itemEl) => {
+        const val = itemEl.dataset.value || "";
+        const lbl = itemEl.dataset.label || "";
+        const desc = itemEl.dataset.description || "";
+
+        let matches = true;
+        if (q && !this.ignoreFilter) {
+          matches =
+            lbl.toLowerCase().includes(q) ||
+            val.toLowerCase().includes(q) ||
+            desc.toLowerCase().includes(q);
+        }
+
+        if (lbl.toLowerCase() === q || val.toLowerCase() === q) {
+          exactMatch = true;
+        }
+
+        if (matches) {
+          itemEl.classList.remove("hidden");
+          visibleCount++;
+        } else {
+          itemEl.classList.add("hidden");
+        }
+      });
+
+      if (this.emptyEl) {
+        if (visibleCount === 0 && !this.createItemSetting) {
+          this.emptyEl.classList.remove("hidden");
+        } else {
+          this.emptyEl.classList.add("hidden");
+        }
+      }
+
+      // Handle create item option visibility
+      if (this.createOptionEl && this.createTextEl) {
+        const shouldShowCreate =
+          Boolean(this.createItemSetting) &&
+          q.length > 0 &&
+          (!exactMatch || this.createItemSetting === "always");
+
+        if (shouldShowCreate) {
+          this.createTextEl.textContent = query.trim();
+          this.createOptionEl.classList.remove("hidden");
+        } else {
+          this.createOptionEl.classList.add("hidden");
+        }
+      }
+    }
+
+    private updateState() {
+      // 1. Update hidden input
+      const newValue = this.isMultiple
+        ? JSON.stringify(this.selectedValues)
+        : this.selectedValues[0] || "";
+
+      if (this.hiddenInput) {
+        this.hiddenInput.value = newValue;
+        this.hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
+        this.hiddenInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+
+      // 2. Update trigger display text
+      if (this.valueTextSpan) {
+        if (this.selectedValues.length === 0) {
+          this.valueTextSpan.textContent = this.placeholder;
+          this.valueTextSpan.className = "truncate text-muted-foreground";
+        } else {
+          const displayLabels = this.selectedValues.map((v) => {
+            const found = this.itemsList.find((i) => i[this.valueKey] === v);
+            return found ? found[this.labelKey] : v;
+          });
+          this.valueTextSpan.textContent = displayLabels.join(", ");
+          this.valueTextSpan.className = "truncate text-foreground";
+        }
+      }
+
+      // 3. Update check icons in viewport
+      const itemEls = this.viewport?.querySelectorAll<HTMLElement>("[data-select-item]");
+      itemEls?.forEach((itemEl) => {
+        const val = itemEl.dataset.value || "";
+        const checkIcon = itemEl.querySelector("[data-select-check-icon]");
+        if (this.selectedValues.includes(val)) {
+          checkIcon?.classList.remove("hidden");
+        } else {
+          checkIcon?.classList.add("hidden");
+        }
+      });
     }
   }
 
-  if (!customElements.get('rla-select')) {
-    customElements.define('rla-select', RLASelect);
+  if (!customElements.get("rla-select")) {
+    customElements.define("rla-select", RLASelect);
   }
 </script>
