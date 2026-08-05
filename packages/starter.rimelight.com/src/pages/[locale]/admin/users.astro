@@ -1,0 +1,731 @@
+---
+import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
+import RLACard from "@rimelight/ui/components/card/RLACard.astro";
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
+import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
+import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro";
+import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
+import RLATable from "@rimelight/ui/components/table/RLATable.astro";
+import type { TableColumn } from "@rimelight/ui/components/table/table";
+import { db } from "@/db";
+import { user, role as roleTable, member, organization } from "@/db/schema";
+import { isNull, desc, eq } from "drizzle-orm";
+
+// SSR initial load of users, roles, and organization memberships
+const rawUsers = await db
+	.select({
+		id: user.id,
+		name: user.name,
+		email: user.email,
+		role: user.role,
+		emailVerified: user.emailVerified,
+		banned: user.banned,
+		banReason: user.banReason,
+		firstName: user.firstName,
+		lastName: user.lastName,
+		createdAt: user.createdAt,
+		image: user.image
+	})
+	.from(user)
+	.where(isNull(user.deletedAt))
+	.orderBy(desc(user.createdAt));
+
+let userOrgMap: Record<string, Array<{ orgName: string; orgRole: string }>> = {};
+try {
+	const memberRecords = await db
+		.select({
+			userId: member.userId,
+			role: member.role,
+			orgName: organization.name
+		})
+		.from(member)
+		.innerJoin(organization, eq(member.organizationId, organization.id))
+		.where(isNull(member.deletedAt));
+
+	memberRecords.forEach((m) => {
+		if (!userOrgMap[m.userId]) userOrgMap[m.userId] = [];
+		userOrgMap[m.userId].push({ orgName: m.orgName, orgRole: m.role });
+	});
+} catch (err) {
+	console.warn("member/organization query skipped in users.astro:", err);
+}
+
+const initialUsers = rawUsers.map((u) => ({
+	...u,
+	organizations: userOrgMap[u.id] || []
+}));
+
+let availableRoles: any[] = [];
+try {
+	availableRoles = await db
+		.select()
+		.from(roleTable)
+		.where(isNull(roleTable.deletedAt));
+} catch (err) {
+	console.warn("roleTable query skipped in users.astro:", err);
+}
+
+// Extract all unique roles present across users (e.g. owner, admin, user) & merge with DB roles
+const rolesMap = new Map<string, string>();
+initialUsers.forEach(u => {
+	if (u.role) {
+		rolesMap.set(u.role.toLowerCase(), u.role.charAt(0).toUpperCase() + u.role.slice(1));
+	}
+});
+availableRoles.forEach(r => {
+	rolesMap.set(r.name.toLowerCase(), r.displayName || r.name);
+});
+if (!rolesMap.has("admin")) rolesMap.set("admin", "Administrator");
+if (!rolesMap.has("owner")) rolesMap.set("owner", "Owner");
+if (!rolesMap.has("user")) rolesMap.set("user", "User");
+
+const roleOptions = Array.from(rolesMap.entries()).map(([value, label]) => ({ label, value }));
+
+const userColumns: TableColumn[] = [
+	{ id: "avatar", header: "Avatar", enableSorting: false },
+	{ id: "name", accessorKey: "name", header: "Username", enableSorting: true },
+	{ id: "email", accessorKey: "email", header: "Email", enableSorting: true },
+	{ id: "firstName", accessorKey: "firstName", header: "First Name", enableSorting: true },
+	{ id: "lastName", accessorKey: "lastName", header: "Last Name", enableSorting: true },
+	{ id: "role", accessorKey: "role", header: "Role", enableSorting: true },
+	{ id: "organizations", header: "Organizations", enableSorting: false },
+	{ id: "sessions", header: "Active Sessions", enableSorting: false },
+	{ id: "verification", header: "Verification", enableSorting: true },
+	{ id: "status", header: "Status", enableSorting: true },
+	{ id: "createdAt", accessorKey: "createdAt", header: "Created Date", enableSorting: true },
+	{ id: "actions", header: "Actions", enableSorting: false, meta: { class: { th: "text-right", td: "text-right" } } }
+];
+---
+
+<AuthAdminDashboardLayout
+	title="Users"
+	description="Create user accounts, manage roles, inspect organization memberships, and security sessions."
+	activeSection="users"
+>
+	<Fragment slot="actions">
+		<RLAButton id="open-create-user-btn" variant="solid" color="primary" leadingIcon="i-lucide-user-plus" size="sm">
+			Create New User
+		</RLAButton>
+	</Fragment>
+
+	<div class="flex flex-col gap-6" id="admin-users-app">
+		<RLATable
+			id="users-table"
+			columns={userColumns}
+			data={initialUsers}
+			searchable
+			searchPlaceholder="Search users..."
+			showColumnsToggle
+			hoverable
+			striped
+			class="w-full"
+		>
+			<div slot="toolbar" class="flex items-center gap-2 flex-wrap">
+				<select
+					id="role-filter-select"
+					class="h-8 px-2.5 text-xs rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+				>
+					<option value="all">All Roles</option>
+					{roleOptions.map(r => (
+						<option value={r.value}>{r.label}</option>
+					))}
+				</select>
+
+				<select
+					id="status-filter-select"
+					class="h-8 px-2.5 text-xs rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+				>
+					<option value="all">All Statuses</option>
+					<option value="verified">Email Verified</option>
+					<option value="unverified">Email Unverified</option>
+					<option value="banned">Banned</option>
+				</select>
+
+				<span class="text-xs text-muted-foreground font-medium shrink-0 ml-1">
+					<span id="visible-count-el">{initialUsers.length}</span> users
+				</span>
+			</div>
+
+			<tbody slot="default" id="users-tbody" class="divide-y divide-border/40">
+				{initialUsers.map((u) => {
+					const actionItems = [
+						[
+							{ label: "View Active Sessions", icon: "i-lucide-key-round", action: "view-sessions" },
+							{ label: "Set Role", icon: "i-lucide-shield", action: "set-role" },
+							!u.emailVerified ? { label: "Resend Email", icon: "i-lucide-mail", action: "resend-email" } : null,
+							{ label: u.banned ? "Unban User" : "Ban User", icon: u.banned ? "i-lucide-user-check" : "i-lucide-user-x", action: "toggle-ban" }
+						].filter(Boolean),
+						[
+							{ label: "Delete User", icon: "i-lucide-trash-2", color: "error", action: "delete-user" }
+						]
+					];
+
+					return (
+						<tr
+							class="user-row hover:bg-muted/20 transition-colors"
+							data-user-id={u.id}
+							data-user-name={u.name.toLowerCase()}
+							data-user-email={u.email.toLowerCase()}
+							data-user-role={(u.role || "user").toLowerCase()}
+							data-user-verified={u.emailVerified ? "true" : "false"}
+							data-user-banned={u.banned ? "true" : "false"}
+							data-raw-name={u.name}
+							data-raw-email={u.email}
+						>
+							<td class="p-3.5" data-col-id="avatar">
+								<RLAAvatar src={u.image || `https://i.pravatar.cc/80?u=${u.id}`} size="sm" />
+							</td>
+							<td class="p-3.5 font-bold text-highlighted" data-col-id="name">
+								{u.name}
+							</td>
+							<td class="p-3.5 font-mono text-xs text-muted-foreground" data-col-id="email">
+								{u.email}
+							</td>
+							<td class="p-3.5 text-xs text-foreground" data-col-id="firstName">
+								{u.firstName || "—"}
+							</td>
+							<td class="p-3.5 text-xs text-foreground" data-col-id="lastName">
+								{u.lastName || "—"}
+							</td>
+							<td class="p-3.5" data-col-id="role">
+								<RLABadge variant="subtle" color={u.role === "admin" || u.role === "owner" ? "primary" : "neutral"} class="capitalize text-xs">
+									{u.role || "user"}
+								</RLABadge>
+							</td>
+							<td class="p-3.5" data-col-id="organizations">
+								{u.organizations.length > 0 ? (
+									<div class="flex flex-wrap gap-1 max-w-xs">
+										{u.organizations.map((org) => (
+											<RLABadge variant="subtle" color="neutral" class="text-[10px] flex items-center gap-1 font-mono">
+												<RLAIcon name="i-lucide-building-2" class="size-3 text-primary" />
+												<span>{org.orgName}</span>
+												<span class="text-muted-foreground font-normal">({org.orgRole})</span>
+											</RLABadge>
+										))}
+									</div>
+								) : (
+									<span class="text-xs text-muted-foreground">—</span>
+								)}
+							</td>
+							<td class="p-3.5" data-col-id="sessions">
+								<button
+									type="button"
+									class="view-user-sessions-btn flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+									data-user-id={u.id}
+									data-raw-name={u.name}
+								>
+									<RLAIcon name="i-lucide-key-round" class="size-3.5 text-primary" />
+									<span class="font-mono font-semibold text-highlighted">Manage Sessions</span>
+								</button>
+							</td>
+							<td class="p-3.5" data-col-id="verification">
+								{u.emailVerified ? (
+									<RLABadge variant="subtle" color="success" class="text-xs flex items-center gap-1 w-fit">
+										<RLAIcon name="i-lucide-check-circle-2" class="size-3" />
+										Verified
+									</RLABadge>
+								) : (
+									<RLABadge variant="subtle" color="warning" class="text-xs flex items-center gap-1 w-fit">
+										<RLAIcon name="i-lucide-clock" class="size-3" />
+										Pending
+									</RLABadge>
+								)}
+							</td>
+							<td class="p-3.5" data-col-id="status">
+								{u.banned ? (
+									<RLABadge variant="subtle" color="error" class="text-xs flex items-center gap-1 w-fit">
+										<RLAIcon name="i-lucide-ban" class="size-3" />
+										Banned
+									</RLABadge>
+								) : (
+									<RLABadge variant="subtle" color="success" class="text-xs flex items-center gap-1 w-fit">
+										Active
+									</RLABadge>
+								)}
+							</td>
+							<td class="p-3.5 text-xs text-muted-foreground whitespace-nowrap" data-col-id="createdAt">
+								{new Date(u.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+							</td>
+							<td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions">
+									<RLADropdownMenu
+										items={actionItems as any}
+										content={{ align: "end" }}
+										size="sm"
+									/>
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</RLATable>
+	</div>
+
+	<!-- Modal: User Sessions -->
+	<div id="user-sessions-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+		<div class="bg-background border border-border rounded-xl shadow-2xl w-full max-w-2xl p-6 flex flex-col gap-4 max-h-[85vh] overflow-hidden">
+			<div class="flex items-center justify-between border-b border-border pb-3">
+				<div class="flex items-center gap-2">
+					<RLAIcon name="i-lucide-key-round" class="size-5 text-primary" />
+					<div>
+						<h3 class="text-base font-bold text-highlighted">Active Security Sessions</h3>
+						<p class="text-xs text-muted-foreground">Sessions for <span id="sessions-modal-username" class="font-semibold text-foreground"></span></p>
+					</div>
+				</div>
+				<button id="close-user-sessions-modal" class="text-muted-foreground hover:text-foreground">
+					<RLAIcon name="i-lucide-x" class="size-5" />
+				</button>
+			</div>
+
+			<div id="sessions-loading-spinner" class="py-8 flex flex-col items-center justify-center text-muted-foreground gap-2 text-xs">
+				<RLAIcon name="i-lucide-loader-2" class="size-6 animate-spin text-primary" />
+				Loading active sessions...
+			</div>
+
+			<div id="sessions-modal-content" class="flex flex-col gap-3 overflow-y-auto hidden pr-1">
+				<div id="sessions-empty-msg" class="py-8 text-center text-xs text-muted-foreground hidden">
+					No active sessions found for this user account.
+				</div>
+				<div id="sessions-list-container" class="flex flex-col gap-2"></div>
+			</div>
+
+			<div class="flex justify-end pt-3 border-t border-border mt-auto">
+				<RLAButton type="button" id="close-user-sessions-btn" variant="outline" color="neutral" size="sm">
+					Close
+				</RLAButton>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal: Confirm Delete User -->
+	<div id="delete-user-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+		<div class="bg-background border border-destructive/30 rounded-xl shadow-2xl w-full max-w-md p-6 flex flex-col gap-4">
+			<div class="flex items-center gap-3">
+				<div class="p-3 rounded-full bg-destructive/10 text-destructive">
+					<RLAIcon name="i-lucide-alert-triangle" class="size-6" />
+				</div>
+				<div>
+					<h3 class="text-base font-bold text-highlighted">Delete User Account</h3>
+					<p class="text-xs text-muted-foreground">This action cannot be undone.</p>
+				</div>
+			</div>
+
+			<p class="text-xs text-foreground bg-muted/40 p-3 rounded-lg border border-border/50">
+				Are you sure you want to delete <span id="delete-user-name-display" class="font-bold text-highlighted"></span> (<span id="delete-user-email-display" class="font-mono text-muted-foreground"></span>)?
+			</p>
+
+			<input type="hidden" id="delete-user-id" />
+
+			<div class="flex justify-end gap-2 pt-3 border-t border-border">
+				<RLAButton type="button" id="cancel-delete-modal" variant="outline" color="neutral" size="sm">
+					Cancel
+				</RLAButton>
+				<RLAButton type="button" id="confirm-delete-btn" variant="solid" color="error" size="sm">
+					Delete Account
+				</RLAButton>
+			</div>
+		</div>
+	</div>
+
+	<!-- Client-side Interactive Logic -->
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			// DOM elements
+			const searchInput = (document.getElementById("user-search-input") || document.querySelector("[data-rla-table-search]")) as HTMLInputElement;
+			const roleFilter = document.getElementById("role-filter-select") as HTMLSelectElement;
+			const statusFilter = document.getElementById("status-filter-select") as HTMLSelectElement;
+			const rows = Array.from(document.querySelectorAll<HTMLTableRowElement>(".user-row"));
+			const visibleCountEl = document.getElementById("visible-count-el");
+
+			// 1. Filtering logic
+			function filterRows() {
+				const query = searchInput?.value.toLowerCase().trim() || "";
+				const selectedRole = roleFilter?.value || "all";
+				const selectedStatus = statusFilter?.value || "all";
+
+				let visibleCount = 0;
+
+				rows.forEach((row) => {
+					const name = row.getAttribute("data-user-name") || "";
+					const email = row.getAttribute("data-user-email") || "";
+					const role = row.getAttribute("data-user-role") || "";
+					const verified = row.getAttribute("data-user-verified") === "true";
+					const banned = row.getAttribute("data-user-banned") === "true";
+
+					const matchesSearch = !query || name.includes(query) || email.includes(query);
+					const matchesRole = selectedRole === "all" || role === selectedRole;
+					let matchesStatus = true;
+
+					if (selectedStatus === "verified") matchesStatus = verified;
+					if (selectedStatus === "unverified") matchesStatus = !verified;
+					if (selectedStatus === "banned") matchesStatus = banned;
+
+					if (matchesSearch && matchesRole && matchesStatus) {
+						row.classList.remove("hidden");
+						visibleCount++;
+					} else {
+						row.classList.add("hidden");
+					}
+				});
+
+				if (visibleCountEl) visibleCountEl.textContent = String(visibleCount);
+			}
+
+			searchInput?.addEventListener("input", filterRows);
+			roleFilter?.addEventListener("change", filterRows);
+			statusFilter?.addEventListener("change", filterRows);
+
+			// 2. Row Action Delegated Handlers via Dropdown Menu
+			document.getElementById("users-tbody")?.addEventListener("click", async (e) => {
+				const itemEl = (e.target as HTMLElement).closest("[data-item-action]") as HTMLElement | null;
+				if (!itemEl) return;
+
+				const action = itemEl.getAttribute("data-item-action");
+				const row = itemEl.closest(".user-row") as HTMLTableRowElement | null;
+				if (!row) return;
+
+				const userId = row.getAttribute("data-user-id") || "";
+				const userName = row.getAttribute("data-raw-name") || row.getAttribute("data-user-name") || "";
+				const userEmail = row.getAttribute("data-raw-email") || row.getAttribute("data-user-email") || "";
+				const currentRole = row.getAttribute("data-user-role") || "user";
+				const isBanned = row.getAttribute("data-user-banned") === "true";
+
+				if (action === "Set Role") {
+					if (roleUserIdInput) roleUserIdInput.value = userId;
+					if (roleUserNameDisplay) roleUserNameDisplay.textContent = userName;
+					if (targetRoleSelect) targetRoleSelect.value = currentRole;
+					setRoleModal?.classList.remove("hidden");
+				} else if (action === "View Active Sessions" || action === "view-sessions") {
+					openUserSessionsModal(userId, userName);
+				} else if (action === "Resend Email") {
+					try {
+						const res = await fetch(`/api/admin/users/${userId}/resend-verification`, {
+							method: "POST",
+							headers: { "Content-Type": "application/json" }
+						});
+						const data = await res.json();
+						if (res.ok) {
+							alert(data.message || `Verification email successfully sent to ${userEmail}!`);
+						} else {
+							alert(data.error || "Failed to resend verification email.");
+						}
+					} catch {
+						alert("Network error while resending verification email.");
+					}
+				} else if (action === "Ban User" || action === "Unban User") {
+					const actionText = isBanned ? "unban" : "ban";
+					if (!confirm(`Are you sure you want to ${actionText} ${userName}?`)) return;
+
+					try {
+						const res = await fetch(`/api/admin/users/${userId}/ban`, {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ ban: !isBanned, banReason: "Admin action" })
+						});
+						if (res.ok) {
+							window.location.reload();
+						} else {
+							const data = await res.json();
+							alert(data.error || `Failed to ${actionText} user.`);
+						}
+					} catch {
+						alert(`Network error updating ban status.`);
+					}
+				} else if (action === "Delete User") {
+					if (deleteUserIdInput) deleteUserIdInput.value = userId;
+					if (deleteUserNameDisplay) deleteUserNameDisplay.textContent = userName;
+					if (deleteUserEmailDisplay) deleteUserEmailDisplay.textContent = userEmail;
+					deleteModal?.classList.remove("hidden");
+				}
+			});
+
+			// Direct manage sessions button clicks
+			document.querySelectorAll(".view-user-sessions-btn").forEach((btn) => {
+				btn.addEventListener("click", (e) => {
+					const target = e.currentTarget as HTMLElement;
+					const userId = target.getAttribute("data-user-id") || "";
+					const userName = target.getAttribute("data-raw-name") || "User";
+					if (userId) openUserSessionsModal(userId, userName);
+				});
+			});
+
+			// User Sessions Modal Logic
+			const userSessionsModal = document.getElementById("user-sessions-modal");
+			const closeUserSessionsModalBtn = document.getElementById("close-user-sessions-modal");
+			const closeUserSessionsBtn = document.getElementById("close-user-sessions-btn");
+			const sessionsModalUsername = document.getElementById("sessions-modal-username");
+			const sessionsLoadingSpinner = document.getElementById("sessions-loading-spinner");
+			const sessionsModalContent = document.getElementById("sessions-modal-content");
+			const sessionsEmptyMsg = document.getElementById("sessions-empty-msg");
+			const sessionsListContainer = document.getElementById("sessions-list-container");
+
+			const hideUserSessionsModal = () => userSessionsModal?.classList.add("hidden");
+			closeUserSessionsModalBtn?.addEventListener("click", hideUserSessionsModal);
+			closeUserSessionsBtn?.addEventListener("click", hideUserSessionsModal);
+
+			async function openUserSessionsModal(userId: string, userName: string) {
+				if (sessionsModalUsername) sessionsModalUsername.textContent = userName;
+				userSessionsModal?.classList.remove("hidden");
+
+				if (sessionsLoadingSpinner) sessionsLoadingSpinner.classList.remove("hidden");
+				if (sessionsModalContent) sessionsModalContent.classList.add("hidden");
+				if (sessionsEmptyMsg) sessionsEmptyMsg.classList.add("hidden");
+				if (sessionsListContainer) sessionsListContainer.innerHTML = "";
+
+				try {
+					const res = await fetch(`/api/admin/users/${userId}/sessions`);
+					const data = await res.json();
+
+					if (sessionsLoadingSpinner) sessionsLoadingSpinner.classList.add("hidden");
+					if (sessionsModalContent) sessionsModalContent.classList.remove("hidden");
+
+					if (res.ok && data.sessions && data.sessions.length > 0) {
+						data.sessions.forEach((s: any) => {
+							const item = document.createElement("div");
+							item.className = "p-3 rounded-lg border border-border bg-muted/20 flex items-center justify-between gap-3 text-xs";
+							item.innerHTML = `
+								<div class="flex flex-col gap-1 min-w-0 flex-1">
+									<div class="flex items-center gap-2">
+										<span class="font-bold text-highlighted font-mono">${s.ipAddress || "Internal IP"}</span>
+										<span class="text-[10px] text-muted-foreground">Expires: ${new Date(s.expiresAt).toLocaleDateString()}</span>
+									</div>
+									<span class="text-muted-foreground truncate" title="${s.userAgent || ""}">${s.userAgent || "Web Browser"}</span>
+								</div>
+								<button type="button" class="revoke-single-session-btn px-2.5 py-1 text-[11px] font-medium text-destructive hover:bg-destructive/10 rounded border border-destructive/20 shrink-0" data-session-id="${s.id}">
+									Revoke
+								</button>
+							`;
+							sessionsListContainer?.appendChild(item);
+						});
+
+						// Add event listener for revoke buttons
+						sessionsListContainer?.querySelectorAll(".revoke-single-session-btn").forEach((btn) => {
+							btn.addEventListener("click", async (e) => {
+								const target = e.currentTarget as HTMLButtonElement;
+								const sessionId = target.getAttribute("data-session-id");
+								if (!sessionId) return;
+								if (!confirm("Revoke this active session?")) return;
+
+								try {
+									const revokeRes = await fetch(`/api/admin/sessions/${sessionId}`, { method: "DELETE" });
+									if (revokeRes.ok) {
+										target.closest("div")?.remove();
+										if (sessionsListContainer?.children.length === 0) {
+											sessionsEmptyMsg?.classList.remove("hidden");
+										}
+									} else {
+										alert("Failed to revoke session.");
+									}
+								} catch {
+									alert("Network error revoking session.");
+								}
+							});
+						});
+					} else {
+						if (sessionsEmptyMsg) sessionsEmptyMsg.classList.remove("hidden");
+					}
+				} catch {
+					if (sessionsLoadingSpinner) sessionsLoadingSpinner.classList.add("hidden");
+					if (sessionsModalContent) sessionsModalContent.classList.remove("hidden");
+					if (sessionsEmptyMsg) {
+						sessionsEmptyMsg.textContent = "Error fetching user active sessions.";
+						sessionsEmptyMsg.classList.remove("hidden");
+					}
+				}
+			}
+
+
+			// 3. Create User Modal
+			const createModal = document.getElementById("create-user-modal");
+			const openCreateBtn = document.getElementById("open-create-user-btn");
+			const closeCreateModalBtn = document.getElementById("close-create-modal");
+			const cancelCreateModalBtn = document.getElementById("cancel-create-modal");
+			const createUserForm = document.getElementById("create-user-form") as HTMLFormElement;
+			const createErrorAlert = document.getElementById("create-error-alert");
+
+			const showCreateModal = () => createModal?.classList.remove("hidden");
+			const hideCreateModal = () => {
+				createModal?.classList.add("hidden");
+				createUserForm?.reset();
+				if (createErrorAlert) createErrorAlert.classList.add("hidden");
+			};
+
+			openCreateBtn?.addEventListener("click", showCreateModal);
+			closeCreateModalBtn?.addEventListener("click", hideCreateModal);
+			cancelCreateModalBtn?.addEventListener("click", hideCreateModal);
+
+			createUserForm?.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const submitBtn = document.getElementById("submit-create-btn") as HTMLButtonElement;
+				if (submitBtn) submitBtn.disabled = true;
+				if (createErrorAlert) createErrorAlert.classList.add("hidden");
+
+				const body = {
+					firstName: (document.getElementById("create-first-name") as HTMLInputElement)?.value,
+					lastName: (document.getElementById("create-last-name") as HTMLInputElement)?.value,
+					name: (document.getElementById("create-name") as HTMLInputElement)?.value,
+					email: (document.getElementById("create-email") as HTMLInputElement)?.value,
+					password: (document.getElementById("create-password") as HTMLInputElement)?.value,
+					role: (document.getElementById("create-role") as HTMLSelectElement)?.value,
+				};
+
+				try {
+					const res = await fetch("/api/admin/users", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(body)
+					});
+
+					const data = await res.json();
+					if (res.ok) {
+						hideCreateModal();
+						window.location.reload();
+					} else {
+						if (createErrorAlert) {
+							createErrorAlert.textContent = data.error || "Failed to create user.";
+							createErrorAlert.classList.remove("hidden");
+						}
+					}
+				} catch (err) {
+					if (createErrorAlert) {
+						createErrorAlert.textContent = "Network error creating user.";
+						createErrorAlert.classList.remove("hidden");
+					}
+				} finally {
+					if (submitBtn) submitBtn.disabled = false;
+				}
+			});
+
+			// 4. Change Role Modal
+			const setRoleModal = document.getElementById("set-role-modal");
+			const closeRoleModalBtn = document.getElementById("close-role-modal");
+			const cancelRoleModalBtn = document.getElementById("cancel-role-modal");
+			const setRoleForm = document.getElementById("set-role-form") as HTMLFormElement;
+			const roleUserIdInput = document.getElementById("role-user-id") as HTMLInputElement;
+			const roleUserNameDisplay = document.getElementById("role-user-name-display");
+			const targetRoleSelect = document.getElementById("target-role-select") as HTMLSelectElement;
+
+			document.querySelectorAll(".set-role-btn").forEach((btn) => {
+				btn.addEventListener("click", (e) => {
+					const target = e.currentTarget as HTMLButtonElement;
+					const userId = target.getAttribute("data-user-id") || "";
+					const userName = target.getAttribute("data-user-name") || "";
+					const currentRole = target.getAttribute("data-user-role") || "user";
+
+					if (roleUserIdInput) roleUserIdInput.value = userId;
+					if (roleUserNameDisplay) roleUserNameDisplay.textContent = userName;
+					if (targetRoleSelect) targetRoleSelect.value = currentRole;
+
+					setRoleModal?.classList.remove("hidden");
+				});
+			});
+
+			closeRoleModalBtn?.addEventListener("click", () => setRoleModal?.classList.add("hidden"));
+			cancelRoleModalBtn?.addEventListener("click", () => setRoleModal?.classList.add("hidden"));
+
+			setRoleForm?.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const userId = roleUserIdInput?.value;
+				const newRole = targetRoleSelect?.value;
+				if (!userId || !newRole) return;
+
+				try {
+					const res = await fetch(`/api/admin/users/${userId}/role`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ role: newRole })
+					});
+
+					if (res.ok) {
+						setRoleModal?.classList.add("hidden");
+						window.location.reload();
+					} else {
+						const data = await res.json();
+						alert(data.error || "Failed to update user role.");
+					}
+				} catch (err) {
+					alert("Network error updating user role.");
+				}
+			});
+
+			// 5. Ban / Unban User Toggle
+			document.querySelectorAll(".toggle-ban-btn").forEach((btn) => {
+				btn.addEventListener("click", async (e) => {
+					const target = e.currentTarget as HTMLButtonElement;
+					const userId = target.getAttribute("data-user-id");
+					const isCurrentlyBanned = target.getAttribute("data-user-banned") === "true";
+					const userName = target.getAttribute("data-user-name");
+
+					const actionText = isCurrentlyBanned ? "unban" : "ban";
+					if (!confirm(`Are you sure you want to ${actionText} ${userName}?`)) return;
+
+					try {
+						const res = await fetch(`/api/admin/users/${userId}/ban`, {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ ban: !isCurrentlyBanned, banReason: "Admin action" })
+						});
+
+						if (res.ok) {
+							window.location.reload();
+						} else {
+							const data = await res.json();
+							alert(data.error || `Failed to ${actionText} user.`);
+						}
+					} catch {
+						alert(`Network error updating ban status.`);
+					}
+				});
+			});
+
+			// 6. Delete User Modal
+			const deleteModal = document.getElementById("delete-user-modal");
+			const cancelDeleteBtn = document.getElementById("cancel-delete-modal");
+			const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+			const deleteUserIdInput = document.getElementById("delete-user-id") as HTMLInputElement;
+			const deleteUserNameDisplay = document.getElementById("delete-user-name-display");
+			const deleteUserEmailDisplay = document.getElementById("delete-user-email-display");
+
+			document.querySelectorAll(".delete-user-btn").forEach((btn) => {
+				btn.addEventListener("click", (e) => {
+					const target = e.currentTarget as HTMLButtonElement;
+					const userId = target.getAttribute("data-user-id") || "";
+					const userName = target.getAttribute("data-user-name") || "";
+					const userEmail = target.getAttribute("data-user-email") || "";
+
+					if (deleteUserIdInput) deleteUserIdInput.value = userId;
+					if (deleteUserNameDisplay) deleteUserNameDisplay.textContent = userName;
+					if (deleteUserEmailDisplay) deleteUserEmailDisplay.textContent = userEmail;
+
+					deleteModal?.classList.remove("hidden");
+				});
+			});
+
+			cancelDeleteBtn?.addEventListener("click", () => deleteModal?.classList.add("hidden"));
+
+			confirmDeleteBtn?.addEventListener("click", async () => {
+				const userId = deleteUserIdInput?.value;
+				if (!userId) return;
+
+				try {
+					const res = await fetch(`/api/admin/users/${userId}`, {
+						method: "DELETE"
+					});
+
+					if (res.ok) {
+						deleteModal?.classList.add("hidden");
+						window.location.reload();
+					} else {
+						const data = await res.json();
+						alert(data.error || "Failed to delete user account.");
+					}
+				} catch (err) {
+					alert("Network error deleting user.");
+				}
+			});
+		});
+	</script>
+</AuthAdminDashboardLayout>

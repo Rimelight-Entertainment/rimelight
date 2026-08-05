@@ -357,4 +357,3 @@ export type Invitation = typeof invitation.$inferSelect
 export type Team = typeof team.$inferSelect
 export type TeamMember = typeof teamMember.$inferSelect
 export type Role = typeof role.$inferSelect
-

@@ -49,8 +49,7 @@ export const createSelectTheme = () =>
       group: "p-1 isolate",
       empty: "p-3 text-center text-sm text-muted-foreground",
       separator: "-mx-1 my-1 h-px bg-border",
-      item:
-        "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      item: "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       itemLeadingIcon: "shrink-0 size-4 me-2 text-muted-foreground group-hover:text-foreground",
       itemLeadingAvatar: "shrink-0 size-4 me-2 rounded-full object-cover",
       itemLeadingChip: "shrink-0 size-2.5 me-2 rounded-full",
@@ -58,16 +57,38 @@ export const createSelectTheme = () =>
       itemLabel: "truncate font-normal",
       itemDescription: "truncate text-xs text-muted-foreground",
       itemTrailingIcon: "shrink-0 size-4 ms-auto text-primary",
-      input: "w-full border-b border-border bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground",
-      createOption: "p-2 text-sm font-medium text-primary hover:bg-accent cursor-pointer flex items-center gap-2 border-t border-border"
+      input:
+        "w-full border-b border-border bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground",
+      createOption:
+        "p-2 text-sm font-medium text-primary hover:bg-accent cursor-pointer flex items-center gap-2 border-t border-border"
     },
     variants: {
       size: {
-        xs: { trigger: "h-7 px-2 text-xs", item: "py-1 px-1.5 text-xs", input: "py-1 px-2 text-xs" },
-        sm: { trigger: "h-8 px-2.5 text-xs", item: "py-1 px-2 text-xs", input: "py-1.5 px-2.5 text-xs" },
-        md: { trigger: "h-9 px-3 text-sm", item: "py-1.5 px-2 text-sm", input: "py-2 px-3 text-sm" },
-        lg: { trigger: "h-10 px-3.5 text-sm", item: "py-2 px-2.5 text-sm", input: "py-2.5 px-3.5 text-sm" },
-        xl: { trigger: "h-11 px-4 text-base", item: "py-2.5 px-3 text-base", input: "py-3 px-4 text-base" }
+        xs: {
+          trigger: "h-7 px-2 text-xs",
+          item: "py-1 px-1.5 text-xs",
+          input: "py-1 px-2 text-xs"
+        },
+        sm: {
+          trigger: "h-8 px-2.5 text-xs",
+          item: "py-1 px-2 text-xs",
+          input: "py-1.5 px-2.5 text-xs"
+        },
+        md: {
+          trigger: "h-9 px-3 text-sm",
+          item: "py-1.5 px-2 text-sm",
+          input: "py-2 px-3 text-sm"
+        },
+        lg: {
+          trigger: "h-10 px-3.5 text-sm",
+          item: "py-2 px-2.5 text-sm",
+          input: "py-2.5 px-3.5 text-sm"
+        },
+        xl: {
+          trigger: "h-11 px-4 text-base",
+          item: "py-2.5 px-3 text-base",
+          input: "py-3 px-4 text-base"
+        }
       },
       variant: {
         outline: { trigger: "bg-background border border-input hover:bg-accent/50" },

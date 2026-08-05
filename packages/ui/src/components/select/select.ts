@@ -39,7 +39,15 @@ export interface SelectProps {
   ignoreFilter?: boolean
   disabled?: boolean
   required?: boolean
-  color?: ThemeColor | "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral"
+  color?:
+    | ThemeColor
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "error"
+    | "neutral"
   variant?: "outline" | "soft" | "subtle" | "ghost" | "none"
   size?: "xs" | "sm" | "md" | "lg" | "xl"
   highlight?: boolean

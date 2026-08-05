@@ -1,0 +1,285 @@
+---
+import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
+import RLACard from "@rimelight/ui/components/card/RLACard.astro";
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
+import RLATable from "@rimelight/ui/components/table/RLATable.astro";
+import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
+import type { TableColumn } from "@rimelight/ui/components/table/table";
+import { db } from "@/db";
+import { organization, member, user } from "@/db/schema";
+import { isNull, desc, eq, count } from "drizzle-orm";
+
+let orgsList: any[] = [];
+try {
+	orgsList = await db
+		.select({
+			id: organization.id,
+			name: organization.name,
+			slug: organization.slug,
+			logo: organization.logo,
+			createdAt: organization.createdAt,
+			memberCount: count(member.id)
+		})
+		.from(organization)
+		.leftJoin(member, eq(organization.id, member.organizationId))
+		.where(isNull(organization.deletedAt))
+		.groupBy(organization.id)
+		.orderBy(desc(organization.createdAt));
+} catch (err) {
+	console.warn("organization query skipped in organizations.astro:", err);
+}
+
+const orgColumns: TableColumn[] = [
+	{ id: "name", accessorKey: "name", header: "Organization", enableSorting: true },
+	{ id: "slug", accessorKey: "slug", header: "Slug / Identifier", enableSorting: true },
+	{ id: "members", accessorKey: "memberCount", header: "Members", enableSorting: true },
+	{ id: "createdAt", accessorKey: "createdAt", header: "Created Date", enableSorting: true },
+	{ id: "actions", header: "Actions", enableSorting: false, meta: { class: { th: "text-right", td: "text-right" } } }
+];
+---
+
+<AuthAdminDashboardLayout
+	title="Organizations"
+	description="Manage system workspace organizations, member associations, and multi-tenant access."
+	activeSection="organizations"
+>
+	<Fragment slot="actions">
+		<RLAButton id="open-create-org-btn" variant="solid" color="primary" leadingIcon="i-lucide-building-2" size="sm">
+			Create Organization
+		</RLAButton>
+	</Fragment>
+
+	<div class="flex flex-col gap-6">
+		<!-- Summary Header Cards -->
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<RLACard class="p-5 flex flex-col justify-between border-border shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Organizations</span>
+					<RLAIcon name="i-lucide-building-2" class="size-5 text-primary" />
+				</div>
+				<span class="text-3xl font-bold text-highlighted mt-2">{orgsList.length}</span>
+			</RLACard>
+
+			<RLACard class="p-5 flex flex-col justify-between border-border shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Multi-Tenancy Engine</span>
+					<RLAIcon name="i-lucide-layers" class="size-5 text-purple-500" />
+				</div>
+				<span class="text-xs font-semibold text-purple-500 mt-2 flex items-center gap-1">
+					<span class="size-2 rounded-full bg-purple-500"></span>
+					Active Organization Plugin
+				</span>
+			</RLACard>
+		</div>
+
+		<!-- Single Unified Card: RLATable -->
+		<RLATable
+			columns={orgColumns}
+			data={orgsList}
+			searchable
+			searchPlaceholder="Search organizations by name or slug..."
+			showColumnsToggle
+			hoverable
+			striped
+			class="w-full"
+		>
+			{orgsList.map((org) => (
+				<tr
+					class="org-row hover:bg-muted/20 transition-colors"
+					data-org-id={org.id}
+					data-org-name={org.name.toLowerCase()}
+					data-org-slug={org.slug.toLowerCase()}
+					data-raw-name={org.name}
+				>
+					<td class="p-3.5" data-col-id="name">
+						<div class="flex items-center gap-3">
+							<RLAAvatar src={org.logo || undefined} alt={org.name} size="sm" />
+							<span class="font-bold text-highlighted">{org.name}</span>
+						</div>
+					</td>
+					<td class="p-3.5 font-mono text-xs text-muted-foreground" data-col-id="slug">
+						{org.slug}
+					</td>
+					<td class="p-3.5" data-col-id="members">
+						<RLABadge variant="subtle" color="primary" class="text-xs font-mono">
+							{org.memberCount} {org.memberCount === 1 ? "member" : "members"}
+						</RLABadge>
+					</td>
+					<td class="p-3.5 text-xs text-muted-foreground whitespace-nowrap" data-col-id="createdAt">
+						{new Date(org.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+					</td>
+					<td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions">
+						<div class="flex items-center justify-end gap-2">
+							<button
+								type="button"
+								class="delete-org-btn text-xs font-medium text-destructive hover:underline"
+								data-org-id={org.id}
+								data-org-name={org.name}
+							>
+								Delete
+							</button>
+						</div>
+					</td>
+				</tr>
+			))}
+		</RLATable>
+	</div>
+
+	<!-- Modal: Create Organization -->
+	<div id="create-org-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+		<div class="bg-background border border-border rounded-xl shadow-2xl w-full max-w-md p-6 flex flex-col gap-4">
+			<div class="flex items-center justify-between border-b border-border pb-3">
+				<h3 class="text-base font-bold text-highlighted flex items-center gap-2">
+					<RLAIcon name="i-lucide-building-2" class="size-5 text-primary" />
+					Create New Organization
+				</h3>
+				<button type="button" id="close-create-org-modal" class="text-muted-foreground hover:text-foreground">
+					<RLAIcon name="i-lucide-x" class="size-5" />
+				</button>
+			</div>
+
+			<form id="create-org-form" class="flex flex-col gap-4">
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-semibold text-foreground">Organization Name</label>
+					<RLAInput id="create-org-name" placeholder="e.g. Acme Corp" required class="w-full" />
+				</div>
+
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-semibold text-foreground">Slug (URL identifier)</label>
+					<RLAInput id="create-org-slug" placeholder="e.g. acme-corp" required class="w-full font-mono text-xs" />
+				</div>
+
+				<div id="create-org-error" class="text-xs text-destructive bg-destructive/10 p-2.5 rounded-md hidden"></div>
+
+				<div class="flex justify-end gap-2 mt-2 pt-3 border-t border-border">
+					<RLAButton type="button" id="cancel-create-org-modal" variant="outline" color="neutral" size="sm">
+						Cancel
+					</RLAButton>
+					<RLAButton type="submit" id="submit-create-org-btn" variant="solid" color="primary" size="sm">
+						Create Organization
+					</RLAButton>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const searchInput = document.getElementById("org-search-input") as HTMLInputElement;
+			const orgRows = Array.from(document.querySelectorAll<HTMLTableRowElement>(".org-row"));
+			const visibleCountEl = document.getElementById("visible-org-count");
+
+			function filterOrgs() {
+				const query = searchInput?.value.toLowerCase().trim() || "";
+				let count = 0;
+
+				orgRows.forEach((row) => {
+					const name = row.getAttribute("data-org-name") || "";
+					const slug = row.getAttribute("data-org-slug") || "";
+					const matches = !query || name.includes(query) || slug.includes(query);
+
+					if (matches) {
+						row.classList.remove("hidden");
+						count++;
+					} else {
+						row.classList.add("hidden");
+					}
+				});
+
+				if (visibleCountEl) visibleCountEl.textContent = String(count);
+			}
+
+			searchInput?.addEventListener("input", filterOrgs);
+
+			// Modal
+			const createModal = document.getElementById("create-org-modal");
+			const openCreateBtn = document.getElementById("open-create-org-btn");
+			const closeCreateBtn = document.getElementById("close-create-org-modal");
+			const cancelCreateBtn = document.getElementById("cancel-create-org-modal");
+			const createForm = document.getElementById("create-org-form") as HTMLFormElement;
+			const nameInput = document.getElementById("create-org-name") as HTMLInputElement;
+			const slugInput = document.getElementById("create-org-slug") as HTMLInputElement;
+			const errorAlert = document.getElementById("create-org-error");
+
+			nameInput?.addEventListener("input", () => {
+				if (slugInput && !slugInput.dataset.userEdited) {
+					slugInput.value = nameInput.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+				}
+			});
+
+			slugInput?.addEventListener("input", () => {
+				slugInput.dataset.userEdited = "true";
+			});
+
+			const showModal = () => createModal?.classList.remove("hidden");
+			const hideModal = () => {
+				createModal?.classList.add("hidden");
+				createForm?.reset();
+				if (slugInput) delete slugInput.dataset.userEdited;
+				if (errorAlert) errorAlert.classList.add("hidden");
+			};
+
+			openCreateBtn?.addEventListener("click", showModal);
+			closeCreateBtn?.addEventListener("click", hideModal);
+			cancelCreateBtn?.addEventListener("click", hideModal);
+
+			createForm?.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				if (errorAlert) errorAlert.classList.add("hidden");
+
+				try {
+					const res = await fetch("/api/admin/organizations", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							name: nameInput?.value,
+							slug: slugInput?.value
+						})
+					});
+
+					if (res.ok) {
+						hideModal();
+						window.location.reload();
+					} else {
+						const data = await res.json();
+						if (errorAlert) {
+							errorAlert.textContent = data.error || "Failed to create organization.";
+							errorAlert.classList.remove("hidden");
+						}
+					}
+				} catch {
+					if (errorAlert) {
+						errorAlert.textContent = "Network error creating organization.";
+						errorAlert.classList.remove("hidden");
+					}
+				}
+			});
+
+			// Delete Action
+			document.querySelectorAll(".delete-org-btn").forEach((btn) => {
+				btn.addEventListener("click", async (e) => {
+					const target = e.currentTarget as HTMLElement;
+					const id = target.getAttribute("data-org-id");
+					const name = target.getAttribute("data-org-name");
+
+					if (!id || !confirm(`Are you sure you want to delete organization "${name}"?`)) return;
+
+					try {
+						const res = await fetch(`/api/admin/organizations/${id}`, { method: "DELETE" });
+						if (res.ok) {
+							window.location.reload();
+						} else {
+							const data = await res.json();
+							alert(data.error || "Failed to delete organization.");
+						}
+					} catch {
+						alert("Network error deleting organization.");
+					}
+				});
+			});
+		});
+	</script>
+</AuthAdminDashboardLayout>

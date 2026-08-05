@@ -54,12 +54,15 @@ async function seedDefaultRoles() {
     const existing = await db.select().from(role).limit(1)
     if (existing.length === 0) {
       for (const defaultRole of DEFAULT_ROLES) {
-        await db.insert(role).values({
-          ...defaultRole,
-          permissions: JSON.stringify(defaultRole.permissions) as any,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }).onConflictDoNothing()
+        await db
+          .insert(role)
+          .values({
+            ...defaultRole,
+            permissions: JSON.stringify(defaultRole.permissions) as any,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          })
+          .onConflictDoNothing()
       }
     }
   } catch (err) {
@@ -92,7 +95,10 @@ rolesApi.post("/", async (c) => {
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const body = await c.req.json()
-  const name = String(body.name || "").trim().toLowerCase().replace(/\s+/g, "-")
+  const name = String(body.name || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
   const displayName = String(body.displayName || body.name || "").trim()
 
   if (!name) {

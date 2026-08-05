@@ -1,0 +1,176 @@
+---
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+import ErrorPage from "@/components/ErrorPage.astro";
+import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro";
+import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro";
+import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro";
+import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro";
+import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro";
+import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro";
+import RLASearch from "@rimelight/ui/components/search/RLASearch.astro";
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
+import RLACard from "@rimelight/ui/components/card/RLACard.astro";
+import { auth } from "@/auth/auth";
+
+// Server side authentication & authorization check
+const session = await auth.api.getSession({ headers: Astro.request.headers });
+const currentUser = session?.user;
+const userRole = (currentUser as any)?.role;
+
+const isAuthenticated = Boolean(session && currentUser);
+const isAdmin = userRole === "admin" || userRole === "owner";
+
+const navItems = [
+	{ icon: "i-lucide-layout-dashboard", label: "Overview", href: "/admin", id: "overview" },
+	{ icon: "i-lucide-building-2", label: "Organizations", href: "/admin/organizations", id: "organizations" },
+	{ icon: "i-lucide-users", label: "Users", href: "/admin/users", id: "users" },
+	{ icon: "i-lucide-shield-check", label: "Roles & Permissions", href: "/admin/roles", id: "roles" },
+];
+
+interface Props {
+	title: string;
+	description: string;
+	activeSection?: string;
+}
+
+const { title, description, activeSection = "overview" } = Astro.props;
+---
+
+{!isAuthenticated ? (
+	<ErrorPage
+		code={401}
+		title="Authentication Required"
+		description="You must be signed in with an administrator account to access this page."
+		actions={[
+			{ label: "Go to Home Page", href: "/", variant: "solid", color: "primary", icon: "i-lucide-home" }
+		]}
+	/>
+) : !isAdmin ? (
+	<ErrorPage
+		code={403}
+		title="Access Denied"
+		description="Your account does not have administrator privileges required to access this page."
+		userEmail={currentUser?.email}
+		requiredRole="admin"
+		actions={[
+			{ label: "Go to Home Page", href: "/", variant: "solid", color: "primary", icon: "i-lucide-home" }
+		]}
+	/>
+) : (
+
+	<DashboardLayout title={title} description={description} noindex={true}>
+
+		<RLADashboardGroup>
+			<RLADashboardSidebar side="left" collapsible>
+				<Fragment slot="header">
+					<div class="flex items-center gap-2.5">
+						<div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+							<RLAIcon name="i-lucide-shield" class="size-5 text-primary" data-dashboard-sidebar-logo />
+						</div>
+						<div class="flex flex-col truncate" data-dashboard-sidebar-label>
+							<span class="font-semibold text-highlighted text-sm leading-none">Auth Admin</span>
+							<span class="text-xs text-muted-foreground mt-0.5">Better Auth Engine</span>
+						</div>
+					</div>
+					<RLADashboardSidebarCollapse side="left" class="shrink-0 ml-auto" />
+				</Fragment>
+
+				<nav class="flex flex-col gap-1 mt-2" data-dashboard-nav-container>
+					{navItems.map((item) => (
+						<a
+							href={item.href}
+							data-dashboard-nav
+							data-dashboard-section={item.id}
+							class={
+								"flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all " +
+								(item.id === activeSection
+									? "bg-primary/10 text-primary font-semibold"
+									: "text-muted-foreground hover:text-highlighted hover:bg-muted/50")
+							}
+						>
+							<RLAIcon name={item.icon} class="size-5 shrink-0" />
+							<span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
+						</a>
+					))}
+				</nav>
+
+				<Fragment slot="footer">
+				</Fragment>
+			</RLADashboardSidebar>
+
+			<RLADashboardPanel>
+				<RLADashboardNavbar slot="header" title={title} icon="i-lucide-shield">
+					<Fragment slot="left">
+						<div class="flex items-center gap-3">
+							<h1 class="text-lg font-bold text-highlighted tracking-tight" data-dashboard-navbar-title>{title}</h1>
+							<RLABadge variant="subtle" color="success" class="hidden sm:inline-flex text-xs">
+								Live Auth Sync
+							</RLABadge>
+						</div>
+					</Fragment>
+					<Fragment slot="right">
+						<RLASearch />
+						<a href="/cms">
+							<RLAButton variant="ghost" color="neutral" size="sm" leadingIcon="i-lucide-file-stack">
+								CMS Admin
+							</RLAButton>
+						</a>
+						<RLAAvatar src={currentUser?.image || `https://i.pravatar.cc/80?u=${currentUser?.id}`} size="sm" class="cursor-pointer" />
+					</Fragment>
+				</RLADashboardNavbar>
+
+				<div slot="body" class="flex flex-col gap-4 flex-1">
+					<RLADashboardToolbar>
+						<Fragment slot="left">
+							<p class="text-sm text-muted-foreground">{description}</p>
+						</Fragment>
+						<Fragment slot="right">
+							<div class="flex items-center gap-2">
+								<slot name="actions" />
+							</div>
+						</Fragment>
+					</RLADashboardToolbar>
+
+					<div class="flex-1 overflow-y-auto min-h-0 p-6">
+						<slot />
+					</div>
+				</div>
+			</RLADashboardPanel>
+		</RLADashboardGroup>
+	</DashboardLayout>
+)}
+
+
+
+<style is:global>
+  /* Collapse styles aligned with CMSDashboardLayout */
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
+    display: none;
+  }
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
+    display: none;
+  }
+  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
+    margin: 0 auto;
+  }
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
+    display: none;
+  }
+  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+</style>
