@@ -26,6 +26,7 @@ const STATIC_PATHS = ["/", "/about", "/contact", "/branding", "/construction"]
 export const PRIVATE_PATH_PREFIXES = [
   "/dashboard",
   "/admin",
+  "/cms",
   "/internal",
   "/api",
   "/dev",

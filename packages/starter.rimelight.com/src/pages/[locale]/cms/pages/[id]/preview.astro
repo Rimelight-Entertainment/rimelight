@@ -15,7 +15,7 @@ if (!session) {
 }
 
 const page = await db.select().from(pages).where(eq(pages.id, id!)).limit(1)
-if (!page[0]) return Astro.redirect('/admin/cms/pages')
+if (!page[0]) return Astro.redirect('/cms/pages')
 
 const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
 
@@ -31,7 +31,7 @@ const userSession = session
 
 <CMSDashboardLayout title={`Preview: ${page[0].title}`} description="Preview CMS page" activeSection="pages">
   <Fragment slot="toolbar-right">
-    <RLAButton href={`/admin/cms/pages/${id}/edit`} variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-arrow-left">
+    <RLAButton href={`/cms/pages/${id}/edit`} variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-arrow-left">
       Back to Editor
     </RLAButton>
   </Fragment>

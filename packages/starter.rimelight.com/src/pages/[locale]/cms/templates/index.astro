@@ -21,7 +21,7 @@ const templates = await db
 
 <CMSDashboardLayout title="Templates" description="Manage CMS templates" activeSection="templates">
   <Fragment slot="toolbar-right">
-    <RLAButton href="/admin/cms/templates/new" variant="solid" color="primary" leadingIcon="i-lucide-plus">
+    <RLAButton href="/cms/templates/new" variant="solid" color="primary" leadingIcon="i-lucide-plus">
       Create Template
     </RLAButton>
   </Fragment>
@@ -50,7 +50,7 @@ const templates = await db
               v{template.version}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-              <RLAButton href={`/admin/cms/templates/${template.id}/edit`} variant="ghost" color="primary" size="xs">
+              <RLAButton href={`/cms/templates/${template.id}/edit`} variant="ghost" color="primary" size="xs">
                 Edit
               </RLAButton>
               <RLAButton variant="ghost" color="error" size="xs">

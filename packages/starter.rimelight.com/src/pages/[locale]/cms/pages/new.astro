@@ -27,7 +27,7 @@ const templateOptions = [
 
 <CMSDashboardLayout title="Create Page" description="Create a new CMS page" activeSection="pages">
   <Fragment slot="toolbar-right">
-    <RLAButton href="/admin/cms/pages" variant="outline" color="neutral" size="sm">
+    <RLAButton href="/cms/pages" variant="outline" color="neutral" size="sm">
       Cancel
     </RLAButton>
     <RLAButton variant="solid" color="success" size="sm" leadingIcon="i-lucide-plus" type="submit" form="page-form">
@@ -112,7 +112,7 @@ const templateOptions = [
 
         if (response.ok) {
           const result = await response.json();
-          window.location.href = `/admin/cms/pages/${result.page.id}/edit`;
+          window.location.href = `/cms/pages/${result.page.id}/edit`;
         } else {
           const errorData = await response.json().catch(() => ({}));
           alert(`Failed to create page: ${errorData.error || 'Unknown error'}`);

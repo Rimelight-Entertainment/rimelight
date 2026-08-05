@@ -328,8 +328,24 @@ export const teamMemberRelations = relations(teamMember, ({ one }) => ({
 }))
 
 // ============================================================================
-// Type Exports
+// Roles & Permissions Tables
 // ============================================================================
+
+export const role = pgTable("role", {
+  id: text("id")
+    .$defaultFn(() => crypto.randomUUID())
+    .notNull()
+    .primaryKey(),
+  name: text("name").notNull().unique(),
+  displayName: text("display_name").notNull(),
+  description: text("description"),
+  permissions: text("permissions").$type<string[]>().notNull().default("[]"),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  deletedAt: timestamp("deleted_at")
+})
 
 export type User = typeof user.$inferSelect
 export type Session = typeof session.$inferSelect
@@ -340,3 +356,5 @@ export type Member = typeof member.$inferSelect
 export type Invitation = typeof invitation.$inferSelect
 export type Team = typeof team.$inferSelect
 export type TeamMember = typeof teamMember.$inferSelect
+export type Role = typeof role.$inferSelect
+

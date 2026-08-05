@@ -27,7 +27,7 @@ const pagesData = pagesList.map(page => ({
 
 <CMSDashboardLayout title="Pages" description="Manage CMS pages" activeSection="pages">
   <Fragment slot="toolbar-right">
-    <RLAButton href="/admin/cms/pages/new" variant="solid" color="success" leadingIcon="i-lucide-plus">
+    <RLAButton href="/cms/pages/new" variant="solid" color="success" leadingIcon="i-lucide-plus">
       Create Page
     </RLAButton>
   </Fragment>
@@ -63,10 +63,10 @@ const pagesData = pagesList.map(page => ({
               )}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-              <RLAButton href={`/admin/cms/pages/${page.id}/edit`} variant="ghost" color="primary" size="xs">
+              <RLAButton href={`/cms/pages/${page.id}/edit`} variant="ghost" color="primary" size="xs">
                 Edit
               </RLAButton>
-              <RLAButton href={`/admin/cms/pages/${page.id}/preview`} variant="ghost" color="neutral" size="xs">
+              <RLAButton href={`/cms/pages/${page.id}/preview`} variant="ghost" color="neutral" size="xs">
                 Preview
               </RLAButton>
               <RLAButton variant="ghost" color="error" size="xs">

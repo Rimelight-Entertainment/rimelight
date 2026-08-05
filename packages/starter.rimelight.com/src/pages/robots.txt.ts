@@ -10,6 +10,7 @@ export const GET: APIRoute = ({ site }) => {
     disallow: [
       ...PRIVATE_PATH_PREFIXES,
       "/*/dashboard/",
+      "/*/cms/",
       "/*/internal/",
       "/*/api/",
       "/*/og/",

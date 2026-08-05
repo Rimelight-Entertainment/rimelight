@@ -3,6 +3,10 @@ import { auth } from "@/auth/auth"
 import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
+import { db } from "@/db"
+import { role } from "@/db/schema"
+import { isNull, desc } from "drizzle-orm"
 import { t } from "@rimelight/i18n"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
@@ -10,6 +14,20 @@ const session = await auth.api.getSession({ headers: Astro.request.headers })
 if (!session) {
   return Astro.redirect("/auth/sign-in")
 }
+
+const dbRoles = await db.select().from(role).where(isNull(role.deletedAt)).orderBy(desc(role.createdAt))
+const defaultRoles = [
+  { name: "admin", displayName: "Administrator", description: "Full system & CMS access", permissions: ["cms:read", "cms:write", "cms:publish", "cms:delete", "templates:create", "templates:edit", "roles:manage"] },
+  { name: "editor", displayName: "Editor", description: "Can create and publish pages", permissions: ["cms:read", "cms:write", "cms:publish", "templates:read"] },
+  { name: "author", displayName: "Author", description: "Can create and edit drafts", permissions: ["cms:read", "cms:write"] },
+  { name: "reviewer", displayName: "Reviewer", description: "Can review & approve versions", permissions: ["cms:read", "cms:approve"] },
+  { name: "viewer", displayName: "Viewer", description: "Read-only access", permissions: ["cms:read"] }
+]
+
+const rolesList = (dbRoles.length > 0 ? dbRoles : defaultRoles).map((r) => ({
+  ...r,
+  permissionsList: typeof r.permissions === "string" ? JSON.parse(r.permissions) : (r.permissions || [])
+}))
 ---
 
 <CMSDashboardLayout title="Settings" description="CMS Settings" activeSection="settings">
@@ -35,6 +53,36 @@ if (!session) {
           <label class="block text-sm font-medium text-gray-700 mb-2">Items per Page</label>
           <RLAInput type="number" value="20" />
         </div>
+      </div>
+    </div>
+
+    <!-- Roles & Permissions Section -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Roles & Permissions</h2>
+          <p class="text-sm text-gray-500 mt-1">Database-backed auth roles and their permissions matrix</p>
+        </div>
+        <RLABadge variant="soft" color="blue" size="sm">Auth System DB</RLABadge>
+      </div>
+
+      <div class="space-y-4">
+        {rolesList.map((r) => (
+          <div class="p-4 border border-gray-200 rounded-lg space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-gray-900">{r.displayName || r.name}</span>
+                <span class="text-xs px-2 py-0.5 bg-gray-100 font-mono text-gray-600 rounded">{r.name}</span>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600">{r.description}</p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              {r.permissionsList.map((perm: string) => (
+                <span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded font-mono">{perm}</span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
 

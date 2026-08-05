@@ -13,13 +13,13 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import { t } from "@rimelight/i18n";
 
 const cmsNavItems = [
-  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: "/admin/cms", id: "dashboard" },
-  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: "/admin/cms/templates", id: "templates" },
-  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: "/admin/cms/pages", id: "pages" },
-  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: "/admin/cms/versions", id: "versions" },
+  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: "/cms", id: "dashboard" },
+  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: "/cms/templates", id: "templates" },
+  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: "/cms/pages", id: "pages" },
+  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: "/cms/versions", id: "versions" },
 ]
 
-const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: "/admin/cms/settings", id: "settings" }
+const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: "/cms/settings", id: "settings" }
 
 interface CMSDashboardLayoutProps {
   title: string;

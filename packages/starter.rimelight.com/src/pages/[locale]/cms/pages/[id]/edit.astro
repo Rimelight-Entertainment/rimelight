@@ -14,7 +14,7 @@ if (!session) {
 }
 
 const page = await db.select().from(pages).where(eq(pages.id, id!)).limit(1)
-if (!page[0]) return Astro.redirect('/admin/cms/pages')
+if (!page[0]) return Astro.redirect('/cms/pages')
 
 const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
 
@@ -25,7 +25,7 @@ const content = draft[0]?.content
 
 <CMSDashboardLayout title={`Edit: ${page[0].title}`} description="Edit CMS page" activeSection="pages">
   <Fragment slot="toolbar-right">
-    <RLAButton href={`/admin/cms/pages/${id}/preview`} variant="outline" color="neutral" size="sm">
+    <RLAButton href={`/cms/pages/${id}/preview`} variant="outline" color="neutral" size="sm">
       Preview
     </RLAButton>
     <RLAButton variant="solid" color="success" size="sm" id="publish-btn">
@@ -63,7 +63,7 @@ const content = draft[0]?.content
         });
         if (response.ok) {
           alert('Page published successfully!');
-          window.location.href = '/admin/cms/pages';
+          window.location.href = '/cms/pages';
         } else {
           const errorData = await response.json().catch(() => ({}));
           alert(`Failed to publish page: ${errorData.error || 'Unknown error'}`);

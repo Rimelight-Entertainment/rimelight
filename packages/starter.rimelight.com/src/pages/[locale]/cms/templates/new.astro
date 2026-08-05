@@ -5,17 +5,37 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
 import RLATextarea from "@rimelight/ui/components/textarea/RLATextarea.astro"
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro"
+import { db } from "@/db"
+import { role } from "@/db/schema"
+import { isNull } from "drizzle-orm"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
 if (!session) {
   return Astro.redirect("/auth/sign-in")
 }
+
+// Fetch DB roles for selection
+const dbRoles = await db.select().from(role).where(isNull(role.deletedAt))
+const defaultRolesList = [
+  { name: "admin", displayName: "Administrator", description: "Full system & CMS access" },
+  { name: "editor", displayName: "Editor", description: "Can create and publish pages" },
+  { name: "author", displayName: "Author", description: "Can create and edit drafts" },
+  { name: "reviewer", displayName: "Reviewer", description: "Can review & approve versions" },
+  { name: "viewer", displayName: "Viewer", description: "Read-only access" }
+]
+
+const activeRoles = dbRoles.length > 0 ? dbRoles : defaultRolesList
+const roleOptions = activeRoles.map((r) => ({
+  label: r.displayName || r.name,
+  value: r.name,
+  description: r.description || ""
+}))
 ---
 
 <CMSDashboardLayout title="Create Template" description="Create a new CMS template" activeSection="templates">
   <Fragment slot="toolbar-right">
-    <RLAButton href="/admin/cms/templates" variant="outline" color="neutral" size="sm">
+    <RLAButton href="/cms/templates" variant="outline" color="neutral" size="sm">
       Cancel
     </RLAButton>
     <RLAButton variant="solid" color="primary" size="sm" type="submit" form="template-form">
@@ -57,8 +77,13 @@ if (!session) {
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Allowed Roles (comma-separated)</label>
-        <RLAInput name="allowedRoles" placeholder="admin, editor" />
+        <label class="block text-sm font-medium text-gray-700 mb-2">Allowed Roles</label>
+        <RLASelect
+          name="allowedRoles"
+          placeholder="Select allowed roles..."
+          multiple={true}
+          items={roleOptions}
+        />
       </div>
 
       <div>
@@ -72,8 +97,18 @@ if (!session) {
       e.preventDefault();
       
       const formData = new FormData(e.target as HTMLFormElement);
-      const allowedRolesVal = formData.get('allowedRoles') as string;
+      const allowedRolesRaw = formData.get('allowedRoles') as string;
       const initialBlocksVal = formData.get('initialBlocks') as string;
+
+      let allowedRoles = [];
+      if (allowedRolesRaw) {
+        try {
+          allowedRoles = JSON.parse(allowedRolesRaw);
+          if (!Array.isArray(allowedRoles)) allowedRoles = [allowedRolesRaw];
+        } catch {
+          allowedRoles = allowedRolesRaw.split(',').map(r => r.trim()).filter(Boolean);
+        }
+      }
 
       let initialBlocks = [];
       if (initialBlocksVal) {
@@ -90,7 +125,7 @@ if (!session) {
         title: formData.get('title'),
         description: formData.get('description'),
         pageType: formData.get('pageType'),
-        allowedRoles: allowedRolesVal ? allowedRolesVal.split(',').map(r => r.trim()) : [],
+        allowedRoles,
         initialBlocks,
         approvalRules: { allowSelfApproval: true, minApprovals: 1 },
         defaultProperties: {}
@@ -104,7 +139,7 @@ if (!session) {
         });
 
         if (response.ok) {
-          window.location.href = '/admin/cms/templates';
+          window.location.href = '/cms/templates';
         } else {
           const errorData = await response.json().catch(() => ({}));
           alert(`Failed to create template: ${errorData.error || 'Unknown error'}`);

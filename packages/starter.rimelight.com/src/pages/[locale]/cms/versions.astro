@@ -70,7 +70,7 @@ const versions = await Promise.all(
               {new Date(version.createdAt).toLocaleDateString()}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-              <RLAButton href={`/admin/cms/versions/${version.id}`} variant="ghost" color="primary" size="xs">
+              <RLAButton href={`/cms/versions/${version.id}`} variant="ghost" color="primary" size="xs">
                 View
               </RLAButton>
               <RLAButton variant="ghost" color="error" size="xs">
