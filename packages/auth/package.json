@@ -1,0 +1,37 @@
+{
+  "name": "@rimelight/auth",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Rimelight Auth — generic, composable better-auth wrapper and security toolkit",
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server/index.ts",
+    "./client": "./src/client/index.ts",
+    "./permissions": "./src/permissions/index.ts",
+    "./schema/drizzle": "./src/schema/drizzle/index.ts",
+    "./plugins/reserved-usernames": "./src/plugins/reserved-usernames/index.ts",
+    "./plugins/discriminator-tag": "./src/plugins/discriminator-tag/index.ts",
+    "./plugins/synthetic-user": "./src/plugins/synthetic-user/index.ts",
+    "./plugins/construction-guest": "./src/plugins/construction-guest/index.ts"
+  },
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "1.6.25",
+    "better-auth": "1.6.25",
+    "drizzle-orm": "0.45.2"
+  },
+  "peerDependencies": {
+    "better-auth": ">=1.0.0",
+    "drizzle-orm": ">=0.30.0",
+    "hono": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "hono": {
+      "optional": true
+    }
+  },
+  "packageManager": "pnpm@11.18.0"
+}
