@@ -8,6 +8,12 @@ const rolesApi = new Hono()
 
 const DEFAULT_ROLES = [
   {
+    name: "owner",
+    displayName: "Owner",
+    description: "Primary system and organization owner with complete control over all assets and settings",
+    permissions: ["*"]
+  },
+  {
     name: "admin",
     displayName: "Administrator",
     description: "Full access to manage system settings, users, CMS content, and page templates",
@@ -45,6 +51,12 @@ const DEFAULT_ROLES = [
     displayName: "Viewer",
     description: "Read-only access to published CMS pages and content",
     permissions: ["cms:read"]
+  },
+  {
+    name: "user",
+    displayName: "User",
+    description: "Standard registered account with baseline user access",
+    permissions: ["user:read"]
   }
 ]
 

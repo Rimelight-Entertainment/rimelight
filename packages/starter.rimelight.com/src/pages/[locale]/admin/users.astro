@@ -59,9 +59,9 @@ const initialUsers = rawUsers.map((u) => ({
 	organizations: userOrgMap[u.id] || []
 }));
 
-let availableRoles: any[] = [];
+let dbRoles: any[] = [];
 try {
-	availableRoles = await db
+	dbRoles = await db
 		.select()
 		.from(roleTable)
 		.where(isNull(roleTable.deletedAt));
@@ -69,19 +69,21 @@ try {
 	console.warn("roleTable query skipped in users.astro:", err);
 }
 
-// Extract all unique roles present across users (e.g. owner, admin, user) & merge with DB roles
-const rolesMap = new Map<string, string>();
-initialUsers.forEach(u => {
-	if (u.role) {
-		rolesMap.set(u.role.toLowerCase(), u.role.charAt(0).toUpperCase() + u.role.slice(1));
-	}
-});
-availableRoles.forEach(r => {
+// Standard system roles + database defined roles
+const SYSTEM_ROLE_LABELS: Record<string, string> = {
+	owner: "Owner",
+	admin: "Administrator",
+	editor: "Editor",
+	author: "Author",
+	reviewer: "Reviewer",
+	viewer: "Viewer",
+	user: "User"
+};
+
+const rolesMap = new Map<string, string>(Object.entries(SYSTEM_ROLE_LABELS));
+dbRoles.forEach(r => {
 	rolesMap.set(r.name.toLowerCase(), r.displayName || r.name);
 });
-if (!rolesMap.has("admin")) rolesMap.set("admin", "Administrator");
-if (!rolesMap.has("owner")) rolesMap.set("owner", "Owner");
-if (!rolesMap.has("user")) rolesMap.set("user", "User");
 
 const roleOptions = Array.from(rolesMap.entries()).map(([value, label]) => ({ label, value }));
 
