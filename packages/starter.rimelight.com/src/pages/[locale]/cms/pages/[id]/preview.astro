@@ -19,7 +19,8 @@ if (!page[0]) return Astro.redirect('/cms/pages')
 
 const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
 
-const content = draft[0]?.content ? JSON.parse(draft[0].content) : JSON.parse(page[0].content)
+const parseContent = (c: any) => (typeof c === "string" ? JSON.parse(c) : c)
+const content = draft[0]?.content ? parseContent(draft[0].content) : parseContent(page[0].content)
 const userSession = session
   ? {
       userId: session.user.id,
@@ -41,11 +42,19 @@ const userSession = session
       <p class="text-sm text-blue-800">Preview Mode - This is how the page will appear to readers</p>
     </div>
 
-    <PageRenderer 
-      blocks={content.blocks || []} 
-      session={userSession} 
-      locale="en"
-      class="prose prose-lg max-w-none"
-    />
+    {userSession ? (
+      <PageRenderer 
+        blocks={content.blocks || []} 
+        session={userSession} 
+        locale="en"
+        class="prose prose-lg max-w-none"
+      />
+    ) : (
+      <PageRenderer 
+        blocks={content.blocks || []} 
+        locale="en"
+        class="prose prose-lg max-w-none"
+      />
+    )}
   </div>
 </CMSDashboardLayout>

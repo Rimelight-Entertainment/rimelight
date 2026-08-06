@@ -1,16 +1,12 @@
 ---
 import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
-import RLACard from "@rimelight/ui/components/card/RLACard.astro";
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
 import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
-import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
-import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro";
 import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table";
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
 import { db } from "@/db";
 import { user, role as roleTable, member, organization } from "@/db/schema";
 import { isNull, desc, eq } from "drizzle-orm";
@@ -48,16 +44,18 @@ try {
 
 	memberRecords.forEach((m) => {
 		if (!userOrgMap[m.userId]) userOrgMap[m.userId] = [];
-		userOrgMap[m.userId].push({ orgName: m.orgName, orgRole: m.role });
+		const list = userOrgMap[m.userId];
+		if (list) list.push({ orgName: m.orgName, orgRole: m.role });
 	});
 } catch (err) {
 	console.warn("member/organization query skipped in users.astro:", err);
 }
 
-const initialUsers = rawUsers.map((u) => ({
-	...u,
-	organizations: userOrgMap[u.id] || []
-}));
+const initialUsers = rawUsers.map((u) =>
+	Object.assign({}, u, {
+		organizations: userOrgMap[u.id] || []
+	})
+);
 
 let dbRoles: any[] = [];
 try {
@@ -337,8 +335,8 @@ const userColumns: TableColumn[] = [
 		document.addEventListener("DOMContentLoaded", () => {
 			// DOM elements
 			const searchInput = (document.getElementById("user-search-input") || document.querySelector("[data-rla-table-search]")) as HTMLInputElement;
-			const roleFilter = document.getElementById("role-filter-select") as HTMLSelectElement;
-			const statusFilter = document.getElementById("status-filter-select") as HTMLSelectElement;
+			const roleFilter = document.getElementById("role-filter-select") as unknown as HTMLSelectElement;
+			const statusFilter = document.getElementById("status-filter-select") as unknown as HTMLSelectElement;
 			const rows = Array.from(document.querySelectorAll<HTMLTableRowElement>(".user-row"));
 			const visibleCountEl = document.getElementById("visible-count-el");
 
@@ -408,7 +406,7 @@ const userColumns: TableColumn[] = [
 							method: "POST",
 							headers: { "Content-Type": "application/json" }
 						});
-						const data = await res.json();
+						const data = (await res.json()) as { error?: string; message?: string };
 						if (res.ok) {
 							alert(data.message || `Verification email successfully sent to ${userEmail}!`);
 						} else {
@@ -430,7 +428,7 @@ const userColumns: TableColumn[] = [
 						if (res.ok) {
 							window.location.reload();
 						} else {
-							const data = await res.json();
+							const data = (await res.json()) as { error?: string };
 							alert(data.error || `Failed to ${actionText} user.`);
 						}
 					} catch {
@@ -479,7 +477,7 @@ const userColumns: TableColumn[] = [
 
 				try {
 					const res = await fetch(`/api/admin/users/${userId}/sessions`);
-					const data = await res.json();
+					const data = (await res.json()) as { sessions?: any[] };
 
 					if (sessionsLoadingSpinner) sessionsLoadingSpinner.classList.add("hidden");
 					if (sessionsModalContent) sessionsModalContent.classList.remove("hidden");
@@ -571,7 +569,7 @@ const userColumns: TableColumn[] = [
 					name: (document.getElementById("create-name") as HTMLInputElement)?.value,
 					email: (document.getElementById("create-email") as HTMLInputElement)?.value,
 					password: (document.getElementById("create-password") as HTMLInputElement)?.value,
-					role: (document.getElementById("create-role") as HTMLSelectElement)?.value,
+					role: (document.getElementById("create-role") as unknown as HTMLSelectElement)?.value,
 				};
 
 				try {
@@ -581,7 +579,7 @@ const userColumns: TableColumn[] = [
 						body: JSON.stringify(body)
 					});
 
-					const data = await res.json();
+					const data = (await res.json()) as { error?: string };
 					if (res.ok) {
 						hideCreateModal();
 						window.location.reload();
@@ -608,7 +606,7 @@ const userColumns: TableColumn[] = [
 			const setRoleForm = document.getElementById("set-role-form") as HTMLFormElement;
 			const roleUserIdInput = document.getElementById("role-user-id") as HTMLInputElement;
 			const roleUserNameDisplay = document.getElementById("role-user-name-display");
-			const targetRoleSelect = document.getElementById("target-role-select") as HTMLSelectElement;
+			const targetRoleSelect = document.getElementById("target-role-select") as unknown as HTMLSelectElement;
 
 			document.querySelectorAll(".set-role-btn").forEach((btn) => {
 				btn.addEventListener("click", (e) => {
@@ -645,7 +643,7 @@ const userColumns: TableColumn[] = [
 						setRoleModal?.classList.add("hidden");
 						window.location.reload();
 					} else {
-						const data = await res.json();
+						const data = (await res.json()) as { error?: string };
 						alert(data.error || "Failed to update user role.");
 					}
 				} catch (err) {
@@ -674,7 +672,7 @@ const userColumns: TableColumn[] = [
 						if (res.ok) {
 							window.location.reload();
 						} else {
-							const data = await res.json();
+							const data = (await res.json()) as { error?: string };
 							alert(data.error || `Failed to ${actionText} user.`);
 						}
 					} catch {
@@ -721,7 +719,7 @@ const userColumns: TableColumn[] = [
 						deleteModal?.classList.add("hidden");
 						window.location.reload();
 					} else {
-						const data = await res.json();
+						const data = (await res.json()) as { error?: string };
 						alert(data.error || "Failed to delete user account.");
 					}
 				} catch (err) {

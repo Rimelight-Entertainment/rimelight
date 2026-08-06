@@ -19,10 +19,11 @@ const pagesList = await db
   .where(isNull(pages.deletedAt))
   .orderBy(desc(pages.createdAt))
 
-const pagesData = pagesList.map(page => ({
-  ...page,
-  content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
-}))
+const pagesData = pagesList.map((page) =>
+  Object.assign({}, page, {
+    content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
+  })
+)
 ---
 
 <CMSDashboardLayout title="Pages" description="Manage CMS pages" activeSection="pages">

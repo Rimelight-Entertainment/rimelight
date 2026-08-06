@@ -1,6 +1,5 @@
 ---
 import type { BaseBlock } from "@rimelight/cms"
-import BlockRenderer from "../BlockRenderer.astro"
 
 interface Props {
   block: BaseBlock
@@ -54,9 +53,7 @@ const { title, synopsis, characters, aPlot, bPlot, cPlot, stinger } = block.prop
   )}
   {block.children && block.children.length > 0 && (
     <div class="mt-4">
-      {block.children.map((child) => (
-        <BlockRenderer block={child} locale={locale} />
-      ))}
+      <slot />
     </div>
   )}
 </div>

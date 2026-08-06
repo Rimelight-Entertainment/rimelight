@@ -66,17 +66,19 @@ async function seedDefaultRoles() {
   try {
     const existing = await db.select().from(role).limit(1)
     if (existing.length === 0) {
-      for (const defaultRole of DEFAULT_ROLES) {
-        await db
-          .insert(role)
-          .values({
-            ...defaultRole,
-            permissions: JSON.stringify(defaultRole.permissions) as any,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          })
-          .onConflictDoNothing()
-      }
+      await Promise.all(
+        DEFAULT_ROLES.map((defaultRole) =>
+          db
+            .insert(role)
+            .values({
+              ...defaultRole,
+              permissions: defaultRole.permissions,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            })
+            .onConflictDoNothing()
+        )
+      )
     }
   } catch (err) {
     console.error("Failed to seed default roles:", err)
@@ -95,10 +97,11 @@ rolesApi.get("/", async (c) => {
     .where(isNull(role.deletedAt))
     .orderBy(desc(role.createdAt))
 
-  const formattedRoles = rolesList.map((r) => ({
-    ...r,
-    permissions: typeof r.permissions === "string" ? JSON.parse(r.permissions) : r.permissions
-  }))
+  const formattedRoles = rolesList.map((r) =>
+    Object.assign({}, r, {
+      permissions: typeof r.permissions === "string" ? JSON.parse(r.permissions) : r.permissions
+    })
+  )
 
   return c.json({ roles: formattedRoles })
 })
@@ -124,7 +127,7 @@ rolesApi.post("/", async (c) => {
       name,
       displayName,
       description: body.description || "",
-      permissions: JSON.stringify(body.permissions || []) as any,
+      permissions: Array.isArray(body.permissions) ? body.permissions : [],
       createdAt: new Date(),
       updatedAt: new Date()
     })
@@ -145,7 +148,7 @@ rolesApi.put("/:id", async (c) => {
     .set({
       displayName: body.displayName,
       description: body.description,
-      permissions: body.permissions ? (JSON.stringify(body.permissions) as any) : undefined,
+      permissions: Array.isArray(body.permissions) ? body.permissions : undefined,
       updatedAt: new Date()
     })
     .where(eq(role.id, id))

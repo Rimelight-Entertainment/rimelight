@@ -26,9 +26,17 @@ const { block, locale = "en" } = Astro.props
   ) : block.type === "CodeBlock" ? (
     <CodeBlock block={block} locale={locale} />
   ) : block.type === "ScriptBlock" ? (
-    <ScriptBlock block={block} locale={locale} />
+    <ScriptBlock block={block} locale={locale}>
+      {block.children?.map((child) => (
+        <Astro.self block={child} locale={locale} />
+      ))}
+    </ScriptBlock>
   ) : block.type === "SceneBlock" ? (
-    <SceneBlock block={block} locale={locale} />
+    <SceneBlock block={block} locale={locale}>
+      {block.children?.map((child) => (
+        <Astro.self block={child} locale={locale} />
+      ))}
+    </SceneBlock>
   ) : block.type === "DialogueBlock" ? (
     <DialogueBlock block={block} locale={locale} />
   ) : block.type === "SectionBlock" ? (

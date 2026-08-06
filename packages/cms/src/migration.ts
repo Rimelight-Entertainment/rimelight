@@ -26,7 +26,8 @@ export async function migrateLegacyPagesToCMSv2(db: any) {
       return null
     }
 
-    return batch.rows as unknown as Array<{ id: string; content: unknown }>
+    const rows: Array<{ id: string; content: unknown }> = batch.rows
+    return rows
   }
 
   async function processBatch(pagesList: Array<{ id: string; content: unknown }>) {
@@ -40,13 +41,15 @@ export async function migrateLegacyPagesToCMSv2(db: any) {
     await Promise.all(updatePromises)
   }
 
-  let pagesList = await fetchBatch(offset)
-  while (pagesList !== null) {
+  async function processAllBatches(currentOffset: number): Promise<void> {
+    const pagesList = await fetchBatch(currentOffset)
+    if (!pagesList) return
     await processBatch(pagesList)
-    offset += BATCH_SIZE
-    console.log(`[Migration] Migrated ${offset} records...`)
-    pagesList = await fetchBatch(offset)
+    console.log(`[Migration] Migrated ${currentOffset + BATCH_SIZE} records...`)
+    return processAllBatches(currentOffset + BATCH_SIZE)
   }
+
+  await processAllBatches(offset)
 
   console.log("[Migration] Migration completed successfully.")
 }

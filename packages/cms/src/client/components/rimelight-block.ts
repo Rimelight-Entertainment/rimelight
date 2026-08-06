@@ -44,19 +44,19 @@ export class RimelightBlockNode extends HTMLElement {
       <rimelight-contenteditable ${readOnly ? "read-only" : ""}></rimelight-contenteditable>
     `
 
-    const ce = this.querySelector("rimelight-contenteditable")
+    const ce = this.querySelector<
+      HTMLElement & { setNodes: (nodes: Array<{ type: string; text: string }>) => void }
+    >("rimelight-contenteditable")
     if (ce) {
-      const contentEditable = ce as unknown as {
-        setNodes: (nodes: Array<{ type: string; text: string }>) => void
-      }
-      contentEditable.setNodes([{ type: "text", text: textVal }])
+      ce.setNodes([{ type: "text", text: textVal }])
       ce.addEventListener("nodes-change", (e: Event) => {
-        const customEvt = e as unknown as { detail: { nodes: Array<{ text?: string }> } }
-        const text = customEvt.detail.nodes[0]?.text || ""
-        this.blockData.props.text = { en: text }
-        this.dispatchEvent(
-          new CustomEvent("block-change", { detail: { block: this.blockData }, bubbles: true })
-        )
+        if (e instanceof CustomEvent && e.detail?.nodes) {
+          const text = e.detail.nodes[0]?.text || ""
+          this.blockData.props.text = { en: text }
+          this.dispatchEvent(
+            new CustomEvent("block-change", { detail: { block: this.blockData }, bubbles: true })
+          )
+        }
       })
     }
 

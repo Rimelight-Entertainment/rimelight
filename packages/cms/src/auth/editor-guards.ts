@@ -48,10 +48,9 @@ export function validateServerBlockPayload(
   }
 
   for (let i = 0; i < existingTemplated.length; i++) {
-    if (
-      existingTemplated[i].id !== incomingTemplated[i].id ||
-      existingTemplated[i].type !== incomingTemplated[i].type
-    ) {
+    const existing = existingTemplated[i]
+    const incoming = incomingTemplated[i]
+    if (!existing || !incoming || existing.id !== incoming.id || existing.type !== incoming.type) {
       return { valid: false, reason: "Forbidden: Reordering of templated blocks is forbidden." }
     }
   }

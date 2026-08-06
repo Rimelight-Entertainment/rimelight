@@ -162,11 +162,10 @@ cms.get("/versions", async (c) => {
         .from(pages)
         .where(eq(pages.id, version.pageId))
         .limit(1)
-      return {
-        ...version,
+      return Object.assign({}, version, {
         pageTitle: page[0]?.title || "Unknown Page",
         slug: page[0]?.slug || ""
-      }
+      })
     })
   )
 
@@ -185,10 +184,11 @@ cms.get("/pages", async (c) => {
     .orderBy(desc(pages.createdAt))
 
   // Ensure content is returned as an object, not a string
-  const pagesData = pagesList.map((page) => ({
-    ...page,
-    content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
-  }))
+  const pagesData = pagesList.map((page) =>
+    Object.assign({}, page, {
+      content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
+    })
+  )
 
   return c.json({ pages: pagesData })
 })

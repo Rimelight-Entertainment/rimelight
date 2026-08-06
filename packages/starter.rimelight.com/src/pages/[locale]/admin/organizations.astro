@@ -7,9 +7,9 @@ import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
 import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table";
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
 import { db } from "@/db";
-import { organization, member, user } from "@/db/schema";
+import { organization, member } from "@/db/schema";
 import { isNull, desc, eq, count } from "drizzle-orm";
 
 let orgsList: any[] = [];
@@ -244,7 +244,7 @@ const orgColumns: TableColumn[] = [
 						hideModal();
 						window.location.reload();
 					} else {
-						const data = await res.json();
+						const data = (await res.json()) as { error?: string };
 						if (errorAlert) {
 							errorAlert.textContent = data.error || "Failed to create organization.";
 							errorAlert.classList.remove("hidden");
@@ -272,7 +272,7 @@ const orgColumns: TableColumn[] = [
 						if (res.ok) {
 							window.location.reload();
 						} else {
-							const data = await res.json();
+							const data = (await res.json()) as { error?: string };
 							alert(data.error || "Failed to delete organization.");
 						}
 					} catch {

@@ -141,7 +141,7 @@ const roleOptions = activeRoles.map((r) => ({
         if (response.ok) {
           window.location.href = '/cms/templates';
         } else {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = (await response.json().catch(() => ({}))) as { error?: string };
           alert(`Failed to create template: ${errorData.error || 'Unknown error'}`);
         }
       } catch (error) {

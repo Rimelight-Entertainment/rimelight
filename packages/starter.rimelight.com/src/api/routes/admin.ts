@@ -1,10 +1,18 @@
 import { Hono } from "hono"
 import { auth } from "@/auth/auth"
 import { db } from "@/db"
-import { user, session, role, account } from "@/db/schema"
+import { user, session, role } from "@/db/schema"
 import { eq, and, count, desc, isNull, like, or, sql } from "drizzle-orm"
 
-const adminApi = new Hono()
+type Env = {
+  Variables: {
+    user: any
+    session: any
+  }
+}
+
+const adminApi = new Hono<Env>()
+const authApi: Record<string, any> = auth.api
 
 // Middleware to ensure user is authenticated as an admin/owner
 adminApi.use("*", async (c, next) => {
@@ -14,14 +22,14 @@ adminApi.use("*", async (c, next) => {
       return c.json({ error: "Unauthorized" }, 401)
     }
 
-    const userRole = (sessionData.user as any).role
+    const userRole = sessionData.user.role
     if (userRole !== "admin" && userRole !== "owner") {
       return c.json({ error: "Forbidden: Admin access required" }, 403)
     }
 
     c.set("user", sessionData.user)
     c.set("session", sessionData.session)
-    await next()
+    return await next()
   } catch (err: any) {
     return c.json({ error: err.message || "Authorization check failed" }, 500)
   }
@@ -185,8 +193,8 @@ adminApi.post("/users", async (c) => {
     // Call Better Auth createUser or signUpEmail
     let newUser: any = null
     try {
-      if ((auth.api as any).createUser) {
-        newUser = await (auth.api as any).createUser({
+      if (authApi.createUser) {
+        newUser = await authApi.createUser({
           body: {
             email: email.toLowerCase(),
             password,
@@ -250,8 +258,8 @@ adminApi.delete("/users/:id", async (c) => {
 
     // Try Better Auth admin removeUser endpoint first
     try {
-      if ((auth.api as any).removeUser) {
-        await (auth.api as any).removeUser({
+      if (authApi.removeUser) {
+        await authApi.removeUser({
           body: { userId },
           headers: c.req.raw.headers
         })
@@ -284,23 +292,25 @@ adminApi.post("/users/:id/resend-verification", async (c) => {
       .where(eq(user.id, userId))
       .limit(1)
 
-    if (targetUser.length === 0) {
+    const target = targetUser[0]
+
+    if (!target) {
       return c.json({ error: "User not found" }, 404)
     }
 
-    if (targetUser[0].emailVerified) {
+    if (target.emailVerified) {
       return c.json({ error: "User email is already verified" }, 400)
     }
 
     // Trigger Better Auth verification email
     await auth.api.sendVerificationEmail({
       body: {
-        email: targetUser[0].email
+        email: target.email
       },
       headers: c.req.raw.headers
     })
 
-    return c.json({ success: true, message: `Verification email sent to ${targetUser[0].email}` })
+    return c.json({ success: true, message: `Verification email sent to ${target.email}` })
   } catch (error: any) {
     console.error("Admin resend verification error:", error)
     return c.json({ error: error.message || "Failed to resend verification email" }, 500)
@@ -330,8 +340,8 @@ adminApi.post("/users/:id/role", async (c) => {
 
     // Attempt Better Auth setRole plugin call or DB update
     try {
-      if ((auth.api as any).setRole) {
-        await (auth.api as any).setRole({
+      if (authApi.setRole) {
+        await authApi.setRole({
           body: { userId, role: newRole },
           headers: c.req.raw.headers
         })
@@ -370,8 +380,8 @@ adminApi.post("/users/:id/ban", async (c) => {
 
     if (isBan) {
       try {
-        if ((auth.api as any).banUser) {
-          await (auth.api as any).banUser({
+        if (authApi.banUser) {
+          await authApi.banUser({
             body: { userId, banReason: banReason || "Banned by administrator" },
             headers: c.req.raw.headers
           })
@@ -392,8 +402,8 @@ adminApi.post("/users/:id/ban", async (c) => {
       await db.delete(session).where(eq(session.userId, userId))
     } else {
       try {
-        if ((auth.api as any).unbanUser) {
-          await (auth.api as any).unbanUser({
+        if (authApi.unbanUser) {
+          await authApi.unbanUser({
             body: { userId },
             headers: c.req.raw.headers
           })

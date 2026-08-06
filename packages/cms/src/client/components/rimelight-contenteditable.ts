@@ -1,4 +1,4 @@
-import type { InlineNode, TextInlineNode, LinkInlineNode } from "../../core/types/inline"
+import type { InlineNode, TextInlineNode } from "../../core/types/inline"
 
 export class RimelightContentEditable extends HTMLElement {
   private editorEl!: HTMLDivElement
@@ -158,8 +158,8 @@ export class RimelightContentEditable extends HTMLElement {
         return
       }
 
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement
+      if (node instanceof HTMLElement) {
+        const el = node
 
         // Handle links
         if (el.tagName === "A") {
@@ -215,17 +215,17 @@ export class RimelightContentEditable extends HTMLElement {
     return nodes
   }
 
-  private parseChildrenToNodes(el: HTMLElement): InlineNode[] {
-    const nodes: InlineNode[] = []
+  private parseChildrenToNodes(el: HTMLElement): TextInlineNode[] {
+    const nodes: TextInlineNode[] = []
     Array.from(el.childNodes).forEach((child) => {
       if (child.nodeType === Node.TEXT_NODE) {
         const text = child.textContent || ""
         if (text.trim()) {
           nodes.push({ type: "text", text })
         }
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
+      } else if (child instanceof HTMLElement) {
         // Simple recursive parsing for nested elements
-        const childEl = child as HTMLElement
+        const childEl = child
         const tagName = childEl.tagName.toLowerCase()
 
         if (tagName === "strong" || tagName === "b") {
@@ -251,5 +251,3 @@ function escapeHtml(str: string): string {
 if (!customElements.get("rimelight-contenteditable")) {
   customElements.define("rimelight-contenteditable", RimelightContentEditable)
 }
-
-export { RimelightContentEditable }

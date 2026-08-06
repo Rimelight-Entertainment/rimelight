@@ -22,11 +22,10 @@ const versionsList = await db
 const versions = await Promise.all(
   versionsList.map(async (version) => {
     const page = await db.select({ title: pages.title, slug: pages.slug }).from(pages).where(eq(pages.id, version.pageId)).limit(1)
-    return {
-      ...version,
+    return Object.assign({}, version, {
       pageTitle: page[0]?.title || "Unknown Page",
-      slug: page[0]?.slug || "",
-    }
+      slug: page[0]?.slug || ""
+    })
   })
 )
 ---

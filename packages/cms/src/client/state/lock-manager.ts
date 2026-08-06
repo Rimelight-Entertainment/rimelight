@@ -7,7 +7,7 @@ export interface LockState {
 
 export class LockManager {
   private pageId: string
-  private heartbeatInterval: number | null = null
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null
   private heartbeatMs: number
 
   constructor(pageId: string, heartbeatMs = 30000) {
@@ -64,7 +64,7 @@ export class LockManager {
       } catch {
         // Silently retry on next heartbeat interval
       }
-    }, this.heartbeatMs) as unknown as number
+    }, this.heartbeatMs)
   }
 
   stopHeartbeat(): void {

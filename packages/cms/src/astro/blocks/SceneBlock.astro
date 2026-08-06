@@ -1,6 +1,5 @@
 ---
 import type { BaseBlock, TimeOfDay, Setting, Transition } from "@rimelight/cms"
-import BlockRenderer from "../BlockRenderer.astro"
 
 interface Props {
   block: BaseBlock
@@ -60,9 +59,7 @@ if (todLabel && todLabel !== "Other") headingParts.push(`- ${todLabel}`)
   )}
   {block.children && block.children.length > 0 && (
     <div class="mt-3">
-      {block.children.map((child) => (
-        <BlockRenderer block={child} locale={locale} />
-      ))}
+      <slot />
     </div>
   )}
 </div>

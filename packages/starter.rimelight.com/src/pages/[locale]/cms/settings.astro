@@ -7,7 +7,6 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { role } from "@/db/schema"
 import { isNull, desc } from "drizzle-orm"
-import { t } from "@rimelight/i18n"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
@@ -24,10 +23,11 @@ const defaultRoles = [
   { name: "viewer", displayName: "Viewer", description: "Read-only access", permissions: ["cms:read"] }
 ]
 
-const rolesList = (dbRoles.length > 0 ? dbRoles : defaultRoles).map((r) => ({
-  ...r,
-  permissionsList: typeof r.permissions === "string" ? JSON.parse(r.permissions) : (r.permissions || [])
-}))
+const rolesList = (dbRoles.length > 0 ? dbRoles : defaultRoles).map((r) =>
+  Object.assign({}, r, {
+    permissionsList: typeof r.permissions === "string" ? JSON.parse(r.permissions) : (r.permissions || [])
+  })
+)
 ---
 
 <CMSDashboardLayout title="Settings" description="CMS Settings" activeSection="settings">

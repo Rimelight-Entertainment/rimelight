@@ -10,8 +10,6 @@ import { db } from "@/db"
 import { pages } from "@/db/schema"
 import { eq, desc, and, isNull } from "drizzle-orm"
 
-const activeLocale = Astro.currentLocale ?? "en"
-
 // Fetch CMS pages with type 'blog'
 const blogPages = await db
   .select()
@@ -20,7 +18,7 @@ const blogPages = await db
   .orderBy(desc(pages.postedAt))
 
 const groupedPosts = blogPages.reduce<Record<string, typeof blogPages>>((acc, page) => {
-  const content = JSON.parse(page.content)
+  const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
   const type = content.properties?.category || "other"
   if (!acc[type]) acc[type] = []
   acc[type].push(page)
@@ -56,7 +54,7 @@ const tabsItems = [
       <div role="tabpanel" data-value="all" class="hidden">
         <RLAGrid cols={4}>
           {blogPages.map((page, index) => {
-            const content = JSON.parse(page.content)
+            const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
             const category = content.properties?.category || "other"
             return (
               <RLAPost
@@ -82,7 +80,7 @@ const tabsItems = [
           <div role="tabpanel" data-value={category} class="hidden">
             <RLAGrid cols={4}>
               {categoryPages.map((page, index) => {
-                const content = JSON.parse(page.content)
+                const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
                 return (
                   <RLAPost
                     variant="ghost"

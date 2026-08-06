@@ -29,21 +29,25 @@ export class RimelightEditorLayout extends HTMLElement {
       </div>
     `
 
-    const container = this.querySelector("#cms-layout")
-    this.editorEl = this.querySelector("#cms-editor-component") as unknown as HTMLElement &
-      RimelightEditorElement
-    this.previewEl = this.querySelector("#cms-preview-component") as unknown as HTMLElement &
-      RimelightPreviewElement
-    const handle = this.querySelector("#cms-resize-handle")
+    const container = this.querySelector<HTMLElement>("#cms-layout")
+    const editorComponent = this.querySelector<RimelightEditorElement>("#cms-editor-component")
+    const previewComponent = this.querySelector<RimelightPreviewElement>("#cms-preview-component")
+    const handle = this.querySelector<HTMLElement>("#cms-resize-handle")
 
-    if (container && this.editorEl && this.previewEl && handle) {
-      initSplitPane(container as HTMLElement, this.editorEl, this.previewEl, handle as HTMLElement)
+    if (editorComponent && previewComponent) {
+      this.editorEl = editorComponent
+      this.previewEl = previewComponent
     }
 
-    this.editorEl.addEventListener("editor-change", (e: Event) => {
-      const customEvt = e as unknown as { detail: { blocks: BaseBlock[] } }
-      const blocks: BaseBlock[] = customEvt.detail.blocks
-      this.previewEl.setBlocks(blocks)
+    if (container && this.editorEl && this.previewEl && handle) {
+      initSplitPane(container, this.editorEl, this.previewEl, handle)
+    }
+
+    this.editorEl?.addEventListener("editor-change", (e: Event) => {
+      if (e instanceof CustomEvent && e.detail?.blocks) {
+        const blocks: BaseBlock[] = e.detail.blocks
+        this.previewEl.setBlocks(blocks)
+      }
     })
 
     // Load initial blocks from attribute
@@ -78,5 +82,3 @@ export class RimelightEditorLayout extends HTMLElement {
 if (!customElements.get("rimelight-editor-layout")) {
   customElements.define("rimelight-editor-layout", RimelightEditorLayout)
 }
-
-export { RimelightEditorLayout }

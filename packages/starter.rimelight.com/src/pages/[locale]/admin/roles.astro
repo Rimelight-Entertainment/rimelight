@@ -136,7 +136,7 @@ formattedDbRoles.forEach((dbRole) => {
 	}
 });
 
-import type { TableColumn } from "@rimelight/ui/components/table/table";
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
 
 const roleColumns: TableColumn[] = [
 	{ id: "displayName", accessorKey: "displayName", header: "Role Name", enableSorting: true },
@@ -455,7 +455,7 @@ const roleColumns: TableColumn[] = [
 						if (res.ok) {
 							window.location.reload();
 						} else {
-							const data = await res.json();
+							const data = (await res.json()) as { error?: string };
 							alert(data.error || "Failed to delete role.");
 						}
 					} catch {
@@ -498,7 +498,7 @@ const roleColumns: TableColumn[] = [
 						closeModal();
 						window.location.reload();
 					} else {
-						const data = await res.json();
+						const data = (await res.json()) as { error?: string };
 						if (modalErrorAlert) {
 							modalErrorAlert.textContent = data.error || "Failed to save role.";
 							modalErrorAlert.classList.remove("hidden");

@@ -48,5 +48,3 @@ function escapeHtml(str: string): string {
 if (!customElements.get("rimelight-preview")) {
   customElements.define("rimelight-preview", RimelightPreview)
 }
-
-export { RimelightPreview }

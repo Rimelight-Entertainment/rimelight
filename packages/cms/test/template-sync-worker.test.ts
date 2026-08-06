@@ -11,39 +11,44 @@ describe("template-sync-worker", () => {
     let processedCount = 0
 
     // Simulate background worker processing batches
+    const batchPromises = []
     for (let i = 0; i < totalPages; i += batchSize) {
-      const batch = Array.from({ length: Math.min(batchSize, totalPages - i) }, (_, idx) => ({
-        id: `page-${i + idx}`,
-        templateVersion: 1,
-        blocks: [
-          {
-            id: "anchor-1",
-            type: "SectionBlock",
-            isTemplated: true,
-            props: { title: "Old Header" }
-          }
-        ]
-      }))
+      batchPromises.push(
+        (async () => {
+          const batch: Array<{ id: string; templateVersion: number; blocks: BaseBlock[] }> =
+            Array.from({ length: Math.min(batchSize, totalPages - i) }, (_, idx) => ({
+              id: `page-${i + idx}`,
+              templateVersion: 1,
+              blocks: [
+                {
+                  id: "anchor-1",
+                  type: "SectionBlock",
+                  isTemplated: true,
+                  props: { title: "Old Header" }
+                }
+              ]
+            }))
 
-      // Process batch
-      batch.forEach((page) => {
-        const newTemplateBlocks = [
-          {
-            id: "anchor-1",
-            type: "SectionBlock",
-            isTemplated: true,
-            props: { title: "New Header" }
-          }
-        ]
-        page.blocks = mergeTemplateBlocks(page.blocks, newTemplateBlocks)
-        page.templateVersion = 2
-        processedCount++
-      })
+          batch.forEach((page) => {
+            const newTemplateBlocks: BaseBlock[] = [
+              {
+                id: "anchor-1",
+                type: "SectionBlock",
+                isTemplated: true,
+                props: { title: "New Header" }
+              }
+            ]
+            page.blocks = mergeTemplateBlocks(page.blocks, newTemplateBlocks)
+            page.templateVersion = 2
+            processedCount++
+          })
 
-      // Small delay to simulate async processing
-      await new Promise((resolve) => setTimeout(resolve, 1))
+          await new Promise((resolve) => setTimeout(resolve, 1))
+        })()
+      )
     }
 
+    await Promise.all(batchPromises)
     expect(processedCount).toBe(totalPages)
   })
 

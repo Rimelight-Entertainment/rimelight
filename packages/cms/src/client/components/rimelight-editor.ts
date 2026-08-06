@@ -3,6 +3,16 @@ import { HistoryStack } from "../state/history"
 import { AutosaveController } from "../state/autosave"
 import { initBlockSortable } from "../utils/sortable"
 
+export interface RimelightBlockElement extends HTMLElement {
+  setBlock: (block: BaseBlock) => void
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "rimelight-block": RimelightBlockElement
+  }
+}
+
 export class RimelightEditor extends HTMLElement {
   private blocks: BaseBlock[] = []
   private historyStack!: HistoryStack
@@ -71,29 +81,29 @@ export class RimelightEditor extends HTMLElement {
     this.containerEl.innerHTML = ""
 
     this.blocks.forEach((block) => {
-      const blockEl = document.createElement("rimelight-block") as unknown as HTMLElement & {
-        setBlock: (block: BaseBlock) => void
-      }
+      const blockEl = document.createElement("rimelight-block")
       this.containerEl.appendChild(blockEl)
       blockEl.setBlock(block)
     })
 
     this.containerEl.addEventListener("block-change", (e: Event) => {
-      const customEvt = e as unknown as { detail: { block: BaseBlock } }
-      const updatedBlock = customEvt.detail.block
-      const idx = this.blocks.findIndex((b) => b.id === updatedBlock.id)
-      if (idx !== -1) {
-        this.blocks[idx] = updatedBlock
-        this.notifyChange()
+      if (e instanceof CustomEvent && e.detail?.block) {
+        const updatedBlock: BaseBlock = e.detail.block
+        const idx = this.blocks.findIndex((b) => b.id === updatedBlock.id)
+        if (idx !== -1) {
+          this.blocks[idx] = updatedBlock
+          this.notifyChange()
+        }
       }
     })
 
     this.containerEl.addEventListener("block-delete", (e: Event) => {
-      const customEvt = e as unknown as { detail: { id: string } }
-      const id = customEvt.detail.id
-      this.blocks = this.blocks.filter((b) => b.id !== id)
-      this.notifyChange(true)
-      this.renderCanvas()
+      if (e instanceof CustomEvent && e.detail?.id) {
+        const id: string = e.detail.id
+        this.blocks = this.blocks.filter((b) => b.id !== id)
+        this.notifyChange(true)
+        this.renderCanvas()
+      }
     })
 
     initBlockSortable(this.containerEl, {
@@ -178,5 +188,3 @@ export class RimelightEditor extends HTMLElement {
 if (!customElements.get("rimelight-editor")) {
   customElements.define("rimelight-editor", RimelightEditor)
 }
-
-export { RimelightEditor }

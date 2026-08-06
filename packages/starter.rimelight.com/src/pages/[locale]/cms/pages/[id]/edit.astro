@@ -42,7 +42,7 @@ const content = draft[0]?.content
   </style>
   <script type="module" define:vars={{ pageId: id }}>
     import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
-      defineCustomElements();
+      return defineCustomElements();
     });
 
     document.getElementById('publish-btn')?.addEventListener('click', async () => {

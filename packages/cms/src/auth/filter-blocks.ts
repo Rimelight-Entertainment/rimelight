@@ -26,16 +26,18 @@ export function filterBlocksForReader(
       ? filterBlocksForReader(block.children, session)
       : block.children
 
-    filtered.push({
+    const newBlock: BaseBlock = {
       id: block.id,
       type: block.type,
-      props: block.props,
-      children: filteredChildren,
-      isTemplated: block.isTemplated,
-      templatedProps: block.templatedProps,
-      allowedRoles: block.allowedRoles,
-      requiredPermission: block.requiredPermission
-    } as BaseBlock)
+      props: block.props
+    }
+    if (filteredChildren !== undefined) newBlock.children = filteredChildren
+    if (block.isTemplated !== undefined) newBlock.isTemplated = block.isTemplated
+    if (block.templatedProps !== undefined) newBlock.templatedProps = block.templatedProps
+    if (block.allowedRoles !== undefined) newBlock.allowedRoles = block.allowedRoles
+    if (block.requiredPermission !== undefined)
+      newBlock.requiredPermission = block.requiredPermission
+    filtered.push(newBlock)
   }
 
   return filtered

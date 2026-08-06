@@ -111,10 +111,10 @@ const templateOptions = [
         });
 
         if (response.ok) {
-          const result = await response.json();
+          const result = (await response.json()) as { page: { id: string } };
           window.location.href = `/cms/pages/${result.page.id}/edit`;
         } else {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = (await response.json().catch(() => ({}))) as { error?: string };
           alert(`Failed to create page: ${errorData.error || 'Unknown error'}`);
         }
       } catch (error) {

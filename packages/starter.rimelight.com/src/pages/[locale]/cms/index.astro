@@ -3,7 +3,6 @@ import { auth } from "@/auth/auth"
 import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
 import RLACard from "@rimelight/ui/components/card/RLACard.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
-import { t } from "@rimelight/i18n"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 

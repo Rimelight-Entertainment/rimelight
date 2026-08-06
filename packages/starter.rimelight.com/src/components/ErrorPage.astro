@@ -59,7 +59,13 @@ const statusConfig: Record<number, { icon: string; iconBoxClass: string; badgeCo
 	}
 };
 
-const config = statusConfig[code] || statusConfig[403];
+const defaultConfig = {
+	icon: "i-lucide-shield-alert",
+	iconBoxClass: "border-rose-500/30 bg-rose-500/10 text-rose-500",
+	badgeColor: "error"
+};
+
+const config = statusConfig[code] || defaultConfig;
 ---
 
 <AppLayout title={`${code} - ${title}`} description={description} noindex={true}>

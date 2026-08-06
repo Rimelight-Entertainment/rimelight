@@ -1,12 +1,10 @@
 ---
 import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
 import RLACard from "@rimelight/ui/components/card/RLACard.astro";
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
 import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table";
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
 import { db } from "@/db";
 import { session, user } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -157,7 +155,7 @@ const sessionColumns: TableColumn[] = [
 					if (res.ok) {
 						window.location.reload();
 					} else {
-						const data = await res.json();
+						const data = (await res.json()) as { error?: string };
 						alert(data.error || "Failed to revoke session.");
 					}
 				} catch {
