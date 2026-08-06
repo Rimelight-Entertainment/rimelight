@@ -4,7 +4,7 @@ export const createDashboardGroupTheme = () =>
   defineTheme({
     slots: ["root"],
     base: {
-      root: "fixed inset-0 flex overflow-hidden"
+      root: "relative w-full h-full min-h-0 flex overflow-hidden"
     },
     variants: {},
     defaultVariants: {}

@@ -154,45 +154,4 @@ const { title, description, activeSection = "dashboard", navbarLeft, navbarRight
     padding-right: 0;
   }
 
-  /* Dashboard container fills exactly 100% height of DashboardLayout viewport slot */
-  .fixed.inset-0.flex.overflow-hidden {
-    position: relative !important;
-    inset: auto !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    overflow: hidden !important;
-  }
-
-  [data-dashboard-sidebar] {
-    height: 100% !important;
-    min-height: 0 !important;
-  }
-
-  [data-dashboard-sidebar] > [data-slot="body"] {
-    flex: 1 1 0% !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-  }
-
-  [data-dashboard-sidebar] > [data-slot="footer"] {
-    margin-top: auto !important;
-  }
-
-  [data-dashboard-panel] {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 1 0% !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  [data-dashboard-panel] > [data-slot="body"] {
-    flex: 1 1 0% !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-  }
 </style>

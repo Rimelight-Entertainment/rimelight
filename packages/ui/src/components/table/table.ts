@@ -20,7 +20,15 @@ export interface TableColumn<T = any> {
   id?: string
   accessorKey?: keyof T | string
   header?: string | ((props: { column: TableColumn<T>; table: any }) => any)
-  cell?: string | ((props: { row: TableRow<T>; getValue: () => any; renderValue: () => any; column: TableColumn<T>; table: any }) => any)
+  cell?:
+    | string
+    | ((props: {
+        row: TableRow<T>
+        getValue: () => any
+        renderValue: () => any
+        column: TableColumn<T>
+        table: any
+      }) => any)
   footer?: string | ((props: { column: TableColumn<T>; table: any }) => any)
   meta?: TableColumnMeta
   enableSorting?: boolean
@@ -40,8 +48,8 @@ export interface TableRow<T = any> {
   toggleSelected: (value?: boolean) => void
   getIsExpanded: () => boolean
   toggleExpanded: (value?: boolean) => void
-  getIsPinned: () => boolean | 'top' | 'bottom'
-  pin: (position: boolean | 'top' | 'bottom') => void
+  getIsPinned: () => boolean | "top" | "bottom"
+  pin: (position: boolean | "top" | "bottom") => void
   getIsGrouped: () => boolean
   getCanExpand: () => boolean
   subRows?: TableRow<T>[]
@@ -226,5 +234,3 @@ export interface TableProps<T = any> {
   class?: any
   [key: string]: unknown
 }
-
-

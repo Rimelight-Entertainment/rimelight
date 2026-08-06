@@ -7,12 +7,7 @@ import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADas
 import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro";
 import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro";
 import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro";
-import RLASearch from "@rimelight/ui/components/search/RLASearch.astro";
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
-import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
-import RLACard from "@rimelight/ui/components/card/RLACard.astro";
 import { auth } from "@/auth/auth";
 
 // Server side authentication & authorization check
@@ -60,9 +55,7 @@ const { title, description, activeSection = "overview" } = Astro.props;
 		]}
 	/>
 ) : (
-
 	<DashboardLayout title={title} description={description} noindex={true}>
-
 		<RLADashboardGroup>
 			<RLADashboardSidebar side="left" collapsible>
 				<Fragment slot="header">
@@ -104,21 +97,7 @@ const { title, description, activeSection = "overview" } = Astro.props;
 			<RLADashboardPanel>
 				<RLADashboardNavbar slot="header" title={title} icon="i-lucide-shield">
 					<Fragment slot="left">
-						<div class="flex items-center gap-3">
-							<h1 class="text-lg font-bold text-highlighted tracking-tight" data-dashboard-navbar-title>{title}</h1>
-							<RLABadge variant="subtle" color="success" class="hidden sm:inline-flex text-xs">
-								Live Auth Sync
-							</RLABadge>
-						</div>
-					</Fragment>
-					<Fragment slot="right">
-						<RLASearch />
-						<a href="/cms">
-							<RLAButton variant="ghost" color="neutral" size="sm" leadingIcon="i-lucide-file-stack">
-								CMS Admin
-							</RLAButton>
-						</a>
-						<RLAAvatar src={currentUser?.image || `https://i.pravatar.cc/80?u=${currentUser?.id}`} size="sm" class="cursor-pointer" />
+						<h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>{title}</h1>
 					</Fragment>
 				</RLADashboardNavbar>
 
@@ -143,32 +122,41 @@ const { title, description, activeSection = "overview" } = Astro.props;
 	</DashboardLayout>
 )}
 
-
-
 <style is:global>
-  /* Collapse styles aligned with CMSDashboardLayout */
+  /* Hide text label when sidebar is collapsed */
   [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
     display: none;
   }
+
+  /* Hide the logo icon too — only show the collapse toggle */
   [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
     display: none;
   }
+
+  /* Center the collapse button in the header and remove side padding */
   [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
     justify-content: center;
     gap: 0;
     padding: 0;
   }
+
   [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
     margin: 0 auto;
   }
+
+  /* Hide nav item text labels when collapsed */
   [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
     display: none;
   }
+
+  /* Center nav icons when collapsed */
   [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
     justify-content: center;
     padding-left: 0;
     padding-right: 0;
   }
+
+  /* Center footer slot item when collapsed */
   [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
     padding-left: 0;
     padding-right: 0;

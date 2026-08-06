@@ -10,7 +10,8 @@ const DEFAULT_ROLES = [
   {
     name: "owner",
     displayName: "Owner",
-    description: "Primary system and organization owner with complete control over all assets and settings",
+    description:
+      "Primary system and organization owner with complete control over all assets and settings",
     permissions: ["*"]
   },
   {

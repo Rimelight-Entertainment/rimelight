@@ -33,6 +33,7 @@
     "@astrojs/rss": "4.0.19",
     "@nanostores/i18n": "1.3.3",
     "@neondatabase/serverless": "1.1.0",
+    "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
     "@rimelight/docs": "workspace:*",
     "@rimelight/i18n": "workspace:*",

@@ -180,7 +180,7 @@ if (sorting && sorting.length > 0) {
   if (activeSort && activeSort.id) {
     const key = activeSort.id
     const isDesc = activeSort.desc
-    processedRows = [...processedRows].sort((a, b) => {
+    processedRows = [...processedRows].toSorted((a, b) => {
       const valA = a.getValue(key)
       const valB = b.getValue(key)
       if (valA === valB) return 0
