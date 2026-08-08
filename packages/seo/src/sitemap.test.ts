@@ -19,8 +19,8 @@ describe("buildSitemapUrls", () => {
     const urls = buildSitemapUrls(entries, config)
 
     expect(urls).toHaveLength(2)
-    expect(urls[0].loc).toBe("https://example.com/about")
-    expect(urls[1].loc).toBe("https://example.com/pt/about")
+    expect(urls[0]!.loc).toBe("https://example.com/about")
+    expect(urls[1]!.loc).toBe("https://example.com/pt/about")
   })
 
   it("includes alternates for multi-locale entries", () => {
@@ -30,16 +30,16 @@ describe("buildSitemapUrls", () => {
     // Default locale URL should have x-default alternate
     const defaultUrl = urls.find((u) => u.loc === "https://example.com/about")
     expect(defaultUrl?.alternates).toHaveLength(2)
-    expect(defaultUrl?.alternates?.[0].hreflang).toBe("pt-BR")
-    expect(defaultUrl?.alternates?.[0].href).toBe("https://example.com/pt/about")
-    expect(defaultUrl?.alternates?.[1].hreflang).toBe("x-default")
-    expect(defaultUrl?.alternates?.[1].href).toBe("https://example.com/about")
+    expect(defaultUrl?.alternates?.[0]!.hreflang).toBe("pt-BR")
+    expect(defaultUrl?.alternates?.[0]!.href).toBe("https://example.com/pt/about")
+    expect(defaultUrl?.alternates?.[1]!.hreflang).toBe("x-default")
+    expect(defaultUrl?.alternates?.[1]!.href).toBe("https://example.com/about")
 
     // Non-default locale URL should have only the other locale as alternate
     const ptUrl = urls.find((u) => u.loc === "https://example.com/pt/about")
     expect(ptUrl?.alternates).toHaveLength(1)
-    expect(ptUrl?.alternates?.[0].hreflang).toBe("en-US")
-    expect(ptUrl?.alternates?.[0].href).toBe("https://example.com/about")
+    expect(ptUrl?.alternates?.[0]!.hreflang).toBe("en-US")
+    expect(ptUrl?.alternates?.[0]!.href).toBe("https://example.com/about")
   })
 
   it("handles prefixDefaultLocale option", () => {
@@ -50,8 +50,8 @@ describe("buildSitemapUrls", () => {
     const entries: SeoEntry[] = [{ path: "/about" }]
     const urls = buildSitemapUrls(entries, configWithPrefix)
 
-    expect(urls[0].loc).toBe("https://example.com/en/about")
-    expect(urls[1].loc).toBe("https://example.com/pt/about")
+    expect(urls[0]!.loc).toBe("https://example.com/en/about")
+    expect(urls[1]!.loc).toBe("https://example.com/pt/about")
   })
 
   it("handles trailingSlash option", () => {
@@ -62,8 +62,8 @@ describe("buildSitemapUrls", () => {
     const entries: SeoEntry[] = [{ path: "/about" }]
     const urls = buildSitemapUrls(entries, configWithSlash)
 
-    expect(urls[0].loc).toBe("https://example.com/about/")
-    expect(urls[1].loc).toBe("https://example.com/pt/about/")
+    expect(urls[0]!.loc).toBe("https://example.com/about/")
+    expect(urls[1]!.loc).toBe("https://example.com/pt/about/")
   })
 
   it("includes lastmod when provided", () => {
@@ -71,15 +71,15 @@ describe("buildSitemapUrls", () => {
     const entries: SeoEntry[] = [{ path: "/about", lastmod: date }]
     const urls = buildSitemapUrls(entries, config)
 
-    expect(urls[0].lastmod).toBe(date.toISOString())
+    expect(urls[0]!.lastmod).toBe(date.toISOString())
   })
 
   it("includes changefreq and priority when provided", () => {
     const entries: SeoEntry[] = [{ path: "/about", changefreq: "weekly", priority: 0.8 }]
     const urls = buildSitemapUrls(entries, config)
 
-    expect(urls[0].changefreq).toBe("weekly")
-    expect(urls[0].priority).toBe(0.8)
+    expect(urls[0]!.changefreq).toBe("weekly")
+    expect(urls[0]!.priority).toBe(0.8)
   })
 
   it("restricts to specified locales", () => {
@@ -87,7 +87,7 @@ describe("buildSitemapUrls", () => {
     const urls = buildSitemapUrls(entries, config)
 
     expect(urls).toHaveLength(1)
-    expect(urls[0].loc).toBe("https://example.com/about")
+    expect(urls[0]!.loc).toBe("https://example.com/about")
   })
 })
 
