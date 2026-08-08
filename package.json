@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "Rimelight Entertainment Monorepository",
+  "homepage": "https://rimelight.com",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
   },

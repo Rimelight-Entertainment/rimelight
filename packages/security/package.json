@@ -3,6 +3,21 @@
   "version": "0.0.3",
   "private": false,
   "description": "Rimelight Entertainment's Security Package",
+  "homepage": "https://rimelight.com/docs",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Marchi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
+  },
+  "files": [
+    "src"
+  ],
   "type": "module",
   "exports": {
     ".": "./src/integrations/index.ts",
@@ -18,7 +33,7 @@
     "typescript": "6.0.3"
   },
   "peerDependencies": {
-    "astro": ">=7.0.1"
+    "astro": ">=7.0.0"
   },
   "engines": {
     "node": ">=26.7.0"
