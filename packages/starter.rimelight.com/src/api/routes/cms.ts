@@ -243,10 +243,62 @@ cms.post("/pages", async (c) => {
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const body = await c.req.json()
+
+  // Clean up templateId: convert empty string / "null" / falsy to null
+  const templateId =
+    body.templateId && body.templateId !== "null" && String(body.templateId).trim() !== ""
+      ? String(body.templateId).trim()
+      : null
+
+  // Ensure title and description are Localized objects
+  const title =
+    typeof body.title === "string" ? { en: body.title } : body.title || { en: "Untitled Page" }
+  const description =
+    typeof body.description === "string" ? { en: body.description } : body.description || null
+
+  let initialBlocks = body.content?.blocks
+  let templateVersion = body.templateVersion || 1
+
+  // If a templateId is specified, fetch the template and initialize template blocks if needed
+  if (templateId) {
+    const tmpl = await db
+      .select()
+      .from(pageTemplates)
+      .where(eq(pageTemplates.id, templateId))
+      .limit(1)
+    if (tmpl[0]) {
+      templateVersion = tmpl[0].version
+      if (!initialBlocks || initialBlocks.length === 0) {
+        initialBlocks = tmpl[0].initialBlocks || []
+      }
+    }
+  }
+
+  if (!initialBlocks || initialBlocks.length === 0) {
+    initialBlocks = [
+      {
+        id: crypto.randomUUID(),
+        type: "ParagraphBlock",
+        props: { text: { en: "Start writing your content..." } }
+      }
+    ]
+  }
+
+  const pageContent = {
+    blocks: initialBlocks,
+    properties: body.content?.properties || {}
+  }
+
   const page = await db
     .insert(pages)
     .values({
-      ...body,
+      slug: body.slug,
+      type: body.type || "blog",
+      title,
+      description,
+      templateId,
+      templateVersion,
+      content: pageContent,
       authorIds: [session.user.id],
       createdAt: new Date(),
       updatedAt: new Date()
@@ -258,7 +310,7 @@ cms.post("/pages", async (c) => {
   // Create initial draft
   await db.insert(pageDrafts).values({
     pageId: page[0].id,
-    content: body.content,
+    content: pageContent,
     updatedBy: session.user.id,
     updatedAt: new Date()
   })

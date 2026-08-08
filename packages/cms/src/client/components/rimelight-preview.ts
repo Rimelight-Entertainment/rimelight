@@ -4,7 +4,7 @@ export class RimelightPreview extends HTMLElement {
   private blocks: BaseBlock[] = []
 
   connectedCallback() {
-    this.className = "cms-preview-pane p-6 overflow-y-auto"
+    this.classList.add("cms-preview-pane", "flex-1", "w-full", "h-full", "p-6", "overflow-y-auto")
     this.render()
   }
 
@@ -15,9 +15,6 @@ export class RimelightPreview extends HTMLElement {
 
   private render() {
     this.innerHTML = `
-      <div class="text-xs text-gray-500 font-semibold mb-4 uppercase tracking-wider border-b border-gray-800 pb-2">
-        Live Reader Preview (SSR Sim)
-      </div>
       <div class="cms-preview-content space-y-4">
         ${this.blocks.map((b) => this.renderBlockPreview(b)).join("")}
       </div>

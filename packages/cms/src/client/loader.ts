@@ -3,6 +3,7 @@ import { RimelightPreview } from "./components/rimelight-preview"
 import { RimelightBlock } from "./components/rimelight-block"
 import { RimelightContentEditable } from "./components/rimelight-contenteditable"
 import { RimelightEditorLayout } from "./components/rimelight-editor-layout"
+import { RimelightTemplateEditor } from "./components/rimelight-template-editor"
 
 export function defineCustomElements() {
   if (!customElements.get("rimelight-editor")) {
@@ -20,6 +21,9 @@ export function defineCustomElements() {
   if (!customElements.get("rimelight-editor-layout")) {
     customElements.define("rimelight-editor-layout", RimelightEditorLayout)
   }
+  if (!customElements.get("rimelight-template-editor")) {
+    customElements.define("rimelight-template-editor", RimelightTemplateEditor)
+  }
 }
 
 export {
@@ -27,5 +31,6 @@ export {
   RimelightPreview,
   RimelightBlock,
   RimelightContentEditable,
-  RimelightEditorLayout
+  RimelightEditorLayout,
+  RimelightTemplateEditor
 }

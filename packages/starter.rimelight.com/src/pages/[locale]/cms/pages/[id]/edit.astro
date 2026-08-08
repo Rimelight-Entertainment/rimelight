@@ -2,6 +2,7 @@
 import { auth } from "@/auth/auth"
 import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -21,37 +22,106 @@ const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!
 const content = draft[0]?.content 
   ? (typeof draft[0].content === 'string' ? JSON.parse(draft[0].content) : draft[0].content)
   : (typeof page[0].content === 'string' ? JSON.parse(page[0].content) : page[0].content)
+const titleVal = typeof page[0].title === 'object' ? page[0].title.en || '' : page[0].title || ''
+const blocksJson = JSON.stringify(content.blocks || []).replace(/"/g, '&quot;')
 ---
 
-<CMSDashboardLayout title={`Edit: ${page[0].title}`} description="Edit CMS page" activeSection="pages">
-  <Fragment slot="toolbar-right">
-    <RLAButton href={`/cms/pages/${id}/preview`} variant="outline" color="neutral" size="sm">
-      Preview
-    </RLAButton>
-    <RLAButton variant="solid" color="success" size="sm" id="publish-btn">
-      Publish
-    </RLAButton>
+<CMSDashboardLayout title={`Edit Page: ${titleVal}`} description="Edit CMS page" activeSection="pages">
+  <Fragment slot="toolbar-left">
+    <RLAButton id="undo-btn" size="sm" square leadingIcon="i-lucide-undo" />
+    <RLAButton id="redo-btn" size="sm" square leadingIcon="i-lucide-redo" />
+    <RLAButton id="add-block-btn" size="sm" square leadingIcon="i-lucide-plus" />
   </Fragment>
 
-  <div class="h-full overflow-hidden">
-    <rimelight-editor-layout page-id={id} initial-blocks={JSON.stringify(content.blocks || [])}></rimelight-editor-layout>
+  <Fragment slot="toolbar-right">
+    <RLAButton id="preview-btn" size="sm" square leadingIcon="i-lucide-eye" />
+    <RLAButton id="save-btn" size="sm" square leadingIcon="i-lucide-save" />
+    <RLABadge id="save-status-indicator" variant="soft" color="emerald" size="xs">
+      ● Saved
+    </RLABadge>
+    <RLAButton id="publish-btn" size="sm" square leadingIcon="i-lucide-upload-cloud" />
+    <RLAButton id="more-actions-btn" size="sm" square leadingIcon="i-lucide-more-vertical" />
+  </Fragment>
+
+  <div class="w-full h-[calc(100vh-180px)] min-h-[600px] flex flex-col overflow-hidden">
+    <rimelight-editor-layout id="cms-editor-layout" page-id={id} initial-blocks={blocksJson} class="w-full h-full flex-1 flex min-h-[600px]"></rimelight-editor-layout>
   </div>
 
   <style is:inline slot="head">
     @import url("@rimelight/cms/client/styles/cms-editor.css");
   </style>
-  <script type="module" define:vars={{ pageId: id }}>
-    import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
-      return defineCustomElements();
+
+  <script>
+    import { defineCustomElements } from "@rimelight/cms/client/loader";
+    defineCustomElements();
+
+    const getLayout = () => document.getElementById('cms-editor-layout') as any;
+
+    const updatePreviewIcon = (visible: boolean) => {
+      const btn = document.getElementById('preview-btn');
+      if (!btn) return;
+      const icon = btn.querySelector('[data-slot="icon"], i, svg');
+      if (icon) {
+        if (visible) {
+          icon.classList.remove('i-lucide-eye');
+          icon.classList.add('i-lucide-eye-off');
+        } else {
+          icon.classList.remove('i-lucide-eye-off');
+          icon.classList.add('i-lucide-eye');
+        }
+      }
+    };
+
+    document.getElementById('preview-btn')?.addEventListener('click', () => {
+      const isVisible = getLayout()?.togglePreview?.();
+      updatePreviewIcon(!!isVisible);
+    });
+
+    document.getElementById('undo-btn')?.addEventListener('click', () => {
+      getLayout()?.undo?.();
+    });
+
+    document.getElementById('redo-btn')?.addEventListener('click', () => {
+      getLayout()?.redo?.();
+    });
+
+    document.getElementById('add-block-btn')?.addEventListener('click', () => {
+      getLayout()?.addBlock?.('ParagraphBlock');
+    });
+
+    document.getElementById('save-btn')?.addEventListener('click', () => {
+      getLayout()?.saveDraft?.();
+    });
+
+    document.addEventListener('status-change', (e: Event) => {
+      if (e instanceof CustomEvent && e.detail?.status) {
+        const status = e.detail.status;
+        const indicator = document.getElementById('save-status-indicator');
+        if (indicator) {
+          indicator.textContent = status === 'saved' ? '● Saved' : status === 'unsaved' ? '▲ Unsaved' : status === 'saving' ? '↻ Saving...' : '✖ Save Failed';
+          indicator.className = `inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold select-none ${
+            status === 'saved' ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/50' :
+            status === 'unsaved' ? 'bg-amber-950/40 text-amber-400 border border-amber-800/50' :
+            status === 'saving' ? 'bg-blue-950/40 text-blue-400 border border-blue-800/50' :
+            'bg-red-950/40 text-red-400 border border-red-800/50'
+          }`;
+        }
+      }
+    });
+
+    document.addEventListener('preview-toggle', (e: Event) => {
+      if (e instanceof CustomEvent && typeof e.detail?.visible === 'boolean') {
+        updatePreviewIcon(e.detail.visible);
+      }
     });
 
     document.getElementById('publish-btn')?.addEventListener('click', async () => {
-      const publishBtn = document.getElementById('publish-btn');
-      const editorLayout = document.querySelector('rimelight-editor-layout');
-      if (!editorLayout) { alert('Editor not loaded'); return; }
-      const editorComponent = editorLayout.querySelector('#cms-editor-component');
-      if (!editorComponent) { alert('Editor component not found'); return; }
-      const blocks = editorComponent.getBlocks ? editorComponent.getBlocks() : [];
+      const publishBtn = document.getElementById('publish-btn') as HTMLButtonElement | null;
+      const layout = getLayout();
+      if (!layout) { alert('Editor not loaded'); return; }
+      
+      const pageId = layout.getAttribute('page-id');
+      const blocks = layout.getBlocks ? await layout.getBlocks() : [];
       const content = { blocks, properties: {} };
       
       try {
@@ -65,7 +135,7 @@ const content = draft[0]?.content
           alert('Page published successfully!');
           window.location.href = '/cms/pages';
         } else {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = (await response.json().catch(() => ({}))) as { error?: string };
           alert(`Failed to publish page: ${errorData.error || 'Unknown error'}`);
         }
       } catch (error) {

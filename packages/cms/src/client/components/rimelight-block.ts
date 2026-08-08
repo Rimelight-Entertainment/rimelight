@@ -21,7 +21,7 @@ export class RimelightBlockNode extends HTMLElement {
     const lockedProps = this.blockData.templatedProps
     const readOnly = this.isLocked || isTemplated || lockedProps === true
 
-    this.className = `cms-block-node ${readOnly ? "locked" : ""}`
+    this.className = `cms-block-node w-full ${readOnly ? "locked" : ""}`
 
     let lockBadgeHtml = ""
     if (this.isLocked) {

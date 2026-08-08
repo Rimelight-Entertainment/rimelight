@@ -19,22 +19,20 @@ const templates = await db
   .from(pageTemplates)
   .orderBy(desc(pageTemplates.createdAt))
 
+const url = new URL(Astro.request.url)
+const selectedTemplateId = url.searchParams.get("templateId") || ""
+const selectedTemplate = templates.find((t: any) => t.id === selectedTemplateId)
+
 const templateOptions = [
   { label: "Blank Page", value: "" },
-  ...templates.map((t: any) => ({ label: `${t.title} (${t.pageType})`, value: t.id }))
+  ...templates.map((t: any) => ({
+    label: `${typeof t.title === "object" ? t.title.en || t.title : t.title} (${t.pageType})`,
+    value: t.id
+  }))
 ]
 ---
 
 <CMSDashboardLayout title="Create Page" description="Create a new CMS page" activeSection="pages">
-  <Fragment slot="toolbar-right">
-    <RLAButton href="/cms/pages" variant="outline" color="neutral" size="sm">
-      Cancel
-    </RLAButton>
-    <RLAButton variant="solid" color="success" size="sm" leadingIcon="i-lucide-plus" type="submit" form="page-form">
-      Create & Edit
-    </RLAButton>
-  </Fragment>
-
   <div class="max-w-3xl mx-auto space-y-6">
     <form id="page-form" class="bg-white p-6 rounded-lg shadow space-y-6">
       <div class="grid grid-cols-2 gap-4">
@@ -48,6 +46,7 @@ const templateOptions = [
             name="type"
             placeholder="Select or create page type..."
             createItem={true}
+            value={selectedTemplate?.pageType || ""}
             items={[
               { label: "Blog Post", value: "blog" },
               { label: "Wiki Page", value: "wiki" },
@@ -69,8 +68,18 @@ const templateOptions = [
         <RLASelect
           name="templateId"
           placeholder="Select template..."
+          value={selectedTemplateId}
           items={templateOptions}
         />
+      </div>
+
+      <div class="border-t pt-6 flex items-center justify-end gap-3">
+        <RLAButton href="/cms/pages" variant="outline" color="neutral" size="sm">
+          Cancel
+        </RLAButton>
+        <RLAButton variant="solid" color="success" size="sm" leadingIcon="i-lucide-plus" type="submit">
+          Create & Edit
+        </RLAButton>
       </div>
     </form>
   </div>
@@ -85,22 +94,17 @@ const templateOptions = [
       e.preventDefault();
       
       const formData = new FormData(form);
+      const rawTmplId = formData.get('templateId');
+      const templateId =
+        rawTmplId && rawTmplId !== 'null' && String(rawTmplId).trim() !== ''
+          ? String(rawTmplId).trim()
+          : null;
+
       const data = {
         slug: formData.get('slug'),
         type: formData.get('type'),
         title: formData.get('title'),
-        templateId: formData.get('templateId') || null,
-        templateVersion: 1,
-        content: {
-          blocks: [
-            {
-              id: crypto.randomUUID(),
-              type: 'ParagraphBlock',
-              props: { text: { en: 'Start writing your content...' } }
-            }
-          ],
-          properties: {}
-        }
+        templateId
       };
 
       try {

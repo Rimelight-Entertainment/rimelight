@@ -9,6 +9,10 @@ void import("./rimelight-editor")
 interface RimelightEditorElement extends HTMLElement {
   setBlocks(blocks: BaseBlock[]): void
   getBlocks(): BaseBlock[]
+  undo(): void
+  redo(): void
+  addBlock(type?: string): void
+  saveDraft(): void
 }
 
 interface RimelightPreviewElement extends HTMLElement {
@@ -18,9 +22,10 @@ interface RimelightPreviewElement extends HTMLElement {
 export class RimelightEditorLayout extends HTMLElement {
   private editorEl!: RimelightEditorElement
   private previewEl!: RimelightPreviewElement
+  private cachedInitialBlocks: BaseBlock[] | null = null
 
   connectedCallback() {
-    this.className = "rimelight-cms-editor-container"
+    this.classList.add("rimelight-cms-editor-container", "flex-1", "w-full", "h-full", "flex")
     this.innerHTML = `
       <div class="cms-split-layout" id="cms-layout">
         <rimelight-editor id="cms-editor-component"></rimelight-editor>
@@ -37,6 +42,11 @@ export class RimelightEditorLayout extends HTMLElement {
     if (editorComponent && previewComponent) {
       this.editorEl = editorComponent
       this.previewEl = previewComponent
+
+      const pageId = this.getAttribute("page-id")
+      if (pageId && this.editorEl.setAttribute) {
+        this.editorEl.setAttribute("page-id", pageId)
+      }
     }
 
     if (container && this.editorEl && this.previewEl && handle) {
@@ -50,7 +60,18 @@ export class RimelightEditorLayout extends HTMLElement {
       }
     })
 
-    // Load initial blocks from attribute
+    this.editorEl?.addEventListener("status-change", (e: Event) => {
+      if (e instanceof CustomEvent && e.detail?.status) {
+        this.dispatchEvent(
+          new CustomEvent("status-change", { detail: { status: e.detail.status }, bubbles: true })
+        )
+      }
+    })
+
+    // Default preview pane to hidden on load
+    this.setPreviewVisible(false)
+
+    // Load initial blocks from attribute if present
     const initialBlocksAttr = this.getAttribute("initial-blocks")
     if (initialBlocksAttr) {
       try {
@@ -59,16 +80,61 @@ export class RimelightEditorLayout extends HTMLElement {
       } catch (e) {
         console.error("Failed to parse initial blocks:", e)
       }
+    } else if (this.cachedInitialBlocks) {
+      this.setInitialBlocks(this.cachedInitialBlocks)
     }
   }
 
   setInitialBlocks(blocks: BaseBlock[]) {
-    if (this.editorEl && this.editorEl.setBlocks) {
+    this.cachedInitialBlocks = blocks
+    if (this.editorEl && typeof this.editorEl.setBlocks === "function") {
       this.editorEl.setBlocks(blocks)
     }
-    if (this.previewEl && this.previewEl.setBlocks) {
+    if (this.previewEl && typeof this.previewEl.setBlocks === "function") {
       this.previewEl.setBlocks(blocks)
     }
+  }
+
+  private isPreviewVisible = false
+
+  togglePreview(): boolean {
+    this.setPreviewVisible(!this.isPreviewVisible)
+    return this.isPreviewVisible
+  }
+
+  setPreviewVisible(visible: boolean) {
+    this.isPreviewVisible = visible
+    const handle = this.querySelector<HTMLElement>("#cms-resize-handle")
+    const preview = this.querySelector<HTMLElement>("#cms-preview-component")
+
+    if (handle) handle.style.display = visible ? "block" : "none"
+    if (preview) {
+      preview.style.display = visible ? "flex" : "none"
+      if (visible) {
+        preview.style.flex = "0 0 50%"
+      }
+    }
+    if (this.editorEl) {
+      this.editorEl.style.flex = visible ? "0 0 50%" : "1 1 100%"
+    }
+
+    this.dispatchEvent(new CustomEvent("preview-toggle", { detail: { visible }, bubbles: true }))
+  }
+
+  undo() {
+    this.editorEl?.undo()
+  }
+
+  redo() {
+    this.editorEl?.redo()
+  }
+
+  addBlock(type?: string) {
+    this.editorEl?.addBlock(type)
+  }
+
+  saveDraft() {
+    this.editorEl?.saveDraft()
   }
 
   async getBlocks(): Promise<BaseBlock[]> {

@@ -50,10 +50,13 @@ const templates = await db
               v{template.version}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
+              <RLAButton href={`/cms/pages/new?templateId=${template.id}`} variant="ghost" color="success" size="xs">
+                Create Page
+              </RLAButton>
               <RLAButton href={`/cms/templates/${template.id}/edit`} variant="ghost" color="primary" size="xs">
                 Edit
               </RLAButton>
-              <RLAButton variant="ghost" color="error" size="xs">
+              <RLAButton variant="ghost" color="error" size="xs" class="delete-template-btn" data-id={template.id}>
                 Delete
               </RLAButton>
             </td>
@@ -62,4 +65,26 @@ const templates = await db
       </tbody>
     </table>
   </div>
+
+  <script>
+    document.querySelectorAll('.delete-template-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = (btn as HTMLElement).dataset.id;
+        if (!id) return;
+
+        if (!confirm('Are you sure you want to delete this template?')) return;
+
+        try {
+          const res = await fetch(`/api/cms/templates/${id}`, { method: 'DELETE' });
+          if (res.ok) {
+            window.location.reload();
+          } else {
+            alert('Failed to delete template');
+          }
+        } catch {
+          alert('Network error deleting template');
+        }
+      });
+    });
+  </script>
 </CMSDashboardLayout>

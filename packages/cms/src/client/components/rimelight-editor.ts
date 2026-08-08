@@ -19,21 +19,34 @@ export class RimelightEditor extends HTMLElement {
   private autosaveController!: AutosaveController
   private containerEl!: HTMLDivElement
 
-  connectedCallback() {
-    const pageId = this.getAttribute("page-id") || "default-page"
-    this.historyStack = new HistoryStack(this.blocks)
-    this.autosaveController = new AutosaveController({
-      pageId,
-      onStatusChange: (status) => this.updateStatusBadge(status)
-    })
+  static get observedAttributes() {
+    return ["page-id"]
+  }
 
-    this.className = "cms-editor-pane"
+  connectedCallback() {
+    this.initAutosave()
+    this.classList.add("cms-editor-pane", "flex-1", "w-full", "h-full", "flex", "flex-col")
     this.render()
     this.setupShortcuts()
   }
 
+  attributeChangedCallback(name: string, _oldVal: string, newVal: string) {
+    if (name === "page-id" && newVal && newVal !== "default-page") {
+      this.initAutosave()
+    }
+  }
+
+  private initAutosave() {
+    const pageId = this.getAttribute("page-id") || "default-page"
+    this.historyStack = new HistoryStack(this.blocks)
+    this.autosaveController = new AutosaveController({
+      pageId,
+      onStatusChange: (status) => this.notifyStatusChange(status)
+    })
+  }
+
   setBlocks(initialBlocks: BaseBlock[]) {
-    this.blocks = JSON.parse(JSON.stringify(initialBlocks))
+    this.blocks = initialBlocks ? JSON.parse(JSON.stringify(initialBlocks)) : []
     this.historyStack = new HistoryStack(this.blocks)
     this.renderCanvas()
   }
@@ -46,32 +59,46 @@ export class RimelightEditor extends HTMLElement {
     return this.blocks
   }
 
+  undo() {
+    const prev = this.historyStack.undo()
+    if (prev) {
+      this.blocks = prev
+      this.renderCanvas()
+      this.notifyChange()
+    }
+  }
+
+  redo() {
+    const next = this.historyStack.redo()
+    if (next) {
+      this.blocks = next
+      this.renderCanvas()
+      this.notifyChange()
+    }
+  }
+
+  addBlock(type: BaseBlock["type"] = "ParagraphBlock") {
+    const newBlock: BaseBlock = {
+      id: crypto.randomUUID(),
+      type,
+      props: { text: { en: "" } }
+    }
+    this.blocks.push(newBlock)
+    this.notifyChange(true)
+    this.renderCanvas()
+  }
+
+  async saveDraft() {
+    this.autosaveController.notifyChange({ blocks: this.blocks })
+  }
+
   private render() {
-    this.innerHTML = `
-      <div class="cms-editor-header">
-        <div class="flex items-center gap-3">
-          <span class="font-bold text-sm text-gray-200">Editor</span>
-          <span id="cms-status-badge" class="cms-status-badge cms-status-saved">● Saved</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="cms-undo-btn" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300">Undo (Ctrl+Z)</button>
-          <button id="cms-redo-btn" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300">Redo (Ctrl+Y)</button>
-          <button id="cms-add-block-btn" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-xs font-semibold rounded text-white">+ Add Block</button>
-        </div>
-      </div>
-      <div class="cms-block-canvas" id="cms-canvas"></div>
-    `
+    this.innerHTML = `<div class="cms-block-canvas flex-1 overflow-y-auto w-full" id="cms-canvas"></div>`
 
     const canvas = this.querySelector("#cms-canvas")
     if (canvas instanceof HTMLDivElement) {
       this.containerEl = canvas
     }
-
-    this.querySelector("#cms-undo-btn")?.addEventListener("click", () => this.undo())
-    this.querySelector("#cms-redo-btn")?.addEventListener("click", () => this.redo())
-    this.querySelector("#cms-add-block-btn")?.addEventListener("click", () =>
-      this.addParagraphBlock()
-    )
 
     this.renderCanvas()
   }
@@ -117,17 +144,6 @@ export class RimelightEditor extends HTMLElement {
     })
   }
 
-  private addParagraphBlock() {
-    const newBlock: BaseBlock = {
-      id: crypto.randomUUID(),
-      type: "ParagraphBlock",
-      props: { text: { en: "New paragraph content..." } }
-    }
-    this.blocks.push(newBlock)
-    this.notifyChange(true)
-    this.renderCanvas()
-  }
-
   private notifyChange(immediate = false) {
     this.historyStack.push(this.blocks, immediate)
     this.autosaveController.notifyChange({ blocks: this.blocks })
@@ -136,26 +152,8 @@ export class RimelightEditor extends HTMLElement {
     )
   }
 
-  private undo() {
-    const prev = this.historyStack.undo()
-    if (prev) {
-      this.blocks = prev
-      this.renderCanvas()
-      this.dispatchEvent(
-        new CustomEvent("editor-change", { detail: { blocks: this.blocks }, bubbles: true })
-      )
-    }
-  }
-
-  private redo() {
-    const next = this.historyStack.redo()
-    if (next) {
-      this.blocks = next
-      this.renderCanvas()
-      this.dispatchEvent(
-        new CustomEvent("editor-change", { detail: { blocks: this.blocks }, bubbles: true })
-      )
-    }
+  private notifyStatusChange(status: string) {
+    this.dispatchEvent(new CustomEvent("status-change", { detail: { status }, bubbles: true }))
   }
 
   private setupShortcuts() {
@@ -168,20 +166,6 @@ export class RimelightEditor extends HTMLElement {
         this.redo()
       }
     })
-  }
-
-  private updateStatusBadge(status: string) {
-    const badge = this.querySelector("#cms-status-badge")
-    if (!badge) return
-    badge.className = `cms-status-badge cms-status-${status}`
-    badge.textContent =
-      status === "saved"
-        ? "● Saved"
-        : status === "unsaved"
-          ? "▲ Unsaved Changes"
-          : status === "saving"
-            ? "↻ Saving..."
-            : "✖ Save Failed"
   }
 }
 

@@ -34,15 +34,6 @@ const roleOptions = activeRoles.map((r) => ({
 ---
 
 <CMSDashboardLayout title="Create Template" description="Create a new CMS template" activeSection="templates">
-  <Fragment slot="toolbar-right">
-    <RLAButton href="/cms/templates" variant="outline" color="neutral" size="sm">
-      Cancel
-    </RLAButton>
-    <RLAButton variant="solid" color="primary" size="sm" type="submit" form="template-form">
-      Create Template
-    </RLAButton>
-  </Fragment>
-
   <div class="max-w-3xl mx-auto space-y-6">
     <form id="template-form" class="bg-white p-6 rounded-lg shadow space-y-6">
       <div>
@@ -127,14 +118,31 @@ const roleOptions = activeRoles.map((r) => ({
         </div>
       </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Initial Blocks (JSON)</label>
-        <RLATextarea name="initialBlocks" rows="10" placeholder='[{"id": "...", "type": "ParagraphBlock", "props": {"text": {"en": "..."}}}]' class="font-mono text-sm" />
+      <div class="border-t pt-6">
+        <rimelight-template-editor id="template-block-editor"></rimelight-template-editor>
+      </div>
+
+      <div class="border-t pt-6 flex items-center justify-end gap-3">
+        <RLAButton href="/cms/templates" variant="outline" color="neutral" size="sm">
+          Cancel
+        </RLAButton>
+        <RLAButton variant="solid" color="primary" size="sm" type="submit">
+          Create Template
+        </RLAButton>
       </div>
     </form>
   </div>
-  <script>
-    function parseRoles(rawVal: string | null): string[] {
+
+  <style is:inline slot="head">
+    @import url("@rimelight/cms/client/styles/cms-editor.css");
+  </style>
+
+  <script type="module">
+    import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
+      return defineCustomElements();
+    });
+
+    function parseRoles(rawVal) {
       if (!rawVal) return [];
       try {
         const parsed = JSON.parse(rawVal);
@@ -147,22 +155,16 @@ const roleOptions = activeRoles.map((r) => ({
     document.getElementById('template-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const formData = new FormData(e.target as HTMLFormElement);
-      const whoCanCreate = parseRoles(formData.get('whoCanCreate') as string);
-      const whoCanEdit = parseRoles(formData.get('whoCanEdit') as string);
-      const whoCanReview = parseRoles(formData.get('whoCanReview') as string);
-      const whoCanView = parseRoles(formData.get('whoCanView') as string);
-      const initialBlocksVal = formData.get('initialBlocks') as string;
+      const formData = new FormData(e.target);
+      const whoCanCreate = parseRoles(formData.get('whoCanCreate'));
+      const whoCanEdit = parseRoles(formData.get('whoCanEdit'));
+      const whoCanReview = parseRoles(formData.get('whoCanReview'));
+      const whoCanView = parseRoles(formData.get('whoCanView'));
 
-      let initialBlocks = [];
-      if (initialBlocksVal) {
-        try {
-          initialBlocks = JSON.parse(initialBlocksVal);
-        } catch (err) {
-          alert('Invalid JSON in Initial Blocks');
-          return;
-        }
-      }
+      const templateEditor = document.getElementById('template-block-editor');
+      const initialBlocks = templateEditor && typeof templateEditor.getBlocks === 'function'
+        ? templateEditor.getBlocks()
+        : [];
 
       const rolePermissions = {
         whoCanCreate,
@@ -197,7 +199,7 @@ const roleOptions = activeRoles.map((r) => ({
         if (response.ok) {
           window.location.href = '/cms/templates';
         } else {
-          const errorData = (await response.json().catch(() => ({}))) as { error?: string };
+          const errorData = (await response.json().catch(() => ({})));
           alert(`Failed to create template: ${errorData.error || 'Unknown error'}`);
         }
       } catch (error) {

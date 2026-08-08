@@ -45,11 +45,13 @@ const pagesData = pagesList.map((page) =>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-200">
-        {pagesData.map((page: any) => (
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">{page.title}</div>
-            </td>
+        {pagesData.map((page: any) => {
+          const titleVal = typeof page.title === "object" ? page.title?.en || "" : page.title || ""
+          return (
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{titleVal}</div>
+              </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {page.slug}
             </td>

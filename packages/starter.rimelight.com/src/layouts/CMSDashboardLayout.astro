@@ -6,9 +6,7 @@ import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADas
 import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro"
 import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
 import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
-import RLASearch from "@rimelight/ui/components/search/RLASearch.astro"
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
-import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import { t } from "@rimelight/i18n";
 
@@ -36,82 +34,81 @@ const { title, description, activeSection = "dashboard", navbarLeft, navbarRight
 
 <DashboardLayout title={title} description={description} noindex={true}>
   <RLADashboardGroup>
-  <RLADashboardSidebar side="left" collapsible>
-    <Fragment slot="header">
-      <RLAIcon name="i-lucide-file-stack" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
-      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
-      <RLADashboardSidebarCollapse side="left" class="shrink-0" />
-    </Fragment>
-
-    <nav class="flex flex-col gap-1" data-dashboard-nav-container>
-      {cmsNavItems.map((item) => (
-        <a
-          href={item.href}
-          data-dashboard-nav
-          data-dashboard-section={item.id}
-          class={
-            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors " +
-            (item.id === activeSection
-              ? "bg-muted text-highlighted"
-              : "text-default hover:text-highlighted hover:bg-muted")
-          }
-        >
-          <RLAIcon name={item.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
-        </a>
-      ))}
-    </nav>
-
-    <Fragment slot="footer">
-      <div class="w-full" data-dashboard-nav-container>
-        <a
-          href={settingsNavItem.href}
-          data-dashboard-nav
-          data-dashboard-section={settingsNavItem.id}
-          class={
-            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors w-full " +
-            ("settings" === activeSection
-              ? "bg-muted text-highlighted"
-              : "text-default hover:text-highlighted hover:bg-muted")
-          }
-        >
-          <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{settingsNavItem.label}</span>
-        </a>
-      </div>
-    </Fragment>
-  </RLADashboardSidebar>
-
-  <RLADashboardPanel>
-    <RLADashboardNavbar slot="header" title={title} icon="i-lucide-file-stack">
-      <Fragment slot="left">
-        <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>{title}</h1>
-        <slot name="navbar-left">{navbarLeft}</slot>
+    <RLADashboardSidebar side="left" collapsible>
+      <Fragment slot="header">
+        <RLAIcon name="i-lucide-file-stack" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
+        <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
+        <RLADashboardSidebarCollapse side="left" class="shrink-0" />
       </Fragment>
-      <Fragment slot="right">
-        <slot name="navbar-right">{navbarRight}</slot>
-        <RLASearch />
-        <RLAButton variant="ghost" color="neutral" square leadingIcon="i-lucide-bell" aria-label="Notifications" />
-        <RLAAvatar src="https://i.pravatar.cc/40?u=admin" size="sm" class="cursor-pointer" />
-      </Fragment>
-    </RLADashboardNavbar>
 
-    <div slot="body" class="flex flex-col gap-6">
-      <RLADashboardToolbar>
+      <nav class="flex flex-col gap-1" data-dashboard-nav-container>
+        {cmsNavItems.map((item) => (
+          <a
+            href={item.href}
+            data-dashboard-nav
+            data-dashboard-section={item.id}
+            class={
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors " +
+              (item.id === activeSection
+                ? "bg-muted text-highlighted"
+                : "text-default hover:text-highlighted hover:bg-muted")
+            }
+          >
+            <RLAIcon name={item.icon} class="size-5 shrink-0" />
+            <span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
+          </a>
+        ))}
+      </nav>
+
+      <Fragment slot="footer">
+        <div class="w-full" data-dashboard-nav-container>
+          <a
+            href={settingsNavItem.href}
+            data-dashboard-nav
+            data-dashboard-section={settingsNavItem.id}
+            class={
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors w-full " +
+              ("settings" === activeSection
+                ? "bg-muted text-highlighted"
+                : "text-default hover:text-highlighted hover:bg-muted")
+            }
+          >
+            <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
+            <span class="truncate flex-1" data-dashboard-nav-label>{settingsNavItem.label}</span>
+          </a>
+        </div>
+      </Fragment>
+    </RLADashboardSidebar>
+
+    <RLADashboardPanel>
+      <RLADashboardNavbar slot="header" title={title} icon="i-lucide-file-stack">
         <Fragment slot="left">
-          <slot name="toolbar-left">{toolbarLeft}</slot>
+          <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>{title}</h1>
+          <slot name="navbar-left">{navbarLeft}</slot>
         </Fragment>
         <Fragment slot="right">
-          <slot name="toolbar-right">{toolbarRight}</slot>
+          <slot name="navbar-right">{navbarRight}</slot>
         </Fragment>
-      </RLADashboardToolbar>
+      </RLADashboardNavbar>
 
-      <div class="flex-1 overflow-y-auto min-h-0 p-6">
-        <slot />
+      <div slot="body" class="flex flex-col gap-6 flex-1 h-full min-h-0">
+        {(toolbarLeft || toolbarRight || Astro.slots.has("toolbar-left") || Astro.slots.has("toolbar-right")) && (
+          <RLADashboardToolbar>
+            <Fragment slot="left">
+              <slot name="toolbar-left">{toolbarLeft}</slot>
+            </Fragment>
+            <Fragment slot="right">
+              <slot name="toolbar-right">{toolbarRight}</slot>
+            </Fragment>
+          </RLADashboardToolbar>
+        )}
+
+        <div class="flex-1 flex flex-col min-h-[600px] p-6">
+          <slot />
+        </div>
       </div>
-    </div>
-  </RLADashboardPanel>
-</RLADashboardGroup>
+    </RLADashboardPanel>
+  </RLADashboardGroup>
 </DashboardLayout>
 
 <style is:global>
@@ -153,5 +150,4 @@ const { title, description, activeSection = "dashboard", navbarLeft, navbarRight
     padding-left: 0;
     padding-right: 0;
   }
-
 </style>
