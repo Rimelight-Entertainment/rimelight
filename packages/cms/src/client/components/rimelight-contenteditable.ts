@@ -1,5 +1,8 @@
 import type { InlineNode, TextInlineNode } from "../../core/types/inline"
 
+const execDocCommand: (commandId: string, showUI?: boolean, value?: string) => boolean =
+  Reflect.get(document, "execCommand").bind(document)
+
 export class RimelightContentEditable extends HTMLElement {
   private editorEl!: HTMLDivElement
   private readOnly = false
@@ -88,14 +91,14 @@ export class RimelightContentEditable extends HTMLElement {
     if (html) {
       // Clean HTML and paste as plain text to avoid security issues
       const cleanText = this.stripHtml(html)
-      document.execCommand("insertText", false, cleanText)
+      execDocCommand("insertText", false, cleanText)
     } else {
-      document.execCommand("insertText", false, text)
+      execDocCommand("insertText", false, text)
     }
   }
 
   private execFormat(command: string) {
-    document.execCommand(command, false)
+    execDocCommand(command, false)
     this.handleInput()
   }
 
@@ -105,7 +108,7 @@ export class RimelightContentEditable extends HTMLElement {
 
     const url = prompt("Enter URL:")
     if (url) {
-      document.execCommand("createLink", false, url)
+      execDocCommand("createLink", false, url)
       this.handleInput()
     }
   }

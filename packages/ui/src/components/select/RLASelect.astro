@@ -51,9 +51,7 @@ const classes = resolveClasses(
   select,
   {
     size,
-    variant,
-    color,
-    disabled
+    variant
   },
   useUi("select", uiProp),
   className
@@ -251,15 +249,15 @@ const isSearchable = searchInput !== false
     private createTextEl: HTMLElement | null = null;
     private chevronEl: HTMLElement | null = null;
 
-    private valueKey = "value";
-    private labelKey = "label";
-    private descriptionKey = "description";
-    private isMultiple = false;
-    private createItemSetting: any = false;
-    private filterFields: string[] = ["label"];
-    private ignoreFilter = false;
-    private placeholder = "Select option...";
-    private selectedIcon = "check";
+    valueKey = "value";
+    labelKey = "label";
+    descriptionKey = "description";
+    isMultiple = false;
+    createItemSetting: any = false;
+    filterFields: string[] = ["label"];
+    ignoreFilter = false;
+    placeholder = "Select option...";
+    selectedIcon = "check";
 
     private itemsList: any[] = [];
     private selectedValues: string[] = [];
@@ -408,7 +406,7 @@ const isSearchable = searchInput !== false
       this.chevronEl?.classList.remove("rotate-180");
     }
 
-    private selectItem(val: string, lbl: string) {
+    private selectItem(val: string, _lbl?: string) {
       if (this.isMultiple) {
         const index = this.selectedValues.indexOf(val);
         if (index > -1) {

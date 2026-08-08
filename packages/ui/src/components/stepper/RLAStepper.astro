@@ -6,7 +6,7 @@ import type { StepperProps } from "./stepper"
 import stepperTheme from "./stepper.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const stepper = scv(stepperTheme)
+const stepper = scv(stepperTheme as any)
 
 const {
   items = [],
@@ -81,7 +81,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
                   data-step-trigger={index}
                 >
                   <span class={classes.indicator} data-slot="indicator">
-                    <slot name="indicator" item={item} index={index} state={state}>
+                    <slot name="indicator" {...({ item, index, state } as any)}>
                       {item.icon ? (
                         <RLAIcon
                           name={item.icon}
@@ -102,15 +102,15 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
 
               {(item.title || item.description || Astro.slots.has("title") || Astro.slots.has("description") || Astro.slots.has("wrapper")) && (
                 <div class={classes.wrapper} data-slot="wrapper">
-                  <slot name="wrapper" item={item} index={index}>
+                  <slot name="wrapper" {...({ item, index } as any)}>
                     {item.title && (
                       <div class={classes.title} data-slot="title">
-                        <slot name="title" item={item} index={index}>{item.title}</slot>
+                        <slot name="title" {...({ item, index } as any)}>{item.title}</slot>
                       </div>
                     )}
                     {item.description && (
                       <div class={classes.description} data-slot="description">
-                        <slot name="description" item={item} index={index}>{item.description}</slot>
+                        <slot name="description" {...({ item, index } as any)}>{item.description}</slot>
                       </div>
                     )}
                   </slot>
@@ -136,7 +136,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
 
     <div class={classes.content} data-slot="content">
       <slot>
-        <slot name="content" item={items[currentIndex]} index={currentIndex} />
+        <slot name="content" {...({ item: items[currentIndex], index: currentIndex } as any)} />
         {items.map((item, index) => {
           const itemValue = item[valueKey] ?? item.value ?? index
           const isActive = index === currentIndex
@@ -150,7 +150,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
               class="w-full"
             >
               {slotName && Astro.slots.has(slotName) ? (
-                <slot name={slotName} item={item} index={index} />
+                <slot name={slotName} {...({ item, index } as any)} />
               ) : item.content ? (
                 <div>{item.content}</div>
               ) : null}
@@ -180,7 +180,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
 
         const triggers = this.querySelectorAll('[data-step-trigger]')
         triggers.forEach(trig => {
-          trig.addEventListener('click', (e) => {
+          trig.addEventListener('click', () => {
             const index = Number((trig as HTMLElement).dataset.stepTrigger)
             if (!isNaN(index)) {
               this.goTo(index)

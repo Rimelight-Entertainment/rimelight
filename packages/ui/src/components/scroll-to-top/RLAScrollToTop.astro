@@ -106,9 +106,10 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
       this.cleanupScroll = () => {
         button.removeEventListener('click', scrollToTop);
         unsubscribeVisibility();
-        if (this.styleEl) {
-          this.styleEl.remove();
-          this.styleEl = null;
+        const self = this as any;
+        if (self.styleEl) {
+          self.styleEl.remove();
+          self.styleEl = null;
         }
       };
 

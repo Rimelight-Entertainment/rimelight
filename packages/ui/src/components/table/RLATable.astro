@@ -8,7 +8,7 @@ import RLAIcon from "../icon/RLAIcon.astro"
 import RLAInput from "../input/RLAInput.astro"
 import RLADropdownMenu from "../dropdown-menu/RLADropdownMenu.astro"
 
-const table = scv(tableTheme)
+const table = scv(tableTheme as any)
 
 const {
   data = [],
@@ -54,7 +54,7 @@ const classes = resolveClasses(table, {
   loadingColor,
   loadingAnimation,
   externalScroll: Boolean(typeof virtualize === "object" && virtualize?.getScrollElement)
-}, useUi("table", uiProp), className);
+} as any, useUi("table", uiProp), className);
 
 // Normalize columns from props.columns or props.headers or infer from data keys
 let resolvedColumns: TableColumn[] = []
@@ -66,8 +66,8 @@ if (columns && columns.length > 0) {
     if (typeof h === "string") {
       return { id: h, accessorKey: h, header: h, enableSorting: true }
     }
-    return { id: h.key || String(i), accessorKey: h.key, header: h.label, enableSorting: true, meta: { class: { th: h.class, td: h.class } } }
-  })
+    return { id: h.key || String(i), accessorKey: h.key, header: h.label, enableSorting: true, meta: { class: { th: h.class || "", td: h.class || "" } } }
+  }) as TableColumn[]
 } else if (data && data.length > 0 && typeof data[0] === "object" && data[0] !== null) {
   const firstRow = data[0] as Record<string, any>
   resolvedColumns = Object.keys(firstRow).map((key) => ({
@@ -128,9 +128,6 @@ function buildRowTree(rawItems: any[], parentDepth = 0): TableRow[] {
       getValue: (key: string) => {
         if (!item || typeof item !== "object") return undefined
         if (key in item) return item[key]
-        if (key.includes(".")) {
-          return key.split(".").reduce((acc, part) => acc && acc[part], item)
-        }
         return undefined
       },
       getIsSelected: () => isSelected,
@@ -145,7 +142,7 @@ function buildRowTree(rawItems: any[], parentDepth = 0): TableRow[] {
       pin: () => {},
       getIsGrouped: () => false,
       getCanExpand: () => !!(subRowsList && subRowsList.length > 0),
-      subRows: subRowsList
+      ...(subRowsList ? { subRows: subRowsList } : {})
     }
 
     return rowObj
@@ -206,19 +203,17 @@ if (rowPinning.top && rowPinning.top.length > 0) {
 
 // Pagination slicing
 let paginatedRows = processedRows
-let totalPages = 1
 let currentPage = 1
 let pageSize = processedRows.length
 
 if (pagination) {
   pageSize = pagination.pageSize || 10
   currentPage = (pagination.pageIndex || 0) + 1
-  totalPages = Math.max(1, Math.ceil(processedRows.length / pageSize))
   const start = (currentPage - 1) * pageSize
   paginatedRows = processedRows.slice(start, start + pageSize)
 }
 
-const hasFooters = visibleColumns.some((col) => col.footer || Astro.slots.has(`${col.id || col.accessorKey}-footer`))
+const hasFooters = visibleColumns.some((col) => col.footer || Astro.slots.has(`${String(col.id || col.accessorKey)}-footer`))
 const uid = Math.random().toString(36).substring(2, 9)
 const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar")
 ---
@@ -281,7 +276,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
                   scope="col"
                   class:list={[
                     classes.th,
-                    isPinned && classes.pinned?.th,
+                    isPinned && (classes.pinned as any)?.th,
                     metaClass
                   ]}
                   style={col.size ? `width: ${typeof col.size === 'number' ? `${col.size}px` : col.size}; ${styleObj || ''}` : styleObj}
@@ -289,7 +284,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
                   data-slot="th"
                 >
                   {Astro.slots.has(headerSlotName) ? (
-                    <slot name={headerSlotName} column={col} />
+                    <slot name={headerSlotName} {...({ column: col } as any)} />
                   ) : canSort ? (
                     <button
                       type="button"
@@ -390,11 +385,13 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
                           {Astro.slots.has(cellSlotName) ? (
                             <slot
                               name={cellSlotName}
-                              row={row}
-                              column={col}
-                              cell={{ value: cellValue }}
-                              getValue={() => cellValue}
-                              renderValue={() => cellValue}
+                              {...({
+                                row,
+                                column: col,
+                                cell: { value: cellValue },
+                                getValue: () => cellValue,
+                                renderValue: () => cellValue
+                              } as any)}
                             />
                           ) : typeof col.cell === "function" ? (
                             col.cell({
@@ -417,7 +414,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
                   {isExpanded && Astro.slots.has("expanded") && (
                     <tr class="bg-muted/20 border-b border-border" data-slot="expanded-tr">
                       <td colspan={visibleColumns.length} class="p-4">
-                        <slot name="expanded" row={row} />
+                        <slot name="expanded" {...({ row } as any)} />
                       </td>
                     </tr>
                   )}
@@ -453,7 +450,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
               return (
                 <td class={classes.td} data-slot="td">
                   {Astro.slots.has(footerSlotName) ? (
-                    <slot name={footerSlotName} column={col} />
+                    <slot name={footerSlotName} {...({ column: col } as any)} />
                   ) : typeof col.footer === "function" ? (
                     col.footer({ column: col, table: {} })
                   ) : (

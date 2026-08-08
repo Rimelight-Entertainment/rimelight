@@ -6,7 +6,7 @@ interface Props {
   locale?: string
 }
 
-const { block, locale = "en" } = Astro.props
+const { block } = Astro.props
 const { title, synopsis, characters, aPlot, bPlot, cPlot, stinger } = block.props
 ---
 

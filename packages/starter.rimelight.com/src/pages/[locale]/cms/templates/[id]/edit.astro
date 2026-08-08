@@ -51,8 +51,8 @@ const rolePerms = template.rolePermissions || {
   whoCanView: []
 }
 
-const titleVal = typeof template.title === "object" ? template.title.en || "" : template.title || ""
-const descVal = typeof template.description === "object" ? template.description.en || "" : template.description || ""
+const titleVal = typeof template.title === "object" && template.title !== null ? (template.title as any).en || "" : template.title || ""
+const descVal = typeof template.description === "object" && template.description !== null ? (template.description as any).en || "" : template.description || ""
 ---
 
 <CMSDashboardLayout title={`Edit Template: ${titleVal}`} description="Edit CMS template" activeSection="templates">
@@ -164,7 +164,7 @@ const descVal = typeof template.description === "object" ? template.description.
     @import url("@rimelight/cms/client/styles/cms-editor.css");
   </style>
 
-  <script type="module" define:vars={{ templateId: id, initialBlocks: template.initialBlocks || [] }}>
+  <script type="module" is:inline define:vars={{ templateId: id, initialBlocks: template.initialBlocks || [] }}>
     import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
       defineCustomElements();
       const templateEditor = document.getElementById('template-block-editor');

@@ -7,7 +7,6 @@ import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashb
 import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
 import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import { t } from "@rimelight/i18n";
 
 const cmsNavItems = [
@@ -23,13 +22,11 @@ interface CMSDashboardLayoutProps {
   title: string;
   description: string;
   activeSection?: string;
-  navbarLeft?: any;
-  navbarRight?: any;
   toolbarLeft?: any;
   toolbarRight?: any;
 }
 
-const { title, description, activeSection = "dashboard", navbarLeft, navbarRight, toolbarLeft, toolbarRight } = Astro.props as CMSDashboardLayoutProps;
+const { title, description, activeSection = "dashboard", toolbarLeft, toolbarRight } = Astro.props as CMSDashboardLayoutProps;
 ---
 
 <DashboardLayout title={title} description={description} noindex={true}>

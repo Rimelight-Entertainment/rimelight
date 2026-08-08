@@ -6,7 +6,7 @@ interface Props {
   locale?: string
 }
 
-const { block, locale = "en" } = Astro.props
+const { block } = Astro.props
 const { location, timeOfDay, setting, transition, description } = block.props
 
 const timeOfDayLabels: Record<TimeOfDay, string> = {
@@ -43,8 +43,8 @@ if (todLabel && todLabel !== "Other") headingParts.push(`- ${todLabel}`)
 
 <div class="my-4 p-3 border-l-4 border-indigo-400 bg-indigo-50/20 dark:bg-indigo-950/10 rounded-r-lg">
   <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-indigo-800 dark:text-indigo-200 mb-2">
-    {headingParts.map((part, idx) => (
-      <span key={idx}>{part}</span>
+    {headingParts.map((part) => (
+      <span>{part}</span>
     ))}
     {transitionLabel && (
       <span class="ml-auto text-[10px] italic text-gray-600 dark:text-gray-400">
