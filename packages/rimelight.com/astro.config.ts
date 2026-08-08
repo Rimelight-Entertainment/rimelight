@@ -101,7 +101,8 @@ export default defineConfig({
   },
 
   security: defineSecurity({
-    domain: "rimelight.com"
+    domain: "rimelight.com",
+    imgSrc: ["https://cdn.rimelight.com"]
   }),
 
   i18n: {

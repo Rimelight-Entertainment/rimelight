@@ -21,7 +21,8 @@
     "generate-types": "wrangler types",
     "astro": "astro",
     "dev": "astro dev",
-    "build": "astro build"
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.0",

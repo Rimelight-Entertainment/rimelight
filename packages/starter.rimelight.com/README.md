@@ -1,43 +1,19 @@
-# Astro Starter Kit: Minimal
+# Rimelight Entertainment Workspace
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+## Structure
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+### Apps (`/packages`)
 
-## 🚀 Project Structure
+- **`rimelight.com`**: The main company website.
+- **`starter.rimelight.com`**: Our standardized starter template for Astro websites.
 
-Inside of your Astro project, you'll see the following folders and files:
+### Packages (`/packages`)
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- **`@rimelight/auth`**: Authentication and authorization utilities for the Rimelight ecosystem.
+- **`@rimelight/cli`**: The command line interface for managing Rimelight projects.
+- **`@rimelight/cms`**: Enterprise content management, block rendering, and wiki engine.
+- **`@rimelight/docs`**: Documentation components and utilities.
+- **`@rimelight/i18n`**: Internationalization and localization tools.
+- **`@rimelight/security`**: Astro security integration (CSP, SRI, and more).
+- **`@rimelight/seo`**: SEO utilities including sitemap, robots, and meta components.
+- **`@rimelight/ui`**: Our component library used in all our web projects.
