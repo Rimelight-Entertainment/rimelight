@@ -1,12 +1,8 @@
 {
   "name": "rimelight-dot-com",
+  "description": "Rimelight Entertainment's Website",
   "version": "0.0.1",
   "private": true,
-  "description": "Tell your story.",
-  "keywords": [
-    "astro",
-    "typescript"
-  ],
   "homepage": "https://rimelight.com",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"

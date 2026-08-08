@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/seo",
+  "description": "Rimelight Entertainment's SEO Package",
   "version": "0.0.1",
   "private": false,
-  "description": "Generic SEO utilities for Astro sites — sitemap, robots.txt builders, and SEOHead component",
   "files": [
     "src"
   ],

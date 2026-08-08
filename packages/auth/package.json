@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/auth",
+  "description": "Rimelight Entertainment's Authentication Package",
   "version": "0.0.1",
   "private": false,
-  "description": "Rimelight Auth — generic, composable better-auth wrapper and security toolkit",
   "files": [
     "src"
   ],

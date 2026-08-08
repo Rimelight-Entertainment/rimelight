@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/security",
+  "description": "Rimelight Entertainment's Security Package",
   "version": "0.0.3",
   "private": false,
-  "description": "Rimelight Entertainment Security Middleware and Utilities.",
   "type": "module",
   "exports": {
     ".": "./src/integrations/index.ts",

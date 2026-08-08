@@ -1,14 +1,8 @@
 {
   "name": "@rimelight/cms",
-  "version": "0.1.0",
+  "description": "Rimelight Entertainment's Content Management System Package",
+  "version": "0.0.1",
   "private": false,
-  "description": "Core Content Management & Wiki Architecture for Rimelight.",
-  "keywords": [
-    "astro",
-    "cms",
-    "drizzle",
-    "typescript"
-  ],
   "license": "MIT",
   "author": {
     "name": "Daniel Marchi"

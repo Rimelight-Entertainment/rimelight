@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/i18n",
+  "description": "Rimelight Entertainment's Internationalization Package",
   "version": "0.0.4",
   "private": false,
-  "description": "Rimelight i18n — unified translation loader with optional KV backing",
   "files": [
     "src"
   ],

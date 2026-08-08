@@ -1,12 +1,8 @@
 {
   "name": "starter-dot-rimelight-dot-com",
+  "description": "Rimelight Starter Template",
   "version": "0.0.1",
   "private": true,
-  "description": "Rimelight Starter",
-  "keywords": [
-    "astro",
-    "typescript"
-  ],
   "homepage": "https://starter.rimelight.com",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"

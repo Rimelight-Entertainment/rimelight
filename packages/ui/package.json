@@ -1,12 +1,8 @@
 {
   "name": "@rimelight/ui",
+  "description": "Rimelight Entertainment's UI Package",
   "version": "0.0.42",
   "private": false,
-  "description": "Rimelight Entertainment UI Library.",
-  "keywords": [
-    "astro",
-    "typescript"
-  ],
   "homepage": "https://rimelight.com/docs",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
