@@ -45,6 +45,7 @@ export const auth = async (c: any, next: any) => {
   }
 
   const session = c.get("session")
+  const user = c.get("user")
 
   if (url.pathname === "/auth") {
     return c.redirect("/auth/sign-in")
@@ -56,6 +57,16 @@ export const auth = async (c: any, next: any) => {
 
   if (isProtected && !session) {
     return c.redirect("/auth/sign-in")
+  }
+
+  if (url.pathname.includes("/admin")) {
+    if (!session) {
+      return c.redirect("/auth/sign-in")
+    }
+    const role = user?.role
+    if (role !== "admin" && role !== "owner") {
+      return c.redirect("/")
+    }
   }
 
   if (url.pathname.includes("/construction") && session) {

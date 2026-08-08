@@ -36,7 +36,15 @@ const { title, description, activeSection = "dashboard", navbarLeft, navbarRight
   <RLADashboardGroup>
     <RLADashboardSidebar collapsible>
       <Fragment slot="header">
-        <span class="font-semibold text-highlighted truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
+        <div class="flex items-center gap-2.5">
+          <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+            <RLAIcon name="i-lucide-shield" class="size-5 text-primary group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
+          </div>
+          <div class="flex flex-col truncate group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>
+            <span class="font-semibold text-highlighted text-sm leading-none">{t("cms.sidebar_app_name")}</span>
+            <span class="text-xs text-muted-foreground mt-0.5">Content Management System</span>
+          </div>
+        </div>
         <RLADashboardSidebarCollapse />
       </Fragment>
 
