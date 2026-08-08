@@ -91,11 +91,19 @@ const settingsConfig = [
 
 <DashboardLayout title={t("dashboard.meta_title")} description={t("dashboard.meta_description")}>
   <RLADashboardGroup>
-  <RLADashboardSidebar side="left" collapsible>
+  <RLADashboardSidebar
+    side="left"
+    collapsible
+    class="group"
+    ui={{
+      header: "group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:p-0",
+      footer: "group-data-[collapsed=true]:px-0",
+    }}
+  >
     <Fragment slot="header">
-      <RLAIcon name="i-lucide-layers" class="size-6 text-primary shrink-0" data-dashboard-sidebar-logo />
-      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200" data-dashboard-sidebar-label>{t("dashboard.navbar_app_name")}</span>
-      <RLADashboardSidebarCollapse side="left" class="shrink-0" />
+      <RLAIcon name="i-lucide-layers" class="size-6 text-primary shrink-0 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
+      <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>{t("dashboard.navbar_app_name")}</span>
+      <RLADashboardSidebarCollapse side="left" class="shrink-0 group-data-[collapsed=true]:mx-auto" />
     </Fragment>
 
     <nav class="flex flex-col gap-1" data-dashboard-nav-container>
@@ -105,14 +113,14 @@ const settingsConfig = [
           data-dashboard-nav
           data-dashboard-section={item.id}
           class={
-            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors " +
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0 " +
             (item.active
               ? "bg-muted text-highlighted"
               : "text-default hover:text-highlighted hover:bg-muted")
           }
         >
           <RLAIcon name={item.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
+          <span class="truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-nav-label>{item.label}</span>
         </a>
       ))}
     </nav>
@@ -123,10 +131,10 @@ const settingsConfig = [
           href={settingsNavItem.href}
           data-dashboard-nav
           data-dashboard-section={settingsNavItem.id}
-          class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-default hover:text-highlighted hover:bg-muted transition-colors w-full"
+          class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-default hover:text-highlighted hover:bg-muted transition-colors w-full group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0"
         >
           <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
-          <span class="truncate flex-1" data-dashboard-nav-label>{settingsNavItem.label}</span>
+          <span class="truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-nav-label>{settingsNavItem.label}</span>
         </a>
       </div>
     </Fragment>
@@ -482,48 +490,7 @@ const settingsConfig = [
 </RLADashboardGroup>
 </DashboardLayout>
 
-<style is:global>
-  /* Hide text label when sidebar is collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
-    display: none;
-  }
 
-  /* Hide the logo icon too — only show the collapse toggle */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
-    display: none;
-  }
-
-
-  /* Center the collapse button in the header and remove side padding */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
-    justify-content: center;
-    gap: 0;
-    padding: 0;
-  }
-
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
-    margin: 0 auto;
-  }
-
-  /* Hide nav item text labels when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
-    display: none;
-  }
-
-  /* Center nav icons when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* Center footer slot item when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-</style>
 
 <script>
   const navTitles: Record<string, string> = {

@@ -57,18 +57,26 @@ const { title, description, activeSection = "overview" } = Astro.props;
 ) : (
 	<DashboardLayout title={title} description={description} noindex={true}>
 		<RLADashboardGroup>
-			<RLADashboardSidebar side="left" collapsible>
+			<RLADashboardSidebar
+				side="left"
+				collapsible
+				class="group"
+				ui={{
+					header: "group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:p-0",
+					footer: "group-data-[collapsed=true]:px-0",
+				}}
+			>
 				<Fragment slot="header">
 					<div class="flex items-center gap-2.5">
 						<div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
-							<RLAIcon name="i-lucide-shield" class="size-5 text-primary" data-dashboard-sidebar-logo />
+							<RLAIcon name="i-lucide-shield" class="size-5 text-primary group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
 						</div>
-						<div class="flex flex-col truncate" data-dashboard-sidebar-label>
+						<div class="flex flex-col truncate group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>
 							<span class="font-semibold text-highlighted text-sm leading-none">Auth Admin</span>
 							<span class="text-xs text-muted-foreground mt-0.5">Better Auth Engine</span>
 						</div>
 					</div>
-					<RLADashboardSidebarCollapse side="left" class="shrink-0 ml-auto" />
+					<RLADashboardSidebarCollapse side="left" class="shrink-0 ml-auto group-data-[collapsed=true]:mx-auto" />
 				</Fragment>
 
 				<nav class="flex flex-col gap-1 mt-2" data-dashboard-nav-container>
@@ -78,14 +86,14 @@ const { title, description, activeSection = "overview" } = Astro.props;
 							data-dashboard-nav
 							data-dashboard-section={item.id}
 							class={
-								"flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all " +
+								"flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0 " +
 								(item.id === activeSection
 									? "bg-primary/10 text-primary font-semibold"
 									: "text-muted-foreground hover:text-highlighted hover:bg-muted/50")
 							}
 						>
 							<RLAIcon name={item.icon} class="size-5 shrink-0" />
-							<span class="truncate flex-1" data-dashboard-nav-label>{item.label}</span>
+							<span class="truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-nav-label>{item.label}</span>
 						</a>
 					))}
 				</nav>
@@ -121,44 +129,3 @@ const { title, description, activeSection = "overview" } = Astro.props;
 		</RLADashboardGroup>
 	</DashboardLayout>
 )}
-
-<style is:global>
-  /* Hide text label when sidebar is collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-label] {
-    display: none;
-  }
-
-  /* Hide the logo icon too — only show the collapse toggle */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-sidebar-logo] {
-    display: none;
-  }
-
-  /* Center the collapse button in the header and remove side padding */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="header"] {
-    justify-content: center;
-    gap: 0;
-    padding: 0;
-  }
-
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-toggle="collapse"] {
-    margin: 0 auto;
-  }
-
-  /* Hide nav item text labels when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav-label] {
-    display: none;
-  }
-
-  /* Center nav icons when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-dashboard-nav] {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  /* Center footer slot item when collapsed */
-  [data-dashboard-sidebar][data-collapsed="true"] [data-slot="footer"] {
-    padding-left: 0;
-    padding-right: 0;
-  }
-</style>
