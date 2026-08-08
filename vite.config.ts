@@ -146,8 +146,16 @@ export default defineConfig({
         command: "vp check --fix"
       },
       "check": {
-        dependsOn: ["audit", "check:vp"],
-        command: "pnpm -r exec vp run check"
+        dependsOn: [
+          "audit",
+          "check:vp",
+          "@rimelight/cms#check",
+          "@rimelight/security#check",
+          "@rimelight/ui#check",
+          "rimelight-dot-com#check",
+          "starter-dot-rimelight-dot-com#check"
+        ],
+        command: 'node -e "process.exit(0)"'
       },
       "fix": {
         command: "pnpm audit fix && vp check --fix"
