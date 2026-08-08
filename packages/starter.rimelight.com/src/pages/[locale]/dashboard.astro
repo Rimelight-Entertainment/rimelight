@@ -91,15 +91,7 @@ const settingsConfig = [
 
 <DashboardLayout title={t("dashboard.meta_title")} description={t("dashboard.meta_description")}>
   <RLADashboardGroup>
-  <RLADashboardSidebar
-    side="left"
-    collapsible
-    class="group"
-    ui={{
-      header: "group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:p-0",
-      footer: "group-data-[collapsed=true]:px-0",
-    }}
-  >
+  <RLADashboardSidebar side="left" collapsible>
     <Fragment slot="header">
       <RLAIcon name="i-lucide-layers" class="size-6 text-primary shrink-0 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
       <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>{t("dashboard.navbar_app_name")}</span>

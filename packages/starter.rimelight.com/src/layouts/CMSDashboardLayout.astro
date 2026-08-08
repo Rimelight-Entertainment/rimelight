@@ -34,18 +34,10 @@ const { title, description, activeSection = "dashboard", navbarLeft, navbarRight
 
 <DashboardLayout title={title} description={description} noindex={true}>
   <RLADashboardGroup>
-    <RLADashboardSidebar
-      collapsible
-      class="group"
-      ui={{
-        header: "group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:gap-0 group-data-[collapsed=true]:p-0",
-        footer: "group-data-[collapsed=true]:px-0",
-      }}
-    >
+    <RLADashboardSidebar collapsible>
       <Fragment slot="header">
-        <RLAIcon name="i-lucide-file-stack" class="size-6 text-primary shrink-0 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
-        <span class="font-semibold text-highlighted truncate flex-1 transition-opacity duration-200 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
-        <RLADashboardSidebarCollapse side="left" class="shrink-0 group-data-[collapsed=true]:mx-auto" />
+        <span class="font-semibold text-highlighted truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>{t("cms.sidebar_app_name")}</span>
+        <RLADashboardSidebarCollapse />
       </Fragment>
 
       <nav class="flex flex-col gap-1" data-dashboard-nav-container>
@@ -90,11 +82,7 @@ const { title, description, activeSection = "dashboard", navbarLeft, navbarRight
     <RLADashboardPanel>
       <RLADashboardNavbar slot="header" title={title} icon="i-lucide-file-stack">
         <Fragment slot="left">
-          <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>{title}</h1>
-          <slot name="navbar-left">{navbarLeft}</slot>
-        </Fragment>
-        <Fragment slot="right">
-          <slot name="navbar-right">{navbarRight}</slot>
+          <h1 class="text-xl font-bold text-highlighted" data-dashboard-navbar-title>{title}</h1>
         </Fragment>
       </RLADashboardNavbar>
 
@@ -109,10 +97,7 @@ const { title, description, activeSection = "dashboard", navbarLeft, navbarRight
             </Fragment>
           </RLADashboardToolbar>
         )}
-
-        <div class="flex-1 flex flex-col min-h-[600px] p-6">
-          <slot />
-        </div>
+        <slot />
       </div>
     </RLADashboardPanel>
   </RLADashboardGroup>
