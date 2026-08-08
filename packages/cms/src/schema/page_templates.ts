@@ -1,7 +1,7 @@
 import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import type { BaseBlock } from "../core/types/blocks"
 import type { Localized, PageType } from "../core/types/pages"
-import type { TemplateApprovalRules } from "../core/types/templates"
+import type { TemplateApprovalRules, TemplateRolePermissions } from "../core/types/templates"
 
 export const pageTemplates = pgTable("page_templates", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
@@ -11,6 +11,10 @@ export const pageTemplates = pgTable("page_templates", {
   pageType: text("page_type").$type<PageType>().notNull(),
   version: integer("version").default(1).notNull(),
   allowedRoles: jsonb("allowed_roles").$type<string[]>().default([]).notNull(),
+  rolePermissions: jsonb("role_permissions")
+    .$type<TemplateRolePermissions>()
+    .default({ whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] })
+    .notNull(),
   requiredPermission: text("required_permission"),
   approvalRules: jsonb("approval_rules")
     .$type<TemplateApprovalRules>()

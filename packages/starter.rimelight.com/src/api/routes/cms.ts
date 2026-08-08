@@ -53,10 +53,12 @@ async function checkApprovalRequirements(pageId: string, userId: string, userRol
   }
 
   // Check if user has required role for approval
-  if (approvalRules.requiredRolesForApproval && approvalRules.requiredRolesForApproval.length > 0) {
-    const hasRequiredRole = userRoles.some((role) =>
-      approvalRules.requiredRolesForApproval!.includes(role)
-    )
+  const requiredRoles = template[0].rolePermissions?.whoCanReview?.length
+    ? template[0].rolePermissions.whoCanReview
+    : approvalRules.requiredRolesForApproval
+
+  if (requiredRoles && requiredRoles.length > 0) {
+    const hasRequiredRole = userRoles.some((role) => requiredRoles.includes(role))
     if (!hasRequiredRole) {
       return { canPublish: false, reason: "User does not have required role for approval" }
     }
@@ -104,10 +106,20 @@ cms.post("/templates", async (c) => {
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const body = await c.req.json()
+  const rolePermissions = body.rolePermissions || {
+    whoCanCreate: body.allowedRoles || [],
+    whoCanEdit: [],
+    whoCanReview: [],
+    whoCanView: []
+  }
+  const allowedRoles = rolePermissions.whoCanCreate || body.allowedRoles || []
+
   const template = await db
     .insert(pageTemplates)
     .values({
       ...body,
+      allowedRoles,
+      rolePermissions,
       version: 1,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -124,9 +136,14 @@ cms.put("/templates/:id", async (c) => {
   const id = c.req.param("id")
   const body = await c.req.json()
 
+  const updateData = { ...body, updatedAt: new Date() }
+  if (body.rolePermissions?.whoCanCreate) {
+    updateData.allowedRoles = body.rolePermissions.whoCanCreate
+  }
+
   const template = await db
     .update(pageTemplates)
-    .set({ ...body, updatedAt: new Date() })
+    .set(updateData)
     .where(eq(pageTemplates.id, id))
     .returning()
 
