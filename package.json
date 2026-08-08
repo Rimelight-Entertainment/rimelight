@@ -19,14 +19,6 @@
     "packages/*"
   ],
   "type": "module",
-  "scripts": {
-    "prepare": "vp config",
-    "generate:config": "vp config",
-    "create-project": "node packages/cli/bin/rimelight.js create",
-    "dev": "pnpm -r dev",
-    "build": "pnpm -r build",
-    "test": "pnpm -r test"
-  },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.8.0",
     "@types/node": "26.1.2",
