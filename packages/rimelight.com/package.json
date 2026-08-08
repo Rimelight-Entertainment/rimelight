@@ -1,8 +1,8 @@
 {
   "name": "rimelight-dot-com",
-  "description": "Rimelight Entertainment's Website",
   "version": "0.0.1",
   "private": true,
+  "description": "Rimelight Entertainment's Website",
   "homepage": "https://rimelight.com",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
@@ -27,11 +27,11 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.1.7",
+    "@astrojs/cloudflare": "14.2.0",
     "@astrojs/mdx": "7.0.5",
     "@astrojs/rss": "4.0.19",
-    "@astrojs/solid-js": "7.0.1",
-    "@astrojs/vue": "7.0.1",
+    "@astrojs/solid-js": "7.0.2",
+    "@astrojs/vue": "7.0.2",
     "@nanostores/i18n": "1.3.3",
     "@neondatabase/serverless": "1.1.0",
     "@rimelight/auth": "workspace:*",
@@ -42,32 +42,32 @@
     "@rimelight/seo": "workspace:*",
     "@rimelight/ui": "workspace:*",
     "@types/chroma-js": "3.1.2",
-    "astro": "7.1.6",
-    "better-auth": "1.6.25",
+    "astro": "7.2.0",
+    "better-auth": "1.6.26",
     "chroma-js": "3.2.0",
     "css-variants": "2.3.5",
     "drizzle-orm": "0.45.2",
-    "hono": "4.12.33",
+    "hono": "4.13.1",
     "nanostores": "1.4.2",
     "solid-js": "1.9.14",
-    "vue": "3.5.40",
+    "vue": "3.5.41",
     "vuedraggable": "2.24.3",
-    "wrangler": "4.118.0"
+    "wrangler": "4.120.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@astrojs/ts-plugin": "1.10.10",
-    "@e18e/eslint-plugin": "0.6.0",
-    "@iconify-json/logos": "1.2.11",
-    "@iconify-json/lucide": "1.2.121",
+    "@e18e/eslint-plugin": "0.8.0",
+    "@iconify-json/logos": "1.2.12",
+    "@iconify-json/lucide": "1.2.122",
     "@types/node": "26.1.2",
     "@unocss/eslint-plugin": "66.7.5",
     "drizzle-kit": "0.31.10",
     "eslint-plugin-regexp": "3.1.1",
-    "takumi-js": "^2.2.0",
+    "takumi-js": "^2.5.11",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vite-plus": "0.2.7"
+    "vite-plus": "0.2.8"
   },
   "engines": {
     "node": ">=26.7.0"

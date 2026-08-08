@@ -1,8 +1,8 @@
 {
   "name": "rimelight",
-  "description": "Rimelight Entertainment Monorepository",
   "version": "0.0.1",
   "private": true,
+  "description": "Rimelight Entertainment Monorepository",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
   },
@@ -27,12 +27,12 @@
     "test": "pnpm -r test"
   },
   "devDependencies": {
-    "@e18e/eslint-plugin": "0.6.0",
+    "@e18e/eslint-plugin": "0.8.0",
     "@types/node": "26.1.2",
     "@unocss/eslint-plugin": "66.7.5",
     "eslint-plugin-regexp": "3.1.1",
-    "pkg-pr-new": "0.0.86",
-    "vite-plus": "0.2.7"
+    "pkg-pr-new": "0.0.87",
+    "vite-plus": "0.2.8"
   },
   "engines": {
     "node": ">=26.7.0"

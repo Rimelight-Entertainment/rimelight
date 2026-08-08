@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/docs",
-  "description": "Rimelight Entertainment's Documentation Package",
   "version": "0.0.1",
   "private": false,
+  "description": "Rimelight Entertainment's Documentation Package",
   "homepage": "https://rimelight.com/docs",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"

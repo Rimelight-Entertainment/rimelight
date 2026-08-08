@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/auth",
-  "description": "Rimelight Entertainment's Authentication Package",
   "version": "0.0.1",
   "private": false,
+  "description": "Rimelight Entertainment's Authentication Package",
   "files": [
     "src"
   ],
@@ -19,14 +19,14 @@
     "./plugins/construction-guest": "./src/plugins/construction-guest/index.ts"
   },
   "dependencies": {
-    "@better-auth/drizzle-adapter": "1.6.25",
-    "better-auth": "1.6.25",
+    "@better-auth/drizzle-adapter": "1.6.26",
+    "better-auth": "1.6.26",
     "drizzle-orm": "0.45.2"
   },
   "peerDependencies": {
     "better-auth": ">=1.0.0",
     "drizzle-orm": ">=0.30.0",
-    "hono": ">=4.0.0"
+    "hono": ">=4.12.34"
   },
   "peerDependenciesMeta": {
     "hono": {

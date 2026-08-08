@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/seo",
-  "description": "Rimelight Entertainment's SEO Package",
   "version": "0.0.1",
   "private": false,
+  "description": "Rimelight Entertainment's SEO Package",
   "files": [
     "src"
   ],
@@ -19,7 +19,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "astro": "7.1.6",
+    "astro": "7.2.0",
     "typescript": "6.0.3"
   },
   "peerDependencies": {

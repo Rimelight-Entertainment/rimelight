@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/cli",
-  "description": "Rimelight Entertainment's Command Line Interface",
   "version": "0.0.1",
   "private": false,
+  "description": "Rimelight Entertainment's Command Line Interface",
   "bin": {
     "rimelight": "./bin/rimelight.js"
   },

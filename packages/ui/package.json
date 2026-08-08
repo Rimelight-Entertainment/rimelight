@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/ui",
-  "description": "Rimelight Entertainment's UI Package",
   "version": "0.0.42",
   "private": false,
+  "description": "Rimelight Entertainment's UI Package",
   "homepage": "https://rimelight.com/docs",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
@@ -47,14 +47,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/solid-js": "7.0.1",
+    "@astrojs/solid-js": "7.0.2",
     "@astrojs/ts-plugin": "1.10.10",
-    "@astrojs/vue": "7.0.1",
-    "astro": "7.1.6",
+    "@astrojs/vue": "7.0.2",
+    "astro": "7.2.0",
     "solid-js": "1.9.14",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vue": "3.5.40"
+    "vue": "3.5.41"
   },
   "peerDependencies": {
     "@astrojs/solid-js": ">=7.0.1",

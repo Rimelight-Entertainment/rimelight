@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/security",
-  "description": "Rimelight Entertainment's Security Package",
   "version": "0.0.3",
   "private": false,
+  "description": "Rimelight Entertainment's Security Package",
   "type": "module",
   "exports": {
     ".": "./src/integrations/index.ts",
@@ -14,7 +14,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "astro": "7.1.6",
+    "astro": "7.2.0",
     "typescript": "6.0.3"
   },
   "peerDependencies": {

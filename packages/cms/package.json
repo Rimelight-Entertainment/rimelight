@@ -1,8 +1,8 @@
 {
   "name": "@rimelight/cms",
-  "description": "Rimelight Entertainment's Content Management System Package",
   "version": "0.0.1",
   "private": false,
+  "description": "Rimelight Entertainment's Content Management System Package",
   "license": "MIT",
   "author": {
     "name": "Daniel Marchi"
@@ -29,17 +29,17 @@
     "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",
     "drizzle-orm": "0.45.2",
-    "sortablejs": "1.15.6"
+    "sortablejs": "1.15.7"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@types/node": "26.1.2",
-    "@types/sortablejs": "1.15.8",
-    "astro": "7.1.6",
-    "better-auth": "1.6.25",
+    "@types/sortablejs": "1.15.9",
+    "astro": "7.2.0",
+    "better-auth": "1.6.26",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vitest": "^3.2.6"
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "astro": ">=7.0.0",
