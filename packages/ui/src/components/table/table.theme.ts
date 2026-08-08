@@ -77,19 +77,19 @@ export const createTableTheme = () =>
         }
       },
       loadingAnimation: {
-        "carousel": "",
-        "carousel-inverse": "",
-        "swing": "",
-        "elastic": ""
+        "carousel": {},
+        "carousel-inverse": {},
+        "swing": {},
+        "elastic": {}
       },
       loadingColor: {
-        primary: "",
-        secondary: "",
-        success: "",
-        info: "",
-        warning: "",
-        error: "",
-        neutral: ""
+        primary: {},
+        secondary: {},
+        success: {},
+        info: {},
+        warning: {},
+        error: {},
+        neutral: {}
       }
     },
     compoundVariants: [

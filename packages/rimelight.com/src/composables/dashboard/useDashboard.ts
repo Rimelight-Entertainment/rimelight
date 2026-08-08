@@ -5,26 +5,25 @@ import { useAuth } from "../auth/useAuth"
 // Global, shared states for Dashboard components
 const activeTeamId = ref<string | null>(null)
 const isNotificationsSlideoverOpen = ref<boolean>(false)
-
-type OrgState = ReturnType<typeof authClient.useActiveOrganization>
+const activeOrgData = ref<any>(null)
 
 export const useDashboard = () => {
   const { session } = useAuth()
 
-  // 1. Auth States (Client-only, only if logged in)
-  const activeOrgState: OrgState | null =
-    typeof window !== "undefined" && session.value ? authClient.useActiveOrganization() : null
+  const refreshActiveOrganization = async () => {
+    if (typeof window === "undefined" || !session.value) return
+    const { data } = await authClient.organization.getFullOrganization()
+    activeOrgData.value = data ?? null
+  }
 
-  const activeOrganization = computed(() => activeOrgState?.value?.data ?? null)
+  if (typeof window !== "undefined" && session.value && !activeOrgData.value) {
+    void refreshActiveOrganization()
+  }
+
+  const activeOrganization = computed(() => activeOrgData.value)
 
   const setActiveTeam = (id: string | null) => {
     activeTeamId.value = id
-  }
-
-  const refreshActiveOrganization = async () => {
-    if (activeOrgState?.value?.refetch) {
-      return await activeOrgState.value.refetch()
-    }
   }
 
   // Reset team when organization changes

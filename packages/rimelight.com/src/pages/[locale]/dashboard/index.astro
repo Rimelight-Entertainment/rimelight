@@ -1,12 +1,12 @@
 ---
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t } from "@rimelight/i18n";
 import { auth } from "@/auth/auth";
 
 const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
 const user = sessionData?.user;
 if (!user) {
-	return Astro.redirect(getRelativeLocaleUrl('/auth/sign-in'));
+	return Astro.redirect('/auth/sign-in');
 }
 ---
 

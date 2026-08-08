@@ -43,4 +43,44 @@ describe("validateServerBlockPayload", () => {
     expect(result.valid).toBe(false)
     expect(result.reason).toContain("Cannot modify locked properties")
   })
+
+  it("rejects payload if an unauthorized user attempts to delete a protected block", () => {
+    const existing: BaseBlock[] = [
+      {
+        id: "22222222-2222-4222-8222-222222222222",
+        type: "ParagraphBlock",
+        allowedRoles: ["admin"],
+        props: { text: "Admin-only Note" }
+      }
+    ]
+    const incoming: BaseBlock[] = []
+    const memberSession = { userId: "m1", roles: ["member"], permissions: [] }
+
+    const result = validateServerBlockPayload(existing, incoming, memberSession)
+    expect(result.valid).toBe(false)
+    expect(result.reason).toContain("Cannot delete protected block")
+  })
+
+  it("allows payload if an authorized user modifies a protected block", () => {
+    const existing: BaseBlock[] = [
+      {
+        id: "22222222-2222-4222-8222-222222222222",
+        type: "ParagraphBlock",
+        allowedRoles: ["admin"],
+        props: { text: "Admin-only Note" }
+      }
+    ]
+    const incoming: BaseBlock[] = [
+      {
+        id: "22222222-2222-4222-8222-222222222222",
+        type: "ParagraphBlock",
+        allowedRoles: ["admin"],
+        props: { text: "Updated Admin-only Note" }
+      }
+    ]
+    const adminSession = { userId: "a1", roles: ["admin"], permissions: [] }
+
+    const result = validateServerBlockPayload(existing, incoming, adminSession)
+    expect(result.valid).toBe(true)
+  })
 })

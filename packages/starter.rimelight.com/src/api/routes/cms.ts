@@ -260,17 +260,23 @@ cms.put("/pages/:id", async (c) => {
   if (!existingPage[0]) return c.json({ error: "Page not found" }, 404)
 
   // Validate block changes
-  if (body.content?.blocks) {
+  const incomingContent = typeof body.content === "string" ? JSON.parse(body.content) : body.content
+  if (incomingContent?.blocks) {
     const existingContent =
       typeof existingPage[0].content === "string"
         ? JSON.parse(existingPage[0].content)
         : existingPage[0].content
-    const incomingContent =
-      typeof body.content === "string" ? JSON.parse(body.content) : body.content
+
+    const userSession = {
+      userId: session.user.id,
+      roles: session.user.role ? [session.user.role] : [],
+      permissions: []
+    }
 
     const validation = validateServerBlockPayload(
       existingContent.blocks || [],
-      incomingContent.blocks || []
+      incomingContent.blocks || [],
+      userSession
     )
     if (!validation.valid) {
       return c.json({ error: validation.reason }, 403)
@@ -308,17 +314,23 @@ cms.post("/pages/:id/draft", async (c) => {
   if (!existingPage[0]) return c.json({ error: "Page not found" }, 404)
 
   // Validate block changes
-  if (body.content?.blocks) {
+  const incomingContent = typeof body.content === "string" ? JSON.parse(body.content) : body.content
+  if (incomingContent?.blocks) {
     const existingContent =
       typeof existingPage[0].content === "string"
         ? JSON.parse(existingPage[0].content)
         : existingPage[0].content
-    const incomingContent =
-      typeof body.content === "string" ? JSON.parse(body.content) : body.content
+
+    const userSession = {
+      userId: session.user.id,
+      roles: session.user.role ? [session.user.role] : [],
+      permissions: []
+    }
 
     const validation = validateServerBlockPayload(
       existingContent.blocks || [],
-      incomingContent.blocks || []
+      incomingContent.blocks || [],
+      userSession
     )
     if (!validation.valid) {
       return c.json({ error: validation.reason }, 403)
@@ -399,9 +411,30 @@ cms.post("/pages/:id/lock/heartbeat", async (c) => {
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
+
+  const existingLock = await db
+    .select()
+    .from(pageDraftLocks)
+    .where(eq(pageDraftLocks.pageId, id))
+    .limit(1)
+
+  if (existingLock[0] && existingLock[0].lockedByUserId !== session.user.id) {
+    const isExpired = new Date(existingLock[0].expiresAt) < new Date()
+    if (!isExpired) {
+      return c.json({ error: "Forbidden: Lock held by another user" }, 403)
+    }
+  }
+
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000)
 
-  await db.update(pageDraftLocks).set({ expiresAt }).where(eq(pageDraftLocks.pageId, id))
+  await db
+    .update(pageDraftLocks)
+    .set({
+      lockedByUserId: session.user.id,
+      lockedByUserName: session.user.name,
+      expiresAt
+    })
+    .where(eq(pageDraftLocks.pageId, id))
 
   return c.json({ success: true })
 })
@@ -411,7 +444,9 @@ cms.post("/pages/:id/lock/release", async (c) => {
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
-  await db.delete(pageDraftLocks).where(eq(pageDraftLocks.pageId, id))
+  await db
+    .delete(pageDraftLocks)
+    .where(and(eq(pageDraftLocks.pageId, id), eq(pageDraftLocks.lockedByUserId, session.user.id)))
 
   return c.json({ success: true })
 })

@@ -82,13 +82,13 @@ describe("draft-lock-ttl", () => {
   })
 
   it("verifies heartbeat refresh extends lock TTL", async () => {
-    const lockManager = new LockManager("test-page", 100) // 100ms TTL
+    const lockManager = new LockManager("test-page", 50) // 50ms heartbeat
 
     const result = await lockManager.acquireCheckout("user-1", "Test User")
     expect(result.success).toBe(true)
 
-    // Wait 75ms (still within TTL)
-    await new Promise((resolve) => setTimeout(resolve, 75))
+    // Wait 100ms (heartbeat fires at 50ms and extends lock by +100ms)
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     const secondResult = await lockManager.acquireCheckout("user-2", "New User")
     expect(secondResult.success).toBe(false)

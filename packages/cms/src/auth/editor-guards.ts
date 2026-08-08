@@ -38,7 +38,8 @@ export function hasLockedDescendants(block: BaseBlock, session?: UserSessionCont
  */
 export function validateServerBlockPayload(
   existingTree: BaseBlock[],
-  incomingTree: BaseBlock[]
+  incomingTree: BaseBlock[],
+  session?: UserSessionContext
 ): { valid: boolean; reason?: string } {
   const existingTemplated = extractTemplatedBlocks(existingTree)
   const incomingTemplated = extractTemplatedBlocks(incomingTree)
@@ -85,7 +86,39 @@ export function validateServerBlockPayload(
     }
   }
 
+  if (session) {
+    const existingProtected = extractProtectedBlocks(existingTree)
+    const incomingMap = new Map(flattenBlocks(incomingTree).map((b) => [b.id, b]))
+
+    for (const existingBlock of existingProtected) {
+      const incomingBlock = incomingMap.get(existingBlock.id)
+      if (!canUserEditBlock(existingBlock, session)) {
+        if (!incomingBlock) {
+          return {
+            valid: false,
+            reason: `Forbidden: Cannot delete protected block ${existingBlock.type} (ID: ${existingBlock.id}).`
+          }
+        }
+        if (JSON.stringify(existingBlock.props) !== JSON.stringify(incomingBlock.props)) {
+          return {
+            valid: false,
+            reason: `Forbidden: Cannot modify protected block ${existingBlock.type} (ID: ${existingBlock.id}).`
+          }
+        }
+      }
+    }
+  }
+
   return { valid: true }
+}
+
+function flattenBlocks(blocks: BaseBlock[]): BaseBlock[] {
+  let result: BaseBlock[] = []
+  for (const b of blocks) {
+    result.push(b)
+    if (b.children?.length) result = result.concat(flattenBlocks(b.children))
+  }
+  return result
 }
 
 function extractTemplatedBlocks(blocks: BaseBlock[]): BaseBlock[] {
@@ -95,4 +128,10 @@ function extractTemplatedBlocks(blocks: BaseBlock[]): BaseBlock[] {
     if (b.children?.length) result = result.concat(extractTemplatedBlocks(b.children))
   }
   return result
+}
+
+function extractProtectedBlocks(blocks: BaseBlock[]): BaseBlock[] {
+  return flattenBlocks(blocks).filter(
+    (b) => (b.allowedRoles && b.allowedRoles.length > 0) || !!b.requiredPermission
+  )
 }

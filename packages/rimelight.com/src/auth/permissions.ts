@@ -1,10 +1,10 @@
-import { createAccessControl } from "better-auth/plugins/access"
 import {
+  createAccessControl,
   defaultStatements,
   ownerAc,
   adminAc,
   memberAc
-} from "better-auth/plugins/organization/access"
+} from "@rimelight/auth/permissions"
 import { cmsStatements } from "@rimelight/cms"
 
 export const statement = {

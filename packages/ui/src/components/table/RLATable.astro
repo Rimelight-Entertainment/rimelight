@@ -53,7 +53,7 @@ const classes = resolveClasses(table, {
   loading,
   loadingColor,
   loadingAnimation,
-  externalScroll: typeof virtualize === "object" && virtualize?.getScrollElement ? true : false
+  externalScroll: Boolean(typeof virtualize === "object" && virtualize?.getScrollElement)
 }, useUi("table", uiProp), className);
 
 // Normalize columns from props.columns or props.headers or infer from data keys

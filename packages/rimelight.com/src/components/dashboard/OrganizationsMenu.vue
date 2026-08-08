@@ -50,8 +50,16 @@ const isOpen = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
 
 // 1. Get List of organizations
-const organizationsState = authClient?.useListOrganizations?.()
-const organizations = computed(() => organizationsState?.value?.data || [])
+const organizationsList = ref<any[]>([])
+
+const fetchOrganizations = async () => {
+  if (authClient?.organization?.list) {
+    const { data } = await authClient.organization.list()
+    organizationsList.value = data || []
+  }
+}
+
+const organizations = computed(() => organizationsList.value)
 
 const selectedOrganization = computed(() => {
   return (
@@ -90,6 +98,7 @@ const handleClickOutside = (event: MouseEvent) => {
 
 onMounted(() => {
   document.addEventListener("click", handleClickOutside)
+  fetchOrganizations()
 })
 
 onUnmounted(() => {
