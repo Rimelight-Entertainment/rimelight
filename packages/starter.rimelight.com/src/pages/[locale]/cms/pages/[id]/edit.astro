@@ -6,6 +6,14 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
+import ParagraphEditorComp from "@rimelight/cms/client/components/editors/ParagraphEditor.astro"
+import ImageEditorComp from "@rimelight/cms/client/components/editors/ImageEditor.astro"
+import DialogueEditorComp from "@rimelight/cms/client/components/editors/DialogueEditor.astro"
+import CodeEditorComp from "@rimelight/cms/client/components/editors/CodeEditor.astro"
+import SceneEditorComp from "@rimelight/cms/client/components/editors/SceneEditor.astro"
+import SectionEditorComp from "@rimelight/cms/client/components/editors/SectionEditor.astro"
+import CalloutEditorComp from "@rimelight/cms/client/components/editors/CalloutEditor.astro"
+import ScriptEditorComp from "@rimelight/cms/client/components/editors/ScriptEditor.astro"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 const id = Astro.params.id
@@ -57,6 +65,17 @@ const propertiesJson = JSON.stringify(initialProperties).replace(/"/g, '&quot;')
       initial-properties={propertiesJson}
       class="flex-none w-72"
     ></rimelight-properties-panel>
+  </div>
+
+  <div class="hidden" aria-hidden="true">
+    <ParagraphEditorComp />
+    <ImageEditorComp />
+    <DialogueEditorComp />
+    <CodeEditorComp />
+    <SceneEditorComp />
+    <SectionEditorComp />
+    <CalloutEditorComp />
+    <ScriptEditorComp />
   </div>
 
   <script>

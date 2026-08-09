@@ -1,0 +1,426 @@
+---
+import type { ScriptBlockProps } from "../../../core/types/blocks"
+
+export interface Props extends Partial<ScriptBlockProps> {
+  title?: string
+  synopsis?: string
+  characters?: string[]
+  aPlot?: string
+  bPlot?: string
+  cPlot?: string
+  stinger?: string
+  children?: any[]
+}
+
+const {
+  title = "",
+  synopsis = "",
+  aPlot = "",
+  bPlot = "",
+  cPlot = "",
+  stinger = ""
+} = Astro.props
+---
+
+<div class="rimelight-script-editor flex flex-col gap-4 p-3 border-l-4 border-amber-500 bg-amber-950/10 rounded-r-md w-full">
+  <div>
+    <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Script Title</div>
+    <input
+      type="text"
+      data-field="title"
+      value={title}
+      placeholder="Script Title"
+      class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500"
+    />
+  </div>
+
+  <div>
+    <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Synopsis</div>
+    <textarea
+      data-field="synopsis"
+      placeholder="Synopsis..."
+      class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500 resize-y min-h-[60px]"
+    >{synopsis}</textarea>
+  </div>
+
+  <div>
+    <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Characters</div>
+    <div class="chars-container flex flex-wrap gap-2 mb-2 min-h-[24px]"></div>
+    <div class="flex gap-2">
+      <input
+        type="text"
+        data-field="char-input"
+        placeholder="New character name"
+        class="char-input bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-1.5 text-sm outline-none focus:border-blue-500 flex-1"
+      />
+      <button type="button" class="add-char-btn px-3 py-1.5 text-xs font-medium rounded cursor-pointer bg-gray-700 text-gray-200 hover:bg-gray-600">Add</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Plots</div>
+    <div class="grid grid-cols-3 gap-3">
+      <input type="text" data-field="aPlot" value={aPlot} placeholder="A-Plot" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+      <input type="text" data-field="bPlot" value={bPlot} placeholder="B-Plot" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+      <input type="text" data-field="cPlot" value={cPlot} placeholder="C-Plot" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+    </div>
+  </div>
+
+  <div>
+    <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Stinger</div>
+    <input type="text" data-field="stinger" value={stinger} placeholder="Stinger (post-credits etc)" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+  </div>
+
+  <div class="mt-4">
+    <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Scenes & Content</div>
+    <div class="children-container mt-2 pl-4 border-l-2 border-amber-800/50 flex flex-col gap-2 min-h-[60px]"></div>
+  </div>
+</div>
+
+<script>
+  import type Sortable from "sortablejs"
+  import { initBlockSortable } from "../../utils/sortable"
+
+  interface BaseBlock {
+    id: string
+    type: string
+    isTemplated?: boolean
+    templatedProps?: boolean | string[]
+    allowedRoles?: string[]
+    requiredPermission?: string
+    props: Record<string, any>
+    children?: BaseBlock[]
+  }
+
+  export class RimelightScriptEditor extends HTMLElement {
+    private titleInput!: HTMLInputElement
+    private synopsisTextarea!: HTMLTextAreaElement
+    private charsContainer!: HTMLElement
+    private charInput!: HTMLInputElement
+    private addCharBtn!: HTMLButtonElement
+    private aPlotInput!: HTMLInputElement
+    private bPlotInput!: HTMLInputElement
+    private cPlotInput!: HTMLInputElement
+    private stingerInput!: HTMLInputElement
+    private childrenContainer!: HTMLElement
+    private sortableInstance?: Sortable
+
+    private currentProps: {
+      title: string
+      synopsis: string
+      characters: string[]
+      aPlot: string
+      bPlot: string
+      cPlot: string
+      stinger: string
+      children: BaseBlock[]
+    } = {
+      title: "",
+      synopsis: "",
+      characters: [],
+      aPlot: "",
+      bPlot: "",
+      cPlot: "",
+      stinger: "",
+      children: []
+    }
+    private sectionDepth: number = 0
+
+    connectedCallback() {
+      if (this.children.length === 0) {
+        this.innerHTML = `
+          <div class="rimelight-script-editor flex flex-col gap-4 p-3 border-l-4 border-amber-500 bg-amber-950/10 rounded-r-md w-full">
+            <div>
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Script Title</div>
+              <input type="text" data-field="title" placeholder="Script Title" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+            </div>
+            <div>
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Synopsis</div>
+              <textarea data-field="synopsis" placeholder="Synopsis..." class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500 resize-y min-h-[60px]"></textarea>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Characters</div>
+              <div class="chars-container flex flex-wrap gap-2 mb-2 min-h-[24px]"></div>
+              <div class="flex gap-2">
+                <input type="text" data-field="char-input" placeholder="New character name" class="char-input bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-1.5 text-sm outline-none focus:border-blue-500 flex-1" />
+                <button type="button" class="add-char-btn px-3 py-1.5 text-xs font-medium rounded cursor-pointer bg-gray-700 text-gray-200 hover:bg-gray-600">Add</button>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Plots</div>
+              <div class="grid grid-cols-3 gap-3">
+                <input type="text" data-field="aPlot" placeholder="A-Plot" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+                <input type="text" data-field="bPlot" placeholder="B-Plot" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+                <input type="text" data-field="cPlot" placeholder="C-Plot" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Stinger</div>
+              <input type="text" data-field="stinger" placeholder="Stinger (post-credits etc)" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500" />
+            </div>
+            <div class="mt-4">
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Scenes & Content</div>
+              <div class="children-container mt-2 pl-4 border-l-2 border-amber-800/50 flex flex-col gap-2 min-h-[60px]"></div>
+            </div>
+          </div>
+        `
+      }
+
+      this.titleInput = this.querySelector('[data-field="title"]') as HTMLInputElement
+      this.synopsisTextarea = this.querySelector('[data-field="synopsis"]') as HTMLTextAreaElement
+      this.charsContainer = this.querySelector('.chars-container') as HTMLElement
+      this.charInput = this.querySelector('.char-input') as HTMLInputElement
+      this.addCharBtn = this.querySelector('.add-char-btn') as HTMLButtonElement
+      this.aPlotInput = this.querySelector('[data-field="aPlot"]') as HTMLInputElement
+      this.bPlotInput = this.querySelector('[data-field="bPlot"]') as HTMLInputElement
+      this.cPlotInput = this.querySelector('[data-field="cPlot"]') as HTMLInputElement
+      this.stingerInput = this.querySelector('[data-field="stinger"]') as HTMLInputElement
+      this.childrenContainer = this.querySelector('.children-container') as HTMLElement
+
+      if (!this.titleInput) return
+
+      const bindInput = (el: HTMLInputElement | HTMLTextAreaElement, key: keyof typeof this.currentProps) => {
+        el.addEventListener("input", () => {
+          ;(this.currentProps as any)[key] = el.value
+          this.dispatchPropsChange()
+        })
+      }
+
+      bindInput(this.titleInput, "title")
+      bindInput(this.synopsisTextarea, "synopsis")
+      bindInput(this.aPlotInput, "aPlot")
+      bindInput(this.bPlotInput, "bPlot")
+      bindInput(this.cPlotInput, "cPlot")
+      bindInput(this.stingerInput, "stinger")
+
+      this.charInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          this.addCharacter(this.charInput.value)
+        }
+      })
+
+      this.addCharBtn.addEventListener("click", () => {
+        this.addCharacter(this.charInput.value)
+      })
+
+      this.setupChildrenListeners()
+      this.render()
+    }
+
+    setProps(props: any, sectionDepth: number = 0): void {
+      this.currentProps = { ...this.currentProps, ...props }
+      if (!this.currentProps.characters) this.currentProps.characters = []
+      if (!this.currentProps.children) this.currentProps.children = []
+      this.sectionDepth = sectionDepth
+      if (!this.titleInput) return
+      this.render()
+    }
+
+    private addCharacter(name: string) {
+      const trimmed = name.trim()
+      if (!trimmed) return
+      if (!this.currentProps.characters.includes(trimmed)) {
+        this.currentProps.characters.push(trimmed)
+        this.charInput.value = ""
+        this.renderCharacters()
+        this.dispatchPropsChange()
+      }
+    }
+
+    private removeCharacter(name: string) {
+      this.currentProps.characters = this.currentProps.characters.filter((c) => c !== name)
+      this.renderCharacters()
+      this.dispatchPropsChange()
+    }
+
+    private render() {
+      this.titleInput.value = this.currentProps.title || ""
+      this.synopsisTextarea.value = this.currentProps.synopsis || ""
+      this.aPlotInput.value = this.currentProps.aPlot || ""
+      this.bPlotInput.value = this.currentProps.bPlot || ""
+      this.cPlotInput.value = this.currentProps.cPlot || ""
+      this.stingerInput.value = this.currentProps.stinger || ""
+
+      this.renderCharacters()
+      this.renderChildren()
+    }
+
+    private renderCharacters() {
+      if (!this.charsContainer) return
+      this.charsContainer.innerHTML = ""
+      const chars = this.currentProps.characters || []
+
+      if (chars.length === 0) {
+        const empty = document.createElement("div")
+        empty.className = "text-xs text-gray-500 italic py-1"
+        empty.textContent = "No characters added"
+        this.charsContainer.appendChild(empty)
+        return
+      }
+
+      chars.forEach((char) => {
+        const chip = document.createElement("div")
+        chip.className =
+          "inline-flex items-center gap-1 px-2 py-0.5 bg-amber-900/40 text-amber-200 text-xs rounded-full"
+
+        const text = document.createElement("span")
+        text.textContent = char
+
+        const remove = document.createElement("span")
+        remove.className = "text-amber-400 hover:text-red-400 cursor-pointer ml-1 font-bold"
+        remove.innerHTML = "&times;"
+        remove.addEventListener("click", () => this.removeCharacter(char))
+
+        chip.appendChild(text)
+        chip.appendChild(remove)
+        this.charsContainer.appendChild(chip)
+      })
+    }
+
+    private renderChildren(): void {
+      if (!this.childrenContainer) return
+      this.childrenContainer.innerHTML = ""
+
+      const childrenBlocks = this.currentProps.children || []
+
+      if (childrenBlocks.length === 0) {
+        const empty = document.createElement("div")
+        empty.className =
+          "cms-empty-placeholder text-gray-600 text-xs italic py-4 text-center border border-dashed border-gray-800/80 rounded my-1 select-none pointer-events-none"
+        empty.textContent = "Empty script — drag scenes here"
+        this.childrenContainer.appendChild(empty)
+      } else {
+        childrenBlocks.forEach((block) => {
+          const el = document.createElement("rimelight-block") as any
+          el.dataset.id = block.id
+          this.childrenContainer.appendChild(el)
+          if (typeof el.setBlock === "function") {
+            el.setBlock(block, this.sectionDepth)
+          }
+        })
+      }
+
+      if (this.sortableInstance) this.sortableInstance.destroy()
+      this.sortableInstance = initBlockSortable(this.childrenContainer, {
+        filter: ".cms-empty-placeholder, .locked",
+        onReorder: (oldIdx: number, newIdx: number) => {
+          const item = childrenBlocks.splice(oldIdx, 1)[0]
+          if (item) childrenBlocks.splice(newIdx, 0, item)
+          this.currentProps.children = childrenBlocks
+          this.dispatchPropsChange()
+        },
+        onAdd: () => {
+          const placeholder = this.childrenContainer.querySelector(".cms-empty-placeholder")
+          if (placeholder) placeholder.remove()
+          this.syncChildrenFromDom()
+        },
+        onRemove: () => {
+          this.syncChildrenFromDom()
+          if ((this.currentProps.children || []).length === 0) {
+            this.renderChildren()
+          }
+        }
+      })
+    }
+
+    private syncChildrenFromDom(): void {
+      const blockElements = Array.from(
+        this.childrenContainer.querySelectorAll(":scope > rimelight-block")
+      ) as any[]
+      const newChildren: BaseBlock[] = []
+      blockElements.forEach((el) => {
+        if (el.blockData) {
+          newChildren.push(el.blockData)
+        }
+      })
+      this.currentProps.children = newChildren
+      this.dispatchPropsChange()
+    }
+
+    private setupChildrenListeners(): void {
+      this.childrenContainer.addEventListener("block-change", (e: Event) => {
+        e.stopPropagation()
+        if (e instanceof CustomEvent && e.detail?.block) {
+          const block: BaseBlock = e.detail.block
+          const childrenBlocks = this.currentProps.children || []
+          const idx = childrenBlocks.findIndex((b) => b.id === block.id)
+          if (idx !== -1) {
+            childrenBlocks[idx] = block
+            this.currentProps.children = childrenBlocks
+            this.dispatchPropsChange()
+          }
+        }
+      })
+
+      this.childrenContainer.addEventListener("block-delete", (e: Event) => {
+        e.stopPropagation()
+        if (e instanceof CustomEvent && e.detail?.id) {
+          const childrenBlocks = this.currentProps.children || []
+          this.currentProps.children = childrenBlocks.filter((b) => b.id !== e.detail.id)
+          this.renderChildren()
+          this.dispatchPropsChange()
+        }
+      })
+
+      this.childrenContainer.addEventListener("block-move", (e: Event) => {
+        e.stopPropagation()
+        if (e instanceof CustomEvent && e.detail) {
+          const { id, direction } = e.detail
+          const childrenBlocks = this.currentProps.children || []
+          const idx = childrenBlocks.findIndex((b) => b.id === id)
+          const newIdx = idx + direction
+          if (idx !== -1 && newIdx >= 0 && newIdx < childrenBlocks.length) {
+            const item = childrenBlocks.splice(idx, 1)[0]!
+            childrenBlocks.splice(newIdx, 0, item)
+            this.currentProps.children = childrenBlocks
+            this.renderChildren()
+            this.dispatchPropsChange()
+          }
+        }
+      })
+
+      this.childrenContainer.addEventListener("block-duplicate", (e: Event) => {
+        e.stopPropagation()
+        if (e instanceof CustomEvent && e.detail?.id) {
+          const childrenBlocks = this.currentProps.children || []
+          const idx = childrenBlocks.findIndex((b) => b.id === e.detail.id)
+          if (idx !== -1) {
+            const clone: BaseBlock = JSON.parse(JSON.stringify(childrenBlocks[idx]))
+            clone.id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)
+            childrenBlocks.splice(idx + 1, 0, clone)
+            this.currentProps.children = childrenBlocks
+            this.renderChildren()
+            this.dispatchPropsChange()
+          }
+        }
+      })
+
+      this.childrenContainer.addEventListener("block-add-adjacent", (e: Event) => {
+        e.stopPropagation()
+        if (e instanceof CustomEvent && e.detail) {
+          const { id, position } = e.detail
+          this.dispatchEvent(
+            new CustomEvent("block-picker-request", {
+              bubbles: true,
+              detail: { targetId: id, position, containerId: this.dataset.blockId }
+            })
+          )
+        }
+      })
+    }
+
+    private dispatchPropsChange() {
+      this.dispatchEvent(
+        new CustomEvent("props-change", {
+          bubbles: false,
+          detail: { props: { ...this.currentProps } }
+        })
+      )
+    }
+  }
+
+  if (!customElements.get("rimelight-script-editor")) {
+    customElements.define("rimelight-script-editor", RimelightScriptEditor)
+  }
+</script>

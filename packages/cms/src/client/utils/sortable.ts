@@ -40,8 +40,9 @@ export function initBlockSortable(container: HTMLElement, options: SortableOptio
       const itemEl = evt.item
       const blockId = itemEl.dataset.id || itemEl.getAttribute("data-id")
       if (blockId && evt.newIndex !== undefined && options.onAdd) {
-        const fromContainer = evt.from.closest("[data-block-id]")
-        options.onAdd(blockId, evt.newIndex, fromContainer?.dataset.blockId)
+        const target = evt.from.closest("[data-block-id]")
+        const containerBlockId = target instanceof HTMLElement ? target.dataset.blockId : undefined
+        options.onAdd(blockId, evt.newIndex, containerBlockId)
       }
     },
     onRemove: (evt) => {
