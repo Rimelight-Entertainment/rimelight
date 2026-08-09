@@ -112,6 +112,12 @@ export class RimelightEditorLayout extends HTMLElement {
       preview.style.display = visible ? "flex" : "none"
       if (visible) {
         preview.style.flex = "0 0 50%"
+        if (this.editorEl && typeof (this.editorEl as any).getBlocks === "function") {
+          const blocks = (this.editorEl as any).getBlocks()
+          if (this.previewEl && typeof (this.previewEl as any).setBlocks === "function") {
+            this.previewEl.setBlocks(blocks)
+          }
+        }
       }
     }
     if (this.editorEl) {

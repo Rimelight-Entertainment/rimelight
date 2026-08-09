@@ -5,13 +5,15 @@ export class HistoryStack {
   private redoStack: BaseBlock[][] = []
   private debounceTimer: number | null = null
   private maxDepth: number
+  private paused = false
 
-  constructor(initialBlocks: BaseBlock[] = [], maxDepth = 50) {
+  constructor(initialBlocks: BaseBlock[] = [], maxDepth = 100) {
     this.maxDepth = maxDepth
     this.undoStack.push(JSON.parse(JSON.stringify(initialBlocks)))
   }
 
   push(blocks: BaseBlock[], immediate = false): void {
+    if (this.paused) return
     const clone = JSON.parse(JSON.stringify(blocks))
 
     if (immediate) {
@@ -52,11 +54,100 @@ export class HistoryStack {
     return JSON.parse(JSON.stringify(next))
   }
 
+  /**
+   * Suppress snapshot captures (e.g. during programmatic block loads)
+   */
+  pause(): void {
+    this.paused = true
+    if (this.debounceTimer !== null) {
+      clearTimeout(this.debounceTimer)
+      this.debounceTimer = null
+    }
+  }
+
+  /**
+   * Resume snapshot captures
+   */
+  resume(): void {
+    this.paused = false
+  }
+
+  /**
+   * Returns an immutable deep-clone of the current state for persistence
+   */
+  commit(blocks: BaseBlock[]): BaseBlock[] {
+    return JSON.parse(JSON.stringify(blocks))
+  }
+
   canUndo(): boolean {
     return this.undoStack.length > 1
   }
 
   canRedo(): boolean {
     return this.redoStack.length > 0
+  }
+
+  reset(blocks: BaseBlock[]): void {
+    this.undoStack = [JSON.parse(JSON.stringify(blocks))]
+    this.redoStack = []
+    this.paused = false
+    if (this.debounceTimer !== null) {
+      clearTimeout(this.debounceTimer)
+      this.debounceTimer = null
+    }
+  }
+}
+
+// ─── Default block factory (shared across all editors) ────────────────────────
+
+export function createDefaultBlock(type: string): BaseBlock {
+  const id =
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 11)
+
+  switch (type) {
+    case "SectionBlock":
+      return { id, type, props: { level: 2, title: "New Section", description: "", children: [] } }
+    case "ParagraphBlock":
+      return { id, type, props: { text: [] } }
+    case "CalloutBlock":
+      return { id, type, props: { variant: "info", children: [] } }
+    case "ImageBlock":
+      return { id, type, props: { src: "", alt: "", caption: "" } }
+    case "ScriptBlock":
+      return {
+        id,
+        type,
+        props: {
+          title: "New Script",
+          synopsis: "",
+          characters: [],
+          aPlot: "",
+          bPlot: "",
+          cPlot: "",
+          stinger: "",
+          children: []
+        }
+      }
+    case "SceneBlock":
+      return {
+        id,
+        type,
+        props: {
+          location: "",
+          timeOfDay: "OTHER",
+          setting: "OTHER",
+          transition: "NONE",
+          description: "",
+          children: []
+        }
+      }
+    case "DialogueBlock":
+      return { id, type, props: { character: "", parenthetical: "", line: "" } }
+    case "CodeBlock":
+      return { id, type, props: { code: "", language: "typescript", caption: "" } }
+    default:
+      return { id, type, props: { text: [] } }
   }
 }

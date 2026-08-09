@@ -1,0 +1,354 @@
+import type { BaseBlock } from "../../../core/types/blocks"
+import { createDefaultBlock } from "../../state/history"
+import { initBlockSortable } from "../../utils/sortable"
+
+export class SceneEditor extends HTMLElement {
+  private props: Record<string, any> = {}
+  private childrenBlocks: BaseBlock[] = []
+  private sectionDepth: number = 0
+
+  private slugPreview!: HTMLDivElement
+  private locationInput!: HTMLInputElement
+  private timeSelect!: HTMLSelectElement
+  private settingSelect!: HTMLSelectElement
+  private transitionSelect!: HTMLSelectElement
+  private descriptionTextarea!: HTMLTextAreaElement
+  private childrenCanvas!: HTMLDivElement
+  private addBlockMenu!: HTMLDivElement
+  private pendingAddRequest: { targetId: string | null; position: "before" | "after" } | null = null
+
+  connectedCallback() {
+    if (this.childElementCount > 0) return
+
+    this.className =
+      "flex flex-col gap-3 p-3 border-l-4 border-cyan-500 bg-cyan-950/10 rounded-r-md"
+
+    this.innerHTML = `
+      <div class="text-xs font-mono text-cyan-400 uppercase bg-gray-900 px-3 py-1.5 rounded mb-2">SCENE PREVIEW</div>
+      
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1 col-span-2">
+          <label class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Location</label>
+          <input type="text" data-field="location" class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-cyan-500 uppercase" placeholder="E.g. LIVING ROOM" />
+        </div>
+        
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Setting</label>
+          <select data-field="setting" class="bg-gray-800 border border-gray-700 text-gray-100 text-sm rounded px-3 py-2 outline-none">
+            <option value="INT.">INTERIOR (INT.)</option>
+            <option value="EXT.">EXTERIOR (EXT.)</option>
+            <option value="INT./EXT.">INT./EXT.</option>
+            <option value="OTHER">OTHER</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Time of Day</label>
+          <select data-field="timeOfDay" class="bg-gray-800 border border-gray-700 text-gray-100 text-sm rounded px-3 py-2 outline-none">
+            <option value="MORNING">MORNING</option>
+            <option value="DAY">DAY</option>
+            <option value="AFTERNOON">AFTERNOON</option>
+            <option value="EVENING">EVENING</option>
+            <option value="NIGHT">NIGHT</option>
+            <option value="CONTINUOUS">CONTINUOUS</option>
+            <option value="LATER">LATER</option>
+            <option value="OTHER">OTHER</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1 mt-2">
+        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Action / Description</label>
+        <textarea data-field="description" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-gray-100 resize-none outline-none focus:border-cyan-500 min-h-[80px]" placeholder="Action lines..."></textarea>
+      </div>
+      
+      <div class="flex flex-col gap-1 mt-2">
+        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Transition (End of Scene)</label>
+        <select data-field="transition" class="bg-gray-800 border border-gray-700 text-gray-100 text-sm rounded px-3 py-2 outline-none">
+          <option value="NONE">NONE</option>
+          <option value="CUT_TO">CUT TO:</option>
+          <option value="FADE_TO">FADE TO:</option>
+          <option value="DISSOLVE_TO">DISSOLVE TO:</option>
+        </select>
+      </div>
+
+      <div class="mt-4 pl-4 border-l-2 border-cyan-800/50 flex flex-col gap-2 min-h-[100px]" data-container-type="scene">
+        <!-- Child blocks will be rendered here -->
+      </div>
+      
+      <div id="add-block-menu" class="hidden mt-2 p-2 bg-gray-800 border border-gray-700 rounded flex gap-2">
+        <button data-type="ParagraphBlock" class="px-3 py-1.5 text-xs font-medium rounded bg-gray-700 hover:bg-gray-600 text-gray-200">Text</button>
+        <button data-type="DialogueBlock" class="px-3 py-1.5 text-xs font-medium rounded bg-purple-900/50 hover:bg-purple-800/50 text-purple-200">Dialogue</button>
+        <button id="cancel-add-block" class="px-3 py-1.5 text-xs font-medium rounded text-gray-400 hover:text-gray-200 ml-auto">Cancel</button>
+      </div>
+      
+      <button id="add-scene-child" class="mt-4 px-3 py-1.5 text-xs font-medium rounded bg-cyan-900/30 hover:bg-cyan-800/50 text-cyan-300 border border-cyan-800/50 self-start">
+        + Add Content
+      </button>
+    `
+
+    this.slugPreview = this.querySelector(".font-mono") as HTMLDivElement
+    this.locationInput = this.querySelector('[data-field="location"]') as HTMLInputElement
+    this.timeSelect = this.querySelector('[data-field="timeOfDay"]') as HTMLSelectElement
+    this.settingSelect = this.querySelector('[data-field="setting"]') as HTMLSelectElement
+    this.transitionSelect = this.querySelector('[data-field="transition"]') as HTMLSelectElement
+    this.descriptionTextarea = this.querySelector(
+      '[data-field="description"]'
+    ) as HTMLTextAreaElement
+    this.childrenCanvas = this.querySelector('[data-container-type="scene"]') as HTMLDivElement
+
+    this.addBlockMenu = this.querySelector("#add-block-menu") as HTMLDivElement
+    const addSceneChildBtn = this.querySelector("#add-scene-child") as HTMLButtonElement
+    const cancelAddBlockBtn = this.querySelector("#cancel-add-block") as HTMLButtonElement
+
+    const handleFieldChange = () => {
+      this.updateSlug()
+      this.saveProps()
+    }
+
+    this.locationInput.addEventListener("input", () => this.updateSlug())
+    this.locationInput.addEventListener("blur", handleFieldChange)
+    this.timeSelect.addEventListener("change", handleFieldChange)
+    this.settingSelect.addEventListener("change", handleFieldChange)
+    this.transitionSelect.addEventListener("change", handleFieldChange)
+    this.descriptionTextarea.addEventListener("blur", handleFieldChange)
+
+    const autoResize = () => {
+      this.descriptionTextarea.style.height = "auto"
+      this.descriptionTextarea.style.height = this.descriptionTextarea.scrollHeight + 2 + "px"
+    }
+    this.descriptionTextarea.addEventListener("input", autoResize)
+
+    initBlockSortable(this.childrenCanvas, {
+      handle: ".cms-drag-handle",
+      onReorder: (oldIndex: number, newIndex: number) => {
+        const moved = this.childrenBlocks.splice(oldIndex, 1)[0]
+        if (moved) {
+          this.childrenBlocks.splice(newIndex, 0, moved)
+          this.saveProps()
+        }
+      }
+    })
+
+    this.childrenCanvas.addEventListener("block-change", (e: Event) => {
+      e.stopPropagation()
+      const detail = (e as CustomEvent).detail
+      const idx = this.childrenBlocks.findIndex((b) => b.id === detail.block.id)
+      if (idx !== -1) {
+        this.childrenBlocks[idx] = detail.block
+        this.saveProps()
+      }
+    })
+
+    this.childrenCanvas.addEventListener("block-delete", (e: Event) => {
+      e.stopPropagation()
+      const detail = (e as CustomEvent).detail
+      this.childrenBlocks = this.childrenBlocks.filter((b) => b.id !== detail.id)
+      this.renderChildren()
+      this.saveProps()
+    })
+
+    this.childrenCanvas.addEventListener("block-move", (e: Event) => {
+      e.stopPropagation()
+      const { id, direction } = (e as CustomEvent).detail
+      const idx = this.childrenBlocks.findIndex((b) => b.id === id)
+      if (idx === -1) return
+
+      const newIdx = idx + direction
+      if (newIdx < 0 || newIdx >= this.childrenBlocks.length) return
+
+      const item = this.childrenBlocks.splice(idx, 1)[0]
+      if (item) {
+        this.childrenBlocks.splice(newIdx, 0, item)
+        this.renderChildren()
+        this.saveProps()
+      }
+    })
+
+    this.childrenCanvas.addEventListener("block-duplicate", (e: Event) => {
+      e.stopPropagation()
+      const { id } = (e as CustomEvent).detail
+      const idx = this.childrenBlocks.findIndex((b) => b.id === id)
+      if (idx === -1) return
+
+      const original = this.childrenBlocks[idx]
+      const duplicate = JSON.parse(JSON.stringify(original))
+      duplicate.id =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).slice(2)
+
+      this.childrenBlocks.splice(idx + 1, 0, duplicate)
+      this.renderChildren()
+      this.saveProps()
+    })
+
+    this.childrenCanvas.addEventListener("block-add-adjacent", (e: Event) => {
+      e.stopPropagation()
+      const { id, position } = (e as CustomEvent).detail
+      this.pendingAddRequest = { targetId: id, position }
+      this.addBlockMenu.classList.remove("hidden")
+    })
+
+    this.childrenCanvas.addEventListener("block-picker-request", (e: Event) => {
+      e.stopPropagation()
+      const { targetId, position } = (e as CustomEvent).detail
+      this.pendingAddRequest = { targetId, position }
+      this.addBlockMenu.classList.remove("hidden")
+    })
+
+    addSceneChildBtn.addEventListener("click", () => {
+      this.pendingAddRequest = { targetId: null, position: "after" }
+      this.addBlockMenu.classList.remove("hidden")
+    })
+
+    cancelAddBlockBtn.addEventListener("click", () => {
+      this.pendingAddRequest = null
+      this.addBlockMenu.classList.add("hidden")
+    })
+
+    this.addBlockMenu.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest("button[data-type]")
+      if (!btn) return
+
+      const type = (btn as HTMLElement).dataset.type
+      if (type) {
+        this.addChildBlock(type)
+        this.addBlockMenu.classList.add("hidden")
+        this.pendingAddRequest = null
+      }
+    })
+
+    this.renderContent()
+    setTimeout(autoResize, 0)
+  }
+
+  setProps(props: Record<string, any>, sectionDepth: number = 0) {
+    this.props = props || {}
+    this.childrenBlocks = this.props.children || []
+    this.sectionDepth = sectionDepth
+    this.renderContent()
+  }
+
+  private renderContent() {
+    if (!this.locationInput) return
+
+    this.locationInput.value = this.props.location || ""
+    this.timeSelect.value = this.props.timeOfDay || "MORNING"
+    this.settingSelect.value = this.props.setting || "INT."
+    this.transitionSelect.value = this.props.transition || "NONE"
+    this.descriptionTextarea.value = this.props.description || ""
+
+    this.updateSlug()
+
+    this.descriptionTextarea.style.height = "auto"
+    this.descriptionTextarea.style.height = this.descriptionTextarea.scrollHeight + 2 + "px"
+
+    this.renderChildren()
+  }
+
+  private updateSlug() {
+    const setting = this.settingSelect.value
+    const loc = this.locationInput.value.toUpperCase() || "LOCATION"
+    const time = this.timeSelect.value
+    this.slugPreview.textContent = `${setting} ${loc} - ${time}`
+  }
+
+  private sortableInstance?: any
+
+  private renderChildren() {
+    this.childrenCanvas.innerHTML = ""
+    if (this.childrenBlocks.length === 0) {
+      const empty = document.createElement("div")
+      empty.className =
+        "cms-empty-placeholder text-gray-600 text-xs italic py-3 text-center border border-dashed border-cyan-900/60 rounded my-1 select-none pointer-events-none"
+      empty.textContent = "Empty scene — drag blocks here"
+      this.childrenCanvas.appendChild(empty)
+    } else {
+      this.childrenBlocks.forEach((block) => {
+        const el = document.createElement("rimelight-block") as any
+        el.classList.add("cms-sortable-item")
+        el.dataset.id = block.id
+        this.childrenCanvas.appendChild(el)
+        el.setBlock(block, this.sectionDepth + 1)
+      })
+    }
+
+    if (this.sortableInstance) this.sortableInstance.destroy()
+    this.sortableInstance = initBlockSortable(this.childrenCanvas, {
+      filter: ".cms-empty-placeholder, .locked",
+      onReorder: (oldIdx: number, newIdx: number) => {
+        const item = this.childrenBlocks.splice(oldIdx, 1)[0]
+        if (item) this.childrenBlocks.splice(newIdx, 0, item)
+        this.saveProps()
+      },
+      onAdd: () => {
+        const placeholder = this.childrenCanvas.querySelector(".cms-empty-placeholder")
+        if (placeholder) placeholder.remove()
+        this.syncChildrenFromDom()
+      },
+      onRemove: () => {
+        this.syncChildrenFromDom()
+        if (this.childrenBlocks.length === 0) {
+          this.renderChildren()
+        }
+      }
+    })
+  }
+
+  private syncChildrenFromDom(): void {
+    const blockElements = Array.from(
+      this.childrenCanvas.querySelectorAll(":scope > rimelight-block")
+    ) as any[]
+    const newChildren: BaseBlock[] = []
+    blockElements.forEach((el) => {
+      if (el.blockData) {
+        newChildren.push(el.blockData)
+      }
+    })
+    this.childrenBlocks = newChildren
+    this.saveProps()
+  }
+
+  private addChildBlock(type: string) {
+    const newBlock = createDefaultBlock(type)
+
+    if (this.pendingAddRequest && this.pendingAddRequest.targetId) {
+      const idx = this.childrenBlocks.findIndex((b) => b.id === this.pendingAddRequest!.targetId)
+      if (idx !== -1) {
+        const insertIdx = this.pendingAddRequest.position === "before" ? idx : idx + 1
+        this.childrenBlocks.splice(insertIdx, 0, newBlock)
+      } else {
+        this.childrenBlocks.push(newBlock)
+      }
+    } else {
+      this.childrenBlocks.push(newBlock)
+    }
+
+    this.renderChildren()
+    this.saveProps()
+  }
+
+  private saveProps() {
+    this.props = {
+      ...this.props,
+      location: this.locationInput.value,
+      timeOfDay: this.timeSelect.value,
+      setting: this.settingSelect.value,
+      transition: this.transitionSelect.value,
+      description: this.descriptionTextarea.value,
+      children: this.childrenBlocks
+    }
+
+    this.dispatchEvent(
+      new CustomEvent("props-change", {
+        detail: { props: this.props },
+        bubbles: false
+      })
+    )
+  }
+}
+
+if (!customElements.get("rimelight-scene-editor")) {
+  customElements.define("rimelight-scene-editor", SceneEditor)
+}

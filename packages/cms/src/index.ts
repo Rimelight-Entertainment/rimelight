@@ -4,6 +4,7 @@ export * from "./core/types/inline"
 export * from "./core/types/pages"
 export * from "./core/types/templates"
 export * from "./core/types/versioning"
+export * from "./core/page-definitions"
 
 // Re-export specific types for convenience
 export type {

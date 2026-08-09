@@ -1,3 +1,5 @@
+import type { InlineNode } from "./inline"
+
 export type BlockType =
   | "SectionBlock"
   | "ParagraphBlock"
@@ -62,3 +64,110 @@ export interface BaseBlock {
   props: Record<string, any>
   children?: BaseBlock[]
 }
+
+// ─── Typed block prop interfaces ─────────────────────────────────────────────
+
+export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
+
+export type CalloutVariant =
+  | "info"
+  | "success"
+  | "warning"
+  | "error"
+  | "commentary"
+  | "ideation"
+  | "source"
+
+export interface SectionBlockProps {
+  title: string
+  description?: string
+  level?: HeadingLevel
+  mainArticleSlug?: string
+  children: BaseBlock[]
+}
+
+export interface ParagraphBlockProps {
+  /**
+   * Stored as an InlineNode array (structured AST). Fallback: { en: string } or plain string.
+   */
+  text: InlineNode[] | { en: string } | string
+}
+
+export interface CalloutBlockProps {
+  variant: CalloutVariant
+  to?: string
+  target?: string
+  children: BaseBlock[]
+}
+
+export interface ImageBlockProps {
+  src: string
+  alt: string
+  caption?: string
+}
+
+export interface CodeBlockProps {
+  code: string
+  language: string
+  caption?: string
+}
+
+export interface TypedScriptBlockProps extends ScriptBlockProps {
+  children: BaseBlock[]
+}
+
+export interface TypedSceneBlockProps extends SceneBlockProps {
+  children: BaseBlock[]
+}
+
+// ─── Typed block discriminated union ─────────────────────────────────────────
+
+export interface SectionBlock extends BaseBlock {
+  type: "SectionBlock"
+  props: SectionBlockProps
+}
+
+export interface ParagraphBlock extends BaseBlock {
+  type: "ParagraphBlock"
+  props: ParagraphBlockProps
+}
+
+export interface CalloutBlock extends BaseBlock {
+  type: "CalloutBlock"
+  props: CalloutBlockProps
+}
+
+export interface ImageBlock extends BaseBlock {
+  type: "ImageBlock"
+  props: ImageBlockProps
+}
+
+export interface ScriptBlock extends BaseBlock {
+  type: "ScriptBlock"
+  props: TypedScriptBlockProps
+}
+
+export interface SceneBlock extends BaseBlock {
+  type: "SceneBlock"
+  props: TypedSceneBlockProps
+}
+
+export interface DialogueBlock extends BaseBlock {
+  type: "DialogueBlock"
+  props: DialogueBlockProps
+}
+
+export interface CodeBlock extends BaseBlock {
+  type: "CodeBlock"
+  props: CodeBlockProps
+}
+
+export type TypedBlock =
+  | SectionBlock
+  | ParagraphBlock
+  | CalloutBlock
+  | ImageBlock
+  | ScriptBlock
+  | SceneBlock
+  | DialogueBlock
+  | CodeBlock

@@ -24,6 +24,10 @@ const content = draft[0]?.content
   : (typeof page[0].content === 'string' ? JSON.parse(page[0].content) : page[0].content)
 const titleVal = typeof page[0].title === 'object' ? page[0].title.en || '' : page[0].title || ''
 const blocksJson = JSON.stringify(content.blocks || []).replace(/"/g, '&quot;')
+
+const pageType = (page[0] as any).type || 'Default'
+const initialProperties = content.properties || {}
+const propertiesJson = JSON.stringify(initialProperties).replace(/"/g, '&quot;')
 ---
 
 <CMSDashboardLayout title={`Edit Page: ${titleVal}`} description="Edit CMS page" activeSection="pages">
@@ -43,15 +47,20 @@ const blocksJson = JSON.stringify(content.blocks || []).replace(/"/g, '&quot;')
     <RLAButton id="more-actions-btn" size="sm" square leadingIcon="i-lucide-more-vertical" />
   </Fragment>
 
-  <div class="w-full h-[calc(100vh-180px)] min-h-[600px] flex flex-col overflow-hidden">
-    <rimelight-editor-layout id="cms-editor-layout" page-id={id} initial-blocks={blocksJson} class="w-full h-full flex-1 flex min-h-[600px]"></rimelight-editor-layout>
+  <div class="cms-editor-with-panel w-full h-[calc(100vh-180px)] min-h-[600px] flex flex-row overflow-hidden">
+    <div class="cms-editor-main flex-1 min-w-0 flex flex-col overflow-hidden">
+      <rimelight-editor-layout id="cms-editor-layout" page-id={id} initial-blocks={blocksJson} class="w-full h-full flex-1 flex min-h-[600px]"></rimelight-editor-layout>
+    </div>
+    <rimelight-properties-panel
+      id="cms-properties-panel"
+      page-type={pageType}
+      initial-properties={propertiesJson}
+      class="flex-none w-72"
+    ></rimelight-properties-panel>
   </div>
 
-  <style is:inline slot="head">
-    @import url("@rimelight/cms/client/styles/cms-editor.css");
-  </style>
-
   <script>
+    import "@rimelight/cms/client/styles/cms-editor.css";
     import { defineCustomElements } from "@rimelight/cms/client/loader";
     defineCustomElements();
 
@@ -60,7 +69,7 @@ const blocksJson = JSON.stringify(content.blocks || []).replace(/"/g, '&quot;')
     const updatePreviewIcon = (visible: boolean) => {
       const btn = document.getElementById('preview-btn');
       if (!btn) return;
-      const icon = btn.querySelector('[data-slot="icon"], i, svg');
+      const icon = btn.querySelector('.i-lucide-eye, .i-lucide-eye-off');
       if (icon) {
         if (visible) {
           icon.classList.remove('i-lucide-eye');
@@ -112,6 +121,12 @@ const blocksJson = JSON.stringify(content.blocks || []).replace(/"/g, '&quot;')
     document.addEventListener('preview-toggle', (e: Event) => {
       if (e instanceof CustomEvent && typeof e.detail?.visible === 'boolean') {
         updatePreviewIcon(e.detail.visible);
+      }
+    });
+
+    document.getElementById('cms-properties-panel')?.addEventListener('properties-change', (e: Event) => {
+      if (e instanceof CustomEvent && e.detail?.properties) {
+        (window as any).cmsPageProperties = e.detail.properties;
       }
     });
 
