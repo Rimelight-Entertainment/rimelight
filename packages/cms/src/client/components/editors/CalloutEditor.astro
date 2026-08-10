@@ -35,6 +35,7 @@ const VARIANTS = {
 <script>
   import type Sortable from "sortablejs"
   import { initBlockSortable } from "../../utils/sortable"
+  import { createDefaultBlock } from "../../state/history"
 
   interface BaseBlock {
     id: string
@@ -101,16 +102,16 @@ const VARIANTS = {
         this.toggleDropdown()
       })
 
-      const variantItems = this.querySelectorAll('.variant-item')
-      variantItems.forEach((item) => {
-        item.addEventListener('click', (e) => {
-          e.stopPropagation()
-          const key = (item as HTMLElement).dataset.variant || "info"
-          this.currentProps.variant = key
-          this.closeDropdown()
+      this.dropdown.addEventListener("click", (e) => {
+        const item = (e.target as HTMLElement).closest(".variant-item")
+        if (!item) return
+        const variant = item.getAttribute("data-variant")
+        if (variant) {
+          this.currentProps.variant = variant
           this.renderVariant()
           this.dispatchPropsChange()
-        })
+          this.closeDropdown()
+        }
       })
 
       document.addEventListener("click", () => this.closeDropdown())
@@ -121,9 +122,33 @@ const VARIANTS = {
 
     setProps(props: { variant: string; children: BaseBlock[] }, sectionDepth: number = 0): void {
       this.currentProps = { ...this.currentProps, ...props }
+      if (!this.currentProps.children) this.currentProps.children = []
       this.sectionDepth = sectionDepth
       if (!this.iconButton) return
       this.render()
+    }
+
+    private openPicker() {
+      let picker = document.querySelector("rimelight-block-picker") as any
+      if (!picker) {
+        picker = document.createElement("rimelight-block-picker") as any
+        document.body.appendChild(picker)
+      }
+      picker.setAttribute("section-depth", String(this.sectionDepth || 0))
+
+      const handleSelect = (e: Event) => {
+        if (e instanceof CustomEvent && e.detail?.type) {
+          const newBlock = createDefaultBlock(e.detail.type)
+          if (!this.currentProps.children) this.currentProps.children = []
+          this.currentProps.children.push(newBlock)
+          this.renderChildren()
+          this.dispatchPropsChange()
+        }
+        picker.removeEventListener("block-type-selected", handleSelect)
+      }
+
+      picker.addEventListener("block-type-selected", handleSelect)
+      picker.open(null, "after")
     }
 
     private toggleDropdown() {
@@ -194,8 +219,21 @@ const VARIANTS = {
       if (childrenBlocks.length === 0) {
         const empty = document.createElement("div")
         empty.className =
-          "cms-empty-placeholder text-gray-600 text-xs italic py-2 border border-dashed border-gray-800/80 rounded my-1 select-none pointer-events-none"
-        empty.textContent = "Empty callout — drag blocks here"
+          "cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-gray-800/80 bg-gray-900/20 text-center my-1"
+        empty.innerHTML = `
+          <div class="text-xs font-semibold text-gray-300">Empty callout</div>
+          <p class="text-[11px] text-gray-500">Drag blocks here or click below to add content</p>
+          <button type="button" class="cms-add-child-block mt-1 px-3 py-1 bg-blue-600/80 hover:bg-blue-500 text-white text-xs font-medium rounded-md cursor-pointer transition-colors shadow-sm inline-flex items-center gap-1">
+            + Add Block
+          </button>
+        `
+        const btn = empty.querySelector(".cms-add-child-block")
+        if (btn) {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation()
+            this.openPicker()
+          })
+        }
         this.childrenContainer.appendChild(empty)
       } else {
         childrenBlocks.forEach((block) => {
@@ -237,12 +275,17 @@ const VARIANTS = {
       ) as any[]
       const newChildren: BaseBlock[] = []
       blockElements.forEach((el) => {
-        if (el.blockData) {
-          newChildren.push(el.blockData)
+        const data = typeof el.getBlockData === "function" ? el.getBlockData() : el.blockData
+        if (data) {
+          newChildren.push(data)
         }
       })
       this.currentProps.children = newChildren
       this.dispatchPropsChange()
+
+      if (newChildren.length === 0) {
+        this.renderChildren()
+      }
     }
 
     private setupChildrenListeners(): void {

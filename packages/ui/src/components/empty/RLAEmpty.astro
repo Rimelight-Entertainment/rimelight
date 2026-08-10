@@ -4,18 +4,99 @@ import { useUi } from "../../utils/useUi"
 import { resolveClasses } from "../../utils/resolveClasses"
 import type { EmptyProps } from "./empty"
 import emptyTheme from "./empty.theme"
-
+import RLAButton from "../button/RLAButton.astro"
+import RLAAvatar from "../avatar/RLAAvatar.astro"
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const empty = scv(emptyTheme)
 
 const {
+  icon,
+  avatar: avatarProp,
+  loading = false,
+  loadingIcon = "i-lucide-loader-circle",
+  title,
+  description,
+  actions = [],
+  variant = "outline",
+  size = "md",
   ui: uiProp,
   class: className,
   ...rest
 } = Astro.props as EmptyProps
 
-const classes = resolveClasses(empty, {}, useUi("empty", uiProp), className);
+const classes = resolveClasses(
+  empty,
+  {
+    size,
+    variant,
+    loading
+  },
+  useUi("empty", uiProp),
+  className
+)
+
+const activeIcon = loading ? loadingIcon : icon
 ---
+
 <div class={classes.root} data-slot="root" {...rest}>
-  <slot />
+  <slot name="header">
+    <div class={classes.header} data-slot="header">
+      <slot name="leading">
+        {activeIcon ? (
+          <div class={classes.avatar} data-slot="avatar">
+            <RLAIcon name={activeIcon} class={`size-full ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
+          </div>
+        ) : avatarProp ? (
+          <div class={classes.avatar} data-slot="avatar">
+            <RLAAvatar {...avatarProp} />
+          </div>
+        ) : null}
+      </slot>
+
+      {(title || Astro.slots.has("title")) && (
+        <div class={classes.title} data-slot="title">
+          <slot name="title">{title}</slot>
+        </div>
+      )}
+
+      {(description || Astro.slots.has("description")) && (
+        <div class={classes.description} data-slot="description">
+          <slot name="description">{description}</slot>
+        </div>
+      )}
+    </div>
+  </slot>
+
+  {(Astro.slots.has("body") || Astro.slots.has("default")) && (
+    <div class={classes.body} data-slot="body">
+      <slot name="body">
+        <slot />
+      </slot>
+    </div>
+  )}
+
+  {(actions.length > 0 || Astro.slots.has("actions")) && (
+    <div class={classes.actions} data-slot="actions">
+      <slot name="actions">
+        {actions.map((action) => (
+          <RLAButton
+            size={size === "xs" ? "xs" : size === "sm" ? "xs" : "sm"}
+            color={action.color || "primary"}
+            variant={action.variant || "solid"}
+            leadingIcon={action.icon}
+            {...action}
+          >
+            {action.label}
+          </RLAButton>
+        ))}
+      </slot>
+    </div>
+  )}
+
+  {Astro.slots.has("footer") && (
+    <div class={classes.footer} data-slot="footer">
+      <slot name="footer" />
+    </div>
+  )}
 </div>

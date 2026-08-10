@@ -21,6 +21,10 @@ export class RimelightBlockNode extends HTMLElement {
     this.render()
   }
 
+  getBlockData(): BaseBlock {
+    return JSON.parse(JSON.stringify(this.blockData))
+  }
+
   private isLocked(): boolean {
     return !!this.blockData.isTemplated || this.blockData.templatedProps === true
   }

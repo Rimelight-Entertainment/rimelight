@@ -327,8 +327,22 @@ const transitions = ["NONE", "CUT_TO", "FADE_TO", "DISSOLVE_TO"]
       if (this.childrenBlocks.length === 0) {
         const empty = document.createElement("div")
         empty.className =
-          "cms-empty-placeholder text-gray-600 text-xs italic py-3 text-center border border-dashed border-cyan-900/60 rounded my-1 select-none pointer-events-none"
-        empty.textContent = "Empty scene — drag blocks here"
+          "cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-cyan-900/60 bg-cyan-950/20 text-center my-1"
+        empty.innerHTML = `
+          <div class="text-xs font-semibold text-cyan-300">Empty scene</div>
+          <p class="text-[11px] text-gray-500">Drag blocks here or click below to add content</p>
+          <button type="button" class="cms-add-child-block mt-1 px-3 py-1 bg-cyan-900/60 hover:bg-cyan-800 text-cyan-200 text-xs font-medium rounded-md cursor-pointer transition-colors shadow-sm inline-flex items-center gap-1">
+            + Add Content
+          </button>
+        `
+        const btn = empty.querySelector(".cms-add-child-block")
+        if (btn) {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation()
+            this.pendingAddRequest = { targetId: null, position: "after" }
+            this.addBlockMenu.classList.remove("hidden")
+          })
+        }
         this.childrenCanvas.appendChild(empty)
       } else {
         this.childrenBlocks.forEach((block) => {
@@ -368,12 +382,17 @@ const transitions = ["NONE", "CUT_TO", "FADE_TO", "DISSOLVE_TO"]
       ) as any[]
       const newChildren: BaseBlock[] = []
       blockElements.forEach((el) => {
-        if (el.blockData) {
-          newChildren.push(el.blockData)
+        const data = typeof el.getBlockData === "function" ? el.getBlockData() : el.blockData
+        if (data) {
+          newChildren.push(data)
         }
       })
       this.childrenBlocks = newChildren
       this.saveProps()
+
+      if (newChildren.length === 0) {
+        this.renderChildren()
+      }
     }
 
     private addChildBlock(type: string) {

@@ -127,11 +127,17 @@ export class RimelightEditor extends HTMLElement {
 
     if (this.blocks.length === 0) {
       this.containerEl.innerHTML = `
-        <div class="cms-empty-state flex flex-col items-center justify-center py-16 text-center h-full">
-          <div class="text-4xl mb-3">📄</div>
-          <h4 class="text-sm font-medium text-gray-400">No blocks yet</h4>
-          <p class="text-xs text-gray-600 mt-1 mb-4">Start building your page</p>
-          <button class="cms-add-first-block px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg cursor-pointer transition-colors">+ Add Block</button>
+        <div class="cms-empty-state flex flex-col items-center justify-center py-12 w-full">
+          <div class="relative flex flex-col items-center justify-center gap-3 rounded-xl p-6 sm:p-8 max-w-sm w-full text-center border border-dashed border-gray-800 bg-gray-900/40">
+            <div class="text-3xl text-gray-500 mb-1">📄</div>
+            <div class="flex flex-col items-center gap-1">
+              <h4 class="text-base font-semibold text-gray-100">No blocks yet</h4>
+              <p class="text-xs text-gray-400">Start building your page by adding your first block</p>
+            </div>
+            <button class="cms-add-first-block mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg cursor-pointer transition-colors shadow-sm inline-flex items-center gap-1.5">
+              + Add Block
+            </button>
+          </div>
         </div>
       `
       const addBtn = this.containerEl.querySelector(".cms-add-first-block")
@@ -261,13 +267,21 @@ export class RimelightEditor extends HTMLElement {
     })
   }
 
-  private openBlockPicker(targetId: string | null, position: "before" | "after") {
+  public openBlockPicker(
+    targetId: string | null,
+    position: "before" | "after",
+    onSelect?: (type: string) => void
+  ) {
     if (!this.pickerEl) return
     this.pickerEl.setAttribute("section-depth", "0")
 
     const handleSelection = (e: Event) => {
       if (e instanceof CustomEvent && e.detail?.type) {
-        this.insertBlock(e.detail.type, targetId, position)
+        if (onSelect) {
+          onSelect(e.detail.type)
+        } else {
+          this.insertBlock(e.detail.type, targetId, position)
+        }
         this.pickerEl.removeEventListener("block-type-selected", handleSelection)
       }
     }
