@@ -53,6 +53,15 @@ rimelight-editor-layout,
   position: relative;
 }
 
+/* Astro's client:only wraps the component in <astro-island> which defaults to display:inline.
+   Scope to .cms-editor-main so only the editor island is affected, not the properties panel. */
+.cms-editor-main > astro-island {
+  display: flex;
+  flex: 1 1 100%;
+  width: 100%;
+  height: 100%;
+}
+
 rimelight-editor,
 .cms-editor-pane {
   flex: 1 1 100%;
@@ -69,12 +78,11 @@ rimelight-editor,
 
 rimelight-preview,
 .cms-preview-pane {
-  flex: 1 1 100%;
-  width: 100%;
+  display: none;
+  flex: 0 0 0%;
+  width: 0;
   height: 100%;
-  min-width: 300px;
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
   background-color: #030712;
   overflow-y: auto;
   box-sizing: border-box;
@@ -131,6 +139,7 @@ rimelight-preview,
 }
 
 .cms-resize-handle {
+  display: none;
   width: 6px;
   cursor: col-resize;
   background-color: #1f2937;
@@ -326,8 +335,7 @@ rimelight-preview,
 }
 
 .cms-sortable-ghost * {
-  opacity: 0.3 !important;
-  pointer-events: none !important;
+  opacity: 0.5 !important;
 }
 
 .cms-sortable-chosen {

@@ -11,6 +11,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "allowArbitraryExtensions": true
+    "allowArbitraryExtensions": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   }
 }

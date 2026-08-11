@@ -112,11 +112,20 @@ export function validateServerBlockPayload(
   return { valid: true }
 }
 
+function getChildren(b: BaseBlock): BaseBlock[] {
+  if (!b) return []
+  if (Array.isArray(b.props?.children)) return b.props.children
+  if (Array.isArray(b.children)) return b.children
+  return []
+}
+
 function flattenBlocks(blocks: BaseBlock[]): BaseBlock[] {
   let result: BaseBlock[] = []
   for (const b of blocks) {
+    if (!b) continue
     result.push(b)
-    if (b.children?.length) result = result.concat(flattenBlocks(b.children))
+    const children = getChildren(b)
+    if (children.length) result = result.concat(flattenBlocks(children))
   }
   return result
 }
@@ -124,8 +133,10 @@ function flattenBlocks(blocks: BaseBlock[]): BaseBlock[] {
 function extractTemplatedBlocks(blocks: BaseBlock[]): BaseBlock[] {
   let result: BaseBlock[] = []
   for (const b of blocks) {
+    if (!b) continue
     if (b.isTemplated) result.push(b)
-    if (b.children?.length) result = result.concat(extractTemplatedBlocks(b.children))
+    const children = getChildren(b)
+    if (children.length) result = result.concat(extractTemplatedBlocks(children))
   }
   return result
 }

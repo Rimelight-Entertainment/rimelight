@@ -6,14 +6,9 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
-import ParagraphEditorComp from "@rimelight/cms/client/components/editors/ParagraphEditor.astro"
-import ImageEditorComp from "@rimelight/cms/client/components/editors/ImageEditor.astro"
-import DialogueEditorComp from "@rimelight/cms/client/components/editors/DialogueEditor.astro"
-import CodeEditorComp from "@rimelight/cms/client/components/editors/CodeEditor.astro"
-import SceneEditorComp from "@rimelight/cms/client/components/editors/SceneEditor.astro"
-import SectionEditorComp from "@rimelight/cms/client/components/editors/SectionEditor.astro"
-import CalloutEditorComp from "@rimelight/cms/client/components/editors/CalloutEditor.astro"
-import ScriptEditorComp from "@rimelight/cms/client/components/editors/ScriptEditor.astro"
+import { RimelightEditorLayout } from "@rimelight/cms/client/components/RimelightEditorLayout"
+import { RimelightPropertiesPanel } from "@rimelight/cms/client/components/RimelightPropertiesPanel"
+import "@rimelight/cms/client/styles/cms-editor.css"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 const id = Astro.params.id
@@ -27,15 +22,22 @@ if (!page[0]) return Astro.redirect('/cms/pages')
 
 const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
 
-const content = draft[0]?.content 
-  ? (typeof draft[0].content === 'string' ? JSON.parse(draft[0].content) : draft[0].content)
-  : (typeof page[0].content === 'string' ? JSON.parse(page[0].content) : page[0].content)
+let rawContent: any = draft[0]?.content || page[0]?.content || {}
+if (typeof rawContent === 'string') {
+  try { rawContent = JSON.parse(rawContent) } catch {}
+}
+if (rawContent && rawContent.content) {
+  rawContent = rawContent.content
+}
+
+const extractedBlocks = Array.isArray(rawContent?.blocks)
+  ? rawContent.blocks
+  : (Array.isArray(rawContent) ? rawContent : [])
+
 const titleVal = typeof page[0].title === 'object' ? page[0].title.en || '' : page[0].title || ''
-const blocksJson = JSON.stringify(content.blocks || []).replace(/"/g, '&quot;')
 
 const pageType = (page[0] as any).type || 'Default'
-const initialProperties = content.properties || {}
-const propertiesJson = JSON.stringify(initialProperties).replace(/"/g, '&quot;')
+const initialProperties = rawContent?.properties || {}
 ---
 
 <CMSDashboardLayout title={`Edit Page: ${titleVal}`} description="Edit CMS page" activeSection="pages">
@@ -56,34 +58,16 @@ const propertiesJson = JSON.stringify(initialProperties).replace(/"/g, '&quot;')
   </Fragment>
 
   <div class="cms-editor-with-panel w-full h-[calc(100vh-180px)] min-h-[600px] flex flex-row overflow-hidden">
-    <div class="cms-editor-main flex-1 min-w-0 flex flex-col overflow-hidden">
-      <rimelight-editor-layout id="cms-editor-layout" page-id={id} initial-blocks={blocksJson} class="w-full h-full flex-1 flex min-h-[600px]"></rimelight-editor-layout>
+    <div id="cms-editor-layout" class="cms-editor-main flex-1 min-w-0 flex flex-col overflow-hidden">
+      <RimelightEditorLayout client:only="solid" pageId={id} initialBlocks={extractedBlocks} />
     </div>
-    <rimelight-properties-panel
-      id="cms-properties-panel"
-      page-type={pageType}
-      initial-properties={propertiesJson}
-      class="flex-none w-72"
-    ></rimelight-properties-panel>
-  </div>
-
-  <div class="hidden" aria-hidden="true">
-    <ParagraphEditorComp />
-    <ImageEditorComp />
-    <DialogueEditorComp />
-    <CodeEditorComp />
-    <SceneEditorComp />
-    <SectionEditorComp />
-    <CalloutEditorComp />
-    <ScriptEditorComp />
+    <RimelightPropertiesPanel client:only="solid" pageType={pageType} initialProperties={initialProperties} class="flex-none w-72" />
   </div>
 
   <script>
     import "@rimelight/cms/client/styles/cms-editor.css";
-    import { defineCustomElements } from "@rimelight/cms/client/loader";
-    defineCustomElements();
 
-    const getLayout = () => document.getElementById('cms-editor-layout') as any;
+    const getLayout = () => (window as any).cmsEditorLayout || (document.getElementById('cms-editor-layout') as any);
 
     const updatePreviewIcon = (visible: boolean) => {
       const btn = document.getElementById('preview-btn');
@@ -166,6 +150,7 @@ const propertiesJson = JSON.stringify(initialProperties).replace(/"/g, '&quot;')
           body: JSON.stringify({ content, changeSummary: 'Published from editor' })
         });
         if (response.ok) {
+          try { localStorage.removeItem('cms_draft_backup_' + pageId); } catch {}
           alert('Page published successfully!');
           window.location.href = '/cms/pages';
         } else {

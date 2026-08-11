@@ -108,17 +108,23 @@ export function createDefaultBlock(type: string): BaseBlock {
 
   switch (type) {
     case "SectionBlock":
-      return { id, type, props: { level: 2, title: "New Section", description: "", children: [] } }
+      return {
+        id,
+        type,
+        children: [],
+        props: { level: 2, title: "New Section", description: "", children: [] }
+      }
     case "ParagraphBlock":
       return { id, type, props: { text: [] } }
     case "CalloutBlock":
-      return { id, type, props: { variant: "info", children: [] } }
+      return { id, type, children: [], props: { variant: "info", children: [] } }
     case "ImageBlock":
       return { id, type, props: { src: "", alt: "", caption: "" } }
     case "ScriptBlock":
       return {
         id,
         type,
+        children: [],
         props: {
           title: "New Script",
           synopsis: "",
@@ -134,6 +140,7 @@ export function createDefaultBlock(type: string): BaseBlock {
       return {
         id,
         type,
+        children: [],
         props: {
           location: "",
           timeOfDay: "OTHER",

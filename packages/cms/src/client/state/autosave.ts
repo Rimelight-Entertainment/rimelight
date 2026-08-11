@@ -13,13 +13,23 @@ export class AutosaveController {
   private debounceMs: number
   private timer: number | null = null
   private status: AutosaveStatus = "saved"
+  private lastContent: any = null
   private onStatusChange?: ((status: AutosaveStatus, errorMsg?: string) => void) | undefined
 
   constructor(options: AutosaveOptions) {
     this.pageId = options.pageId
     this.saveEndpoint = options.saveEndpoint || `/api/cms/pages/${this.pageId}/draft`
-    this.debounceMs = options.debounceMs || 2000
+    this.debounceMs = options.debounceMs || 500
     this.onStatusChange = options.onStatusChange
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", () => this.flushSync())
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          this.flushSync()
+        }
+      })
+    }
   }
 
   getPageId(): string {
@@ -27,7 +37,10 @@ export class AutosaveController {
   }
 
   notifyChange(content: any): void {
+    this.lastContent = content
+    this.saveToLocalStorage(content)
     this.setStatus("unsaved")
+
     if (this.timer !== null) {
       clearTimeout(this.timer)
     }
@@ -35,6 +48,16 @@ export class AutosaveController {
     this.timer = window.setTimeout(() => {
       void this.save(content)
     }, this.debounceMs)
+  }
+
+  async saveImmediate(content: any): Promise<boolean> {
+    this.lastContent = content
+    this.saveToLocalStorage(content)
+    if (this.timer !== null) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
+    return this.save(content)
   }
 
   async save(content: any): Promise<boolean> {
@@ -57,6 +80,32 @@ export class AutosaveController {
     } catch (err: any) {
       this.setStatus("error", err?.message || "Network error")
       return false
+    }
+  }
+
+  private saveToLocalStorage(content: any): void {
+    if (typeof localStorage === "undefined" || !this.pageId) return
+    try {
+      localStorage.setItem(`cms_draft_backup_${this.pageId}`, JSON.stringify(content))
+    } catch (e) {
+      console.warn("Failed to write draft backup to localStorage", e)
+    }
+  }
+
+  private flushSync(): void {
+    if (this.status === "unsaved" && this.lastContent) {
+      if (this.timer !== null) {
+        clearTimeout(this.timer)
+        this.timer = null
+      }
+      try {
+        void fetch(this.saveEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: this.lastContent }),
+          keepalive: true
+        })
+      } catch {}
     }
   }
 

@@ -57,7 +57,7 @@ if (todLabel && todLabel !== "Other") headingParts.push(`- ${todLabel}`)
       {description}
     </p>
   )}
-  {block.children && block.children.length > 0 && (
+  {((block.children && block.children.length > 0) || (block.props?.children && block.props.children.length > 0)) && (
     <div class="mt-3">
       <slot />
     </div>

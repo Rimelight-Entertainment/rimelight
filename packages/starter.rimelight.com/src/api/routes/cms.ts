@@ -382,13 +382,13 @@ cms.post("/pages/:id/draft", async (c) => {
   const existingPage = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
   if (!existingPage[0]) return c.json({ error: "Page not found" }, 404)
 
-  // Validate block changes
+  const existingDraft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id)).limit(1)
+
+  // Validate block changes against existing draft or page content
   const incomingContent = typeof body.content === "string" ? JSON.parse(body.content) : body.content
   if (incomingContent?.blocks) {
-    const existingContent =
-      typeof existingPage[0].content === "string"
-        ? JSON.parse(existingPage[0].content)
-        : existingPage[0].content
+    const baseContent = existingDraft[0]?.content || existingPage[0].content
+    const existingContent = typeof baseContent === "string" ? JSON.parse(baseContent) : baseContent
 
     const userSession = {
       userId: session.user.id,
@@ -397,12 +397,27 @@ cms.post("/pages/:id/draft", async (c) => {
     }
 
     const validation = validateServerBlockPayload(
-      existingContent.blocks || [],
+      existingContent?.blocks || [],
       incomingContent.blocks || [],
       userSession
     )
     if (!validation.valid) {
-      return c.json({ error: validation.reason }, 403)
+      console.warn(`[Draft Save Rejected] ${validation.reason}`)
+      return c.json({ error: validation.reason, message: validation.reason }, 403)
+    }
+  }
+
+  let draftPayload: any = incomingContent
+  if (draftPayload && draftPayload.content) {
+    draftPayload = draftPayload.content
+  }
+  if (Array.isArray(draftPayload)) {
+    draftPayload = { blocks: draftPayload, properties: {} }
+  }
+  if (!draftPayload || !Array.isArray(draftPayload.blocks)) {
+    draftPayload = {
+      blocks: incomingContent?.blocks || [],
+      properties: incomingContent?.properties || {}
     }
   }
 
@@ -410,14 +425,14 @@ cms.post("/pages/:id/draft", async (c) => {
     .insert(pageDrafts)
     .values({
       pageId: id,
-      content: body.content,
+      content: draftPayload,
       updatedBy: session.user.id,
       updatedAt: new Date()
     })
     .onConflictDoUpdate({
       target: pageDrafts.pageId,
       set: {
-        content: body.content,
+        content: draftPayload,
         updatedBy: session.user.id,
         updatedAt: new Date()
       }

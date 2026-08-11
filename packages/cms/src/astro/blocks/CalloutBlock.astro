@@ -19,5 +19,6 @@ const variantStyles: Record<string, string> = {
 ---
 
 <div class={`cms-callout p-4 my-4 rounded-lg border-l-4 ${variantStyles[variant] || variantStyles.info}`} data-block-id={block.id}>
-  <p class="m-0">{textContent}</p>
+  {textContent && <p class="m-0 mb-2">{textContent}</p>}
+  <slot />
 </div>

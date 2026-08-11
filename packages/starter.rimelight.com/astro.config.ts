@@ -1,6 +1,7 @@
 import en from "./src/translations/en.json"
 import pt from "./src/translations/pt.json"
 import mdx from "@astrojs/mdx"
+import solid from "@astrojs/solid-js"
 import { ui } from "@rimelight/ui"
 import { sri } from "@rimelight/security"
 import { defineSecurity } from "@rimelight/security/config"
@@ -94,6 +95,9 @@ export default defineConfig({
   },
 
   integrations: [
+    solid({
+      include: ["**/solid/**", "**/*.tsx"]
+    }),
     rimelightI18n({
       translations: { en, pt },
       kvBinding: "starter-dot-rimelight-dot-com_translations"
