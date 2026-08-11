@@ -1,4 +1,5 @@
 packages:
+  - "apps/*"
   - "packages/*"
 configDependencies:
   "@pnpm/pacquet": 0.11.12
