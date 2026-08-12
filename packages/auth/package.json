@@ -48,14 +48,14 @@
       "optional": true
     }
   },
-  "engines": {
-    "node": ">=26.7.0"
-  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
       "version": "11.21.0",
       "onFail": "download"
     }
+  },
+  "engines": {
+    "node": ">=26.7.0"
   }
 }

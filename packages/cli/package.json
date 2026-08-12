@@ -37,17 +37,14 @@
     "mri": "1.2.0",
     "picocolors": "1.1.1"
   },
-  "engines": {
-    "node": ">=26.7.0"
-  },
-  "engines": {
-    "node": ">=26.7.0"
-  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
       "version": "11.21.0",
       "onFail": "download"
     }
+  },
+  "engines": {
+    "node": ">=26.7.0"
   }
 }

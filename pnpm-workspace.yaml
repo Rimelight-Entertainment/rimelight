@@ -10,17 +10,12 @@ supportedArchitectures:
     - wasm32
 packageImportMethod: copy
 saveExact: true
-#minimumReleaseAge: 4320 # Minutes = 3 Days
+minimumReleaseAge: 4320 # Minutes = 3 Days
 minimumReleaseAgeExclude:
   - "@rimelight/*"
-  # Vulnerabilty Fixes
-  - brace-expansion
 overrides:
-  # Vulnerability Overrides
-  js-yaml: "^4.3.1"
-  nanoid: "^3.3.17"
-  postcss: "^8.5.23"
-  esbuild: "0.28.1"
+  # Vulnerability Fixes
+  esbuild: ">=0.24.3"
 allowBuilds:
   better-sqlite3: true
   esbuild: true

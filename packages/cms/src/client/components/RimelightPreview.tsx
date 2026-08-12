@@ -188,9 +188,7 @@ export const RimelightPreview: Component<RimelightPreviewProps> = (props) => {
         Live Preview
       </div>
       <div class="cms-preview-document p-8 max-w-3xl mx-auto space-y-4">
-        <For each={props.blocks()}>
-          {(b) => <div innerHTML={renderBlockPreviewHtml(b, 0)} />}
-        </For>
+        <For each={props.blocks()}>{(b) => <div innerHTML={renderBlockPreviewHtml(b, 0)} />}</For>
       </div>
     </div>
   )
