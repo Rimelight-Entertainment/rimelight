@@ -4,7 +4,11 @@ import { getUIConfig } from "virtual:rimelight-ui"
 // Hoisted once at module load — getUIConfig() returns a static frozen object.
 const uiConfig = getUIConfig()
 
-const themeCache = new WeakMap<Function, Map<string, Record<string, string>>>()
+const classThemeCache = new WeakMap<Function, Map<string, Record<string, string>>>()
+const themeCreatorCache = new WeakMap<Function>()
+const uiMergeCache = new WeakMap<object, Record<string, string | Function | undefined>>()
+
+const EMPTY_DEFAULTS: Record<string, string | Function | undefined> = Object.freeze({})
 
 function getVariantCacheKey(variants: Record<string, any>): string {
   if (!variants) return ""
@@ -15,6 +19,58 @@ function getVariantCacheKey(variants: Record<string, any>): string {
     key += `${k}:${variants[k]};`
   }
   return key
+}
+
+function hasOwnProperties(obj: object): boolean {
+  for (const k in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, k)) return true
+  }
+  return false
+}
+
+export function useUi(
+  componentName: string,
+  uiProp?: Record<string, string | Function | undefined>
+): Record<string, string | Function | undefined> {
+  const defaults = uiConfig[componentName]
+
+  if (!defaults) return EMPTY_DEFAULTS
+
+  if (!uiProp || !hasOwnProperties(uiProp)) {
+    return defaults
+  }
+
+  const cached = uiMergeCache.get(uiProp)
+  if (cached) return cached
+
+  // Direct fast path for slot class overrides (flat string / function maps)
+  const result: Record<string, string | Function | undefined> = { ...defaults }
+  for (const key in uiProp) {
+    if (Object.prototype.hasOwnProperty.call(uiProp, key)) {
+      const val = uiProp[key]
+      if (val !== undefined && val !== null) {
+        result[key] = val
+      }
+    }
+  }
+
+  uiMergeCache.set(uiProp, result)
+  return result
+}
+
+export function resolveTheme<T>(
+  themeDefault: T,
+  themeCreator?: (colors: readonly string[]) => T
+): T {
+  if (uiConfig.colors && themeCreator) {
+    let cached: T | undefined = themeCreatorCache.get(themeCreator)
+    if (!cached) {
+      cached = themeCreator(uiConfig.colors)
+      themeCreatorCache.set(themeCreator, cached)
+    }
+    return cached
+  }
+  return themeDefault
 }
 
 export function resolveClasses<T extends (...args: never[]) => Record<string, string>>(
@@ -29,10 +85,10 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   if (isUnstyled) {
     resolved = {}
   } else {
-    let fnMap = themeCache.get(themeFn)
+    let fnMap = classThemeCache.get(themeFn)
     if (!fnMap) {
       fnMap = new Map()
-      themeCache.set(themeFn, fnMap)
+      classThemeCache.set(themeFn, fnMap)
     }
     const key = getVariantCacheKey(variants as Record<string, any>)
     const cached = fnMap.get(key)
