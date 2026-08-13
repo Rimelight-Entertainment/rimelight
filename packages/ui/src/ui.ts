@@ -10,13 +10,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
   return [
     UnoCSS({
       ...unocss,
-      presets: [rimelightUiPreset(o), ...(unocss.presets ?? [])],
-      safelist: [
-        ...Object.values(icons).filter(
-          (v): v is string => typeof v === "string" && v.startsWith("i-")
-        ),
-        ...(unocss.safelist ?? [])
-      ]
+      presets: [rimelightUiPreset(o), ...(unocss.presets ?? [])]
     }),
     {
       name: "@rimelight/ui",
@@ -29,7 +23,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
                 "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify({
                   ...components?.themes,
                   logos,
-                  colors: [...new Set([...colorConfig.colors, ...Object.keys(colors)])],
+                  colors: Array.from(new Set([...colorConfig.colors, ...Object.keys(colors)])),
                   shortcuts,
                   icons
                 })

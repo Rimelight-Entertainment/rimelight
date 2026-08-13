@@ -101,6 +101,7 @@ const createScale = (colorName: string, shadeKeys: string[]) => ({
 export interface RimelightPresetOptions {
   colors?: Record<string, ColorConfigValue>
   autogenerateColorModes?: boolean
+  icons?: Record<string, unknown>
   presets?: {
     wind?: boolean
     typography?: boolean
@@ -123,7 +124,10 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   )
   const resolvedColors = { ...resolvedBuiltins, ...resolvedUserColors }
 
-  const safelist = allColors.map((color) => "rl-color-" + color)
+  const iconSafelist = Object.values(options?.icons ?? {}).filter(
+    (v): v is string => typeof v === "string" && v.startsWith("i-")
+  )
+  const safelist = [...allColors.map((color) => "rl-color-" + color), ...iconSafelist]
 
   const enabledPresets = {
     wind: options?.presets?.wind !== false,
