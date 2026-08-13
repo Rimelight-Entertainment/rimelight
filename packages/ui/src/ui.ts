@@ -7,7 +7,6 @@ import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
 export function ui(opts: UIConfig = {}): AstroIntegration[] {
   const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = opts
   const content = (typeof unocss.content === "object" ? unocss.content : {}) as Record<string, any>
-  const toArr = (v: unknown) => (Array.isArray(v) ? v : v ? [v] : [])
 
   return [
     UnoCSS({
@@ -59,3 +58,5 @@ export function ui(opts: UIConfig = {}): AstroIntegration[] {
     }
   ]
 }
+
+const toArr = (v: unknown): unknown[] => (Array.isArray(v) ? v : v ? [v] : [])
