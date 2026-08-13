@@ -1,32 +1,19 @@
 export interface ComponentTheme {
-  slots: string[]
-  base: Record<string, string | string[]>
-  variants?: Record<string, Record<string, Record<string, string | string[]>>>
-  compoundVariants?: Record<string, unknown>[]
+  slots: readonly string[] | string[]
+  base: Record<string, unknown>
+  variants?: Record<string, Record<string, unknown>>
+  compoundVariants?: unknown[]
   defaultVariants?: Record<string, unknown>
 }
 
-export function defineTheme<const T extends ComponentTheme>(theme: T): T {
-  return theme
-}
+export const defineTheme = <const T extends ComponentTheme>(theme: T): T => theme
 
-export type ComponentVariants<T extends { variants?: Record<string, Record<string, unknown>> }> =
-  T["variants"] extends Record<string, Record<string, unknown>>
-    ? {
-        [K in keyof T["variants"]]?: T["variants"][K] extends { true: unknown; false: unknown }
-          ? boolean
-          : T["variants"][K] extends { true: unknown }
-            ? boolean
-            : keyof T["variants"][K]
-      }
-    : never
+export type ComponentVariants<T> = T extends { variants?: infer V }
+  ? { [K in keyof V]?: V[K] extends { true: unknown } ? boolean : keyof V[K] }
+  : {}
 
-export type ComponentSlots<T extends { slots: readonly string[] }> = Partial<
-  Record<T["slots"][number], string>
->
+export type ComponentSlots<T> = T extends { slots: readonly (infer S)[] }
+  ? Partial<Record<Extract<S, string>, string>>
+  : {}
 
-export type ComponentThemeProps<
-  T extends { slots: readonly string[]; variants?: Record<string, Record<string, unknown>> }
-> = ComponentVariants<T> & {
-  ui?: ComponentSlots<T>
-}
+export type ComponentThemeProps<T> = ComponentVariants<T> & { ui?: ComponentSlots<T> }
