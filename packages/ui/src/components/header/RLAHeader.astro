@@ -1,14 +1,14 @@
 ---
 import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
+import { useUi, resolveClasses } from "../../utils/resolver"
+import HeaderLayer from "./HeaderLayer.astro"
 import type { HeaderProps } from "./header"
 import headerTheme from "./header.theme"
-
 
 const header = scv(headerTheme)
 
 const {
+  as = "header",
   contain = true,
   sticky = true,
   fixed = false,
@@ -17,40 +17,43 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as HeaderProps;
+} = Astro.props as HeaderProps
 
-const classes = resolveClasses(header, {
-  contain,
-  sticky: fixed ? false : sticky,
-  fixed,
-}, useUi("header", uiProp), className);
-
-const headerId = `rla-header-${Math.random().toString(36).slice(2, 8)}`;
+const classes = resolveClasses(
+  header,
+  {
+    contain,
+    sticky: fixed ? false : sticky,
+    fixed
+  },
+  useUi("header", uiProp),
+  className
+)
 ---
 
-<header
-  id={headerId}
-  data-slot="root"
-  class:list={[classes.root]}
-  data-contain={contain ? "true" : "false"}
-  data-rla-header="true"
-  data-stack-index={stackIndex}
-  data-hide-on-scroll={String(hideOnScroll)}
-  data-header-layer-id={headerId}
+<HeaderLayer
+  as={as}
+  layerType="header"
+  componentName="header"
+  theme={header}
+  contain={contain}
+  sticky={sticky}
+  fixed={fixed}
+  stackIndex={stackIndex}
+  hideOnScroll={hideOnScroll}
+  ui={uiProp}
+  class={className}
   {...rest}
 >
-  <div class:list={[classes.content]} data-header-content>
-    <div class:list={[classes.container]} data-slot="container">
-      <div class:list={[classes.left]} data-slot="left">
-        <slot name="left" />
-      </div>
-      <div class:list={[classes.center]} data-slot="center">
-        <slot name="center" />
-      </div>
-      <div class:list={[classes.right]} data-slot="right">
-        <slot name="right" />
-      </div>
-    </div>
+  <div class:list={[classes.left]} data-slot="left">
+    <slot name="left" />
   </div>
-</header>
-
+  <div class:list={[classes.center]} data-slot="center">
+    <slot name="center">
+      <slot />
+    </slot>
+  </div>
+  <div class:list={[classes.right]} data-slot="right">
+    <slot name="right" />
+  </div>
+</HeaderLayer>

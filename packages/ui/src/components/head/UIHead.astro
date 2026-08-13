@@ -142,6 +142,10 @@ const { transitions = true } = Astro.props as UIHeadProps;
     function initLayer(el: any) {
       const RL = w.RLHeaderStack;
       if (!RL) return;
+      if (el.getAttribute('data-rla-banner') === 'false' || el.classList.contains('hidden')) {
+        RL.unregister(el.id);
+        return;
+      }
       const id = el.id;
       const type = el.getAttribute('data-layer-type') || 'header';
       const stackIndex = parseInt(el.getAttribute('data-stack-index') || '0', 10);
