@@ -11,9 +11,7 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
     ...(options.autogenerateColorModes !== undefined && {
       autogenerateColorModes: options.autogenerateColorModes
     }),
-    ...(options.presets !== undefined && {
-      presets: options.presets
-    })
+    ...(options.presets !== undefined && { presets: options.presets })
   }
 
   const resolvedConfig = {
@@ -25,13 +23,6 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
   }
 
   const userUnoConfig = options.unocss ?? {}
-  const contentObj =
-    userUnoConfig.content && typeof userUnoConfig.content === "object"
-      ? userUnoConfig.content
-      : null
-
-  const userPipelineIncludes = extractPipelineIncludes(contentObj)
-  const userFilesystem = extractFilesystemGlobs(contentObj)
 
   return [
     UnoCSS({
@@ -49,10 +40,10 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
             "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
             uiSrcGlob,
-            ...userPipelineIncludes
+            ...extractPipelineIncludes(userUnoConfig.content)
           ]
         },
-        filesystem: [uiFilesystemGlob, ...userFilesystem]
+        filesystem: [uiFilesystemGlob, ...extractFilesystemGlobs(userUnoConfig.content)]
       }
     }),
     {
@@ -73,32 +64,24 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
   ]
 }
 
-function extractPipelineIncludes(contentObj: any): (string | RegExp)[] {
-  if (!contentObj || typeof contentObj !== "object") return []
-  const pipeline =
-    "pipeline" in contentObj && contentObj.pipeline && typeof contentObj.pipeline === "object"
-      ? contentObj.pipeline
-      : null
-  const rawIncludes = pipeline && "include" in pipeline ? pipeline.include : undefined
-  if (Array.isArray(rawIncludes)) {
-    return rawIncludes.filter(
+function extractPipelineIncludes(content: unknown): (string | RegExp)[] {
+  if (!content || typeof content !== "object" || !("pipeline" in content)) return []
+  const pipeline = content.pipeline
+  if (!pipeline || typeof pipeline !== "object" || !("include" in pipeline)) return []
+  const include = pipeline.include
+  if (Array.isArray(include)) {
+    return include.filter(
       (item): item is string | RegExp => typeof item === "string" || item instanceof RegExp
     )
   }
-  if (typeof rawIncludes === "string" || rawIncludes instanceof RegExp) {
-    return [rawIncludes]
-  }
-  return []
+  return typeof include === "string" || include instanceof RegExp ? [include] : []
 }
 
-function extractFilesystemGlobs(contentObj: any): string[] {
-  if (!contentObj || typeof contentObj !== "object") return []
-  const rawFilesystem = "filesystem" in contentObj ? contentObj.filesystem : undefined
-  if (Array.isArray(rawFilesystem)) {
-    return rawFilesystem.filter((item): item is string => typeof item === "string")
+function extractFilesystemGlobs(content: unknown): string[] {
+  if (!content || typeof content !== "object" || !("filesystem" in content)) return []
+  const filesystem = content.filesystem
+  if (Array.isArray(filesystem)) {
+    return filesystem.filter((item): item is string => typeof item === "string")
   }
-  if (typeof rawFilesystem === "string") {
-    return [rawFilesystem]
-  }
-  return []
+  return typeof filesystem === "string" ? [filesystem] : []
 }
