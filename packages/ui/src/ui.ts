@@ -15,8 +15,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
     {
       name: "@rimelight/ui",
       hooks: {
-        "astro:config:setup": ({ updateConfig, logger }) => {
-          logger.info("Initializing @rimelight/ui core")
+        "astro:config:setup": ({ updateConfig }) => {
           updateConfig({
             vite: {
               define: {
