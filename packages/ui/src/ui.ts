@@ -69,29 +69,15 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
           logger.info("Initializing @rimelight/ui core")
           updateConfig({
             vite: {
-              plugins: [createVirtualModulePlugin(resolvedConfig)]
+              define: {
+                "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(resolvedConfig)
+              }
             }
           })
         }
       }
     }
   ]
-}
-
-/**
- * Creates a Vite plugin to resolve and load the virtual config module.
- */
-function createVirtualModulePlugin(config: any) {
-  const id = "virtual:rimelight-ui"
-  return {
-    name: "vite-plugin-rimelight-ui-virtual",
-    enforce: "pre" as const,
-    resolveId: (rId: string) => (rId === id ? "\0" + id : null),
-    load: (rId: string) =>
-      rId === "\0" + id
-        ? `const _config = ${JSON.stringify(config)}; export const getUIConfig = () => _config;`
-        : null
-  }
 }
 
 /**

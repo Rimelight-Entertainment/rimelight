@@ -1,5 +1,5 @@
 import { DEFAULT_ICONS } from "../../icons/defaults"
-import { getUIConfig } from "virtual:rimelight-ui"
+import { uiConfig } from "../../config"
 
 export interface ResolvedIcon {
   isClass: boolean
@@ -8,18 +8,6 @@ export interface ResolvedIcon {
 
 const defaultIconsLookup = DEFAULT_ICONS as Record<string, string>
 const iconCache = new Map<string, ResolvedIcon>()
-
-let uiConfigCache: Record<string, any> | null = null
-function getCachedConfig(): Record<string, any> {
-  if (!uiConfigCache) {
-    try {
-      uiConfigCache = getUIConfig() ?? {}
-    } catch {
-      uiConfigCache = {}
-    }
-  }
-  return uiConfigCache
-}
 
 export function resolveIcon(iconKey?: string, customProp?: string): ResolvedIcon {
   if (!iconKey) {
@@ -35,8 +23,7 @@ export function resolveIcon(iconKey?: string, customProp?: string): ResolvedIcon
   const cached = iconCache.get(cacheKey)
   if (cached) return cached
 
-  const config = getCachedConfig()
-  const resolved = customProp || config.icons?.[iconKey]
+  const resolved = customProp || uiConfig.icons?.[iconKey]
 
   let result: ResolvedIcon
   if (!resolved) {

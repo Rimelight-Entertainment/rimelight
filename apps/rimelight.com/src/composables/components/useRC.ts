@@ -1,6 +1,5 @@
 import { computed } from "vue"
-// @ts-ignore virtual module provided by @rimelight/ui integration
-import { getUIConfig } from "virtual:rimelight-ui"
+import { uiConfig } from "@rimelight/ui/config"
 
 // Pure JavaScript deep merge helper to replace defu
 function deepMerge<T extends Record<string, any>>(target: T, source: any): T {
@@ -38,7 +37,7 @@ function deepMerge<T extends Record<string, any>>(target: T, source: any): T {
  */
 export function useRC<T extends Record<string, any>>(namespace: string, propsProp: T | undefined) {
   const rc = computed(() => {
-    const config: Record<string, any> = getUIConfig() || {}
+    const config: Record<string, any> = uiConfig || {}
     const conf: Record<string, any> = config[namespace] || config[namespace.toLowerCase()] || {}
     return deepMerge<T>(propsProp ?? Object.create(null), conf.slots || conf)
   })

@@ -4,8 +4,7 @@ import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { LogoProps } from "./logo"
 import logoTheme from "./logo.theme"
-import { getUIConfig } from "virtual:rimelight-ui"
-
+import { uiConfig } from "../../config"
 
 const logo = scv(logoTheme)
 
@@ -36,9 +35,6 @@ if (href === "/") {
 
 const classes = resolveClasses(logo, {}, useUi("logo", uiProp), className);
 
-const globalConfig = getUIConfig();
-const rcLogos = globalConfig.logos as Record<string, any>;
-
 let logoSrc: string | null = null;
 let darkSrc: string | null = null;
 let lightSrc: string | null = null;
@@ -60,19 +56,17 @@ function resolveLogo(pathStr: string | null | undefined): any {
   return pathStr;
 }
 
-if (rcLogos && typeof rcLogos === "object") {
-  let src = rcLogos[variant];
-  if (src && typeof src === "object") {
-    if (mode) {
-      logoSrc = resolveLogo(src[mode] || src.color);
-    } else {
-      logoSrc = resolveLogo(src.color || src.black || src.white);
-      darkSrc = resolveLogo(src.white || src.color);
-      lightSrc = resolveLogo(src.black || src.color);
-    }
-  } else if (typeof src === "string") {
-    logoSrc = resolveLogo(src);
+const logoVariant = uiConfig.logos?.[variant];
+if (logoVariant && typeof logoVariant === "object") {
+  if (mode) {
+    logoSrc = resolveLogo(logoVariant[mode] || logoVariant.color);
+  } else {
+    logoSrc = resolveLogo(logoVariant.color || logoVariant.black || logoVariant.white);
+    darkSrc = resolveLogo(logoVariant.white || logoVariant.color);
+    lightSrc = resolveLogo(logoVariant.black || logoVariant.color);
   }
+} else if (typeof logoVariant === "string") {
+  logoSrc = resolveLogo(logoVariant);
 }
 
 const startsWithUrlPrefix = logoSrc && (logoSrc.startsWith("http") || logoSrc.startsWith("/") || logoSrc.startsWith("."));

@@ -87,6 +87,25 @@ export interface UIConfig {
   unocss?: UserConfig
 }
 
+export interface ResolvedUIConfig {
+  logos?: Record<string, any>
+  colors?: readonly string[]
+  shortcuts?: {
+    categories?: Record<string, { label: string }>
+  }
+  icons?: RimelightIcons
+  [key: string]: any
+}
+
+declare global {
+  interface ImportMetaEnv {
+    readonly RIMELIGHT_UI_CONFIG?: ResolvedUIConfig
+  }
+}
+
+export const uiConfig: ResolvedUIConfig =
+  (typeof import.meta !== "undefined" && import.meta.env.RIMELIGHT_UI_CONFIG) || {}
+
 export type Theme = "light" | "dark"
 
 export type ThemeColor = keyof typeof colorScales | (string & {})

@@ -1,8 +1,5 @@
 import { cx } from "css-variants"
-import { getUIConfig } from "virtual:rimelight-ui"
-
-// Hoisted once at module load — getUIConfig() returns a static frozen object.
-const uiConfig = getUIConfig()
+import { uiConfig } from "../config"
 
 const classThemeCache = new WeakMap<Function, Map<string, Record<string, string>>>()
 const themeCreatorCache = new WeakMap<Function>()
