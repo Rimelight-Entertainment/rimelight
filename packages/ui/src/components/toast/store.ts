@@ -11,9 +11,9 @@ export interface ToastItem {
   onDismiss?: () => void
 }
 
-export const toasts = atom<ToastItem[]>([])
-export const toastsStore = toasts
 export type Toast = ToastItem
+
+export const toasts = atom<ToastItem[]>([])
 
 export function addToast(toast: Omit<ToastItem, "id"> & { id?: string }): ToastItem {
   const id = toast.id || crypto.randomUUID()
