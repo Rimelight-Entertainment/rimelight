@@ -23,7 +23,6 @@
     ".": "./src/ui.ts",
     "./components/*": "./src/components/*",
     "./config": "./src/config.ts",
-    "./stores/*": "./src/stores/*",
     "./utils/*": "./src/utils/*",
     "./types/*": "./src/types/*",
     "./icons/*": "./src/icons/*",
