@@ -2,12 +2,10 @@ import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./config"
 import { colorConfig } from "./config"
-import rimelightUiPreset, { uiSrcGlob, uiFilesystemGlob } from "./presets"
+import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
 import type { RimelightPresetOptions } from "./presets"
 
 export function ui(options: UIConfig = {}): AstroIntegration[] {
-  let astroLogger: any = null
-
   const presetOptions: RimelightPresetOptions = {
     colors: options.colors ?? {},
     ...(options.autogenerateColorModes !== undefined && {
@@ -55,17 +53,12 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
           ]
         },
         filesystem: [uiFilesystemGlob, ...userFilesystem]
-      },
-      configResolved(config) {
-        logUnoConfig(config, astroLogger)
-        userUnoConfig.configResolved?.(config)
       }
     }),
     {
       name: "@rimelight/ui",
       hooks: {
         "astro:config:setup": ({ updateConfig, logger }) => {
-          astroLogger = logger
           logger.info("Initializing @rimelight/ui core")
           updateConfig({
             vite: {
@@ -78,42 +71,6 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
       }
     }
   ]
-}
-
-/**
- * Helper to log UnoCSS configuration details and rule collisions in development.
- */
-function logUnoConfig(config: any, astroLogger: any) {
-  if (process.env.NODE_ENV !== "development" || process.env.UNO_CONFIG_LOGGED) {
-    return
-  }
-  process.env.UNO_CONFIG_LOGGED = "true"
-
-  const log = (msg: string, isWarn = false) => {
-    const logger = astroLogger ?? console
-    const method = isWarn ? "warn" : astroLogger ? "info" : "log"
-    logger[method](msg)
-  }
-
-  log(`[UnoCSS] Presets: ${config.presets.map((p: any) => p.name).join(", ")}`)
-  log(`[UnoCSS] Rules: ${config.rules.length}`)
-  log(`[UnoCSS] Shortcuts: ${Object.keys(config.shortcuts).length}`)
-
-  const ruleNames = config.rules.map((r: any) => (Array.isArray(r) ? r[0].toString() : "dynamic"))
-  const seen = new Set<string>()
-  const duplicates = new Set<string>()
-  for (const name of ruleNames) {
-    if (seen.has(name)) {
-      duplicates.add(name)
-    } else {
-      seen.add(name)
-    }
-  }
-  const filtered = Array.from(duplicates).filter((d: string) => d !== "/^(.+?)-(\\$.+)$/")
-
-  if (filtered.length > 0) {
-    log(`[UnoCSS] Rule collisions: ${filtered.join(", ")}`, true)
-  }
 }
 
 function extractPipelineIncludes(contentObj: any): (string | RegExp)[] {
