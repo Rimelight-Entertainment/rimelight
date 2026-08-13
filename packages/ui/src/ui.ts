@@ -33,35 +33,13 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
   }
 
   const userUnoConfig = options.unocss ?? {}
-
   const contentObj =
     userUnoConfig.content && typeof userUnoConfig.content === "object"
       ? userUnoConfig.content
       : null
-  const pipeline =
-    contentObj &&
-    "pipeline" in contentObj &&
-    typeof contentObj.pipeline === "object" &&
-    contentObj.pipeline !== null
-      ? contentObj.pipeline
-      : null
-  const rawIncludes = pipeline && "include" in pipeline ? pipeline.include : undefined
-  let userPipelineIncludes: (string | RegExp)[] = []
-  if (Array.isArray(rawIncludes)) {
-    userPipelineIncludes = rawIncludes.filter(
-      (item): item is string | RegExp => typeof item === "string" || item instanceof RegExp
-    )
-  } else if (typeof rawIncludes === "string" || rawIncludes instanceof RegExp) {
-    userPipelineIncludes = [rawIncludes]
-  }
 
-  const rawFilesystem = contentObj && "filesystem" in contentObj ? contentObj.filesystem : undefined
-  let userFilesystem: string[] = []
-  if (Array.isArray(rawFilesystem)) {
-    userFilesystem = rawFilesystem.filter((item): item is string => typeof item === "string")
-  } else if (typeof rawFilesystem === "string") {
-    userFilesystem = [rawFilesystem]
-  }
+  const userPipelineIncludes = extractPipelineIncludes(contentObj)
+  const userFilesystem = extractFilesystemGlobs(contentObj)
 
   return [
     UnoCSS({
@@ -156,4 +134,34 @@ function logUnoConfig(config: any, astroLogger: any) {
   if (filtered.length > 0) {
     log(`[UnoCSS] Rule collisions: ${filtered.join(", ")}`, true)
   }
+}
+
+function extractPipelineIncludes(contentObj: any): (string | RegExp)[] {
+  if (!contentObj || typeof contentObj !== "object") return []
+  const pipeline =
+    "pipeline" in contentObj && contentObj.pipeline && typeof contentObj.pipeline === "object"
+      ? contentObj.pipeline
+      : null
+  const rawIncludes = pipeline && "include" in pipeline ? pipeline.include : undefined
+  if (Array.isArray(rawIncludes)) {
+    return rawIncludes.filter(
+      (item): item is string | RegExp => typeof item === "string" || item instanceof RegExp
+    )
+  }
+  if (typeof rawIncludes === "string" || rawIncludes instanceof RegExp) {
+    return [rawIncludes]
+  }
+  return []
+}
+
+function extractFilesystemGlobs(contentObj: any): string[] {
+  if (!contentObj || typeof contentObj !== "object") return []
+  const rawFilesystem = "filesystem" in contentObj ? contentObj.filesystem : undefined
+  if (Array.isArray(rawFilesystem)) {
+    return rawFilesystem.filter((item): item is string => typeof item === "string")
+  }
+  if (typeof rawFilesystem === "string") {
+    return [rawFilesystem]
+  }
+  return []
 }

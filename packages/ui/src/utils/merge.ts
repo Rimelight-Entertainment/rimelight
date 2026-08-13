@@ -30,7 +30,7 @@ export function merge(
   defaults: Record<string, any>
 ): Record<string, any> {
   if (!isPlainObject(defaults)) {
-    return merge(base, {})
+    return isPlainObject(base) ? { ...base } : {}
   }
   if (!isPlainObject(base)) {
     return { ...defaults }
@@ -50,7 +50,7 @@ export function merge(
     }
 
     if (Array.isArray(value) && Array.isArray(object[key])) {
-      object[key] = [...value, ...object[key]]
+      object[key] = Array.from(new Set([...value, ...object[key]]))
     } else if (isPlainObject(value) && isPlainObject(object[key])) {
       object[key] = merge(value, object[key])
     } else {

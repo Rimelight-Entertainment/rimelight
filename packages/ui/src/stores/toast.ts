@@ -8,6 +8,7 @@ export interface ToastItem {
   duration?: number
   color?: string
   icon?: string
+  onDismiss?: () => void
 }
 
 export const toasts = atom<ToastItem[]>([])
@@ -20,5 +21,14 @@ export function addToast(toast: Omit<ToastItem, "id"> & { id?: string }): ToastI
 }
 
 export function removeToast(id: string) {
-  toasts.set(toasts.get().filter((t) => t.id !== id))
+  const current = toasts.get()
+  const target = current.find((t) => t.id === id)
+  if (target?.onDismiss) {
+    try {
+      target.onDismiss()
+    } catch (err) {
+      console.error("Error executing toast onDismiss callback:", err)
+    }
+  }
+  toasts.set(current.filter((t) => t.id !== id))
 }

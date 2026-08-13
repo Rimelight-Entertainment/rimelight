@@ -124,6 +124,190 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
     icons: options?.presets?.icons !== false
   }
 
+  const lightDarkLines = Object.entries(resolvedColors)
+    .flatMap(([color, modes]) => {
+      const light = modes.light as Record<string, string>
+      const dark = (modes.dark ?? modes.light) as Record<string, string>
+      return Object.keys(light).map((shade) => {
+        const l = light[shade]
+        const d = dark[shade] ?? l
+        return `            --color-${color}-${shade}: light-dark(${l}, ${d});`
+      })
+    })
+    .join("\n")
+
+  const semanticTokenLines = Object.entries(colorConfig.semanticTokens)
+    .map(([token, val]) => {
+      if (typeof val === "string") {
+        return `          --${token}: ${val};`
+      }
+      const l = val.light
+      const d = val.dark ?? l
+      return `          --${token}: light-dark(${l}, ${d});`
+    })
+    .join("\n")
+
+  const preflightCss = `
+        :root {
+          color-scheme: light dark;
+
+          /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
+${semanticTokenLines}
+          --radius: 0.625rem;
+          --font-sans: "Noto Sans", sans-serif;
+          --font-serif: "Noto Serif", serif;
+          --font-mono: "Noto Sans Mono", monospace;
+
+          --ui-header-height: 4rem;
+          --rl-container: 90rem;
+
+          /* Text / background / border / ring semantic tokens using responsive neutral variables */
+          --text-color-default: var(--color-neutral-700);
+          --text-color-muted: var(--color-neutral-600);
+          --text-color-dimmed: var(--color-neutral-500);
+          --text-color-toned: var(--color-neutral-800);
+          --text-color-highlighted: var(--color-neutral-950);
+          --text-color-elevated: var(--color-neutral-800);
+          --text-color-accented: var(--color-neutral-900);
+          --text-color-inverted: var(--color-neutral-50);
+
+          --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
+          --background-color-muted: var(--color-neutral-100);
+          --background-color-elevated: var(--color-neutral-200);
+          --background-color-accented: var(--color-neutral-300);
+          --background-color-dimmed: var(--color-neutral-400);
+          --background-color-toned: var(--color-neutral-800);
+          --background-color-highlighted: var(--color-neutral-900);
+          --background-color-inverted: var(--color-neutral-950);
+
+          --border-color-default: var(--color-neutral-200);
+          --border-color-muted: var(--color-neutral-100);
+          --border-color-elevated: var(--color-neutral-200);
+          --border-color-accented: var(--color-neutral-300);
+          --border-color-dimmed: var(--color-neutral-400);
+          --border-color-toned: var(--color-neutral-800);
+          --border-color-highlighted: var(--color-neutral-900);
+          --border-color-inverted: var(--color-neutral-950);
+
+          --ring-color-default: var(--color-neutral-200);
+          --ring-color-muted: var(--color-neutral-100);
+          --ring-color-elevated: var(--color-neutral-200);
+          --ring-color-accented: var(--color-neutral-300);
+          --ring-color-dimmed: var(--color-neutral-400);
+          --ring-color-toned: var(--color-neutral-800);
+          --ring-color-highlighted: var(--color-neutral-900);
+          --ring-color-inverted: var(--color-neutral-950);
+
+          --divide-color-default: var(--color-neutral-200);
+          --divide-color-inverted: var(--color-neutral-950);
+
+          /* Color scales — light-dark() resolves based on inherited color-scheme */
+${lightDarkLines}
+
+          /* Shiki / Expressive Code */
+          --shiki-foreground: #e1e4e8;
+          --shiki-background: #1f2428;
+          --shiki-token-keyword: #f97583;
+          --shiki-token-string: #9ecbff;
+          --shiki-token-comment: #6a737d;
+          --shiki-token-function: #b392f0;
+          --shiki-token-constant: #79b8ff;
+          --shiki-token-parameter: #ffab70;
+          --shiki-token-punctuation: #e1e4e8;
+        }
+
+        /* ── Container Style Query Property Registration ───────────────── */
+        @property --rl-contrast-color {
+          syntax: "<color>";
+          initial-value: white;
+          inherits: true;
+        }
+
+        /* ── Theme Container Detector & Sub-element Tinting ────────────── */
+        .rl-theme-container {
+          container-type: normal;
+          --rl-surface-effective: var(--rl-bg, var(--background));
+          --rl-contrast-color: contrast-color(var(--rl-surface-effective));
+          color: var(--rl-contrast-color);
+        }
+
+        .rl-theme-container > *,
+        .rl-theme-container :where(h1, h2, h3, h4, h5, h6, p, span, div, li, strong) {
+          color: inherit;
+        }
+
+        /* Dark background detected (contrast-color is white) -> Soft light subtext & subtle border */
+        @container style(--rl-contrast-color: white) {
+          .rl-theme-container .rl-subtext {
+            color: oklch(from var(--rl-surface-effective) 0.88 0.04 h) !important;
+          }
+          .rl-theme-container .rl-border-subtle {
+            border-color: oklch(from var(--rl-surface-effective) 0.45 0.08 h / 0.6) !important;
+          }
+        }
+
+        /* Light background detected (contrast-color is black) -> Deep hue-tinted subtext & soft border */
+        @container style(--rl-contrast-color: black) {
+          .rl-theme-container .rl-subtext {
+            color: oklch(from var(--rl-surface-effective) 0.32 0.07 h) !important;
+          }
+          .rl-theme-container .rl-border-subtle {
+            border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6) !important;
+          }
+        }
+
+        /* ── Adaptive Elevation (Shadow in Light, Glowing OKLCH border in Dark) ── */
+        .shadow-adaptive, .rl-elevation {
+          box-shadow:
+            /* Crisp drop shadow in light mode */
+            0 2px 8px light-dark(rgba(0, 0, 0, 0.12), transparent),
+            0 12px 32px light-dark(rgba(0, 0, 0, 0.08), transparent),
+            /* Vivid neon glowing border in dark mode */
+            inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)),
+            0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)),
+            0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8));
+        }
+
+        /* Re-declare color on semantic text elements using :where() so utility/inherited colors take precedence */
+        :where(p, h1, h2, h3, h4, h5, h6, li, blockquote, figcaption, caption, label, legend, dt, dd) {
+          color: var(--foreground);
+        }
+        .dark {
+          color-scheme: dark;
+        }
+        .light {
+          color-scheme: light;
+        }
+
+        /* Accessibility fallback for hidden="until-found" in older/non-supporting browsers */
+        @supports not (content-visibility: hidden) {
+          [hidden="until-found"] {
+            display: none !important;
+          }
+        }
+
+        /* ── Global body reset ───────────────────────────────────────────── */
+        body {
+          background-color: var(--background);
+          color: var(--foreground);
+          font-family: var(--font-sans);
+        }
+
+        /* ── Uniform focus styles ────────────────────────────────────────── */
+        *,
+        ::before,
+        ::after {
+          /* Setup default ring/outline parameters or halo */
+          --un-ring-color: var(--primary);
+        }
+
+        *:focus-visible,
+        *:has(> a:focus-visible) {
+          outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
+          outline-offset: 2px;
+        }
+        `
+
   return {
     name: "rimelight-ui",
     safelist,
@@ -360,197 +544,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
 
     preflights: [
       {
-        getCSS: (() => {
-          let cachedCss: string | null = null
-          return () => {
-            if (cachedCss) return cachedCss
-
-            const lightDarkLines = Object.entries(resolvedColors)
-              .flatMap(([color, modes]) => {
-                const light = modes.light as Record<string, string>
-                const dark = (modes.dark ?? modes.light) as Record<string, string>
-                return Object.keys(light).map((shade) => {
-                  const l = light[shade]
-                  const d = dark[shade] ?? l
-                  return `            --color-${color}-${shade}: light-dark(${l}, ${d});`
-                })
-              })
-              .join("\n")
-
-            const semanticTokenLines = Object.entries(colorConfig.semanticTokens)
-              .map(([token, val]) => {
-                if (typeof val === "string") {
-                  return `          --${token}: ${val};`
-                }
-                const l = val.light
-                const d = val.dark ?? l
-                return `          --${token}: light-dark(${l}, ${d});`
-              })
-              .join("\n")
-
-            cachedCss = `
-        :root {
-          color-scheme: light dark;
-
-          /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
-${semanticTokenLines}
-          --radius: 0.625rem;
-          --font-sans: "Noto Sans", sans-serif;
-          --font-serif: "Noto Serif", serif;
-          --font-mono: "Noto Sans Mono", monospace;
-
-          --ui-header-height: 4rem;
-          --rl-container: 90rem;
-
-          /* Text / background / border / ring semantic tokens using responsive neutral variables */
-          --text-color-default: var(--color-neutral-700);
-          --text-color-muted: var(--color-neutral-600);
-          --text-color-dimmed: var(--color-neutral-500);
-          --text-color-toned: var(--color-neutral-800);
-          --text-color-highlighted: var(--color-neutral-950);
-          --text-color-elevated: var(--color-neutral-800);
-          --text-color-accented: var(--color-neutral-900);
-          --text-color-inverted: var(--color-neutral-50);
-
-          --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
-          --background-color-muted: var(--color-neutral-100);
-          --background-color-elevated: var(--color-neutral-200);
-          --background-color-accented: var(--color-neutral-300);
-          --background-color-dimmed: var(--color-neutral-400);
-          --background-color-toned: var(--color-neutral-800);
-          --background-color-highlighted: var(--color-neutral-900);
-          --background-color-inverted: var(--color-neutral-950);
-
-          --border-color-default: var(--color-neutral-200);
-          --border-color-muted: var(--color-neutral-100);
-          --border-color-elevated: var(--color-neutral-200);
-          --border-color-accented: var(--color-neutral-300);
-          --border-color-dimmed: var(--color-neutral-400);
-          --border-color-toned: var(--color-neutral-800);
-          --border-color-highlighted: var(--color-neutral-900);
-          --border-color-inverted: var(--color-neutral-950);
-
-          --ring-color-default: var(--color-neutral-200);
-          --ring-color-muted: var(--color-neutral-100);
-          --ring-color-elevated: var(--color-neutral-200);
-          --ring-color-accented: var(--color-neutral-300);
-          --ring-color-dimmed: var(--color-neutral-400);
-          --ring-color-toned: var(--color-neutral-800);
-          --ring-color-highlighted: var(--color-neutral-900);
-          --ring-color-inverted: var(--color-neutral-950);
-
-          --divide-color-default: var(--color-neutral-200);
-          --divide-color-inverted: var(--color-neutral-950);
-
-          /* Color scales — light-dark() resolves based on inherited color-scheme */
-${lightDarkLines}
-
-          /* Shiki / Expressive Code */
-          --shiki-foreground: #e1e4e8;
-          --shiki-background: #1f2428;
-          --shiki-token-keyword: #f97583;
-          --shiki-token-string: #9ecbff;
-          --shiki-token-comment: #6a737d;
-          --shiki-token-function: #b392f0;
-          --shiki-token-constant: #79b8ff;
-          --shiki-token-parameter: #ffab70;
-          --shiki-token-punctuation: #e1e4e8;
-        }
-
-        /* ── Container Style Query Property Registration ───────────────── */
-        @property --rl-contrast-color {
-          syntax: "<color>";
-          initial-value: white;
-          inherits: true;
-        }
-
-        /* ── Theme Container Detector & Sub-element Tinting ────────────── */
-        .rl-theme-container {
-          container-type: normal;
-          --rl-surface-effective: var(--rl-bg, var(--background));
-          --rl-contrast-color: contrast-color(var(--rl-surface-effective));
-          color: var(--rl-contrast-color);
-        }
-
-        .rl-theme-container > *,
-        .rl-theme-container :where(h1, h2, h3, h4, h5, h6, p, span, div, li, strong) {
-          color: inherit;
-        }
-
-        /* Dark background detected (contrast-color is white) -> Soft light subtext & subtle border */
-        @container style(--rl-contrast-color: white) {
-          .rl-theme-container .rl-subtext {
-            color: oklch(from var(--rl-surface-effective) 0.88 0.04 h) !important;
-          }
-          .rl-theme-container .rl-border-subtle {
-            border-color: oklch(from var(--rl-surface-effective) 0.45 0.08 h / 0.6) !important;
-          }
-        }
-
-        /* Light background detected (contrast-color is black) -> Deep hue-tinted subtext & soft border */
-        @container style(--rl-contrast-color: black) {
-          .rl-theme-container .rl-subtext {
-            color: oklch(from var(--rl-surface-effective) 0.32 0.07 h) !important;
-          }
-          .rl-theme-container .rl-border-subtle {
-            border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6) !important;
-          }
-        }
-
-        /* ── Adaptive Elevation (Shadow in Light, Glowing OKLCH border in Dark) ── */
-        .shadow-adaptive, .rl-elevation {
-          box-shadow:
-            /* Crisp drop shadow in light mode */
-            0 2px 8px light-dark(rgba(0, 0, 0, 0.12), transparent),
-            0 12px 32px light-dark(rgba(0, 0, 0, 0.08), transparent),
-            /* Vivid neon glowing border in dark mode */
-            inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)),
-            0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)),
-            0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8));
-        }
-
-        /* Re-declare color on semantic text elements using :where() so utility/inherited colors take precedence */
-        :where(p, h1, h2, h3, h4, h5, h6, li, blockquote, figcaption, caption, label, legend, dt, dd) {
-          color: var(--foreground);
-        }
-        .dark {
-          color-scheme: dark;
-        }
-        .light {
-          color-scheme: light;
-        }
-
-        /* Accessibility fallback for hidden="until-found" in older/non-supporting browsers */
-        @supports not (content-visibility: hidden) {
-          [hidden="until-found"] {
-            display: none !important;
-          }
-        }
-
-        /* ── Global body reset ───────────────────────────────────────────── */
-        body {
-          background-color: var(--background);
-          color: var(--foreground);
-          font-family: var(--font-sans);
-        }
-
-        /* ── Uniform focus styles ────────────────────────────────────────── */
-        *,
-        ::before,
-        ::after {
-          /* Setup default ring/outline parameters or halo */
-          --un-ring-color: var(--primary);
-        }
-
-        *:focus-visible,
-        *:has(> a:focus-visible) {
-          outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
-          outline-offset: 2px;
-        }
-        `
-            return cachedCss
-          }
-        })()
+        getCSS: () => preflightCss
       }
     ]
   }

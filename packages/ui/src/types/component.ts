@@ -4,6 +4,15 @@ export type Theme = "light" | "dark"
 
 export type ThemeColor = keyof typeof colorScales | (string & {})
 
+export type ColorShades = Record<string, string>
+
+export interface ColorModeScale {
+  light?: ColorShades
+  dark?: ColorShades
+}
+
+export type ColorScale = ColorShades | ColorModeScale
+
 export interface ComponentTheme {
   slots: string[]
   base: Record<string, string | string[]>

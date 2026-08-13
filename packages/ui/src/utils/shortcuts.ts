@@ -109,10 +109,15 @@ function convertKeyToCode(key: string): string {
 function isUsingInput(activeElement: Element | null): boolean | string {
   if (!activeElement) return false
   const tagName = activeElement.tagName
+  const isContentEditable =
+    typeof HTMLElement !== "undefined" &&
+    activeElement instanceof HTMLElement &&
+    activeElement.isContentEditable
   const contentEditable = activeElement.getAttribute("contenteditable")
   const isInput =
     tagName === "INPUT" ||
     tagName === "TEXTAREA" ||
+    isContentEditable ||
     contentEditable === "true" ||
     contentEditable === "plaintext-only"
   if (isInput) {

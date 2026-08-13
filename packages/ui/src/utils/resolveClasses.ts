@@ -8,8 +8,10 @@ const themeCache = new WeakMap<Function, Map<string, Record<string, string>>>()
 
 function getVariantCacheKey(variants: Record<string, any>): string {
   if (!variants) return ""
+  const keys = Object.keys(variants).toSorted()
   let key = ""
-  for (const k in variants) {
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i]!
     key += `${k}:${variants[k]};`
   }
   return key
@@ -51,7 +53,8 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
 
   if (isUnstyled) {
     if (rootClass) result.root = cx(rootClass)
-    for (const [slot, override] of Object.entries(mergedUI)) {
+    for (const slot in mergedUI) {
+      const override = mergedUI[slot]
       if (typeof override === "function") {
         result[slot] = cx(override(""))
       } else if (override) {
