@@ -1,9 +1,9 @@
 ---
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
 import type { SwitchProps } from "./switch"
-import { resolveTheme } from "../../utils/resolveTheme"
+import { resolveTheme } from "../../utils/resolver"
 import switchThemeDefault, { createSwitchTheme } from "./switch.theme"
 const switchTheme = resolveTheme(switchThemeDefault, createSwitchTheme)
 

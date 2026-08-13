@@ -1,9 +1,9 @@
 ---
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
 import type { InputRatingProps } from "./input-rating"
-import { resolveTheme } from "../../utils/resolveTheme"
+import { resolveTheme } from "../../utils/resolver"
 import inputRatingThemeDefault, { createInputRatingTheme } from "./input-rating.theme"
 const inputRatingTheme = resolveTheme(inputRatingThemeDefault, createInputRatingTheme)
 import RLAIcon from "../icon/RLAIcon.astro"

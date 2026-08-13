@@ -1,8 +1,8 @@
 ---
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import { resolveTheme } from "../../utils/resolveTheme"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
+import { resolveTheme } from "../../utils/resolver"
 import colorFieldThemeDefault, { createColorFieldTheme } from "./color-field.theme"
 const colorFieldTheme = resolveTheme(colorFieldThemeDefault, createColorFieldTheme)
 

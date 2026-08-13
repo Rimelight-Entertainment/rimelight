@@ -22,8 +22,8 @@
   "exports": {
     ".": "./src/ui.ts",
     "./components/*": "./src/components/*",
-    "./themes": "./src/themes.ts",
-    "./config/*": "./src/config/*",
+    "./config": "./src/config.ts",
+    "./stores/*": "./src/stores/*",
     "./utils/*": "./src/utils/*",
     "./types/*": "./src/types/*",
     "./icons/*": "./src/icons/*",

@@ -1,8 +1,8 @@
 ---
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import { resolveTheme } from "../../utils/resolveTheme"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
+import { resolveTheme } from "../../utils/resolver"
 import colorSliderThemeDefault, { createColorSliderTheme } from "./color-slider.theme"
 const colorSliderTheme = resolveTheme(colorSliderThemeDefault, createColorSliderTheme)
 

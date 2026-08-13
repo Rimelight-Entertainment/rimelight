@@ -8,7 +8,7 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import { colorConfig } from "../config/color.config"
+import { colorConfig } from "../config"
 
 const pathDirname = dirname(fileURLToPath(import.meta.url))
 export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")

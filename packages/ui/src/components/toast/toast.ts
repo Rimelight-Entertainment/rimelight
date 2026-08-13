@@ -1,4 +1,4 @@
-import type { ThemeColor } from "../../types/component"
+import type { ThemeColor } from "../../config"
 export interface ToastProps {
   /**
    * Main toast title.

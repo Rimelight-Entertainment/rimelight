@@ -1,9 +1,9 @@
 ---
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
 import type { ConfirmProps } from "./confirm"
-import { resolveTheme } from "../../utils/resolveTheme"
+import { resolveTheme } from "../../utils/resolver"
 import confirmThemeDefault, { createConfirmTheme } from "./confirm.theme"
 const confirmTheme = resolveTheme(confirmThemeDefault, createConfirmTheme)
 import RLAButton from "../button/RLAButton.astro"

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, useAttrs } from "vue"
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
 import type { BadgeProps } from "./badge"
 import badgeThemeDefault from "./badge.theme"
 

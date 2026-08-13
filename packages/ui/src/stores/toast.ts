@@ -12,6 +12,8 @@ export interface ToastItem {
 }
 
 export const toasts = atom<ToastItem[]>([])
+export const toastsStore = toasts
+export type Toast = ToastItem
 
 function generateToastId(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {

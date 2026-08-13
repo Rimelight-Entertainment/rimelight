@@ -1,9 +1,9 @@
 ---
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
 import type { StickySurfaceProps } from "./sticky-surface"
-import { resolveTheme } from "../../utils/resolveTheme"
+import { resolveTheme } from "../../utils/resolver"
 import stickySurfaceThemeDefault, { createStickySurfaceTheme } from "./sticky-surface.theme"
 const stickySurfaceTheme = resolveTheme(stickySurfaceThemeDefault, createStickySurfaceTheme)
 

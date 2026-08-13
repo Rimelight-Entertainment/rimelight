@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
+import { useUi } from "../../utils/resolver"
+import { resolveClasses } from "../../utils/resolver"
 import type { ScrollToTopProps } from "./scroll-to-top"
 import scrollToTopTheme from "./scroll-to-top.theme"
 import { trackScroll, scrollToTop as scrollToTopFn } from "../../utils/scroll"

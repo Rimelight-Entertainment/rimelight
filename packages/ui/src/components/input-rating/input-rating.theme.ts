@@ -1,5 +1,5 @@
-import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../utils/defineTheme"
+import { colorConfig } from "../../config"
+import { defineTheme } from "../../types/component"
 
 export const createInputRatingTheme = (colors: readonly string[] = colorConfig.colors) => {
   const colorVariants: Record<string, { root?: string; indicator: string; item: string }> = {
