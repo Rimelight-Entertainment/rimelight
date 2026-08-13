@@ -21,7 +21,7 @@ export interface HeaderLayerProps {
 }
 
 const {
-  as: Tag = "header",
+  as = "header",
   layerType = "header",
   contain = true,
   sticky = true,
@@ -34,6 +34,8 @@ const {
   class: className,
   ...rest
 } = Astro.props as HeaderLayerProps
+
+const Tag = (as || "header") as any
 
 const classes = resolveClasses(
   theme,
