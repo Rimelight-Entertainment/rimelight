@@ -6,8 +6,10 @@ import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
 import type { RimelightPresetOptions } from "./presets"
 
 export function ui(options: UIConfig = {}): AstroIntegration[] {
+  const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = options
+
   const presetOptions: RimelightPresetOptions = {
-    colors: options.colors ?? {},
+    colors,
     ...(options.autogenerateColorModes !== undefined && {
       autogenerateColorModes: options.autogenerateColorModes
     }),
@@ -15,24 +17,25 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
   }
 
   const resolvedConfig = {
-    ...options.components?.themes,
-    logos: options.logos ?? {},
-    colors: Array.from(new Set([...colorConfig.colors, ...Object.keys(options.colors ?? {})])),
-    shortcuts: options.shortcuts ?? {},
-    icons: options.icons ?? {}
+    ...components?.themes,
+    logos,
+    colors: [...new Set([...colorConfig.colors, ...Object.keys(colors)])],
+    shortcuts,
+    icons
   }
 
-  const userUnoConfig = options.unocss ?? {}
+  const content = typeof unocss.content === "object" ? unocss.content : undefined
+  const pipeline = typeof content?.pipeline === "object" ? content.pipeline : undefined
 
   return [
     UnoCSS({
-      ...userUnoConfig,
-      presets: [rimelightUiPreset(presetOptions), ...(userUnoConfig.presets ?? [])],
+      ...unocss,
+      presets: [rimelightUiPreset(presetOptions), ...(unocss.presets ?? [])],
       safelist: [
-        ...Object.values(options.icons ?? {}).filter(
+        ...Object.values(icons).filter(
           (v): v is string => typeof v === "string" && v.startsWith("i-")
         ),
-        ...(userUnoConfig.safelist ?? [])
+        ...(unocss.safelist ?? [])
       ],
       content: {
         pipeline: {
@@ -40,10 +43,16 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
             "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
             uiSrcGlob,
-            ...extractPipelineIncludes(userUnoConfig.content)
+            ...extractList(
+              pipeline?.include,
+              (i): i is string | RegExp => typeof i === "string" || i instanceof RegExp
+            )
           ]
         },
-        filesystem: [uiFilesystemGlob, ...extractFilesystemGlobs(userUnoConfig.content)]
+        filesystem: [
+          uiFilesystemGlob,
+          ...extractList(content?.filesystem, (i): i is string => typeof i === "string")
+        ]
       }
     }),
     {
@@ -64,18 +73,7 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
   ]
 }
 
-function extractPipelineIncludes(content: any): (string | RegExp)[] {
-  const include = content?.pipeline?.include
-  if (!include) return []
-  return (Array.isArray(include) ? include : [include]).filter(
-    (item): item is string | RegExp => typeof item === "string" || item instanceof RegExp
-  )
-}
-
-function extractFilesystemGlobs(content: any): string[] {
-  const filesystem = content?.filesystem
-  if (!filesystem) return []
-  return (Array.isArray(filesystem) ? filesystem : [filesystem]).filter(
-    (item): item is string => typeof item === "string"
-  )
+function extractList<T>(value: unknown, guard: (item: unknown) => item is T): T[] {
+  if (!value) return []
+  return (Array.isArray(value) ? value : [value]).filter(guard)
 }
