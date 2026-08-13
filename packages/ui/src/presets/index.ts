@@ -1,7 +1,6 @@
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import {
-  definePreset,
   presetTypography,
   presetWind4,
   presetIcons,
@@ -102,7 +101,7 @@ export interface RimelightPresetOptions {
   }
 }
 
-export default definePreset((options?: RimelightPresetOptions) => {
+export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const userColors = options?.colors ?? {}
   const autoGen = options?.autogenerateColorModes ?? true
   const allColors = [...new Set([...colorConfig.colors, ...Object.keys(userColors)])]
@@ -117,7 +116,7 @@ export default definePreset((options?: RimelightPresetOptions) => {
   )
   const resolvedColors = { ...resolvedBuiltins, ...resolvedUserColors }
 
-  const safelist = allColors.flatMap((color) => ["rl-color-" + color])
+  const safelist = allColors.map((color) => "rl-color-" + color)
 
   const enabledPresets = {
     wind: options?.presets?.wind !== false,
@@ -202,22 +201,6 @@ export default definePreset((options?: RimelightPresetOptions) => {
         }
       ],
       [
-        /^(text)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
-        ([, , name, opacity]) =>
-          opacity
-            ? { color: `color-mix(in srgb, var(--text-color-${name}) ${opacity}%, transparent)` }
-            : { color: `var(--text-color-${name})` }
-      ],
-      [
-        /^(bg)-(default|muted|elevated|accented|dimmed|toned|highlighted)(?:\/(\d+))?$/,
-        ([, , name, opacity]) =>
-          opacity
-            ? {
-                "background-color": `color-mix(in srgb, var(--background-color-${name}) ${opacity}%, transparent)`
-              }
-            : { "background-color": `var(--background-color-${name})` }
-      ],
-      [
         /^bg-inverted(?:\/(\d+))?$/,
         ([, opacity]) =>
           opacity
@@ -231,31 +214,29 @@ export default definePreset((options?: RimelightPresetOptions) => {
               }
       ],
       [
-        /^(ring)-(default|muted|elevated|accented|dimmed|toned|highlighted|inverted)(?:\/(\d+))?$/,
-        ([, , name, opacity]) =>
-          opacity
-            ? {
-                "--un-ring-color": `color-mix(in srgb, var(--ring-color-${name}) ${opacity}%, transparent)`
-              }
-            : { "--un-ring-color": `var(--ring-color-${name})` }
-      ],
-      [
-        /^(border)-(default|muted|elevated|accented|dimmed|toned|highlighted|inverted)(?:\/(\d+))?$/,
-        ([, , name, opacity]) =>
-          opacity
-            ? {
-                "border-color": `color-mix(in srgb, var(--border-color-${name}) ${opacity}%, transparent)`
-              }
-            : { "border-color": `var(--border-color-${name})` }
-      ],
-      [
-        /^(outline)-(inverted)(?:\/(\d+))?$/,
-        ([, , name, opacity]) =>
-          opacity
-            ? {
-                "outline-color": `color-mix(in srgb, var(--ring-color-${name}) ${opacity}%, transparent)`
-              }
-            : { "outline-color": `var(--ring-color-${name})` }
+        /^(text|bg|ring|border|outline)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
+        ([, rawProp = "text", name, opacity]) => {
+          const prop = rawProp || "text"
+          const cssPropMap: Record<string, string> = {
+            text: "color",
+            bg: "background-color",
+            ring: "--un-ring-color",
+            border: "border-color",
+            outline: "outline-color"
+          }
+          const varPrefixMap: Record<string, string> = {
+            ring: "ring-color",
+            outline: "ring-color",
+            bg: "background-color",
+            text: "text-color",
+            border: "border-color"
+          }
+          const cssProp = cssPropMap[prop] ?? "color"
+          const varName = `--${varPrefixMap[prop] ?? "text-color"}-${name}`
+          return opacity
+            ? { [cssProp]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
+            : { [cssProp]: `var(${varName})` }
+        }
       ]
     ],
 
@@ -379,91 +360,41 @@ export default definePreset((options?: RimelightPresetOptions) => {
 
     preflights: [
       {
-        getCSS: () => {
-          // Single pass: emit light-dark() for every color shade.
-          // The browser resolves each call based on the element's inherited color-scheme.
-          const lightDarkLines = Object.entries(resolvedColors)
-            .flatMap(([color, modes]) => {
-              const light = modes.light as Record<string, string>
-              const dark = (modes.dark ?? modes.light) as Record<string, string>
-              return Object.keys(light).map((shade) => {
-                const l = light[shade]
-                const d = dark[shade] ?? l
-                return `            --color-${color}-${shade}: light-dark(${l}, ${d});`
-              })
-            })
-            .join("\n")
+        getCSS: (() => {
+          let cachedCss: string | null = null
+          return () => {
+            if (cachedCss) return cachedCss
 
-          return `
+            const lightDarkLines = Object.entries(resolvedColors)
+              .flatMap(([color, modes]) => {
+                const light = modes.light as Record<string, string>
+                const dark = (modes.dark ?? modes.light) as Record<string, string>
+                return Object.keys(light).map((shade) => {
+                  const l = light[shade]
+                  const d = dark[shade] ?? l
+                  return `            --color-${color}-${shade}: light-dark(${l}, ${d});`
+                })
+              })
+              .join("\n")
+
+            const semanticTokenLines = Object.entries(colorConfig.semanticTokens)
+              .map(([token, val]) => {
+                if (typeof val === "string") {
+                  return `          --${token}: ${val};`
+                }
+                const l = val.light
+                const d = val.dark ?? l
+                return `          --${token}: light-dark(${l}, ${d});`
+              })
+              .join("\n")
+
+            cachedCss = `
         :root {
           color-scheme: light dark;
 
-          /* Semantic tokens — each resolves to its light or dark value based on color-scheme */
-          --background: light-dark(#ffffff, #030712);
-          --foreground: light-dark(#030712, #f9fafb);
-          --card: light-dark(#ffffff, #111827);
-          --card-foreground: light-dark(#030712, #f9fafb);
-          --popover: light-dark(#ffffff, #1f2937);
-          --popover-foreground: light-dark(#030712, #f9fafb);
-          --primary: light-dark(#0064d7, #3b82f6);
-          --primary-foreground: #ffffff;
-          --primary-accent: light-dark(#0050ac, #60a5fa);
-          --secondary: #8b5cf6;
-          --secondary-foreground: #f9fafb;
-          --secondary-accent: light-dark(#7c3aed, #a78bfa);
-          --muted: light-dark(#f3f4f6, #1f2937);
-          --muted-foreground: light-dark(#4b5563, #9ca3af);
-          --accent: light-dark(#f3f4f6, #374151);
-          --accent-foreground: light-dark(#111827, #f3f4f6);
-          --info: #3b82f6;
-          --info-foreground: #ffffff;
-          --info-accent: light-dark(#2563eb, #60a5fa);
-          --success: #22c55e;
-          --success-foreground: #ffffff;
-          --success-accent: light-dark(#16a34a, #4ade80);
-          --warning: #f59e0b;
-          --warning-foreground: #000000;
-          --warning-accent: light-dark(#d97706, #fbbf24);
-          --error: #ef4444;
-          --error-foreground: #f9fafb;
-          --error-accent: light-dark(#dc2626, #f87171);
-          --commentary: light-dark(#ec4899, #f472b6);
-          --commentary-foreground: light-dark(#f9fafb, #0f172a);
-          --commentary-accent: light-dark(#db2777, #f9a8d4);
-          --ideation: light-dark(#8b5cf6, #a78bfa);
-          --ideation-foreground: light-dark(#f9fafb, #0f172a);
-          --ideation-accent: light-dark(#7c3aed, #c4b5fd);
-          --source: light-dark(#38bdf8, #7dd3fc);
-          --source-foreground: #0f172a;
-          --source-accent: light-dark(#0284c7, #bae6fd);
-          --border: light-dark(#e5e7eb, rgba(249, 250, 251, 0.1));
-          --input: light-dark(#e5e7eb, rgba(249, 250, 251, 0.15));
-          --outline: light-dark(#9ca3af, #6b7280);
-          --ring: light-dark(#9ca3af, #6b7280);
+          /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
+${semanticTokenLines}
           --radius: 0.625rem;
-          --sidebar: light-dark(#f9fafb, #111827);
-          --sidebar-foreground: light-dark(#030712, #f9fafb);
-          --sidebar-primary: #1d4ed8;
-          --sidebar-primary-foreground: #f9fafb;
-          --sidebar-accent: light-dark(#f3f4f6, #1f2937);
-          --sidebar-accent-foreground: light-dark(#111827, #f3f4f6);
-          --sidebar-border: light-dark(#e5e7eb, #1f2937);
-          --sidebar-ring: light-dark(#9ca3af, #6b7280);
-          --chart-1: light-dark(#3b82f6, #60a5fa);
-          --chart-2: light-dark(#6366f1, #818cf8);
-          --chart-3: light-dark(#8b5cf6, #a78bfa);
-          --chart-4: light-dark(#a855f7, #c084fc);
-          --chart-5: light-dark(#ec4899, #f472b6);
-          --destructive: light-dark(#ef4444, #f87171);
-          --color-surface: light-dark(#ffffff, #1f2937);
-          --color-muted-strong: light-dark(#e5e7eb, #374151);
-          --color-foreground-secondary: light-dark(#4b5563, #d1d5db);
-          --color-foreground-tertiary: light-dark(#6b7280, #9ca3af);
-          --color-placeholder: light-dark(#9ca3af, #6b7280);
-          --color-input-border: light-dark(#d1d5db, #4b5563);
-          --color-hover: light-dark(#f3f4f6, #374151);
-          --color-destructive-subtle: light-dark(#fef2f2, #451a1a);
-          --color-accent-subtle: light-dark(#eff6ff, #1e293b);
           --font-sans: "Noto Sans", sans-serif;
           --font-serif: "Noto Serif", serif;
           --font-mono: "Noto Sans Mono", monospace;
@@ -616,10 +547,13 @@ ${lightDarkLines}
           outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
           outline-offset: 2px;
         }
-
         `
-        }
+            return cachedCss
+          }
+        })()
       }
     ]
   }
-})
+}
+
+export default rimelightUiPreset

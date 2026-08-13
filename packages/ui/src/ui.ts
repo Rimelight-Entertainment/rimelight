@@ -82,7 +82,7 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
             ...userPipelineIncludes
           ]
         },
-        filesystem: [uiFilesystemGlob, "src/components/**/*", "src/pages/**/*", ...userFilesystem]
+        filesystem: [uiFilesystemGlob, ...userFilesystem]
       },
       configResolved(config) {
         logUnoConfig(config, astroLogger)

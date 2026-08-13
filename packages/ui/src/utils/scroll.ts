@@ -14,13 +14,21 @@ export function trackScroll(
 
   const { threshold = 200 } = options
 
+  let ticking = false
+
   function update() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop
-    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
-    onUpdate({
-      isVisible: scrollTop > threshold,
-      scrollPercentage: scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
-    })
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
+        onUpdate({
+          isVisible: scrollTop > threshold,
+          scrollPercentage: scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
+        })
+        ticking = false
+      })
+      ticking = true
+    }
   }
 
   window.addEventListener("scroll", update, { passive: true })

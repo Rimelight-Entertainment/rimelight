@@ -1,4 +1,3 @@
-import { merge } from "./merge"
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const mergeCache = new WeakMap<object, Record<string, string | Function | undefined>>()
@@ -19,12 +18,12 @@ export function useUi(
   const cached = mergeCache.get(uiProp)
   if (cached) return cached
 
-  const merged = merge(uiProp, defaults)
-  const result: Record<string, string | Function | undefined> = {}
-  for (const key of Object.keys(merged)) {
-    const value = merged[key]
-    if (typeof value === "string" || typeof value === "function") {
-      result[key] = value
+  // Direct fast path for slot class overrides (flat string / function maps)
+  const result: Record<string, string | Function | undefined> = { ...defaults }
+  for (const key of Object.keys(uiProp)) {
+    const val = uiProp[key]
+    if (val !== undefined && val !== null) {
+      result[key] = val
     }
   }
 

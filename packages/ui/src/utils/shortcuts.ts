@@ -184,10 +184,11 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
       const { label, description, category, order } = shortcutConfig
       if (!label && !description) return []
 
+      const itemCategory = category || "system"
       const item: RegisteredShortcut = {
-        id: `${key}-${Math.random().toString(36).slice(2, 7)}`,
+        id: `${itemCategory}-${key}`,
         keys: formatShortcutKeys(key),
-        category: category || "system"
+        category: itemCategory
       }
       if (label) item.label = label
       if (description) item.description = description
@@ -220,7 +221,9 @@ export function defineShortcuts(
   }
 
   if (itemsToRegister.length > 0) {
-    activeShortcutsStore.set([...activeShortcutsStore.get(), ...itemsToRegister])
+    const newIds = new Set(itemsToRegister.map((item) => item.id))
+    const existing = activeShortcutsStore.get().filter((item) => !newIds.has(item.id))
+    activeShortcutsStore.set([...existing, ...itemsToRegister])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {

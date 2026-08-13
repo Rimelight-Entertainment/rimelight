@@ -59,15 +59,17 @@ export function getHeaderStack(): HeaderStackManager {
         if (!layer) {
           layer = { id, type, order, naturalHeight, isVisible, el }
           this.layers.push(layer)
-          this.layers.sort((a: HeaderLayer, b: HeaderLayer) => {
-            if (a.type !== b.type) return a.type === "banner" ? -1 : 1
-            return a.order - b.order
-          })
         } else {
+          layer.type = type
+          layer.order = order
           layer.naturalHeight = naturalHeight
           layer.isVisible = isVisible
           layer.el = el
         }
+        this.layers.sort((a: HeaderLayer, b: HeaderLayer) => {
+          if (a.type !== b.type) return a.type === "banner" ? -1 : 1
+          return a.order - b.order
+        })
         this.update()
       },
       unregister(id: string) {
