@@ -3,34 +3,15 @@ import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./config"
 import { colorConfig } from "./config"
 import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
-import type { RimelightPresetOptions } from "./presets"
 
 export function ui(options: UIConfig = {}): AstroIntegration[] {
   const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = options
-
-  const presetOptions: RimelightPresetOptions = {
-    colors,
-    ...(options.autogenerateColorModes !== undefined && {
-      autogenerateColorModes: options.autogenerateColorModes
-    }),
-    ...(options.presets !== undefined && { presets: options.presets })
-  }
-
-  const resolvedConfig = {
-    ...components?.themes,
-    logos,
-    colors: [...new Set([...colorConfig.colors, ...Object.keys(colors)])],
-    shortcuts,
-    icons
-  }
-
-  const content = typeof unocss.content === "object" ? unocss.content : undefined
-  const pipeline = typeof content?.pipeline === "object" ? content.pipeline : undefined
+  const unoContent = typeof unocss.content === "object" ? unocss.content : undefined
 
   return [
     UnoCSS({
       ...unocss,
-      presets: [rimelightUiPreset(presetOptions), ...(unocss.presets ?? [])],
+      presets: [rimelightUiPreset(options), ...(unocss.presets ?? [])],
       safelist: [
         ...Object.values(icons).filter(
           (v): v is string => typeof v === "string" && v.startsWith("i-")
@@ -44,14 +25,16 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
             "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
             uiSrcGlob,
             ...extractList(
-              pipeline?.include,
+              unoContent?.pipeline && typeof unoContent.pipeline === "object"
+                ? (unoContent.pipeline as { include?: unknown }).include
+                : undefined,
               (i): i is string | RegExp => typeof i === "string" || i instanceof RegExp
             )
           ]
         },
         filesystem: [
           uiFilesystemGlob,
-          ...extractList(content?.filesystem, (i): i is string => typeof i === "string")
+          ...extractList(unoContent?.filesystem, (i): i is string => typeof i === "string")
         ]
       }
     }),
@@ -63,7 +46,13 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
           updateConfig({
             vite: {
               define: {
-                "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(resolvedConfig)
+                "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify({
+                  ...components?.themes,
+                  logos,
+                  colors: [...new Set([...colorConfig.colors, ...Object.keys(colors)])],
+                  shortcuts,
+                  icons
+                })
               }
             }
           })
@@ -73,7 +62,5 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
   ]
 }
 
-function extractList<T>(value: unknown, guard: (item: unknown) => item is T): T[] {
-  if (!value) return []
-  return (Array.isArray(value) ? value : [value]).filter(guard)
-}
+const extractList = <T>(v: unknown, g: (x: unknown) => x is T): T[] =>
+  v ? (Array.isArray(v) ? v : [v]).filter(g) : []
