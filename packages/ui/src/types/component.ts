@@ -2,7 +2,7 @@ export interface ComponentTheme {
   slots: string[]
   base: Record<string, string | string[]>
   variants?: Record<string, Record<string, Record<string, string | string[]>>>
-  compoundVariants?: any[]
+  compoundVariants?: Record<string, unknown>[]
   defaultVariants?: Record<string, unknown>
 }
 
@@ -24,3 +24,9 @@ export type ComponentVariants<T extends { variants?: Record<string, Record<strin
 export type ComponentSlots<T extends { slots: readonly string[] }> = Partial<
   Record<T["slots"][number], string>
 >
+
+export type ComponentThemeProps<
+  T extends { slots: readonly string[]; variants?: Record<string, Record<string, unknown>> }
+> = ComponentVariants<T> & {
+  ui?: ComponentSlots<T>
+}

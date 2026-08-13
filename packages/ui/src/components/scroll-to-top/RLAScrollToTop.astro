@@ -62,7 +62,7 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 </rla-scroll-to-top>
 
 <script>
-  import { trackScroll, scrollToTop } from "../../utils/scroll"
+  import { trackScroll, scrollToTop } from "./scroll"
 
   class RLAScrollToTop extends HTMLElement {
     private cleanupScroll: (() => void) | null = null;
