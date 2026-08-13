@@ -57,6 +57,13 @@ async function checkApprovalRequirements(pageId: string, userId: string, userRol
     ? template[0].rolePermissions.whoCanReview
     : approvalRules.requiredRolesForApproval
 
+  // System owners and admins can always review & publish
+  const isOwnerOrAdmin = userRoles.some((role) => ["owner", "admin"].includes(role.toLowerCase()))
+
+  if (isOwnerOrAdmin) {
+    return { canPublish: true, reason: null }
+  }
+
   if (requiredRoles && requiredRoles.length > 0) {
     const hasRequiredRole = userRoles.some((role) => requiredRoles.includes(role))
     if (!hasRequiredRole) {
