@@ -7,22 +7,12 @@ const uiMergeCache = new WeakMap<object, Record<string, string | Function | unde
 
 const EMPTY_DEFAULTS: Record<string, string | Function | undefined> = Object.freeze({})
 
-function getVariantCacheKey(variants: Record<string, any>): string {
+function getVariantCacheKey(variants?: Record<string, any>): string {
   if (!variants) return ""
-  const keys = Object.keys(variants).toSorted()
-  let key = ""
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i]!
-    key += `${k}:${variants[k]};`
-  }
-  return key
-}
-
-function hasOwnProperties(obj: object): boolean {
-  for (const k in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, k)) return true
-  }
-  return false
+  return Object.keys(variants)
+    .toSorted()
+    .map((k) => `${k}:${variants[k]}`)
+    .join(";")
 }
 
 export function useUi(
@@ -30,24 +20,16 @@ export function useUi(
   uiProp?: Record<string, string | Function | undefined>
 ): Record<string, string | Function | undefined> {
   const defaults = uiConfig[componentName]
-
   if (!defaults) return EMPTY_DEFAULTS
-
-  if (!uiProp || !hasOwnProperties(uiProp)) {
-    return defaults
-  }
+  if (!uiProp || Object.keys(uiProp).length === 0) return defaults
 
   const cached = uiMergeCache.get(uiProp)
   if (cached) return cached
 
-  // Direct fast path for slot class overrides (flat string / function maps)
   const result: Record<string, string | Function | undefined> = { ...defaults }
   for (const key in uiProp) {
-    if (Object.prototype.hasOwnProperty.call(uiProp, key)) {
-      const val = uiProp[key]
-      if (val !== undefined && val !== null) {
-        result[key] = val
-      }
+    if (uiProp[key] != null) {
+      result[key] = uiProp[key]
     }
   }
 

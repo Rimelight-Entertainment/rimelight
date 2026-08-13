@@ -64,24 +64,18 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
   ]
 }
 
-function extractPipelineIncludes(content: unknown): (string | RegExp)[] {
-  if (!content || typeof content !== "object" || !("pipeline" in content)) return []
-  const pipeline = content.pipeline
-  if (!pipeline || typeof pipeline !== "object" || !("include" in pipeline)) return []
-  const include = pipeline.include
-  if (Array.isArray(include)) {
-    return include.filter(
-      (item): item is string | RegExp => typeof item === "string" || item instanceof RegExp
-    )
-  }
-  return typeof include === "string" || include instanceof RegExp ? [include] : []
+function extractPipelineIncludes(content: any): (string | RegExp)[] {
+  const include = content?.pipeline?.include
+  if (!include) return []
+  return (Array.isArray(include) ? include : [include]).filter(
+    (item): item is string | RegExp => typeof item === "string" || item instanceof RegExp
+  )
 }
 
-function extractFilesystemGlobs(content: unknown): string[] {
-  if (!content || typeof content !== "object" || !("filesystem" in content)) return []
-  const filesystem = content.filesystem
-  if (Array.isArray(filesystem)) {
-    return filesystem.filter((item): item is string => typeof item === "string")
-  }
-  return typeof filesystem === "string" ? [filesystem] : []
+function extractFilesystemGlobs(content: any): string[] {
+  const filesystem = content?.filesystem
+  if (!filesystem) return []
+  return (Array.isArray(filesystem) ? filesystem : [filesystem]).filter(
+    (item): item is string => typeof item === "string"
+  )
 }
