@@ -87,13 +87,8 @@ export interface UIConfig {
   unocss?: UserConfig
 }
 
-export interface ResolvedUIConfig {
-  logos?: Record<string, any>
+export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "icons">> & {
   colors?: readonly string[]
-  shortcuts?: {
-    categories?: Record<string, { label: string }>
-  }
-  icons?: RimelightIcons
   [key: string]: any
 }
 

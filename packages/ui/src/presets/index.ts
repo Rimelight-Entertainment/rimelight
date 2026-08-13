@@ -34,18 +34,14 @@ const VAR_PREFIX_MAP: Record<string, string> = {
   border: "border-color"
 }
 
-function generateLightShade(shade: string, value: string): string {
+function generateShade(shade: string, value: string, target: "white" | "black"): string {
   const num = Number(shade)
   if (isNaN(num)) return value
-  const mixPct = Math.min(60, ((950 - num) / 950) * 60)
-  return `color-mix(in oklch, ${value}, white ${Math.round(mixPct)}%)`
-}
-
-function generateDarkShade(shade: string, value: string): string {
-  const num = Number(shade)
-  if (isNaN(num)) return value
-  const mixPct = Math.min(60, ((num - 50) / 900) * 60)
-  return `color-mix(in oklch, ${value}, black ${Math.round(mixPct)}%)`
+  const mixPct =
+    target === "white"
+      ? Math.min(60, ((950 - num) / 950) * 60)
+      : Math.min(60, ((num - 50) / 900) * 60)
+  return `color-mix(in oklch, ${value}, ${target} ${Math.round(mixPct)}%)`
 }
 
 function resolveColorModes(
@@ -53,48 +49,43 @@ function resolveColorModes(
   autogenerate?: boolean
 ): { light: Record<string, string>; dark: Record<string, string> } {
   const raw = entry as Record<string, unknown>
+  const modeLight = (
+    typeof raw.light === "object" && raw.light ? { ...raw.light } : {}
+  ) as ColorShades
+  const modeDark = (typeof raw.dark === "object" && raw.dark ? { ...raw.dark } : {}) as ColorShades
 
-  const modeLight =
-    typeof raw.light === "object" && raw.light !== null ? { ...raw.light } : ({} as ColorShades)
-  const modeDark =
-    typeof raw.dark === "object" && raw.dark !== null ? { ...raw.dark } : ({} as ColorShades)
-
-  const modeKeys = new Set(["light", "dark"])
   const flatShades: ColorShades = {}
   for (const [k, v] of Object.entries(raw)) {
-    if (!modeKeys.has(k) && typeof v === "string") {
-      flatShades[k] = v
-    }
+    if (k !== "light" && k !== "dark" && typeof v === "string") flatShades[k] = v
   }
 
-  const allShades = [
-    ...new Set([...Object.keys(modeLight), ...Object.keys(modeDark), ...Object.keys(flatShades)])
-  ]
+  const allShades = Array.from(
+    new Set([...Object.keys(modeLight), ...Object.keys(modeDark), ...Object.keys(flatShades)])
+  )
 
   if (autogenerate) {
     if (Object.keys(modeLight).length === 0) {
-      for (const shade of allShades) {
-        const value = flatShades[shade] ?? modeDark[shade]
-        if (value) modeLight[shade] = generateLightShade(shade, value)
+      for (const s of allShades) {
+        const val = flatShades[s] ?? modeDark[s]
+        if (val) modeLight[s] = generateShade(s, val, "white")
       }
     }
     if (Object.keys(modeDark).length === 0) {
-      for (const shade of allShades) {
-        const value = flatShades[shade] ?? modeLight[shade]
-        if (value) modeDark[shade] = generateDarkShade(shade, value)
+      for (const s of allShades) {
+        const val = flatShades[s] ?? modeLight[s]
+        if (val) modeDark[s] = generateShade(s, val, "black")
       }
     }
   }
 
   const light: ColorShades = {}
   const dark: ColorShades = {}
+  for (const s of allShades) {
+    const lv = modeLight[s] ?? flatShades[s] ?? modeDark[s]
+    if (lv) light[s] = lv
 
-  for (const shade of allShades) {
-    const lv = modeLight[shade] ?? flatShades[shade] ?? modeDark[shade]
-    if (lv !== undefined) light[shade] = lv
-
-    const dv = modeDark[shade] ?? flatShades[shade] ?? modeLight[shade]
-    if (dv !== undefined) dark[shade] = dv
+    const dv = modeDark[s] ?? flatShades[s] ?? modeLight[s]
+    if (dv) dark[s] = dv
   }
 
   return { light, dark }
