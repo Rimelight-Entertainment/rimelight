@@ -39,7 +39,7 @@ export function merge(
   const object = { ...defaults }
 
   for (const key of Object.keys(base)) {
-    if (key === "__proto__" || key === "constructor") {
+    if (key === "__proto__" || key === "constructor" || key === "prototype") {
       continue
     }
 

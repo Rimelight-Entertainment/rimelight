@@ -18,18 +18,34 @@ type ColorShades = Record<string, string>
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades
 
+const CSS_PROP_MAP: Record<string, string> = {
+  text: "color",
+  bg: "background-color",
+  ring: "--un-ring-color",
+  border: "border-color",
+  outline: "outline-color"
+}
+
+const VAR_PREFIX_MAP: Record<string, string> = {
+  ring: "ring-color",
+  outline: "ring-color",
+  bg: "background-color",
+  text: "text-color",
+  border: "border-color"
+}
+
 function generateLightShade(shade: string, value: string): string {
   const num = Number(shade)
   if (isNaN(num)) return value
   const mixPct = Math.min(60, ((950 - num) / 950) * 60)
-  return `color-mix(in oklch, ${value}, white ${mixPct.toFixed(0)}%)`
+  return `color-mix(in oklch, ${value}, white ${Math.round(mixPct)}%)`
 }
 
 function generateDarkShade(shade: string, value: string): string {
   const num = Number(shade)
   if (isNaN(num)) return value
   const mixPct = Math.min(60, ((num - 50) / 900) * 60)
-  return `color-mix(in oklch, ${value}, black ${mixPct.toFixed(0)}%)`
+  return `color-mix(in oklch, ${value}, black ${Math.round(mixPct)}%)`
 }
 
 function resolveColorModes(
@@ -147,16 +163,15 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
     })
     .join("\n")
 
-  const preflightCss = `
-        :root {
-          color-scheme: light dark;
+  const preflightCss = `:root {
+  color-scheme: light dark;
 
-          /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
+  /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
 ${semanticTokenLines}
-          --radius: 0.625rem;
-          --font-sans: "Noto Sans", sans-serif;
-          --font-serif: "Noto Serif", serif;
-          --font-mono: "Noto Sans Mono", monospace;
+  --radius: 0.625rem;
+  --font-sans: "Noto Sans", sans-serif;
+  --font-serif: "Noto Serif", serif;
+  --font-mono: "Noto Sans Mono", monospace;
 
           --ui-header-height: 4rem;
           --rl-container: 90rem;
@@ -401,22 +416,8 @@ ${lightDarkLines}
         /^(text|bg|ring|border|outline)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
         ([, rawProp = "text", name, opacity]) => {
           const prop = rawProp || "text"
-          const cssPropMap: Record<string, string> = {
-            text: "color",
-            bg: "background-color",
-            ring: "--un-ring-color",
-            border: "border-color",
-            outline: "outline-color"
-          }
-          const varPrefixMap: Record<string, string> = {
-            ring: "ring-color",
-            outline: "ring-color",
-            bg: "background-color",
-            text: "text-color",
-            border: "border-color"
-          }
-          const cssProp = cssPropMap[prop] ?? "color"
-          const varName = `--${varPrefixMap[prop] ?? "text-color"}-${name}`
+          const cssProp = CSS_PROP_MAP[prop] ?? "color"
+          const varName = `--${VAR_PREFIX_MAP[prop] ?? "text-color"}-${name}`
           return opacity
             ? { [cssProp]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
             : { [cssProp]: `var(${varName})` }
@@ -456,7 +457,7 @@ ${lightDarkLines}
         ...Object.fromEntries(
           allColors.map((color) => {
             const m = resolvedColors[color]!
-            const shadeKeys = [...new Set([...Object.keys(m.light), ...Object.keys(m.dark)])]
+            const shadeKeys = Object.keys(m.light)
             return [color, createScale(color, shadeKeys)]
           })
         ),

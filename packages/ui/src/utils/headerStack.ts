@@ -44,6 +44,8 @@ export function getHeaderStack(): HeaderStackManager {
   }
 
   if (!window.RLHeaderStack) {
+    let updateScheduled = false
+
     window.RLHeaderStack = {
       layers: [] as HeaderLayer[],
       register(
@@ -90,24 +92,30 @@ export function getHeaderStack(): HeaderStackManager {
         this.update()
       },
       update() {
-        let currentTop = 0
-        for (const layer of this.layers) {
-          if (layer.el) {
-            // If hidden, slide it up out of view (or exactly to its negative height so it's ready to slide down)
-            const topPx = layer.isVisible ? `${currentTop}px` : `-${layer.naturalHeight}px`
-            layer.el.style.top = topPx
-            layer.el.style.opacity = layer.isVisible ? "1" : "0"
-            layer.el.style.pointerEvents = layer.isVisible ? "auto" : "none"
-            layer.el.style.setProperty(
-              "--rl-header-bottom",
-              `calc(${topPx} + ${layer.naturalHeight}px)`
-            )
+        if (updateScheduled) return
+        updateScheduled = true
+
+        requestAnimationFrame(() => {
+          updateScheduled = false
+          let currentTop = 0
+          for (const layer of this.layers) {
+            if (layer.el) {
+              // If hidden, slide it up out of view (or exactly to its negative height so it's ready to slide down)
+              const topPx = layer.isVisible ? `${currentTop}px` : `-${layer.naturalHeight}px`
+              layer.el.style.top = topPx
+              layer.el.style.opacity = layer.isVisible ? "1" : "0"
+              layer.el.style.pointerEvents = layer.isVisible ? "auto" : "none"
+              layer.el.style.setProperty(
+                "--rl-header-bottom",
+                `calc(${topPx} + ${layer.naturalHeight}px)`
+              )
+            }
+            if (layer.isVisible) {
+              currentTop += layer.naturalHeight
+            }
           }
-          if (layer.isVisible) {
-            currentTop += layer.naturalHeight
-          }
-        }
-        document.documentElement.style.setProperty("--rl-total-header-height", `${currentTop}px`)
+          document.documentElement.style.setProperty("--rl-total-header-height", `${currentTop}px`)
+        })
       }
     }
   }

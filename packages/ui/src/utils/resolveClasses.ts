@@ -67,10 +67,23 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   for (const slot in resolved) {
     const value = resolved[slot] ?? ""
     const override = mergedUI[slot]
-    if (typeof override === "function") {
+    if (!override) {
+      result[slot] = value
+    } else if (typeof override === "function") {
       result[slot] = cx(override(value))
     } else {
       result[slot] = cx(value, override)
+    }
+  }
+
+  for (const slot in mergedUI) {
+    if (!(slot in resolved) && slot !== "root") {
+      const override = mergedUI[slot]
+      if (typeof override === "function") {
+        result[slot] = cx(override(""))
+      } else if (override) {
+        result[slot] = cx(override)
+      }
     }
   }
 

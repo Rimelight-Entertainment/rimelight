@@ -15,10 +15,11 @@ export function trackScroll(
   const { threshold = 200 } = options
 
   let ticking = false
+  let rafId: number | null = null
 
   function update() {
     if (!ticking) {
-      requestAnimationFrame(() => {
+      rafId = requestAnimationFrame(() => {
         const scrollTop = window.scrollY || document.documentElement.scrollTop
         const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
         onUpdate({
@@ -26,6 +27,7 @@ export function trackScroll(
           scrollPercentage: scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0
         })
         ticking = false
+        rafId = null
       })
       ticking = true
     }
@@ -36,6 +38,9 @@ export function trackScroll(
 
   return () => {
     window.removeEventListener("scroll", update)
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId)
+    }
   }
 }
 

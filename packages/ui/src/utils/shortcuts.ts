@@ -66,10 +66,15 @@ const kbdKeysMap: Record<string, string> = {
   arrowright: "→"
 }
 
+const shortcutKeyFormatCache = new Map<string, string[]>()
+
 // Convert a combination string (e.g. meta_alt_t) into platform-specific readable key symbol arrays
 export function formatShortcutKeys(keyStr: string): string[] {
+  const cached = shortcutKeyFormatCache.get(keyStr)
+  if (cached) return cached
+
   const parts = keyStr.split("_")
-  return parts.map((part) => {
+  const result = parts.map((part) => {
     const lower = part.toLowerCase()
     if (kbdKeysMap[lower] !== undefined) {
       return kbdKeysMap[lower]
@@ -79,6 +84,9 @@ export function formatShortcutKeys(keyStr: string): string[] {
     }
     return part.charAt(0).toUpperCase() + part.slice(1)
   })
+
+  shortcutKeyFormatCache.set(keyStr, result)
+  return result
 }
 
 // Reactive store containing all currently registered shortcuts on the page
@@ -105,15 +113,28 @@ function convertKeyToCode(key: string): string {
   return specialKeysMap[key.toLowerCase()] || key
 }
 
+const SHIFTABLE_KEYS = new Set([
+  "arrowleft",
+  "arrowright",
+  "arrowup",
+  "arrowdown",
+  "tab",
+  "escape",
+  "enter",
+  "backspace"
+])
+
 // Input tag checking
 function isUsingInput(activeElement: Element | null): boolean | string {
-  if (!activeElement) return false
-  const tagName = activeElement.tagName
+  let el = activeElement
+  while (el && el.shadowRoot && el.shadowRoot.activeElement) {
+    el = el.shadowRoot.activeElement
+  }
+  if (!el) return false
+  const tagName = el.tagName
   const isContentEditable =
-    typeof HTMLElement !== "undefined" &&
-    activeElement instanceof HTMLElement &&
-    activeElement.isContentEditable
-  const contentEditable = activeElement.getAttribute("contenteditable")
+    typeof HTMLElement !== "undefined" && el instanceof HTMLElement && el.isContentEditable
+  const contentEditable = el.getAttribute("contenteditable")
   const isInput =
     tagName === "INPUT" ||
     tagName === "TEXTAREA" ||
@@ -121,7 +142,7 @@ function isUsingInput(activeElement: Element | null): boolean | string {
     contentEditable === "true" ||
     contentEditable === "plaintext-only"
   if (isInput) {
-    return activeElement.getAttribute("name") || true
+    return el.getAttribute("name") || true
   }
   return false
 }
@@ -218,6 +239,10 @@ export function defineShortcuts(
   const { shortcuts: parsedShortcuts, registered: itemsToRegister } = parseShortcutConfig(config)
 
   const chainDelay = options.chainDelay ?? 800
+  const maxChainLength = Math.max(
+    2,
+    ...parsedShortcuts.filter((s) => s.chained).map((s) => s.key.split("-").length)
+  )
   const chainedInputs: string[] = []
   let debounceTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -250,16 +275,21 @@ export function defineShortcuts(
 
     // Handle chained shortcuts
     chainedInputs.push(e.key.toLowerCase())
+    if (chainedInputs.length > maxChainLength) {
+      chainedInputs.shift()
+    }
     clearTimeout(debounceTimer)
 
     if (chainedInputs.length >= 2) {
-      const chainedKey = chainedInputs.slice(-2).join("-")
-      const matchedChained = parsedShortcuts.find((s) => s.chained && s.key === chainedKey)
-      if (matchedChained && isShortcutEnabled(matchedChained)) {
-        e.preventDefault()
-        matchedChained.handler(e)
-        clearChainedInput()
-        return
+      for (let len = Math.min(chainedInputs.length, maxChainLength); len >= 2; len--) {
+        const chainedKey = chainedInputs.slice(-len).join("-")
+        const matchedChained = parsedShortcuts.find((s) => s.chained && s.key === chainedKey)
+        if (matchedChained && isShortcutEnabled(matchedChained)) {
+          e.preventDefault()
+          matchedChained.handler(e)
+          clearChainedInput()
+          return
+        }
       }
     }
 
@@ -280,24 +310,9 @@ export function defineShortcuts(
         if (pressedKey !== shortcut.key) continue
       }
 
-      // Shift modifier check:
-      // If the shortcut explicitly specifies shiftKey: true, then e.shiftKey must be true.
-      // If the shortcut does NOT specify shiftKey: true, but e.shiftKey is true:
-      // - If the base key is a letter (e.g. 'k'), then we do NOT match (because it's Shift+K, not K).
-      // - If the base key is a shiftable control key (like 'arrowleft'), we do NOT match.
-      // - For other keys (like '?', '/', etc.), we allow it to match even if e.shiftKey is true.
+      // Shift modifier check
       const alphabetKey = /^[a-z]$/i.test(shortcut.key)
-      const shiftableKeys = [
-        "arrowleft",
-        "arrowright",
-        "arrowup",
-        "arrowdown",
-        "tab",
-        "escape",
-        "enter",
-        "backspace"
-      ]
-      const shiftableKey = shiftableKeys.includes(shortcut.key)
+      const shiftableKey = SHIFTABLE_KEYS.has(shortcut.key)
 
       if (shortcut.shiftKey && !e.shiftKey) continue
       if (!shortcut.shiftKey && e.shiftKey && (alphabetKey || shiftableKey)) continue
@@ -319,12 +334,19 @@ export function defineShortcuts(
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(debounceTimer)
 
-    // Unregister items from the active store
+    // Unregister items from the active store safely per instance
     if (itemsToRegister.length > 0) {
-      const idsToRemove = new Set(itemsToRegister.map((item) => item.id))
-      activeShortcutsStore.set(
-        activeShortcutsStore.get().filter((item) => !idsToRemove.has(item.id))
-      )
+      const current = activeShortcutsStore.get()
+      const updated = [...current]
+      for (const item of itemsToRegister) {
+        const idx = updated.findIndex(
+          (registeredItem) => registeredItem === item || registeredItem.id === item.id
+        )
+        if (idx !== -1) {
+          updated.splice(idx, 1)
+        }
+      }
+      activeShortcutsStore.set(updated)
     }
   }
 }

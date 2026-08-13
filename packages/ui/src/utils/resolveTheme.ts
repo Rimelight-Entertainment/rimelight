@@ -1,7 +1,7 @@
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const uiConfig = getUIConfig()
-const themeCache = new Map<Function, any>()
+const themeCache = new WeakMap<Function>()
 
 export function resolveTheme<T>(
   themeDefault: T,

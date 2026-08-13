@@ -11,11 +11,9 @@ function kebabToCamel(str: string): string {
 }
 
 function themeNameFromFile(path: string): string {
+  const lastSlash = path.lastIndexOf("/")
   const fileName =
-    path
-      .split("/")
-      .pop()
-      ?.replace(/\.theme\.ts$/, "") || ""
+    lastSlash !== -1 ? path.slice(lastSlash + 1, -9) : path.replace(/\.theme\.ts$/, "")
   return kebabToCamel(fileName)
 }
 

@@ -1,6 +1,14 @@
 import { getUIConfig } from "virtual:rimelight-ui"
 
 const mergeCache = new WeakMap<object, Record<string, string | Function | undefined>>()
+const EMPTY_DEFAULTS: Record<string, string | Function | undefined> = Object.freeze({})
+
+function hasOwnProperties(obj: object): boolean {
+  for (const k in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, k)) return true
+  }
+  return false
+}
 
 export function useUi(
   componentName: string,
@@ -9,9 +17,9 @@ export function useUi(
   const globalConfig = getUIConfig()
   const defaults = globalConfig[componentName]
 
-  if (!defaults) return {}
+  if (!defaults) return EMPTY_DEFAULTS
 
-  if (!uiProp || Object.keys(uiProp).length === 0) {
+  if (!uiProp || !hasOwnProperties(uiProp)) {
     return defaults
   }
 
@@ -20,10 +28,12 @@ export function useUi(
 
   // Direct fast path for slot class overrides (flat string / function maps)
   const result: Record<string, string | Function | undefined> = { ...defaults }
-  for (const key of Object.keys(uiProp)) {
-    const val = uiProp[key]
-    if (val !== undefined && val !== null) {
-      result[key] = val
+  for (const key in uiProp) {
+    if (Object.prototype.hasOwnProperty.call(uiProp, key)) {
+      const val = uiProp[key]
+      if (val !== undefined && val !== null) {
+        result[key] = val
+      }
     }
   }
 
