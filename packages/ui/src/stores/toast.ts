@@ -15,15 +15,8 @@ export const toasts = atom<ToastItem[]>([])
 export const toastsStore = toasts
 export type Toast = ToastItem
 
-function generateToastId(): string {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID()
-  }
-  return `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-}
-
 export function addToast(toast: Omit<ToastItem, "id"> & { id?: string }): ToastItem {
-  const id = toast.id || generateToastId()
+  const id = toast.id || crypto.randomUUID()
   const item: ToastItem = { duration: 6000, ...toast, id }
   toasts.set([...toasts.get(), item])
   return item
