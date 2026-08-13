@@ -21,7 +21,7 @@ const { block, locale = "en" } = Astro.props
     <ParagraphBlock block={block} locale={locale} />
   ) : block.type === "CalloutBlock" ? (
     <CalloutBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child) => (
+      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
         <Astro.self block={child} locale={locale} />
       ))}
     </CalloutBlock>
@@ -31,13 +31,13 @@ const { block, locale = "en" } = Astro.props
     <CodeBlock block={block} locale={locale} />
   ) : block.type === "ScriptBlock" ? (
     <ScriptBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child) => (
+      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
         <Astro.self block={child} locale={locale} />
       ))}
     </ScriptBlock>
   ) : block.type === "SceneBlock" ? (
     <SceneBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child) => (
+      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
         <Astro.self block={child} locale={locale} />
       ))}
     </SceneBlock>
@@ -46,7 +46,7 @@ const { block, locale = "en" } = Astro.props
   ) : block.type === "SectionBlock" ? (
     <section class="cms-section my-6" data-block-id={block.id}>
       {block.props.title && <h2 class="text-2xl font-bold mb-4">{block.props.title}</h2>}
-      {(block.children || block.props?.children)?.map((child) => (
+      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
         <Astro.self block={child} locale={locale} />
       ))}
     </section>

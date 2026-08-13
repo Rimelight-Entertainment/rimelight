@@ -6,8 +6,7 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
-import { RimelightEditorLayout } from "@rimelight/cms/client/components/RimelightEditorLayout"
-import { RimelightPropertiesPanel } from "@rimelight/cms/client/components/RimelightPropertiesPanel"
+import { RimelightEditorLayout, RimelightPropertiesPanel } from "@rimelight/cms/client/components"
 import "@rimelight/cms/client/styles/cms-editor.css"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
@@ -59,7 +58,7 @@ const initialProperties = rawContent?.properties || {}
 
   <div class="cms-editor-with-panel w-full h-[calc(100vh-180px)] min-h-[600px] flex flex-row overflow-hidden">
     <div id="cms-editor-layout" class="cms-editor-main flex-1 min-w-0 flex flex-col overflow-hidden">
-      <RimelightEditorLayout client:only="solid" pageId={id} initialBlocks={extractedBlocks} />
+      <RimelightEditorLayout client:only="solid" pageId={id!} initialBlocks={extractedBlocks} />
     </div>
     <RimelightPropertiesPanel client:only="solid" pageType={pageType} initialProperties={initialProperties} class="flex-none w-72" />
   </div>

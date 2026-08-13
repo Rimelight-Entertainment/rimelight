@@ -16,6 +16,7 @@ export interface RimelightPropertiesPanelProps {
   pageType?: string
   initialProperties?: Record<string, any>
   onPropertiesChange?: (props: Record<string, any>) => void
+  class?: string
 }
 
 export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> = (
