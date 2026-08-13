@@ -117,6 +117,9 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
       editableDiv.innerText = String(text)
     }
 
+    editableDiv.addEventListener("input", () => {
+      saveProps()
+    })
     editableDiv.addEventListener("focus", () => setToolbarVisible(true))
     editableDiv.addEventListener("blur", () => {
       setTimeout(() => {
@@ -147,6 +150,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
       e.preventDefault()
       const clipboardText = e.clipboardData?.getData("text/plain") || ""
       document.execCommand("insertText", false, clipboardText)
+      saveProps()
     })
   })
 

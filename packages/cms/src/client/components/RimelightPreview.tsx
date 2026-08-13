@@ -14,39 +14,60 @@ function escapeHtml(str: string): string {
 }
 
 function getChildren(b: BaseBlock): BaseBlock[] {
-  if (Array.isArray(b.props?.children)) return b.props.children
+  if (!b) return []
   if (Array.isArray(b.children)) return b.children
+  if (Array.isArray(b.props?.children)) return b.props.children
   return []
 }
 
 function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string {
-  const rawText = b.props.text
-  const textVal = typeof rawText === "object" ? rawText.en || "" : rawText || ""
+  if (!b) return ""
+  const props = b.props || {}
+  const rawText = props.text
+  const textVal = typeof rawText === "object" && rawText !== null ? rawText.en || "" : rawText || ""
 
   if (b.type === "ParagraphBlock") {
-    let html = textVal
-    if (Array.isArray(rawText)) {
-      html = rawText
+    const renderNodes = (nodes: any[]): string => {
+      return nodes
         .map((node) => {
-          if (node.type === "text") return escapeHtml(node.text)
-          if (node.type === "link")
-            return `<a href="${escapeHtml(node.url)}" class="text-blue-400 hover:underline">${escapeHtml(node.text)}</a>`
-          if (node.type === "page_mention")
+          if (node.type === "text") {
+            let t = escapeHtml(node.text || "")
+            if (node.marks && Array.isArray(node.marks)) {
+              if (node.marks.includes("bold")) t = `<strong>${t}</strong>`
+              if (node.marks.includes("italic")) t = `<em>${t}</em>`
+              if (node.marks.includes("underline")) t = `<u>${t}</u>`
+              if (node.marks.includes("strikethrough")) t = `<s>${t}</s>`
+              if (node.marks.includes("code"))
+                t = `<code class="bg-gray-800 px-1 py-0.5 rounded text-sm">${t}</code>`
+            }
+            return t
+          }
+          if (node.type === "link") {
+            const inner = node.children ? renderNodes(node.children) : escapeHtml(node.text || "")
+            return `<a href="${escapeHtml(node.url || "#")}" class="text-blue-400 hover:underline">${inner}</a>`
+          }
+          if (node.type === "page_mention") {
             return `<span class="px-1 py-0.5 bg-blue-900/50 text-blue-300 rounded text-sm">${escapeHtml(node.text)}</span>`
+          }
           return ""
         })
         .join("")
+    }
+
+    let html = ""
+    if (Array.isArray(rawText)) {
+      html = renderNodes(rawText)
     } else {
       html = escapeHtml(textVal)
     }
-    return `<p class="text-gray-200 text-base leading-relaxed my-3">${html}</p>`
+    return `<p class="text-gray-200 text-base leading-relaxed my-3">${html || '<span class="text-gray-500 italic">Empty paragraph</span>'}</p>`
   }
 
   if (b.type === "SectionBlock") {
     const level = Math.min(6, sectionDepth + 2)
-    const title = b.props.title || "Untitled Section"
+    const title = props.title || "Untitled Section"
     const slug = title.toLowerCase().replace(/\W+/g, "-")
-    const description = b.props.description
+    const description = props.description
     let headingClasses = "font-bold text-gray-100"
     if (level === 2) headingClasses += " text-2xl"
     else if (level === 3) headingClasses += " text-xl"
@@ -67,7 +88,7 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "CalloutBlock") {
-    const variant = b.props.variant || "info"
+    const variant = props.variant || "info"
     const variantLabel = variant.toUpperCase()
     let borderColor = "border-blue-500",
       bgColor = "bg-blue-950/30",
@@ -109,9 +130,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "ImageBlock") {
-    const src = b.props.url || b.props.src || ""
-    const alt = b.props.alt || ""
-    const caption = b.props.caption
+    const src = props.url || props.src || ""
+    const alt = props.alt || ""
+    const caption = props.caption
     return `<figure class="my-4">
       <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" class="w-full rounded-lg border border-gray-800 max-h-96 object-contain" />
       ${caption ? `<figcaption class="text-center text-xs text-gray-500 mt-2">${escapeHtml(caption)}</figcaption>` : ""}
@@ -119,9 +140,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "CodeBlock") {
-    const code = b.props.code || textVal
-    const language = b.props.language || "plaintext"
-    const caption = b.props.caption
+    const code = props.code || textVal
+    const language = props.language || "plaintext"
+    const caption = props.caption
     return `<div class="my-3">
       ${caption ? `<div class="text-xs text-gray-500 mb-1">${escapeHtml(caption)}</div>` : ""}
       <pre class="bg-gray-950 border border-gray-800 rounded-lg p-4 overflow-x-auto">
@@ -132,9 +153,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "ScriptBlock") {
-    const title = b.props.title || "Untitled Script"
-    const synopsis = b.props.synopsis
-    const chars = b.props.characters || []
+    const title = props.title || "Untitled Script"
+    const synopsis = props.synopsis
+    const chars = props.characters || []
     return `<div class="script-block my-4 border-l-4 border-amber-500 pl-4 py-2 bg-amber-950/10 rounded-r-md">
       <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">SCRIPT</div>
       <div class="font-bold text-gray-100">${escapeHtml(title)}</div>
@@ -149,12 +170,12 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "SceneBlock") {
-    const setting = b.props.setting || "NONE"
-    const location = b.props.location || "LOCATION"
-    const timeOfDay = b.props.timeOfDay || "DAY"
+    const setting = props.setting || "NONE"
+    const location = props.location || "LOCATION"
+    const timeOfDay = props.timeOfDay || "DAY"
     const slugLine = `${setting === "INTERIOR" ? "INT." : setting === "EXTERIOR" ? "EXT." : ""} ${location.toUpperCase()} - ${timeOfDay}`
-    const description = b.props.description
-    const transition = b.props.transition || "NONE"
+    const description = props.description
+    const transition = props.transition || "NONE"
     return `<div class="scene-block my-4">
       <div class="font-mono text-sm font-bold text-cyan-400 uppercase tracking-wide py-1">${escapeHtml(slugLine)}</div>
       ${description ? `<p class="text-sm text-gray-300 mt-1 leading-relaxed">${escapeHtml(description)}</p>` : ""}
@@ -168,9 +189,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "DialogueBlock") {
-    const character = b.props.character || "CHARACTER"
-    const parenthetical = b.props.parenthetical
-    const line = b.props.line || ""
+    const character = props.character || "CHARACTER"
+    const parenthetical = props.parenthetical
+    const line = props.line || ""
     return `<div class="dialogue-block my-2">
       <div class="text-center font-bold text-sm text-purple-300 uppercase tracking-wider">${escapeHtml(character)}</div>
       ${parenthetical ? `<div class="text-center italic text-xs text-gray-500">(${escapeHtml(parenthetical)})</div>` : ""}
@@ -184,9 +205,6 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
 export const RimelightPreview: Component<RimelightPreviewProps> = (props) => {
   return (
     <div class="cms-preview-pane flex-1 w-full h-full overflow-y-auto">
-      <div class="cms-preview-header px-6 py-3 border-b border-gray-800 text-xs font-medium text-gray-400 uppercase tracking-widest">
-        Live Preview
-      </div>
       <div class="cms-preview-document p-8 max-w-3xl mx-auto space-y-4">
         <For each={props.blocks()}>{(b) => <div innerHTML={renderBlockPreviewHtml(b, 0)} />}</For>
       </div>

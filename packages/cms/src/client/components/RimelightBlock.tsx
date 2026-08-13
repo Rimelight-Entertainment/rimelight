@@ -65,8 +65,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
     )
 
     const childrenList = () => {
-      if (Array.isArray(props.block.children)) return props.block.children
-      if (Array.isArray(props.block.props?.children)) return props.block.props.children
+      if (Array.isArray(blockItem.children)) return blockItem.children
+      if (Array.isArray(blockItem.props?.children)) return blockItem.props.children
       return []
     }
 
@@ -76,26 +76,26 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
       case "SectionBlock":
         return (
           <SectionEditor
-            blockId={props.block.id}
-            props={props.block.props}
+            blockId={blockItem.id}
+            props={blockItem.props}
             children={childrenList}
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth + 1, props.block.id)}
+            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth + 1, blockItem.id)}
             renderChildBlock={renderChildBlock}
           />
         )
       case "CalloutBlock":
         return (
           <CalloutEditor
-            blockId={props.block.id}
-            props={props.block.props}
+            blockId={blockItem.id}
+            props={blockItem.props}
             children={childrenList}
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, props.block.id)}
+            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, blockItem.id)}
             renderChildBlock={renderChildBlock}
           />
         )
@@ -106,26 +106,26 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
       case "ScriptBlock":
         return (
           <ScriptEditor
-            blockId={props.block.id}
-            props={props.block.props}
+            blockId={blockItem.id}
+            props={blockItem.props}
             children={childrenList}
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, props.block.id)}
+            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, blockItem.id)}
             renderChildBlock={renderChildBlock}
           />
         )
       case "SceneBlock":
         return (
           <SceneEditor
-            blockId={props.block.id}
-            props={props.block.props}
+            blockId={blockItem.id}
+            props={blockItem.props}
             children={childrenList}
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, props.block.id)}
+            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, blockItem.id)}
             renderChildBlock={renderChildBlock}
           />
         )

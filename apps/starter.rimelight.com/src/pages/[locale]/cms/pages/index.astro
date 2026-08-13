@@ -3,6 +3,8 @@ import { auth } from "@/auth/auth"
 import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
+import RLATable from "@rimelight/ui/components/table/RLATable.astro"
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts"
 import { db } from "@/db"
 import { pages } from "@/db/schema"
 import { desc, isNull } from "drizzle-orm"
@@ -19,11 +21,26 @@ const pagesList = await db
   .where(isNull(pages.deletedAt))
   .orderBy(desc(pages.createdAt))
 
-const pagesData = pagesList.map((page) =>
-  Object.assign({}, page, {
-    content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
-  })
-)
+const formattedPages = pagesList.map((page) => {
+  const titleVal = typeof page.title === "object" && page.title !== null ? (page.title as Record<string, string>).en || "" : String(page.title || "")
+  return {
+    id: page.id,
+    title: titleVal,
+    slug: page.slug,
+    type: page.type || "page",
+    status: page.publishedVersionId ? "published" : "draft",
+    publishedVersionId: page.publishedVersionId,
+    createdAt: page.createdAt
+  }
+})
+
+const columns: TableColumn[] = [
+  { id: "title", accessorKey: "title", header: "Title", enableSorting: true },
+  { id: "slug", accessorKey: "slug", header: "Slug", enableSorting: true },
+  { id: "type", accessorKey: "type", header: "Type", enableSorting: true },
+  { id: "status", accessorKey: "status", header: "Status", enableSorting: true },
+  { id: "actions", header: "Actions", enableSorting: false, meta: { class: { th: "text-right", td: "text-right" } } }
+]
 ---
 
 <CMSDashboardLayout title="Pages" description="Manage CMS pages" activeSection="pages">
@@ -33,53 +50,73 @@ const pagesData = pagesList.map((page) =>
     </RLAButton>
   </Fragment>
 
-  <div class="bg-white rounded-lg shadow overflow-hidden">
-    <table class="w-full">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200">
-        {pagesData.map((page: any) => {
-          const titleVal = typeof page.title === "object" ? page.title?.en || "" : page.title || ""
-          return (
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{titleVal}</div>
-              </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {page.slug}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <RLABadge variant="soft" color="blue" size="xs">{page.type}</RLABadge>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {page.publishedVersionId ? (
-                <RLABadge variant="soft" color="green" size="xs">Published</RLABadge>
-              ) : (
-                <RLABadge variant="soft" color="yellow" size="xs">Draft</RLABadge>
-              )}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-              <RLAButton href={`/cms/pages/${page.id}/edit`} variant="ghost" color="primary" size="xs">
-                Edit
-              </RLAButton>
-              <RLAButton href={`/cms/pages/${page.id}/preview`} variant="ghost" color="neutral" size="xs">
-                Preview
-              </RLAButton>
-              <RLAButton variant="ghost" color="error" size="xs">
-                Delete
-              </RLAButton>
-            </td>
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
-  </div>
+  <RLATable
+    columns={columns}
+    data={formattedPages}
+    searchable
+    searchPlaceholder="Search pages..."
+    showColumnsToggle
+    hoverable
+    striped
+    class="w-full"
+  >
+    {formattedPages.map((page) => (
+      <tr class="hover:bg-muted/20 transition-colors">
+        <td class="p-3.5 text-sm font-medium text-foreground" data-col-id="title">
+          {page.title}
+        </td>
+        <td class="p-3.5 text-sm text-muted-foreground font-mono" data-col-id="slug">
+          {page.slug}
+        </td>
+        <td class="p-3.5" data-col-id="type">
+          <RLABadge variant="soft" color="blue" size="xs">
+            {page.type}
+          </RLABadge>
+        </td>
+        <td class="p-3.5" data-col-id="status">
+          {page.status === "published" ? (
+            <RLABadge variant="soft" color="green" size="xs">Published</RLABadge>
+          ) : (
+            <RLABadge variant="soft" color="yellow" size="xs">Draft</RLABadge>
+          )}
+        </td>
+        <td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions">
+          <div class="flex items-center justify-end gap-2">
+            <RLAButton href={`/cms/pages/${page.id}/edit`} variant="ghost" color="primary" size="xs">
+              Edit
+            </RLAButton>
+            <RLAButton href={`/cms/pages/${page.id}/preview`} variant="ghost" color="neutral" size="xs">
+              Preview
+            </RLAButton>
+            <RLAButton variant="ghost" color="error" size="xs" class="delete-page-btn" data-page-id={page.id}>
+              Delete
+            </RLAButton>
+          </div>
+        </td>
+      </tr>
+    ))}
+  </RLATable>
+
+  <script>
+    document.querySelectorAll(".delete-page-btn").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const pageId = (btn as HTMLElement).dataset.pageId
+        if (!pageId) return
+        if (!confirm("Are you sure you want to delete this page?")) return
+
+        try {
+          const res = await fetch(`/api/cms/pages/${pageId}`, {
+            method: "DELETE"
+          })
+          if (res.ok) {
+            window.location.reload()
+          } else {
+            alert("Failed to delete page")
+          }
+        } catch (err) {
+          alert("Error deleting page")
+        }
+      })
+    })
+  </script>
 </CMSDashboardLayout>

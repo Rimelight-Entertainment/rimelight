@@ -37,7 +37,10 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
     const len = state.blocks.length
     const result: BaseBlock[] = []
     for (let i = 0; i < len; i++) {
-      result.push(JSON.parse(JSON.stringify(state.blocks[i])) as BaseBlock)
+      const blockObj = JSON.parse(JSON.stringify(state.blocks[i]))
+      if (blockObj && typeof blockObj === "object") {
+        result.push(blockObj)
+      }
     }
     return result
   })
@@ -52,10 +55,6 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
   })
 
   onMount(() => {
-    if (containerRef && editorPaneRef && previewPaneRef && handleRef) {
-      initSplitPane(containerRef, editorPaneRef, previewPaneRef, handleRef)
-    }
-
     const publicMethods = {
       undo: () => state.undo(),
       redo: () => state.redo(),
@@ -87,6 +86,16 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
 
     if (containerRef) {
       Object.assign(containerRef, publicMethods)
+    }
+  })
+
+  createEffect(() => {
+    if (state.previewVisible()) {
+      queueMicrotask(() => {
+        if (containerRef && editorPaneRef && previewPaneRef && handleRef) {
+          initSplitPane(containerRef, editorPaneRef, previewPaneRef, handleRef)
+        }
+      })
     }
   })
 
