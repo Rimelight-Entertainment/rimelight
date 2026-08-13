@@ -4,14 +4,15 @@ import type { UIConfig } from "./config"
 import { colorConfig } from "./config"
 import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
 
-export function ui(options: UIConfig = {}): AstroIntegration[] {
-  const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = options
-  const unoContent = typeof unocss.content === "object" ? unocss.content : undefined
+export function ui(opts: UIConfig = {}): AstroIntegration[] {
+  const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = opts
+  const content = (typeof unocss.content === "object" ? unocss.content : {}) as Record<string, any>
+  const toArr = (v: unknown) => (Array.isArray(v) ? v : v ? [v] : [])
 
   return [
     UnoCSS({
       ...unocss,
-      presets: [rimelightUiPreset(options), ...(unocss.presets ?? [])],
+      presets: [rimelightUiPreset(opts), ...(unocss.presets ?? [])],
       safelist: [
         ...Object.values(icons).filter(
           (v): v is string => typeof v === "string" && v.startsWith("i-")
@@ -24,17 +25,14 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
             "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
             uiSrcGlob,
-            ...extractList(
-              unoContent?.pipeline && typeof unoContent.pipeline === "object"
-                ? (unoContent.pipeline as { include?: unknown }).include
-                : undefined,
+            ...toArr(content.pipeline?.include).filter(
               (i): i is string | RegExp => typeof i === "string" || i instanceof RegExp
             )
           ]
         },
         filesystem: [
           uiFilesystemGlob,
-          ...extractList(unoContent?.filesystem, (i): i is string => typeof i === "string")
+          ...toArr(content.filesystem).filter((i): i is string => typeof i === "string")
         ]
       }
     }),
@@ -61,6 +59,3 @@ export function ui(options: UIConfig = {}): AstroIntegration[] {
     }
   ]
 }
-
-const extractList = <T>(v: unknown, g: (x: unknown) => x is T): T[] =>
-  v ? (Array.isArray(v) ? v : [v]).filter(g) : []
