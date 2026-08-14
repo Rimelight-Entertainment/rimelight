@@ -73,13 +73,7 @@ const keySymbols: Record<string, string> = {
   arrowright: "→"
 }
 
-const specialCodes: Record<string, string> = {
-  space: "Space",
-  enter: "Enter",
-  escape: "Escape",
-  tab: "Tab",
-  backspace: "Backspace",
-  delete: "Delete",
+const SPECIAL_CODES: Record<string, string> = {
   arrowup: "ArrowUp",
   arrowdown: "ArrowDown",
   arrowleft: "ArrowLeft",
@@ -103,24 +97,22 @@ export function formatShortcutKeys(keyStr: string): string[] {
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
 const toCode = (k: string) =>
-  k.length === 1 && /[a-z]/i.test(k)
-    ? `Key${k.toUpperCase()}`
-    : k.length === 1 && /\d/.test(k)
-      ? `Digit${k}`
-      : /^f\d+$/i.test(k)
-        ? k.toUpperCase()
-        : specialCodes[k.toLowerCase()] || k
+  k.length === 1
+    ? /[a-z]/i.test(k)
+      ? `Key${k.toUpperCase()}`
+      : /\d/.test(k)
+        ? `Digit${k}`
+        : k
+    : /^f\d+$/i.test(k)
+      ? k.toUpperCase()
+      : SPECIAL_CODES[k.toLowerCase()] || k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
 
+const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 function isUsingInput(el: Element | null): boolean | string {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
   if (!el) return false
-  const t = el.tagName
-  return t === "INPUT" ||
-    t === "TEXTAREA" ||
-    t === "SELECT" ||
-    (el instanceof HTMLElement && el.isContentEditable)
-    ? el.getAttribute("name") || true
-    : false
+  const isInput = INPUT_TAGS.has(el.tagName) || (el instanceof HTMLElement && el.isContentEditable)
+  return isInput ? el.getAttribute("name") || true : false
 }
 
 interface ParsedShortcuts {
@@ -155,16 +147,10 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         : parts.filter((p) => !MODIFIERS.has(p)).join("_")
       if (chainedKey) maxChain = Math.max(maxChain, parts.length)
 
-      let ctrl = false,
-        meta = false,
-        shift = false,
-        alt = false
-      for (const p of parts) {
-        if (p === "ctrl" || p === "control") ctrl = true
-        else if (p === "meta" || p === "command") meta = true
-        else if (p === "shift") shift = true
-        else if (p === "alt" || p === "option") alt = true
-      }
+      let ctrl = parts.some((p) => p === "ctrl" || p === "control")
+      let meta = parts.some((p) => p === "meta" || p === "command")
+      const shift = parts.includes("shift")
+      const alt = parts.some((p) => p === "alt" || p === "option")
       if (!isMac && meta && !ctrl) {
         meta = false
         ctrl = true

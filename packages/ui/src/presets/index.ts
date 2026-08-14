@@ -23,6 +23,9 @@ export const uiSrcGlob = join(
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades
 
+const isMode = (v: ColorConfigValue): v is ColorModeShades =>
+  typeof v === "object" && v !== null && ("light" in v || "dark" in v)
+
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
   const num = Number(shade)
   if (isNaN(num)) return value
@@ -37,22 +40,21 @@ function resolveColorModes(
   entry: ColorConfigValue,
   autogenerate?: boolean
 ): { light: Record<string, string>; dark: Record<string, string> } {
-  const raw = (entry ?? {}) as Record<string, any>
-  const mL: ColorShades = raw.light && typeof raw.light === "object" ? raw.light : {}
-  const mD: ColorShades = raw.dark && typeof raw.dark === "object" ? raw.dark : {}
-  const flat = Object.fromEntries(
-    Object.entries(raw).filter(([k, v]) => k !== "light" && k !== "dark" && typeof v === "string")
-  )
+  const mL = isMode(entry) && entry.light ? entry.light : {}
+  const mD = isMode(entry) && entry.dark ? entry.dark : {}
+  const flat = isMode(entry) ? {} : entry
   const shades = [...new Set([...Object.keys(mL), ...Object.keys(mD), ...Object.keys(flat)])]
-
   const light: ColorShades = {}
   const dark: ColorShades = {}
+
   for (const s of shades) {
-    const [rL, rD, rF] = [mL[s], mD[s], flat[s]]
-    let [lv, dv] = [rL ?? rF ?? rD, rD ?? rF ?? rL]
+    let lv = mL[s] ?? flat[s] ?? mD[s]
+    let dv = mD[s] ?? flat[s] ?? mL[s]
     if (autogenerate) {
-      if (!rL && (rF || rD)) lv = generateShade(s, rF ?? rD, "white")
-      if (!rD && (rF || rL)) dv = generateShade(s, rF ?? rL, "black")
+      const baseL = flat[s] ?? mD[s]
+      const baseD = flat[s] ?? mL[s]
+      if (!mL[s] && baseL) lv = generateShade(s, baseL, "white")
+      if (!mD[s] && baseD) dv = generateShade(s, baseD, "black")
     }
     if (lv) light[s] = lv
     if (dv) dark[s] = dv
@@ -60,18 +62,18 @@ function resolveColorModes(
   return { light, dark }
 }
 
-const createScale = (colorName: string) => ({
-  DEFAULT: `var(--${colorName})`,
-  foreground: `var(--${colorName}-foreground)`,
-  accent: `var(--${colorName}-accent)`,
-  ...Object.fromEntries(COLOR_SHADES.map((shade) => [shade, `var(--color-${colorName}-${shade})`]))
+const createScale = (c: string) => ({
+  DEFAULT: `var(--${c})`,
+  foreground: `var(--${c}-foreground)`,
+  accent: `var(--${c}-accent)`,
+  ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
 })
 
 const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(semanticTokens)
-  .map(([token, val]) =>
-    typeof val === "string"
-      ? `  --${token}: ${val};`
-      : `  --${token}: light-dark(${val.light}, ${val.dark ?? val.light});`
+  .map(([t, v]) =>
+    typeof v === "string"
+      ? `  --${t}: ${v};`
+      : `  --${t}: light-dark(${v.light}, ${v.dark ?? v.light});`
   )
   .join("\n")
 
@@ -79,25 +81,64 @@ const formatColorLines = (
   colorMap: Record<string, { light?: Record<string, string>; dark?: Record<string, string> }>
 ) =>
   Object.entries(colorMap)
-    .flatMap(([color, modes]) => {
-      const light = modes.light ?? {}
-      const dark = modes.dark ?? light
-      return Object.keys(light).map(
-        (s) => `  --color-${color}-${s}: light-dark(${light[s]}, ${dark[s] ?? light[s]});`
+    .flatMap(([c, m]) =>
+      Object.keys(m.light ?? {}).map(
+        (s) => `  --color-${c}-${s}: light-dark(${m.light![s]}, ${m.dark?.[s] ?? m.light![s]});`
       )
-    })
+    )
     .join("\n")
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
 
+const PROP_MAP: Record<string, { css: string; prefix?: string }> = {
+  text: { css: "color" },
+  bg: { css: "background-color", prefix: "background" },
+  ring: { css: "--un-ring-color", prefix: "ring" },
+  outline: { css: "outline-color", prefix: "ring" },
+  divide: { css: "border-color", prefix: "divide" },
+  border: { css: "border-color" }
+}
+
+const INTENT_PREFLIGHT_VARS = `
+  --text-color-default: var(--color-neutral-700);
+  --text-color-muted: var(--color-neutral-600);
+  --text-color-dimmed: var(--color-neutral-500);
+  --text-color-toned: var(--color-neutral-800);
+  --text-color-highlighted: var(--color-neutral-950);
+  --text-color-elevated: var(--color-neutral-800);
+  --text-color-accented: var(--color-neutral-900);
+  --text-color-inverted: var(--color-neutral-50);
+  --background-color-default: light-dark(oklch(1 0 0), var(--color-neutral-50));
+  --background-color-muted: var(--color-neutral-100);
+  --background-color-elevated: var(--color-neutral-200);
+  --background-color-accented: var(--color-neutral-300);
+  --background-color-dimmed: var(--color-neutral-400);
+  --background-color-toned: var(--color-neutral-800);
+  --background-color-highlighted: var(--color-neutral-900);
+  --background-color-inverted: var(--color-neutral-950);
+  --border-color-default: var(--color-neutral-200);
+  --border-color-muted: var(--color-neutral-100);
+  --border-color-elevated: var(--color-neutral-200);
+  --border-color-accented: var(--color-neutral-300);
+  --border-color-dimmed: var(--color-neutral-400);
+  --border-color-toned: var(--color-neutral-800);
+  --border-color-highlighted: var(--color-neutral-900);
+  --border-color-inverted: var(--color-neutral-950);
+  --ring-color-default: var(--color-neutral-200);
+  --ring-color-muted: var(--color-neutral-100);
+  --ring-color-elevated: var(--color-neutral-200);
+  --ring-color-accented: var(--color-neutral-300);
+  --ring-color-dimmed: var(--color-neutral-400);
+  --ring-color-toned: var(--color-neutral-800);
+  --ring-color-highlighted: var(--color-neutral-900);
+  --ring-color-inverted: var(--color-neutral-950);
+  --divide-color-default: var(--color-neutral-200);
+  --divide-color-inverted: var(--color-neutral-950);`
+
 const STATIC_PREFLIGHT_SUFFIX = `
 }
 
-@property --rl-contrast-color {
-  syntax: "<color>";
-  initial-value: white;
-  inherits: true;
-}
+@property --rl-contrast-color { syntax: "<color>"; initial-value: white; inherits: true; }
 
 .rl-theme-container {
   container-type: normal;
@@ -105,10 +146,7 @@ const STATIC_PREFLIGHT_SUFFIX = `
   --rl-contrast-color: contrast-color(var(--rl-surface-effective));
   color: var(--rl-contrast-color);
 }
-.rl-theme-container > *,
-.rl-theme-container :where(h1, h2, h3, h4, h5, h6, p, span, div, li, strong) {
-  color: inherit;
-}
+.rl-theme-container > *, .rl-theme-container :where(h1, h2, h3, h4, h5, h6, p, span, div, li, strong) { color: inherit; }
 
 @container style(--rl-contrast-color: white) {
   .rl-theme-container .rl-subtext { color: oklch(from var(--rl-surface-effective) 0.88 0.04 h) !important; }
@@ -120,12 +158,7 @@ const STATIC_PREFLIGHT_SUFFIX = `
   .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6) !important; }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-}
-
+body { background-color: var(--background); color: var(--foreground); font-family: var(--font-sans); }
 *, ::before, ::after { --un-ring-color: var(--primary); }
 *:focus-visible, *:has(> a:focus-visible) {
   outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
@@ -142,19 +175,20 @@ export interface RimelightPresetOptions {
 
 export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const userColors = options?.colors ?? {}
-  const autoGen = options?.autogenerateColorModes ?? true
   const allColors = getAllColorNames(userColors)
-
   const resolvedUserColors = Object.fromEntries(
-    Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
+    Object.entries(userColors).map(([name, entry]) => [
+      name,
+      resolveColorModes(entry, options?.autogenerateColorModes ?? true)
+    ])
   )
 
-  const safelist: string[] = allColors.map((color) => `rl-color-${color}`)
-  if (options?.icons) {
-    for (const v of Object.values(options.icons)) {
-      if (typeof v === "string" && v.startsWith("i-")) safelist.push(v)
-    }
-  }
+  const safelist: string[] = [
+    ...allColors.map((color) => `rl-color-${color}`),
+    ...Object.values(options?.icons ?? {}).filter(
+      (v): v is string => typeof v === "string" && v.startsWith("i-")
+    )
+  ]
 
   const userColorLines =
     Object.keys(userColors).length > 0 ? formatColorLines(resolvedUserColors) : ""
@@ -162,56 +196,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
     ? `${STATIC_BUILTIN_COLOR_LINES}\n${userColorLines}`
     : STATIC_BUILTIN_COLOR_LINES
 
-  const preflightCss = `:root {
-  color-scheme: light dark;
-${STATIC_SEMANTIC_TOKEN_LINES}
-  --radius: 0.625rem;
-  --font-sans: "Noto Sans", sans-serif;
-  --font-serif: "Noto Serif", serif;
-  --font-mono: "Noto Sans Mono", monospace;
-  --ui-header-height: 4rem;
-  --rl-container: 90rem;
-
-  --text-color-default: var(--color-neutral-700);
-  --text-color-muted: var(--color-neutral-600);
-  --text-color-dimmed: var(--color-neutral-500);
-  --text-color-toned: var(--color-neutral-800);
-  --text-color-highlighted: var(--color-neutral-950);
-  --text-color-elevated: var(--color-neutral-800);
-  --text-color-accented: var(--color-neutral-900);
-  --text-color-inverted: var(--color-neutral-50);
-
-  --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
-  --background-color-muted: var(--color-neutral-100);
-  --background-color-elevated: var(--color-neutral-200);
-  --background-color-accented: var(--color-neutral-300);
-  --background-color-dimmed: var(--color-neutral-400);
-  --background-color-toned: var(--color-neutral-800);
-  --background-color-highlighted: var(--color-neutral-900);
-  --background-color-inverted: var(--color-neutral-950);
-
-  --border-color-default: var(--color-neutral-200);
-  --border-color-muted: var(--color-neutral-100);
-  --border-color-elevated: var(--color-neutral-200);
-  --border-color-accented: var(--color-neutral-300);
-  --border-color-dimmed: var(--color-neutral-400);
-  --border-color-toned: var(--color-neutral-800);
-  --border-color-highlighted: var(--color-neutral-900);
-  --border-color-inverted: var(--color-neutral-950);
-
-  --ring-color-default: var(--color-neutral-200);
-  --ring-color-muted: var(--color-neutral-100);
-  --ring-color-elevated: var(--color-neutral-200);
-  --ring-color-accented: var(--color-neutral-300);
-  --ring-color-dimmed: var(--color-neutral-400);
-  --ring-color-toned: var(--color-neutral-800);
-  --ring-color-highlighted: var(--color-neutral-900);
-  --ring-color-inverted: var(--color-neutral-950);
-
-  --divide-color-default: var(--color-neutral-200);
-  --divide-color-inverted: var(--color-neutral-950);
-
-${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
+  const preflightCss = `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
 
   const presets: Preset[] = []
   if (options?.presets?.wind !== false) presets.push(presetWind4())
@@ -222,9 +207,7 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
           "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
             "font-family": "var(--font-sans), system-ui, sans-serif"
           },
-          "pre,code": {
-            "font-family": "var(--font-mono), monospace"
-          }
+          "pre,code": { "font-family": "var(--font-mono), monospace" }
         }
       })
     )
@@ -267,7 +250,7 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
         /^(shadow-adaptive|rl-elevation)$/,
         () => ({
           "box-shadow":
-            "0 2px 8px light-dark(rgba(0, 0, 0, 0.12), transparent), 0 12px 32px light-dark(rgba(0, 0, 0, 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8))"
+            "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8))"
         })
       ],
       [
@@ -280,24 +263,15 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
       [
         /^(text|bg|ring|border|outline|divide)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
         ([, prop, name, opacity]) => {
-          const propMap: Record<string, { css: string; prefix?: string }> = {
-            text: { css: "color" },
-            bg: { css: "background-color", prefix: "background" },
-            ring: { css: "--un-ring-color", prefix: "ring" },
-            outline: { css: "outline-color", prefix: "ring" },
-            divide: { css: "border-color", prefix: "divide" },
-            border: { css: "border-color" }
-          }
-          const { css, prefix = prop } = (prop ? propMap[prop] : undefined) ?? {
+          const { css, prefix = prop } = (prop ? PROP_MAP[prop] : undefined) ?? {
             css: `${prop}-color`
           }
           const varName = `--${prefix}-color-${name}`
-          const isBgInverted = prop === "bg" && name === "inverted"
-          const baseResult: Record<string, string> = opacity
+          const res: Record<string, string> = opacity
             ? { [css]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
             : { [css]: `var(${varName})` }
-          if (isBgInverted) baseResult.color = "var(--text-color-inverted)"
-          return baseResult
+          if (prop === "bg" && name === "inverted") res.color = "var(--text-color-inverted)"
+          return res
         }
       ]
     ],
@@ -353,7 +327,7 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
         "placeholder": "var(--color-placeholder)",
         "input-border": "var(--color-input-border)",
         "accent-subtle": "var(--color-accent-subtle)",
-        ...Object.fromEntries(allColors.map((color) => [color, createScale(color)]))
+        ...Object.fromEntries(allColors.map((c) => [c, createScale(c)]))
       },
       radius: {
         "xs": "calc(var(--radius) - 0.375rem)",

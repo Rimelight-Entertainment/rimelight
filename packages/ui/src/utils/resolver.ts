@@ -1,14 +1,13 @@
 import { cx } from "css-variants"
-import { uiConfig } from "../config"
+import { uiConfig, type Override } from "../config"
 
-type Override = string | ((base: string) => string) | undefined
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
 const themeCreatorCache = new WeakMap<Function>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
 export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
-  const d = uiConfig.themes?.[name]
-  return d ? (prop ? { ...d, ...prop } : d) : (prop ?? EMPTY)
+  const slots = uiConfig.themes?.[name]?.slots
+  return slots ? (prop ? { ...slots, ...prop } : slots) : (prop ?? EMPTY)
 }
 
 export function resolveTheme<T>(fallback: T, create?: (colors: readonly string[]) => T): T {
@@ -30,9 +29,10 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   if (!map) classCache.set(themeFn, (map = new Map()))
 
   const key = variants
-    ? Object.keys(variants)
-        .toSorted()
-        .reduce((acc, k) => `${acc}${k}:${String((variants as Record<string, unknown>)[k])};`, "")
+    ? Object.entries(variants)
+        .toSorted(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => `${k}:${String(v)}`)
+        .join(";")
     : ""
   let cached = map.get(key)
   if (!cached) map.set(key, (cached = themeFn(variants)))
@@ -42,8 +42,8 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   const res: Record<string, string> = { ...cached }
   for (const slot in ui) {
     const o = ui[slot]
-    if (o) res[slot] = typeof o === "function" ? cx(o(res[slot] ?? "")) : cx(res[slot] ?? "", o)
+    if (o) res[slot] = typeof o === "function" ? cx(o(res[slot] ?? "")) : cx(res[slot], o)
   }
-  if (rootClass) res.root = cx(res.root ?? "", rootClass)
+  if (rootClass) res.root = cx(res.root, rootClass)
   return res
 }
