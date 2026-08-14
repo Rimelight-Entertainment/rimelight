@@ -58,7 +58,7 @@
   "send_email": [
     {
       "name": "EMAIL",
-      "remote": true
+      "remote": false
     }
   ],
   "vars": {
@@ -66,5 +66,22 @@
     "CONSTRUCTION_AUTH": "true",
     "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
     "EMAIL_DOMAIN": "rimelight.com"
+  },
+  "env": {
+    "remote": {
+      "r2_buckets": [
+        {
+          "binding": "BLOB",
+          "bucket_name": "rimelight-dot-com",
+          "remote": true
+        }
+      ],
+      "send_email": [
+        {
+          "name": "EMAIL",
+          "remote": true
+        }
+      ]
+    }
   }
 }
