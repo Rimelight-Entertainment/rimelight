@@ -321,16 +321,6 @@ ${lightDarkLines}
   return {
     name: "rimelight-ui",
     safelist,
-    content: {
-      pipeline: {
-        include: [
-          /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
-          "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
-          uiSrcGlob
-        ]
-      },
-      filesystem: [uiFilesystemGlob]
-    },
     presets: (
       [
         enabledPresets.wind && presetWind4(),
