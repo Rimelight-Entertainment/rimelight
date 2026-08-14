@@ -109,9 +109,21 @@ export type ThemeColor = keyof typeof colorScales | (string & {})
 
 export type ColorShades = Record<string, string>
 
-const SHADES = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"] as const
+export const COLOR_SHADES = [
+  "50",
+  "100",
+  "200",
+  "300",
+  "400",
+  "500",
+  "600",
+  "700",
+  "800",
+  "900",
+  "950"
+] as const
 const mkScale = (...v: string[]): ColorShades =>
-  Object.fromEntries(v.map((val, i) => [SHADES[i], val]))
+  Object.fromEntries(v.map((val, i) => [COLOR_SHADES[i]!, val]))
 
 export const colorScales = {
   neutral: {

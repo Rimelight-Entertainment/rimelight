@@ -41,9 +41,8 @@ export interface RegisteredShortcut {
 
 // OS detection
 const macOS =
-  typeof window !== "undefined" &&
   typeof navigator !== "undefined" &&
-  /Macintosh|Mac OS X|MacIntel|iPad|iPhone|iPod/.test(navigator.userAgent)
+  /Macintosh|Mac OS X|iPad|iPhone|iPod/.test(navigator.userAgent)
 
 const MODIFIER_KEYS = new Set(["meta", "command", "ctrl", "shift", "alt", "option"])
 
@@ -132,16 +131,11 @@ function isUsingInput(activeElement: Element | null): boolean | string {
   }
   if (!el) return false
   const tagName = el.tagName
-  const isContentEditable =
-    typeof HTMLElement !== "undefined" && el instanceof HTMLElement && el.isContentEditable
-  const contentEditable = el.getAttribute("contenteditable")
   const isInput =
     tagName === "INPUT" ||
     tagName === "TEXTAREA" ||
     tagName === "SELECT" ||
-    isContentEditable ||
-    contentEditable === "true" ||
-    contentEditable === "plaintext-only"
+    (typeof HTMLElement !== "undefined" && el instanceof HTMLElement && el.isContentEditable)
   if (isInput) {
     return el.getAttribute("name") || true
   }

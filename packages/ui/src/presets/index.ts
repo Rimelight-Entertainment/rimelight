@@ -1,5 +1,4 @@
-import { dirname, join } from "node:path"
-import { fileURLToPath } from "node:url"
+import { join } from "node:path"
 import {
   presetTypography,
   presetWind4,
@@ -8,14 +7,13 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import { colorScales, colorNames, semanticTokens, type ColorShades } from "../config"
+import { colorScales, colorNames, semanticTokens, COLOR_SHADES, type ColorShades } from "../config"
 
-const pathDirname = dirname(fileURLToPath(import.meta.url))
-export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}").replace(
-  /\\/g,
-  "/"
-)
-export const uiFilesystemGlob = join(pathDirname, "../**/*").replace(/\\/g, "/")
+export const uiSrcGlob = join(
+  import.meta.dirname,
+  "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}"
+).replace(/\\/g, "/")
+export const uiFilesystemGlob = join(import.meta.dirname, "../**/*").replace(/\\/g, "/")
 
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades
@@ -90,11 +88,11 @@ function resolveColorModes(
   return { light, dark }
 }
 
-const createScale = (colorName: string, shadeKeys: string[]) => ({
+const createScale = (colorName: string) => ({
   DEFAULT: `var(--${colorName})`,
   foreground: `var(--${colorName}-foreground)`,
   accent: `var(--${colorName}-accent)`,
-  ...Object.fromEntries(shadeKeys.map((shade) => [shade, `var(--color-${colorName}-${shade})`]))
+  ...Object.fromEntries(COLOR_SHADES.map((shade) => [shade, `var(--color-${colorName}-${shade})`]))
 })
 
 const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(semanticTokens)
@@ -249,13 +247,10 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const autoGen = options?.autogenerateColorModes ?? true
   const allColors = [...new Set([...colorNames, ...Object.keys(userColors)])]
 
-  // Built-in scales already have explicit {light, dark} buckets — pass through directly.
   // Only user-provided colors need resolveColorModes (they may be flat shades or partial modes).
-  const resolvedBuiltins = colorScales
   const resolvedUserColors = Object.fromEntries(
     Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
   )
-  const resolvedColors = { ...resolvedBuiltins, ...resolvedUserColors }
 
   const safelist: string[] = allColors.map((color) => `rl-color-${color}`)
   if (options?.icons) {
@@ -457,13 +452,7 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)"
         },
-        ...Object.fromEntries(
-          allColors.map((color) => {
-            const m = (resolvedColors as Record<string, any>)[color]!
-            const shadeKeys = Object.keys(m.light)
-            return [color, createScale(color, shadeKeys)]
-          })
-        ),
+        ...Object.fromEntries(allColors.map((color) => [color, createScale(color)])),
         "muted": {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)"

@@ -13,15 +13,13 @@ function hasKeys(obj?: Record<string, any>): boolean {
 }
 
 function getVariantCacheKey(variants?: Record<string, any>): string {
-  if (!hasKeys(variants)) return ""
-  const keys = Object.keys(variants!).toSorted()
-  let result = ""
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i]!
-    if (i > 0) result += ";"
-    result += `${k}:${variants![k]}`
-  }
-  return result
+  if (!variants) return ""
+  const entries = Object.entries(variants)
+  if (entries.length === 0) return ""
+  return entries
+    .toSorted(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}:${v}`)
+    .join(";")
 }
 
 export function useUi(
@@ -75,13 +73,7 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
       classThemeCache.set(themeFn, fnMap)
     }
     const key = getVariantCacheKey(variants as Record<string, any>)
-    const cached = fnMap.get(key)
-    if (cached) {
-      resolved = cached
-    } else {
-      resolved = themeFn(variants)
-      fnMap.set(key, resolved)
-    }
+    resolved = fnMap.get(key) ?? fnMap.set(key, themeFn(variants)).get(key)!
   }
 
   const hasOverrides = hasKeys(mergedUI) || Boolean(rootClass)

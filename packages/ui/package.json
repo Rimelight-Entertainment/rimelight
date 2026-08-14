@@ -20,14 +20,9 @@
   ],
   "type": "module",
   "exports": {
-    ".": "./src/ui.ts",
-    "./components/*": "./src/components/*",
+    ".": "./src/index.ts",
     "./config": "./src/config.ts",
-    "./utils/*": "./src/utils/*",
-    "./types/*": "./src/types/*",
-    "./icons/*": "./src/icons/*",
     "./presets": "./src/presets/index.ts",
-    "./presets/*": "./src/presets/*",
     "./*": "./src/*"
   },
   "publishConfig": {
