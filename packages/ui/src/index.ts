@@ -32,8 +32,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
       presets: [rimelightUiPreset(o), ...(unocss.presets ?? [])],
       content: {
         ...userContent,
-        pipeline: pipeline === false ? false : { ...pipeline, include },
-        filesystem: userContent.filesystem ?? []
+        pipeline: pipeline === false ? false : { ...pipeline, include }
       }
     }),
     {

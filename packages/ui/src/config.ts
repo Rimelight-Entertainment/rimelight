@@ -86,29 +86,7 @@ export interface UIConfig {
   unocss?: UserConfig
 }
 
-export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "icons">> & {
-  colors?: readonly string[]
-  unstyled?: boolean
-  themes?: Record<string, ComponentThemeOverride>
-  [key: string]: unknown
-}
-
-export const getAllColorNames = (customColors?: Record<string, unknown>): string[] => [
-  ...new Set([...colorNames, ...Object.keys(customColors ?? {})])
-]
-
-declare global {
-  interface ImportMetaEnv {
-    readonly RIMELIGHT_UI_CONFIG?: ResolvedUIConfig
-  }
-}
-
-export const uiConfig: ResolvedUIConfig =
-  (typeof import.meta !== "undefined" && import.meta.env?.RIMELIGHT_UI_CONFIG) || {}
-
 export type Theme = "light" | "dark"
-
-export type ThemeColor = keyof typeof colorScales | (string & {})
 
 export type ColorShades = Record<string, string>
 
@@ -415,6 +393,27 @@ export const colorScales = {
 } as const
 
 export const colorNames = Object.keys(colorScales)
+
+export type ThemeColor = keyof typeof colorScales | (string & {})
+
+export const getAllColorNames = (customColors?: Record<string, unknown>): string[] => [
+  ...new Set([...colorNames, ...Object.keys(customColors ?? {})])
+]
+
+export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "icons">> & {
+  colors?: readonly string[]
+  unstyled?: boolean
+  themes?: Record<string, ComponentThemeOverride>
+  [key: string]: unknown
+}
+
+declare global {
+  interface ImportMetaEnv {
+    readonly RIMELIGHT_UI_CONFIG?: ResolvedUIConfig
+  }
+}
+
+export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
 
 const pair = (light: string, dark: string) => ({ light, dark })
 

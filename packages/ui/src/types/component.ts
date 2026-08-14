@@ -10,8 +10,8 @@ export interface ComponentTheme {
 
 export function defineTheme<const T extends ComponentTheme>(
   theme: T
-): T & { slots: Extract<T["slots"], readonly string[]>[number][] }
-export function defineTheme(theme: unknown): unknown {
+): T & { slots: T["slots"][number][] }
+export function defineTheme(theme: ComponentTheme) {
   return theme
 }
 

@@ -2,7 +2,7 @@ import { cx } from "css-variants"
 import { uiConfig, type Override } from "../config"
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<Function>()
+const themeCreatorCache = new WeakMap<object>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
 export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {

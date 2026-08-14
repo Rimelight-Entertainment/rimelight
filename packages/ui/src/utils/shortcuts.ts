@@ -118,10 +118,16 @@ const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 function isUsingInput(el: Element | null): boolean | string {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
   if (!el) return false
-  return INPUT_TAGS.has(el.tagName) || ("isContentEditable" in el && Boolean(el.isContentEditable))
-    ? el.getAttribute("name") || true
-    : false
+  const isEditable = el instanceof HTMLElement && el.isContentEditable
+  return INPUT_TAGS.has(el.tagName) || isEditable ? el.getAttribute("name") || true : false
 }
+
+const isShortcutEnabled = (s: Shortcut, inputState: boolean | string): boolean =>
+  !s.usingInput
+    ? !inputState
+    : typeof s.usingInput === "string"
+      ? inputState === s.usingInput
+      : true
 
 interface ParsedShortcuts {
   standard: Shortcut[]
@@ -150,20 +156,25 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof handler === "function") {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
-      const mods = new Set<"ctrl" | "meta" | "shift" | "alt">()
+      let hasCtrl = false
+      let hasMeta = false
+      let hasShift = false
+      let hasAlt = false
       const nonMods: string[] = []
 
       for (const p of rawParts) {
         const mod = MODIFIERS[p]
-        if (mod) mods.add(mod)
+        if (mod === "ctrl") hasCtrl = true
+        else if (mod === "meta") hasMeta = true
+        else if (mod === "shift") hasShift = true
+        else if (mod === "alt") hasAlt = true
         else nonMods.push(p)
       }
 
       const base = chainedKey ? rawKey.toLowerCase() : nonMods.join("_")
       if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
 
-      const meta = mods.has("meta")
-      const ctrl = mods.has("ctrl") || (!isMac && meta)
+      const ctrl = hasCtrl || (!isMac && hasMeta)
 
       const sc: Shortcut = {
         key: base,
@@ -171,9 +182,9 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         handler,
         chained: chainedKey,
         ctrlKey: ctrl,
-        metaKey: isMac && meta,
-        shiftKey: mods.has("shift"),
-        altKey: mods.has("alt"),
+        metaKey: isMac && hasMeta,
+        shiftKey: hasShift,
+        altKey: hasAlt,
         usingInput
       }
 
@@ -212,23 +223,22 @@ export function defineShortcuts(
   let timer: ReturnType<typeof setTimeout> | undefined
   const regIds = registered.length ? new Set(registered.map((i) => i.id)) : null
 
-  const removeRegistered = () =>
-    activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds?.has(i.id)))
+  const removeRegistered = () => {
+    if (regIds) {
+      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
+    }
+  }
 
   if (regIds) {
-    removeRegistered()
-    activeShortcutsStore.set([...activeShortcutsStore.get(), ...registered])
+    activeShortcutsStore.set([
+      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
+      ...registered
+    ])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!e.key) return
     const inputState = isUsingInput(document.activeElement)
-    const enabled = (s: Shortcut) =>
-      !s.usingInput
-        ? !inputState
-        : typeof s.usingInput === "string"
-          ? inputState === s.usingInput
-          : true
 
     const trigger = (s: Shortcut) => {
       e.preventDefault()
@@ -243,7 +253,7 @@ export function defineShortcuts(
     if (inputs.length >= 2 && chained.size > 0) {
       for (let len = Math.min(inputs.length, maxChain); len >= 2; len--) {
         const match = chained.get(inputs.slice(-len).join("-"))
-        if (match && enabled(match)) {
+        if (match && isShortcutEnabled(match, inputState)) {
           trigger(match)
           return
         }
@@ -257,10 +267,10 @@ export function defineShortcuts(
       if (
         !s.shiftKey &&
         e.shiftKey &&
-        ((s.key.length === 1 && /^[a-z]$/i.test(s.key)) || SHIFTABLE.has(s.key))
+        ((s.key.length === 1 && s.key >= "a" && s.key <= "z") || SHIFTABLE.has(s.key))
       )
         continue
-      if (enabled(s)) {
+      if (isShortcutEnabled(s, inputState)) {
         trigger(s)
         return
       }
@@ -275,6 +285,6 @@ export function defineShortcuts(
   return () => {
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
-    if (regIds) removeRegistered()
+    removeRegistered()
   }
 }

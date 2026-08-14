@@ -23,21 +23,19 @@ const isMode = (v: ColorConfigValue): v is ColorModeShades =>
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
   const num = Number(shade)
   if (isNaN(num)) return value
-  const mixPct =
-    target === "white"
-      ? Math.min(60, ((950 - num) / 950) * 60)
-      : Math.min(60, ((num - 50) / 900) * 60)
-  return `color-mix(in oklch, ${value}, ${target} ${Math.round(mixPct)}%)`
+  const pct = target === "white" ? (950 - num) / 950 : (num - 50) / 900
+  return `color-mix(in oklch, ${value}, ${target} ${Math.min(60, Math.round(pct * 60))}%)`
 }
 
 function resolveColorModes(
   entry: ColorConfigValue,
   autogenerate?: boolean
 ): { light: Record<string, string>; dark: Record<string, string> } {
-  const mL = isMode(entry) && entry.light ? entry.light : {}
-  const mD = isMode(entry) && entry.dark ? entry.dark : {}
-  const flat = isMode(entry) ? {} : entry
-  const shades = Object.keys(isMode(entry) ? { ...entry.light, ...entry.dark } : entry)
+  const mode = isMode(entry)
+  const mL = mode ? (entry.light ?? {}) : {}
+  const mD = mode ? (entry.dark ?? {}) : {}
+  const flat = mode ? {} : entry
+  const shades = mode ? Object.keys({ ...entry.light, ...entry.dark }) : Object.keys(entry)
   const light: ColorShades = {}
   const dark: ColorShades = {}
 
@@ -68,12 +66,16 @@ const formatColorLines = (
   colorMap: Record<string, { light?: Record<string, string>; dark?: Record<string, string> }>
 ) =>
   Object.entries(colorMap)
-    .flatMap(([c, m]) =>
-      Object.keys(m.light ?? m.dark ?? {}).map(
+    .flatMap(([c, m]) => {
+      const shades = COLOR_SHADES.filter(
+        (s) => m.light?.[s] !== undefined || m.dark?.[s] !== undefined
+      )
+      const keys = shades.length ? shades : Object.keys({ ...m.light, ...m.dark })
+      return keys.map(
         (s) =>
           `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark?.[s]}, ${m.dark?.[s] ?? m.light?.[s]});`
       )
-    )
+    })
     .join("\n")
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
@@ -98,19 +100,14 @@ const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
   inverted: ["50", "950"]
 }
 
-const INTENT_PROPS = ["text", "background", "border", "ring", "divide"] as const
-
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
-  .map(([n, [t, b, bg]]) => {
-    const vals: Record<string, string> = {
-      text: `var(--color-neutral-${t})`,
-      background: bg ?? `var(--color-neutral-${b})`,
-      border: `var(--color-neutral-${b})`,
-      ring: `var(--color-neutral-${b})`,
-      divide: `var(--color-neutral-${b})`
-    }
-    return INTENT_PROPS.map((p) => `  --${p}-color-${n}: ${vals[p]};`).join("\n")
-  })
+  .flatMap(([n, [t, b, bg]]) => [
+    `  --text-color-${n}: var(--color-neutral-${t});`,
+    `  --background-color-${n}: ${bg ?? `var(--color-neutral-${b})`};`,
+    `  --border-color-${n}: var(--color-neutral-${b});`,
+    `  --ring-color-${n}: var(--color-neutral-${b});`,
+    `  --divide-color-${n}: var(--color-neutral-${b});`
+  ])
   .join("\n")
 
 const STATIC_PREFLIGHT_SUFFIX = `
@@ -244,11 +241,12 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         ([, prop, name, opacity]) => {
           const [css, prefix] = PROP_MAP[prop!]!
           const varName = `--${prefix}-color-${name}`
-          const res: Record<string, string> = opacity
-            ? { [css]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
-            : { [css]: `var(${varName})` }
-          if (prop === "bg" && name === "inverted") res.color = "var(--text-color-inverted)"
-          return res
+          const val = opacity
+            ? `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)`
+            : `var(${varName})`
+          return prop === "bg" && name === "inverted"
+            ? { [css]: val, color: "var(--text-color-inverted)" }
+            : { [css]: val }
         }
       ]
     ],
