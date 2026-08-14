@@ -26,7 +26,7 @@ vp build
 
 This runs `astro build`, which outputs the Worker bundle to `dist/`. The entry point is `src/worker.ts`, which is specified in `wrangler.jsonc`:
 
-```jsonc
+```json
 {
   "main": "./src/worker.ts"
 }
@@ -48,7 +48,7 @@ Wrangler reads `wrangler.jsonc` in the project root and pushes the bundle, bindi
 
 The `routes` array in `wrangler.jsonc` maps your Worker to custom domains:
 
-```jsonc
+```json
 "routes": [
   { "pattern": "my-project.com",     "custom_domain": true },
   { "pattern": "www.my-project.com", "custom_domain": true }
@@ -65,7 +65,7 @@ Cloudflare Workers have two kinds of runtime values:
 
 ### `vars` (non-secret, in wrangler.jsonc)
 
-```jsonc
+```json
 "vars": {
   "CONSTRUCTION_MODE":       "false",
   "CONSTRUCTION_AUTH":       "false",
@@ -158,7 +158,7 @@ This uses Cloudflare's cache layer in front of the Worker. Static assets in `dis
 
 Worker observability is enabled in `wrangler.jsonc`:
 
-```jsonc
+```json
 "observability": {
   "enabled": true,
   "logs":   { "enabled": true, "head_sampling_rate": 1, "invocation_logs": true },

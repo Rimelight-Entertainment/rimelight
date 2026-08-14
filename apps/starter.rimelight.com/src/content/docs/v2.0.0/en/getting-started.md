@@ -57,7 +57,7 @@ cp .env.example .env
 
 Open `.env` and set the required values:
 
-```dotenv
+```bash
 # Better Auth secret — generate with: openssl rand -hex 32
 BETTER_AUTH_SECRET=your_secret_here
 BETTER_AUTH_URL=http://localhost:4321
@@ -78,7 +78,7 @@ DATABASE_URL=.wrangler/state/v3/d1/miniflare-D1DatabaseObject/<hash>.sqlite
 
 The `wrangler.jsonc` file ships with names tied to the `starter.rimelight.com` domain. Before deploying to your own account, find-and-replace `starter-dot-rimelight-dot-com` with a slug that matches your project name:
 
-```jsonc
+```json
 // wrangler.jsonc
 {
   "name": "my-project",

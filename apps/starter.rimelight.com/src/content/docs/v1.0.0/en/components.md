@@ -148,7 +148,7 @@ Add shortcuts to the registry in any component using the `useShortcuts` composab
 
 All Astro components can be imported and used inside `.mdx` doc files:
 
-```mdx
+```jsx
 import RLACard from "@rimelight/ui/components/card/RLACard.astro"
 import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
 import RLAAlert from "@rimelight/ui/components/alert/RLAAlert.astro"

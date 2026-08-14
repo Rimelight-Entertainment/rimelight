@@ -172,7 +172,7 @@ Disable on a specific page with `editUrl: false` in frontmatter.
 
 Doc files can use standard Markdown and also import and render Rimelight UI components:
 
-```mdx
+```markdown
 ---
 title: My Page
 description: An example MDX page.

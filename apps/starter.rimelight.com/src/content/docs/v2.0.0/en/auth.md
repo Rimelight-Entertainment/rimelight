@@ -154,7 +154,7 @@ The auth pages live at `src/pages/[locale]/auth/`:
 
 ## Environment Variables
 
-```dotenv
+```bash
 BETTER_AUTH_SECRET=<random 32-byte hex>
 BETTER_AUTH_URL=http://localhost:4321
 ```

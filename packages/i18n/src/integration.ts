@@ -157,19 +157,22 @@ declare module "@rimelight/i18n:runtime" {
           fs.writeFileSync(seedFile, JSON.stringify(seedData, null, 2))
           logger.info(`translations seed file written to ${seedFile}`)
 
-          try {
-            const { execSync } = await import("node:child_process")
-            execSync(`npx wrangler kv:bulk put --binding "${kvBinding}" "${seedFile}"`, {
-              stdio: "pipe",
-              timeout: 30_000
-            })
-            logger.info(`KV "${kvBinding}" seeded with translations`)
-          } catch {
-            logger.warn(
-              `could not seed KV automatically — run ` +
-                `"npx wrangler kv:bulk put --binding "${kvBinding}" "${seedFile}"" ` +
-                `to seed translations into KV`
-            )
+          const autoSeed = process.env.WRANGLER_SEED_KV === "true" || process.env.CI === "true"
+          if (autoSeed) {
+            try {
+              const { execSync } = await import("node:child_process")
+              execSync(`npx wrangler kv:bulk put --binding "${kvBinding}" "${seedFile}"`, {
+                stdio: "pipe",
+                timeout: 30_000
+              })
+              logger.info(`KV "${kvBinding}" seeded with translations`)
+            } catch {
+              logger.warn(
+                `could not seed KV automatically — run ` +
+                  `"npx wrangler kv:bulk put --binding "${kvBinding}" "${seedFile}"" ` +
+                  `to seed translations into KV`
+              )
+            }
           }
         } else {
           logger.info("i18n build complete (no translations to seed)")
