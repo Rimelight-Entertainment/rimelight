@@ -35,7 +35,7 @@ function resolveColorModes(
   const mL = mode ? (entry.light ?? {}) : {}
   const mD = mode ? (entry.dark ?? {}) : {}
   const flat = mode ? {} : entry
-  const shades = mode ? Object.keys({ ...entry.light, ...entry.dark }) : Object.keys(entry)
+  const shades = mode ? Object.keys({ ...mL, ...mD }) : Object.keys(entry)
   const light: ColorShades = {}
   const dark: ColorShades = {}
 
@@ -200,7 +200,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
     outputToCssLayers: true,
     layers: { theme: 1, preflights: 2, shortcuts: 3, default: 4 },
     shortcuts: {
-      "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl lg:px-xl",
+      "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl",
       "sr-only":
         "absolute w-px h-px p-0 m-0 overflow-hidden [clip:rect(1px,1px,1px,1px)] whitespace-nowrap border-0"
     },

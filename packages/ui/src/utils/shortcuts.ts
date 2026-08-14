@@ -194,15 +194,14 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof cfg === "object" && (cfg.label || cfg.description)) {
       const cat = cfg.category || "system"
-      const reg: RegisteredShortcut = {
+      registered.push({
         id: `${cat}-${rawKey}`,
         keys: formatShortcutKeys(rawKey),
-        category: cat
-      }
-      if (cfg.label !== undefined) reg.label = cfg.label
-      if (cfg.description !== undefined) reg.description = cfg.description
-      if (cfg.order !== undefined) reg.order = cfg.order
-      registered.push(reg)
+        category: cat,
+        ...(cfg.label !== undefined && { label: cfg.label }),
+        ...(cfg.description !== undefined && { description: cfg.description }),
+        ...(cfg.order !== undefined && { order: cfg.order })
+      })
     }
   }
 
@@ -230,10 +229,8 @@ export function defineShortcuts(
   }
 
   if (regIds) {
-    activeShortcutsStore.set([
-      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
-      ...registered
-    ])
+    removeRegistered()
+    activeShortcutsStore.set([...activeShortcutsStore.get(), ...registered])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {

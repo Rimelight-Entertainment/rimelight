@@ -43,7 +43,8 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   let cached = map.get(key)
   if (!cached) map.set(key, (cached = themeFn(variants)))
 
-  if (ui === EMPTY && !rootClass) return cached
+  const hasUiOverrides = ui !== EMPTY && Object.keys(ui).length > 0
+  if (!hasUiOverrides && !rootClass) return cached
 
   const res: Record<string, string> = { ...cached }
   for (const slot in ui) {

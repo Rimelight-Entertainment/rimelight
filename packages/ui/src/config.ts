@@ -396,9 +396,10 @@ export const colorNames = Object.keys(colorScales)
 
 export type ThemeColor = keyof typeof colorScales | (string & {})
 
-export const getAllColorNames = (customColors?: Record<string, unknown>): string[] => [
-  ...new Set([...colorNames, ...Object.keys(customColors ?? {})])
-]
+export const getAllColorNames = (customColors?: Record<string, unknown>): string[] =>
+  customColors && Object.keys(customColors).length > 0
+    ? [...new Set([...colorNames, ...Object.keys(customColors)])]
+    : colorNames
 
 export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "icons">> & {
   colors?: readonly string[]
