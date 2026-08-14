@@ -90,9 +90,14 @@ export interface UIConfig {
 export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "icons">> & {
   colors?: readonly string[]
   unstyled?: boolean
-  themes?: Record<string, Record<string, string | Function | undefined>>
+  themes?: Record<string, Record<string, ((base: string) => string) | string | undefined>>
   [key: string]: unknown
 }
+
+export const getAllColorNames = (customColors?: Record<string, unknown>): string[] =>
+  customColors && Object.keys(customColors).length > 0
+    ? [...new Set([...colorNames, ...Object.keys(customColors)])]
+    : [...colorNames]
 
 declare global {
   interface ImportMetaEnv {

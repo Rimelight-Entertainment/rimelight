@@ -39,13 +39,21 @@ export interface RegisteredShortcut {
   order?: number
 }
 
-const isMac =
-  typeof navigator !== "undefined" &&
-  /Macintosh|Mac OS X|iPad|iPhone|iPod/.test(navigator.userAgent)
+const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
 
-const MODIFIER_KEYS = new Set(["meta", "command", "ctrl", "control", "shift", "alt", "option"])
+const MODIFIERS = new Set(["meta", "command", "ctrl", "control", "shift", "alt", "option"])
+const SHIFTABLE = new Set([
+  "arrowleft",
+  "arrowright",
+  "arrowup",
+  "arrowdown",
+  "tab",
+  "escape",
+  "enter",
+  "backspace"
+])
 
-const kbdKeysMap: Record<string, string> = {
+const keySymbols: Record<string, string> = {
   meta: isMac ? "⌘" : "Ctrl",
   command: isMac ? "⌘" : "Ctrl",
   ctrl: "Ctrl",
@@ -65,24 +73,7 @@ const kbdKeysMap: Record<string, string> = {
   arrowright: "→"
 }
 
-const shortcutKeyFormatCache = new Map<string, string[]>()
-
-export function formatShortcutKeys(keyStr: string): string[] {
-  const cached = shortcutKeyFormatCache.get(keyStr)
-  if (cached) return cached
-
-  const delimiter = keyStr.includes("-") && keyStr !== "-" && !keyStr.includes("_") ? "-" : "_"
-  const result = keyStr
-    .split(delimiter)
-    .map((p) => kbdKeysMap[p.toLowerCase()] ?? p.charAt(0).toUpperCase() + p.slice(1))
-
-  shortcutKeyFormatCache.set(keyStr, result)
-  return result
-}
-
-export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
-
-const specialKeysMap: Record<string, string> = {
+const specialCodes: Record<string, string> = {
   space: "Space",
   enter: "Enter",
   escape: "Escape",
@@ -95,222 +86,192 @@ const specialKeysMap: Record<string, string> = {
   arrowright: "ArrowRight"
 }
 
-function convertKeyToCode(key: string): string {
-  if (key.length === 1) {
-    if (key >= "a" && key <= "z") return `Key${key.toUpperCase()}`
-    if (key >= "0" && key <= "9") return `Digit${key}`
+const isChained = (k: string) => k.includes("-") && k !== "-" && !k.includes("_")
+
+const formatCache = new Map<string, string[]>()
+export function formatShortcutKeys(keyStr: string): string[] {
+  let res = formatCache.get(keyStr)
+  if (!res) {
+    res = keyStr
+      .split(isChained(keyStr) ? "-" : "_")
+      .map((p) => keySymbols[p.toLowerCase()] ?? p.charAt(0).toUpperCase() + p.slice(1))
+    formatCache.set(keyStr, res)
   }
-  if (/^f\d+$/i.test(key)) return key.toUpperCase()
-  return specialKeysMap[key.toLowerCase()] || key
+  return res
 }
 
-const SHIFTABLE_KEYS = new Set([
-  "arrowleft",
-  "arrowright",
-  "arrowup",
-  "arrowdown",
-  "tab",
-  "escape",
-  "enter",
-  "backspace"
-])
+export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
-function isUsingInput(activeElement: Element | null): boolean | string {
-  let el = activeElement
-  while (el?.shadowRoot?.activeElement) {
-    el = el.shadowRoot.activeElement
-  }
+const toCode = (k: string) =>
+  k.length === 1 && /[a-z]/i.test(k)
+    ? `Key${k.toUpperCase()}`
+    : k.length === 1 && /\d/.test(k)
+      ? `Digit${k}`
+      : /^f\d+$/i.test(k)
+        ? k.toUpperCase()
+        : specialCodes[k.toLowerCase()] || k
+
+function isUsingInput(el: Element | null): boolean | string {
+  while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
   if (!el) return false
-  const tagName = el.tagName
-  if (
-    tagName === "INPUT" ||
-    tagName === "TEXTAREA" ||
-    tagName === "SELECT" ||
-    (typeof HTMLElement !== "undefined" && el instanceof HTMLElement && el.isContentEditable)
-  ) {
-    return el.getAttribute("name") || true
-  }
-  return false
+  const t = el.tagName
+  return t === "INPUT" ||
+    t === "TEXTAREA" ||
+    t === "SELECT" ||
+    (el instanceof HTMLElement && el.isContentEditable)
+    ? el.getAttribute("name") || true
+    : false
 }
 
 interface ParsedShortcuts {
-  shortcuts: Shortcut[]
+  standard: Shortcut[]
+  chained: Map<string, Shortcut>
+  maxChain: number
   registered: RegisteredShortcut[]
 }
 
 const parseCache = new WeakMap<ShortcutsConfig, ParsedShortcuts>()
 
 function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
-  const cached = parseCache.get(config)
+  let cached = parseCache.get(config)
   if (cached) return cached
 
-  const shortcuts: Shortcut[] = []
+  const standard: Shortcut[] = []
+  const chained = new Map<string, Shortcut>()
+  let maxChain = 2
   const registered: RegisteredShortcut[] = []
 
-  for (const [key, shortcutConfig] of Object.entries(config)) {
-    if (!shortcutConfig) continue
-
-    const isFunc = typeof shortcutConfig === "function"
-    const handler = isFunc ? shortcutConfig : shortcutConfig.handler
-    const usingInput = isFunc ? false : (shortcutConfig.usingInput ?? false)
+  for (const [rawKey, cfg] of Object.entries(config)) {
+    if (!cfg) continue
+    const isFn = typeof cfg === "function"
+    const handler = isFn ? cfg : cfg.handler
+    const usingInput = isFn ? false : (cfg.usingInput ?? false)
+    const chainedKey = isChained(rawKey)
 
     if (typeof handler === "function") {
-      const chained = key.includes("-") && key !== "-" && !key.includes("_")
-      let baseKey = ""
-      let ctrlKey = false
-      let metaKey = false
-      let shiftKey = false
-      let altKey = false
+      const parts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
+      const base = chainedKey
+        ? rawKey.toLowerCase()
+        : parts.filter((p) => !MODIFIERS.has(p)).join("_")
+      if (chainedKey) maxChain = Math.max(maxChain, parts.length)
 
-      if (chained) {
-        baseKey = key.toLowerCase()
-      } else {
-        const parts = key.toLowerCase().split("_")
-        baseKey = parts.filter((p) => !MODIFIER_KEYS.has(p)).join("_")
-        ctrlKey = parts.includes("ctrl") || parts.includes("control")
-        metaKey = parts.includes("meta") || parts.includes("command")
-        shiftKey = parts.includes("shift")
-        altKey = parts.includes("alt") || parts.includes("option")
-
-        if (!isMac && metaKey && !ctrlKey) {
-          metaKey = false
-          ctrlKey = true
-        }
+      let [ctrl, meta, shift, alt] = [
+        parts.some((p) => p === "ctrl" || p === "control"),
+        parts.some((p) => p === "meta" || p === "command"),
+        parts.includes("shift"),
+        parts.some((p) => p === "alt" || p === "option")
+      ]
+      if (!isMac && meta && !ctrl) {
+        meta = false
+        ctrl = true
       }
 
-      shortcuts.push({
-        key: baseKey,
+      const sc: Shortcut = {
+        key: base,
         handler,
-        chained,
-        ctrlKey,
-        metaKey,
-        shiftKey,
-        altKey,
+        chained: chainedKey,
+        ctrlKey: ctrl,
+        metaKey: meta,
+        shiftKey: shift,
+        altKey: alt,
         usingInput
-      })
+      }
+      if (chainedKey) chained.set(base, sc)
+      else standard.push(sc)
     }
 
-    if (typeof shortcutConfig === "object" && shortcutConfig !== null) {
-      const { label, description, category, order } = shortcutConfig
-      if (label || description) {
-        const itemCategory = category || "system"
-        registered.push({
-          id: `${itemCategory}-${key}`,
-          keys: formatShortcutKeys(key),
-          category: itemCategory,
-          ...(label && { label }),
-          ...(description && { description }),
-          ...(order !== undefined && { order })
-        })
-      }
+    if (typeof cfg === "object" && cfg && (cfg.label || cfg.description)) {
+      const cat = cfg.category || "system"
+      registered.push({
+        id: `${cat}-${rawKey}`,
+        keys: formatShortcutKeys(rawKey),
+        category: cat,
+        ...(cfg.label && { label: cfg.label }),
+        ...(cfg.description && { description: cfg.description }),
+        ...(cfg.order !== undefined && { order: cfg.order })
+      })
     }
   }
 
-  const result = { shortcuts, registered }
-  parseCache.set(config, result)
-  return result
+  cached = { standard, chained, maxChain, registered }
+  parseCache.set(config, cached)
+  return cached
 }
 
 export function defineShortcuts(
   config: ShortcutsConfig,
   options: ShortcutsOptions = {}
 ): () => void {
-  if (typeof window === "undefined") {
-    return () => {}
-  }
+  if (typeof window === "undefined") return () => {}
 
-  const { shortcuts: parsedShortcuts, registered: itemsToRegister } = parseShortcutConfig(config)
+  const { standard, chained, maxChain, registered } = parseShortcutConfig(config)
   const chainDelay = options.chainDelay ?? 800
-  const maxChainLength = Math.max(
-    2,
-    ...parsedShortcuts.filter((s) => s.chained).map((s) => s.key.split("-").length)
-  )
-  const chainedInputs: string[] = []
-  let debounceTimer: ReturnType<typeof setTimeout> | undefined
+  const inputs: string[] = []
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const regIds = registered.length ? new Set(registered.map((i) => i.id)) : null
 
-  const registeredIds =
-    itemsToRegister.length > 0 ? new Set(itemsToRegister.map((item) => item.id)) : null
-
-  if (registeredIds) {
+  if (regIds) {
     activeShortcutsStore.set([
-      ...activeShortcutsStore.get().filter((item) => !registeredIds.has(item.id)),
-      ...itemsToRegister
+      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
+      ...registered
     ])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!e.key) return
+    const inputState = isUsingInput(document.activeElement)
+    const enabled = (s: Shortcut) =>
+      !s.usingInput
+        ? !inputState
+        : typeof s.usingInput === "string"
+          ? inputState === s.usingInput
+          : true
 
-    const activeEl = document.activeElement
-    const currentlyUsingInput = isUsingInput(activeEl)
+    inputs.push(e.key.toLowerCase())
+    if (inputs.length > maxChain) inputs.shift()
+    clearTimeout(timer)
 
-    const isShortcutEnabled = (shortcut: Shortcut) => {
-      if (!shortcut.usingInput) return !currentlyUsingInput
-      if (typeof shortcut.usingInput === "string")
-        return currentlyUsingInput === shortcut.usingInput
-      return true
-    }
-
-    chainedInputs.push(e.key.toLowerCase())
-    if (chainedInputs.length > maxChainLength) {
-      chainedInputs.shift()
-    }
-    clearTimeout(debounceTimer)
-
-    if (chainedInputs.length >= 2) {
-      for (let len = Math.min(chainedInputs.length, maxChainLength); len >= 2; len--) {
-        const chainedKey = chainedInputs.slice(-len).join("-")
-        const matchedChained = parsedShortcuts.find((s) => s.chained && s.key === chainedKey)
-        if (matchedChained && isShortcutEnabled(matchedChained)) {
+    if (inputs.length >= 2 && chained.size > 0) {
+      for (let len = Math.min(inputs.length, maxChain); len >= 2; len--) {
+        const match = chained.get(inputs.slice(-len).join("-"))
+        if (match && enabled(match)) {
           e.preventDefault()
-          matchedChained.handler(e)
-          chainedInputs.length = 0
+          match.handler(e)
+          inputs.length = 0
           return
         }
       }
     }
 
-    for (const shortcut of parsedShortcuts) {
-      if (shortcut.chained) continue
-      if (e.ctrlKey !== shortcut.ctrlKey) continue
-      if (e.metaKey !== shortcut.metaKey) continue
-      if (e.altKey !== shortcut.altKey) continue
-
-      if (shortcut.altKey && e.altKey) {
-        if (e.code !== convertKeyToCode(shortcut.key)) continue
-      } else if (e.key.toLowerCase() !== shortcut.key) {
+    for (const s of standard) {
+      if (e.ctrlKey !== s.ctrlKey || e.metaKey !== s.metaKey || e.altKey !== s.altKey) continue
+      if (s.altKey && e.altKey ? e.code !== toCode(s.key) : e.key.toLowerCase() !== s.key) continue
+      if (s.shiftKey && !e.shiftKey) continue
+      if (
+        !s.shiftKey &&
+        e.shiftKey &&
+        ((s.key.length === 1 && /^[a-z]$/i.test(s.key)) || SHIFTABLE.has(s.key))
+      )
         continue
-      }
-
-      const isSingleAlpha = shortcut.key.length === 1 && /^[a-z]$/i.test(shortcut.key)
-      const isShiftable = SHIFTABLE_KEYS.has(shortcut.key)
-
-      if (shortcut.shiftKey && !e.shiftKey) continue
-      if (!shortcut.shiftKey && e.shiftKey && (isSingleAlpha || isShiftable)) continue
-
-      if (isShortcutEnabled(shortcut)) {
+      if (enabled(s)) {
         e.preventDefault()
-        shortcut.handler(e)
-        chainedInputs.length = 0
+        s.handler(e)
+        inputs.length = 0
         return
       }
     }
 
-    debounceTimer = setTimeout(() => {
-      chainedInputs.length = 0
+    timer = setTimeout(() => {
+      inputs.length = 0
     }, chainDelay)
   }
 
   window.addEventListener("keydown", onKeyDown)
-
   return () => {
     window.removeEventListener("keydown", onKeyDown)
-    clearTimeout(debounceTimer)
-
-    if (registeredIds) {
-      activeShortcutsStore.set(
-        activeShortcutsStore.get().filter((item) => !registeredIds.has(item.id))
-      )
+    clearTimeout(timer)
+    if (regIds) {
+      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
     }
   }
 }

@@ -1,8 +1,8 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./config"
-import { colorNames } from "./config"
-import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
+import { getAllColorNames } from "./config"
+import rimelightUiPreset, { uiSrcGlob } from "./presets"
 
 export function ui(o: UIConfig = {}): AstroIntegration[] {
   const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = o
@@ -12,7 +12,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
     unstyled: o.unstyled,
     themes: components?.themes ?? {},
     logos,
-    colors: [...new Set([...colorNames, ...Object.keys(colors)])],
+    colors: getAllColorNames(colors),
     shortcuts,
     icons
   })
@@ -32,7 +32,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
           ]
         },
         filesystem: [
-          uiFilesystemGlob,
+          uiSrcGlob,
           ...(Array.isArray(userContent.filesystem) ? userContent.filesystem : [])
         ]
       }
@@ -42,11 +42,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
       hooks: {
         "astro:config:setup": ({ updateConfig }) => {
           updateConfig({
-            vite: {
-              define: {
-                "import.meta.env.RIMELIGHT_UI_CONFIG": defineUiConfig
-              }
-            }
+            vite: { define: { "import.meta.env.RIMELIGHT_UI_CONFIG": defineUiConfig } }
           })
         }
       }

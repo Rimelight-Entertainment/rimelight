@@ -1,86 +1,49 @@
 import { cx } from "css-variants"
 import { uiConfig } from "../config"
 
-const classThemeCache = new WeakMap<Function, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<Function>()
+type Override = string | ((base: string) => string) | undefined
+const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
+const themeCreatorCache = new WeakMap<(...args: any[]) => any>()
+const EMPTY: Record<string, Override> = Object.freeze({})
 
-const EMPTY_DEFAULTS: Record<string, string | Function | undefined> = Object.freeze({})
-
-function getVariantCacheKey(variants?: Record<string, any>): string {
-  if (!variants) return ""
-  let key = ""
-  for (const k of Object.keys(variants).toSorted()) {
-    key += `${k}:${variants[k]};`
-  }
-  return key
+export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
+  const d = uiConfig.themes?.[name]
+  return d ? (prop ? { ...d, ...prop } : d) : (prop ?? EMPTY)
 }
 
-export function useUi(
-  componentName: string,
-  uiProp?: Record<string, string | Function | undefined>
-): Record<string, string | Function | undefined> {
-  const defaults = uiConfig.themes?.[componentName]
-  if (!defaults) return uiProp ?? EMPTY_DEFAULTS
-  if (!uiProp) return defaults
-  return { ...defaults, ...uiProp }
-}
-
-export function resolveTheme<T>(
-  themeDefault: T,
-  themeCreator?: (colors: readonly string[]) => T
-): T {
-  if (uiConfig.colors && themeCreator) {
-    let cached: T | undefined = themeCreatorCache.get(themeCreator)
-    if (!cached) {
-      cached = themeCreator(uiConfig.colors)
-      themeCreatorCache.set(themeCreator, cached)
-    }
-    return cached
-  }
-  return themeDefault
+export function resolveTheme<T>(fallback: T, create?: (colors: readonly string[]) => T): T {
+  if (!uiConfig.colors || !create) return fallback
+  let c = themeCreatorCache.get(create)
+  if (!c) themeCreatorCache.set(create, (c = create(uiConfig.colors)))
+  return c
 }
 
 export function resolveClasses<T extends (...args: never[]) => Record<string, string>>(
   themeFn: T,
   variants: Parameters<T>[0],
-  mergedUI: Record<string, string | Function | undefined>,
+  ui: Record<string, Override>,
   rootClass?: string
 ): Record<string, string> {
-  if (uiConfig.unstyled === true) {
-    return rootClass ? { root: rootClass } : {}
-  }
+  if (uiConfig.unstyled) return rootClass ? { root: rootClass } : {}
 
-  let fnMap = classThemeCache.get(themeFn)
-  if (!fnMap) {
-    fnMap = new Map()
-    classThemeCache.set(themeFn, fnMap)
-  }
-  const key = getVariantCacheKey(variants as Record<string, any>)
-  let cached = fnMap.get(key)
-  if (!cached) {
-    cached = themeFn(variants)
-    fnMap.set(key, cached)
-  }
+  let map = classCache.get(themeFn)
+  if (!map) classCache.set(themeFn, (map = new Map()))
 
-  const hasUiOverrides = mergedUI && Object.keys(mergedUI).length > 0
-  if (!hasUiOverrides && !rootClass) {
-    return cached
+  const key = variants
+    ? Object.keys(variants)
+        .toSorted()
+        .reduce((acc, k) => `${acc}${k}:${String((variants as Record<string, unknown>)[k])};`, "")
+    : ""
+  let cached = map.get(key)
+  if (!cached) map.set(key, (cached = themeFn(variants)))
+
+  if (ui === EMPTY && !rootClass) return cached
+
+  const res: Record<string, string> = { ...cached }
+  for (const slot in ui) {
+    const o = ui[slot]
+    if (o) res[slot] = typeof o === "function" ? cx(o(res[slot] ?? "")) : cx(res[slot] ?? "", o)
   }
-
-  const result: Record<string, string> = { ...cached }
-
-  if (hasUiOverrides) {
-    for (const slot in mergedUI) {
-      const override = mergedUI[slot]
-      if (!override) continue
-      const base = result[slot] ?? ""
-      result[slot] = typeof override === "function" ? cx(override(base)) : cx(base, override)
-    }
-  }
-
-  if (rootClass) {
-    result.root = cx(result.root ?? "", rootClass)
-  }
-
-  return result
+  if (rootClass) res.root = cx(res.root ?? "", rootClass)
+  return res
 }
