@@ -43,7 +43,7 @@ function resolveColorModes(
   const mL = isMode(entry) && entry.light ? entry.light : {}
   const mD = isMode(entry) && entry.dark ? entry.dark : {}
   const flat = isMode(entry) ? {} : entry
-  const shades = [...new Set([...Object.keys(mL), ...Object.keys(mD), ...Object.keys(flat)])]
+  const shades = Object.keys(isMode(entry) ? { ...entry.light, ...entry.dark } : entry)
   const light: ColorShades = {}
   const dark: ColorShades = {}
 
@@ -74,16 +74,12 @@ const formatColorLines = (
   colorMap: Record<string, { light?: Record<string, string>; dark?: Record<string, string> }>
 ) =>
   Object.entries(colorMap)
-    .flatMap(([c, m]) => {
-      const shades =
-        m.light && m.dark
-          ? COLOR_SHADES
-          : [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
-      return shades.map(
+    .flatMap(([c, m]) =>
+      Object.keys(m.light ?? m.dark ?? {}).map(
         (s) =>
-          `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark![s]}, ${m.dark?.[s] ?? m.light![s]});`
+          `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark?.[s]}, ${m.dark?.[s] ?? m.light?.[s]});`
       )
-    })
+    )
     .join("\n")
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)

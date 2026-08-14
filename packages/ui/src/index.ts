@@ -11,7 +11,9 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
   const userContent = unocss.content ?? {}
   const pipeline = userContent.pipeline
   const userInc =
-    typeof pipeline === "object" && Array.isArray(pipeline?.include) ? pipeline.include : []
+    typeof pipeline === "object" && pipeline && Array.isArray(pipeline.include)
+      ? pipeline.include
+      : []
   const include = [EXT_RE, uiSrcGlob, ...userInc]
 
   const defineUiConfig = JSON.stringify({
@@ -30,7 +32,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
       content: {
         ...userContent,
         pipeline: pipeline === false ? false : { ...pipeline, include },
-        filesystem: Array.isArray(userContent.filesystem) ? userContent.filesystem : []
+        filesystem: userContent.filesystem ?? []
       }
     }),
     {

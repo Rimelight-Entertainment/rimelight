@@ -181,7 +181,7 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
       else standard.push(sc)
     }
 
-    if (typeof cfg === "object" && cfg && (cfg.label || cfg.description)) {
+    if (typeof cfg === "object" && (cfg.label || cfg.description)) {
       const cat = cfg.category || "system"
       const reg: RegisteredShortcut = {
         id: `${cat}-${rawKey}`,
@@ -212,11 +212,12 @@ export function defineShortcuts(
   let timer: ReturnType<typeof setTimeout> | undefined
   const regIds = registered.length ? new Set(registered.map((i) => i.id)) : null
 
+  const removeRegistered = () =>
+    activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds?.has(i.id)))
+
   if (regIds) {
-    activeShortcutsStore.set([
-      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
-      ...registered
-    ])
+    removeRegistered()
+    activeShortcutsStore.set([...activeShortcutsStore.get(), ...registered])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -251,7 +252,7 @@ export function defineShortcuts(
 
     for (const s of standard) {
       if (e.ctrlKey !== s.ctrlKey || e.metaKey !== s.metaKey || e.altKey !== s.altKey) continue
-      if (s.altKey && e.altKey ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
+      if (s.altKey ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
       if (s.shiftKey && !e.shiftKey) continue
       if (
         !s.shiftKey &&
@@ -274,8 +275,6 @@ export function defineShortcuts(
   return () => {
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
-    if (regIds) {
-      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
-    }
+    if (regIds) removeRegistered()
   }
 }
