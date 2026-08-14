@@ -28,6 +28,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
           ...userContent.pipeline,
           include: [
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
+            uiSrcGlob,
             ...(Array.isArray(userContent.pipeline?.include) ? userContent.pipeline.include : [])
           ]
         },
