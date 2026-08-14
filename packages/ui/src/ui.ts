@@ -6,10 +6,17 @@ import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
 
 export function ui(o: UIConfig = {}): AstroIntegration[] {
   const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = o
-  const userContent = (typeof unocss.content === "object" ? unocss.content : {}) as Record<
-    string,
-    any
-  >
+  const userContent = (
+    typeof unocss.content === "object" && unocss.content !== null ? unocss.content : {}
+  ) as Record<string, any>
+
+  const defineUiConfig = JSON.stringify({
+    ...components?.themes,
+    logos,
+    colors: Array.from(new Set([...colorConfig.colors, ...Object.keys(colors)])),
+    shortcuts,
+    icons
+  })
 
   return [
     UnoCSS({
@@ -18,6 +25,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
       content: {
         ...userContent,
         pipeline: {
+          ...userContent.pipeline,
           include: [
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
             "src/**/*.{js,ts,jsx,tsx,vue,svelte,astro}",
@@ -38,13 +46,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
           updateConfig({
             vite: {
               define: {
-                "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify({
-                  ...components?.themes,
-                  logos,
-                  colors: Array.from(new Set([...colorConfig.colors, ...Object.keys(colors)])),
-                  shortcuts,
-                  icons
-                })
+                "import.meta.env.RIMELIGHT_UI_CONFIG": defineUiConfig
               }
             }
           })

@@ -7,12 +7,27 @@ const uiMergeCache = new WeakMap<object, Record<string, string | Function | unde
 
 const EMPTY_DEFAULTS: Record<string, string | Function | undefined> = Object.freeze({})
 
+function hasKeys(obj?: Record<string, any>): boolean {
+  if (!obj) return false
+  for (const _ in obj) return true
+  return false
+}
+
 function getVariantCacheKey(variants?: Record<string, any>): string {
-  if (!variants) return ""
-  return Object.keys(variants)
-    .toSorted()
-    .map((k) => `${k}:${variants[k]}`)
-    .join(";")
+  if (!hasKeys(variants)) return ""
+  const keys = Object.keys(variants!)
+  if (keys.length === 1) {
+    const k = keys[0]!
+    return `${k}:${variants![k]}`
+  }
+  keys.sort()
+  let result = ""
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i]!
+    if (i > 0) result += ";"
+    result += `${k}:${variants![k]}`
+  }
+  return result
 }
 
 export function useUi(
@@ -21,9 +36,9 @@ export function useUi(
 ): Record<string, string | Function | undefined> {
   const defaults = uiConfig[componentName]
   if (!defaults) return EMPTY_DEFAULTS
-  if (!uiProp || Object.keys(uiProp).length === 0) return defaults
+  if (!hasKeys(uiProp)) return defaults
 
-  const cached = uiMergeCache.get(uiProp)
+  const cached = uiMergeCache.get(uiProp!)
   if (cached) return cached
 
   const result: Record<string, string | Function | undefined> = { ...defaults }
@@ -33,7 +48,7 @@ export function useUi(
     }
   }
 
-  uiMergeCache.set(uiProp, result)
+  uiMergeCache.set(uiProp!, result)
   return result
 }
 
@@ -79,47 +94,19 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
     }
   }
 
-  const hasOverrides = (mergedUI && Object.keys(mergedUI).length > 0) || Boolean(rootClass)
+  const hasOverrides = hasKeys(mergedUI) || Boolean(rootClass)
+
   if (!hasOverrides) {
     return resolved
   }
 
-  const result: Record<string, string> = {}
-
-  if (isUnstyled) {
-    if (rootClass) result.root = cx(rootClass)
-    for (const slot in mergedUI) {
-      const override = mergedUI[slot]
-      if (typeof override === "function") {
-        result[slot] = cx(override(""))
-      } else if (override) {
-        result[slot] = cx(override)
-      }
-    }
-    return result
-  }
-
-  for (const slot in resolved) {
-    const value = resolved[slot] ?? ""
-    const override = mergedUI[slot]
-    if (!override) {
-      result[slot] = value
-    } else if (typeof override === "function") {
-      result[slot] = cx(override(value))
-    } else {
-      result[slot] = cx(value, override)
-    }
-  }
+  const result: Record<string, string> = { ...resolved }
 
   for (const slot in mergedUI) {
-    if (!(slot in resolved) && slot !== "root") {
-      const override = mergedUI[slot]
-      if (typeof override === "function") {
-        result[slot] = cx(override(""))
-      } else if (override) {
-        result[slot] = cx(override)
-      }
-    }
+    const override = mergedUI[slot]
+    if (!override) continue
+    const base = result[slot] ?? ""
+    result[slot] = typeof override === "function" ? cx(override(base)) : cx(base, override)
   }
 
   if (rootClass) {

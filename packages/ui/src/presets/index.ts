@@ -8,13 +8,15 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import { colorConfig } from "../config"
+import { colorConfig, type ColorShades } from "../config"
 
 const pathDirname = dirname(fileURLToPath(import.meta.url))
-export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}")
-export const uiFilesystemGlob = join(pathDirname, "../**/*")
+export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}").replace(
+  /\\/g,
+  "/"
+)
+export const uiFilesystemGlob = join(pathDirname, "../**/*").replace(/\\/g, "/")
 
-type ColorShades = Record<string, string>
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades
 
@@ -48,11 +50,9 @@ function resolveColorModes(
   entry: ColorConfigValue,
   autogenerate?: boolean
 ): { light: Record<string, string>; dark: Record<string, string> } {
-  const raw = entry as Record<string, unknown>
-  const modeLight = (
-    typeof raw.light === "object" && raw.light ? { ...raw.light } : {}
-  ) as ColorShades
-  const modeDark = (typeof raw.dark === "object" && raw.dark ? { ...raw.dark } : {}) as ColorShades
+  const raw = entry as Record<string, any>
+  const modeLight: ColorShades = raw.light && typeof raw.light === "object" ? raw.light : {}
+  const modeDark: ColorShades = raw.dark && typeof raw.dark === "object" ? raw.dark : {}
 
   const flatShades: ColorShades = {}
   for (const [k, v] of Object.entries(raw)) {
@@ -63,28 +63,27 @@ function resolveColorModes(
     new Set([...Object.keys(modeLight), ...Object.keys(modeDark), ...Object.keys(flatShades)])
   )
 
-  if (autogenerate) {
-    if (Object.keys(modeLight).length === 0) {
-      for (const s of allShades) {
-        const val = flatShades[s] ?? modeDark[s]
-        if (val) modeLight[s] = generateShade(s, val, "white")
-      }
-    }
-    if (Object.keys(modeDark).length === 0) {
-      for (const s of allShades) {
-        const val = flatShades[s] ?? modeLight[s]
-        if (val) modeDark[s] = generateShade(s, val, "black")
-      }
-    }
-  }
-
   const light: ColorShades = {}
   const dark: ColorShades = {}
-  for (const s of allShades) {
-    const lv = modeLight[s] ?? flatShades[s] ?? modeDark[s]
-    if (lv) light[s] = lv
 
-    const dv = modeDark[s] ?? flatShades[s] ?? modeLight[s]
+  for (const s of allShades) {
+    const rawL = modeLight[s]
+    const rawD = modeDark[s]
+    const rawF = flatShades[s]
+
+    let lv = rawL ?? rawF ?? rawD
+    let dv = rawD ?? rawF ?? rawL
+
+    if (autogenerate) {
+      if (!rawL && (rawF || rawD)) {
+        lv = generateShade(s, (rawF ?? rawD)!, "white")
+      }
+      if (!rawD && (rawF || rawL)) {
+        dv = generateShade(s, (rawF ?? rawL)!, "black")
+      }
+    }
+
+    if (lv) light[s] = lv
     if (dv) dark[s] = dv
   }
 
@@ -98,122 +97,38 @@ const createScale = (colorName: string, shadeKeys: string[]) => ({
   ...Object.fromEntries(shadeKeys.map((shade) => [shade, `var(--color-${colorName}-${shade})`]))
 })
 
-export interface RimelightPresetOptions {
-  colors?: Record<string, ColorConfigValue>
-  autogenerateColorModes?: boolean
-  icons?: Record<string, unknown>
-  presets?: {
-    wind?: boolean
-    typography?: boolean
-    icons?: boolean
-  }
+const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(colorConfig.semanticTokens)
+  .map(([token, val]) => {
+    if (typeof val === "string") {
+      return `          --${token}: ${val};`
+    }
+    const l = val.light
+    const d = val.dark ?? l
+    return `          --${token}: light-dark(${l}, ${d});`
+  })
+  .join("\n")
+
+interface ColorModes {
+  light?: Record<string, string>
+  dark?: Record<string, string>
 }
 
-export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
-  const userColors = options?.colors ?? {}
-  const autoGen = options?.autogenerateColorModes ?? true
-  const allColors = [...new Set([...colorConfig.colors, ...Object.keys(userColors)])]
-
-  // Built-in scales already have explicit {light, dark} buckets — pass through directly.
-  // Only user-provided colors need resolveColorModes (they may be flat shades or partial modes).
-  const resolvedBuiltins = Object.fromEntries(
-    Object.entries(colorConfig.scales).map(([name, entry]) => [name, entry])
-  )
-  const resolvedUserColors = Object.fromEntries(
-    Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
-  )
-  const resolvedColors = { ...resolvedBuiltins, ...resolvedUserColors }
-
-  const iconSafelist = Object.values(options?.icons ?? {}).filter(
-    (v): v is string => typeof v === "string" && v.startsWith("i-")
-  )
-  const safelist = [...allColors.map((color) => "rl-color-" + color), ...iconSafelist]
-
-  const enabledPresets = {
-    wind: options?.presets?.wind !== false,
-    typography: options?.presets?.typography !== false,
-    icons: options?.presets?.icons !== false
-  }
-
-  const lightDarkLines = Object.entries(resolvedColors)
+const formatColorLines = (colorMap: Record<string, ColorModes>) =>
+  Object.entries(colorMap)
     .flatMap(([color, modes]) => {
-      const light = modes.light as Record<string, string>
-      const dark = (modes.dark ?? modes.light) as Record<string, string>
+      const light = modes.light ?? {}
+      const dark = modes.dark ?? modes.light ?? {}
       return Object.keys(light).map((shade) => {
-        const l = light[shade]
+        const l = light[shade]!
         const d = dark[shade] ?? l
         return `            --color-${color}-${shade}: light-dark(${l}, ${d});`
       })
     })
     .join("\n")
 
-  const semanticTokenLines = Object.entries(colorConfig.semanticTokens)
-    .map(([token, val]) => {
-      if (typeof val === "string") {
-        return `          --${token}: ${val};`
-      }
-      const l = val.light
-      const d = val.dark ?? l
-      return `          --${token}: light-dark(${l}, ${d});`
-    })
-    .join("\n")
+const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorConfig.scales)
 
-  const preflightCss = `:root {
-  color-scheme: light dark;
-
-  /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
-${semanticTokenLines}
-  --radius: 0.625rem;
-  --font-sans: "Noto Sans", sans-serif;
-  --font-serif: "Noto Serif", serif;
-  --font-mono: "Noto Sans Mono", monospace;
-
-          --ui-header-height: 4rem;
-          --rl-container: 90rem;
-
-          /* Text / background / border / ring semantic tokens using responsive neutral variables */
-          --text-color-default: var(--color-neutral-700);
-          --text-color-muted: var(--color-neutral-600);
-          --text-color-dimmed: var(--color-neutral-500);
-          --text-color-toned: var(--color-neutral-800);
-          --text-color-highlighted: var(--color-neutral-950);
-          --text-color-elevated: var(--color-neutral-800);
-          --text-color-accented: var(--color-neutral-900);
-          --text-color-inverted: var(--color-neutral-50);
-
-          --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
-          --background-color-muted: var(--color-neutral-100);
-          --background-color-elevated: var(--color-neutral-200);
-          --background-color-accented: var(--color-neutral-300);
-          --background-color-dimmed: var(--color-neutral-400);
-          --background-color-toned: var(--color-neutral-800);
-          --background-color-highlighted: var(--color-neutral-900);
-          --background-color-inverted: var(--color-neutral-950);
-
-          --border-color-default: var(--color-neutral-200);
-          --border-color-muted: var(--color-neutral-100);
-          --border-color-elevated: var(--color-neutral-200);
-          --border-color-accented: var(--color-neutral-300);
-          --border-color-dimmed: var(--color-neutral-400);
-          --border-color-toned: var(--color-neutral-800);
-          --border-color-highlighted: var(--color-neutral-900);
-          --border-color-inverted: var(--color-neutral-950);
-
-          --ring-color-default: var(--color-neutral-200);
-          --ring-color-muted: var(--color-neutral-100);
-          --ring-color-elevated: var(--color-neutral-200);
-          --ring-color-accented: var(--color-neutral-300);
-          --ring-color-dimmed: var(--color-neutral-400);
-          --ring-color-toned: var(--color-neutral-800);
-          --ring-color-highlighted: var(--color-neutral-900);
-          --ring-color-inverted: var(--color-neutral-950);
-
-          --divide-color-default: var(--color-neutral-200);
-          --divide-color-inverted: var(--color-neutral-950);
-
-          /* Color scales — light-dark() resolves based on inherited color-scheme */
-${lightDarkLines}
-
+const STATIC_PREFLIGHT_SUFFIX = `
           /* Shiki / Expressive Code */
           --shiki-foreground: #e1e4e8;
           --shiki-background: #1f2428;
@@ -318,6 +233,113 @@ ${lightDarkLines}
         }
         `
 
+export interface RimelightPresetOptions {
+  colors?: Record<string, ColorConfigValue>
+  autogenerateColorModes?: boolean
+  icons?: Record<string, unknown>
+  presets?: {
+    wind?: boolean
+    typography?: boolean
+    icons?: boolean
+  }
+}
+
+export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
+  const userColors = options?.colors ?? {}
+  const autoGen = options?.autogenerateColorModes ?? true
+  const allColors = [...new Set([...colorConfig.colors, ...Object.keys(userColors)])]
+
+  // Built-in scales already have explicit {light, dark} buckets — pass through directly.
+  // Only user-provided colors need resolveColorModes (they may be flat shades or partial modes).
+  const resolvedBuiltins = colorConfig.scales
+  const resolvedUserColors = Object.fromEntries(
+    Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
+  )
+  const resolvedColors = { ...resolvedBuiltins, ...resolvedUserColors }
+
+  const safelist: string[] = allColors.map((color) => `rl-color-${color}`)
+  if (options?.icons) {
+    for (const v of Object.values(options.icons)) {
+      if (typeof v === "string" && v.startsWith("i-")) {
+        safelist.push(v)
+      }
+    }
+  }
+
+  const enabledPresets = {
+    wind: options?.presets?.wind !== false,
+    typography: options?.presets?.typography !== false,
+    icons: options?.presets?.icons !== false
+  }
+
+  let hasUserColors = false
+  for (const _ in userColors) {
+    hasUserColors = true
+    break
+  }
+
+  const userColorLines = hasUserColors ? formatColorLines(resolvedUserColors) : ""
+
+  const lightDarkLines = userColorLines
+    ? `${STATIC_BUILTIN_COLOR_LINES}\n${userColorLines}`
+    : STATIC_BUILTIN_COLOR_LINES
+
+  const preflightCss = `:root {
+  color-scheme: light dark;
+
+  /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
+${STATIC_SEMANTIC_TOKEN_LINES}
+  --radius: 0.625rem;
+  --font-sans: "Noto Sans", sans-serif;
+  --font-serif: "Noto Serif", serif;
+  --font-mono: "Noto Sans Mono", monospace;
+
+          --ui-header-height: 4rem;
+          --rl-container: 90rem;
+
+          /* Text / background / border / ring semantic tokens using responsive neutral variables */
+          --text-color-default: var(--color-neutral-700);
+          --text-color-muted: var(--color-neutral-600);
+          --text-color-dimmed: var(--color-neutral-500);
+          --text-color-toned: var(--color-neutral-800);
+          --text-color-highlighted: var(--color-neutral-950);
+          --text-color-elevated: var(--color-neutral-800);
+          --text-color-accented: var(--color-neutral-900);
+          --text-color-inverted: var(--color-neutral-50);
+
+          --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
+          --background-color-muted: var(--color-neutral-100);
+          --background-color-elevated: var(--color-neutral-200);
+          --background-color-accented: var(--color-neutral-300);
+          --background-color-dimmed: var(--color-neutral-400);
+          --background-color-toned: var(--color-neutral-800);
+          --background-color-highlighted: var(--color-neutral-900);
+          --background-color-inverted: var(--color-neutral-950);
+
+          --border-color-default: var(--color-neutral-200);
+          --border-color-muted: var(--color-neutral-100);
+          --border-color-elevated: var(--color-neutral-200);
+          --border-color-accented: var(--color-neutral-300);
+          --border-color-dimmed: var(--color-neutral-400);
+          --border-color-toned: var(--color-neutral-800);
+          --border-color-highlighted: var(--color-neutral-900);
+          --border-color-inverted: var(--color-neutral-950);
+
+          --ring-color-default: var(--color-neutral-200);
+          --ring-color-muted: var(--color-neutral-100);
+          --ring-color-elevated: var(--color-neutral-200);
+          --ring-color-accented: var(--color-neutral-300);
+          --ring-color-dimmed: var(--color-neutral-400);
+          --ring-color-toned: var(--color-neutral-800);
+          --ring-color-highlighted: var(--color-neutral-900);
+          --ring-color-inverted: var(--color-neutral-950);
+
+          --divide-color-default: var(--color-neutral-200);
+          --divide-color-inverted: var(--color-neutral-950);
+
+          /* Color scales — light-dark() resolves based on inherited color-scheme */
+${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
+
   return {
     name: "rimelight-ui",
     safelist,
@@ -360,13 +382,9 @@ ${lightDarkLines}
     shortcuts: {
       "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl lg:px-xl",
       "sr-only":
-        "absolute w-px h-px p-0 m-0 overflow-hidden clip-rect-1-1-1-1 whitespace-nowrap border-0"
+        "absolute w-px h-px p-0 m-0 overflow-hidden [clip:rect(1px,1px,1px,1px)] whitespace-nowrap border-0"
     },
     rules: [
-      [
-        /^clip-rect-(\d+)-(\d+)-(\d+)-(\d+)$/,
-        ([, t, r, b, l]) => ({ clip: `rect(${t}px, ${r}px, ${b}px, ${l}px)` })
-      ],
       [
         /^rl-color-([a-z][a-z0-9-]*)$/,
         ([, color]) => ({
@@ -396,23 +414,18 @@ ${lightDarkLines}
       ],
       [
         /^bg-inverted(?:\/(\d+))?$/,
-        ([, opacity]) =>
-          opacity
-            ? {
-                "background-color": `color-mix(in srgb, var(--background-color-inverted) ${opacity}%, transparent)`,
-                "color": "var(--text-color-inverted)"
-              }
-            : {
-                "background-color": "var(--background-color-inverted)",
-                "color": "var(--text-color-inverted)"
-              }
+        ([, opacity]) => ({
+          "background-color": opacity
+            ? `color-mix(in srgb, var(--background-color-inverted) ${opacity}%, transparent)`
+            : "var(--background-color-inverted)",
+          "color": "var(--text-color-inverted)"
+        })
       ],
       [
         /^(text|bg|ring|border|outline)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
-        ([, rawProp = "text", name, opacity]) => {
-          const prop = rawProp || "text"
-          const cssProp = CSS_PROP_MAP[prop] ?? "color"
-          const varName = `--${VAR_PREFIX_MAP[prop] ?? "text-color"}-${name}`
+        ([, prop, name, opacity]) => {
+          const cssProp = CSS_PROP_MAP[prop!]!
+          const varName = `--${VAR_PREFIX_MAP[prop!]!}-${name}`
           return opacity
             ? { [cssProp]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
             : { [cssProp]: `var(${varName})` }
@@ -451,7 +464,7 @@ ${lightDarkLines}
         },
         ...Object.fromEntries(
           allColors.map((color) => {
-            const m = resolvedColors[color]!
+            const m = (resolvedColors as Record<string, any>)[color]!
             const shadeKeys = Object.keys(m.light)
             return [color, createScale(color, shadeKeys)]
           })
