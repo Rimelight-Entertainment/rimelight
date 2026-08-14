@@ -46,10 +46,6 @@ export interface UIConfig {
      * merge utility (first arg wins). Values follow the css-variants theme override format.
      */
     themes?: Record<string, ComponentThemeOverride>
-    /**
-     * Default prop values overrides for components.
-     */
-    props?: Record<string, Record<string, any>>
   }
   /**
    * Custom colors. Each color can be:
@@ -94,7 +90,6 @@ export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "i
   colors?: readonly string[]
   unstyled?: boolean
   themes?: Record<string, ComponentThemeOverride>
-  props?: Record<string, Record<string, any>>
   [key: string]: unknown
 }
 
@@ -461,35 +456,35 @@ export const semanticTokens = {
   "commentary": pair("oklch(0.667 0.295 322.2)", "oklch(0.74 0.238 322.2)"),
   "commentary-foreground": pair("oklch(0.985 0 0)", "oklch(0.208 0.015 260)"),
   "commentary-accent": pair("oklch(0.591 0.293 322.9)", "oklch(0.833 0.145 321.4)"),
-  "ideation": pair("oklch(0.606 0.25 292.7)", "oklch(0.702 0.183 293.5)"),
+  "ideation": pair("oklch(0.612 0.252 291.5)", "oklch(0.708 0.185 292.0)"),
   "ideation-foreground": pair("oklch(0.985 0 0)", "oklch(0.208 0.015 260)"),
-  "ideation-accent": pair("oklch(0.541 0.281 293.0)", "oklch(0.811 0.111 293.6)"),
+  "ideation-accent": pair("oklch(0.545 0.279 291.8)", "oklch(0.815 0.114 292.2)"),
   "source": pair("oklch(0.789 0.154 211.5)", "oklch(0.865 0.127 207.1)"),
   "source-foreground": "oklch(0.208 0.015 260)",
   "source-accent": pair("oklch(0.609 0.126 221.7)", "oklch(0.917 0.08 205.0)"),
   "border": border,
   "input": pair("oklch(0.922 0.005 260)", "oklch(0.985 0 0 / 0.15)"),
-  "outline": ring,
+  "outline": pair("oklch(0.705 0.01 260)", "oklch(0.552 0.011 260)"),
   "ring": ring,
   "sidebar": pair("oklch(0.985 0 0)", "oklch(0.205 0.015 260)"),
   "sidebar-foreground": fg,
   "sidebar-primary": "oklch(0.488 0.243 264.4)",
   "sidebar-primary-foreground": "oklch(0.985 0 0)",
-  "sidebar-accent": muted,
+  "sidebar-accent": pair("oklch(0.965 0.004 260)", "oklch(0.265 0.016 260)"),
   "sidebar-accent-foreground": pair("oklch(0.205 0.015 260)", "oklch(0.97 0.003 260)"),
   "sidebar-border": pair("oklch(0.922 0.005 260)", "oklch(0.269 0.015 260)"),
-  "sidebar-ring": ring,
+  "sidebar-ring": pair("oklch(0.71 0.012 260)", "oklch(0.56 0.012 260)"),
   "chart-1": pair("oklch(0.623 0.214 259.8)", "oklch(0.707 0.165 254.6)"),
   "chart-2": pair("oklch(0.585 0.233 277.1)", "oklch(0.673 0.182 276.9)"),
-  "chart-3": pair("oklch(0.606 0.25 292.7)", "oklch(0.702 0.183 293.5)"),
+  "chart-3": pair("oklch(0.615 0.245 295.2)", "oklch(0.698 0.187 294.8)"),
   "chart-4": pair("oklch(0.627 0.265 303.9)", "oklch(0.714 0.203 304.0)"),
-  "chart-5": pair("oklch(0.667 0.295 322.2)", "oklch(0.74 0.238 322.2)"),
+  "chart-5": pair("oklch(0.672 0.290 324.5)", "oklch(0.745 0.235 323.8)"),
   "color-surface": pair("oklch(1 0 0)", "oklch(0.269 0.015 260)"),
   "color-muted-strong": pair("oklch(0.922 0.005 260)", "oklch(0.371 0.013 260)"),
   "color-foreground-secondary": pair("oklch(0.439 0.012 260)", "oklch(0.87 0.007 260)"),
   "color-foreground-tertiary": pair("oklch(0.556 0.011 260)", "oklch(0.708 0.01 260)"),
-  "color-placeholder": ring,
+  "color-placeholder": pair("oklch(0.702 0.009 260)", "oklch(0.550 0.010 260)"),
   "color-input-border": pair("oklch(0.87 0.007 260)", "oklch(0.439 0.012 260)"),
-  "color-hover": hover,
+  "color-hover": pair("oklch(0.968 0.004 260)", "oklch(0.368 0.014 260)"),
   "color-accent-subtle": pair("oklch(0.97 0.015 260)", "oklch(0.279 0.015 260)")
 } as const

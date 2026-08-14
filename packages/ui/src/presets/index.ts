@@ -48,9 +48,9 @@ function resolveColorModes(
   const dark: ColorShades = {}
 
   for (const s of shades) {
-    const base = flat[s] ?? mD[s] ?? mL[s]
-    light[s] = mL[s] ?? (autogenerate && base ? generateShade(s, base, "white") : (base ?? ""))
-    dark[s] = mD[s] ?? (autogenerate && base ? generateShade(s, base, "black") : (base ?? ""))
+    const base = flat[s] ?? mD[s] ?? mL[s] ?? ""
+    light[s] = mL[s] ?? (autogenerate && base ? generateShade(s, base, "white") : base)
+    dark[s] = mD[s] ?? (autogenerate && base ? generateShade(s, base, "black") : base)
   }
   return { light, dark }
 }
@@ -75,7 +75,10 @@ const formatColorLines = (
 ) =>
   Object.entries(colorMap)
     .flatMap(([c, m]) => {
-      const shades = [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
+      const shades =
+        m.light && m.dark
+          ? COLOR_SHADES
+          : [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
       return shades.map(
         (s) =>
           `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark![s]}, ${m.dark?.[s] ?? m.light![s]});`
@@ -85,13 +88,13 @@ const formatColorLines = (
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
 
-const PROP_MAP: Record<string, { css: string; prefix?: string }> = {
-  text: { css: "color" },
-  bg: { css: "background-color", prefix: "background" },
-  ring: { css: "--un-ring-color", prefix: "ring" },
-  outline: { css: "outline-color", prefix: "ring" },
-  divide: { css: "border-color", prefix: "divide" },
-  border: { css: "border-color" }
+const PROP_MAP: Record<string, [css: string, prefix: string]> = {
+  text: ["color", "text"],
+  bg: ["background-color", "background"],
+  ring: ["--un-ring-color", "ring"],
+  outline: ["outline-color", "ring"],
+  divide: ["border-color", "divide"],
+  border: ["border-color", "border"]
 }
 
 const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
@@ -105,14 +108,20 @@ const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
   inverted: ["50", "950"]
 }
 
-const INTENT_PREFLIGHT_VARS =
-  Object.entries(INTENTS)
-    .map(
-      ([n, [t, b, bg]]) =>
-        `  --text-color-${n}: var(--color-neutral-${t});\n  --background-color-${n}: ${bg ?? `var(--color-neutral-${b})`};\n  --border-color-${n}: var(--color-neutral-${b});\n  --ring-color-${n}: var(--color-neutral-${b});`
-    )
-    .join("\n") +
-  "\n  --divide-color-default: var(--color-neutral-200);\n  --divide-color-inverted: var(--color-neutral-950);"
+const INTENT_PROPS = ["text", "background", "border", "ring", "divide"] as const
+
+const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
+  .map(([n, [t, b, bg]]) => {
+    const vals: Record<string, string> = {
+      text: `var(--color-neutral-${t})`,
+      background: bg ?? `var(--color-neutral-${b})`,
+      border: `var(--color-neutral-${b})`,
+      ring: `var(--color-neutral-${b})`,
+      divide: `var(--color-neutral-${b})`
+    }
+    return INTENT_PROPS.map((p) => `  --${p}-color-${n}: ${vals[p]};`).join("\n")
+  })
+  .join("\n")
 
 const STATIC_PREFLIGHT_SUFFIX = `
 }
@@ -177,25 +186,24 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
 
   const preflightCss = `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
 
-  const presets: Preset[] = []
-  if (options?.presets?.wind !== false) presets.push(presetWind4())
-  if (options?.presets?.typography !== false) {
-    presets.push(
-      presetTypography({
-        cssExtend: {
-          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-            "font-family": "var(--font-sans), system-ui, sans-serif"
-          },
-          "pre,code": { "font-family": "var(--font-mono), monospace" }
-        }
-      })
-    )
-  }
-  if (options?.presets?.icons !== false) {
-    presets.push(
-      presetIcons({ extraProperties: { "display": "inline-block", "vertical-align": "middle" } })
-    )
-  }
+  const presets: Preset[] = [
+    options?.presets?.wind !== false ? presetWind4() : null,
+    options?.presets?.typography !== false
+      ? presetTypography({
+          cssExtend: {
+            "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+              "font-family": "var(--font-sans), system-ui, sans-serif"
+            },
+            "pre,code": { "font-family": "var(--font-mono), monospace" }
+          }
+        })
+      : null,
+    options?.presets?.icons !== false
+      ? presetIcons({
+          extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+        })
+      : null
+  ].filter((p): p is Preset => Boolean(p))
 
   return {
     name: "rimelight-ui",
@@ -221,10 +229,12 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         })
       ],
       [
-        /^(rl-)?(light|dark)$/,
-        ([, , mode]) => ({ "color-scheme": mode, "color": "var(--foreground)" })
+        /^(?:rl-)?(light|dark|auto)$/,
+        ([, mode]) => ({
+          "color-scheme": mode === "auto" ? "light dark" : mode,
+          "color": "var(--foreground)"
+        })
       ],
-      ["rl-auto", { "color-scheme": "light dark", "color": "var(--foreground)" }],
       [
         /^(shadow-adaptive|rl-elevation)$/,
         () => ({
@@ -242,7 +252,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
       [
         /^(text|bg|ring|border|outline|divide)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
         ([, prop, name, opacity]) => {
-          const { css, prefix = prop } = PROP_MAP[prop!] ?? { css: `${prop}-color` }
+          const [css, prefix] = PROP_MAP[prop!]!
           const varName = `--${prefix}-color-${name}`
           const res: Record<string, string> = opacity
             ? { [css]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }

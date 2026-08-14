@@ -42,7 +42,16 @@ export interface RegisteredShortcut {
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
 
-const MODIFIERS = new Set(["meta", "command", "ctrl", "control", "shift", "alt", "option"])
+const MODIFIERS: Record<string, "ctrl" | "meta" | "shift" | "alt"> = {
+  ctrl: "ctrl",
+  control: "ctrl",
+  meta: "meta",
+  command: "meta",
+  shift: "shift",
+  alt: "alt",
+  option: "alt"
+}
+
 const SHIFTABLE = new Set([
   "arrowleft",
   "arrowright",
@@ -97,23 +106,21 @@ export function formatShortcutKeys(keyStr: string): string[] {
 
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
-const toCode = (k: string) =>
-  k.length === 1
-    ? /[a-z]/i.test(k)
-      ? `Key${k.toUpperCase()}`
-      : /\d/.test(k)
-        ? `Digit${k}`
-        : k
-    : /^f\d+$/i.test(k)
-      ? k.toUpperCase()
-      : SPECIAL_CODES[k.toLowerCase()] || k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
+const toCode = (k: string) => {
+  if (k.length === 1) {
+    return /[a-z]/i.test(k) ? `Key${k.toUpperCase()}` : /\d/.test(k) ? `Digit${k}` : k
+  }
+  if (/^f\d+$/i.test(k)) return k.toUpperCase()
+  return SPECIAL_CODES[k.toLowerCase()] || k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
+}
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 function isUsingInput(el: Element | null): boolean | string {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
   if (!el) return false
-  const isInput = INPUT_TAGS.has(el.tagName) || (el instanceof HTMLElement && el.isContentEditable)
-  return isInput ? el.getAttribute("name") || true : false
+  return INPUT_TAGS.has(el.tagName) || ("isContentEditable" in el && Boolean(el.isContentEditable))
+    ? el.getAttribute("name") || true
+    : false
 }
 
 interface ParsedShortcuts {
@@ -142,15 +149,21 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
     const chainedKey = isChained(rawKey)
 
     if (typeof handler === "function") {
-      const parts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
-      const base = chainedKey
-        ? rawKey.toLowerCase()
-        : parts.filter((p) => !MODIFIERS.has(p)).join("_")
-      if (chainedKey) maxChain = Math.max(maxChain, parts.length)
+      const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
+      const mods = new Set<"ctrl" | "meta" | "shift" | "alt">()
+      const nonMods: string[] = []
 
-      const has = new Set(parts)
-      const meta = has.has("meta") || has.has("command")
-      const ctrl = has.has("ctrl") || has.has("control") || (!isMac && meta)
+      for (const p of rawParts) {
+        const mod = MODIFIERS[p]
+        if (mod) mods.add(mod)
+        else nonMods.push(p)
+      }
+
+      const base = chainedKey ? rawKey.toLowerCase() : nonMods.join("_")
+      if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
+
+      const meta = mods.has("meta")
+      const ctrl = mods.has("ctrl") || (!isMac && meta)
 
       const sc: Shortcut = {
         key: base,
@@ -159,8 +172,8 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         chained: chainedKey,
         ctrlKey: ctrl,
         metaKey: isMac && meta,
-        shiftKey: has.has("shift"),
-        altKey: has.has("alt") || has.has("option"),
+        shiftKey: mods.has("shift"),
+        altKey: mods.has("alt"),
         usingInput
       }
 
@@ -170,14 +183,15 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof cfg === "object" && cfg && (cfg.label || cfg.description)) {
       const cat = cfg.category || "system"
-      registered.push({
+      const reg: RegisteredShortcut = {
         id: `${cat}-${rawKey}`,
         keys: formatShortcutKeys(rawKey),
-        category: cat,
-        ...(cfg.label && { label: cfg.label }),
-        ...(cfg.description && { description: cfg.description }),
-        ...(cfg.order !== undefined && { order: cfg.order })
-      })
+        category: cat
+      }
+      if (cfg.label !== undefined) reg.label = cfg.label
+      if (cfg.description !== undefined) reg.description = cfg.description
+      if (cfg.order !== undefined) reg.order = cfg.order
+      registered.push(reg)
     }
   }
 
