@@ -120,12 +120,6 @@ const STATIC_PREFLIGHT_SUFFIX = `
   .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6) !important; }
 }
 
-:where(p, h1, h2, h3, h4, h5, h6, li, blockquote, figcaption, caption, label, legend, dt, dd) { color: var(--foreground); }
-
-@supports not (content-visibility: hidden) {
-  [hidden="until-found"] { display: none !important; }
-}
-
 body {
   background-color: var(--background);
   color: var(--foreground);
@@ -376,14 +370,6 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
         "xl": "calc(var(--radius) + 0.25rem)",
         "2xl": "calc(var(--radius) + 0.5rem)",
         "3xl": "calc(var(--radius) + 1rem)"
-      },
-      animation: {
-        keyframes: {
-          marquee: "from { transform: translateX(0); } to { transform: translateX(-100%); }"
-        },
-        durations: { marquee: "30s" },
-        timingFns: { marquee: "linear" },
-        counts: { marquee: "infinite" }
       }
     },
     preflights: [{ getCSS: () => preflightCss }]

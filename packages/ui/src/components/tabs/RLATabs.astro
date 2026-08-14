@@ -213,6 +213,11 @@ if (needsOverflow && renderedListItems.length > 1) {
   .rla-tb-pop-rendered {
     display: none;
   }
+  @supports not (content-visibility: hidden) {
+    [hidden="until-found"] {
+      display: none !important;
+    }
+  }
 </style>
 
 <script>

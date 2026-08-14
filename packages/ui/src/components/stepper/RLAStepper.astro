@@ -303,3 +303,11 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
     }
   }
 </script>
+
+<style>
+  @supports not (content-visibility: hidden) {
+    [hidden="until-found"] {
+      display: none !important;
+    }
+  }
+</style>
