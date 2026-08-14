@@ -12,6 +12,7 @@ import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 
 export default defineConfig({
   experimental: {
+    incrementalBuild: true,
     contentIntellisense: true,
     clientPrerender: true,
     collectionStorage: "chunked",
@@ -31,7 +32,7 @@ export default defineConfig({
 
   vite: {
     define: {
-      "import.meta.env.BUILD_TIME": JSON.stringify(new Date().toISOString())
+      "import.meta.env.BUILD_TIME": JSON.stringify(process.env.BUILD_TIME || "static")
     }
   },
 

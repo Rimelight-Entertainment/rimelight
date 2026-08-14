@@ -10,7 +10,7 @@ export async function getStaticPaths() {
   const legals = await getCollection("legal").catch(() => [])
 
   const paths = [
-    { params: { route: "page" }, props: {} },
+    { params: { route: "page" }, props: {}, cacheKey: "static-page" },
     {
       params: { route: "default" },
       props: {
@@ -18,11 +18,18 @@ export async function getStaticPaths() {
         description: "Entertainment & Gaming",
         type: "Documentation",
         isDocs: false
-      }
+      },
+      cacheKey: "static-default"
     },
     {
       params: { route: "wiki-default" },
-      props: { title: "Grand Tale Wiki", description: "Knowledge Base", type: "Wiki", isDocs: true }
+      props: {
+        title: "Grand Tale Wiki",
+        description: "Knowledge Base",
+        type: "Wiki",
+        isDocs: true
+      },
+      cacheKey: "static-wiki"
     },
     {
       params: { route: "forum-default" },
@@ -31,7 +38,8 @@ export async function getStaticPaths() {
         description: "Community Discussions",
         type: "Community",
         isDocs: false
-      }
+      },
+      cacheKey: "static-forum"
     },
     ...blogs.map((b: any) => ({
       params: { route: `blog/${b.id}` },
@@ -41,7 +49,8 @@ export async function getStaticPaths() {
         type: "Blog Post",
         isDocs: false,
         pubDate: b.data.pubDate ? new Date(b.data.pubDate).toLocaleDateString() : ""
-      }
+      },
+      cacheKey: b.digest || b.id
     })),
     ...docs.map((d: any) => ({
       params: { route: `docs/${d.id}` },
@@ -50,7 +59,8 @@ export async function getStaticPaths() {
         description: d.data.description || "",
         type: "Documentation",
         isDocs: true
-      }
+      },
+      cacheKey: d.digest || d.id
     })),
     ...legals.map((l: any) => ({
       params: { route: `legal/${l.id}` },
@@ -59,7 +69,8 @@ export async function getStaticPaths() {
         description: l.data.description || "",
         type: "Legal",
         isDocs: false
-      }
+      },
+      cacheKey: l.digest || l.id
     }))
   ]
   return paths
