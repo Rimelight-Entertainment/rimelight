@@ -1,4 +1,3 @@
-import { join } from "node:path"
 import {
   presetTypography,
   presetWind4,
@@ -14,11 +13,6 @@ import {
   COLOR_SHADES,
   type ColorShades
 } from "../config"
-
-export const uiSrcGlob = join(
-  import.meta.dirname,
-  "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}"
-).replace(/\\/g, "/")
 
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades

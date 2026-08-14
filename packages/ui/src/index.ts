@@ -2,9 +2,10 @@ import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./config"
 import { getAllColorNames } from "./config"
-import rimelightUiPreset, { uiSrcGlob } from "./presets"
+import rimelightUiPreset from "./presets"
 
-const EXT_RE = /\.(vue|svelte|[jt]sx|mdx?|astro|html)($|\?)/
+const EXT_RE = /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/
+const UI_PACKAGE_RE = /[\\/](@rimelight\/ui|packages\/ui)[\\/]/
 
 export function ui(o: UIConfig = {}): AstroIntegration[] {
   const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = o
@@ -14,7 +15,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
     typeof pipeline === "object" && pipeline && Array.isArray(pipeline.include)
       ? pipeline.include
       : []
-  const include = [EXT_RE, uiSrcGlob, ...userInc]
+  const include = [EXT_RE, UI_PACKAGE_RE, ...userInc]
 
   const defineUiConfig = JSON.stringify({
     unstyled: o.unstyled,
