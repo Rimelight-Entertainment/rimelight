@@ -14,6 +14,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
     typeof pipeline === "object" && pipeline && Array.isArray(pipeline.include)
       ? pipeline.include
       : []
+  const include = [EXT_RE, uiSrcGlob, ...userInc]
 
   const defineUiConfig = JSON.stringify({
     unstyled: o.unstyled,
@@ -31,8 +32,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
       presets: [rimelightUiPreset(o), ...(unocss.presets ?? [])],
       content: {
         ...userContent,
-        pipeline:
-          pipeline === false ? false : { ...pipeline, include: [EXT_RE, uiSrcGlob, ...userInc] },
+        pipeline: pipeline === false ? false : { ...pipeline, include },
         filesystem: [
           uiSrcGlob,
           ...(Array.isArray(userContent.filesystem) ? userContent.filesystem : [])

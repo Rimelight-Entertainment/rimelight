@@ -2,7 +2,7 @@ import { cx } from "css-variants"
 import { uiConfig, type Override } from "../config"
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<Function>()
+const themeCreatorCache = new WeakMap<object>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
 export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
@@ -29,11 +29,12 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   if (!map) classCache.set(themeFn, (map = new Map()))
 
   const key = variants
-    ? Object.entries(variants)
-        .toSorted(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => `${k}:${String(v)}`)
+    ? Object.keys(variants)
+        .toSorted()
+        .map((k) => `${k}:${(variants as Record<string, string>)[k]}`)
         .join(";")
     : ""
+
   let cached = map.get(key)
   if (!cached) map.set(key, (cached = themeFn(variants)))
 

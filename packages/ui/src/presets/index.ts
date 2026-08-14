@@ -48,16 +48,9 @@ function resolveColorModes(
   const dark: ColorShades = {}
 
   for (const s of shades) {
-    let lv = mL[s] ?? flat[s] ?? mD[s]
-    let dv = mD[s] ?? flat[s] ?? mL[s]
-    if (autogenerate) {
-      const baseL = flat[s] ?? mD[s]
-      const baseD = flat[s] ?? mL[s]
-      if (!mL[s] && baseL) lv = generateShade(s, baseL, "white")
-      if (!mD[s] && baseD) dv = generateShade(s, baseD, "black")
-    }
-    if (lv) light[s] = lv
-    if (dv) dark[s] = dv
+    const base = flat[s] ?? mD[s] ?? mL[s]
+    light[s] = mL[s] ?? (autogenerate && base ? generateShade(s, base, "white") : (base ?? ""))
+    dark[s] = mD[s] ?? (autogenerate && base ? generateShade(s, base, "black") : (base ?? ""))
   }
   return { light, dark }
 }
@@ -81,11 +74,13 @@ const formatColorLines = (
   colorMap: Record<string, { light?: Record<string, string>; dark?: Record<string, string> }>
 ) =>
   Object.entries(colorMap)
-    .flatMap(([c, m]) =>
-      Object.keys(m.light ?? {}).map(
-        (s) => `  --color-${c}-${s}: light-dark(${m.light![s]}, ${m.dark?.[s] ?? m.light![s]});`
+    .flatMap(([c, m]) => {
+      const shades = [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
+      return shades.map(
+        (s) =>
+          `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark![s]}, ${m.dark?.[s] ?? m.light![s]});`
       )
-    )
+    })
     .join("\n")
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
@@ -99,41 +94,25 @@ const PROP_MAP: Record<string, { css: string; prefix?: string }> = {
   border: { css: "border-color" }
 }
 
-const INTENT_PREFLIGHT_VARS = `
-  --text-color-default: var(--color-neutral-700);
-  --text-color-muted: var(--color-neutral-600);
-  --text-color-dimmed: var(--color-neutral-500);
-  --text-color-toned: var(--color-neutral-800);
-  --text-color-highlighted: var(--color-neutral-950);
-  --text-color-elevated: var(--color-neutral-800);
-  --text-color-accented: var(--color-neutral-900);
-  --text-color-inverted: var(--color-neutral-50);
-  --background-color-default: light-dark(oklch(1 0 0), var(--color-neutral-50));
-  --background-color-muted: var(--color-neutral-100);
-  --background-color-elevated: var(--color-neutral-200);
-  --background-color-accented: var(--color-neutral-300);
-  --background-color-dimmed: var(--color-neutral-400);
-  --background-color-toned: var(--color-neutral-800);
-  --background-color-highlighted: var(--color-neutral-900);
-  --background-color-inverted: var(--color-neutral-950);
-  --border-color-default: var(--color-neutral-200);
-  --border-color-muted: var(--color-neutral-100);
-  --border-color-elevated: var(--color-neutral-200);
-  --border-color-accented: var(--color-neutral-300);
-  --border-color-dimmed: var(--color-neutral-400);
-  --border-color-toned: var(--color-neutral-800);
-  --border-color-highlighted: var(--color-neutral-900);
-  --border-color-inverted: var(--color-neutral-950);
-  --ring-color-default: var(--color-neutral-200);
-  --ring-color-muted: var(--color-neutral-100);
-  --ring-color-elevated: var(--color-neutral-200);
-  --ring-color-accented: var(--color-neutral-300);
-  --ring-color-dimmed: var(--color-neutral-400);
-  --ring-color-toned: var(--color-neutral-800);
-  --ring-color-highlighted: var(--color-neutral-900);
-  --ring-color-inverted: var(--color-neutral-950);
-  --divide-color-default: var(--color-neutral-200);
-  --divide-color-inverted: var(--color-neutral-950);`
+const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
+  default: ["700", "200", "light-dark(oklch(1 0 0), var(--color-neutral-50))"],
+  muted: ["600", "100"],
+  elevated: ["800", "200"],
+  accented: ["900", "300"],
+  dimmed: ["500", "400"],
+  toned: ["800", "800"],
+  highlighted: ["950", "900"],
+  inverted: ["50", "950"]
+}
+
+const INTENT_PREFLIGHT_VARS =
+  Object.entries(INTENTS)
+    .map(
+      ([n, [t, b, bg]]) =>
+        `  --text-color-${n}: var(--color-neutral-${t});\n  --background-color-${n}: ${bg ?? `var(--color-neutral-${b})`};\n  --border-color-${n}: var(--color-neutral-${b});\n  --ring-color-${n}: var(--color-neutral-${b});`
+    )
+    .join("\n") +
+  "\n  --divide-color-default: var(--color-neutral-200);\n  --divide-color-inverted: var(--color-neutral-950);"
 
 const STATIC_PREFLIGHT_SUFFIX = `
 }
@@ -263,9 +242,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
       [
         /^(text|bg|ring|border|outline|divide)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
         ([, prop, name, opacity]) => {
-          const { css, prefix = prop } = (prop ? PROP_MAP[prop] : undefined) ?? {
-            css: `${prop}-color`
-          }
+          const { css, prefix = prop } = PROP_MAP[prop!] ?? { css: `${prop}-color` }
           const varName = `--${prefix}-color-${name}`
           const res: Record<string, string> = opacity
             ? { [css]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }

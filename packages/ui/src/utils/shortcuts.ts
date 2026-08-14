@@ -21,6 +21,7 @@ export interface ShortcutsOptions {
 
 interface Shortcut {
   key: string
+  code: string
   handler: Handler
   chained: boolean
   ctrlKey: boolean
@@ -147,25 +148,22 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         : parts.filter((p) => !MODIFIERS.has(p)).join("_")
       if (chainedKey) maxChain = Math.max(maxChain, parts.length)
 
-      let ctrl = parts.some((p) => p === "ctrl" || p === "control")
-      let meta = parts.some((p) => p === "meta" || p === "command")
-      const shift = parts.includes("shift")
-      const alt = parts.some((p) => p === "alt" || p === "option")
-      if (!isMac && meta && !ctrl) {
-        meta = false
-        ctrl = true
-      }
+      const has = new Set(parts)
+      const meta = has.has("meta") || has.has("command")
+      const ctrl = has.has("ctrl") || has.has("control") || (!isMac && meta)
 
       const sc: Shortcut = {
         key: base,
+        code: toCode(base),
         handler,
         chained: chainedKey,
         ctrlKey: ctrl,
-        metaKey: meta,
-        shiftKey: shift,
-        altKey: alt,
+        metaKey: isMac && meta,
+        shiftKey: has.has("shift"),
+        altKey: has.has("alt") || has.has("option"),
         usingInput
       }
+
       if (chainedKey) chained.set(base, sc)
       else standard.push(sc)
     }
@@ -239,7 +237,7 @@ export function defineShortcuts(
 
     for (const s of standard) {
       if (e.ctrlKey !== s.ctrlKey || e.metaKey !== s.metaKey || e.altKey !== s.altKey) continue
-      if (s.altKey && e.altKey ? e.code !== toCode(s.key) : e.key.toLowerCase() !== s.key) continue
+      if (s.altKey && e.altKey ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
       if (s.shiftKey && !e.shiftKey) continue
       if (
         !s.shiftKey &&
