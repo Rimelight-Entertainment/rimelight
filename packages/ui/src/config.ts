@@ -91,13 +91,13 @@ export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "i
   colors?: readonly string[]
   unstyled?: boolean
   themes?: Record<string, Record<string, ((base: string) => string) | string | undefined>>
+  props?: Record<string, Record<string, any>>
   [key: string]: unknown
 }
 
-export const getAllColorNames = (customColors?: Record<string, unknown>): string[] =>
-  customColors && Object.keys(customColors).length > 0
-    ? [...new Set([...colorNames, ...Object.keys(customColors)])]
-    : [...colorNames]
+export const getAllColorNames = (customColors?: Record<string, unknown>): string[] => [
+  ...new Set([...colorNames, ...Object.keys(customColors ?? {})])
+]
 
 declare global {
   interface ImportMetaEnv {
@@ -413,18 +413,7 @@ export const colorScales = {
   }
 } as const
 
-export const colorNames = [
-  "neutral",
-  "primary",
-  "secondary",
-  "info",
-  "success",
-  "warning",
-  "error",
-  "commentary",
-  "ideation",
-  "source"
-] as const satisfies readonly (keyof typeof colorScales)[]
+export const colorNames = Object.keys(colorScales)
 
 const pair = (light: string, dark: string) => ({ light, dark })
 
@@ -483,7 +472,6 @@ export const semanticTokens = {
   "chart-3": pair("#8b5cf6", "#a78bfa"),
   "chart-4": pair("#a855f7", "#c084fc"),
   "chart-5": pair("#ec4899", "#f472b6"),
-  "destructive": pair("#ef4444", "#f87171"),
   "color-surface": pair("#ffffff", "#1f2937"),
   "color-muted-strong": pair("#e5e7eb", "#374151"),
   "color-foreground-secondary": pair("#4b5563", "#d1d5db"),
@@ -491,6 +479,5 @@ export const semanticTokens = {
   "color-placeholder": pair("#9ca3af", "#6b7280"),
   "color-input-border": pair("#d1d5db", "#4b5563"),
   "color-hover": pair("#f3f4f6", "#374151"),
-  "color-destructive-subtle": pair("#fef2f2", "#451a1a"),
   "color-accent-subtle": pair("#eff6ff", "#1e293b")
 } as const

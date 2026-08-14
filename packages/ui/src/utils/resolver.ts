@@ -3,7 +3,7 @@ import { uiConfig } from "../config"
 
 type Override = string | ((base: string) => string) | undefined
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<(...args: any[]) => any>()
+const themeCreatorCache = new WeakMap<Function>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
 export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {

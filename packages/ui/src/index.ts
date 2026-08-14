@@ -11,6 +11,7 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
   const defineUiConfig = JSON.stringify({
     unstyled: o.unstyled,
     themes: components?.themes ?? {},
+    props: components?.props ?? {},
     logos,
     colors: getAllColorNames(colors),
     shortcuts,
@@ -27,7 +28,6 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
           ...userContent.pipeline,
           include: [
             /\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html)($|\?)/,
-            uiSrcGlob,
             ...(Array.isArray(userContent.pipeline?.include) ? userContent.pipeline.include : [])
           ]
         },

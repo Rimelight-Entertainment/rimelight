@@ -155,12 +155,16 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         : parts.filter((p) => !MODIFIERS.has(p)).join("_")
       if (chainedKey) maxChain = Math.max(maxChain, parts.length)
 
-      let [ctrl, meta, shift, alt] = [
-        parts.some((p) => p === "ctrl" || p === "control"),
-        parts.some((p) => p === "meta" || p === "command"),
-        parts.includes("shift"),
-        parts.some((p) => p === "alt" || p === "option")
-      ]
+      let ctrl = false,
+        meta = false,
+        shift = false,
+        alt = false
+      for (const p of parts) {
+        if (p === "ctrl" || p === "control") ctrl = true
+        else if (p === "meta" || p === "command") meta = true
+        else if (p === "shift") shift = true
+        else if (p === "alt" || p === "option") alt = true
+      }
       if (!isMac && meta && !ctrl) {
         meta = false
         ctrl = true
@@ -227,6 +231,12 @@ export function defineShortcuts(
           ? inputState === s.usingInput
           : true
 
+    const trigger = (s: Shortcut) => {
+      e.preventDefault()
+      s.handler(e)
+      inputs.length = 0
+    }
+
     inputs.push(e.key.toLowerCase())
     if (inputs.length > maxChain) inputs.shift()
     clearTimeout(timer)
@@ -235,9 +245,7 @@ export function defineShortcuts(
       for (let len = Math.min(inputs.length, maxChain); len >= 2; len--) {
         const match = chained.get(inputs.slice(-len).join("-"))
         if (match && enabled(match)) {
-          e.preventDefault()
-          match.handler(e)
-          inputs.length = 0
+          trigger(match)
           return
         }
       }
@@ -254,9 +262,7 @@ export function defineShortcuts(
       )
         continue
       if (enabled(s)) {
-        e.preventDefault()
-        s.handler(e)
-        inputs.length = 0
+        trigger(s)
         return
       }
     }

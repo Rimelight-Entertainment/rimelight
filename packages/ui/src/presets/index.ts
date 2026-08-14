@@ -37,9 +37,9 @@ function resolveColorModes(
   entry: ColorConfigValue,
   autogenerate?: boolean
 ): { light: Record<string, string>; dark: Record<string, string> } {
-  const raw = entry as Record<string, any>
-  const mL: ColorShades = typeof raw.light === "object" ? raw.light : {}
-  const mD: ColorShades = typeof raw.dark === "object" ? raw.dark : {}
+  const raw = (entry ?? {}) as Record<string, any>
+  const mL: ColorShades = raw.light && typeof raw.light === "object" ? raw.light : {}
+  const mD: ColorShades = raw.dark && typeof raw.dark === "object" ? raw.dark : {}
   const flat = Object.fromEntries(
     Object.entries(raw).filter(([k, v]) => k !== "light" && k !== "dark" && typeof v === "string")
   )
@@ -280,22 +280,22 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
       [
         /^(text|bg|ring|border|outline|divide)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
         ([, prop, name, opacity]) => {
-          const cssProp =
-            prop === "text"
-              ? "color"
-              : prop === "bg"
-                ? "background-color"
-                : prop === "ring"
-                  ? "--un-ring-color"
-                  : prop === "divide"
-                    ? "border-color"
-                    : `${prop}-color`
-          const prefix = prop === "bg" ? "background" : prop === "outline" ? "ring" : prop
+          const propMap: Record<string, { css: string; prefix?: string }> = {
+            text: { css: "color" },
+            bg: { css: "background-color", prefix: "background" },
+            ring: { css: "--un-ring-color", prefix: "ring" },
+            outline: { css: "outline-color", prefix: "ring" },
+            divide: { css: "border-color", prefix: "divide" },
+            border: { css: "border-color" }
+          }
+          const { css, prefix = prop } = (prop ? propMap[prop] : undefined) ?? {
+            css: `${prop}-color`
+          }
           const varName = `--${prefix}-color-${name}`
           const isBgInverted = prop === "bg" && name === "inverted"
           const baseResult: Record<string, string> = opacity
-            ? { [cssProp]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
-            : { [cssProp]: `var(${varName})` }
+            ? { [css]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
+            : { [css]: `var(${varName})` }
           if (isBgInverted) baseResult.color = "var(--text-color-inverted)"
           return baseResult
         }
@@ -330,7 +330,6 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
         "input": "var(--input)",
         "outline": "var(--outline)",
         "ring": "var(--ring)",
-        "destructive": { DEFAULT: "var(--destructive)", subtle: "var(--color-destructive-subtle)" },
         "sidebar": {
           DEFAULT: "var(--sidebar)",
           foreground: "var(--sidebar-foreground)",
@@ -345,13 +344,7 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)"
         },
-        "chart": {
-          "1": "var(--chart-1)",
-          "2": "var(--chart-2)",
-          "3": "var(--chart-3)",
-          "4": "var(--chart-4)",
-          "5": "var(--chart-5)"
-        },
+        "chart": Object.fromEntries([1, 2, 3, 4, 5].map((i) => [i, `var(--chart-${i})`])),
         "hover": "var(--color-hover)",
         "surface": "var(--color-surface)",
         "muted-strong": "var(--color-muted-strong)",
