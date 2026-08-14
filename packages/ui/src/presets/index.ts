@@ -8,7 +8,7 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import { colorConfig, type ColorShades } from "../config"
+import { colorScales, colorNames, semanticTokens, type ColorShades } from "../config"
 
 const pathDirname = dirname(fileURLToPath(import.meta.url))
 export const uiSrcGlob = join(pathDirname, "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}").replace(
@@ -97,7 +97,7 @@ const createScale = (colorName: string, shadeKeys: string[]) => ({
   ...Object.fromEntries(shadeKeys.map((shade) => [shade, `var(--color-${colorName}-${shade})`]))
 })
 
-const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(colorConfig.semanticTokens)
+const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(semanticTokens)
   .map(([token, val]) => {
     if (typeof val === "string") {
       return `          --${token}: ${val};`
@@ -117,7 +117,7 @@ const formatColorLines = (colorMap: Record<string, ColorModes>) =>
   Object.entries(colorMap)
     .flatMap(([color, modes]) => {
       const light = modes.light ?? {}
-      const dark = modes.dark ?? modes.light ?? {}
+      const dark = modes.dark ?? light
       return Object.keys(light).map((shade) => {
         const l = light[shade]!
         const d = dark[shade] ?? l
@@ -126,7 +126,7 @@ const formatColorLines = (colorMap: Record<string, ColorModes>) =>
     })
     .join("\n")
 
-const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorConfig.scales)
+const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
 
 const STATIC_PREFLIGHT_SUFFIX = `
           /* Shiki / Expressive Code */
@@ -247,11 +247,11 @@ export interface RimelightPresetOptions {
 export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const userColors = options?.colors ?? {}
   const autoGen = options?.autogenerateColorModes ?? true
-  const allColors = [...new Set([...colorConfig.colors, ...Object.keys(userColors)])]
+  const allColors = [...new Set([...colorNames, ...Object.keys(userColors)])]
 
   // Built-in scales already have explicit {light, dark} buckets — pass through directly.
   // Only user-provided colors need resolveColorModes (they may be flat shades or partial modes).
-  const resolvedBuiltins = colorConfig.scales
+  const resolvedBuiltins = colorScales
   const resolvedUserColors = Object.fromEntries(
     Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
   )
@@ -272,13 +272,8 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
     icons: options?.presets?.icons !== false
   }
 
-  let hasUserColors = false
-  for (const _ in userColors) {
-    hasUserColors = true
-    break
-  }
-
-  const userColorLines = hasUserColors ? formatColorLines(resolvedUserColors) : ""
+  const userColorLines =
+    Object.keys(userColors).length > 0 ? formatColorLines(resolvedUserColors) : ""
 
   const lightDarkLines = userColorLines
     ? `${STATIC_BUILTIN_COLOR_LINES}\n${userColorLines}`
@@ -287,7 +282,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const preflightCss = `:root {
   color-scheme: light dark;
 
-  /* Semantic tokens — dynamically generated from colorConfig.semanticTokens */
+  /* Semantic tokens — dynamically generated from semanticTokens */
 ${STATIC_SEMANTIC_TOKEN_LINES}
   --radius: 0.625rem;
   --font-sans: "Noto Sans", sans-serif;
@@ -531,21 +526,13 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
       },
       animation: {
         keyframes: {
-          "accordion-down":
-            "from { height: 0; } to { height: var(--starwind-accordion-content-height); }",
-          "accordion-up":
-            "from { height: var(--starwind-accordion-content-height); } to { height: 0; }",
-          "marquee": "from { transform: translateX(0); } to { transform: translateX(-100%); }"
+          marquee: "from { transform: translateX(0); } to { transform: translateX(-100%); }"
         },
         durations: {
-          "accordion-down": "0.2s",
-          "accordion-up": "0.2s",
-          "marquee": "30s"
+          marquee: "30s"
         },
         timingFns: {
-          "accordion-down": "ease-out",
-          "accordion-up": "ease-out",
-          "marquee": "linear"
+          marquee: "linear"
         },
         counts: { marquee: "infinite" }
       }

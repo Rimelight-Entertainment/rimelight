@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createAvatarTheme = (colors: readonly string[] = colorConfig.colors) =>
+export const createAvatarTheme = (colors: readonly string[] = colorNames) =>
   defineTheme({
     slots: ["root", "image", "fallback", "icon", "badge"],
     base: {

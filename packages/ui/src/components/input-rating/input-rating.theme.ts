@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createInputRatingTheme = (colors: readonly string[] = colorConfig.colors) => {
+export const createInputRatingTheme = (colors: readonly string[] = colorNames) => {
   const colorVariants: Record<string, { root?: string; indicator: string; item: string }> = {
     neutral: {
       indicator: "text-highlighted",

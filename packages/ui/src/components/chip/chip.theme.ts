@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createChipTheme = (colors: readonly string[] = colorConfig.colors) => {
+export const createChipTheme = (colors: readonly string[] = colorNames) => {
   const colorVariants: Record<string, { base: string }> = { neutral: { base: "bg-inverted" } }
   for (const c of colors) {
     colorVariants[c] = { base: `bg-${c}` }

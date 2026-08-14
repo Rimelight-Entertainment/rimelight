@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createCarouselTheme = (_colors: readonly string[] = colorConfig.colors) =>
+export const createCarouselTheme = (_colors: readonly string[] = colorNames) =>
   defineTheme({
     slots: ["root", "viewport", "container", "slide", "buttonPrev", "buttonNext", "dots", "dot"],
     base: {

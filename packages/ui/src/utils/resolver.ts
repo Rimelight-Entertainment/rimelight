@@ -3,7 +3,6 @@ import { uiConfig } from "../config"
 
 const classThemeCache = new WeakMap<Function, Map<string, Record<string, string>>>()
 const themeCreatorCache = new WeakMap<Function>()
-const uiMergeCache = new WeakMap<object, Record<string, string | Function | undefined>>()
 
 const EMPTY_DEFAULTS: Record<string, string | Function | undefined> = Object.freeze({})
 
@@ -15,12 +14,7 @@ function hasKeys(obj?: Record<string, any>): boolean {
 
 function getVariantCacheKey(variants?: Record<string, any>): string {
   if (!hasKeys(variants)) return ""
-  const keys = Object.keys(variants!)
-  if (keys.length === 1) {
-    const k = keys[0]!
-    return `${k}:${variants![k]}`
-  }
-  keys.sort()
+  const keys = Object.keys(variants!).toSorted()
   let result = ""
   for (let i = 0; i < keys.length; i++) {
     const k = keys[i]!
@@ -34,12 +28,9 @@ export function useUi(
   componentName: string,
   uiProp?: Record<string, string | Function | undefined>
 ): Record<string, string | Function | undefined> {
-  const defaults = uiConfig[componentName]
+  const defaults = uiConfig.themes?.[componentName]
   if (!defaults) return EMPTY_DEFAULTS
   if (!hasKeys(uiProp)) return defaults
-
-  const cached = uiMergeCache.get(uiProp!)
-  if (cached) return cached
 
   const result: Record<string, string | Function | undefined> = { ...defaults }
   for (const key in uiProp) {
@@ -48,7 +39,6 @@ export function useUi(
     }
   }
 
-  uiMergeCache.set(uiProp!, result)
   return result
 }
 
@@ -73,7 +63,7 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   mergedUI: Record<string, string | Function | undefined>,
   rootClass?: string
 ): Record<string, string> {
-  const isUnstyled = uiConfig?.unstyled === true
+  const isUnstyled = uiConfig.unstyled === true
 
   let resolved: Record<string, string>
   if (isUnstyled) {

@@ -89,7 +89,9 @@ export interface UIConfig {
 
 export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "icons">> & {
   colors?: readonly string[]
-  [key: string]: any
+  unstyled?: boolean
+  themes?: Record<string, Record<string, string | Function | undefined>>
+  [key: string]: unknown
 }
 
 declare global {
@@ -405,7 +407,7 @@ export const colorNames = [
   "commentary",
   "ideation",
   "source"
-] as const
+] as const satisfies readonly (keyof typeof colorScales)[]
 
 export const semanticTokens = {
   "background": { light: "#ffffff", dark: "#030712" },
@@ -447,6 +449,7 @@ export const semanticTokens = {
   "source-accent": { light: "#0284c7", dark: "#bae6fd" },
   "border": { light: "#e5e7eb", dark: "rgba(249, 250, 251, 0.1)" },
   "input": { light: "#e5e7eb", dark: "rgba(249, 250, 251, 0.15)" },
+  // outline = focus outline-color utility; ring = ring-color utility — same value, different CSS properties
   "outline": { light: "#9ca3af", dark: "#6b7280" },
   "ring": { light: "#9ca3af", dark: "#6b7280" },
   "sidebar": { light: "#f9fafb", dark: "#111827" },
@@ -473,9 +476,3 @@ export const semanticTokens = {
   "color-destructive-subtle": { light: "#fef2f2", dark: "#451a1a" },
   "color-accent-subtle": { light: "#eff6ff", dark: "#1e293b" }
 } as const
-
-export const colorConfig = {
-  scales: colorScales,
-  colors: colorNames,
-  semanticTokens
-}

@@ -27,12 +27,12 @@ export const createLinkTheme = () =>
       {
         active: false,
         disabled: false,
-        classNames: { root: ["hover:text-default"] }
+        classNames: { root: "hover:text-default" }
       },
       {
         active: true,
         disabled: false,
-        classNames: { root: ["hover:text-primary"] }
+        classNames: { root: "hover:text-primary" }
       }
     ]
   })

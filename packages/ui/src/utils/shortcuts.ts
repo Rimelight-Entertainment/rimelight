@@ -165,15 +165,9 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
   for (const [key, shortcutConfig] of Object.entries(config)) {
     if (!shortcutConfig) continue
 
-    let handler: Handler | undefined
-    let usingInput: boolean | string = false
-
-    if (typeof shortcutConfig === "function") {
-      handler = shortcutConfig
-    } else {
-      handler = shortcutConfig.handler
-      usingInput = shortcutConfig.usingInput ?? false
-    }
+    const isFunc = typeof shortcutConfig === "function"
+    const handler = isFunc ? shortcutConfig : shortcutConfig.handler
+    const usingInput = isFunc ? false : (shortcutConfig.usingInput ?? false)
 
     if (typeof handler === "function") {
       const chained = key.includes("-") && key !== "-" && !key.includes("_")
@@ -252,13 +246,11 @@ export function defineShortcuts(
   const chainedInputs: string[] = []
   let debounceTimer: ReturnType<typeof setTimeout> | undefined
 
-  const clearChainedInput = () => {
-    chainedInputs.length = 0
-  }
+  const registeredIds =
+    itemsToRegister.length > 0 ? new Set(itemsToRegister.map((item) => item.id)) : null
 
-  if (itemsToRegister.length > 0) {
-    const newIds = new Set(itemsToRegister.map((item) => item.id))
-    const existing = activeShortcutsStore.get().filter((item) => !newIds.has(item.id))
+  if (registeredIds) {
+    const existing = activeShortcutsStore.get().filter((item) => !registeredIds.has(item.id))
     activeShortcutsStore.set([...existing, ...itemsToRegister])
   }
 
@@ -293,7 +285,7 @@ export function defineShortcuts(
         if (matchedChained && isShortcutEnabled(matchedChained)) {
           e.preventDefault()
           matchedChained.handler(e)
-          clearChainedInput()
+          chainedInputs.length = 0
           return
         }
       }
@@ -326,12 +318,14 @@ export function defineShortcuts(
       if (isShortcutEnabled(shortcut)) {
         e.preventDefault()
         shortcut.handler(e)
-        clearChainedInput()
+        chainedInputs.length = 0
         return
       }
     }
 
-    debounceTimer = setTimeout(clearChainedInput, chainDelay)
+    debounceTimer = setTimeout(() => {
+      chainedInputs.length = 0
+    }, chainDelay)
   }
 
   window.addEventListener("keydown", onKeyDown)
@@ -341,9 +335,10 @@ export function defineShortcuts(
     clearTimeout(debounceTimer)
 
     // Unregister items from the active store safely per instance
-    if (itemsToRegister.length > 0) {
-      const removeIds = new Set(itemsToRegister.map((i) => i.id))
-      activeShortcutsStore.set(activeShortcutsStore.get().filter((item) => !removeIds.has(item.id)))
+    if (registeredIds) {
+      activeShortcutsStore.set(
+        activeShortcutsStore.get().filter((item) => !registeredIds.has(item.id))
+      )
     }
   }
 }

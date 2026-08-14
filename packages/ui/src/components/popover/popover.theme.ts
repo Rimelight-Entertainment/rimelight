@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createPopoverTheme = (_colors: readonly string[] = colorConfig.colors) =>
+export const createPopoverTheme = (_colors: readonly string[] = colorNames) =>
   defineTheme({
     slots: ["root", "trigger", "content"],
     base: {

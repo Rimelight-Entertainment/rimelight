@@ -1,19 +1,17 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./config"
-import { colorConfig } from "./config"
+import { colorNames } from "./config"
 import rimelightUiPreset, { uiFilesystemGlob, uiSrcGlob } from "./presets"
 
 export function ui(o: UIConfig = {}): AstroIntegration[] {
   const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = o
-  const userContent = (
-    typeof unocss.content === "object" && unocss.content !== null ? unocss.content : {}
-  ) as Record<string, any>
+  const userContent = (unocss.content ?? {}) as Record<string, any>
 
   const defineUiConfig = JSON.stringify({
-    ...components?.themes,
+    themes: components?.themes ?? {},
     logos,
-    colors: Array.from(new Set([...colorConfig.colors, ...Object.keys(colors)])),
+    colors: Array.from(new Set([...colorNames, ...Object.keys(colors)])),
     shortcuts,
     icons
   })

@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createSpinnerTheme = (colors: readonly string[] = colorConfig.colors) =>
+export const createSpinnerTheme = (colors: readonly string[] = colorNames) =>
   defineTheme({
     slots: ["root"],
     base: {

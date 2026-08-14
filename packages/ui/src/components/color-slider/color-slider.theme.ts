@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createColorSliderTheme = (colors: readonly string[] = colorConfig.colors) =>
+export const createColorSliderTheme = (colors: readonly string[] = colorNames) =>
   defineTheme({
     slots: ["root", "track", "thumb"],
     base: {

@@ -1,5 +1,5 @@
 const svg = (inner: string) =>
-  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" width="100%" height="100%">${inner}</svg>`
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="100%" height="100%">${inner}</svg>`
 
 export const DEFAULT_ICONS = {
   alertTriangle: svg(
@@ -81,5 +81,6 @@ export const DEFAULT_ICONS = {
   )
 } as const
 
-export type RimelightIcons = Partial<Record<keyof typeof DEFAULT_ICONS, string>> &
-  Record<string, string | undefined>
+export type RimelightIcons = { [K in keyof typeof DEFAULT_ICONS]?: string } & {
+  [key: string]: string | undefined
+}

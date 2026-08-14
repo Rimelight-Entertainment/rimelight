@@ -1,7 +1,7 @@
-import { colorConfig } from "../../config"
+import { colorNames } from "../../config"
 import { defineTheme } from "../../types/component"
 
-export const createSeparatorTheme = (colors: readonly string[] = colorConfig.colors) =>
+export const createSeparatorTheme = (colors: readonly string[] = colorNames) =>
   defineTheme({
     slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
     base: {
