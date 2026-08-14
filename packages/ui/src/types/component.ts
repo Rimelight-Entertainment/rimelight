@@ -1,5 +1,4 @@
 export interface ComponentTheme {
-  // Bridge union: readonly string[] supports const theme definitions; string[] satisfies css-variants SlotClassVariantDefinition.slots: S[]
   slots: readonly string[] | string[]
   base: Record<string, unknown>
   variants?: Record<string, Record<string, unknown>>

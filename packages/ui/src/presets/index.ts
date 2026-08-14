@@ -7,32 +7,21 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import { colorScales, colorNames, semanticTokens, COLOR_SHADES, type ColorShades } from "../config"
+import {
+  colorScales,
+  getAllColorNames,
+  semanticTokens,
+  COLOR_SHADES,
+  type ColorShades
+} from "../config"
 
 export const uiSrcGlob = join(
   import.meta.dirname,
   "../**/*.{js,ts,jsx,tsx,vue,svelte,astro}"
 ).replace(/\\/g, "/")
-export const uiFilesystemGlob = join(import.meta.dirname, "../**/*").replace(/\\/g, "/")
 
 type ColorModeShades = { light?: ColorShades; dark?: ColorShades }
 export type ColorConfigValue = ColorShades | ColorModeShades
-
-const CSS_PROP_MAP: Record<string, string> = {
-  text: "color",
-  bg: "background-color",
-  ring: "--un-ring-color",
-  border: "border-color",
-  outline: "outline-color"
-}
-
-const VAR_PREFIX_MAP: Record<string, string> = {
-  ring: "ring-color",
-  outline: "ring-color",
-  bg: "background-color",
-  text: "text-color",
-  border: "border-color"
-}
 
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
   const num = Number(shade)
@@ -57,9 +46,9 @@ function resolveColorModes(
     if (k !== "light" && k !== "dark" && typeof v === "string") flatShades[k] = v
   }
 
-  const allShades = Array.from(
-    new Set([...Object.keys(modeLight), ...Object.keys(modeDark), ...Object.keys(flatShades)])
-  )
+  const allShades = [
+    ...new Set([...Object.keys(modeLight), ...Object.keys(modeDark), ...Object.keys(flatShades)])
+  ]
 
   const light: ColorShades = {}
   const dark: ColorShades = {}
@@ -98,11 +87,11 @@ const createScale = (colorName: string) => ({
 const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(semanticTokens)
   .map(([token, val]) => {
     if (typeof val === "string") {
-      return `          --${token}: ${val};`
+      return `  --${token}: ${val};`
     }
     const l = val.light
     const d = val.dark ?? l
-    return `          --${token}: light-dark(${l}, ${d});`
+    return `  --${token}: light-dark(${l}, ${d});`
   })
   .join("\n")
 
@@ -119,7 +108,7 @@ const formatColorLines = (colorMap: Record<string, ColorModes>) =>
       return Object.keys(light).map((shade) => {
         const l = light[shade]!
         const d = dark[shade] ?? l
-        return `            --color-${color}-${shade}: light-dark(${l}, ${d});`
+        return `  --color-${color}-${shade}: light-dark(${l}, ${d});`
       })
     })
     .join("\n")
@@ -182,16 +171,13 @@ const STATIC_PREFLIGHT_SUFFIX = `
         /* ── Adaptive Elevation (Shadow in Light, Glowing OKLCH border in Dark) ── */
         .shadow-adaptive, .rl-elevation {
           box-shadow:
-            /* Crisp drop shadow in light mode */
             0 2px 8px light-dark(rgba(0, 0, 0, 0.12), transparent),
             0 12px 32px light-dark(rgba(0, 0, 0, 0.08), transparent),
-            /* Vivid neon glowing border in dark mode */
             inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)),
             0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)),
             0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8));
         }
 
-        /* Re-declare color on semantic text elements using :where() so utility/inherited colors take precedence */
         :where(p, h1, h2, h3, h4, h5, h6, li, blockquote, figcaption, caption, label, legend, dt, dd) {
           color: var(--foreground);
         }
@@ -202,25 +188,21 @@ const STATIC_PREFLIGHT_SUFFIX = `
           color-scheme: light;
         }
 
-        /* Accessibility fallback for hidden="until-found" in older/non-supporting browsers */
         @supports not (content-visibility: hidden) {
           [hidden="until-found"] {
             display: none !important;
           }
         }
 
-        /* ── Global body reset ───────────────────────────────────────────── */
         body {
           background-color: var(--background);
           color: var(--foreground);
           font-family: var(--font-sans);
         }
 
-        /* ── Uniform focus styles ────────────────────────────────────────── */
         *,
         ::before,
         ::after {
-          /* Setup default ring/outline parameters or halo */
           --un-ring-color: var(--primary);
         }
 
@@ -247,7 +229,6 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const autoGen = options?.autogenerateColorModes ?? true
   const allColors = [...new Set([...colorNames, ...Object.keys(userColors)])]
 
-  // Only user-provided colors need resolveColorModes (they may be flat shades or partial modes).
   const resolvedUserColors = Object.fromEntries(
     Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry, autoGen)])
   )
@@ -259,12 +240,6 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         safelist.push(v)
       }
     }
-  }
-
-  const enabledPresets = {
-    wind: options?.presets?.wind !== false,
-    typography: options?.presets?.typography !== false,
-    icons: options?.presets?.icons !== false
   }
 
   const userColorLines =
@@ -284,81 +259,83 @@ ${STATIC_SEMANTIC_TOKEN_LINES}
   --font-serif: "Noto Serif", serif;
   --font-mono: "Noto Sans Mono", monospace;
 
-          --ui-header-height: 4rem;
-          --rl-container: 90rem;
+  --ui-header-height: 4rem;
+  --rl-container: 90rem;
 
-          /* Text / background / border / ring semantic tokens using responsive neutral variables */
-          --text-color-default: var(--color-neutral-700);
-          --text-color-muted: var(--color-neutral-600);
-          --text-color-dimmed: var(--color-neutral-500);
-          --text-color-toned: var(--color-neutral-800);
-          --text-color-highlighted: var(--color-neutral-950);
-          --text-color-elevated: var(--color-neutral-800);
-          --text-color-accented: var(--color-neutral-900);
-          --text-color-inverted: var(--color-neutral-50);
+  /* Text / background / border / ring semantic tokens using responsive neutral variables */
+  --text-color-default: var(--color-neutral-700);
+  --text-color-muted: var(--color-neutral-600);
+  --text-color-dimmed: var(--color-neutral-500);
+  --text-color-toned: var(--color-neutral-800);
+  --text-color-highlighted: var(--color-neutral-950);
+  --text-color-elevated: var(--color-neutral-800);
+  --text-color-accented: var(--color-neutral-900);
+  --text-color-inverted: var(--color-neutral-50);
 
-          --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
-          --background-color-muted: var(--color-neutral-100);
-          --background-color-elevated: var(--color-neutral-200);
-          --background-color-accented: var(--color-neutral-300);
-          --background-color-dimmed: var(--color-neutral-400);
-          --background-color-toned: var(--color-neutral-800);
-          --background-color-highlighted: var(--color-neutral-900);
-          --background-color-inverted: var(--color-neutral-950);
+  --background-color-default: light-dark(#ffffff, var(--color-neutral-50));
+  --background-color-muted: var(--color-neutral-100);
+  --background-color-elevated: var(--color-neutral-200);
+  --background-color-accented: var(--color-neutral-300);
+  --background-color-dimmed: var(--color-neutral-400);
+  --background-color-toned: var(--color-neutral-800);
+  --background-color-highlighted: var(--color-neutral-900);
+  --background-color-inverted: var(--color-neutral-950);
 
-          --border-color-default: var(--color-neutral-200);
-          --border-color-muted: var(--color-neutral-100);
-          --border-color-elevated: var(--color-neutral-200);
-          --border-color-accented: var(--color-neutral-300);
-          --border-color-dimmed: var(--color-neutral-400);
-          --border-color-toned: var(--color-neutral-800);
-          --border-color-highlighted: var(--color-neutral-900);
-          --border-color-inverted: var(--color-neutral-950);
+  --border-color-default: var(--color-neutral-200);
+  --border-color-muted: var(--color-neutral-100);
+  --border-color-elevated: var(--color-neutral-200);
+  --border-color-accented: var(--color-neutral-300);
+  --border-color-dimmed: var(--color-neutral-400);
+  --border-color-toned: var(--color-neutral-800);
+  --border-color-highlighted: var(--color-neutral-900);
+  --border-color-inverted: var(--color-neutral-950);
 
-          --ring-color-default: var(--color-neutral-200);
-          --ring-color-muted: var(--color-neutral-100);
-          --ring-color-elevated: var(--color-neutral-200);
-          --ring-color-accented: var(--color-neutral-300);
-          --ring-color-dimmed: var(--color-neutral-400);
-          --ring-color-toned: var(--color-neutral-800);
-          --ring-color-highlighted: var(--color-neutral-900);
-          --ring-color-inverted: var(--color-neutral-950);
+  --ring-color-default: var(--color-neutral-200);
+  --ring-color-muted: var(--color-neutral-100);
+  --ring-color-elevated: var(--color-neutral-200);
+  --ring-color-accented: var(--color-neutral-300);
+  --ring-color-dimmed: var(--color-neutral-400);
+  --ring-color-toned: var(--color-neutral-800);
+  --ring-color-highlighted: var(--color-neutral-900);
+  --ring-color-inverted: var(--color-neutral-950);
 
-          --divide-color-default: var(--color-neutral-200);
-          --divide-color-inverted: var(--color-neutral-950);
+  --divide-color-default: var(--color-neutral-200);
+  --divide-color-inverted: var(--color-neutral-950);
 
-          /* Color scales — light-dark() resolves based on inherited color-scheme */
+  /* Color scales — light-dark() resolves based on inherited color-scheme */
 ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
+
+  const presets: Preset[] = []
+  if (options?.presets?.wind !== false) presets.push(presetWind4())
+  if (options?.presets?.typography !== false) {
+    presets.push(
+      presetTypography({
+        cssExtend: {
+          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+            "font-family": "var(--font-sans), system-ui, sans-serif"
+          },
+          "pre,code": {
+            "font-family": "var(--font-mono), monospace"
+          }
+        }
+      })
+    )
+  }
+  if (options?.presets?.icons !== false) {
+    presets.push(
+      presetIcons({
+        extraProperties: {
+          "display": "inline-block",
+          "vertical-align": "middle"
+        }
+      })
+    )
+  }
 
   return {
     name: "rimelight-ui",
     safelist,
-    presets: (
-      [
-        enabledPresets.wind && presetWind4(),
-        enabledPresets.typography &&
-          presetTypography({
-            cssExtend: {
-              "h1,h2,h3,h4,h5,h6": {
-                "font-family": "var(--font-sans), system-ui, sans-serif"
-              },
-              "p,li,blockquote,code": {
-                "font-family": "var(--font-sans), system-ui, sans-serif"
-              },
-              "pre,code": {
-                "font-family": "var(--font-mono), monospace"
-              }
-            }
-          }),
-        enabledPresets.icons &&
-          presetIcons({
-            extraProperties: {
-              "display": "inline-block",
-              "vertical-align": "middle"
-            }
-          })
-      ] as const
-    ).filter((p): p is Preset => Boolean(p)),
+    presets,
     transformers: [transformerDirectives(), transformerVariantGroup()],
 
     outputToCssLayers: true,
@@ -385,16 +362,9 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
           "--rl-border": `var(--color-${color}-500)`
         })
       ],
-      // Pins the element's color-scheme to light — light-dark() resolves to light values.
-      // Also sets color so plain text children inherit the correct foreground without needing
-      // an explicit utility class on every element.
       ["rl-light", { "color-scheme": "light", "color": "var(--foreground)" }],
-      // Pins the element's color-scheme to dark — light-dark() resolves to dark values.
       ["rl-dark", { "color-scheme": "dark", "color": "var(--foreground)" }],
-      // Resets color-scheme back to reactive — follows the page-level preference
-      // (i.e. whatever is set on <html>). Use inside a pinned wrapper to opt a subtree back out.
       ["rl-auto", { "color-scheme": "light dark", "color": "var(--foreground)" }],
-      // Visibility-aware rendering utility to prevent unsafe inline style attributes in strict CSPs
       [
         "rla-visibility-aware",
         {
@@ -403,22 +373,20 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
         }
       ],
       [
-        /^bg-inverted(?:\/(\d+))?$/,
-        ([, opacity]) => ({
-          "background-color": opacity
-            ? `color-mix(in srgb, var(--background-color-inverted) ${opacity}%, transparent)`
-            : "var(--background-color-inverted)",
-          "color": "var(--text-color-inverted)"
-        })
-      ],
-      [
         /^(text|bg|ring|border|outline)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
         ([, prop, name, opacity]) => {
-          const cssProp = CSS_PROP_MAP[prop!]!
-          const varName = `--${VAR_PREFIX_MAP[prop!]!}-${name}`
-          return opacity
+          const cssProp =
+            prop === "text" ? "color" : prop === "ring" ? "--un-ring-color" : `${prop}-color`
+          const varName = `--${prop === "outline" ? "ring" : prop}-color-${name}`
+          const isBgInverted = prop === "bg" && name === "inverted"
+          const baseResult: Record<string, string> = opacity
             ? { [cssProp]: `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)` }
             : { [cssProp]: `var(${varName})` }
+
+          if (isBgInverted) {
+            baseResult.color = "var(--text-color-inverted)"
+          }
+          return baseResult
         }
       ]
     ],
@@ -497,12 +465,7 @@ ${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
         "foreground-tertiary": "var(--color-foreground-tertiary)",
         "placeholder": "var(--color-placeholder)",
         "input-border": "var(--color-input-border)",
-        "accent-subtle": "var(--color-accent-subtle)",
-        "elevated": "var(--background-color-elevated)",
-        "accented": "var(--ring-color-accented)",
-        "dimmed": "var(--text-color-dimmed)",
-        "toned": "var(--text-color-toned)",
-        "highlighted": "var(--text-color-highlighted)"
+        "accent-subtle": "var(--color-accent-subtle)"
       },
       radius: {
         "xs": "calc(var(--radius) - 0.375rem)",

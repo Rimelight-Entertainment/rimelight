@@ -39,23 +39,20 @@ export interface RegisteredShortcut {
   order?: number
 }
 
-// OS detection
-const macOS =
+const isMac =
   typeof navigator !== "undefined" &&
   /Macintosh|Mac OS X|iPad|iPhone|iPod/.test(navigator.userAgent)
 
-const MODIFIER_KEYS = new Set(["meta", "command", "ctrl", "shift", "alt", "option"])
-
-// Modifiers map for human-readable display
+const MODIFIER_KEYS = new Set(["meta", "command", "ctrl", "control", "shift", "alt", "option"])
 
 const kbdKeysMap: Record<string, string> = {
-  meta: macOS ? "⌘" : "Ctrl",
-  command: macOS ? "⌘" : "Ctrl",
+  meta: isMac ? "⌘" : "Ctrl",
+  command: isMac ? "⌘" : "Ctrl",
   ctrl: "Ctrl",
   control: "Ctrl",
-  alt: macOS ? "⌥" : "Alt",
-  option: macOS ? "⌥" : "Alt",
-  shift: macOS ? "⇧" : "Shift",
+  alt: isMac ? "⌥" : "Alt",
+  option: isMac ? "⌥" : "Alt",
+  shift: isMac ? "⇧" : "Shift",
   enter: "↵",
   delete: "⌦",
   backspace: "⌫",
@@ -70,21 +67,19 @@ const kbdKeysMap: Record<string, string> = {
 
 const shortcutKeyFormatCache = new Map<string, string[]>()
 
-// Convert a combination string (e.g. meta_alt_t) into platform-specific readable key symbol arrays
 export function formatShortcutKeys(keyStr: string): string[] {
   const cached = shortcutKeyFormatCache.get(keyStr)
   if (cached) return cached
 
-  const parts = keyStr.split("_")
-  const result = parts.map(
-    (part) => kbdKeysMap[part.toLowerCase()] ?? part.charAt(0).toUpperCase() + part.slice(1)
-  )
+  const delimiter = keyStr.includes("-") && keyStr !== "-" && !keyStr.includes("_") ? "-" : "_"
+  const result = keyStr
+    .split(delimiter)
+    .map((p) => kbdKeysMap[p.toLowerCase()] ?? p.charAt(0).toUpperCase() + p.slice(1))
 
   shortcutKeyFormatCache.set(keyStr, result)
   return result
 }
 
-// Reactive store containing all currently registered shortcuts on the page
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
 const specialKeysMap: Record<string, string> = {
@@ -100,15 +95,12 @@ const specialKeysMap: Record<string, string> = {
   arrowright: "ArrowRight"
 }
 
-const ALPHA_REGEX = /^[a-z]$/i
-const DIGIT_REGEX = /^\d$/
-const F_KEY_REGEX = /^f\d+$/i
-
-// Simple key to code conversion for layout/translation independence under Alt
 function convertKeyToCode(key: string): string {
-  if (ALPHA_REGEX.test(key)) return `Key${key.toUpperCase()}`
-  if (DIGIT_REGEX.test(key)) return `Digit${key}`
-  if (F_KEY_REGEX.test(key)) return key.toUpperCase()
+  if (key.length === 1) {
+    if (key >= "a" && key <= "z") return `Key${key.toUpperCase()}`
+    if (key >= "0" && key <= "9") return `Digit${key}`
+  }
+  if (/^f\d+$/i.test(key)) return key.toUpperCase()
   return specialKeysMap[key.toLowerCase()] || key
 }
 
@@ -123,7 +115,6 @@ const SHIFTABLE_KEYS = new Set([
   "backspace"
 ])
 
-// Input tag checking
 function isUsingInput(activeElement: Element | null): boolean | string {
   let el = activeElement
   while (el?.shadowRoot?.activeElement) {
@@ -131,12 +122,12 @@ function isUsingInput(activeElement: Element | null): boolean | string {
   }
   if (!el) return false
   const tagName = el.tagName
-  const isInput =
+  if (
     tagName === "INPUT" ||
     tagName === "TEXTAREA" ||
     tagName === "SELECT" ||
     (typeof HTMLElement !== "undefined" && el instanceof HTMLElement && el.isContentEditable)
-  if (isInput) {
+  ) {
     return el.getAttribute("name") || true
   }
   return false
@@ -176,13 +167,12 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
       } else {
         const parts = key.toLowerCase().split("_")
         baseKey = parts.filter((p) => !MODIFIER_KEYS.has(p)).join("_")
-
-        ctrlKey = parts.includes("ctrl")
+        ctrlKey = parts.includes("ctrl") || parts.includes("control")
         metaKey = parts.includes("meta") || parts.includes("command")
         shiftKey = parts.includes("shift")
         altKey = parts.includes("alt") || parts.includes("option")
 
-        if (!macOS && metaKey && !ctrlKey) {
+        if (!isMac && metaKey && !ctrlKey) {
           metaKey = false
           ctrlKey = true
         }
@@ -204,15 +194,14 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
       const { label, description, category, order } = shortcutConfig
       if (label || description) {
         const itemCategory = category || "system"
-        const item: RegisteredShortcut = {
+        registered.push({
           id: `${itemCategory}-${key}`,
           keys: formatShortcutKeys(key),
-          category: itemCategory
-        }
-        if (label) item.label = label
-        if (description) item.description = description
-        if (order !== undefined) item.order = order
-        registered.push(item)
+          category: itemCategory,
+          ...(label && { label }),
+          ...(description && { description }),
+          ...(order !== undefined && { order })
+        })
       }
     }
   }
@@ -231,7 +220,6 @@ export function defineShortcuts(
   }
 
   const { shortcuts: parsedShortcuts, registered: itemsToRegister } = parseShortcutConfig(config)
-
   const chainDelay = options.chainDelay ?? 800
   const maxChainLength = Math.max(
     2,
@@ -244,8 +232,10 @@ export function defineShortcuts(
     itemsToRegister.length > 0 ? new Set(itemsToRegister.map((item) => item.id)) : null
 
   if (registeredIds) {
-    const existing = activeShortcutsStore.get().filter((item) => !registeredIds.has(item.id))
-    activeShortcutsStore.set([...existing, ...itemsToRegister])
+    activeShortcutsStore.set([
+      ...activeShortcutsStore.get().filter((item) => !registeredIds.has(item.id)),
+      ...itemsToRegister
+    ])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -254,18 +244,13 @@ export function defineShortcuts(
     const activeEl = document.activeElement
     const currentlyUsingInput = isUsingInput(activeEl)
 
-    // Helper to check if a shortcut is enabled given current focus state
     const isShortcutEnabled = (shortcut: Shortcut) => {
-      if (!shortcut.usingInput) {
-        return !currentlyUsingInput
-      }
-      if (typeof shortcut.usingInput === "string") {
+      if (!shortcut.usingInput) return !currentlyUsingInput
+      if (typeof shortcut.usingInput === "string")
         return currentlyUsingInput === shortcut.usingInput
-      }
       return true
     }
 
-    // Handle chained shortcuts
     chainedInputs.push(e.key.toLowerCase())
     if (chainedInputs.length > maxChainLength) {
       chainedInputs.shift()
@@ -285,29 +270,23 @@ export function defineShortcuts(
       }
     }
 
-    // Handle standard shortcuts
     for (const shortcut of parsedShortcuts) {
       if (shortcut.chained) continue
-
       if (e.ctrlKey !== shortcut.ctrlKey) continue
       if (e.metaKey !== shortcut.metaKey) continue
       if (e.altKey !== shortcut.altKey) continue
 
-      // Match by code when Alt modifier is active to avoid key translation issues
-      const useCode = shortcut.altKey && e.altKey
-      if (useCode) {
+      if (shortcut.altKey && e.altKey) {
         if (e.code !== convertKeyToCode(shortcut.key)) continue
-      } else {
-        const pressedKey = e.key.toLowerCase()
-        if (pressedKey !== shortcut.key) continue
+      } else if (e.key.toLowerCase() !== shortcut.key) {
+        continue
       }
 
-      // Shift modifier check
-      const alphabetKey = ALPHA_REGEX.test(shortcut.key)
-      const shiftableKey = SHIFTABLE_KEYS.has(shortcut.key)
+      const isSingleAlpha = shortcut.key.length === 1 && /^[a-z]$/i.test(shortcut.key)
+      const isShiftable = SHIFTABLE_KEYS.has(shortcut.key)
 
       if (shortcut.shiftKey && !e.shiftKey) continue
-      if (!shortcut.shiftKey && e.shiftKey && (alphabetKey || shiftableKey)) continue
+      if (!shortcut.shiftKey && e.shiftKey && (isSingleAlpha || isShiftable)) continue
 
       if (isShortcutEnabled(shortcut)) {
         e.preventDefault()
@@ -328,7 +307,6 @@ export function defineShortcuts(
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(debounceTimer)
 
-    // Unregister items from the active store safely per instance
     if (registeredIds) {
       activeShortcutsStore.set(
         activeShortcutsStore.get().filter((item) => !registeredIds.has(item.id))

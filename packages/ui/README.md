@@ -78,10 +78,9 @@ export default defineConfig({
 ### Astro Components
 
 ```astro
-// component.astro
-
 ---
-import { RLAButton } from '@rimelight/ui/components/astro/RLAButton.astro';
+// component.astro
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 ---
 
 <RLAButton label="Click Me" />
@@ -90,10 +89,9 @@ import { RLAButton } from '@rimelight/ui/components/astro/RLAButton.astro';
 ### Vue Components
 
 ```vue
-// component.vue
-
+<!-- component.vue -->
 <script setup lang="ts">
-import { RLVButton } from "@rimelight/ui/components/vue/RLVButton.vue"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 </script>
 
 <template>
@@ -102,14 +100,6 @@ import { RLVButton } from "@rimelight/ui/components/vue/RLVButton.vue"
 ```
 
 For mixed usage please refer to the [Astro documentation on using front-end frameworks](https://docs.astro.build/en/guides/framework-components/).
-
-You can add the FAQ section right toward the bottom of your README, typically just before the Contributing or Support sections.
-
-Since GitHub and most Markdown viewers natively support the <details> and <summary> HTML tags, they will render as interactive accordion dropdowns, keeping your README clean and compact.
-
-Here is the exact code block to drop into your Repository README:
-
-Markdown
 
 ## Frequently Asked Questions
 
