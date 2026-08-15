@@ -93,17 +93,21 @@ export const createTableTheme = () =>
       }
     },
     compoundVariants: [
-      { loading: true, loadingColor: "primary", class: { thead: "after:bg-primary" } },
-      { loading: true, loadingColor: "secondary", class: { thead: "after:bg-secondary" } },
-      { loading: true, loadingColor: "success", class: { thead: "after:bg-success" } },
-      { loading: true, loadingColor: "info", class: { thead: "after:bg-info" } },
-      { loading: true, loadingColor: "warning", class: { thead: "after:bg-warning" } },
-      { loading: true, loadingColor: "error", class: { thead: "after:bg-destructive" } },
-      { loading: true, loadingColor: "neutral", class: { thead: "after:bg-muted-foreground" } },
+      { loading: true, loadingColor: "primary", classNames: { thead: "after:bg-primary" } },
+      { loading: true, loadingColor: "secondary", classNames: { thead: "after:bg-secondary" } },
+      { loading: true, loadingColor: "success", classNames: { thead: "after:bg-success" } },
+      { loading: true, loadingColor: "info", classNames: { thead: "after:bg-info" } },
+      { loading: true, loadingColor: "warning", classNames: { thead: "after:bg-warning" } },
+      { loading: true, loadingColor: "error", classNames: { thead: "after:bg-destructive" } },
+      {
+        loading: true,
+        loadingColor: "neutral",
+        classNames: { thead: "after:bg-muted-foreground" }
+      },
       {
         loading: true,
         loadingAnimation: "carousel",
-        class: { thead: "motion-safe:after:animate-pulse" }
+        classNames: { thead: "motion-safe:after:animate-pulse" }
       }
     ],
     defaultVariants: {

@@ -135,42 +135,42 @@ export const createStepperTheme = () =>
       {
         orientation: "horizontal",
         size: "xs",
-        class: {
+        classNames: {
           separator: "mt-3"
         }
       },
       {
         orientation: "horizontal",
         size: "sm",
-        class: {
+        classNames: {
           separator: "mt-4"
         }
       },
       {
         orientation: "horizontal",
         size: "md",
-        class: {
+        classNames: {
           separator: "mt-5"
         }
       },
       {
         orientation: "horizontal",
         size: "lg",
-        class: {
+        classNames: {
           separator: "mt-6"
         }
       },
       {
         orientation: "horizontal",
         size: "xl",
-        class: {
+        classNames: {
           separator: "mt-7"
         }
       },
       {
         orientation: "vertical",
         size: "xs",
-        class: {
+        classNames: {
           separator: "top-[24px] bottom-[-16px]",
           item: "gap-1.5"
         }
@@ -178,7 +178,7 @@ export const createStepperTheme = () =>
       {
         orientation: "vertical",
         size: "sm",
-        class: {
+        classNames: {
           separator: "top-[32px] bottom-[-16px]",
           item: "gap-2"
         }
@@ -186,7 +186,7 @@ export const createStepperTheme = () =>
       {
         orientation: "vertical",
         size: "md",
-        class: {
+        classNames: {
           separator: "top-[40px] bottom-[-16px]",
           item: "gap-2.5"
         }
@@ -194,7 +194,7 @@ export const createStepperTheme = () =>
       {
         orientation: "vertical",
         size: "lg",
-        class: {
+        classNames: {
           separator: "top-[48px] bottom-[-16px]",
           item: "gap-3"
         }
@@ -202,7 +202,7 @@ export const createStepperTheme = () =>
       {
         orientation: "vertical",
         size: "xl",
-        class: {
+        classNames: {
           separator: "top-[56px] bottom-[-16px]",
           item: "gap-3.5"
         }
