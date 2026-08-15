@@ -1,7 +1,4 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { LinkGroupProps } from "./link-group"
 import { linkGroupTheme } from "./link-group.theme"
 
@@ -11,7 +8,6 @@ import RLALink from "../link/RLALink.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const linkGroup = scv(linkGroupTheme)
 
 const {
   label: headingLabel,
@@ -25,7 +21,11 @@ const {
   ...rest
 } = Astro.props as LinkGroupProps
 
-const classes = resolveClasses(linkGroup, { theme }, useUi("linkGroup", uiProp), className);
+const classes = linkGroupTheme({
+  theme,
+  ui: uiProp,
+  class: className
+});
 
 const normalizedLinks = Array.isArray(links) ? links : [links];
 

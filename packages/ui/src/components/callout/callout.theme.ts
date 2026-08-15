@@ -8,7 +8,7 @@ for (const c of colors) {
   colorVariants[c] = { root: "" }
 }
 
-export const calloutTheme = defineTheme({
+export const calloutTheme = defineTheme("callout", {
   slots: ["root", "body", "icon", "title", "content", "avatar", "avatarSize", "actions", "close"],
   base: {
     root: "relative overflow-hidden w-full rounded-lg p-4 flex gap-2.5 items-start",

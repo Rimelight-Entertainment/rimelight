@@ -1,6 +1,7 @@
 import type { Theme, ThemeColor } from "../../config"
 
 export interface BadgeProps {
+  label?: string
   /**
    * Visual style variant.
    */

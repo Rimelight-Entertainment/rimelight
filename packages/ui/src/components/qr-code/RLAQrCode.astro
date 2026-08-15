@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { QrCodeProps } from "./qr-code"
 import { qrCodeTheme } from "./qr-code.theme"
 
 
-const qrCode = scv(qrCodeTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as QrCodeProps
 
-const classes = resolveClasses(qrCode, {}, useUi("qrCode", uiProp), className);
+const classes = qrCodeTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

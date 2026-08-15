@@ -1,5 +1,6 @@
 import type { ThemeColor } from "../../config"
 export interface TextareaProps {
+  autoGrow?: boolean
   /**
    * The text value.
    */

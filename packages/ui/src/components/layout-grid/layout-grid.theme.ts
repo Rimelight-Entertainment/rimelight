@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const layoutGridTheme = defineTheme({
+export const layoutGridTheme = defineTheme("layout-grid", {
   slots: ["root", "overlay", "container", "columns"],
   base: {
     root: "",

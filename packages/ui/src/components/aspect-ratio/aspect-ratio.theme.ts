@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const aspectRatioTheme = defineTheme({
+export const aspectRatioTheme = defineTheme("aspect-ratio", {
   slots: ["root", "content"],
   base: {
     root: "relative w-full overflow-hidden",

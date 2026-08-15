@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ChartProps, ChartDataPoint } from "./chart"
 import { chartTheme } from "./chart.theme"
 
 
-const chart = scv(chartTheme)
 
 const {
   type = "bar",
@@ -19,7 +15,10 @@ const {
   ...rest
 } = Astro.props as ChartProps
 
-const classes = resolveClasses(chart, {}, useUi("chart", uiProp), className)
+const classes = chartTheme({
+  ui: uiProp,
+  class: className
+})
 
 // Compute derived values on the server so we don't do heavy JS on the client
 const max = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1

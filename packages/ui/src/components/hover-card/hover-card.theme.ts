@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const hoverCardTheme = defineTheme({
+export const hoverCardTheme = defineTheme("hover-card", {
   slots: ["root", "trigger", "content"],
   base: {
     root: "relative inline-block group/hover-card",

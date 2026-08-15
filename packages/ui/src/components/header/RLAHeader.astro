@@ -1,11 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils/resolver"
 import HeaderLayer from "./HeaderLayer.astro"
 import type { HeaderProps } from "./header"
 import { headerTheme } from "./header.theme"
 
-const header = scv(headerTheme)
 
 const {
   as = "header",
@@ -19,23 +16,20 @@ const {
   ...rest
 } = Astro.props as HeaderProps
 
-const classes = resolveClasses(
-  header,
-  {
-    contain,
+const classes = headerTheme({
+  contain,
     sticky: fixed ? false : sticky,
-    fixed
-  },
-  useUi("header", uiProp),
-  className
-)
+    fixed,
+  ui: uiProp,
+  class: className
+})
 ---
 
 <HeaderLayer
   as={as}
   layerType="header"
   componentName="header"
-  theme={header}
+  theme={headerTheme}
   contain={contain}
   sticky={sticky}
   fixed={fixed}

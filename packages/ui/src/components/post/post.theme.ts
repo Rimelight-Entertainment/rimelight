@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const postTheme = defineTheme({
+export const postTheme = defineTheme("post", {
   slots: [
     "root",
     "imageWrapper",

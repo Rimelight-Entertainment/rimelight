@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const colorAreaTheme = defineTheme({
+export const colorAreaTheme = defineTheme("color-area", {
   slots: ["root", "area", "thumb"],
   base: {
     root: "relative block touch-none select-none rounded-lg w-full aspect-square outline-none",

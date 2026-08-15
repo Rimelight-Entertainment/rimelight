@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
 import { dropdownMenuTheme } from "./dropdown-menu.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const dropdownMenu = scv(dropdownMenuTheme)
 
 const {
   items = [],
@@ -25,9 +21,11 @@ const {
 const align = contentProp?.align || "start"
 const side = contentProp?.side || "bottom"
 
-const classes = resolveClasses(dropdownMenu, {
-  size
-}, useUi("dropdownMenu", uiProp), className)
+const classes = dropdownMenuTheme({
+  size,
+  ui: uiProp,
+  class: className
+})
 
 // Standardize item groups: array of arrays vs array of items
 const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 0 && Array.isArray(items[0])

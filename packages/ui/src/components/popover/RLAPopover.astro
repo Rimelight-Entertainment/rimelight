@@ -1,11 +1,7 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { PopoverProps } from "./popover"
 import { popoverTheme } from "./popover.theme"
 
-const popover = scv(popoverTheme)
 
 const {
   triggerLabel,
@@ -16,9 +12,11 @@ const {
   ...rest
 } = Astro.props as PopoverProps
 
-const classes = resolveClasses(popover, {
-  placement
-}, useUi("popover", uiProp), className)
+const classes = popoverTheme({
+  placement,
+  ui: uiProp,
+  class: className
+})
 
 const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
 ---

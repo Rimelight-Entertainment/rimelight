@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const imageTheme = defineTheme({
+export const imageTheme = defineTheme("image", {
   slots: [
     "root",
     "trigger",

@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const colorSliderTheme = defineTheme({
+export const colorSliderTheme = defineTheme("color-slider", {
   slots: ["root", "track", "thumb"],
   base: {
     root: "relative flex w-full touch-none select-none items-center outline-none",

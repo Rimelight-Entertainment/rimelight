@@ -1,13 +1,8 @@
 import { createMemo, splitProps, type Component, type JSX } from "solid-js"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { LinkProps } from "./link"
 import { linkTheme } from "./link.theme"
 import RLSIcon from "../icon/RLSIcon"
 import { resolveLinkAttrs } from "./helpers"
-
-const link = scv(linkTheme)
 
 type RLSLinkProps = LinkProps & {
   children?: JSX.Element
@@ -47,16 +42,13 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       return { root: props.class || "" }
     }
 
-    return resolveClasses(
-      link,
-      {
-        theme: props.theme,
-        ...(props.active !== undefined ? { active: props.active } : {}),
-        disabled: !!props.disabled
-      },
-      useUi("link", props.ui),
-      props.class
-    )
+    return linkTheme({
+      theme: props.theme,
+      ...(props.active !== undefined ? { active: props.active } : {}),
+      disabled: !!props.disabled,
+      ui: props.ui,
+      class: props.class
+    })
   })
 
   return (

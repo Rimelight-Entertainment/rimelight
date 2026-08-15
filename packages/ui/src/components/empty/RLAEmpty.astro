@@ -1,14 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { EmptyProps } from "./empty"
 import { emptyTheme } from "./empty.theme"
 import RLAButton from "../button/RLAButton.astro"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const empty = scv(emptyTheme)
 
 const {
   icon,
@@ -25,16 +21,13 @@ const {
   ...rest
 } = Astro.props as EmptyProps
 
-const classes = resolveClasses(
-  empty,
-  {
-    size,
+const classes = emptyTheme({
+  size,
     variant,
-    loading
-  },
-  useUi("empty", uiProp),
-  className
-)
+    loading,
+  ui: uiProp,
+  class: className
+})
 
 const activeIcon = loading ? loadingIcon : icon
 ---

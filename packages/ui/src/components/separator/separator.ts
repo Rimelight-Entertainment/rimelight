@@ -1,4 +1,8 @@
 export interface SeparatorProps {
+  color?: string
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  type?: "solid" | "dashed" | "dotted"
+  position?: "start" | "center" | "end"
   /**
    * The visual layout orientation.
    */

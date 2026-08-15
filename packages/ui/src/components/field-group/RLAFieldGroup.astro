@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { FieldGroupProps } from "./field-group"
 import { fieldGroupTheme } from "./field-group.theme"
 
 
-const fieldGroup = scv(fieldGroupTheme)
 
 const {
   prepend,
@@ -17,9 +13,11 @@ const {
   ...rest
 } = Astro.props as FieldGroupProps
 
-const classes = resolveClasses(fieldGroup, {
-  size
-}, useUi("fieldGroup", uiProp), className);
+const classes = fieldGroupTheme({
+  size,
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   {prepend && (

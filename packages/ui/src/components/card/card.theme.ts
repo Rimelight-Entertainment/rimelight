@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const cardTheme = defineTheme({
+export const cardTheme = defineTheme("card", {
   slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media"],
   base: {
     root: "rounded-lg overflow-hidden",

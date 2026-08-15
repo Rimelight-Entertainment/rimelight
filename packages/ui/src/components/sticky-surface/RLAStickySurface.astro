@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { StickySurfaceProps } from "./sticky-surface"
 import { stickySurfaceTheme } from "./sticky-surface.theme"
 
 
-const stickySurface = scv(stickySurfaceTheme)
 
 const {
   offsetTop = 0,
@@ -15,9 +11,14 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as StickySurfaceProps & { stuckShadow?: boolean }
+} = Astro.props as StickySurfaceProps
 
-const classes = resolveClasses(stickySurface, {}, useUi("stickySurface", uiProp), className)
+
+
+const classes = stickySurfaceTheme({
+  ui: uiProp,
+  class: className
+})
 const topOffset = `${offsetTop}px`
 const id = `sticky-${Math.random().toString(36).substring(2, 9)}`
 ---

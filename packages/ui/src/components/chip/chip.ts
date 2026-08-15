@@ -1,6 +1,8 @@
 import type { Theme } from "../../config"
 
 export interface ChipProps {
+  activeColor?: string
+  activeVariant?: string
   /**
    * Theme mode override â€” pins colors to flat, light, or dark mode.
    */

@@ -1,11 +1,7 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { MarqueeProps } from "./marquee"
 import { marqueeTheme } from "./marquee.theme"
 
-const marquee = scv(marqueeTheme)
 
 const {
   direction = "left",
@@ -16,10 +12,12 @@ const {
   ...rest
 } = Astro.props as MarqueeProps
 
-const classes = resolveClasses(marquee, {
+const classes = marqueeTheme({
   direction,
-  pauseOnHover
-}, useUi("marquee", uiProp), className)
+  pauseOnHover,
+  ui: uiProp,
+  class: className
+})
 
 const duration = `${speed}s`
 const id = `marquee-${Math.random().toString(36).substring(2, 9)}`

@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import { resolveIcon } from "./resolver"
 import type { IconProps } from "./icon"
 import { iconTheme } from "./icon.theme"
 
 
-const icon = scv(iconTheme)
 
 const {
   name,
@@ -17,7 +13,11 @@ const {
   ...rest
 } = Astro.props as IconProps
 
-const classes = resolveClasses(icon, { size }, useUi("icon", uiProp), className)
+const classes = iconTheme({
+  size,
+  ui: uiProp,
+  class: className
+})
 const resolved = resolveIcon(name)
 ---
 

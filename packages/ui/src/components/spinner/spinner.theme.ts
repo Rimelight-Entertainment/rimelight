@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const spinnerTheme = defineTheme({
+export const spinnerTheme = defineTheme("spinner", {
   slots: ["root"],
   base: {
     root: "animate-spin shrink-0 rounded-full border-2 border-t-transparent border-current"

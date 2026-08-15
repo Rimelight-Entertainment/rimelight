@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const stepperTheme = defineTheme({
+export const stepperTheme = defineTheme("stepper", {
   slots: [
     "root",
     "header",

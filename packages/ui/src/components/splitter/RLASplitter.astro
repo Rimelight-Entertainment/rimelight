@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SplitterProps } from "./splitter"
 import { splitterTheme } from "./splitter.theme"
 
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const splitter = scv(splitterTheme)
 
 const {
   direction = "horizontal",
@@ -17,9 +13,11 @@ const {
   ...rest
 } = Astro.props as SplitterProps
 
-const classes = resolveClasses(splitter, {
-  direction
-}, useUi("splitter", uiProp), className)
+const classes = splitterTheme({
+  direction,
+  ui: uiProp,
+  class: className
+})
 
 // Normalise sizes so they sum to 100
 const total = defaultSizes.reduce((s, v) => s + v, 0)

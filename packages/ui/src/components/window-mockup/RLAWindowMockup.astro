@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { WindowMockupProps } from "./window-mockup"
 import { windowMockupTheme } from "./window-mockup.theme"
 
 
-const windowMockup = scv(windowMockupTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as WindowMockupProps
 
-const classes = resolveClasses(windowMockup, {}, useUi("windowMockup", uiProp), className);
+const classes = windowMockupTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

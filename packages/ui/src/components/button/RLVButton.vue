@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { computed, useSlots, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ButtonProps } from "./button"
 import { buttonTheme } from "./button.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 const attrs = useAttrs()
-const button = scv(buttonTheme)
 
 const {
   variant = "solid",
@@ -59,22 +55,19 @@ defineSlots<{
 }>()
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    button,
-    {
-      variant: active && activeVariant ? activeVariant : variant,
-      color: active && activeColor ? activeColor : color,
-      size,
-      block,
-      square: square || (!label && !slots.default),
-      leading: isLeading.value,
-      trailing: isTrailing.value,
-      loading,
-      active
-    },
-    useUi("button", uiProp),
-    className
-  )
+  buttonTheme({
+    variant: active && activeVariant ? activeVariant : variant,
+    color: active && activeColor ? activeColor : color,
+    size,
+    block,
+    square: square || (!label && !slots.default),
+    leading: isLeading.value,
+    trailing: isTrailing.value,
+    loading,
+    active,
+    ui: uiProp,
+    class: className
+  })
 )
 
 const Tag = href ? "a" : "button"

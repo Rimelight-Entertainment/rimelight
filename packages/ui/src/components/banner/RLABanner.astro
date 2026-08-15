@@ -1,11 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils/resolver"
 import HeaderLayer from "../header/HeaderLayer.astro"
 import type { BannerProps } from "./banner"
 import { bannerTheme } from "./banner.theme"
 
-const banner = scv(bannerTheme)
 
 const {
   contain = true,
@@ -21,16 +18,13 @@ const {
   ...rest
 } = Astro.props as BannerProps
 
-const classes = resolveClasses(
-  banner,
-  {
-    contain,
+const classes = bannerTheme({
+  contain,
     sticky: fixed ? false : sticky,
-    fixed
-  },
-  useUi("banner", uiProp),
-  className
-)
+    fixed,
+  ui: uiProp,
+  class: className
+})
 
 const bannerId = (rest.id as string) || `rla-banner-${Math.random().toString(36).slice(2, 8)}`
 const storageKey = dismissId || bannerId
@@ -41,7 +35,7 @@ const storageKey = dismissId || bannerId
   id={bannerId}
   layerType="banner"
   componentName="banner"
-  theme={banner}
+  theme={bannerTheme}
   contain={contain}
   sticky={sticky}
   fixed={fixed}

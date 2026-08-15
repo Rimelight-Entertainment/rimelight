@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { computed, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { BadgeProps } from "./badge"
 import { badgeTheme } from "./badge.theme"
 
 defineOptions({ name: "RLVBadge" })
 
 const attrs = useAttrs()
-const badgeScv = scv(badgeTheme)
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   variant: "solid",
@@ -19,17 +15,14 @@ const props = withDefaults(defineProps<BadgeProps>(), {
 })
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    badgeScv,
-    {
-      variant: props.variant,
-      color: props.color,
-      size: props.size,
-      shape: props.shape
-    },
-    useUi("badge", props.ui),
-    props.class
-  )
+  badgeTheme({
+    variant: props.variant,
+    color: props.color,
+    size: props.size,
+    shape: props.shape,
+    ui: props.ui,
+    class: props.class
+  })
 )
 </script>
 

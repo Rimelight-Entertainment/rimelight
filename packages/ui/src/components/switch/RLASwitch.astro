@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SwitchProps } from "./switch"
 import { switchTheme } from "./switch.theme"
 
 
-const switchFn = scv(switchTheme)
 
 const {
   checked = false,
@@ -21,12 +17,14 @@ const {
   ...rest
 } = Astro.props as SwitchProps
 
-const classes = resolveClasses(switchFn, {
+const classes = switchTheme({
   color,
   size,
   checked,
-  theme
-}, useUi("switch", uiProp), className);
+  theme,
+  ui: uiProp,
+  class: className
+});
 ---
 <label class={classes.root} data-slot="root">
   <input

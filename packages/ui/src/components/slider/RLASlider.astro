@@ -1,11 +1,7 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SliderProps } from "./slider"
 import { sliderTheme } from "./slider.theme"
 
-const slider = scv(sliderTheme)
 
 const {
   value = 0,
@@ -20,10 +16,12 @@ const {
   ...rest
 } = Astro.props as SliderProps
 
-const classes = resolveClasses(slider, {
+const classes = sliderTheme({
   color,
-  theme
-}, useUi("slider", uiProp), className)
+  theme,
+  ui: uiProp,
+  class: className
+})
 
 const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100))
 ---

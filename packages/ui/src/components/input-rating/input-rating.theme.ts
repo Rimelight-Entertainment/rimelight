@@ -17,7 +17,7 @@ for (const c of colors) {
   }
 }
 
-export const inputRatingTheme = defineTheme({
+export const inputRatingTheme = defineTheme("input-rating", {
   slots: ["root", "item", "indicator", "icon", "emptyIcon"],
   base: {
     root: "inline-flex select-none",

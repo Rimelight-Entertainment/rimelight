@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { TabsProps } from "./tabs"
 import { tabsTheme } from "./tabs.theme"
 import RLABadge from "../badge/RLABadge.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const tabs = scv(tabsTheme)
 
 const {
   items = [],
@@ -31,11 +27,13 @@ const {
 // Normalize variant names
 const normalizedVariant = (variant === "solid" || variant === "pills") ? "pill" : (variant === "link" ? "underline" : variant);
 
-const classes = resolveClasses(tabs, {
+const classes = tabsTheme({
   variant: normalizedVariant,
   orientation,
-  size
-}, useUi("tabs", uiProp), className);
+  size,
+  ui: uiProp,
+  class: className
+});
 
 const initialValue = value || defaultValue || (items.length > 0 ? (items[0]?.[valueKey] ?? items[0]?.value ?? "0") : "")
 

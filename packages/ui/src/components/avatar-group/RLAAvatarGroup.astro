@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { AvatarGroupProps } from "./avatar-group"
 import { avatarGroupTheme } from "./avatar-group.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 
 
-const avatarGroup = scv(avatarGroupTheme)
 
 const {
   items,
@@ -18,7 +14,10 @@ const {
   ...rest
 } = Astro.props as AvatarGroupProps
 
-const classes = resolveClasses(avatarGroup, {}, useUi("avatarGroup", uiProp), className)
+const classes = avatarGroupTheme({
+  ui: uiProp,
+  class: className
+})
 
 // ─── Responsive CSS Item Counter ────────────────────────────────────────────
 //

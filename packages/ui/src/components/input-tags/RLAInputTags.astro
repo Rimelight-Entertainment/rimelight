@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { InputTagsProps, TagItem } from "./input-tags"
 import { inputTagsTheme } from "./input-tags.theme"
 
 
-const inputTags = scv(inputTagsTheme)
 
 const {
   items,
@@ -20,7 +16,10 @@ const {
   ...rest
 } = Astro.props as InputTagsProps
 
-const classes = resolveClasses(inputTags, {}, useUi("inputTags", uiProp), className)
+const classes = inputTagsTheme({
+  ui: uiProp,
+  class: className
+})
 
 // ─── Responsive CSS Item Counter ────────────────────────────────────────────
 //

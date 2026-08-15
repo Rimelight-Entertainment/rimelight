@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const iconTheme = defineTheme({
+export const iconTheme = defineTheme("icon", {
   slots: ["root"],
   base: {
     root: "shrink-0 inline-flex items-center justify-center align-middle leading-none"

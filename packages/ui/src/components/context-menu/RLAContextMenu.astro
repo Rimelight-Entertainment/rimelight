@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ContextMenuProps } from "./context-menu"
 import { contextMenuTheme } from "./context-menu.theme"
 
 
-const contextMenu = scv(contextMenuTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as ContextMenuProps
 
-const classes = resolveClasses(contextMenu, {}, useUi("contextMenu", uiProp), className);
+const classes = contextMenuTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

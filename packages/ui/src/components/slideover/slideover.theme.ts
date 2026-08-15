@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const slideoverTheme = defineTheme({
+export const slideoverTheme = defineTheme("slideover", {
   slots: [
     "root",
     "trigger",

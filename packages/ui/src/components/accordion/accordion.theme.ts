@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const accordionTheme = defineTheme({
+export const accordionTheme = defineTheme("accordion", {
   slots: [
     "root",
     "item",

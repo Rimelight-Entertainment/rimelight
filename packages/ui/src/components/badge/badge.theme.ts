@@ -8,7 +8,7 @@ for (const c of colors) {
   colorVariants[c] = { root: "" }
 }
 
-export const badgeTheme = defineTheme({
+export const badgeTheme = defineTheme("badge", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
   base: {
     root: "font-medium inline-flex items-center gap-1.5 transition-all duration-150 select-none",

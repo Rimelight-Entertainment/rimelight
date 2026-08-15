@@ -1,9 +1,6 @@
 ---
-import { scv } from "css-variants"
-import { useUi, resolveClasses } from "../../utils/resolver"
 import { headerTheme } from "./header.theme"
 
-const defaultHeaderTheme = scv(headerTheme)
 
 export interface HeaderLayerProps {
   as?: "header" | "div" | "aside" | "section" | (string & {})
@@ -28,7 +25,7 @@ const {
   fixed = false,
   stackIndex = 0,
   hideOnScroll = false,
-  theme = defaultHeaderTheme,
+  theme = headerTheme,
   componentName = "header",
   ui: uiProp,
   class: className,
@@ -37,16 +34,13 @@ const {
 
 const Tag = (as || "header") as any
 
-const classes = resolveClasses(
-  theme,
-  {
-    contain,
-    sticky: fixed ? false : sticky,
-    fixed
-  },
-  useUi(componentName, uiProp),
-  className
-)
+const classes = theme({
+  contain,
+  sticky: fixed ? false : sticky,
+  fixed,
+  ui: uiProp,
+  class: className
+})
 
 const isBanner = layerType === "banner"
 const layerId = rest.id || `rla-${componentName}-${Math.random().toString(36).slice(2, 8)}`

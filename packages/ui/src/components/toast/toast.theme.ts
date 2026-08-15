@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const toastTheme = defineTheme({
+export const toastTheme = defineTheme("toast", {
   slots: ["root", "title", "description", "action", "close"],
   base: {
     root: "group pointer-events-auto relative flex w-full items-start justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all border-border bg-background text-foreground",

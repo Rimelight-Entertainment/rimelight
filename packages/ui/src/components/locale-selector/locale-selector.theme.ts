@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const localeSelectorTheme = defineTheme({
+export const localeSelectorTheme = defineTheme("locale-selector", {
   slots: ["root", "label", "wrapper", "select", "option", "iconWrapper"],
   base: {
     root: "inline-flex flex-col gap-1.5",

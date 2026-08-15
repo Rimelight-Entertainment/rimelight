@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { DashboardSearchButtonProps } from "./dashboard-search-button"
 import { dashboardSearchButtonTheme } from "./dashboard-search-button.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const dashboardSearchButton = scv(dashboardSearchButtonTheme)
 
 const {
   icon,
@@ -18,7 +14,11 @@ const {
   ...rest
 } = Astro.props as DashboardSearchButtonProps
 
-const classes = resolveClasses(dashboardSearchButton, { collapsed }, useUi("dashboardSearchButton", uiProp), className);
+const classes = dashboardSearchButtonTheme({
+  collapsed,
+  ui: uiProp,
+  class: className
+});
 ---
 
 <button

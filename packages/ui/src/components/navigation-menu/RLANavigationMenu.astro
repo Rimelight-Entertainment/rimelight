@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import RLAIcon from "../icon/RLAIcon.astro"
 import type { NavigationMenuProps } from "./navigation-menu"
 import { navigationMenuTheme } from "./navigation-menu.theme"
 
 
-const navigationMenu = scv(navigationMenuTheme)
 
 const {
   items = [],
@@ -17,9 +13,15 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as NavigationMenuProps & { theme?: string }
+} = Astro.props as NavigationMenuProps
 
-const classes = resolveClasses(navigationMenu, { theme: theme as "dark", orientation }, useUi("navigationMenu", uiProp), className)
+
+
+const classes = navigationMenuTheme({
+  theme: theme as "dark", orientation,
+  ui: uiProp,
+  class: className
+})
 
 const slotContents: Record<string, string> = {}
 await Promise.all(

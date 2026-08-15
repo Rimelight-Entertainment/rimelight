@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const tabsTheme = defineTheme({
+export const tabsTheme = defineTheme("tabs", {
   slots: [
     "root",
     "list",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const modalTheme = defineTheme({
+export const modalTheme = defineTheme("modal", {
   slots: [
     "root",
     "trigger",

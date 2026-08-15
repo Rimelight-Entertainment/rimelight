@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SelectProps } from "./select"
 import { selectTheme } from "./select.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
@@ -10,7 +7,6 @@ import RLVIcon from "../icon/RLVIcon.vue"
 defineOptions({ name: "RLVSelect" })
 
 const attrs = useAttrs()
-const selectScv = scv(selectTheme)
 
 const modelValue = defineModel<string | number | undefined>()
 
@@ -21,16 +17,13 @@ const props = withDefaults(defineProps<SelectProps>(), {
 })
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    selectScv,
-    {
-      size: props.size,
-      color: props.color,
-      disabled: props.disabled
-    },
-    useUi("select", props.ui),
-    props.class
-  )
+  selectTheme({
+    size: props.size,
+    color: props.color,
+    disabled: props.disabled,
+    ui: props.ui,
+    class: props.class
+  })
 )
 
 const normalizedItems = computed(() => {

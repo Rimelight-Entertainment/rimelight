@@ -1,7 +1,4 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { PostProps } from "./post"
 import { postTheme } from "./post.theme"
 import { Image } from "astro:assets"
@@ -9,7 +6,6 @@ import type { ImageMetadata } from "astro"
 import RLABadge from "../badge/RLABadge.astro"
 
 
-const post = scv(postTheme)
 
 const {
   title,
@@ -26,7 +22,11 @@ const {
   ...rest
 } = Astro.props as PostProps
 
-const classes = resolveClasses(post, { variant, orientation }, useUi("post", uiProp), className);
+const classes = postTheme({
+  variant, orientation,
+  ui: uiProp,
+  class: className
+});
 
 const Tag = to ? "a" : "div";
 const formattedDate = date ? (date instanceof Date ? date.toLocaleDateString() : date) : null;

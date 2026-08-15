@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const switchTheme = defineTheme({
+export const switchTheme = defineTheme("switch", {
   slots: ["root", "input", "track", "thumb", "label"],
   base: {
     root: "inline-flex items-center gap-2 cursor-pointer select-none",

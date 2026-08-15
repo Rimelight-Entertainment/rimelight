@@ -1,21 +1,22 @@
 ---
 import type { HTMLTag } from "astro/types"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { DashboardResizeHandleProps } from "./dashboard-resize-handle"
 import { dashboardResizeHandleTheme } from "./dashboard-resize-handle.theme"
 
-const dashboardResizeHandle = scv(dashboardResizeHandleTheme)
 
 const {
   as: Tag = "div" as HTMLTag,
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as DashboardResizeHandleProps & { as?: HTMLTag }
+} = Astro.props as DashboardResizeHandleProps
 
-const classes = resolveClasses(dashboardResizeHandle, {}, useUi("dashboardResizeHandle", uiProp), className);
+
+
+const classes = dashboardResizeHandleTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <Tag
   role="separator"

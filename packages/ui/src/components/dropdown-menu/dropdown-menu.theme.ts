@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const dropdownMenuTheme = defineTheme({
+export const dropdownMenuTheme = defineTheme("dropdown-menu", {
   slots: [
     "root",
     "trigger",

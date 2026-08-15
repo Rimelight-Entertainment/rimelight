@@ -8,7 +8,7 @@ for (const c of colors) {
   colorVariants[c] = { base: `bg-${c}` }
 }
 
-export const chipTheme = defineTheme({
+export const chipTheme = defineTheme("chip", {
   slots: ["root", "base"],
   base: {
     root: "relative inline-flex items-center justify-center shrink-0",

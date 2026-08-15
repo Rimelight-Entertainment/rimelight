@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const paginationTheme = defineTheme({
+export const paginationTheme = defineTheme("pagination", {
   slots: ["root", "list", "item", "link", "ellipsis"],
   base: {
     root: "mx-auto flex w-full justify-center",

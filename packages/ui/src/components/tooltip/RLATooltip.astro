@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { TooltipProps } from "./tooltip"
 import { tooltipTheme } from "./tooltip.theme"
 
 
-const tooltip = scv(tooltipTheme)
 
 const {
   content,
@@ -16,9 +12,11 @@ const {
   ...rest
 } = Astro.props as TooltipProps
 
-const classes = resolveClasses(tooltip, {
-  placement
-}, useUi("tooltip", uiProp), className)
+const classes = tooltipTheme({
+  placement,
+  ui: uiProp,
+  class: className
+})
 
 const anchorName = `--rla-tt-${Math.random().toString(36).substring(2, 9)}`
 ---

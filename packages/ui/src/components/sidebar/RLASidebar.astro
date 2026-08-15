@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SidebarProps, SidebarItem } from "./sidebar"
 import { sidebarTheme } from "./sidebar.theme"
 import RLABadge from "../badge/RLABadge.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const sidebar = scv(sidebarTheme)
 
 const {
   items = [],
@@ -20,13 +16,17 @@ const {
   t = (key: string) => key,
   _depth = 0,
   ...rest
-} = Astro.props as SidebarProps & { t?: (key: string) => string; _depth?: number }
+} = Astro.props as SidebarProps
 
-const classes = resolveClasses(sidebar, {
+
+
+const classes = sidebarTheme({
   side,
   collapsible,
-  variant
-}, useUi("sidebar", uiProp), className)
+  variant,
+  ui: uiProp,
+  class: className
+})
 
 const hasActiveChild = (item: SidebarItem): boolean => {
   if (item.active) return true

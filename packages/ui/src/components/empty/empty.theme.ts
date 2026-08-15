@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const emptyTheme = defineTheme({
+export const emptyTheme = defineTheme("empty", {
   slots: ["root", "header", "avatar", "title", "description", "body", "actions", "footer"],
   base: {
     root: "relative flex flex-col items-center justify-center gap-4 rounded-lg p-4 sm:p-6 lg:p-8 min-w-0 text-center",

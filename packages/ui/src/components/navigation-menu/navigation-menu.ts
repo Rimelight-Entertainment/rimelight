@@ -35,6 +35,7 @@ export interface NavigationMenuChildItem extends Omit<NavigationMenuItem, "type"
 }
 
 export interface NavigationMenuProps {
+  theme?: string
   /**
    * Main menu navigation links.
    */

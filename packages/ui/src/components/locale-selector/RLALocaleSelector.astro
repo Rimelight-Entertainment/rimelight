@@ -1,14 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { LocaleSelectorProps } from "./locale-selector"
 import { localeSelectorTheme } from "./locale-selector.theme"
 import { getRelativeLocaleUrlList, getRelativeLocaleUrl } from "astro:i18n"
 import RLASelect from "../select/RLASelect.astro"
 
 
-const localeSelector = scv(localeSelectorTheme)
 
 const {
     locales,
@@ -20,10 +16,12 @@ const {
     ...rest
 } = Astro.props as LocaleSelectorProps;
 
-const classes = resolveClasses(localeSelector, {
-    variant,
-    size
-}, useUi("localeSelector", uiProp), className);
+const classes = localeSelectorTheme({
+  variant,
+    size,
+  ui: uiProp,
+  class: className
+});
 
 // Resolve the active locale: explicit prop → Astro.currentLocale → 'en'
 const currentLocale = currentLocaleProp ?? Astro.currentLocale ?? 'en';

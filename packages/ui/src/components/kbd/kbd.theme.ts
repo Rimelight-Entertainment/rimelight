@@ -8,7 +8,7 @@ for (const c of colors) {
   colorVariants[c] = { root: "" }
 }
 
-export const kbdTheme = defineTheme({
+export const kbdTheme = defineTheme("kbd", {
   slots: ["root"],
   base: {
     root: "inline-flex items-center justify-center px-1 rounded-sm font-medium font-sans uppercase"

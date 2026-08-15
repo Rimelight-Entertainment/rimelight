@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const pageHeaderTheme = defineTheme({
+export const pageHeaderTheme = defineTheme("page-header", {
   slots: ["root"],
   base: {
     root: ""

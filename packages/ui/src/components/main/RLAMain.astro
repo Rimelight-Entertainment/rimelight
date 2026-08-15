@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { MainProps } from "./main"
 import { mainTheme } from "./main.theme"
 
 
-const main = scv(mainTheme)
 
 const {
     as = "main",
@@ -15,9 +11,11 @@ const {
     ...rest
 } = Astro.props as MainProps;
 
-const classes = resolveClasses(main, {
-    hasContent: Astro.slots.has("default")
-}, useUi("main", uiProp), className);
+const classes = mainTheme({
+  hasContent: Astro.slots.has("default"),
+  ui: uiProp,
+  class: className
+});
 
 const Tag = as;
 ---

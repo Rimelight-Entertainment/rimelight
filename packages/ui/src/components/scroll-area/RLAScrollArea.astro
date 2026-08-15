@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ScrollAreaProps } from "./scroll-area"
 import { scrollAreaTheme } from "./scroll-area.theme"
 
 
-const scrollArea = scv(scrollAreaTheme)
 
 const {
   orientation = "vertical",
@@ -17,9 +13,11 @@ const {
   ...rest
 } = Astro.props as ScrollAreaProps
 
-const classes = resolveClasses(scrollArea, {
-  orientation
-}, useUi("scrollArea", uiProp), className)
+const classes = scrollAreaTheme({
+  orientation,
+  ui: uiProp,
+  class: className
+})
 
 const heightStyle = height
   ? `height:${typeof height === "number" ? `${height}px` : height}`

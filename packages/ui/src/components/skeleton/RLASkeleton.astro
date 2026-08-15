@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SkeletonProps } from "./skeleton"
 import { skeletonTheme } from "./skeleton.theme"
 
 
-const skeleton = scv(skeletonTheme)
 
 const {
   shape = "rounded",
@@ -15,8 +11,10 @@ const {
   ...rest
 } = Astro.props as SkeletonProps
 
-const classes = resolveClasses(skeleton, {
-  shape
-}, useUi("skeleton", uiProp), className)
+const classes = skeletonTheme({
+  shape,
+  ui: uiProp,
+  class: className
+})
 ---
 <div class={classes.root} data-slot="root" {...rest} />

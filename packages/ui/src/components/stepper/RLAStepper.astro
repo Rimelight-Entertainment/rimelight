@@ -1,12 +1,7 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { StepperProps } from "./stepper"
 import { stepperTheme } from "./stepper.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
-
-const stepper = scv(stepperTheme as any)
 
 const {
   items = [],
@@ -24,11 +19,13 @@ const {
   ...rest
 } = Astro.props as StepperProps
 
-const classes = resolveClasses(stepper, {
+const classes = stepperTheme({
   orientation,
   size,
-  color
-}, useUi("stepper", uiProp), className);
+  color,
+  ui: uiProp,
+  class: className
+})
 
 const initialActiveValue = value ?? modelValue ?? defaultValue ?? (items.length > 0 ? (items[0]?.[valueKey] ?? items[0]?.value ?? 0) : 0)
 

@@ -1,14 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SeparatorProps } from "./separator"
 import { separatorTheme } from "./separator.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
-import { cx } from "css-variants"
 
 
-const separator = scv(separatorTheme)
 
 const {
   orientation = "horizontal",
@@ -23,20 +18,19 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as SeparatorProps & {
-  color?: string
-  size?: "xs" | "sm" | "md" | "lg" | "xl"
-  type?: "solid" | "dashed" | "dotted"
-  position?: "start" | "center" | "end"
-}
+} = Astro.props as SeparatorProps
 
-const classes = resolveClasses(separator, {
+
+
+const classes = separatorTheme({
   orientation,
   color: color as "neutral",
   size: size as "xs",
   type: type as "solid",
-  position: position as "center"
-}, useUi("separator", uiProp), className)
+  position: position as "center",
+  ui: uiProp,
+  class: className
+})
 ---
 <div
   class={classes.root}

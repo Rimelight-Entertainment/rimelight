@@ -1,11 +1,7 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { LayoutGridProps } from "./layout-grid"
 import { layoutGridTheme } from "./layout-grid.theme"
 
-const layoutGrid = scv(layoutGridTheme)
 
 const {
   cols = 4,
@@ -56,7 +52,10 @@ const normalizeArray = (val: number | number[] | undefined, defaultVal: number):
 const gutterArray = normalizeArray(gutter, 1)
 const marginArray = normalizeArray(margin, 1)
 
-const classes = resolveClasses(layoutGrid, {}, useUi("layoutGrid", uiProp), className)
+const classes = layoutGridTheme({
+  ui: uiProp,
+  class: className
+})
 ---
 
 {shouldRender && (

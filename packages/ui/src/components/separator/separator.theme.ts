@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const separatorTheme = defineTheme({
+export const separatorTheme = defineTheme("separator", {
   slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
   base: {
     root: "flex items-center align-center text-center",

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const pageTheme = defineTheme({
+export const pageTheme = defineTheme("page", {
   slots: ["root"],
   base: {
     root: ""

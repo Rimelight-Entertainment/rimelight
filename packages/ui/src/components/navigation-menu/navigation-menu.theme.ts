@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const navigationMenuTheme = defineTheme({
+export const navigationMenuTheme = defineTheme("navigation-menu", {
   slots: ["root", "list", "item", "link", "trigger", "content", "viewport", "viewportWrapper"],
   base: {
     root: "relative z-10 flex w-full",

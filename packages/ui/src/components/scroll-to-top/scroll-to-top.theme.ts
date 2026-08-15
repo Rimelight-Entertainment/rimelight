@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const scrollToTopTheme = defineTheme({
+export const scrollToTopTheme = defineTheme("scroll-to-top", {
   slots: ["root", "button", "progressBase", "svg", "iconContainer", "icon"],
   base: {
     root: "fixed bottom-6 right-6 z-50",

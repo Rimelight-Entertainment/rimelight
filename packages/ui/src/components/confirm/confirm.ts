@@ -1,4 +1,5 @@
 export interface ConfirmProps {
+  variant?: "default" | "destructive"
   /**
    * Title of the alert confirmation dialog.
    */

@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const avatarGroupTheme = defineTheme({
+export const avatarGroupTheme = defineTheme("avatar-group", {
   slots: ["root", "more"],
   base: {
     root: "flex -space-x-3 hover:space-x-0 transition-all duration-300 [&_[data-slot=root]]:ring-2 [&_[data-slot=root]]:ring-background [&_[data-slot=root]]:transition-all",

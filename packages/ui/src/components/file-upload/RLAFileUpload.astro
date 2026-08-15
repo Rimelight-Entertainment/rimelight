@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { FileUploadProps } from "./file-upload"
 import { fileUploadTheme } from "./file-upload.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const fileUpload = scv(fileUploadTheme)
 
 const {
   accept,
@@ -22,9 +18,11 @@ const {
   ...rest
 } = Astro.props as FileUploadProps
 
-const classes = resolveClasses(fileUpload, {
-  disabled
-}, useUi("fileUpload", uiProp), className)
+const classes = fileUploadTheme({
+  disabled,
+  ui: uiProp,
+  class: className
+})
 
 const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
 ---

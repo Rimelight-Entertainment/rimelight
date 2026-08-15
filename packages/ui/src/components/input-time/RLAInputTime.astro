@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { InputTimeProps } from "./input-time"
 import { inputTimeTheme } from "./input-time.theme"
 
 
-const inputTime = scv(inputTimeTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as InputTimeProps
 
-const classes = resolveClasses(inputTime, {}, useUi("inputTime", uiProp), className);
+const classes = inputTimeTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

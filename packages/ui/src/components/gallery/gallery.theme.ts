@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const galleryTheme = defineTheme({
+export const galleryTheme = defineTheme("gallery", {
   slots: ["root"],
   base: {
     root: ""

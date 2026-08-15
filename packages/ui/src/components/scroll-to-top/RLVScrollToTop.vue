@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ScrollToTopProps } from "./scroll-to-top"
 import { scrollToTopTheme } from "./scroll-to-top.theme"
 import { trackScroll, scrollToTop as scrollToTopFn } from "./scroll"
 import { ref, computed, onMounted, onUnmounted, watch, useAttrs } from "vue"
 
 const attrs = useAttrs()
-const scrollToTop = scv(scrollToTopTheme)
 
 const {
   color = "primary",
@@ -20,7 +16,11 @@ const {
   class: className
 } = defineProps<ScrollToTopProps>()
 
-const classes = resolveClasses(scrollToTop, { color }, useUi("scrollToTop", uiProp), className)
+const classes = scrollToTopTheme({
+  color,
+  ui: uiProp,
+  class: className
+})
 
 const isVisible = ref(false)
 const scrollPercentage = ref(0)

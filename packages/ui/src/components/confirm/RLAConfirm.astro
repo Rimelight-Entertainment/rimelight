@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ConfirmProps } from "./confirm"
 import { confirmTheme } from "./confirm.theme"
 import RLAButton from "../button/RLAButton.astro"
 
-const alertDialog = scv(confirmTheme)
 
 const {
   variant = "default",
@@ -18,11 +14,15 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ConfirmProps & { variant?: "default" | "destructive" }
+} = Astro.props as ConfirmProps
 
-const classes = resolveClasses(alertDialog, {
-  variant
-}, useUi("alertDialog", uiProp), className)
+
+
+const classes = confirmTheme({
+  variant,
+  ui: uiProp,
+  class: className
+})
 
 const dialogId = `rla-alert-dialog-${Math.random().toString(36).substring(2, 9)}`
 const isDestructive = variant === "destructive"

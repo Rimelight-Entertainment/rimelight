@@ -1,4 +1,5 @@
 export interface StickySurfaceProps {
+  stuckShadow?: boolean
   /**
    * Pixels offset from top when sticky.
    */

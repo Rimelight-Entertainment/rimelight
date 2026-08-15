@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const skeletonTheme = defineTheme({
+export const skeletonTheme = defineTheme("skeleton", {
   slots: ["root"],
   base: {
     root: "animate-pulse bg-elevated shrink-0"

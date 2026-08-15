@@ -8,7 +8,7 @@ for (const c of colors) {
   colorVariants[c] = { root: "" }
 }
 
-export const buttonTheme = defineTheme({
+export const buttonTheme = defineTheme("button", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
   base: {
     root: [

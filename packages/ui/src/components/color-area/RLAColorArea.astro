@@ -1,10 +1,6 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import { colorAreaTheme } from "./color-area.theme"
 
-const colorArea = scv(colorAreaTheme)
 
 export interface Props {
   colorSpace?: "hsl" | "rgb" | "hsb"
@@ -41,10 +37,12 @@ const {
   ...rest
 } = Astro.props as Props
 
-const classes = resolveClasses(colorArea, {
+const classes = colorAreaTheme({
   color,
-  theme
-}, useUi("colorArea", uiProp), className)
+  theme,
+  ui: uiProp,
+  class: className
+})
 
 const initialValue = modelValue || defaultValue
 ---

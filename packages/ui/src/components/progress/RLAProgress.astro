@@ -1,11 +1,7 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ProgressProps } from "./progress"
 import { progressTheme } from "./progress.theme"
 
-const progress = scv(progressTheme)
 
 const {
   value = 0,
@@ -18,11 +14,13 @@ const {
   ...rest
 } = Astro.props as ProgressProps
 
-const classes = resolveClasses(progress, {
+const classes = progressTheme({
   color,
   size,
-  theme
-}, useUi("progress", uiProp), className)
+  theme,
+  ui: uiProp,
+  class: className
+})
 
 const percentage = Math.min(100, Math.max(0, (value / max) * 100))
 const id = `progress-${Math.random().toString(36).substring(2, 9)}`

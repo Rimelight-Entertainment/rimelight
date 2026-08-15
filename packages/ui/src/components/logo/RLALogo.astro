@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { LogoProps } from "./logo"
 import { logoTheme } from "./logo.theme"
 import { uiConfig } from "../../config"
 
-const logo = scv(logoTheme)
 
 const {
   variant = "logomark",
@@ -33,7 +29,10 @@ if (href === "/") {
   }
 }
 
-const classes = resolveClasses(logo, {}, useUi("logo", uiProp), className);
+const classes = logoTheme({
+  ui: uiProp,
+  class: className
+});
 
 let logoSrc: string | null = null;
 let darkSrc: string | null = null;

@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const colorFieldTheme = defineTheme({
+export const colorFieldTheme = defineTheme("color-field", {
   slots: ["root", "input"],
   base: {
     root: "relative flex items-center border border-border rounded-lg bg-background shadow-sm px-3 py-1.5 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",

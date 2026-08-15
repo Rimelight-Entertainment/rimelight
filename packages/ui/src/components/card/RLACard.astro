@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { CardProps } from "./card"
 import { cardTheme } from "./card.theme"
 
 
-const card = scv(cardTheme)
 
 const {
   title,
@@ -19,10 +15,12 @@ const {
   ...rest
 } = Astro.props as CardProps
 
-const classes = resolveClasses(card, {
+const classes = cardTheme({
   interactive: !!href,
-  overlay
-}, useUi("card", uiProp), className)
+  overlay,
+  ui: uiProp,
+  class: className
+})
 
 const Tag = href ? "a" : "div"
 ---

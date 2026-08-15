@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const breadcrumbTheme = defineTheme({
+export const breadcrumbTheme = defineTheme("breadcrumb", {
   slots: ["root", "list", "item", "link", "separator", "page"],
   base: {
     root: "aria-label='breadcrumb'",

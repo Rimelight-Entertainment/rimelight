@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const inputTagsTheme = defineTheme({
+export const inputTagsTheme = defineTheme("input-tags", {
   slots: ["root", "tag", "tagLabel", "more", "input"],
   base: {
     root: "flex flex-wrap items-center gap-1.5",

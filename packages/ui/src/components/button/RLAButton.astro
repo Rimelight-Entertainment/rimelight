@@ -1,14 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ButtonProps } from "./button"
 import { buttonTheme } from "./button.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLALink from "../link/RLALink.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const button = scv(buttonTheme)
 
 const {
   variant = "solid",
@@ -33,11 +29,9 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as ButtonProps & {
-  rounded?: boolean
-  activeColor?: string
-  activeVariant?: string
-}
+} = Astro.props as ButtonProps
+
+
 
 const isLeading = !!(leadingIcon || avatar || Astro.slots.has("leading") || loading)
 const isTrailing = !!(trailingIcon || Astro.slots.has("trailing")) || (loading && !isLeading)
@@ -53,7 +47,7 @@ const showTrailingIcon = loading
 const leadingIconClass = loading ? "animate-spin" : ""
 const trailingIconClass = loading ? "animate-spin" : ""
 
-const classes = resolveClasses(button, {
+const classes = buttonTheme({
   variant: (active && activeVariant ? activeVariant : variant) as "solid",
   color: (active && activeColor ? activeColor : color) as "neutral",
   size,
@@ -65,8 +59,10 @@ const classes = resolveClasses(button, {
   trailing: isTrailing,
   loading,
   active,
-  theme
-}, useUi("button", uiProp), className);
+  theme,
+  ui: uiProp,
+  class: className
+});
 
 const Tag = (href || to) ? RLALink : "button";
 

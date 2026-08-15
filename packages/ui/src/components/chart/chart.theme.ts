@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const chartTheme = defineTheme({
+export const chartTheme = defineTheme("chart", {
   slots: ["root", "title", "container", "svg", "axis", "bar", "line", "tooltip", "legend"],
   base: {
     root: "flex flex-col gap-3 p-4 rounded-xl border border-border bg-card text-card-foreground shadow-sm",

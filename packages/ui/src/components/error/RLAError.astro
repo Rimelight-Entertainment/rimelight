@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ErrorProps } from "./error"
 import { errorTheme } from "./error.theme"
 
 
-const error = scv(errorTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as ErrorProps
 
-const classes = resolveClasses(error, {}, useUi("error", uiProp), className);
+const classes = errorTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

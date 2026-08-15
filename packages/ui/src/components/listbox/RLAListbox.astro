@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ListboxProps } from "./listbox"
 import { listboxTheme } from "./listbox.theme"
 
 
-const listbox = scv(listboxTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as ListboxProps
 
-const classes = resolveClasses(listbox, {}, useUi("listbox", uiProp), className);
+const classes = listboxTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

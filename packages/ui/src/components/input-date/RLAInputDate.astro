@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { InputDateProps } from "./input-date"
 import { inputDateTheme } from "./input-date.theme"
 
 
-const inputDate = scv(inputDateTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as InputDateProps
 
-const classes = resolveClasses(inputDate, {}, useUi("inputDate", uiProp), className);
+const classes = inputDateTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

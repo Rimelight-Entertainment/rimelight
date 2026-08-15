@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const checkboxTheme = defineTheme({
+export const checkboxTheme = defineTheme("checkbox", {
   slots: ["root", "input", "box", "indicator", "label"],
   base: {
     root: "inline-flex items-center gap-2 cursor-pointer select-none",

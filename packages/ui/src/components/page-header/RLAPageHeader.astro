@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { PageHeaderProps } from "./page-header"
 import { pageHeaderTheme } from "./page-header.theme"
 
 
-const pageHeader = scv(pageHeaderTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as PageHeaderProps
 
-const classes = resolveClasses(pageHeader, {}, useUi("pageHeader", uiProp), className);
+const classes = pageHeaderTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

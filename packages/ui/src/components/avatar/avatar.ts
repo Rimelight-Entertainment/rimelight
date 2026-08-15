@@ -11,6 +11,7 @@ export interface AvatarProps {
   alt?: string
   icon?: any
   text?: string
+  fallback?: string
   /**
    * @default "md"
    */
@@ -30,6 +31,9 @@ export interface AvatarProps {
     | "ideation"
     | "source"
   chip?: boolean | ChipProps
+  badge?: boolean | string | number
+  badgeColor?: string
+  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left"
   loading?: "lazy" | "eager"
   referrerpolicy?:
     | ""

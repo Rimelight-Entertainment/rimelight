@@ -1,14 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { TableProps, TableColumn, TableRow } from "./table"
 import { tableTheme } from "./table.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 import RLAInput from "../input/RLAInput.astro"
 import RLADropdownMenu from "../dropdown-menu/RLADropdownMenu.astro"
-
-const table = scv(tableTheme as any)
 
 const {
   data = [],
@@ -46,15 +41,17 @@ const {
   ...rest
 } = Astro.props as TableProps
 
-const classes = resolveClasses(table, {
+const classes = tableTheme({
   striped,
   bordered,
   sticky: typeof sticky === "boolean" ? sticky : sticky,
   loading,
   loadingColor,
   loadingAnimation,
-  externalScroll: Boolean(typeof virtualize === "object" && virtualize?.getScrollElement)
-} as any, useUi("table", uiProp), className);
+  externalScroll: Boolean(typeof virtualize === "object" && virtualize?.getScrollElement),
+  ui: uiProp,
+  class: className
+})
 
 // Normalize columns from props.columns or props.headers or infer from data keys
 let resolvedColumns: TableColumn[] = []

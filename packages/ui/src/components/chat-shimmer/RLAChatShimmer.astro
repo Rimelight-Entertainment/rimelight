@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ChatShimmerProps } from "./chat-shimmer"
 import { chatShimmerTheme } from "./chat-shimmer.theme"
 
 
-const chatShimmer = scv(chatShimmerTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as ChatShimmerProps
 
-const classes = resolveClasses(chatShimmer, {}, useUi("chatShimmer", uiProp), className);
+const classes = chatShimmerTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

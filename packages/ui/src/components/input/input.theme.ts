@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const inputTheme = defineTheme({
+export const inputTheme = defineTheme("input", {
   slots: ["root", "input", "leading", "trailing"],
   base: {
     root: "relative flex items-center w-full rounded-md border border-input bg-background shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",

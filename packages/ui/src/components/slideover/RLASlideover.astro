@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SlideoverProps } from "./slideover"
 import { slideoverTheme } from "./slideover.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const slideover = scv(slideoverTheme)
 
 const {
   side = "left",
@@ -20,9 +16,11 @@ const {
   ...rest
 } = Astro.props as SlideoverProps
 
-const classes = resolveClasses(slideover, {
-  side
-}, useUi("slideover", uiProp), className)
+const classes = slideoverTheme({
+  side,
+  ui: uiProp,
+  class: className
+})
 
 const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
 ---

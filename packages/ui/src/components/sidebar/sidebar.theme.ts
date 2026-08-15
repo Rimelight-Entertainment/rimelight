@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const sidebarTheme = defineTheme({
+export const sidebarTheme = defineTheme("sidebar", {
   slots: ["root", "header", "content", "footer", "item", "itemLink", "itemIcon", "itemBadge"],
   base: {
     root: "flex flex-col h-full w-64 bg-background border-r border-border shadow-sm transition-all duration-300",

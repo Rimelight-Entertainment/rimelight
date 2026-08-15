@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const gridTheme = defineTheme({
+export const gridTheme = defineTheme("grid", {
   slots: ["root"],
   base: {
     root: "grid w-full [&>*]:mt-0!"

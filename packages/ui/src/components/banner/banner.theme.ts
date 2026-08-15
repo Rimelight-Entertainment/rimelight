@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const bannerTheme = defineTheme({
+export const bannerTheme = defineTheme("banner", {
   slots: ["root", "content", "container", "center", "left", "side", "actions", "dismiss"],
   base: {
     root: "w-full",

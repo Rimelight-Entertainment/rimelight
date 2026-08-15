@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const avatarTheme = defineTheme({
+export const avatarTheme = defineTheme("avatar", {
   slots: ["root", "image", "fallback", "icon", "badge"],
   base: {
     root: "inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative",

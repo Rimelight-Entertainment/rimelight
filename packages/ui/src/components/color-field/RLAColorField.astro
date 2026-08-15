@@ -1,10 +1,6 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import { colorFieldTheme } from "./color-field.theme"
 
-const colorField = scv(colorFieldTheme)
 
 export interface Props {
   channel?: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"
@@ -45,10 +41,12 @@ const {
   ...rest
 } = Astro.props as Props
 
-const classes = resolveClasses(colorField, {
+const classes = colorFieldTheme({
   color,
-  theme
-}, useUi("colorField", uiProp), className)
+  theme,
+  ui: uiProp,
+  class: className
+})
 
 const initialValue = modelValue || defaultValue
 ---

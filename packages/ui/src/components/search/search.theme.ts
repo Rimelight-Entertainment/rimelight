@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const searchTheme = defineTheme({
+export const searchTheme = defineTheme("search", {
   slots: [
     "root",
     "trigger",

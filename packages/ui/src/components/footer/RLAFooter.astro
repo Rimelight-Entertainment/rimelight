@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { FooterProps } from "./footer"
 import { footerTheme } from "./footer.theme"
 
 
-const footer = scv(footerTheme)
 
 const {
   contain = false,
@@ -15,7 +11,11 @@ const {
   ...rest
 } = Astro.props as FooterProps
 
-const classes = resolveClasses(footer, { contain }, useUi("footer", uiProp), className)
+const classes = footerTheme({
+  contain,
+  ui: uiProp,
+  class: className
+})
 ---
 
 <footer

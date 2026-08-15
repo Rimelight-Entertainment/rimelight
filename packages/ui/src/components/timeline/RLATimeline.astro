@@ -1,13 +1,8 @@
 ---
-import { scv, cx } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { TimelineProps, TimelineItem } from "./timeline"
 import { timelineTheme } from "./timeline.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
-
-const timeline = scv(timelineTheme)
 
 const {
   as: Component = "div",
@@ -24,17 +19,14 @@ const {
   ...rest
 } = Astro.props as TimelineProps
 
-const classes = resolveClasses(
-  timeline,
-  {
-    orientation,
-    size,
-    color,
-    reverse
-  },
-  useUi("timeline", uiProp),
-  className
-)
+const classes = timelineTheme({
+  orientation,
+  size,
+  color,
+  reverse,
+  ui: uiProp,
+  class: className
+})
 
 const activeVal = modelValue !== undefined ? modelValue : defaultValue
 
@@ -68,15 +60,15 @@ function getItemState(_item: TimelineItem, index: number): "active" | "completed
   }
 }
 
-function getSlotName(item: TimelineItem, slotType: string): string {
-  return item.slot ? `${item.slot}-${slotType}` : slotType
+function getSlotName(item: TimelineItem, base: string) {
+  return item.slot ? `${item.slot}-${base}` : base
 }
 ---
 
 <Component
-  data-orientation={orientation}
   data-slot="root"
   class={classes.root}
+  data-orientation={orientation}
   {...rest}
 >
   {items && items.length > 0 ? (
@@ -99,12 +91,12 @@ function getSlotName(item: TimelineItem, slotType: string): string {
       return (
         <div
           data-slot="item"
-          class={cx(classes.item, item.ui?.item, item.class)}
+          class:list={[classes.item, item.ui?.item, item.class]}
           data-state={state}
         >
           <div
             data-slot="container"
-            class={cx(classes.container, item.ui?.container)}
+            class:list={[classes.container, item.ui?.container]}
           >
             <RLAAvatar
               size={size as any}
@@ -112,7 +104,7 @@ function getSlotName(item: TimelineItem, slotType: string): string {
               alt={item.avatar?.alt}
               {...(typeof item.avatar === "object" ? item.avatar : {})}
               data-slot="indicator"
-              class={cx(classes.indicator, item.ui?.indicator)}
+              class:list={[classes.indicator, item.ui?.indicator]}
               ui={{ icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted", fallback: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted" }}
             >
               {hasCustomIndicator ? (
@@ -127,7 +119,7 @@ function getSlotName(item: TimelineItem, slotType: string): string {
             {!isLast && (
               <div
                 data-slot="separator"
-                class={cx(classes.separator, item.ui?.separator)}
+                class:list={[classes.separator, item.ui?.separator]}
                 data-orientation={orientation}
               />
             )}
@@ -135,7 +127,7 @@ function getSlotName(item: TimelineItem, slotType: string): string {
 
           <div
             data-slot="wrapper"
-            class={cx(classes.wrapper, item.ui?.wrapper)}
+            class:list={[classes.wrapper, item.ui?.wrapper]}
           >
             {hasCustomWrapper ? (
               <slot name={itemWrapperSlot}>
@@ -146,7 +138,7 @@ function getSlotName(item: TimelineItem, slotType: string): string {
                 {(item.date || hasCustomDate) && (
                   <div
                     data-slot="date"
-                    class={cx(classes.date, item.ui?.date)}
+                    class:list={[classes.date, item.ui?.date]}
                   >
                     <slot name={itemDateSlot}>
                       <slot name="date">
@@ -159,7 +151,7 @@ function getSlotName(item: TimelineItem, slotType: string): string {
                 {(item.title || hasCustomTitle) && (
                   <div
                     data-slot="title"
-                    class={cx(classes.title, item.ui?.title)}
+                    class:list={[classes.title, item.ui?.title]}
                   >
                     <slot name={itemTitleSlot}>
                       <slot name="title">
@@ -172,7 +164,7 @@ function getSlotName(item: TimelineItem, slotType: string): string {
                 {(item.description || hasCustomDescription) && (
                   <div
                     data-slot="description"
-                    class={cx(classes.description, item.ui?.description)}
+                    class:list={[classes.description, item.ui?.description]}
                   >
                     <slot name={itemDescriptionSlot}>
                       <slot name="description">

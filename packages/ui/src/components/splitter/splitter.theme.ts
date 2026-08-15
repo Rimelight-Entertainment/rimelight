@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const splitterTheme = defineTheme({
+export const splitterTheme = defineTheme("splitter", {
   slots: ["root", "panel", "handle"],
   base: {
     root: "flex w-full h-full",

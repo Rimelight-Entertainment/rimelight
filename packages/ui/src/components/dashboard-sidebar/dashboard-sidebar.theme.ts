@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const dashboardSidebarTheme = defineTheme({
+export const dashboardSidebarTheme = defineTheme("dashboard-sidebar", {
   slots: ["root", "header", "body", "footer", "toggle", "handle", "content", "overlay"],
   base: {
     root: "group relative hidden lg:flex flex-col h-full min-h-0 min-w-16 w-(--width) shrink-0 transition-[width] duration-300",

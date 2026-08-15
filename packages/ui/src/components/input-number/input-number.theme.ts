@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const inputNumberTheme = defineTheme({
+export const inputNumberTheme = defineTheme("input-number", {
   slots: ["root"],
   base: {
     root: ""

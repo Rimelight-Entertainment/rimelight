@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 
 const colors = uiConfig.colors ?? colorNames
 
-export const progressTheme = defineTheme({
+export const progressTheme = defineTheme("progress", {
   slots: ["root", "indicator"],
   base: {
     root: "relative w-full overflow-hidden rounded-full bg-muted shadow-inner",

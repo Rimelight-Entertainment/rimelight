@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const dashboardPanelTheme = defineTheme({
+export const dashboardPanelTheme = defineTheme("dashboard-panel", {
   slots: ["root", "body", "handle"],
   base: {
     root: "relative flex flex-col min-w-0 h-full min-h-0 lg:not-last:border-e lg:not-last:border-default shrink-0 flex-1",

@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { TreeProps } from "./tree"
 import { treeTheme } from "./tree.theme"
 
 
-const tree = scv(treeTheme)
 
 const {
   ui: uiProp,
@@ -14,7 +10,10 @@ const {
   ...rest
 } = Astro.props as TreeProps
 
-const classes = resolveClasses(tree, {}, useUi("tree", uiProp), className);
+const classes = treeTheme({
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot />

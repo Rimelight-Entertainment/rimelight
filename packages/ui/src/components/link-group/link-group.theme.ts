@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const linkGroupTheme = defineTheme({
+export const linkGroupTheme = defineTheme("link-group", {
   slots: ["root", "title", "list", "item", "link"],
   base: {
     root: "flex flex-col gap-4",

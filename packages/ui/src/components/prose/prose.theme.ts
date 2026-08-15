@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const proseTheme = defineTheme({
+export const proseTheme = defineTheme("prose", {
   slots: ["root"],
   base: {
     root: ""

@@ -1,14 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { ThemeSelectorProps } from "./theme-selector"
 import { themeSelectorTheme } from "./theme-selector.theme"
 import RLAButton from "../button/RLAButton.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const themeSelector = scv(themeSelectorTheme)
 
 const {
     size = "md",
@@ -17,9 +13,11 @@ const {
     ...rest
 } = Astro.props as ThemeSelectorProps
 
-const classes = resolveClasses(themeSelector, {
-    size
-}, useUi("themeSelector", uiProp), className);
+const classes = themeSelectorTheme({
+  size,
+  ui: uiProp,
+  class: className
+});
 ---
 
 <rla-theme-selector {...rest}>

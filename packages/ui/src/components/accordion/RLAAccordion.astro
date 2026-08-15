@@ -1,12 +1,7 @@
 ---
-import { scv, cx } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { AccordionProps } from "./accordion"
 import { accordionTheme } from "./accordion.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
-
-const accordion = scv(accordionTheme)
 
 const {
   items,
@@ -20,9 +15,11 @@ const {
   ...rest
 } = Astro.props as AccordionProps
 
-const classes = resolveClasses(accordion, {
-  disabled
-}, useUi("accordion", uiProp), className)
+const classes = accordionTheme({
+  disabled,
+  ui: uiProp,
+  class: className
+})
 
 // Generate a unique name for HTML details grouping if single-open mode (multiple=false) is active
 const groupName = name || (!multiple ? `accordion-${Math.random().toString(36).substring(2, 9)}` : undefined)
@@ -41,12 +38,12 @@ const groupName = name || (!multiple ? `accordion-${Math.random().toString(36).s
           name={groupName}
         >
           <summary 
-            class={cx(classes.trigger, itemDisabled && "pointer-events-none opacity-50 select-none")} 
+            class:list={[classes.trigger, itemDisabled && "pointer-events-none opacity-50 select-none"]} 
             data-slot="trigger"
           >
             {item.icon && (
               <span class={classes.leadingIcon} data-slot="leading-icon">
-                <span class={cx(item.icon)} aria-hidden="true" />
+                <span class={item.icon} aria-hidden="true" />
               </span>
             )}
             
@@ -75,7 +72,7 @@ const groupName = name || (!multiple ? `accordion-${Math.random().toString(36).s
 ) : (
   <details class:list={[classes.root, classes.item]} data-slot="root" name={name} {...rest}>
     <summary 
-      class={cx(classes.trigger, disabled && "pointer-events-none opacity-50 select-none")} 
+      class:list={[classes.trigger, disabled && "pointer-events-none opacity-50 select-none"]} 
       data-slot="trigger"
     >
       <span class={classes.label} data-slot="label">{summary}</span>

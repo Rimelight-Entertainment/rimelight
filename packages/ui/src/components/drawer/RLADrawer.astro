@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { DrawerProps } from "./drawer"
 import { drawerTheme } from "./drawer.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const drawer = scv(drawerTheme)
 
 const {
   direction = "bottom",
@@ -19,9 +15,11 @@ const {
   ...rest
 } = Astro.props as DrawerProps
 
-const classes = resolveClasses(drawer, {
-  direction
-}, useUi("drawer", uiProp), className)
+const classes = drawerTheme({
+  direction,
+  ui: uiProp,
+  class: className
+})
 
 const dialogId = `rla-drawer-${Math.random().toString(36).substring(2, 9)}`
 ---

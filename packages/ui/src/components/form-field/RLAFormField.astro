@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { FormFieldProps } from "./form-field"
 import { formFieldTheme } from "./form-field.theme"
 
 
-const formField = scv(formFieldTheme)
 
 const {
   id = `field-${Math.random().toString(36).substring(2, 9)}`,
@@ -18,11 +14,15 @@ const {
   ui: uiProp,
   class: className,
   ...rest
-} = Astro.props as FormFieldProps & { id?: string }
+} = Astro.props as FormFieldProps
 
-const classes = resolveClasses(formField, {
-  size
-}, useUi("formField", uiProp), className);
+
+
+const classes = formFieldTheme({
+  size,
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   {label && (

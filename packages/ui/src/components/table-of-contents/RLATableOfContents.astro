@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { TableOfContentsProps } from "./table-of-contents"
 import { tableOfContentsTheme } from "./table-of-contents.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const tableOfContents = scv(tableOfContentsTheme)
 
 const {
   headings,
@@ -19,7 +15,10 @@ const {
   ...rest
 } = Astro.props as TableOfContentsProps
 
-const classes = resolveClasses(tableOfContents, {}, useUi("tableOfContents", uiProp), className);
+const classes = tableOfContentsTheme({
+  ui: uiProp,
+  class: className
+});
 
 if (tableOfContentsConfig === false) {
   // Render nothing

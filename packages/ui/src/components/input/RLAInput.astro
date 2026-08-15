@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { InputProps } from "./input"
 import { inputTheme } from "./input.theme"
 
 
-const input = scv(inputTheme)
 
 const {
   type = "text",
@@ -31,14 +27,16 @@ const {
 const hasLeading = !!leadingIcon || Astro.slots.has("leading")
 const hasTrailing = !!trailingIcon || Astro.slots.has("trailing")
 
-const classes = resolveClasses(input, {
+const classes = inputTheme({
   variant,
   size,
   hasLeading,
   hasTrailing,
   error: !!error,
-  theme
-}, useUi("input", uiProp), className);
+  theme,
+  ui: uiProp,
+  class: className
+});
 ---
 <div class={classes.root} data-slot="root">
   {(leadingIcon || Astro.slots.has("leading")) && (

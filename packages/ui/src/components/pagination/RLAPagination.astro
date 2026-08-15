@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { PaginationProps } from "./pagination"
 import { paginationTheme } from "./pagination.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const pagination = scv(paginationTheme)
 
 const {
   currentPage = 1,
@@ -18,7 +14,10 @@ const {
   ...rest
 } = Astro.props as PaginationProps
 
-const classes = resolveClasses(pagination, {}, useUi("pagination", uiProp), className)
+const classes = paginationTheme({
+  ui: uiProp,
+  class: className
+})
 
 const getPageNumbers = () => {
   const pages: (number | "ellipsis")[] = []
@@ -66,7 +65,10 @@ const pages = getPageNumbers()
       }
 
       const isActive = p === currentPage
-      const itemClasses = resolveClasses(pagination, { active: isActive }, useUi("pagination", uiProp))
+      const itemClasses = paginationTheme({
+  active: isActive,
+  ui: uiProp
+})
 
       return (
         <li class={classes.item}>

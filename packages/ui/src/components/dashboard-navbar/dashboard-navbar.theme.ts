@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const dashboardNavbarTheme = defineTheme({
+export const dashboardNavbarTheme = defineTheme("dashboard-navbar", {
   slots: ["root", "left", "icon", "title", "center", "right", "toggle"],
   base: {
     root: "h-(--ui-header-height) shrink-0 flex items-center justify-between border-b border-default px-4 sm:px-6 gap-1.5",

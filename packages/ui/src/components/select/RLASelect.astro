@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/resolver"
-import { resolveClasses } from "../../utils/resolver"
 import type { SelectProps, SelectItem } from "./select"
 import { selectTheme } from "./select.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 
-const select = scv(selectTheme)
 
 const {
   items = [],
@@ -47,15 +43,12 @@ const {
 
 const activeValue = value ?? modelValue ?? defaultValue ?? (multiple ? [] : "")
 
-const classes = resolveClasses(
-  select,
-  {
-    size,
-    variant
-  },
-  useUi("select", uiProp),
-  className
-)
+const classes = selectTheme({
+  size,
+    variant,
+  ui: uiProp,
+  class: className
+})
 
 // Helper to normalize items
 function normalizeItems(rawItems: SelectItem[]): any[] {

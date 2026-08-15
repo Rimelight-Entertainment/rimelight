@@ -1,6 +1,6 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const collapsibleTheme = defineTheme({
+export const collapsibleTheme = defineTheme("collapsible", {
   slots: ["root", "trigger", "content"],
   base: {
     root: "w-full",
