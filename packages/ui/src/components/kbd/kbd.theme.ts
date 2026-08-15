@@ -1,4 +1,4 @@
-import { defineTheme, themeColors } from "../../utils/resolver"
+import { defineTheme } from "../../utils/resolver"
 
 export const kbdTheme = defineTheme("kbd", {
   slots: ["root"],
@@ -8,10 +8,12 @@ export const kbdTheme = defineTheme("kbd", {
   variants: {
     color: "auto",
     variant: {
-      solid: { root: "" },
-      outline: { root: "" },
-      soft: { root: "" },
-      subtle: { root: "" }
+      solid: { root: "bg-[var(--rl-bg)] text-white" },
+      outline: { root: "ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]" },
+      soft: { root: "text-[var(--rl-text)] bg-[var(--rl-bg)]/10" },
+      subtle: {
+        root: "text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10"
+      }
     },
     size: {
       sm: { root: "h-4 min-w-[16px] text-[10px]" },
@@ -24,38 +26,6 @@ export const kbdTheme = defineTheme("kbd", {
     }
   },
   compoundVariants: [
-    ...themeColors.map((color) => ({
-      variant: "solid" as const,
-      color,
-      classNames: {
-        root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
-      }
-    })),
-    ...themeColors.map((color) => ({
-      variant: "outline" as const,
-      color,
-      classNames: {
-        root:
-          "rl-color-" + color + " ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]"
-      }
-    })),
-    ...themeColors.map((color) => ({
-      variant: "soft" as const,
-      color,
-      classNames: {
-        root: "rl-color-" + color + " text-[var(--rl-text)] bg-[var(--rl-bg)]/10"
-      }
-    })),
-    ...themeColors.map((color) => ({
-      variant: "subtle" as const,
-      color,
-      classNames: {
-        root:
-          "rl-color-" +
-          color +
-          " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10"
-      }
-    })),
     {
       color: "neutral",
       variant: "solid",

@@ -1,12 +1,12 @@
 import { scv, cx, type SlotClassVariantDefinition, type SlotClassVariantRecord } from "css-variants"
 import { colorNames, uiConfig, type Override, type ThemeColor } from "../config"
 
-export const themeColors = uiConfig.colors ?? colorNames
+const colors = uiConfig.colors ?? colorNames
 
 const autoColorVariants: Record<string, { root: string }> = {
   neutral: { root: "" }
 }
-for (const c of themeColors) {
+for (const c of colors) {
   autoColorVariants[c] = { root: `rl-color-${c}` }
 }
 
@@ -101,7 +101,7 @@ export const defineTheme = <
             ? autoColorVariants
             : {
                 neutral: { [slot]: "" },
-                ...Object.fromEntries(themeColors.map((c) => [c, { [slot]: `rl-color-${c}` }]))
+                ...Object.fromEntries(colors.map((c) => [c, { [slot]: `rl-color-${c}` }]))
               }
       } else if (val && typeof val === "object") {
         normalizedVariants[key] = val

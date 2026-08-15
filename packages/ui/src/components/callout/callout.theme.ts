@@ -1,4 +1,4 @@
-import { defineTheme, themeColors } from "../../utils/resolver"
+import { defineTheme } from "../../utils/resolver"
 
 export const calloutTheme = defineTheme("callout", {
   slots: ["root", "body", "icon", "title", "content", "avatar", "avatarSize", "actions", "close"],
@@ -15,10 +15,12 @@ export const calloutTheme = defineTheme("callout", {
   },
   variants: {
     variant: {
-      solid: { root: "" },
-      outline: { root: "" },
-      soft: { root: "" },
-      subtle: { root: "" }
+      solid: { root: "bg-[var(--rl-bg)] text-white" },
+      outline: { root: "text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25" },
+      soft: { root: "bg-[var(--rl-bg)]/10 text-[var(--rl-text)]" },
+      subtle: {
+        root: "bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25"
+      }
     },
     color: "auto",
     theme: {
@@ -27,38 +29,6 @@ export const calloutTheme = defineTheme("callout", {
     }
   },
   compoundVariants: [
-    ...themeColors.map((color) => ({
-      variant: "solid" as const,
-      color,
-      classNames: {
-        root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
-      }
-    })),
-    ...themeColors.map((color) => ({
-      variant: "outline" as const,
-      color,
-      classNames: {
-        root:
-          "rl-color-" + color + " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25"
-      }
-    })),
-    ...themeColors.map((color) => ({
-      variant: "soft" as const,
-      color,
-      classNames: {
-        root: "rl-color-" + color + " bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
-      }
-    })),
-    ...themeColors.map((color) => ({
-      variant: "subtle" as const,
-      color,
-      classNames: {
-        root:
-          "rl-color-" +
-          color +
-          " bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25"
-      }
-    })),
     {
       color: "neutral",
       variant: "solid",
