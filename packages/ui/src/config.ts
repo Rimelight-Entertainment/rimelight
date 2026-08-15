@@ -8,6 +8,17 @@ export type ComponentThemeOverride = {
   [key: string]: unknown
 }
 
+export type LogoConfig =
+  | string
+  | {
+      light?: string
+      dark?: string
+      color?: string
+      white?: string
+      black?: string
+      [key: string]: string | undefined
+    }
+
 export interface UIConfig {
   /**
    * Whether to strip default theme classes from all components (bringing your own styling).
@@ -22,18 +33,7 @@ export interface UIConfig {
   /**
    * Configuration for the Logo component variants.
    */
-  logos?: Record<
-    string,
-    | string
-    | {
-        light?: string
-        dark?: string
-        color?: string
-        white?: string
-        black?: string
-        [key: string]: string | undefined
-      }
-  >
+  logos?: Record<string, LogoConfig>
   /**
    * Global component configuration overrides.
    */
@@ -77,9 +77,7 @@ export interface UIConfig {
 }
 
 export type Theme = "light" | "dark"
-
 export type ColorShades = Record<string, string>
-
 export type ColorConfigValue = ColorShades | { light?: ColorShades; dark?: ColorShades }
 
 export const COLOR_SHADES = [
@@ -150,13 +148,10 @@ export const colorScales = {
 } as const
 
 export const colorNames = Object.keys(colorScales)
-
 export type ThemeColor = keyof typeof colorScales | (string & {})
 
 export const getAllColorNames = (customColors?: Record<string, unknown>): string[] =>
-  customColors && Object.keys(customColors).length
-    ? Array.from(new Set([...colorNames, ...Object.keys(customColors)]))
-    : colorNames
+  customColors ? [...new Set([...colorNames, ...Object.keys(customColors)])] : colorNames
 
 export type ResolvedUIConfig = Omit<UIConfig, "colors" | "components" | "presets" | "unocss"> & {
   colors?: readonly string[]
@@ -172,79 +167,74 @@ declare global {
 
 export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
 
-const pair = (light: string, dark: string) => ({ light, dark })
-
+const p = (light: string, dark = light) => ({ light, dark })
 const white = "oklch(1 0 0)"
 const darkFg = "oklch(0.985 0 0)"
 const lightFg = "oklch(0.145 0 0)"
-const fg = pair(lightFg, darkFg)
-const ring = pair("oklch(0.708 0.01 260)", "oklch(0.556 0.011 260)")
-const muted = pair("oklch(0.97 0.003 260)", "oklch(0.269 0.015 260)")
-const hover = pair("oklch(0.97 0.003 260)", "oklch(0.371 0.013 260)")
-const border = pair("oklch(0.922 0.005 260)", "oklch(0.985 0 0 / 0.1)")
+const fg = p(lightFg, darkFg)
 const darkMeta = "oklch(0.208 0.015 260)"
 
 export const semanticTokens = {
-  "background": pair(white, lightFg),
+  "background": p(white, lightFg),
   "foreground": fg,
-  "card": pair(white, "oklch(0.205 0.015 260)"),
+  "card": p(white, "oklch(0.206 0.015 260)"),
   "card-foreground": fg,
-  "popover": pair(white, "oklch(0.269 0.015 260)"),
+  "popover": p(white, "oklch(0.268 0.015 260)"),
   "popover-foreground": fg,
-  "primary": pair("oklch(0.53 0.21 260)", "oklch(0.623 0.214 259.8)"),
-  "primary-foreground": white,
-  "primary-accent": pair("oklch(0.44 0.19 260)", "oklch(0.707 0.165 254.6)"),
-  "secondary": "oklch(0.606 0.25 292.7)",
-  "secondary-foreground": darkFg,
-  "secondary-accent": pair("oklch(0.541 0.281 293.0)", "oklch(0.702 0.183 293.5)"),
-  "muted": muted,
-  "muted-foreground": pair("oklch(0.439 0.012 260)", "oklch(0.708 0.01 260)"),
-  "accent": hover,
-  "accent-foreground": pair("oklch(0.205 0.015 260)", "oklch(0.97 0.003 260)"),
-  "info": "oklch(0.623 0.214 259.8)",
-  "info-foreground": white,
-  "info-accent": pair("oklch(0.546 0.245 262.9)", "oklch(0.707 0.165 254.6)"),
-  "success": "oklch(0.723 0.219 149.6)",
-  "success-foreground": white,
-  "success-accent": pair("oklch(0.627 0.194 149.2)", "oklch(0.792 0.209 151.7)"),
-  "warning": "oklch(0.795 0.184 86.0)",
-  "warning-foreground": "oklch(0 0 0)",
-  "warning-accent": pair("oklch(0.681 0.162 75.8)", "oklch(0.852 0.199 91.9)"),
-  "error": "oklch(0.637 0.237 25.3)",
-  "error-foreground": darkFg,
-  "error-accent": pair("oklch(0.577 0.245 27.3)", "oklch(0.704 0.191 22.2)"),
-  "commentary": pair("oklch(0.667 0.295 322.2)", "oklch(0.74 0.238 322.2)"),
-  "commentary-foreground": pair(darkFg, darkMeta),
-  "commentary-accent": pair("oklch(0.591 0.293 322.9)", "oklch(0.833 0.145 321.4)"),
-  "ideation": pair("oklch(0.612 0.252 291.5)", "oklch(0.708 0.185 292.0)"),
-  "ideation-foreground": pair(darkFg, darkMeta),
-  "ideation-accent": pair("oklch(0.545 0.279 291.8)", "oklch(0.815 0.114 292.2)"),
-  "source": pair("oklch(0.789 0.154 211.5)", "oklch(0.865 0.127 207.1)"),
-  "source-foreground": darkMeta,
-  "source-accent": pair("oklch(0.609 0.126 221.7)", "oklch(0.917 0.08 205.0)"),
-  "border": border,
-  "input": pair("oklch(0.922 0.005 260)", "oklch(0.985 0 0 / 0.15)"),
-  "outline": pair("oklch(0.705 0.01 260)", "oklch(0.552 0.011 260)"),
-  "ring": ring,
-  "sidebar": pair(darkFg, "oklch(0.205 0.015 260)"),
+  "primary": p("oklch(0.53 0.21 260)", "oklch(0.623 0.214 259.8)"),
+  "primary-foreground": p(white),
+  "primary-accent": p("oklch(0.44 0.19 260)", "oklch(0.707 0.165 254.6)"),
+  "secondary": p("oklch(0.606 0.25 292.7)", "oklch(0.702 0.183 293.5)"),
+  "secondary-foreground": p(darkFg),
+  "secondary-accent": p("oklch(0.541 0.281 293.0)", "oklch(0.702 0.183 293.5)"),
+  "muted": p("oklch(0.969 0.003 260)", "oklch(0.270 0.015 260)"),
+  "muted-foreground": p("oklch(0.439 0.012 260)", "oklch(0.708 0.01 260)"),
+  "accent": p("oklch(0.971 0.003 260)", "oklch(0.371 0.013 260)"),
+  "accent-foreground": p("oklch(0.204 0.015 260)", "oklch(0.972 0.003 260)"),
+  "info": p("oklch(0.623 0.214 259.8)", "oklch(0.68 0.18 264)"),
+  "info-foreground": p(white),
+  "info-accent": p("oklch(0.546 0.245 262.9)", "oklch(0.707 0.165 254.6)"),
+  "success": p("oklch(0.723 0.219 149.6)", "oklch(0.68 0.12 150)"),
+  "success-foreground": p(white),
+  "success-accent": p("oklch(0.627 0.194 149.2)", "oklch(0.792 0.209 151.7)"),
+  "warning": p("oklch(0.795 0.184 86.0)", "oklch(0.68 0.11 66)"),
+  "warning-foreground": p("oklch(0 0 0)"),
+  "warning-accent": p("oklch(0.681 0.162 75.8)", "oklch(0.852 0.199 91.9)"),
+  "error": p("oklch(0.637 0.237 25.3)", "oklch(0.68 0.17 28)"),
+  "error-foreground": p(darkFg),
+  "error-accent": p("oklch(0.577 0.245 27.3)", "oklch(0.704 0.191 22.2)"),
+  "commentary": p("oklch(0.667 0.295 322.2)", "oklch(0.74 0.238 322.2)"),
+  "commentary-foreground": p(darkFg, darkMeta),
+  "commentary-accent": p("oklch(0.591 0.293 322.9)", "oklch(0.833 0.145 321.4)"),
+  "ideation": p("oklch(0.612 0.252 291.5)", "oklch(0.708 0.185 292.0)"),
+  "ideation-foreground": p(darkFg, darkMeta),
+  "ideation-accent": p("oklch(0.545 0.279 291.8)", "oklch(0.815 0.114 292.2)"),
+  "source": p("oklch(0.789 0.154 211.5)", "oklch(0.865 0.127 207.1)"),
+  "source-foreground": p(darkMeta),
+  "source-accent": p("oklch(0.609 0.126 221.7)", "oklch(0.917 0.08 205.0)"),
+  "border": p("oklch(0.922 0.005 260)", "oklch(0.985 0 0 / 0.1)"),
+  "input": p("oklch(0.924 0.005 260)", "oklch(0.985 0 0 / 0.15)"),
+  "outline": p("oklch(0.705 0.01 260)", "oklch(0.552 0.011 260)"),
+  "ring": p("oklch(0.708 0.01 260)", "oklch(0.556 0.011 260)"),
+  "sidebar": p(darkFg, "oklch(0.203 0.015 260)"),
   "sidebar-foreground": fg,
-  "sidebar-primary": "oklch(0.488 0.243 264.4)",
-  "sidebar-primary-foreground": darkFg,
-  "sidebar-accent": pair("oklch(0.965 0.004 260)", "oklch(0.265 0.016 260)"),
-  "sidebar-accent-foreground": pair("oklch(0.205 0.015 260)", "oklch(0.97 0.003 260)"),
-  "sidebar-border": pair("oklch(0.922 0.005 260)", "oklch(0.269 0.015 260)"),
-  "sidebar-ring": pair("oklch(0.71 0.012 260)", "oklch(0.56 0.012 260)"),
-  "chart-1": pair("oklch(0.623 0.214 259.8)", "oklch(0.707 0.165 254.6)"),
-  "chart-2": pair("oklch(0.585 0.233 277.1)", "oklch(0.673 0.182 276.9)"),
-  "chart-3": pair("oklch(0.615 0.245 295.2)", "oklch(0.698 0.187 294.8)"),
-  "chart-4": pair("oklch(0.627 0.265 303.9)", "oklch(0.714 0.203 304.0)"),
-  "chart-5": pair("oklch(0.672 0.290 324.5)", "oklch(0.745 0.235 323.8)"),
-  "color-surface": pair(white, "oklch(0.269 0.015 260)"),
-  "color-muted-strong": pair("oklch(0.922 0.005 260)", "oklch(0.371 0.013 260)"),
-  "color-foreground-secondary": pair("oklch(0.439 0.012 260)", "oklch(0.87 0.007 260)"),
-  "color-foreground-tertiary": pair("oklch(0.556 0.011 260)", "oklch(0.708 0.01 260)"),
-  "color-placeholder": pair("oklch(0.702 0.009 260)", "oklch(0.550 0.010 260)"),
-  "color-input-border": pair("oklch(0.87 0.007 260)", "oklch(0.439 0.012 260)"),
-  "color-hover": pair("oklch(0.968 0.004 260)", "oklch(0.368 0.014 260)"),
-  "color-accent-subtle": pair("oklch(0.97 0.015 260)", "oklch(0.279 0.015 260)")
+  "sidebar-primary": p("oklch(0.488 0.243 264.4)"),
+  "sidebar-primary-foreground": p(darkFg),
+  "sidebar-accent": p("oklch(0.965 0.004 260)", "oklch(0.265 0.016 260)"),
+  "sidebar-accent-foreground": p("oklch(0.207 0.015 260)", "oklch(0.97 0.003 260)"),
+  "sidebar-border": p("oklch(0.920 0.005 260)", "oklch(0.271 0.015 260)"),
+  "sidebar-ring": p("oklch(0.71 0.012 260)", "oklch(0.56 0.012 260)"),
+  "chart-1": p("oklch(0.623 0.214 259.8)", "oklch(0.707 0.165 254.6)"),
+  "chart-2": p("oklch(0.585 0.233 277.1)", "oklch(0.673 0.182 276.9)"),
+  "chart-3": p("oklch(0.615 0.245 295.2)", "oklch(0.698 0.187 294.8)"),
+  "chart-4": p("oklch(0.627 0.265 303.9)", "oklch(0.714 0.203 304.0)"),
+  "chart-5": p("oklch(0.672 0.290 324.5)", "oklch(0.745 0.235 323.8)"),
+  "color-surface": p(white, "oklch(0.267 0.015 260)"),
+  "color-muted-strong": p("oklch(0.923 0.005 260)", "oklch(0.371 0.013 260)"),
+  "color-foreground-secondary": p("oklch(0.439 0.012 260)", "oklch(0.87 0.007 260)"),
+  "color-foreground-tertiary": p("oklch(0.556 0.011 260)", "oklch(0.708 0.01 260)"),
+  "color-placeholder": p("oklch(0.702 0.009 260)", "oklch(0.550 0.010 260)"),
+  "color-input-border": p("oklch(0.87 0.007 260)", "oklch(0.439 0.012 260)"),
+  "color-hover": p("oklch(0.968 0.004 260)", "oklch(0.368 0.014 260)"),
+  "color-accent-subtle": p("oklch(0.97 0.015 260)", "oklch(0.279 0.015 260)")
 } as const

@@ -21,30 +21,33 @@ const isMode = (v: ColorConfigValue): v is { light?: ColorShades; dark?: ColorSh
 
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
   const num = Number(shade)
-  if (isNaN(num)) return value
-  const pct = Math.min(
-    60,
-    Math.round((target === "white" ? (950 - num) / 950 : (num - 50) / 900) * 60)
-  )
-  return `color-mix(in oklch, ${value}, ${target} ${pct}%)`
+  if (!num || num === 500) return value
+  const diff = target === "white" ? (500 - num) / 500 : (num - 500) / 450
+  const pct = Math.round(Math.max(0, diff) * 75)
+  return pct ? `color-mix(in oklch, ${value}, ${target} ${pct}%)` : value
 }
 
 function resolveColorModes(
   entry: ColorConfigValue,
   autogenerate = true
-): { light: Record<string, string>; dark: Record<string, string> } {
+): { light: ColorShades; dark: ColorShades } {
   const mode = isMode(entry)
-  const mL = mode ? entry.light : undefined
-  const mD = mode ? entry.dark : undefined
+  const mL = mode ? entry.light : entry
+  const mD = mode ? entry.dark : entry
   const light: ColorShades = {}
   const dark: ColorShades = {}
-  const keys = mode
-    ? new Set([...Object.keys(mL ?? {}), ...Object.keys(mD ?? {})])
-    : Object.keys(entry)
+  const keys = autogenerate
+    ? COLOR_SHADES
+    : [...new Set([...Object.keys(mL ?? {}), ...Object.keys(mD ?? {})])]
+  const fallback = mD?.["500"] ?? mL?.["500"] ?? Object.values(mD ?? mL ?? {})[0] ?? ""
+
   for (const s of keys) {
-    const base = (!mode ? entry[s] : undefined) ?? mD?.[s] ?? mL?.[s] ?? ""
-    light[s] = mL?.[s] ?? (autogenerate && base ? generateShade(s, base, "white") : base)
-    dark[s] = mD?.[s] ?? (autogenerate && base ? generateShade(s, base, "black") : base)
+    const base = mD?.[s] ?? mL?.[s] ?? fallback
+    if (!base) continue
+    const isLight = Number(s) < 500
+    light[s] =
+      mL?.[s] ?? (autogenerate ? generateShade(s, base, isLight ? "white" : "black") : base)
+    dark[s] = mD?.[s] ?? (autogenerate ? generateShade(s, base, isLight ? "black" : "white") : base)
   }
   return { light, dark }
 }
@@ -57,68 +60,68 @@ const createScale = (c: string) => ({
 })
 
 const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(semanticTokens)
-  .map(([t, v]) =>
-    typeof v === "string"
-      ? `  --${t}: ${v};`
-      : `  --${t}: light-dark(${v.light}, ${v.dark ?? v.light});`
-  )
+  .map(([t, v]) => `  --${t}: light-dark(${v.light}, ${v.dark});`)
   .join("\n")
 
 const formatColorLines = (
   colorMap: Record<string, { light?: Record<string, string>; dark?: Record<string, string> }>
 ) =>
   Object.entries(colorMap)
-    .flatMap(([c, m]) =>
-      Object.keys({ ...m.light, ...m.dark }).map((s) => {
-        const l = m.light?.[s] ?? m.dark?.[s]
-        const d = m.dark?.[s] ?? l
-        return `  --color-${c}-${s}: light-dark(${l}, ${d});`
+    .flatMap(([c, m]) => {
+      const keys = [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
+      const lines = keys.map((s) => {
+        const l = m.light?.[s]
+        const d = m.dark?.[s]
+        return `  --color-${c}-${s}: light-dark(${l ?? d}, ${d ?? l});`
       })
-    )
+      const l500 = m.light?.["500"] ?? m.dark?.["500"]
+      if (l500 && !(c in semanticTokens)) {
+        lines.push(
+          `  --${c}: light-dark(${l500}, ${m.dark?.["500"] ?? l500});`,
+          `  --${c}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
+          `  --${c}-accent: var(--color-${c}-600);`
+        )
+      }
+      return lines
+    })
     .join("\n")
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
 
 const STATIC_THEME_COLORS = {
-  ...Object.fromEntries(
-    ["background", "foreground", "border", "input", "outline", "ring"].map((k) => [
-      k,
-      `var(--${k})`
-    ])
-  ),
-  ...Object.fromEntries(
-    ["card", "popover", "muted", "accent"].map((k) => [
-      k,
-      { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }
-    ])
-  ),
-  sidebar: {
+  "background": "var(--background)",
+  "foreground": "var(--foreground)",
+  "border": "var(--border)",
+  "input": "var(--input)",
+  "outline": "var(--outline)",
+  "ring": "var(--ring)",
+  "card": { DEFAULT: "var(--card)", foreground: "var(--card-foreground)" },
+  "popover": { DEFAULT: "var(--popover)", foreground: "var(--popover-foreground)" },
+  "muted": { DEFAULT: "var(--muted)", foreground: "var(--muted-foreground)" },
+  "accent": { DEFAULT: "var(--accent)", foreground: "var(--accent-foreground)" },
+  "sidebar": {
     DEFAULT: "var(--sidebar)",
     foreground: "var(--sidebar-foreground)",
-    primary: {
-      DEFAULT: "var(--sidebar-primary)",
-      foreground: "var(--sidebar-primary-foreground)"
-    },
-    accent: {
-      DEFAULT: "var(--sidebar-accent)",
-      foreground: "var(--sidebar-accent-foreground)"
-    },
+    primary: { DEFAULT: "var(--sidebar-primary)", foreground: "var(--sidebar-primary-foreground)" },
+    accent: { DEFAULT: "var(--sidebar-accent)", foreground: "var(--sidebar-accent-foreground)" },
     border: "var(--sidebar-border)",
     ring: "var(--sidebar-ring)"
   },
-  chart: Object.fromEntries([1, 2, 3, 4, 5].map((i) => [i, `var(--chart-${i})`])),
-  ...Object.fromEntries(
-    [
-      "hover",
-      "surface",
-      "muted-strong",
-      "foreground-secondary",
-      "foreground-tertiary",
-      "placeholder",
-      "input-border",
-      "accent-subtle"
-    ].map((k) => [k, `var(--color-${k})`])
-  )
+  "chart": {
+    1: "var(--chart-1)",
+    2: "var(--chart-2)",
+    3: "var(--chart-3)",
+    4: "var(--chart-4)",
+    5: "var(--chart-5)"
+  },
+  "hover": "var(--color-hover)",
+  "surface": "var(--color-surface)",
+  "muted-strong": "var(--color-muted-strong)",
+  "foreground-secondary": "var(--color-foreground-secondary)",
+  "foreground-tertiary": "var(--color-foreground-tertiary)",
+  "placeholder": "var(--color-placeholder)",
+  "input-border": "var(--color-input-border)",
+  "accent-subtle": "var(--color-accent-subtle)"
 }
 
 const PROP_MAP: Record<string, [css: string, prefix: string]> = {
@@ -130,22 +133,24 @@ const PROP_MAP: Record<string, [css: string, prefix: string]> = {
   border: ["border-color", "border"]
 }
 
-const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
-  default: ["700", "200", "light-dark(oklch(1 0 0), var(--color-neutral-50))"],
-  muted: ["600", "100"],
-  elevated: ["800", "200"],
-  accented: ["900", "300"],
-  dimmed: ["500", "400"],
-  toned: ["800", "800"],
-  highlighted: ["950", "900"],
-  inverted: ["50", "950"]
+const INTENTS: Record<string, [string, string, string, string, string]> = {
+  default: ["700", "light-dark(oklch(1 0 0), var(--color-neutral-50))", "200", "300", "100"],
+  muted: ["600", "100", "200", "300", "200"],
+  elevated: ["800", "light-dark(oklch(1 0 0), var(--color-neutral-100))", "200", "400", "100"],
+  accented: ["900", "200", "300", "500", "300"],
+  dimmed: ["500", "light-dark(var(--color-neutral-50), oklch(0 0 0 / 0.25))", "300", "400", "200"],
+  toned: ["800", "700", "600", "900", "800"],
+  highlighted: ["950", "200", "800", "950", "900"],
+  inverted: ["50", "950", "800", "700", "900"]
 }
 
+const nVal = (s: string) => (s.startsWith("light-dark(") ? s : `var(--color-neutral-${s})`)
+
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
-  .map(([n, [t, b, bg]]) => {
-    const borderVal = `var(--color-neutral-${b})`
-    return `  --text-color-${n}: var(--color-neutral-${t});\n  --background-color-${n}: ${bg ?? borderVal};\n  --border-color-${n}: ${borderVal};\n  --ring-color-${n}: ${borderVal};\n  --divide-color-${n}: ${borderVal};`
-  })
+  .map(
+    ([n, [t, bg, b, r, d]]) =>
+      `  --text-color-${n}: ${nVal(t)};\n  --background-color-${n}: ${nVal(bg)};\n  --border-color-${n}: ${nVal(b)};\n  --ring-color-${n}: ${nVal(r)};\n  --divide-color-${n}: ${nVal(d)};`
+  )
   .join("\n")
 
 const STATIC_PREFLIGHT_SUFFIX = `
@@ -179,27 +184,58 @@ body { background-color: var(--background); color: var(--foreground); font-famil
 }
 `
 
+const THEME_SPACING = {
+  "6xs": "0.125rem",
+  "5xs": "0.25rem",
+  "4xs": "0.375rem",
+  "3xs": "0.5rem",
+  "2xs": "0.625rem",
+  "xs": "0.75rem",
+  "sm": "0.875rem",
+  "md": "1rem",
+  "lg": "1.25rem",
+  "xl": "1.5rem",
+  "2xl": "2rem",
+  "3xl": "3rem",
+  "4xl": "4rem",
+  "5xl": "6rem",
+  "6xl": "8rem"
+}
+
+const THEME_RADIUS = {
+  "xs": "calc(var(--radius) - 0.375rem)",
+  "sm": "calc(var(--radius) - 0.25rem)",
+  "md": "calc(var(--radius) - 0.125rem)",
+  "lg": "var(--radius)",
+  "xl": "calc(var(--radius) + 0.25rem)",
+  "2xl": "calc(var(--radius) + 0.5rem)",
+  "3xl": "calc(var(--radius) + 1rem)"
+}
+
 export type RimelightPresetOptions = UIConfig
 
 export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const userColors = options?.colors ?? {}
   const allColors = getAllColorNames(userColors)
-  const resolvedUserColors = Object.fromEntries(
-    Object.entries(userColors).map(([name, entry]) => [
-      name,
-      resolveColorModes(entry, options?.autogenerateColorModes ?? true)
-    ])
-  )
+  const hasUserColors = Object.keys(userColors).length > 0
 
-  const safelist: string[] = [
-    ...allColors.map((color) => `rl-color-${color}`),
+  const safelist = [
+    ...allColors.map((c) => `rl-color-${c}`),
     ...Object.values(options?.icons ?? {}).filter(
       (v): v is string => typeof v === "string" && v.startsWith("i-")
     )
   ]
 
-  const userColorLines =
-    Object.keys(userColors).length > 0 ? formatColorLines(resolvedUserColors) : ""
+  const userColorLines = hasUserColors
+    ? formatColorLines(
+        Object.fromEntries(
+          Object.entries(userColors).map(([name, entry]) => [
+            name,
+            resolveColorModes(entry, options?.autogenerateColorModes ?? true)
+          ])
+        )
+      )
+    : ""
   const lightDarkLines = userColorLines
     ? `${STATIC_BUILTIN_COLOR_LINES}\n${userColorLines}`
     : STATIC_BUILTIN_COLOR_LINES
@@ -208,27 +244,23 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
 
   const optPresets = options?.presets
   const presets: Preset[] = [
-    ...(optPresets?.wind !== false ? [presetWind4()] : []),
-    ...(optPresets?.typography !== false
-      ? [
-          presetTypography({
-            cssExtend: {
-              "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-                "font-family": "var(--font-sans), system-ui, sans-serif"
-              },
-              "pre,code": { "font-family": "var(--font-mono), monospace" }
-            }
-          })
-        ]
-      : []),
-    ...(optPresets?.icons !== false
-      ? [
-          presetIcons({
-            extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-          })
-        ]
-      : [])
-  ]
+    optPresets?.wind !== false ? presetWind4() : null,
+    optPresets?.typography !== false
+      ? presetTypography({
+          cssExtend: {
+            "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+              "font-family": "var(--font-sans), system-ui, sans-serif"
+            },
+            "pre,code": { "font-family": "var(--font-mono), monospace" }
+          }
+        })
+      : null,
+    optPresets?.icons !== false
+      ? presetIcons({
+          extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+        })
+      : null
+  ].filter((p): p is Preset => p !== null)
 
   return {
     name: "rimelight-ui",
@@ -289,36 +321,12 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
       ]
     ],
     theme: {
-      spacing: {
-        "6xs": "0.125rem",
-        "5xs": "0.25rem",
-        "4xs": "0.375rem",
-        "3xs": "0.5rem",
-        "2xs": "0.625rem",
-        "xs": "0.75rem",
-        "sm": "0.875rem",
-        "md": "1rem",
-        "lg": "1.25rem",
-        "xl": "1.5rem",
-        "2xl": "2rem",
-        "3xl": "3rem",
-        "4xl": "4rem",
-        "5xl": "6rem",
-        "6xl": "8rem"
-      },
+      spacing: THEME_SPACING,
       colors: {
         ...STATIC_THEME_COLORS,
         ...Object.fromEntries(allColors.map((c) => [c, createScale(c)]))
       },
-      radius: {
-        "xs": "calc(var(--radius) - 0.375rem)",
-        "sm": "calc(var(--radius) - 0.25rem)",
-        "md": "calc(var(--radius) - 0.125rem)",
-        "lg": "var(--radius)",
-        "xl": "calc(var(--radius) + 0.25rem)",
-        "2xl": "calc(var(--radius) + 0.5rem)",
-        "3xl": "calc(var(--radius) + 1rem)"
-      }
+      radius: THEME_RADIUS
     },
     preflights: [{ getCSS: () => preflightCss }]
   }
