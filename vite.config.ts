@@ -5,19 +5,7 @@ export default defineConfig({
     "*": "vp check --fix"
   },
   lint: {
-    plugins: [
-      "eslint",
-      "typescript",
-      "unicorn",
-      "oxc",
-      "import",
-      "jsdoc",
-      "jsx-a11y",
-      "node",
-      "promise",
-      "vitest",
-      "vue"
-    ],
+    plugins: ["import", "jsdoc", "jsx-a11y", "node", "promise", "vitest", "vue"],
     ignorePatterns: [
       "**/dist/**",
       "**/node_modules/**",
@@ -43,18 +31,14 @@ export default defineConfig({
       perf: "warn"
     },
     rules: {
-      "oxc/no-barrel-file": "off",
       "import/no-cycle": ["error", { maxDepth: 3 }],
-      "no-console": "off",
       "vite-plus/prefer-vite-plus-imports": "error",
-      "no-restricted-globals": "error",
       "import/no-unassigned-import": [
         "error",
         {
           allow: ["**/*.css", "**/*.sass", "**/*.scss", "**/*.less", "**/*.styl"]
         }
       ],
-      "typescript/consistent-type-imports": "error",
       "e18e/prefer-array-from-map": "error",
       "e18e/prefer-timer-args": "error",
       "e18e/prefer-date-now": "error",
