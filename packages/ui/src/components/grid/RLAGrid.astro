@@ -5,21 +5,10 @@ import { gridTheme } from "./grid.theme"
 
 
 const {
-  cols = 2,
-  gap = "md",
-  stagger = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as GridProps
 
-const classes = gridTheme({
-  cols: cols as any,
-  gap,
-  stagger,
-  ui: uiProp,
-  class: className
-})
+const classes = gridTheme(Astro.props)
 ---
 
 <div class={classes.root} {...rest}>

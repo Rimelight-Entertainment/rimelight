@@ -4,17 +4,8 @@ import { ratingTheme } from "./rating.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as RatingProps
-
-const classes = ratingTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = ratingTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

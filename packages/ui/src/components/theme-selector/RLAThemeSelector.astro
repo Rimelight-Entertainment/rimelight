@@ -7,17 +7,11 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 
 const {
-    size = "md",
-    ui: uiProp,
-    class: className,
-    ...rest
+  size = "md",
+  ...rest
 } = Astro.props as ThemeSelectorProps
 
-const classes = themeSelectorTheme({
-  size,
-  ui: uiProp,
-  class: className
-});
+const classes = themeSelectorTheme(Astro.props);
 ---
 
 <rla-theme-selector {...rest}>

@@ -7,16 +7,12 @@ const {
   side = "left",
   collapsible = false,
   collapsed = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardSidebarProps
 
 const classes = dashboardSidebarTheme({
-  side,
-  collapsed: collapsible && collapsed,
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  collapsed: collapsible && collapsed
 });
 
 const collapsedWidth = "4rem";

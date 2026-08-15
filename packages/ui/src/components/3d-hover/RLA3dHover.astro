@@ -4,17 +4,8 @@ import { hover3dTheme } from "./3d-hover.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ThreeDHoverProps
-
-const classes = hover3dTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = hover3dTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

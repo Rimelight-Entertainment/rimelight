@@ -12,7 +12,6 @@ const slots = useSlots()
 const resolvedClasses = computed(() =>
   formFieldTheme({
     size: props.size,
-    ui: props.ui,
     class: props.class
   })
 )

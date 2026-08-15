@@ -10,17 +10,11 @@ const {
   title,
   description,
   triggerLabel,
-  ui: uiProp,
-  class: className,
   unmountOnHide = true,
   ...rest
 } = Astro.props as SlideoverProps
 
-const classes = slideoverTheme({
-  side,
-  ui: uiProp,
-  class: className
-})
+const classes = slideoverTheme(Astro.props)
 
 const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
 ---

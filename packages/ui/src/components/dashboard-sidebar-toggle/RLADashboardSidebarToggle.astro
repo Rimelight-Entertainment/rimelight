@@ -6,17 +6,10 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 const {
   icon = "menu",
-  side = "left",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardSidebarToggleProps
 
-const classes = dashboardSidebarToggleTheme({
-  side,
-  ui: uiProp,
-  class: className
-});
+const classes = dashboardSidebarToggleTheme(Astro.props);
 ---
 <button
   type="button"

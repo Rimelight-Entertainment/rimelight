@@ -12,17 +12,10 @@ const {
   title = "Drop files here or click to upload",
   description = "Supports any file type",
   icon = "uploadCloud",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as FileUploadProps
 
-const classes = fileUploadTheme({
-  disabled,
-  ui: uiProp,
-  class: className
-})
+const classes = fileUploadTheme(Astro.props)
 
 const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
 ---

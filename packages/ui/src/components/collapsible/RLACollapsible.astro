@@ -9,18 +9,10 @@ const {
   open = false,
   label = "Toggle",
   icon,
-  size = "md",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CollapsibleProps
 
-const classes = collapsibleTheme({
-  open,
-  ui: uiProp,
-  class: className
-});
+const classes = collapsibleTheme(Astro.props);
 ---
 <details class={classes.root} open={open ? true : undefined} data-slot="root" {...rest}>
   <summary class={classes.trigger} data-slot="trigger">

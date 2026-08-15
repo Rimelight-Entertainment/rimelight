@@ -16,7 +16,6 @@ const resolvedClasses = computed(() =>
   cardTheme({
     interactive: !!props.href,
     overlay: props.overlay,
-    ui: props.ui,
     class: props.class
   })
 )

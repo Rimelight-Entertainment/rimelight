@@ -7,16 +7,10 @@ const {
   triggerLabel,
   placement = "bottom",
   mode = "both",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as PopoverProps
 
-const classes = popoverTheme({
-  placement,
-  ui: uiProp,
-  class: className
-})
+const classes = popoverTheme(Astro.props)
 
 const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
 ---

@@ -7,30 +7,17 @@ import RLAAvatar from "../avatar/RLAAvatar.astro"
 
 const {
   orientation = "horizontal",
-  color = "neutral",
   size = "xs",
-  type = "solid",
   label,
   icon,
   avatar,
-  position = "center",
   decorative = true,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as SeparatorProps
 
 
 
-const classes = separatorTheme({
-  orientation,
-  color: color as "neutral",
-  size: size as "xs",
-  type: type as "solid",
-  position: position as "center",
-  ui: uiProp,
-  class: className
-})
+const classes = separatorTheme(Astro.props)
 ---
 <div
   class={classes.root}

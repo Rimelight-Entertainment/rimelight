@@ -6,17 +6,10 @@ import { labelTheme } from "./label.theme"
 
 const {
   for: htmlFor,
-  size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as LabelProps
 
-const classes = labelTheme({
-  size,
-  ui: uiProp,
-  class: className
-})
+const classes = labelTheme(Astro.props)
 ---
 <label class={classes.root} data-slot="root" for={htmlFor} {...rest}>
   <slot />

@@ -16,16 +16,10 @@ const {
   href: headingHref,
   links = [],
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as LinkGroupProps
 
-const classes = linkGroupTheme({
-  theme,
-  ui: uiProp,
-  class: className
-});
+const classes = linkGroupTheme(Astro.props);
 
 const normalizedLinks = Array.isArray(links) ? links : [links];
 

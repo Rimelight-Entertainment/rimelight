@@ -4,17 +4,8 @@ import { spoilerTheme } from "./spoiler.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as SpoilerProps
-
-const classes = spoilerTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = spoilerTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

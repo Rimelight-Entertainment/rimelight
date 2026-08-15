@@ -4,17 +4,8 @@ import { errorTheme } from "./error.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ErrorProps
-
-const classes = errorTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = errorTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

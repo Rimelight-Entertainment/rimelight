@@ -4,17 +4,8 @@ import { chatReasoningTheme } from "./chat-reasoning.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ChatReasoningProps
-
-const classes = chatReasoningTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = chatReasoningTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

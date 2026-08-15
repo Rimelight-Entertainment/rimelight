@@ -10,7 +10,6 @@ const {
   as = "section",
   variant = "default",
   orientation = "vertical",
-  reverse = false,
   ctaVariant = "solid",
   headline,
   title,
@@ -19,24 +18,20 @@ const {
   links,
   contentVisibility,
   containIntrinsicSize,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as PageSectionProps;
 
 const resolvedVariant = (variant === "default" || variant === "hero" || variant === "cta") ? variant : "default"
 
 const classes = pageSectionTheme({
+  ...Astro.props,
   variant: resolvedVariant,
-  orientation,
-  reverse,
-  ...(resolvedVariant === "cta" && { ctaVariant }),
+  ...(resolvedVariant === "cta" && { ctaVariant
+}),
   headline: !!(Astro.slots.has("headline") || headline),
   title: !!(Astro.slots.has("title") || title),
   description: !!(Astro.slots.has("description") || description),
   body: Astro.slots.has("body"),
-  ui: uiProp,
-  class: className
 });
 
 const hasDefaultSlot = Astro.slots.has("default");

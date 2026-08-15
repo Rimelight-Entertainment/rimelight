@@ -8,16 +8,10 @@ import RLAIcon from "../icon/RLAIcon.astro"
 const {
   direction = "horizontal",
   defaultSizes = [50, 50],
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as SplitterProps
 
-const classes = splitterTheme({
-  direction,
-  ui: uiProp,
-  class: className
-})
+const classes = splitterTheme(Astro.props)
 
 // Normalise sizes so they sum to 100
 const total = defaultSizes.reduce((s, v) => s + v, 0)

@@ -9,15 +9,10 @@ const {
   currentPage = 1,
   totalPages = 1,
   baseUrl = "?page=",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as PaginationProps
 
-const classes = paginationTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = paginationTheme(Astro.props)
 
 const getPageNumbers = () => {
   const pages: (number | "ellipsis")[] = []
@@ -67,7 +62,6 @@ const pages = getPageNumbers()
       const isActive = p === currentPage
       const itemClasses = paginationTheme({
   active: isActive,
-  ui: uiProp
 })
 
       return (

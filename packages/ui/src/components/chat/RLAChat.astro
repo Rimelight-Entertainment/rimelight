@@ -4,17 +4,8 @@ import { chatTheme } from "./chat.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ChatProps
-
-const classes = chatTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = chatTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

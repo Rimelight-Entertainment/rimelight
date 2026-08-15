@@ -19,6 +19,14 @@ const blogPages = await db
   .where(and(eq(pages.type, "blog"), isNull(pages.deletedAt)))
   .orderBy(desc(pages.postedAt), desc(pages.createdAt))
 
+function getPageTitle(title: unknown, locale: string): string {
+  if (typeof title === "object" && title !== null) {
+    const titleRecord = title as Record<string, string>
+    return titleRecord[locale] || titleRecord.en || ""
+  }
+  return String(title || "")
+}
+
 const groupedPosts = blogPages.reduce<Record<string, typeof blogPages>>((acc, page) => {
   const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
   const type = content?.properties?.category || "other"
@@ -57,7 +65,7 @@ const tabsItems = [
         <RLAGrid cols={4}>
           {blogPages.map((page, index) => {
             const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
-            const titleVal = typeof page.title === "object" && page.title !== null ? (page.title as Record<string, string>)[activeLocale] || (page.title as Record<string, string>).en || "" : String(page.title || "")
+            const titleVal = getPageTitle(page.title, activeLocale)
             const category = content?.properties?.category || "other"
             const postDate = page.postedAt || page.createdAt
             return (
@@ -85,7 +93,7 @@ const tabsItems = [
             <RLAGrid cols={4}>
               {categoryPages.map((page, index) => {
                 const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
-                const titleVal = typeof page.title === "object" && page.title !== null ? (page.title as Record<string, string>)[activeLocale] || (page.title as Record<string, string>).en || "" : String(page.title || "")
+                const titleVal = getPageTitle(page.title, activeLocale)
                 const postDate = page.postedAt || page.createdAt
                 return (
                   <RLAPost

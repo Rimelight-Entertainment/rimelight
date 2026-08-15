@@ -4,14 +4,8 @@ import { badgeTheme } from "./badge.theme"
 
 
 const {
-  variant = "solid",
-  color = "primary",
-  size = "md",
-  shape = "pill",
+  variant,
   label,
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as BadgeProps
 
@@ -20,13 +14,8 @@ const {
 const resolvedVariant = (variant === "ghost") ? "soft" : ((variant === "solid" || variant === "outline" || variant === "soft" || variant === "subtle") ? variant : "solid")
 
 const classes = badgeTheme({
-  variant: resolvedVariant as "solid",
-  color: color as "neutral",
-  size,
-  shape,
-  theme,
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  variant: resolvedVariant as "solid"
 })
 ---
 <span class={classes.root} data-slot="root" {...rest}>

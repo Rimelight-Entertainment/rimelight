@@ -5,16 +5,13 @@ import { mainTheme } from "./main.theme"
 
 
 const {
-    as = "main",
-    ui: uiProp,
-    class: className,
-    ...rest
+  as = "main",
+  ...rest
 } = Astro.props as MainProps;
 
 const classes = mainTheme({
-  hasContent: Astro.slots.has("default"),
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  hasContent: Astro.slots.has("default")
 });
 
 const Tag = as;

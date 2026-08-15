@@ -12,15 +12,10 @@ const {
   endpoint = "/api/search",
   placeholder = "Search...",
   messages = {},
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as SearchProps
 
-const classes = searchTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = searchTheme(Astro.props)
 
 // Default messages
 const searchPlaceholder = messages.searchPlaceholder || placeholder

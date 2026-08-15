@@ -11,21 +11,11 @@ const {
   valueKey = "value",
   linear = true,
   disabled = false,
-  orientation = "horizontal",
   size = "sm",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as StepperProps
 
-const classes = stepperTheme({
-  orientation,
-  size,
-  color,
-  ui: uiProp,
-  class: className
-})
+const classes = stepperTheme(Astro.props)
 
 const initialActiveValue = value ?? modelValue ?? defaultValue ?? (items.length > 0 ? (items[0]?.[valueKey] ?? items[0]?.value ?? 0) : 0)
 

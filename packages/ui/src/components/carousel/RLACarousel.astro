@@ -8,15 +8,10 @@ import RLAIcon from "../icon/RLAIcon.astro"
 const {
   slides,
   autoplay = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CarouselProps
 
-const classes = carouselTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = carouselTheme(Astro.props)
 const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
 ---
 <rla-carousel data-autoplay={autoplay ? "true" : "false"} {...rest}>

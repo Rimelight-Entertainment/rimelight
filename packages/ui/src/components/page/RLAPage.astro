@@ -4,17 +4,8 @@ import { pageTheme } from "./page.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PageProps
-
-const classes = pageTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = pageTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

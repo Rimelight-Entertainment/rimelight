@@ -32,17 +32,10 @@ const {
   yName,
   color = "primary",
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as Props
 
-const classes = colorAreaTheme({
-  color,
-  theme,
-  ui: uiProp,
-  class: className
-})
+const classes = colorAreaTheme(Astro.props)
 
 const initialValue = modelValue || defaultValue
 ---

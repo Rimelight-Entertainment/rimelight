@@ -11,15 +11,11 @@ const {
   progressWidth = 6,
   duration = 0.1,
   threshold = 200,
-  showProgress = false,
-  ui: uiProp,
-  class: className
+  showProgress = false
 } = defineProps<ScrollToTopProps>()
 
 const classes = scrollToTopTheme({
-  color,
-  ui: uiProp,
-  class: className
+  color
 })
 
 const isVisible = ref(false)

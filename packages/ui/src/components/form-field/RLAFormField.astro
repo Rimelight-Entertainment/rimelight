@@ -10,19 +10,12 @@ const {
   description,
   error,
   required = false,
-  size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as FormFieldProps
 
 
 
-const classes = formFieldTheme({
-  size,
-  ui: uiProp,
-  class: className
-});
+const classes = formFieldTheme(Astro.props);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   {label && (

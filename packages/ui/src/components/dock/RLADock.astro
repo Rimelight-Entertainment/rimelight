@@ -4,17 +4,8 @@ import { dockTheme } from "./dock.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as DockProps
-
-const classes = dockTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = dockTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

@@ -7,21 +7,13 @@ import RLASelect from "../select/RLASelect.astro"
 
 
 const {
-    locales,
-    currentLocale: currentLocaleProp,
-    variant = "default",
-    size = "md",
-    ui: uiProp,
-    class: className,
-    ...rest
+  locales,
+  currentLocale: currentLocaleProp,
+  size = "md",
+  ...rest
 } = Astro.props as LocaleSelectorProps;
 
-const classes = localeSelectorTheme({
-  variant,
-    size,
-  ui: uiProp,
-  class: className
-});
+const classes = localeSelectorTheme(Astro.props);
 
 // Resolve the active locale: explicit prop → Astro.currentLocale → 'en'
 const currentLocale = currentLocaleProp ?? Astro.currentLocale ?? 'en';

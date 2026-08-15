@@ -12,18 +12,10 @@ const {
   disabled = false,
   name,
   label,
-  size = "md",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as InputMenuProps
 
-const classes = inputMenuTheme({
-  size,
-  ui: uiProp,
-  class: className
-});
+const classes = inputMenuTheme(Astro.props);
 
 const normalizedItems = items.map(item => {
   if (typeof item === "string") {

@@ -14,13 +14,10 @@ const {
   size = "md",
   color = "primary",
   content = true,
-  unmountOnHide = true,
   valueKey = "value",
   labelKey = "label",
   maxTabs,
   estimatedTabWidth = 100,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as TabsProps
 
@@ -28,11 +25,8 @@ const {
 const normalizedVariant = (variant === "solid" || variant === "pills") ? "pill" : (variant === "link" ? "underline" : variant);
 
 const classes = tabsTheme({
-  variant: normalizedVariant,
-  orientation,
-  size,
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  variant: normalizedVariant
 });
 
 const initialValue = value || defaultValue || (items.length > 0 ? (items[0]?.[valueKey] ?? items[0]?.value ?? "0") : "")

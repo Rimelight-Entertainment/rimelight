@@ -4,17 +4,8 @@ import { tourTheme } from "./tour.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as TourProps
-
-const classes = tourTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = tourTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

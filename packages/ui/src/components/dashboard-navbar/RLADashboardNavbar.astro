@@ -6,23 +6,17 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 
 const {
-  as: Tag = "div" as HTMLTag,
+  as: Tag = "header",
   icon,
   title,
   toggle = true,
   toggleSide = "left",
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as DashboardNavbarProps
+} = Astro.props as DashboardNavbarProps 
 
 
 
-const classes = dashboardNavbarTheme({
-  toggleSide,
-  ui: uiProp,
-  class: className
-});
+const classes = dashboardNavbarTheme(Astro.props);
 ---
 
 <Tag class={classes.root} data-slot="root" {...rest}>

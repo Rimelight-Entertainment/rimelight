@@ -4,17 +4,8 @@ import { watermarkTheme } from "./watermark.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as WatermarkProps
-
-const classes = watermarkTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = watermarkTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

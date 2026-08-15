@@ -4,17 +4,8 @@ import { floatingActionTheme } from "./floating-action.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as FloatingActionProps
-
-const classes = floatingActionTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = floatingActionTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

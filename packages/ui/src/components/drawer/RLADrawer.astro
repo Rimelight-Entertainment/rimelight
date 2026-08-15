@@ -6,20 +6,13 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 
 const {
-  direction = "bottom",
   title,
   description,
   triggerLabel,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DrawerProps
 
-const classes = drawerTheme({
-  direction,
-  ui: uiProp,
-  class: className
-})
+const classes = drawerTheme(Astro.props)
 
 const dialogId = `rla-drawer-${Math.random().toString(36).substring(2, 9)}`
 ---

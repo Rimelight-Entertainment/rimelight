@@ -4,17 +4,8 @@ import { pageAsideTheme } from "./page-aside.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PageAsideProps
-
-const classes = pageAsideTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = pageAsideTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

@@ -4,17 +4,8 @@ import { editorTheme } from "./editor.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as EditorProps
-
-const classes = editorTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = editorTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

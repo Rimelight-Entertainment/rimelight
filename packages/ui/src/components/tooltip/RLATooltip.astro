@@ -7,16 +7,10 @@ import { tooltipTheme } from "./tooltip.theme"
 const {
   content,
   placement = "top",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as TooltipProps
 
-const classes = tooltipTheme({
-  placement,
-  ui: uiProp,
-  class: className
-})
+const classes = tooltipTheme(Astro.props)
 
 const anchorName = `--rla-tt-${Math.random().toString(36).substring(2, 9)}`
 ---

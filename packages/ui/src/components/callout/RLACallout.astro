@@ -14,9 +14,6 @@ const {
   avatar,
   actions,
   close,
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CalloutProps
 
@@ -39,11 +36,9 @@ const resolvedIcon = icon ?? colorToIcon[resolvedColor]
 const hasTitleRow = !!(title || Astro.slots.has("title") || Astro.slots.has("header") || avatar || close || Astro.slots.has("close"))
 
 const classes = calloutTheme({
+  ...Astro.props,
   variant: resolvedVariant,
-  color: resolvedColor as any,
-  theme,
-  ui: uiProp,
-  class: className
+  color: resolvedColor as any
 })
 ---
 <div

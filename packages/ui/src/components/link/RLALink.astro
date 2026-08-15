@@ -11,8 +11,6 @@ const {
   trailingIcon,
   href,
   external,
-  externalIcon,
-  noExternalIcon,
   target,
   rel,
   prefetch,
@@ -20,23 +18,18 @@ const {
   disabled,
   raw,
   ariaLabel,
-  ariaCurrentValue,
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as LinkProps
 
 const attrs = resolveLinkAttrs(Astro.props)
 
 const classes = raw
-  ? { root: className || "", leadingIcon: "", label: "", trailingIcon: "" }
+  ? { root: (Astro.props.class as string) || "", leadingIcon: "", label: "", trailingIcon: "" }
   : (linkTheme({
   theme,
         ...(active !== undefined ? { active } : {}),
         disabled: !!disabled,
-  ui: uiProp,
-  class: className
 }) as Record<string, string>)
 ---
 

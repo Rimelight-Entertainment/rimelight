@@ -6,7 +6,9 @@ export interface UIHeadProps {
   transitions?: boolean;
 }
 
-const { transitions = true } = Astro.props as UIHeadProps;
+const {
+  transitions = true
+} = Astro.props as UIHeadProps;
 ---
 
 <!-- Theme Mode Flash Prevention -->

@@ -4,17 +4,8 @@ import { formTheme } from "./form.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as FormProps
-
-const classes = formTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = formTheme(Astro.props)
 ---
-<form class={classes.root} data-slot="root" {...rest}>
+<form class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </form>

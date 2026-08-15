@@ -6,16 +6,10 @@ import { footerTheme } from "./footer.theme"
 
 const {
   contain = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as FooterProps
 
-const classes = footerTheme({
-  contain,
-  ui: uiProp,
-  class: className
-})
+const classes = footerTheme(Astro.props)
 ---
 
 <footer

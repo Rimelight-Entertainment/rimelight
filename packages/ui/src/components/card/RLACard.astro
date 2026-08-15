@@ -10,16 +10,12 @@ const {
   mediaSrc,
   href,
   overlay = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CardProps
 
 const classes = cardTheme({
-  interactive: !!href,
-  overlay,
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  interactive: !!href
 })
 
 const Tag = href ? "a" : "div"

@@ -4,17 +4,8 @@ import { chatPromptSubmitTheme } from "./chat-prompt-submit.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ChatPromptSubmitProps
-
-const classes = chatPromptSubmitTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = chatPromptSubmitTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

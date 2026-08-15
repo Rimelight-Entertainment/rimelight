@@ -11,15 +11,10 @@ const {
   showInput = false,
   name,
   placeholder = "Add tag…",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as InputTagsProps
 
-const classes = inputTagsTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = inputTagsTheme(Astro.props)
 
 // ─── Responsive CSS Item Counter ────────────────────────────────────────────
 //

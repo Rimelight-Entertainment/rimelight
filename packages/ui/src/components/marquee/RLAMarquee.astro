@@ -4,20 +4,11 @@ import { marqueeTheme } from "./marquee.theme"
 
 
 const {
-  direction = "left",
   speed = 40,
-  pauseOnHover = true,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as MarqueeProps
 
-const classes = marqueeTheme({
-  direction,
-  pauseOnHover,
-  ui: uiProp,
-  class: className
-})
+const classes = marqueeTheme(Astro.props)
 
 const duration = `${speed}s`
 const id = `marquee-${Math.random().toString(36).substring(2, 9)}`

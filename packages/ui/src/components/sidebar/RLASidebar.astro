@@ -7,12 +7,9 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 const {
   items = [],
-  side = "left",
   collapsible = "none",
   variant = "sidebar",
   logo,
-  ui: uiProp,
-  class: className,
   t = (key: string) => key,
   _depth = 0,
   ...rest
@@ -20,13 +17,7 @@ const {
 
 
 
-const classes = sidebarTheme({
-  side,
-  collapsible,
-  variant,
-  ui: uiProp,
-  class: className
-})
+const classes = sidebarTheme(Astro.props)
 
 const hasActiveChild = (item: SidebarItem): boolean => {
   if (item.active) return true
@@ -74,7 +65,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
       <!-- Body -->
       <div class={classes.content} data-slot="content">
         <slot>
-          <Astro.self items={items} t={t} _depth={1} ui={uiProp} />
+          <Astro.self items={items} t={t} _depth={1} ui={Astro.props.ui} />
         </slot>
       </div>
 

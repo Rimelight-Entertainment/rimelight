@@ -4,19 +4,10 @@ import { placeholderTheme } from "./placeholder.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PlaceholderProps
-
-const classes = placeholderTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = placeholderTheme(Astro.props)
 ---
 
-<div class={classes.base} {...rest}>
+<div class={classes.base} {...Astro.props}>
   <svg class={classes.svg}>
     <defs>
       <pattern

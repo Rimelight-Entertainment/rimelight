@@ -4,17 +4,8 @@ import { colorPickerTheme } from "./color-picker.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ColorPickerProps
-
-const classes = colorPickerTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = colorPickerTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

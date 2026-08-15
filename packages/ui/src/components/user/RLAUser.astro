@@ -4,17 +4,8 @@ import { userTheme } from "./user.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as UserProps
-
-const classes = userTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = userTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

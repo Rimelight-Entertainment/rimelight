@@ -4,17 +4,8 @@ import { knobTheme } from "./knob.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as KnobProps
-
-const classes = knobTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = knobTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

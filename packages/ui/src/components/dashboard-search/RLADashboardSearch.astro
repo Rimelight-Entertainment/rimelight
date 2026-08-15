@@ -4,16 +4,14 @@ import { dashboardSearchTheme } from "./dashboard-search.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const {
-  ui: uiProp,
-  class: className
-} = Astro.props as DashboardSearchProps
+const props = Astro.props as DashboardSearchProps
 
 const classes = dashboardSearchTheme({
-  fullscreen: false, size: "md",
-  ui: uiProp,
-  class: className
-});
+  ...Astro.props,
+  ...props,
+  fullscreen: false,
+  size: "md"
+})
 ---
 
 <template id="dashboard-search-template">

@@ -34,7 +34,6 @@ const emit = defineEmits<{
 const resolvedClasses = computed(() =>
   modalTheme({
     size: props.size,
-    ui: props.ui,
     class: props.class
   })
 )

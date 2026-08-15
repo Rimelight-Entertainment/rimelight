@@ -21,7 +21,6 @@ const resolvedClasses = computed(() =>
     size: props.size,
     color: props.color,
     disabled: props.disabled,
-    ui: props.ui,
     class: props.class
   })
 )

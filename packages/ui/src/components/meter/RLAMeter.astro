@@ -4,17 +4,8 @@ import { meterTheme } from "./meter.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as MeterProps
-
-const classes = meterTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = meterTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

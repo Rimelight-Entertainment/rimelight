@@ -4,17 +4,8 @@ import { compareTheme } from "./compare.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as CompareProps
-
-const classes = compareTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = compareTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

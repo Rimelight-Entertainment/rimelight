@@ -4,17 +4,8 @@ import { treeTheme } from "./tree.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as TreeProps
-
-const classes = treeTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = treeTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

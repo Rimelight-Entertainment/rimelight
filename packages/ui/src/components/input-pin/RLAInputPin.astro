@@ -4,17 +4,8 @@ import { inputPinTheme } from "./input-pin.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as InputPinProps
-
-const classes = inputPinTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = inputPinTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

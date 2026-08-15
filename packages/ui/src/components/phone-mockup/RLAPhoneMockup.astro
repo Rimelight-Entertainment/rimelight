@@ -4,17 +4,8 @@ import { phoneMockupTheme } from "./phone-mockup.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PhoneMockupProps
-
-const classes = phoneMockupTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = phoneMockupTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

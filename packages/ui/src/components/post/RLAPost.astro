@@ -15,18 +15,10 @@ const {
   to,
   badge,
   badgeColor = "primary",
-  variant = "soft",
-  orientation = "vertical",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as PostProps
 
-const classes = postTheme({
-  variant, orientation,
-  ui: uiProp,
-  class: className
-});
+const classes = postTheme(Astro.props);
 
 const Tag = to ? "a" : "div";
 const formattedDate = date ? (date instanceof Date ? date.toLocaleDateString() : date) : null;

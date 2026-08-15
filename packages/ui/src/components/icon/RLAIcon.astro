@@ -7,17 +7,10 @@ import { iconTheme } from "./icon.theme"
 
 const {
   name,
-  size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as IconProps
 
-const classes = iconTheme({
-  size,
-  ui: uiProp,
-  class: className
-})
+const classes = iconTheme(Astro.props)
 const resolved = resolveIcon(name)
 ---
 

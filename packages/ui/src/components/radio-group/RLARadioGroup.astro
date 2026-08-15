@@ -4,17 +4,8 @@ import { radioGroupTheme } from "./radio-group.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as RadioGroupProps
-
-const classes = radioGroupTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = radioGroupTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

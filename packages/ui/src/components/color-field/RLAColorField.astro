@@ -36,17 +36,10 @@ const {
   step = 1,
   color = "primary",
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as Props
 
-const classes = colorFieldTheme({
-  color,
-  theme,
-  ui: uiProp,
-  class: className
-})
+const classes = colorFieldTheme(Astro.props)
 
 const initialValue = modelValue || defaultValue
 ---

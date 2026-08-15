@@ -14,20 +14,14 @@ const {
   rows = 4,
   autoGrow = false,
   error = false,
-  size = "md",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as TextareaProps
 
 
 
 const classes = textareaTheme({
-  size,
-  error: !!error,
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  error: !!error
 });
 ---
 <div class={classes.root} data-slot="root">

@@ -17,11 +17,7 @@ const {
   height,
   width,
   loading = "lazy",
-  fit = "cover",
   metadata: preMetadata,
-  open,
-  ui: uiProp,
-  class: className,
   metaSource = true,
   metaFormat = true,
   metaDimensions = true,
@@ -31,10 +27,7 @@ const {
   ...rest
 } = Astro.props as ImageProps
 
-const classes = imageTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = imageTheme(Astro.props)
 
 const isResponsive = !!(mobileSrc && desktopSrc)
 const isFormatFallback = !isResponsive && !!(formats && formats.length > 0)

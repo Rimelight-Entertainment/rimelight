@@ -6,7 +6,6 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 
 const {
-  open = false,
   triggerLabel,
   closeOnClickOutside = true,
   closeOnEscape = true,
@@ -14,19 +13,13 @@ const {
   title,
   description,
   size = "md",
-  ui: uiProp,
-  class: className,
   unmountOnHide = true,
   ...rest
 } = Astro.props as ModalProps
 
 
 
-const classes = modalTheme({
-  size,
-  ui: uiProp,
-  class: className
-})
+const classes = modalTheme(Astro.props)
 
 const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
 ---

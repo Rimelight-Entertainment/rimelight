@@ -13,17 +13,12 @@ const {
   dismissable = false,
   dismissId,
   actions = [],
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as BannerProps
 
 const classes = bannerTheme({
-  contain,
-    sticky: fixed ? false : sticky,
-    fixed,
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  sticky: fixed ? false : sticky
 })
 
 const bannerId = (rest.id as string) || `rla-banner-${Math.random().toString(36).slice(2, 8)}`
@@ -42,8 +37,6 @@ const storageKey = dismissId || bannerId
   stackIndex={stackIndex}
   hideOnScroll={hideOnScroll}
   data-dismiss-key={`rl-banner-dismiss-${storageKey}`}
-  ui={uiProp}
-  class={className}
   {...rest}
 >
   {actions.length > 0 && (

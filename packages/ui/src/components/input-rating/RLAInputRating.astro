@@ -10,9 +10,7 @@ const {
   readonly = false,
   icon = "star",
   emptyIcon,
-  color = "primary",
   size = "md",
-  orientation = "horizontal",
   step = 1,
   disabled = false,
   required = false,
@@ -21,20 +19,10 @@ const {
   length = 5,
   clearable = false,
   hoverable = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as InputRatingProps
 
-const classes = inputRatingTheme({
-  orientation,
-    size,
-    color: color as any,
-    readonly,
-    disabled,
-  ui: uiProp,
-  class: className
-})
+const classes = inputRatingTheme(Astro.props)
 
 const sizeMap = {
   xs: "0.75rem",

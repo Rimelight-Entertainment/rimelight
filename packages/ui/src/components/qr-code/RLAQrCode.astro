@@ -4,17 +4,8 @@ import { qrCodeTheme } from "./qr-code.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as QrCodeProps
-
-const classes = qrCodeTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = qrCodeTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

@@ -7,17 +7,10 @@ import { fieldGroupTheme } from "./field-group.theme"
 const {
   prepend,
   append,
-  size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as FieldGroupProps
 
-const classes = fieldGroupTheme({
-  size,
-  ui: uiProp,
-  class: className
-});
+const classes = fieldGroupTheme(Astro.props);
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   {prepend && (

@@ -5,15 +5,12 @@ import { dashboardPanelTheme } from "./dashboard-panel.theme"
 
 const {
   resizable = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardPanelProps
 
 const classes = dashboardPanelTheme({
-  size: false,
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  size: false
 });
 ---
 <div class={classes.root} data-slot="root" {...rest}>

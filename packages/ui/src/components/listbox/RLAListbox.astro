@@ -4,17 +4,8 @@ import { listboxTheme } from "./listbox.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ListboxProps
-
-const classes = listboxTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = listboxTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

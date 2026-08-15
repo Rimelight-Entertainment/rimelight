@@ -8,16 +8,10 @@ const {
   orientation = "vertical",
   scrollHideDelay = 600,
   height,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as ScrollAreaProps
 
-const classes = scrollAreaTheme({
-  orientation,
-  ui: uiProp,
-  class: className
-})
+const classes = scrollAreaTheme(Astro.props)
 
 const heightStyle = height
   ? `height:${typeof height === "number" ? `${height}px` : height}`

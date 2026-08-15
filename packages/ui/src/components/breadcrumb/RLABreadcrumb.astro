@@ -10,15 +10,10 @@ const {
   maxVisible,
   estimatedItemWidth = 120,
   separatorIcon = "chevronRight",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as BreadcrumbProps
 
-const classes = breadcrumbTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = breadcrumbTheme(Astro.props)
 
 // ─── Responsive CSS Item Counter ─────────────────────────────────────────────
 //

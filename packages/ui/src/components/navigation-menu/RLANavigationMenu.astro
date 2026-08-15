@@ -8,20 +8,13 @@ import { navigationMenuTheme } from "./navigation-menu.theme"
 const {
   items = [],
   color = "primary",
-  theme,
   orientation = "horizontal",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as NavigationMenuProps
 
 
 
-const classes = navigationMenuTheme({
-  theme: theme as "dark", orientation,
-  ui: uiProp,
-  class: className
-})
+const classes = navigationMenuTheme(Astro.props)
 
 const slotContents: Record<string, string> = {}
 await Promise.all(

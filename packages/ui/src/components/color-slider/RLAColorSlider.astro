@@ -34,17 +34,10 @@ const {
   step = 1,
   color = "primary",
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as Props
 
-const classes = colorSliderTheme({
-  color,
-  theme,
-  ui: uiProp,
-  class: className
-})
+const classes = colorSliderTheme(Astro.props)
 
 const initialValue = modelValue || defaultValue
 ---

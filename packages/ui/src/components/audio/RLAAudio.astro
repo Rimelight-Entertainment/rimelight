@@ -4,18 +4,9 @@ import { audioTheme } from "./audio.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as AudioProps
-
-const classes = audioTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = audioTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
   {Astro.slots.has("transcript") && (
     <div class="mt-2 text-sm text-zinc-400" data-slot="transcript">

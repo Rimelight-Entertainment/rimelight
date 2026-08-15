@@ -4,17 +4,8 @@ import { galleryTheme } from "./gallery.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as GalleryProps
-
-const classes = galleryTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = galleryTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

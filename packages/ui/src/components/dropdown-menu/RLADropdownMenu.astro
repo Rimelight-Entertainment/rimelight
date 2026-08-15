@@ -13,19 +13,13 @@ const {
   arrow = false,
   content: contentProp = {},
   disabled = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DropdownMenuProps
 
 const align = contentProp?.align || "start"
 const side = contentProp?.side || "bottom"
 
-const classes = dropdownMenuTheme({
-  size,
-  ui: uiProp,
-  class: className
-})
+const classes = dropdownMenuTheme(Astro.props)
 
 // Standardize item groups: array of arrays vs array of items
 const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 0 && Array.isArray(items[0])

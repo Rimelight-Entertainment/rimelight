@@ -23,7 +23,6 @@ const resolvedClasses = computed(() =>
     color: props.color,
     error: !!props.error,
     disabled: props.disabled,
-    ui: props.ui,
     class: props.class
   })
 )

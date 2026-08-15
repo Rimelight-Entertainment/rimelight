@@ -9,15 +9,10 @@ const {
   items,
   displayLimit = 5,
   size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as AvatarGroupProps
 
-const classes = avatarGroupTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = avatarGroupTheme(Astro.props)
 
 // ─── Responsive CSS Item Counter ────────────────────────────────────────────
 //

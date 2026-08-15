@@ -7,18 +7,11 @@ import RLAIcon from "../icon/RLAIcon.astro"
 const {
   icon,
   label = "Search",
-  collapsed = false,
   kbds = [{ value: "meta" }, { value: "k" }],
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardSearchButtonProps
 
-const classes = dashboardSearchButtonTheme({
-  collapsed,
-  ui: uiProp,
-  class: className
-});
+const classes = dashboardSearchButtonTheme(Astro.props);
 ---
 
 <button

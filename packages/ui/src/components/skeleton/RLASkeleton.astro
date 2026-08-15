@@ -5,16 +5,9 @@ import { skeletonTheme } from "./skeleton.theme"
 
 
 const {
-  shape = "rounded",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as SkeletonProps
 
-const classes = skeletonTheme({
-  shape,
-  ui: uiProp,
-  class: className
-})
+const classes = skeletonTheme(Astro.props)
 ---
 <div class={classes.root} data-slot="root" {...rest} />

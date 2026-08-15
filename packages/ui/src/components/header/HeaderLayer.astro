@@ -27,8 +27,6 @@ const {
   hideOnScroll = false,
   theme = headerTheme,
   componentName = "header",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as HeaderLayerProps
 
@@ -38,8 +36,6 @@ const classes = theme({
   contain,
   sticky: fixed ? false : sticky,
   fixed,
-  ui: uiProp,
-  class: className
 })
 
 const isBanner = layerType === "banner"

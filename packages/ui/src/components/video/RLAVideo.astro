@@ -114,16 +114,13 @@ const {
   src,
   title = "YouTube Video Player",
   icon = "play",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as VideoProps
 
 const classes = videoTheme({
+  ...Astro.props,
   title: !!(Astro.slots.has("title") || title),
-  icon: !!(Astro.slots.has("icon") || icon),
-  ui: uiProp,
-  class: className
+  icon: !!(Astro.slots.has("icon") || icon)
 });
 
 const embedUrl = getYoutubeEmbedUrl(src);

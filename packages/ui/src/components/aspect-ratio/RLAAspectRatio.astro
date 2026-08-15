@@ -6,15 +6,10 @@ import { aspectRatioTheme } from "./aspect-ratio.theme"
 
 const {
   ratio = 1,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as AspectRatioProps
 
-const classes = aspectRatioTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = aspectRatioTheme(Astro.props)
 ---
 <div class:list={[classes.root]} data-slot="root" {...rest}>
   <svg viewBox={`0 0 100 ${(1 / ratio) * 100}`} class="w-full h-auto pointer-events-none block" aria-hidden="true"></svg>

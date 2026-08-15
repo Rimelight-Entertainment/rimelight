@@ -5,18 +5,13 @@ import { dashboardResizeHandleTheme } from "./dashboard-resize-handle.theme"
 
 
 const {
-  as: Tag = "div" as HTMLTag,
-  ui: uiProp,
-  class: className,
+  as: Tag = "div",
   ...rest
-} = Astro.props as DashboardResizeHandleProps
+} = Astro.props as DashboardResizeHandleProps 
 
 
 
-const classes = dashboardResizeHandleTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = dashboardResizeHandleTheme(Astro.props);
 ---
 <Tag
   role="separator"

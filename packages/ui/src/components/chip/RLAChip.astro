@@ -6,30 +6,14 @@ import { chipTheme } from "./chip.theme"
 
 const {
   text,
-  color = "primary",
-  size = "md",
-  position = "top-right",
-  inset = false,
   standalone = false,
   show = true,
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as ChipProps
 
 
 
-const classes = chipTheme({
-  color: color as "neutral",
-  size: size as "md",
-  position: position as "top-right",
-  inset,
-  standalone,
-  theme,
-  ui: uiProp,
-  class: className
-})
+const classes = chipTheme(Astro.props)
 ---
 {standalone ? (
   show && (

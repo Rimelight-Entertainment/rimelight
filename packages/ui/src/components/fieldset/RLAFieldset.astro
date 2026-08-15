@@ -4,17 +4,8 @@ import { fieldsetTheme } from "./fieldset.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as FieldsetProps
-
-const classes = fieldsetTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = fieldsetTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

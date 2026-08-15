@@ -4,17 +4,8 @@ import { pricingPlanTheme } from "./pricing-plan.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PricingPlanProps
-
-const classes = pricingPlanTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = pricingPlanTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

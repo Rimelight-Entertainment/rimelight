@@ -6,16 +6,10 @@ import { stepsTheme } from "./steps.theme"
 
 const {
   size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as StepsProps
 
-const classes = stepsTheme({
-  size,
-  ui: uiProp,
-  class: className
-})
+const classes = stepsTheme(Astro.props)
 ---
 
 <div class:list={[classes.root, "rl-steps"]} data-slot="root" data-size={size} {...rest}>

@@ -11,17 +11,16 @@ const {
   variant = "default",
   actionLabel,
   duration = 6000,
-  color = "primary",
-  ui: uiProp,
-  class: className,
   dismissable = true,
   ...rest
 } = Astro.props as ToastProps
 
 const classes = toastTheme({
-  variant: ["success", "error", "warning", "info"].includes(variant ?? "") ? variant : "default",
-  ui: uiProp,
-  class: className
+  ...Astro.props,
+  variant: ["success",
+  "error",
+  "warning",
+  "info"].includes(variant ?? "") ? variant : "default"
 })
 
 const variantIcons: Record<string, string> = {

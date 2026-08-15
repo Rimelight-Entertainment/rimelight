@@ -4,17 +4,8 @@ import { speedDialTheme } from "./speed-dial.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as SpeedDialProps
-
-const classes = speedDialTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = speedDialTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

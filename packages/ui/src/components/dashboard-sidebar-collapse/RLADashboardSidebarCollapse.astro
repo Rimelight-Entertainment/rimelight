@@ -6,17 +6,10 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 const {
   icon = "i-lucide-panel-left",
-  side = "left",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardSidebarCollapseProps
 
-const classes = dashboardSidebarCollapseTheme({
-  side,
-  ui: uiProp,
-  class: className
-});
+const classes = dashboardSidebarCollapseTheme(Astro.props);
 ---
 <button
   type="button"

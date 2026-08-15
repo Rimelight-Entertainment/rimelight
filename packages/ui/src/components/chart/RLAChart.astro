@@ -10,15 +10,10 @@ const {
   title,
   height = 280,
   color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as ChartProps
 
-const classes = chartTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = chartTheme(Astro.props)
 
 // Compute derived values on the server so we don't do heavy JS on the client
 const max = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1

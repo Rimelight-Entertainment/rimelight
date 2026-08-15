@@ -5,18 +5,13 @@ import { dashboardToolbarTheme } from "./dashboard-toolbar.theme"
 
 
 const {
-  as: Tag = "div" as HTMLTag,
-  ui: uiProp,
-  class: className,
+  as: Tag = "div",
   ...rest
-} = Astro.props as DashboardToolbarProps
+} = Astro.props as DashboardToolbarProps 
 
 
 
-const classes = dashboardToolbarTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = dashboardToolbarTheme(Astro.props);
 ---
 <Tag class={classes.root} data-slot="root" {...rest}>
   <slot>

@@ -18,9 +18,7 @@ const {
   block = false,
   active = false,
   activeColor,
-  activeVariant,
-  ui: uiProp,
-  class: className
+  activeVariant
 } = defineProps<ButtonProps>()
 
 const slots = useSlots()
@@ -64,9 +62,7 @@ const resolvedClasses = computed(() =>
     leading: isLeading.value,
     trailing: isTrailing.value,
     loading,
-    active,
-    ui: uiProp,
-    class: className
+    active
   })
 )
 

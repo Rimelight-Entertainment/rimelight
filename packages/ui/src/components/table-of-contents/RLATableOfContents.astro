@@ -7,18 +7,12 @@ import RLAIcon from "../icon/RLAIcon.astro"
 
 const {
   headings,
-  tableOfContents: tableOfContentsConfig,
-  ui: uiProp,
-  class: className,
   collapsible = false,
   containerSelector = ".markdown-content",
   ...rest
 } = Astro.props as TableOfContentsProps
 
-const classes = tableOfContentsTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = tableOfContentsTheme(Astro.props);
 
 if (tableOfContentsConfig === false) {
   // Render nothing

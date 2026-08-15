@@ -4,17 +4,8 @@ import { proseTheme } from "./prose.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ProseProps
-
-const classes = proseTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = proseTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

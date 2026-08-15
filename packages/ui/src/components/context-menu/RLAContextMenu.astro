@@ -4,17 +4,8 @@ import { contextMenuTheme } from "./context-menu.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ContextMenuProps
-
-const classes = contextMenuTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = contextMenuTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

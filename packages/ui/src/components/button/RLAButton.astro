@@ -19,15 +19,10 @@ const {
   loading = false,
   loadingAuto = false,
   square = false,
-  rounded = false,
-  block = false,
   justify = "center",
   active = false,
-  theme,
   activeColor,
   activeVariant,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as ButtonProps
 
@@ -48,20 +43,12 @@ const leadingIconClass = loading ? "animate-spin" : ""
 const trailingIconClass = loading ? "animate-spin" : ""
 
 const classes = buttonTheme({
+  ...Astro.props,
   variant: (active && activeVariant ? activeVariant : variant) as "solid",
   color: (active && activeColor ? activeColor : color) as "neutral",
-  size,
-  block,
-  justify,
   square: square || (!label && !Astro.slots.has("default")),
-  rounded,
   leading: isLeading,
-  trailing: isTrailing,
-  loading,
-  active,
-  theme,
-  ui: uiProp,
-  class: className
+  trailing: isTrailing
 });
 
 const Tag = (href || to) ? RLALink : "button";

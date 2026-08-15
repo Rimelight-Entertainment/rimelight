@@ -15,7 +15,6 @@ const props = withDefaults(defineProps<IconProps>(), {
 const resolvedClasses = computed(() =>
   iconTheme({
     size: props.size,
-    ui: props.ui,
     class: props.class
   })
 )

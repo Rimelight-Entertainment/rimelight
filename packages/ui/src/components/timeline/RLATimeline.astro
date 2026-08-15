@@ -8,25 +8,15 @@ const {
   as: Component = "div",
   items,
   size = "md",
-  color = "primary",
   orientation = "vertical",
   valueKey = "value",
   defaultValue,
   modelValue,
   reverse = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as TimelineProps
 
-const classes = timelineTheme({
-  orientation,
-  size,
-  color,
-  reverse,
-  ui: uiProp,
-  class: className
-})
+const classes = timelineTheme(Astro.props)
 
 const activeVal = modelValue !== undefined ? modelValue : defaultValue
 

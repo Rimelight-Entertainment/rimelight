@@ -37,7 +37,6 @@ const resolvedClasses = computed(() =>
     leading: isLeading.value,
     trailing: isTrailing.value,
     theme: props.theme,
-    ui: props.ui,
     class: props.class
   })
 )

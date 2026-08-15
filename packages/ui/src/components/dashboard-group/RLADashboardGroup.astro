@@ -5,18 +5,13 @@ import { dashboardGroupTheme } from "./dashboard-group.theme"
 
 
 const {
-  as: Tag = "div" as HTMLTag,
-  ui: uiProp,
-  class: className,
+  as: Tag = "div",
   ...rest
-} = Astro.props as DashboardGroupProps
+} = Astro.props as DashboardGroupProps 
 
 
 
-const classes = dashboardGroupTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = dashboardGroupTheme(Astro.props);
 ---
 <Tag class={classes.root} data-slot="root" {...rest}>
   <slot />

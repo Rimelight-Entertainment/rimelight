@@ -13,8 +13,8 @@ const {
   mdBreakpoint = 768,
   lgBreakpoint = 1024,
   xlBreakpoint = 1280,
-  gutter = [0.75, 1, 1.5, 1.5, 1.5],
-  margin = [0.75, 1, 1.5, 1.5, 1.5],
+  gutter = [0.75, 1, 1.5, 2, 2],
+  margin = [0.75, 1, 1.5, 2, 2],
   gridColor = "#ff0000",
   gridOpacity = 0.1,
   maxWidth = "1440px",
@@ -30,8 +30,6 @@ const {
   zIndex = 1000,
   shortcut = "meta_shift_g",
   devOnly = true,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as LayoutGridProps
 
@@ -52,10 +50,7 @@ const normalizeArray = (val: number | number[] | undefined, defaultVal: number):
 const gutterArray = normalizeArray(gutter, 1)
 const marginArray = normalizeArray(margin, 1)
 
-const classes = layoutGridTheme({
-  ui: uiProp,
-  class: className
-})
+const classes = layoutGridTheme(Astro.props)
 ---
 
 {shouldRender && (

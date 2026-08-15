@@ -4,17 +4,8 @@ import { calendarTheme } from "./calendar.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as CalendarProps
-
-const classes = calendarTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = calendarTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

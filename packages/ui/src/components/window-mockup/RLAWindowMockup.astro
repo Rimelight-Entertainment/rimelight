@@ -4,17 +4,8 @@ import { windowMockupTheme } from "./window-mockup.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as WindowMockupProps
-
-const classes = windowMockupTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = windowMockupTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

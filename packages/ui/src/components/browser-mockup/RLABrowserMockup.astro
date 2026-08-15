@@ -4,17 +4,8 @@ import { browserMockupTheme } from "./browser-mockup.theme"
 
 
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as BrowserMockupProps
-
-const classes = browserMockupTheme({
-  ui: uiProp,
-  class: className
-});
+const classes = browserMockupTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>
