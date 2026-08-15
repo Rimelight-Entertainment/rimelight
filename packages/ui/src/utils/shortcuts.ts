@@ -224,8 +224,10 @@ export function defineShortcuts(
   }
 
   if (regIds) {
-    removeRegistered()
-    activeShortcutsStore.set([...activeShortcutsStore.get(), ...registered])
+    activeShortcutsStore.set([
+      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
+      ...registered
+    ])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {

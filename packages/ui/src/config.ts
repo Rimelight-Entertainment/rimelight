@@ -101,20 +101,15 @@ export const COLOR_SHADES = [
   "950"
 ] as const
 
-const c = (l: string, d: string) => ({
-  light: Object.fromEntries(
-    l
-      .trim()
-      .split(/\s*,\s*/)
-      .map((v, i) => [COLOR_SHADES[i]!, `oklch(${v})`])
-  ),
-  dark: Object.fromEntries(
-    d
+const parseScale = (s: string) =>
+  Object.fromEntries(
+    s
       .trim()
       .split(/\s*,\s*/)
       .map((v, i) => [COLOR_SHADES[i]!, `oklch(${v})`])
   )
-})
+
+const c = (l: string, d: string) => ({ light: parseScale(l), dark: parseScale(d) })
 
 export const colorScales = {
   neutral: c(
@@ -165,7 +160,7 @@ export type ThemeColor = keyof typeof colorScales | (string & {})
 
 export const getAllColorNames = (customColors?: Record<string, unknown>): string[] =>
   customColors && Object.keys(customColors).length > 0
-    ? Array.from(new Set([...colorNames, ...Object.keys(customColors)]))
+    ? [...new Set([...colorNames, ...Object.keys(customColors)])]
     : colorNames
 
 export type ResolvedUIConfig = Omit<UIConfig, "colors" | "components" | "presets" | "unocss"> & {
@@ -189,13 +184,15 @@ const ring = pair("oklch(0.708 0.01 260)", "oklch(0.556 0.011 260)")
 const muted = pair("oklch(0.97 0.003 260)", "oklch(0.269 0.015 260)")
 const hover = pair("oklch(0.97 0.003 260)", "oklch(0.371 0.013 260)")
 const border = pair("oklch(0.922 0.005 260)", "oklch(0.985 0 0 / 0.1)")
+const surface = pair("oklch(1 0 0)", "oklch(0.269 0.015 260)")
+const badgeOnDark = pair("oklch(0.985 0 0)", "oklch(0.208 0.015 260)")
 
 export const semanticTokens = {
   "background": pair("oklch(1 0 0)", "oklch(0.145 0 0)"),
   "foreground": fg,
   "card": pair("oklch(1 0 0)", "oklch(0.205 0.015 260)"),
   "card-foreground": fg,
-  "popover": pair("oklch(1 0 0)", "oklch(0.269 0.015 260)"),
+  "popover": surface,
   "popover-foreground": fg,
   "primary": pair("oklch(0.53 0.21 260)", "oklch(0.623 0.214 259.8)"),
   "primary-foreground": "oklch(1 0 0)",
@@ -220,10 +217,10 @@ export const semanticTokens = {
   "error-foreground": "oklch(0.985 0 0)",
   "error-accent": pair("oklch(0.577 0.245 27.3)", "oklch(0.704 0.191 22.2)"),
   "commentary": pair("oklch(0.667 0.295 322.2)", "oklch(0.74 0.238 322.2)"),
-  "commentary-foreground": pair("oklch(0.985 0 0)", "oklch(0.208 0.015 260)"),
+  "commentary-foreground": badgeOnDark,
   "commentary-accent": pair("oklch(0.591 0.293 322.9)", "oklch(0.833 0.145 321.4)"),
   "ideation": pair("oklch(0.612 0.252 291.5)", "oklch(0.708 0.185 292.0)"),
-  "ideation-foreground": pair("oklch(0.985 0 0)", "oklch(0.208 0.015 260)"),
+  "ideation-foreground": badgeOnDark,
   "ideation-accent": pair("oklch(0.545 0.279 291.8)", "oklch(0.815 0.114 292.2)"),
   "source": pair("oklch(0.789 0.154 211.5)", "oklch(0.865 0.127 207.1)"),
   "source-foreground": "oklch(0.208 0.015 260)",
@@ -245,7 +242,7 @@ export const semanticTokens = {
   "chart-3": pair("oklch(0.615 0.245 295.2)", "oklch(0.698 0.187 294.8)"),
   "chart-4": pair("oklch(0.627 0.265 303.9)", "oklch(0.714 0.203 304.0)"),
   "chart-5": pair("oklch(0.672 0.290 324.5)", "oklch(0.745 0.235 323.8)"),
-  "color-surface": pair("oklch(1 0 0)", "oklch(0.269 0.015 260)"),
+  "color-surface": surface,
   "color-muted-strong": pair("oklch(0.922 0.005 260)", "oklch(0.371 0.013 260)"),
   "color-foreground-secondary": pair("oklch(0.439 0.012 260)", "oklch(0.87 0.007 260)"),
   "color-foreground-tertiary": pair("oklch(0.556 0.011 260)", "oklch(0.708 0.01 260)"),

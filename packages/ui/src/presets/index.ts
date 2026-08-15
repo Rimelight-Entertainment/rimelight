@@ -35,7 +35,9 @@ function resolveColorModes(
   const mL = mode ? (entry.light ?? {}) : {}
   const mD = mode ? (entry.dark ?? {}) : {}
   const flat = mode ? {} : entry
-  const shades = mode ? Object.keys({ ...mL, ...mD }) : Object.keys(entry)
+  const shades = mode
+    ? Object.keys(mL).concat(Object.keys(mD).filter((k) => !(k in mL)))
+    : Object.keys(entry)
   const light: ColorShades = {}
   const dark: ColorShades = {}
 
@@ -67,11 +69,12 @@ const formatColorLines = (
 ) =>
   Object.entries(colorMap)
     .flatMap(([c, m]) => {
-      const keys = Object.keys({ ...m.light, ...m.dark })
-      return keys.map(
-        (s) =>
-          `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark?.[s]}, ${m.dark?.[s] ?? m.light?.[s]});`
-      )
+      const keys = Object.keys(m.light ?? m.dark ?? {})
+      return keys.map((s) => {
+        const l = m.light?.[s] ?? m.dark?.[s]
+        const d = m.dark?.[s] ?? l
+        return `  --color-${c}-${s}: light-dark(${l}, ${d});`
+      })
     })
     .join("\n")
 
