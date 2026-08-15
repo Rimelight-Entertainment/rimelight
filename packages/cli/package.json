@@ -28,7 +28,6 @@
     "access": "public"
   },
   "scripts": {
-    "check": "node -e \"process.exit(0)\"",
     "create": "node ./bin/rimelight.js create"
   },
   "dependencies": {
