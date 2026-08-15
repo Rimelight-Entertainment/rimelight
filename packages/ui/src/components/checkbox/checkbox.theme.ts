@@ -1,7 +1,4 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
 
 export const checkboxTheme = defineTheme("checkbox", {
   slots: ["root", "input", "box", "indicator", "label"],
@@ -9,7 +6,8 @@ export const checkboxTheme = defineTheme("checkbox", {
     root: "inline-flex items-center gap-2 cursor-pointer select-none",
     input: "absolute opacity-0 size-0 pointer-events-none peer",
     box: [
-      "size-4 shrink-0 rounded border border-border bg-background transition-all focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+      "size-4 shrink-0 rounded border border-border bg-background transition-all focus-within:ring-2 focus-within:ring-[var(--rl-ring)]/50 focus-within:ring-offset-2",
+      "peer-checked:bg-[var(--rl-bg)] peer-checked:border-[var(--rl-border)] peer-checked:[&_[data-slot=indicator]]:scale-100",
       "peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
     ],
     indicator:
@@ -17,15 +15,7 @@ export const checkboxTheme = defineTheme("checkbox", {
     label: "text-sm text-foreground leading-none"
   },
   variants: {
-    color: Object.fromEntries(
-      colors.map((color) => [
-        color,
-        {
-          root: "rl-color-" + color,
-          box: `peer-checked:bg-[var(--rl-bg)] peer-checked:border-[var(--rl-border)] focus-within:ring-[var(--rl-ring)]/50 peer-checked:[&_[data-slot=indicator]]:scale-100`
-        }
-      ])
-    ),
+    color: "auto",
     size: {
       sm: { box: "size-3.5", label: "text-xs" },
       md: { box: "size-4", label: "text-sm" },

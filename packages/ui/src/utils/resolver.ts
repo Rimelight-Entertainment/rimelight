@@ -1,5 +1,14 @@
 import { scv, cx, type SlotClassVariantDefinition, type SlotClassVariantRecord } from "css-variants"
-import { uiConfig, type Override } from "../config"
+import { colorNames, uiConfig, type Override, type ThemeColor } from "../config"
+
+export const themeColors = uiConfig.colors ?? colorNames
+
+const autoColorVariants: Record<string, { root: string }> = {
+  neutral: { root: "" }
+}
+for (const c of themeColors) {
+  autoColorVariants[c] = { root: `rl-color-${c}` }
+}
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
 const EMPTY: Record<string, Override> = Object.freeze({})
@@ -55,14 +64,59 @@ export function resolveClasses<T extends (...args: any[]) => Record<string, stri
   return res
 }
 
+export type ThemeVariants<S extends string> = Record<
+  string,
+  "auto" | Record<string, Partial<Record<S, string>>>
+>
+
+export type ThemeDefaultVariants<V> = {
+  [K in keyof V]?: V[K] extends "auto" ? ThemeColor : keyof V[K] | boolean | string
+}
+
+export interface CustomThemeDefinition<S extends string, V extends ThemeVariants<S>> {
+  slots: readonly S[] | S[]
+  base?: Partial<Record<S, string | string[]>>
+  variants?: V
+  compoundVariants?: Array<Record<string, unknown> & { classNames?: Partial<Record<S, string>> }>
+  defaultVariants?: ThemeDefaultVariants<V>
+}
+
 export const defineTheme = <
   const S extends string,
-  const T extends SlotClassVariantRecord<S> | undefined
+  const V extends ThemeVariants<S> = ThemeVariants<S>
 >(
   name: string,
-  theme: SlotClassVariantDefinition<S, T>
+  theme: CustomThemeDefinition<S, V>
 ) => {
-  const themeFn = scv(theme)
+  const normalizedVariants: Record<string, unknown> = {}
+  if (theme.variants) {
+    for (const key of Object.keys(theme.variants)) {
+      const val = theme.variants[key]
+      if (val === "auto") {
+        const slot = (theme.slots as readonly string[]).includes("root")
+          ? "root"
+          : (theme.slots[0] ?? "root")
+        normalizedVariants[key] =
+          slot === "root"
+            ? autoColorVariants
+            : {
+                neutral: { [slot]: "" },
+                ...Object.fromEntries(themeColors.map((c) => [c, { [slot]: `rl-color-${c}` }]))
+              }
+      } else if (val && typeof val === "object") {
+        normalizedVariants[key] = val
+      }
+    }
+  }
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+  const themeFn = scv({
+    slots: theme.slots,
+    base: theme.base,
+    variants: normalizedVariants,
+    compoundVariants: theme.compoundVariants,
+    defaultVariants: theme.defaultVariants
+  } as unknown as SlotClassVariantDefinition<S, SlotClassVariantRecord<S>>)
 
   return (
     props?: Record<string, unknown> & {

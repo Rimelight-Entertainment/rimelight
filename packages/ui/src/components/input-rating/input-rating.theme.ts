@@ -1,32 +1,15 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
-
-const colorVariants: Record<string, { root?: string; indicator: string; item: string }> = {
-  neutral: {
-    indicator: "text-highlighted",
-    item: "focus-visible:outline-inverted"
-  }
-}
-for (const c of colors) {
-  colorVariants[c] = {
-    root: "rl-color-" + c,
-    indicator: "text-[var(--rl-bg)]",
-    item: "focus-visible:outline-[var(--rl-ring)]"
-  }
-}
 
 export const inputRatingTheme = defineTheme("input-rating", {
   slots: ["root", "item", "indicator", "icon", "emptyIcon"],
   base: {
     root: "inline-flex select-none",
     item: [
-      "relative inline-block cursor-pointer select-none rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+      "relative inline-block cursor-pointer select-none rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]",
       "transition-all duration-150"
     ],
     indicator:
-      "absolute inset-y-0 left-0 overflow-hidden outline-none pointer-events-none flex items-center justify-start",
+      "absolute inset-y-0 left-0 overflow-hidden outline-none pointer-events-none flex items-center justify-start text-[var(--rl-bg)]",
     icon: "block w-[var(--item-size)] h-[var(--item-size)] max-w-none shrink-0",
     emptyIcon:
       "absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-start text-muted"
@@ -47,7 +30,7 @@ export const inputRatingTheme = defineTheme("input-rating", {
       lg: { item: "size-6" },
       xl: { item: "size-7" }
     },
-    color: colorVariants,
+    color: "auto",
     readonly: {
       true: {
         root: "cursor-default",
@@ -71,6 +54,13 @@ export const inputRatingTheme = defineTheme("input-rating", {
     disabled: false
   },
   compoundVariants: [
+    {
+      color: "neutral",
+      classNames: {
+        indicator: "text-highlighted",
+        item: "focus-visible:outline-inverted"
+      }
+    },
     {
       readonly: false,
       disabled: false,

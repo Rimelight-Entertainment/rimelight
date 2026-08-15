@@ -1,12 +1,4 @@
-import { colorNames, uiConfig } from "../../config"
-import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
-
-const colorVariants: Record<string, { root: string }> = { neutral: { root: "" } }
-for (const c of colors) {
-  colorVariants[c] = { root: "" }
-}
+import { defineTheme, themeColors } from "../../utils/resolver"
 
 export const buttonTheme = defineTheme("button", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
@@ -31,7 +23,7 @@ export const buttonTheme = defineTheme("button", {
       ghost: { root: "" },
       link: { root: "" }
     },
-    color: colorVariants,
+    color: "auto",
     size: {
       xs: {
         root: "text-xs gap-1 [&_svg]:size-4",
@@ -96,7 +88,7 @@ export const buttonTheme = defineTheme("button", {
     }
   },
   compoundVariants: [
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "solid" as const,
       color,
       classNames: {
@@ -106,7 +98,7 @@ export const buttonTheme = defineTheme("button", {
           " bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] active:bg-[var(--rl-bg-hover)] disabled:bg-[var(--rl-bg)] aria-disabled:bg-[var(--rl-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "outline" as const,
       color,
       classNames: {
@@ -116,7 +108,7 @@ export const buttonTheme = defineTheme("button", {
           " ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "soft" as const,
       color,
       classNames: {
@@ -126,7 +118,7 @@ export const buttonTheme = defineTheme("button", {
           " text-[var(--rl-text)] bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 focus:outline-none focus-visible:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "subtle" as const,
       color,
       classNames: {
@@ -136,7 +128,7 @@ export const buttonTheme = defineTheme("button", {
           " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25 bg-[var(--rl-bg)]/10 hover:bg-[var(--rl-bg)]/15 active:bg-[var(--rl-bg)]/15 disabled:bg-[var(--rl-bg)]/10 aria-disabled:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "ghost" as const,
       color,
       classNames: {
@@ -146,7 +138,7 @@ export const buttonTheme = defineTheme("button", {
           " text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10 active:bg-[var(--rl-bg)]/10 focus:outline-none focus-visible:bg-[var(--rl-bg)]/10 disabled:bg-transparent aria-disabled:bg-transparent"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "link" as const,
       color,
       classNames: {

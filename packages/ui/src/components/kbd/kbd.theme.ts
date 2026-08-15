@@ -1,12 +1,4 @@
-import { colorNames, uiConfig } from "../../config"
-import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
-
-const colorVariants: Record<string, { root: string }> = { neutral: { root: "" } }
-for (const c of colors) {
-  colorVariants[c] = { root: "" }
-}
+import { defineTheme, themeColors } from "../../utils/resolver"
 
 export const kbdTheme = defineTheme("kbd", {
   slots: ["root"],
@@ -14,7 +6,7 @@ export const kbdTheme = defineTheme("kbd", {
     root: "inline-flex items-center justify-center px-1 rounded-sm font-medium font-sans uppercase"
   },
   variants: {
-    color: colorVariants,
+    color: "auto",
     variant: {
       solid: { root: "" },
       outline: { root: "" },
@@ -32,14 +24,14 @@ export const kbdTheme = defineTheme("kbd", {
     }
   },
   compoundVariants: [
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "solid" as const,
       color,
       classNames: {
         root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "outline" as const,
       color,
       classNames: {
@@ -47,14 +39,14 @@ export const kbdTheme = defineTheme("kbd", {
           "rl-color-" + color + " ring ring-inset ring-[var(--rl-border)]/50 text-[var(--rl-text)]"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "soft" as const,
       color,
       classNames: {
         root: "rl-color-" + color + " text-[var(--rl-text)] bg-[var(--rl-bg)]/10"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "subtle" as const,
       color,
       classNames: {

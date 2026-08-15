@@ -1,35 +1,16 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
 
 export const avatarTheme = defineTheme("avatar", {
   slots: ["root", "image", "fallback", "icon", "badge"],
   base: {
-    root: "inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative",
+    root: "inline-flex items-center justify-center shrink-0 select-none rounded-full align-middle relative bg-[var(--rl-bg)]/10 text-[var(--rl-text)]",
     image: "h-full w-full rounded-[inherit] object-cover",
-    fallback: "font-medium truncate",
-    icon: "shrink-0",
+    fallback: "font-medium truncate text-inherit",
+    icon: "shrink-0 text-inherit",
     badge: "absolute rounded-full ring-2 ring-bg"
   },
   variants: {
-    color: {
-      ...Object.fromEntries(
-        colors.map((color) => [
-          color,
-          {
-            root: `bg-${color}/10`,
-            fallback: `text-${color}`,
-            icon: `text-${color}`
-          }
-        ])
-      ),
-      neutral: {
-        root: "bg-elevated",
-        fallback: "text-foreground",
-        icon: "text-muted"
-      }
-    },
+    color: "auto",
     size: {
       "3xs": {
         root: "size-4 text-[8px]",
@@ -75,6 +56,15 @@ export const avatarTheme = defineTheme("avatar", {
       "bottom-left": { badge: "bottom-0 left-0" }
     }
   },
+  compoundVariants: [
+    {
+      color: "neutral",
+      classNames: {
+        root: "bg-elevated text-foreground",
+        icon: "text-muted"
+      }
+    }
+  ],
   defaultVariants: {
     size: "md",
     color: "neutral",

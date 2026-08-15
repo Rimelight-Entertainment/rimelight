@@ -1,7 +1,4 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
 
 export const scrollToTopTheme = defineTheme("scroll-to-top", {
   slots: ["root", "button", "progressBase", "svg", "iconContainer", "icon"],
@@ -14,18 +11,7 @@ export const scrollToTopTheme = defineTheme("scroll-to-top", {
     icon: "size-6 text-white"
   },
   variants: {
-    color: Object.fromEntries(
-      colors.map((color) => [
-        color,
-        {
-          root: "rl-color-" + color,
-          progressBase: "",
-          svg: "",
-          iconContainer: "",
-          icon: ""
-        }
-      ])
-    ),
+    color: "auto",
     theme: {
       light: { root: "rl-light" },
       dark: { root: "rl-dark" }

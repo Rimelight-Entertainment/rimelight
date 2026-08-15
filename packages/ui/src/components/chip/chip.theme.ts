@@ -1,21 +1,13 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
-
-const colorVariants: Record<string, { base: string }> = { neutral: { base: "bg-inverted" } }
-for (const c of colors) {
-  colorVariants[c] = { base: `bg-${c}` }
-}
 
 export const chipTheme = defineTheme("chip", {
   slots: ["root", "base"],
   base: {
     root: "relative inline-flex items-center justify-center shrink-0",
-    base: "rounded-full ring ring-bg flex items-center justify-center text-inverted font-medium whitespace-nowrap"
+    base: "rounded-full ring ring-bg flex items-center justify-center text-inverted font-medium whitespace-nowrap bg-[var(--rl-bg)]"
   },
   variants: {
-    color: colorVariants,
+    color: "auto",
     size: {
       "3xs": { base: "h-[4px] min-w-[4px] text-[4px]" },
       "2xs": { base: "h-[5px] min-w-[5px] text-[5px]" },
@@ -45,6 +37,10 @@ export const chipTheme = defineTheme("chip", {
     }
   },
   compoundVariants: [
+    {
+      color: "neutral",
+      classNames: { base: "bg-inverted" }
+    },
     {
       position: "top-right",
       inset: false,

@@ -1,13 +1,10 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
 
 export const separatorTheme = defineTheme("separator", {
   slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
   base: {
     root: "flex items-center align-center text-center",
-    border: "",
+    border: "border-[var(--rl-border)]",
     container: "font-medium text-default flex",
     icon: "shrink-0 size-5",
     avatar: "shrink-0",
@@ -15,10 +12,7 @@ export const separatorTheme = defineTheme("separator", {
     label: "text-sm"
   },
   variants: {
-    color: {
-      ...Object.fromEntries(colors.map((color) => [color, { border: `border-${color}` }])),
-      neutral: { border: "border-default" }
-    },
+    color: "auto",
     orientation: {
       horizontal: {
         root: "w-full flex-row",
@@ -56,6 +50,10 @@ export const separatorTheme = defineTheme("separator", {
     }
   },
   compoundVariants: [
+    {
+      color: "neutral",
+      classNames: { border: "border-default" }
+    },
     {
       orientation: "horizontal",
       position: "start",

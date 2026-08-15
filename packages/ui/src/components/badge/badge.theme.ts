@@ -1,12 +1,4 @@
-import { colorNames, uiConfig } from "../../config"
-import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
-
-const colorVariants: Record<string, { root: string }> = { neutral: { root: "" } }
-for (const c of colors) {
-  colorVariants[c] = { root: "" }
-}
+import { defineTheme, themeColors } from "../../utils/resolver"
 
 export const badgeTheme = defineTheme("badge", {
   slots: ["root", "label", "leadingIcon", "leadingAvatar", "leadingAvatarSize", "trailingIcon"],
@@ -25,7 +17,7 @@ export const badgeTheme = defineTheme("badge", {
       soft: { root: "" },
       subtle: { root: "" }
     },
-    color: colorVariants,
+    color: "auto",
     size: {
       xs: {
         root: "text-[8px]/3 px-1 py-0.5 gap-1 rounded-sm",
@@ -72,14 +64,14 @@ export const badgeTheme = defineTheme("badge", {
     }
   },
   compoundVariants: [
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "solid" as const,
       color,
       classNames: {
         root: "rl-color-" + color + " bg-[var(--rl-bg)] text-white"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "outline" as const,
       color,
       classNames: {
@@ -87,14 +79,14 @@ export const badgeTheme = defineTheme("badge", {
           "rl-color-" + color + " text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/50"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "soft" as const,
       color,
       classNames: {
         root: "rl-color-" + color + " bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
       }
     })),
-    ...colors.map((color) => ({
+    ...themeColors.map((color) => ({
       variant: "subtle" as const,
       color,
       classNames: {

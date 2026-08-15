@@ -1,24 +1,13 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
 
 export const progressTheme = defineTheme("progress", {
   slots: ["root", "indicator"],
   base: {
     root: "relative w-full overflow-hidden rounded-full bg-muted shadow-inner",
-    indicator: "h-full w-full flex-1 transition-all duration-300 ease-in-out"
+    indicator: "h-full w-full flex-1 transition-all duration-300 ease-in-out bg-[var(--rl-bg)]"
   },
   variants: {
-    color: Object.fromEntries(
-      colors.map((color) => [
-        color,
-        {
-          root: "rl-color-" + color,
-          indicator: `bg-[var(--rl-bg)]`
-        }
-      ])
-    ),
+    color: "auto",
     size: {
       sm: { root: "h-1.5" },
       md: { root: "h-3" },

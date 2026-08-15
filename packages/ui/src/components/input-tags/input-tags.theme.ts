@@ -1,7 +1,4 @@
-import { colorNames, uiConfig } from "../../config"
 import { defineTheme } from "../../utils/resolver"
-
-const colors = uiConfig.colors ?? colorNames
 
 export const inputTagsTheme = defineTheme("input-tags", {
   slots: ["root", "tag", "tagLabel", "more", "input"],
@@ -10,8 +7,8 @@ export const inputTagsTheme = defineTheme("input-tags", {
     tag: [
       "inline-flex items-center gap-1 px-2 py-0.5",
       "rounded-full text-xs font-medium",
-      "bg-elevated text-foreground",
-      "ring-1 ring-border/60",
+      "bg-[var(--rl-bg)]/10 text-[var(--rl-text)]",
+      "ring-1 ring-[var(--rl-border)]/30",
       "whitespace-nowrap select-none"
     ],
     tagLabel: "leading-none",
@@ -28,20 +25,16 @@ export const inputTagsTheme = defineTheme("input-tags", {
     ]
   },
   variants: {
-    color: {
-      ...Object.fromEntries(
-        colors.map((color) => [
-          color,
-          {
-            tag: `bg-${color}/10 text-${color}-700 ring-${color}/30`
-          }
-        ])
-      ),
-      neutral: {
+    color: "auto"
+  },
+  compoundVariants: [
+    {
+      color: "neutral",
+      classNames: {
         tag: "bg-elevated text-foreground ring-border/60"
       }
     }
-  },
+  ],
   defaultVariants: {
     color: "neutral"
   }
