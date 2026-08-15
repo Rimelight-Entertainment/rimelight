@@ -4,12 +4,12 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { BadgeProps } from "./badge"
-import badgeThemeDefault from "./badge.theme"
+import { badgeTheme } from "./badge.theme"
 
 defineOptions({ name: "RLVBadge" })
 
 const attrs = useAttrs()
-const badgeScv = scv(badgeThemeDefault)
+const badgeScv = scv(badgeTheme)
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   variant: "solid",

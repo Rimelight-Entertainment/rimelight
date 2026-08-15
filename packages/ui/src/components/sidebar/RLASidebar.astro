@@ -3,11 +3,10 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { SidebarProps, SidebarItem } from "./sidebar"
-import sidebarThemeDefault from "./sidebar.theme"
+import { sidebarTheme } from "./sidebar.theme"
 import RLABadge from "../badge/RLABadge.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const sidebarTheme = sidebarThemeDefault
 const sidebar = scv(sidebarTheme)
 
 const {

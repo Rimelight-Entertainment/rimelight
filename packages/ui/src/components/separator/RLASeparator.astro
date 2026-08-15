@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { SeparatorProps } from "./separator"
-import { resolveTheme } from "../../utils/resolver"
-import separatorThemeDefault, { createSeparatorTheme } from "./separator.theme"
-const separatorTheme = resolveTheme(separatorThemeDefault, createSeparatorTheme)
+import { separatorTheme } from "./separator.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import { cx } from "css-variants"
 

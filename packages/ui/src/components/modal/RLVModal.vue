@@ -4,14 +4,14 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { ModalProps } from "./modal"
-import modalThemeDefault from "./modal.theme"
+import { modalTheme } from "./modal.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 
 defineOptions({ name: "RLVModal" })
 
 const attrs = useAttrs()
 const slots = useSlots()
-const modalScv = scv(modalThemeDefault)
+const modalScv = scv(modalTheme)
 
 const isOpen = defineModel<boolean>("open", { default: false })
 

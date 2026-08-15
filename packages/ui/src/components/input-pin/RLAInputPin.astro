@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { InputPinProps } from "./input-pin"
-import { resolveTheme } from "../../utils/resolver"
-import inputPinThemeDefault, { createInputPinTheme } from "./input-pin.theme"
-const inputPinTheme = resolveTheme(inputPinThemeDefault, createInputPinTheme)
+import { inputPinTheme } from "./input-pin.theme"
 
 
 const inputPin = scv(inputPinTheme)

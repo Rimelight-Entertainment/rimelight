@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { HoverCardProps } from "./hover-card"
-import { resolveTheme } from "../../utils/resolver"
-import hoverCardThemeDefault, { createHoverCardTheme } from "./hover-card.theme"
-const hoverCardTheme = resolveTheme(hoverCardThemeDefault, createHoverCardTheme)
+import { hoverCardTheme } from "./hover-card.theme"
 
 
 const hoverCard = scv(hoverCardTheme)

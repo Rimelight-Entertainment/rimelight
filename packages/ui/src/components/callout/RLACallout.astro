@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { CalloutProps } from "./callout"
-import { resolveTheme } from "../../utils/resolver"
-import calloutThemeDefault, { createCalloutTheme } from "./callout.theme"
-const calloutTheme = resolveTheme(calloutThemeDefault, createCalloutTheme)
+import { calloutTheme } from "./callout.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 

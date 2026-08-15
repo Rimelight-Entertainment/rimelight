@@ -1,13 +1,10 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const createListboxTheme = () =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: ""
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createListboxTheme()
+export const listboxTheme = defineTheme({
+  slots: ["root"],
+  base: {
+    root: ""
+  },
+  variants: {},
+  defaultVariants: {}
+})

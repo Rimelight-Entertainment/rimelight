@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { ChipProps } from "./chip"
-import { resolveTheme } from "../../utils/resolver"
-import chipThemeDefault, { createChipTheme } from "./chip.theme"
-const chipTheme = resolveTheme(chipThemeDefault, createChipTheme)
+import { chipTheme } from "./chip.theme"
 
 
 const chip = scv(chipTheme)

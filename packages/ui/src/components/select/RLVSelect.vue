@@ -4,13 +4,13 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { SelectProps } from "./select"
-import selectThemeDefault from "./select.theme"
+import { selectTheme } from "./select.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 
 defineOptions({ name: "RLVSelect" })
 
 const attrs = useAttrs()
-const selectScv = scv(selectThemeDefault)
+const selectScv = scv(selectTheme)
 
 const modelValue = defineModel<string | number | undefined>()
 

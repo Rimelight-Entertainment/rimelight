@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { CheckboxProps } from "./checkbox"
-import { resolveTheme } from "../../utils/resolver"
-import checkboxThemeDefault, { createCheckboxTheme } from "./checkbox.theme"
-const checkboxTheme = resolveTheme(checkboxThemeDefault, createCheckboxTheme)
+import { checkboxTheme } from "./checkbox.theme"
 
 
 const checkbox = scv(checkboxTheme)

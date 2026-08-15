@@ -3,10 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { MarqueeProps } from "./marquee"
-import { resolveTheme } from "../../utils/resolver"
-import marqueeThemeDefault, { createMarqueeTheme } from "./marquee.theme"
+import { marqueeTheme } from "./marquee.theme"
 
-const marqueeTheme = resolveTheme(marqueeThemeDefault, createMarqueeTheme)
 const marquee = scv(marqueeTheme)
 
 const {

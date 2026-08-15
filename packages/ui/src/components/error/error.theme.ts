@@ -1,13 +1,10 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const createErrorTheme = () =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: ""
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createErrorTheme()
+export const errorTheme = defineTheme({
+  slots: ["root"],
+  base: {
+    root: ""
+  },
+  variants: {},
+  defaultVariants: {}
+})

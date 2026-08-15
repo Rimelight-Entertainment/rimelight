@@ -4,9 +4,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { ButtonProps } from "./button"
-import { resolveTheme } from "../../utils/resolver"
-import buttonThemeDefault, { createButtonTheme } from "./button.theme"
-const buttonTheme = resolveTheme(buttonThemeDefault, createButtonTheme)
+import { buttonTheme } from "./button.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 const attrs = useAttrs()
 const button = scv(buttonTheme)

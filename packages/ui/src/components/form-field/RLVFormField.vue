@@ -4,7 +4,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { FormFieldProps } from "./form-field"
-import formFieldTheme from "./form-field.theme"
+import { formFieldTheme } from "./form-field.theme"
 
 const formField = scv(formFieldTheme)
 

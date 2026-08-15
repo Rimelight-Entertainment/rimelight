@@ -3,7 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { ScrollToTopProps } from "./scroll-to-top"
-import scrollToTopTheme from "./scroll-to-top.theme"
+import { scrollToTopTheme } from "./scroll-to-top.theme"
 import { trackScroll, scrollToTop as scrollToTopFn } from "./scroll"
 import { ref, computed, onMounted, onUnmounted, watch, useAttrs } from "vue"
 

@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { ProgressProps } from "./progress"
-import { resolveTheme } from "../../utils/resolver"
-import progressThemeDefault, { createProgressTheme } from "./progress.theme"
-const progressTheme = resolveTheme(progressThemeDefault, createProgressTheme)
+import { progressTheme } from "./progress.theme"
 
 const progress = scv(progressTheme)
 

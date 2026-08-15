@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { BadgeProps } from "./badge"
-import { resolveTheme } from "../../utils/resolver"
-import badgeThemeDefault, { createBadgeTheme } from "./badge.theme"
-const badgeTheme = resolveTheme(badgeThemeDefault, createBadgeTheme)
+import { badgeTheme } from "./badge.theme"
 
 const badge = scv(badgeTheme)
 

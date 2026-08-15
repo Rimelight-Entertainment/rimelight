@@ -4,12 +4,12 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { TextareaProps } from "./textarea"
-import textareaThemeDefault from "./textarea.theme"
+import { textareaTheme } from "./textarea.theme"
 
 defineOptions({ name: "RLVTextarea" })
 
 const attrs = useAttrs()
-const textareaScv = scv(textareaThemeDefault)
+const textareaScv = scv(textareaTheme)
 
 const modelValue = defineModel<string>()
 

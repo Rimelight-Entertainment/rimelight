@@ -9,21 +9,11 @@ export const defineTheme = <
 ) => theme
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<object>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
 export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
   const global = uiConfig.themes?.[name]?.slots
   return global ? (prop ? { ...global, ...prop } : global) : (prop ?? EMPTY)
-}
-
-export function resolveTheme<T>(fallback: T, create?: (colors: readonly string[]) => T): T {
-  if (!uiConfig.colors || !create) return fallback
-  const cached = themeCreatorCache.get(create)
-  if (cached !== undefined) return cached
-  const result = create(uiConfig.colors)
-  themeCreatorCache.set(create, result)
-  return result
 }
 
 export function resolveClasses<T extends (...args: never[]) => Record<string, string>>(

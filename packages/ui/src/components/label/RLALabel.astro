@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { LabelProps } from "./label"
-import { resolveTheme } from "../../utils/resolver"
-import labelThemeDefault, { createLabelTheme } from "./label.theme"
-const labelTheme = resolveTheme(labelThemeDefault, createLabelTheme)
+import { labelTheme } from "./label.theme"
 
 
 const label = scv(labelTheme)

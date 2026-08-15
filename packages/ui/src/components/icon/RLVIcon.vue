@@ -5,12 +5,12 @@ import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import { resolveIcon } from "./resolver"
 import type { IconProps } from "./icon"
-import iconThemeDefault from "./icon.theme"
+import { iconTheme } from "./icon.theme"
 
 defineOptions({ name: "RLVIcon" })
 
 const attrs = useAttrs()
-const iconScv = scv(iconThemeDefault)
+const iconScv = scv(iconTheme)
 
 const props = withDefaults(defineProps<IconProps>(), {
   size: "md"

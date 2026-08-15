@@ -3,9 +3,7 @@ import { scv, cx } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { TimelineProps, TimelineItem } from "./timeline"
-import { resolveTheme } from "../../utils/resolver"
-import timelineThemeDefault, { createTimelineTheme } from "./timeline.theme"
-const timelineTheme = resolveTheme(timelineThemeDefault, createTimelineTheme)
+import { timelineTheme } from "./timeline.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 

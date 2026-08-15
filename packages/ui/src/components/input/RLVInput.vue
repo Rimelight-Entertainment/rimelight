@@ -4,7 +4,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { InputProps } from "./input"
-import inputTheme from "./input.theme"
+import { inputTheme } from "./input.theme"
 
 const input = scv(inputTheme)
 

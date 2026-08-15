@@ -4,7 +4,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { LinkProps } from "./link"
-import linkTheme from "./link.theme"
+import { linkTheme } from "./link.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 import { resolveLinkAttrs } from "./helpers"
 

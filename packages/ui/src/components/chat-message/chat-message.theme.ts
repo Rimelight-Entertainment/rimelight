@@ -1,13 +1,10 @@
 import { defineTheme } from "../../utils/resolver"
 
-export const createChatMessageTheme = () =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: ""
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createChatMessageTheme()
+export const chatMessageTheme = defineTheme({
+  slots: ["root"],
+  base: {
+    root: ""
+  },
+  variants: {},
+  defaultVariants: {}
+})

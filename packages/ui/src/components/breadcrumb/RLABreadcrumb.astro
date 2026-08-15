@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { BreadcrumbProps } from "./breadcrumb"
-import { resolveTheme } from "../../utils/resolver"
-import breadcrumbThemeDefault, { createBreadcrumbTheme } from "./breadcrumb.theme"
-const breadcrumbTheme = resolveTheme(breadcrumbThemeDefault, createBreadcrumbTheme)
+import { breadcrumbTheme } from "./breadcrumb.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 

@@ -4,9 +4,9 @@ import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import { resolveIcon } from "./resolver"
 import type { IconProps } from "./icon"
-import iconThemeDefault from "./icon.theme"
+import { iconTheme } from "./icon.theme"
 
-const iconScv = scv(iconThemeDefault)
+const iconScv = scv(iconTheme)
 
 const RLSIcon: Component<IconProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, ["name", "size", "ui", "class"])

@@ -3,9 +3,7 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { PaginationProps } from "./pagination"
-import { resolveTheme } from "../../utils/resolver"
-import paginationThemeDefault, { createPaginationTheme } from "./pagination.theme"
-const paginationTheme = resolveTheme(paginationThemeDefault, createPaginationTheme)
+import { paginationTheme } from "./pagination.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 

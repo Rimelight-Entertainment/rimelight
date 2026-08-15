@@ -3,10 +3,8 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { PopoverProps } from "./popover"
-import { resolveTheme } from "../../utils/resolver"
-import popoverThemeDefault, { createPopoverTheme } from "./popover.theme"
+import { popoverTheme } from "./popover.theme"
 
-const popoverTheme = resolveTheme(popoverThemeDefault, createPopoverTheme)
 const popover = scv(popoverTheme)
 
 const {

@@ -4,13 +4,13 @@ import { scv } from "css-variants"
 import { useUi } from "../../utils/resolver"
 import { resolveClasses } from "../../utils/resolver"
 import type { CardProps } from "./card"
-import cardThemeDefault from "./card.theme"
+import { cardTheme } from "./card.theme"
 
 defineOptions({ name: "RLVCard" })
 
 const attrs = useAttrs()
 const slots = useSlots()
-const cardScv = scv(cardThemeDefault)
+const cardScv = scv(cardTheme)
 
 const props = withDefaults(defineProps<CardProps>(), {
   overlay: false
