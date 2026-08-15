@@ -42,14 +42,10 @@ export interface RegisteredShortcut {
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
 
-const MODIFIERS: Record<string, "ctrl" | "meta" | "shift" | "alt"> = {
-  ctrl: "ctrl",
+const MODIFIER_MAP: Record<string, string> = {
   control: "ctrl",
-  meta: "meta",
   cmd: "meta",
   command: "meta",
-  shift: "shift",
-  alt: "alt",
   opt: "alt",
   option: "alt"
 }
@@ -90,7 +86,7 @@ export function formatShortcutKeys(keyStr: string): string[] {
   if (!res) {
     res = keyStr.split(isChained(keyStr) ? "-" : "_").map((p) => {
       const lower = p.toLowerCase()
-      return keySymbols[MODIFIERS[lower] ?? lower] ?? p.charAt(0).toUpperCase() + p.slice(1)
+      return keySymbols[MODIFIER_MAP[lower] ?? lower] ?? p.charAt(0).toUpperCase() + p.slice(1)
     })
     if (formatCache.size > 200) formatCache.clear()
     formatCache.set(keyStr, res)
@@ -152,7 +148,9 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
       const nonMods: string[] = []
 
       for (const p of rawParts) {
-        const mod = MODIFIERS[p]
+        const mod =
+          MODIFIER_MAP[p] ??
+          (p === "ctrl" || p === "meta" || p === "shift" || p === "alt" ? p : undefined)
         if (mod) mods.add(mod)
         else nonMods.push(p)
       }
@@ -246,7 +244,7 @@ export function defineShortcuts(
       if (s.altKey ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
       if (
         s.shiftKey !== e.shiftKey &&
-        (s.shiftKey || (s.key.length === 1 && s.key >= "a" && s.key <= "z") || SHIFTABLE.has(s.key))
+        (s.shiftKey || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
       )
         continue
       if (isShortcutEnabled(s, inputState)) return trigger(s)

@@ -11,13 +11,12 @@ import {
   getAllColorNames,
   semanticTokens,
   COLOR_SHADES,
-  type ColorShades
+  type ColorShades,
+  type ColorConfigValue,
+  type UIConfig
 } from "../config"
 
-type ColorModeShades = { light?: ColorShades; dark?: ColorShades }
-export type ColorConfigValue = ColorShades | ColorModeShades
-
-const isMode = (v: ColorConfigValue): v is ColorModeShades =>
+const isMode = (v: ColorConfigValue): v is { light?: ColorShades; dark?: ColorShades } =>
   typeof v === "object" && v !== null && ("light" in v || "dark" in v)
 
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
@@ -80,6 +79,48 @@ const formatColorLines = (
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
 
+const STATIC_THEME_COLORS = {
+  ...Object.fromEntries(
+    ["background", "foreground", "border", "input", "outline", "ring"].map((k) => [
+      k,
+      `var(--${k})`
+    ])
+  ),
+  ...Object.fromEntries(
+    ["card", "popover", "muted", "accent"].map((k) => [
+      k,
+      { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }
+    ])
+  ),
+  sidebar: {
+    DEFAULT: "var(--sidebar)",
+    foreground: "var(--sidebar-foreground)",
+    primary: {
+      DEFAULT: "var(--sidebar-primary)",
+      foreground: "var(--sidebar-primary-foreground)"
+    },
+    accent: {
+      DEFAULT: "var(--sidebar-accent)",
+      foreground: "var(--sidebar-accent-foreground)"
+    },
+    border: "var(--sidebar-border)",
+    ring: "var(--sidebar-ring)"
+  },
+  chart: Object.fromEntries([1, 2, 3, 4, 5].map((i) => [i, `var(--chart-${i})`])),
+  ...Object.fromEntries(
+    [
+      "hover",
+      "surface",
+      "muted-strong",
+      "foreground-secondary",
+      "foreground-tertiary",
+      "placeholder",
+      "input-border",
+      "accent-subtle"
+    ].map((k) => [k, `var(--color-${k})`])
+  )
+}
+
 const PROP_MAP: Record<string, [css: string, prefix: string]> = {
   text: ["color", "text"],
   bg: ["background-color", "background"],
@@ -138,12 +179,7 @@ body { background-color: var(--background); color: var(--foreground); font-famil
 }
 `
 
-export interface RimelightPresetOptions {
-  colors?: Record<string, ColorConfigValue>
-  autogenerateColorModes?: boolean
-  icons?: Record<string, unknown>
-  presets?: { wind?: boolean; typography?: boolean; icons?: boolean }
-}
+export type RimelightPresetOptions = UIConfig
 
 export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const userColors = options?.colors ?? {}
@@ -271,45 +307,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         "6xl": "8rem"
       },
       colors: {
-        ...Object.fromEntries(
-          ["background", "foreground", "border", "input", "outline", "ring"].map((k) => [
-            k,
-            `var(--${k})`
-          ])
-        ),
-        ...Object.fromEntries(
-          ["card", "popover", "muted", "accent"].map((k) => [
-            k,
-            { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }
-          ])
-        ),
-        sidebar: {
-          DEFAULT: "var(--sidebar)",
-          foreground: "var(--sidebar-foreground)",
-          primary: {
-            DEFAULT: "var(--sidebar-primary)",
-            foreground: "var(--sidebar-primary-foreground)"
-          },
-          accent: {
-            DEFAULT: "var(--sidebar-accent)",
-            foreground: "var(--sidebar-accent-foreground)"
-          },
-          border: "var(--sidebar-border)",
-          ring: "var(--sidebar-ring)"
-        },
-        chart: Object.fromEntries([1, 2, 3, 4, 5].map((i) => [i, `var(--chart-${i})`])),
-        ...Object.fromEntries(
-          [
-            "hover",
-            "surface",
-            "muted-strong",
-            "foreground-secondary",
-            "foreground-tertiary",
-            "placeholder",
-            "input-border",
-            "accent-subtle"
-          ].map((k) => [k, `var(--color-${k})`])
-        ),
+        ...STATIC_THEME_COLORS,
         ...Object.fromEntries(allColors.map((c) => [c, createScale(c)]))
       },
       radius: {

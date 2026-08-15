@@ -56,14 +56,7 @@ export interface UIConfig {
    *   { light: { "500": "oklch(0.53 0.21 260)" }, dark: { "500": "oklch(0.623 0.214 259.8)" } }
    *   ```
    */
-  colors?: Record<
-    string,
-    | Record<string, string>
-    | {
-        light?: Record<string, string>
-        dark?: Record<string, string>
-      }
-  >
+  colors?: Record<string, ColorConfigValue>
   autogenerateColorModes?: boolean
   /**
    * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
@@ -86,6 +79,8 @@ export interface UIConfig {
 export type Theme = "light" | "dark"
 
 export type ColorShades = Record<string, string>
+
+export type ColorConfigValue = ColorShades | { light?: ColorShades; dark?: ColorShades }
 
 export const COLOR_SHADES = [
   "50",
