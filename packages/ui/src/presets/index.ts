@@ -35,9 +35,7 @@ function resolveColorModes(
   const mL = mode ? (entry.light ?? {}) : {}
   const mD = mode ? (entry.dark ?? {}) : {}
   const flat = mode ? {} : entry
-  const shades = mode
-    ? Object.keys(mL).concat(Object.keys(mD).filter((k) => !(k in mL)))
-    : Object.keys(entry)
+  const shades = mode ? new Set([...Object.keys(mL), ...Object.keys(mD)]) : Object.keys(entry)
   const light: ColorShades = {}
   const dark: ColorShades = {}
 

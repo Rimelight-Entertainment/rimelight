@@ -30,16 +30,14 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
 
   let key = ""
   if (variants) {
-    const keys = Object.keys(variants)
-    const len = keys.length
-    if (len === 1) {
-      key = `${keys[0]}:${String(variants[keys[0]!])}`
-    } else if (len > 1) {
-      keys.sort()
-      for (let i = 0; i < len; i++) {
-        const k = keys[i]!
-        key += (i ? ";" : "") + k + ":" + String(variants[k])
-      }
+    const entries = Object.entries(variants)
+    if (entries.length === 1) {
+      key = `${entries[0]![0]}:${String(entries[0]![1])}`
+    } else if (entries.length > 1) {
+      key = entries
+        .toSorted(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => `${k}:${String(v)}`)
+        .join(";")
     }
   }
 

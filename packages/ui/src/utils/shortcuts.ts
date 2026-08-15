@@ -43,12 +43,8 @@ export interface RegisteredShortcut {
 const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
 
 const MODIFIERS: Record<string, "ctrl" | "meta" | "shift" | "alt"> = {
-  ctrl: "ctrl",
   control: "ctrl",
-  meta: "meta",
   command: "meta",
-  shift: "shift",
-  alt: "alt",
   option: "alt"
 }
 
@@ -80,13 +76,6 @@ const keySymbols: Record<string, string> = {
   arrowright: "→"
 }
 
-const SPECIAL_CODES: Record<string, string> = {
-  arrowup: "ArrowUp",
-  arrowdown: "ArrowDown",
-  arrowleft: "ArrowLeft",
-  arrowright: "ArrowRight"
-}
-
 const isChained = (k: string) => k.includes("-") && k !== "-" && !k.includes("_")
 
 const formatCache = new Map<string, string[]>()
@@ -110,8 +99,10 @@ const toCode = (k: string) => {
   if (k.length === 1) {
     return /[a-z]/i.test(k) ? `Key${k.toUpperCase()}` : /\d/.test(k) ? `Digit${k}` : k
   }
+  const lower = k.toLowerCase()
+  if (lower.startsWith("arrow")) return `Arrow${k.slice(5).charAt(0).toUpperCase() + k.slice(6)}`
   if (/^f\d+$/i.test(k)) return k.toUpperCase()
-  return SPECIAL_CODES[k.toLowerCase()] || k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
+  return k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
 }
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
