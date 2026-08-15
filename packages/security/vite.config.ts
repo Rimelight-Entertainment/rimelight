@@ -4,8 +4,8 @@ export default defineConfig({
   run: {
     tasks: {
       check: {
-        command: "astro check",
-        input: [{ auto: true }, "!.wrangler/**", "!.astro/**"]
+        command: "pnpm audit --audit-level=moderate && vp check --fix && astro check",
+        input: [{ auto: true }, "!.astro/**"]
       }
     }
   }
