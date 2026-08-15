@@ -1,122 +1,55 @@
-import { scv, cx, type SlotClassVariantDefinition, type SlotClassVariantRecord } from "css-variants"
+import { scv, cx } from "css-variants"
 import { colorNames, uiConfig, type Override, type ThemeColor } from "../config"
 
 const colors = uiConfig.colors ?? colorNames
+const cache = new WeakMap<object, Map<string, Record<string, string>>>()
+const create = (fn: Function, arg: unknown): any => fn(arg)
 
-const autoColorVariants: Record<string, { root: string }> = {
-  neutral: { root: "" }
-}
-for (const c of colors) {
-  autoColorVariants[c] = { root: `rl-color-${c}` }
-}
-
-const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const EMPTY: Record<string, Override> = Object.freeze({})
-
-export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
-  if (!name) return prop ?? EMPTY
+const getUi = (name: string, prop?: Record<string, Override>) => {
   const global = uiConfig.themes?.[name]?.slots
-  return global ? (prop ? { ...global, ...prop } : global) : (prop ?? EMPTY)
-}
-
-export function resolveClasses<T extends (...args: any[]) => Record<string, string>>(
-  themeFn: T,
-  variants?: Parameters<T>[0] | Record<string, unknown>,
-  ui: Record<string, Override> = EMPTY,
-  rootClass?: string
-): Record<string, string> {
-  if (uiConfig.unstyled) return rootClass ? { root: rootClass } : {}
-
-  let map = classCache.get(themeFn)
-  if (!map) classCache.set(themeFn, (map = new Map()))
-
-  let key = ""
-  if (variants && typeof variants === "object") {
-    for (const k in variants) {
-      key += `${k}:${String((variants as Record<string, unknown>)[k])};`
-    }
-  }
-
-  let cached = map.get(key)
-  if (!cached) {
-    cached = themeFn(variants)
-    map.set(key, cached)
-  }
-
-  let hasUi = false
-  if (ui !== EMPTY) {
-    for (const _ in ui) {
-      hasUi = true
-      break
-    }
-  }
-
-  if (!rootClass && !hasUi) return cached
-
-  const res: Record<string, string> = { ...cached }
-  if (hasUi) {
-    for (const slot in ui) {
-      const o = ui[slot]
-      if (o) res[slot] = typeof o === "function" ? cx(o(res[slot] ?? "")) : cx(res[slot], o)
-    }
-  }
-  if (rootClass) res.root = cx(res.root, rootClass)
-  return res
-}
-
-export type ThemeVariants<S extends string> = Record<
-  string,
-  "auto" | Record<string, Partial<Record<S, string>>>
->
-
-export type ThemeDefaultVariants<V> = {
-  [K in keyof V]?: V[K] extends "auto" ? ThemeColor : keyof V[K] | boolean | string
-}
-
-export interface CustomThemeDefinition<S extends string, V extends ThemeVariants<S>> {
-  slots: readonly S[] | S[]
-  base?: Partial<Record<S, string | string[]>>
-  variants?: V
-  compoundVariants?: Array<Record<string, unknown> & { classNames?: Partial<Record<S, string>> }>
-  defaultVariants?: ThemeDefaultVariants<V>
+  return global ? (prop ? { ...global, ...prop } : global) : prop
 }
 
 export const defineTheme = <
   const S extends string,
-  const V extends ThemeVariants<S> = ThemeVariants<S>
+  const V extends Record<string, "auto" | Record<string, Partial<Record<S, string>>>> = Record<
+    string,
+    "auto" | Record<string, Partial<Record<S, string>>>
+  >
 >(
   name: string,
-  theme: CustomThemeDefinition<S, V>
+  theme: {
+    slots: readonly S[]
+    base?: Partial<Record<S, string | string[]>>
+    variants?: V
+    compoundVariants?: Array<Record<string, unknown> & { classNames?: Partial<Record<S, string>> }>
+    defaultVariants?: {
+      [K in keyof V]?: V[K] extends "auto" ? ThemeColor : keyof V[K] | boolean | string
+    }
+  }
 ) => {
-  const normalizedVariants: Record<string, unknown> = {}
+  const variants: Record<string, unknown> = {}
   if (theme.variants) {
-    for (const key of Object.keys(theme.variants)) {
-      const val = theme.variants[key]
+    for (const k in theme.variants) {
+      const val = theme.variants[k]
       if (val === "auto") {
         const slot = (theme.slots as readonly string[]).includes("root")
           ? "root"
           : (theme.slots[0] ?? "root")
-        normalizedVariants[key] =
-          slot === "root"
-            ? autoColorVariants
-            : {
-                neutral: { [slot]: "" },
-                ...Object.fromEntries(colors.map((c) => [c, { [slot]: `rl-color-${c}` }]))
-              }
-      } else if (val && typeof val === "object") {
-        normalizedVariants[key] = val
+        const auto: Record<string, Record<string, string>> = { neutral: { [slot]: "" } }
+        for (const c of colors) auto[c] = { [slot]: `rl-color-${c}` }
+        variants[k] = auto
+      } else if (val) {
+        variants[k] = val
       }
     }
   }
 
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-  const themeFn = scv({
-    slots: theme.slots,
-    base: theme.base,
-    variants: normalizedVariants,
-    compoundVariants: theme.compoundVariants,
-    defaultVariants: theme.defaultVariants
-  } as unknown as SlotClassVariantDefinition<S, SlotClassVariantRecord<S>>)
+  const config: Record<string, unknown> = { slots: [...theme.slots], variants }
+  if (theme.base) config.base = theme.base
+  if (theme.compoundVariants) config.compoundVariants = theme.compoundVariants
+  if (theme.defaultVariants) config.defaultVariants = theme.defaultVariants
+  const themeFn = create(scv, config)
 
   return (
     props?: Record<string, unknown> & {
@@ -125,16 +58,41 @@ export const defineTheme = <
       className?: string
     }
   ): Record<S, string> => {
-    if (!props) {
-      return resolveClasses(themeFn, undefined, useUi(name), undefined)
-    }
-    const { ui, class: rootClass, className, ...variants } = props
-    const cls =
-      typeof rootClass === "string"
-        ? rootClass
-        : typeof className === "string"
-          ? className
+    const rootClass =
+      typeof props?.class === "string"
+        ? props.class
+        : typeof props?.className === "string"
+          ? props.className
           : undefined
-    return resolveClasses(themeFn, variants, useUi(name, ui), cls)
+
+    if (uiConfig.unstyled) return create(() => (rootClass ? { root: rootClass } : {}), null)
+
+    let map = cache.get(themeFn)
+    if (!map) cache.set(themeFn, (map = new Map()))
+
+    const { ui, class: _, className: __, ...v } = props ?? {}
+    let key = ""
+    for (const k in v) key += `${k}:${String(v[k])};`
+
+    const res =
+      map.get(key) ??
+      create(() => {
+        const r = themeFn(v)
+        map?.set(key, r)
+        return r
+      }, null)
+
+    const mergedUi = getUi(name, ui)
+    if (!rootClass && !mergedUi) return res
+
+    const out: Record<string, string> = { ...res }
+    if (mergedUi) {
+      for (const s in mergedUi) {
+        const o = mergedUi[s]
+        if (o) out[s] = typeof o === "function" ? cx(o(out[s] ?? "")) : cx(out[s], o)
+      }
+    }
+    if (rootClass) out.root = cx(out.root, rootClass)
+    return out
   }
 }
