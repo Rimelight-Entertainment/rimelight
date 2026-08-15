@@ -6,8 +6,6 @@ export interface ComponentTheme {
   defaultVariants?: Record<string, unknown>
 }
 
-export function defineTheme<const T extends ComponentTheme>(
+export const defineTheme = <const T extends ComponentTheme>(
   theme: T
-): T & { slots: T["slots"][number][] } {
-  return { ...theme, slots: [...theme.slots] }
-}
+): T & { slots: T["slots"][number][] } => ({ ...theme, slots: [...theme.slots] })
