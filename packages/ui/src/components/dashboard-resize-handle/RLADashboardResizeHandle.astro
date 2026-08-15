@@ -1,5 +1,4 @@
 ---
-import type { HTMLTag } from "astro/types"
 import type { DashboardResizeHandleProps } from "./dashboard-resize-handle"
 import { dashboardResizeHandleTheme } from "./dashboard-resize-handle.theme"
 
@@ -14,10 +13,9 @@ const {
 const classes = dashboardResizeHandleTheme(Astro.props);
 ---
 <Tag
-  role="separator"
   data-slot="root"
   class={classes.root}
-  {...rest}
+  {...({ role: "separator", ...rest } as any)}
 >
   <slot />
 </Tag>

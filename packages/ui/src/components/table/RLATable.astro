@@ -30,6 +30,7 @@ const {
   showColumnsToggle = false,
   getSubRows,
   getRowId,
+  class: className,
   ...rest
 } = Astro.props as TableProps
 
@@ -259,7 +260,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
                   scope="col"
                   class:list={[
                     classes.th,
-                    isPinned && (classes.pinned as any)?.th,
+                    isPinned && (classes as any).pinned?.th,
                     metaClass
                   ]}
                   style={col.size ? `width: ${typeof col.size === 'number' ? `${col.size}px` : col.size}; ${styleObj || ''}` : styleObj}

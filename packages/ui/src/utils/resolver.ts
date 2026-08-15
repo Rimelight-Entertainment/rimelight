@@ -51,13 +51,7 @@ export const defineTheme = <
   if (theme.defaultVariants) config.defaultVariants = theme.defaultVariants
   const themeFn = create(scv, config)
 
-  return (
-    props?: Record<string, unknown> & {
-      ui?: Record<string, Override>
-      class?: string
-      className?: string
-    }
-  ): Record<S, string> => {
+  return (props?: Record<string, any>): Record<S, string> => {
     const rootClass =
       typeof props?.class === "string"
         ? props.class

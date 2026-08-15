@@ -18,8 +18,7 @@ const {
   ...rest
 } = Astro.props as InputProps
 
-const hasLeading = !!leadingIcon || Astro.slots.has("leading")
-const hasTrailing = !!trailingIcon || Astro.slots.has("trailing")
+
 
 const classes = inputTheme({
   ...Astro.props,

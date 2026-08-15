@@ -45,7 +45,7 @@ const classes = separatorTheme(Astro.props)
         <slot name="icon">
           {icon && (
             <span class={classes.icon} data-slot="icon">
-              <span class={cx(icon)} aria-hidden="true" />
+              <span class={icon as string} aria-hidden="true" />
             </span>
           )}
         </slot>
