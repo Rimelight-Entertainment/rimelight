@@ -81,6 +81,4 @@ export const DEFAULT_ICONS = {
   )
 } as const
 
-export type DefaultIconName = keyof typeof DEFAULT_ICONS
-
-export type RimelightIcons = Partial<Record<DefaultIconName | (string & {}), string>>
+export type RimelightIcons = Partial<Record<keyof typeof DEFAULT_ICONS | (string & {}), string>>
