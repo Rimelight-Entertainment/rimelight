@@ -173,28 +173,27 @@ export const pageActions = {
           offset
         })
 
-        return results.map(
-          (row): Page =>
-            Object.assign(
-              {
-                id: row.id,
-                slug: row.slug,
-                type: row.type,
-                blocks: row.content.blocks,
-                properties: row.content.properties,
-                title: row.title
-              },
-              row.description ? { description: row.description } : {},
-              row.tags ? { tags: row.tags } : {},
-              row.authorIds ? { authorsIds: row.authorIds } : {},
-              row.postedAt ? { postedAt: row.postedAt } : {},
-              {
-                links: [],
-                images: [],
-                createdAt: row.createdAt,
-                updatedAt: row.updatedAt ?? row.createdAt
-              }
-            )
+        return results.map((row): Page =>
+          Object.assign(
+            {
+              id: row.id,
+              slug: row.slug,
+              type: row.type,
+              blocks: row.content.blocks,
+              properties: row.content.properties,
+              title: row.title
+            },
+            row.description ? { description: row.description } : {},
+            row.tags ? { tags: row.tags } : {},
+            row.authorIds ? { authorsIds: row.authorIds } : {},
+            row.postedAt ? { postedAt: row.postedAt } : {},
+            {
+              links: [],
+              images: [],
+              createdAt: row.createdAt,
+              updatedAt: row.updatedAt ?? row.createdAt
+            }
+          )
         )
       } catch (error) {
         console.error("Pages API Error:", error)

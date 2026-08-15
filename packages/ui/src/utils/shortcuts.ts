@@ -100,22 +100,16 @@ export function formatShortcutKeys(keyStr: string): string[] {
 
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
-const toCode = (k: string) => {
-  if (k.length === 1) {
-    const code = k.charCodeAt(0)
-    return (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
-      ? `Key${k.toUpperCase()}`
-      : code >= 48 && code <= 57
-        ? `Digit${k}`
-        : k
-  }
-  const lower = k.toLowerCase()
-  return lower.startsWith("arrow")
-    ? `Arrow${k.slice(5).charAt(0).toUpperCase() + k.slice(6)}`
-    : /^f\d+$/i.test(k)
-      ? k.toUpperCase()
-      : k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
-}
+const toCode = (k: string) =>
+  /^[a-z]$/i.test(k)
+    ? `Key${k.toUpperCase()}`
+    : /^\d$/.test(k)
+      ? `Digit${k}`
+      : k.toLowerCase().startsWith("arrow")
+        ? `Arrow${k.slice(5).charAt(0).toUpperCase() + k.slice(6)}`
+        : /^f\d+$/i.test(k)
+          ? k.toUpperCase()
+          : k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 function isUsingInput(el: Element | null): boolean | string {
@@ -222,10 +216,8 @@ export function defineShortcuts(
   }
 
   if (regIds) {
-    activeShortcutsStore.set([
-      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
-      ...registered
-    ])
+    removeRegistered()
+    activeShortcutsStore.set([...activeShortcutsStore.get(), ...registered])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {

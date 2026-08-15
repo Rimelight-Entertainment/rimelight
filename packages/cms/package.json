@@ -49,8 +49,8 @@
     "@astrojs/check": "0.9.10",
     "@types/node": "26.2.0",
     "@types/sortablejs": "1.15.9",
-    "astro": "7.2.0",
-    "better-auth": "1.6.26",
+    "astro": "7.2.1",
+    "better-auth": "1.6.27",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
     "vitest": "4.1.10"

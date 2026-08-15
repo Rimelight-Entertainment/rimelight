@@ -32,22 +32,31 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
 
   let key = ""
   if (variants) {
-    const keys = Object.keys(variants).toSorted()
-    for (let i = 0; i < keys.length; i++) {
-      const k = keys[i]!
-      key += `${i ? ";" : ""}${k}:${String((variants as Record<string, unknown>)[k])}`
+    const v = variants as Record<string, unknown>
+    for (const k in v) {
+      key += `${k}:${String(v[k])};`
     }
   }
 
   let cached = map.get(key)
   if (!cached) map.set(key, (cached = themeFn(variants)))
 
-  if (!rootClass && (ui === EMPTY || !Object.keys(ui).length)) return cached
+  let hasUi = false
+  if (ui !== EMPTY) {
+    for (const _ in ui) {
+      hasUi = true
+      break
+    }
+  }
+
+  if (!rootClass && !hasUi) return cached
 
   const res: Record<string, string> = { ...cached }
-  for (const slot in ui) {
-    const o = ui[slot]
-    if (o) res[slot] = typeof o === "function" ? cx(o(res[slot] ?? "")) : cx(res[slot], o)
+  if (hasUi) {
+    for (const slot in ui) {
+      const o = ui[slot]
+      if (o) res[slot] = typeof o === "function" ? cx(o(res[slot] ?? "")) : cx(res[slot], o)
+    }
   }
   if (rootClass) res.root = cx(res.root, rootClass)
   return res

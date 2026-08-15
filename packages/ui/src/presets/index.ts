@@ -35,16 +35,17 @@ function resolveColorModes(
   autogenerate = true
 ): { light: Record<string, string>; dark: Record<string, string> } {
   const mode = isMode(entry)
-  const mL = mode ? (entry.light ?? {}) : {}
-  const mD = mode ? (entry.dark ?? {}) : {}
-  const flat = mode ? {} : entry
+  const mL = mode ? entry.light : undefined
+  const mD = mode ? entry.dark : undefined
   const light: ColorShades = {}
   const dark: ColorShades = {}
-  const keys = mode ? new Set([...Object.keys(mL), ...Object.keys(mD)]) : Object.keys(entry)
+  const keys = mode
+    ? new Set([...Object.keys(mL ?? {}), ...Object.keys(mD ?? {})])
+    : Object.keys(entry)
   for (const s of keys) {
-    const base = flat[s] ?? mD[s] ?? mL[s] ?? ""
-    light[s] = mL[s] ?? (autogenerate && base ? generateShade(s, base, "white") : base)
-    dark[s] = mD[s] ?? (autogenerate && base ? generateShade(s, base, "black") : base)
+    const base = (!mode ? entry[s] : undefined) ?? mD?.[s] ?? mL?.[s] ?? ""
+    light[s] = mL?.[s] ?? (autogenerate && base ? generateShade(s, base, "white") : base)
+    dark[s] = mD?.[s] ?? (autogenerate && base ? generateShade(s, base, "black") : base)
   }
   return { light, dark }
 }
@@ -207,7 +208,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
     },
     rules: [
       [
-        /^rl-color-([a-z][a-z0-9-]*)$/,
+        /^rl-color-([\w-]+)$/,
         ([, c]) => ({
           "--rl-bg": `var(--color-${c}-500)`,
           "--rl-bg-hover": `var(--color-${c}-600)`,

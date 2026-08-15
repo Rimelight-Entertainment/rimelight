@@ -41,7 +41,7 @@
     "@astrojs/solid-js": "7.0.2",
     "@astrojs/ts-plugin": "1.10.10",
     "@astrojs/vue": "7.0.2",
-    "astro": "7.2.0",
+    "astro": "7.2.1",
     "solid-js": "1.9.14",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
