@@ -12,7 +12,10 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
   const userContent = unocss.content ?? {}
   const pipeline = userContent.pipeline
   const userInc =
-    typeof pipeline === "object" && pipeline !== null && Array.isArray(pipeline.include)
+    typeof pipeline === "object" &&
+    pipeline &&
+    "include" in pipeline &&
+    Array.isArray(pipeline.include)
       ? pipeline.include
       : []
   const include = [EXT_RE, UI_PACKAGE_RE, ...userInc]

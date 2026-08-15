@@ -2,7 +2,7 @@ import { cx } from "css-variants"
 import { uiConfig, type Override } from "../config"
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<object>()
+const themeCreatorCache = new WeakMap<Function>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
 export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
@@ -12,7 +12,7 @@ export const useUi = (name: string, prop?: Record<string, Override>): Record<str
 
 export function resolveTheme<T>(fallback: T, create?: (colors: readonly string[]) => T): T {
   if (!uiConfig.colors || !create) return fallback
-  let c = themeCreatorCache.get(create)
+  let c: T | undefined = themeCreatorCache.get(create)
   if (!c) themeCreatorCache.set(create, (c = create(uiConfig.colors)))
   return c
 }
@@ -30,23 +30,17 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
 
   let key = ""
   if (variants) {
-    const entries = Object.entries(variants)
-    key =
-      entries.length <= 1
-        ? entries[0]
-          ? `${entries[0][0]}:${String(entries[0][1])}`
-          : ""
-        : entries
-            .toSorted(([a], [b]) => (a < b ? -1 : 1))
-            .map(([k, v]) => `${k}:${String(v)}`)
-            .join(";")
+    const keys = Object.keys(variants).toSorted()
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i]!
+      key += `${i ? ";" : ""}${k}:${String((variants as Record<string, unknown>)[k])}`
+    }
   }
 
   let cached = map.get(key)
   if (!cached) map.set(key, (cached = themeFn(variants)))
 
-  const hasUiOverrides = ui !== EMPTY && Object.keys(ui).length > 0
-  if (!hasUiOverrides && !rootClass) return cached
+  if ((ui === EMPTY || !Object.keys(ui).length) && !rootClass) return cached
 
   const res: Record<string, string> = { ...cached }
   for (const slot in ui) {

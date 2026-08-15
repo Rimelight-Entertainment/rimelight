@@ -29,17 +29,16 @@ function generateShade(shade: string, value: string, target: "white" | "black"):
 
 function resolveColorModes(
   entry: ColorConfigValue,
-  autogenerate?: boolean
+  autogenerate = true
 ): { light: Record<string, string>; dark: Record<string, string> } {
   const mode = isMode(entry)
   const mL = mode ? (entry.light ?? {}) : {}
   const mD = mode ? (entry.dark ?? {}) : {}
   const flat = mode ? {} : entry
-  const shades = mode ? new Set([...Object.keys(mL), ...Object.keys(mD)]) : Object.keys(entry)
   const light: ColorShades = {}
   const dark: ColorShades = {}
-
-  for (const s of shades) {
+  const keys = mode ? new Set([...Object.keys(mL), ...Object.keys(mD)]) : Object.keys(entry)
+  for (const s of keys) {
     const base = flat[s] ?? mD[s] ?? mL[s] ?? ""
     light[s] = mL[s] ?? (autogenerate && base ? generateShade(s, base, "white") : base)
     dark[s] = mD[s] ?? (autogenerate && base ? generateShade(s, base, "black") : base)
@@ -98,16 +97,10 @@ const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
 }
 
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
-  .flatMap(([n, [t, b, bg]]) => {
-    const neutralB = `var(--color-neutral-${b})`
-    return [
-      `  --text-color-${n}: var(--color-neutral-${t});`,
-      `  --background-color-${n}: ${bg ?? neutralB};`,
-      `  --border-color-${n}: ${neutralB};`,
-      `  --ring-color-${n}: ${neutralB};`,
-      `  --divide-color-${n}: ${neutralB};`
-    ]
-  })
+  .map(
+    ([n, [t, b, bg]]) =>
+      `  --text-color-${n}: var(--color-neutral-${t});\n  --background-color-${n}: ${bg ?? `var(--color-neutral-${b})`};\n  --border-color-${n}: var(--color-neutral-${b});\n  --ring-color-${n}: var(--color-neutral-${b});\n  --divide-color-${n}: var(--color-neutral-${b});`
+  )
   .join("\n")
 
 const STATIC_PREFLIGHT_SUFFIX = `
@@ -173,27 +166,29 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
 
   const preflightCss = `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
 
-  const presets: Preset[] = []
-  if (options?.presets?.wind !== false) presets.push(presetWind4())
-  if (options?.presets?.typography !== false) {
-    presets.push(
-      presetTypography({
-        cssExtend: {
-          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-            "font-family": "var(--font-sans), system-ui, sans-serif"
-          },
-          "pre,code": { "font-family": "var(--font-mono), monospace" }
-        }
-      })
-    )
-  }
-  if (options?.presets?.icons !== false) {
-    presets.push(
-      presetIcons({
-        extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-      })
-    )
-  }
+  const optPresets = options?.presets
+  const presets: Preset[] = [
+    ...(optPresets?.wind !== false ? [presetWind4()] : []),
+    ...(optPresets?.typography !== false
+      ? [
+          presetTypography({
+            cssExtend: {
+              "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+                "font-family": "var(--font-sans), system-ui, sans-serif"
+              },
+              "pre,code": { "font-family": "var(--font-mono), monospace" }
+            }
+          })
+        ]
+      : []),
+    ...(optPresets?.icons !== false
+      ? [
+          presetIcons({
+            extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+          })
+        ]
+      : [])
+  ]
 
   return {
     name: "rimelight-ui",
@@ -272,16 +267,18 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         "6xl": "8rem"
       },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        card: { DEFAULT: "var(--card)", foreground: "var(--card-foreground)" },
-        popover: { DEFAULT: "var(--popover)", foreground: "var(--popover-foreground)" },
-        muted: { DEFAULT: "var(--muted)", foreground: "var(--muted-foreground)" },
-        accent: { DEFAULT: "var(--accent)", foreground: "var(--accent-foreground)" },
-        border: "var(--border)",
-        input: "var(--input)",
-        outline: "var(--outline)",
-        ring: "var(--ring)",
+        ...Object.fromEntries(
+          ["background", "foreground", "border", "input", "outline", "ring"].map((k) => [
+            k,
+            `var(--${k})`
+          ])
+        ),
+        ...Object.fromEntries(
+          ["card", "popover", "muted", "accent"].map((k) => [
+            k,
+            { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }
+          ])
+        ),
         sidebar: {
           DEFAULT: "var(--sidebar)",
           foreground: "var(--sidebar-foreground)",

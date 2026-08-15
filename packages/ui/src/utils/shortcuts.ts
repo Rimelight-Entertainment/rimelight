@@ -90,8 +90,7 @@ export function formatShortcutKeys(keyStr: string): string[] {
   if (!res) {
     res = keyStr.split(isChained(keyStr) ? "-" : "_").map((p) => {
       const lower = p.toLowerCase()
-      const norm = MODIFIERS[lower] ?? lower
-      return keySymbols[norm] ?? p.charAt(0).toUpperCase() + p.slice(1)
+      return keySymbols[MODIFIERS[lower] ?? lower] ?? p.charAt(0).toUpperCase() + p.slice(1)
     })
     if (formatCache.size > 200) formatCache.clear()
     formatCache.set(keyStr, res)
@@ -102,21 +101,22 @@ export function formatShortcutKeys(keyStr: string): string[] {
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
 const toCode = (k: string) => {
-  if (k.length === 1) {
+  if (k.length === 1)
     return /[a-z]/i.test(k) ? `Key${k.toUpperCase()}` : /\d/.test(k) ? `Digit${k}` : k
-  }
   const lower = k.toLowerCase()
-  if (lower.startsWith("arrow")) return `Arrow${k.slice(5).charAt(0).toUpperCase() + k.slice(6)}`
-  if (/^f\d+$/i.test(k)) return k.toUpperCase()
-  return k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
+  return lower.startsWith("arrow")
+    ? `Arrow${k.slice(5).charAt(0).toUpperCase() + k.slice(6)}`
+    : /^f\d+$/i.test(k)
+      ? k.toUpperCase()
+      : k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
 }
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 function isUsingInput(el: Element | null): boolean | string {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
-  if (!el) return false
-  const isEditable = el instanceof HTMLElement && el.isContentEditable
-  return INPUT_TAGS.has(el.nodeName) || isEditable ? el.getAttribute("name") || true : false
+  return el && (INPUT_TAGS.has(el.nodeName) || (el instanceof HTMLElement && el.isContentEditable))
+    ? el.getAttribute("name") || true
+    : false
 }
 
 const isShortcutEnabled = (s: Shortcut, inputState: boolean | string): boolean =>
@@ -220,8 +220,10 @@ export function defineShortcuts(
   }
 
   if (regIds) {
-    const remaining = activeShortcutsStore.get().filter((i) => !regIds.has(i.id))
-    activeShortcutsStore.set([...remaining, ...registered])
+    activeShortcutsStore.set([
+      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
+      ...registered
+    ])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -241,27 +243,19 @@ export function defineShortcuts(
     if (inputs.length >= 2 && chained.size > 0) {
       for (let len = Math.min(inputs.length, maxChain); len >= 2; len--) {
         const match = chained.get(inputs.slice(-len).join("-"))
-        if (match && isShortcutEnabled(match, inputState)) {
-          trigger(match)
-          return
-        }
+        if (match && isShortcutEnabled(match, inputState)) return trigger(match)
       }
     }
 
     for (const s of standard) {
       if (e.ctrlKey !== s.ctrlKey || e.metaKey !== s.metaKey || e.altKey !== s.altKey) continue
       if (s.altKey ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
-      if (s.shiftKey && !e.shiftKey) continue
       if (
-        !s.shiftKey &&
-        e.shiftKey &&
-        ((s.key.length === 1 && s.key >= "a" && s.key <= "z") || SHIFTABLE.has(s.key))
+        s.shiftKey !== e.shiftKey &&
+        (s.shiftKey || (s.key.length === 1 && s.key >= "a" && s.key <= "z") || SHIFTABLE.has(s.key))
       )
         continue
-      if (isShortcutEnabled(s, inputState)) {
-        trigger(s)
-        return
-      }
+      if (isShortcutEnabled(s, inputState)) return trigger(s)
     }
 
     timer = setTimeout(() => {
