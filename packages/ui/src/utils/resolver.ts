@@ -31,14 +31,15 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   let key = ""
   if (variants) {
     const entries = Object.entries(variants)
-    if (entries.length === 1) {
-      key = `${entries[0]![0]}:${String(entries[0]![1])}`
-    } else if (entries.length > 1) {
-      key = entries
-        .toSorted(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => `${k}:${String(v)}`)
-        .join(";")
-    }
+    key =
+      entries.length <= 1
+        ? entries[0]
+          ? `${entries[0][0]}:${String(entries[0][1])}`
+          : ""
+        : entries
+            .toSorted(([a], [b]) => (a < b ? -1 : 1))
+            .map(([k, v]) => `${k}:${String(v)}`)
+            .join(";")
   }
 
   let cached = map.get(key)

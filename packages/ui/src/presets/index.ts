@@ -66,14 +66,13 @@ const formatColorLines = (
   colorMap: Record<string, { light?: Record<string, string>; dark?: Record<string, string> }>
 ) =>
   Object.entries(colorMap)
-    .flatMap(([c, m]) => {
-      const keys = Object.keys(m.light ?? m.dark ?? {})
-      return keys.map((s) => {
+    .flatMap(([c, m]) =>
+      Object.keys({ ...m.light, ...m.dark }).map((s) => {
         const l = m.light?.[s] ?? m.dark?.[s]
         const d = m.dark?.[s] ?? l
         return `  --color-${c}-${s}: light-dark(${l}, ${d});`
       })
-    })
+    )
     .join("\n")
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
@@ -273,17 +272,17 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         "6xl": "8rem"
       },
       colors: {
-        "background": "var(--background)",
-        "foreground": "var(--foreground)",
-        "card": { DEFAULT: "var(--card)", foreground: "var(--card-foreground)" },
-        "popover": { DEFAULT: "var(--popover)", foreground: "var(--popover-foreground)" },
-        "muted": { DEFAULT: "var(--muted)", foreground: "var(--muted-foreground)" },
-        "accent": { DEFAULT: "var(--accent)", foreground: "var(--accent-foreground)" },
-        "border": "var(--border)",
-        "input": "var(--input)",
-        "outline": "var(--outline)",
-        "ring": "var(--ring)",
-        "sidebar": {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        card: { DEFAULT: "var(--card)", foreground: "var(--card-foreground)" },
+        popover: { DEFAULT: "var(--popover)", foreground: "var(--popover-foreground)" },
+        muted: { DEFAULT: "var(--muted)", foreground: "var(--muted-foreground)" },
+        accent: { DEFAULT: "var(--accent)", foreground: "var(--accent-foreground)" },
+        border: "var(--border)",
+        input: "var(--input)",
+        outline: "var(--outline)",
+        ring: "var(--ring)",
+        sidebar: {
           DEFAULT: "var(--sidebar)",
           foreground: "var(--sidebar-foreground)",
           primary: {
@@ -297,15 +296,19 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)"
         },
-        "chart": Object.fromEntries([1, 2, 3, 4, 5].map((i) => [i, `var(--chart-${i})`])),
-        "hover": "var(--color-hover)",
-        "surface": "var(--color-surface)",
-        "muted-strong": "var(--color-muted-strong)",
-        "foreground-secondary": "var(--color-foreground-secondary)",
-        "foreground-tertiary": "var(--color-foreground-tertiary)",
-        "placeholder": "var(--color-placeholder)",
-        "input-border": "var(--color-input-border)",
-        "accent-subtle": "var(--color-accent-subtle)",
+        chart: Object.fromEntries([1, 2, 3, 4, 5].map((i) => [i, `var(--chart-${i})`])),
+        ...Object.fromEntries(
+          [
+            "hover",
+            "surface",
+            "muted-strong",
+            "foreground-secondary",
+            "foreground-tertiary",
+            "placeholder",
+            "input-border",
+            "accent-subtle"
+          ].map((k) => [k, `var(--color-${k})`])
+        ),
         ...Object.fromEntries(allColors.map((c) => [c, createScale(c)]))
       },
       radius: {

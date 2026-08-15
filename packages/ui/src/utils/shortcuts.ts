@@ -43,8 +43,14 @@ export interface RegisteredShortcut {
 const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
 
 const MODIFIERS: Record<string, "ctrl" | "meta" | "shift" | "alt"> = {
+  ctrl: "ctrl",
   control: "ctrl",
+  meta: "meta",
+  cmd: "meta",
   command: "meta",
+  shift: "shift",
+  alt: "alt",
+  opt: "alt",
   option: "alt"
 }
 
@@ -142,7 +148,6 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
     if (!cfg) continue
     const isFn = typeof cfg === "function"
     const handler = isFn ? cfg : cfg.handler
-    const usingInput = isFn ? false : (cfg.usingInput ?? false)
     const chainedKey = isChained(rawKey)
 
     if (typeof handler === "function") {
@@ -171,7 +176,7 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         metaKey: isMac && hasMeta,
         shiftKey: mods.has("shift"),
         altKey: mods.has("alt"),
-        usingInput
+        usingInput: isFn ? false : (cfg.usingInput ?? false)
       }
 
       if (chainedKey) chained.set(base, sc)
@@ -215,10 +220,8 @@ export function defineShortcuts(
   }
 
   if (regIds) {
-    activeShortcutsStore.set([
-      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
-      ...registered
-    ])
+    const remaining = activeShortcutsStore.get().filter((i) => !regIds.has(i.id))
+    activeShortcutsStore.set([...remaining, ...registered])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
