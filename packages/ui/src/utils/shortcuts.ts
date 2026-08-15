@@ -65,11 +65,8 @@ const SHIFTABLE = new Set([
 
 const keySymbols: Record<string, string> = {
   meta: isMac ? "⌘" : "Ctrl",
-  command: isMac ? "⌘" : "Ctrl",
   ctrl: "Ctrl",
-  control: "Ctrl",
   alt: isMac ? "⌥" : "Alt",
-  option: isMac ? "⌥" : "Alt",
   shift: isMac ? "⇧" : "Shift",
   enter: "↵",
   delete: "⌦",
@@ -96,9 +93,11 @@ const formatCache = new Map<string, string[]>()
 export function formatShortcutKeys(keyStr: string): string[] {
   let res = formatCache.get(keyStr)
   if (!res) {
-    res = keyStr
-      .split(isChained(keyStr) ? "-" : "_")
-      .map((p) => keySymbols[p.toLowerCase()] ?? p.charAt(0).toUpperCase() + p.slice(1))
+    res = keyStr.split(isChained(keyStr) ? "-" : "_").map((p) => {
+      const lower = p.toLowerCase()
+      const norm = MODIFIERS[lower] ?? lower
+      return keySymbols[norm] ?? p.charAt(0).toUpperCase() + p.slice(1)
+    })
     formatCache.set(keyStr, res)
   }
   return res

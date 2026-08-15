@@ -5,9 +5,6 @@ export type Override = string | ((base: string) => string) | undefined
 
 export type ComponentThemeOverride = {
   slots?: Record<string, Override>
-  variants?: Record<string, Record<string, unknown>>
-  compoundVariants?: unknown[]
-  defaultVariants?: Record<string, unknown>
   [key: string]: unknown
 }
 
@@ -401,9 +398,8 @@ export const getAllColorNames = (customColors?: Record<string, unknown>): string
     ? [...new Set([...colorNames, ...Object.keys(customColors)])]
     : colorNames
 
-export type ResolvedUIConfig = Partial<Pick<UIConfig, "logos" | "shortcuts" | "icons">> & {
+export type ResolvedUIConfig = Omit<UIConfig, "colors" | "components" | "presets" | "unocss"> & {
   colors?: readonly string[]
-  unstyled?: boolean
   themes?: Record<string, ComponentThemeOverride>
   [key: string]: unknown
 }

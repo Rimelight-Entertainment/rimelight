@@ -173,24 +173,27 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
 
   const preflightCss = `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
 
-  const presets: Preset[] = [
-    options?.presets?.wind !== false ? presetWind4() : null,
-    options?.presets?.typography !== false
-      ? presetTypography({
-          cssExtend: {
-            "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-              "font-family": "var(--font-sans), system-ui, sans-serif"
-            },
-            "pre,code": { "font-family": "var(--font-mono), monospace" }
-          }
-        })
-      : null,
-    options?.presets?.icons !== false
-      ? presetIcons({
-          extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-        })
-      : null
-  ].filter((p): p is Preset => Boolean(p))
+  const presets: Preset[] = []
+  if (options?.presets?.wind !== false) presets.push(presetWind4())
+  if (options?.presets?.typography !== false) {
+    presets.push(
+      presetTypography({
+        cssExtend: {
+          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+            "font-family": "var(--font-sans), system-ui, sans-serif"
+          },
+          "pre,code": { "font-family": "var(--font-mono), monospace" }
+        }
+      })
+    )
+  }
+  if (options?.presets?.icons !== false) {
+    presets.push(
+      presetIcons({
+        extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+      })
+    )
+  }
 
   return {
     name: "rimelight-ui",
