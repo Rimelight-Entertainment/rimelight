@@ -1,7 +1,6 @@
 import { scv, cx } from "css-variants"
 import { colorNames, uiConfig, type ThemeColor } from "../config"
 
-const colors = uiConfig.colors ?? colorNames
 const cache = new WeakMap<object, Map<string, Record<string, string>>>()
 
 export const defineTheme = <
@@ -31,7 +30,7 @@ export const defineTheme = <
           ? "root"
           : (theme.slots[0] ?? "root")
         const auto: Record<string, Record<string, string>> = { neutral: { [slot]: "" } }
-        for (const c of colors) auto[c] = { [slot]: `rl-color-${c}` }
+        for (const c of uiConfig.colors ?? colorNames) auto[c] = { [slot]: `rl-color-${c}` }
         variants[k] = auto
       } else if (val) {
         variants[k] = val
