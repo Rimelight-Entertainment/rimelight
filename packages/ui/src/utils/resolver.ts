@@ -2,13 +2,13 @@ import { cx } from "css-variants"
 import { uiConfig, type Override } from "../config"
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<object>()
+const themeCreatorCache = new WeakMap<Function>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
-export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
-  const slots = uiConfig.themes?.[name]?.slots
-  return slots && prop ? { ...slots, ...prop } : (slots ?? prop ?? EMPTY)
-}
+export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> =>
+  uiConfig.themes?.[name]?.slots && prop
+    ? { ...uiConfig.themes[name].slots, ...prop }
+    : (uiConfig.themes?.[name]?.slots ?? prop ?? EMPTY)
 
 export function resolveTheme<T>(fallback: T, create?: (colors: readonly string[]) => T): T {
   if (!uiConfig.colors || !create) return fallback
@@ -28,16 +28,16 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   let map = classCache.get(themeFn)
   if (!map) classCache.set(themeFn, (map = new Map()))
 
-  const varKeys = variants ? Object.keys(variants) : []
-  const len = varKeys.length
+  const varEntries = variants ? Object.entries(variants) : []
+  const len = varEntries.length
   const key =
     len === 0
       ? ""
       : len === 1
-        ? `${varKeys[0]}:${(variants as Record<string, string>)[varKeys[0]!]}`
-        : varKeys
-            .toSorted()
-            .map((k) => `${k}:${(variants as Record<string, string>)[k]}`)
+        ? `${varEntries[0]![0]}:${String(varEntries[0]![1])}`
+        : varEntries
+            .toSorted(([a], [b]) => (a < b ? -1 : 1))
+            .map(([k, v]) => `${k}:${String(v)}`)
             .join(";")
 
   let cached = map.get(key)

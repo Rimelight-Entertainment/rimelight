@@ -98,6 +98,7 @@ export function formatShortcutKeys(keyStr: string): string[] {
       const norm = MODIFIERS[lower] ?? lower
       return keySymbols[norm] ?? p.charAt(0).toUpperCase() + p.slice(1)
     })
+    if (formatCache.size > 200) formatCache.clear()
     formatCache.set(keyStr, res)
   }
   return res
@@ -118,7 +119,7 @@ function isUsingInput(el: Element | null): boolean | string {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
   if (!el) return false
   const isEditable = el instanceof HTMLElement && el.isContentEditable
-  return INPUT_TAGS.has(el.tagName) || isEditable ? el.getAttribute("name") || true : false
+  return INPUT_TAGS.has(el.nodeName) || isEditable ? el.getAttribute("name") || true : false
 }
 
 const isShortcutEnabled = (s: Shortcut, inputState: boolean | string): boolean =>
@@ -155,25 +156,20 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof handler === "function") {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
-      let hasCtrl = false
-      let hasMeta = false
-      let hasShift = false
-      let hasAlt = false
+      const mods = new Set<string>()
       const nonMods: string[] = []
 
       for (const p of rawParts) {
         const mod = MODIFIERS[p]
-        if (mod === "ctrl") hasCtrl = true
-        else if (mod === "meta") hasMeta = true
-        else if (mod === "shift") hasShift = true
-        else if (mod === "alt") hasAlt = true
+        if (mod) mods.add(mod)
         else nonMods.push(p)
       }
 
       const base = chainedKey ? rawKey.toLowerCase() : nonMods.join("_")
       if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
 
-      const ctrl = hasCtrl || (!isMac && hasMeta)
+      const hasMeta = mods.has("meta")
+      const ctrl = mods.has("ctrl") || (!isMac && hasMeta)
 
       const sc: Shortcut = {
         key: base,
@@ -182,8 +178,8 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         chained: chainedKey,
         ctrlKey: ctrl,
         metaKey: isMac && hasMeta,
-        shiftKey: hasShift,
-        altKey: hasAlt,
+        shiftKey: mods.has("shift"),
+        altKey: mods.has("alt"),
         usingInput
       }
 

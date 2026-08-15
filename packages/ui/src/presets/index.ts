@@ -67,10 +67,7 @@ const formatColorLines = (
 ) =>
   Object.entries(colorMap)
     .flatMap(([c, m]) => {
-      const shades = COLOR_SHADES.filter(
-        (s) => m.light?.[s] !== undefined || m.dark?.[s] !== undefined
-      )
-      const keys = shades.length ? shades : Object.keys({ ...m.light, ...m.dark })
+      const keys = Object.keys({ ...m.light, ...m.dark })
       return keys.map(
         (s) =>
           `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark?.[s]}, ${m.dark?.[s] ?? m.light?.[s]});`
@@ -101,13 +98,16 @@ const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
 }
 
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
-  .flatMap(([n, [t, b, bg]]) => [
-    `  --text-color-${n}: var(--color-neutral-${t});`,
-    `  --background-color-${n}: ${bg ?? `var(--color-neutral-${b})`};`,
-    `  --border-color-${n}: var(--color-neutral-${b});`,
-    `  --ring-color-${n}: var(--color-neutral-${b});`,
-    `  --divide-color-${n}: var(--color-neutral-${b});`
-  ])
+  .flatMap(([n, [t, b, bg]]) => {
+    const neutralB = `var(--color-neutral-${b})`
+    return [
+      `  --text-color-${n}: var(--color-neutral-${t});`,
+      `  --background-color-${n}: ${bg ?? neutralB};`,
+      `  --border-color-${n}: ${neutralB};`,
+      `  --ring-color-${n}: ${neutralB};`,
+      `  --divide-color-${n}: ${neutralB};`
+    ]
+  })
   .join("\n")
 
 const STATIC_PREFLIGHT_SUFFIX = `
@@ -210,12 +210,12 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
     rules: [
       [
         /^rl-color-([a-z][a-z0-9-]*)$/,
-        ([, color]) => ({
-          "--rl-bg": `var(--color-${color}-500)`,
-          "--rl-bg-hover": `var(--color-${color}-600)`,
-          "--rl-text": `var(--color-${color}-600)`,
-          "--rl-ring": `var(--color-${color}-500)`,
-          "--rl-border": `var(--color-${color}-500)`
+        ([, c]) => ({
+          "--rl-bg": `var(--color-${c}-500)`,
+          "--rl-bg-hover": `var(--color-${c}-600)`,
+          "--rl-text": `var(--color-${c}-600)`,
+          "--rl-ring": `var(--color-${c}-500)`,
+          "--rl-border": `var(--color-${c}-500)`
         })
       ],
       [
