@@ -23,8 +23,11 @@ const isMode = (v: ColorConfigValue): v is ColorModeShades =>
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
   const num = Number(shade)
   if (isNaN(num)) return value
-  const pct = target === "white" ? (950 - num) / 950 : (num - 50) / 900
-  return `color-mix(in oklch, ${value}, ${target} ${Math.min(60, Math.round(pct * 60))}%)`
+  const pct = Math.min(
+    60,
+    Math.round((target === "white" ? (950 - num) / 950 : (num - 50) / 900) * 60)
+  )
+  return `color-mix(in oklch, ${value}, ${target} ${pct}%)`
 }
 
 function resolveColorModes(
@@ -97,10 +100,10 @@ const INTENTS: Record<string, [t: string, b: string, bg?: string]> = {
 }
 
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
-  .map(
-    ([n, [t, b, bg]]) =>
-      `  --text-color-${n}: var(--color-neutral-${t});\n  --background-color-${n}: ${bg ?? `var(--color-neutral-${b})`};\n  --border-color-${n}: var(--color-neutral-${b});\n  --ring-color-${n}: var(--color-neutral-${b});\n  --divide-color-${n}: var(--color-neutral-${b});`
-  )
+  .map(([n, [t, b, bg]]) => {
+    const borderVal = `var(--color-neutral-${b})`
+    return `  --text-color-${n}: var(--color-neutral-${t});\n  --background-color-${n}: ${bg ?? borderVal};\n  --border-color-${n}: ${borderVal};\n  --ring-color-${n}: ${borderVal};\n  --divide-color-${n}: ${borderVal};`
+  })
   .join("\n")
 
 const STATIC_PREFLIGHT_SUFFIX = `
@@ -117,13 +120,13 @@ const STATIC_PREFLIGHT_SUFFIX = `
 .rl-theme-container > *, .rl-theme-container :where(h1, h2, h3, h4, h5, h6, p, span, div, li, strong) { color: inherit; }
 
 @container style(--rl-contrast-color: white) {
-  .rl-theme-container .rl-subtext { color: oklch(from var(--rl-surface-effective) 0.88 0.04 h) !important; }
-  .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.45 0.08 h / 0.6) !important; }
+  .rl-theme-container .rl-subtext { color: oklch(from var(--rl-surface-effective) 0.88 0.04 h); }
+  .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.45 0.08 h / 0.6); }
 }
 
 @container style(--rl-contrast-color: black) {
-  .rl-theme-container .rl-subtext { color: oklch(from var(--rl-surface-effective) 0.32 0.07 h) !important; }
-  .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6) !important; }
+  .rl-theme-container .rl-subtext { color: oklch(from var(--rl-surface-effective) 0.32 0.07 h); }
+  .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6); }
 }
 
 body { background-color: var(--background); color: var(--foreground); font-family: var(--font-sans); }

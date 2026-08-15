@@ -2,19 +2,21 @@ import { cx } from "css-variants"
 import { uiConfig, type Override } from "../config"
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
-const themeCreatorCache = new WeakMap<Function>()
+const themeCreatorCache = new WeakMap<object>()
 const EMPTY: Record<string, Override> = Object.freeze({})
 
 export const useUi = (name: string, prop?: Record<string, Override>): Record<string, Override> => {
   const global = uiConfig.themes?.[name]?.slots
-  return global && prop ? { ...global, ...prop } : (global ?? prop ?? EMPTY)
+  return global ? (prop ? { ...global, ...prop } : global) : (prop ?? EMPTY)
 }
 
 export function resolveTheme<T>(fallback: T, create?: (colors: readonly string[]) => T): T {
   if (!uiConfig.colors || !create) return fallback
-  let c: T | undefined = themeCreatorCache.get(create)
-  if (!c) themeCreatorCache.set(create, (c = create(uiConfig.colors)))
-  return c
+  const cached = themeCreatorCache.get(create)
+  if (cached !== undefined) return cached
+  const result = create(uiConfig.colors)
+  themeCreatorCache.set(create, result)
+  return result
 }
 
 export function resolveClasses<T extends (...args: never[]) => Record<string, string>>(
@@ -40,7 +42,7 @@ export function resolveClasses<T extends (...args: never[]) => Record<string, st
   let cached = map.get(key)
   if (!cached) map.set(key, (cached = themeFn(variants)))
 
-  if ((ui === EMPTY || !Object.keys(ui).length) && !rootClass) return cached
+  if (!rootClass && (ui === EMPTY || !Object.keys(ui).length)) return cached
 
   const res: Record<string, string> = { ...cached }
   for (const slot in ui) {

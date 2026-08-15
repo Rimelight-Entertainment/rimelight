@@ -101,8 +101,14 @@ export function formatShortcutKeys(keyStr: string): string[] {
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
 const toCode = (k: string) => {
-  if (k.length === 1)
-    return /[a-z]/i.test(k) ? `Key${k.toUpperCase()}` : /\d/.test(k) ? `Digit${k}` : k
+  if (k.length === 1) {
+    const code = k.charCodeAt(0)
+    return (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
+      ? `Key${k.toUpperCase()}`
+      : code >= 48 && code <= 57
+        ? `Digit${k}`
+        : k
+  }
   const lower = k.toLowerCase()
   return lower.startsWith("arrow")
     ? `Arrow${k.slice(5).charAt(0).toUpperCase() + k.slice(6)}`
@@ -120,11 +126,7 @@ function isUsingInput(el: Element | null): boolean | string {
 }
 
 const isShortcutEnabled = (s: Shortcut, inputState: boolean | string): boolean =>
-  !s.usingInput
-    ? !inputState
-    : typeof s.usingInput === "string"
-      ? inputState === s.usingInput
-      : true
+  s.usingInput === true || (s.usingInput ? inputState === s.usingInput : !inputState)
 
 interface ParsedShortcuts {
   standard: Shortcut[]
