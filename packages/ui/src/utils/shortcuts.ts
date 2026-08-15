@@ -144,16 +144,18 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof handler === "function") {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
-      const mods = new Set<string>()
-      const nonMods: string[] = []
-
-      for (const p of rawParts) {
-        const mod =
-          MODIFIER_MAP[p] ??
-          (p === "ctrl" || p === "meta" || p === "shift" || p === "alt" ? p : undefined)
-        if (mod) mods.add(mod)
-        else nonMods.push(p)
-      }
+      const mods = new Set(
+        rawParts
+          .filter(
+            (p) =>
+              MODIFIER_MAP[p] ??
+              (p === "ctrl" || p === "meta" || p === "shift" || p === "alt" ? p : "")
+          )
+          .map((p) => MODIFIER_MAP[p] ?? p)
+      )
+      const nonMods = rawParts.filter(
+        (p) => !(MODIFIER_MAP[p] ?? (p === "ctrl" || p === "meta" || p === "shift" || p === "alt"))
+      )
 
       const base = chainedKey ? rawKey.toLowerCase() : nonMods.join("_")
       if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
@@ -179,14 +181,15 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof cfg === "object" && (cfg.label || cfg.description)) {
       const cat = cfg.category || "system"
-      registered.push({
+      const entry: RegisteredShortcut = {
         id: `${cat}-${rawKey}`,
         keys: formatShortcutKeys(rawKey),
-        category: cat,
-        ...(cfg.label !== undefined && { label: cfg.label }),
-        ...(cfg.description !== undefined && { description: cfg.description }),
-        ...(cfg.order !== undefined && { order: cfg.order })
-      })
+        category: cat
+      }
+      if (cfg.label != null) entry.label = cfg.label
+      if (cfg.description != null) entry.description = cfg.description
+      if (cfg.order != null) entry.order = cfg.order
+      registered.push(entry)
     }
   }
 
@@ -207,11 +210,8 @@ export function defineShortcuts(
   let timer: ReturnType<typeof setTimeout> | undefined
   const regIds = registered.length ? new Set(registered.map((i) => i.id)) : null
 
-  const removeRegistered = () => {
-    if (regIds) {
-      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
-    }
-  }
+  const removeRegistered = () =>
+    regIds && activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
 
   if (regIds) {
     removeRegistered()
@@ -250,9 +250,7 @@ export function defineShortcuts(
       if (isShortcutEnabled(s, inputState)) return trigger(s)
     }
 
-    timer = setTimeout(() => {
-      inputs.length = 0
-    }, chainDelay)
+    timer = setTimeout(() => void (inputs.length = 0), chainDelay)
   }
 
   window.addEventListener("keydown", onKeyDown)

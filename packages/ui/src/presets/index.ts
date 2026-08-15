@@ -22,8 +22,9 @@ const isMode = (v: ColorConfigValue): v is { light?: ColorShades; dark?: ColorSh
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
   const num = Number(shade)
   if (!num || num === 500) return value
-  const diff = target === "white" ? (500 - num) / 500 : (num - 500) / 450
-  const pct = Math.round(Math.max(0, diff) * 75)
+  const pct = Math.round(
+    Math.max(0, target === "white" ? (500 - num) / 500 : (num - 500) / 450) * 75
+  )
   return pct ? `color-mix(in oklch, ${value}, ${target} ${pct}%)` : value
 }
 
@@ -41,21 +42,19 @@ function resolveColorModes(
     : [...new Set([...Object.keys(mL ?? {}), ...Object.keys(mD ?? {})])]
   const baseL = mL?.["500"] ?? Object.values(mL ?? {})[0] ?? ""
   const baseD = mD?.["500"] ?? Object.values(mD ?? {})[0] ?? baseL
-  const fallbackL = baseL || baseD
-  const fallbackD = baseD || baseL
 
   for (const s of keys) {
     const isLight = Number(s) < 500
     const lVal =
       mL?.[s] ??
-      (autogenerate && fallbackL
-        ? generateShade(s, fallbackL, isLight ? "white" : "black")
-        : fallbackL)
+      (autogenerate && (baseL || baseD)
+        ? generateShade(s, baseL || baseD, isLight ? "white" : "black")
+        : baseL || baseD)
     const dVal =
       mD?.[s] ??
-      (autogenerate && fallbackD
-        ? generateShade(s, fallbackD, isLight ? "black" : "white")
-        : fallbackD)
+      (autogenerate && (baseD || baseL)
+        ? generateShade(s, baseD || baseL, isLight ? "black" : "white")
+        : baseD || baseL)
     if (lVal) light[s] = lVal
     if (dVal) dark[s] = dVal
   }
@@ -98,16 +97,19 @@ const formatColorLines = (
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
 
-const varPair = (k: string) => ({ DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` })
-const toVar =
-  (prefix = "") =>
-  (k: string) => [k, `var(--${prefix}${k})`]
-
 const STATIC_THEME_COLORS = {
   ...Object.fromEntries(
-    ["background", "foreground", "border", "input", "outline", "ring"].map(toVar())
+    ["background", "foreground", "border", "input", "outline", "ring"].map((k) => [
+      k,
+      `var(--${k})`
+    ])
   ),
-  ...Object.fromEntries(["card", "popover", "muted", "accent"].map((k) => [k, varPair(k)])),
+  ...Object.fromEntries(
+    ["card", "popover", "muted", "accent"].map((k) => [
+      k,
+      { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }
+    ])
+  ),
   ...Object.fromEntries(
     [
       "hover",
@@ -118,14 +120,14 @@ const STATIC_THEME_COLORS = {
       "placeholder",
       "input-border",
       "accent-subtle"
-    ].map(toVar("color-"))
+    ].map((k) => [k, `var(--color-${k})`])
   ),
   chart: Object.fromEntries([1, 2, 3, 4, 5].map((n) => [n, `var(--chart-${n})`])),
   sidebar: {
     DEFAULT: "var(--sidebar)",
     foreground: "var(--sidebar-foreground)",
-    primary: varPair("sidebar-primary"),
-    accent: varPair("sidebar-accent"),
+    primary: { DEFAULT: "var(--sidebar-primary)", foreground: "var(--sidebar-primary-foreground)" },
+    accent: { DEFAULT: "var(--sidebar-accent)", foreground: "var(--sidebar-accent-foreground)" },
     border: "var(--sidebar-border)",
     ring: "var(--sidebar-ring)"
   }
@@ -193,7 +195,8 @@ body { background-color: var(--background); color: var(--foreground); font-famil
 }
 `
 
-const BASE_PREFLIGHT_CSS = `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}${STATIC_PREFLIGHT_SUFFIX}`
+const buildPreflight = (extra = "") =>
+  `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}${extra ? `\n${extra}` : ""}${STATIC_PREFLIGHT_SUFFIX}`
 
 const THEME_SPACING = {
   "6xs": "0.125rem",
@@ -212,7 +215,6 @@ const THEME_SPACING = {
   "5xl": "6rem",
   "6xl": "8rem"
 }
-
 const THEME_RADIUS = {
   "xs": "calc(var(--radius) - 0.375rem)",
   "sm": "calc(var(--radius) - 0.25rem)",
@@ -228,16 +230,13 @@ export type RimelightPresetOptions = UIConfig
 export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   const userColors = options?.colors ?? {}
   const allColors = getAllColorNames(userColors)
-  const hasUserColors = Object.keys(userColors).length > 0
-
   const safelist = [
     ...allColors.map((c) => `rl-color-${c}`),
     ...Object.values(options?.icons ?? {}).filter(
       (v): v is string => typeof v === "string" && v.startsWith("i-")
     )
   ]
-
-  const userColorLines = hasUserColors
+  const userColorLines = Object.keys(userColors).length
     ? formatColorLines(
         Object.fromEntries(
           Object.entries(userColors).map(([name, entry]) => [
@@ -247,30 +246,25 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         )
       )
     : ""
-
-  const preflightCss = hasUserColors
-    ? `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}\n${userColorLines}${STATIC_PREFLIGHT_SUFFIX}`
-    : BASE_PREFLIGHT_CSS
+  const preflightCss = buildPreflight(userColorLines)
 
   const opt = options?.presets
   const presets: Preset[] = [
-    opt?.wind !== false ? presetWind4() : null,
-    opt?.typography !== false
-      ? presetTypography({
-          cssExtend: {
-            "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-              "font-family": "var(--font-sans), system-ui, sans-serif"
-            },
-            "pre,code": { "font-family": "var(--font-mono), monospace" }
-          }
-        })
-      : null,
-    opt?.icons !== false
-      ? presetIcons({
-          extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-        })
-      : null
-  ].filter((p): p is Preset => p !== null)
+    opt?.wind !== false && presetWind4(),
+    opt?.typography !== false &&
+      presetTypography({
+        cssExtend: {
+          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+            "font-family": "var(--font-sans), system-ui, sans-serif"
+          },
+          "pre,code": { "font-family": "var(--font-mono), monospace" }
+        }
+      }),
+    opt?.icons !== false &&
+      presetIcons({
+        extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+      })
+  ].filter((p): p is Preset => !!p)
 
   return {
     name: "rimelight-ui",

@@ -148,7 +148,7 @@ export const colorNames = Object.keys(colorScales)
 export type ThemeColor = keyof typeof colorScales | (string & {})
 
 export const getAllColorNames = (customColors?: Record<string, unknown>): readonly string[] =>
-  customColors && Object.keys(customColors).length > 0
+  customColors && Object.keys(customColors).length
     ? [...new Set([...colorNames, ...Object.keys(customColors)])]
     : colorNames
 

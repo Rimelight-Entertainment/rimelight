@@ -1,14 +1,8 @@
 import { scv, cx } from "css-variants"
-import { colorNames, uiConfig, type Override, type ThemeColor } from "../config"
+import { colorNames, uiConfig, type ThemeColor } from "../config"
 
 const colors = uiConfig.colors ?? colorNames
 const cache = new WeakMap<object, Map<string, Record<string, string>>>()
-const create = (fn: Function, arg: unknown): any => fn(arg)
-
-const getUi = (name: string, prop?: Record<string, Override>) => {
-  const global = uiConfig.themes?.[name]?.slots
-  return global ? (prop ? { ...global, ...prop } : global) : prop
-}
 
 export const defineTheme = <
   const S extends string,
@@ -49,7 +43,9 @@ export const defineTheme = <
   if (theme.base) config.base = theme.base
   if (theme.compoundVariants) config.compoundVariants = theme.compoundVariants
   if (theme.defaultVariants) config.defaultVariants = theme.defaultVariants
-  const themeFn = create(scv, config)
+  const themeFn = (scv as unknown as (c: unknown) => (v: Record<string, any>) => Record<S, string>)(
+    config
+  )
 
   return (props?: Record<string, any>): Record<S, string> => {
     const rootClass =
@@ -59,7 +55,8 @@ export const defineTheme = <
           ? props.className
           : undefined
 
-    if (uiConfig.unstyled) return create(() => (rootClass ? { root: rootClass } : {}), null)
+    if (uiConfig.unstyled)
+      return (rootClass ? { root: rootClass } : {}) as unknown as Record<S, string>
 
     let map = cache.get(themeFn)
     if (!map) cache.set(themeFn, (map = new Map()))
@@ -68,21 +65,16 @@ export const defineTheme = <
     let key = ""
     for (const k in v) key += `${k}:${String(v[k])};`
 
-    const res =
-      map.get(key) ??
-      create(() => {
-        const r = themeFn(v)
-        map?.set(key, r)
-        return r
-      }, null)
+    const res = map.get(key) ?? (map.set(key, themeFn(v)), map.get(key)!)
 
-    const mergedUi = getUi(name, ui)
-    if (!rootClass && !mergedUi) return res
+    const mergedUi = uiConfig.themes?.[name]?.slots
+    const resolvedUi = mergedUi ? (ui ? { ...mergedUi, ...ui } : mergedUi) : ui
+    if (!rootClass && !resolvedUi) return res
 
     const out: Record<string, string> = { ...res }
-    if (mergedUi) {
-      for (const s in mergedUi) {
-        const o = mergedUi[s]
+    if (resolvedUi) {
+      for (const s in resolvedUi) {
+        const o = resolvedUi[s]
         if (o) out[s] = typeof o === "function" ? cx(o(out[s] ?? "")) : cx(out[s], o)
       }
     }

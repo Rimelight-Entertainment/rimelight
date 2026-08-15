@@ -10,10 +10,12 @@ const UI_PACKAGE_RE = /[\\/](@rimelight\/ui|packages\/ui)[\\/]/
 export function ui(o: UIConfig = {}): AstroIntegration[] {
   const { colors = {}, logos = {}, shortcuts = {}, icons = {}, components, unocss = {} } = o
   const userContent = unocss.content ?? {}
-  const pipeline = userContent.pipeline
-  const userInc =
-    typeof pipeline === "object" && Array.isArray(pipeline?.include) ? pipeline.include : []
-  const include = [EXT_RE, UI_PACKAGE_RE, ...userInc]
+  const { pipeline } = userContent
+  const include = [
+    EXT_RE,
+    UI_PACKAGE_RE,
+    ...(typeof pipeline === "object" && Array.isArray(pipeline?.include) ? pipeline.include : [])
+  ]
 
   const defineUiConfig = JSON.stringify({
     unstyled: o.unstyled,
