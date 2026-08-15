@@ -1,5 +1,12 @@
-import { cx } from "css-variants"
+import { cx, type SlotClassVariantDefinition, type SlotClassVariantRecord } from "css-variants"
 import { uiConfig, type Override } from "../config"
+
+export const defineTheme = <
+  const S extends string,
+  const T extends SlotClassVariantRecord<S> | undefined
+>(
+  theme: SlotClassVariantDefinition<S, T>
+) => theme
 
 const classCache = new WeakMap<(...args: any[]) => any, Map<string, Record<string, string>>>()
 const themeCreatorCache = new WeakMap<object>()

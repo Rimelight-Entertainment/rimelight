@@ -1,5 +1,5 @@
 import { colorNames } from "../../config"
-import { defineTheme } from "../../types/component"
+import { defineTheme } from "../../utils/resolver"
 
 export const createButtonTheme = (colors: readonly string[] = colorNames) => {
   const colorVariants: Record<string, { root: string }> = { neutral: { root: "" } }

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../types/component"
+import { defineTheme } from "../../utils/resolver"
 
 export const createLinkGroupTheme = () =>
   defineTheme({

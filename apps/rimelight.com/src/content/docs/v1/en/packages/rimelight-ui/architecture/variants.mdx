@@ -18,8 +18,7 @@ Each component has a corresponding `.theme.ts` file that defines its styling. Th
 Here's an abbreviated example from the Button component:
 
 ```typescript
-import { defaultColors } from "../presets/defaults"
-import { defineTheme } from "@rimelight/ui/types/component"
+import { defineTheme } from "@/utils/resolver"
 
 export const createButtonTheme = (colors: readonly string[] = defaultColors) =>
   defineTheme({

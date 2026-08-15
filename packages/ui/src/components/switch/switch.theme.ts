@@ -1,5 +1,5 @@
 import { colorNames } from "../../config"
-import { defineTheme } from "../../types/component"
+import { defineTheme } from "../../utils/resolver"
 
 export const createSwitchTheme = (colors: readonly string[] = colorNames) =>
   defineTheme({
