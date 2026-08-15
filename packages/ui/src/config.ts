@@ -94,13 +94,10 @@ export const COLOR_SHADES = [
   "950"
 ] as const
 
+export type ColorShade = (typeof COLOR_SHADES)[number]
+
 const parseScale = (s: string) =>
-  Object.fromEntries(
-    s
-      .trim()
-      .split(/\s*,\s*/)
-      .map((v, i) => [COLOR_SHADES[i]!, `oklch(${v})`])
-  )
+  Object.fromEntries(s.split(",").map((v, i) => [COLOR_SHADES[i]!, `oklch(${v.trim()})`]))
 
 const c = (l: string, d: string) => ({ light: parseScale(l), dark: parseScale(d) })
 
@@ -150,8 +147,10 @@ export const colorScales = {
 export const colorNames = Object.keys(colorScales)
 export type ThemeColor = keyof typeof colorScales | (string & {})
 
-export const getAllColorNames = (customColors?: Record<string, unknown>): string[] =>
-  customColors ? [...new Set([...colorNames, ...Object.keys(customColors)])] : colorNames
+export const getAllColorNames = (customColors?: Record<string, unknown>): readonly string[] =>
+  customColors && Object.keys(customColors).length > 0
+    ? [...new Set([...colorNames, ...Object.keys(customColors)])]
+    : colorNames
 
 export type ResolvedUIConfig = Omit<UIConfig, "colors" | "components" | "presets" | "unocss"> & {
   colors?: readonly string[]
@@ -159,13 +158,13 @@ export type ResolvedUIConfig = Omit<UIConfig, "colors" | "components" | "presets
   [key: string]: unknown
 }
 
+export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
+
 declare global {
   interface ImportMetaEnv {
     readonly RIMELIGHT_UI_CONFIG?: ResolvedUIConfig
   }
 }
-
-export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
 
 const p = (light: string, dark = light) => ({ light, dark })
 const white = "oklch(1 0 0)"

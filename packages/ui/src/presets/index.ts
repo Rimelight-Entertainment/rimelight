@@ -39,15 +39,25 @@ function resolveColorModes(
   const keys = autogenerate
     ? COLOR_SHADES
     : [...new Set([...Object.keys(mL ?? {}), ...Object.keys(mD ?? {})])]
-  const fallback = mD?.["500"] ?? mL?.["500"] ?? Object.values(mD ?? mL ?? {})[0] ?? ""
+  const baseL = mL?.["500"] ?? Object.values(mL ?? {})[0] ?? ""
+  const baseD = mD?.["500"] ?? Object.values(mD ?? {})[0] ?? baseL
+  const fallbackL = baseL || baseD
+  const fallbackD = baseD || baseL
 
   for (const s of keys) {
-    const base = mD?.[s] ?? mL?.[s] ?? fallback
-    if (!base) continue
     const isLight = Number(s) < 500
-    light[s] =
-      mL?.[s] ?? (autogenerate ? generateShade(s, base, isLight ? "white" : "black") : base)
-    dark[s] = mD?.[s] ?? (autogenerate ? generateShade(s, base, isLight ? "black" : "white") : base)
+    const lVal =
+      mL?.[s] ??
+      (autogenerate && fallbackL
+        ? generateShade(s, fallbackL, isLight ? "white" : "black")
+        : fallbackL)
+    const dVal =
+      mD?.[s] ??
+      (autogenerate && fallbackD
+        ? generateShade(s, fallbackD, isLight ? "black" : "white")
+        : fallbackD)
+    if (lVal) light[s] = lVal
+    if (dVal) dark[s] = dVal
   }
   return { light, dark }
 }
@@ -88,40 +98,37 @@ const formatColorLines = (
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
 
+const varPair = (k: string) => ({ DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` })
+const toVar =
+  (prefix = "") =>
+  (k: string) => [k, `var(--${prefix}${k})`]
+
 const STATIC_THEME_COLORS = {
-  "background": "var(--background)",
-  "foreground": "var(--foreground)",
-  "border": "var(--border)",
-  "input": "var(--input)",
-  "outline": "var(--outline)",
-  "ring": "var(--ring)",
-  "card": { DEFAULT: "var(--card)", foreground: "var(--card-foreground)" },
-  "popover": { DEFAULT: "var(--popover)", foreground: "var(--popover-foreground)" },
-  "muted": { DEFAULT: "var(--muted)", foreground: "var(--muted-foreground)" },
-  "accent": { DEFAULT: "var(--accent)", foreground: "var(--accent-foreground)" },
-  "sidebar": {
+  ...Object.fromEntries(
+    ["background", "foreground", "border", "input", "outline", "ring"].map(toVar())
+  ),
+  ...Object.fromEntries(["card", "popover", "muted", "accent"].map((k) => [k, varPair(k)])),
+  ...Object.fromEntries(
+    [
+      "hover",
+      "surface",
+      "muted-strong",
+      "foreground-secondary",
+      "foreground-tertiary",
+      "placeholder",
+      "input-border",
+      "accent-subtle"
+    ].map(toVar("color-"))
+  ),
+  chart: Object.fromEntries([1, 2, 3, 4, 5].map((n) => [n, `var(--chart-${n})`])),
+  sidebar: {
     DEFAULT: "var(--sidebar)",
     foreground: "var(--sidebar-foreground)",
-    primary: { DEFAULT: "var(--sidebar-primary)", foreground: "var(--sidebar-primary-foreground)" },
-    accent: { DEFAULT: "var(--sidebar-accent)", foreground: "var(--sidebar-accent-foreground)" },
+    primary: varPair("sidebar-primary"),
+    accent: varPair("sidebar-accent"),
     border: "var(--sidebar-border)",
     ring: "var(--sidebar-ring)"
-  },
-  "chart": {
-    1: "var(--chart-1)",
-    2: "var(--chart-2)",
-    3: "var(--chart-3)",
-    4: "var(--chart-4)",
-    5: "var(--chart-5)"
-  },
-  "hover": "var(--color-hover)",
-  "surface": "var(--color-surface)",
-  "muted-strong": "var(--color-muted-strong)",
-  "foreground-secondary": "var(--color-foreground-secondary)",
-  "foreground-tertiary": "var(--color-foreground-tertiary)",
-  "placeholder": "var(--color-placeholder)",
-  "input-border": "var(--color-input-border)",
-  "accent-subtle": "var(--color-accent-subtle)"
+  }
 }
 
 const PROP_MAP: Record<string, [css: string, prefix: string]> = {
@@ -144,14 +151,16 @@ const INTENTS: Record<string, [string, string, string, string, string]> = {
   inverted: ["50", "950", "800", "700", "900"]
 }
 
+const INTENT_PROPS = ["text", "background", "border", "ring", "divide"] as const
 const nVal = (s: string) => (s.startsWith("light-dark(") ? s : `var(--color-neutral-${s})`)
 
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
-  .map(
-    ([n, [t, bg, b, r, d]]) =>
-      `  --text-color-${n}: ${nVal(t)};\n  --background-color-${n}: ${nVal(bg)};\n  --border-color-${n}: ${nVal(b)};\n  --ring-color-${n}: ${nVal(r)};\n  --divide-color-${n}: ${nVal(d)};`
-  )
+  .flatMap(([n, vals]) => INTENT_PROPS.map((p, i) => `  --${p}-color-${n}: ${nVal(vals[i]!)};`))
   .join("\n")
+
+const INTENT_REGEX = new RegExp(
+  `^(text|bg|ring|border|outline|divide)-(${Object.keys(INTENTS).join("|")})(?:\\/(\\d+))?$`
+)
 
 const STATIC_PREFLIGHT_SUFFIX = `
 }
@@ -183,6 +192,8 @@ body { background-color: var(--background); color: var(--foreground); font-famil
   outline-offset: 2px;
 }
 `
+
+const BASE_PREFLIGHT_CSS = `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}${STATIC_PREFLIGHT_SUFFIX}`
 
 const THEME_SPACING = {
   "6xs": "0.125rem",
@@ -236,16 +247,15 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         )
       )
     : ""
-  const lightDarkLines = userColorLines
-    ? `${STATIC_BUILTIN_COLOR_LINES}\n${userColorLines}`
-    : STATIC_BUILTIN_COLOR_LINES
 
-  const preflightCss = `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${lightDarkLines}${STATIC_PREFLIGHT_SUFFIX}`
+  const preflightCss = hasUserColors
+    ? `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}\n${userColorLines}${STATIC_PREFLIGHT_SUFFIX}`
+    : BASE_PREFLIGHT_CSS
 
-  const optPresets = options?.presets
+  const opt = options?.presets
   const presets: Preset[] = [
-    optPresets?.wind !== false ? presetWind4() : null,
-    optPresets?.typography !== false
+    opt?.wind !== false ? presetWind4() : null,
+    opt?.typography !== false
       ? presetTypography({
           cssExtend: {
             "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
@@ -255,7 +265,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
           }
         })
       : null,
-    optPresets?.icons !== false
+    opt?.icons !== false
       ? presetIcons({
           extraProperties: { "display": "inline-block", "vertical-align": "middle" }
         })
@@ -307,7 +317,7 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
         }
       ],
       [
-        /^(text|bg|ring|border|outline|divide)-(default|muted|dimmed|toned|highlighted|elevated|accented|inverted)(?:\/(\d+))?$/,
+        INTENT_REGEX,
         ([, prop, name, opacity]) => {
           const [css, prefix] = PROP_MAP[prop!]!
           const varName = `--${prefix}-color-${name}`
