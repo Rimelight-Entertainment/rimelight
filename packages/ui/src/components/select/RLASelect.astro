@@ -160,7 +160,7 @@ const isSearchable = searchInput !== false
     <!-- Dropdown Content Menu -->
     <div class={classes.content + " hidden"} data-slot="content" data-select-dropdown>
       {isSearchable && (
-        <div class="p-2 border-b border-border">
+        <div class="p-2 border-b border-default">
           <input
             type="text"
             class={classes.input}
@@ -520,14 +520,14 @@ const isSearchable = searchInput !== false
       if (this.valueTextSpan) {
         if (this.selectedValues.length === 0) {
           this.valueTextSpan.textContent = this.placeholder;
-          this.valueTextSpan.className = "truncate text-muted-foreground";
+          this.valueTextSpan.className = "truncate text-muted";
         } else {
           const displayLabels = this.selectedValues.map((v) => {
             const found = this.itemsList.find((i) => i[this.valueKey] === v);
             return found ? found[this.labelKey] : v;
           });
           this.valueTextSpan.textContent = displayLabels.join(", ");
-          this.valueTextSpan.className = "truncate text-foreground";
+          this.valueTextSpan.className = "truncate text-highlighted";
         }
       }
 

@@ -15,14 +15,11 @@ export const inputTagsTheme = defineTheme("input-tags", {
     more: [
       "inline-flex items-center justify-center px-2 py-0.5",
       "rounded-full text-xs font-semibold",
-      "bg-muted text-muted-foreground",
+      "bg-muted text-muted",
       "ring-1 ring-border/40",
       "whitespace-nowrap select-none cursor-default"
     ],
-    input: [
-      "flex-1 min-w-[6rem] bg-transparent text-sm outline-none",
-      "placeholder:text-muted-foreground"
-    ]
+    input: ["flex-1 min-w-[6rem] bg-transparent text-sm outline-none", "placeholder:text-muted"]
   },
   variants: {
     color: "auto"
@@ -31,7 +28,7 @@ export const inputTagsTheme = defineTheme("input-tags", {
     {
       color: "neutral",
       classNames: {
-        tag: "bg-elevated text-foreground ring-border/60"
+        tag: "bg-elevated text-highlighted ring-border/60"
       }
     }
   ],

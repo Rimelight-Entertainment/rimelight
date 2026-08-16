@@ -6,7 +6,7 @@ export const cardTheme = defineTheme("card", {
     root: "rounded-lg overflow-hidden",
     header: "p-4 sm:px-6 border-default",
     title: "text-highlighted font-semibold",
-    description: "mt-1 text-muted-foreground text-sm",
+    description: "mt-1 text-muted text-sm",
     body: "p-4 sm:p-6 border-default",
     footer: "p-4 sm:px-6 border-default",
     overlay:

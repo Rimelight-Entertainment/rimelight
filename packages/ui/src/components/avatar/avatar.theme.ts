@@ -60,7 +60,7 @@ export const avatarTheme = defineTheme("avatar", {
     {
       color: "neutral",
       classNames: {
-        root: "bg-elevated text-foreground",
+        root: "bg-elevated text-highlighted",
         icon: "text-muted"
       }
     }

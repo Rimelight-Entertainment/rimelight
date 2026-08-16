@@ -7,7 +7,7 @@ export const linkGroupTheme = defineTheme("link-group", {
     title: "font-bold text-sm uppercase tracking-wider text-neutral-500",
     list: "flex flex-col gap-2",
     item: "",
-    link: "text-sm text-muted-foreground hover:text-accent-foreground transition-colors"
+    link: "text-sm text-muted hover:text-accent-foreground transition-colors"
   },
   variants: {
     theme: {
@@ -16,8 +16,8 @@ export const linkGroupTheme = defineTheme("link-group", {
         title: "text-white"
       },
       light: {
-        link: "text-foreground hover:text-accent-foreground",
-        title: "text-foreground"
+        link: "text-highlighted hover:text-accent-foreground",
+        title: "text-highlighted"
       }
     }
   },

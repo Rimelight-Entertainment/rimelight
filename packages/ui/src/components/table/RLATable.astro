@@ -204,7 +204,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
 
 <rla-table class:list={[classes.root, className]} data-slot="root" data-table-id={uid} {...rest}>
   {showToolbar && (
-    <div class="flex items-center justify-between gap-3 p-3.5 border-b border-border bg-muted/20 overflow-x-auto" data-slot="toolbar">
+    <div class="flex items-center justify-between gap-3 p-3.5 border-b border-default bg-muted/20 overflow-x-auto" data-slot="toolbar">
       {searchable && (
         <div class="relative max-w-xs flex-1">
           <RLAInput
@@ -313,7 +313,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
               {Astro.slots.has("loading") ? (
                 <slot name="loading" />
               ) : (
-                <div class="flex items-center justify-center gap-2 text-muted-foreground py-4">
+                <div class="flex items-center justify-center gap-2 text-muted py-4">
                   <RLAIcon name="i-lucide-loader-2" class="size-5 animate-spin text-primary" />
                   <span>Loading table data...</span>
                 </div>
@@ -326,7 +326,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
               {Astro.slots.has("empty") ? (
                 <slot name="empty" />
               ) : (
-                <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted-foreground">
+                <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted">
                   <RLAIcon name="i-lucide-inbox" class="size-8 opacity-50" />
                   <p class="text-sm font-medium">{empty}</p>
                 </div>
@@ -396,7 +396,7 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
                   </tr>
 
                   {isExpanded && Astro.slots.has("expanded") && (
-                    <tr class="bg-muted/20 border-b border-border" data-slot="expanded-tr">
+                    <tr class="bg-muted/20 border-b border-default" data-slot="expanded-tr">
                       <td colspan={visibleColumns.length} class="p-4">
                         <slot name="expanded" {...({ row } as any)} />
                       </td>

@@ -17,15 +17,15 @@ export const slideoverTheme = defineTheme("slideover", {
     trigger: "",
     backdrop: "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300",
     content: [
-      "fixed z-50 bg-background p-6 shadow-xl border-border transition-all duration-300 outline-none",
+      "fixed z-50 bg-default p-6 shadow-xl border-default transition-all duration-300 outline-none",
       "data-[state=open]:animate-in data-[state=closed]:animate-out"
     ],
     header: "flex flex-col gap-1.5 mb-4",
-    title: "text-lg font-semibold leading-none tracking-tight text-foreground",
-    description: "text-sm text-muted-foreground leading-relaxed",
+    title: "text-lg font-semibold leading-none tracking-tight text-highlighted",
+    description: "text-sm text-muted leading-relaxed",
     footer: "flex flex-col sm:flex-row sm:justify-end gap-2 mt-6",
     closeButton: [
-      "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 text-foreground",
+      "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 text-highlighted",
       "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
     ]
   },

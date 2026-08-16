@@ -85,7 +85,7 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
                   disabled={item.disabled}
                 >
                   {item.type === "checkbox" && (
-                    <span class="shrink-0 size-4 flex items-center justify-center border border-border rounded bg-background" data-checkbox-box>
+                    <span class="shrink-0 size-4 flex items-center justify-center border border-default rounded bg-default" data-checkbox-box>
                       <RLAIcon name="i-lucide-check" class={`size-3 text-primary ${item.checked !== false ? "" : "hidden"}`} data-checkbox-check />
                     </span>
                   )}

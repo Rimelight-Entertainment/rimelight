@@ -94,7 +94,7 @@ const initialSize = preMetadata?.size ?? undefined
       class={classes.dialog}
       data-image-dialog
     >
-      <div class="flex flex-col bg-background text-foreground max-h-[90vh]">
+      <div class="flex flex-col bg-default text-highlighted max-h-[90vh]">
         <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
           {isResponsive && mobileImg && desktopImg ? (
             <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
@@ -112,15 +112,15 @@ const initialSize = preMetadata?.size ?? undefined
           )}
         </div>
 
-        <hr class="border-border mx-4 mb-3 shrink-0" />
+        <hr class="border-default mx-4 mb-3 shrink-0" />
 
         <div class={classes.fileInfo}>
           <div class="flex flex-col gap-xs text-sm">
             {
               metaSource && (
                 <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="image" class="size-4 shrink-0 text-muted-foreground" />
-                  <span class="text-muted-foreground">Source:</span>
+                  <RLAIcon name="image" class="size-4 shrink-0 text-muted" />
+                  <span class="text-muted">Source:</span>
                   <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
                 </div>
               )
@@ -128,8 +128,8 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaFormat && (
                 <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="fileQuestion" class="size-4 shrink-0 text-muted-foreground" />
-                  <span class="text-muted-foreground">Format:</span>
+                  <RLAIcon name="fileQuestion" class="size-4 shrink-0 text-muted" />
+                  <span class="text-muted">Format:</span>
                   <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
                 </div>
               )
@@ -137,8 +137,8 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaDimensions && (
                 <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="imageUpscale" class="size-4 shrink-0 text-muted-foreground" />
-                  <span class="text-muted-foreground">Dimensions:</span>
+                  <RLAIcon name="imageUpscale" class="size-4 shrink-0 text-muted" />
+                  <span class="text-muted">Dimensions:</span>
                   <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
                 </div>
               )
@@ -146,8 +146,8 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaSize && (
                 <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="hardDrive" class="size-4 shrink-0 text-muted-foreground" />
-                  <span class="text-muted-foreground">Size:</span>
+                  <RLAIcon name="hardDrive" class="size-4 shrink-0 text-muted" />
+                  <span class="text-muted">Size:</span>
                   <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
                 </div>
               )
@@ -155,8 +155,8 @@ const initialSize = preMetadata?.size ?? undefined
             {
               metaAlt && (
                 <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="alignLeft" class="size-4 shrink-0 text-muted-foreground" />
-                  <span class="text-muted-foreground">Alt:</span>
+                  <RLAIcon name="alignLeft" class="size-4 shrink-0 text-muted" />
+                  <span class="text-muted">Alt:</span>
                   <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
                 </div>
               )

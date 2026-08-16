@@ -4,8 +4,8 @@ export const formFieldTheme = defineTheme("form-field", {
   slots: ["root", "label", "description", "error"],
   base: {
     root: "flex flex-col gap-1.5 w-full",
-    label: "text-sm font-medium text-foreground",
-    description: "text-xs text-muted-foreground leading-normal",
+    label: "text-sm font-medium text-highlighted",
+    description: "text-xs text-muted leading-normal",
     error: "text-xs font-medium text-error-500 leading-normal"
   },
   variants: {

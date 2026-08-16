@@ -96,7 +96,7 @@ const id = `chart-${Math.random().toString(36).substring(2, 9)}`
         const pct = max > 0 ? (item.value / max) * 100 : 0
         return (
           <div class="flex flex-col items-center gap-1 flex-1 group">
-            <span class="text-[10px] text-muted-foreground font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+            <span class="text-[10px] text-muted font-mono opacity-0 group-hover:opacity-100 transition-opacity">
               {item.value}
             </span>
             <div class:list={[classes.bar, "h-full w-full overflow-hidden !bg-transparent"]} title={`${item.label}: ${item.value}`}>
@@ -188,12 +188,12 @@ const id = `chart-${Math.random().toString(36).substring(2, 9)}`
       {/* Legend */}
       <div class="flex flex-col gap-1.5">
         {data.map((item, i) => (
-          <div class="flex items-center gap-2 text-xs text-muted-foreground">
+          <div class="flex items-center gap-2 text-xs text-muted">
             <svg class="size-3 shrink-0" viewBox="0 0 10 10">
               <rect width="10" height="10" rx="2" fill={getColor(item, i)} />
             </svg>
             <span>{item.label}</span>
-            <span class="ml-1 font-mono text-foreground">{item.value}</span>
+            <span class="ml-1 font-mono text-highlighted">{item.value}</span>
           </div>
         ))}
       </div>

@@ -31,35 +31,35 @@ export const selectTheme = defineTheme("select", {
   ],
   base: {
     root: "relative w-full flex flex-col gap-1.5",
-    label: "text-sm font-medium text-foreground",
+    label: "text-sm font-medium text-highlighted",
     trigger:
-      "relative group w-full inline-flex items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-75 cursor-pointer",
+      "relative group w-full inline-flex items-center justify-between rounded-md border border-default bg-default px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-75 cursor-pointer",
     leading: "inline-flex items-center gap-1.5 shrink-0 me-2",
-    leadingIcon: "shrink-0 size-4 text-muted-foreground",
+    leadingIcon: "shrink-0 size-4 text-muted",
     leadingAvatar: "shrink-0 size-4 rounded-full object-cover",
     trailing: "inline-flex items-center gap-1.5 shrink-0 ms-auto",
-    trailingIcon: "shrink-0 size-4 text-muted-foreground transition-transform duration-200",
-    trailingClear: "p-0 text-muted-foreground hover:text-foreground cursor-pointer",
-    value: "truncate text-foreground",
-    placeholder: "truncate text-muted-foreground",
+    trailingIcon: "shrink-0 size-4 text-muted transition-transform duration-200",
+    trailingClear: "p-0 text-muted hover:text-highlighted cursor-pointer",
+    value: "truncate text-highlighted",
+    placeholder: "truncate text-muted",
     content:
-      "absolute z-50 left-0 right-0 min-w-[12rem] bg-background shadow-lg rounded-md border border-border overflow-hidden mt-1 flex flex-col max-h-60",
+      "absolute z-50 left-0 right-0 min-w-[12rem] bg-default shadow-lg rounded-md border border-default overflow-hidden mt-1 flex flex-col max-h-60",
     viewport: "relative p-1 scroll-py-1 overflow-y-auto flex-1 divide-y divide-border/50",
     group: "p-1 isolate",
-    empty: "p-3 text-center text-sm text-muted-foreground",
+    empty: "p-3 text-center text-sm text-muted",
     separator: "-mx-1 my-1 h-px bg-border",
     item: "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-    itemLeadingIcon: "shrink-0 size-4 me-2 text-muted-foreground group-hover:text-foreground",
+    itemLeadingIcon: "shrink-0 size-4 me-2 text-muted group-hover:text-highlighted",
     itemLeadingAvatar: "shrink-0 size-4 me-2 rounded-full object-cover",
     itemLeadingChip: "shrink-0 size-2.5 me-2 rounded-full",
     itemWrapper: "flex-1 flex flex-col min-w-0",
     itemLabel: "truncate font-normal",
-    itemDescription: "truncate text-xs text-muted-foreground",
+    itemDescription: "truncate text-xs text-muted",
     itemTrailingIcon: "shrink-0 size-4 ms-auto text-primary",
     input:
-      "w-full border-b border-border bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground",
+      "w-full border-b border-default bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted",
     createOption:
-      "p-2 text-sm font-medium text-primary hover:bg-accent cursor-pointer flex items-center gap-2 border-t border-border"
+      "p-2 text-sm font-medium text-primary hover:bg-accent cursor-pointer flex items-center gap-2 border-t border-default"
   },
   variants: {
     size: {
@@ -90,9 +90,9 @@ export const selectTheme = defineTheme("select", {
       }
     },
     variant: {
-      outline: { trigger: "bg-background border border-input hover:bg-accent/50" },
+      outline: { trigger: "bg-default border border-default hover:bg-accent/50" },
       soft: { trigger: "bg-accent/50 border-transparent hover:bg-accent" },
-      subtle: { trigger: "bg-accent border border-border hover:bg-accent/80" },
+      subtle: { trigger: "bg-accent border border-default hover:bg-accent/80" },
       ghost: { trigger: "bg-transparent border-transparent hover:bg-accent" },
       none: { trigger: "bg-transparent border-transparent px-0 shadow-none" }
     }

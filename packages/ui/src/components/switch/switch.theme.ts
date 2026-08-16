@@ -11,8 +11,8 @@ export const switchTheme = defineTheme("switch", {
       "peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
     ],
     thumb:
-      "pointer-events-none block size-4 rounded-full bg-background shadow-lg ring-0 transition-transform duration-200 translate-x-0",
-    label: "text-sm text-foreground leading-none"
+      "pointer-events-none block size-4 rounded-full bg-default shadow-lg ring-0 transition-transform duration-200 translate-x-0",
+    label: "text-sm text-highlighted leading-none"
   },
   variants: {
     color: "auto",

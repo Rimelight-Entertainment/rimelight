@@ -23,7 +23,7 @@ export const imageTheme = defineTheme("image", {
     download:
       "inline-flex items-center justify-center rounded-md font-medium transition-colors outline-none h-9 px-4 py-2 text-sm gap-2 text-primary-500 hover:bg-primary-500/10 active:bg-primary-500/10",
     closeButton:
-      "inline-flex items-center justify-center size-8 rounded-full bg-background/80 hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+      "inline-flex items-center justify-center size-8 rounded-full bg-default/80 hover:bg-accent text-muted hover:text-highlighted transition-colors"
   },
   variants: {},
   defaultVariants: {}

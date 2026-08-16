@@ -18,7 +18,7 @@ export const tabsTheme = defineTheme("tabs", {
     indicator:
       "absolute transition-[translate,width,height,top,left] duration-200 ease-out pointer-events-none",
     trigger:
-      "group relative inline-flex items-center justify-center min-w-0 whitespace-nowrap font-medium transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 focus-visible:outline-none data-[state=inactive]:text-muted-foreground hover:data-[state=inactive]:text-foreground",
+      "group relative inline-flex items-center justify-center min-w-0 whitespace-nowrap font-medium transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 focus-visible:outline-none data-[state=inactive]:text-muted hover:data-[state=inactive]:text-highlighted",
     leadingIcon: "shrink-0",
     leadingAvatar: "shrink-0",
     label: "truncate",
@@ -29,16 +29,16 @@ export const tabsTheme = defineTheme("tabs", {
     variant: {
       pill: {
         list: "bg-muted/60 dark:bg-muted/40 rounded-lg p-1",
-        trigger: "grow rounded-md data-[state=active]:text-foreground z-10",
-        indicator: "bg-background rounded-md shadow-xs top-1 bottom-1 h-[calc(100%-8px)]"
+        trigger: "grow rounded-md data-[state=active]:text-highlighted z-10",
+        indicator: "bg-default rounded-md shadow-xs top-1 bottom-1 h-[calc(100%-8px)]"
       },
       underline: {
-        list: "bg-transparent border-b border-border p-0 gap-2 -mb-px",
+        list: "bg-transparent border-b border-default p-0 gap-2 -mb-px",
         trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
         indicator: "bg-primary rounded-full -bottom-px h-0.5 left-0"
       },
       link: {
-        list: "bg-transparent border-b border-border p-0 gap-2 -mb-px",
+        list: "bg-transparent border-b border-default p-0 gap-2 -mb-px",
         trigger: "rounded-md data-[state=active]:text-primary pb-2 pt-1 px-3 z-10",
         indicator: "bg-primary rounded-full -bottom-px h-0.5 left-0"
       }
@@ -52,7 +52,7 @@ export const tabsTheme = defineTheme("tabs", {
       },
       vertical: {
         root: "flex-row gap-6",
-        list: "flex-col items-stretch w-48 border-r border-border p-0",
+        list: "flex-col items-stretch w-48 border-r border-default p-0",
         trigger: "justify-start text-left"
       }
     },

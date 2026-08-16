@@ -87,11 +87,11 @@ await Promise.all(
                           href={typeof child.href === "string" ? child.href : (typeof child.to === "string" ? child.to : "#")}
                           class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
-                          {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted-foreground"} />}
+                          {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted"} />}
                           <div>
                             <div class="font-medium leading-none">{child.label}</div>
                             {child.description && (
-                              <p class="mt-1 text-xs text-muted-foreground line-clamp-2">{child.description}</p>
+                              <p class="mt-1 text-xs text-muted line-clamp-2">{child.description}</p>
                             )}
                           </div>
                         </a>

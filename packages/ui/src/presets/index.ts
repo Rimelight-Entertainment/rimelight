@@ -66,8 +66,8 @@ const formatCustomColors = (colors?: Record<string, ColorModeInput>) => {
           ? entry
           : { light: entry, dark: entry }
       ) as { light?: Record<string, string>; dark?: Record<string, string> }
-      const l = mode.light ?? {}
-      const d = mode.dark ?? {}
+      const l = mode.light ?? {},
+        d = mode.dark ?? {}
       const bL = l["500"] ?? Object.values(l)[0] ?? "oklch(0.55 0.15 0)"
       const bD = d["500"] ?? Object.values(d)[0] ?? bL
       return [
@@ -96,32 +96,7 @@ ${BUILTIN_PALETTE_CSS}${custom ? `\n${custom}` : ""}
 .dark, [data-theme="dark"] { color-scheme: dark; }
 .light, [data-theme="light"] { color-scheme: light; }
 
-body { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }
-*, ::before, ::after { --un-ring-color: var(--primary); }
-*:focus-visible, *:has(> a:focus-visible) {
-  outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
-  outline-offset: 2px;
-}`
-}
-
-const INTENT_PROPS: Record<string, [string, number]> = {
-  text: ["color", 0],
-  bg: ["background-color", 1],
-  border: ["border-color", 2],
-  ring: ["--un-ring-color", 3],
-  outline: ["outline-color", 3],
-  divide: ["border-color", 4]
-}
-
-const SEMANTIC_INTENTS: Record<string, readonly [string, string, string, string, string]> = {
-  default: ["700", "light-dark(oklch(1 0 0), var(--color-neutral-50))", "200", "300", "100"],
-  muted: ["600", "100", "200", "300", "200"],
-  elevated: ["800", "light-dark(oklch(1 0 0), var(--color-neutral-100))", "200", "400", "100"],
-  accented: ["900", "200", "300", "500", "300"],
-  dimmed: ["500", "light-dark(var(--color-neutral-50), oklch(0 0 0 / 0.25))", "300", "400", "200"],
-  toned: ["800", "700", "600", "900", "800"],
-  highlighted: ["950", "200", "800", "950", "900"],
-  inverted: ["50", "950", "800", "700", "900"]
+body { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
 }
 
 const SPACING = {
@@ -152,10 +127,24 @@ const RADIUS = {
   "3xl": "calc(var(--radius) + 1rem)"
 }
 
-const BASE_THEME_COLORS = {
-  background: "light-dark(oklch(1 0 0), var(--color-neutral-50))",
-  foreground: "var(--color-neutral-950)",
-  border: "var(--color-neutral-200)"
+const PROPERTY_CONFIG: Record<string, { key: "text" | "bg" | "border" | "ring"; prop: string }> = {
+  text: { key: "text", prop: "color" },
+  bg: { key: "bg", prop: "background-color" },
+  border: { key: "border", prop: "border-color" },
+  divide: { key: "border", prop: "border-color" },
+  ring: { key: "ring", prop: "--un-ring-color" },
+  outline: { key: "ring", prop: "outline-color" }
+}
+
+const SEMANTIC_INTENTS: Record<string, Record<"text" | "bg" | "border" | "ring", string>> = {
+  default: { text: "700", bg: "50", border: "200", ring: "300" },
+  muted: { text: "600", bg: "100", border: "200", ring: "300" },
+  elevated: { text: "800", bg: "100", border: "200", ring: "400" },
+  accented: { text: "900", bg: "200", border: "300", ring: "500" },
+  dimmed: { text: "500", bg: "50", border: "300", ring: "400" },
+  toned: { text: "800", bg: "700", border: "600", ring: "900" },
+  highlighted: { text: "950", bg: "200", border: "800", ring: "950" },
+  inverted: { text: "50", bg: "950", border: "800", ring: "700" }
 }
 
 const rules: Rule[] = [
@@ -170,30 +159,15 @@ const rules: Rule[] = [
     })
   ],
   [
-    /^(shadow-adaptive|rl-elevation)$/,
-    () => ({
-      "box-shadow":
-        "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.25 h / 0.8))"
-    })
-  ],
-  [
-    /^(?:rl|rla)-visibility-aware$/,
-    () => ({
-      "content-visibility": "auto",
-      "contain-intrinsic-size":
-        "var(--rl-contain-intrinsic-size, var(--rla-contain-intrinsic-size, auto 500px))"
-    })
-  ],
-  [
     /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
     ([, prop, name, opacity]) => {
-      const mapping = INTENT_PROPS[prop!]
-      const intentValues = SEMANTIC_INTENTS[name!]
-      if (!mapping || !intentValues) return
-      const raw = intentValues[mapping[1]]!
-      const base = raw.includes("(") ? raw : `var(--color-neutral-${raw})`
+      const config = PROPERTY_CONFIG[prop!]
+      const intent = SEMANTIC_INTENTS[name!]
+      if (!config || !intent) return
+
+      const base = `var(--color-neutral-${intent[config.key]})`
       return {
-        [mapping[0]]: opacity ? `color-mix(in srgb, ${base} ${opacity}%, transparent)` : base,
+        [config.prop]: opacity ? `color-mix(in srgb, ${base} ${opacity}%, transparent)` : base,
         ...(prop === "bg" && name === "inverted" ? { color: "var(--color-neutral-50)" } : {})
       }
     }
@@ -219,20 +193,21 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const theme = {
     spacing: SPACING,
     radius: RADIUS,
-    colors: {
-      ...BASE_THEME_COLORS,
-      ...Object.fromEntries(
-        allColors.map((c) => [
-          c,
-          {
-            DEFAULT: `var(--${c})`,
-            foreground: `var(--${c}-foreground)`,
-            accent: `var(--${c}-accent)`,
-            ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
-          }
-        ])
-      )
-    }
+    boxShadow: {
+      adaptive:
+        "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.25 h / 0.8))"
+    },
+    colors: Object.fromEntries(
+      allColors.map((c) => [
+        c,
+        {
+          DEFAULT: `var(--${c})`,
+          foreground: `var(--${c}-foreground)`,
+          accent: `var(--${c}-accent)`,
+          ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
+        }
+      ])
+    )
   }
 
   const preflights = [{ getCSS: () => generatePreflightCss(options.colors) }]

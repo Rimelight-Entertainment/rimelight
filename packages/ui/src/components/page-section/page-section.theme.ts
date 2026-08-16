@@ -27,7 +27,7 @@ export const pageSectionTheme = defineTheme("page-section", {
     leadingIcon: "size-10 shrink-0 text-primary",
     headline: "",
     title: "text-pretty tracking-tight font-bold",
-    description: "text-muted-foreground",
+    description: "text-muted",
     body: "",
     footer: "",
     links: "flex flex-wrap"

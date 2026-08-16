@@ -53,14 +53,14 @@ const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
           <p class={classes.description} data-slot="description">{description}</p>
         )}
         {accept && (
-          <p class="mt-1 text-[10px] text-muted-foreground/70">
+          <p class="mt-1 text-[10px] text-muted/70">
             Accepted: <span class="font-mono">{accept}</span>
           </p>
         )}
       </slot>
 
       <div
-        class="mt-3 hidden text-xs text-muted-foreground"
+        class="mt-3 hidden text-xs text-muted"
         data-fileUpload-filelist
         aria-live="polite"
       />

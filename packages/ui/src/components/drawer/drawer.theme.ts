@@ -18,13 +18,13 @@ export const drawerTheme = defineTheme("drawer", {
     trigger: "",
     backdrop: "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300",
     content: [
-      "fixed z-50 bg-background p-6 shadow-xl border-border transition-all duration-300 outline-none",
+      "fixed z-50 bg-default p-6 shadow-xl border-default transition-all duration-300 outline-none",
       "data-[state=open]:animate-in data-[state=closed]:animate-out"
     ],
     handle: "mx-auto h-1.5 w-[100px] rounded-full bg-muted mb-4",
     header: "flex flex-col gap-1.5 mb-4 text-center",
-    title: "text-lg font-semibold leading-none tracking-tight text-foreground",
-    description: "text-sm text-muted-foreground leading-relaxed",
+    title: "text-lg font-semibold leading-none tracking-tight text-highlighted",
+    description: "text-sm text-muted leading-relaxed",
     footer: "flex flex-col gap-2 mt-6",
     closeButton: [
       "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
