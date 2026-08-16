@@ -8,29 +8,30 @@ const INCLUDES = [
   /[\\/](@rimelight\/ui|packages\/ui)[\\/]/
 ]
 
-export const ui = (config: UIConfig = {}): AstroIntegration[] => {
-  const { unocss } = config,
-    pipeline = unocss?.content?.pipeline
-  return [
-    UnoCSS({
-      ...unocss,
-      presets: [rimelightUiPreset(config), ...(unocss?.presets ?? [])],
-      content: {
-        ...unocss?.content,
-        pipeline: pipeline !== false && {
-          ...pipeline,
-          include: [...INCLUDES, ...(pipeline?.include ? [pipeline.include].flat() : [])]
-        }
-      }
-    }),
-    {
-      name: "@rimelight/ui",
-      hooks: {
-        "astro:config:setup": ({ updateConfig }) =>
-          void updateConfig({
-            vite: { define: { "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(config) } }
-          })
+export const ui = (config: UIConfig = {}): AstroIntegration[] => [
+  UnoCSS({
+    ...config.unocss,
+    presets: [rimelightUiPreset(config), ...(config.unocss?.presets ?? [])],
+    content: {
+      ...config.unocss?.content,
+      pipeline: config.unocss?.content?.pipeline !== false && {
+        ...config.unocss?.content?.pipeline,
+        include: [
+          ...INCLUDES,
+          ...(config.unocss?.content?.pipeline?.include
+            ? [config.unocss.content.pipeline.include].flat()
+            : [])
+        ]
       }
     }
-  ]
-}
+  }),
+  {
+    name: "@rimelight/ui",
+    hooks: {
+      "astro:config:setup": ({ updateConfig }) =>
+        void updateConfig({
+          vite: { define: { "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(config) } }
+        })
+    }
+  }
+]
