@@ -269,7 +269,7 @@ const STATIC_RULES: Rule[] = [
   ]
 ]
 
-export function rimelightUiPreset({ colors, icons, presets: p }: PresetOptions = {}): Preset {
+export default function rimelightUiPreset({ colors, icons, presets }: PresetOptions = {}): Preset {
   return {
     name: "rimelight-ui",
     safelist: [
@@ -279,9 +279,9 @@ export function rimelightUiPreset({ colors, icons, presets: p }: PresetOptions =
       )
     ],
     presets: [
-      p?.wind !== false && presetWind4(),
-      p?.typography !== false && presetTypography(),
-      p?.icons !== false && presetIcons()
+      presets?.wind !== false && presetWind4(),
+      presets?.typography !== false && presetTypography(),
+      presets?.icons !== false && presetIcons()
     ].filter(Boolean) as Preset[],
     transformers: [transformerDirectives(), transformerVariantGroup()],
     outputToCssLayers: true,
@@ -298,5 +298,3 @@ export function rimelightUiPreset({ colors, icons, presets: p }: PresetOptions =
     preflights: [{ getCSS: () => getPreflightCss(colors) }]
   }
 }
-
-export default rimelightUiPreset
