@@ -1,7 +1,7 @@
 import { scv, cx } from "css-variants"
 import type { UIConfig } from "../types"
 
-export const uiConfig: UIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG || {}
+export const uiConfig: UIConfig = import.meta.env.RIMELIGHT_UI_CONFIG ?? {}
 
 export const defineTheme = <const S extends string>(name: string, t: any) => {
   const root = (t.slots.includes("root") ? "root" : t.slots[0]) as S,

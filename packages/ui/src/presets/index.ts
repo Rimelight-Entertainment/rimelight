@@ -53,15 +53,15 @@ const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
       const m = (
         e && typeof e === "object" && ("light" in e || "dark" in e) ? e : { light: e, dark: e }
       ) as { light?: Record<string, string>; dark?: Record<string, string> }
-      const l = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
-      const d = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? l
+      const l = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)",
+        d = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? l
       return emit(n, (s) => `light-dark(${m.light?.[s] ?? l}, ${m.dark?.[s] ?? d})`)
     })
   ].join("\n")
 
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
-  const allColors = Object.keys({ ...PALETTES, ...options.colors })
-  const shades = Object.keys(SHADES)
+  const allColors = Object.keys({ ...PALETTES, ...options.colors }),
+    shades = Object.keys(SHADES)
 
   return {
     name: "rimelight-ui",
@@ -80,16 +80,13 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
     rules: [
       [
         /^rl-color-([\w-]+)$/,
-        ([, c]) => {
-          const [c5, c6] = [`var(--color-${c}-500)`, `var(--color-${c}-600)`]
-          return {
-            "--rl-bg": c5,
-            "--rl-ring": c5,
-            "--rl-border": c5,
-            "--rl-bg-hover": c6,
-            "--rl-text": c6
-          }
-        }
+        ([, c]) => ({
+          "--rl-bg": `var(--color-${c}-500)`,
+          "--rl-ring": `var(--color-${c}-500)`,
+          "--rl-border": `var(--color-${c}-500)`,
+          "--rl-bg-hover": `var(--color-${c}-600)`,
+          "--rl-text": `var(--color-${c}-600)`
+        })
       ],
       [
         /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,

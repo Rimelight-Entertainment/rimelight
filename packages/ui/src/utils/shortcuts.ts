@@ -114,9 +114,9 @@ export function defineShortcuts(
 ): () => void {
   if (typeof window === "undefined") return () => {}
 
-  const standard: Shortcut[] = []
-  const chained = new Map<string, Shortcut>()
-  const registered: RegisteredShortcut[] = []
+  const standard: Shortcut[] = [],
+    chained = new Map<string, Shortcut>(),
+    registered: RegisteredShortcut[] = []
   let maxChain = 2
 
   for (const [rawKey, cfg] of Object.entries(config)) {
@@ -153,9 +153,9 @@ export function defineShortcuts(
         id: `${category}-${rawKey}`,
         keys: formatShortcutKeys(rawKey),
         category,
-        ...(cfg.label && { label: cfg.label }),
-        ...(cfg.description && { description: cfg.description }),
-        ...(cfg.order != null && { order: cfg.order })
+        label: cfg.label,
+        description: cfg.description,
+        order: cfg.order
       })
     }
   }
