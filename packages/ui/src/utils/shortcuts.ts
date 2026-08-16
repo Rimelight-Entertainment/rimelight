@@ -23,7 +23,6 @@ interface Shortcut {
   key: string
   code: string
   handler: Handler
-  chained: boolean
   ctrlKey: boolean
   metaKey: boolean
   shiftKey: boolean
@@ -102,7 +101,7 @@ const toCode = (k: string) =>
     : /^\d$/.test(k)
       ? `Digit${k}`
       : k.toLowerCase().startsWith("arrow")
-        ? `Arrow${k.slice(5).charAt(0).toUpperCase() + k.slice(6)}`
+        ? `Arrow${k[5]!.toUpperCase() + k.slice(6)}`
         : /^f\d+$/i.test(k)
           ? k.toUpperCase()
           : k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
@@ -125,6 +124,9 @@ interface ParsedShortcuts {
   registered: RegisteredShortcut[]
 }
 
+const isMod = (p: string) =>
+  p in MODIFIER_MAP || p === "ctrl" || p === "meta" || p === "shift" || p === "alt"
+
 const parseCache = new WeakMap<ShortcutsConfig, ParsedShortcuts>()
 
 function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
@@ -144,18 +146,8 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof handler === "function") {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
-      const mods = new Set(
-        rawParts
-          .filter(
-            (p) =>
-              MODIFIER_MAP[p] ??
-              (p === "ctrl" || p === "meta" || p === "shift" || p === "alt" ? p : "")
-          )
-          .map((p) => MODIFIER_MAP[p] ?? p)
-      )
-      const nonMods = rawParts.filter(
-        (p) => !(MODIFIER_MAP[p] ?? (p === "ctrl" || p === "meta" || p === "shift" || p === "alt"))
-      )
+      const mods = new Set(rawParts.filter(isMod).map((p) => MODIFIER_MAP[p] ?? p))
+      const nonMods = rawParts.filter((p) => !isMod(p))
 
       const base = chainedKey ? rawKey.toLowerCase() : nonMods.join("_")
       if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
@@ -167,7 +159,6 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         key: base,
         code: toCode(base),
         handler,
-        chained: chainedKey,
         ctrlKey: ctrl,
         metaKey: isMac && hasMeta,
         shiftKey: mods.has("shift"),
@@ -181,15 +172,14 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof cfg === "object" && (cfg.label || cfg.description)) {
       const cat = cfg.category || "system"
-      const entry: RegisteredShortcut = {
+      registered.push({
         id: `${cat}-${rawKey}`,
         keys: formatShortcutKeys(rawKey),
-        category: cat
-      }
-      if (cfg.label != null) entry.label = cfg.label
-      if (cfg.description != null) entry.description = cfg.description
-      if (cfg.order != null) entry.order = cfg.order
-      registered.push(entry)
+        category: cat,
+        ...(cfg.label != null && { label: cfg.label }),
+        ...(cfg.description != null && { description: cfg.description }),
+        ...(cfg.order != null && { order: cfg.order })
+      })
     }
   }
 
@@ -210,12 +200,11 @@ export function defineShortcuts(
   let timer: ReturnType<typeof setTimeout> | undefined
   const regIds = registered.length ? new Set(registered.map((i) => i.id)) : null
 
-  const removeRegistered = () =>
-    regIds && activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
-
   if (regIds) {
-    removeRegistered()
-    activeShortcutsStore.set([...activeShortcutsStore.get(), ...registered])
+    activeShortcutsStore.set([
+      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
+      ...registered
+    ])
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -257,6 +246,7 @@ export function defineShortcuts(
   return () => {
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
-    removeRegistered()
+    if (regIds)
+      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
   }
 }

@@ -47,12 +47,12 @@ function resolveColorModes(
     const isLight = Number(s) < 500
     const lVal =
       mL?.[s] ??
-      (autogenerate && (baseL || baseD)
+      (autogenerate
         ? generateShade(s, baseL || baseD, isLight ? "white" : "black")
         : baseL || baseD)
     const dVal =
       mD?.[s] ??
-      (autogenerate && (baseD || baseL)
+      (autogenerate
         ? generateShade(s, baseD || baseL, isLight ? "black" : "white")
         : baseD || baseL)
     if (lVal) light[s] = lVal
@@ -72,10 +72,12 @@ const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(semanticTokens)
   .map(([t, v]) => `  --${t}: light-dark(${v.light}, ${v.dark});`)
   .join("\n")
 
+const SEMANTIC_TOKEN_KEYS = new Set(Object.keys(semanticTokens))
+
 const formatColorLines = (
-  colorMap: Record<string, { light?: Record<string, string>; dark?: Record<string, string> }>
+  entries: Iterable<[string, { light?: Record<string, string>; dark?: Record<string, string> }]>
 ) =>
-  Object.entries(colorMap)
+  [...entries]
     .flatMap(([c, m]) => {
       const keys = [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
       const lines = keys.map((s) => {
@@ -84,7 +86,7 @@ const formatColorLines = (
         return `  --color-${c}-${s}: light-dark(${l ?? d}, ${d ?? l});`
       })
       const l500 = m.light?.["500"] ?? m.dark?.["500"]
-      if (l500 && !(c in semanticTokens)) {
+      if (l500 && !SEMANTIC_TOKEN_KEYS.has(c)) {
         lines.push(
           `  --${c}: light-dark(${l500}, ${m.dark?.["500"] ?? l500});`,
           `  --${c}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
@@ -95,22 +97,19 @@ const formatColorLines = (
     })
     .join("\n")
 
-const STATIC_BUILTIN_COLOR_LINES = formatColorLines(colorScales)
+const STATIC_BUILTIN_COLOR_LINES = formatColorLines(Object.entries(colorScales))
+
+const sv = (keys: string[], prefix = "") =>
+  Object.fromEntries(keys.map((k) => [k, `var(--${prefix}${k})`]))
+const svFg = (keys: string[]) =>
+  Object.fromEntries(
+    keys.map((k) => [k, { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }])
+  )
 
 const STATIC_THEME_COLORS = {
-  ...Object.fromEntries(
-    ["background", "foreground", "border", "input", "outline", "ring"].map((k) => [
-      k,
-      `var(--${k})`
-    ])
-  ),
-  ...Object.fromEntries(
-    ["card", "popover", "muted", "accent"].map((k) => [
-      k,
-      { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }
-    ])
-  ),
-  ...Object.fromEntries(
+  ...sv(["background", "foreground", "border", "input", "outline", "ring"]),
+  ...svFg(["card", "popover", "muted", "accent"]),
+  ...sv(
     [
       "hover",
       "surface",
@@ -120,7 +119,8 @@ const STATIC_THEME_COLORS = {
       "placeholder",
       "input-border",
       "accent-subtle"
-    ].map((k) => [k, `var(--color-${k})`])
+    ],
+    "color-"
   ),
   chart: Object.fromEntries([1, 2, 3, 4, 5].map((n) => [n, `var(--chart-${n})`])),
   sidebar: {
@@ -154,10 +154,13 @@ const INTENTS: Record<string, [string, string, string, string, string]> = {
 }
 
 const INTENT_PROPS = ["text", "background", "border", "ring", "divide"] as const
-const nVal = (s: string) => (s.startsWith("light-dark(") ? s : `var(--color-neutral-${s})`)
-
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
-  .flatMap(([n, vals]) => INTENT_PROPS.map((p, i) => `  --${p}-color-${n}: ${nVal(vals[i]!)};`))
+  .flatMap(([n, vals]) =>
+    INTENT_PROPS.map(
+      (p, i) =>
+        `  --${p}-color-${n}: ${vals[i]!.startsWith("light-dark(") ? vals[i]! : `var(--color-neutral-${vals[i]!})`};`
+    )
+  )
   .join("\n")
 
 const INTENT_REGEX = new RegExp(
@@ -225,9 +228,7 @@ const THEME_RADIUS = {
   "3xl": "calc(var(--radius) + 1rem)"
 }
 
-export type RimelightPresetOptions = UIConfig
-
-export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
+export function rimelightUiPreset(options?: UIConfig): Preset {
   const userColors = options?.colors ?? {}
   const allColors = getAllColorNames(userColors)
   const safelist = [
@@ -238,12 +239,10 @@ export function rimelightUiPreset(options?: RimelightPresetOptions): Preset {
   ]
   const userColorLines = Object.keys(userColors).length
     ? formatColorLines(
-        Object.fromEntries(
-          Object.entries(userColors).map(([name, entry]) => [
-            name,
-            resolveColorModes(entry, options?.autogenerateColorModes ?? true)
-          ])
-        )
+        Object.entries(userColors).map(([name, entry]) => [
+          name,
+          resolveColorModes(entry, options?.autogenerateColorModes ?? true)
+        ])
       )
     : ""
   const preflightCss = buildPreflight(userColorLines)

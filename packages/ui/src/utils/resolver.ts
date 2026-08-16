@@ -1,8 +1,6 @@
 import { scv, cx } from "css-variants"
 import { colorNames, uiConfig, type ThemeColor } from "../config"
 
-const cache = new WeakMap<object, Map<string, Record<string, string>>>()
-
 export const defineTheme = <
   const S extends string,
   const V extends Record<string, "auto" | Record<string, Partial<Record<S, string>>>> = Record<
@@ -21,12 +19,21 @@ export const defineTheme = <
     }
   }
 ) => {
+  if (uiConfig.unstyled) {
+    return (p?: Record<string, any>) =>
+      (p?.class || p?.className ? { root: (p.class ?? p.className) as string } : {}) as Record<
+        S,
+        string
+      >
+  }
+
   const variants: Record<string, unknown> = {}
   if (theme.variants) {
+    let slot: string | undefined
     for (const k in theme.variants) {
       const val = theme.variants[k]
       if (val === "auto") {
-        const slot = (theme.slots as readonly string[]).includes("root")
+        slot ??= (theme.slots as readonly string[]).includes("root")
           ? "root"
           : (theme.slots[0] ?? "root")
         const auto: Record<string, Record<string, string>> = { neutral: { [slot]: "" } }
@@ -38,44 +45,35 @@ export const defineTheme = <
     }
   }
 
-  const config: Record<string, unknown> = { slots: [...theme.slots], variants }
-  if (theme.base) config.base = theme.base
-  if (theme.compoundVariants) config.compoundVariants = theme.compoundVariants
-  if (theme.defaultVariants) config.defaultVariants = theme.defaultVariants
   const themeFn = (scv as unknown as (c: unknown) => (v: Record<string, any>) => Record<S, string>)(
-    config
+    {
+      slots: [...theme.slots],
+      variants,
+      ...(theme.base && { base: theme.base }),
+      ...(theme.compoundVariants && { compoundVariants: theme.compoundVariants }),
+      ...(theme.defaultVariants && { defaultVariants: theme.defaultVariants })
+    }
   )
+  const globalSlots = uiConfig.themes?.[name]?.slots
+  const map = new Map<string, Record<string, string>>()
 
   return (props?: Record<string, any>): Record<S, string> => {
-    const rootClass =
-      typeof props?.class === "string"
-        ? props.class
-        : typeof props?.className === "string"
-          ? props.className
-          : undefined
-
-    if (uiConfig.unstyled)
-      return (rootClass ? { root: rootClass } : {}) as unknown as Record<S, string>
-
-    let map = cache.get(themeFn)
-    if (!map) cache.set(themeFn, (map = new Map()))
-
+    const rc = props?.class ?? props?.className
+    const rootClass = typeof rc === "string" ? rc : undefined
     const { ui, class: _, className: __, ...v } = props ?? {}
+
     let key = ""
     for (const k in v) key += `${k}:${String(v[k])};`
 
-    const res = map.get(key) ?? (map.set(key, themeFn(v)), map.get(key)!)
-
-    const mergedUi = uiConfig.themes?.[name]?.slots
-    const resolvedUi = mergedUi ? (ui ? { ...mergedUi, ...ui } : mergedUi) : ui
-    if (!rootClass && !resolvedUi) return res
+    if (!map.has(key)) map.set(key, themeFn(v))
+    const res = map.get(key)!
+    const resolvedUi = globalSlots || ui ? { ...globalSlots, ...ui } : undefined
+    if (!resolvedUi && !rootClass) return res
 
     const out: Record<string, string> = { ...res }
-    if (resolvedUi) {
-      for (const s in resolvedUi) {
-        const o = resolvedUi[s]
-        if (o) out[s] = typeof o === "function" ? cx(o(out[s] ?? "")) : cx(out[s], o)
-      }
+    for (const s in resolvedUi) {
+      const o = resolvedUi[s]
+      if (o) out[s] = typeof o === "function" ? cx(o(out[s] ?? "")) : cx(out[s], o)
     }
     if (rootClass) out.root = cx(out.root, rootClass)
     return out

@@ -172,6 +172,7 @@ export const buttonTheme = defineTheme("button", {
     variant: "solid",
     color: "primary",
     size: "md",
-    justify: "center"
+    justify: "center",
+    rounded: false
   }
 })

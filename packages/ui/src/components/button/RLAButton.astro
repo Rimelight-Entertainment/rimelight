@@ -58,7 +58,7 @@ const loadingAutoProps = loadingAuto ? { 'data-loading-auto': '' } : {};
 <Tag
   class={classes.root}
   data-slot="root"
-  {...(Tag === RLALink ? { href, to, noExternalIcon: true } : {})}
+  {...(Tag === RLALink ? { href, to, noExternalIcon: true, raw: true } : {})}
   {...loadingAutoProps}
   {...rest}
 >

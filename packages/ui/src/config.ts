@@ -98,7 +98,6 @@ export type ColorShade = (typeof COLOR_SHADES)[number]
 
 const parseScale = (s: string) =>
   Object.fromEntries(s.split(",").map((v, i) => [COLOR_SHADES[i]!, `oklch(${v.trim()})`]))
-
 const c = (l: string, d: string) => ({ light: parseScale(l), dark: parseScale(d) })
 
 export const colorScales = {
@@ -155,8 +154,7 @@ export const getAllColorNames = (customColors?: Record<string, unknown>): readon
 export type ResolvedUIConfig = Omit<UIConfig, "colors" | "components" | "presets" | "unocss"> & {
   colors?: readonly string[]
   themes?: Record<string, ComponentThemeOverride>
-  [key: string]: unknown
-}
+} & Record<string, unknown>
 
 export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
 
@@ -168,13 +166,11 @@ declare global {
 
 const p = (light: string, dark = light) => ({ light, dark })
 const white = "oklch(1 0 0)"
-const darkFg = "oklch(0.985 0 0)"
-const lightFg = "oklch(0.145 0 0)"
-const fg = p(lightFg, darkFg)
+const fg = p("oklch(0.145 0 0)", "oklch(0.985 0 0)")
 const darkMeta = "oklch(0.208 0.015 260)"
 
 export const semanticTokens = {
-  "background": p(white, lightFg),
+  "background": p(white, "oklch(0.145 0 0)"),
   "foreground": fg,
   "card": p(white, "oklch(0.206 0.015 260)"),
   "card-foreground": fg,
@@ -184,7 +180,7 @@ export const semanticTokens = {
   "primary-foreground": p(white),
   "primary-accent": p("oklch(0.44 0.19 260)", "oklch(0.707 0.165 254.6)"),
   "secondary": p("oklch(0.606 0.25 292.7)", "oklch(0.702 0.183 293.5)"),
-  "secondary-foreground": p(darkFg),
+  "secondary-foreground": p("oklch(0.985 0 0)"),
   "secondary-accent": p("oklch(0.541 0.281 293.0)", "oklch(0.702 0.183 293.5)"),
   "muted": p("oklch(0.969 0.003 260)", "oklch(0.270 0.015 260)"),
   "muted-foreground": p("oklch(0.439 0.012 260)", "oklch(0.708 0.01 260)"),
@@ -200,13 +196,13 @@ export const semanticTokens = {
   "warning-foreground": p("oklch(0 0 0)"),
   "warning-accent": p("oklch(0.681 0.162 75.8)", "oklch(0.852 0.199 91.9)"),
   "error": p("oklch(0.637 0.237 25.3)", "oklch(0.68 0.17 28)"),
-  "error-foreground": p(darkFg),
+  "error-foreground": p("oklch(0.985 0 0)"),
   "error-accent": p("oklch(0.577 0.245 27.3)", "oklch(0.704 0.191 22.2)"),
   "commentary": p("oklch(0.667 0.295 322.2)", "oklch(0.74 0.238 322.2)"),
-  "commentary-foreground": p(darkFg, darkMeta),
+  "commentary-foreground": p("oklch(0.985 0 0)", darkMeta),
   "commentary-accent": p("oklch(0.591 0.293 322.9)", "oklch(0.833 0.145 321.4)"),
   "ideation": p("oklch(0.612 0.252 291.5)", "oklch(0.708 0.185 292.0)"),
-  "ideation-foreground": p(darkFg, darkMeta),
+  "ideation-foreground": p("oklch(0.985 0 0)", darkMeta),
   "ideation-accent": p("oklch(0.545 0.279 291.8)", "oklch(0.815 0.114 292.2)"),
   "source": p("oklch(0.789 0.154 211.5)", "oklch(0.865 0.127 207.1)"),
   "source-foreground": p(darkMeta),
@@ -215,10 +211,10 @@ export const semanticTokens = {
   "input": p("oklch(0.924 0.005 260)", "oklch(0.985 0 0 / 0.15)"),
   "outline": p("oklch(0.705 0.01 260)", "oklch(0.552 0.011 260)"),
   "ring": p("oklch(0.708 0.01 260)", "oklch(0.556 0.011 260)"),
-  "sidebar": p(darkFg, "oklch(0.203 0.015 260)"),
+  "sidebar": p("oklch(0.985 0 0)", "oklch(0.203 0.015 260)"),
   "sidebar-foreground": fg,
   "sidebar-primary": p("oklch(0.488 0.243 264.4)"),
-  "sidebar-primary-foreground": p(darkFg),
+  "sidebar-primary-foreground": p("oklch(0.985 0 0)"),
   "sidebar-accent": p("oklch(0.965 0.004 260)", "oklch(0.265 0.016 260)"),
   "sidebar-accent-foreground": p("oklch(0.207 0.015 260)", "oklch(0.97 0.003 260)"),
   "sidebar-border": p("oklch(0.920 0.005 260)", "oklch(0.271 0.015 260)"),
