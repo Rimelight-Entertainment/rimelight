@@ -28,60 +28,75 @@ const PALETTES: Record<string, [number, number]> = {
   source: [0.13, 215]
 }
 
-const renderPaletteVars = (name: string, chroma: number, hue: number) =>
+const SHADE_KEYS = Object.keys(SHADES)
+
+const emitPaletteCss = (
+  name: string,
+  getShade: (s: string) => string,
+  light: string,
+  dark: string
+) =>
   [
-    ...Object.entries(SHADES).map(
-      ([s, [lL, cL, dL, dC]]) =>
-        `  --color-${name}-${s}: light-dark(oklch(${lL} ${(cL * chroma).toFixed(3)} ${hue}), oklch(${dL} ${(dC * chroma).toFixed(3)} ${hue}));`
-    ),
-    `  --${name}: light-dark(oklch(0.55 ${chroma} ${hue}), oklch(0.53 ${chroma} ${hue}));`,
+    ...SHADE_KEYS.map((s) => `  --color-${name}-${s}: ${getShade(s)};`),
+    `  --${name}: light-dark(${light}, ${dark});`,
     `  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
     `  --${name}-accent: var(--color-${name}-600);`
   ].join("\n")
 
-const formatCustomColors = (colors?: Record<string, ColorModeInput>) => {
-  if (!colors) return ""
-  return Object.entries(colors)
-    .map(([name, entry]) => {
-      const mode =
-        entry && typeof entry === "object" && ("light" in entry || "dark" in entry)
-          ? (entry as { light?: Record<string, string>; dark?: Record<string, string> })
-          : { light: entry as Record<string, string>, dark: entry as Record<string, string> }
-      const l = mode.light ?? {},
-        d = mode.dark ?? {}
-      const bL = l["500"] ?? Object.values(l)[0] ?? "oklch(0.55 0.15 0)"
-      const bD = d["500"] ?? Object.values(d)[0] ?? bL
+const BUILTIN_PALETTES = Object.entries(PALETTES)
+  .map(([name, [c, h]]) =>
+    emitPaletteCss(
+      name,
+      (s) => {
+        const [lL, cL, dL, dC] = SHADES[s]!
+        return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`
+      },
+      `oklch(0.55 ${c} ${h})`,
+      `oklch(0.53 ${c} ${h})`
+    )
+  )
+  .join("\n")
 
-      return [
-        ...Object.keys(SHADES).map(
-          (s) => `  --color-${name}-${s}: light-dark(${l[s] ?? bL}, ${d[s] ?? bD});`
-        ),
-        `  --${name}: light-dark(${bL}, ${bD});`,
-        `  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
-        `  --${name}-accent: var(--color-${name}-600);`
-      ].join("\n")
-    })
-    .join("\n")
+const formatCustomColors = (colors?: Record<string, ColorModeInput>) =>
+  colors
+    ? Object.entries(colors)
+        .map(([name, entry]) => {
+          const { light = {}, dark = {} } = (
+            typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
+              ? entry
+              : { light: entry, dark: entry }
+          ) as { light?: Record<string, string>; dark?: Record<string, string> }
+          const bL = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
+          const bD = dark["500"] ?? Object.values(dark)[0] ?? bL
+          return emitPaletteCss(
+            name,
+            (s) => `light-dark(${light[s] ?? bL}, ${dark[s] ?? bD})`,
+            bL,
+            bD
+          )
+        })
+        .join("\n")
+    : ""
+
+const PROPS: Record<string, [prop: string, idx: number]> = {
+  text: ["color", 0],
+  bg: ["background-color", 1],
+  border: ["border-color", 2],
+  divide: ["border-color", 2],
+  ring: ["--un-ring-color", 3],
+  outline: ["outline-color", 3]
 }
 
-const PROPERTY_CONFIG: Record<string, { key: string; prop: string }> = {
-  text: { key: "text", prop: "color" },
-  bg: { key: "bg", prop: "background-color" },
-  border: { key: "border", prop: "border-color" },
-  divide: { key: "border", prop: "border-color" },
-  ring: { key: "ring", prop: "--un-ring-color" },
-  outline: { key: "ring", prop: "outline-color" }
-}
-
-const SEMANTIC_INTENTS: Record<string, Record<string, string>> = {
-  default: { text: "700", bg: "50", border: "200", ring: "300" },
-  muted: { text: "600", bg: "100", border: "200", ring: "300" },
-  elevated: { text: "800", bg: "100", border: "200", ring: "400" },
-  accented: { text: "900", bg: "200", border: "300", ring: "500" },
-  dimmed: { text: "500", bg: "50", border: "300", ring: "400" },
-  toned: { text: "800", bg: "700", border: "600", ring: "900" },
-  highlighted: { text: "950", bg: "200", border: "800", ring: "950" },
-  inverted: { text: "50", bg: "950", border: "800", ring: "700" }
+// [text, bg, border, ring]
+const INTENTS: Record<string, [string, string, string, string]> = {
+  default: ["700", "50", "200", "300"],
+  muted: ["600", "100", "200", "300"],
+  elevated: ["800", "100", "200", "400"],
+  accented: ["900", "200", "300", "500"],
+  dimmed: ["500", "50", "300", "400"],
+  toned: ["800", "700", "600", "900"],
+  highlighted: ["950", "200", "800", "950"],
+  inverted: ["50", "950", "800", "700"]
 }
 
 const rules: Rule[] = [
@@ -89,22 +104,22 @@ const rules: Rule[] = [
     /^rl-color-([\w-]+)$/,
     ([, c]) => ({
       "--rl-bg": `var(--color-${c}-500)`,
-      "--rl-bg-hover": `var(--color-${c}-600)`,
-      "--rl-text": `var(--color-${c}-600)`,
       "--rl-ring": `var(--color-${c}-500)`,
-      "--rl-border": `var(--color-${c}-500)`
+      "--rl-border": `var(--color-${c}-500)`,
+      "--rl-bg-hover": `var(--color-${c}-600)`,
+      "--rl-text": `var(--color-${c}-600)`
     })
   ],
   [
     /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
     ([, prop, name, opacity]) => {
-      const config = PROPERTY_CONFIG[prop!]
-      const intent = SEMANTIC_INTENTS[name!]
-      if (!config || !intent) return
+      const [cssProp, idx] = PROPS[prop!] ?? []
+      const shade = idx !== undefined ? INTENTS[name!]?.[idx] : undefined
+      if (!cssProp || !shade) return
 
-      const base = `var(--color-neutral-${intent[config.key]})`
+      const base = `var(--color-neutral-${shade})`
       return {
-        [config.prop]: opacity ? `color-mix(in srgb, ${base} ${opacity}%, transparent)` : base,
+        [cssProp]: opacity ? `color-mix(in srgb, ${base} ${opacity}%, transparent)` : base,
         ...(prop === "bg" && name === "inverted" ? { color: "var(--color-neutral-50)" } : {})
       }
     }
@@ -139,64 +154,51 @@ const RADIUS = {
   "3xl": "calc(var(--radius) + 1rem)"
 }
 
+const buildColorTheme = (c: string) => ({
+  DEFAULT: `var(--${c})`,
+  foreground: `var(--${c}-foreground)`,
+  accent: `var(--${c}-accent)`,
+  ...Object.fromEntries(SHADE_KEYS.map((s) => [s, `var(--color-${c}-${s})`]))
+})
+
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const allColors = getAllColorNames(options.colors)
 
-  const safelist = [
-    ...allColors.map((c) => `rl-color-${c}`),
-    ...Object.values(options.icons ?? {}).filter(
-      (v): v is string => typeof v === "string" && v.startsWith("i-")
-    )
-  ]
-
-  const presets = [
-    options.presets?.wind !== false && presetWind4(),
-    options.presets?.typography !== false && presetTypography(),
-    options.presets?.icons !== false && presetIcons()
-  ].filter(Boolean) as Preset[]
-
-  const theme = {
-    spacing: SPACING,
-    radius: RADIUS,
-    colors: Object.fromEntries(
-      allColors.map((c) => [
-        c,
-        {
-          DEFAULT: `var(--${c})`,
-          foreground: `var(--${c}-foreground)`,
-          accent: `var(--${c}-accent)`,
-          ...Object.fromEntries(Object.keys(SHADES).map((s) => [s, `var(--color-${c}-${s})`]))
-        }
-      ])
-    )
-  }
-
-  const preflights = [
-    {
-      getCSS: () => `:root {
+  return {
+    name: "rimelight-ui",
+    outputToCssLayers: true,
+    safelist: [
+      ...allColors.map((c) => `rl-color-${c}`),
+      ...Object.values(options.icons ?? {}).filter(
+        (v): v is string => typeof v === "string" && v.startsWith("i-")
+      )
+    ],
+    presets: [
+      options.presets?.wind !== false && presetWind4(),
+      options.presets?.typography !== false && presetTypography(),
+      options.presets?.icons !== false && presetIcons()
+    ].filter(Boolean) as Preset[],
+    rules,
+    theme: {
+      spacing: SPACING,
+      radius: RADIUS,
+      colors: Object.fromEntries(allColors.map((c) => [c, buildColorTheme(c)]))
+    },
+    preflights: [
+      {
+        getCSS: () => `:root {
   color-scheme: light dark;
   --radius: 0.625rem;
   --rl-header-height: 4rem;
   --rl-container: 90rem;
-${Object.entries(PALETTES)
-  .map(([name, [c, h]]) => renderPaletteVars(name, c, h))
-  .join("\n")}${options.colors ? `\n${formatCustomColors(options.colors)}` : ""}
+${BUILTIN_PALETTES}${options.colors ? `\n${formatCustomColors(options.colors)}` : ""}
 }
 
 .dark, [data-theme="dark"] { color-scheme: dark; }
 .light, [data-theme="light"] { color-scheme: light; }
 
 body { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
-    }
-  ]
-
-  return {
-    name: "rimelight-ui",
-    outputToCssLayers: true,
-    safelist,
-    presets,
-    rules,
-    theme,
-    preflights
+      }
+    ]
   }
 }
