@@ -31,10 +31,12 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     const val = theme.variants[k]
     if (val === "auto") {
       const slot = (theme.slots.includes("root" as S) ? "root" : theme.slots[0]) ?? "root"
-      variants[k] = Object.fromEntries([
-        ["neutral", { [slot]: "" }],
-        ...(uiConfig.colors ?? colorNames).map((c) => [c, { [slot]: `rl-color-${c}` }])
-      ])
+      variants[k] = Object.fromEntries(
+        (uiConfig.colors ?? colorNames).map((c) => [
+          c,
+          { [slot]: c === "neutral" ? "" : `rl-color-${c}` }
+        ])
+      )
     } else if (val) variants[k] = val
   }
 

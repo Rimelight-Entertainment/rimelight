@@ -165,7 +165,7 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         metaKey: isMac && hasMeta,
         shiftKey: mods.has("shift"),
         altKey: mods.has("alt"),
-        usingInput: isFn ? false : (cfg.usingInput ?? false)
+        usingInput: !isFn && (cfg.usingInput ?? false)
       }
 
       if (chainedKey) chained.set(base, sc)
@@ -178,8 +178,8 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
         id: `${cat}-${rawKey}`,
         keys: formatShortcutKeys(rawKey),
         category: cat,
-        ...(cfg.label != null && { label: cfg.label }),
-        ...(cfg.description != null && { description: cfg.description }),
+        ...(cfg.label && { label: cfg.label }),
+        ...(cfg.description && { description: cfg.description }),
         ...(cfg.order != null && { order: cfg.order })
       })
     }

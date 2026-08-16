@@ -263,11 +263,9 @@ export function rimelightUiPreset(options?: UIConfig): Preset {
       (v): v is string => typeof v === "string" && v.startsWith("i-")
     )
   ]
-  const userColorLines = Object.keys(userColors).length
-    ? formatColorLines(
-        Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry)])
-      )
-    : ""
+  const userColorLines = formatColorLines(
+    Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry)])
+  )
   const preflightCss = buildPreflight(userColorLines)
 
   const opt = options?.presets
@@ -342,10 +340,9 @@ export function rimelightUiPreset(options?: UIConfig): Preset {
         INTENT_REGEX,
         ([, prop, name, opacity]) => {
           const [css, prefix] = PROP_MAP[prop!]!
-          const varName = `--${prefix}-color-${name}`
           const val = opacity
-            ? `color-mix(in srgb, var(${varName}) ${opacity}%, transparent)`
-            : `var(${varName})`
+            ? `color-mix(in srgb, var(--${prefix}-color-${name}) ${opacity}%, transparent)`
+            : `var(--${prefix}-color-${name})`
           return prop === "bg" && name === "inverted"
             ? { [css]: val, color: "var(--text-color-inverted)" }
             : { [css]: val }
