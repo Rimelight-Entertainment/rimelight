@@ -71,19 +71,18 @@ function formatUserColors(colors?: Record<string, ColorModeInput>): string {
   return Object.entries(colors)
     .map(([c, entry]) => {
       const isMode = typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
-      const { light, dark } = (isMode ? entry : { light: entry, dark: entry }) as {
-        light?: Record<string, string>
-        dark?: Record<string, string>
-      }
+      const { light, dark } = (isMode ? entry : { light: entry, dark: entry }) as Record<
+        string,
+        Record<string, string> | undefined
+      >
       const bL = light?.["500"] ?? (light && Object.values(light)[0]) ?? ""
       const bD = dark?.["500"] ?? (dark && Object.values(dark)[0]) ?? bL
 
       const mix = (val: string, s: string, isDark: boolean) => {
-        const n = Number(s)
-        if (!n || n === 500) return val
-        const target = n < 500 !== isDark ? "white" : "black"
-        const pct = Math.round((Math.abs(500 - n) / (n < 500 ? 500 : 450)) * 75)
-        return `color-mix(in oklch, ${val}, ${target} ${pct}%)`
+        const n = +s
+        return !n || n === 500
+          ? val
+          : `color-mix(in oklch, ${val}, ${n < 500 !== isDark ? "white" : "black"} ${Math.round((Math.abs(500 - n) / (n < 500 ? 500 : 450)) * 75)}%)`
       }
 
       return colorBlock(
@@ -136,10 +135,9 @@ const INTENTS: Record<string, [string, string, string, string, string]> = {
   inverted: ["50", "950", "800", "700", "900"]
 }
 
-const INTENT_PROPS = ["text", "background", "border", "ring", "divide"] as const
 const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
   .flatMap(([n, vals]) =>
-    INTENT_PROPS.map(
+    (["text", "background", "border", "ring", "divide"] as const).map(
       (p, i) =>
         `  --${p}-color-${n}: ${vals[i]!.includes("(") ? vals[i]! : `var(--color-neutral-${vals[i]!})`};`
     )
@@ -225,12 +223,6 @@ const THEME_RADIUS: Record<string, string> = {
   "3xl": "calc(var(--radius) + 1rem)"
 }
 
-const STATIC_SHORTCUTS = {
-  "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl",
-  "sr-only":
-    "absolute w-px h-px p-0 m-0 overflow-hidden [clip:rect(1px,1px,1px,1px)] whitespace-nowrap border-0"
-}
-
 const STATIC_RULES: Rule[] = [
   [
     /^rl-color-([\w-]+)$/,
@@ -244,8 +236,8 @@ const STATIC_RULES: Rule[] = [
   ],
   [
     /^(?:rl-)?(light|dark|auto)$/,
-    ([, mode]) => ({
-      "color-scheme": mode === "auto" ? "light dark" : mode,
+    ([, m]) => ({
+      "color-scheme": m === "auto" ? "light dark" : m,
       "color": "var(--foreground)"
     })
   ],
@@ -266,8 +258,9 @@ const STATIC_RULES: Rule[] = [
   [
     INTENT_REGEX,
     ([, prop, name, opacity]) => {
-      if (!name || !(name in INTENTS)) return
-      const [css, prefix] = PROP_MAP[prop!]!
+      const mapping = PROP_MAP[prop!]
+      if (!mapping || !INTENTS[name!]) return
+      const [css, prefix] = mapping
       const val = opacity
         ? `color-mix(in srgb, var(--${prefix}-color-${name}) ${opacity}%, transparent)`
         : `var(--${prefix}-color-${name})`
@@ -277,9 +270,6 @@ const STATIC_RULES: Rule[] = [
     }
   ]
 ]
-
-const STATIC_TRANSFORMERS = [transformerDirectives(), transformerVariantGroup()]
-const STATIC_LAYERS = { theme: 1, preflights: 2, shortcuts: 3, default: 4 }
 
 export function rimelightUiPreset(options?: PresetOptions): Preset {
   const userColors = options?.colors
@@ -306,14 +296,16 @@ export function rimelightUiPreset(options?: PresetOptions): Preset {
           }
         }),
       opt?.icons !== false &&
-        presetIcons({
-          extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-        })
+        presetIcons({ extraProperties: { "display": "inline-block", "vertical-align": "middle" } })
     ].filter(Boolean) as Preset[],
-    transformers: STATIC_TRANSFORMERS,
+    transformers: [transformerDirectives(), transformerVariantGroup()],
     outputToCssLayers: true,
-    layers: STATIC_LAYERS,
-    shortcuts: STATIC_SHORTCUTS,
+    layers: { theme: 1, preflights: 2, shortcuts: 3, default: 4 },
+    shortcuts: {
+      "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl",
+      "sr-only":
+        "absolute w-px h-px p-0 m-0 overflow-hidden [clip:rect(1px,1px,1px,1px)] whitespace-nowrap border-0"
+    },
     rules: STATIC_RULES,
     theme: {
       spacing: THEME_SPACING,

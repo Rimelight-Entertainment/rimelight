@@ -17,7 +17,7 @@ export const defineTheme = <const S extends string, const V extends Record<strin
       [K in keyof V]?: V[K] extends "auto" ? ThemeColor : keyof V[K] | boolean | string
     }
   }
-) => {
+): ((props?: Record<string, any>) => Record<S, string>) => {
   if (uiConfig.unstyled) {
     return (p?: Record<string, any>) =>
       (p?.class || p?.className ? { root: String(p.class ?? p.className) } : {}) as Record<
@@ -33,28 +33,24 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     theme.variants &&
     Object.fromEntries(Object.entries(theme.variants).map(([k, v]) => [k, v === "auto" ? {} : v]))
 
-  const themeFn = (scv as any)({
-    ...theme,
-    variants
-  }) as (v: Record<string, any>) => Record<S, string>
-
+  const themeFn = (scv as any)({ ...theme, variants }) as (
+    v: Record<string, any>
+  ) => Record<S, string>
   const globalSlots = uiConfig.components?.themes?.[name]?.slots
   const cache = new Map<string, Record<string, string>>()
 
   return (props?: Record<string, any>): Record<S, string> => {
     const { ui, class: c1, className: c2, ...v } = props ?? {}
     const rootClass = c1 ?? c2
-
-    let key = ""
-    for (const k in v) key += `${k}:${v[k]};`
+    const key = JSON.stringify(v)
 
     let res = cache.get(key)
     if (!res) cache.set(key, (res = themeFn(v)))
 
     const color = hasAuto && (v.color ?? (theme.defaultVariants as any)?.color)
     const colorClass = color && color !== "neutral" ? `rl-color-${color}` : ""
-
     const resolvedUi = globalSlots || ui ? { ...globalSlots, ...ui } : undefined
+
     if (!resolvedUi && !rootClass && !colorClass) return res
 
     const out: Record<string, string> = { ...res }
@@ -62,7 +58,7 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     if (resolvedUi) {
       for (const s in resolvedUi) {
         const o = resolvedUi[s]
-        if (o) out[s] = typeof o === "function" ? cx(o(out[s] ?? "")) : cx(out[s], o)
+        if (o) out[s as S] = typeof o === "function" ? cx(o(out[s as S] ?? "")) : cx(out[s as S], o)
       }
     }
     if (rootClass) out.root = cx(out.root, rootClass)

@@ -19,19 +19,6 @@ export interface ShortcutsOptions {
   chainDelay?: number
 }
 
-const CTRL = 1
-const META = 2
-const SHIFT = 4
-const ALT = 8
-
-interface Shortcut {
-  key: string
-  code: string
-  handler: Handler
-  mods: number
-  usingInput?: boolean | string
-}
-
 export interface RegisteredShortcut {
   id: string
   keys: string[]
@@ -41,32 +28,34 @@ export interface RegisteredShortcut {
   order?: number
 }
 
-const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
-
-const MODS: Record<string, string> = {
-  control: "ctrl",
-  ctrl: "ctrl",
-  cmd: "meta",
-  command: "meta",
-  meta: "meta",
-  opt: "alt",
-  option: "alt",
-  alt: "alt",
-  shift: "shift"
+interface Shortcut {
+  key: string
+  code: string
+  handler: Handler
+  mods: number
+  usingInput?: boolean | string
 }
 
-const SHIFTABLE = new Set([
-  "arrowleft",
-  "arrowright",
-  "arrowup",
-  "arrowdown",
-  "tab",
-  "escape",
-  "enter",
-  "backspace"
-])
+const CTRL = 1
+const META = 2
+const SHIFT = 4
+const ALT = 8
 
-const keySymbols: Record<string, string> = {
+const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
+
+const MOD_BITS: Record<string, number> = {
+  ctrl: CTRL,
+  control: CTRL,
+  cmd: META,
+  command: META,
+  meta: META,
+  opt: ALT,
+  option: ALT,
+  alt: ALT,
+  shift: SHIFT
+}
+
+const KEY_SYMBOLS: Record<string, string> = {
   meta: isMac ? "⌘" : "Ctrl",
   ctrl: "Ctrl",
   alt: isMac ? "⌥" : "Alt",
@@ -83,6 +72,17 @@ const keySymbols: Record<string, string> = {
   arrowright: "→"
 }
 
+const SHIFTABLE = new Set([
+  "arrowleft",
+  "arrowright",
+  "arrowup",
+  "arrowdown",
+  "tab",
+  "escape",
+  "enter",
+  "backspace"
+])
+
 const formatCache = new Map<string, string[]>()
 export function formatShortcutKeys(keyStr: string): string[] {
   let res = formatCache.get(keyStr)
@@ -91,8 +91,16 @@ export function formatShortcutKeys(keyStr: string): string[] {
     formatCache.set(
       keyStr,
       (res = keyStr.split(/[_-]/).map((p) => {
-        const lower = p.toLowerCase()
-        return keySymbols[MODS[lower] ?? lower] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
+        const l = p.toLowerCase()
+        const canonical =
+          l === "cmd" || l === "command"
+            ? "meta"
+            : l === "opt" || l === "option"
+              ? "alt"
+              : l === "control"
+                ? "ctrl"
+                : l
+        return KEY_SYMBOLS[canonical] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
       }))
     )
   }
@@ -101,14 +109,16 @@ export function formatShortcutKeys(keyStr: string): string[] {
 
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
-const toCode = (k: string) => {
-  if (/^[a-z]$/i.test(k)) return `Key${k.toUpperCase()}`
-  if (/^\d$/.test(k)) return `Digit${k}`
-  if (/^arrow/i.test(k)) return `Arrow${k[5]?.toUpperCase() ?? ""}${k.slice(6).toLowerCase()}`
-  return /^f\d+$/i.test(k)
-    ? k.toUpperCase()
-    : (k[0]?.toUpperCase() ?? "") + k.slice(1).toLowerCase()
-}
+const toCode = (k: string) =>
+  /^[a-z]$/i.test(k)
+    ? `Key${k.toUpperCase()}`
+    : /^\d$/.test(k)
+      ? `Digit${k}`
+      : /^arrow/i.test(k)
+        ? `Arrow${k[5]?.toUpperCase() ?? ""}${k.slice(6).toLowerCase()}`
+        : /^f\d+$/i.test(k)
+          ? k.toUpperCase()
+          : (k[0]?.toUpperCase() ?? "") + k.slice(1).toLowerCase()
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 const isUsingInput = (el: Element | null): boolean | string => {
@@ -147,27 +157,19 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof handler === "function") {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
-      const mods = new Set<string>()
+      let bitMods = 0
       const nonMods: string[] = []
+
       for (const p of rawParts) {
-        const mod = MODS[p]
-        if (mod) mods.add(mod)
+        const bit = MOD_BITS[p]
+        if (bit) bitMods |= bit
         else nonMods.push(p)
       }
 
+      if (!isMac && bitMods & META) bitMods = (bitMods & ~META) | CTRL
+
       const base = chainedKey ? rawKey.toLowerCase() : nonMods.join("_")
       if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
-
-      const hasMeta = mods.has("meta")
-      const hasCtrl = mods.has("ctrl") || (!isMac && hasMeta)
-      const hasShift = mods.has("shift")
-      const hasAlt = mods.has("alt")
-
-      let bitMods = 0
-      if (hasCtrl) bitMods |= CTRL
-      if (isMac && hasMeta) bitMods |= META
-      if (hasShift) bitMods |= SHIFT
-      if (hasAlt) bitMods |= ALT
 
       const sc: Shortcut = {
         key: base,
