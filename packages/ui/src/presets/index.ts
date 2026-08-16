@@ -6,16 +6,12 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import {
-  colorScales,
-  getAllColorNames,
-  COLOR_SHADES,
-  type ColorShades,
-  type ColorConfigValue,
-  type UIConfig
-} from "../config"
+import { colorScales, getAllColorNames, COLOR_SHADES, type UIConfig } from "../config"
 
-const isMode = (v: ColorConfigValue): v is { light?: ColorShades; dark?: ColorShades } =>
+type ColorEntry = NonNullable<UIConfig["colors"]>[string]
+type Shades = Record<string, string>
+
+const isMode = (v: ColorEntry): v is { light?: Shades; dark?: Shades } =>
   typeof v === "object" && v !== null && ("light" in v || "dark" in v)
 
 function generateShade(shade: string, value: string, target: "white" | "black"): string {
@@ -28,14 +24,14 @@ function generateShade(shade: string, value: string, target: "white" | "black"):
 }
 
 function resolveColorModes(
-  entry: ColorConfigValue,
+  entry: ColorEntry,
   autogenerate = true
-): { light: ColorShades; dark: ColorShades } {
+): { light: Shades; dark: Shades } {
   const mode = isMode(entry)
   const mL = mode ? entry.light : entry
   const mD = mode ? entry.dark : entry
-  const light: ColorShades = {}
-  const dark: ColorShades = {}
+  const light: Shades = {}
+  const dark: Shades = {}
   const keys = autogenerate
     ? COLOR_SHADES
     : [...new Set([...Object.keys(mL ?? {}), ...Object.keys(mD ?? {})])]

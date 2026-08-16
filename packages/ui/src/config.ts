@@ -1,24 +1,6 @@
 import type { UserConfig } from "unocss"
 import type { RimelightIcons } from "./icons/defaults"
 
-export type Override = string | ((base: string) => string) | undefined
-
-export type ComponentThemeOverride = {
-  slots?: Record<string, Override>
-  [key: string]: unknown
-}
-
-export type LogoConfig =
-  | string
-  | {
-      light?: string
-      dark?: string
-      color?: string
-      white?: string
-      black?: string
-      [key: string]: string | undefined
-    }
-
 export interface UIConfig {
   /**
    * Whether to strip default theme classes from all components (bringing your own styling).
@@ -33,7 +15,18 @@ export interface UIConfig {
   /**
    * Configuration for the Logo component variants.
    */
-  logos?: Record<string, LogoConfig>
+  logos?: Record<
+    string,
+    | string
+    | {
+        light?: string
+        dark?: string
+        color?: string
+        white?: string
+        black?: string
+        [key: string]: string | undefined
+      }
+  >
   /**
    * Global component configuration overrides.
    */
@@ -42,7 +35,13 @@ export interface UIConfig {
      * Global UI overrides applied to all components. Merged with defaults via our custom recursive
      * merge utility (first arg wins). Values follow the css-variants theme override format.
      */
-    themes?: Record<string, ComponentThemeOverride>
+    themes?: Record<
+      string,
+      {
+        slots?: Record<string, string | ((base: string) => string) | undefined>
+        [key: string]: unknown
+      }
+    >
   }
   /**
    * Custom colors. Each color can be:
@@ -56,7 +55,10 @@ export interface UIConfig {
    *   { light: { "500": "oklch(0.53 0.21 260)" }, dark: { "500": "oklch(0.623 0.214 259.8)" } }
    *   ```
    */
-  colors?: Record<string, ColorConfigValue>
+  colors?: Record<
+    string,
+    Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string> }
+  >
   autogenerateColorModes?: boolean
   /**
    * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
@@ -77,8 +79,6 @@ export interface UIConfig {
 }
 
 export type Theme = "light" | "dark"
-export type ColorShades = Record<string, string>
-export type ColorConfigValue = ColorShades | { light?: ColorShades; dark?: ColorShades }
 
 export const COLOR_SHADES = [
   "50",
@@ -93,8 +93,6 @@ export const COLOR_SHADES = [
   "900",
   "950"
 ] as const
-
-export type ColorShade = (typeof COLOR_SHADES)[number]
 
 const parseScale = (s: string) =>
   Object.fromEntries(s.split(",").map((v, i) => [COLOR_SHADES[i]!, `oklch(${v.trim()})`]))
@@ -153,7 +151,7 @@ export const getAllColorNames = (customColors?: Record<string, unknown>): readon
 
 type ResolvedUIConfig = Omit<UIConfig, "colors" | "components" | "presets" | "unocss"> & {
   colors?: readonly string[]
-  themes?: Record<string, ComponentThemeOverride>
+  themes?: NonNullable<UIConfig["components"]>["themes"]
 } & Record<string, unknown>
 
 export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
