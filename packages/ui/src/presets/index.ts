@@ -15,16 +15,16 @@ const SHADES: Record<string, [number, number, number, number]> = {
   "950": [0.145, 0.3, 0.93, 0.25]
 }
 
-const PROPS: Record<string, string> = {
-  text: "color",
-  bg: "background-color",
-  border: "border-color",
-  divide: "border-color",
-  ring: "--un-ring-color",
-  outline: "outline-color"
+const PROPERTY_MAP: Record<string, [string, number]> = {
+  text: ["color", 0],
+  bg: ["background-color", 1],
+  border: ["border-color", 2],
+  divide: ["border-color", 2],
+  ring: ["--un-ring-color", 3],
+  outline: ["outline-color", 3]
 }
 
-const INTENTS: Record<string, [string, string, string, string]> = {
+const INTENTS: Record<string, string[]> = {
   default: ["700", "50", "200", "300"],
   muted: ["600", "100", "200", "300"],
   elevated: ["800", "100", "200", "400"],
@@ -35,22 +35,11 @@ const INTENTS: Record<string, [string, string, string, string]> = {
   inverted: ["50", "950", "800", "700"]
 }
 
-const PROP_IDX: Record<string, number> = {
-  text: 0,
-  bg: 1,
-  border: 2,
-  divide: 2,
-  ring: 3,
-  outline: 3
-}
-
 const emitPalette = (name: string, shadeFn: (s: string) => string) =>
-  `${Object.keys(SHADES)
+  Object.keys(SHADES)
     .map((s) => `  --color-${name}-${s}: ${shadeFn(s)};`)
-    .join("\n")}
-  --${name}: var(--color-${name}-500);
-  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));
-  --${name}-accent: var(--color-${name}-600);`
+    .join("\n") +
+  `\n  --${name}: var(--color-${name}-500);\n  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));\n  --${name}-accent: var(--color-${name}-600);`
 
 const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
   [
@@ -93,19 +82,21 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
     rules: [
       [
         /^rl-color-([\w-]+)$/,
-        ([, c]) => ({
-          "--rl-bg": `var(--color-${c}-500)`,
-          "--rl-ring": `var(--color-${c}-500)`,
-          "--rl-border": `var(--color-${c}-500)`,
-          "--rl-bg-hover": `var(--color-${c}-600)`,
-          "--rl-text": `var(--color-${c}-600)`
-        })
+        ([, c]) => {
+          const [c5, c6] = [`var(--color-${c}-500)`, `var(--color-${c}-600)`]
+          return {
+            "--rl-bg": c5,
+            "--rl-ring": c5,
+            "--rl-border": c5,
+            "--rl-bg-hover": c6,
+            "--rl-text": c6
+          }
+        }
       ],
       [
         /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
         ([, prop, name, opacity]) => {
-          const cssProp = PROPS[prop!]
-          const idx = PROP_IDX[prop!]
+          const [cssProp, idx] = PROPERTY_MAP[prop!] ?? []
           const shade = idx !== undefined ? INTENTS[name!]?.[idx] : undefined
           if (!cssProp || !shade) return
 
@@ -135,15 +126,17 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
         "5xl": "6rem",
         "6xl": "8rem"
       },
-      radius: {
-        "xs": "calc(var(--radius) - 0.375rem)",
-        "sm": "calc(var(--radius) - 0.25rem)",
-        "md": "calc(var(--radius) - 0.125rem)",
-        "lg": "var(--radius)",
-        "xl": "calc(var(--radius) + 0.25rem)",
-        "2xl": "calc(var(--radius) + 0.5rem)",
-        "3xl": "calc(var(--radius) + 1rem)"
-      },
+      radius: Object.fromEntries(
+        Object.entries({
+          "xs": "- 0.375rem",
+          "sm": "- 0.25rem",
+          "md": "- 0.125rem",
+          "lg": "",
+          "xl": "+ 0.25rem",
+          "2xl": "+ 0.5rem",
+          "3xl": "+ 1rem"
+        }).map(([k, off]) => [k, off ? `calc(var(--radius) ${off})` : "var(--radius)"])
+      ),
       colors: Object.fromEntries(
         allColors.map((c) => [
           c,
