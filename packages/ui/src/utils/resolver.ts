@@ -5,19 +5,13 @@ export type ResolvedUIConfig = {
   unstyled?: boolean
   shortcuts?: UIConfig["shortcuts"]
   logos?: UIConfig["logos"]
-  icons?: Record<string, string>
+  icons?: UIConfig["icons"]
   colors?: readonly string[]
-  themes?: Record<string, { slots?: Record<string, string | ((b: string) => string)> }>
+  themes?: NonNullable<UIConfig["components"]>["themes"]
   [key: string]: unknown
 }
 
-export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
-
-declare global {
-  interface ImportMetaEnv {
-    readonly RIMELIGHT_UI_CONFIG?: ResolvedUIConfig
-  }
-}
+export const uiConfig: ResolvedUIConfig = (import.meta.env as any)?.RIMELIGHT_UI_CONFIG ?? {}
 
 export const defineTheme = <const S extends string, const V extends Record<string, any>>(
   name: string,
