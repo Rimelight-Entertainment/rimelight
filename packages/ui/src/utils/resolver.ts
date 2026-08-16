@@ -8,7 +8,6 @@ export const defineTheme = <const S extends string>(name: string, t: any) => {
     auto = t.variants?.color === "auto",
     fn = scv(auto ? { ...t, variants: { ...t.variants, color: {} } } : t),
     g = uiConfig.components?.themes?.[name]?.slots
-
   return (p: any = {}): Record<S, string> => {
     if (uiConfig.unstyled) return { [root]: cx(p.class, p.className) } as any
     const r = fn(p),
