@@ -1,5 +1,6 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
+import type { FilterPattern } from "unocss"
 import type { UIConfig } from "./types"
 import rimelightUiPreset from "./presets"
 
@@ -8,8 +9,14 @@ const INCLUDES = [
   /[\\/](@rimelight\/ui|packages\/ui)[\\/]/
 ]
 
-const resolvePipeline = (p: any) =>
-  p !== false && { ...p, include: [...INCLUDES, ...(Array.isArray(p?.include) ? p.include : [])] }
+const resolvePipeline = (p?: { include?: FilterPattern; exclude?: FilterPattern } | false) =>
+  p !== false && {
+    ...p,
+    include: [
+      ...INCLUDES,
+      ...(Array.isArray(p?.include) ? p.include : p?.include ? [p.include] : [])
+    ]
+  }
 
 export const ui = (o: UIConfig = {}): AstroIntegration[] => [
   UnoCSS({

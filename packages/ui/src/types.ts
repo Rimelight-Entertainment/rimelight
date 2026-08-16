@@ -17,14 +17,18 @@ export const colorNames = [
 export type Theme = "light" | "dark"
 export type ThemeColor = (typeof colorNames)[number] | (string & {})
 
+export type ColorModeInput =
+  | Record<string, string>
+  | { light?: Record<string, string>; dark?: Record<string, string> }
+
+export const getAllColorNames = (customColors?: Record<string, unknown>): readonly string[] =>
+  customColors ? [...new Set<string>([...colorNames, ...Object.keys(customColors)])] : colorNames
+
 export interface PresetOptions {
   /**
    * Custom colors.
    */
-  colors?: Record<
-    string,
-    Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string> }
-  >
+  colors?: Record<string, ColorModeInput>
   /**
    * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
    */
