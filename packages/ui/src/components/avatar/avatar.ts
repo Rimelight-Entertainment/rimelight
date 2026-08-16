@@ -1,3 +1,4 @@
+import type { ThemeColor } from "../../types"
 import type { ChipProps } from "../chip/chip"
 
 export interface AvatarProps {
@@ -19,17 +20,7 @@ export interface AvatarProps {
   /**
    * @default "neutral"
    */
-  color?:
-    | "neutral"
-    | "primary"
-    | "secondary"
-    | "info"
-    | "success"
-    | "warning"
-    | "error"
-    | "commentary"
-    | "ideation"
-    | "source"
+  color?: ThemeColor
   chip?: boolean | ChipProps
   badge?: boolean | string | number
   badgeColor?: string

@@ -1,19 +1,20 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
 import type { ColorModeInput, PresetOptions } from "./types"
 
-const P: Record<string, [number, number]> = {
-    neutral: [0, 0],
-    primary: [0.21, 260],
-    secondary: [0.18, 70],
-    info: [0.24, 260],
-    success: [0.2, 150],
-    warning: [0.17, 86],
-    error: [0.24, 25],
-    commentary: [0.29, 322],
-    ideation: [0.28, 293],
-    source: [0.13, 215]
-  },
-  S =
+export const P = {
+  neutral: [0, 0],
+  primary: [0.21, 260],
+  secondary: [0.18, 70],
+  info: [0.24, 260],
+  success: [0.2, 150],
+  warning: [0.17, 86],
+  error: [0.24, 25],
+  commentary: [0.29, 322],
+  ideation: [0.28, 293],
+  source: [0.13, 215]
+} as const
+
+const S =
     "50:0.985:0.1:0.145:0.2,100:0.965:0.25:0.2:0.35,200:0.925:0.45:0.28:0.55,300:0.85:0.7:0.35:0.75,400:0.72:0.9:0.44:0.9,500:0.55:1:0.53:1,600:0.44:0.9:0.61:0.85,700:0.35:0.75:0.69:0.7,800:0.27:0.6:0.77:0.55,900:0.2:0.45:0.86:0.4,950:0.145:0.3:0.93:0.25"
       .split(",")
       .map((s) => s.split(":").map(Number)),

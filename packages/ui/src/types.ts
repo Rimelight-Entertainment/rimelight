@@ -1,19 +1,10 @@
 import type { UserConfig } from "unocss"
 import type { RimelightIcons } from "./icons"
+import type { P } from "./preset"
 
 export type Theme = "light" | "dark"
-export type ThemeColor =
-  | "neutral"
-  | "primary"
-  | "secondary"
-  | "info"
-  | "success"
-  | "warning"
-  | "error"
-  | "commentary"
-  | "ideation"
-  | "source"
-  | (string & {})
+export type BuiltinThemeColor = keyof typeof P
+export type ThemeColor = BuiltinThemeColor | (string & {})
 
 export type ColorModeInput =
   | Record<string, string>
