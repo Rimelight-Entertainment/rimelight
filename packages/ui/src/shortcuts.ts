@@ -37,15 +37,6 @@ const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAg
   MOD_CMD = isMac ? 2 : 1
 
 const SYMBOLS: Record<string, string> = {
-  meta: isMac ? "⌘" : "Ctrl",
-  cmd: isMac ? "⌘" : "Ctrl",
-  command: isMac ? "⌘" : "Ctrl",
-  ctrl: "Ctrl",
-  control: "Ctrl",
-  alt: isMac ? "⌥" : "Alt",
-  opt: isMac ? "⌥" : "Alt",
-  option: isMac ? "⌥" : "Alt",
-  shift: isMac ? "⇧" : "Shift",
   enter: "↵",
   delete: "⌦",
   backspace: "⌫",
@@ -82,9 +73,14 @@ const MOD_MASKS: Record<string, number> = {
 }
 
 export const formatShortcutKeys = (keyStr: string): string[] =>
-  keyStr
-    .split(/[_-]/)
-    .map((p) => SYMBOLS[p.toLowerCase()] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : ""))
+  keyStr.split(/[_-]/).map((p) => {
+    const k = p.toLowerCase()
+    if (/^(?:meta|cmd|command)$/.test(k)) return isMac ? "⌘" : "Ctrl"
+    if (/^(?:alt|opt|option)$/.test(k)) return isMac ? "⌥" : "Alt"
+    if (/^(?:ctrl|control)$/.test(k)) return "Ctrl"
+    if (k === "shift") return isMac ? "⇧" : "Shift"
+    return SYMBOLS[k] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
+  })
 
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
