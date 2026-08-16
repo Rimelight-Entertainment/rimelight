@@ -155,10 +155,7 @@ const getPreflightCss = (userColors?: Record<string, ColorModeInput>) => `:root 
   --ring: var(--ring-color-default);
   --outline: var(--ring-color-default);
   --radius: 0.625rem;
-  --font-sans: "Noto Sans", sans-serif;
-  --font-serif: "Noto Serif", serif;
-  --font-mono: "Noto Sans Mono", monospace;
-  --ui-header-height: 4rem;
+  --rl-header-height: 4rem;
   --rl-container: 90rem;
 ${INTENT_PREFLIGHT_VARS}
 
@@ -188,7 +185,7 @@ ${STATIC_BUILTIN_COLOR_LINES}${userColors ? `\n${formatUserColors(userColors)}` 
   .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6); }
 }
 
-body { background-color: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+body { background-color: var(--background); color: var(--foreground); }
 *, ::before, ::after { --un-ring-color: var(--primary); }
 *:focus-visible, *:has(> a:focus-visible) {
   outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
@@ -249,11 +246,12 @@ const STATIC_RULES: Rule[] = [
     })
   ],
   [
-    "rla-visibility-aware",
-    {
+    /^(?:rl|rla)-visibility-aware$/,
+    () => ({
       "content-visibility": "auto",
-      "contain-intrinsic-size": "var(--rla-contain-intrinsic-size, auto 500px)"
-    }
+      "contain-intrinsic-size":
+        "var(--rl-contain-intrinsic-size, var(--rla-contain-intrinsic-size, auto 500px))"
+    })
   ],
   [
     INTENT_REGEX,
@@ -271,51 +269,33 @@ const STATIC_RULES: Rule[] = [
   ]
 ]
 
-export function rimelightUiPreset(options?: PresetOptions): Preset {
-  const userColors = options?.colors
-  const allColors = getAllColorNames(userColors)
-  const opt = options?.presets
-
+export function rimelightUiPreset({ colors, icons, presets: p }: PresetOptions = {}): Preset {
   return {
     name: "rimelight-ui",
     safelist: [
-      ...allColors.map((c) => `rl-color-${c}`),
-      ...Object.values(options?.icons ?? {}).filter(
+      ...getAllColorNames(colors).map((c) => `rl-color-${c}`),
+      ...Object.values(icons ?? {}).filter(
         (v): v is string => typeof v === "string" && v.startsWith("i-")
       )
     ],
     presets: [
-      opt?.wind !== false && presetWind4(),
-      opt?.typography !== false &&
-        presetTypography({
-          cssExtend: {
-            "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-              "font-family": "var(--font-sans), system-ui, sans-serif"
-            },
-            "pre,code": { "font-family": "var(--font-mono), monospace" }
-          }
-        }),
-      opt?.icons !== false &&
-        presetIcons({ extraProperties: { "display": "inline-block", "vertical-align": "middle" } })
+      p?.wind !== false && presetWind4(),
+      p?.typography !== false && presetTypography(),
+      p?.icons !== false && presetIcons()
     ].filter(Boolean) as Preset[],
     transformers: [transformerDirectives(), transformerVariantGroup()],
     outputToCssLayers: true,
     layers: { theme: 1, preflights: 2, shortcuts: 3, default: 4 },
-    shortcuts: {
-      "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl",
-      "sr-only":
-        "absolute w-px h-px p-0 m-0 overflow-hidden [clip:rect(1px,1px,1px,1px)] whitespace-nowrap border-0"
-    },
     rules: STATIC_RULES,
     theme: {
       spacing: THEME_SPACING,
       colors: {
         ...STATIC_THEME_COLORS,
-        ...Object.fromEntries(allColors.map((c) => [c, createScale(c)]))
+        ...Object.fromEntries(getAllColorNames(colors).map((c) => [c, createScale(c)]))
       },
       radius: THEME_RADIUS
     },
-    preflights: [{ getCSS: () => getPreflightCss(userColors) }]
+    preflights: [{ getCSS: () => getPreflightCss(colors) }]
   }
 }
 

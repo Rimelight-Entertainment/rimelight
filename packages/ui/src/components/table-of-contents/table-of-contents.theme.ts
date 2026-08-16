@@ -22,7 +22,7 @@ export const tableOfContentsTheme = defineTheme("table-of-contents", {
     "indicatorActive"
   ],
   base: {
-    root: "sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 sm:px-6 sm:-mx-6 lg:ms-0 xl:mx-0 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-var(--ui-header-height))]",
+    root: "sticky top-(--rl-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 px-4 sm:px-6 sm:-mx-6 lg:ms-0 xl:mx-0 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-var(--rl-header-height))]",
     container:
       "pt-4 sm:pt-6 pb-2.5 sm:pb-4.5 lg:py-8 border-b border-dashed border-default lg:border-0 flex flex-col",
     top: "",
