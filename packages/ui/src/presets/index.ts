@@ -1,12 +1,4 @@
-import {
-  presetIcons,
-  presetTypography,
-  presetWind4,
-  transformerDirectives,
-  transformerVariantGroup,
-  type Preset,
-  type Rule
-} from "unocss"
+import { presetIcons, presetTypography, presetWind4, type Preset, type Rule } from "unocss"
 import { getAllColorNames, type ColorModeInput, type PresetOptions } from "../types"
 
 export const COLOR_SHADES = [
@@ -61,64 +53,9 @@ const renderPaletteVars = (name: string, chroma: number, hue: number) =>
     `  --${name}-accent: var(--color-${name}-600);`
   ].join("\n")
 
-const STATIC_BUILTIN_COLOR_CSS_VARS = Object.entries(PALETTES)
+const BUILTIN_PALETTE_CSS = Object.entries(PALETTES)
   .map(([name, [c, h]]) => renderPaletteVars(name, c, h))
   .join("\n")
-
-const INTENT_PROPS: Record<string, [string, number]> = {
-  text: ["color", 0],
-  bg: ["background-color", 1],
-  border: ["border-color", 2],
-  ring: ["--un-ring-color", 3],
-  outline: ["outline-color", 3],
-  divide: ["border-color", 4]
-}
-
-const SEMANTIC_INTENTS: Record<string, readonly [string, string, string, string, string]> = {
-  default: ["700", "light-dark(oklch(1 0 0), var(--color-neutral-50))", "200", "300", "100"],
-  muted: ["600", "100", "200", "300", "200"],
-  elevated: ["800", "light-dark(oklch(1 0 0), var(--color-neutral-100))", "200", "400", "100"],
-  accented: ["900", "200", "300", "500", "300"],
-  dimmed: ["500", "light-dark(var(--color-neutral-50), oklch(0 0 0 / 0.25))", "300", "400", "200"],
-  toned: ["800", "700", "600", "900", "800"],
-  highlighted: ["950", "200", "800", "950", "900"],
-  inverted: ["50", "950", "800", "700", "900"]
-}
-
-const SPACING_TOKENS = {
-  "6xs": "0.125rem",
-  "5xs": "0.25rem",
-  "4xs": "0.375rem",
-  "3xs": "0.5rem",
-  "2xs": "0.625rem",
-  "xs": "0.75rem",
-  "sm": "0.875rem",
-  "md": "1rem",
-  "lg": "1.25rem",
-  "xl": "1.5rem",
-  "2xl": "2rem",
-  "3xl": "3rem",
-  "4xl": "4rem",
-  "5xl": "6rem",
-  "6xl": "8rem"
-}
-
-const RADIUS_TOKENS = {
-  "xs": "calc(var(--radius) - 0.375rem)",
-  "sm": "calc(var(--radius) - 0.25rem)",
-  "md": "calc(var(--radius) - 0.125rem)",
-  "lg": "var(--radius)",
-  "xl": "calc(var(--radius) + 0.25rem)",
-  "2xl": "calc(var(--radius) + 0.5rem)",
-  "3xl": "calc(var(--radius) + 1rem)"
-}
-
-const createPaletteScale = (palette: string) => ({
-  DEFAULT: `var(--${palette})`,
-  foreground: `var(--${palette}-foreground)`,
-  accent: `var(--${palette}-accent)`,
-  ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${palette}-${s})`]))
-})
 
 const formatCustomColors = (colors?: Record<string, ColorModeInput>) => {
   if (!colors) return ""
@@ -146,56 +83,82 @@ const formatCustomColors = (colors?: Record<string, ColorModeInput>) => {
     .join("\n")
 }
 
-const PREFLIGHT_BASE_CSS = `
-:root.dark, html.dark, .dark, [data-theme="dark"] { color-scheme: dark; }
-:root.light, html.light, .light, [data-theme="light"] { color-scheme: light; }
-
-@property --rl-contrast-color { syntax: "<color>"; initial-value: white; inherits: true; }
-
-.rl-theme-container {
-  container-type: normal;
-  --rl-surface-effective: var(--rl-bg, var(--background));
-  --rl-contrast-color: contrast-color(var(--rl-surface-effective));
-  color: var(--rl-contrast-color);
-}
-.rl-theme-container > *, .rl-theme-container :where(h1, h2, h3, h4, h5, h6, p, span, div, li, strong) { color: inherit; }
-
-@container style(--rl-contrast-color: white) {
-  .rl-theme-container .rl-subtext { color: oklch(from var(--rl-surface-effective) 0.88 0.04 h); }
-  .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.45 0.08 h / 0.6); }
+const generatePreflightCss = (colors?: Record<string, ColorModeInput>) => {
+  const custom = formatCustomColors(colors)
+  return `:root {
+  color-scheme: light dark;
+  --radius: 0.625rem;
+  --rl-header-height: 4rem;
+  --rl-container: 90rem;
+${BUILTIN_PALETTE_CSS}${custom ? `\n${custom}` : ""}
 }
 
-@container style(--rl-contrast-color: black) {
-  .rl-theme-container .rl-subtext { color: oklch(from var(--rl-surface-effective) 0.32 0.07 h); }
-  .rl-theme-container .rl-border-subtle { border-color: oklch(from var(--rl-surface-effective) 0.75 0.05 h / 0.6); }
-}
+.dark, [data-theme="dark"] { color-scheme: dark; }
+.light, [data-theme="light"] { color-scheme: light; }
 
-body { background-color: var(--background); color: var(--foreground); }
+body { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }
 *, ::before, ::after { --un-ring-color: var(--primary); }
 *:focus-visible, *:has(> a:focus-visible) {
   outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
   outline-offset: 2px;
 }`
-
-const getPreflightCss = (colors?: Record<string, ColorModeInput>) => {
-  const custom = formatCustomColors(colors)
-  return `:root {
-  color-scheme: light dark;
-  --background: light-dark(oklch(1 0 0), var(--color-neutral-50));
-  --foreground: var(--color-neutral-950);
-  --border: var(--color-neutral-200);
-  --input: var(--color-neutral-200);
-  --ring: var(--color-neutral-300);
-  --outline: var(--color-neutral-300);
-  --radius: 0.625rem;
-  --rl-header-height: 4rem;
-  --rl-container: 90rem;
-${STATIC_BUILTIN_COLOR_CSS_VARS}${custom ? `\n${custom}` : ""}
-}
-${PREFLIGHT_BASE_CSS}`
 }
 
-const customPresetRules: Rule[] = [
+const INTENT_PROPS: Record<string, [string, number]> = {
+  text: ["color", 0],
+  bg: ["background-color", 1],
+  border: ["border-color", 2],
+  ring: ["--un-ring-color", 3],
+  outline: ["outline-color", 3],
+  divide: ["border-color", 4]
+}
+
+const SEMANTIC_INTENTS: Record<string, readonly [string, string, string, string, string]> = {
+  default: ["700", "light-dark(oklch(1 0 0), var(--color-neutral-50))", "200", "300", "100"],
+  muted: ["600", "100", "200", "300", "200"],
+  elevated: ["800", "light-dark(oklch(1 0 0), var(--color-neutral-100))", "200", "400", "100"],
+  accented: ["900", "200", "300", "500", "300"],
+  dimmed: ["500", "light-dark(var(--color-neutral-50), oklch(0 0 0 / 0.25))", "300", "400", "200"],
+  toned: ["800", "700", "600", "900", "800"],
+  highlighted: ["950", "200", "800", "950", "900"],
+  inverted: ["50", "950", "800", "700", "900"]
+}
+
+const SPACING = {
+  "6xs": "0.125rem",
+  "5xs": "0.25rem",
+  "4xs": "0.375rem",
+  "3xs": "0.5rem",
+  "2xs": "0.625rem",
+  "xs": "0.75rem",
+  "sm": "0.875rem",
+  "md": "1rem",
+  "lg": "1.25rem",
+  "xl": "1.5rem",
+  "2xl": "2rem",
+  "3xl": "3rem",
+  "4xl": "4rem",
+  "5xl": "6rem",
+  "6xl": "8rem"
+}
+
+const RADIUS = {
+  "xs": "calc(var(--radius) - 0.375rem)",
+  "sm": "calc(var(--radius) - 0.25rem)",
+  "md": "calc(var(--radius) - 0.125rem)",
+  "lg": "var(--radius)",
+  "xl": "calc(var(--radius) + 0.25rem)",
+  "2xl": "calc(var(--radius) + 0.5rem)",
+  "3xl": "calc(var(--radius) + 1rem)"
+}
+
+const BASE_THEME_COLORS = {
+  background: "light-dark(oklch(1 0 0), var(--color-neutral-50))",
+  foreground: "var(--color-neutral-950)",
+  border: "var(--color-neutral-200)"
+}
+
+const rules: Rule[] = [
   [
     /^rl-color-([\w-]+)$/,
     ([, c]) => ({
@@ -207,17 +170,10 @@ const customPresetRules: Rule[] = [
     })
   ],
   [
-    /^(?:rl-)?(light|dark|auto)$/,
-    ([, m]) => ({
-      "color-scheme": m === "auto" ? "light dark" : m,
-      "color": "var(--foreground)"
-    })
-  ],
-  [
     /^(shadow-adaptive|rl-elevation)$/,
     () => ({
       "box-shadow":
-        "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8))"
+        "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.25 h / 0.8))"
     })
   ],
   [
@@ -244,37 +200,50 @@ const customPresetRules: Rule[] = [
   ]
 ]
 
-export default function rimelightUiPreset({ colors, icons, presets }: PresetOptions = {}): Preset {
-  const allColors = getAllColorNames(colors)
+export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
+  const allColors = getAllColorNames(options.colors)
+
+  const safelist = [
+    ...allColors.map((c) => `rl-color-${c}`),
+    ...Object.values(options.icons ?? {}).filter(
+      (v): v is string => typeof v === "string" && v.startsWith("i-")
+    )
+  ]
+
+  const presets = [
+    options.presets?.wind !== false && presetWind4(),
+    options.presets?.typography !== false && presetTypography(),
+    options.presets?.icons !== false && presetIcons()
+  ].filter(Boolean) as Preset[]
+
+  const theme = {
+    spacing: SPACING,
+    radius: RADIUS,
+    colors: {
+      ...BASE_THEME_COLORS,
+      ...Object.fromEntries(
+        allColors.map((c) => [
+          c,
+          {
+            DEFAULT: `var(--${c})`,
+            foreground: `var(--${c}-foreground)`,
+            accent: `var(--${c}-accent)`,
+            ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
+          }
+        ])
+      )
+    }
+  }
+
+  const preflights = [{ getCSS: () => generatePreflightCss(options.colors) }]
+
   return {
     name: "rimelight-ui",
-    safelist: [
-      ...allColors.map((c) => `rl-color-${c}`),
-      ...Object.values(icons ?? {}).filter(
-        (v): v is string => typeof v === "string" && v.startsWith("i-")
-      )
-    ],
-    presets: [
-      presets?.wind !== false && presetWind4(),
-      presets?.typography !== false && presetTypography(),
-      presets?.icons !== false && presetIcons()
-    ].filter(Boolean) as Preset[],
-    transformers: [transformerDirectives(), transformerVariantGroup()],
     outputToCssLayers: true,
-    rules: customPresetRules,
-    theme: {
-      spacing: SPACING_TOKENS,
-      radius: RADIUS_TOKENS,
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        outline: "var(--outline)",
-        ...Object.fromEntries(allColors.map((c) => [c, createPaletteScale(c)]))
-      }
-    },
-    preflights: [{ getCSS: () => getPreflightCss(colors) }]
+    safelist,
+    presets,
+    rules,
+    theme,
+    preflights
   }
 }

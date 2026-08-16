@@ -63,12 +63,12 @@ const badgeClass = badgeColor?.startsWith("bg-") ? badgeColor : `bg-${badgeColor
     </span>
     <div class="flex flex-col leading-tight">
       {title && (
-        <span class="font-medium text-sm text-[var(--foreground)]" data-slot="title">
+        <span class="font-medium text-sm text-default" data-slot="title">
           {title}
         </span>
       )}
       {subtitle && (
-        <span class="text-xs text-[var(--muted-foreground)]" data-slot="subtitle">
+        <span class="text-xs text-muted" data-slot="subtitle">
           {subtitle}
         </span>
       )}

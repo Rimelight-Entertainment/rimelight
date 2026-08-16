@@ -84,11 +84,11 @@ const overrideTriggerClass = classes.select
 const gapClass = size === "sm" ? "gap-1.5" : size === "lg" ? "gap-3" : "gap-2";
 
 const selectUi = {
-    root: "!w-fit !inline-flex",
-    trigger: `flex items-center justify-between !w-fit ${gapClass} ${overrideTriggerClass}`,
-    content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
-    item: "!text-[var(--foreground)] hover:!bg-[var(--accent)] hover:!text-[var(--accent-foreground)]"
-};
+  root: "!w-fit !inline-flex",
+  trigger: `flex items-center justify-between !w-fit ${gapClass} ${overrideTriggerClass}`,
+  content: "!min-w-0 !w-full !bg-default !border-default !text-default",
+  item: "!text-default hover:!bg-muted hover:!text-highlighted"
+}
 ---
 
 <rla-locale-selector {...rest}>
