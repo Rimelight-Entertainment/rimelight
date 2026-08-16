@@ -8,50 +8,31 @@ import {
 } from "unocss"
 import { colorScales, getAllColorNames, COLOR_SHADES, type UIConfig } from "../config"
 
-type ColorEntry = NonNullable<UIConfig["colors"]>[string]
 type Shades = Record<string, string>
+type ModeEntry = { light?: Shades; dark?: Shades }
 
-const isMode = (v: ColorEntry): v is { light?: Shades; dark?: Shades } =>
+const isMode = (v: unknown): v is ModeEntry =>
   typeof v === "object" && v !== null && ("light" in v || "dark" in v)
 
-function generateShade(shade: string, value: string, target: "white" | "black"): string {
-  const num = Number(shade)
-  if (!num || num === 500) return value
-  const pct = Math.round(
-    Math.max(0, target === "white" ? (500 - num) / 500 : (num - 500) / 450) * 75
-  )
-  return pct ? `color-mix(in oklch, ${value}, ${target} ${pct}%)` : value
-}
-
-function resolveColorModes(
-  entry: ColorEntry,
-  autogenerate = true
-): { light: Shades; dark: Shades } {
+function resolveColorModes(entry: unknown): { light: Shades; dark: Shades } {
   const mode = isMode(entry)
-  const mL = mode ? entry.light : entry
-  const mD = mode ? entry.dark : entry
-  const light: Shades = {}
-  const dark: Shades = {}
-  const keys = autogenerate
-    ? COLOR_SHADES
-    : [...new Set([...Object.keys(mL ?? {}), ...Object.keys(mD ?? {})])]
-  const baseL = mL?.["500"] ?? Object.values(mL ?? {})[0] ?? ""
-  const baseD = mD?.["500"] ?? Object.values(mD ?? {})[0] ?? baseL
+  const mL = mode ? entry.light : (entry as Shades | undefined)
+  const mD = mode ? entry.dark : (entry as Shades | undefined)
+  const base = (m: Shades | undefined) => m?.["500"] ?? Object.values(m ?? {})[0] ?? ""
+  const [bL, bD] = [base(mL) || base(mD), base(mD) || base(mL)]
 
-  for (const s of keys) {
-    const isLight = Number(s) < 500
-    const lVal =
-      mL?.[s] ??
-      (autogenerate
-        ? generateShade(s, baseL || baseD, isLight ? "white" : "black")
-        : baseL || baseD)
-    const dVal =
-      mD?.[s] ??
-      (autogenerate
-        ? generateShade(s, baseD || baseL, isLight ? "black" : "white")
-        : baseD || baseL)
-    if (lVal) light[s] = lVal
-    if (dVal) dark[s] = dVal
+  const gen = (val: string, s: string, dark: boolean) => {
+    const n = Number(s)
+    if (!n || n === 500) return val
+    const target = n < 500 !== dark ? "white" : "black"
+    const pct = Math.round((Math.abs(500 - n) / (n < 500 ? 500 : 450)) * 75)
+    return `color-mix(in oklch, ${val}, ${target} ${pct}%)`
+  }
+
+  const [light, dark]: [Shades, Shades] = [{}, {}]
+  for (const s of COLOR_SHADES) {
+    light[s] = mL?.[s] ?? gen(bL, s, false)
+    dark[s] = mD?.[s] ?? gen(bD, s, true)
   }
   return { light, dark }
 }
@@ -63,17 +44,14 @@ const createScale = (c: string) => ({
   ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
 })
 
-const formatColorLines = (
-  entries: Iterable<[string, { light?: Record<string, string>; dark?: Record<string, string> }]>
-) =>
+const formatColorLines = (entries: Iterable<[string, { light?: Shades; dark?: Shades }]>) =>
   [...entries]
     .flatMap(([c, m]) => {
       const keys = [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
-      const lines = keys.map((s) => {
-        const l = m.light?.[s]
-        const d = m.dark?.[s]
-        return `  --color-${c}-${s}: light-dark(${l ?? d}, ${d ?? l});`
-      })
+      const lines = keys.map(
+        (s) =>
+          `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark?.[s]}, ${m.dark?.[s] ?? m.light?.[s]});`
+      )
       const l500 = m.light?.["500"] ?? m.dark?.["500"]
       if (l500) {
         lines.push(
@@ -136,7 +114,23 @@ const INTENT_REGEX = new RegExp(
   `^(text|bg|ring|border|outline|divide)-(${Object.keys(INTENTS).join("|")})(?:\\/(\\d+))?$`
 )
 
-const STATIC_PREFLIGHT_SUFFIX = `
+const buildPreflight = (extra = "") => `:root {
+  color-scheme: light dark;
+  --background: light-dark(oklch(1 0 0), var(--color-neutral-50));
+  --foreground: var(--color-neutral-950);
+  --border: var(--border-color-default);
+  --input: var(--border-color-default);
+  --ring: var(--ring-color-default);
+  --outline: var(--ring-color-default);
+  --radius: 0.625rem;
+  --font-sans: "Noto Sans", sans-serif;
+  --font-serif: "Noto Serif", serif;
+  --font-mono: "Noto Sans Mono", monospace;
+  --ui-header-height: 4rem;
+  --rl-container: 90rem;
+${INTENT_PREFLIGHT_VARS}
+
+${STATIC_BUILTIN_COLOR_LINES}${extra ? `\n${extra}` : ""}
 }
 
 :root.dark, html.dark, .dark, [data-theme="dark"] { color-scheme: dark; }
@@ -170,9 +164,6 @@ body { background-color: var(--background); color: var(--foreground); font-famil
 }
 `
 
-const buildPreflight = (extra = "") =>
-  `:root {\n  color-scheme: light dark;\n  --background: light-dark(oklch(1 0 0), var(--color-neutral-50));\n  --foreground: var(--color-neutral-950);\n  --border: var(--border-color-default);\n  --input: var(--border-color-default);\n  --ring: var(--ring-color-default);\n  --outline: var(--ring-color-default);\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}${extra ? `\n${extra}` : ""}${STATIC_PREFLIGHT_SUFFIX}`
-
 const THEME_SPACING = {
   "6xs": "0.125rem",
   "5xs": "0.25rem",
@@ -190,6 +181,7 @@ const THEME_SPACING = {
   "5xl": "6rem",
   "6xl": "8rem"
 }
+
 const THEME_RADIUS = {
   "xs": "calc(var(--radius) - 0.375rem)",
   "sm": "calc(var(--radius) - 0.25rem)",
@@ -211,10 +203,7 @@ export function rimelightUiPreset(options?: UIConfig): Preset {
   ]
   const userColorLines = Object.keys(userColors).length
     ? formatColorLines(
-        Object.entries(userColors).map(([name, entry]) => [
-          name,
-          resolveColorModes(entry, options?.autogenerateColorModes ?? true)
-        ])
+        Object.entries(userColors).map(([name, entry]) => [name, resolveColorModes(entry)])
       )
     : ""
   const preflightCss = buildPreflight(userColorLines)
