@@ -26,12 +26,9 @@ export function ui({ unocss, ...o }: UIConfig = {}): AstroIntegration[] {
             vite: {
               define: {
                 "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify({
-                  unstyled: o.unstyled,
+                  ...o,
                   themes: o.components?.themes,
-                  logos: o.logos,
-                  colors: getAllColorNames(o.colors),
-                  shortcuts: o.shortcuts,
-                  icons: o.icons
+                  colors: getAllColorNames(o.colors)
                 })
               }
             }
