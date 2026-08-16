@@ -1,7 +1,7 @@
 import { scv, cx } from "css-variants"
 import { colorNames, type ThemeColor, type UIConfig } from "../types"
 
-export type ResolvedUIConfig = {
+export const uiConfig: {
   unstyled?: boolean
   shortcuts?: UIConfig["shortcuts"]
   logos?: UIConfig["logos"]
@@ -9,9 +9,7 @@ export type ResolvedUIConfig = {
   colors?: readonly string[]
   themes?: NonNullable<UIConfig["components"]>["themes"]
   [key: string]: unknown
-}
-
-export const uiConfig: ResolvedUIConfig = (import.meta.env as any)?.RIMELIGHT_UI_CONFIG ?? {}
+} = (import.meta.env as any)?.RIMELIGHT_UI_CONFIG ?? {}
 
 export const defineTheme = <const S extends string, const V extends Record<string, any>>(
   name: string,
