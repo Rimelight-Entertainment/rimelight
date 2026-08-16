@@ -109,22 +109,17 @@ export function defineShortcuts(
     const chain = k.includes("-") && k !== "-" && !k.includes("_"),
       parts = k.toLowerCase().split(chain ? "-" : "_")
     let mods = 0
-    const nonMods: string[] = []
+    const nonMods = parts.filter((p) => (MODS[p] ? !(mods |= MODS[p]!) : true)),
+      base = chain ? k.toLowerCase() : nonMods.join("_")
 
-    for (const p of parts) {
-      const m = MODS[p]
-      if (m) mods |= m
-      else nonMods.push(p)
+    if (chain) {
+      maxChain = Math.max(maxChain, parts.length)
+      chained.set(base, { key: base, handler, mods, usingInput: obj?.usingInput })
+    } else {
+      standard.push({ key: base, handler, mods, usingInput: obj?.usingInput })
     }
 
-    const base = chain ? k.toLowerCase() : nonMods.join("_")
-    if (chain) maxChain = Math.max(maxChain, parts.length)
-
-    const s: Shortcut = { key: base, handler, mods, usingInput: obj?.usingInput }
-    if (chain) chained.set(base, s)
-    else standard.push(s)
-
-    if (obj && (obj.label || obj.description)) {
+    if (obj?.label || obj?.description) {
       const category = obj.category || "system"
       reg.push({
         id: `${category}-${k}`,
@@ -168,16 +163,13 @@ export function defineShortcuts(
         if (match && isEnabled(match, input)) return trigger(match)
       }
 
-    const eMods = +e.ctrlKey | (+e.metaKey << 1) | (+e.altKey << 2) | (+e.shiftKey << 3)
+    const eMods = +e.ctrlKey | (+e.metaKey << 1) | (+e.altKey << 2) | (+e.shiftKey << 3),
+      c = e.code.toLowerCase(),
+      k = e.key.toLowerCase()
 
     for (const s of standard) {
       if ((s.mods & 7) !== (eMods & 7)) continue
-      const c = e.code.toLowerCase()
-      if (
-        s.mods & 4
-          ? c !== `key${s.key}` && c !== `digit${s.key}` && c !== s.key
-          : e.key.toLowerCase() !== s.key
-      )
+      if (s.mods & 4 ? c !== `key${s.key}` && c !== `digit${s.key}` && c !== s.key : k !== s.key)
         continue
       if (
         Boolean(s.mods & 8) !== e.shiftKey &&
