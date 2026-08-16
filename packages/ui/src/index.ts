@@ -18,7 +18,7 @@ const resolvePipeline = (p?: { include?: FilterPattern; exclude?: FilterPattern 
 export const ui = (o: UIConfig = {}): AstroIntegration[] => [
   UnoCSS({
     ...o.unocss,
-    presets: [rimelightUiPreset(o), ...(o.unocss?.presets || [])],
+    presets: [rimelightUiPreset(o), ...(o.unocss?.presets ?? [])],
     content: { ...o.unocss?.content, pipeline: resolvePipeline(o.unocss?.content?.pipeline) }
   }),
   {

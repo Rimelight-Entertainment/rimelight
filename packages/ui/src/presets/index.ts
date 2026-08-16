@@ -1,7 +1,7 @@
 import {
+  presetIcons,
   presetTypography,
   presetWind4,
-  presetIcons,
   transformerDirectives,
   transformerVariantGroup,
   type Preset,
@@ -57,7 +57,7 @@ const colorBlock = (
 
 const STATIC_BUILTIN_COLOR_LINES = Object.entries(BUILTIN_COLORS)
   .map(([name, scale]) => {
-    const [l, d] = scale.split("|").map((h) => h.split(",").map((v) => v.trim()))
+    const [l, d] = scale.split(" | ").map((h) => h.split(", "))
     return colorBlock(
       name,
       (_, i) => `oklch(${l![i]})`,
@@ -70,8 +70,8 @@ function formatUserColors(colors?: Record<string, ColorModeInput>): string {
   if (!colors) return ""
   return Object.entries(colors)
     .map(([c, entry]) => {
-      const mode = typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
-      const { light, dark } = (mode ? entry : { light: entry, dark: entry }) as {
+      const isMode = typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
+      const { light, dark } = (isMode ? entry : { light: entry, dark: entry }) as {
         light?: Record<string, string>
         dark?: Record<string, string>
       }
@@ -148,7 +148,7 @@ const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
 
 const INTENT_REGEX = /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/
 
-const STATIC_PREFLIGHT_HEAD = `:root {
+const getPreflightCss = (userColors?: Record<string, ColorModeInput>) => `:root {
   color-scheme: light dark;
   --background: light-dark(oklch(1 0 0), var(--color-neutral-50));
   --foreground: var(--color-neutral-950);
@@ -164,9 +164,8 @@ const STATIC_PREFLIGHT_HEAD = `:root {
   --rl-container: 90rem;
 ${INTENT_PREFLIGHT_VARS}
 
-${STATIC_BUILTIN_COLOR_LINES}`
-
-const STATIC_PREFLIGHT_TAIL = `}
+${STATIC_BUILTIN_COLOR_LINES}${userColors ? `\n${formatUserColors(userColors)}` : ""}
+}
 
 :root.dark, html.dark, .dark, [data-theme="dark"] { color-scheme: dark; }
 :root.light, html.light, .light, [data-theme="light"] { color-scheme: light; }
@@ -285,37 +284,32 @@ const STATIC_LAYERS = { theme: 1, preflights: 2, shortcuts: 3, default: 4 }
 export function rimelightUiPreset(options?: PresetOptions): Preset {
   const userColors = options?.colors
   const allColors = getAllColorNames(userColors)
-  const safelist = [
-    ...allColors.map((c) => `rl-color-${c}`),
-    ...Object.values(options?.icons ?? {}).filter(
-      (v): v is string => typeof v === "string" && v.startsWith("i-")
-    )
-  ]
-  const userColorLines = formatUserColors(userColors)
-  const preflightCss = `${STATIC_PREFLIGHT_HEAD}${userColorLines ? `\n${userColorLines}` : ""}\n${STATIC_PREFLIGHT_TAIL}\n`
-
   const opt = options?.presets
-  const presets: Preset[] = [
-    opt?.wind !== false && presetWind4(),
-    opt?.typography !== false &&
-      presetTypography({
-        cssExtend: {
-          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-            "font-family": "var(--font-sans), system-ui, sans-serif"
-          },
-          "pre,code": { "font-family": "var(--font-mono), monospace" }
-        }
-      }),
-    opt?.icons !== false &&
-      presetIcons({
-        extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-      })
-  ].filter(Boolean) as Preset[]
 
   return {
     name: "rimelight-ui",
-    safelist,
-    presets,
+    safelist: [
+      ...allColors.map((c) => `rl-color-${c}`),
+      ...Object.values(options?.icons ?? {}).filter(
+        (v): v is string => typeof v === "string" && v.startsWith("i-")
+      )
+    ],
+    presets: [
+      opt?.wind !== false && presetWind4(),
+      opt?.typography !== false &&
+        presetTypography({
+          cssExtend: {
+            "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+              "font-family": "var(--font-sans), system-ui, sans-serif"
+            },
+            "pre,code": { "font-family": "var(--font-mono), monospace" }
+          }
+        }),
+      opt?.icons !== false &&
+        presetIcons({
+          extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+        })
+    ].filter(Boolean) as Preset[],
     transformers: STATIC_TRANSFORMERS,
     outputToCssLayers: true,
     layers: STATIC_LAYERS,
@@ -329,7 +323,7 @@ export function rimelightUiPreset(options?: PresetOptions): Preset {
       },
       radius: THEME_RADIUS
     },
-    preflights: [{ getCSS: () => preflightCss }]
+    preflights: [{ getCSS: () => getPreflightCss(userColors) }]
   }
 }
 

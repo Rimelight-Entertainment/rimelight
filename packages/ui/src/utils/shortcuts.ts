@@ -19,14 +19,16 @@ export interface ShortcutsOptions {
   chainDelay?: number
 }
 
+const CTRL = 1
+const META = 2
+const SHIFT = 4
+const ALT = 8
+
 interface Shortcut {
   key: string
   code: string
   handler: Handler
-  ctrlKey: boolean
-  metaKey: boolean
-  shiftKey: boolean
-  altKey: boolean
+  mods: number
   usingInput?: boolean | string
 }
 
@@ -157,14 +159,21 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
       if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
 
       const hasMeta = mods.has("meta")
+      const hasCtrl = mods.has("ctrl") || (!isMac && hasMeta)
+      const hasShift = mods.has("shift")
+      const hasAlt = mods.has("alt")
+
+      let bitMods = 0
+      if (hasCtrl) bitMods |= CTRL
+      if (isMac && hasMeta) bitMods |= META
+      if (hasShift) bitMods |= SHIFT
+      if (hasAlt) bitMods |= ALT
+
       const sc: Shortcut = {
         key: base,
         code: toCode(base),
         handler,
-        ctrlKey: mods.has("ctrl") || (!isMac && hasMeta),
-        metaKey: isMac && hasMeta,
-        shiftKey: mods.has("shift"),
-        altKey: mods.has("alt"),
+        mods: bitMods,
         usingInput: !isFn && (cfg.usingInput ?? false)
       }
 
@@ -227,12 +236,20 @@ export function defineShortcuts(
       }
     }
 
+    const eventMods =
+      (e.ctrlKey ? CTRL : 0) |
+      (e.metaKey ? META : 0) |
+      (e.shiftKey ? SHIFT : 0) |
+      (e.altKey ? ALT : 0)
+
+    const mainMods = CTRL | META | ALT
+
     for (const s of standard) {
-      if (e.ctrlKey !== s.ctrlKey || e.metaKey !== s.metaKey || e.altKey !== s.altKey) continue
-      if (s.altKey ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
+      if ((s.mods & mainMods) !== (eventMods & mainMods)) continue
+      if (s.mods & ALT ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
       if (
-        s.shiftKey !== e.shiftKey &&
-        (s.shiftKey || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
+        (s.mods & SHIFT) !== (eventMods & SHIFT) &&
+        (s.mods & SHIFT || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
       )
         continue
       if (isShortcutEnabled(s, inputState)) return trigger(s)

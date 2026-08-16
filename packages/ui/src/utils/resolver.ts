@@ -1,12 +1,10 @@
 import { scv, cx } from "css-variants"
-import { getAllColorNames, type ThemeColor, type UIConfig } from "../types"
+import type { ThemeColor, UIConfig } from "../types"
 
 export const uiConfig: Partial<UIConfig> & Record<string, unknown> =
   (import.meta.env?.RIMELIGHT_UI_CONFIG as
     | (Partial<UIConfig> & Record<string, unknown>)
     | undefined) ?? {}
-
-const allColors = getAllColorNames(uiConfig.colors)
 
 export const defineTheme = <const S extends string, const V extends Record<string, any>>(
   name: string,
@@ -21,30 +19,25 @@ export const defineTheme = <const S extends string, const V extends Record<strin
   }
 ) => {
   if (uiConfig.unstyled) {
-    return (p?: Record<string, any>) => {
-      const c = p?.class ?? p?.className
-      return (c ? { root: String(c) } : {}) as Record<S, string>
-    }
+    return (p?: Record<string, any>) =>
+      (p?.class || p?.className ? { root: String(p.class ?? p.className) } : {}) as Record<
+        S,
+        string
+      >
   }
 
   const hasAuto = Object.values(theme.variants ?? {}).includes("auto")
-  const defaultSlot = theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")
-  const autoVariants = hasAuto
-    ? Object.fromEntries(
-        allColors.map((c) => [c, { [defaultSlot]: c === "neutral" ? "" : `rl-color-${c}` }])
-      )
-    : null
+  const defaultSlot = (theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")) as S
 
   const variants =
     theme.variants &&
-    Object.fromEntries(
-      Object.entries(theme.variants).map(([k, v]) => [k, v === "auto" ? autoVariants : v])
-    )
+    Object.fromEntries(Object.entries(theme.variants).map(([k, v]) => [k, v === "auto" ? {} : v]))
 
   const themeFn = (scv as any)({
     ...theme,
     variants
   }) as (v: Record<string, any>) => Record<S, string>
+
   const globalSlots = uiConfig.components?.themes?.[name]?.slots
   const cache = new Map<string, Record<string, string>>()
 
@@ -58,10 +51,14 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     let res = cache.get(key)
     if (!res) cache.set(key, (res = themeFn(v)))
 
+    const color = hasAuto && (v.color ?? (theme.defaultVariants as any)?.color)
+    const colorClass = color && color !== "neutral" ? `rl-color-${color}` : ""
+
     const resolvedUi = globalSlots || ui ? { ...globalSlots, ...ui } : undefined
-    if (!resolvedUi && !rootClass) return res
+    if (!resolvedUi && !rootClass && !colorClass) return res
 
     const out: Record<string, string> = { ...res }
+    if (colorClass) out[defaultSlot] = cx(out[defaultSlot], colorClass)
     if (resolvedUi) {
       for (const s in resolvedUi) {
         const o = resolvedUi[s]
