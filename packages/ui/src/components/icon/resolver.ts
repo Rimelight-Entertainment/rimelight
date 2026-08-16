@@ -6,34 +6,19 @@ export interface ResolvedIcon {
   content: string
 }
 
-const defaultIconsLookup = DEFAULT_ICONS as Record<string, string>
-const iconCache = new Map<string, ResolvedIcon>()
+const c = new Map<string, ResolvedIcon>(),
+  isCls = (s: string) => s.startsWith("i-") || s.includes(":")
 
-export function resolveIcon(iconKey?: string, customProp?: string): ResolvedIcon {
-  if (!iconKey) {
-    return { isClass: false, content: "" }
-  }
-
-  // Fast path: direct UnoCSS iconify class syntax
-  if (iconKey.startsWith("i-") || iconKey.includes(":")) {
-    return { isClass: true, content: iconKey }
-  }
-
-  const cacheKey = customProp ? `${iconKey}:${customProp}` : iconKey
-  const cached = iconCache.get(cacheKey)
+export function resolveIcon(k = "", custom?: string): ResolvedIcon {
+  if (!k) return { isClass: false, content: "" }
+  if (isCls(k)) return { isClass: true, content: k }
+  const id = custom ? `${k}:${custom}` : k,
+    cached = c.get(id)
   if (cached) return cached
-
-  const resolved = customProp || uiConfig.icons?.[iconKey]
-
-  let result: ResolvedIcon
-  if (!resolved) {
-    result = { isClass: false, content: defaultIconsLookup[iconKey] || "" }
-  } else {
-    const isClass =
-      typeof resolved === "string" && (resolved.startsWith("i-") || resolved.includes(":"))
-    result = { isClass, content: resolved }
-  }
-
-  iconCache.set(cacheKey, result)
-  return result
+  const raw = custom || uiConfig.icons?.[k],
+    res: ResolvedIcon = raw
+      ? { isClass: isCls(raw), content: raw }
+      : { isClass: false, content: (DEFAULT_ICONS as Record<string, string>)[k] || "" }
+  c.set(id, res)
+  return res
 }

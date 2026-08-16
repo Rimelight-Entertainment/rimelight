@@ -5,19 +5,19 @@ export const uiConfig: UIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG || {}
 
 export const defineTheme = <const S extends string>(
   name: string,
-  theme: { slots: readonly S[]; [k: string]: any }
+  t: { slots: readonly S[]; [k: string]: any }
 ) => {
-  const root = (theme.slots.find((s) => s === "root") ?? theme.slots[0]) as S,
-    auto = theme.variants?.color === "auto",
-    fn = scv(auto ? { ...theme, variants: { ...theme.variants, color: {} } } : (theme as any)),
-    gUi = uiConfig.components?.themes?.[name]?.slots
+  const root = (t.slots.find((s) => s === "root") ?? t.slots[0]) as S,
+    auto = t.variants?.color === "auto",
+    fn = scv(auto ? { ...t, variants: { ...t.variants, color: {} } } : (t as any)),
+    g = uiConfig.components?.themes?.[name]?.slots
 
   return (p: any = {}): Record<S, string> => {
     if (uiConfig.unstyled) return { [root]: cx(p.class, p.className) } as any
     const out: any = fn(p),
-      c = auto && (p.color ?? theme.defaultVariants?.color)
+      c = auto && (p.color ?? t.defaultVariants?.color)
     out[root] = cx(out[root], c && `rl-color-${c}`, p.class, p.className)
-    for (const [k, f] of Object.entries({ ...gUi, ...p.ui }))
+    for (const [k, f] of Object.entries({ ...g, ...p.ui }))
       if (f) out[k] = typeof f === "function" ? cx(f(out[k] || "")) : cx(out[k], f)
     return out
   }
