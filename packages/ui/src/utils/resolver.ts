@@ -2,10 +2,13 @@ import { scv, cx } from "css-variants"
 import { colorNames, type ThemeColor, type UIConfig } from "../types"
 
 export const uiConfig: Partial<UIConfig> & {
-  colors?: readonly string[]
   themes?: NonNullable<UIConfig["components"]>["themes"]
   [key: string]: unknown
 } = (import.meta as any).env?.RIMELIGHT_UI_CONFIG ?? {}
+
+const allColors = uiConfig.colors
+  ? [...new Set<string>([...colorNames, ...Object.keys(uiConfig.colors)])]
+  : colorNames
 
 export const defineTheme = <const S extends string, const V extends Record<string, any>>(
   name: string,
@@ -32,10 +35,7 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     if (val === "auto") {
       const slot = (theme.slots.includes("root" as S) ? "root" : theme.slots[0]) ?? "root"
       variants[k] = Object.fromEntries(
-        (uiConfig.colors ?? colorNames).map((c) => [
-          c,
-          { [slot]: c === "neutral" ? "" : `rl-color-${c}` }
-        ])
+        allColors.map((c) => [c, { [slot]: c === "neutral" ? "" : `rl-color-${c}` }])
       )
     } else if (val) variants[k] = val
   }

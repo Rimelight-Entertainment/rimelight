@@ -1,7 +1,7 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./types"
-import rimelightUiPreset, { getAllColorNames } from "./presets"
+import rimelightUiPreset from "./presets"
 
 const INCLUDES = [
   /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
@@ -26,8 +26,7 @@ export const ui = ({ unocss, ...o }: UIConfig = {}): AstroIntegration[] => [
             define: {
               "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify({
                 ...o,
-                themes: o.components?.themes,
-                colors: getAllColorNames(o.colors)
+                themes: o.components?.themes
               })
             }
           }
