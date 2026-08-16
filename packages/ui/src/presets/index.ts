@@ -1,5 +1,5 @@
 import { presetIcons, presetTypography, presetWind4, type Preset, type Rule } from "unocss"
-import { getAllColorNames, type ColorModeInput, type PresetOptions } from "../types"
+import { PALETTES, type ColorModeInput, type PresetOptions } from "../types"
 
 const SHADES: Record<string, [number, number, number, number]> = {
   "50": [0.985, 0.1, 0.145, 0.2],
@@ -15,35 +15,17 @@ const SHADES: Record<string, [number, number, number, number]> = {
   "950": [0.145, 0.3, 0.93, 0.25]
 }
 
-const PALETTES: Record<string, [number, number]> = {
-  neutral: [0, 0],
-  primary: [0.21, 260],
-  secondary: [0.18, 70],
-  info: [0.24, 260],
-  success: [0.2, 150],
-  warning: [0.17, 86],
-  error: [0.24, 25],
-  commentary: [0.29, 322],
-  ideation: [0.28, 293],
-  source: [0.13, 215]
-}
-
 const SHADE_KEYS = Object.keys(SHADES)
 
-const emitPaletteCss = (
-  name: string,
-  shadeFn: (s: string) => string,
-  light: string,
-  dark: string
-) =>
+const emitPalette = (name: string, shadeFn: (s: string) => string, light: string, dark: string) =>
   `${SHADE_KEYS.map((s) => `  --color-${name}-${s}: ${shadeFn(s)};`).join("\n")}
   --${name}: light-dark(${light}, ${dark});
   --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));
   --${name}-accent: var(--color-${name}-600);`
 
-const BUILTIN_PALETTES = Object.entries(PALETTES)
-  .map(([name, [c, h]]) =>
-    emitPaletteCss(
+const compilePalettes = (custom?: Record<string, ColorModeInput>) => {
+  const builtin = Object.entries(PALETTES).map(([name, [c, h]]) =>
+    emitPalette(
       name,
       (s) => {
         const [lL, cL, dL, dC] = SHADES[s]!
@@ -53,29 +35,27 @@ const BUILTIN_PALETTES = Object.entries(PALETTES)
       `oklch(0.53 ${c} ${h})`
     )
   )
-  .join("\n")
 
-const formatCustomColors = (colors?: Record<string, ColorModeInput>) =>
-  colors
-    ? "\n" +
-      Object.entries(colors)
-        .map(([name, entry]) => {
-          const m = (
-            typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
-              ? entry
-              : { light: entry, dark: entry }
-          ) as { light?: Record<string, string>; dark?: Record<string, string> }
-          const bL = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
-          const bD = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? bL
-          return emitPaletteCss(
-            name,
-            (s) => `light-dark(${m.light?.[s] ?? bL}, ${m.dark?.[s] ?? bD})`,
-            bL,
-            bD
-          )
-        })
-        .join("\n")
-    : ""
+  const customCss = custom
+    ? Object.entries(custom).map(([name, entry]) => {
+        const m = (
+          typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
+            ? entry
+            : { light: entry, dark: entry }
+        ) as { light?: Record<string, string>; dark?: Record<string, string> }
+        const bL = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
+        const bD = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? bL
+        return emitPalette(
+          name,
+          (s) => `light-dark(${m.light?.[s] ?? bL}, ${m.dark?.[s] ?? bD})`,
+          bL,
+          bD
+        )
+      })
+    : []
+
+  return [...builtin, ...customCss].join("\n")
+}
 
 const PROPS: Record<string, [prop: string, idx: number]> = {
   text: ["color", 0],
@@ -86,8 +66,7 @@ const PROPS: Record<string, [prop: string, idx: number]> = {
   outline: ["outline-color", 3]
 }
 
-// [text, bg, border, ring]
-const INTENTS: Record<string, [string, string, string, string]> = {
+const INTENTS: Record<string, string[]> = {
   default: ["700", "50", "200", "300"],
   muted: ["600", "100", "200", "300"],
   elevated: ["800", "100", "200", "400"],
@@ -161,7 +140,7 @@ const buildColorTheme = (c: string) => ({
 })
 
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
-  const allColors = getAllColorNames(options.colors)
+  const allColors = Object.keys({ ...PALETTES, ...options.colors })
 
   return {
     name: "rimelight-ui",
@@ -190,7 +169,7 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   --radius: 0.625rem;
   --rl-header-height: 4rem;
   --rl-container: 90rem;
-${BUILTIN_PALETTES}${formatCustomColors(options.colors)}
+${compilePalettes(options.colors)}
 }
 
 .dark, [data-theme="dark"] { color-scheme: dark; }

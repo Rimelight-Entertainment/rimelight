@@ -44,10 +44,10 @@ const MOD_BITS: Record<string, number> = {
   cmd: 2,
   command: 2,
   meta: 2,
+  shift: 4,
   opt: 8,
   option: 8,
-  alt: 8,
-  shift: 4
+  alt: 8
 }
 
 const KEY_SYMBOLS: Record<string, string> = {
@@ -120,19 +120,7 @@ const isUsingInput = (el: Element | null): boolean | string => {
 const isEnabled = (s: Shortcut, inputState: boolean | string) =>
   s.usingInput === true || (s.usingInput ? inputState === s.usingInput : !inputState)
 
-interface ParsedConfig {
-  standard: Shortcut[]
-  chained: Map<string, Shortcut>
-  maxChain: number
-  registered: RegisteredShortcut[]
-}
-
-const parseCache = new WeakMap<ShortcutsConfig, ParsedConfig>()
-
-function parseShortcutConfig(config: ShortcutsConfig): ParsedConfig {
-  const cached = parseCache.get(config)
-  if (cached) return cached
-
+function parseShortcutConfig(config: ShortcutsConfig) {
   const standard: Shortcut[] = []
   const chained = new Map<string, Shortcut>()
   const registered: RegisteredShortcut[] = []
@@ -142,35 +130,34 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedConfig {
     if (!cfg) continue
     const isFn = typeof cfg === "function"
     const handler = isFn ? cfg : cfg.handler
+    if (typeof handler !== "function") continue
+
     const isChained = rawKey.includes("-") && rawKey !== "-" && !rawKey.includes("_")
+    const parts = rawKey.toLowerCase().split(isChained ? "-" : "_")
+    let mods = 0
+    const nonMods: string[] = []
 
-    if (typeof handler === "function") {
-      const parts = rawKey.toLowerCase().split(isChained ? "-" : "_")
-      let mods = 0
-      const nonMods: string[] = []
-
-      for (const p of parts) {
-        const bit = MOD_BITS[p]
-        if (bit) mods |= bit
-        else nonMods.push(p)
-      }
-
-      if (!isMac && mods & 2) mods = (mods & ~2) | 1
-
-      const base = isChained ? rawKey.toLowerCase() : nonMods.join("_")
-      if (isChained) maxChain = Math.max(maxChain, parts.length)
-
-      const shortcut: Shortcut = {
-        key: base,
-        code: toCode(base),
-        handler,
-        mods,
-        usingInput: !isFn && (cfg.usingInput ?? false)
-      }
-
-      if (isChained) chained.set(base, shortcut)
-      else standard.push(shortcut)
+    for (const p of parts) {
+      const bit = MOD_BITS[p]
+      if (bit) mods |= bit
+      else nonMods.push(p)
     }
+
+    if (!isMac && mods & 2) mods = (mods & ~2) | 1
+
+    const base = isChained ? rawKey.toLowerCase() : nonMods.join("_")
+    if (isChained) maxChain = Math.max(maxChain, parts.length)
+
+    const shortcut: Shortcut = {
+      key: base,
+      code: toCode(base),
+      handler,
+      mods,
+      usingInput: !isFn && (cfg.usingInput ?? false)
+    }
+
+    if (isChained) chained.set(base, shortcut)
+    else standard.push(shortcut)
 
     if (typeof cfg === "object" && (cfg.label || cfg.description)) {
       const category = cfg.category || "system"
@@ -185,9 +172,7 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedConfig {
     }
   }
 
-  const result = { standard, chained, maxChain, registered }
-  parseCache.set(config, result)
-  return result
+  return { standard, chained, maxChain, registered }
 }
 
 export function defineShortcuts(

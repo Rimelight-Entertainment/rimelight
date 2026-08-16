@@ -1,28 +1,27 @@
 import type { UserConfig } from "unocss"
 import type { RimelightIcons } from "./icons/defaults"
 
-export const colorNames = [
-  "neutral",
-  "primary",
-  "secondary",
-  "info",
-  "success",
-  "warning",
-  "error",
-  "commentary",
-  "ideation",
-  "source"
-] as const
+export const PALETTES = {
+  neutral: [0, 0],
+  primary: [0.21, 260],
+  secondary: [0.18, 70],
+  info: [0.24, 260],
+  success: [0.2, 150],
+  warning: [0.17, 86],
+  error: [0.24, 25],
+  commentary: [0.29, 322],
+  ideation: [0.28, 293],
+  source: [0.13, 215]
+} as const
+
+export const colorNames = Object.keys(PALETTES) as readonly (keyof typeof PALETTES)[]
 
 export type Theme = "light" | "dark"
-export type ThemeColor = (typeof colorNames)[number] | (string & {})
+export type ThemeColor = keyof typeof PALETTES | (string & {})
 
 export type ColorModeInput =
   | Record<string, string>
   | { light?: Record<string, string>; dark?: Record<string, string> }
-
-export const getAllColorNames = (customColors?: Record<string, unknown>): readonly string[] =>
-  customColors ? [...new Set([...colorNames, ...Object.keys(customColors)])] : colorNames
 
 export interface PresetOptions {
   /**
