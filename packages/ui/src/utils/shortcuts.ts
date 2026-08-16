@@ -32,23 +32,14 @@ interface Shortcut {
   key: string
   code: string
   handler: Handler
-  mods: number
+  ctrl?: boolean
+  meta?: boolean
+  alt?: boolean
+  shift?: boolean
   usingInput?: boolean | string
 }
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
-
-const MOD_BITS: Record<string, number> = {
-  ctrl: 1,
-  control: 1,
-  cmd: 2,
-  command: 2,
-  meta: 2,
-  shift: 4,
-  opt: 8,
-  option: 8,
-  alt: 8
-}
 
 const KEY_SYMBOLS: Record<string, string> = {
   meta: isMac ? "⌘" : "Ctrl",
@@ -120,7 +111,12 @@ const isUsingInput = (el: Element | null): boolean | string => {
 const isEnabled = (s: Shortcut, inputState: boolean | string) =>
   s.usingInput === true || (s.usingInput ? inputState === s.usingInput : !inputState)
 
-function parseShortcuts(config: ShortcutsConfig) {
+export function defineShortcuts(
+  config: ShortcutsConfig,
+  options: ShortcutsOptions = {}
+): () => void {
+  if (typeof window === "undefined") return () => {}
+
   const standard: Shortcut[] = []
   const chained = new Map<string, Shortcut>()
   const registered: RegisteredShortcut[] = []
@@ -134,16 +130,22 @@ function parseShortcuts(config: ShortcutsConfig) {
 
     const isChained = rawKey.includes("-") && rawKey !== "-" && !rawKey.includes("_")
     const parts = rawKey.toLowerCase().split(isChained ? "-" : "_")
-    let mods = 0
+    let ctrl = false
+    let meta = false
+    let alt = false
+    let shift = false
     const nonMods: string[] = []
 
     for (const p of parts) {
-      const bit = MOD_BITS[p]
-      if (bit) mods |= bit
+      if (p === "ctrl" || p === "control") ctrl = true
+      else if (p === "cmd" || p === "command" || p === "meta") {
+        if (isMac) meta = true
+        else ctrl = true
+      } else if (p === "alt" || p === "opt" || p === "option") alt = true
+      else if (p === "shift") shift = true
       else nonMods.push(p)
     }
 
-    if (!isMac && mods & 2) mods = (mods & ~2) | 1
     const base = isChained ? rawKey.toLowerCase() : nonMods.join("_")
     if (isChained) maxChain = Math.max(maxChain, parts.length)
 
@@ -151,7 +153,10 @@ function parseShortcuts(config: ShortcutsConfig) {
       key: base,
       code: toCode(base),
       handler,
-      mods,
+      ctrl,
+      meta,
+      alt,
+      shift,
       usingInput: !isFn && (cfg.usingInput ?? false)
     }
 
@@ -171,20 +176,6 @@ function parseShortcuts(config: ShortcutsConfig) {
     }
   }
 
-  return { standard, chained, maxChain, registered }
-}
-
-export function defineShortcuts(
-  config: ShortcutsConfig,
-  options: ShortcutsOptions = {}
-): () => void {
-  if (typeof window === "undefined") return () => {}
-
-  const { standard, chained, maxChain, registered } = parseShortcuts(config)
-  const chainDelay = options.chainDelay ?? 800
-  const inputs: string[] = []
-  let timer: ReturnType<typeof setTimeout> | undefined
-
   const ids = new Set(registered.map((i) => i.id))
   if (ids.size) {
     activeShortcutsStore.set([
@@ -192,6 +183,9 @@ export function defineShortcuts(
       ...registered
     ])
   }
+
+  const inputs: string[] = []
+  let timer: ReturnType<typeof setTimeout> | undefined
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!e.key) return
@@ -214,22 +208,24 @@ export function defineShortcuts(
       }
     }
 
-    const eventMods =
-      (e.ctrlKey ? 1 : 0) | (e.metaKey ? 2 : 0) | (e.shiftKey ? 4 : 0) | (e.altKey ? 8 : 0)
-    const mainMods = 11 // 1 | 2 | 8
-
     for (const s of standard) {
-      if ((s.mods & mainMods) !== (eventMods & mainMods)) continue
-      if (s.mods & 8 ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
       if (
-        (s.mods & 4) !== (eventMods & 4) &&
-        (s.mods & 4 || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
+        Boolean(s.ctrl) !== e.ctrlKey ||
+        Boolean(s.meta) !== e.metaKey ||
+        Boolean(s.alt) !== e.altKey
+      )
+        continue
+
+      if (s.alt ? e.code !== s.code : e.key.toLowerCase() !== s.key) continue
+      if (
+        Boolean(s.shift) !== e.shiftKey &&
+        (s.shift || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
       )
         continue
       if (isEnabled(s, inputState)) return trigger(s)
     }
 
-    timer = setTimeout(() => void (inputs.length = 0), chainDelay)
+    timer = setTimeout(() => void (inputs.length = 0), options.chainDelay ?? 800)
   }
 
   window.addEventListener("keydown", onKeyDown)

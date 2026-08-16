@@ -15,10 +15,8 @@ export const PALETTES = {
 } as const
 
 export const colorNames = Object.keys(PALETTES) as readonly (keyof typeof PALETTES)[]
-
 export type Theme = "light" | "dark"
 export type ThemeColor = keyof typeof PALETTES | (string & {})
-
 export type ColorModeInput =
   | Record<string, string>
   | { light?: Record<string, string>; dark?: Record<string, string> }
@@ -35,24 +33,18 @@ export interface PresetOptions {
   /**
    * Configure which built-in UnoCSS presets are enabled/disabled.
    */
-  presets?: {
-    wind?: boolean
-    typography?: boolean
-    icons?: boolean
-  }
+  presets?: { wind?: boolean; typography?: boolean; icons?: boolean }
 }
 
 export interface UIConfig extends PresetOptions {
   /**
-   * Whether to strip default theme classes from all components (bringing your own styling).
+   * Whether to strip default theme classes from all components.
    */
   unstyled?: boolean
   /**
    * Configuration for keyboard shortcuts.
    */
-  shortcuts?: {
-    categories?: Record<string, { label: string }>
-  }
+  shortcuts?: { categories?: Record<string, { label: string }> }
   /**
    * Configuration for the Logo component variants.
    */
@@ -61,10 +53,6 @@ export interface UIConfig extends PresetOptions {
    * Global component configuration overrides.
    */
   components?: {
-    /**
-     * Global UI overrides applied to all components. Merged with defaults via our custom recursive
-     * merge utility (first arg wins). Values follow the css-variants theme override format.
-     */
     themes?: Record<
       string,
       {
@@ -74,7 +62,7 @@ export interface UIConfig extends PresetOptions {
     >
   }
   /**
-   * Custom UnoCSS configuration overrides, routed directly down to the UnoCSS instance.
+   * Custom UnoCSS configuration overrides.
    */
   unocss?: UserConfig
 }

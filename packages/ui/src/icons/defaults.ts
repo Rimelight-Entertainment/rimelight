@@ -43,8 +43,8 @@ const ICONS = {
   eyeOff: `<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499A10.75 10.75 0 0 1 2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.225-4.22"/><line x1="2" x2="22" y1="2" y2="22"/>`
 } as const
 
-export const DEFAULT_ICONS = Object.fromEntries(
-  Object.entries(ICONS).map(([k, v]) => [k, svg(v)])
-) as { readonly [K in keyof typeof ICONS]: string }
+export const DEFAULT_ICONS = new Proxy(ICONS as Record<string, string>, {
+  get: (target, prop: string) => (prop in target ? svg(target[prop]!) : undefined)
+}) as { readonly [K in keyof typeof ICONS]: string }
 
-export type RimelightIcons = Partial<Record<keyof typeof DEFAULT_ICONS | (string & {}), string>>
+export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>

@@ -1,4 +1,4 @@
-import { presetIcons, presetTypography, presetWind4, type Preset, type Rule } from "unocss"
+import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
 import { PALETTES, type ColorModeInput, type PresetOptions } from "../types"
 
 const SHADES: Record<string, [number, number, number, number]> = {
@@ -15,49 +15,16 @@ const SHADES: Record<string, [number, number, number, number]> = {
   "950": [0.145, 0.3, 0.93, 0.25]
 }
 
-const SHADE_KEYS = Object.keys(SHADES)
-
-const emitPalette = (name: string, shadeFn: (s: string) => string, l: string, d: string) =>
-  `${SHADE_KEYS.map((s) => `  --color-${name}-${s}: ${shadeFn(s)};`).join("\n")}
-  --${name}: light-dark(${l}, ${d});
-  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));
-  --${name}-accent: var(--color-${name}-600);`
-
-const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
-  [
-    ...Object.entries(PALETTES).map(([name, [c, h]]) =>
-      emitPalette(
-        name,
-        (s) => {
-          const [lL, cL, dL, dC] = SHADES[s]!
-          return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`
-        },
-        `oklch(0.55 ${c} ${h})`,
-        `oklch(0.53 ${c} ${h})`
-      )
-    ),
-    ...Object.entries(custom ?? {}).map(([name, entry]) => {
-      const m = (
-        typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
-          ? entry
-          : { light: entry, dark: entry }
-      ) as { light?: Record<string, string>; dark?: Record<string, string> }
-      const l = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
-      const d = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? l
-      return emitPalette(name, (s) => `light-dark(${m.light?.[s] ?? l}, ${m.dark?.[s] ?? d})`, l, d)
-    })
-  ].join("\n")
-
-const PROPS: Record<string, [prop: string, idx: number]> = {
-  text: ["color", 0],
-  bg: ["background-color", 1],
-  border: ["border-color", 2],
-  divide: ["border-color", 2],
-  ring: ["--un-ring-color", 3],
-  outline: ["outline-color", 3]
+const PROPS: Record<string, string> = {
+  text: "color",
+  bg: "background-color",
+  border: "border-color",
+  divide: "border-color",
+  ring: "--un-ring-color",
+  outline: "outline-color"
 }
 
-const INTENTS: Record<string, string[]> = {
+const INTENTS: Record<string, [string, string, string, string]> = {
   default: ["700", "50", "200", "300"],
   muted: ["600", "100", "200", "300"],
   elevated: ["800", "100", "200", "400"],
@@ -68,63 +35,46 @@ const INTENTS: Record<string, string[]> = {
   inverted: ["50", "950", "800", "700"]
 }
 
-const rules: Rule[] = [
+const PROP_IDX: Record<string, number> = {
+  text: 0,
+  bg: 1,
+  border: 2,
+  divide: 2,
+  ring: 3,
+  outline: 3
+}
+
+const emitPalette = (name: string, shadeFn: (s: string) => string) =>
+  `${Object.keys(SHADES)
+    .map((s) => `  --color-${name}-${s}: ${shadeFn(s)};`)
+    .join("\n")}
+  --${name}: var(--color-${name}-500);
+  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));
+  --${name}-accent: var(--color-${name}-600);`
+
+const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
   [
-    /^rl-color-([\w-]+)$/,
-    ([, c]) => ({
-      "--rl-bg": `var(--color-${c}-500)`,
-      "--rl-ring": `var(--color-${c}-500)`,
-      "--rl-border": `var(--color-${c}-500)`,
-      "--rl-bg-hover": `var(--color-${c}-600)`,
-      "--rl-text": `var(--color-${c}-600)`
+    ...Object.entries(PALETTES).map(([name, [c, h]]) =>
+      emitPalette(name, (s) => {
+        const [lL, cL, dL, dC] = SHADES[s]!
+        return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`
+      })
+    ),
+    ...Object.entries(custom ?? {}).map(([name, entry]) => {
+      const m = (
+        entry && typeof entry === "object" && ("light" in entry || "dark" in entry)
+          ? entry
+          : { light: entry, dark: entry }
+      ) as { light?: Record<string, string>; dark?: Record<string, string> }
+      const l = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
+      const d = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? l
+      return emitPalette(name, (s) => `light-dark(${m.light?.[s] ?? l}, ${m.dark?.[s] ?? d})`)
     })
-  ],
-  [
-    /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
-    ([, prop, name, opacity]) => {
-      const [cssProp, idx] = PROPS[prop!] ?? []
-      const shade = idx !== undefined ? INTENTS[name!]?.[idx] : undefined
-      if (!cssProp || !shade) return
-
-      const base = `var(--color-neutral-${shade})`
-      return {
-        [cssProp]: opacity ? `color-mix(in srgb, ${base} ${opacity}%, transparent)` : base,
-        ...(prop === "bg" && name === "inverted" ? { color: "var(--color-neutral-50)" } : {})
-      }
-    }
-  ]
-]
-
-const SPACING = {
-  "6xs": "0.125rem",
-  "5xs": "0.25rem",
-  "4xs": "0.375rem",
-  "3xs": "0.5rem",
-  "2xs": "0.625rem",
-  "xs": "0.75rem",
-  "sm": "0.875rem",
-  "md": "1rem",
-  "lg": "1.25rem",
-  "xl": "1.5rem",
-  "2xl": "2rem",
-  "3xl": "3rem",
-  "4xl": "4rem",
-  "5xl": "6rem",
-  "6xl": "8rem"
-}
-
-const RADIUS = {
-  "xs": "calc(var(--radius) - 0.375rem)",
-  "sm": "calc(var(--radius) - 0.25rem)",
-  "md": "calc(var(--radius) - 0.125rem)",
-  "lg": "var(--radius)",
-  "xl": "calc(var(--radius) + 0.25rem)",
-  "2xl": "calc(var(--radius) + 0.5rem)",
-  "3xl": "calc(var(--radius) + 1rem)"
-}
+  ].join("\n")
 
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const allColors = Object.keys({ ...PALETTES, ...options.colors })
+  const shadeKeys = Object.keys(SHADES)
 
   return {
     name: "rimelight-ui",
@@ -140,10 +90,60 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
       options.presets?.typography !== false && presetTypography(),
       options.presets?.icons !== false && presetIcons()
     ].filter(Boolean) as Preset[],
-    rules,
+    rules: [
+      [
+        /^rl-color-([\w-]+)$/,
+        ([, c]) => ({
+          "--rl-bg": `var(--color-${c}-500)`,
+          "--rl-ring": `var(--color-${c}-500)`,
+          "--rl-border": `var(--color-${c}-500)`,
+          "--rl-bg-hover": `var(--color-${c}-600)`,
+          "--rl-text": `var(--color-${c}-600)`
+        })
+      ],
+      [
+        /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
+        ([, prop, name, opacity]) => {
+          const cssProp = PROPS[prop!]
+          const idx = PROP_IDX[prop!]
+          const shade = idx !== undefined ? INTENTS[name!]?.[idx] : undefined
+          if (!cssProp || !shade) return
+
+          const base = `var(--color-neutral-${shade})`
+          return {
+            [cssProp]: opacity ? `color-mix(in srgb, ${base} ${opacity}%, transparent)` : base,
+            ...(prop === "bg" && name === "inverted" && { color: "var(--color-neutral-50)" })
+          }
+        }
+      ]
+    ],
     theme: {
-      spacing: SPACING,
-      radius: RADIUS,
+      spacing: {
+        "6xs": "0.125rem",
+        "5xs": "0.25rem",
+        "4xs": "0.375rem",
+        "3xs": "0.5rem",
+        "2xs": "0.625rem",
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "md": "1rem",
+        "lg": "1.25rem",
+        "xl": "1.5rem",
+        "2xl": "2rem",
+        "3xl": "3rem",
+        "4xl": "4rem",
+        "5xl": "6rem",
+        "6xl": "8rem"
+      },
+      radius: {
+        "xs": "calc(var(--radius) - 0.375rem)",
+        "sm": "calc(var(--radius) - 0.25rem)",
+        "md": "calc(var(--radius) - 0.125rem)",
+        "lg": "var(--radius)",
+        "xl": "calc(var(--radius) + 0.25rem)",
+        "2xl": "calc(var(--radius) + 0.5rem)",
+        "3xl": "calc(var(--radius) + 1rem)"
+      },
       colors: Object.fromEntries(
         allColors.map((c) => [
           c,
@@ -151,7 +151,7 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
             DEFAULT: `var(--${c})`,
             foreground: `var(--${c}-foreground)`,
             accent: `var(--${c}-accent)`,
-            ...Object.fromEntries(SHADE_KEYS.map((s) => [s, `var(--color-${c}-${s})`]))
+            ...Object.fromEntries(shadeKeys.map((s) => [s, `var(--color-${c}-${s})`]))
           }
         ])
       )

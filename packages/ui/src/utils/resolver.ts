@@ -16,34 +16,31 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     }
   }
 ) => {
-  const slot = (theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")) as S
-
+  const root = (theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")) as S
   if (uiConfig.unstyled) {
-    return (p: any = {}) => ({ [slot]: cx(p.class, p.className) }) as Record<S, string>
+    return (p: any = {}) => ({ [root]: cx(p.class, p.className) }) as Record<S, string>
   }
 
   const auto = theme.variants?.color === "auto"
   const themeFn = scv(
-    (auto ? { ...theme, variants: { ...theme.variants, color: {} } } : theme) as any
+    auto ? { ...theme, variants: { ...theme.variants, color: {} } } : (theme as any)
   )
   const globalUi = uiConfig.components?.themes?.[name]?.slots
 
   return (props: any = {}): Record<S, string> => {
     const { ui, class: c1, className: c2, ...v } = props
-    const out = themeFn(v) as Record<S, string>
+    const out = themeFn(v) as Record<string, string>
     const color = auto && (v.color ?? (theme.defaultVariants as any)?.color)
-    if (color) out[slot] = cx(out[slot], `rl-color-${color}`)
+    if (color) out[root] = cx(out[root], `rl-color-${color}`)
 
     const merged = globalUi || ui ? { ...globalUi, ...ui } : null
     if (merged) {
       for (const k in merged) {
         const fn = merged[k]
-        if (fn)
-          (out as any)[k] =
-            typeof fn === "function" ? cx(fn((out as any)[k] ?? "")) : cx((out as any)[k], fn)
+        if (fn) out[k] = typeof fn === "function" ? cx(fn(out[k] ?? "")) : cx(out[k], fn)
       }
     }
-    if (c1 || c2) out[slot] = cx(out[slot], c1, c2)
-    return out
+    if (c1 || c2) out[root] = cx(out[root], c1, c2)
+    return out as Record<S, string>
   }
 }
