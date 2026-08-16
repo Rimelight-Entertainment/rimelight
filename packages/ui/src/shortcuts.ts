@@ -1,7 +1,6 @@
 import { atom } from "nanostores"
 
 export type Handler = (e: KeyboardEvent) => void
-
 export interface ShortcutConfig {
   handler: Handler
   usingInput?: boolean | string | undefined
@@ -10,13 +9,10 @@ export interface ShortcutConfig {
   category?: string | undefined
   order?: number | undefined
 }
-
 export type ShortcutsConfig = Record<string, ShortcutConfig | Handler | false | null | undefined>
-
 export interface ShortcutsOptions {
   chainDelay?: number | undefined
 }
-
 export interface RegisteredShortcut {
   id: string
   keys: string[]
@@ -34,63 +30,54 @@ interface Shortcut {
 }
 
 const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAgent),
-  MOD_CMD = isMac ? 2 : 1
+  MOD_CMD = isMac ? 2 : 1,
+  SHIFTABLE = new Set([
+    "arrowleft",
+    "arrowright",
+    "arrowup",
+    "arrowdown",
+    "tab",
+    "escape",
+    "enter",
+    "backspace"
+  ]),
+  MODS: Record<string, number> = {
+    ctrl: 1,
+    control: 1,
+    cmd: MOD_CMD,
+    command: MOD_CMD,
+    meta: MOD_CMD,
+    alt: 4,
+    opt: 4,
+    option: 4,
+    shift: 8
+  },
+  KEYS: Record<string, string> = {
+    ctrl: "Ctrl",
+    control: "Ctrl",
+    cmd: isMac ? "⌘" : "Ctrl",
+    command: isMac ? "⌘" : "Ctrl",
+    meta: isMac ? "⌘" : "Ctrl",
+    alt: isMac ? "⌥" : "Alt",
+    opt: isMac ? "⌥" : "Alt",
+    option: isMac ? "⌥" : "Alt",
+    shift: isMac ? "⇧" : "Shift",
+    enter: "↵",
+    delete: "⌦",
+    backspace: "⌫",
+    escape: "Esc",
+    tab: "⇥",
+    space: "Space",
+    arrowup: "↑",
+    arrowdown: "↓",
+    arrowleft: "←",
+    arrowright: "→"
+  }
 
-const SYMBOLS: Record<string, string> = {
-  enter: "↵",
-  delete: "⌦",
-  backspace: "⌫",
-  escape: "Esc",
-  tab: "⇥",
-  space: "Space",
-  arrowup: "↑",
-  arrowdown: "↓",
-  arrowleft: "←",
-  arrowright: "→"
-}
-
-const SHIFTABLE = new Set([
-  "arrowleft",
-  "arrowright",
-  "arrowup",
-  "arrowdown",
-  "tab",
-  "escape",
-  "enter",
-  "backspace"
-])
-
-const MOD_MASKS: Record<string, number> = {
-  ctrl: 1,
-  control: 1,
-  cmd: MOD_CMD,
-  command: MOD_CMD,
-  meta: MOD_CMD,
-  alt: 4,
-  opt: 4,
-  option: 4,
-  shift: 8
-}
-
-export const formatShortcutKeys = (keyStr: string): string[] =>
-  keyStr.split(/[_-]/).map((p) => {
-    const k = p.toLowerCase()
-    if (/^(?:meta|cmd|command)$/.test(k)) return isMac ? "⌘" : "Ctrl"
-    if (/^(?:alt|opt|option)$/.test(k)) return isMac ? "⌥" : "Alt"
-    if (/^(?:ctrl|control)$/.test(k)) return "Ctrl"
-    if (k === "shift") return isMac ? "⇧" : "Shift"
-    return SYMBOLS[k] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
-  })
+export const formatShortcutKeys = (k: string): string[] =>
+  k.split(/[_-]/).map((p) => KEYS[p.toLowerCase()] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : ""))
 
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
-
-const syncShortcuts = (add: RegisteredShortcut[], removeIds: Set<string>) =>
-  activeShortcutsStore.set(
-    activeShortcutsStore
-      .get()
-      .filter((i) => !removeIds.has(i.id))
-      .concat(add)
-  )
 
 const isUsingInput = (el: Element | null): boolean | string => {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
@@ -110,52 +97,54 @@ export function defineShortcuts(
 
   const standard: Shortcut[] = [],
     chained = new Map<string, Shortcut>(),
-    registered: RegisteredShortcut[] = []
+    reg: RegisteredShortcut[] = []
   let maxChain = 2
 
-  for (const [rawKey, cfg] of Object.entries(config)) {
+  for (const [k, cfg] of Object.entries(config)) {
     if (!cfg) continue
-    const handler = typeof cfg === "function" ? cfg : cfg.handler
+    const obj = typeof cfg === "object" ? cfg : null,
+      handler = obj ? obj.handler : cfg
     if (typeof handler !== "function") continue
 
-    const isChained = rawKey.includes("-") && rawKey !== "-" && !rawKey.includes("_"),
-      parts = rawKey.toLowerCase().split(isChained ? "-" : "_")
+    const chain = k.includes("-") && k !== "-" && !k.includes("_"),
+      parts = k.toLowerCase().split(chain ? "-" : "_")
     let mods = 0
     const nonMods: string[] = []
 
     for (const p of parts) {
-      const m = MOD_MASKS[p]
+      const m = MODS[p]
       if (m) mods |= m
       else nonMods.push(p)
     }
 
-    const base = isChained ? rawKey.toLowerCase() : nonMods.join("_")
-    if (isChained) maxChain = Math.max(maxChain, parts.length)
+    const base = chain ? k.toLowerCase() : nonMods.join("_")
+    if (chain) maxChain = Math.max(maxChain, parts.length)
 
-    const s: Shortcut = {
-      key: base,
-      handler,
-      mods,
-      usingInput: typeof cfg === "object" ? cfg.usingInput : false
-    }
-    if (isChained) chained.set(base, s)
+    const s: Shortcut = { key: base, handler, mods, usingInput: obj?.usingInput }
+    if (chain) chained.set(base, s)
     else standard.push(s)
 
-    if (typeof cfg === "object" && (cfg.label || cfg.description)) {
-      const category = cfg.category || "system"
-      registered.push({
-        id: `${category}-${rawKey}`,
-        keys: formatShortcutKeys(rawKey),
+    if (obj && (obj.label || obj.description)) {
+      const category = obj.category || "system"
+      reg.push({
+        id: `${category}-${k}`,
+        keys: formatShortcutKeys(k),
         category,
-        label: cfg.label,
-        description: cfg.description,
-        order: cfg.order
+        label: obj.label,
+        description: obj.description,
+        order: obj.order
       })
     }
   }
 
-  const ids = new Set(registered.map((i) => i.id))
-  if (ids.size) syncShortcuts(registered, ids)
+  const ids = new Set(reg.map((i) => i.id))
+  if (ids.size)
+    activeShortcutsStore.set(
+      activeShortcutsStore
+        .get()
+        .filter((i) => !ids.has(i.id))
+        .concat(reg)
+    )
 
   const inputs: string[] = []
   let timer: ReturnType<typeof setTimeout> | undefined
@@ -173,21 +162,20 @@ export function defineShortcuts(
     if (inputs.length > maxChain) inputs.shift()
     clearTimeout(timer)
 
-    if (inputs.length >= 2 && chained.size) {
+    if (inputs.length >= 2 && chained.size)
       for (let len = Math.min(inputs.length, maxChain); len >= 2; len--) {
         const match = chained.get(inputs.slice(-len).join("-"))
         if (match && isEnabled(match, input)) return trigger(match)
       }
-    }
 
-    const eventMods = +e.ctrlKey | (+e.metaKey << 1) | (+e.altKey << 2) | (+e.shiftKey << 3)
+    const eMods = +e.ctrlKey | (+e.metaKey << 1) | (+e.altKey << 2) | (+e.shiftKey << 3)
 
     for (const s of standard) {
-      if ((s.mods & 7) !== (eventMods & 7)) continue
-      const code = e.code.toLowerCase()
+      if ((s.mods & 7) !== (eMods & 7)) continue
+      const c = e.code.toLowerCase()
       if (
         s.mods & 4
-          ? code !== `key${s.key}` && code !== `digit${s.key}` && code !== s.key
+          ? c !== `key${s.key}` && c !== `digit${s.key}` && c !== s.key
           : e.key.toLowerCase() !== s.key
       )
         continue
@@ -206,6 +194,6 @@ export function defineShortcuts(
   return () => {
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
-    if (ids.size) syncShortcuts([], ids)
+    if (ids.size) activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !ids.has(i.id)))
   }
 }
