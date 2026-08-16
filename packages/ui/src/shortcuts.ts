@@ -35,7 +35,7 @@ interface Shortcut {
   usingInput?: boolean | string | undefined
 }
 
-const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
+const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAgent)
 const MOD_CMD = isMac ? 2 : 1
 
 const SYMBOLS: Record<string, string> = {
@@ -99,8 +99,7 @@ const syncShortcuts = (add: RegisteredShortcut[], removeIds?: Set<string>) =>
 
 const isUsingInput = (el: Element | null): boolean | string => {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
-  return el &&
-    (/^(?:INPUT|TEXTAREA|SELECT)$/.test(el.nodeName) || (el as HTMLElement).isContentEditable)
+  return el && (/INPUT|TEXTAREA|SELECT/.test(el.nodeName) || (el as HTMLElement).isContentEditable)
     ? el.getAttribute("name") || true
     : false
 }

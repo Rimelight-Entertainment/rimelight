@@ -14,7 +14,6 @@ export const PALETTES = {
   source: [0.13, 215]
 } as const
 
-export const colorNames = Object.keys(PALETTES) as readonly (keyof typeof PALETTES)[]
 export type Theme = "light" | "dark"
 export type ThemeColor = keyof typeof PALETTES | (string & {})
 export type ColorModeInput =

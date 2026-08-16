@@ -120,17 +120,15 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
         "5xl": "6rem",
         "6xl": "8rem"
       },
-      radius: Object.fromEntries(
-        Object.entries({
-          "xs": "- 0.375rem",
-          "sm": "- 0.25rem",
-          "md": "- 0.125rem",
-          "lg": "",
-          "xl": "+ 0.25rem",
-          "2xl": "+ 0.5rem",
-          "3xl": "+ 1rem"
-        }).map(([k, off]) => [k, off ? `calc(var(--radius) ${off})` : "var(--radius)"])
-      ),
+      radius: {
+        "xs": "calc(var(--radius) - 0.375rem)",
+        "sm": "calc(var(--radius) - 0.25rem)",
+        "md": "calc(var(--radius) - 0.125rem)",
+        "lg": "var(--radius)",
+        "xl": "calc(var(--radius) + 0.25rem)",
+        "2xl": "calc(var(--radius) + 0.5rem)",
+        "3xl": "calc(var(--radius) + 1rem)"
+      },
       colors: Object.fromEntries(
         allColors.map((c) => [
           c,
