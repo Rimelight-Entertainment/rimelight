@@ -37,7 +37,7 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     const { ui, class: c1, className: c2, ...v } = props
     const out = themeFn(v)
     const color = auto && (v.color ?? (theme.defaultVariants as any)?.color)
-    if (color && color !== "neutral") out[slot] = cx(out[slot], `rl-color-${color}`)
+    if (color) out[slot] = cx(out[slot], `rl-color-${color}`)
 
     const merged = globalUi ? { ...globalUi, ...ui } : ui
     if (merged) {
