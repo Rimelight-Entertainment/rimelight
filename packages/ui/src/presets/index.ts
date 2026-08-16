@@ -159,7 +159,8 @@ const getPreflightCss = (userColors?: Record<string, ColorModeInput>) => `:root 
   --rl-container: 90rem;
 ${INTENT_PREFLIGHT_VARS}
 
-${STATIC_BUILTIN_COLOR_LINES}${userColors ? `\n${formatUserColors(userColors)}` : ""}
+${STATIC_BUILTIN_COLOR_LINES}
+${formatUserColors(userColors)}
 }
 
 :root.dark, html.dark, .dark, [data-theme="dark"] { color-scheme: dark; }
