@@ -11,11 +11,11 @@ const INCLUDES = [
 const resolvePipeline = (p: any) =>
   p !== false && { ...p, include: [...INCLUDES, ...(Array.isArray(p?.include) ? p.include : [])] }
 
-export const ui = ({ unocss, ...o }: UIConfig = {}): AstroIntegration[] => [
+export const ui = (o: UIConfig = {}): AstroIntegration[] => [
   UnoCSS({
-    ...unocss,
-    presets: [rimelightUiPreset(o), ...(unocss?.presets || [])],
-    content: { ...unocss?.content, pipeline: resolvePipeline(unocss?.content?.pipeline) }
+    ...o.unocss,
+    presets: [rimelightUiPreset(o), ...(o.unocss?.presets || [])],
+    content: { ...o.unocss?.content, pipeline: resolvePipeline(o.unocss?.content?.pipeline) }
   }),
   {
     name: "@rimelight/ui",
