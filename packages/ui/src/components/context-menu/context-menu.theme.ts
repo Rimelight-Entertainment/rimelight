@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const contextMenuTheme = defineTheme("context-menu", {
   slots: ["root"],

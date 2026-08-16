@@ -1,5 +1,5 @@
 import type { UserConfig } from "unocss"
-import type { RimelightIcons } from "./icons/defaults"
+import type { RimelightIcons } from "./icons"
 
 export const PALETTES = {
   neutral: [0, 0],

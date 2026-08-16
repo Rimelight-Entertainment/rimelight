@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const avatarTheme = defineTheme("avatar", {
   slots: ["root", "image", "fallback", "icon", "badge"],

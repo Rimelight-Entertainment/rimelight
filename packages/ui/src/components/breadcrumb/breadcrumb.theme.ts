@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const breadcrumbTheme = defineTheme("breadcrumb", {
   slots: ["root", "list", "item", "link", "separator", "page"],

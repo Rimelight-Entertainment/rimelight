@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const fileUploadTheme = defineTheme("file-upload", {
   slots: ["root", "input", "content", "icon", "title", "description"],

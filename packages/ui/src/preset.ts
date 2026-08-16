@@ -1,5 +1,5 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
-import { PALETTES, type ColorModeInput, type PresetOptions } from "../types"
+import { PALETTES, type ColorModeInput, type PresetOptions } from "./types"
 
 const SHADES: Record<string, [number, number, number, number]> = {
   "50": [0.985, 0.1, 0.145, 0.2],
@@ -43,7 +43,7 @@ const emit = (name: string, fn: (s: string) => string) =>
 
 const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
   [
-    ...Object.entries(PALETTES).map(([n, [c, h]]) =>
+    ...Object.entries(PALETTES as Record<string, readonly [number, number]>).map(([n, [c, h]]) =>
       emit(n, (s) => {
         const [lL, cL, dL, dC] = SHADES[s]!
         return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`

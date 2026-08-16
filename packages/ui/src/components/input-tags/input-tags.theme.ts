@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const inputTagsTheme = defineTheme("input-tags", {
   slots: ["root", "tag", "tagLabel", "more", "input"],

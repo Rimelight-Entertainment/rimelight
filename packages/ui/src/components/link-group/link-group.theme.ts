@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const linkGroupTheme = defineTheme("link-group", {
   slots: ["root", "title", "list", "item", "link"],

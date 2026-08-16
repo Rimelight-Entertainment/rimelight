@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const dashboardSidebarTheme = defineTheme("dashboard-sidebar", {
   slots: ["root", "header", "body", "footer", "toggle", "handle", "content", "overlay"],

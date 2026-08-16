@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const separatorTheme = defineTheme("separator", {
   slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],

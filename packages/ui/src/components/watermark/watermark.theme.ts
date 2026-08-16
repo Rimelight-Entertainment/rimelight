@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const watermarkTheme = defineTheme("watermark", {
   slots: ["root"],

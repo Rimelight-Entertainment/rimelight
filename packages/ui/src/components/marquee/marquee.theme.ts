@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const marqueeTheme = defineTheme("marquee", {
   slots: ["root", "track"],

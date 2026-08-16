@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const cardTheme = defineTheme("card", {
   slots: ["root", "header", "title", "description", "body", "footer", "overlay", "media"],

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const scrollToTopTheme = defineTheme("scroll-to-top", {
   slots: ["root", "button", "progressBase", "svg", "iconContainer", "icon"],

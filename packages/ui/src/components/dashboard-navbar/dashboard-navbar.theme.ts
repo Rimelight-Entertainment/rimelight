@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const dashboardNavbarTheme = defineTheme("dashboard-navbar", {
   slots: ["root", "left", "icon", "title", "center", "right", "toggle"],

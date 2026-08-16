@@ -1,24 +1,24 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./types"
-import rimelightUiPreset from "./presets"
+import rimelightUiPreset from "./preset"
 
 const INCLUDES = [
   /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
   /[\\/](@rimelight\/ui|packages\/ui)[\\/]/
 ]
 
-export const ui = (o: UIConfig = {}): AstroIntegration[] => {
-  const p = o.unocss?.content?.pipeline
+export const ui = (config: UIConfig = {}): AstroIntegration[] => {
+  const pipeline = config.unocss?.content?.pipeline
   return [
     UnoCSS({
-      ...o.unocss,
-      presets: [rimelightUiPreset(o), ...(o.unocss?.presets ?? [])],
+      ...config.unocss,
+      presets: [rimelightUiPreset(config), ...(config.unocss?.presets ?? [])],
       content: {
-        ...o.unocss?.content,
-        pipeline: p !== false && {
-          ...p,
-          include: [...INCLUDES, ...(p?.include ? [p.include].flat() : [])]
+        ...config.unocss?.content,
+        pipeline: pipeline !== false && {
+          ...pipeline,
+          include: [...INCLUDES, ...(pipeline?.include ? [pipeline.include].flat() : [])]
         }
       }
     }),
@@ -27,7 +27,7 @@ export const ui = (o: UIConfig = {}): AstroIntegration[] => {
       hooks: {
         "astro:config:setup": ({ updateConfig }) =>
           void updateConfig({
-            vite: { define: { "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(o) } }
+            vite: { define: { "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(config) } }
           })
       }
     }

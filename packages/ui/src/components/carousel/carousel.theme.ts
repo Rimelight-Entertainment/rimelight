@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const carouselTheme = defineTheme("carousel", {
   slots: ["root", "viewport", "container", "slide", "buttonPrev", "buttonNext", "dots", "dot"],

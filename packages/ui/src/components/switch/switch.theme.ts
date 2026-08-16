@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const switchTheme = defineTheme("switch", {
   slots: ["root", "input", "track", "thumb", "label"],

@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const emptyTheme = defineTheme("empty", {
   slots: ["root", "header", "avatar", "title", "description", "body", "actions", "footer"],

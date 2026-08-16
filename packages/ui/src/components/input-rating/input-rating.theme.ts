@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const inputRatingTheme = defineTheme("input-rating", {
   slots: ["root", "item", "indicator", "icon", "emptyIcon"],

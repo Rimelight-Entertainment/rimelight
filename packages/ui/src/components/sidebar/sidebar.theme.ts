@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const sidebarTheme = defineTheme("sidebar", {
   slots: ["root", "header", "content", "footer", "item", "itemLink", "itemIcon", "itemBadge"],

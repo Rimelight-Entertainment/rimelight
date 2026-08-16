@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const scrollAreaTheme = defineTheme("scroll-area", {
   slots: ["root", "viewport", "scrollbar", "thumb"],

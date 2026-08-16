@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const hover3dTheme = defineTheme("3d-hover", {
   slots: ["root"],

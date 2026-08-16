@@ -1,4 +1,4 @@
-import { defineTheme } from "../../utils/resolver"
+import { defineTheme } from "../../resolver"
 
 export const footerTheme = defineTheme("footer", {
   slots: ["root", "container", "left", "center", "right"],

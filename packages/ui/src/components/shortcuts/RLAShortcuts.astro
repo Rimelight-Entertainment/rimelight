@@ -1,6 +1,6 @@
 ---
 import RLAIcon from "../icon/RLAIcon.astro"
-import { uiConfig } from "../../utils/resolver"
+import { uiConfig } from "../../resolver"
 
 interface Props {
   categories?: Record<string, string>
@@ -56,8 +56,8 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 </rla-shortcuts>
 
 <script>
-  import { activeShortcutsStore, defineShortcuts } from "../../utils/shortcuts"
-  import type { RegisteredShortcut } from "../../utils/shortcuts"
+  import { activeShortcutsStore, defineShortcuts } from "../../shortcuts"
+  import type { RegisteredShortcut } from "../../shortcuts"
 
   class RLAShortcuts extends HTMLElement {
     private shortcutsCleanup: (() => void) | null = null;
