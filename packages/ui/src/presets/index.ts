@@ -17,45 +17,36 @@ const SHADES: Record<string, [number, number, number, number]> = {
 
 const SHADE_KEYS = Object.keys(SHADES)
 
-const emitPalette = (name: string, shadeFn: (s: string) => string, light: string, dark: string) =>
+const emitPalette = (name: string, shadeFn: (s: string) => string, l: string, d: string) =>
   `${SHADE_KEYS.map((s) => `  --color-${name}-${s}: ${shadeFn(s)};`).join("\n")}
-  --${name}: light-dark(${light}, ${dark});
+  --${name}: light-dark(${l}, ${d});
   --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));
   --${name}-accent: var(--color-${name}-600);`
 
-const compilePalettes = (custom?: Record<string, ColorModeInput>) => {
-  const builtin = Object.entries(PALETTES).map(([name, [c, h]]) =>
-    emitPalette(
-      name,
-      (s) => {
-        const [lL, cL, dL, dC] = SHADES[s]!
-        return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`
-      },
-      `oklch(0.55 ${c} ${h})`,
-      `oklch(0.53 ${c} ${h})`
-    )
-  )
-
-  const customCss = custom
-    ? Object.entries(custom).map(([name, entry]) => {
-        const m = (
-          typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
-            ? entry
-            : { light: entry, dark: entry }
-        ) as { light?: Record<string, string>; dark?: Record<string, string> }
-        const bL = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
-        const bD = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? bL
-        return emitPalette(
-          name,
-          (s) => `light-dark(${m.light?.[s] ?? bL}, ${m.dark?.[s] ?? bD})`,
-          bL,
-          bD
-        )
-      })
-    : []
-
-  return [...builtin, ...customCss].join("\n")
-}
+const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
+  [
+    ...Object.entries(PALETTES).map(([name, [c, h]]) =>
+      emitPalette(
+        name,
+        (s) => {
+          const [lL, cL, dL, dC] = SHADES[s]!
+          return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`
+        },
+        `oklch(0.55 ${c} ${h})`,
+        `oklch(0.53 ${c} ${h})`
+      )
+    ),
+    ...Object.entries(custom ?? {}).map(([name, entry]) => {
+      const m = (
+        typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
+          ? entry
+          : { light: entry, dark: entry }
+      ) as { light?: Record<string, string>; dark?: Record<string, string> }
+      const l = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
+      const d = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? l
+      return emitPalette(name, (s) => `light-dark(${m.light?.[s] ?? l}, ${m.dark?.[s] ?? d})`, l, d)
+    })
+  ].join("\n")
 
 const PROPS: Record<string, [prop: string, idx: number]> = {
   text: ["color", 0],
@@ -132,13 +123,6 @@ const RADIUS = {
   "3xl": "calc(var(--radius) + 1rem)"
 }
 
-const buildColorTheme = (c: string) => ({
-  DEFAULT: `var(--${c})`,
-  foreground: `var(--${c}-foreground)`,
-  accent: `var(--${c}-accent)`,
-  ...Object.fromEntries(SHADE_KEYS.map((s) => [s, `var(--color-${c}-${s})`]))
-})
-
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const allColors = Object.keys({ ...PALETTES, ...options.colors })
 
@@ -160,7 +144,17 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
     theme: {
       spacing: SPACING,
       radius: RADIUS,
-      colors: Object.fromEntries(allColors.map((c) => [c, buildColorTheme(c)]))
+      colors: Object.fromEntries(
+        allColors.map((c) => [
+          c,
+          {
+            DEFAULT: `var(--${c})`,
+            foreground: `var(--${c}-foreground)`,
+            accent: `var(--${c}-accent)`,
+            ...Object.fromEntries(SHADE_KEYS.map((s) => [s, `var(--color-${c}-${s})`]))
+          }
+        ])
+      )
     },
     preflights: [
       {
