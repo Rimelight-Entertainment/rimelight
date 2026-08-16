@@ -22,9 +22,11 @@ export const COLOR_SHADES = [
   "950"
 ] as const
 
+type Shades = Record<string, string>
+
 const parseScale = (s: string) =>
   Object.fromEntries(s.split(",").map((v, i) => [COLOR_SHADES[i]!, `oklch(${v.trim()})`]))
-const pair = (l: string, d: string) => ({ light: parseScale(l), dark: parseScale(d) })
+const pair = (light: string, dark: string) => ({ light: parseScale(light), dark: parseScale(dark) })
 
 export const colorScales = {
   neutral: pair(
@@ -74,13 +76,13 @@ export const getAllColorNames = (customColors?: Record<string, unknown>): readon
     ? [...new Set([...colorNames, ...Object.keys(customColors)])]
     : colorNames
 
-type Shades = Record<string, string>
-
 function resolveColorModes(entry: unknown): { light: Shades; dark: Shades } {
-  const isMode =
-    typeof entry === "object" && entry !== null && ("light" in entry || "dark" in entry)
-  const mL = (isMode ? (entry as any).light : entry) as Shades | undefined
-  const mD = (isMode ? (entry as any).dark : entry) as Shades | undefined
+  const isMode = Boolean(
+    entry && typeof entry === "object" && ("light" in entry || "dark" in entry)
+  )
+  const [mL, mD] = isMode
+    ? [(entry as any).light as Shades | undefined, (entry as any).dark as Shades | undefined]
+    : [entry as Shades | undefined, entry as Shades | undefined]
   const base = (m: Shades | undefined) => m?.["500"] ?? Object.values(m ?? {})[0] ?? ""
   const [bL, bD] = [base(mL) || base(mD), base(mD) || base(mL)]
 
@@ -109,16 +111,15 @@ const createScale = (c: string) => ({
 
 const formatColorLines = (entries: Iterable<[string, { light?: Shades; dark?: Shades }]>) =>
   [...entries]
-    .flatMap(([c, m]) => {
-      const keys = [...new Set([...Object.keys(m.light ?? {}), ...Object.keys(m.dark ?? {})])]
+    .flatMap(([c, { light = {}, dark = {} }]) => {
+      const keys = [...new Set([...Object.keys(light), ...Object.keys(dark)])]
       const lines = keys.map(
-        (s) =>
-          `  --color-${c}-${s}: light-dark(${m.light?.[s] ?? m.dark?.[s]}, ${m.dark?.[s] ?? m.light?.[s]});`
+        (s) => `  --color-${c}-${s}: light-dark(${light[s] ?? dark[s]}, ${dark[s] ?? light[s]});`
       )
-      const l500 = m.light?.["500"] ?? m.dark?.["500"]
+      const l500 = light["500"] ?? dark["500"]
       if (l500) {
         lines.push(
-          `  --${c}: light-dark(${l500}, ${m.dark?.["500"] ?? l500});`,
+          `  --${c}: light-dark(${l500}, ${dark["500"] ?? l500});`,
           `  --${c}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
           `  --${c}-accent: var(--color-${c}-600);`
         )
@@ -227,7 +228,7 @@ body { background-color: var(--background); color: var(--foreground); font-famil
 }
 `
 
-const THEME_SPACING = {
+const THEME_SPACING: Record<string, string> = {
   "6xs": "0.125rem",
   "5xs": "0.25rem",
   "4xs": "0.375rem",
@@ -245,7 +246,7 @@ const THEME_SPACING = {
   "6xl": "8rem"
 }
 
-const THEME_RADIUS = {
+const THEME_RADIUS: Record<string, string> = {
   "xs": "calc(var(--radius) - 0.375rem)",
   "sm": "calc(var(--radius) - 0.25rem)",
   "md": "calc(var(--radius) - 0.125rem)",
@@ -273,21 +274,27 @@ export function rimelightUiPreset(options?: UIConfig): Preset {
 
   const opt = options?.presets
   const presets: Preset[] = [
-    opt?.wind !== false && presetWind4(),
-    opt?.typography !== false &&
-      presetTypography({
-        cssExtend: {
-          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-            "font-family": "var(--font-sans), system-ui, sans-serif"
-          },
-          "pre,code": { "font-family": "var(--font-mono), monospace" }
-        }
-      }),
-    opt?.icons !== false &&
-      presetIcons({
-        extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-      })
-  ].filter((p): p is Preset => !!p)
+    ...(opt?.wind !== false ? [presetWind4()] : []),
+    ...(opt?.typography !== false
+      ? [
+          presetTypography({
+            cssExtend: {
+              "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+                "font-family": "var(--font-sans), system-ui, sans-serif"
+              },
+              "pre,code": { "font-family": "var(--font-mono), monospace" }
+            }
+          })
+        ]
+      : []),
+    ...(opt?.icons !== false
+      ? [
+          presetIcons({
+            extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+          })
+        ]
+      : [])
+  ]
 
   return {
     name: "rimelight-ui",

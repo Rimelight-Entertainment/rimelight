@@ -41,12 +41,16 @@ export interface RegisteredShortcut {
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
 
-const MODIFIER_MAP: Record<string, string> = {
+const MODS: Record<string, string> = {
   control: "ctrl",
+  ctrl: "ctrl",
   cmd: "meta",
   command: "meta",
+  meta: "meta",
   opt: "alt",
-  option: "alt"
+  option: "alt",
+  alt: "alt",
+  shift: "shift"
 }
 
 const SHIFTABLE = new Set([
@@ -83,28 +87,26 @@ const formatCache = new Map<string, string[]>()
 export function formatShortcutKeys(keyStr: string): string[] {
   let res = formatCache.get(keyStr)
   if (!res) {
-    res = keyStr.split(isChained(keyStr) ? "-" : "_").map((p) => {
-      const lower = p.toLowerCase()
-      return keySymbols[MODIFIER_MAP[lower] ?? lower] ?? p.charAt(0).toUpperCase() + p.slice(1)
-    })
     if (formatCache.size > 200) formatCache.clear()
-    formatCache.set(keyStr, res)
+    formatCache.set(
+      keyStr,
+      (res = keyStr.split(isChained(keyStr) ? "-" : "_").map((p) => {
+        const lower = p.toLowerCase()
+        return keySymbols[MODS[lower] ?? lower] ?? p[0]!.toUpperCase() + p.slice(1)
+      }))
+    )
   }
   return res
 }
 
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
-const toCode = (k: string) =>
-  /^[a-z]$/i.test(k)
-    ? `Key${k.toUpperCase()}`
-    : /^\d$/.test(k)
-      ? `Digit${k}`
-      : k.toLowerCase().startsWith("arrow")
-        ? `Arrow${k[5]!.toUpperCase() + k.slice(6)}`
-        : /^f\d+$/i.test(k)
-          ? k.toUpperCase()
-          : k.charAt(0).toUpperCase() + k.slice(1).toLowerCase()
+const toCode = (k: string) => {
+  if (/^[a-z]$/i.test(k)) return `Key${k.toUpperCase()}`
+  if (/^\d$/.test(k)) return `Digit${k}`
+  if (/^arrow/i.test(k)) return `Arrow${k.slice(5, 6).toUpperCase()}${k.slice(6).toLowerCase()}`
+  return /^f\d+$/i.test(k) ? k.toUpperCase() : k[0]!.toUpperCase() + k.slice(1).toLowerCase()
+}
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 function isUsingInput(el: Element | null): boolean | string {
@@ -123,9 +125,6 @@ interface ParsedShortcuts {
   maxChain: number
   registered: RegisteredShortcut[]
 }
-
-const isMod = (p: string) =>
-  p in MODIFIER_MAP || p === "ctrl" || p === "meta" || p === "shift" || p === "alt"
 
 const parseCache = new WeakMap<ShortcutsConfig, ParsedShortcuts>()
 
@@ -146,20 +145,24 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
 
     if (typeof handler === "function") {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
-      const mods = new Set(rawParts.filter(isMod).map((p) => MODIFIER_MAP[p] ?? p))
-      const nonMods = rawParts.filter((p) => !isMod(p))
+      const mods = new Set<string>()
+      const nonMods: string[] = []
+
+      for (const p of rawParts) {
+        const mod = MODS[p]
+        if (mod) mods.add(mod)
+        else nonMods.push(p)
+      }
 
       const base = chainedKey ? rawKey.toLowerCase() : nonMods.join("_")
       if (chainedKey) maxChain = Math.max(maxChain, rawParts.length)
 
       const hasMeta = mods.has("meta")
-      const ctrl = mods.has("ctrl") || (!isMac && hasMeta)
-
       const sc: Shortcut = {
         key: base,
         code: toCode(base),
         handler,
-        ctrlKey: ctrl,
+        ctrlKey: mods.has("ctrl") || (!isMac && hasMeta),
         metaKey: isMac && hasMeta,
         shiftKey: mods.has("shift"),
         altKey: mods.has("alt"),
@@ -200,12 +203,11 @@ export function defineShortcuts(
   let timer: ReturnType<typeof setTimeout> | undefined
   const regIds = registered.length ? new Set(registered.map((i) => i.id)) : null
 
-  if (regIds) {
+  if (regIds)
     activeShortcutsStore.set([
       ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
       ...registered
     ])
-  }
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!e.key) return

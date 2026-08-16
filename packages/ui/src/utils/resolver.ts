@@ -1,10 +1,10 @@
 import { scv, cx } from "css-variants"
-import { colorNames, type ThemeColor } from "../types"
+import { colorNames, type ThemeColor, type UIConfig } from "../types"
 
 export type ResolvedUIConfig = {
   unstyled?: boolean
-  shortcuts?: Record<string, unknown>
-  logos?: Record<string, unknown>
+  shortcuts?: UIConfig["shortcuts"]
+  logos?: UIConfig["logos"]
   icons?: Record<string, string>
   colors?: readonly string[]
   themes?: Record<string, { slots?: Record<string, string | ((b: string) => string)> }>
@@ -32,44 +32,43 @@ export const defineTheme = <const S extends string, const V extends Record<strin
   }
 ) => {
   if (uiConfig.unstyled) {
-    return (p?: Record<string, any>) =>
-      (p?.class || p?.className ? { root: (p.class ?? p.className) as string } : {}) as Record<
-        S,
-        string
-      >
+    return (p?: Record<string, any>) => {
+      const c = p?.class ?? p?.className
+      return (c ? { root: String(c) } : {}) as Record<S, string>
+    }
   }
 
   const variants: Record<string, any> = {}
   for (const k in theme.variants) {
     const val = theme.variants[k]
     if (val === "auto") {
-      const slot = (theme.slots as readonly string[]).includes("root")
-        ? "root"
-        : (theme.slots[0] ?? "root")
-      const auto: Record<string, Record<string, string>> = { neutral: { [slot]: "" } }
-      for (const c of uiConfig.colors ?? colorNames) auto[c] = { [slot]: `rl-color-${c}` }
-      variants[k] = auto
-    } else if (val) {
-      variants[k] = val
-    }
+      const slot = theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")
+      variants[k] = Object.fromEntries([
+        ["neutral", { [slot]: "" }],
+        ...(uiConfig.colors ?? colorNames).map((c) => [c, { [slot]: `rl-color-${c}` }])
+      ])
+    } else if (val) variants[k] = val
   }
 
   const themeFn = (scv as unknown as (c: unknown) => (v: Record<string, any>) => Record<S, string>)(
-    { ...theme, slots: [...theme.slots], variants }
+    {
+      ...theme,
+      variants
+    }
   )
   const globalSlots = uiConfig.themes?.[name]?.slots
   const cache = new Map<string, Record<string, string>>()
 
   return (props?: Record<string, any>): Record<S, string> => {
-    const rc = props?.class ?? props?.className
-    const rootClass = typeof rc === "string" ? rc : undefined
+    const rootClass = props?.class ?? props?.className
     const { ui, class: _, className: __, ...v } = props ?? {}
 
     let key = ""
-    for (const k in v) key += `${k}:${String(v[k])};`
+    for (const k in v) key += `${k}:${v[k]};`
 
-    if (!cache.has(key)) cache.set(key, themeFn(v))
-    const res = cache.get(key)!
+    let res = cache.get(key)
+    if (!res) cache.set(key, (res = themeFn(v)))
+
     const resolvedUi = globalSlots || ui ? { ...globalSlots, ...ui } : undefined
     if (!resolvedUi && !rootClass) return res
 

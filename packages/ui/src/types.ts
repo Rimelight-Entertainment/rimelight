@@ -66,7 +66,6 @@ export interface UIConfig {
     string,
     Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string> }
   >
-  autogenerateColorModes?: boolean
   /**
    * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
    */
