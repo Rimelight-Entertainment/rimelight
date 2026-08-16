@@ -6,7 +6,7 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import { colorNames, type UIConfig } from "../types"
+import { colorNames, type PresetOptions } from "../types"
 
 export const COLOR_SHADES = [
   "50",
@@ -254,7 +254,7 @@ const THEME_RADIUS: Record<string, string> = {
   "3xl": "calc(var(--radius) + 1rem)"
 }
 
-export function rimelightUiPreset(options?: UIConfig): Preset {
+export function rimelightUiPreset(options?: PresetOptions): Preset {
   const userColors = options?.colors ?? {}
   const allColors = getAllColorNames(userColors)
   const safelist = [

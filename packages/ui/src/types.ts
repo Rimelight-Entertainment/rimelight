@@ -17,7 +17,29 @@ export const colorNames = [
 export type Theme = "light" | "dark"
 export type ThemeColor = (typeof colorNames)[number] | (string & {})
 
-export interface UIConfig {
+export interface PresetOptions {
+  /**
+   * Custom colors.
+   */
+  colors?: Record<
+    string,
+    Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string> }
+  >
+  /**
+   * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
+   */
+  icons?: RimelightIcons
+  /**
+   * Configure which built-in UnoCSS presets are enabled/disabled.
+   */
+  presets?: {
+    wind?: boolean
+    typography?: boolean
+    icons?: boolean
+  }
+}
+
+export interface UIConfig extends PresetOptions {
   /**
    * Whether to strip default theme classes from all components (bringing your own styling).
    */
@@ -58,25 +80,6 @@ export interface UIConfig {
         [key: string]: unknown
       }
     >
-  }
-  /**
-   * Custom colors.
-   */
-  colors?: Record<
-    string,
-    Record<string, string> | { light?: Record<string, string>; dark?: Record<string, string> }
-  >
-  /**
-   * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
-   */
-  icons?: RimelightIcons
-  /**
-   * Configure which built-in UnoCSS presets are enabled/disabled.
-   */
-  presets?: {
-    wind?: boolean
-    typography?: boolean
-    icons?: boolean
   }
   /**
    * Custom UnoCSS configuration overrides, routed directly down to the UnoCSS instance.
