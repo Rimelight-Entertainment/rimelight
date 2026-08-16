@@ -1,5 +1,5 @@
 import { computed } from "vue"
-import { uiConfig } from "@rimelight/ui/config"
+import { uiConfig } from "@rimelight/ui"
 
 // Pure JavaScript deep merge helper to replace defu
 function deepMerge<T extends Record<string, any>>(target: T, source: any): T {

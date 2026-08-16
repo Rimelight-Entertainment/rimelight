@@ -1,4 +1,4 @@
-import type { Theme } from "../../config"
+import type { Theme } from "../../index"
 
 export interface ChipProps {
   activeColor?: string

@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../config"
+import type { Theme, ThemeColor } from "../../index"
 
 export interface SliderProps {
   /**

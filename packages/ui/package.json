@@ -21,7 +21,6 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./config": "./src/config.ts",
     "./presets": "./src/presets/index.ts",
     "./*": "./src/*"
   },

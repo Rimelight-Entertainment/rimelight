@@ -1,5 +1,29 @@
 import { scv, cx } from "css-variants"
-import { colorNames, uiConfig, type ThemeColor } from "../config"
+import { colorNames } from "../presets/index"
+import type { ThemeColor } from "../index"
+
+export interface ComponentThemeOverride {
+  slots?: Record<string, string | ((base: string) => string) | undefined>
+  [key: string]: unknown
+}
+
+export type ResolvedUIConfig = {
+  unstyled?: boolean
+  shortcuts?: Record<string, unknown>
+  logos?: Record<string, unknown>
+  icons?: Record<string, string>
+  colors?: readonly string[]
+  themes?: Record<string, ComponentThemeOverride>
+  [key: string]: unknown
+}
+
+export const uiConfig: ResolvedUIConfig = import.meta.env?.RIMELIGHT_UI_CONFIG ?? {}
+
+declare global {
+  interface ImportMetaEnv {
+    readonly RIMELIGHT_UI_CONFIG?: ResolvedUIConfig
+  }
+}
 
 export const defineTheme = <
   const S extends string,
