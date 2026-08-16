@@ -13,11 +13,8 @@ export const defineTheme = <const S extends string>(name: string, theme: any) =>
     const slots = scvFn(props),
       color = autoColor && (props.color ?? theme.defaultVariants?.color)
     slots[root] = cx(slots[root], color && `rl-color-${color}`, props.class, props.className)
-    for (const [slotName, override] of Object.entries({ ...globalSlots, ...props.ui }))
-      slots[slotName] = cx(
-        slots[slotName],
-        typeof override === "function" ? override(slots[slotName] || "") : override
-      )
+    for (const [k, v] of Object.entries({ ...globalSlots, ...props.ui }))
+      slots[k] = cx(slots[k], typeof v === "function" ? v(slots[k] || "") : v)
     return slots
   }
 }

@@ -9,13 +9,14 @@ const INCLUDES = [
 ]
 
 export const ui = (config: UIConfig = {}): AstroIntegration[] => {
-  const pipeline = config.unocss?.content?.pipeline
+  const { unocss } = config,
+    pipeline = unocss?.content?.pipeline
   return [
     UnoCSS({
-      ...config.unocss,
-      presets: [rimelightUiPreset(config), ...(config.unocss?.presets ?? [])],
+      ...unocss,
+      presets: [rimelightUiPreset(config), ...(unocss?.presets ?? [])],
       content: {
-        ...config.unocss?.content,
+        ...unocss?.content,
         pipeline: pipeline !== false && {
           ...pipeline,
           include: [...INCLUDES, ...(pipeline?.include ? [pipeline.include].flat() : [])]
