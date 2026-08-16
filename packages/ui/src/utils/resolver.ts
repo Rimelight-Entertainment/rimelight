@@ -27,16 +27,19 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     }
   }
 
-  const variants: Record<string, any> = {}
-  for (const k in theme.variants) {
-    const val = theme.variants[k]
-    if (val === "auto") {
-      const slot = theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")
-      variants[k] = Object.fromEntries(
-        allColors.map((c) => [c, { [slot]: c === "neutral" ? "" : `rl-color-${c}` }])
+  const hasAuto = Object.values(theme.variants ?? {}).includes("auto")
+  const defaultSlot = theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")
+  const autoVariants = hasAuto
+    ? Object.fromEntries(
+        allColors.map((c) => [c, { [defaultSlot]: c === "neutral" ? "" : `rl-color-${c}` }])
       )
-    } else if (val) variants[k] = val
-  }
+    : null
+
+  const variants =
+    theme.variants &&
+    Object.fromEntries(
+      Object.entries(theme.variants).map(([k, v]) => [k, v === "auto" ? autoVariants : v])
+    )
 
   const themeFn = (scv as any)({
     ...theme,

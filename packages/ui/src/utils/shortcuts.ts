@@ -81,8 +81,6 @@ const keySymbols: Record<string, string> = {
   arrowright: "→"
 }
 
-const isChained = (k: string) => k.includes("-") && k !== "-" && !k.includes("_")
-
 const formatCache = new Map<string, string[]>()
 export function formatShortcutKeys(keyStr: string): string[] {
   let res = formatCache.get(keyStr)
@@ -90,7 +88,7 @@ export function formatShortcutKeys(keyStr: string): string[] {
     if (formatCache.size > 200) formatCache.clear()
     formatCache.set(
       keyStr,
-      (res = keyStr.split(isChained(keyStr) ? "-" : "_").map((p) => {
+      (res = keyStr.split(/[_-]/).map((p) => {
         const lower = p.toLowerCase()
         return keySymbols[MODS[lower] ?? lower] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
       }))
@@ -143,7 +141,7 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
     if (!cfg) continue
     const isFn = typeof cfg === "function"
     const handler = isFn ? cfg : cfg.handler
-    const chainedKey = isChained(rawKey)
+    const chainedKey = rawKey.includes("-") && rawKey !== "-" && !rawKey.includes("_")
 
     if (typeof handler === "function") {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")

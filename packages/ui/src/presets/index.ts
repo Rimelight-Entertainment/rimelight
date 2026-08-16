@@ -4,7 +4,8 @@ import {
   presetIcons,
   transformerDirectives,
   transformerVariantGroup,
-  type Preset
+  type Preset,
+  type Rule
 } from "unocss"
 import { getAllColorNames, type ColorModeInput, type PresetOptions } from "../types"
 
@@ -46,25 +47,21 @@ const BUILTIN_COLORS: Record<string, string> = {
 
 const colorBlock = (
   name: string,
-  lightMap: (s: string, i: number) => string,
-  darkMap: (s: string, i: number) => string
+  light: (s: string, i: number) => string,
+  dark: (s: string, i: number) => string
 ) =>
-  COLOR_SHADES.map(
-    (s, i) => `  --color-${name}-${s}: light-dark(${lightMap(s, i)}, ${darkMap(s, i)});`
-  ).join("\n") +
-  `\n  --${name}: light-dark(${lightMap("500", 5)}, ${darkMap("500", 5)});` +
-  `\n  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));` +
-  `\n  --${name}-accent: var(--color-${name}-600);`
+  `${COLOR_SHADES.map((s, i) => `  --color-${name}-${s}: light-dark(${light(s, i)}, ${dark(s, i)});`).join("\n")}
+  --${name}: light-dark(${light("500", 5)}, ${dark("500", 5)});
+  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));
+  --${name}-accent: var(--color-${name}-600);`
 
 const STATIC_BUILTIN_COLOR_LINES = Object.entries(BUILTIN_COLORS)
   .map(([name, scale]) => {
-    const [l, d] = scale.split("|")
-    const lVals = l!.split(",")
-    const dVals = d!.split(",")
+    const [l, d] = scale.split("|").map((h) => h.split(",").map((v) => v.trim()))
     return colorBlock(
       name,
-      (_, i) => `oklch(${lVals[i]!.trim()})`,
-      (_, i) => `oklch(${dVals[i]!.trim()})`
+      (_, i) => `oklch(${l![i]})`,
+      (_, i) => `oklch(${d![i]})`
     )
   })
   .join("\n")
@@ -73,9 +70,8 @@ function formatUserColors(colors?: Record<string, ColorModeInput>): string {
   if (!colors) return ""
   return Object.entries(colors)
     .map(([c, entry]) => {
-      const isMode =
-        typeof entry === "object" && entry !== null && ("light" in entry || "dark" in entry)
-      const { light, dark } = (isMode ? entry : { light: entry, dark: entry }) as {
+      const mode = typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
+      const { light, dark } = (mode ? entry : { light: entry, dark: entry }) as {
         light?: Record<string, string>
         dark?: Record<string, string>
       }
@@ -150,11 +146,9 @@ const INTENT_PREFLIGHT_VARS = Object.entries(INTENTS)
   )
   .join("\n")
 
-const INTENT_REGEX = new RegExp(
-  `^(text|bg|ring|border|outline|divide)-(${Object.keys(INTENTS).join("|")})(?:\\/(\\d+))?$`
-)
+const INTENT_REGEX = /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/
 
-const buildPreflight = (extra = "") => `:root {
+const STATIC_PREFLIGHT_HEAD = `:root {
   color-scheme: light dark;
   --background: light-dark(oklch(1 0 0), var(--color-neutral-50));
   --foreground: var(--color-neutral-950);
@@ -170,8 +164,9 @@ const buildPreflight = (extra = "") => `:root {
   --rl-container: 90rem;
 ${INTENT_PREFLIGHT_VARS}
 
-${STATIC_BUILTIN_COLOR_LINES}${extra ? `\n${extra}` : ""}
-}
+${STATIC_BUILTIN_COLOR_LINES}`
+
+const STATIC_PREFLIGHT_TAIL = `}
 
 :root.dark, html.dark, .dark, [data-theme="dark"] { color-scheme: dark; }
 :root.light, html.light, .light, [data-theme="light"] { color-scheme: light; }
@@ -201,8 +196,7 @@ body { background-color: var(--background); color: var(--foreground); font-famil
 *:focus-visible, *:has(> a:focus-visible) {
   outline: 2px solid color-mix(in srgb, var(--un-ring-color, var(--primary)) 25%, transparent);
   outline-offset: 2px;
-}
-`
+}`
 
 const THEME_SPACING: Record<string, string> = {
   "6xs": "0.125rem",
@@ -232,98 +226,101 @@ const THEME_RADIUS: Record<string, string> = {
   "3xl": "calc(var(--radius) + 1rem)"
 }
 
+const STATIC_SHORTCUTS = {
+  "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl",
+  "sr-only":
+    "absolute w-px h-px p-0 m-0 overflow-hidden [clip:rect(1px,1px,1px,1px)] whitespace-nowrap border-0"
+}
+
+const STATIC_RULES: Rule[] = [
+  [
+    /^rl-color-([\w-]+)$/,
+    ([, c]) => ({
+      "--rl-bg": `var(--color-${c}-500)`,
+      "--rl-bg-hover": `var(--color-${c}-600)`,
+      "--rl-text": `var(--color-${c}-600)`,
+      "--rl-ring": `var(--color-${c}-500)`,
+      "--rl-border": `var(--color-${c}-500)`
+    })
+  ],
+  [
+    /^(?:rl-)?(light|dark|auto)$/,
+    ([, mode]) => ({
+      "color-scheme": mode === "auto" ? "light dark" : mode,
+      "color": "var(--foreground)"
+    })
+  ],
+  [
+    /^(shadow-adaptive|rl-elevation)$/,
+    () => ({
+      "box-shadow":
+        "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8))"
+    })
+  ],
+  [
+    "rla-visibility-aware",
+    {
+      "content-visibility": "auto",
+      "contain-intrinsic-size": "var(--rla-contain-intrinsic-size, auto 500px)"
+    }
+  ],
+  [
+    INTENT_REGEX,
+    ([, prop, name, opacity]) => {
+      if (!name || !(name in INTENTS)) return
+      const [css, prefix] = PROP_MAP[prop!]!
+      const val = opacity
+        ? `color-mix(in srgb, var(--${prefix}-color-${name}) ${opacity}%, transparent)`
+        : `var(--${prefix}-color-${name})`
+      return prop === "bg" && name === "inverted"
+        ? { [css]: val, color: "var(--text-color-inverted)" }
+        : { [css]: val }
+    }
+  ]
+]
+
+const STATIC_TRANSFORMERS = [transformerDirectives(), transformerVariantGroup()]
+const STATIC_LAYERS = { theme: 1, preflights: 2, shortcuts: 3, default: 4 }
+
 export function rimelightUiPreset(options?: PresetOptions): Preset {
-  const allColors = getAllColorNames(options?.colors)
+  const userColors = options?.colors
+  const allColors = getAllColorNames(userColors)
   const safelist = [
     ...allColors.map((c) => `rl-color-${c}`),
     ...Object.values(options?.icons ?? {}).filter(
       (v): v is string => typeof v === "string" && v.startsWith("i-")
     )
   ]
-  const userColorLines = formatUserColors(options?.colors)
-  const preflightCss = buildPreflight(userColorLines)
+  const userColorLines = formatUserColors(userColors)
+  const preflightCss = `${STATIC_PREFLIGHT_HEAD}${userColorLines ? `\n${userColorLines}` : ""}\n${STATIC_PREFLIGHT_TAIL}\n`
 
   const opt = options?.presets
   const presets: Preset[] = [
-    ...(opt?.wind !== false ? [presetWind4()] : []),
-    ...(opt?.typography !== false
-      ? [
-          presetTypography({
-            cssExtend: {
-              "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
-                "font-family": "var(--font-sans), system-ui, sans-serif"
-              },
-              "pre,code": { "font-family": "var(--font-mono), monospace" }
-            }
-          })
-        ]
-      : []),
-    ...(opt?.icons !== false
-      ? [
-          presetIcons({
-            extraProperties: { "display": "inline-block", "vertical-align": "middle" }
-          })
-        ]
-      : [])
-  ]
+    opt?.wind !== false && presetWind4(),
+    opt?.typography !== false &&
+      presetTypography({
+        cssExtend: {
+          "h1,h2,h3,h4,h5,h6,p,li,blockquote": {
+            "font-family": "var(--font-sans), system-ui, sans-serif"
+          },
+          "pre,code": { "font-family": "var(--font-mono), monospace" }
+        }
+      }),
+    opt?.icons !== false &&
+      presetIcons({
+        extraProperties: { "display": "inline-block", "vertical-align": "middle" }
+      })
+  ].filter(Boolean) as Preset[]
 
   return {
     name: "rimelight-ui",
     safelist,
     presets,
-    transformers: [transformerDirectives(), transformerVariantGroup()],
+    transformers: STATIC_TRANSFORMERS,
     outputToCssLayers: true,
-    layers: { theme: 1, preflights: 2, shortcuts: 3, default: 4 },
-    shortcuts: {
-      "container": "mx-auto w-full max-w-[var(--rl-container)] px-xs sm:px-md md:px-xl",
-      "sr-only":
-        "absolute w-px h-px p-0 m-0 overflow-hidden [clip:rect(1px,1px,1px,1px)] whitespace-nowrap border-0"
-    },
-    rules: [
-      [
-        /^rl-color-([\w-]+)$/,
-        ([, c]) => ({
-          "--rl-bg": `var(--color-${c}-500)`,
-          "--rl-bg-hover": `var(--color-${c}-600)`,
-          "--rl-text": `var(--color-${c}-600)`,
-          "--rl-ring": `var(--color-${c}-500)`,
-          "--rl-border": `var(--color-${c}-500)`
-        })
-      ],
-      [
-        /^(?:rl-)?(light|dark|auto)$/,
-        ([, mode]) => ({
-          "color-scheme": mode === "auto" ? "light dark" : mode,
-          "color": "var(--foreground)"
-        })
-      ],
-      [
-        /^(shadow-adaptive|rl-elevation)$/,
-        () => ({
-          "box-shadow":
-            "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--rl-surface-effective, var(--background)) calc(l + 0.35) 0.25 h / 0.8))"
-        })
-      ],
-      [
-        "rla-visibility-aware",
-        {
-          "content-visibility": "auto",
-          "contain-intrinsic-size": "var(--rla-contain-intrinsic-size, auto 500px)"
-        }
-      ],
-      [
-        INTENT_REGEX,
-        ([, prop, name, opacity]) => {
-          const [css, prefix] = PROP_MAP[prop!]!
-          const val = opacity
-            ? `color-mix(in srgb, var(--${prefix}-color-${name}) ${opacity}%, transparent)`
-            : `var(--${prefix}-color-${name})`
-          return prop === "bg" && name === "inverted"
-            ? { [css]: val, color: "var(--text-color-inverted)" }
-            : { [css]: val }
-        }
-      ]
-    ],
+    layers: STATIC_LAYERS,
+    shortcuts: STATIC_SHORTCUTS,
+    rules: STATIC_RULES,
     theme: {
       spacing: THEME_SPACING,
       colors: {
