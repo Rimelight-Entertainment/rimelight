@@ -4,11 +4,11 @@ export type Handler = (e: KeyboardEvent) => void
 
 export interface ShortcutConfig {
   handler: Handler
-  usingInput?: boolean | string
-  label?: string
-  description?: string
-  category?: string
-  order?: number
+  usingInput?: boolean | string | undefined
+  label?: string | undefined
+  description?: string | undefined
+  category?: string | undefined
+  order?: number | undefined
 }
 
 export interface ShortcutsConfig {
@@ -16,7 +16,7 @@ export interface ShortcutsConfig {
 }
 
 export interface ShortcutsOptions {
-  chainDelay?: number
+  chainDelay?: number | undefined
 }
 
 export interface RegisteredShortcut {
@@ -35,12 +35,8 @@ interface Shortcut {
   usingInput?: boolean | string | undefined
 }
 
-const CTRL = 1
-const META = 2
-const ALT = 4
-const SHIFT = 8
-
 const isMac = typeof navigator !== "undefined" && /Mac|iPad|iPhone|iPod/.test(navigator.userAgent)
+const MOD_CMD = isMac ? 2 : 1
 
 const SYMBOLS: Record<string, string> = {
   meta: isMac ? "⌘" : "Ctrl",
@@ -76,15 +72,15 @@ const SHIFTABLE = new Set([
 ])
 
 const MOD_MASKS: Record<string, number> = {
-  ctrl: CTRL,
-  control: CTRL,
-  cmd: isMac ? META : CTRL,
-  command: isMac ? META : CTRL,
-  meta: isMac ? META : CTRL,
-  alt: ALT,
-  opt: ALT,
-  option: ALT,
-  shift: SHIFT
+  ctrl: 1,
+  control: 1,
+  cmd: MOD_CMD,
+  command: MOD_CMD,
+  meta: MOD_CMD,
+  alt: 4,
+  opt: 4,
+  option: 4,
+  shift: 8
 }
 
 export function formatShortcutKeys(keyStr: string): string[] {
@@ -148,7 +144,6 @@ export function defineShortcuts(
       mods,
       usingInput: typeof cfg === "object" ? cfg.usingInput : false
     }
-
     if (isChained) chained.set(base, s)
     else standard.push(s)
 
@@ -192,28 +187,22 @@ export function defineShortcuts(
     }
 
     const eventMods =
-      (e.ctrlKey ? CTRL : 0) |
-      (e.metaKey ? META : 0) |
-      (e.altKey ? ALT : 0) |
-      (e.shiftKey ? SHIFT : 0)
+      (e.ctrlKey ? 1 : 0) | (e.metaKey ? 2 : 0) | (e.altKey ? 4 : 0) | (e.shiftKey ? 8 : 0)
 
     for (const s of standard) {
       if ((s.mods & 7) !== (eventMods & 7)) continue
-
       const code = e.code.toLowerCase()
       if (
-        s.mods & ALT
+        s.mods & 4
           ? code !== `key${s.key}` && code !== `digit${s.key}` && code !== s.key
           : e.key.toLowerCase() !== s.key
       )
         continue
-
       if (
-        Boolean(s.mods & SHIFT) !== e.shiftKey &&
-        (s.mods & SHIFT || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
+        Boolean(s.mods & 8) !== e.shiftKey &&
+        (s.mods & 8 || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
       )
         continue
-
       if (isEnabled(s, input)) return trigger(s)
     }
 

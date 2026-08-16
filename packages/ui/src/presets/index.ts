@@ -15,7 +15,7 @@ const SHADES: Record<string, [number, number, number, number]> = {
   "950": [0.145, 0.3, 0.93, 0.25]
 }
 
-const PROPERTY_MAP: Record<string, [string, number]> = {
+const PROPS: Record<string, [string, number]> = {
   text: ["color", 0],
   bg: ["background-color", 1],
   border: ["border-color", 2],
@@ -35,35 +35,33 @@ const INTENTS: Record<string, string[]> = {
   inverted: ["50", "950", "800", "700"]
 }
 
-const emitPalette = (name: string, shadeFn: (s: string) => string) =>
+const emit = (name: string, fn: (s: string) => string) =>
   Object.keys(SHADES)
-    .map((s) => `  --color-${name}-${s}: ${shadeFn(s)};`)
+    .map((s) => `  --color-${name}-${s}: ${fn(s)};`)
     .join("\n") +
   `\n  --${name}: var(--color-${name}-500);\n  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));\n  --${name}-accent: var(--color-${name}-600);`
 
 const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
   [
-    ...Object.entries(PALETTES).map(([name, [c, h]]) =>
-      emitPalette(name, (s) => {
+    ...Object.entries(PALETTES).map(([n, [c, h]]) =>
+      emit(n, (s) => {
         const [lL, cL, dL, dC] = SHADES[s]!
         return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`
       })
     ),
-    ...Object.entries(custom ?? {}).map(([name, entry]) => {
+    ...Object.entries(custom ?? {}).map(([n, e]) => {
       const m = (
-        entry && typeof entry === "object" && ("light" in entry || "dark" in entry)
-          ? entry
-          : { light: entry, dark: entry }
+        e && typeof e === "object" && ("light" in e || "dark" in e) ? e : { light: e, dark: e }
       ) as { light?: Record<string, string>; dark?: Record<string, string> }
       const l = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
       const d = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? l
-      return emitPalette(name, (s) => `light-dark(${m.light?.[s] ?? l}, ${m.dark?.[s] ?? d})`)
+      return emit(n, (s) => `light-dark(${m.light?.[s] ?? l}, ${m.dark?.[s] ?? d})`)
     })
   ].join("\n")
 
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const allColors = Object.keys({ ...PALETTES, ...options.colors })
-  const shadeKeys = Object.keys(SHADES)
+  const shades = Object.keys(SHADES)
 
   return {
     name: "rimelight-ui",
@@ -95,15 +93,14 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
       ],
       [
         /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
-        ([, prop, name, opacity]) => {
-          const [cssProp, idx] = PROPERTY_MAP[prop!] ?? []
-          const shade = idx !== undefined ? INTENTS[name!]?.[idx] : undefined
-          if (!cssProp || !shade) return
-
-          const base = `var(--color-neutral-${shade})`
+        ([, p, n, o]) => {
+          const [prop, idx] = PROPS[p!] ?? []
+          const s = idx !== undefined ? INTENTS[n!]?.[idx] : undefined
+          if (!prop || !s) return
+          const base = `var(--color-neutral-${s})`
           return {
-            [cssProp]: opacity ? `color-mix(in srgb, ${base} ${opacity}%, transparent)` : base,
-            ...(prop === "bg" && name === "inverted" && { color: "var(--color-neutral-50)" })
+            [prop]: o ? `color-mix(in srgb, ${base} ${o}%, transparent)` : base,
+            ...(p === "bg" && n === "inverted" && { color: "var(--color-neutral-50)" })
           }
         }
       ]
@@ -144,7 +141,7 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
             DEFAULT: `var(--${c})`,
             foreground: `var(--${c}-foreground)`,
             accent: `var(--${c}-accent)`,
-            ...Object.fromEntries(shadeKeys.map((s) => [s, `var(--color-${c}-${s})`]))
+            ...Object.fromEntries(shades.map((s) => [s, `var(--color-${c}-${s})`]))
           }
         ])
       )
