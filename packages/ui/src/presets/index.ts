@@ -47,14 +47,12 @@ const BUILTIN_COLORS: Record<string, string> = {
 const colorBlock = (
   name: string,
   lightMap: (s: string, i: number) => string,
-  darkMap: (s: string, i: number) => string,
-  l500: string,
-  d500: string
+  darkMap: (s: string, i: number) => string
 ) =>
   COLOR_SHADES.map(
     (s, i) => `  --color-${name}-${s}: light-dark(${lightMap(s, i)}, ${darkMap(s, i)});`
   ).join("\n") +
-  `\n  --${name}: light-dark(${l500}, ${d500});` +
+  `\n  --${name}: light-dark(${lightMap("500", 5)}, ${darkMap("500", 5)});` +
   `\n  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));` +
   `\n  --${name}-accent: var(--color-${name}-600);`
 
@@ -66,9 +64,7 @@ const STATIC_BUILTIN_COLOR_LINES = Object.entries(BUILTIN_COLORS)
     return colorBlock(
       name,
       (_, i) => `oklch(${lVals[i]!.trim()})`,
-      (_, i) => `oklch(${dVals[i]!.trim()})`,
-      `oklch(${lVals[5]!.trim()})`,
-      `oklch(${dVals[5]!.trim()})`
+      (_, i) => `oklch(${dVals[i]!.trim()})`
     )
   })
   .join("\n")
@@ -97,9 +93,7 @@ function formatUserColors(colors?: Record<string, ColorModeInput>): string {
       return colorBlock(
         c,
         (s) => light?.[s] ?? mix(bL, s, false),
-        (s) => dark?.[s] ?? mix(bD, s, true),
-        light?.["500"] ?? mix(bL, "500", false),
-        dark?.["500"] ?? mix(bD, "500", true)
+        (s) => dark?.[s] ?? mix(bD, s, true)
       )
     })
     .join("\n")
@@ -239,8 +233,7 @@ const THEME_RADIUS: Record<string, string> = {
 }
 
 export function rimelightUiPreset(options?: PresetOptions): Preset {
-  const userColors = options?.colors ?? {}
-  const allColors = getAllColorNames(userColors)
+  const allColors = getAllColorNames(options?.colors)
   const safelist = [
     ...allColors.map((c) => `rl-color-${c}`),
     ...Object.values(options?.icons ?? {}).filter(

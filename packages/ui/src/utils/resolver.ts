@@ -1,9 +1,7 @@
 import { scv, cx } from "css-variants"
 import { getAllColorNames, type ThemeColor, type UIConfig } from "../types"
 
-export const uiConfig: Partial<UIConfig> & {
-  [key: string]: unknown
-} =
+export const uiConfig: Partial<UIConfig> & Record<string, unknown> =
   (import.meta.env?.RIMELIGHT_UI_CONFIG as
     | (Partial<UIConfig> & Record<string, unknown>)
     | undefined) ?? {}
@@ -61,9 +59,11 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     if (!resolvedUi && !rootClass) return res
 
     const out: Record<string, string> = { ...res }
-    for (const s in resolvedUi) {
-      const o = resolvedUi[s]
-      if (o) out[s] = typeof o === "function" ? cx(o(out[s] ?? "")) : cx(out[s], o)
+    if (resolvedUi) {
+      for (const s in resolvedUi) {
+        const o = resolvedUi[s]
+        if (o) out[s] = typeof o === "function" ? cx(o(out[s] ?? "")) : cx(out[s], o)
+      }
     }
     if (rootClass) out.root = cx(out.root, rootClass)
     return out

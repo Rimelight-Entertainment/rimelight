@@ -22,7 +22,7 @@ export type ColorModeInput =
   | { light?: Record<string, string>; dark?: Record<string, string> }
 
 export const getAllColorNames = (customColors?: Record<string, unknown>): readonly string[] =>
-  customColors ? [...new Set<string>([...colorNames, ...Object.keys(customColors)])] : colorNames
+  customColors ? [...new Set([...colorNames, ...Object.keys(customColors)])] : colorNames
 
 export interface PresetOptions {
   /**
@@ -57,18 +57,7 @@ export interface UIConfig extends PresetOptions {
   /**
    * Configuration for the Logo component variants.
    */
-  logos?: Record<
-    string,
-    | string
-    | {
-        light?: string
-        dark?: string
-        color?: string
-        white?: string
-        black?: string
-        [key: string]: string | undefined
-      }
-  >
+  logos?: Record<string, string | Record<string, string | undefined>>
   /**
    * Global component configuration overrides.
    */

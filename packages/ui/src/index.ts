@@ -12,10 +12,7 @@ const INCLUDES = [
 const resolvePipeline = (p?: { include?: FilterPattern; exclude?: FilterPattern } | false) =>
   p !== false && {
     ...p,
-    include: [
-      ...INCLUDES,
-      ...(Array.isArray(p?.include) ? p.include : p?.include ? [p.include] : [])
-    ]
+    include: [...INCLUDES, ...(p?.include ? [p.include].flat() : [])]
   }
 
 export const ui = (o: UIConfig = {}): AstroIntegration[] => [

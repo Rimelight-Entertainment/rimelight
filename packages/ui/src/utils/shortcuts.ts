@@ -92,7 +92,7 @@ export function formatShortcutKeys(keyStr: string): string[] {
       keyStr,
       (res = keyStr.split(isChained(keyStr) ? "-" : "_").map((p) => {
         const lower = p.toLowerCase()
-        return keySymbols[MODS[lower] ?? lower] ?? p[0]!.toUpperCase() + p.slice(1)
+        return keySymbols[MODS[lower] ?? lower] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
       }))
     )
   }
@@ -104,8 +104,10 @@ export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 const toCode = (k: string) => {
   if (/^[a-z]$/i.test(k)) return `Key${k.toUpperCase()}`
   if (/^\d$/.test(k)) return `Digit${k}`
-  if (/^arrow/i.test(k)) return `Arrow${k.slice(5, 6).toUpperCase()}${k.slice(6).toLowerCase()}`
-  return /^f\d+$/i.test(k) ? k.toUpperCase() : k[0]!.toUpperCase() + k.slice(1).toLowerCase()
+  if (/^arrow/i.test(k)) return `Arrow${k[5]?.toUpperCase() ?? ""}${k.slice(6).toLowerCase()}`
+  return /^f\d+$/i.test(k)
+    ? k.toUpperCase()
+    : (k[0]?.toUpperCase() ?? "") + k.slice(1).toLowerCase()
 }
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
