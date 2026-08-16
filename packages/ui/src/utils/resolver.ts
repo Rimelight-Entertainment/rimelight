@@ -15,7 +15,7 @@ export const defineTheme = <const S extends string>(name: string, t: any) => {
       c = auto && (p.color ?? t.defaultVariants?.color)
     r[root] = cx(r[root], c && `rl-color-${c}`, p.class, p.className)
     for (const [k, f] of Object.entries({ ...g, ...p.ui }))
-      if (f) r[k] = cx(typeof f === "function" ? f(r[k] || "") : [r[k], f])
+      r[k] = cx(r[k], typeof f === "function" ? f(r[k] || "") : f)
     return r
   }
 }
