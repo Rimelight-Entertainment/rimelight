@@ -1,15 +1,11 @@
 import { scv, cx } from "css-variants"
 import { colorNames, type ThemeColor, type UIConfig } from "../types"
 
-export const uiConfig: {
-  unstyled?: boolean
-  shortcuts?: UIConfig["shortcuts"]
-  logos?: UIConfig["logos"]
-  icons?: UIConfig["icons"]
+export const uiConfig: Partial<UIConfig> & {
   colors?: readonly string[]
   themes?: NonNullable<UIConfig["components"]>["themes"]
   [key: string]: unknown
-} = (import.meta.env as any)?.RIMELIGHT_UI_CONFIG ?? {}
+} = (import.meta as any).env?.RIMELIGHT_UI_CONFIG ?? {}
 
 export const defineTheme = <const S extends string, const V extends Record<string, any>>(
   name: string,
@@ -34,7 +30,7 @@ export const defineTheme = <const S extends string, const V extends Record<strin
   for (const k in theme.variants) {
     const val = theme.variants[k]
     if (val === "auto") {
-      const slot = theme.slots.includes("root" as S) ? "root" : (theme.slots[0] ?? "root")
+      const slot = (theme.slots.includes("root" as S) ? "root" : theme.slots[0]) ?? "root"
       variants[k] = Object.fromEntries([
         ["neutral", { [slot]: "" }],
         ...(uiConfig.colors ?? colorNames).map((c) => [c, { [slot]: `rl-color-${c}` }])
@@ -42,18 +38,16 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     } else if (val) variants[k] = val
   }
 
-  const themeFn = (scv as unknown as (c: unknown) => (v: Record<string, any>) => Record<S, string>)(
-    {
-      ...theme,
-      variants
-    }
-  )
+  const themeFn = (scv as any)({
+    ...theme,
+    variants
+  }) as (v: Record<string, any>) => Record<S, string>
   const globalSlots = uiConfig.themes?.[name]?.slots
   const cache = new Map<string, Record<string, string>>()
 
   return (props?: Record<string, any>): Record<S, string> => {
-    const rootClass = props?.class ?? props?.className
-    const { ui, class: _, className: __, ...v } = props ?? {}
+    const { ui, class: c1, className: c2, ...v } = props ?? {}
+    const rootClass = c1 ?? c2
 
     let key = ""
     for (const k in v) key += `${k}:${v[k]};`

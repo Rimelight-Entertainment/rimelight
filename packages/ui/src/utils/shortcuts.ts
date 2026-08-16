@@ -109,9 +109,9 @@ const toCode = (k: string) => {
 }
 
 const INPUT_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
-function isUsingInput(el: Element | null): boolean | string {
+const isUsingInput = (el: Element | null): boolean | string => {
   while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
-  return el && (INPUT_TAGS.has(el.nodeName) || (el instanceof HTMLElement && el.isContentEditable))
+  return el && (INPUT_TAGS.has(el.nodeName) || (el as HTMLElement).isContentEditable)
     ? el.getAttribute("name") || true
     : false
 }
@@ -147,7 +147,6 @@ function parseShortcutConfig(config: ShortcutsConfig): ParsedShortcuts {
       const rawParts = rawKey.toLowerCase().split(chainedKey ? "-" : "_")
       const mods = new Set<string>()
       const nonMods: string[] = []
-
       for (const p of rawParts) {
         const mod = MODS[p]
         if (mod) mods.add(mod)
@@ -202,12 +201,10 @@ export function defineShortcuts(
   const inputs: string[] = []
   let timer: ReturnType<typeof setTimeout> | undefined
   const regIds = registered.length ? new Set(registered.map((i) => i.id)) : null
+  const filterOut = (items: RegisteredShortcut[]) =>
+    regIds ? items.filter((i) => !regIds.has(i.id)) : items
 
-  if (regIds)
-    activeShortcutsStore.set([
-      ...activeShortcutsStore.get().filter((i) => !regIds.has(i.id)),
-      ...registered
-    ])
+  if (regIds) activeShortcutsStore.set([...filterOut(activeShortcutsStore.get()), ...registered])
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!e.key) return
@@ -248,7 +245,6 @@ export function defineShortcuts(
   return () => {
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
-    if (regIds)
-      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !regIds.has(i.id)))
+    if (regIds) activeShortcutsStore.set(filterOut(activeShortcutsStore.get()))
   }
 }

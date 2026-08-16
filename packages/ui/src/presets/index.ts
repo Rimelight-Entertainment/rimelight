@@ -72,19 +72,17 @@ export const colorScales = {
 } as const
 
 export const getAllColorNames = (customColors?: Record<string, unknown>): readonly string[] =>
-  customColors && Object.keys(customColors).length
-    ? [...new Set([...colorNames, ...Object.keys(customColors)])]
-    : colorNames
+  customColors ? [...new Set<string>([...colorNames, ...Object.keys(customColors)])] : colorNames
 
 function resolveColorModes(entry: unknown): { light: Shades; dark: Shades } {
-  const isMode = Boolean(
-    entry && typeof entry === "object" && ("light" in entry || "dark" in entry)
-  )
-  const [mL, mD] = isMode
-    ? [(entry as any).light as Shades | undefined, (entry as any).dark as Shades | undefined]
-    : [entry as Shades | undefined, entry as Shades | undefined]
-  const base = (m: Shades | undefined) => m?.["500"] ?? Object.values(m ?? {})[0] ?? ""
-  const [bL, bD] = [base(mL) || base(mD), base(mD) || base(mL)]
+  const isMode = !!entry && typeof entry === "object" && ("light" in entry || "dark" in entry)
+  const { light: mL, dark: mD } = (isMode ? entry : { light: entry, dark: entry }) as {
+    light?: Shades
+    dark?: Shades
+  }
+  const base = (m?: Shades) => m?.["500"] ?? (m && Object.values(m)[0]) ?? ""
+  const bL = base(mL) || base(mD)
+  const bD = base(mD) || base(mL)
 
   const gen = (val: string, s: string, dark: boolean) => {
     const n = Number(s)
@@ -109,24 +107,24 @@ const createScale = (c: string) => ({
   ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
 })
 
-const formatColorLines = (entries: Iterable<[string, { light?: Shades; dark?: Shades }]>) =>
-  [...entries]
-    .flatMap(([c, { light = {}, dark = {} }]) => {
-      const keys = [...new Set([...Object.keys(light), ...Object.keys(dark)])]
-      const lines = keys.map(
-        (s) => `  --color-${c}-${s}: light-dark(${light[s] ?? dark[s]}, ${dark[s] ?? light[s]});`
+const formatColorLines = (entries: Iterable<[string, { light?: Shades; dark?: Shades }]>) => {
+  const lines: string[] = []
+  for (const [c, { light = {}, dark = {} }] of entries) {
+    const keys = Object.keys(light).length ? Object.keys(light) : Object.keys(dark)
+    for (const s of keys) {
+      lines.push(`  --color-${c}-${s}: light-dark(${light[s] ?? dark[s]}, ${dark[s] ?? light[s]});`)
+    }
+    const l500 = light["500"] ?? dark["500"]
+    if (l500) {
+      lines.push(
+        `  --${c}: light-dark(${l500}, ${dark["500"] ?? l500});`,
+        `  --${c}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
+        `  --${c}-accent: var(--color-${c}-600);`
       )
-      const l500 = light["500"] ?? dark["500"]
-      if (l500) {
-        lines.push(
-          `  --${c}: light-dark(${l500}, ${dark["500"] ?? l500});`,
-          `  --${c}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
-          `  --${c}-accent: var(--color-${c}-600);`
-        )
-      }
-      return lines
-    })
-    .join("\n")
+    }
+  }
+  return lines.join("\n")
+}
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(Object.entries(colorScales))
 

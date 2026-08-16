@@ -1,7 +1,7 @@
 import type { AstroIntegration } from "astro"
 import UnoCSS from "unocss/astro"
 import type { UIConfig } from "./types"
-import rimelightUiPreset, { getAllColorNames } from "./presets/index"
+import rimelightUiPreset, { getAllColorNames } from "./presets"
 
 export function ui(o: UIConfig = {}): AstroIntegration[] {
   const { pipeline, ...userContent } = o.unocss?.content ?? {}
@@ -26,11 +26,11 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
               define: {
                 "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify({
                   unstyled: o.unstyled,
-                  themes: o.components?.themes ?? {},
-                  logos: o.logos ?? {},
+                  themes: o.components?.themes,
+                  logos: o.logos,
                   colors: getAllColorNames(o.colors),
-                  shortcuts: o.shortcuts ?? {},
-                  icons: o.icons ?? {}
+                  shortcuts: o.shortcuts,
+                  icons: o.icons
                 })
               }
             }
@@ -42,5 +42,5 @@ export function ui(o: UIConfig = {}): AstroIntegration[] {
 }
 
 export * from "./types"
-export { rimelightUiPreset, colorScales } from "./presets/index"
+export { rimelightUiPreset, colorScales } from "./presets"
 export { defineTheme, uiConfig } from "./utils/resolver"
