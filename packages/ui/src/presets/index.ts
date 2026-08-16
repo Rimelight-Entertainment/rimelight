@@ -32,16 +32,14 @@ const SHADE_KEYS = Object.keys(SHADES)
 
 const emitPaletteCss = (
   name: string,
-  getShade: (s: string) => string,
+  shadeFn: (s: string) => string,
   light: string,
   dark: string
 ) =>
-  [
-    ...SHADE_KEYS.map((s) => `  --color-${name}-${s}: ${getShade(s)};`),
-    `  --${name}: light-dark(${light}, ${dark});`,
-    `  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
-    `  --${name}-accent: var(--color-${name}-600);`
-  ].join("\n")
+  `${SHADE_KEYS.map((s) => `  --color-${name}-${s}: ${shadeFn(s)};`).join("\n")}
+  --${name}: light-dark(${light}, ${dark});
+  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));
+  --${name}-accent: var(--color-${name}-600);`
 
 const BUILTIN_PALETTES = Object.entries(PALETTES)
   .map(([name, [c, h]]) =>
@@ -59,18 +57,19 @@ const BUILTIN_PALETTES = Object.entries(PALETTES)
 
 const formatCustomColors = (colors?: Record<string, ColorModeInput>) =>
   colors
-    ? Object.entries(colors)
+    ? "\n" +
+      Object.entries(colors)
         .map(([name, entry]) => {
-          const { light = {}, dark = {} } = (
+          const m = (
             typeof entry === "object" && entry && ("light" in entry || "dark" in entry)
               ? entry
               : { light: entry, dark: entry }
           ) as { light?: Record<string, string>; dark?: Record<string, string> }
-          const bL = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
-          const bD = dark["500"] ?? Object.values(dark)[0] ?? bL
+          const bL = m.light?.["500"] ?? Object.values(m.light ?? {})[0] ?? "oklch(0.55 0.15 0)"
+          const bD = m.dark?.["500"] ?? Object.values(m.dark ?? {})[0] ?? bL
           return emitPaletteCss(
             name,
-            (s) => `light-dark(${light[s] ?? bL}, ${dark[s] ?? bD})`,
+            (s) => `light-dark(${m.light?.[s] ?? bL}, ${m.dark?.[s] ?? bD})`,
             bL,
             bD
           )
@@ -191,7 +190,7 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   --radius: 0.625rem;
   --rl-header-height: 4rem;
   --rl-container: 90rem;
-${BUILTIN_PALETTES}${options.colors ? `\n${formatCustomColors(options.colors)}` : ""}
+${BUILTIN_PALETTES}${formatCustomColors(options.colors)}
 }
 
 .dark, [data-theme="dark"] { color-scheme: dark; }
