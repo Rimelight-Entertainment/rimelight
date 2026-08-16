@@ -1,20 +1,6 @@
 import { presetIcons, presetTypography, presetWind4, type Preset, type Rule } from "unocss"
 import { getAllColorNames, type ColorModeInput, type PresetOptions } from "../types"
 
-export const COLOR_SHADES = [
-  "50",
-  "100",
-  "200",
-  "300",
-  "400",
-  "500",
-  "600",
-  "700",
-  "800",
-  "900",
-  "950"
-] as const
-
 const SHADES: Record<string, [number, number, number, number]> = {
   "50": [0.985, 0.1, 0.145, 0.2],
   "100": [0.965, 0.25, 0.2, 0.35],
@@ -53,27 +39,22 @@ const renderPaletteVars = (name: string, chroma: number, hue: number) =>
     `  --${name}-accent: var(--color-${name}-600);`
   ].join("\n")
 
-const BUILTIN_PALETTE_CSS = Object.entries(PALETTES)
-  .map(([name, [c, h]]) => renderPaletteVars(name, c, h))
-  .join("\n")
-
 const formatCustomColors = (colors?: Record<string, ColorModeInput>) => {
   if (!colors) return ""
   return Object.entries(colors)
     .map(([name, entry]) => {
-      const mode = (
+      const mode =
         entry && typeof entry === "object" && ("light" in entry || "dark" in entry)
-          ? entry
-          : { light: entry, dark: entry }
-      ) as { light?: Record<string, string>; dark?: Record<string, string> }
+          ? (entry as { light?: Record<string, string>; dark?: Record<string, string> })
+          : { light: entry as Record<string, string>, dark: entry as Record<string, string> }
       const l = mode.light ?? {},
         d = mode.dark ?? {}
       const bL = l["500"] ?? Object.values(l)[0] ?? "oklch(0.55 0.15 0)"
       const bD = d["500"] ?? Object.values(d)[0] ?? bL
+
       return [
-        ...COLOR_SHADES.map(
-          (s) =>
-            `  --color-${name}-${s}: light-dark(${l[s] ?? `color-mix(in oklch, ${bL}, white ${Math.max(0, 500 - +s) / 5}%)`}, ${d[s] ?? `color-mix(in oklch, ${bD}, black ${Math.max(0, +s - 500) / 4.5}%)`});`
+        ...Object.keys(SHADES).map(
+          (s) => `  --color-${name}-${s}: light-dark(${l[s] ?? bL}, ${d[s] ?? bD});`
         ),
         `  --${name}: light-dark(${bL}, ${bD});`,
         `  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
@@ -83,51 +64,7 @@ const formatCustomColors = (colors?: Record<string, ColorModeInput>) => {
     .join("\n")
 }
 
-const generatePreflightCss = (colors?: Record<string, ColorModeInput>) => {
-  const custom = formatCustomColors(colors)
-  return `:root {
-  color-scheme: light dark;
-  --radius: 0.625rem;
-  --rl-header-height: 4rem;
-  --rl-container: 90rem;
-${BUILTIN_PALETTE_CSS}${custom ? `\n${custom}` : ""}
-}
-
-.dark, [data-theme="dark"] { color-scheme: dark; }
-.light, [data-theme="light"] { color-scheme: light; }
-
-body { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
-}
-
-const SPACING = {
-  "6xs": "0.125rem",
-  "5xs": "0.25rem",
-  "4xs": "0.375rem",
-  "3xs": "0.5rem",
-  "2xs": "0.625rem",
-  "xs": "0.75rem",
-  "sm": "0.875rem",
-  "md": "1rem",
-  "lg": "1.25rem",
-  "xl": "1.5rem",
-  "2xl": "2rem",
-  "3xl": "3rem",
-  "4xl": "4rem",
-  "5xl": "6rem",
-  "6xl": "8rem"
-}
-
-const RADIUS = {
-  "xs": "calc(var(--radius) - 0.375rem)",
-  "sm": "calc(var(--radius) - 0.25rem)",
-  "md": "calc(var(--radius) - 0.125rem)",
-  "lg": "var(--radius)",
-  "xl": "calc(var(--radius) + 0.25rem)",
-  "2xl": "calc(var(--radius) + 0.5rem)",
-  "3xl": "calc(var(--radius) + 1rem)"
-}
-
-const PROPERTY_CONFIG: Record<string, { key: "text" | "bg" | "border" | "ring"; prop: string }> = {
+const PROPERTY_CONFIG: Record<string, { key: string; prop: string }> = {
   text: { key: "text", prop: "color" },
   bg: { key: "bg", prop: "background-color" },
   border: { key: "border", prop: "border-color" },
@@ -136,7 +73,7 @@ const PROPERTY_CONFIG: Record<string, { key: "text" | "bg" | "border" | "ring"; 
   outline: { key: "ring", prop: "outline-color" }
 }
 
-const SEMANTIC_INTENTS: Record<string, Record<"text" | "bg" | "border" | "ring", string>> = {
+const SEMANTIC_INTENTS: Record<string, Record<string, string>> = {
   default: { text: "700", bg: "50", border: "200", ring: "300" },
   muted: { text: "600", bg: "100", border: "200", ring: "300" },
   elevated: { text: "800", bg: "100", border: "200", ring: "400" },
@@ -174,6 +111,34 @@ const rules: Rule[] = [
   ]
 ]
 
+const SPACING = {
+  "6xs": "0.125rem",
+  "5xs": "0.25rem",
+  "4xs": "0.375rem",
+  "3xs": "0.5rem",
+  "2xs": "0.625rem",
+  "xs": "0.75rem",
+  "sm": "0.875rem",
+  "md": "1rem",
+  "lg": "1.25rem",
+  "xl": "1.5rem",
+  "2xl": "2rem",
+  "3xl": "3rem",
+  "4xl": "4rem",
+  "5xl": "6rem",
+  "6xl": "8rem"
+}
+
+const RADIUS = {
+  "xs": "calc(var(--radius) - 0.375rem)",
+  "sm": "calc(var(--radius) - 0.25rem)",
+  "md": "calc(var(--radius) - 0.125rem)",
+  "lg": "var(--radius)",
+  "xl": "calc(var(--radius) + 0.25rem)",
+  "2xl": "calc(var(--radius) + 0.5rem)",
+  "3xl": "calc(var(--radius) + 1rem)"
+}
+
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const allColors = getAllColorNames(options.colors)
 
@@ -193,10 +158,6 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const theme = {
     spacing: SPACING,
     radius: RADIUS,
-    boxShadow: {
-      adaptive:
-        "0 2px 8px light-dark(oklch(0 0 0 / 0.12), transparent), 0 12px 32px light-dark(oklch(0 0 0 / 0.08), transparent), inset 0 0 0 1px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.15 h / 0.7)), 0 0 20px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.2 h / 0.5)), 0 0 4px light-dark(transparent, oklch(from var(--color-neutral-50) calc(l + 0.35) 0.25 h / 0.8))"
-    },
     colors: Object.fromEntries(
       allColors.map((c) => [
         c,
@@ -204,13 +165,30 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
           DEFAULT: `var(--${c})`,
           foreground: `var(--${c}-foreground)`,
           accent: `var(--${c}-accent)`,
-          ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
+          ...Object.fromEntries(Object.keys(SHADES).map((s) => [s, `var(--color-${c}-${s})`]))
         }
       ])
     )
   }
 
-  const preflights = [{ getCSS: () => generatePreflightCss(options.colors) }]
+  const preflights = [
+    {
+      getCSS: () => `:root {
+  color-scheme: light dark;
+  --radius: 0.625rem;
+  --rl-header-height: 4rem;
+  --rl-container: 90rem;
+${Object.entries(PALETTES)
+  .map(([name, [c, h]]) => renderPaletteVars(name, c, h))
+  .join("\n")}${options.colors ? `\n${formatCustomColors(options.colors)}` : ""}
+}
+
+.dark, [data-theme="dark"] { color-scheme: dark; }
+.light, [data-theme="light"] { color-scheme: light; }
+
+body { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
+    }
+  ]
 
   return {
     name: "rimelight-ui",
