@@ -12,11 +12,10 @@ export const defineTheme = <const S extends string>(name: string, t: any) => {
   return (p: any = {}): Record<S, string> => {
     if (uiConfig.unstyled) return { [root]: cx(p.class, p.className) } as any
     const r = fn(p),
-      c = auto && (p.color ?? t.defaultVariants?.color),
-      u = { ...g, ...p.ui }
+      c = auto && (p.color ?? t.defaultVariants?.color)
     r[root] = cx(r[root], c && `rl-color-${c}`, p.class, p.className)
-    for (const k in u)
-      if (u[k]) r[k] = cx(typeof u[k] === "function" ? u[k](r[k] || "") : [r[k], u[k]])
+    for (const [k, f] of Object.entries({ ...g, ...p.ui }))
+      if (f) r[k] = cx(typeof f === "function" ? f(r[k] || "") : [r[k], f])
     return r
   }
 }
