@@ -2,7 +2,6 @@ import { scv, cx } from "css-variants"
 import { colorNames, type ThemeColor, type UIConfig } from "../types"
 
 export const uiConfig: Partial<UIConfig> & {
-  themes?: NonNullable<UIConfig["components"]>["themes"]
   [key: string]: unknown
 } = (import.meta as any).env?.RIMELIGHT_UI_CONFIG ?? {}
 
@@ -44,7 +43,7 @@ export const defineTheme = <const S extends string, const V extends Record<strin
     ...theme,
     variants
   }) as (v: Record<string, any>) => Record<S, string>
-  const globalSlots = uiConfig.themes?.[name]?.slots
+  const globalSlots = uiConfig.components?.themes?.[name]?.slots
   const cache = new Map<string, Record<string, string>>()
 
   return (props?: Record<string, any>): Record<S, string> => {

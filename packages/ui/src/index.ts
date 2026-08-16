@@ -24,10 +24,7 @@ export const ui = ({ unocss, ...o }: UIConfig = {}): AstroIntegration[] => [
         void updateConfig({
           vite: {
             define: {
-              "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify({
-                ...o,
-                themes: o.components?.themes
-              })
+              "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(o)
             }
           }
         })
