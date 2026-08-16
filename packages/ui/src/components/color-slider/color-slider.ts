@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../index"
+import type { Theme, ThemeColor } from "../../types"
 
 export interface ColorSliderProps {
   channel: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"

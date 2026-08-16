@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../index"
+import type { Theme, ThemeColor } from "../../types"
 
 export interface CheckboxProps {
   /**

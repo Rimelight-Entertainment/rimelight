@@ -1,4 +1,4 @@
-import type { ThemeColor } from "../../index"
+import type { ThemeColor } from "../../types"
 
 export interface TabItem {
   label?: string

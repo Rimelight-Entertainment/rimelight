@@ -6,7 +6,7 @@ import {
   transformerVariantGroup,
   type Preset
 } from "unocss"
-import type { UIConfig } from "../index"
+import { colorNames, type UIConfig } from "../types"
 
 export const COLOR_SHADES = [
   "50",
@@ -69,23 +69,18 @@ export const colorScales = {
   )
 } as const
 
-export const colorNames = Object.keys(colorScales)
-
 export const getAllColorNames = (customColors?: Record<string, unknown>): readonly string[] =>
   customColors && Object.keys(customColors).length
     ? [...new Set([...colorNames, ...Object.keys(customColors)])]
     : colorNames
 
 type Shades = Record<string, string>
-type ModeEntry = { light?: Shades; dark?: Shades }
-
-const isMode = (v: unknown): v is ModeEntry =>
-  typeof v === "object" && v !== null && ("light" in v || "dark" in v)
 
 function resolveColorModes(entry: unknown): { light: Shades; dark: Shades } {
-  const mode = isMode(entry)
-  const mL = mode ? entry.light : (entry as Shades | undefined)
-  const mD = mode ? entry.dark : (entry as Shades | undefined)
+  const isMode =
+    typeof entry === "object" && entry !== null && ("light" in entry || "dark" in entry)
+  const mL = (isMode ? (entry as any).light : entry) as Shades | undefined
+  const mD = (isMode ? (entry as any).dark : entry) as Shades | undefined
   const base = (m: Shades | undefined) => m?.["500"] ?? Object.values(m ?? {})[0] ?? ""
   const [bL, bD] = [base(mL) || base(mD), base(mD) || base(mL)]
 

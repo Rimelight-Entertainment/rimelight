@@ -1,5 +1,5 @@
 import { DEFAULT_ICONS } from "../../icons/defaults"
-import { uiConfig } from "../../index"
+import { uiConfig } from "../../utils/resolver"
 
 export interface ResolvedIcon {
   isClass: boolean

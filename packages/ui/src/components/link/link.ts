@@ -1,4 +1,4 @@
-import type { Theme } from "../../index"
+import type { Theme } from "../../types"
 
 export interface LinkProps {
   /**
