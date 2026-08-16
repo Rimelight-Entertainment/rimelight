@@ -9,7 +9,6 @@ import {
 import {
   colorScales,
   getAllColorNames,
-  semanticTokens,
   COLOR_SHADES,
   type ColorShades,
   type ColorConfigValue,
@@ -68,12 +67,6 @@ const createScale = (c: string) => ({
   ...Object.fromEntries(COLOR_SHADES.map((s) => [s, `var(--color-${c}-${s})`]))
 })
 
-const STATIC_SEMANTIC_TOKEN_LINES = Object.entries(semanticTokens)
-  .map(([t, v]) => `  --${t}: light-dark(${v.light}, ${v.dark});`)
-  .join("\n")
-
-const SEMANTIC_TOKEN_KEYS = new Set(Object.keys(semanticTokens))
-
 const formatColorLines = (
   entries: Iterable<[string, { light?: Record<string, string>; dark?: Record<string, string> }]>
 ) =>
@@ -86,7 +79,7 @@ const formatColorLines = (
         return `  --color-${c}-${s}: light-dark(${l ?? d}, ${d ?? l});`
       })
       const l500 = m.light?.["500"] ?? m.dark?.["500"]
-      if (l500 && !SEMANTIC_TOKEN_KEYS.has(c)) {
+      if (l500) {
         lines.push(
           `  --${c}: light-dark(${l500}, ${m.dark?.["500"] ?? l500});`,
           `  --${c}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));`,
@@ -99,37 +92,17 @@ const formatColorLines = (
 
 const STATIC_BUILTIN_COLOR_LINES = formatColorLines(Object.entries(colorScales))
 
-const sv = (keys: string[], prefix = "") =>
-  Object.fromEntries(keys.map((k) => [k, `var(--${prefix}${k})`]))
-const svFg = (keys: string[]) =>
-  Object.fromEntries(
-    keys.map((k) => [k, { DEFAULT: `var(--${k})`, foreground: `var(--${k}-foreground)` }])
-  )
-
 const STATIC_THEME_COLORS = {
-  ...sv(["background", "foreground", "border", "input", "outline", "ring"]),
-  ...svFg(["card", "popover", "muted", "accent"]),
-  ...sv(
-    [
-      "hover",
-      "surface",
-      "muted-strong",
-      "foreground-secondary",
-      "foreground-tertiary",
-      "placeholder",
-      "input-border",
-      "accent-subtle"
-    ],
-    "color-"
-  ),
-  chart: Object.fromEntries([1, 2, 3, 4, 5].map((n) => [n, `var(--chart-${n})`])),
-  sidebar: {
-    DEFAULT: "var(--sidebar)",
-    foreground: "var(--sidebar-foreground)",
-    primary: { DEFAULT: "var(--sidebar-primary)", foreground: "var(--sidebar-primary-foreground)" },
-    accent: { DEFAULT: "var(--sidebar-accent)", foreground: "var(--sidebar-accent-foreground)" },
-    border: "var(--sidebar-border)",
-    ring: "var(--sidebar-ring)"
+  background: "var(--background)",
+  foreground: "var(--foreground)",
+  border: "var(--border)",
+  input: "var(--input)",
+  ring: "var(--ring)",
+  outline: "var(--outline)",
+  muted: { DEFAULT: "var(--background-color-muted)", foreground: "var(--text-color-muted)" },
+  accent: {
+    DEFAULT: "var(--background-color-accented)",
+    foreground: "var(--text-color-highlighted)"
   }
 }
 
@@ -170,6 +143,9 @@ const INTENT_REGEX = new RegExp(
 const STATIC_PREFLIGHT_SUFFIX = `
 }
 
+:root.dark, html.dark, .dark, [data-theme="dark"] { color-scheme: dark; }
+:root.light, html.light, .light, [data-theme="light"] { color-scheme: light; }
+
 @property --rl-contrast-color { syntax: "<color>"; initial-value: white; inherits: true; }
 
 .rl-theme-container {
@@ -199,7 +175,7 @@ body { background-color: var(--background); color: var(--foreground); font-famil
 `
 
 const buildPreflight = (extra = "") =>
-  `:root {\n  color-scheme: light dark;\n${STATIC_SEMANTIC_TOKEN_LINES}\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}${extra ? `\n${extra}` : ""}${STATIC_PREFLIGHT_SUFFIX}`
+  `:root {\n  color-scheme: light dark;\n  --background: light-dark(oklch(1 0 0), var(--color-neutral-50));\n  --foreground: var(--color-neutral-950);\n  --border: var(--border-color-default);\n  --input: var(--border-color-default);\n  --ring: var(--ring-color-default);\n  --outline: var(--ring-color-default);\n  --radius: 0.625rem;\n  --font-sans: "Noto Sans", sans-serif;\n  --font-serif: "Noto Serif", serif;\n  --font-mono: "Noto Sans Mono", monospace;\n  --ui-header-height: 4rem;\n  --rl-container: 90rem;\n${INTENT_PREFLIGHT_VARS}\n\n${STATIC_BUILTIN_COLOR_LINES}${extra ? `\n${extra}` : ""}${STATIC_PREFLIGHT_SUFFIX}`
 
 const THEME_SPACING = {
   "6xs": "0.125rem",

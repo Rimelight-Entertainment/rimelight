@@ -10,7 +10,7 @@ export const inputMenuTheme = defineTheme("input-menu", {
     input:
       "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-all placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
     content:
-      "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md transition-all w-full mt-1 max-h-60 overflow-y-auto",
+      "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-elevated p-1 text-foreground shadow-md transition-all w-full mt-1 max-h-60 overflow-y-auto",
     item: "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     itemText: "truncate",
     itemIcon: "ml-auto size-4"

@@ -159,8 +159,8 @@ const { stackIndex = 1 } = Astro.props;
         }}
       >
         <!-- Features Mega Menu -->
-        <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-[var(--card)] w-full">
-          <div class="bg-[var(--card)] flex flex-col lg:flex-row gap-lg p-lg flex-1">
+        <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
+          <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
             <RLAImage
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
               src={"https://cdn.rimelight.com/Images/placeholder.webp"}
@@ -173,7 +173,7 @@ const { stackIndex = 1 } = Astro.props;
             </div>
           </div>
 
-          <div class="bg-[var(--accent)] p-lg w-64 shrink-0">
+          <div class="bg-muted p-lg w-64 shrink-0">
             <RLALinkGroup {...resourcesLinkGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>

@@ -3,7 +3,7 @@ import { defineTheme } from "../../utils/resolver"
 export const chartTheme = defineTheme("chart", {
   slots: ["root", "title", "container", "svg", "axis", "bar", "line", "tooltip", "legend"],
   base: {
-    root: "flex flex-col gap-3 p-4 rounded-xl border border-border bg-card text-card-foreground shadow-sm",
+    root: "flex flex-col gap-3 p-4 rounded-xl border border-border bg-elevated text-foreground shadow-sm",
     title: "text-sm font-semibold tracking-tight text-foreground",
     container: "relative w-full aspect-video flex items-end justify-between",
     svg: "w-full h-full",
