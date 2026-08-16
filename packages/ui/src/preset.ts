@@ -43,7 +43,7 @@ const emit = (name: string, fn: (s: string) => string) =>
 
 const compilePalettes = (custom?: Record<string, ColorModeInput>) =>
   [
-    ...Object.entries(PALETTES as Record<string, readonly [number, number]>).map(([n, [c, h]]) =>
+    ...Object.entries(PALETTES).map(([n, [c, h]]) =>
       emit(n, (s) => {
         const [lL, cL, dL, dC] = SHADES[s]!
         return `light-dark(oklch(${lL} ${(cL * c).toFixed(3)} ${h}), oklch(${dL} ${(dC * c).toFixed(3)} ${h}))`
@@ -130,15 +130,15 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
         "3xl": "calc(var(--radius) + 1rem)"
       },
       colors: Object.fromEntries(
-        allColors.map((c) => [
-          c,
-          {
+        allColors.map((c) => {
+          const col: Record<string, string> = {
             DEFAULT: `var(--${c})`,
             foreground: `var(--${c}-foreground)`,
-            accent: `var(--${c}-accent)`,
-            ...Object.fromEntries(shades.map((s) => [s, `var(--color-${c}-${s})`]))
+            accent: `var(--${c}-accent)`
           }
-        ])
+          for (const s of shades) col[s] = `var(--color-${c}-${s})`
+          return [c, col]
+        })
       )
     },
     preflights: [

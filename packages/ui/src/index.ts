@@ -16,12 +16,7 @@ export const ui = (config: UIConfig = {}): AstroIntegration[] => [
       ...config.unocss?.content,
       pipeline: config.unocss?.content?.pipeline !== false && {
         ...config.unocss?.content?.pipeline,
-        include: [
-          ...INCLUDES,
-          ...(config.unocss?.content?.pipeline?.include
-            ? [config.unocss.content.pipeline.include].flat()
-            : [])
-        ]
+        include: [...INCLUDES, ...[config.unocss?.content?.pipeline?.include ?? []].flat()]
       }
     }
   }),
