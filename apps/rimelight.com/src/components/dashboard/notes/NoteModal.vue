@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch, onMounted, onUnmounted } from "vue"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
-import { useRC } from "@/composables"
 
 export interface Label {
   id: string
@@ -27,23 +26,9 @@ export interface Note {
 /* region Props */
 export interface NoteModalProps {
   note?: Note | null
-  rc?: {
-    root?: string
-    contentWrapper?: string
-    mainContent?: string
-    titleInput?: string
-    labelBadgeList?: string
-    contentText?: string
-    sideActions?: string
-    footerWrapper?: string
-    labelActionWrapper?: string
-    statusWrapper?: string
-    statusText?: string
-  }
 }
 
-const { note, rc: rcProp } = defineProps<NoteModalProps>()
-const { rc } = useRC("NoteModal", rcProp)
+const { note } = defineProps<NoteModalProps>()
 /* endregion */
 
 /* region Emits */
@@ -89,14 +74,7 @@ const noteModalStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = noteModalStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = noteModalStyles()
 /* endregion */
 
 /* region State */

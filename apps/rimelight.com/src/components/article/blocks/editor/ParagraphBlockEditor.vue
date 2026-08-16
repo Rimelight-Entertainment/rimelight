@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, inject, computed, nextTick } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { ref, watch, onMounted, inject, nextTick } from "vue"
+import { scv } from "css-variants"
 import type { ParagraphBlockProps, RichTextContent } from "@/types/blocks"
 import { richTextToHtml, parseHtmlToRichText } from "@/utils/richTextHelpers"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
@@ -9,15 +8,9 @@ import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 /* region Props */
 export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
   id: string
-  rc?: {
-    root?: string
-    toolbar?: string
-  }
 }
 
-const { id, text, rc: rcProp } = defineProps<ParagraphBlockEditorProps>()
-
-const { rc } = useRC("ParagraphBlockEditor", rcProp)
+const { id, text } = defineProps<ParagraphBlockEditorProps>()
 /* endregion */
 
 /* region Emits */
@@ -33,17 +26,7 @@ const paragraphBlockEditorStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = paragraphBlockEditorStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as {
-    root: string
-    toolbar: string
-  }
-})
+const styles = paragraphBlockEditorStyles()
 /* endregion */
 
 /* region State */

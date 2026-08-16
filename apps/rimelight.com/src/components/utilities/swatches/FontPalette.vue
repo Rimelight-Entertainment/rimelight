@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import chroma from "chroma-js"
-import { useRC } from "@/composables"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 
 /* region Props */
 export interface FontData {
@@ -20,19 +19,12 @@ export interface ColorData {
 }
 
 export interface FontPaletteProps {
-  css?: string /**   * UI custom classes   */
-  rc?: {
-    root?: string
-    section?: string
-    title?: string
-    grid?: string
-  }
+  css?: string
   t?: (key: string) => string
 }
 
 const {
   css = "",
-  rc: rcProp,
   t = (key: string) => {
     const map: Record<string, string> = {
       "font_palette.heading_1": "Heading 1",
@@ -52,8 +44,6 @@ const {
     return map[key] || key
   }
 } = defineProps<FontPaletteProps>()
-
-const { rc } = useRC("FontPalette", rcProp)
 /* endregion */
 
 /* region Emits */
@@ -123,14 +113,7 @@ const fontPaletteStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = fontPaletteStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = fontPaletteStyles()
 /* endregion */
 
 /* region State */

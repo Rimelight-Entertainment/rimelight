@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref, watch } from "vue"
 import type { SectionBlockProps } from "@/types/blocks"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
 import BlockEditor from "../BlockEditor.vue"
 import Section from "../../../content/Section.vue"
@@ -12,24 +11,10 @@ import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 /* region Props */
 export interface SectionBlockEditorProps extends SectionBlockProps {
   id: string
-  rc?: {
-    root?: string
-    headerContainer?: string
-    titleInput?: string
-  }
 }
 
-const {
-  id,
-  rc: rcProp,
-  title,
-  description,
-  mainArticleSlug,
-  children,
-  level
-} = defineProps<SectionBlockEditorProps>()
-
-const { rc } = useRC("SectionBlockEditor", rcProp)
+const { id, title, description, mainArticleSlug, children, level } =
+  defineProps<SectionBlockEditorProps>()
 /* endregion */
 
 /* region Styles */
@@ -43,14 +28,7 @@ const sectionBlockEditorStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = sectionBlockEditorStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = sectionBlockEditorStyles()
 /* endregion */
 
 /* region State */

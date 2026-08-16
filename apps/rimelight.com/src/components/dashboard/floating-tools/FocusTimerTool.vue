@@ -1,23 +1,13 @@
 <script setup lang="ts">
-import { computed, watch } from "vue"
-import { scv, cx } from "css-variants"
+import { watch } from "vue"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVProgress from "@rimelight/ui/components/progress/RLVProgress.vue"
-import { useRC, useFocusTimer, useToast } from "@/composables"
+import { useFocusTimer, useToast } from "@/composables"
 
 /* region Props */
-export interface FocusTimerToolProps {
-  rc?: {
-    root?: string
-    timerDisplay?: string
-    timeValue?: string
-    modeLabel?: string
-    controls?: string
-  }
-}
-
-const { rc: rcProp } = defineProps<FocusTimerToolProps>()
-const { rc } = useRC("FocusTimerTool", rcProp)
+export interface FocusTimerToolProps {}
+defineProps<FocusTimerToolProps>()
 /* endregion */
 
 /* region Emits */
@@ -43,14 +33,7 @@ const focusTimerToolStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = focusTimerToolStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = focusTimerToolStyles()
 /* endregion */
 
 /* region State */

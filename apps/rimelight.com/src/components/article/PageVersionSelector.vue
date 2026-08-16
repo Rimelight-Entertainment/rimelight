@@ -1,29 +1,30 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue"
-import { useRC, useToast } from "@/composables"
+import { useToast } from "@/composables"
 import { t } from "@rimelight/i18n"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import type { PageVersion } from "@/types/pages"
-import RLVButton from "@rimelight/ui/components/button/RLVButton.vue" /* region Props */
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+
+/* region Props */
 export interface PageVersionSelectorProps {
   pageId: string
   isAdmin?: boolean
-  rc?: {
-    root?: string
-    button?: string
-    popover?: string
-    versionItem?: string
-  }
 }
-const { pageId, isAdmin = false, rc: rcProp } = defineProps<PageVersionSelectorProps>()
-const { rc } = useRC("PageVersionSelector", rcProp) /* endregion */ /* region Emits */
+const { pageId, isAdmin = false } = defineProps<PageVersionSelectorProps>()
+/* endregion */
+
+/* region Emits */
 export interface PageVersionSelectorEmits {
   "version-selected": [version: PageVersion]
   "version-approved": [version: PageVersion]
   "version-rejected": [version: PageVersion]
   "version-reverted": [version: PageVersion]
 }
-const emit = defineEmits<PageVersionSelectorEmits>() /* endregion */ /* region Styles */
+const emit = defineEmits<PageVersionSelectorEmits>()
+/* endregion */
+
+/* region Styles */
 const pageVersionSelectorStyles = scv({
   slots: {
     root: "relative inline-block text-left",
@@ -54,14 +55,11 @@ const pageVersionSelectorStyles = scv({
     pendingText: "text-xs text-dimmed"
   }
 })
-const styles = computed(() => {
-  const resolved = pageVersionSelectorStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-}) /* endregion */ /* region State */
+
+const styles = pageVersionSelectorStyles()
+/* endregion */
+
+/* region State */
 const selectedVersionId = defineModel<string | null>("currentVersionId", { default: null })
 const versions = ref<PageVersion[]>([])
 const isLoading = ref(false)
@@ -309,7 +307,7 @@ defineOptions({ name: "PageVersionSelector" }) /* endregion */
             @click="selectVersion(version)"
           >
             <div :class="styles.versionEntryWrapper">
-              <div :class="styles.versionEntryContent()">
+              <div :class="styles.versionEntryContent">
                 <div :class="styles.versionEntryHeader">
                   <span
                     class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"

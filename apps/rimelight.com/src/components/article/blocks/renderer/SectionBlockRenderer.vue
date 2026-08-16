@@ -1,25 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { SectionBlockProps } from "@/types/blocks"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import BlockViewRenderer from "../BlockViewRenderer.vue"
 
 /* region Props */
-export interface SectionBlockRendererProps extends SectionBlockProps {
-  rc?: {
-    root?: string
-  }
-}
+export interface SectionBlockRendererProps extends SectionBlockProps {}
 
-const {
-  level = 2,
-  title,
-  description,
-  children = [],
-  rc: rcProp
-} = defineProps<SectionBlockRendererProps>()
-const { rc } = useRC("SectionBlockRenderer", rcProp)
+const { level = 2, title, description, children = [] } = defineProps<SectionBlockRendererProps>()
 /* endregion */
 
 /* region Styles */
@@ -29,14 +17,7 @@ const sectionBlockRendererStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = sectionBlockRendererStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = sectionBlockRendererStyles()
 /* endregion */
 
 /* region State */

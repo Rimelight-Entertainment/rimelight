@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { t } from "@rimelight/i18n"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
@@ -14,17 +12,6 @@ export interface PageSurroundProps {
   nextTitle?: string
   nextDescription?: string
   nextTo?: string
-  rc?: {
-    grid?: string
-    card?: string
-    cardContent?: string
-    headingGroup?: string
-    button?: string
-    typeLabel?: string
-    infoGroup?: string
-    title?: string
-    description?: string
-  }
 }
 
 const {
@@ -34,11 +21,8 @@ const {
   previousTo,
   nextTitle,
   nextDescription,
-  nextTo,
-  rc: rcProp
+  nextTo
 } = defineProps<PageSurroundProps>()
-
-const { rc } = useRC("PageSurround", rcProp)
 /* endregion */
 
 /* region Styles */
@@ -62,17 +46,7 @@ const pageSurroundStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = pageSurroundStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
-/* endregion */
-
-/* region State */
+const styles = pageSurroundStyles()
 /* endregion */
 
 /* region Meta */

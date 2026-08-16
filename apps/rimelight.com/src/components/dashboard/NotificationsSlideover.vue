@@ -1,25 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue"
+import { ref, onMounted } from "vue"
 import type { Notification } from "@/types"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import { useRC, useDashboard } from "@/composables"
+import { useDashboard } from "@/composables"
 
 /* region Props */
-export interface NotificationsSlideoverProps {
-  rc?: {
-    root?: string
-    notificationItem?: string
-    notificationContent?: string
-    notificationHeader?: string
-    senderName?: string
-    timestamp?: string
-    notificationBody?: string
-  }
-}
-
-const { rc: rcProp } = defineProps<NotificationsSlideoverProps>()
-const { rc } = useRC("NotificationsSlideover", rcProp)
+export interface NotificationsSlideoverProps {}
+defineProps<NotificationsSlideoverProps>()
 /* endregion */
 
 /* region Emits */
@@ -55,14 +43,7 @@ const notificationsSlideoverStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = notificationsSlideoverStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = notificationsSlideoverStyles()
 /* endregion */
 
 /* region State */

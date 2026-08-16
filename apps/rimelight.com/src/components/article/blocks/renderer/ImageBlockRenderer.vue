@@ -1,21 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue"
 import type { ImageBlockProps } from "@/types/blocks"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 
 /* region Props */
-export interface ImageBlockRendererProps extends ImageBlockProps {
-  rc?: {
-    root?: string
-    image?: string
-    caption?: string
-  }
-}
+export interface ImageBlockRendererProps extends ImageBlockProps {}
 
-const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockRendererProps>()
-
-const { rc } = useRC("ImageBlockRenderer", rcProp)
+const { src, alt, caption } = defineProps<ImageBlockRendererProps>()
 /* endregion */
 
 /* region Styles */
@@ -27,18 +17,7 @@ const imageBlockRendererStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = imageBlockRendererStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as {
-    root: string
-    image: string
-    captionClass: string
-  }
-})
+const styles = imageBlockRendererStyles()
 /* endregion */
 
 defineOptions({ name: "ImageBlockRenderer" })

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { siteConfig } from "@/config/site.config"
 
 /* region Props */
@@ -13,21 +12,18 @@ export type CalloutVariant =
   | "commentary"
   | "ideation"
   | "source"
+
 export interface CalloutProps {
   variant: CalloutVariant
   to?: string
   target?: string
-  rc?: {
-    icon?: string
-    tooltipIcon?: string
-  }
   t?: (key: string) => string
 }
+
 const {
   variant,
   to,
   target,
-  rc: rcProp,
   t = (key: string) => {
     const map: Record<string, string> = {
       "callout.info": "Info",
@@ -41,14 +37,22 @@ const {
     return map[key] || key
   }
 } = defineProps<CalloutProps>()
-const { rc } = useRC("Callout", rcProp) /* endregion */ /* region Emits */
+/* endregion */
+
+/* region Emits */
 export interface CalloutEmits {}
-defineEmits<CalloutEmits>() /* endregion */ /* region Slots */
+defineEmits<CalloutEmits>()
+/* endregion */
+
+/* region Slots */
 export interface CalloutSlots {
   default: (props: {}) => any
   leading: (props: { icon: string; iconClass: string }) => any
 }
-defineSlots<CalloutSlots>() /* endregion */ /* region Styles */
+defineSlots<CalloutSlots>()
+/* endregion */
+
+/* region Styles */
 const calloutStyles = scv({
   slots: ["root", "iconClass", "tooltipIcon", "titleClass", "descriptionClass"],
   base: {
@@ -84,14 +88,11 @@ const calloutStyles = scv({
     }
   }
 })
-const styles = computed(() => {
-  const resolved = calloutStyles({ variant })
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-}) /* endregion */ /* region State */
+
+const styles = computed(() => calloutStyles({ variant }))
+/* endregion */
+
+/* region State */
 const config = computed(() => {
   return (
     (siteConfig.ui as any)?.callouts?.[variant] ?? {
@@ -101,6 +102,7 @@ const config = computed(() => {
     }
   )
 })
+
 // Map standard lucide format to UnoCSS syntax
 const icon = computed(() => {
   const raw = config.value.icon
@@ -109,9 +111,11 @@ const icon = computed(() => {
   }
   return raw
 })
+
 const title = computed(() => config.value.title)
 const tooltip = computed(() => config.value.tooltip)
 /* endregion */
+
 /* region Meta */
 defineOptions({
   name: "RLCallout"
@@ -121,8 +125,8 @@ defineOptions({
 
 <template>
   <component :is="to ? 'a' : 'div'" :href="to" :target="target" :class="styles.root">
-    <slot name="leading" :icon="icon" :icon-class="cx(styles.iconClass, rc.icon)">
-      <span :class="[icon, styles.iconClass, rc.icon]" aria-hidden="true" />
+    <slot name="leading" :icon="icon" :icon-class="styles.iconClass">
+      <span :class="[icon, styles.iconClass]" aria-hidden="true" />
     </slot>
     <div class="flex-1">
       <h4 :class="styles.titleClass">{{ t(title) }}</h4>
@@ -132,7 +136,7 @@ defineOptions({
     </div>
     <div v-if="tooltip" class="self-start">
       <span
-        :class="['i-lucide-circle-help', styles.tooltipIcon, rc.tooltipIcon]"
+        :class="['i-lucide-circle-help', styles.tooltipIcon]"
         :title="t(tooltip)"
         aria-hidden="true"
       />

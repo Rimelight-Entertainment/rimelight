@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import chroma from "chroma-js"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import ColorSwatch from "./ColorSwatch.vue"
 
 /* region Props */
@@ -23,18 +22,10 @@ export interface PaletteTab {
 }
 
 export interface ColorPaletteProps {
-  css?: string /**   * UI custom classes   */
-  rc?: {
-    root?: string
-    section?: string
-    title?: string
-    grid?: string
-    swatch?: string
-  }
+  css?: string
 }
 
-const { css = "", rc: rcProp } = defineProps<ColorPaletteProps>()
-const { rc } = useRC("ColorPalette", rcProp)
+const { css = "" } = defineProps<ColorPaletteProps>()
 /* endregion */
 
 /* region Emits */
@@ -62,14 +53,7 @@ const colorPaletteStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = colorPaletteStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = colorPaletteStyles()
 /* endregion */
 
 /* region State */
@@ -259,7 +243,6 @@ function isSectionOpen(label: string) {
                   v-for="swatch in subSection.swatches"
                   :key="swatch.name"
                   v-bind="getSwatchProps(swatch)"
-                  :class="rc.swatch"
                 />
               </div>
             </div>

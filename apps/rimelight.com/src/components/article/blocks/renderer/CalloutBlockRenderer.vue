@@ -1,27 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { CalloutBlockProps } from "@/types/blocks"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import BlockViewRenderer from "../BlockViewRenderer.vue"
 
 /* region Props */
-export interface CalloutBlockRendererProps extends CalloutBlockProps {
-  rc?: {
-    root?: string
-    icon?: string
-  }
-}
+export interface CalloutBlockRendererProps extends CalloutBlockProps {}
 
-const {
-  variant = "info",
-  children = [],
-  to,
-  target,
-  rc: rcProp
-} = defineProps<CalloutBlockRendererProps>()
-
-const { rc } = useRC("CalloutBlockRenderer", rcProp)
+const { variant = "info", children = [], to, target } = defineProps<CalloutBlockRendererProps>()
 /* endregion */
 
 /* region Styles */
@@ -33,18 +19,7 @@ const calloutBlockRendererStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = calloutBlockRendererStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as {
-    root: string
-    iconClass: string
-    content: string
-  }
-})
+const styles = calloutBlockRendererStyles()
 /* endregion */
 
 /* region State */
@@ -104,7 +79,6 @@ const currentConfig = computed(() => {
   return variantConfigs[variant] || variantConfigs.info
 })
 
-const isLink = computed(() => !!to)
 const Tag = computed(() => (to ? "a" : "div"))
 /* endregion */
 

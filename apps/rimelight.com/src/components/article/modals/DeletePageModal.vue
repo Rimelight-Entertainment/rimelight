@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue"
+import { ref, watch } from "vue"
 import { t } from "@rimelight/i18n"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
@@ -11,17 +10,9 @@ import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 export interface DeletePageModalProps {
   loading?: boolean
   pageTitle: string
-  rc?: {
-    header?: string
-    headerTitle?: string
-    closeButton?: string
-    body?: string
-    footer?: string
-  }
 }
 
-const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>()
-const { rc } = useRC("DeletePageModal", rcProp)
+const { loading, pageTitle } = defineProps<DeletePageModalProps>()
 /* endregion */
 
 /* region Emits */
@@ -43,14 +34,7 @@ const deletePageModalStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = deletePageModalStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = deletePageModalStyles()
 /* endregion */
 
 /* region State */

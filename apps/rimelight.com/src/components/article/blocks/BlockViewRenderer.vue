@@ -1,21 +1,15 @@
 <script setup lang="ts">
-import { defineAsyncComponent, computed } from "vue"
-import { scv, cx } from "css-variants"
+import { defineAsyncComponent } from "vue"
+import { scv } from "css-variants"
 import type { Block } from "@/types/blocks"
-import { useRC } from "@/composables"
 import { BLOCK_RENDERER_COMPONENT_MAP } from "@/generated/blockRendererMap"
 
 /* region Props */
 export interface BlockViewRendererProps {
   blocks: Block[]
-  rc?: {
-    root?: string
-  }
 }
 
-const { blocks, rc: rcProp } = defineProps<BlockViewRendererProps>()
-
-const { rc } = useRC("BlockViewRenderer", rcProp)
+const { blocks } = defineProps<BlockViewRendererProps>()
 /* endregion */
 
 /* region Styles */
@@ -23,14 +17,7 @@ const blockViewRendererStyles = scv({
   slots: { root: "flex flex-col gap-lg w-full" }
 })
 
-const styles = computed(() => {
-  const resolved = blockViewRendererStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = blockViewRendererStyles()
 /* endregion */
 
 /* region Logic */

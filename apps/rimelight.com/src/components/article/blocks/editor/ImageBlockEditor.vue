@@ -1,25 +1,14 @@
 <script setup lang="ts">
 import { ref, watch, computed, onUnmounted } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import type { ImageBlockProps } from "@/types/blocks"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 
 /* region Props */
-export interface ImageBlockEditorProps extends ImageBlockProps {
-  rc?: {
-    root?: string
-    upload?: string
-    previewContainer?: string
-    previewImage?: string
-    emptyPreview?: string
-  }
-}
+export interface ImageBlockEditorProps extends ImageBlockProps {}
 
-const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockEditorProps>()
-
-const { rc } = useRC("ImageBlockEditor", rcProp)
+const { src, alt, caption } = defineProps<ImageBlockEditorProps>()
 /* endregion */
 
 /* region Emits */
@@ -45,20 +34,7 @@ const imageBlockEditorStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = imageBlockEditorStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as {
-    root: string
-    upload: string
-    previewContainer: string
-    previewImage: string
-    emptyPreview: string
-  }
-})
+const styles = imageBlockEditorStyles()
 /* endregion */
 
 /* region State */

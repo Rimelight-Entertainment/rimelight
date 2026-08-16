@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, reactive } from "vue"
 import type { Page, Link } from "@/types/pages"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { t } from "@rimelight/i18n"
 import { getLocalizedContent } from "@/utils/page"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
@@ -11,24 +10,10 @@ import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 
 /* region Props */
 export interface PagePropertiesEditorProps {
-  rc?: {
-    aside?: string
-    icon?: string
-    titleInput?: string
-    type?: string
-    tags?: string
-    tabs?: string
-    image?: string
-    groupButton?: string
-    details?: string
-    field?: string
-    links?: string
-  }
   onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>
 }
 
-const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>()
-const { rc } = useRC("PagePropertiesEditor", rcProp)
+const { onFetchPages } = defineProps<PagePropertiesEditorProps>()
 /* endregion */
 
 /* region Styles */
@@ -68,14 +53,7 @@ const pagePropertiesEditorStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = pagePropertiesEditorStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = pagePropertiesEditorStyles()
 /* endregion */
 
 /* region State */

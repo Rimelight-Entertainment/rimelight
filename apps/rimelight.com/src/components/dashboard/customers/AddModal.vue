@@ -1,24 +1,16 @@
 <script setup lang="ts">
 import { z } from "astro/zod"
-import { ref, reactive, computed } from "vue"
-import { scv, cx } from "css-variants"
+import { ref, reactive } from "vue"
+import { scv } from "css-variants"
 import RLVForm from "@rimelight/ui/components/form/RLVForm.vue"
 import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import { useRC, useToast } from "@/composables"
+import { useToast } from "@/composables"
 
 /* region Props */
-export interface AddModalProps {
-  rc?: {
-    root?: string
-    form?: string
-    actions?: string
-  }
-}
-
-const { rc: rcProp } = defineProps<AddModalProps>()
-const { rc } = useRC("AddModal", rcProp)
+export interface AddModalProps {}
+defineProps<AddModalProps>()
 /* endregion */
 
 /* region Emits */
@@ -41,14 +33,7 @@ const addModalStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = addModalStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = addModalStyles()
 /* endregion */
 
 /* region State */

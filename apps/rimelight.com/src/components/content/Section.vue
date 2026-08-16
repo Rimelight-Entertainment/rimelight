@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, provide, useAttrs } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
 import { addToast } from "@rimelight/ui/components/toast/store"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
@@ -13,23 +12,8 @@ export interface SectionProps {
   title: string
   description?: string
   isEditing?: boolean
-  rc?: {
-    section?: string
-    link?: string
-    title?: string
-    description?: string
-    separator?: string
-    content?: string
-  }
 }
-const {
-  level: levelProp,
-  title,
-  description,
-  isEditing = false,
-  rc: rcProp
-} = defineProps<SectionProps>()
-const { rc } = useRC("Section", rcProp)
+const { level: levelProp, title, description, isEditing = false } = defineProps<SectionProps>()
 /* endregion */
 
 /* region Emits */
@@ -92,12 +76,7 @@ const resolvedLevel = computed(() => levelProp ?? Math.min(6, parentLevel.value 
 provide(SECTION_LEVEL_KEY, resolvedLevel)
 
 const styles = computed(() => {
-  const resolved = sectionStyles({ level: resolvedLevel.value as SectionLevel })
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
+  return sectionStyles({ level: resolvedLevel.value as SectionLevel })
 })
 /* endregion */
 

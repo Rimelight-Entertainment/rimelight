@@ -1,33 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, inject } from "vue"
 import { BLOCK_DEFINITIONS, CATEGORY_ORDER, type BlockDefinition } from "@/utils/blocks"
-import { useRC } from "@/composables"
 import { t } from "@rimelight/i18n"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import { SECTION_LEVEL_KEY } from "@/composables/pages/injectionKeys"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 
 /* region Props */
-export interface AddBlockModalProps {
-  rc?: {
-    header?: string
-    headerTitle?: string
-    closeButton?: string
-    body?: string
-    search?: string
-    categoryList?: string
-    categoryHeader?: string
-    blockGrid?: string
-    blockItem?: string
-    blockIcon?: string
-    blockLabel?: string
-    blockDescription?: string
-    footer?: string
-  }
-}
-const { rc: rcProp } = defineProps<AddBlockModalProps>()
-const { rc } = useRC("AddBlockModal", rcProp)
+export interface AddBlockModalProps {}
+defineProps<AddBlockModalProps>()
 /* endregion */
 
 /* region Emits */
@@ -60,14 +42,7 @@ const addBlockModalStyles = scv({
     emptyState: "flex flex-col items-center justify-center py-12 text-center"
   }
 })
-const styles = computed(() => {
-  const resolved = addBlockModalStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = addBlockModalStyles()
 /* endregion */
 
 /* region State */

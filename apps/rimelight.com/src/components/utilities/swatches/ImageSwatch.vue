@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
@@ -11,14 +10,6 @@ export interface ImageSwatchProps {
   png?: string
   webp?: string
   svg?: string
-  rc?: {
-    card?: string
-    title?: string
-    content?: string
-    image?: string
-    buttonGroup?: string
-    button?: string
-  }
   t?: (key: string) => string
 }
 
@@ -28,7 +19,6 @@ const {
   png,
   webp,
   svg,
-  rc: rcProp,
   t = (key: string) => {
     const map: Record<string, string> = {
       "swatch.download_jpg": "Download JPG",
@@ -39,8 +29,6 @@ const {
     return map[key] || key
   }
 } = defineProps<ImageSwatchProps>()
-
-const { rc } = useRC("ImageSwatch", rcProp)
 /* endregion */
 
 /* region Emits */
@@ -66,14 +54,7 @@ const imageSwatchStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = imageSwatchStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = imageSwatchStyles()
 /* endregion */
 
 /* region State */
@@ -98,7 +79,7 @@ const image = computed(() => {
       <h3 :class="styles.title">{{ name }}</h3>
     </div>
     <div :class="styles.content">
-      <img :src="image" :class="[styles.imageClass, rc.image]" :alt="name || ''" />
+      <img :src="image" :class="styles.imageClass" :alt="name || ''" />
       <div :class="styles.buttonGroup">
         <RLVButton
           v-if="jpg"

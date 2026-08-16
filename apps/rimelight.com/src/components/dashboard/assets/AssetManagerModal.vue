@@ -1,22 +1,18 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from "vue"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
 import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
-import { useRC, useAssetManagement, useAuth, useToast } from "@/composables"
+import { useAssetManagement, useAuth, useToast } from "@/composables"
 
 /* region Props */
 export interface AssetManagerModalProps {
-  rc?: {
-    root?: string
-  }
   selectionMode?: boolean
 }
 
-const { rc: rcProp, selectionMode = false } = defineProps<AssetManagerModalProps>()
-const { rc } = useRC("AssetManagerModal", rcProp)
+const { selectionMode = false } = defineProps<AssetManagerModalProps>()
 const toast = useToast()
 
 const t = (key: string, data?: any) => {
@@ -122,14 +118,7 @@ const assetManagerStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = assetManagerStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = assetManagerStyles()
 /* endregion */
 
 /* region State */

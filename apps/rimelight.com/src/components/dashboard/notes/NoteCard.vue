@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import { scv, cx } from "css-variants"
+import { ref } from "vue"
+import { scv } from "css-variants"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import { useRC } from "@/composables"
 
 export interface Label {
   id: string
@@ -26,22 +25,9 @@ export interface Note {
 /* region Props */
 export interface NoteCardProps {
   note: Note
-  rc?: {
-    root?: string
-    cardClass?: string
-    contentWrapper?: string
-    titleClass?: string
-    bodyClass?: string
-    labelWrapper?: string
-    labelBadge?: string
-    selectionWrapper?: string
-    actionsWrapper?: string
-    pinButton?: string
-  }
 }
 
-const { note, rc: rcProp } = defineProps<NoteCardProps>()
-const { rc } = useRC("NoteCard", rcProp)
+const { note } = defineProps<NoteCardProps>()
 /* endregion */
 
 /* region Emits */
@@ -86,14 +72,7 @@ const noteCardStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = noteCardStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = noteCardStyles()
 /* endregion */
 
 /* region State */

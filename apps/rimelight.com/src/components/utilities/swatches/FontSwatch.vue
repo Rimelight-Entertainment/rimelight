@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
@@ -11,14 +10,6 @@ export interface FontSwatchProps {
   png?: string
   webp?: string
   svg?: string
-  rc?: {
-    card?: string
-    title?: string
-    content?: string
-    actions?: string
-    buttonGroup?: string
-    button?: string
-  }
   t?: (key: string) => string
 }
 
@@ -28,7 +19,6 @@ const {
   png,
   webp,
   svg,
-  rc: rcProp,
   t = (key: string) => {
     const map: Record<string, string> = {
       "swatch.download_jpg": "Download JPG",
@@ -39,8 +29,6 @@ const {
     return map[key] || key
   }
 } = defineProps<FontSwatchProps>()
-
-const { rc } = useRC("FontSwatch", rcProp)
 /* endregion */
 
 /* region Emits */
@@ -67,14 +55,7 @@ const fontSwatchStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = fontSwatchStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = fontSwatchStyles()
 /* endregion */
 
 /* region State */

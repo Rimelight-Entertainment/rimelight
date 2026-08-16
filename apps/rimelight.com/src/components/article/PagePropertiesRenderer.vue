@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import type { Page } from "@/types/pages"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
-import { t } from "@rimelight/i18n"
+import { scv } from "css-variants"
 import { getLocalizedContent } from "@/utils/page"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import PageMention from "./PageMention.vue"
@@ -12,31 +10,9 @@ import PageMention from "./PageMention.vue"
 export interface PagePropertiesRendererProps {
   canEdit?: boolean
   editUrl?: string
-  rc?: {
-    aside?: string
-    actions?: string
-    icon?: string
-    title?: string
-    type?: string
-    tags?: string
-    tabs?: string
-    image?: string
-    groupButton?: string
-    details?: string
-    field?: string
-    fieldLabel?: string
-    fieldValue?: string
-    list?: string
-    listItem?: string
-    pageArrayList?: string
-    pageArrayItem?: string
-    pageArrayBullet?: string
-    links?: string
-  }
 }
 
-const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>()
-const { rc } = useRC("PagePropertiesRenderer", rcProp)
+const { canEdit = false, editUrl } = defineProps<PagePropertiesRendererProps>()
 /* endregion */
 
 /* region Styles */
@@ -70,14 +46,7 @@ const pagePropertiesRendererStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = pagePropertiesRendererStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = pagePropertiesRendererStyles()
 /* endregion */
 
 /* region State */

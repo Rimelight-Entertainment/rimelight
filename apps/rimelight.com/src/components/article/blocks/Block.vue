@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import { inject, ref, computed } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
 export interface BlockProps {
   id: string
   type: string
-  rc?: {
-    root?: string
-    menuContainer?: string
-  }
 }
-const { id, type, rc: rcProp } = defineProps<BlockProps>()
-const { rc } = useRC("Block", rcProp)
+const { id, type } = defineProps<BlockProps>()
 /* endregion */
 
 /* region Styles */
@@ -26,14 +20,7 @@ const blockStyles = scv({
     dragHandle: "drag-handle cursor-grab active:cursor-grabbing"
   }
 })
-const styles = computed(() => {
-  const resolved = blockStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = blockStyles()
 /* endregion */
 
 /* region State */

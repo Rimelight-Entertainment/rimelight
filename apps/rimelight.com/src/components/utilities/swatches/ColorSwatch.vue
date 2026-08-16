@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { addToast } from "@rimelight/ui/components/toast/store"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 
 /* region Props */
@@ -14,15 +13,6 @@ export interface ColorSwatchProps {
   oklch?: string
   cmyk?: string
   textColor?: string
-  rc?: {
-    card?: string
-    title?: string
-    content?: string
-    preview?: string
-    details?: string
-    buttonGroup?: string
-    button?: string
-  }
   t?: (key: string) => string
 }
 
@@ -34,7 +24,6 @@ const {
   oklch,
   cmyk,
   textColor,
-  rc: rcProp,
   t = (key: string) => {
     const map: Record<string, string> = {
       "swatch.color_copied": "Color copied!",
@@ -49,8 +38,6 @@ const {
     return map[key] || key
   }
 } = defineProps<ColorSwatchProps>()
-
-const { rc } = useRC("ColorSwatch", rcProp)
 /* endregion */
 
 /* region Emits */
@@ -78,14 +65,7 @@ const colorSwatchStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = colorSwatchStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = colorSwatchStyles()
 /* endregion */
 
 /* region State */

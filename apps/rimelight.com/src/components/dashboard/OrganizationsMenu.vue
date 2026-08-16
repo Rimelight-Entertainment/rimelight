@@ -1,22 +1,16 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, computed } from "vue"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import { useRC, useDashboard } from "@/composables"
+import { useDashboard } from "@/composables"
 import { authClient } from "@/auth/auth-client"
 
 /* region Props */
 export interface OrganizationsMenuProps {
   collapsed?: boolean
-  rc?: {
-    root?: string
-    triggerButton?: string
-    buttonTrailing?: string
-  }
 }
 
-const { collapsed = false, rc: rcProp } = defineProps<OrganizationsMenuProps>()
-const { rc } = useRC("OrganizationsMenu", rcProp)
+const { collapsed = false } = defineProps<OrganizationsMenuProps>()
 /* endregion */
 
 /* region Emits */
@@ -34,14 +28,7 @@ const organizationsMenuStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = organizationsMenuStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = organizationsMenuStyles()
 /* endregion */
 
 /* region State */

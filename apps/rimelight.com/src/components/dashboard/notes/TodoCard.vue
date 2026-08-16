@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import { useRC } from "@/composables"
 
 export interface Todo {
   id: string
@@ -16,20 +15,9 @@ export interface Todo {
 /* region Props */
 export interface TodoCardProps {
   todo: Todo
-  rc?: {
-    root?: string
-    contentWrapper?: string
-    checkWrapper?: string
-    checkIcon?: string
-    textWrapper?: string
-    titleClass?: string
-    descriptionClass?: string
-    actionsWrapper?: string
-  }
 }
 
-const { todo, rc: rcProp } = defineProps<TodoCardProps>()
-const { rc } = useRC("TodoCard", rcProp)
+const { todo } = defineProps<TodoCardProps>()
 /* endregion */
 
 /* region Emits */
@@ -78,15 +66,10 @@ const todoCardStyles = scv({
 })
 
 const styles = computed(() => {
-  const resolved = todoCardStyles({
+  return todoCardStyles({
     isArchived: todo.isArchived,
     completed: todo.completed
   })
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
 })
 /* endregion */
 

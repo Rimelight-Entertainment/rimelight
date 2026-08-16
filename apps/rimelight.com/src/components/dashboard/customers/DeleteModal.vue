@@ -1,20 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import { scv, cx } from "css-variants"
+import { ref } from "vue"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import { useRC } from "@/composables"
 
 /* region Props */
 export interface DeleteModalProps {
   count?: number
-  rc?: {
-    root?: string
-    actions?: string
-  }
 }
 
-const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>()
-const { rc } = useRC("DeleteModal", rcProp)
+const { count = 0 } = defineProps<DeleteModalProps>()
 /* endregion */
 
 /* region Emits */
@@ -38,14 +32,7 @@ const deleteModalStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = deleteModalStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = deleteModalStyles()
 /* endregion */
 
 /* region State */

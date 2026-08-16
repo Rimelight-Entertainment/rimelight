@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref, onMounted, onUnmounted } from "vue"
 import type { CalloutBlockProps, CalloutVariant, Block } from "@/types/blocks"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { t } from "@rimelight/i18n"
 import CalloutBlockRenderer from "../renderer/CalloutBlockRenderer.vue"
 import BlockEditor from "../BlockEditor.vue"
@@ -10,19 +9,8 @@ import BlockEditor from "../BlockEditor.vue"
 /* region Props */
 export interface CalloutBlockEditorProps extends CalloutBlockProps {
   id: string
-  rc?: {
-    root?: string
-  }
 }
-const {
-  id,
-  rc: rcProp,
-  children,
-  variant = "info",
-  to,
-  target
-} = defineProps<CalloutBlockEditorProps>()
-const { rc } = useRC("CalloutBlockEditor", rcProp)
+const { id, children, variant = "info", to, target } = defineProps<CalloutBlockEditorProps>()
 /* endregion */
 
 /* region Styles */
@@ -41,14 +29,7 @@ const calloutBlockEditorStyles = scv({
     itemDescription: "text-xs text-dimmed font-normal leading-snug whitespace-normal"
   }
 })
-const styles = computed(() => {
-  const resolved = calloutBlockEditorStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = calloutBlockEditorStyles()
 /* endregion */
 
 /* region State */

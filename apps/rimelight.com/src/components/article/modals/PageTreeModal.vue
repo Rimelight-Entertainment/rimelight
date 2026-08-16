@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
-import { useRC } from "@/composables"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import { getLocalizedContent } from "@/utils/page"
 import { t } from "@rimelight/i18n"
 import type { Page } from "@/types/pages"
@@ -21,17 +20,9 @@ export interface PageTreeModalProps {
   loading?: boolean
   pages?: Pick<Page, "title" | "slug">[]
   basePath?: string
-  rc?: {
-    header?: string
-    headerTitle?: string
-    closeButton?: string
-    body?: string
-    footer?: string
-  }
 }
 
-const { loading, pages = [], basePath, rc: rcProp } = defineProps<PageTreeModalProps>()
-const { rc } = useRC("PageTreeModal", rcProp)
+const { loading, pages = [], basePath } = defineProps<PageTreeModalProps>()
 /* endregion */
 
 /* region Emits */
@@ -59,14 +50,7 @@ const pageTreeModalStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = pageTreeModalStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = pageTreeModalStyles()
 /* endregion */
 
 /* region State */

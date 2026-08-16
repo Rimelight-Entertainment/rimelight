@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from "vue"
 import {
   type RichTextContent,
   type InlineContent,
@@ -10,20 +9,14 @@ import {
 import TextNode from "./nodes/TextNode.vue"
 import LinkNode from "./nodes/LinkNode.vue"
 import PageMention from "../PageMention.vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 
 /* region Props */
 export interface TextRendererProps {
   content: RichTextContent
-  rc?: {
-    root?: string
-  }
 }
 
-const { content, rc: rcProp } = defineProps<TextRendererProps>()
-
-const { rc } = useRC("TextRenderer", rcProp)
+const { content } = defineProps<TextRendererProps>()
 /* endregion */
 
 /* region Styles */
@@ -31,14 +24,7 @@ const textRendererStyles = scv({
   slots: { root: "whitespace-pre-wrap break-words" }
 })
 
-const styles = computed(() => {
-  const resolved = textRendererStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = textRendererStyles()
 /* endregion */
 
 /* region Logic */

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, inject, defineAsyncComponent, computed } from "vue"
+import { ref, inject, defineAsyncComponent } from "vue"
 import draggable from "vuedraggable"
 import type { Block } from "@/types/blocks"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { BLOCK_EDITOR_COMPONENT_MAP } from "@/generated/blockEditorMap"
 import BlockComponent from "./Block.vue"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
@@ -12,18 +11,9 @@ import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 export interface BlockEditRendererProps {
   blocks?: Block[]
   containerId?: string | null
-  rc?: {
-    root?: string
-  }
 }
 
-const {
-  blocks: propsBlocks,
-  containerId = null,
-  rc: rcProp
-} = defineProps<BlockEditRendererProps>()
-
-const { rc } = useRC("BlockEditRenderer", rcProp)
+const { blocks: propsBlocks, containerId = null } = defineProps<BlockEditRendererProps>()
 /* endregion */
 
 /* region Emits */
@@ -56,17 +46,7 @@ const blockEditRendererStyles = scv({
 })
 
 const styles = (isDragOver: boolean) => {
-  const resolved = blockEditRendererStyles({ isDraggingOver: isDragOver })
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as {
-    root: string
-    draggableClass: string
-    emptyContainer: string
-    itemWrapper: string
-  }
+  return blockEditRendererStyles({ isDraggingOver: isDragOver })
 }
 /* endregion */
 

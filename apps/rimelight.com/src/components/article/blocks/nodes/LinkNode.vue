@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 
 /* region Props */
 export interface LinkNodeProps {
   href: string
   target?: string
   content: string
-  rc?: {
-    root?: string
-  }
 }
 
-const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>()
-
-const { rc } = useRC("LinkNode", rcProp)
+const { href, target, content } = defineProps<LinkNodeProps>()
 /* endregion */
 
 /* region Styles */
@@ -23,14 +17,7 @@ const linkNodeStyles = scv({
   slots: { root: "text-primary hover:underline transition-all" }
 })
 
-const styles = computed(() => {
-  const resolved = linkNodeStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = linkNodeStyles()
 /* endregion */
 
 /* region State */

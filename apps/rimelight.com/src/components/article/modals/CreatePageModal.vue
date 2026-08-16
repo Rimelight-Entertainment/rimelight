@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
 import type { PageDefinition, PageType, Page } from "@/types/blocks"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 import { t } from "@rimelight/i18n"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
@@ -12,18 +11,9 @@ import RLVFormField from "@rimelight/ui/components/form-field/RLVFormField.vue"
 export interface CreatePageModalProps {
   definitions: Record<string, PageDefinition>
   loading?: boolean
-  rc?: {
-    header?: string
-    headerTitle?: string
-    closeButton?: string
-    body?: string
-    field?: string
-    footer?: string
-  }
 }
 
-const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>()
-const { rc } = useRC("CreatePageModal", rcProp)
+const { loading, definitions } = defineProps<CreatePageModalProps>()
 /* endregion */
 
 /* region Emits */
@@ -46,14 +36,7 @@ const createPageModalStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = createPageModalStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = createPageModalStyles()
 /* endregion */
 
 /* region State */

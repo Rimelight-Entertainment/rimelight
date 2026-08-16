@@ -1,20 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from "vue"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-import { useRC, useQuickActions } from "@/composables"
+import { useQuickActions } from "@/composables"
 
 /* region Props */
-export interface QuickActionsProps {
-  rc?: {
-    root?: string
-    triggerButton?: string
-    triggerIcon?: string
-  }
-}
-
-const { rc: rcProp } = defineProps<QuickActionsProps>()
-const { rc } = useRC("QuickActions", rcProp)
+export interface QuickActionsProps {}
+defineProps<QuickActionsProps>()
 /* endregion */
 
 /* region Emits */
@@ -38,14 +30,7 @@ const quickActionsStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = quickActionsStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = quickActionsStyles()
 /* endregion */
 
 /* region State */

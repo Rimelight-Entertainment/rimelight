@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { provide, ref, computed } from "vue"
+import { provide, ref } from "vue"
 import type { Block } from "@/types/blocks"
-import { useBlockEditor, useRC } from "@/composables"
+import { useBlockEditor } from "@/composables"
 import { type BlockDefinition } from "@/utils/blocks"
 import { t } from "@rimelight/i18n"
-import { scv, cx } from "css-variants"
+import { scv } from "css-variants"
 import BlockEditRenderer from "./BlockEditRenderer.vue"
 import AddBlockModal from "./AddBlockModal.vue"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
@@ -13,13 +13,8 @@ import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 export interface BlockEditorProps {
   historyLimit?: number
   containerId?: string | null // ID of container block, null for root
-  rc?: {
-    root?: string
-    content?: string
-  }
 }
-const { historyLimit, containerId = null, rc: rcProp } = defineProps<BlockEditorProps>()
-const { rc } = useRC("BlockEditor", rcProp)
+const { historyLimit, containerId = null } = defineProps<BlockEditorProps>()
 /* endregion */
 
 /* region Emits */
@@ -40,14 +35,7 @@ const blockEditorStyles = scv({
     footerClass: "flex flex-col items-center justify-center gap-4 p-4"
   }
 })
-const styles = computed(() => {
-  const resolved = blockEditorStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = blockEditorStyles()
 /* endregion */
 
 /* region State */

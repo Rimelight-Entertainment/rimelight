@@ -1,19 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue"
 import type { ParagraphBlockProps } from "@/types/blocks"
 import TextRenderer from "../TextRenderer.vue"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 
 /* region Props */
-export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
-  rc?: {
-    root?: string
-  }
-}
+export interface ParagraphBlockRendererProps extends ParagraphBlockProps {}
 
-const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>()
-const { rc } = useRC("ParagraphBlockRenderer", rcProp)
+const { text } = defineProps<ParagraphBlockRendererProps>()
 /* endregion */
 
 /* region Styles */
@@ -23,14 +16,7 @@ const paragraphBlockRendererStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = paragraphBlockRendererStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as Record<string, string>
-})
+const styles = paragraphBlockRendererStyles()
 /* endregion */
 
 defineOptions({ name: "ParagraphBlockRenderer" })

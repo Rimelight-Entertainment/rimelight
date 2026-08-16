@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import { scv, cx } from "css-variants"
+import { ref } from "vue"
+import { scv } from "css-variants"
 import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
 import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
-import { useRC, useTodos } from "@/composables"
+import { useTodos } from "@/composables"
 import TodoCard from "./TodoCard.vue"
 
 export interface Todo {
@@ -19,22 +19,9 @@ export interface TodoListProps {
   todos: Todo[]
   archivedTodos?: Todo[]
   loading?: boolean
-  rc?: {
-    root?: string
-    header?: string
-    headerTitle?: string
-    mainContainer?: string
-    quickAddWrapper?: string
-    inputRow?: string
-    descriptionRow?: string
-    todoGrid?: string
-    emptyText?: string
-    archivedGrid?: string
-  }
 }
 
-const { todos, archivedTodos = [], loading = false, rc: rcProp } = defineProps<TodoListProps>()
-const { rc } = useRC("TodoList", rcProp)
+const { todos, archivedTodos = [], loading = false } = defineProps<TodoListProps>()
 /* endregion */
 
 /* region Emits */
@@ -71,14 +58,7 @@ const todoListStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = todoListStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result
-})
+const styles = todoListStyles()
 /* endregion */
 
 /* region State */

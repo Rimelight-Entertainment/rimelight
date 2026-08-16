@@ -1,23 +1,15 @@
 <script setup lang="ts">
-import { inject, ref, watch, computed } from "vue"
+import { inject, ref, watch } from "vue"
 import { getLocalizedContent } from "@/utils/page"
 import { type Page } from "@/types/pages"
-import { scv, cx } from "css-variants"
-import { useRC } from "@/composables"
+import { scv } from "css-variants"
 
 /* region Props */
 export interface PageMentionProps {
   pageId: string
-  rc?: {
-    link?: string
-    icon?: string
-    text?: string
-    skeleton?: string
-  }
 }
 
-const { pageId, rc: rcProp } = defineProps<PageMentionProps>()
-const { rc } = useRC("PageMention", rcProp)
+const { pageId } = defineProps<PageMentionProps>()
 /* endregion */
 
 /* region Styles */
@@ -33,20 +25,7 @@ const pageMentionStyles = scv({
   }
 })
 
-const styles = computed(() => {
-  const resolved = pageMentionStyles()
-  const result: Record<string, string> = {}
-  for (const [slot, value] of Object.entries(resolved)) {
-    result[slot] = cx(value, (rc.value as Record<string, string>)[slot])
-  }
-  return result as {
-    linkClass: string
-    iconClass: string
-    textClass: string
-    skeletonClass: string
-    unresolvedText: string
-  }
-})
+const styles = pageMentionStyles()
 /* endregion */
 
 /* region State */
