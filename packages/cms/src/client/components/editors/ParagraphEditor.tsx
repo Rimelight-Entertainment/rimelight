@@ -157,21 +157,17 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
   return (
     <div
       ref={(el) => (containerDiv = el)}
-      class="rimelight-paragraph-editor border border-transparent rounded-md transition-colors duration-200 w-full"
-      classList={{
-        "border-gray-600 overflow-hidden": toolbarVisible(),
-        "border-transparent": !toolbarVisible()
-      }}
+      class="rimelight-paragraph-editor flex flex-col w-full relative"
     >
       <div
-        class="toolbar-div flex items-center gap-1 px-2 py-1 bg-gray-800 border-b border-gray-700 rounded-t-md"
+        class="toolbar-div flex items-center gap-1 px-2 py-1 bg-neutral-100 dark:bg-neutral-800 border border-default border-b-0 rounded-t-lg shadow-sm"
         classList={{ hidden: !toolbarVisible() }}
       >
         <button
           type="button"
           data-cmd="bold"
           onClick={() => execCommand("bold")}
-          class="p-1.5 rounded text-gray-400 hover:text-gray-100 hover:bg-gray-700 cursor-pointer text-xs font-bold"
+          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs font-bold"
         >
           B
         </button>
@@ -179,7 +175,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
           type="button"
           data-cmd="italic"
           onClick={() => execCommand("italic")}
-          class="p-1.5 rounded text-gray-400 hover:text-gray-100 hover:bg-gray-700 cursor-pointer text-xs italic"
+          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs italic font-serif"
         >
           I
         </button>
@@ -187,16 +183,16 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
           type="button"
           data-cmd="underline"
           onClick={() => execCommand("underline")}
-          class="p-1.5 rounded text-gray-400 hover:text-gray-100 hover:bg-gray-700 cursor-pointer text-xs underline"
+          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs underline"
         >
           U
         </button>
-        <div class="w-px h-4 bg-gray-700 mx-1"></div>
+        <div class="w-px h-3.5 bg-neutral-300 dark:bg-neutral-700 mx-1"></div>
         <button
           type="button"
           data-cmd="createLink"
           onClick={() => execCommand("createLink")}
-          class="p-1.5 rounded text-gray-400 hover:text-gray-100 hover:bg-gray-700 cursor-pointer text-xs"
+          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs"
         >
           Link
         </button>
@@ -205,7 +201,11 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
         ref={(el) => (editableDiv = el)}
         aria-label="Paragraph text content"
         contentEditable={true}
-        class="editable-div p-3 outline-none min-h-[48px] text-sm text-gray-100 bg-transparent leading-relaxed"
+        class="editable-div p-3 outline-none min-h-[4rem] text-sm text-foreground bg-white dark:bg-neutral-900 border border-default leading-relaxed focus:ring-2 focus:ring-primary shadow-sm"
+        classList={{
+          "rounded-b-lg": toolbarVisible(),
+          "rounded-lg": !toolbarVisible()
+        }}
       />
     </div>
   )

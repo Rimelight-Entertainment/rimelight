@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, type Component } from "solid-js"
+import { createSignal, onMount, onCleanup, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../core/types/blocks"
 import { ParagraphEditor } from "./editors/ParagraphEditor"
 import { SectionEditor } from "./editors/SectionEditor"
@@ -30,20 +30,20 @@ export interface RimelightBlockProps {
 }
 
 export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
-  const [contextMenuOpen, setContextMenuOpen] = createSignal(false)
-  let blockWrapEl: HTMLDivElement | undefined
+  const [menuOpen, setMenuOpen] = createSignal(false)
+  let menuWrapEl: HTMLDivElement | undefined
 
   const isLocked = () => !!props.block.isTemplated || props.block.templatedProps === true
 
   onMount(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
+    const handleOutside = (e: MouseEvent) => {
       const target = e.target instanceof Node ? e.target : null
-      if (contextMenuOpen() && blockWrapEl && target && !blockWrapEl.contains(target)) {
-        setContextMenuOpen(false)
+      if (menuOpen() && menuWrapEl && target && !menuWrapEl.contains(target)) {
+        setMenuOpen(false)
       }
     }
-    document.addEventListener("click", handleOutsideClick)
-    onCleanup(() => document.removeEventListener("click", handleOutsideClick))
+    document.addEventListener("click", handleOutside)
+    onCleanup(() => document.removeEventListener("click", handleOutside))
   })
 
   const renderEditorComponent = (blockItem: BaseBlock, depth: number) => {
@@ -147,30 +147,50 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
 
   return (
     <div
-      ref={(el) => (blockWrapEl = el)}
       data-id={props.block.id}
       data-block-id={props.block.id}
       data-block-type={props.block.type}
-      class="cms-block-wrap group/block relative w-full block my-2"
+      class="cms-block-wrap group/block relative w-full my-2 flex items-start gap-2"
     >
-      <div class="cms-block-grip absolute left-2 top-3 z-20 flex items-center gap-1 opacity-70 hover:opacity-100 group-hover/block:opacity-100 transition-opacity">
+      {/* Left Drag Grip Handle with Dropdown Menu */}
+      <div
+        ref={(el) => (menuWrapEl = el)}
+        class="cms-block-grip pt-3 shrink-0 relative flex items-center justify-center opacity-40 hover:opacity-100 group-hover/block:opacity-100 transition-opacity"
+      >
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation()
-            setContextMenuOpen(!contextMenuOpen())
+            setMenuOpen(!menuOpen())
           }}
-          class="cms-grip-btn cms-drag-handle p-1 rounded hover:bg-gray-700 text-gray-400 hover:text-gray-200 cursor-grab active:cursor-grabbing flex items-center justify-center text-sm select-none"
+          aria-label="Drag handle and options menu"
+          class="cms-grip-btn cms-drag-handle p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing flex items-center justify-center transition border-0 bg-transparent"
           title="Drag to reorder / Click for options"
         >
-          ⠿
+          <svg
+            class="size-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="9" cy="12" r="1" fill="currentColor" />
+            <circle cx="9" cy="5" r="1" fill="currentColor" />
+            <circle cx="9" cy="19" r="1" fill="currentColor" />
+            <circle cx="15" cy="12" r="1" fill="currentColor" />
+            <circle cx="15" cy="5" r="1" fill="currentColor" />
+            <circle cx="15" cy="19" r="1" fill="currentColor" />
+          </svg>
         </button>
 
-        {contextMenuOpen() && (
-          <div class="absolute left-0 top-8 z-50 w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-xl py-1">
+        {/* Dropdown Options Menu */}
+        <Show when={menuOpen()}>
+          <div class="absolute left-0 top-10 z-50 w-48 bg-white dark:bg-neutral-900 border border-default rounded-xl shadow-xl py-1 text-xs">
             {isLocked() ? (
-              <div class="px-3 py-2 text-xs text-gray-400 italic">
-                Locked — cannot delete or move
+              <div class="px-3 py-2 text-muted-foreground italic">
+                Locked — templated block
               </div>
             ) : (
               <>
@@ -178,78 +198,192 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   type="button"
                   onClick={() => {
                     props.onMove(props.block.id, -1)
-                    setContextMenuOpen(false)
+                    setMenuOpen(false)
                   }}
-                  class="menu-item-move-up flex items-center gap-2 w-full px-3 py-1.5 text-xs hover:bg-gray-800 cursor-pointer text-gray-300 transition-colors bg-transparent border-none text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
-                  Move Up ↑
+                  <span>Move Up</span>
+                  <span class="ml-auto text-muted-foreground">↑</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     props.onMove(props.block.id, 1)
-                    setContextMenuOpen(false)
+                    setMenuOpen(false)
                   }}
-                  class="menu-item-move-down flex items-center gap-2 w-full px-3 py-1.5 text-xs hover:bg-gray-800 cursor-pointer text-gray-300 transition-colors bg-transparent border-none text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
-                  Move Down ↓
+                  <span>Move Down</span>
+                  <span class="ml-auto text-muted-foreground">↓</span>
                 </button>
-                <div class="my-1 border-t border-gray-800"></div>
+                <div class="my-1 border-t border-default" />
                 <button
                   type="button"
                   onClick={() => {
                     props.onAddAdjacent(props.block.id, "before")
-                    setContextMenuOpen(false)
+                    setMenuOpen(false)
                   }}
-                  class="menu-item-add-above flex items-center gap-2 w-full px-3 py-1.5 text-xs hover:bg-gray-800 cursor-pointer text-gray-300 transition-colors bg-transparent border-none text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
-                  Add Block Above
+                  <span>Add Block Above</span>
+                  <span class="ml-auto text-muted-foreground">+</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     props.onAddAdjacent(props.block.id, "after")
-                    setContextMenuOpen(false)
+                    setMenuOpen(false)
                   }}
-                  class="menu-item-add-below flex items-center gap-2 w-full px-3 py-1.5 text-xs hover:bg-gray-800 cursor-pointer text-gray-300 transition-colors bg-transparent border-none text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
-                  Add Block Below
+                  <span>Add Block Below</span>
+                  <span class="ml-auto text-muted-foreground">+</span>
                 </button>
-                <div class="my-1 border-t border-gray-800"></div>
+                <div class="my-1 border-t border-default" />
                 <button
                   type="button"
                   onClick={() => {
                     props.onDuplicate(props.block.id)
-                    setContextMenuOpen(false)
+                    setMenuOpen(false)
                   }}
-                  class="menu-item-duplicate flex items-center gap-2 w-full px-3 py-1.5 text-xs hover:bg-gray-800 cursor-pointer text-gray-300 transition-colors bg-transparent border-none text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
-                  Duplicate Block
+                  <span>Duplicate Block</span>
+                  <span class="ml-auto text-muted-foreground">❐</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     props.onDelete(props.block.id)
-                    setContextMenuOpen(false)
+                    setMenuOpen(false)
                   }}
-                  class="menu-item-delete flex items-center gap-2 w-full px-3 py-1.5 text-xs hover:bg-gray-800 cursor-pointer text-red-400 hover:text-red-300 transition-colors bg-transparent border-none text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 hover:text-red-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
                 >
-                  Delete Block
+                  <span>Delete Block</span>
+                  <span class="ml-auto">🗑</span>
                 </button>
               </>
             )}
           </div>
-        )}
+        </Show>
       </div>
 
-      <div class="cms-block-node flex-1 min-w-0 pl-10 pr-4 py-2 bg-gray-900/60 border border-gray-800 rounded-lg relative">
-        {isLocked() && (
-          <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-800 text-gray-400 rounded text-xs mb-2 select-none">
-            🔒 Locked
-          </div>
-        )}
-        <div class="cms-editor-container">
-          {renderEditorComponent(props.block, props.sectionDepth || 0)}
+      <div class="flex-1 min-w-0 relative">
+        {/* Top Action Floating Toolbar */}
+        <div class="absolute -top-3 right-4 z-20 opacity-0 group-hover/block:opacity-100 transition-opacity flex items-center gap-0.5 bg-white dark:bg-neutral-800 border border-default rounded-lg p-0.5 shadow-md">
+          <button
+            type="button"
+            onClick={() => props.onAddAdjacent(props.block.id, "before")}
+            aria-label="Add block above"
+            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
+            title="Add block above"
+          >
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => props.onAddAdjacent(props.block.id, "after")}
+            aria-label="Add block below"
+            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
+            title="Add block below"
+          >
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => props.onMove(props.block.id, -1)}
+            aria-label="Move up"
+            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
+            title="Move up"
+          >
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m18 15-6-6-6 6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => props.onMove(props.block.id, 1)}
+            aria-label="Move down"
+            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
+            title="Move down"
+          >
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => props.onDuplicate(props.block.id)}
+            aria-label="Duplicate"
+            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
+            title="Duplicate"
+          >
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => props.onDelete(props.block.id)}
+            aria-label="Delete"
+            class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
+            title="Delete"
+          >
+            <svg
+              class="size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Block Editor Body */}
+        <div class="w-full transition-all rounded-xl hover:ring-1 hover:ring-primary/40">
+          {isLocked() && (
+            <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-xs mb-2 select-none border border-default">
+              🔒 Templated Block (Locked)
+            </div>
+          )}
+          <div class="w-full">{renderEditorComponent(props.block, props.sectionDepth || 0)}</div>
         </div>
       </div>
     </div>

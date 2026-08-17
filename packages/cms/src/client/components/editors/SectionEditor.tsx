@@ -19,7 +19,6 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
   let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null
   let sortableInstance: any = null
 
-  const displayLevel = () => Math.min((componentProps.sectionDepth || 0) + 1, 6)
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
@@ -53,8 +52,6 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
           setTimeout(cleanAllSortableClasses, 200)
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
-          // Intentionally empty: the target container's onAdd -> relocateBlock
-          // handles the full atomic move atomically (remove source + insert destination).
           cleanAllSortableClasses()
         }
       })
@@ -75,49 +72,57 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
   }
 
   return (
-    <div class="rimelight-section-editor flex flex-col gap-3 w-full">
-      <div class="flex items-center gap-2 w-full">
-        <div class="level-badge text-xs font-mono text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded shrink-0">
-          H{displayLevel()}
-        </div>
+    <div class="w-full flex flex-col gap-4 border border-default rounded-xl p-4 bg-neutral-50/50 dark:bg-neutral-900/30">
+      <div class="flex items-center gap-3">
+        <select
+          value={componentProps.props.level || (componentProps.sectionDepth || 0) + 1}
+          onChange={(e) => {
+            componentProps.onPropsChange({
+              ...componentProps.props,
+              level: Number(e.currentTarget.value)
+            })
+          }}
+          class="bg-white dark:bg-neutral-800 border border-default rounded-lg px-2 py-1 text-xs font-bold focus:outline-none text-foreground cursor-pointer"
+        >
+          <option value={1}>H1</option>
+          <option value={2}>H2</option>
+          <option value={3}>H3</option>
+          <option value={4}>H4</option>
+          <option value={5}>H5</option>
+          <option value={6}>H6</option>
+        </select>
         <input
           ref={(el) => (titleInput = el)}
           type="text"
-          data-field="title"
           value={componentProps.props.title || ""}
           onInput={saveProps}
           placeholder="Section Title"
-          class="title-input flex-1 w-full min-w-0 bg-transparent border-b border-gray-700 text-gray-100 font-semibold outline-none py-1 focus:border-blue-500 text-lg"
-          classList={{ "text-xl": displayLevel() <= 2 }}
+          class="flex-1 font-bold text-lg bg-transparent border-0 focus:outline-none text-foreground placeholder:text-muted-foreground/60"
         />
       </div>
+
       <input
         ref={(el) => (descInput = el)}
         type="text"
-        data-field="description"
         value={componentProps.props.description || ""}
         onInput={saveProps}
-        placeholder="Optional description..."
-        class="desc-input w-full min-w-0 bg-transparent border-b border-gray-700 text-gray-400 text-sm outline-none py-1 focus:border-blue-500"
+        placeholder="Section description (optional)..."
+        class="text-sm text-dimmed bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground/50"
       />
-      <hr class="border-t border-gray-800 my-1" />
+
       <div
         ref={(el) => (childrenContainer = el)}
-        class="children-container flex flex-col gap-2 min-h-[48px] pl-4 border-l-2 border-gray-700"
+        class="pl-4 border-l-2 border-primary/30 flex flex-col gap-4 mt-2 min-h-[32px]"
       >
         {childrenBlocks().length === 0 ? (
-          <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-4 rounded-lg border border-dashed border-gray-800/80 bg-gray-900/30 text-center my-1">
-            <div class="text-xs font-semibold text-gray-300">Empty section</div>
-            <p class="text-[11px] text-gray-500">Drag blocks here or click below to add content</p>
+          <div class="flex flex-col items-center justify-center p-3 border border-dashed border-default rounded-lg text-center bg-white/40 dark:bg-neutral-900/40">
+            <span class="text-xs text-muted-foreground">Empty section</span>
             <button
               type="button"
-              onClick={(e: MouseEvent) => {
-                e.stopPropagation()
-                componentProps.onOpenPicker?.()
-              }}
-              class="cms-add-child-block mt-1 px-3 py-1.5 bg-blue-600/80 hover:bg-blue-500 text-white text-xs font-medium rounded-md cursor-pointer transition-colors shadow-sm inline-flex items-center gap-1"
+              onClick={() => componentProps.onOpenPicker?.()}
+              class="mt-1 text-xs text-primary font-medium hover:underline cursor-pointer bg-transparent border-none"
             >
-              + Add Block
+              + Add first block
             </button>
           </div>
         ) : (
@@ -128,13 +133,16 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
           </For>
         )}
       </div>
-      <button
-        type="button"
-        onClick={() => componentProps.onOpenPicker?.()}
-        class="add-btn text-xs text-gray-500 hover:text-blue-400 flex items-center gap-1 py-2 cursor-pointer bg-transparent border-none w-fit"
-      >
-        <span>+</span> Add block
-      </button>
+
+      <div class="flex items-center pt-1">
+        <button
+          type="button"
+          onClick={() => componentProps.onOpenPicker?.()}
+          class="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 cursor-pointer bg-transparent border-none py-1 transition-colors"
+        >
+          <span class="font-bold">+</span> Add block
+        </button>
+      </div>
     </div>
   )
 }

@@ -1,3 +1,6 @@
+const SNAP_POINTS = [25, 33.333, 50, 66.667, 75]
+const SNAP_THRESHOLD = 2.0
+
 export function initSplitPane(
   container: HTMLElement,
   leftPane: HTMLElement,
@@ -36,9 +39,12 @@ export function initSplitPane(
     const offset = e.clientX - containerRect.left
     let percentage = (offset / containerRect.width) * 100
 
-    // Snap to 50% only when within ±2.5% of center
-    if (Math.abs(percentage - 50) <= 2.5) {
-      percentage = 50
+    // Multi-point snapping (25%, 33.33%, 50%, 66.67%, 75%)
+    for (const snap of SNAP_POINTS) {
+      if (Math.abs(percentage - snap) <= SNAP_THRESHOLD) {
+        percentage = snap
+        break
+      }
     }
 
     // Keep within bounds 20% - 80%
