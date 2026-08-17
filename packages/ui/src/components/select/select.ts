@@ -49,6 +49,7 @@ export interface SelectProps {
     | "error"
     | "neutral"
   variant?: "outline" | "soft" | "subtle" | "ghost" | "none"
+  theme?: "light" | "dark"
   size?: "xs" | "sm" | "md" | "lg" | "xl"
   highlight?: boolean
   icon?: string

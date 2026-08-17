@@ -8,21 +8,28 @@ export const localeSelectorTheme = defineTheme("locale-selector", {
     wrapper: "relative inline-block",
     select:
       "w-full appearance-none font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/40 cursor-pointer pr-10",
-    option: "bg-neutral-900 text-white selection:bg-neutral-800",
+    option: "bg-default text-default",
     iconWrapper:
       "pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-current group-hover:text-default"
   },
   variants: {
+    theme: {
+      dark: {
+        root: "rl-dark"
+      },
+      light: {
+        root: "rl-light"
+      }
+    },
     variant: {
       default: {
-        select: "bg-gray-100 text-gray-800 hover:bg-gray-200 border border-transparent"
+        select: "bg-default text-default hover:bg-accent/50 border border-default"
       },
       outline: {
-        select:
-          "bg-transparent border border-neutral-800 text-white hover:bg-neutral-900 hover:border-neutral-700"
+        select: "bg-transparent border border-default text-default hover:bg-accent/50"
       },
       ghost: {
-        select: "bg-transparent border border-transparent text-white hover:bg-neutral-900"
+        select: "bg-transparent border border-transparent text-default hover:bg-accent/50"
       }
     },
     size: {

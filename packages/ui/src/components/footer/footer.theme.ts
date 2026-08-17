@@ -3,7 +3,7 @@ import { defineTheme } from "../../resolver"
 export const footerTheme = defineTheme("footer", {
   slots: ["root", "container", "left", "center", "right"],
   base: {
-    root: "py-8 lg:py-12 overflow-hidden",
+    root: "py-8 lg:py-12 overflow-hidden text-default",
     container:
       "box-border flex flex-col justify-between gap-xl lg:flex-row lg:items-stretch px-xs sm:px-md md:px-xl lg:px-xl w-full",
     left: "order-last flex flex-col items-center justify-between gap-xl lg:order-1 lg:flex-none lg:items-start",
@@ -18,6 +18,14 @@ export const footerTheme = defineTheme("footer", {
       },
       false: {
         container: "w-full"
+      }
+    },
+    theme: {
+      dark: {
+        root: "rl-dark"
+      },
+      light: {
+        root: "rl-light"
       }
     }
   },

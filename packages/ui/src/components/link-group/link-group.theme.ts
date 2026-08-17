@@ -4,20 +4,18 @@ export const linkGroupTheme = defineTheme("link-group", {
   slots: ["root", "title", "list", "item", "link"],
   base: {
     root: "flex flex-col gap-4",
-    title: "font-bold text-sm uppercase tracking-wider text-neutral-500",
+    title: "font-bold text-sm uppercase tracking-wider text-dimmed",
     list: "flex flex-col gap-2",
     item: "",
-    link: "text-sm text-muted hover:text-accent-foreground transition-colors"
+    link: "text-sm text-muted hover:text-highlighted transition-colors"
   },
   variants: {
     theme: {
       dark: {
-        link: "text-white hover:text-accent-foreground",
-        title: "text-white"
+        root: "rl-dark"
       },
       light: {
-        link: "text-highlighted hover:text-accent-foreground",
-        title: "text-highlighted"
+        root: "rl-light"
       }
     }
   },

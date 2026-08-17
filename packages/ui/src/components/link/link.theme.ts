@@ -33,5 +33,8 @@ export const linkTheme = defineTheme("link", {
       disabled: false,
       classNames: { root: "hover:text-primary" }
     }
-  ]
+  ],
+  defaultVariants: {
+    active: false
+  }
 })

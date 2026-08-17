@@ -95,6 +95,10 @@ export const selectTheme = defineTheme("select", {
       subtle: { trigger: "bg-accent border border-default hover:bg-accent/80" },
       ghost: { trigger: "bg-transparent border-transparent hover:bg-accent" },
       none: { trigger: "bg-transparent border-transparent px-0 shadow-none" }
+    },
+    theme: {
+      dark: { root: "rl-dark" },
+      light: { root: "rl-light" }
     }
   },
   defaultVariants: {

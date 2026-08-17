@@ -139,7 +139,7 @@ select.rl-select option:checked { background-color: var(--color-primary-500, #3b
     preflights: [
       {
         getCSS: () =>
-          `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${cssVars(options.colors)}}\n.dark, [data-theme="dark"] { color-scheme: dark; }\n.light, [data-theme="light"] { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
+          `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n}\n:root, .dark, .light, .rl-dark, .rl-light, [data-theme="dark"], [data-theme="light"] {\n${cssVars(options.colors)}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
       }
     ]
   }

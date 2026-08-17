@@ -10,6 +10,7 @@ const {
   locales,
   currentLocale: currentLocaleProp,
   size = "md",
+  theme,
   ...rest
 } = Astro.props as LocaleSelectorProps;
 
@@ -104,6 +105,7 @@ const selectUi = {
                 items={items}
                 value={currentLocaleUrl}
                 size={size}
+                theme={theme}
                 ui={selectUi}
             />
         </div>

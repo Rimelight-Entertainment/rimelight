@@ -22,27 +22,6 @@ const {
 const classes = linkGroupTheme(Astro.props);
 
 const normalizedLinks = Array.isArray(links) ? links : [links];
-
-const isPinnedDark = theme === "dark";
-const overrideLinkClass = classes.link
-    ? classes.link
-        .split(" ")
-        .map(cls => {
-            if (!cls) return "";
-            if (cls.includes(":")) {
-                const parts = cls.split(":");
-                const state = parts.slice(0, -1).join(":");
-                const baseCls = parts[parts.length - 1];
-                return `${state}:!${baseCls}`;
-            }
-            if (cls.startsWith("text-") && !isPinnedDark) {
-                return cls;
-            }
-            return `!${cls}`;
-        })
-        .filter(Boolean)
-        .join(" ")
-    : "";
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   {headingLabel && (
@@ -69,7 +48,7 @@ const overrideLinkClass = classes.link
         <li class={classes.item} data-slot="item">
           <RLALink
             theme={link.theme ?? theme}
-            class:list={[overrideLinkClass, "w-full !justify-start"]}
+            class:list={[classes.link, "w-full !justify-start"]}
             data-slot="link"
             {...link}
           />

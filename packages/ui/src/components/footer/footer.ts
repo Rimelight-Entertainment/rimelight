@@ -4,6 +4,10 @@ export interface FooterProps {
    */
   contain?: boolean
   /**
+   * Theme mode override for the footer subtree ("dark" | "light").
+   */
+  theme?: "light" | "dark"
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any
