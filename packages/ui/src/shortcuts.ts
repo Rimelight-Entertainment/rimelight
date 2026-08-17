@@ -41,38 +41,22 @@ const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAg
     "enter",
     "backspace"
   ]),
-  MODS: Record<string, number> = {
-    ctrl: 1,
-    control: 1,
-    cmd: MOD_CMD,
-    command: MOD_CMD,
-    meta: MOD_CMD,
-    alt: 4,
-    opt: 4,
-    option: 4,
-    shift: 8
-  },
-  KEYS: Record<string, string> = {
-    ctrl: "Ctrl",
-    control: "Ctrl",
-    cmd: isMac ? "⌘" : "Ctrl",
-    command: isMac ? "⌘" : "Ctrl",
-    meta: isMac ? "⌘" : "Ctrl",
-    alt: isMac ? "⌥" : "Alt",
-    opt: isMac ? "⌥" : "Alt",
-    option: isMac ? "⌥" : "Alt",
-    shift: isMac ? "⇧" : "Shift",
-    enter: "↵",
-    delete: "⌦",
-    backspace: "⌫",
-    escape: "Esc",
-    tab: "⇥",
-    space: "Space",
-    arrowup: "↑",
-    arrowdown: "↓",
-    arrowleft: "←",
-    arrowright: "→"
-  }
+  kMap = (m: string, v: any) => m.split(",").map((k) => [k, v]),
+  MODS: Record<string, number> = Object.fromEntries([
+    ...kMap("ctrl,control", 1),
+    ...kMap("cmd,command,meta", MOD_CMD),
+    ...kMap("alt,opt,option", 4),
+    ["shift", 8]
+  ]),
+  KEYS: Record<string, string> = Object.fromEntries([
+    ...kMap("ctrl,control", "Ctrl"),
+    ...kMap("cmd,command,meta", isMac ? "⌘" : "Ctrl"),
+    ...kMap("alt,opt,option", isMac ? "⌥" : "Alt"),
+    ["shift", isMac ? "⇧" : "Shift"],
+    ..."enter:↵,delete:⌦,backspace:⌫,escape:Esc,tab:⇥,space:Space,arrowup:↑,arrowdown:↓,arrowleft:←,arrowright:→"
+      .split(",")
+      .map((s) => s.split(":") as [string, string])
+  ])
 
 export const formatShortcutKeys = (k: string): string[] =>
   k.split(/[_-]/).map((p) => KEYS[p.toLowerCase()] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : ""))
