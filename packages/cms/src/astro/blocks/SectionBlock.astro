@@ -1,0 +1,46 @@
+---
+import type { BaseBlock, HeadingLevel } from "../../core/types/blocks"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block } = Astro.props
+const { title = "", description = "", level = 2 } = block.props || {}
+
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "")
+}
+
+const safeLevel = Math.max(1, Math.min(6, Number(level) || 2)) as HeadingLevel
+const headingId = title ? slugify(title) : undefined
+
+const headingClasses: Record<number, string> = {
+  1: "text-4xl font-extrabold text-neutral-900 dark:text-white mt-8 mb-4",
+  2: "text-3xl font-bold text-neutral-900 dark:text-white mt-6 mb-3 border-b border-gray-200 dark:border-gray-800 pb-2",
+  3: "text-2xl font-semibold text-neutral-900 dark:text-white mt-5 mb-2.5",
+  4: "text-xl font-medium text-neutral-900 dark:text-white mt-4 mb-2",
+  5: "text-lg font-medium text-neutral-800 dark:text-neutral-200 mt-3 mb-1.5",
+  6: "text-base font-normal text-neutral-700 dark:text-neutral-300 mt-2 mb-1"
+}
+
+const Tag = `h${safeLevel}` as any
+---
+
+<section id={headingId} class="cms-section my-6 scroll-mt-20" data-block-id={block.id}>
+  {title && <Tag class={headingClasses[safeLevel] || headingClasses[2]}>{title}</Tag>}
+  {description && <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4 italic">{description}</p>}
+  <div class="mt-4">
+    <slot />
+  </div>
+</section>

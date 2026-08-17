@@ -1,29 +1,39 @@
 ---
 import { auth } from "@/auth/auth"
-import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
+import DashboardLayout from "@/layouts/DashboardLayout.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
-import { RimelightEditorLayout, RimelightPropertiesPanel } from "@rimelight/cms/client/components"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
+import { RimelightEditorLayout, RimelightPropertiesPanel, RimelightPreview } from "@rimelight/cms/client/components"
 import "@rimelight/cms/client/styles/cms-editor.css"
 
+const currentLocale = Astro.currentLocale ?? "en"
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 const id = Astro.params.id
 
 if (!session) {
-  return Astro.redirect("/auth/sign-in")
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
 }
 
-const page = await db.select().from(pages).where(eq(pages.id, id!)).limit(1)
-if (!page[0]) return Astro.redirect('/cms/pages')
+const pageResult = await db.select().from(pages).where(eq(pages.id, id!)).limit(1)
+const page = pageResult[0]
+if (!page) {
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/pages"))
+}
 
 const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
 
-let rawContent: any = draft[0]?.content || page[0]?.content || {}
-if (typeof rawContent === 'string') {
-  try { rawContent = JSON.parse(rawContent) } catch {}
+let rawContent: any = draft[0]?.content || page.content || {}
+if (typeof rawContent === "string") {
+  try {
+    rawContent = JSON.parse(rawContent)
+  } catch {
+    rawContent = {}
+  }
 }
 if (rawContent && rawContent.content) {
   rawContent = rawContent.content
@@ -31,63 +41,356 @@ if (rawContent && rawContent.content) {
 
 const extractedBlocks = Array.isArray(rawContent?.blocks)
   ? rawContent.blocks
-  : (Array.isArray(rawContent) ? rawContent : [])
+  : Array.isArray(rawContent)
+  ? rawContent
+  : []
 
-const titleVal = typeof page[0].title === 'object' ? page[0].title.en || '' : page[0].title || ''
+const titleVal =
+  typeof page.title === "object" && page.title !== null
+    ? (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>).en || ""
+    : String(page.title || "")
 
-const pageType = (page[0] as any).type || 'Default'
+const descVal =
+  typeof page.description === "object" && page.description !== null
+    ? (page.description as Record<string, string>)[currentLocale] || (page.description as Record<string, string>).en || ""
+    : String(page.description || "")
+
+const pageType = (page as any).type || "blog"
 const initialProperties = rawContent?.properties || {}
+const heroImage = initialProperties?.heroImage || (page as any).banner?.src || ""
+const viewUrl = page.type === "blog" ? getRelativeLocaleUrl(currentLocale, `/blog/${page.slug}`) : getRelativeLocaleUrl(currentLocale, `/${page.slug}`)
+const isPublished = !!page.publishedVersionId
 ---
 
-<CMSDashboardLayout title={`Edit Page: ${titleVal}`} description="Edit CMS page" activeSection="pages">
-  <Fragment slot="toolbar-left">
-    <RLAButton id="undo-btn" size="sm" square leadingIcon="i-lucide-undo" />
-    <RLAButton id="redo-btn" size="sm" square leadingIcon="i-lucide-redo" />
-    <RLAButton id="add-block-btn" size="sm" square leadingIcon="i-lucide-plus" />
-  </Fragment>
+<DashboardLayout title={`Edit: ${titleVal || 'Untitled Page'}`} description="CMS Page Editor" noindex={true}>
+  <div class="flex flex-col h-screen overflow-hidden bg-background text-foreground select-none">
+    <!-- Top Header Bar matching PageEditor.vue -->
+    <header class="h-12 w-full bg-neutral-100 dark:bg-neutral-800/90 flex items-center justify-between px-4 border-b border-default shrink-0 z-30">
+      <div class="flex items-center gap-2.5">
+        <RLAButton
+          href={getRelativeLocaleUrl(currentLocale, "/cms/pages")}
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          leadingIcon="i-lucide-arrow-left"
+          class="!px-2"
+        >
+          Pages
+        </RLAButton>
 
-  <Fragment slot="toolbar-right">
-    <RLAButton id="preview-btn" size="sm" square leadingIcon="i-lucide-eye" />
-    <RLAButton id="save-btn" size="sm" square leadingIcon="i-lucide-save" />
-    <RLABadge id="save-status-indicator" variant="soft" color="emerald" size="xs">
-      ● Saved
-    </RLABadge>
-    <RLAButton id="publish-btn" size="sm" square leadingIcon="i-lucide-upload-cloud" />
-    <RLAButton id="more-actions-btn" size="sm" square leadingIcon="i-lucide-more-vertical" />
-  </Fragment>
+        <span class="w-px h-4 bg-neutral-200 dark:bg-neutral-700" />
 
-  <div class="cms-editor-with-panel w-full h-[calc(100vh-180px)] min-h-[600px] flex flex-row overflow-hidden">
-    <div id="cms-editor-layout" class="cms-editor-main flex-1 min-w-0 flex flex-col overflow-hidden">
-      <RimelightEditorLayout client:only="solid" pageId={id!} initialBlocks={extractedBlocks} />
+        <div class="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap overflow-hidden max-w-[200px] sm:max-w-xs">
+          <span>Editing:</span>
+          <span id="header-page-title" class="font-semibold text-neutral-900 dark:text-white truncate">{titleVal || "Untitled Page"}</span>
+        </div>
+
+        <span class="w-px h-4 bg-neutral-200 dark:bg-neutral-700" />
+
+        <div class="flex items-center gap-1">
+          <RLAButton id="undo-btn" size="xs" square variant="ghost" color="neutral" leadingIcon="i-lucide-rotate-ccw" aria-label="Undo" />
+          <RLAButton id="redo-btn" size="xs" square variant="ghost" color="neutral" leadingIcon="i-lucide-rotate-cw" aria-label="Redo" />
+        </div>
+
+        <RLABadge id="save-status-indicator" variant="soft" color="emerald" size="xs">
+          ● Saved
+        </RLABadge>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <RLAButton
+          href={viewUrl}
+          target="_blank"
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          leadingIcon="i-lucide-external-link"
+        >
+          <span class="hidden sm:inline">View Page</span>
+        </RLAButton>
+
+        <RLAButton
+          id="preview-btn"
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          leadingIcon="i-lucide-eye"
+        >
+          <span class="hidden sm:inline">Preview</span>
+        </RLAButton>
+
+        <span class="w-px h-4 bg-neutral-200 dark:bg-neutral-700 hidden sm:block" />
+
+        <RLAButton
+          id="publish-btn"
+          variant="outline"
+          color="neutral"
+          size="xs"
+          leadingIcon="i-lucide-globe"
+        >
+          {isPublished ? "Unpublish" : "Publish"}
+        </RLAButton>
+
+        <RLAButton
+          id="save-btn"
+          variant="solid"
+          color="primary"
+          size="xs"
+          leadingIcon="i-lucide-save"
+        >
+          Save
+        </RLAButton>
+
+        <RLAButton
+          id="delete-btn"
+          variant="ghost"
+          color="error"
+          size="xs"
+          square
+          leadingIcon="i-lucide-trash-2"
+          aria-label="Delete Page"
+        />
+      </div>
+    </header>
+
+    <!-- Main Workspace Split Container -->
+    <div id="split-container" class="flex w-full min-h-0 flex-1 overflow-hidden relative select-text">
+      
+      <!-- Editor Pane (Left Column) -->
+      <div id="editor-pane" class="relative overflow-y-auto p-6 flex-1 w-full min-w-0">
+        <div class="max-w-7xl mx-auto flex flex-col py-2 w-full gap-6">
+          
+          <!-- Banner Container -->
+          <div class="w-full relative group/banner aspect-[5/1] rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 border border-default flex items-center justify-center">
+            <img
+              id="banner-img"
+              src={heroImage}
+              alt="Banner"
+              class={`absolute inset-0 size-full object-cover transition-opacity ${heroImage ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            />
+            <div
+              id="banner-placeholder"
+              class={`flex flex-col items-center justify-center text-dimmed gap-1.5 opacity-50 hover:opacity-100 transition cursor-pointer ${heroImage ? 'hidden' : 'flex'}`}
+            >
+              <RLAIcon name="i-lucide-image" class="size-8" />
+              <span class="text-xs uppercase font-bold tracking-wider">Add Banner</span>
+            </div>
+            
+            <div class="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover/banner:opacity-100 transition">
+              <RLAButton id="change-banner-btn" size="xs" variant="solid" color="neutral" leadingIcon="i-lucide-edit-2">
+                Change
+              </RLAButton>
+              <RLAButton id="remove-banner-btn" size="xs" square variant="solid" color="error" leadingIcon="i-lucide-trash" aria-label="Remove Banner" />
+            </div>
+          </div>
+
+          <!-- Title and Description Header -->
+          <div class="border-b border-default pb-4 flex flex-col gap-2">
+            <input
+              id="page-title-input"
+              type="text"
+              value={titleVal}
+              placeholder="Page Title"
+              class="w-full text-4xl font-bold bg-transparent border-0 focus:ring-0 focus:outline-none p-0 text-foreground"
+            />
+            <textarea
+              id="page-desc-input"
+              rows="2"
+              placeholder="Add a description..."
+              class="w-full text-lg text-dimmed bg-transparent border-0 focus:ring-0 focus:outline-none p-0 resize-none mt-1"
+            >{descVal}</textarea>
+          </div>
+
+          <!-- 24-Column Grid: Properties (8) + Content (16) -->
+          <div class="grid grid-cols-1 lg:grid-cols-24 gap-8 items-start w-full">
+            
+            <!-- Properties Panel (Order 1 in mobile, Order 2 in desktop) -->
+            <div class="order-1 lg:order-2 lg:col-span-8 xl:col-span-7 flex flex-col gap-4">
+              <div class="rounded-xl border border-default bg-neutral-900/30 overflow-hidden sticky top-4 shadow-sm">
+                <RimelightPropertiesPanel
+                  client:only="solid"
+                  pageType={pageType}
+                  initialProperties={initialProperties}
+                  class="w-full"
+                />
+              </div>
+            </div>
+
+            <!-- Content Wrapper (Order 2 in mobile, Order 1 in desktop) -->
+            <div class="order-2 lg:order-1 lg:col-span-16 xl:col-span-17 flex flex-col gap-6 w-full min-w-0">
+              <div id="cms-editor-layout" class="w-full">
+                <RimelightEditorLayout
+                  client:only="solid"
+                  pageId={id!}
+                  initialBlocks={extractedBlocks}
+                  showInternalPreview={false}
+                />
+              </div>
+
+              <!-- Metadata Box -->
+              <div class="flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-6">
+                <span class="font-bold text-foreground">Metadata</span>
+                <span>ID: {page.id}</span>
+                {page.createdAt && <span>Created: {new Date(page.createdAt).toLocaleString(currentLocale)}</span>}
+                {page.updatedAt && <span>Updated: {new Date(page.updatedAt).toLocaleString(currentLocale)}</span>}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Resizer Handle (Middle) -->
+      <div
+        id="split-drag-handle"
+        class="hidden cms-resize-handle"
+        title="Drag to resize (snaps to center)"
+      >
+        <div class="cms-resize-pill" />
+      </div>
+
+      <!-- Live Preview Column (Right) -->
+      <div
+        id="preview-pane"
+        class="hidden flex-col h-full overflow-y-auto border-l border-default bg-neutral-50/50 dark:bg-neutral-950/40 shrink-0"
+      >
+        <div id="preview-content-container" class="w-full h-full">
+          <RimelightPreview
+            client:only="solid"
+            blocks={extractedBlocks}
+            title={titleVal}
+            description={descVal}
+            banner={heroImage}
+            category={initialProperties?.category}
+          />
+        </div>
+      </div>
+
     </div>
-    <RimelightPropertiesPanel client:only="solid" pageType={pageType} initialProperties={initialProperties} class="flex-none w-72" />
   </div>
 
+  <!-- Initial page JSON -->
+  <script id="initial-properties-data" type="application/json" set:html={JSON.stringify(initialProperties)} />
+  <script id="initial-page-data" type="application/json" set:html={JSON.stringify({ id: page.id, slug: page.slug, title: titleVal, description: descVal, banner: heroImage, isPublished, pageType })} />
+
   <script>
+    import { initSplitPane } from "@rimelight/cms/client/utils/splitpane";
     import "@rimelight/cms/client/styles/cms-editor.css";
 
-    const getLayout = () => (window as any).cmsEditorLayout || (document.getElementById('cms-editor-layout') as any);
+    const initialData = JSON.parse(document.getElementById('initial-page-data')?.textContent || '{}');
+    const initialProps = JSON.parse(document.getElementById('initial-properties-data')?.textContent || '{}');
+    (window as any).cmsPageProperties = initialProps;
 
-    const updatePreviewIcon = (visible: boolean) => {
-      const btn = document.getElementById('preview-btn');
-      if (!btn) return;
-      const icon = btn.querySelector('.i-lucide-eye, .i-lucide-eye-off');
-      if (icon) {
-        if (visible) {
-          icon.classList.remove('i-lucide-eye');
-          icon.classList.add('i-lucide-eye-off');
-        } else {
-          icon.classList.remove('i-lucide-eye-off');
-          icon.classList.add('i-lucide-eye');
+    const titleInput = document.getElementById('page-title-input') as HTMLInputElement | null;
+    const descInput = document.getElementById('page-desc-input') as HTMLTextAreaElement | null;
+    const headerTitle = document.getElementById('header-page-title');
+    const bannerImg = document.getElementById('banner-img') as HTMLImageElement | null;
+    const bannerPlaceholder = document.getElementById('banner-placeholder');
+
+    const splitContainer = document.getElementById('split-container');
+    const editorPane = document.getElementById('editor-pane');
+    const previewPane = document.getElementById('preview-pane');
+    const dragHandle = document.getElementById('split-drag-handle');
+    const previewBtn = document.getElementById('preview-btn');
+
+    let isPreviewOpen = false;
+    let cleanupSplitPane: (() => void) | null = null;
+
+    const broadcastMeta = () => {
+      document.dispatchEvent(new CustomEvent('page-meta-change', {
+        detail: {
+          title: titleInput?.value || '',
+          description: descInput?.value || '',
+          banner: (window as any).cmsPageProperties?.heroImage || '',
+          category: (window as any).cmsPageProperties?.category || ''
         }
+      }));
+    };
+
+    const togglePreview = (forcedState?: boolean) => {
+      isPreviewOpen = typeof forcedState === 'boolean' ? forcedState : !isPreviewOpen;
+      
+      if (isPreviewOpen) {
+        editorPane?.style.setProperty('flex', '0 0 50%');
+        editorPane?.style.setProperty('width', '50%');
+        previewPane?.style.setProperty('flex', '0 0 50%');
+        previewPane?.style.setProperty('width', '50%');
+        previewPane?.classList.remove('hidden');
+        previewPane?.classList.add('flex');
+        dragHandle?.classList.remove('hidden');
+        dragHandle?.classList.add('flex');
+
+        if (splitContainer && editorPane && previewPane && dragHandle) {
+          cleanupSplitPane = initSplitPane(splitContainer, editorPane, previewPane, dragHandle);
+        }
+        broadcastMeta();
+      } else {
+        if (cleanupSplitPane) {
+          cleanupSplitPane();
+          cleanupSplitPane = null;
+        }
+        editorPane?.style.setProperty('flex', '1 1 100%');
+        editorPane?.style.setProperty('width', '100%');
+        previewPane?.classList.add('hidden');
+        previewPane?.classList.remove('flex');
+        dragHandle?.classList.add('hidden');
+        dragHandle?.classList.remove('flex');
+      }
+
+      // Update Preview Icon
+      const icon = previewBtn?.querySelector('.i-lucide-eye, .i-lucide-eye-off');
+      if (icon) {
+        icon.className = isPreviewOpen ? 'i-lucide-eye-off size-4' : 'i-lucide-eye size-4';
       }
     };
 
-    document.getElementById('preview-btn')?.addEventListener('click', () => {
-      const isVisible = getLayout()?.togglePreview?.();
-      updatePreviewIcon(!!isVisible);
+    previewBtn?.addEventListener('click', () => togglePreview());
+
+    titleInput?.addEventListener('input', () => {
+      if (headerTitle && titleInput) {
+        headerTitle.textContent = titleInput.value || 'Untitled Page';
+      }
+      broadcastMeta();
     });
 
+    descInput?.addEventListener('input', () => {
+      broadcastMeta();
+    });
+
+    const setBanner = (url: string) => {
+      (window as any).cmsPageProperties = { ...((window as any).cmsPageProperties || {}), heroImage: url };
+      if (bannerImg) {
+        bannerImg.src = url;
+        bannerImg.classList.toggle('opacity-100', !!url);
+        bannerImg.classList.toggle('opacity-0', !url);
+        bannerImg.classList.toggle('pointer-events-none', !url);
+      }
+      if (bannerPlaceholder) {
+        bannerPlaceholder.classList.toggle('hidden', !!url);
+        bannerPlaceholder.classList.toggle('flex', !url);
+      }
+      broadcastMeta();
+    };
+
+    document.getElementById('banner-placeholder')?.addEventListener('click', () => {
+      const url = prompt('Enter Banner Image URL:');
+      if (url) setBanner(url);
+    });
+
+    document.getElementById('change-banner-btn')?.addEventListener('click', () => {
+      const current = (window as any).cmsPageProperties?.heroImage || '';
+      const url = prompt('Enter Banner Image URL:', current);
+      if (url !== null) setBanner(url);
+    });
+
+    document.getElementById('remove-banner-btn')?.addEventListener('click', () => {
+      if (confirm('Remove banner image?')) setBanner('');
+    });
+
+    const getLayout = () => (window as any).cmsEditorLayout || (document.getElementById('cms-editor-layout') as any);
+
+    // Undo / Redo
     document.getElementById('undo-btn')?.addEventListener('click', () => {
       getLayout()?.undo?.();
     });
@@ -96,14 +399,7 @@ const initialProperties = rawContent?.properties || {}
       getLayout()?.redo?.();
     });
 
-    document.getElementById('add-block-btn')?.addEventListener('click', () => {
-      getLayout()?.addBlock?.('ParagraphBlock');
-    });
-
-    document.getElementById('save-btn')?.addEventListener('click', () => {
-      getLayout()?.saveDraft?.();
-    });
-
+    // Save Status Listener
     document.addEventListener('status-change', (e: Event) => {
       if (e instanceof CustomEvent && e.detail?.status) {
         const status = e.detail.status;
@@ -120,47 +416,113 @@ const initialProperties = rawContent?.properties || {}
       }
     });
 
-    document.addEventListener('preview-toggle', (e: Event) => {
-      if (e instanceof CustomEvent && typeof e.detail?.visible === 'boolean') {
-        updatePreviewIcon(e.detail.visible);
-      }
-    });
-
-    document.getElementById('cms-properties-panel')?.addEventListener('properties-change', (e: Event) => {
+    document.addEventListener('properties-change', (e: Event) => {
       if (e instanceof CustomEvent && e.detail?.properties) {
         (window as any).cmsPageProperties = e.detail.properties;
       }
     });
 
+    // Save handler
+    const savePage = async () => {
+      const saveBtn = document.getElementById('save-btn') as HTMLButtonElement | null;
+      const layout = getLayout();
+      if (!layout) return;
+
+      const pageId = initialData.id;
+      const blocks = layout.getBlocks ? await layout.getBlocks() : [];
+      const properties = (window as any).cmsPageProperties || {};
+      const title = titleInput?.value || initialData.title || '';
+      const description = descInput?.value || initialData.description || '';
+      const content = { blocks, properties };
+
+      try {
+        if (saveBtn) saveBtn.disabled = true;
+        const res = await fetch(`/api/cms/pages/${pageId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: { en: title },
+            description: { en: description },
+            content
+          })
+        });
+        if (res.ok) {
+          const indicator = document.getElementById('save-status-indicator');
+          if (indicator) indicator.textContent = '● Saved';
+        } else {
+          alert('Failed to save page');
+        }
+      } catch {
+        alert('Network error saving page');
+      } finally {
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    };
+
+    document.getElementById('save-btn')?.addEventListener('click', savePage);
+
+    // Publish / Unpublish handler
     document.getElementById('publish-btn')?.addEventListener('click', async () => {
       const publishBtn = document.getElementById('publish-btn') as HTMLButtonElement | null;
       const layout = getLayout();
       if (!layout) { alert('Editor not loaded'); return; }
-      
-      const pageId = layout.getAttribute('page-id');
+
+      const pageId = initialData.id;
       const blocks = layout.getBlocks ? await layout.getBlocks() : [];
-      const content = { blocks, properties: {} };
-      
+      const properties = (window as any).cmsPageProperties || {};
+      const title = titleInput?.value || initialData.title || '';
+      const description = descInput?.value || initialData.description || '';
+      const content = { blocks, properties };
+
       try {
         if (publishBtn) publishBtn.disabled = true;
-        const response = await fetch(`/api/cms/pages/${pageId}/publish`, {
+        // Save page metadata & draft first
+        await fetch(`/api/cms/pages/${pageId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: { en: title },
+            description: { en: description },
+            content
+          })
+        });
+
+        const isUnpublish = publishBtn.textContent?.trim() === 'Unpublish';
+        const endpoint = isUnpublish ? `/api/cms/pages/${pageId}/unpublish` : `/api/cms/pages/${pageId}/publish`;
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content, changeSummary: 'Published from editor' })
+          body: JSON.stringify({ content, changeSummary: isUnpublish ? 'Unpublished from editor' : 'Published from editor' })
         });
-        if (response.ok) {
+
+        if (res.ok) {
           try { localStorage.removeItem('cms_draft_backup_' + pageId); } catch {}
-          alert('Page published successfully!');
-          window.location.href = '/cms/pages';
+          alert(isUnpublish ? 'Page unpublished!' : 'Page published successfully!');
+          window.location.reload();
         } else {
-          const errorData = (await response.json().catch(() => ({}))) as { error?: string };
-          alert(`Failed to publish page: ${errorData.error || 'Unknown error'}`);
+          const errorData = (await res.json().catch(() => ({}))) as { error?: string };
+          alert(`Failed: ${errorData.error || 'Unknown error'}`);
         }
-      } catch (error) {
-        alert('Error publishing page: Network error');
+      } catch {
+        alert('Network error');
       } finally {
         if (publishBtn) publishBtn.disabled = false;
       }
     });
+
+    // Delete handler
+    document.getElementById('delete-btn')?.addEventListener('click', async () => {
+      if (!confirm(`Are you sure you want to delete "${initialData.title}"?`)) return;
+      try {
+        const res = await fetch(`/api/cms/pages/${initialData.id}`, { method: 'DELETE' });
+        if (res.ok) {
+          window.location.href = '/cms/pages';
+        } else {
+          alert('Failed to delete page');
+        }
+      } catch {
+        alert('Network error deleting page');
+      }
+    });
   </script>
-</CMSDashboardLayout>
+</DashboardLayout>

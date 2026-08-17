@@ -22,12 +22,14 @@ export function createEditorState(
     position: "before" | "after"
     sectionDepth: number
     parentId?: string | null
+    containerType?: string | null
   }>({
     open: false,
     targetId: null,
     position: "after",
     sectionDepth: 0,
-    parentId: null
+    parentId: null,
+    containerType: null
   })
 
   let historyStack = new HistoryStack(initialBlocks)
@@ -229,9 +231,10 @@ export function createEditorState(
     targetId: string | null = null,
     position: "before" | "after" = "after",
     sectionDepth = 0,
-    parentId: string | null = null
+    parentId: string | null = null,
+    containerType: string | null = null
   ) => {
-    setPickerTarget({ open: true, targetId, position, sectionDepth, parentId })
+    setPickerTarget({ open: true, targetId, position, sectionDepth, parentId, containerType })
   }
 
   const closePicker = () => {

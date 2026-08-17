@@ -23,7 +23,8 @@ export interface RimelightBlockProps {
         targetId: string | null,
         position: "before" | "after",
         sectionDepth: number,
-        parentId?: string | null
+        parentId?: string | null,
+        containerType?: string | null
       ) => void)
     | undefined
 }
@@ -82,7 +83,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth + 1, blockItem.id)}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth + 1, blockItem.id, "SectionBlock")
+            }
             renderChildBlock={renderChildBlock}
           />
         )
@@ -95,7 +98,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, blockItem.id)}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "CalloutBlock")
+            }
             renderChildBlock={renderChildBlock}
           />
         )
@@ -112,7 +117,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, blockItem.id)}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "ScriptBlock")
+            }
             renderChildBlock={renderChildBlock}
           />
         )
@@ -125,7 +132,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             sectionDepth={depth}
             onPropsChange={handleProps}
             onRelocate={props.onRelocate}
-            onOpenPicker={() => props.onOpenPicker?.(null, "after", depth, blockItem.id)}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "SceneBlock")
+            }
             renderChildBlock={renderChildBlock}
           />
         )

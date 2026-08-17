@@ -7,16 +7,18 @@ import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashb
 import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
 import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
-import { t } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+
+const currentLocale = Astro.currentLocale ?? "en";
 
 const cmsNavItems = [
-  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: "/cms", id: "dashboard" },
-  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: "/cms/templates", id: "templates" },
-  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: "/cms/pages", id: "pages" },
-  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: "/cms/versions", id: "versions" },
+  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: getRelativeLocaleUrl(currentLocale, "/cms"), id: "dashboard" },
+  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: getRelativeLocaleUrl(currentLocale, "/cms/templates"), id: "templates" },
+  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: getRelativeLocaleUrl(currentLocale, "/cms/pages"), id: "pages" },
+  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: getRelativeLocaleUrl(currentLocale, "/cms/versions"), id: "versions" },
 ]
 
-const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: "/cms/settings", id: "settings" }
+const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: getRelativeLocaleUrl(currentLocale, "/cms/settings"), id: "settings" }
 
 interface CMSDashboardLayoutProps {
   title: string;
@@ -30,7 +32,8 @@ const { title, description, activeSection = "dashboard", toolbarLeft, toolbarRig
 ---
 
 <DashboardLayout title={title} description={description} noindex={true}>
-  <RLADashboardGroup>
+  <div data-astro-reload class="flex-1 flex flex-col w-full h-full min-h-0">
+    <RLADashboardGroup>
     <RLADashboardSidebar collapsible>
       <Fragment slot="header">
         <div class="flex items-center gap-2.5">
@@ -106,4 +109,5 @@ const { title, description, activeSection = "dashboard", toolbarLeft, toolbarRig
       </div>
     </RLADashboardPanel>
   </RLADashboardGroup>
+  </div>
 </DashboardLayout>

@@ -8,6 +8,7 @@ import { initSplitPane } from "../utils/splitpane"
 export interface RimelightEditorLayoutProps {
   pageId?: string
   initialBlocks?: BaseBlock[] | string
+  showInternalPreview?: boolean
   ref?: (el: any) => void
 }
 
@@ -31,8 +32,6 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
   const state = createEditorState(parsedInitialBlocks, componentProps.pageId || "default-page")
 
   // Snapshot of blocks as plain objects for the preview.
-  // Explicitly reads state.blocks.length and each index so SolidJS tracks
-  // every array mutation (add, remove, reorder).
   const previewBlocks = createMemo<BaseBlock[]>(() => {
     const len = state.blocks.length
     const result: BaseBlock[] = []
@@ -50,6 +49,15 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
     if (typeof document !== "undefined") {
       document.dispatchEvent(
         new CustomEvent("status-change", { detail: { status: currentStatus }, bubbles: true })
+      )
+    }
+  })
+
+  createEffect(() => {
+    const rawBlocks = previewBlocks()
+    if (typeof document !== "undefined") {
+      document.dispatchEvent(
+        new CustomEvent("blocks-change", { detail: { blocks: rawBlocks }, bubbles: true })
       )
     }
   })
@@ -90,7 +98,7 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
   })
 
   createEffect(() => {
-    if (state.previewVisible()) {
+    if (componentProps.showInternalPreview && state.previewVisible()) {
       queueMicrotask(() => {
         if (containerRef && editorPaneRef && previewPaneRef && handleRef) {
           initSplitPane(containerRef, editorPaneRef, previewPaneRef, handleRef)
@@ -108,14 +116,19 @@ export const RimelightEditorLayout: Component<RimelightEditorLayoutProps> = (com
       >
         <div
           ref={editorPaneRef}
-          style={{ flex: state.previewVisible() ? "0 0 50%" : "1 1 100%" }}
-          class="flex flex-col h-full overflow-hidden"
+          style={{
+            flex:
+              componentProps.showInternalPreview && state.previewVisible() ? "0 0 50%" : "1 1 100%"
+          }}
+          class="flex flex-col h-full overflow-hidden w-full"
         >
           <RimelightEditor state={state} />
         </div>
 
-        <Show when={state.previewVisible()}>
-          <div ref={handleRef} class="cms-resize-handle" id="cms-resize-handle" />
+        <Show when={componentProps.showInternalPreview && state.previewVisible()}>
+          <div ref={handleRef} class="cms-resize-handle" id="cms-resize-handle">
+            <div class="cms-resize-pill" />
+          </div>
           <div
             ref={previewPaneRef}
             style={{ flex: "0 0 50%" }}

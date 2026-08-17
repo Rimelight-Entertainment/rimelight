@@ -8,12 +8,14 @@ import RLASelect from "@rimelight/ui/components/select/RLASelect.astro"
 import { db } from "@/db"
 import { pageTemplates, role } from "@/db/schema"
 import { eq, isNull } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
 
+const currentLocale = Astro.currentLocale ?? "en"
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 const id = Astro.params.id
 
 if (!session) {
-  return Astro.redirect("/auth/sign-in")
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
 }
 
 const templateResult = await db
@@ -24,7 +26,7 @@ const templateResult = await db
 
 const template = templateResult[0]
 if (!template) {
-  return Astro.redirect("/cms/templates")
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/templates"))
 }
 
 // Fetch DB roles for selection
@@ -150,7 +152,7 @@ const descVal = typeof template.description === "object" && template.description
       </div>
 
       <div class="border-t pt-6 flex items-center justify-end gap-3">
-        <RLAButton href="/cms/templates" variant="outline" color="neutral" size="sm">
+        <RLAButton href={getRelativeLocaleUrl(currentLocale, "/cms/templates")} variant="outline" color="neutral" size="sm">
           Cancel
         </RLAButton>
         <RLAButton variant="solid" color="primary" size="sm" type="submit">
@@ -164,7 +166,7 @@ const descVal = typeof template.description === "object" && template.description
     @import url("@rimelight/cms/client/styles/cms-editor.css");
   </style>
 
-  <script type="module" is:inline define:vars={{ templateId: id, initialBlocks: template.initialBlocks || [] }}>
+  <script define:vars={{ currentLocale, templateId: id, initialBlocks: template.initialBlocks || [] }}>
     import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
       defineCustomElements();
       const templateEditor = document.getElementById('template-block-editor');
@@ -228,7 +230,7 @@ const descVal = typeof template.description === "object" && template.description
         });
 
         if (response.ok) {
-          window.location.href = '/cms/templates';
+          window.location.href = `/${currentLocale}/cms/templates`;
         } else {
           const errorData = (await response.json().catch(() => ({})));
           alert(`Failed to save template: ${errorData.error || 'Unknown error'}`);

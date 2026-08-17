@@ -46,6 +46,14 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     const updated = { ...properties(), [key]: value }
     setProperties(updated)
     componentProps.onPropertiesChange?.(updated)
+    if (typeof document !== "undefined") {
+      document.dispatchEvent(
+        new CustomEvent("properties-change", { detail: { properties: updated }, bubbles: true })
+      )
+    }
+    if (typeof window !== "undefined") {
+      ;(window as any).cmsPageProperties = updated
+    }
   }
 
   const toggleGroup = (groupId: string) => {
@@ -195,7 +203,10 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
   }
 
   return (
-    <div class="cms-properties-panel h-full flex flex-col bg-gray-900 border-l border-gray-800">
+    <div
+      id="cms-properties-panel"
+      class="cms-properties-panel h-full flex flex-col bg-gray-900 border-l border-gray-800"
+    >
       <div class="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
         <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Properties</span>
         <span class="text-xs text-gray-500">{pageType()}</span>

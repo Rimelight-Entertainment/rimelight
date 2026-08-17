@@ -7,6 +7,7 @@ import CodeBlock from "./blocks/CodeBlock.astro"
 import ScriptBlock from "./blocks/ScriptBlock.astro"
 import SceneBlock from "./blocks/SceneBlock.astro"
 import DialogueBlock from "./blocks/DialogueBlock.astro"
+import SectionBlock from "./blocks/SectionBlock.astro"
 
 interface Props {
   block: BaseBlock
@@ -44,12 +45,11 @@ const { block, locale = "en" } = Astro.props
   ) : block.type === "DialogueBlock" ? (
     <DialogueBlock block={block} locale={locale} />
   ) : block.type === "SectionBlock" ? (
-    <section class="cms-section my-6" data-block-id={block.id}>
-      {block.props.title && <h2 class="text-2xl font-bold mb-4">{block.props.title}</h2>}
+    <SectionBlock block={block} locale={locale}>
       {(block.children || block.props?.children)?.map((child: BaseBlock) => (
         <Astro.self block={child} locale={locale} />
       ))}
-    </section>
+    </SectionBlock>
   ) : (
     <div class="cms-block-fallback p-4 border border-dashed border-gray-700 rounded my-2 text-sm text-gray-400">
       Unknown Block Type: {block.type}

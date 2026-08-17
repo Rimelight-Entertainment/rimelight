@@ -556,7 +556,12 @@ const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar"
 
         // Row Selection Event
         this.addEventListener("click", (e) => {
-          const tr = (e.target as HTMLElement).closest("tbody tr[data-row-id]");
+          const target = e.target as HTMLElement | null;
+          if (!target) return;
+          if (target.closest("a, button, input, select, textarea, [role=button]")) {
+            return;
+          }
+          const tr = target.closest("tbody tr[data-row-id]");
           if (tr) {
             const rowId = tr.getAttribute("data-row-id");
             this.dispatchEvent(new CustomEvent("rla-row-select", { detail: { rowId, event: e }, bubbles: true }));

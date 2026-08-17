@@ -139,16 +139,35 @@ rimelight-preview,
 }
 
 .cms-resize-handle {
-  display: block;
-  width: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
   cursor: col-resize;
-  background-color: #1f2937;
-  transition: background-color 0.2s ease;
-  z-index: 10;
+  background-color: transparent;
+  border-left: 1px solid rgba(75, 85, 99, 0.3);
+  border-right: 1px solid rgba(75, 85, 99, 0.3);
+  transition: background-color 0.15s ease;
+  z-index: 20;
+  user-select: none;
+  flex-shrink: 0;
 }
 
 .cms-resize-handle:hover,
 .cms-resize-handle.active {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+.cms-resize-pill {
+  width: 4px;
+  height: 32px;
+  border-radius: 9999px;
+  background-color: #4b5563;
+  transition: background-color 0.15s ease;
+}
+
+.cms-resize-handle:hover .cms-resize-pill,
+.cms-resize-handle.active .cms-resize-pill {
   background-color: #3b82f6;
 }
 

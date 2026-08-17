@@ -1,5 +1,6 @@
 ---
 import type { BaseBlock } from "../../core/types/blocks"
+import type { InlineNode } from "../../core/types/inline"
 
 interface Props {
   block: BaseBlock
@@ -7,10 +8,58 @@ interface Props {
 }
 
 const { block, locale = "en" } = Astro.props
-const rawText = block.props.text
-const textContent = typeof rawText === "object" ? (rawText[locale] || rawText.en || "") : (rawText || "")
+const rawText = block.props?.text
+
+function escapeHtml(str: string): string {
+  return (str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+}
+
+function renderNodesToHtml(nodes: InlineNode[]): string {
+  if (!Array.isArray(nodes)) return ""
+  return nodes
+    .map((node) => {
+      if (!node) return ""
+      if (node.type === "text") {
+        let t = escapeHtml(node.text || "")
+        if (node.marks && Array.isArray(node.marks)) {
+          if (node.marks.includes("bold")) t = `<strong>${t}</strong>`
+          if (node.marks.includes("italic")) t = `<em>${t}</em>`
+          if (node.marks.includes("underline")) t = `<u>${t}</u>`
+          if (node.marks.includes("strikethrough")) t = `<s>${t}</s>`
+          if (node.marks.includes("code")) {
+            t = `<code class="bg-neutral-800 text-neutral-200 px-1.5 py-0.5 rounded text-sm font-mono">${t}</code>`
+          }
+        }
+        return t
+      }
+      if (node.type === "link") {
+        const inner = node.children ? renderNodesToHtml(node.children) : escapeHtml((node as any).text || "")
+        const target = node.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : ""
+        const href = escapeHtml(node.url || "#")
+        return `<a href="${href}"${target} class="text-blue-500 hover:text-blue-400 underline underline-offset-2">${inner}</a>`
+      }
+      if (node.type === "page_mention") {
+        const title = escapeHtml(node.displayTitle || node.pageSlug || node.pageId || "Page")
+        const href = `/${escapeHtml(node.pageSlug || node.pageId)}`
+        return `<a href="${href}" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-sm font-medium no-underline"><span class="i-lucide-file-text size-3.5"></span>${title}</a>`
+      }
+      return ""
+    })
+    .join("")
+}
+
+let htmlContent = ""
+if (Array.isArray(rawText)) {
+  htmlContent = renderNodesToHtml(rawText)
+} else if (typeof rawText === "object" && rawText !== null) {
+  htmlContent = escapeHtml(rawText[locale] || rawText.en || "")
+} else if (typeof rawText === "string") {
+  htmlContent = escapeHtml(rawText)
+}
 ---
 
-<p class="cms-paragraph text-base leading-relaxed text-gray-200 my-4" data-block-id={block.id}>
-  {textContent}
-</p>
+<p class="cms-paragraph text-base leading-relaxed text-neutral-800 dark:text-neutral-200 my-4 whitespace-pre-wrap break-words" data-block-id={block.id} set:html={htmlContent} />

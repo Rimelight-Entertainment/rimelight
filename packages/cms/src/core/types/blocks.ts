@@ -171,3 +171,27 @@ export type TypedBlock =
   | SceneBlock
   | DialogueBlock
   | CodeBlock
+
+export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
+  Root: [
+    "SectionBlock",
+    "ParagraphBlock",
+    "CalloutBlock",
+    "ImageBlock",
+    "CodeBlock",
+    "ScriptBlock",
+    "SceneBlock",
+    "DialogueBlock"
+  ],
+  SectionBlock: [
+    "SectionBlock",
+    "ParagraphBlock",
+    "CalloutBlock",
+    "ImageBlock",
+    "CodeBlock",
+    "ScriptBlock"
+  ],
+  CalloutBlock: ["ParagraphBlock", "CalloutBlock", "ImageBlock", "CodeBlock"],
+  ScriptBlock: ["SceneBlock"],
+  SceneBlock: ["ParagraphBlock", "CalloutBlock", "DialogueBlock"]
+}

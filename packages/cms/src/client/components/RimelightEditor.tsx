@@ -97,8 +97,8 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
                   onDuplicate={props.state.duplicateBlock}
                   onAddAdjacent={(targetId, pos) => props.state.openPicker(targetId, pos, 0)}
                   onRelocate={props.state.relocateBlock}
-                  onOpenPicker={(targetId, pos, depth, parentId) =>
-                    props.state.openPicker(targetId, pos, depth, parentId)
+                  onOpenPicker={(targetId, pos, depth, parentId, containerType) =>
+                    props.state.openPicker(targetId, pos, depth, parentId, containerType)
                   }
                 />
               )}
@@ -111,7 +111,7 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
             <div class="cms-add-block-footer flex items-center justify-center py-4">
               <button
                 type="button"
-                onClick={() => props.state.openPicker(null, "after", 0)}
+                onClick={() => props.state.openPicker(null, "after", 0, null, "Root")}
                 class="cms-add-block-btn flex items-center gap-2 px-4 py-2 border border-dashed border-gray-700 hover:border-blue-500 text-gray-500 hover:text-blue-400 text-xs rounded-lg cursor-pointer transition-colors"
               >
                 + Add Block
@@ -124,6 +124,7 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
       <RimelightBlockPicker
         open={props.state.pickerTarget().open}
         sectionDepth={props.state.pickerTarget().sectionDepth}
+        containerType={props.state.pickerTarget().containerType}
         onSelect={(type) => {
           const { targetId, position, parentId } = props.state.pickerTarget()
           props.state.insertBlock(type, targetId, position, parentId)

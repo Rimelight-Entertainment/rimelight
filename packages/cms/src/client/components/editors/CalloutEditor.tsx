@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
+import { createSignal, onMount, onCleanup, For, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
 
@@ -25,7 +25,10 @@ const VARIANTS: Record<string, { icon: string; color: string; label: string }> =
 
 export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => {
   const [dropdownOpen, setDropdownOpen] = createSignal(false)
+  const [linkSettingsOpen, setLinkSettingsOpen] = createSignal(!!componentProps.props.to)
   let childrenContainer: HTMLDivElement | undefined = undefined
+  let toInput: HTMLInputElement | undefined = undefined
+  let targetSelect: HTMLSelectElement | undefined = undefined
   let sortableInstance: any = null
 
   const variant = () => componentProps.props.variant || "info"
@@ -64,7 +67,6 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
           setTimeout(cleanAllSortableClasses, 200)
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
-          // Intentionally empty: the target container's onAdd -> relocateBlock handles this.
           cleanAllSortableClasses()
         }
       })
@@ -82,6 +84,14 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
       if (sortableInstance) sortableInstance.destroy()
     })
   })
+
+  const saveLinkProps = () => {
+    componentProps.onPropsChange({
+      ...componentProps.props,
+      to: toInput?.value || undefined,
+      target: targetSelect?.value || undefined
+    })
+  }
 
   const setVariant = (v: string) => {
     componentProps.onPropsChange({
@@ -135,40 +145,77 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
 
   return (
     <div
-      class={`rimelight-callout-editor flex items-start gap-3 p-4 rounded-lg border my-1 relative transition-colors w-full ${borderClass()}`}
+      class={`rimelight-callout-editor flex flex-col gap-2 p-4 rounded-lg border my-1 relative transition-colors w-full ${borderClass()}`}
     >
-      <div class="callout-dropdown-wrapper relative">
+      <div class="flex items-center justify-between w-full">
+        <div class="callout-dropdown-wrapper relative flex items-center gap-2">
+          <button
+            type="button"
+            class={`callout-icon-btn text-xl cursor-pointer select-none leading-none bg-transparent border-none p-0 ${iconClass()}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              setDropdownOpen(!dropdownOpen())
+            }}
+          >
+            {config()?.icon}
+          </button>
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">
+            {config()?.label}
+          </span>
+
+          {dropdownOpen() && (
+            <div class="callout-dropdown absolute left-0 top-8 z-50 w-52 bg-gray-900 border border-gray-700 rounded-lg shadow-xl p-1 flex flex-col gap-1">
+              <For each={Object.entries(VARIANTS)}>
+                {([key, itemConfig]: [string, { icon: string; color: string; label: string }]) => (
+                  <button
+                    type="button"
+                    data-variant={key}
+                    onClick={() => setVariant(key)}
+                    class="variant-item flex items-center gap-2 w-full px-3 py-2 rounded text-sm hover:bg-gray-800 cursor-pointer text-gray-300 bg-transparent border-none text-left"
+                  >
+                    <span class="text-lg w-6 text-center">{itemConfig.icon}</span>
+                    <span>{itemConfig.label}</span>
+                  </button>
+                )}
+              </For>
+            </div>
+          )}
+        </div>
+
         <button
           type="button"
-          class={`callout-icon-btn text-xl cursor-pointer select-none leading-none bg-transparent border-none p-0 ${iconClass()}`}
-          onClick={(e) => {
-            e.stopPropagation()
-            setDropdownOpen(!dropdownOpen())
-          }}
+          onClick={() => setLinkSettingsOpen(!linkSettingsOpen())}
+          class="text-xs text-gray-500 hover:text-gray-300 cursor-pointer bg-transparent border-none flex items-center gap-1"
+          title="Link settings"
         >
-          {config()?.icon}
+          <span>🔗</span>
+          <span>{componentProps.props.to ? "Linked" : "Add Link"}</span>
         </button>
-
-        {dropdownOpen() && (
-          <div class="callout-dropdown absolute left-0 top-10 z-50 w-52 bg-gray-900 border border-gray-700 rounded-lg shadow-xl p-1 flex flex-col gap-1">
-            <For each={Object.entries(VARIANTS)}>
-              {([key, itemConfig]: [string, { icon: string; color: string; label: string }]) => (
-                <button
-                  type="button"
-                  data-variant={key}
-                  onClick={() => setVariant(key)}
-                  class="variant-item flex items-center gap-2 w-full px-3 py-2 rounded text-sm hover:bg-gray-800 cursor-pointer text-gray-300 bg-transparent border-none text-left"
-                >
-                  <span class="text-lg w-6 text-center">{itemConfig.icon}</span>
-                  <span>{itemConfig.label}</span>
-                </button>
-              )}
-            </For>
-          </div>
-        )}
       </div>
 
-      <div class="flex-1 min-w-0 flex flex-col gap-2">
+      <Show when={linkSettingsOpen()}>
+        <div class="callout-link-settings flex items-center gap-2 p-2 bg-gray-900/60 rounded border border-gray-800 text-xs">
+          <input
+            ref={(el) => (toInput = el)}
+            type="text"
+            placeholder="Link URL (e.g. https://... or /slug)"
+            value={componentProps.props.to || ""}
+            onBlur={saveLinkProps}
+            class="flex-1 bg-gray-800 border border-gray-700 text-gray-200 px-2 py-1 rounded outline-none"
+          />
+          <select
+            ref={(el) => (targetSelect = el)}
+            value={componentProps.props.target || "_self"}
+            onChange={saveLinkProps}
+            class="bg-gray-800 border border-gray-700 text-gray-300 px-2 py-1 rounded outline-none"
+          >
+            <option value="_self">Same tab</option>
+            <option value="_blank">New tab (_blank)</option>
+          </select>
+        </div>
+      </Show>
+
+      <div class="flex-1 min-w-0 flex flex-col gap-2 mt-1">
         <div ref={childrenContainer} class="children-container flex flex-col gap-2">
           {childrenBlocks().length === 0 ? (
             <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-gray-800/80 bg-gray-900/20 text-center my-1">

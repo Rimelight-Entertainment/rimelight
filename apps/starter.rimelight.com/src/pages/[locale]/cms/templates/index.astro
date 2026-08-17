@@ -6,6 +6,9 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { pageTemplates } from "@/db/schema"
 import { desc } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
+
+const currentLocale = Astro.currentLocale ?? "en"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
@@ -21,7 +24,7 @@ const templates = await db
 
 <CMSDashboardLayout title="Templates" description="Manage CMS templates" activeSection="templates">
   <Fragment slot="toolbar-right">
-    <RLAButton href="/cms/templates/new" variant="solid" color="primary" leadingIcon="i-lucide-plus">
+    <RLAButton href={getRelativeLocaleUrl(currentLocale, "/cms/templates/new")} variant="solid" color="primary" leadingIcon="i-lucide-plus">
       Create Template
     </RLAButton>
   </Fragment>
@@ -50,10 +53,10 @@ const templates = await db
               v{template.version}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-              <RLAButton href={`/cms/pages/new?templateId=${template.id}`} variant="ghost" color="success" size="xs">
+              <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/pages/new?templateId=${template.id}`)} variant="ghost" color="success" size="xs">
                 Create Page
               </RLAButton>
-              <RLAButton href={`/cms/templates/${template.id}/edit`} variant="ghost" color="primary" size="xs">
+              <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/templates/${template.id}/edit`)} variant="ghost" color="primary" size="xs">
                 Edit
               </RLAButton>
               <RLAButton variant="ghost" color="error" size="xs" class="delete-template-btn" data-id={template.id}>

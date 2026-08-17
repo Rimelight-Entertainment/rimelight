@@ -2,36 +2,80 @@ export function initSplitPane(
   container: HTMLElement,
   leftPane: HTMLElement,
   rightPane: HTMLElement,
-  handle: HTMLElement
+  handle: HTMLElement,
+  onResize?: (leftPct: number) => void
 ) {
   let isDragging = false
+  let animationFrameId: number | null = null
+  let pendingPercentage: number | null = null
 
-  handle.addEventListener("mousedown", (e) => {
+  const applyResize = () => {
+    if (pendingPercentage === null) return
+    leftPane.style.flex = `0 0 ${pendingPercentage}%`
+    leftPane.style.width = `${pendingPercentage}%`
+    rightPane.style.flex = `0 0 ${100 - pendingPercentage}%`
+    rightPane.style.width = `${100 - pendingPercentage}%`
+    onResize?.(pendingPercentage)
+    animationFrameId = null
+  }
+
+  const onMouseDown = (e: MouseEvent) => {
     isDragging = true
     handle.classList.add("active")
+    container.classList.add("split-dragging")
+    leftPane.style.transition = "none"
+    rightPane.style.transition = "none"
     document.body.style.cursor = "col-resize"
     document.body.style.userSelect = "none"
     e.preventDefault()
-  })
+  }
 
-  document.addEventListener("mousemove", (e) => {
+  const onMouseMove = (e: MouseEvent) => {
     if (!isDragging) return
     const containerRect = container.getBoundingClientRect()
     const offset = e.clientX - containerRect.left
-    const percentage = (offset / containerRect.width) * 100
+    let percentage = (offset / containerRect.width) * 100
 
-    if (percentage > 20 && percentage < 80) {
-      leftPane.style.flex = `0 0 ${percentage}%`
-      rightPane.style.flex = `0 0 ${100 - percentage}%`
+    // Snap to 50% only when within ±2.5% of center
+    if (Math.abs(percentage - 50) <= 2.5) {
+      percentage = 50
     }
-  })
 
-  document.addEventListener("mouseup", () => {
+    // Keep within bounds 20% - 80%
+    percentage = Math.max(20, Math.min(80, percentage))
+
+    pendingPercentage = percentage
+    if (!animationFrameId) {
+      animationFrameId = requestAnimationFrame(applyResize)
+    }
+  }
+
+  const onMouseUp = () => {
     if (isDragging) {
       isDragging = false
       handle.classList.remove("active")
+      container.classList.remove("split-dragging")
+      leftPane.style.transition = ""
+      rightPane.style.transition = ""
       document.body.style.cursor = ""
       document.body.style.userSelect = ""
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+        animationFrameId = null
+      }
     }
-  })
+  }
+
+  handle.addEventListener("mousedown", onMouseDown)
+  document.addEventListener("mousemove", onMouseMove)
+  document.addEventListener("mouseup", onMouseUp)
+
+  return () => {
+    handle.removeEventListener("mousedown", onMouseDown)
+    document.removeEventListener("mousemove", onMouseMove)
+    document.removeEventListener("mouseup", onMouseUp)
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId)
+    }
+  }
 }

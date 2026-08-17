@@ -6,11 +6,13 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { pageVersions, pages } from "@/db/schema"
 import { desc, eq } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
 
+const currentLocale = Astro.currentLocale ?? "en"
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
 if (!session) {
-  return Astro.redirect("/auth/sign-in")
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
 }
 
 const versionsList = await db
@@ -66,10 +68,10 @@ const versions = await Promise.all(
               {version.authorName || 'Unknown'}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {new Date(version.createdAt).toLocaleDateString()}
+              {new Date(version.createdAt).toLocaleDateString(currentLocale)}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
-              <RLAButton href={`/cms/versions/${version.id}`} variant="ghost" color="primary" size="xs">
+              <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/versions/${version.id}`)} variant="ghost" color="primary" size="xs">
                 View
               </RLAButton>
               <RLAButton variant="ghost" color="error" size="xs">

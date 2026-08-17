@@ -8,11 +8,13 @@ import RLASelect from "@rimelight/ui/components/select/RLASelect.astro"
 import { db } from "@/db"
 import { role } from "@/db/schema"
 import { isNull } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
 
+const currentLocale = Astro.currentLocale ?? "en"
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
 if (!session) {
-  return Astro.redirect("/auth/sign-in")
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
 }
 
 // Fetch DB roles for selection
@@ -123,7 +125,7 @@ const roleOptions = activeRoles.map((r) => ({
       </div>
 
       <div class="border-t pt-6 flex items-center justify-end gap-3">
-        <RLAButton href="/cms/templates" variant="outline" color="neutral" size="sm">
+        <RLAButton href={getRelativeLocaleUrl(currentLocale, "/cms/templates")} variant="outline" color="neutral" size="sm">
           Cancel
         </RLAButton>
         <RLAButton variant="solid" color="primary" size="sm" type="submit">
@@ -137,7 +139,7 @@ const roleOptions = activeRoles.map((r) => ({
     @import url("@rimelight/cms/client/styles/cms-editor.css");
   </style>
 
-  <script type="module" is:inline>
+  <script define:vars={{ currentLocale }}>
     import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
       return defineCustomElements();
     });
@@ -197,7 +199,7 @@ const roleOptions = activeRoles.map((r) => ({
         });
 
         if (response.ok) {
-          window.location.href = '/cms/templates';
+          window.location.href = `/${currentLocale}/cms/templates`;
         } else {
           const errorData = (await response.json().catch(() => ({})));
           alert(`Failed to create template: ${errorData.error || 'Unknown error'}`);

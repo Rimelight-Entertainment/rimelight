@@ -59,9 +59,13 @@ const BLOCK_DEFS = [
   }
 ]
 
+import { ALLOWED_CHILDREN_MAP } from "../../core/types/blocks"
+export { ALLOWED_CHILDREN_MAP }
+
 export interface RimelightBlockPickerProps {
   open: boolean
-  sectionDepth?: number
+  sectionDepth?: number | undefined
+  containerType?: string | null | undefined
   onSelect: (type: string) => void
   onClose: () => void
 }
@@ -71,10 +75,18 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
   const [query, setQuery] = createSignal("")
   const [selectedIndex, setSelectedIndex] = createSignal(0)
 
+  const allowedTypes = (): string[] => {
+    const parent = props.containerType || "Root"
+    return ALLOWED_CHILDREN_MAP[parent] || ALLOWED_CHILDREN_MAP.Root || []
+  }
+
   const filteredBlocks = () => {
     const q = query().toLowerCase()
     const depth = props.sectionDepth || 0
+    const allowed = allowedTypes()
+
     return BLOCK_DEFS.filter((b) => {
+      if (!allowed.includes(b.type)) return false
       if (b.type === "SectionBlock" && depth >= 6) return false
       return (
         b.label.toLowerCase().includes(q) ||
@@ -99,7 +111,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
     const list = filteredBlocks()
     if (e.key === "ArrowDown") {
       e.preventDefault()
-      setSelectedIndex((prev) => Math.min(prev + 1, list.length - 1))
+      setSelectedIndex((prev) => Math.min(prev + 1, Math.max(0, list.length - 1)))
     } else if (e.key === "ArrowUp") {
       e.preventDefault()
       setSelectedIndex((prev) => Math.max(prev - 1, 0))
@@ -123,7 +135,10 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
       >
         <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
           <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
-            <div class="text-sm font-semibold text-gray-100">Add Block</div>
+            <div class="text-sm font-semibold text-gray-100">
+              Add Block{" "}
+              {props.containerType ? `to ${props.containerType.replace("Block", "")}` : ""}
+            </div>
           </div>
 
           <input
@@ -144,7 +159,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
 
           <div class="overflow-y-auto max-h-[50vh] pb-2">
             {filteredBlocks().length === 0 ? (
-              <div class="text-center py-4 text-gray-500 text-sm">No blocks found</div>
+              <div class="text-center py-4 text-gray-500 text-sm">No compatible blocks found</div>
             ) : (
               (() => {
                 let currentGroup = ""

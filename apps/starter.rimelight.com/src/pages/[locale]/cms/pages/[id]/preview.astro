@@ -6,16 +6,18 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
 
+const currentLocale = Astro.currentLocale ?? "en"
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 const id = Astro.params.id
 
 if (!session) {
-  return Astro.redirect("/auth/sign-in")
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
 }
 
 const page = await db.select().from(pages).where(eq(pages.id, id!)).limit(1)
-if (!page[0]) return Astro.redirect('/cms/pages')
+if (!page[0]) return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/pages"))
 
 const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
 
@@ -28,11 +30,16 @@ const userSession = session
       permissions: []
     }
   : undefined
+
+const titleVal =
+  typeof page[0].title === "object" && page[0].title !== null
+    ? (page[0].title as Record<string, string>)[currentLocale] || (page[0].title as Record<string, string>).en || ""
+    : String(page[0].title || "")
 ---
 
-<CMSDashboardLayout title={`Preview: ${page[0].title}`} description="Preview CMS page" activeSection="pages">
+<CMSDashboardLayout title={`Preview: ${titleVal}`} description="Preview CMS page" activeSection="pages">
   <Fragment slot="toolbar-right">
-    <RLAButton href={`/cms/pages/${id}/edit`} variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-arrow-left">
+    <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/pages/${id}/edit`)} variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-arrow-left">
       Back to Editor
     </RLAButton>
   </Fragment>

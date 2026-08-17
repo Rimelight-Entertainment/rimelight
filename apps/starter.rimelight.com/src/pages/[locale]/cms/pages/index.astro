@@ -8,6 +8,9 @@ import type { TableColumn } from "@rimelight/ui/components/table/table.ts"
 import { db } from "@/db"
 import { pages } from "@/db/schema"
 import { desc, isNull } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
+
+const currentLocale = Astro.currentLocale ?? "en"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
@@ -45,7 +48,7 @@ const columns: TableColumn[] = [
 
 <CMSDashboardLayout title="Pages" description="Manage CMS pages" activeSection="pages">
   <Fragment slot="toolbar-right">
-    <RLAButton href="/cms/pages/new" variant="solid" color="success" leadingIcon="i-lucide-plus">
+    <RLAButton href={getRelativeLocaleUrl(currentLocale, "/cms/pages/new")} variant="solid" color="success" leadingIcon="i-lucide-plus">
       Create Page
     </RLAButton>
   </Fragment>
@@ -61,34 +64,52 @@ const columns: TableColumn[] = [
     class="w-full"
   >
     {formattedPages.map((page) => (
-      <tr class="hover:bg-muted/20 transition-colors">
-        <td class="p-3.5 text-sm font-medium text-foreground" data-col-id="title">
+      <tr class="hover:bg-muted/20 transition-colors" data-slot="tr" data-row-id={page.id}>
+        <td class="p-3.5 text-sm font-medium text-foreground" data-col-id="title" data-slot="td">
           {page.title}
         </td>
-        <td class="p-3.5 text-sm text-muted-foreground font-mono" data-col-id="slug">
+        <td class="p-3.5 text-sm text-muted-foreground font-mono text-xs" data-col-id="slug" data-slot="td">
           {page.slug}
         </td>
-        <td class="p-3.5" data-col-id="type">
+        <td class="p-3.5" data-col-id="type" data-slot="td">
           <RLABadge variant="soft" color="blue" size="xs">
             {page.type}
           </RLABadge>
         </td>
-        <td class="p-3.5" data-col-id="status">
+        <td class="p-3.5" data-col-id="status" data-slot="td">
           {page.status === "published" ? (
             <RLABadge variant="soft" color="green" size="xs">Published</RLABadge>
           ) : (
             <RLABadge variant="soft" color="yellow" size="xs">Draft</RLABadge>
           )}
         </td>
-        <td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions">
+        <td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions" data-slot="td">
           <div class="flex items-center justify-end gap-2">
-            <RLAButton href={`/cms/pages/${page.id}/edit`} variant="ghost" color="primary" size="xs">
+            <RLAButton
+              href={getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/edit`)}
+              variant="ghost"
+              color="primary"
+              size="xs"
+              data-astro-reload
+            >
               Edit
             </RLAButton>
-            <RLAButton href={`/cms/pages/${page.id}/preview`} variant="ghost" color="neutral" size="xs">
+            <RLAButton
+              href={getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/preview`)}
+              variant="ghost"
+              color="neutral"
+              size="xs"
+              data-astro-reload
+            >
               Preview
             </RLAButton>
-            <RLAButton variant="ghost" color="error" size="xs" class="delete-page-btn" data-page-id={page.id}>
+            <RLAButton
+              variant="ghost"
+              color="error"
+              size="xs"
+              class="delete-page-btn"
+              data-page-id={page.id}
+            >
               Delete
             </RLAButton>
           </div>
