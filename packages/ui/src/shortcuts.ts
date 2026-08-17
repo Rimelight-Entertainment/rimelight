@@ -110,26 +110,23 @@ export function defineShortcuts(
       parts = k.toLowerCase().split(chain ? "-" : "_")
     let mods = 0
     const nonMods = parts.filter((p) => (MODS[p] ? !(mods |= MODS[p]!) : true)),
-      base = chain ? k.toLowerCase() : nonMods.join("_")
+      base = chain ? k.toLowerCase() : nonMods.join("_"),
+      item: Shortcut = { key: base, handler, mods, usingInput: obj?.usingInput }
 
     if (chain) {
       maxChain = Math.max(maxChain, parts.length)
-      chained.set(base, { key: base, handler, mods, usingInput: obj?.usingInput })
-    } else {
-      standard.push({ key: base, handler, mods, usingInput: obj?.usingInput })
-    }
+      chained.set(base, item)
+    } else standard.push(item)
 
-    if (obj?.label || obj?.description) {
-      const category = obj.category || "system"
+    if (obj?.label || obj?.description)
       reg.push({
-        id: `${category}-${k}`,
+        id: `${obj.category || "system"}-${k}`,
         keys: formatShortcutKeys(k),
-        category,
+        category: obj.category || "system",
         label: obj.label,
         description: obj.description,
         order: obj.order
       })
-    }
   }
 
   const ids = new Set(reg.map((i) => i.id))
