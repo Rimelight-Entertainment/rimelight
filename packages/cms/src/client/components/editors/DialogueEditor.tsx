@@ -1,4 +1,6 @@
-import { onMount, type Component } from "solid-js"
+import { type Component } from "solid-js"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
+import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea"
 
 export interface DialogueEditorProps {
   props: Record<string, any>
@@ -6,60 +8,44 @@ export interface DialogueEditorProps {
 }
 
 export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) => {
-  let characterInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let parentheticalInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let lineTextarea: HTMLTextAreaElement | null = null as HTMLTextAreaElement | null
-
-  const autoResize = () => {
-    if (lineTextarea) {
-      lineTextarea.style.height = "auto"
-      lineTextarea.style.height = `${lineTextarea.scrollHeight}px`
-    }
-  }
-
-  const saveProps = () => {
+  const saveProps = (character?: string, parenthetical?: string, line?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      character: characterInput?.value || "",
-      parenthetical: parentheticalInput?.value || "",
-      line: lineTextarea?.value || ""
+      character: character !== undefined ? character : componentProps.props.character || "",
+      parenthetical:
+        parenthetical !== undefined ? parenthetical : componentProps.props.parenthetical || "",
+      line: line !== undefined ? line : componentProps.props.line || ""
     })
   }
 
-  onMount(() => {
-    if (lineTextarea) {
-      lineTextarea.value = componentProps.props.line || ""
-      autoResize()
-    }
-  })
-
   return (
-    <div class="rimelight-dialogue-editor flex flex-col gap-2 p-3 border-l-4 border-purple-500 bg-purple-950/10 rounded-r-md w-full">
-      <input
-        ref={(el) => (characterInput = el)}
-        type="text"
-        data-field="character"
-        value={componentProps.props.character || ""}
-        onBlur={saveProps}
-        class="text-center uppercase font-bold text-sm text-purple-200 bg-transparent border-b border-purple-800 px-2 py-1 outline-none w-48 mx-auto block placeholder-purple-800"
-        placeholder="CHARACTER"
-      />
-      <input
-        ref={(el) => (parentheticalInput = el)}
-        type="text"
-        data-field="parenthetical"
-        value={componentProps.props.parenthetical || ""}
-        onBlur={saveProps}
-        class="text-center italic text-sm text-gray-400 bg-transparent border-b border-gray-700 px-2 py-1 outline-none w-64 mx-auto block placeholder-gray-600"
-        placeholder="(parenthetical)"
-      />
-      <textarea
-        ref={(el) => (lineTextarea = el)}
+    <div class="rimelight-dialogue-editor flex flex-col gap-2 p-2 border-l-2 border-primary/50 w-full">
+      <div class="w-48 mx-auto">
+        <RLSInput
+          data-field="character"
+          value={componentProps.props.character || ""}
+          onBlur={(e) => saveProps(e.currentTarget.value)}
+          class="text-center font-bold text-sm uppercase"
+          placeholder="CHARACTER"
+          size="sm"
+        />
+      </div>
+      <div class="w-64 mx-auto">
+        <RLSInput
+          data-field="parenthetical"
+          value={componentProps.props.parenthetical || ""}
+          onBlur={(e) => saveProps(undefined, e.currentTarget.value)}
+          class="text-center italic text-sm"
+          placeholder="(parenthetical)"
+          size="sm"
+        />
+      </div>
+      <RLSTextarea
         data-field="line"
-        onInput={autoResize}
-        onBlur={saveProps}
-        class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-gray-100 resize-none outline-none focus:border-purple-500 min-h-[60px]"
+        value={componentProps.props.line || ""}
+        onBlur={(e) => saveProps(undefined, undefined, e.currentTarget.value)}
         placeholder="Dialogue line..."
+        rows={2}
       />
     </div>
   )

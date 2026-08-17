@@ -1,5 +1,5 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
-import type { BaseBlock } from "../../core/types/blocks"
+import { type BaseBlock, calculateHeadingLevel } from "../../core/types/blocks"
 
 export interface RimelightPreviewProps {
   blocks?: BaseBlock[] | (() => BaseBlock[]) | undefined
@@ -171,14 +171,12 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "SectionBlock") {
-    const rawLevel = Number(props.level) || Math.min(6, sectionDepth + 2)
-    const level = Math.max(1, Math.min(6, rawLevel))
+    const level = calculateHeadingLevel(sectionDepth)
     const title = props.title || "Untitled Section"
     const slug = title.toLowerCase().replace(/\W+/g, "-")
     const description = props.description
     let headingClasses = "font-bold text-neutral-900 dark:text-white"
-    if (level === 1) headingClasses += " text-4xl font-extrabold mt-8 mb-4"
-    else if (level === 2)
+    if (level === 2)
       headingClasses += " text-3xl mt-6 mb-3 border-b border-gray-200 dark:border-gray-800 pb-2"
     else if (level === 3) headingClasses += " text-2xl font-semibold mt-5 mb-2.5"
     else if (level === 4) headingClasses += " text-xl font-medium mt-4 mb-2"

@@ -1,11 +1,52 @@
 import { createSignal } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
-import type { BaseBlock } from "../../core/types/blocks"
+import { type BaseBlock, MAX_SECTION_DEPTH } from "../../core/types/blocks"
 import { HistoryStack, createDefaultBlock } from "./history"
 import { AutosaveController, type AutosaveStatus } from "./autosave"
 import { sanitizeBlockTree } from "../utils/tree-sanitizer"
+import { toast } from "../toast"
 
 const cloneBlocks = (b: BaseBlock[]): BaseBlock[] => JSON.parse(JSON.stringify(b))
+
+function findBlockInfo(
+  list: BaseBlock[],
+  targetId: string,
+  currentDepth: number = 0
+): { block: BaseBlock; depth: number; parentId: string | null } | null {
+  for (const b of list) {
+    if (!b) continue
+    if (b.id === targetId) {
+      return { block: b, depth: currentDepth, parentId: null }
+    }
+    const isSec = b.type === "SectionBlock"
+    const nextDepth = isSec ? currentDepth + 1 : currentDepth
+    const children = b.children || b.props?.children
+    if (Array.isArray(children)) {
+      const found = findBlockInfo(children, targetId, nextDepth)
+      if (found) {
+        if (!found.parentId && b.id) {
+          found.parentId = b.id
+        }
+        return found
+      }
+    }
+  }
+  return null
+}
+
+function getMaxSubtreeSectionHeight(b: BaseBlock | null): number {
+  if (!b) return 0
+  const isSec = b.type === "SectionBlock"
+  const children = b.children || b.props?.children
+  let maxChildHeight = 0
+  if (Array.isArray(children)) {
+    for (const c of children) {
+      const h = getMaxSubtreeSectionHeight(c)
+      if (h > maxChildHeight) maxChildHeight = h
+    }
+  }
+  return isSec ? 1 + maxChildHeight : maxChildHeight
+}
 
 export function createEditorState(
   initialBlocks: BaseBlock[] = [],
@@ -179,8 +220,33 @@ export function createEditorState(
     position: "before" | "after" = "after",
     parentId: string | null = null
   ) => {
-    const newBlock = createDefaultBlock(type)
     const updated = cloneBlocks(blocks)
+
+    if (type === "SectionBlock") {
+      let targetSectionDepth = 0
+      if (parentId) {
+        const parentInfo = findBlockInfo(updated, parentId, 0)
+        if (parentInfo) {
+          const isParentSection = parentInfo.block.type === "SectionBlock"
+          targetSectionDepth = isParentSection ? parentInfo.depth + 1 : parentInfo.depth
+        }
+      } else if (targetId) {
+        const targetInfo = findBlockInfo(updated, targetId, 0)
+        if (targetInfo) {
+          targetSectionDepth = targetInfo.depth
+        }
+      }
+
+      if (targetSectionDepth > MAX_SECTION_DEPTH) {
+        toast.error(
+          "Invalid Section Nesting",
+          "Sections cannot be nested inside an H6 section. H6 is the maximum heading level."
+        )
+        return
+      }
+    }
+
+    const newBlock = createDefaultBlock(type)
 
     const insertIntoList = (list: BaseBlock[]): boolean => {
       if (targetId) {
@@ -264,6 +330,29 @@ export function createEditorState(
 
     const cleanedTree = remove(updated)
     if (!extractedBlock) return
+
+    const sectionHeight = getMaxSubtreeSectionHeight(extractedBlock)
+    if (sectionHeight > 0) {
+      let targetBaseSectionDepth = 0
+      if (targetParentId) {
+        const parentInfo = findBlockInfo(cleanedTree, targetParentId, 0)
+        if (parentInfo) {
+          const isParentSection = parentInfo.block.type === "SectionBlock"
+          targetBaseSectionDepth = isParentSection ? parentInfo.depth + 1 : parentInfo.depth
+        }
+      }
+      const isMovingSection = (extractedBlock as BaseBlock).type === "SectionBlock"
+      const maxResultDepth = isMovingSection
+        ? targetBaseSectionDepth + sectionHeight - 1
+        : targetBaseSectionDepth + sectionHeight
+      if (maxResultDepth > MAX_SECTION_DEPTH) {
+        toast.error(
+          "Invalid Section Nesting",
+          "Cannot move section here because it would exceed the maximum heading depth (H6)."
+        )
+        return
+      }
+    }
 
     if (!targetParentId) {
       const idx = Math.min(Math.max(0, newIndex), cleanedTree.length)

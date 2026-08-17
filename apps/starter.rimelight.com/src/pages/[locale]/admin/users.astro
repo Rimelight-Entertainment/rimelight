@@ -212,15 +212,17 @@ const userColumns: TableColumn[] = [
 								)}
 							</td>
 							<td class="p-3.5" data-col-id="sessions">
-								<button
+								<RLAButton
 									type="button"
-									class="view-user-sessions-btn flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+									variant="ghost"
+									color="neutral"
+									size="xs"
+									class="view-user-sessions-btn font-mono"
 									data-user-id={u.id}
 									data-raw-name={u.name}
-								>
-									<RLAIcon name="i-lucide-key-round" class="size-3.5 text-primary" />
-									<span class="font-mono font-semibold text-highlighted">Manage Sessions</span>
-								</button>
+									leadingIcon="i-lucide-key-round"
+									label="Manage Sessions"
+								/>
 							</td>
 							<td class="p-3.5" data-col-id="verification">
 								{u.emailVerified ? (

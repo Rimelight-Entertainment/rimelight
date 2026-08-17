@@ -184,6 +184,41 @@ const isPublished = !!page.publishedVersionId
             </div>
           </div>
 
+          <!-- Banner Image URL Dialog -->
+          <dialog
+            id="banner-url-dialog"
+            class="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-xl border border-default bg-default p-6 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+          >
+            <h3 class="text-base font-semibold text-foreground mb-4">Banner Image URL</h3>
+            <div class="flex flex-col gap-3">
+              <input
+                id="banner-url-input"
+                type="url"
+                placeholder="https://..."
+                class="w-full rounded-md border border-default bg-elevated px-3 py-2 text-sm text-foreground placeholder:text-dimmed focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+              <div class="flex justify-end gap-2 pt-1">
+                <button
+                  id="banner-dialog-remove"
+                  type="button"
+                  class="hidden px-3 py-1.5 text-xs font-medium rounded-md text-red-500 hover:bg-red-500/10 transition border border-red-500/30"
+                >Remove</button>
+                <div class="flex gap-2 ml-auto">
+                  <button
+                    id="banner-dialog-cancel"
+                    type="button"
+                    class="px-3 py-1.5 text-xs font-medium rounded-md border border-default text-foreground hover:bg-elevated transition"
+                  >Cancel</button>
+                  <button
+                    id="banner-dialog-apply"
+                    type="button"
+                    class="px-3 py-1.5 text-xs font-semibold rounded-md bg-primary text-white hover:bg-primary/90 transition"
+                  >Apply</button>
+                </div>
+              </div>
+            </div>
+          </dialog>
+
           <!-- Title and Description Header -->
           <div class="border-b border-default pb-4 flex flex-col gap-2">
             <input
@@ -373,19 +408,50 @@ const isPublished = !!page.publishedVersionId
       broadcastMeta();
     };
 
+    // Banner URL dialog logic
+    const bannerDialog = document.getElementById('banner-url-dialog') as HTMLDialogElement | null;
+    const bannerUrlInput = document.getElementById('banner-url-input') as HTMLInputElement | null;
+    const bannerDialogRemove = document.getElementById('banner-dialog-remove');
+    const bannerDialogCancel = document.getElementById('banner-dialog-cancel');
+    const bannerDialogApply = document.getElementById('banner-dialog-apply');
+
+    const openBannerDialog = (current = '') => {
+      if (!bannerDialog || !bannerUrlInput) return;
+      bannerUrlInput.value = current;
+      if (bannerDialogRemove) bannerDialogRemove.classList.toggle('hidden', !current);
+      bannerDialog.showModal();
+      setTimeout(() => bannerUrlInput.focus(), 50);
+    };
+
+    bannerDialogCancel?.addEventListener('click', () => bannerDialog?.close());
+    bannerDialogApply?.addEventListener('click', () => {
+      const url = bannerUrlInput?.value?.trim() || '';
+      setBanner(url);
+      bannerDialog?.close();
+    });
+    bannerDialogRemove?.addEventListener('click', () => {
+      setBanner('');
+      bannerDialog?.close();
+    });
+    bannerUrlInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter') { e.preventDefault(); bannerDialogApply?.click(); }
+      if (e.key === 'Escape') { bannerDialog?.close(); }
+    });
+    bannerDialog?.addEventListener('click', (e: MouseEvent) => {
+      if (e.target === bannerDialog) bannerDialog.close();
+    });
+
     document.getElementById('banner-placeholder')?.addEventListener('click', () => {
-      const url = prompt('Enter Banner Image URL:');
-      if (url) setBanner(url);
+      openBannerDialog('');
     });
 
     document.getElementById('change-banner-btn')?.addEventListener('click', () => {
       const current = (window as any).cmsPageProperties?.heroImage || '';
-      const url = prompt('Enter Banner Image URL:', current);
-      if (url !== null) setBanner(url);
+      openBannerDialog(current);
     });
 
     document.getElementById('remove-banner-btn')?.addEventListener('click', () => {
-      if (confirm('Remove banner image?')) setBanner('');
+      setBanner('');
     });
 
     const getLayout = () => (window as any).cmsEditorLayout || (document.getElementById('cms-editor-layout') as any);

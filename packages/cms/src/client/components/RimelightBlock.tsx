@@ -8,6 +8,8 @@ import { CodeEditor } from "./editors/CodeEditor"
 import { ScriptEditor } from "./editors/ScriptEditor"
 import { SceneEditor } from "./editors/SceneEditor"
 import { DialogueEditor } from "./editors/DialogueEditor"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
 
 export interface RimelightBlockProps {
   block: BaseBlock
@@ -150,48 +152,33 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
       data-id={props.block.id}
       data-block-id={props.block.id}
       data-block-type={props.block.type}
-      class="cms-block-wrap group/block relative w-full my-2 flex items-start gap-2"
+      class="cms-block-wrap group/block relative w-full my-1 flex items-start"
     >
-      {/* Left Drag Grip Handle with Dropdown Menu */}
+      {/* Top-Left Drag Grip Handle (Aligned to top-left, shows only on hover) */}
       <div
         ref={(el) => (menuWrapEl = el)}
-        class="cms-block-grip pt-3 shrink-0 relative flex items-center justify-center opacity-40 hover:opacity-100 group-hover/block:opacity-100 transition-opacity"
+        class="cms-block-grip absolute -left-7 top-1 z-30 flex items-center justify-center opacity-0 group-hover/block:opacity-100 transition-opacity"
       >
-        <button
-          type="button"
-          onClick={(e) => {
+        <RLSButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          square={true}
+          onClick={(e: MouseEvent) => {
             e.stopPropagation()
             setMenuOpen(!menuOpen())
           }}
           aria-label="Drag handle and options menu"
-          class="cms-grip-btn cms-drag-handle p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing flex items-center justify-center transition border-0 bg-transparent"
+          class="cms-grip-btn cms-drag-handle !p-1 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing rounded-md"
           title="Drag to reorder / Click for options"
-        >
-          <svg
-            class="size-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="9" cy="12" r="1" fill="currentColor" />
-            <circle cx="9" cy="5" r="1" fill="currentColor" />
-            <circle cx="9" cy="19" r="1" fill="currentColor" />
-            <circle cx="15" cy="12" r="1" fill="currentColor" />
-            <circle cx="15" cy="5" r="1" fill="currentColor" />
-            <circle cx="15" cy="19" r="1" fill="currentColor" />
-          </svg>
-        </button>
+          leading={<RLSIcon name="gripVertical" size="sm" />}
+        />
 
         {/* Dropdown Options Menu */}
         <Show when={menuOpen()}>
-          <div class="absolute left-0 top-10 z-50 w-48 bg-white dark:bg-neutral-900 border border-default rounded-xl shadow-xl py-1 text-xs">
+          <div class="absolute left-0 top-7 z-50 w-48 bg-elevated border border-default rounded-xl shadow-xl py-1 text-xs">
             {isLocked() ? (
-              <div class="px-3 py-2 text-muted-foreground italic">
-                Locked — templated block
-              </div>
+              <div class="px-3 py-2 text-muted-foreground italic">Locked — templated block</div>
             ) : (
               <>
                 <button
@@ -202,8 +189,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
+                  <RLSIcon name="arrowUp" size="xs" class="text-muted-foreground" />
                   <span>Move Up</span>
-                  <span class="ml-auto text-muted-foreground">↑</span>
                 </button>
                 <button
                   type="button"
@@ -213,8 +200,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
+                  <RLSIcon name="arrowDown" size="xs" class="text-muted-foreground" />
                   <span>Move Down</span>
-                  <span class="ml-auto text-muted-foreground">↓</span>
                 </button>
                 <div class="my-1 border-t border-default" />
                 <button
@@ -225,8 +212,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
+                  <RLSIcon name="plus" size="xs" class="text-muted-foreground" />
                   <span>Add Block Above</span>
-                  <span class="ml-auto text-muted-foreground">+</span>
                 </button>
                 <button
                   type="button"
@@ -236,8 +223,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
+                  <RLSIcon name="plus" size="xs" class="text-muted-foreground" />
                   <span>Add Block Below</span>
-                  <span class="ml-auto text-muted-foreground">+</span>
                 </button>
                 <div class="my-1 border-t border-default" />
                 <button
@@ -248,8 +235,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
                 >
+                  <RLSIcon name="copy" size="xs" class="text-muted-foreground" />
                   <span>Duplicate Block</span>
-                  <span class="ml-auto text-muted-foreground">❐</span>
                 </button>
                 <button
                   type="button"
@@ -259,8 +246,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                   }}
                   class="flex items-center gap-2 w-full px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-500 hover:text-red-600 cursor-pointer transition-colors bg-transparent border-0 text-left"
                 >
+                  <RLSIcon name="trash" size="xs" class="text-red-500" />
                   <span>Delete Block</span>
-                  <span class="ml-auto">🗑</span>
                 </button>
               </>
             )}
@@ -269,117 +256,75 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
       </div>
 
       <div class="flex-1 min-w-0 relative">
-        {/* Top Action Floating Toolbar */}
-        <div class="absolute -top-3 right-4 z-20 opacity-0 group-hover/block:opacity-100 transition-opacity flex items-center gap-0.5 bg-white dark:bg-neutral-800 border border-default rounded-lg p-0.5 shadow-md">
-          <button
-            type="button"
+        {/* Top Action Floating Toolbar (Shows on hover, inside block at top-right) */}
+        <div class="absolute top-0 right-0 z-20 opacity-0 group-hover/block:opacity-100 transition-opacity flex items-center gap-0.5 bg-elevated border border-default rounded-lg p-0.5 shadow-md">
+          <RLSButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            square={true}
             onClick={() => props.onAddAdjacent(props.block.id, "before")}
             aria-label="Add block above"
-            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
             title="Add block above"
-          >
-            <svg
-              class="size-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </button>
-          <button
-            type="button"
+            leading={<RLSIcon name="plus" size="xs" />}
+          />
+          <RLSButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            square={true}
             onClick={() => props.onAddAdjacent(props.block.id, "after")}
             aria-label="Add block below"
-            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
             title="Add block below"
-          >
-            <svg
-              class="size-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </button>
-          <button
-            type="button"
+            leading={<RLSIcon name="plus" size="xs" />}
+          />
+          <RLSButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            square={true}
             onClick={() => props.onMove(props.block.id, -1)}
             aria-label="Move up"
-            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
             title="Move up"
-          >
-            <svg
-              class="size-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="m18 15-6-6-6 6" />
-            </svg>
-          </button>
-          <button
-            type="button"
+            leading={<RLSIcon name="arrowUp" size="xs" />}
+          />
+          <RLSButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            square={true}
             onClick={() => props.onMove(props.block.id, 1)}
             aria-label="Move down"
-            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
             title="Move down"
-          >
-            <svg
-              class="size-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-          <button
-            type="button"
+            leading={<RLSIcon name="arrowDown" size="xs" />}
+          />
+          <RLSButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            square={true}
             onClick={() => props.onDuplicate(props.block.id)}
             aria-label="Duplicate"
-            class="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
             title="Duplicate"
-          >
-            <svg
-              class="size-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-            </svg>
-          </button>
-          <button
-            type="button"
+            leading={<RLSIcon name="copy" size="xs" />}
+          />
+          <RLSButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            square={true}
             onClick={() => props.onDelete(props.block.id)}
             aria-label="Delete"
-            class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition cursor-pointer border-0 bg-transparent"
             title="Delete"
-          >
-            <svg
-              class="size-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-            </svg>
-          </button>
+            class="!text-red-500 hover:!text-red-600"
+            leading={<RLSIcon name="trash" size="xs" />}
+          />
         </div>
 
-        {/* Block Editor Body */}
-        <div class="w-full transition-all rounded-xl hover:ring-1 hover:ring-primary/40">
+        {/* Block Editor Body (No border, no bg) */}
+        <div class="w-full relative">
           {isLocked() && (
-            <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-xs mb-2 select-none border border-default">
+            <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-neutral-200/50 dark:bg-neutral-800/50 text-neutral-600 dark:text-neutral-300 rounded text-xs mb-2 select-none border border-default">
               🔒 Templated Block (Locked)
             </div>
           )}

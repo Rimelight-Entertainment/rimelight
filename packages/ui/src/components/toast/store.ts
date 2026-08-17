@@ -16,7 +16,11 @@ export type Toast = ToastItem
 export const toasts = atom<ToastItem[]>([])
 
 export function addToast(toast: Omit<ToastItem, "id"> & { id?: string }): ToastItem {
-  const id = toast.id || crypto.randomUUID()
+  const id =
+    toast.id ||
+    (typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).substring(2, 9))
   const item: ToastItem = { duration: 6000, ...toast, id }
   toasts.set([...toasts.get(), item])
   return item
@@ -36,3 +40,58 @@ export function removeToast(id: string) {
   }
   toasts.set(current.filter((t) => t.id !== id))
 }
+
+export function clearToasts() {
+  toasts.set([])
+}
+
+export type ToastInput = string | (Omit<ToastItem, "id"> & { id?: string })
+
+function normalizeToastInput(
+  input: ToastInput,
+  description?: string,
+  variant?: ToastItem["variant"],
+  extra?: Partial<ToastItem>
+): Omit<ToastItem, "id"> & { id?: string } {
+  if (typeof input === "string") {
+    return {
+      title: input,
+      ...(description !== undefined ? { description } : {}),
+      ...(variant ? { variant } : {}),
+      ...extra
+    }
+  }
+  return {
+    ...input,
+    ...(variant && !input.variant ? { variant } : {}),
+    ...extra
+  }
+}
+
+export const toast = Object.assign(
+  (input: ToastInput, description?: string, options?: Partial<ToastItem>) => {
+    return addToast(normalizeToastInput(input, description, undefined, options))
+  },
+  {
+    error: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
+      addToast(normalizeToastInput(input, description, "error", options)),
+    success: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
+      addToast(normalizeToastInput(input, description, "success", options)),
+    warning: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
+      addToast(normalizeToastInput(input, description, "warning", options)),
+    info: (input: ToastInput, description?: string, options?: Partial<ToastItem>) =>
+      addToast(normalizeToastInput(input, description, "info", options)),
+    add: addToast,
+    remove: removeToast,
+    clear: clearToasts
+  }
+)
+
+export const showErrorToast = (title: string, description?: string, options?: Partial<ToastItem>) =>
+  toast.error(title, description, options)
+
+export const showSuccessToast = (
+  title: string,
+  description?: string,
+  options?: Partial<ToastItem>
+) => toast.success(title, description, options)

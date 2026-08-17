@@ -1,6 +1,7 @@
 import { onMount, onCleanup, For, type Component } from "solid-js"
-import type { BaseBlock } from "../../../core/types/blocks"
+import { type BaseBlock, calculateHeadingLevel } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
 
 export interface SectionEditorProps {
   blockId?: string
@@ -18,6 +19,8 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
   let descInput: HTMLInputElement | null = null as HTMLInputElement | null
   let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null
   let sortableInstance: any = null
+
+  const headingLevel = () => calculateHeadingLevel(componentProps.sectionDepth || 0)
 
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
@@ -67,37 +70,24 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
       ...componentProps.props,
       title: titleInput?.value || "",
       description: descInput?.value || "",
+      level: headingLevel(),
       children: childrenBlocks()
     })
   }
 
   return (
-    <div class="w-full flex flex-col gap-4 border border-default rounded-xl p-4 bg-neutral-50/50 dark:bg-neutral-900/30">
-      <div class="flex items-center gap-3">
-        <select
-          value={componentProps.props.level || (componentProps.sectionDepth || 0) + 1}
-          onChange={(e) => {
-            componentProps.onPropsChange({
-              ...componentProps.props,
-              level: Number(e.currentTarget.value)
-            })
-          }}
-          class="bg-white dark:bg-neutral-800 border border-default rounded-lg px-2 py-1 text-xs font-bold focus:outline-none text-foreground cursor-pointer"
-        >
-          <option value={1}>H1</option>
-          <option value={2}>H2</option>
-          <option value={3}>H3</option>
-          <option value={4}>H4</option>
-          <option value={5}>H5</option>
-          <option value={6}>H6</option>
-        </select>
+    <div class="w-full flex flex-col gap-2 py-0.5">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xs font-bold text-muted-foreground select-none shrink-0 tracking-wider">
+          H{headingLevel()}
+        </span>
         <input
           ref={(el) => (titleInput = el)}
           type="text"
           value={componentProps.props.title || ""}
           onInput={saveProps}
           placeholder="Section Title"
-          class="flex-1 font-bold text-lg bg-transparent border-0 focus:outline-none text-foreground placeholder:text-muted-foreground/60"
+          class="flex-1 font-bold text-lg bg-transparent border-0 focus:outline-none text-foreground placeholder:text-muted-foreground/60 py-0.5"
         />
       </div>
 
@@ -107,23 +97,23 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
         value={componentProps.props.description || ""}
         onInput={saveProps}
         placeholder="Section description (optional)..."
-        class="text-sm text-dimmed bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground/50"
+        class="text-sm text-muted-foreground bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground/50 py-0.5"
       />
 
       <div
         ref={(el) => (childrenContainer = el)}
-        class="pl-4 border-l-2 border-primary/30 flex flex-col gap-4 mt-2 min-h-[32px]"
+        class="ml-1 pl-8 border-l-2 border-primary/30 flex flex-col gap-2 mt-1 min-h-[32px]"
       >
         {childrenBlocks().length === 0 ? (
-          <div class="flex flex-col items-center justify-center p-3 border border-dashed border-default rounded-lg text-center bg-white/40 dark:bg-neutral-900/40">
+          <div class="flex flex-col items-center justify-center p-3 border border-dashed border-default rounded-lg text-center">
             <span class="text-xs text-muted-foreground">Empty section</span>
-            <button
-              type="button"
+            <RLSButton
+              variant="link"
+              color="primary"
+              size="xs"
               onClick={() => componentProps.onOpenPicker?.()}
-              class="mt-1 text-xs text-primary font-medium hover:underline cursor-pointer bg-transparent border-none"
-            >
-              + Add first block
-            </button>
+              label="+ Add first block"
+            />
           </div>
         ) : (
           <For each={childrenBlocks()}>
@@ -135,13 +125,14 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
       </div>
 
       <div class="flex items-center pt-1">
-        <button
-          type="button"
+        <RLSButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
           onClick={() => componentProps.onOpenPicker?.()}
-          class="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 cursor-pointer bg-transparent border-none py-1 transition-colors"
-        >
-          <span class="font-bold">+</span> Add block
-        </button>
+          leadingIcon="plus"
+          label="Add block"
+        />
       </div>
     </div>
   )

@@ -1,6 +1,10 @@
-import { onMount, onCleanup, For, type Component } from "solid-js"
+import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
+import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea"
+import RLSBadge from "@rimelight/ui/components/badge/RLSBadge"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
 
 export interface ScriptEditorProps {
   blockId?: string
@@ -14,13 +18,7 @@ export interface ScriptEditorProps {
 }
 
 export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
-  let titleInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let synopsisTextarea: HTMLTextAreaElement | null = null as HTMLTextAreaElement | null
-  let charInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let aPlotInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let bPlotInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let cPlotInput: HTMLInputElement | null = null as HTMLInputElement | null
-  let stingerInput: HTMLInputElement | null = null as HTMLInputElement | null
+  const [charInputVal, setCharInputVal] = createSignal("")
   let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null
   let sortableInstance: any = null
 
@@ -58,7 +56,6 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
           setTimeout(cleanAllSortableClasses, 200)
         },
         onRemove: (_blockId: string, _oldIdx: number) => {
-          // Intentionally empty: the target container's onAdd -> relocateBlock handles this.
           cleanAllSortableClasses()
         }
       })
@@ -69,15 +66,10 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
     })
   })
 
-  const saveProps = () => {
+  const saveProps = (partial: Record<string, any>) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      title: titleInput?.value || "",
-      synopsis: synopsisTextarea?.value || "",
-      aPlot: aPlotInput?.value || "",
-      bPlot: bPlotInput?.value || "",
-      cPlot: cPlotInput?.value || "",
-      stinger: stingerInput?.value || "",
+      ...partial,
       children: childrenBlocks()
     })
   }
@@ -88,7 +80,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
     const currentChars = characters()
     if (!currentChars.includes(trimmed)) {
       const updated = [...currentChars, trimmed]
-      if (charInput) charInput.value = ""
+      setCharInputVal("")
       componentProps.onPropsChange({ ...componentProps.props, characters: updated })
     }
   }
@@ -99,152 +91,145 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
   }
 
   return (
-    <div class="rimelight-script-editor flex flex-col gap-4 p-3 border-l-4 border-amber-500 bg-amber-950/10 rounded-r-md w-full">
-      <div>
-        <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">
+    <div class="rimelight-script-editor flex flex-col gap-4 p-3 border-l-2 border-primary/50 w-full">
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
           Script Title
-        </div>
-        <input
-          ref={(el) => (titleInput = el)}
-          type="text"
+        </span>
+        <RLSInput
           data-field="title"
           value={componentProps.props.title || ""}
-          onInput={saveProps}
+          onInput={(e) => saveProps({ title: e.currentTarget.value })}
           placeholder="Script Title"
-          class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500"
+          size="sm"
         />
       </div>
 
-      <div>
-        <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Synopsis</div>
-        <textarea
-          ref={(el) => (synopsisTextarea = el)}
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+          Synopsis
+        </span>
+        <RLSTextarea
           data-field="synopsis"
           value={componentProps.props.synopsis || ""}
-          onInput={saveProps}
+          onInput={(e) => saveProps({ synopsis: e.currentTarget.value })}
           placeholder="Synopsis..."
-          class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500 resize-y min-h-[60px]"
+          rows={2}
         />
       </div>
 
-      <div>
-        <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
           Characters
-        </div>
-        <div class="chars-container flex flex-wrap gap-2 mb-2 min-h-[24px]">
+        </span>
+        <div class="chars-container flex flex-wrap gap-1.5 mb-1.5 min-h-[24px]">
           {characters().length === 0 ? (
-            <div class="text-xs text-gray-500 italic py-1">No characters added</div>
+            <div class="text-xs text-muted-foreground italic py-0.5">No characters added</div>
           ) : (
             <For each={characters()}>
               {(char) => (
-                <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-900/40 text-amber-200 text-xs rounded-full">
+                <RLSBadge variant="soft" color="primary" size="sm">
                   <span>{char}</span>
                   <button
                     type="button"
                     onClick={() => removeCharacter(char)}
-                    class="text-amber-400 hover:text-red-400 cursor-pointer ml-1 font-bold bg-transparent border-none p-0"
+                    class="hover:text-red-500 cursor-pointer ml-1 font-bold bg-transparent border-none p-0 inline-flex items-center"
                   >
                     ×
                   </button>
-                </div>
+                </RLSBadge>
               )}
             </For>
           )}
         </div>
         <div class="flex gap-2">
-          <input
-            ref={(el) => (charInput = el)}
-            type="text"
-            data-field="char-input"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault()
-                addCharacter(charInput?.value || "")
-              }
-            }}
-            placeholder="New character name"
-            class="char-input bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-1.5 text-sm outline-none focus:border-blue-500 flex-1"
+          <div class="flex-1">
+            <RLSInput
+              data-field="char-input"
+              value={charInputVal()}
+              onInput={(e) => setCharInputVal(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  addCharacter(charInputVal())
+                }
+              }}
+              placeholder="New character name"
+              size="sm"
+            />
+          </div>
+          <RLSButton
+            variant="outline"
+            color="neutral"
+            size="sm"
+            onClick={() => addCharacter(charInputVal())}
+            label="Add"
           />
-          <button
-            type="button"
-            onClick={() => addCharacter(charInput?.value || "")}
-            class="add-char-btn px-3 py-1.5 text-xs font-medium rounded cursor-pointer bg-gray-700 text-gray-200 hover:bg-gray-600"
-          >
-            Add
-          </button>
         </div>
       </div>
 
-      <div>
-        <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Plots</div>
-        <div class="grid grid-cols-3 gap-3">
-          <input
-            ref={(el) => (aPlotInput = el)}
-            type="text"
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">Plots</span>
+        <div class="grid grid-cols-3 gap-2">
+          <RLSInput
             data-field="aPlot"
             value={componentProps.props.aPlot || ""}
-            onInput={saveProps}
+            onInput={(e) => saveProps({ aPlot: e.currentTarget.value })}
             placeholder="A-Plot"
-            class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500"
+            size="sm"
           />
-          <input
-            ref={(el) => (bPlotInput = el)}
-            type="text"
+          <RLSInput
             data-field="bPlot"
             value={componentProps.props.bPlot || ""}
-            onInput={saveProps}
+            onInput={(e) => saveProps({ bPlot: e.currentTarget.value })}
             placeholder="B-Plot"
-            class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500"
+            size="sm"
           />
-          <input
-            ref={(el) => (cPlotInput = el)}
-            type="text"
+          <RLSInput
             data-field="cPlot"
             value={componentProps.props.cPlot || ""}
-            onInput={saveProps}
+            onInput={(e) => saveProps({ cPlot: e.currentTarget.value })}
             placeholder="C-Plot"
-            class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500"
+            size="sm"
           />
         </div>
       </div>
 
-      <div>
-        <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Stinger</div>
-        <input
-          ref={(el) => (stingerInput = el)}
-          type="text"
+      <div class="flex flex-col gap-1">
+        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+          Stinger
+        </span>
+        <RLSInput
           data-field="stinger"
           value={componentProps.props.stinger || ""}
-          onInput={saveProps}
+          onInput={(e) => saveProps({ stinger: e.currentTarget.value })}
           placeholder="Stinger (post-credits etc)"
-          class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500"
+          size="sm"
         />
       </div>
 
-      <div class="mt-4">
-        <div class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">
+      <div class="mt-2">
+        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest block mb-1">
           Scenes & Content
-        </div>
+        </span>
         <div
           ref={(el) => (childrenContainer = el)}
-          class="children-container mt-2 pl-4 border-l-2 border-amber-800/50 flex flex-col gap-2 min-h-[60px]"
+          class="children-container mt-1 pl-3 border-l-2 border-default flex flex-col gap-2 min-h-[60px]"
         >
           {childrenBlocks().length === 0 ? (
-            <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-4 rounded-lg border border-dashed border-gray-800/80 bg-gray-900/20 text-center my-1">
-              <div class="text-xs font-semibold text-gray-300">Empty script content</div>
-              <p class="text-[11px] text-gray-500">
-                Drag scenes here or click below to add content
-              </p>
-              <button
-                type="button"
-                onClick={(e) => {
+            <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-default text-center my-1">
+              <div class="text-xs font-semibold text-muted-foreground">Empty script content</div>
+              <RLSButton
+                variant="outline"
+                color="neutral"
+                size="xs"
+                onClick={(e: MouseEvent) => {
                   e.stopPropagation()
                   componentProps.onOpenPicker?.()
                 }}
-                class="cms-add-child-block mt-1 px-3 py-1.5 bg-blue-600/80 hover:bg-blue-500 text-white text-xs font-medium rounded-md cursor-pointer transition-colors shadow-sm inline-flex items-center gap-1"
-              >
-                + Add Block
-              </button>
+                leadingIcon="plus"
+                label="Add Block"
+              />
             </div>
           ) : (
             <For each={childrenBlocks()}>

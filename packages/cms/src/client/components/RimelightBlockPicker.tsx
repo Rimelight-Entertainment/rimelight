@@ -1,4 +1,7 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
+import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
 
 const BLOCK_DEFS = [
   {
@@ -6,60 +9,61 @@ const BLOCK_DEFS = [
     type: "ParagraphBlock",
     label: "Paragraph",
     desc: "Rich text paragraph",
-    icon: "¶"
+    icon: "paragraph"
   },
   {
     group: "Text",
     type: "SectionBlock",
     label: "Section",
     desc: "Collapsible section with heading",
-    icon: "§"
+    icon: "heading"
   },
   {
     group: "Media",
     type: "ImageBlock",
     label: "Image",
     desc: "Embed an image with caption",
-    icon: "🖼"
+    icon: "image"
   },
   {
     group: "Media",
     type: "CodeBlock",
     label: "Code",
     desc: "Code block with syntax highlighting",
-    icon: "</>"
+    icon: "code"
   },
   {
     group: "Callout",
     type: "CalloutBlock",
     label: "Callout",
     desc: "Highlighted info/warning/note box",
-    icon: "⚡"
+    icon: "info"
   },
   {
     group: "Screenplay",
     type: "ScriptBlock",
     label: "Script",
     desc: "Script container with plot tracking",
-    icon: "📄"
+    icon: "fileText"
   },
   {
     group: "Screenplay",
     type: "SceneBlock",
     label: "Scene",
     desc: "Scene with location and time-of-day",
-    icon: "🎬"
+    icon: "video"
   },
   {
     group: "Screenplay",
     type: "DialogueBlock",
     label: "Dialogue",
     desc: "Character dialogue line",
-    icon: "💬"
+    icon: "messageSquare"
   }
 ]
 
-import { ALLOWED_CHILDREN_MAP } from "../../core/types/blocks"
+import { ALLOWED_CHILDREN_MAP, MAX_SECTION_DEPTH } from "../../core/types/blocks"
+import { toast } from "../toast"
 export { ALLOWED_CHILDREN_MAP }
 
 export interface RimelightBlockPickerProps {
@@ -87,7 +91,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
 
     return BLOCK_DEFS.filter((b) => {
       if (!allowed.includes(b.type)) return false
-      if (b.type === "SectionBlock" && depth >= 6) return false
+      if (b.type === "SectionBlock" && depth > MAX_SECTION_DEPTH) return false
       return (
         b.label.toLowerCase().includes(q) ||
         b.type.toLowerCase().includes(q) ||
@@ -95,6 +99,18 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
         b.group.toLowerCase().includes(q)
       )
     })
+  }
+
+  const handleSelectBlock = (type: string) => {
+    const depth = props.sectionDepth || 0
+    if (type === "SectionBlock" && depth > MAX_SECTION_DEPTH) {
+      toast.error(
+        "Invalid Section Nesting",
+        "Sections cannot be nested inside an H6 section. H6 is the maximum heading level."
+      )
+      return
+    }
+    props.onSelect(type)
   }
 
   onMount(() => {
@@ -119,7 +135,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
       e.preventDefault()
       const selected = list[selectedIndex()]
       if (selected) {
-        props.onSelect(selected.type)
+        handleSelectBlock(selected.type)
       }
     }
   }
@@ -133,33 +149,46 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
         }}
         class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       >
-        <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
-          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800">
-            <div class="text-sm font-semibold text-gray-100">
+        <div class="bg-elevated border border-default rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-default">
+            <div class="text-sm font-semibold text-foreground">
               Add Block{" "}
               {props.containerType ? `to ${props.containerType.replace("Block", "")}` : ""}
             </div>
+            <RLSButton
+              variant="ghost"
+              color="neutral"
+              size="xs"
+              square={true}
+              onClick={() => props.onClose()}
+              aria-label="Close"
+              leading={<RLSIcon name="close" size="xs" />}
+            />
           </div>
 
-          <input
-            ref={(el) => {
-              searchInput = el
-              if (props.open) setTimeout(() => searchInput?.focus(), 10)
-            }}
-            type="text"
-            value={query()}
-            onInput={(e) => {
-              setQuery(e.currentTarget.value)
-              setSelectedIndex(0)
-            }}
-            onKeyDown={handleKeydown}
-            placeholder="Search blocks..."
-            class="w-[calc(100%-2rem)] bg-gray-800 border border-gray-700 text-gray-100 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 mx-4 my-3"
-          />
+          <div class="px-4 py-3 border-b border-default/50">
+            <RLSInput
+              ref={(el: HTMLInputElement) => {
+                searchInput = el
+                if (props.open) setTimeout(() => searchInput?.focus(), 10)
+              }}
+              value={query()}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => {
+                setQuery(e.currentTarget.value)
+                setSelectedIndex(0)
+              }}
+              onKeyDown={handleKeydown}
+              placeholder="Search blocks..."
+              leadingIcon="search"
+              size="sm"
+            />
+          </div>
 
           <div class="overflow-y-auto max-h-[50vh] pb-2">
             {filteredBlocks().length === 0 ? (
-              <div class="text-center py-4 text-gray-500 text-sm">No compatible blocks found</div>
+              <div class="text-center py-4 text-muted-foreground text-sm">
+                No compatible blocks found
+              </div>
             ) : (
               (() => {
                 let currentGroup = ""
@@ -173,7 +202,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                       return (
                         <>
                           {showHeader && (
-                            <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-4 py-1 mt-2">
+                            <div class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-4 py-1.5 mt-2">
                               {block.group}
                             </div>
                           )}
@@ -182,23 +211,27 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                             onClick={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
-                              props.onSelect(block.type)
+                              handleSelectBlock(block.type)
                             }}
                             onMouseEnter={() => setSelectedIndex(index())}
-                            class="cms-picker-item flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-gray-800 w-full text-left bg-transparent border-none"
-                            classList={{ "bg-gray-800": isSelected }}
+                            class="cms-picker-item flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800/80 w-full text-left bg-transparent border-none"
+                            classList={{ "bg-neutral-100 dark:bg-neutral-800/80": isSelected }}
                           >
-                            <div class="text-xl w-8 h-8 flex items-center justify-center shrink-0 bg-gray-800 rounded text-gray-300">
-                              {block.icon}
+                            <div class="text-base w-8 h-8 flex items-center justify-center shrink-0 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-foreground border border-default">
+                              <RLSIcon name={block.icon} size="sm" />
                             </div>
-                            <div class="flex flex-col flex-1">
+                            <div class="flex flex-col flex-1 min-w-0">
                               <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-gray-200">{block.label}</span>
-                                <span class="text-[10px] font-mono text-gray-500 bg-gray-800 px-1.5 py-0.5 rounded">
+                                <span class="text-sm font-medium text-foreground">
+                                  {block.label}
+                                </span>
+                                <span class="text-[10px] font-mono text-muted-foreground bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded border border-default/50">
                                   {block.type}
                                 </span>
                               </div>
-                              <span class="text-xs text-gray-500 mt-0.5">{block.desc}</span>
+                              <span class="text-xs text-muted-foreground mt-0.5 truncate">
+                                {block.desc}
+                              </span>
                             </div>
                           </button>
                         </>

@@ -3,6 +3,7 @@ import type { EditorState } from "../state/editor-store"
 import { RimelightBlock } from "./RimelightBlock"
 import { RimelightBlockPicker } from "./RimelightBlockPicker"
 import { initBlockSortable, cleanAllSortableClasses } from "../utils/sortable"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
 
 export interface RimelightEditorProps {
   state: EditorState
@@ -60,22 +61,25 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
   })
 
   return (
-    <div class="flex flex-col gap-6 w-full">
-      <div ref={canvasContainer} class="flex flex-col gap-4 w-full min-h-[200px]">
+    <div class="flex flex-col gap-6 w-full bg-transparent">
+      <div ref={canvasContainer} class="flex flex-col gap-3 w-full min-h-[200px] pl-6">
         {props.state.blocks.length === 0 ? (
-          <div class="flex flex-col items-center justify-center p-8 sm:p-12 rounded-xl border border-dashed border-default bg-neutral-50/50 dark:bg-neutral-900/30 text-center my-4">
+          <div class="flex flex-col items-center justify-center p-8 sm:p-12 rounded-xl border border-dashed border-default text-center my-4">
             <div class="text-3xl text-muted-foreground mb-2">📄</div>
             <h4 class="text-base font-semibold text-foreground">No blocks yet</h4>
             <p class="text-xs text-muted-foreground mt-1 max-w-xs">
               Start building your page content by adding your first block below.
             </p>
-            <button
-              type="button"
-              onClick={() => props.state.openPicker(null, "after", 0)}
-              class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-default bg-neutral-100 dark:bg-neutral-800 text-foreground hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer shadow-sm"
-            >
-              + Add Block
-            </button>
+            <div class="mt-4">
+              <RLSButton
+                variant="outline"
+                color="neutral"
+                size="sm"
+                onClick={() => props.state.openPicker(null, "after", 0)}
+                leadingIcon="plus"
+                label="Add Block"
+              />
+            </div>
           </div>
         ) : (
           <For each={props.state.blocks}>
@@ -100,13 +104,14 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
 
       {props.state.blocks.length > 0 && (
         <div class="flex flex-col items-center justify-center gap-4 p-4 mt-2">
-          <button
-            type="button"
+          <RLSButton
+            variant="outline"
+            color="neutral"
+            size="sm"
             onClick={() => props.state.openPicker(null, "after", 0, null, "Root")}
-            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-default bg-neutral-100 dark:bg-neutral-800 text-foreground hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer shadow-sm"
-          >
-            + Add Block
-          </button>
+            leadingIcon="plus"
+            label="Add Block"
+          />
         </div>
       )}
 

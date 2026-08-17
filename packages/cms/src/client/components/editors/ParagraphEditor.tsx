@@ -1,4 +1,7 @@
-import { createSignal, onMount, type Component } from "solid-js"
+import { createSignal, onMount, Show, type Component } from "solid-js"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSModal from "@rimelight/ui/components/modal/RLSModal"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
 
 export interface InlineNode {
   type: "text" | "link"
@@ -42,6 +45,8 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
   let containerDiv: HTMLDivElement | null = null as HTMLDivElement | null
 
   const [toolbarVisible, setToolbarVisible] = createSignal(false)
+  const [linkModalOpen, setLinkModalOpen] = createSignal(false)
+  const [linkUrl, setLinkUrl] = createSignal("")
 
   const parseDOM = (root: Node): InlineNode[] => {
     const nodes: InlineNode[] = []
@@ -96,12 +101,23 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
 
   const execCommand = (cmd: string) => {
     if (cmd === "createLink") {
-      const url = prompt("Enter link URL:")
-      if (url) document.execCommand(cmd, false, url)
+      // Open our modal instead of using browser prompt()
+      setLinkUrl("")
+      setLinkModalOpen(true)
     } else {
       document.execCommand(cmd, false)
+      editableDiv?.focus()
     }
-    editableDiv?.focus()
+  }
+
+  const applyLink = () => {
+    const url = linkUrl().trim()
+    if (url) {
+      editableDiv?.focus()
+      document.execCommand("createLink", false, url)
+      saveProps()
+    }
+    setLinkModalOpen(false)
   }
 
   onMount(() => {
@@ -160,53 +176,98 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
       class="rimelight-paragraph-editor flex flex-col w-full relative"
     >
       <div
-        class="toolbar-div flex items-center gap-1 px-2 py-1 bg-neutral-100 dark:bg-neutral-800 border border-default border-b-0 rounded-t-lg shadow-sm"
+        class="toolbar-div flex items-center gap-0.5 px-1.5 py-1 bg-elevated border border-default rounded-lg shadow-sm mb-1 self-start"
         classList={{ hidden: !toolbarVisible() }}
       >
-        <button
-          type="button"
-          data-cmd="bold"
+        <RLSButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          square={true}
           onClick={() => execCommand("bold")}
-          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs font-bold"
-        >
-          B
-        </button>
-        <button
-          type="button"
-          data-cmd="italic"
+          class="font-bold !px-2"
+          label="B"
+        />
+        <RLSButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          square={true}
           onClick={() => execCommand("italic")}
-          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs italic font-serif"
-        >
-          I
-        </button>
-        <button
-          type="button"
-          data-cmd="underline"
+          class="italic font-serif !px-2"
+          label="I"
+        />
+        <RLSButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          square={true}
           onClick={() => execCommand("underline")}
-          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs underline"
-        >
-          U
-        </button>
-        <div class="w-px h-3.5 bg-neutral-300 dark:bg-neutral-700 mx-1"></div>
-        <button
-          type="button"
-          data-cmd="createLink"
+          class="underline !px-2"
+          label="U"
+        />
+        <div class="w-px h-3.5 bg-default mx-1" />
+        <RLSButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
           onClick={() => execCommand("createLink")}
-          class="px-2 py-0.5 rounded text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer text-xs"
-        >
-          Link
-        </button>
+          leadingIcon="link"
+          label="Link"
+        />
       </div>
       <div
         ref={(el) => (editableDiv = el)}
         aria-label="Paragraph text content"
         contentEditable={true}
-        class="editable-div p-3 outline-none min-h-[4rem] text-sm text-foreground bg-white dark:bg-neutral-900 border border-default leading-relaxed focus:ring-2 focus:ring-primary shadow-sm"
-        classList={{
-          "rounded-b-lg": toolbarVisible(),
-          "rounded-lg": !toolbarVisible()
-        }}
+        class="editable-div py-1.5 px-2 outline-none min-h-[2.5rem] text-sm text-foreground bg-transparent leading-relaxed focus:ring-1 focus:ring-primary/40 rounded-lg"
       />
+
+      {/* Link URL Modal — replaces browser prompt() */}
+      <Show when={linkModalOpen()}>
+        <RLSModal
+          open={linkModalOpen()}
+          onClose={() => setLinkModalOpen(false)}
+          title="Insert Link"
+          footerSlot={
+            <>
+              <RLSButton
+                variant="outline"
+                color="neutral"
+                size="sm"
+                onClick={() => setLinkModalOpen(false)}
+                label="Cancel"
+              />
+              <RLSButton
+                variant="solid"
+                color="primary"
+                size="sm"
+                onClick={applyLink}
+                label="Insert"
+              />
+            </>
+          }
+        >
+          <div class="flex flex-col gap-2 py-2">
+            <span class="text-xs font-semibold text-muted-foreground">URL</span>
+            <RLSInput
+              value={linkUrl()}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                setLinkUrl(e.currentTarget.value)
+              }
+              onKeyDown={(e: KeyboardEvent) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  applyLink()
+                }
+              }}
+              placeholder="https://..."
+              leadingIcon="link"
+              autofocus
+            />
+          </div>
+        </RLSModal>
+      </Show>
     </div>
   )
 }

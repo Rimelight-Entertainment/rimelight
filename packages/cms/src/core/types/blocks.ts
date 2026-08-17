@@ -67,7 +67,16 @@ export interface BaseBlock {
 
 // ─── Typed block prop interfaces ─────────────────────────────────────────────
 
-export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
+export type HeadingLevel = 2 | 3 | 4 | 5 | 6
+
+export const MIN_SECTION_HEADING_LEVEL: HeadingLevel = 2
+export const MAX_SECTION_HEADING_LEVEL: HeadingLevel = 6
+export const MAX_SECTION_DEPTH = 4 // Depth 0 -> H2, Depth 4 -> H6
+
+export function calculateHeadingLevel(sectionDepth: number): HeadingLevel {
+  const depth = Math.max(0, Math.floor(sectionDepth || 0))
+  return Math.min(MAX_SECTION_HEADING_LEVEL, depth + MIN_SECTION_HEADING_LEVEL) as HeadingLevel
+}
 
 export type CalloutVariant =
   | "info"

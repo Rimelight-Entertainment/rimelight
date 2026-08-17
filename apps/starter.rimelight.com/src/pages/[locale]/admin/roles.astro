@@ -234,27 +234,31 @@ const roleColumns: TableColumn[] = [
 					</td>
 					<td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions">
 						<div class="flex items-center justify-end gap-2">
-							<button
+							<RLAButton
 								type="button"
-								class="edit-role-btn text-xs font-medium text-primary hover:underline flex items-center gap-1"
+								variant="ghost"
+								color="primary"
+								size="xs"
+								class="edit-role-btn"
 								data-role-id={role.id}
 								data-role-name={role.name}
 								data-role-display={role.displayName}
 								data-role-desc={role.description}
 								data-role-perms={JSON.stringify(role.permissions)}
-							>
-								<RLAIcon name="i-lucide-pencil" class="size-3.5" />
-								Edit
-							</button>
+								leadingIcon="i-lucide-pencil"
+								label="Edit"
+							/>
 							{!role.isSystem && (
-								<button
+								<RLAButton
 									type="button"
-									class="delete-role-btn text-xs font-medium text-destructive hover:underline ml-2"
+									variant="ghost"
+									color="error"
+									size="xs"
+									class="delete-role-btn !text-destructive ml-1"
 									data-role-id={role.id}
 									data-role-name={role.name}
-								>
-									Delete
-								</button>
+									label="Delete"
+								/>
 							)}
 						</div>
 					</td>

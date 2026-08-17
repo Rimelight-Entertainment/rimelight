@@ -4,6 +4,12 @@ import {
   type PageDefinition,
   type FieldDefinition
 } from "../../core/page-definitions"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSBadge from "@rimelight/ui/components/badge/RLSBadge"
+import RLSModal from "@rimelight/ui/components/modal/RLSModal"
+import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
 
 function getTextValue(value: any): string {
   if (typeof value === "string") return value
@@ -117,64 +123,57 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
     if (field.type === "text") {
       return (
-        <label class="flex flex-col gap-1 w-full cursor-pointer">
+        <div class="flex flex-col gap-1 w-full">
           <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 block">
             {label}
           </span>
-          <input
-            type="text"
-            data-field={fieldId}
+          <RLSInput
             value={getTextValue(value)}
-            onInput={(e) => handlePropertyChange(fieldId, e.currentTarget.value)}
+            onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+              handlePropertyChange(fieldId, e.currentTarget.value)
+            }
             placeholder="Type here..."
-            class="w-full bg-white dark:bg-neutral-900 border border-default rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+            size="sm"
           />
-        </label>
+        </div>
       )
     }
 
     if (field.type === "number") {
       return (
-        <label class="flex flex-col gap-1 w-full cursor-pointer">
+        <div class="flex flex-col gap-1 w-full">
           <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 block">
             {label}
           </span>
-          <input
+          <RLSInput
             type="number"
-            data-field={fieldId}
             value={value !== undefined ? String(value) : ""}
-            onInput={(e) => handlePropertyChange(fieldId, Number(e.currentTarget.value))}
+            onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+              handlePropertyChange(fieldId, Number(e.currentTarget.value))
+            }
             placeholder="0"
-            class="w-full bg-white dark:bg-neutral-900 border border-default rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+            size="sm"
           />
-        </label>
+        </div>
       )
     }
 
     if (field.type === "enum") {
+      const selectItems = (field.options || []).map((opt) => getTextValue(opt))
       return (
-        <label class="flex flex-col gap-1 w-full cursor-pointer">
+        <div class="flex flex-col gap-1 w-full">
           <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 block">
             {label}
           </span>
-          <select
-            data-field={fieldId}
+          <RLSSelect
+            items={selectItems}
             value={getTextValue(value)}
-            onChange={(e) => handlePropertyChange(fieldId, e.currentTarget.value)}
-            class="w-full bg-white dark:bg-neutral-900 border border-default rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-sm cursor-pointer"
-          >
-            <For each={field.options || []}>
-              {(opt) => {
-                const optVal = getTextValue(opt)
-                return (
-                  <option value={optVal} selected={getTextValue(value) === optVal}>
-                    {optVal}
-                  </option>
-                )
-              }}
-            </For>
-          </select>
-        </label>
+            onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
+              handlePropertyChange(fieldId, e.currentTarget.value)
+            }
+            size="sm"
+          />
+        </div>
       )
     }
 
@@ -203,42 +202,43 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
           <div class="flex flex-wrap gap-1 mb-1">
             <For each={arr}>
               {(item, idx) => (
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-foreground text-xs rounded-full border border-default">
-                  {item}
+                <RLSBadge variant="soft" color="neutral" size="sm">
+                  <span>{item}</span>
                   <button
                     type="button"
                     onClick={() => removeArrayItem(idx())}
-                    class="ml-1 text-muted-foreground hover:text-red-500 cursor-pointer"
+                    class="ml-1 text-muted-foreground hover:text-red-500 cursor-pointer bg-transparent border-0 p-0 inline-flex items-center"
                   >
                     ×
                   </button>
-                </span>
+                </RLSBadge>
               )}
             </For>
           </div>
           <div class="flex gap-1 mt-1">
-            <input
-              type="text"
-              value={arrayInputs()[fieldId] || ""}
-              onInput={(e) =>
-                setArrayInputs((prev) => ({ ...prev, [fieldId]: e.currentTarget.value }))
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault()
-                  addArrayItem()
+            <div class="flex-1">
+              <RLSInput
+                value={arrayInputs()[fieldId] || ""}
+                onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                  setArrayInputs((prev) => ({ ...prev, [fieldId]: e.currentTarget.value }))
                 }
-              }}
-              class="flex-1 bg-white dark:bg-neutral-900 border border-default rounded-md px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Add item..."
-            />
-            <button
-              type="button"
+                onKeyDown={(e: KeyboardEvent) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    addArrayItem()
+                  }
+                }}
+                size="sm"
+                placeholder="Add item..."
+              />
+            </div>
+            <RLSButton
+              variant="outline"
+              color="neutral"
+              size="sm"
               onClick={addArrayItem}
-              class="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-foreground border border-default rounded-md text-sm font-medium transition cursor-pointer"
-            >
-              +
-            </button>
+              label="+"
+            />
           </div>
         </div>
       )
@@ -248,25 +248,13 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
   }
 
   return (
-    <aside
-      id="cms-properties-panel"
-      class="flex flex-col gap-4 bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-default w-full shadow-sm"
-    >
-      <div class="bg-white dark:bg-neutral-900 border border-default rounded-xl p-4 shadow-sm flex flex-col">
-        {/* Top header content matching PagePropertiesEditor.vue */}
+    <aside id="cms-properties-panel" class="flex flex-col gap-4 p-4 w-full bg-transparent">
+      <div class="flex flex-col">
+        {/* Top header content */}
         <div class="flex flex-col gap-2 items-center text-center">
           <div class="relative group/icon mb-1">
-            <div class="w-12 h-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center border-2 border-dashed border-default shadow-sm text-muted-foreground">
-              <svg
-                class="size-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
+            <div class="w-10 h-10 rounded-full flex items-center justify-center border border-default text-muted-foreground">
+              <RLSIcon name="fileText" size="md" />
             </div>
           </div>
 
@@ -285,23 +273,20 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                   <button
                     type="button"
                     onClick={() => toggleGroup(groupId)}
-                    class="flex justify-between items-center w-full p-2.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-left font-medium text-sm text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition cursor-pointer mt-2"
+                    class="flex justify-between items-center w-full p-2 rounded-lg text-left font-medium text-sm text-foreground hover:bg-elevated transition cursor-pointer mt-2 bg-transparent border-0"
                   >
                     <span>{getTextValue(group.label)}</span>
-                    <svg
-                      class="size-4 opacity-60 transition-transform duration-150"
-                      classList={{ "rotate-180": isExpanded() }}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
+                    <RLSIcon
+                      name="chevronDown"
+                      size="sm"
+                      class={`transition-transform duration-150 text-muted-foreground ${
+                        isExpanded() ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
 
                   {isExpanded() && (
-                    <div class="p-3 flex flex-col gap-3 bg-white dark:bg-neutral-900 border border-default rounded-b-lg border-t-0 -mt-1 shadow-sm">
+                    <div class="p-3 flex flex-col gap-3 border-t border-default/50 -mt-1">
                       <For each={Object.entries(group.fields || {})}>
                         {([fieldId, field]) => renderField(fieldId, field)}
                       </For>
@@ -314,27 +299,18 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         </div>
       </div>
 
-      {/* Links section matching PagePropertiesEditor.vue */}
+      {/* Links section */}
       <div class="flex flex-col gap-2 pt-2 border-t border-default">
         <div class="flex items-center justify-between mb-1">
           <h6 class="text-xs font-bold uppercase tracking-wider text-muted-foreground">Links</h6>
-          <button
-            type="button"
+          <RLSButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
             onClick={() => openLinkModal()}
-            class="p-1 rounded border border-default bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-xs font-bold text-foreground cursor-pointer transition flex items-center gap-1"
-            title="Add Link"
-          >
-            <svg
-              class="size-3"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            <span>Add</span>
-          </button>
+            leadingIcon="plus"
+            label="Add"
+          />
         </div>
 
         <Show
@@ -344,53 +320,33 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
           <div class="flex flex-col gap-2">
             <For each={links()}>
               {(item, index) => (
-                <div class="flex items-center justify-between p-2 rounded-lg border border-default bg-white dark:bg-neutral-900 shadow-sm text-sm">
+                <div class="flex items-center justify-between p-2 rounded-lg border border-default text-sm">
                   <div class="flex items-center gap-2 truncate">
-                    <svg
-                      class="size-3.5 text-muted-foreground shrink-0"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                    </svg>
+                    <RLSIcon name="link" size="xs" class="text-muted-foreground shrink-0" />
                     <span class="font-medium text-foreground truncate">{item.label}</span>
                   </div>
                   <div class="flex items-center gap-1 shrink-0">
-                    <button
-                      type="button"
+                    <RLSButton
+                      variant="ghost"
+                      color="neutral"
+                      size="xs"
+                      square={true}
                       onClick={() => openLinkModal(index())}
-                      class="p-1 text-muted-foreground hover:text-foreground cursor-pointer border-0 bg-transparent"
+                      aria-label="Edit"
                       title="Edit"
-                    >
-                      <svg
-                        class="size-3.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
+                      leading={<RLSIcon name="edit" size="xs" />}
+                    />
+                    <RLSButton
+                      variant="ghost"
+                      color="neutral"
+                      size="xs"
+                      square={true}
                       onClick={() => removeLink(index())}
-                      class="p-1 text-red-500 hover:text-red-600 cursor-pointer border-0 bg-transparent"
+                      aria-label="Delete"
                       title="Delete"
-                    >
-                      <svg
-                        class="size-3.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                      </svg>
-                    </button>
+                      class="!text-red-500 hover:!text-red-600"
+                      leading={<RLSIcon name="trash" size="xs" />}
+                    />
                   </div>
                 </div>
               )}
@@ -400,71 +356,53 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       </div>
 
       {/* Link Add/Edit Modal */}
-      <Show when={isLinkModalOpen()}>
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <button
-            type="button"
-            aria-label="Close modal"
-            onClick={() => setIsLinkModalOpen(false)}
-            class="fixed inset-0 bg-black/60 backdrop-blur-sm cursor-default border-0 p-0"
-          />
-          <div class="relative z-10 bg-white dark:bg-neutral-900 border border-default rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-4 py-3 border-b border-default">
-              <h3 class="text-base font-semibold text-foreground">
-                {editingLinkIndex() !== null ? "Edit Link" : "Add Link"}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsLinkModalOpen(false)}
-                class="p-1 text-muted-foreground hover:text-foreground cursor-pointer text-sm"
-              >
-                ✕
-              </button>
-            </div>
+      <RLSModal
+        open={isLinkModalOpen()}
+        onClose={() => setIsLinkModalOpen(false)}
+        title={editingLinkIndex() !== null ? "Edit Link" : "Add Link"}
+        footerSlot={
+          <>
+            <RLSButton
+              variant="outline"
+              color="neutral"
+              size="sm"
+              onClick={() => setIsLinkModalOpen(false)}
+              label="Cancel"
+            />
+            <RLSButton
+              variant="solid"
+              color="primary"
+              size="sm"
+              onClick={saveLink}
+              label={editingLinkIndex() !== null ? "Update" : "Add"}
+            />
+          </>
+        }
+      >
+        <div class="flex flex-col gap-4 py-2">
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold text-muted-foreground">Label</span>
+            <RLSInput
+              value={linkDraft().label}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                setLinkDraft({ ...linkDraft(), label: e.currentTarget.value })
+              }
+              placeholder="e.g. GitHub Repository"
+            />
+          </div>
 
-            <div class="flex flex-col gap-4 p-4">
-              <label class="flex flex-col gap-1 cursor-pointer">
-                <span class="text-xs font-semibold text-muted-foreground">Label</span>
-                <input
-                  type="text"
-                  value={linkDraft().label}
-                  onInput={(e) => setLinkDraft({ ...linkDraft(), label: e.currentTarget.value })}
-                  placeholder="e.g. GitHub Repository"
-                  class="w-full bg-white dark:bg-neutral-900 border border-default rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </label>
-
-              <label class="flex flex-col gap-1 cursor-pointer">
-                <span class="text-xs font-semibold text-muted-foreground">URL</span>
-                <input
-                  type="text"
-                  value={linkDraft().to}
-                  onInput={(e) => setLinkDraft({ ...linkDraft(), to: e.currentTarget.value })}
-                  placeholder="https://..."
-                  class="w-full bg-white dark:bg-neutral-900 border border-default rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </label>
-            </div>
-
-            <div class="flex justify-end gap-2 p-4 border-t border-default bg-neutral-50 dark:bg-neutral-800/40">
-              <button
-                type="button"
-                onClick={() => setIsLinkModalOpen(false)}
-                class="px-3 py-1.5 rounded-lg border border-default text-sm font-medium text-muted-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={saveLink}
-                class="px-4 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 cursor-pointer transition shadow-sm"
-              >
-                {editingLinkIndex() !== null ? "Update" : "Add"}
-              </button>
-            </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold text-muted-foreground">URL</span>
+            <RLSInput
+              value={linkDraft().to}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                setLinkDraft({ ...linkDraft(), to: e.currentTarget.value })
+              }
+              placeholder="https://..."
+            />
           </div>
         </div>
-      </Show>
+      </RLSModal>
     </aside>
   )
 }

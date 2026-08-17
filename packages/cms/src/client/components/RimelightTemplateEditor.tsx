@@ -1,6 +1,11 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../utils/sortable"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
+import RLSCheckbox from "@rimelight/ui/components/checkbox/RLSCheckbox"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
 
 export interface RimelightTemplateEditorProps {
   initialBlocks?: BaseBlock[]
@@ -16,11 +21,22 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;")
 }
 
+const TEMPLATE_BLOCK_OPTIONS = [
+  { label: "Paragraph", value: "ParagraphBlock" },
+  { label: "Section Heading", value: "SectionBlock" },
+  { label: "Callout Box", value: "CalloutBlock" },
+  { label: "Code Snippet", value: "CodeBlock" },
+  { label: "Image", value: "ImageBlock" },
+  { label: "Script", value: "ScriptBlock" },
+  { label: "Scene", value: "SceneBlock" },
+  { label: "Dialogue", value: "DialogueBlock" }
+]
+
 export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = (props) => {
   const [blocks, setBlocks] = createSignal<BaseBlock[]>(
     props.initialBlocks ? JSON.parse(JSON.stringify(props.initialBlocks)) : []
   )
-  let selectEl: HTMLSelectElement | undefined
+  const [selectedType, setSelectedType] = createSignal("ParagraphBlock")
   let canvasContainer: HTMLDivElement | undefined
   let sortableInstance: any = null
 
@@ -103,48 +119,44 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
   }
 
   return (
-    <div class="cms-template-editor border border-gray-300 rounded-lg p-4 bg-gray-950 text-gray-100 space-y-4">
-      <div class="flex items-center justify-between bg-gray-900 p-3 rounded border border-gray-800">
+    <div class="cms-template-editor border border-default rounded-xl p-4 space-y-4">
+      <div class="flex items-center justify-between p-3 rounded-lg border border-default">
         <div>
-          <h4 class="text-sm font-semibold text-gray-200">Initial Template Blocks</h4>
-          <p class="text-xs text-gray-400">
+          <h4 class="text-sm font-semibold text-foreground">Initial Template Blocks</h4>
+          <p class="text-xs text-muted-foreground">
             Visually design the initial layout and set block locks for pages instantiated from this
             template.
           </p>
         </div>
         <div class="flex items-center gap-2">
-          <select
-            ref={(el) => (selectEl = el)}
-            id="tmpl-block-type-select"
-            class="px-2.5 py-1.5 bg-gray-800 border border-gray-700 text-xs rounded text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            <option value="ParagraphBlock">Paragraph</option>
-            <option value="SectionBlock">Section Heading</option>
-            <option value="CalloutBlock">Callout Box</option>
-            <option value="CodeBlock">Code Snippet</option>
-            <option value="ImageBlock">Image</option>
-            <option value="ScriptBlock">Script</option>
-            <option value="SceneBlock">Scene</option>
-            <option value="DialogueBlock">Dialogue</option>
-          </select>
-          <button
-            type="button"
-            id="tmpl-add-block-btn"
-            onClick={() => addBlock(selectEl?.value || "ParagraphBlock")}
-            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-xs font-medium rounded text-white cursor-pointer"
-          >
-            + Add Block
-          </button>
+          <div class="w-44">
+            <RLSSelect
+              items={TEMPLATE_BLOCK_OPTIONS}
+              value={selectedType()}
+              onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
+                setSelectedType(e.currentTarget.value)
+              }
+              size="sm"
+            />
+          </div>
+          <RLSButton
+            variant="solid"
+            color="primary"
+            size="sm"
+            onClick={() => addBlock(selectedType())}
+            leadingIcon="plus"
+            label="Add Block"
+          />
         </div>
       </div>
 
       <div
         ref={(el) => (canvasContainer = el)}
         id="tmpl-block-canvas"
-        class="space-y-3 min-h-[120px] p-3 bg-gray-900/50 border border-gray-800 rounded"
+        class="space-y-3 min-h-[120px] p-3 border border-dashed border-default rounded-lg"
       >
         {blocks().length === 0 ? (
-          <div class="text-center py-8 text-xs text-gray-500 italic">
+          <div class="text-center py-8 text-xs text-muted-foreground italic">
             No initial blocks added yet. Use the dropdown above to add initial template blocks.
           </div>
         ) : (
@@ -157,77 +169,70 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
               return (
                 <div
                   data-id={block.id}
-                  class="cms-template-block-card bg-gray-900 border border-gray-800 rounded p-3 text-xs space-y-2 relative"
+                  class="cms-template-block-card border border-default rounded-lg p-3 text-xs space-y-2 relative"
                 >
-                  <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                  <div class="flex items-center justify-between border-b border-default/60 pb-2">
                     <div class="flex items-center gap-2">
-                      <span class="font-bold text-gray-300 uppercase">{block.type}</span>
-                      <span class="text-[10px] text-gray-500">#{index() + 1}</span>
+                      <span class="font-bold text-foreground uppercase">{block.type}</span>
+                      <span class="text-[10px] text-muted-foreground">#{index() + 1}</span>
                     </div>
-                    <button
-                      type="button"
+                    <RLSButton
+                      variant="ghost"
+                      color="neutral"
+                      size="xs"
                       onClick={() => deleteBlock(block.id)}
-                      class="tmpl-del-btn text-red-400 hover:text-red-300 text-xs font-semibold cursor-pointer"
-                    >
-                      Delete
-                    </button>
+                      class="!text-red-500 hover:!text-red-600"
+                      leading={<RLSIcon name="trash" size="xs" />}
+                      label="Delete"
+                    />
                   </div>
 
                   <div class="flex items-center gap-4 py-1">
-                    <label
-                      class="flex items-center gap-1.5 cursor-pointer text-gray-300 select-none"
-                      title="Permanent anchor: page authors cannot delete or reorder this block"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!!block.isTemplated}
-                        onChange={(e) =>
-                          updateBlockItem(block.id, (b) => {
-                            b.isTemplated = e.currentTarget.checked
-                          })
-                        }
-                        class="tmpl-anchor-chk rounded text-blue-600 focus:ring-0"
-                      />
-                      <span>📌 Anchor (Permanent)</span>
-                    </label>
-                    <label
-                      class="flex items-center gap-1.5 cursor-pointer text-gray-300 select-none"
-                      title="Content lock: page authors cannot edit this block's content"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={block.templatedProps === true}
-                        onChange={(e) =>
-                          updateBlockItem(block.id, (b) => {
-                            b.templatedProps = e.currentTarget.checked
-                          })
-                        }
-                        class="tmpl-lock-chk rounded text-blue-600 focus:ring-0"
-                      />
-                      <span>🔒 Lock Content</span>
-                    </label>
+                    <RLSCheckbox
+                      checked={!!block.isTemplated}
+                      onChange={(e: Event & { currentTarget: HTMLInputElement }) =>
+                        updateBlockItem(block.id, (b) => {
+                          b.isTemplated = e.currentTarget.checked
+                        })
+                      }
+                      label="📌 Anchor (Permanent)"
+                      size="sm"
+                    />
+                    <RLSCheckbox
+                      checked={block.templatedProps === true}
+                      onChange={(e: Event & { currentTarget: HTMLInputElement }) =>
+                        updateBlockItem(block.id, (b) => {
+                          b.templatedProps = e.currentTarget.checked
+                        })
+                      }
+                      label="🔒 Lock Content"
+                      size="sm"
+                    />
                   </div>
 
                   <div>
-                    <label class="block text-[11px] text-gray-400 mb-1">
-                      Block Content / Text
-                      <input
-                        id={`tmpl-content-${block.id}`}
-                        type="text"
-                        value={escapeHtml(textVal)}
-                        onInput={(e) => {
-                          const val = e.currentTarget.value
-                          updateBlockItem(block.id, (b) => {
-                            if (b.type === "SectionBlock") b.props.title = val
-                            else if (b.type === "CodeBlock") b.props.code = val
-                            else if (b.type === "ImageBlock") b.props.src = val
-                            else b.props.text = { en: val }
-                          })
-                        }}
-                        class="tmpl-content-input w-full px-2.5 py-1.5 bg-gray-800 border border-gray-700 rounded text-gray-200 text-xs focus:outline-none focus:border-blue-500 mt-1 font-normal"
-                        placeholder="Enter default block content..."
-                      />
-                    </label>
+                    <div>
+                      <span class="block text-[11px] text-muted-foreground mb-1">
+                        Block Content / Text
+                      </span>
+                      <div class="mt-1">
+                        <RLSInput
+                          id={`tmpl-content-${block.id}`}
+                          value={escapeHtml(textVal)}
+                          onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => {
+                            const val = e.currentTarget.value
+                            updateBlockItem(block.id, (b) => {
+                              if (b.type === "SectionBlock") b.props.title = val
+                              else if (b.type === "CodeBlock") b.props.code = val
+                              else if (b.type === "ImageBlock") b.props.src = val
+                              else b.props.text = { en: val }
+                            })
+                          }}
+                          size="sm"
+                          placeholder="Enter default block content..."
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               )

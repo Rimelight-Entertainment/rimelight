@@ -1,6 +1,9 @@
 import { createSignal, onMount, onCleanup, For, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
 
 export interface CalloutEditorProps {
   blockId?: string
@@ -14,20 +17,28 @@ export interface CalloutEditorProps {
 }
 
 const VARIANTS: Record<string, { icon: string; label: string }> = {
-  info: { icon: "○", label: "Info" },
-  success: { icon: "✓", label: "Success" },
-  warning: { icon: "⚠", label: "Warning" },
-  error: { icon: "✕", label: "Error" },
-  commentary: { icon: "💬", label: "Commentary" },
-  ideation: { icon: "💡", label: "Ideation" },
-  source: { icon: "<>", label: "Source" }
+  info: { icon: "info", label: "Info" },
+  success: { icon: "check", label: "Success" },
+  warning: { icon: "triangleAlert", label: "Warning" },
+  error: { icon: "circleAlert", label: "Error" },
+  commentary: { icon: "messageSquare", label: "Commentary" },
+  ideation: { icon: "lightbulb", label: "Ideation" },
+  source: { icon: "code", label: "Source" }
 }
+
+const VARIANT_OPTIONS = Object.entries(VARIANTS).map(([key, item]) => ({
+  label: item.label,
+  value: key
+}))
+
+const TARGET_OPTIONS = [
+  { label: "Same tab", value: "_self" },
+  { label: "New tab (_blank)", value: "_blank" }
+]
 
 export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => {
   const [linkSettingsOpen, setLinkSettingsOpen] = createSignal(!!componentProps.props.to)
   let childrenContainer: HTMLDivElement | undefined = undefined
-  let toInput: HTMLInputElement | undefined = undefined
-  let targetSelect: HTMLSelectElement | undefined = undefined
   let sortableInstance: any = null
 
   const variant = () => componentProps.props.variant || "info"
@@ -75,11 +86,11 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
     })
   })
 
-  const saveLinkProps = () => {
+  const saveLinkProps = (to?: string, target?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      to: toInput?.value || undefined,
-      target: targetSelect?.value || undefined
+      to: to !== undefined ? to : componentProps.props.to,
+      target: target !== undefined ? target : componentProps.props.target
     })
   }
 
@@ -91,70 +102,75 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
   }
 
   return (
-    <div class="w-full flex flex-col gap-3 border border-default rounded-xl p-4 bg-white dark:bg-neutral-900 shadow-sm">
-      <div class="flex items-center justify-between">
-        <label class="flex items-center gap-2 cursor-pointer">
+    <div class="w-full flex flex-col gap-3 p-3 rounded-xl border border-default/70">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
           <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Callout Type:
+            Callout:
           </span>
-          <select
-            value={variant()}
-            onChange={(e) => setVariant(e.currentTarget.value)}
-            class="bg-neutral-100 dark:bg-neutral-800 border border-default rounded px-2 py-1 text-xs font-medium focus:outline-none text-foreground cursor-pointer"
-          >
-            <For each={Object.entries(VARIANTS)}>
-              {([key, itemConfig]) => <option value={key}>{itemConfig.label}</option>}
-            </For>
-          </select>
-        </label>
+          <div class="w-36">
+            <RLSSelect
+              items={VARIANT_OPTIONS}
+              value={variant()}
+              onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
+                setVariant(e.currentTarget.value)
+              }
+              size="xs"
+            />
+          </div>
+        </div>
 
-        <button
-          type="button"
+        <RLSButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
           onClick={() => setLinkSettingsOpen(!linkSettingsOpen())}
-          class="text-xs text-muted-foreground hover:text-foreground cursor-pointer bg-transparent border-none flex items-center gap-1"
           title="Link settings"
-        >
-          <span>🔗</span>
-          <span>{componentProps.props.to ? "Linked" : "Add Link"}</span>
-        </button>
+          leadingIcon="link"
+          label={componentProps.props.to ? "Linked" : "Add Link"}
+        />
       </div>
 
       <Show when={linkSettingsOpen()}>
-        <div class="flex items-center gap-2 p-2 bg-neutral-100 dark:bg-neutral-800/80 rounded-lg border border-default text-xs">
-          <input
-            ref={(el) => (toInput = el)}
-            type="text"
-            placeholder="Link URL (e.g. https://... or /slug)"
-            value={componentProps.props.to || ""}
-            onBlur={saveLinkProps}
-            class="flex-1 bg-white dark:bg-neutral-900 border border-default text-foreground px-2 py-1 rounded outline-none"
-          />
-          <select
-            ref={(el) => (targetSelect = el)}
-            value={componentProps.props.target || "_self"}
-            onChange={saveLinkProps}
-            class="bg-white dark:bg-neutral-900 border border-default text-foreground px-2 py-1 rounded outline-none"
-          >
-            <option value="_self">Same tab</option>
-            <option value="_blank">New tab (_blank)</option>
-          </select>
+        <div class="flex items-center gap-2 p-2 rounded-lg border border-default text-xs">
+          <div class="flex-1">
+            <RLSInput
+              type="text"
+              placeholder="Link URL (e.g. https://... or /slug)"
+              value={componentProps.props.to || ""}
+              onBlur={(e: FocusEvent & { currentTarget: HTMLInputElement }) =>
+                saveLinkProps(e.currentTarget.value, componentProps.props.target)
+              }
+              size="sm"
+            />
+          </div>
+          <div class="w-32">
+            <RLSSelect
+              items={TARGET_OPTIONS}
+              value={componentProps.props.target || "_self"}
+              onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
+                saveLinkProps(componentProps.props.to, e.currentTarget.value)
+              }
+              size="xs"
+            />
+          </div>
         </div>
       </Show>
 
       <div
         ref={(el) => (childrenContainer = el)}
-        class="p-3 rounded-lg border border-dashed border-default flex flex-col gap-2 min-h-[36px]"
+        class="p-2 rounded-lg border border-dashed border-default flex flex-col gap-2 min-h-[36px]"
       >
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-2">
             <span class="text-xs text-muted-foreground block">Empty callout</span>
-            <button
-              type="button"
+            <RLSButton
+              variant="link"
+              color="primary"
+              size="xs"
               onClick={() => componentProps.onOpenPicker?.()}
-              class="mt-1 text-xs text-primary font-medium hover:underline cursor-pointer bg-transparent border-none"
-            >
-              + Add block
-            </button>
+              label="+ Add block"
+            />
           </div>
         ) : (
           <For each={childrenBlocks()}>

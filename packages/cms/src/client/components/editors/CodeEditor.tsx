@@ -1,4 +1,6 @@
-import { onMount, For, type Component } from "solid-js"
+import { onMount, type Component } from "solid-js"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
+import RLSInput from "@rimelight/ui/components/input/RLSInput"
 
 export interface CodeEditorProps {
   props: Record<string, any>
@@ -23,9 +25,7 @@ const LANGUAGES = [
 ]
 
 export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
-  let languageSelect: HTMLSelectElement | undefined
   let codeTextarea: HTMLTextAreaElement | undefined
-  let captionInput: HTMLInputElement | undefined
 
   const autoResize = () => {
     if (codeTextarea) {
@@ -34,12 +34,12 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
     }
   }
 
-  const saveProps = () => {
+  const saveProps = (lang?: string, code?: string, caption?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      language: languageSelect?.value || "typescript",
-      code: codeTextarea?.value || "",
-      caption: captionInput?.value || ""
+      language: lang !== undefined ? lang : componentProps.props.language || "typescript",
+      code: code !== undefined ? code : codeTextarea?.value || "",
+      caption: caption !== undefined ? caption : componentProps.props.caption || ""
     })
   }
 
@@ -51,37 +51,31 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
   })
 
   return (
-    <div class="rimelight-code-editor flex flex-col gap-2 p-3 w-full">
+    <div class="rimelight-code-editor flex flex-col gap-2 p-2 w-full">
       <div class="flex items-center justify-between mb-1">
-        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wide flex items-center gap-2">
-          <span>Source Code</span>
-          <select
-            id="code-language-select"
-            ref={(el) => (languageSelect = el)}
-            data-field="language"
-            value={componentProps.props.language || "typescript"}
-            onChange={saveProps}
-            class="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-2 py-1 outline-none cursor-pointer font-normal normal-case"
-          >
-            <For each={LANGUAGES}>
-              {(l) => (
-                <option value={l} selected={l === (componentProps.props.language || "typescript")}>
-                  {l}
-                </option>
-              )}
-            </For>
-          </select>
-        </label>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            Language
+          </span>
+          <div class="w-36">
+            <RLSSelect
+              items={LANGUAGES}
+              value={componentProps.props.language || "typescript"}
+              onChange={(e) => saveProps(e.currentTarget.value)}
+              size="xs"
+            />
+          </div>
+        </div>
       </div>
-      <div class="relative">
+      <div class="relative w-full">
         <textarea
           ref={(el) => (codeTextarea = el)}
           data-field="code"
-          class="w-full bg-gray-950 border border-gray-700 rounded px-3 py-2 text-sm text-green-300 font-mono resize-none outline-none focus:border-blue-500 min-h-[120px] leading-relaxed"
+          class="w-full bg-neutral-950/80 border border-default rounded-lg px-3 py-2 text-sm text-green-400 font-mono resize-none outline-none focus:border-primary min-h-[120px] leading-relaxed"
           placeholder="// Write code here..."
           spellcheck={false}
           onInput={autoResize}
-          onBlur={saveProps}
+          onBlur={() => saveProps()}
           onKeyDown={(e) => {
             if (e.key === "Tab" && codeTextarea) {
               e.preventDefault()
@@ -94,13 +88,12 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
           }}
         />
       </div>
-      <input
-        ref={(el) => (captionInput = el)}
+      <RLSInput
         type="text"
         data-field="caption"
         value={componentProps.props.caption || ""}
-        onBlur={saveProps}
-        class="bg-gray-800 border-gray-700 text-gray-100 rounded px-3 py-2 text-sm w-full outline-none focus:border-blue-500 mt-2"
+        onBlur={(e) => saveProps(undefined, undefined, e.currentTarget.value)}
+        size="sm"
         placeholder="Caption (optional)"
       />
     </div>

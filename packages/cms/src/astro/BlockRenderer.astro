@@ -12,9 +12,10 @@ import SectionBlock from "./blocks/SectionBlock.astro"
 interface Props {
   block: BaseBlock
   locale?: string
+  sectionDepth?: number
 }
 
-const { block, locale = "en" } = Astro.props
+const { block, locale = "en", sectionDepth = 0 } = Astro.props
 ---
 
 {
@@ -23,7 +24,7 @@ const { block, locale = "en" } = Astro.props
   ) : block.type === "CalloutBlock" ? (
     <CalloutBlock block={block} locale={locale}>
       {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} />
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} />
       ))}
     </CalloutBlock>
   ) : block.type === "ImageBlock" ? (
@@ -33,21 +34,21 @@ const { block, locale = "en" } = Astro.props
   ) : block.type === "ScriptBlock" ? (
     <ScriptBlock block={block} locale={locale}>
       {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} />
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} />
       ))}
     </ScriptBlock>
   ) : block.type === "SceneBlock" ? (
     <SceneBlock block={block} locale={locale}>
       {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} />
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} />
       ))}
     </SceneBlock>
   ) : block.type === "DialogueBlock" ? (
     <DialogueBlock block={block} locale={locale} />
   ) : block.type === "SectionBlock" ? (
-    <SectionBlock block={block} locale={locale}>
+    <SectionBlock block={block} locale={locale} sectionDepth={sectionDepth}>
       {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} />
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth + 1} />
       ))}
     </SectionBlock>
   ) : (
@@ -56,3 +57,4 @@ const { block, locale = "en" } = Astro.props
     </div>
   )
 }
+

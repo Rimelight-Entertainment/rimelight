@@ -39,3 +39,6 @@ export * from "./migration"
 // Astro Components
 export { default as PageRenderer } from "./astro/PageRenderer.astro"
 export { default as BlockRenderer } from "./astro/BlockRenderer.astro"
+
+// Toast API
+export * from "./client/toast"
