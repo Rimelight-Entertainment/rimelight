@@ -69,28 +69,28 @@ export const RimelightPreview: Component<RimelightPreviewProps> = (props) => {
   })
 
   return (
-    <div class="cms-preview-pane flex-1 w-full h-full overflow-y-auto bg-neutral-900/30">
+    <div class="cms-preview-pane flex-1 w-full h-full overflow-y-auto bg-transparent">
       <div class="cms-preview-document p-6 sm:p-8 max-w-4xl mx-auto space-y-6">
         {banner() && (
-          <div class="rounded-2xl overflow-hidden border border-neutral-800 shadow-sm aspect-[21/9]">
+          <div class="rounded-2xl overflow-hidden border border-default shadow-sm aspect-[21/9]">
             <img src={banner()} alt={title() || "Banner"} class="w-full h-full object-cover" />
           </div>
         )}
 
         {(title() || description() || category()) && (
-          <header class="border-b border-neutral-800 pb-6 mb-6">
+          <header class="border-b border-default pb-6 mb-6">
             {category() && (
-              <span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-500/10 text-blue-400 mb-3 uppercase tracking-wider">
+              <span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary mb-3 uppercase tracking-wider">
                 {category()}
               </span>
             )}
             {title() && (
-              <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-100 tracking-tight leading-tight">
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
                 {title()}
               </h1>
             )}
             {description() && (
-              <p class="text-lg text-neutral-400 mt-3 leading-relaxed">{description()}</p>
+              <p class="text-lg text-dimmed mt-3 leading-relaxed">{description()}</p>
             )}
           </header>
         )}

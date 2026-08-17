@@ -4,6 +4,8 @@ import DashboardLayout from "@/layouts/DashboardLayout.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
+import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro"
+import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro"
 import { db } from "@/db"
 import { pages, pageDrafts } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -141,14 +143,18 @@ const isPublished = !!page.publishedVersionId
           Save
         </RLAButton>
 
-        <RLAButton
-          id="delete-btn"
-          variant="ghost"
-          color="error"
+        <!-- More Actions Dropdown -->
+        <RLADropdownMenu
           size="xs"
-          square
-          leadingIcon="i-lucide-trash-2"
-          aria-label="Delete Page"
+          content={{ align: "end" }}
+          items={[
+            {
+              id: "open-delete-dialog-item",
+              label: "Delete Page...",
+              icon: "i-lucide-trash-2",
+              color: "error"
+            }
+          ]}
         />
       </div>
     </header>
@@ -241,7 +247,7 @@ const isPublished = !!page.publishedVersionId
             
             <!-- Properties Panel (Order 1 in mobile, Order 2 in desktop) -->
             <div class="order-1 lg:order-2 lg:col-span-8 xl:col-span-7 flex flex-col gap-4">
-              <div class="rounded-xl border border-default bg-neutral-900/30 overflow-hidden sticky top-4 shadow-sm">
+              <div class="sticky top-4">
                 <RimelightPropertiesPanel
                   client:only="solid"
                   pageType={pageType}
@@ -262,8 +268,8 @@ const isPublished = !!page.publishedVersionId
                 />
               </div>
 
-              <!-- Metadata Box -->
-              <div class="flex flex-col gap-1 text-xs text-dimmed p-4 bg-neutral-50 dark:bg-neutral-900/40 rounded-xl border border-default mt-6">
+              <!-- Metadata Box (Clean, no extra border/bg) -->
+              <div class="flex flex-col gap-1 text-xs text-dimmed pt-4 mt-6">
                 <span class="font-bold text-foreground">Metadata</span>
                 <span>ID: {page.id}</span>
                 {page.createdAt && <span>Created: {new Date(page.createdAt).toLocaleString(currentLocale)}</span>}
@@ -288,7 +294,7 @@ const isPublished = !!page.publishedVersionId
       <!-- Live Preview Column (Right) -->
       <div
         id="preview-pane"
-        class="hidden flex-col h-full overflow-y-auto border-l border-default bg-neutral-50/50 dark:bg-neutral-950/40 shrink-0"
+        class="hidden flex-col h-full overflow-y-auto border-l border-default shrink-0"
       >
         <div id="preview-content-container" class="w-full h-full">
           <RimelightPreview
@@ -304,6 +310,34 @@ const isPublished = !!page.publishedVersionId
 
     </div>
   </div>
+
+  <!-- Delete Confirmation Modal (Rimelight UI RLAModal) -->
+  <RLAModal
+    id="delete-page-modal"
+    size="sm"
+    title="Delete Page"
+    description={`Are you sure you want to delete "${titleVal || 'Untitled Page'}"? This action cannot be undone.`}
+  >
+    <div slot="footer" class="flex justify-end gap-2">
+      <RLAButton
+        id="cancel-delete-page-btn"
+        variant="outline"
+        color="neutral"
+        size="sm"
+        data-dialog-close="delete-page-modal"
+      >
+        Cancel
+      </RLAButton>
+      <RLAButton
+        id="confirm-delete-page-btn"
+        variant="solid"
+        color="error"
+        size="sm"
+      >
+        Delete Page
+      </RLAButton>
+    </div>
+  </RLAModal>
 
   <!-- Initial page JSON -->
   <script id="initial-properties-data" type="application/json" set:html={JSON.stringify(initialProperties)} />
@@ -576,18 +610,33 @@ const isPublished = !!page.publishedVersionId
       }
     });
 
-    // Delete handler
-    document.getElementById('delete-btn')?.addEventListener('click', async () => {
-      if (!confirm(`Are you sure you want to delete "${initialData.title}"?`)) return;
+    // Handle delete dropdown menu selection & confirmation (Rimelight UI RLAModal)
+    const deleteModalDialog = document.querySelector('#delete-page-modal dialog') as HTMLDialogElement | null;
+    const confirmDeletePageBtn = document.getElementById('confirm-delete-page-btn');
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      const deleteItem = target?.closest('[data-item-id="open-delete-dialog-item"]');
+      if (deleteItem) {
+        if (deleteModalDialog) {
+          deleteModalDialog.showModal();
+        }
+      }
+    });
+
+    confirmDeletePageBtn?.addEventListener('click', async () => {
       try {
+        if (confirmDeletePageBtn) (confirmDeletePageBtn as HTMLButtonElement).disabled = true;
         const res = await fetch(`/api/cms/pages/${initialData.id}`, { method: 'DELETE' });
         if (res.ok) {
           window.location.href = '/cms/pages';
         } else {
           alert('Failed to delete page');
+          if (confirmDeletePageBtn) (confirmDeletePageBtn as HTMLButtonElement).disabled = false;
         }
       } catch {
         alert('Network error deleting page');
+        if (confirmDeletePageBtn) (confirmDeletePageBtn as HTMLButtonElement).disabled = false;
       }
     });
   </script>
