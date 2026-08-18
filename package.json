@@ -15,12 +15,8 @@
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "type": "module",
   "devDependencies": {
-    "@types/node": "26.2.0",
     "pkg-pr-new": "0.0.88",
     "vite-plus": "0.2.9"
   },

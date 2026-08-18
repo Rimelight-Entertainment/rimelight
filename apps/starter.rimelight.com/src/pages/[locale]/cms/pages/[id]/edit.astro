@@ -428,7 +428,7 @@ const isPublished = !!page.publishedVersionId
     });
 
     const setBanner = (url: string) => {
-      (window as any).cmsPageProperties = { ...((window as any).cmsPageProperties || {}), heroImage: url };
+      (window as any).cmsPageProperties = { ...(window as any).cmsPageProperties, heroImage: url };
       if (bannerImg) {
         bannerImg.src = url;
         bannerImg.classList.toggle('opacity-100', !!url);
