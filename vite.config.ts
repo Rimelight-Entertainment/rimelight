@@ -123,7 +123,7 @@ export default defineConfig({
   run: {
     cache: true,
     tasks: {
-      "check": {
+      check: {
         dependsOn: [
           "@rimelight/auth#check",
           "@rimelight/cli#check",
@@ -138,7 +138,7 @@ export default defineConfig({
         ],
         command: 'node -e "process.exit(0)"'
       },
-      "fix": {
+      fix: {
         command: "pnpm audit fix && vp check --fix"
       }
     }
