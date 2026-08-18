@@ -13,8 +13,8 @@ export interface RLSSelectProps {
   class?: string
   items?: SelectItem[]
   children?: JSX.Element
-  onChange?: JSX.EventHandlerUnion<HTMLSelectElement, Event>
-  onBlur?: JSX.EventHandlerUnion<HTMLSelectElement, FocusEvent>
+  onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void
+  onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void
 }
 
 const SIZE_CLASSES = {
