@@ -4,8 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54d2cc84-c473-46f4-b95c-8bf5638d59e9" name="Changes" comment="refactor: cms improvements">
-      <change beforePath="$PROJECT_DIR$/apps/rimelight.com/src/components/app/AppHeader.astro" beforeDir="false" afterPath="$PROJECT_DIR$/apps/rimelight.com/src/components/app/AppHeader.astro" afterDir="false" />
+    <list default="true" id="54d2cc84-c473-46f4-b95c-8bf5638d59e9" name="Changes" comment="refactor: task runner improvements">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/rimelight.com/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/rimelight.com/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/rimelight.com/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/auth/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/auth/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/auth/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/cli/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cli/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/cli/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/cms/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/cms/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/docs/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/docs/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/docs/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/i18n/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/i18n/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/i18n/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/security/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/security/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/security/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/seo/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/seo/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/seo/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,6 +165,15 @@
       <workItem from="1787012331827" duration="2623000" />
       <workItem from="1787015027690" duration="2013000" />
     </task>
+    <task id="LOCAL-00001" summary="refactor: cms improvements">
+      <option name="closed" value="true" />
+      <created>1787018470358</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1787018470358</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -151,6 +181,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="refactor: cms improvements" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: cms improvements" />
+    <MESSAGE value="refactor: task runner improvements" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: task runner improvements" />
   </component>
 </project>

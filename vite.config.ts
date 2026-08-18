@@ -123,18 +123,15 @@ export default defineConfig({
   run: {
     cache: true,
     tasks: {
-      "audit": {
-        command: "pnpm audit --audit-level=moderate"
-      },
-      "check:vp": {
-        command: "vp check --fix"
-      },
       "check": {
         dependsOn: [
-          "audit",
-          "check:vp",
+          "@rimelight/auth#check",
+          "@rimelight/cli#check",
           "@rimelight/cms#check",
+          "@rimelight/docs#check",
+          "@rimelight/i18n#check",
           "@rimelight/security#check",
+          "@rimelight/seo#check",
           "@rimelight/ui#check",
           "rimelight-dot-com#check",
           "starter-dot-rimelight-dot-com#check"

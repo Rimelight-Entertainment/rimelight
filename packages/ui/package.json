@@ -27,7 +27,8 @@
     "access": "public"
   },
   "scripts": {
-    "astro": "astro"
+    "astro": "astro",
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
   },
   "dependencies": {
     "@unocss/astro": "66.7.5",

@@ -30,6 +30,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
+  },
   "devDependencies": {
     "astro": "7.2.1",
     "typescript": "6.0.3"

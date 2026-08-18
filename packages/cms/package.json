@@ -38,6 +38,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
+  },
   "dependencies": {
     "@rimelight/i18n": "workspace:*",
     "@rimelight/ui": "workspace:*",

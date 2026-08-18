@@ -28,7 +28,8 @@
     "access": "public"
   },
   "scripts": {
-    "create": "node ./bin/rimelight.js create"
+    "create": "node ./bin/rimelight.js create",
+    "check": "pnpm audit --audit-level=moderate"
   },
   "dependencies": {
     "@clack/prompts": "1.7.0",

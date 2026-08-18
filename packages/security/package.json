@@ -28,6 +28,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
+  },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "astro": "7.2.1",

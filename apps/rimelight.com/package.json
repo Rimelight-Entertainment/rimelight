@@ -25,7 +25,8 @@
     "dev:remote": "astro dev --remote",
     "prebuild": "node scripts/generate-block-maps.ts && node scripts/sync-md-to-db.ts",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && node scripts/generate-block-maps.ts && wrangler types && astro sync && astro check"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.0",

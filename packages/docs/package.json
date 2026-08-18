@@ -26,6 +26,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "check": "pnpm audit --audit-level=moderate && vp check --fix"
+  },
   "peerDependencies": {
     "@rimelight/ui": "workspace:*"
   },
