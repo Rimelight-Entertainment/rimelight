@@ -9,9 +9,6 @@ export default defineConfig({
     ignorePatterns: [
       "**/dist/**",
       "**/node_modules/**",
-      "**/i18n.generated.d.ts",
-      "**/runtime-constants.ts",
-      "**/fallbacks.generated.ts",
       "**/worker-configuration.d.ts",
       "**/env.d.ts"
     ],
@@ -105,12 +102,8 @@ export default defineConfig({
     ignorePatterns: [
       "**/dist/**",
       "**/node_modules/**",
-      "**/i18n.generated.d.ts",
-      "**/runtime-constants.ts",
-      "**/fallbacks.generated.ts",
       "**/worker-configuration.d.ts",
-      "**/env.d.ts",
-      "i18n-data.json"
+      "**/env.d.ts"
     ],
     jsdoc: {
       bracketSpacing: true,
@@ -137,9 +130,6 @@ export default defineConfig({
           "starter-dot-rimelight-dot-com#check"
         ],
         command: 'node -e "process.exit(0)"'
-      },
-      fix: {
-        command: "pnpm audit fix && vp check --fix"
       }
     }
   }
