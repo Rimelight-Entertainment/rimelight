@@ -92,12 +92,6 @@ export default defineConfig({
     }
   },
   fmt: {
-    ignorePatterns: [
-      "**/dist/**",
-      "**/node_modules/**",
-      "**/worker-configuration.d.ts",
-      "**/env.d.ts"
-    ],
     jsdoc: {
       bracketSpacing: true,
       commentLineStrategy: "multiline"
