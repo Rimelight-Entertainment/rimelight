@@ -61,7 +61,7 @@ const variantConfigs: Record<
   }
 }
 
-const config = variantConfigs[variant as CalloutVariant] || variantConfigs.info
+const config = variantConfigs[variant as CalloutVariant] ?? variantConfigs.info
 const Tag = to ? "a" : "div"
 ---
 

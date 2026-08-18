@@ -6,7 +6,6 @@ export const prerender = true
 
 export async function getStaticPaths() {
   const blogs = await getCollection("blog").catch(() => [])
-  const docs = await getCollection("docs").catch(() => [])
   const legals = await getCollection("legal").catch(() => [])
 
   const paths = [
@@ -20,11 +19,6 @@ export async function getStaticPaths() {
         isDocs: false
       },
       cacheKey: "static-default"
-    },
-    {
-      params: { route: "wiki-default" },
-      props: { title: "Rimelight Wiki", description: "Knowledge Base", type: "Wiki", isDocs: true },
-      cacheKey: "static-wiki"
     },
     {
       params: { route: "forum-default" },
@@ -46,16 +40,6 @@ export async function getStaticPaths() {
         pubDate: b.data.pubDate ? new Date(b.data.pubDate).toLocaleDateString() : ""
       },
       cacheKey: b.digest || b.id
-    })),
-    ...docs.map((d: any) => ({
-      params: { route: `docs/${d.id}` },
-      props: {
-        title: d.data.title,
-        description: d.data.description || "",
-        type: "Documentation",
-        isDocs: true
-      },
-      cacheKey: d.digest || d.id
     })),
     ...legals.map((l: any) => ({
       params: { route: `legal/${l.id}` },

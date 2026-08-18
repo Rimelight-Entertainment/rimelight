@@ -1,3 +1,9 @@
 {
-  "extends": "../../.config/tsconfig.astro.json"
+  "extends": "../../.config/tsconfig.astro.json",
+  "include": ["**/*"],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }
