@@ -5,64 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54d2cc84-c473-46f4-b95c-8bf5638d59e9" name="Changes" comment="refactor: cms improvements">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RFC_CMS_MIGRATION.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/pages/api/migrate-docs.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/pages/debug-blocks.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/pages/run-migration.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/scripts/debug-db.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/scripts/migrate-docs-simple.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/scripts/migrate-docs.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/scripts/migrate-with-env.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/CardBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/CardsBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/FileTreeBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/OrderedListBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/StepItemBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/StepsBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/TabItemBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/TableBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/TabsBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/astro/blocks/UnorderedListBlock.astro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/CardEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/CardsEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/FileTreeEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/StepItemEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/StepsEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/TabItemEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/TableEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/client/components/editors/TabsEditor.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/markdown/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/markdown/parser.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/src/markdown/serializer.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/test/docs-migration.test.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/cms/test/markdown-engine.test.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/docs/src/toc.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/docs/test/toc.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/src/config/seo.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/config/seo.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/src/content.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/content.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/src/lib/searchSync.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/lib/searchSync.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/src/pages/[locale]/docs/[...slug].astro" beforeDir="false" afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/pages/[locale]/docs/[...slug].astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/starter.rimelight.com/src/pages/[locale]/docs/index.astro" beforeDir="false" afterPath="$PROJECT_DIR$/apps/starter.rimelight.com/src/pages/[locale]/docs/index.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/astro/BlockRenderer.astro" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/astro/BlockRenderer.astro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/client/components/RimelightBlock.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/client/components/RimelightBlock.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/client/components/RimelightBlockPicker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/client/components/RimelightBlockPicker.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/client/state/history.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/client/state/history.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/core/types/blocks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/core/types/blocks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/migration.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/migration.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/schema/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/schema/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/schema/page_draft_locks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/schema/page_draft_locks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/schema/page_drafts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/schema/page_drafts.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/schema/page_version_approvals.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/schema/page_version_approvals.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/schema/page_version_comments.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/schema/page_version_comments.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/schema/pages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/schema/pages.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/src/schema/search.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/src/schema/search.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/cms/test/block-hierarchy-and-rendering.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/cms/test/block-hierarchy-and-rendering.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/docs/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/docs/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/docs/src/routing.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/docs/src/routing.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/rimelight.com/src/components/app/AppHeader.astro" beforeDir="false" afterPath="$PROJECT_DIR$/apps/rimelight.com/src/components/app/AppHeader.astro" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,30 +103,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feat/rimelight-cms",
-    "javascript.preferred.runtime.type.id": "node",
-    "junie.onboarding.icon.badge.shown": "true",
-    "junie.plugin.stays.banner.dismissed": "true",
-    "last_opened_file_path": "C:/Users/idant/WebstormProjects/rimelight",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "C:/Users/idant/.vite-plus/bin/node.exe",
-    "nodejs_package_manager_path": "pnpm",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "C:\\Users\\idant\\WebstormProjects\\rimelight\\packages\\security\\node_modules\\typescript\\lib"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/rimelight-cms&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;junie.plugin.stays.banner.dismissed&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/idant/WebstormProjects/rimelight&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;C:/Users/idant/.vite-plus/bin/node.exe&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\idant\\WebstormProjects\\rimelight\\packages\\security\\node_modules\\typescript\\lib&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

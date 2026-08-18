@@ -8,7 +8,7 @@ import RLASlideover from "@rimelight/ui/components/slideover/RLASlideover.astro"
 import RLASearch from "@rimelight/ui/components/search/RLASearch.astro";
 import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
 import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import RLAPopover from "@rimelight/ui/components/popover/RLAPopover.astro";
+import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
 import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts"
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
@@ -134,6 +134,38 @@ const actions: ButtonProps[] = [
     label: t("app_header.actions_sign-in")
   }
 ];
+
+const userDropdownItems = session ? [
+	{
+		type: "label",
+		label: `${session.user.name} #${session.user.tag || '0000'}`
+	},
+	{
+		label: "Dashboard",
+		icon: "i-lucide-layout-dashboard",
+		to: getRelativeLocaleUrl('/dashboard')
+	},
+	{
+		label: "Profile",
+		icon: "i-lucide-user",
+		to: getRelativeLocaleUrl('/dashboard/profile')
+	},
+	{
+		label: "Settings",
+		icon: "i-lucide-cog",
+		to: getRelativeLocaleUrl('/dashboard/settings')
+	},
+	{
+		type: "separator"
+	},
+	{
+		label: "Sign Out",
+		icon: "i-lucide-log-out",
+		to: getRelativeLocaleUrl('/auth/sign-out'),
+		color: "error"
+	}
+] : [];
+
 const { stackIndex = 1 } = Astro.props;
 ---
 
@@ -251,7 +283,11 @@ const { stackIndex = 1 } = Astro.props;
     />
     <div class="hidden md:flex flex-row gap-md">
       {session ? (
-        <RLAPopover placement="bottom-end" class="relative group/popover">
+        <RLADropdownMenu
+          items={userDropdownItems}
+          content={{ align: "end", side: "bottom" }}
+          class="text-white"
+        >
           <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
             <div class="relative">
               <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
@@ -263,148 +299,52 @@ const { stackIndex = 1 } = Astro.props;
             </div>
             <span class="hidden md:inline text-sm font-medium">{session.user.name}</span>
           </div>
-
-          <div class="flex flex-col gap-2 p-3 min-w-[240px] bg-card border border-border rounded-xl shadow-2xl text-foreground">
-            <div class="flex items-center gap-sm pb-2 border-b border-border">
-              <RLAAvatar src={session.user.image || undefined} alt={session.user.name || "User"} size="md" />
-              <div class="flex flex-col min-w-0">
-                <span class="font-semibold text-sm flex items-center gap-1.5 truncate">
-                  {session.user.name}
-                  <span class="text-xs text-muted-foreground font-mono font-normal">#{session.user.tag || '0000'}</span>
-                </span>
-                <span class="text-[11px] font-semibold text-primary capitalize">
-                  {String(session.user.role || 'user').charAt(0).toUpperCase() + String(session.user.role || 'user').slice(1)}
-                </span>
-                <span class="text-xs text-muted-foreground truncate max-w-[150px]">{session.user.status || "Online"}</span>
-              </div>
-            </div>
-
-              <div class="flex flex-col gap-0.5">
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start"
-                  href={getRelativeLocaleUrl('/dashboard')}
-                  leadingIcon="i-lucide-layout-dashboard"
-                  label="Dashboard"
-                />
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start"
-                  href={getRelativeLocaleUrl('/dashboard/profile')}
-                  leadingIcon="i-lucide-user"
-                  label="Profile"
-                />
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start"
-                  href={getRelativeLocaleUrl('/dashboard/settings')}
-                  leadingIcon="i-lucide-cog"
-                  label="Settings"
-                />
-              </div>
-
-              <div class="border-t border-neutral-200 dark:border-neutral-800 my-1"></div>
-
-              <div class="flex flex-col">
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start text-error-500 hover:text-error-600"
-                  href={getRelativeLocaleUrl('/auth/sign-out')}
-                  leadingIcon="i-lucide-log-out"
-                  label="Sign Out"
-                />
-              </div>
-            </div>
-          </RLAPopover>
-        ) : (
-          actions.map((buttonProps) => (
-            <RLAButton {...buttonProps} />
-          ))
-        )}
+        </RLADropdownMenu>
+      ) : (
+        actions.map((buttonProps) => (
+          <RLAButton {...buttonProps} />
+        ))
+      )}
       </div>
 
       <div class="block md:hidden">
-        <RLASlideover side="right" title={session ? "Profile" : "Actions"}>
-          <RLAButton
-            slot="trigger"
-            color="neutral"
-            variant="ghost"
-            rounded={true}
-            leadingIcon={session ? "i-lucide-user" : "i-lucide-ellipsis-vertical"}
-            class="!text-white"
-            aria-label="Open Actions"
-          />
-
-          <div class="flex flex-col gap-md">
-            {session ? (
-              <div class="flex flex-col gap-md p-2 text-neutral-900 dark:text-neutral-100">
-                <div class="flex items-center gap-sm pb-2 border-b border-neutral-200 dark:border-neutral-800">
-                  <RLAAvatar src={session.user.image || undefined} alt={session.user.name || "User"} size="md" />
-                  <div class="flex flex-col min-w-0">
-                    <span class="font-semibold text-sm flex items-center gap-1.5 truncate">
-                      {session.user.name}
-                      <span class="text-xs text-neutral-400 font-mono font-normal">#{session.user.tag || '0000'}</span>
-                    </span>
-                    <span class="text-[11px] font-semibold text-primary-500 capitalize">
-                      {String(session.user.role || 'user').charAt(0).toUpperCase() + String(session.user.role || 'user').slice(1)}
-                    </span>
-                    <span class="text-xs text-neutral-500 truncate max-w-[150px]">{session.user.status || "Online"}</span>
-                  </div>
-                </div>
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start"
-                  href={getRelativeLocaleUrl('/dashboard')}
-                  leadingIcon="i-lucide-layout-dashboard"
-                  label="Dashboard"
-                />
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start"
-                  href={getRelativeLocaleUrl('/dashboard/profile')}
-                  leadingIcon="i-lucide-user"
-                  label="Profile"
-                />
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start"
-                  href={getRelativeLocaleUrl('/dashboard/settings')}
-                  leadingIcon="i-lucide-cog"
-                  label="Settings"
-                />
-                <div class="border-t border-neutral-200 dark:border-neutral-800 my-1"></div>
-                <RLAButton
-                  color="neutral"
-                  variant="ghost"
-                  block={true}
-                  class="!justify-start text-error-500 hover:text-error-600"
-                  href={getRelativeLocaleUrl('/auth/sign-out')}
-                  leadingIcon="i-lucide-log-out"
-                  label="Sign Out"
-                />
+        {session ? (
+          <RLADropdownMenu
+            items={userDropdownItems}
+            content={{ align: "end", side: "bottom" }}
+            class="text-white"
+          >
+            <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
+              <div class="relative">
+                <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
+                <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
+                  session.user.availability === 'busy' ? 'bg-error-500' :
+                  session.user.availability === 'invisible' ? 'bg-neutral-500' :
+                  'bg-success-500'
+                }`} />
               </div>
-          ) : (
-            actions.map((buttonProps) => (
-              <RLAButton {...buttonProps} block={true} />
-            ))
-          )}
-        </div>
-      </RLASlideover>
-    </div>
+            </div>
+          </RLADropdownMenu>
+        ) : (
+          <RLASlideover side="right" title="Actions">
+            <RLAButton
+              slot="trigger"
+              color="neutral"
+              variant="ghost"
+              rounded={true}
+              leadingIcon="i-lucide-ellipsis-vertical"
+              class="!text-white"
+              aria-label="Open Actions"
+            />
+
+            <div class="flex flex-col gap-md">
+              {actions.map((buttonProps) => (
+                <RLAButton {...buttonProps} block={true} />
+              ))}
+            </div>
+          </RLASlideover>
+        )}
+      </div>
   </div>
 </RLAHeader>
 
