@@ -6,12 +6,6 @@ export default defineConfig({
   },
   lint: {
     plugins: ["import", "jsdoc", "jsx-a11y", "node", "promise", "vitest", "vue"],
-    ignorePatterns: [
-      "**/dist/**",
-      "**/node_modules/**",
-      "**/worker-configuration.d.ts",
-      "**/env.d.ts"
-    ],
     options: {
       typeAware: true,
       typeCheck: true
