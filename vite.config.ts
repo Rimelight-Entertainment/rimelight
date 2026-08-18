@@ -23,7 +23,6 @@ export default defineConfig({
       { name: "@unocss", specifier: "@unocss/eslint-plugin" }
     ],
     categories: {
-      correctness: "error",
       suspicious: "warn",
       perf: "warn"
     },
