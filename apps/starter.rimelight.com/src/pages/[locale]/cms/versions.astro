@@ -22,7 +22,7 @@ const versionsList = await db
   .limit(50)
 
 const versions = await Promise.all(
-  versionsList.map(async (version) => {
+  versionsList.map(async (version: any) => {
     const page = await db.select({ title: pages.title, slug: pages.slug }).from(pages).where(eq(pages.id, version.pageId)).limit(1)
     return Object.assign({}, version, {
       pageTitle: page[0]?.title || "Unknown Page",

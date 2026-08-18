@@ -97,7 +97,7 @@ rolesApi.get("/", async (c) => {
     .where(isNull(role.deletedAt))
     .orderBy(desc(role.createdAt))
 
-  const formattedRoles = rolesList.map((r) =>
+  const formattedRoles = rolesList.map((r: any) =>
     Object.assign({}, r, {
       permissions: typeof r.permissions === "string" ? JSON.parse(r.permissions) : r.permissions
     })

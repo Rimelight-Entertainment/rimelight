@@ -28,13 +28,6 @@ type BaseBlock = {
   children?: BaseBlock[]
 }
 
-type ListItemBlock = BaseBlock & {
-  type: "ListItemBlock"
-  props: {
-    content: InlineNode[]
-  }
-}
-
 function parseInlines(text: string): InlineNode[] {
   if (!text) return []
 
@@ -215,7 +208,6 @@ function markdownToBlocks(markdown: string): BaseBlock[] {
     if (listMatch) {
       const indent = listMatch[1] || ""
       const marker = listMatch[2] || ""
-      const content = (listMatch[3] || "").trim()
 
       const listItems: BaseBlock[] = []
       const isOrdered = /^\d+\./.test(marker)
@@ -229,7 +221,6 @@ function markdownToBlocks(markdown: string): BaseBlock[] {
         if (!currentMatch) break
 
         const currentIndent = currentMatch[1] || ""
-        const currentMarker = currentMatch[2] || ""
         const currentContent = (currentMatch[3] || "").trim()
 
         // Check if same level (simplified)

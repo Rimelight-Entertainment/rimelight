@@ -3,7 +3,7 @@ import { languages } from "@/config/i18n.config"
 const WHITELISTED_ROUTES = ["/construction", "/api/auth", "/api/construction-guest"]
 
 const getLocaleFromPath = (path: string) => {
-  return languages.find((loc) => path === `/${loc}` || path.startsWith(`/${loc}/`)) ?? "en"
+  return languages.find((loc: string) => path === `/${loc}` || path.startsWith(`/${loc}/`)) ?? "en"
 }
 
 export const construction = async (c: any, next: any) => {

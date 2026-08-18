@@ -180,7 +180,7 @@ cms.get("/versions", async (c) => {
 
   // Join with pages to get page title/slug
   const versionsWithPage = await Promise.all(
-    versionsList.map(async (version) => {
+    versionsList.map(async (version: any) => {
       const page = await db
         .select({ title: pages.title, slug: pages.slug })
         .from(pages)
@@ -208,7 +208,7 @@ cms.get("/pages", async (c) => {
     .orderBy(desc(pages.createdAt))
 
   // Ensure content is returned as an object, not a string
-  const pagesData = pagesList.map((page) =>
+  const pagesData = pagesList.map((page: any) =>
     Object.assign({}, page, {
       content: typeof page.content === "string" ? JSON.parse(page.content) : page.content
     })
@@ -664,7 +664,7 @@ cms.post("/versions/:versionId/approve", async (c) => {
   await db
     .update(pageVersions)
     .set({
-      approvedBy: allApprovals.map((a) => a.userId),
+      approvedBy: allApprovals.map((a: any) => a.userId),
       approvedAt: new Date()
     })
     .where(eq(pageVersions.id, versionId))

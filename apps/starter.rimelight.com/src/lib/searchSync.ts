@@ -189,7 +189,7 @@ export async function doSearchSync() {
         })
 
       if (insertedRows && insertedRows.length > 0) {
-        const ids = insertedRows.map((r) => r.id)
+        const ids = insertedRows.map((r: any) => r.id)
         syncedIds.push(...ids)
       }
     }
