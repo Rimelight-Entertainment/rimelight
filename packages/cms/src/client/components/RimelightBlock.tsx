@@ -16,9 +16,9 @@ import { StepItemEditor } from "./editors/StepItemEditor"
 import { CardsEditor } from "./editors/CardsEditor"
 import { CardEditor } from "./editors/CardEditor"
 import { FileTreeEditor } from "./editors/FileTreeEditor"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
-import RLSModal from "@rimelight/ui/components/modal/RLSModal"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
+import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
 
 export interface RimelightBlockProps {
   block: BaseBlock

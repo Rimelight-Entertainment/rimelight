@@ -2,10 +2,10 @@ import { createSignal, onMount, onCleanup, For, Show, type Component } from "sol
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
 import { createDefaultBlock } from "../../state/history"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 
 export interface SceneEditorProps {
   blockId?: string

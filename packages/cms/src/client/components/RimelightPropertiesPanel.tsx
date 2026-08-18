@@ -4,12 +4,12 @@ import {
   type PageDefinition,
   type FieldDefinition
 } from "../../core/page-definitions"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge"
-import RLSModal from "@rimelight/ui/components/modal/RLSModal"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
+import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
+import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
 
 function getTextValue(value: any): string {
   if (typeof value === "string") return value

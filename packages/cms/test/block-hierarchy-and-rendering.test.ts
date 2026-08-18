@@ -150,7 +150,7 @@ describe("block-hierarchy-and-rules", () => {
       expect(activeToasts.length).toBeGreaterThan(0)
       expect(
         activeToasts.some(
-          (t) => t.variant === "error" && t.title.includes("Invalid Section Nesting")
+          (t: any) => t.variant === "error" && t.title.includes("Invalid Section Nesting")
         )
       ).toBe(true)
     })

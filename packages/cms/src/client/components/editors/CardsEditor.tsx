@@ -1,8 +1,8 @@
 import { onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 
 export interface CardsEditorProps {
   blockId?: string

@@ -1,7 +1,7 @@
 import { For, type Component } from "solid-js"
 import type { TableColumnDef } from "../../../core/types/blocks"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 
 export interface TableEditorProps {
   props: Record<string, any>

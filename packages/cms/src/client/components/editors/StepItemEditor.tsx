@@ -1,8 +1,8 @@
 import { onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 
 export interface StepItemEditorProps {
   blockId?: string

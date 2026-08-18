@@ -1,10 +1,10 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
-import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
+import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 
 export interface ScriptEditorProps {
   blockId?: string

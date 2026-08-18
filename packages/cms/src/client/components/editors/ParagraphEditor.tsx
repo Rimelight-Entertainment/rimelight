@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show, type Component } from "solid-js"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
-import RLSModal from "@rimelight/ui/components/modal/RLSModal"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
 
 export interface InlineNode {
   type: "text" | "link"

@@ -1,7 +1,7 @@
 import { createSignal, onMount, onCleanup, For, type Component } from "solid-js"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
-import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 
 const BLOCK_DEFS = [
   {

@@ -1,9 +1,9 @@
 import { createSignal, onMount, onCleanup, For, Show, type Component } from "solid-js"
 import type { BaseBlock } from "../../../core/types/blocks"
 import { initBlockSortable, cleanAllSortableClasses } from "../../utils/sortable"
-import RLSSelect from "@rimelight/ui/components/select/RLSSelect"
-import RLSInput from "@rimelight/ui/components/input/RLSInput"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
+import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
+import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 
 export interface CalloutEditorProps {
   blockId?: string
