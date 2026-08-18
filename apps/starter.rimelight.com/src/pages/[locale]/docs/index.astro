@@ -6,40 +6,26 @@ import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
 import { blocksToMarkdown } from "@rimelight/cms";
 import { db } from "@/db";
 import { pages } from "@/db/schema";
-import { eq, and, isNull, inArray } from "drizzle-orm";
+import { eq, and, isNull, inArray, sql } from "drizzle-orm";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
-// 1. Discover versions from database
+// 1. Discover versions from database (only fetch slugs + extract version from JSON)
 let allDocPages: any[] = [];
 try {
   allDocPages = await db
-    .select({ slug: pages.slug, content: pages.content })
+    .select({
+      slug: pages.slug,
+      version: sql<string>`(${pages.content}->'properties'->>'version')`.as('version'),
+    })
     .from(pages)
     .where(and(eq(pages.type, "doc"), isNull(pages.deletedAt)));
-  console.log(`[Docs Index] Found ${allDocPages.length} doc pages in database`);
-} catch (error) {
-  console.error(`[Docs Index] Database query error:`, error);
+} catch {
   // DB query fallback if offline/initializing
 }
 
-
-
-const versions = getDocsVersions(
-  allDocPages.map((p) => {
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-    return {
-      slug: p.slug,
-      version: content.properties?.version
-    };
-  }),
-  activeLocale
-);
-
-const { activeVersion, contentPath, includeVersionInUrl } = parseDocsSlug(undefined, versions);
-
-console.log(`[Docs Index] activeVersion: ${activeVersion}, contentPath: ${contentPath}, includeVersionInUrl: ${includeVersionInUrl}`);
-console.log(`[Docs Index] versions: ${JSON.stringify(versions)}`);
+const versions = getDocsVersions(allDocPages, activeLocale);
+const { activeVersion, includeVersionInUrl } = parseDocsSlug(undefined, versions);
 
 if (includeVersionInUrl) {
   return Astro.redirect(`/${activeLocale}/docs/${activeVersion}/`);
@@ -52,29 +38,20 @@ const candidateSlugs = [
   activeVersion ? `${activeVersion}/index` : "index"
 ];
 
-console.log(`[Docs Index] Candidate slugs: ${JSON.stringify(candidateSlugs)}`);
-
 try {
   const pageResults = await db
     .select()
     .from(pages)
     .where(and(eq(pages.type, "doc"), inArray(pages.slug, candidateSlugs), isNull(pages.deletedAt)));
 
-  console.log(`[Docs Index] Found ${pageResults.length} pages matching candidates`);
-  console.log(`[Docs Index] Page results: ${JSON.stringify(pageResults.map(p => ({ slug: p.slug, id: p.id })))}`);
-
-  if (pageResults && pageResults.length > 0) {
-    for (const candidate of candidateSlugs) {
-      const match = pageResults.find((p: any) => p.slug === candidate);
-      if (match) {
-        dbPage = match;
-        console.log(`[Docs Index] Found matching page with slug: ${candidate}`);
-        break;
-      }
+  for (const candidate of candidateSlugs) {
+    const match = pageResults.find((p: any) => p.slug === candidate);
+    if (match) {
+      dbPage = match;
+      break;
     }
   }
-} catch (error) {
-  console.error(`[Docs Index] Database query error:`, error);
+} catch {
   // continue
 }
 

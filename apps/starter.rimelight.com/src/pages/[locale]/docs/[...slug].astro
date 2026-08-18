@@ -6,32 +6,26 @@ import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
 import { blocksToMarkdown } from "@rimelight/cms";
 import { db } from "@/db";
 import { pages } from "@/db/schema";
-import { eq, and, isNull, inArray } from "drizzle-orm";
+import { eq, and, isNull, inArray, sql } from "drizzle-orm";
 
 const activeLocale = Astro.currentLocale ?? "en";
 const { slug } = Astro.params;
 
-// 1. Discover versions from database
+// 1. Discover versions from database (only fetch slugs + extract version from JSON)
 let allDocPages: any[] = [];
 try {
   allDocPages = await db
-    .select({ slug: pages.slug, content: pages.content })
+    .select({
+      slug: pages.slug,
+      version: sql<string>`(${pages.content}->'properties'->>'version')`.as('version'),
+    })
     .from(pages)
     .where(and(eq(pages.type, "doc"), isNull(pages.deletedAt)));
 } catch {
   // DB query fallback if offline/initializing
 }
 
-const versions = getDocsVersions(
-  allDocPages.map((p) => {
-    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
-    return {
-      slug: p.slug,
-      version: content.properties?.version
-    };
-  }),
-  activeLocale
-);
+const versions = getDocsVersions(allDocPages, activeLocale);
 
 const { activeVersion, contentPath, includeVersionInUrl } = parseDocsSlug(slug, versions);
 
