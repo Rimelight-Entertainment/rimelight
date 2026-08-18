@@ -1,21 +1,43 @@
 ---
-import { getEntry, render } from 'astro:content';
-import AppLayout from '@/layouts/AppLayout.astro';
-import RLADate from "@rimelight/ui/components/date/RLADate.astro";
-import { t } from "@rimelight/i18n";
+import AppLayout from "@/layouts/AppLayout.astro"
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
+import RLADate from "@rimelight/ui/components/date/RLADate.astro"
+import { t } from "@rimelight/i18n"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq, and, isNull, sql } from "drizzle-orm"
 
-const activeLocale = Astro.currentLocale ?? "en";
+const activeLocale = Astro.currentLocale ?? "en"
 
-const { slug } = Astro.params;
-if (!slug) return Astro.redirect('/404');
-const post = await getEntry('legal', `${activeLocale}/${slug}`);
+const { slug } = Astro.params
+if (!slug) return Astro.redirect("/404")
 
-if (!post) {
-	return Astro.redirect('/404');
+const pageResult = await db
+  .select()
+  .from(pages)
+  .where(and(sql`${pages.type} = ${"legal"}`, eq(pages.slug, slug), isNull(pages.deletedAt)))
+  .limit(1)
+
+const page = pageResult[0]
+
+if (!page) {
+  return Astro.redirect("/404")
 }
 
-const { Content } = await render(post);
-const { title, description, pubDate, updatedDate } = post.data;
+const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content || {}
+
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
+
+const title = getLocalizedText(page.title, activeLocale)
+const description = getLocalizedText(page.description, activeLocale)
+const pubDate = page.postedAt || page.createdAt
+const updatedDate = page.updatedAt
 ---
 
 <AppLayout title={title} description={description}>
@@ -34,7 +56,7 @@ const { title, description, pubDate, updatedDate } = post.data;
 					</div>
 					<h1 class="text-4xl md:text-5xl font-black uppercase tracking-tight text-white">{title}</h1>
 				</div>
-				<Content />
+				<PageRenderer blocks={content.blocks || []} locale={activeLocale} />
 			</div>
 		</article>
 </AppLayout>

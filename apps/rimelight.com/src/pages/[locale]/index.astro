@@ -2,7 +2,9 @@
 import AppLayout from "@/layouts/AppLayout.astro";
 import { siteConfig } from "@/config/site.config";
 import { getRelativeLocaleUrl, t } from "@rimelight/i18n";
-import { getCollection } from "astro:content";
+import { db } from "@/db";
+import { pages } from "@/db/schema";
+import { and, isNull, desc, sql } from "drizzle-orm";
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
 import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
@@ -18,12 +20,24 @@ const GrandTaleImg = "https://cdn.rimelight.com/Images/placeholder_home_projects
 const NewsBg = "https://cdn.rimelight.com/Images/placeholder_home_news_background.jpg";
 const CtaBg = "https://cdn.rimelight.com/Images/placeholder_home_cta_background.jpg";
 
-// Fetch the 3 latest blog posts
+// Fetch the 3 latest blog posts from CMS
 const activeLocale = Astro.currentLocale ?? "en";
-const latestPosts = (await getCollection("blog"))
-    .filter((post) => post.id.startsWith(`${activeLocale}/`))
-    .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-    .slice(0, 3);
+
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
+
+const blogPages = await db
+  .select()
+  .from(pages)
+  .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
+  .orderBy(desc(pages.postedAt));
+
+const latestPosts = blogPages.slice(0, 3);
 
 // Button configurations using exact UI properties
 const heroLinks = [
@@ -227,16 +241,23 @@ const ctaLinks = [
       <div slot="body" class="w-full mt-12 max-w-7xl mx-auto px-4">
         <RLAGrid>
           {
-            latestPosts.map((post) => (
+            latestPosts.map((post) => {
+              const content = typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
+              const title = getLocalizedText(post.title, activeLocale)
+              const description = getLocalizedText(post.description, activeLocale) || content.properties?.description || ""
+              const heroImage = content.properties?.heroImage
+              const postDate = post.postedAt || post.createdAt
+              return (
                 <RLAPost
-                    title={post.data.title}
-                    description={post.data.description}
-                    date={post.data.pubDate}
-                    image={post.data.heroImage}
-                    to={getRelativeLocaleUrl(`/company/blog/${post.id.replace(`${activeLocale}/`, "")}/`)}
+                    title={title}
+                    description={description}
+                    date={postDate}
+                    image={heroImage}
+                    to={getRelativeLocaleUrl(`/company/blog/${post.slug}/`)}
                     variant="ghost"
                 />
-            ))
+              )
+            })
           }
         </RLAGrid>
 

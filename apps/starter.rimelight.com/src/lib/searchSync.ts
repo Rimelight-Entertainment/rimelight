@@ -1,4 +1,3 @@
-import { getCollection } from "astro:content"
 import { db } from "@/db"
 import * as schema from "@/db/schema"
 import { sql, and, isNull, isNotNull } from "drizzle-orm"
@@ -57,60 +56,7 @@ export async function doSearchSync() {
   const activeSourceKeys = new Set<string>()
   const toUpsert: any[] = []
 
-  // --- PART 1: Fetch Markdown collections ---
-  const blogCollection = await getCollection("blog")
-  for (const entry of blogCollection) {
-    const sourceId = `blog:${entry.id}`
-    const cacheKey = `markdown:${sourceId}`
-    activeSourceKeys.add(cacheKey)
-
-    const parts = entry.id.split("/")
-    const locale = parts[0]
-    let subSlug = parts.slice(1).join("/")
-    subSlug = subSlug.replace(/[/\\]index$/, "")
-    if (subSlug === "index" || subSlug === "") {
-      subSlug = ""
-    }
-    const pageUrl = `/${locale}/blog${subSlug ? "/" + subSlug : ""}`
-
-    toUpsert.push({
-      sourceType: "markdown",
-      sourceId,
-      title: entry.data.title || "Untitled Blog Post",
-      url: pageUrl,
-      bodyContent: entry.body || "",
-      searchableText: `${entry.data.title || "Untitled Blog Post"} ${entry.body || ""}`,
-      updatedAt: new Date()
-    })
-  }
-
-  const legalCollection = await getCollection("legal")
-  for (const entry of legalCollection) {
-    const sourceId = `legal:${entry.id}`
-    const cacheKey = `markdown:${sourceId}`
-    activeSourceKeys.add(cacheKey)
-
-    const parts = entry.id.split("/")
-    const locale = parts[0]
-    let subSlug = parts.slice(1).join("/")
-    subSlug = subSlug.replace(/[/\\]index$/, "")
-    if (subSlug === "index" || subSlug === "") {
-      subSlug = ""
-    }
-    const pageUrl = `/${locale}/legal${subSlug ? "/" + subSlug : ""}`
-
-    toUpsert.push({
-      sourceType: "markdown",
-      sourceId,
-      title: entry.data.title || "Untitled Legal Document",
-      url: pageUrl,
-      bodyContent: entry.body || "",
-      searchableText: `${entry.data.title || "Untitled Legal Document"} ${entry.body || ""}`,
-      updatedAt: new Date()
-    })
-  }
-
-  // --- PART 2: Fetch Dynamic Pages if 'pages' table exists ---
+  // --- PART 1: Fetch Dynamic Pages if 'pages' table exists ---
   const pagesTable = Reflect.get(schema, "pages")
   const hasPagesTable = pagesTable && (await tableExists("pages"))
 
@@ -148,6 +94,8 @@ export async function doSearchSync() {
         pageUrl = `/en/docs${row.slug === "index" ? "" : "/" + row.slug}`
       } else if (row.type === "blog") {
         pageUrl = `/en/blog${row.slug === "index" ? "" : "/" + row.slug}`
+      } else if (row.type === "legal") {
+        pageUrl = `/en/legal${row.slug === "index" ? "" : "/" + row.slug}`
       }
 
       toUpsert.push({
@@ -162,7 +110,7 @@ export async function doSearchSync() {
     }
   }
 
-  // --- PART 3: Upsert records in D1 ---
+  // --- PART 2: Upsert records in D1 ---
   const syncedIds: string[] = []
   if (toUpsert.length > 0) {
     const chunkSize = 10
@@ -195,7 +143,7 @@ export async function doSearchSync() {
     }
   }
 
-  // --- PART 4: Clean up removed items ---
+  // --- PART 3: Clean up removed items ---
   const allExisting = await db
     .select({
       id: schema.searchIndex.id,

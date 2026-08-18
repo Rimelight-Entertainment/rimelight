@@ -1,13 +1,39 @@
 import type { APIRoute } from "astro"
 import { getCollection } from "astro:content"
 import { render } from "takumi-js"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { and, isNull, sql } from "drizzle-orm"
 
 export const prerender = true
 
+function getLocalizedText(val: unknown, locale = "en"): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || Object.values(record)[0] || ""
+  }
+  return String(val || "")
+}
+
 export async function getStaticPaths() {
-  const blogs = await getCollection("blog").catch(() => [])
   const docs = await getCollection("docs").catch(() => [])
-  const legals = await getCollection("legal").catch(() => [])
+
+  const blogPages = await db
+    .select({
+      slug: pages.slug,
+      title: pages.title,
+      description: pages.description,
+      postedAt: pages.postedAt
+    })
+    .from(pages)
+    .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
+    .catch(() => [])
+
+  const legalPages = await db
+    .select({ slug: pages.slug, title: pages.title, description: pages.description })
+    .from(pages)
+    .where(and(sql`${pages.type} = ${"legal"}`, isNull(pages.deletedAt)))
+    .catch(() => [])
 
   const paths = [
     { params: { route: "page" }, props: {}, cacheKey: "static-page" },
@@ -41,16 +67,16 @@ export async function getStaticPaths() {
       },
       cacheKey: "static-forum"
     },
-    ...blogs.map((b: any) => ({
-      params: { route: `blog/${b.id}` },
+    ...blogPages.map((b) => ({
+      params: { route: `blog/${b.slug}` },
       props: {
-        title: b.data.title,
-        description: b.data.description || "",
+        title: getLocalizedText(b.title),
+        description: getLocalizedText(b.description),
         type: "Blog Post",
         isDocs: false,
-        pubDate: b.data.pubDate ? new Date(b.data.pubDate).toLocaleDateString() : ""
+        pubDate: b.postedAt ? new Date(b.postedAt).toLocaleDateString() : ""
       },
-      cacheKey: b.digest || b.id
+      cacheKey: b.slug
     })),
     ...docs.map((d: any) => ({
       params: { route: `docs/${d.id}` },
@@ -62,15 +88,15 @@ export async function getStaticPaths() {
       },
       cacheKey: d.digest || d.id
     })),
-    ...legals.map((l: any) => ({
-      params: { route: `legal/${l.id}` },
+    ...legalPages.map((l) => ({
+      params: { route: `legal/${l.slug}` },
       props: {
-        title: l.data.title,
-        description: l.data.description || "",
+        title: getLocalizedText(l.title),
+        description: getLocalizedText(l.description),
         type: "Legal",
         isDocs: false
       },
-      cacheKey: l.digest || l.id
+      cacheKey: l.slug
     }))
   ]
   return paths

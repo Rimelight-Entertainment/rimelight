@@ -1,30 +1,44 @@
 ---
-import AppLayout from '@/layouts/AppLayout.astro';
-import { getCollection } from 'astro:content';
-import { siteConfig } from '@/config/site.config';
+import AppLayout from "@/layouts/AppLayout.astro"
+import { siteConfig } from "@/config/site.config"
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { and, isNull, desc, sql } from "drizzle-orm"
 
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+const activeLocale = Astro.currentLocale ?? "en"
 
-const activeLocale = Astro.currentLocale ?? "en";
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
 
-const legalDocs = (await getCollection('legal'))
-	.filter((doc) => doc.id.startsWith(`${activeLocale}/`))
-	.toSorted(
-		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-	);
+const legalPages = await db
+  .select()
+  .from(pages)
+  .where(and(sql`${pages.type} = ${"legal"}`, isNull(pages.deletedAt)))
+  .orderBy(desc(pages.postedAt))
 ---
 
 <AppLayout title={t("page_legal.meta_title")} description={siteConfig.description}>
 		<section class="legal-section py-24 max-w-4xl mx-auto px-4 text-white">
 			<h1 class="text-4xl md:text-5xl font-black uppercase tracking-tight mb-12">{t("page_legal.meta_title")}</h1>
 			<ul class="space-y-8">
-				{legalDocs.map((doc) => (
-					<li class="bg-neutral-900 border border-neutral-850 rounded-2xl p-6 shadow-md">
-						<h3><a class="text-xl font-bold text-white hover:text-primary-400 transition-colors uppercase" href={getRelativeLocaleUrl(`/company/legal/${doc.id.replace(`${activeLocale}/`, "")}/`)}>{doc.data.title}</a></h3>
-						<p class="text-neutral-400 text-sm mt-2 leading-relaxed">{doc.data.description}</p>
-						<span class="text-neutral-500 text-xs mt-4 block">{t("legal.lastUpdated")} {doc.data.pubDate.toLocaleDateString()}</span>
-					</li>
-				))}
+				{legalPages.map((doc) => {
+					const title = getLocalizedText(doc.title, activeLocale)
+					const description = getLocalizedText(doc.description, activeLocale)
+					const pubDate = doc.postedAt || doc.createdAt
+					return (
+						<li class="bg-neutral-900 border border-neutral-850 rounded-2xl p-6 shadow-md">
+							<h3><a class="text-xl font-bold text-white hover:text-primary-400 transition-colors uppercase" href={getRelativeLocaleUrl(`/company/legal/${doc.slug}/`)}>{title}</a></h3>
+							<p class="text-neutral-400 text-sm mt-2 leading-relaxed">{description}</p>
+							<span class="text-neutral-500 text-xs mt-4 block">{t("legal.lastUpdated")} {new Date(pubDate).toLocaleDateString()}</span>
+						</li>
+					)
+				})}
 			</ul>
 		</section>
 </AppLayout>

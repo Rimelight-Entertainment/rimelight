@@ -23,10 +23,7 @@ try {
   // DB query fallback if offline/initializing
 }
 
-// DEBUG: If no pages found, show helpful message
-if (allDocPages.length === 0) {
-  console.log(`[Docs Index] No doc pages found. Run migration at /api/migrate-docs`);
-}
+
 
 const versions = getDocsVersions(
   allDocPages.map((p) => {

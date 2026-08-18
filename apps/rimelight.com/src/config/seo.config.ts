@@ -1,6 +1,9 @@
 import type { SeoEntry, LocaleConfig } from "@rimelight/seo"
 import { getCollection } from "astro:content"
 import docsConfig from "./docs.config"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { and, isNull, sql } from "drizzle-orm"
 
 /**
  * SEO locale configuration
@@ -132,29 +135,39 @@ export async function seoEntries(): Promise<SeoEntry[]> {
     entries.push({ path })
   }
 
-  // Blog entries
-  const blog = await getCollection("blog")
-  for (const post of blog) {
-    const path = `/company/blog/${post.id}`
+  // Blog entries from CMS
+  const blogPages = await db
+    .select({ slug: pages.slug, postedAt: pages.postedAt, updatedAt: pages.updatedAt })
+    .from(pages)
+    .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
+
+  for (const post of blogPages) {
+    const path = `/company/blog/${post.slug}`
+    const lastmod = post.updatedAt ?? post.postedAt
     entries.push({
       path,
-      lastmod: post.data.updatedDate ?? post.data.pubDate,
+      ...(lastmod ? { lastmod } : {}),
       changefreq: "weekly"
     })
   }
 
-  // Legal entries
-  const legal = await getCollection("legal")
-  for (const page of legal) {
-    const path = `/company/legal/${page.id}`
+  // Legal entries from CMS
+  const legalPages = await db
+    .select({ slug: pages.slug, postedAt: pages.postedAt, updatedAt: pages.updatedAt })
+    .from(pages)
+    .where(and(sql`${pages.type} = ${"legal"}`, isNull(pages.deletedAt)))
+
+  for (const page of legalPages) {
+    const path = `/company/legal/${page.slug}`
+    const lastmod = page.updatedAt ?? page.postedAt
     entries.push({
       path,
-      lastmod: page.data.updatedDate ?? page.data.pubDate,
+      ...(lastmod ? { lastmod } : {}),
       changefreq: "monthly"
     })
   }
 
-  // Docs entries from content collection
+  // Docs entries from content collection (staying as content collections for now)
   const docs = await getCollection("docs")
   for (const doc of docs) {
     const path = `/company/docs/${doc.id}`

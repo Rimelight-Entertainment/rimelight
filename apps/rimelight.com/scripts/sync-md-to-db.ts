@@ -128,11 +128,7 @@ async function sync() {
   const toUpsert: any[] = []
 
   // --- PART 1: Sync Markdown Content collections ---
-  const collections = [
-    { name: "blog", dir: "./src/content/blog", urlPrefix: "/company/blog" },
-    { name: "docs", dir: "./src/content/docs", urlPrefix: "/company/docs" },
-    { name: "legal", dir: "./src/content/legal", urlPrefix: "/company/legal" }
-  ]
+  const collections = [{ name: "docs", dir: "./src/content/docs", urlPrefix: "/company/docs" }]
 
   for (const col of collections) {
     const fullDir = path.resolve(col.dir)

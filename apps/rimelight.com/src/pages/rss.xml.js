@@ -1,9 +1,16 @@
 import rss from "@astrojs/rss"
-import { getCollection } from "astro:content"
 import { siteConfig } from "@/config/site.config"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { and, isNull, desc, sql } from "drizzle-orm"
 
 export async function GET(context) {
-  const blog = await getCollection("blog")
+  const blogPages = await db
+    .select()
+    .from(pages)
+    .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
+    .orderBy(desc(pages.postedAt))
+
   return rss({
     title: siteConfig.name,
     description: siteConfig.description,
@@ -12,11 +19,20 @@ export async function GET(context) {
       atom: "http://www.w3.org/2005/Atom"
     },
     customData: `<atom:link href="${new URL("/rss.xml", context.site)}" rel="self" type="application/rss+xml" />`,
-    items: blog.map((post) => ({
-      title: post.data.title,
-      pubDate: post.data.pubDate,
-      description: post.data.description,
-      link: `/company/blog/${post.id}/`
-    }))
+    items: blogPages.map((post) => {
+      const content =
+        typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
+      const title =
+        typeof post.title === "object" && post.title !== null
+          ? post.title.en || Object.values(post.title)[0] || ""
+          : String(post.title || "")
+      const description = content.properties?.description || ""
+      return {
+        title,
+        pubDate: post.postedAt || post.createdAt,
+        description,
+        link: `/company/blog/${post.slug}/`
+      }
+    })
   })
 }

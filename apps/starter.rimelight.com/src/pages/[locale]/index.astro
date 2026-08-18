@@ -1,7 +1,9 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro"
 import { t, getLocale, getRelativeLocaleUrl } from "@rimelight/i18n"
-import { getCollection } from "astro:content"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq, and, isNull, desc } from "drizzle-orm"
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro"
 import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro"
 import RLALink from "@rimelight/ui/components/link/RLALink.astro"
@@ -9,9 +11,26 @@ import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
 import RLAPost from "@rimelight/ui/components/post/RLAPost.astro"
 import RLAImage from "@rimelight/ui/components/image/RLAImage.astro"
 
-const latestPosts = (await getCollection("blog"))
-  .filter((post) => post.id.startsWith(`${getLocale()}/`))
-  .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
+
+const activeLocale = getLocale()
+const blogPages = await db
+  .select()
+  .from(pages)
+  .where(and(eq(pages.type, "blog"), isNull(pages.deletedAt)))
+  .orderBy(desc(pages.postedAt))
+
+const latestPosts = blogPages
+  .filter((post) => {
+    const content = typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
+    return (content.properties?.locale || "en") === activeLocale
+  })
   .slice(0, 3)
 
 const heroLinks = [
@@ -83,16 +102,23 @@ const ctaLinks = [
     <div class="flex flex-col gap-xl items-center">
       <RLAGrid cols={3}>
         {
-          latestPosts.map((post) => (
-            <RLAPost
-              variant="ghost"
-              image={post.data.heroImage}
-              title={post.data.title}
-              description={post.data.description}
-              date={post.data.pubDate}
-              to={getRelativeLocaleUrl(`/blog/${post.id.replace(`${getLocale()}/`, "")}/`)}
-            />
-          ))
+          latestPosts.map((post) => {
+            const content = typeof post.content === "string" ? JSON.parse(post.content) : post.content || {}
+            const title = getLocalizedText(post.title, activeLocale)
+            const description = content.properties?.description || ""
+            const heroImage = content.properties?.heroImage
+            const postDate = post.postedAt || post.createdAt
+            return (
+              <RLAPost
+                variant="ghost"
+                image={heroImage}
+                title={title}
+                description={description}
+                date={postDate}
+                to={getRelativeLocaleUrl(`/blog/${post.slug}/`)}
+              />
+            )
+          })
         }
       </RLAGrid>
 
