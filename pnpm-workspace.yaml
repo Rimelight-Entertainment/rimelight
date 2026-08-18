@@ -1,8 +1,6 @@
 packages:
   - "apps/*"
   - "packages/*"
-configDependencies:
-  "@pnpm/pacquet": 0.11.12
 linkWorkspacePackages: true
 supportedArchitectures:
   cpu:
