@@ -1,6 +1,7 @@
 {
   "extends": "../../.config/tsconfig.base.json",
-  "include": ["src/**/*"],
+  "include": ["**/*"],
+  "exclude": ["dist"],
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]
