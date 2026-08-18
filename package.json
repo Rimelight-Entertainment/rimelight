@@ -23,15 +23,15 @@
     "@e18e/eslint-plugin": "0.8.0",
     "@types/node": "26.2.0",
     "@unocss/eslint-plugin": "66.7.5",
-    "eslint-plugin-regexp": "3.1.1",
-    "pkg-pr-new": "0.0.87",
+    "eslint-plugin-regexp": "3.2.0",
+    "pkg-pr-new": "0.0.88",
     "unocss": "66.7.5",
     "vite-plus": "0.2.9"
   },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "11.21.0",
+      "version": "11.22.0",
       "onFail": "download"
     }
   },

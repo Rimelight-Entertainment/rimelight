@@ -65,7 +65,7 @@
     "@types/node": "26.2.0",
     "@unocss/eslint-plugin": "66.7.5",
     "drizzle-kit": "0.31.10",
-    "eslint-plugin-regexp": "3.1.1",
+    "eslint-plugin-regexp": "3.2.0",
     "takumi-js": "2.7.2",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
@@ -74,7 +74,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "11.21.0",
+      "version": "11.22.0",
       "onFail": "download"
     }
   },
