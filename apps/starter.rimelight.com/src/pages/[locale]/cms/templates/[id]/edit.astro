@@ -166,7 +166,7 @@ const descVal = typeof template.description === "object" && template.description
     @import url("@rimelight/cms/client/styles/cms-editor.css");
   </style>
 
-  <script define:vars={{ currentLocale, templateId: id, initialBlocks: template.initialBlocks || [] }}>
+  <script is:inline define:vars={{ currentLocale, templateId: id, initialBlocks: template.initialBlocks || [] }}>
     import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
       defineCustomElements();
       const templateEditor = document.getElementById('template-block-editor');

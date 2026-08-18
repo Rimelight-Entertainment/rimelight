@@ -139,7 +139,7 @@ const roleOptions = activeRoles.map((r) => ({
     @import url("@rimelight/cms/client/styles/cms-editor.css");
   </style>
 
-  <script define:vars={{ currentLocale }}>
+  <script is:inline define:vars={{ currentLocale }}>
     import('@rimelight/cms/client/loader').then(({ defineCustomElements }) => {
       return defineCustomElements();
     });

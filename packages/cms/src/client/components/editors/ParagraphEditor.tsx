@@ -105,7 +105,26 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
       setLinkUrl("")
       setLinkModalOpen(true)
     } else {
-      document.execCommand(cmd, false)
+      // Use Selection API instead of deprecated execCommand
+      const selection = window.getSelection()
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0)
+        const selectedText = range.toString()
+
+        if (selectedText) {
+          if (cmd === "bold") {
+            const strong = document.createElement("strong")
+            range.surroundContents(strong)
+          } else if (cmd === "italic") {
+            const em = document.createElement("em")
+            range.surroundContents(em)
+          } else if (cmd === "underline") {
+            const u = document.createElement("u")
+            range.surroundContents(u)
+          }
+          selection.removeAllRanges()
+        }
+      }
       editableDiv?.focus()
     }
   }
@@ -114,7 +133,21 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
     const url = linkUrl().trim()
     if (url) {
       editableDiv?.focus()
-      document.execCommand("createLink", false, url)
+      // Use Selection API instead of deprecated execCommand
+      const selection = window.getSelection()
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0)
+        const selectedText = range.toString()
+
+        if (selectedText) {
+          const a = document.createElement("a")
+          a.href = url
+          a.textContent = selectedText
+          range.deleteContents()
+          range.insertNode(a)
+          selection.removeAllRanges()
+        }
+      }
       saveProps()
     }
     setLinkModalOpen(false)
@@ -165,7 +198,15 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
     editableDiv.addEventListener("paste", (e: ClipboardEvent) => {
       e.preventDefault()
       const clipboardText = e.clipboardData?.getData("text/plain") || ""
-      document.execCommand("insertText", false, clipboardText)
+      // Use Selection API instead of deprecated execCommand
+      const selection = window.getSelection()
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0)
+        range.deleteContents()
+        const textNode = document.createTextNode(clipboardText)
+        range.insertNode(textNode)
+        selection.removeAllRanges()
+      }
       saveProps()
     })
   })

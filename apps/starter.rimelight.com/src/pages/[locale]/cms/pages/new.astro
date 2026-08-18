@@ -90,7 +90,7 @@ const templateOptions = [
   <style is:inline slot="head">
     @import url("@rimelight/cms/client/styles/cms-editor.css");
   </style>
-  <script define:vars={{ currentLocale }}>
+  <script is:inline define:vars={{ currentLocale }}>
     const form = document.getElementById('page-form');
     
     form?.addEventListener('submit', async (e) => {

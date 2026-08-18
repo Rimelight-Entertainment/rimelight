@@ -340,8 +340,8 @@ const isPublished = !!page.publishedVersionId
   </RLAModal>
 
   <!-- Initial page JSON -->
-  <script id="initial-properties-data" type="application/json" set:html={JSON.stringify(initialProperties)} />
-  <script id="initial-page-data" type="application/json" set:html={JSON.stringify({ id: page.id, slug: page.slug, title: titleVal, description: descVal, banner: heroImage, isPublished, pageType })} />
+  <script is:inline id="initial-properties-data" type="application/json" set:html={JSON.stringify(initialProperties)} />
+  <script is:inline id="initial-page-data" type="application/json" set:html={JSON.stringify({ id: page.id, slug: page.slug, title: titleVal, description: descVal, banner: heroImage, isPublished, pageType })} />
 
   <script>
     import { initSplitPane } from "@rimelight/cms/client/utils/splitpane";
@@ -587,7 +587,7 @@ const isPublished = !!page.publishedVersionId
           })
         });
 
-        const isUnpublish = publishBtn.textContent?.trim() === 'Unpublish';
+        const isUnpublish = publishBtn?.textContent?.trim() === 'Unpublish';
         const endpoint = isUnpublish ? `/api/cms/pages/${pageId}/unpublish` : `/api/cms/pages/${pageId}/publish`;
         const res = await fetch(endpoint, {
           method: 'POST',

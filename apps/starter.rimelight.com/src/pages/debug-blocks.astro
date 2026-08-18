@@ -10,8 +10,8 @@ const indexPage = await db
   .limit(1)
 
 const page = indexPage[0]
-const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content
-const blocks = content.blocks || []
+const content = page && typeof page.content === "string" ? JSON.parse(page.content) : page?.content || {}
+const blocks = content?.blocks || []
 const firstBlock = blocks[0]
 const firstParagraphText = firstBlock?.props?.text
 ---
