@@ -48,3 +48,6 @@ worker-configuration.d.ts
 # Misc
 *.local
 *.tsbuildinfo
+
+# IDE
+.idea/
