@@ -100,16 +100,6 @@ export async function seoEntries(): Promise<SeoEntry[]> {
     })
   }
 
-  // Docs entries from content collection
-  const docs = await getCollection("docs")
-  for (const doc of docs) {
-    const path = `/docs/${doc.id}`
-    entries.push({
-      path,
-      changefreq: "weekly"
-    })
-  }
-
   // Filter out private paths
   return entries.filter(
     (entry) => !PRIVATE_PATH_PREFIXES.some((prefix) => entry.path.startsWith(prefix))

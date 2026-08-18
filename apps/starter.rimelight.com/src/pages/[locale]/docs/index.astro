@@ -1,45 +1,124 @@
 ---
-import { getEntry, render, getCollection } from "astro:content";
 import DocsLayout from "@/layouts/DocsLayout.astro";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts";
-import { getDocsVersions, parseDocsSlug } from "@rimelight/docs";
+import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/docs";
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
+import { blocksToMarkdown } from "@rimelight/cms";
+import { db } from "@/db";
+import { pages } from "@/db/schema";
+import { eq, and, isNull, inArray } from "drizzle-orm";
 
 const activeLocale = Astro.currentLocale ?? "en";
 
-const allDocs = await getCollection("docs");
-const versions = getDocsVersions(allDocs, activeLocale);
+// 1. Discover versions from database
+let allDocPages: any[] = [];
+try {
+  allDocPages = await db
+    .select({ slug: pages.slug, content: pages.content })
+    .from(pages)
+    .where(and(eq(pages.type, "doc"), isNull(pages.deletedAt)));
+  console.log(`[Docs Index] Found ${allDocPages.length} doc pages in database`);
+} catch (error) {
+  console.error(`[Docs Index] Database query error:`, error);
+  // DB query fallback if offline/initializing
+}
+
+// DEBUG: If no pages found, show helpful message
+if (allDocPages.length === 0) {
+  console.log(`[Docs Index] No doc pages found. Run migration at /api/migrate-docs`);
+}
+
+const versions = getDocsVersions(
+  allDocPages.map((p) => {
+    const content = typeof p.content === "string" ? JSON.parse(p.content) : p.content || {};
+    return {
+      slug: p.slug,
+      version: content.properties?.version
+    };
+  }),
+  activeLocale
+);
+
 const { activeVersion, contentPath, includeVersionInUrl } = parseDocsSlug(undefined, versions);
+
+console.log(`[Docs Index] activeVersion: ${activeVersion}, contentPath: ${contentPath}, includeVersionInUrl: ${includeVersionInUrl}`);
+console.log(`[Docs Index] versions: ${JSON.stringify(versions)}`);
 
 if (includeVersionInUrl) {
   return Astro.redirect(`/${activeLocale}/docs/${activeVersion}/`);
 }
 
-const entryKey = contentPath === "index"
-  ? (activeVersion ? `${activeVersion}/${activeLocale}` : activeLocale)
-  : (activeVersion ? `${activeVersion}/${activeLocale}/${contentPath}` : `${activeLocale}/${contentPath}`);
+// 2. Fetch index doc page from CMS DB
+let dbPage: any = null;
+const candidateSlugs = [
+  "index",
+  activeVersion ? `${activeVersion}/index` : "index"
+];
 
-const entry = await getEntry("docs", entryKey);
+console.log(`[Docs Index] Candidate slugs: ${JSON.stringify(candidateSlugs)}`);
 
-if (!entry) {
+try {
+  const pageResults = await db
+    .select()
+    .from(pages)
+    .where(and(eq(pages.type, "doc"), inArray(pages.slug, candidateSlugs), isNull(pages.deletedAt)));
+
+  console.log(`[Docs Index] Found ${pageResults.length} pages matching candidates`);
+  console.log(`[Docs Index] Page results: ${JSON.stringify(pageResults.map(p => ({ slug: p.slug, id: p.id })))}`);
+
+  if (pageResults && pageResults.length > 0) {
+    for (const candidate of candidateSlugs) {
+      const match = pageResults.find((p: any) => p.slug === candidate);
+      if (match) {
+        dbPage = match;
+        console.log(`[Docs Index] Found matching page with slug: ${candidate}`);
+        break;
+      }
+    }
+  }
+} catch (error) {
+  console.error(`[Docs Index] Database query error:`, error);
+  // continue
+}
+
+if (!dbPage) {
+  console.log(`[Docs Index] No page found, redirecting to 404`);
   return Astro.redirect("/404");
 }
 
-const { Content, headings } = await render(entry);
-const { title, description, tableOfContents, prev, next, editUrl } = entry.data;
+const content = typeof dbPage.content === "string" ? JSON.parse(dbPage.content) : dbPage.content || {};
+const dbBlocks = content.blocks || [];
+
+const getLocalizedText = (val: unknown, loc: string): string => {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>;
+    return record[loc] || record.en || "";
+  }
+  return String(val || "");
+};
+
+const docTitle = getLocalizedText(dbPage.title, activeLocale) || "Documentation";
+const docDescription = getLocalizedText(dbPage.description, activeLocale) || content.properties?.description || "";
+const docHeadings = extractHeadingsFromBlocks(dbBlocks);
+const docTableOfContents = content.properties?.tableOfContents as TableOfContentsConfig | false | undefined;
+const docPrev = content.properties?.prev;
+const docNext = content.properties?.next;
+const docEditUrl = content.properties?.editUrl;
+const docRawMarkdown = blocksToMarkdown(dbBlocks);
 ---
 
 <DocsLayout
-  title={title}
-  description={description}
-  headings={headings}
-  tableOfContents={tableOfContents as TableOfContentsConfig | false | undefined}
-  prevOverride={prev}
-  nextOverride={next}
-  editUrl={editUrl}
-  rawMarkdown={entry.body}
+  title={docTitle}
+  description={docDescription}
+  headings={docHeadings}
+  tableOfContents={docTableOfContents}
+  prevOverride={docPrev}
+  nextOverride={docNext}
+  editUrl={docEditUrl}
+  rawMarkdown={docRawMarkdown}
   activeVersion={activeVersion}
   versions={versions}
   includeVersionInUrl={includeVersionInUrl}
 >
-  <Content />
+  <PageRenderer blocks={dbBlocks} locale={activeLocale} />
 </DocsLayout>

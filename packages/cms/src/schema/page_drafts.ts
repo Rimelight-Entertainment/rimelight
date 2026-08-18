@@ -1,5 +1,5 @@
 import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { pages } from "./pages"
+import { pages } from "./pages.ts"
 import type { BaseBlock } from "../core/types/blocks"
 
 export const pageDrafts = pgTable("page_drafts", {

@@ -1,0 +1,19 @@
+---
+import type { BaseBlock } from "../../core/types/blocks"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+  index?: number
+  isFirst?: boolean
+}
+
+const { block, isFirst = false } = Astro.props
+---
+
+<div
+  class={`cms-tab-panel ${isFirst ? "" : "hidden"}`}
+  data-block-id={block.id}
+>
+  <slot />
+</div>

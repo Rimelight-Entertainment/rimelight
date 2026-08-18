@@ -9,6 +9,14 @@ export type BlockType =
   | "SceneBlock"
   | "DialogueBlock"
   | "CodeBlock"
+  | "TableBlock"
+  | "TabsBlock"
+  | "TabItemBlock"
+  | "StepsBlock"
+  | "StepItemBlock"
+  | "CardsBlock"
+  | "CardBlock"
+  | "FileTreeBlock"
   | (string & {})
 
 export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER"
@@ -119,6 +127,68 @@ export interface CodeBlockProps {
   code: string
   language: string
   caption?: string
+  title?: string
+  filename?: string
+  showLineNumbers?: boolean
+  highlightLines?: number[]
+}
+
+export interface TableColumnDef {
+  key: string
+  header: string
+  align?: "left" | "center" | "right"
+}
+
+export interface TableBlockProps {
+  columns: TableColumnDef[]
+  rows: Record<string, string>[]
+  caption?: string
+}
+
+export interface TabItemBlockProps {
+  label: string
+  value?: string
+  icon?: string
+  children: BaseBlock[]
+}
+
+export interface TabsBlockProps {
+  defaultValue?: string
+  children: BaseBlock[]
+}
+
+export interface StepItemBlockProps {
+  title: string
+  description?: string
+  children: BaseBlock[]
+}
+
+export interface StepsBlockProps {
+  children: BaseBlock[]
+}
+
+export interface CardBlockProps {
+  title: string
+  description?: string
+  icon?: string
+  href?: string
+  badge?: string
+}
+
+export interface CardsBlockProps {
+  columns?: 1 | 2 | 3 | 4
+  children: BaseBlock[]
+}
+
+export interface FileTreeNode {
+  name: string
+  isDir?: boolean
+  children?: FileTreeNode[]
+  comment?: string
+}
+
+export interface FileTreeBlockProps {
+  tree: FileTreeNode[]
 }
 
 export interface TypedScriptBlockProps extends ScriptBlockProps {
@@ -171,6 +241,46 @@ export interface CodeBlock extends BaseBlock {
   props: CodeBlockProps
 }
 
+export interface TableBlock extends BaseBlock {
+  type: "TableBlock"
+  props: TableBlockProps
+}
+
+export interface TabsBlock extends BaseBlock {
+  type: "TabsBlock"
+  props: TabsBlockProps
+}
+
+export interface TabItemBlock extends BaseBlock {
+  type: "TabItemBlock"
+  props: TabItemBlockProps
+}
+
+export interface StepsBlock extends BaseBlock {
+  type: "StepsBlock"
+  props: StepsBlockProps
+}
+
+export interface StepItemBlock extends BaseBlock {
+  type: "StepItemBlock"
+  props: StepItemBlockProps
+}
+
+export interface CardsBlock extends BaseBlock {
+  type: "CardsBlock"
+  props: CardsBlockProps
+}
+
+export interface CardBlock extends BaseBlock {
+  type: "CardBlock"
+  props: CardBlockProps
+}
+
+export interface FileTreeBlock extends BaseBlock {
+  type: "FileTreeBlock"
+  props: FileTreeBlockProps
+}
+
 export type TypedBlock =
   | SectionBlock
   | ParagraphBlock
@@ -180,6 +290,14 @@ export type TypedBlock =
   | SceneBlock
   | DialogueBlock
   | CodeBlock
+  | TableBlock
+  | TabsBlock
+  | TabItemBlock
+  | StepsBlock
+  | StepItemBlock
+  | CardsBlock
+  | CardBlock
+  | FileTreeBlock
 
 export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
   Root: [
@@ -190,7 +308,12 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "CodeBlock",
     "ScriptBlock",
     "SceneBlock",
-    "DialogueBlock"
+    "DialogueBlock",
+    "TableBlock",
+    "TabsBlock",
+    "StepsBlock",
+    "CardsBlock",
+    "FileTreeBlock"
   ],
   SectionBlock: [
     "SectionBlock",
@@ -198,9 +321,47 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "CalloutBlock",
     "ImageBlock",
     "CodeBlock",
-    "ScriptBlock"
+    "ScriptBlock",
+    "TableBlock",
+    "TabsBlock",
+    "StepsBlock",
+    "CardsBlock",
+    "FileTreeBlock"
   ],
-  CalloutBlock: ["ParagraphBlock", "CalloutBlock", "ImageBlock", "CodeBlock"],
+  CalloutBlock: [
+    "ParagraphBlock",
+    "CalloutBlock",
+    "ImageBlock",
+    "CodeBlock",
+    "TableBlock",
+    "TabsBlock",
+    "StepsBlock",
+    "CardsBlock",
+    "FileTreeBlock"
+  ],
+  TabsBlock: ["TabItemBlock"],
+  TabItemBlock: [
+    "ParagraphBlock",
+    "CalloutBlock",
+    "ImageBlock",
+    "CodeBlock",
+    "TableBlock",
+    "StepsBlock",
+    "CardsBlock",
+    "FileTreeBlock"
+  ],
+  StepsBlock: ["StepItemBlock"],
+  StepItemBlock: [
+    "ParagraphBlock",
+    "CalloutBlock",
+    "ImageBlock",
+    "CodeBlock",
+    "TableBlock",
+    "TabsBlock",
+    "CardsBlock",
+    "FileTreeBlock"
+  ],
+  CardsBlock: ["CardBlock"],
   ScriptBlock: ["SceneBlock"],
   SceneBlock: ["ParagraphBlock", "CalloutBlock", "DialogueBlock"]
 }

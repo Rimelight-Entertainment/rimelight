@@ -154,6 +154,97 @@ export function createDefaultBlock(type: string): BaseBlock {
       return { id, type, props: { character: "", parenthetical: "", line: "" } }
     case "CodeBlock":
       return { id, type, props: { code: "", language: "typescript", caption: "" } }
+    case "TableBlock":
+      return {
+        id,
+        type,
+        props: {
+          columns: [
+            { key: "col1", header: "Header 1", align: "left" },
+            { key: "col2", header: "Header 2", align: "left" }
+          ],
+          rows: [{ col1: "Cell 1", col2: "Cell 2" }],
+          caption: ""
+        }
+      }
+    case "TabsBlock":
+      return {
+        id,
+        type,
+        children: [],
+        props: {
+          defaultValue: "tab-1",
+          children: []
+        }
+      }
+    case "TabItemBlock":
+      return {
+        id,
+        type,
+        children: [],
+        props: {
+          label: "Tab 1",
+          value: "tab-1",
+          children: []
+        }
+      }
+    case "StepsBlock":
+      return {
+        id,
+        type,
+        children: [],
+        props: {
+          children: []
+        }
+      }
+    case "StepItemBlock":
+      return {
+        id,
+        type,
+        children: [],
+        props: {
+          title: "Step 1",
+          description: "",
+          children: []
+        }
+      }
+    case "CardsBlock":
+      return {
+        id,
+        type,
+        children: [],
+        props: {
+          columns: 2,
+          children: []
+        }
+      }
+    case "CardBlock":
+      return {
+        id,
+        type,
+        props: {
+          title: "Card Title",
+          description: "Card description text",
+          icon: "i-lucide-book-open",
+          href: "",
+          badge: ""
+        }
+      }
+    case "FileTreeBlock":
+      return {
+        id,
+        type,
+        props: {
+          tree: [
+            {
+              name: "src",
+              isDir: true,
+              children: [{ name: "index.ts", isDir: false }]
+            },
+            { name: "package.json", isDir: false }
+          ]
+        }
+      }
     default:
       return { id, type, props: { text: [] } }
   }

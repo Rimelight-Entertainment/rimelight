@@ -84,32 +84,6 @@ export async function doSearchSync() {
     })
   }
 
-  const docsCollection = await getCollection("docs")
-  for (const entry of docsCollection) {
-    const sourceId = `docs:${entry.id}`
-    const cacheKey = `markdown:${sourceId}`
-    activeSourceKeys.add(cacheKey)
-
-    const parts = entry.id.split("/")
-    const locale = parts[0]
-    let subSlug = parts.slice(1).join("/")
-    subSlug = subSlug.replace(/[/\\]index$/, "")
-    if (subSlug === "index" || subSlug === "") {
-      subSlug = ""
-    }
-    const pageUrl = `/${locale}/docs${subSlug ? "/" + subSlug : ""}`
-
-    toUpsert.push({
-      sourceType: "markdown",
-      sourceId,
-      title: entry.data.title || "Untitled Documentation",
-      url: pageUrl,
-      bodyContent: entry.body || "",
-      searchableText: `${entry.data.title || "Untitled Documentation"} ${entry.body || ""}`,
-      updatedAt: new Date()
-    })
-  }
-
   const legalCollection = await getCollection("legal")
   for (const entry of legalCollection) {
     const sourceId = `legal:${entry.id}`
@@ -145,6 +119,7 @@ export async function doSearchSync() {
       .select({
         id: pagesTable.id,
         slug: pagesTable.slug,
+        type: pagesTable.type,
         title: pagesTable.title,
         description: pagesTable.description,
         content: pagesTable.content,
@@ -168,7 +143,12 @@ export async function doSearchSync() {
       const contentObj = row.content || {}
       const blocks = Reflect.get(contentObj, "blocks") || []
       const bodyContent = `${description} ${extractTextFromBlocks(blocks)}`.trim()
-      const pageUrl = `/${row.slug}`
+      let pageUrl = `/${row.slug}`
+      if (row.type === "doc") {
+        pageUrl = `/en/docs${row.slug === "index" ? "" : "/" + row.slug}`
+      } else if (row.type === "blog") {
+        pageUrl = `/en/blog${row.slug === "index" ? "" : "/" + row.slug}`
+      }
 
       toUpsert.push({
         sourceType: "database_page",

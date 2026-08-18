@@ -23,7 +23,8 @@
     "dev": "astro dev",
     "dev:remote": "astro dev --remote",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "migrate-docs": "tsx src/scripts/migrate-docs.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.1",

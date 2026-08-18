@@ -20,7 +20,17 @@ describe("block-hierarchy-and-rules", () => {
 
   it("enforces allowed children rules for CalloutBlock", () => {
     const allowedInCallout = ALLOWED_CHILDREN_MAP["CalloutBlock"]
-    expect(allowedInCallout).toEqual(["ParagraphBlock", "CalloutBlock", "ImageBlock", "CodeBlock"])
+    expect(allowedInCallout).toEqual([
+      "ParagraphBlock",
+      "CalloutBlock",
+      "ImageBlock",
+      "CodeBlock",
+      "TableBlock",
+      "TabsBlock",
+      "StepsBlock",
+      "CardsBlock",
+      "FileTreeBlock"
+    ])
   })
 
   it("enforces allowed children rules for SectionBlock", () => {
@@ -31,7 +41,12 @@ describe("block-hierarchy-and-rules", () => {
       "CalloutBlock",
       "ImageBlock",
       "CodeBlock",
-      "ScriptBlock"
+      "ScriptBlock",
+      "TableBlock",
+      "TabsBlock",
+      "StepsBlock",
+      "CardsBlock",
+      "FileTreeBlock"
     ])
   })
 

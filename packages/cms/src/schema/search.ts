@@ -1,5 +1,5 @@
 import { customType, index, pgTable, text, uuid } from "drizzle-orm/pg-core"
-import { pages } from "./pages"
+import { pages } from "./pages.ts"
 
 const tsvector = customType<{ data: string }>({
   dataType() {

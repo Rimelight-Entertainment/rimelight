@@ -8,6 +8,14 @@ import { CodeEditor } from "./editors/CodeEditor"
 import { ScriptEditor } from "./editors/ScriptEditor"
 import { SceneEditor } from "./editors/SceneEditor"
 import { DialogueEditor } from "./editors/DialogueEditor"
+import { TableEditor } from "./editors/TableEditor"
+import { TabsEditor } from "./editors/TabsEditor"
+import { TabItemEditor } from "./editors/TabItemEditor"
+import { StepsEditor } from "./editors/StepsEditor"
+import { StepItemEditor } from "./editors/StepItemEditor"
+import { CardsEditor } from "./editors/CardsEditor"
+import { CardEditor } from "./editors/CardEditor"
+import { FileTreeEditor } from "./editors/FileTreeEditor"
 import RLSButton from "@rimelight/ui/components/button/RLSButton"
 import RLSIcon from "@rimelight/ui/components/icon/RLSIcon"
 import RLSModal from "@rimelight/ui/components/modal/RLSModal"
@@ -117,6 +125,87 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         return <ImageEditor props={blockItem.props} onPropsChange={handleProps} />
       case "CodeBlock":
         return <CodeEditor props={blockItem.props} onPropsChange={handleProps} />
+      case "TableBlock":
+        return <TableEditor props={blockItem.props} onPropsChange={handleProps} />
+      case "TabsBlock":
+        return (
+          <TabsEditor
+            blockId={blockItem.id}
+            props={blockItem.props}
+            children={childrenList}
+            sectionDepth={depth}
+            onPropsChange={handleProps}
+            onRelocate={props.onRelocate}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "TabsBlock")
+            }
+            renderChildBlock={renderChildBlock}
+          />
+        )
+      case "TabItemBlock":
+        return (
+          <TabItemEditor
+            blockId={blockItem.id}
+            props={blockItem.props}
+            children={childrenList}
+            sectionDepth={depth}
+            onPropsChange={handleProps}
+            onRelocate={props.onRelocate}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "TabItemBlock")
+            }
+            renderChildBlock={renderChildBlock}
+          />
+        )
+      case "StepsBlock":
+        return (
+          <StepsEditor
+            blockId={blockItem.id}
+            props={blockItem.props}
+            children={childrenList}
+            sectionDepth={depth}
+            onPropsChange={handleProps}
+            onRelocate={props.onRelocate}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "StepsBlock")
+            }
+            renderChildBlock={renderChildBlock}
+          />
+        )
+      case "StepItemBlock":
+        return (
+          <StepItemEditor
+            blockId={blockItem.id}
+            props={blockItem.props}
+            children={childrenList}
+            sectionDepth={depth}
+            onPropsChange={handleProps}
+            onRelocate={props.onRelocate}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "StepItemBlock")
+            }
+            renderChildBlock={renderChildBlock}
+          />
+        )
+      case "CardsBlock":
+        return (
+          <CardsEditor
+            blockId={blockItem.id}
+            props={blockItem.props}
+            children={childrenList}
+            sectionDepth={depth}
+            onPropsChange={handleProps}
+            onRelocate={props.onRelocate}
+            onOpenPicker={() =>
+              props.onOpenPicker?.(null, "after", depth, blockItem.id, "CardsBlock")
+            }
+            renderChildBlock={renderChildBlock}
+          />
+        )
+      case "CardBlock":
+        return <CardEditor props={blockItem.props} onPropsChange={handleProps} />
+      case "FileTreeBlock":
+        return <FileTreeEditor props={blockItem.props} onPropsChange={handleProps} />
       case "ScriptBlock":
         return (
           <ScriptEditor

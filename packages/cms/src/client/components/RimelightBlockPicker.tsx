@@ -40,6 +40,62 @@ const BLOCK_DEFS = [
     icon: "info"
   },
   {
+    group: "Documentation",
+    type: "TableBlock",
+    label: "Table",
+    desc: "Structured data table with columns and rows",
+    icon: "table"
+  },
+  {
+    group: "Documentation",
+    type: "TabsBlock",
+    label: "Tabs",
+    desc: "Tabbed content container",
+    icon: "layers"
+  },
+  {
+    group: "Documentation",
+    type: "TabItemBlock",
+    label: "Tab Item",
+    desc: "Individual tab page",
+    icon: "fileText"
+  },
+  {
+    group: "Documentation",
+    type: "StepsBlock",
+    label: "Steps",
+    desc: "Step-by-step walkthrough sequence",
+    icon: "listOrdered"
+  },
+  {
+    group: "Documentation",
+    type: "StepItemBlock",
+    label: "Step Item",
+    desc: "Individual step",
+    icon: "check"
+  },
+  {
+    group: "Documentation",
+    type: "CardsBlock",
+    label: "Cards Grid",
+    desc: "Grid container for link cards",
+    icon: "grid"
+  },
+  {
+    group: "Documentation",
+    type: "CardBlock",
+    label: "Card",
+    desc: "Interactive doc/link card",
+    icon: "file"
+  },
+  {
+    group: "Documentation",
+    type: "FileTreeBlock",
+    label: "File Tree",
+    desc: "Directory and file structure visualizer",
+    icon: "folder"
+  },
+  {
     group: "Screenplay",
     type: "ScriptBlock",
     label: "Script",

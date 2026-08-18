@@ -2,8 +2,8 @@ import { sql } from "drizzle-orm"
 import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core"
 import type { BaseBlock } from "../core/types/blocks"
 import type { Localized, PageType } from "../core/types/pages"
-import { pageVersions } from "./page_versions"
-import { pageTemplates } from "./page_templates"
+import { pageVersions } from "./page_versions.ts"
+import { pageTemplates } from "./page_templates.ts"
 
 export const pages = pgTable(
   "pages",

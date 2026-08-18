@@ -8,14 +8,25 @@ import ScriptBlock from "./blocks/ScriptBlock.astro"
 import SceneBlock from "./blocks/SceneBlock.astro"
 import DialogueBlock from "./blocks/DialogueBlock.astro"
 import SectionBlock from "./blocks/SectionBlock.astro"
+import TableBlock from "./blocks/TableBlock.astro"
+import TabsBlock from "./blocks/TabsBlock.astro"
+import TabItemBlock from "./blocks/TabItemBlock.astro"
+import StepsBlock from "./blocks/StepsBlock.astro"
+import StepItemBlock from "./blocks/StepItemBlock.astro"
+import CardsBlock from "./blocks/CardsBlock.astro"
+import CardBlock from "./blocks/CardBlock.astro"
+import FileTreeBlock from "./blocks/FileTreeBlock.astro"
+import UnorderedListBlock from "./blocks/UnorderedListBlock.astro"
+import OrderedListBlock from "./blocks/OrderedListBlock.astro"
 
 interface Props {
   block: BaseBlock
   locale?: string
   sectionDepth?: number
+  index?: number
 }
 
-const { block, locale = "en", sectionDepth = 0 } = Astro.props
+const { block, locale = "en", sectionDepth = 0, index = 0 } = Astro.props
 ---
 
 {
@@ -23,32 +34,72 @@ const { block, locale = "en", sectionDepth = 0 } = Astro.props
     <ParagraphBlock block={block} locale={locale} />
   ) : block.type === "CalloutBlock" ? (
     <CalloutBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} />
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
       ))}
     </CalloutBlock>
   ) : block.type === "ImageBlock" ? (
     <ImageBlock block={block} locale={locale} />
   ) : block.type === "CodeBlock" ? (
     <CodeBlock block={block} locale={locale} />
+  ) : block.type === "TableBlock" ? (
+    <TableBlock block={block} locale={locale} />
+  ) : block.type === "TabsBlock" ? (
+    <TabsBlock block={block} locale={locale}>
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      ))}
+    </TabsBlock>
+  ) : block.type === "TabItemBlock" ? (
+    <TabItemBlock block={block} locale={locale} index={index} isFirst={index === 0}>
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      ))}
+    </TabItemBlock>
+  ) : block.type === "StepsBlock" ? (
+    <StepsBlock block={block} locale={locale}>
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      ))}
+    </StepsBlock>
+  ) : block.type === "StepItemBlock" ? (
+    <StepItemBlock block={block} locale={locale} index={index}>
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      ))}
+    </StepItemBlock>
+  ) : block.type === "CardsBlock" ? (
+    <CardsBlock block={block} locale={locale}>
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      ))}
+    </CardsBlock>
+  ) : block.type === "CardBlock" ? (
+    <CardBlock block={block} locale={locale} />
+  ) : block.type === "FileTreeBlock" ? (
+    <FileTreeBlock block={block} locale={locale} />
+  ) : block.type === "UnorderedListBlock" ? (
+    <UnorderedListBlock block={block} locale={locale} />
+  ) : block.type === "OrderedListBlock" ? (
+    <OrderedListBlock block={block} locale={locale} />
   ) : block.type === "ScriptBlock" ? (
     <ScriptBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} />
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
       ))}
     </ScriptBlock>
   ) : block.type === "SceneBlock" ? (
     <SceneBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} />
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
       ))}
     </SceneBlock>
   ) : block.type === "DialogueBlock" ? (
     <DialogueBlock block={block} locale={locale} />
   ) : block.type === "SectionBlock" ? (
     <SectionBlock block={block} locale={locale} sectionDepth={sectionDepth}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth + 1} />
+      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
+        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth + 1} index={idx} />
       ))}
     </SectionBlock>
   ) : (

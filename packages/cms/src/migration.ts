@@ -1,4 +1,84 @@
 import { sql } from "drizzle-orm"
+import { markdownToBlocks } from "./markdown/parser.ts"
+import type { BaseBlock } from "./core/types/blocks"
+
+export interface DocMigrationInput {
+  slug: string
+  title: string | Record<string, string>
+  description?: string | Record<string, string>
+  markdown: string
+  properties?: Record<string, any>
+  postedAt?: Date | null
+  authorIds?: string[]
+}
+
+export function parseMarkdownWithFrontmatter(raw: string): {
+  frontmatter: Record<string, any>
+  body: string
+} {
+  const frontmatter: Record<string, any> = {}
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/)
+
+  if (!match) {
+    return { frontmatter, body: raw.trim() }
+  }
+
+  const yamlBlock = match[1] || ""
+  const body = (match[2] || "").trim()
+
+  const lines = yamlBlock.split(/\r?\n/)
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith("#")) continue
+    const colonIndex = trimmed.indexOf(":")
+    if (colonIndex !== -1) {
+      const key = trimmed.slice(0, colonIndex).trim()
+      let value: any = trimmed.slice(colonIndex + 1).trim()
+
+      if (value === "true") value = true
+      else if (value === "false") value = false
+      else if (value === "null") value = null
+      else if (!isNaN(Number(value)) && value !== "") value = Number(value)
+      else if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1)
+      }
+
+      frontmatter[key] = value
+    }
+  }
+
+  return { frontmatter, body }
+}
+
+export function convertMarkdownDocToPageRecord(input: DocMigrationInput) {
+  const blocks: BaseBlock[] = markdownToBlocks(input.markdown)
+  const titleObj =
+    typeof input.title === "string" ? { en: input.title } : input.title || { en: input.slug }
+  const descObj =
+    typeof input.description === "string"
+      ? { en: input.description }
+      : input.description || undefined
+
+  return {
+    id: crypto.randomUUID(),
+    slug: input.slug,
+    type: "doc" as const,
+    title: titleObj,
+    description: descObj,
+    tags: [],
+    authorIds: input.authorIds || [],
+    postedAt: input.postedAt !== undefined ? input.postedAt : new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    content: {
+      blocks,
+      properties: input.properties || {}
+    }
+  }
+}
 
 export async function migrateLegacyPagesToCMSv2(db: any) {
   console.log("[Migration] Applying DDL schema updates...")
