@@ -1,6 +1,6 @@
 ---
 import WikiLayout from '@/layouts/WikiLayout.astro';
-import PageReviewView from '@/components/article/views/PageReviewView.vue';
+import { BlockRenderer } from "@rimelight/cms/astro";
 import { PAGE_MAP as pageDefinitions } from '@/types/pageDefinitions';
 import { auth } from "@/auth/auth";
 
@@ -13,8 +13,8 @@ const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as
 ---
 
 <WikiLayout title="Review Wiki Version | Grand Tale Wiki">
-	<PageReviewView
-		client:only="vue"
+	<BlockRenderer
+		client:only
 		lookupPath={lookupSlug}
 		versionId={versionId}
 		pageDefinitions={pageDefinitions}

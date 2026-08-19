@@ -1,6 +1,6 @@
 ---
 import WikiLayout from '@/layouts/WikiLayout.astro';
-import PageEditView from '@/components/article/views/PageEditView.vue';
+import { RimelightTemplateEditor } from "@rimelight/cms/client";
 import { PAGE_MAP as pageDefinitions } from '@/types/pageDefinitions';
 import { auth } from "@/auth/auth";
 
@@ -12,8 +12,8 @@ const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as
 ---
 
 <WikiLayout title="Edit Wiki Page | Grand Tale Wiki">
-	<PageEditView
-		client:only="vue"
+<RimelightTemplateEditor
+		client:load
 		lookupPath={lookupSlug}
 		cacheKey={`edit-wiki-${slug}`}
 		pageDefinitions={pageDefinitions}

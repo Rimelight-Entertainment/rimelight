@@ -1,6 +1,6 @@
 ---
 import WikiLayout from '@/layouts/WikiLayout.astro';
-import PageLiveView from '@/components/article/views/PageLiveView.vue';
+import { BlockRenderer } from "@rimelight/cms/astro";
 import { auth } from "@/auth/auth";
 
 const { slug } = Astro.params;
@@ -11,7 +11,7 @@ const canEdit = (user as { role?: string } | null)?.role === 'owner' || (user as
 ---
 
 <WikiLayout title="Wiki Page | Grand Tale Wiki">
-	<PageLiveView
+	<BlockRenderer
 		client:load
 		lookupPath={lookupSlug}
 		cacheKey={`wiki-${slug}`}
