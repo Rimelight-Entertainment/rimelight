@@ -29,9 +29,8 @@ export interface ThemeMeta {
 export interface ComponentMeta {
   name: string
   astroComponent: string | null
-  vueComponent: string | null
   solidComponent: string | null
-  frameworks: ("astro" | "vue" | "solid")[]
+  frameworks: ("astro" | "solid")[]
   props: PropMeta[]
   slots: SlotMeta[]
   emits: EmitMeta[]
