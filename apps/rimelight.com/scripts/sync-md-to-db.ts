@@ -42,7 +42,7 @@ function extractTextFromBlocks(blocks: Block[]): string {
     } else if (block.type === "ParagraphBlock") {
       if (Array.isArray(block.props.text)) {
         for (const item of block.props.text) {
-          if (item && (item.type === "text" || item.type === "link")) {
+          if (item && item.props && (item.type === "text" || item.type === "link")) {
             text += ` ${item.props.content || ""}`
           }
         }
