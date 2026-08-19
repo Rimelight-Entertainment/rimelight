@@ -54,21 +54,14 @@
     "@iconify-json/logos": "1.2.13",
     "@iconify-json/lucide": "1.2.123",
     "@rimelight/config": "workspace:*",
-    "@types/node": "26.2.0",
     "drizzle-kit": "0.31.10",
     "takumi-js": "2.10.0",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
     "vite-plus": "0.2.9"
   },
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "11.22.0",
-      "onFail": "download"
-    }
-  },
   "engines": {
     "node": ">=26.7.0"
-  }
+  },
+  "packageManager": "pnpm@11.22.0"
 }

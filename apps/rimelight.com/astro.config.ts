@@ -1,7 +1,6 @@
 import en from "./src/translations/en.json"
 import pt from "./src/translations/pt.json"
 import mdx from "@astrojs/mdx"
-import vue from "@astrojs/vue"
 import solid from "@astrojs/solid-js"
 import { ui } from "@rimelight/ui"
 import { sri } from "@rimelight/security"
@@ -148,8 +147,6 @@ export default defineConfig({
     }),
 
     mdx(),
-
-    vue(),
 
     solid({
       include: ["**/solid/**", "**/*.tsx"]
