@@ -1,24 +1,51 @@
 ---
 import WikiLayout from '@/layouts/WikiLayout.astro';
-import { BlockRenderer } from "@rimelight/cms/astro";
-import { PAGE_MAP as pageDefinitions } from '@/types/pageDefinitions';
-import { auth } from "@/auth/auth";
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
+import { db } from "@/db"
+import { pageVersions } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
-const { slug } = Astro.params;
-const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
+const activeLocale = Astro.currentLocale ?? "en"
+
 const versionId = Astro.url.searchParams.get('version') || '';
-const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
-const user = sessionData?.user;
-const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
+
+let version = null;
+if (versionId) {
+  const versionResult = await db
+    .select()
+    .from(pageVersions)
+    .where(eq(pageVersions.id, versionId))
+    .limit(1)
+  version = versionResult[0]
+}
+
+if (!version) {
+  return Astro.redirect("/404")
+}
+
+const versionContent = typeof version.content === "string" ? JSON.parse(version.content) : version.content || {}
+
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
+
+const title = getLocalizedText(version.title, activeLocale)
+const description = getLocalizedText(version.description, activeLocale) || ""
 ---
 
-<WikiLayout title="Review Wiki Version | Grand Tale Wiki">
-	<BlockRenderer
-		client:only
-		lookupPath={lookupSlug}
-		versionId={versionId}
-		pageDefinitions={pageDefinitions}
-		baseUrl="/franchises/grand-tale/wiki"
-		isAdmin={isAdmin}
-	/>
+<WikiLayout title={`Review Wiki Version | ${title} | Grand Tale`}>
+  <article class="prose">
+    <div class="text-xs text-muted-foreground mb-4">
+      <span>Status: {version.status}</span>
+      {version.createdAt && <span> | Created: {new Date(version.createdAt).toLocaleDateString(activeLocale)}</span>}
+      {version.approvedAt && <span> | Approved: {new Date(version.approvedAt).toLocaleDateString(activeLocale)}</span>}
+    </div>
+    <h1>{title}</h1>
+    {description && <p class="text-muted-foreground">{description}</p>}
+    <PageRenderer blocks={versionContent.blocks || []} locale={activeLocale} />
+  </article>
 </WikiLayout>

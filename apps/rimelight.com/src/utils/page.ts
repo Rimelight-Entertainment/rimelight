@@ -1,4 +1,3 @@
-import { type MaybeRefOrGetter, toValue } from "vue"
 import type {
   Localized,
   Page,
@@ -9,6 +8,12 @@ import type {
   PropertyGroup
 } from "@/types/pages"
 import type { Block, SectionBlock } from "@/types/blocks"
+
+type MaybeRefOrGetter<T> = T | (() => T)
+
+function toValue<T>(value: MaybeRefOrGetter<T>): T {
+  return typeof value === "function" ? (value as () => T)() : value
+}
 
 function getValue(value: object, key: string): unknown {
   return Reflect.get(value, key)

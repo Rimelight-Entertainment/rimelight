@@ -20,13 +20,12 @@
     "prepare": "vp config",
     "generate-types": "wrangler types",
     "astro": "astro",
-    "predev": "node scripts/generate-block-maps.ts",
     "dev": "astro dev",
     "dev:remote": "astro dev --remote",
-    "prebuild": "node scripts/generate-block-maps.ts && node scripts/sync-md-to-db.ts",
+    "prebuild": "node scripts/sync-md-to-db.ts",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "pnpm audit --audit-level=moderate && vp check --fix && node scripts/generate-block-maps.ts && wrangler types && astro sync && astro check"
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && wrangler types && astro sync && astro check"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.1",

@@ -2,7 +2,6 @@
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLAPopover from "@rimelight/ui/components/popover/RLAPopover.astro";
-import { scv } from "css-variants";
 import RLASeparator from "@rimelight/ui/components/separator/RLASeparator.astro";
 
 interface Props {
@@ -50,7 +49,7 @@ if (isDynamic && togglingPattern === "select-option") {
   }
 }
 
-// Load theme and pre-calculate all variant classes at build-time (server-side)
+// Load theme for slot visualization
 let resolvedTheme = theme;
 const componentNameWithoutPrefix = resolvedComponentName.replace(/^RL[AV]/, '');
 const componentKey = componentNameWithoutPrefix.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(); // e.g. "button" or "input-number"
@@ -64,49 +63,6 @@ if (componentKey) {
       resolvedTheme = module.default;
     } catch (e) {
       console.warn(`Could not load theme for component: ${resolvedComponentName}`);
-    }
-  }
-
-  if (resolvedTheme) {
-    try {
-      const resolver = scv(resolvedTheme);
-
-      // Calculate baseline classes for initial/default variants
-      const initialVariants = {
-        ...resolvedTheme.defaultVariants,
-        ...defaultProps
-      };
-      initialThemeClasses = resolver(initialVariants);
-
-      if (isDynamic) {
-        // Generate classes for all combinations of configured props
-        const keys = Object.keys(propsConfig || {});
-        const getCombinations = (index: number, current: Record<string, string>) => {
-          if (index === keys.length) {
-            const activeVariants = {
-              ...resolvedTheme.defaultVariants,
-              ...defaultProps,
-              ...current
-            };
-            const resolved = resolver(activeVariants);
-            const keyStr = keys.map(k => `${k}:${current[k]}`).join('|');
-            combinationClasses[keyStr] = resolved;
-            return;
-          }
-
-          const key = keys[index];
-          if (!key) return;
-          const vals = propsConfig?.[key] || [];
-          vals.forEach((val: string) => {
-            current[key] = val;
-            getCombinations(index + 1, { ...current });
-          });
-        };
-
-        getCombinations(0, {});
-      }
-    } catch (err) {
-      console.error(`Failed to pre-resolve classes for: ${resolvedComponentName}`, err);
     }
   }
 }

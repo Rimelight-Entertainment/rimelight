@@ -1,21 +1,46 @@
 ---
 import WikiLayout from '@/layouts/WikiLayout.astro';
-import { BlockRenderer } from "@rimelight/cms/astro";
-import { auth } from "@/auth/auth";
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq, and, isNull } from "drizzle-orm"
+
+const activeLocale = Astro.currentLocale ?? "en"
 
 const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/franchises/grand-tale/wiki");
+
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
-const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
-const user = sessionData?.user;
-const canEdit = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
+const pageResult = await db
+  .select()
+  .from(pages)
+  .where(and(eq(pages.slug, lookupSlug), isNull(pages.deletedAt)))
+  .limit(1)
+
+const page = pageResult[0]
+
+if (!page) {
+  return Astro.redirect("/404")
+}
+
+const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content || {}
+
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
+
+const title = getLocalizedText(page.title, activeLocale)
+const description = getLocalizedText(page.description, activeLocale) || ""
 ---
 
-<WikiLayout title="Wiki Page | Grand Tale Wiki">
-	<BlockRenderer
-		client:load
-		lookupPath={lookupSlug}
-		cacheKey={`wiki-${slug}`}
-		baseUrl="/franchises/grand-tale/wiki"
-		canEdit={canEdit}
-	/>
+<WikiLayout title={`Wiki | ${title} | Grand Tale`}>
+  <article class="prose">
+    <h1>{title}</h1>
+    {description && <p class="text-muted-foreground">{description}</p>}
+    <PageRenderer blocks={content.blocks || []} locale={activeLocale} />
+  </article>
 </WikiLayout>

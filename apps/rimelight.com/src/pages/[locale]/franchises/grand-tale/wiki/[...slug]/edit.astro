@@ -1,24 +1,185 @@
 ---
-import WikiLayout from '@/layouts/WikiLayout.astro';
-import { RimelightTemplateEditor } from "@rimelight/cms/client";
-import { PAGE_MAP as pageDefinitions } from '@/types/pageDefinitions';
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import { RimelightEditorLayout, RimelightPropertiesPanel } from "@rimelight/cms/client/components";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq, and, isNull } from "drizzle-orm"
 import { auth } from "@/auth/auth";
 
+const currentLocale = Astro.currentLocale ?? "en"
 const { slug } = Astro.params;
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
+
 const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
-const user = sessionData?.user;
-const isAdmin = (user as { role?: string } | null)?.role === 'owner' || (user as { role?: string } | null)?.role === 'admin';
+
+if (!sessionData) {
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
+}
+
+const pageResult = await db
+  .select()
+  .from(pages)
+  .where(and(eq(pages.slug, lookupSlug), isNull(pages.deletedAt)))
+  .limit(1)
+
+const page = pageResult[0]
+
+if (!page) {
+  return Astro.redirect("/404")
+}
+
+let rawContent: any = page.content || {}
+if (typeof rawContent === "string") {
+  try {
+    rawContent = JSON.parse(rawContent)
+  } catch {
+    rawContent = {}
+  }
+}
+
+const extractedBlocks = Array.isArray(rawContent?.blocks)
+  ? rawContent.blocks
+  : Array.isArray(rawContent)
+  ? rawContent
+  : []
+
+const titleVal =
+  typeof page.title === "object" && page.title !== null
+    ? (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>).en || ""
+    : String(page.title || "")
+
+const descVal =
+  typeof page.description === "object" && page.description !== null
+    ? (page.description as Record<string, string>)[currentLocale] || (page.description as Record<string, string>).en || ""
+    : String(page.description || "")
+
+const pageType = (page as any).type || "Default"
+const initialProperties = rawContent?.properties || {}
 ---
 
-<WikiLayout title="Edit Wiki Page | Grand Tale Wiki">
-<RimelightTemplateEditor
-		client:load
-		lookupPath={lookupSlug}
-		cacheKey={`edit-wiki-${slug}`}
-		pageDefinitions={pageDefinitions}
-		baseUrl="/franchises/grand-tale/wiki"
-		isAdmin={isAdmin}
-		backUrl="/franchises/grand-tale/wiki"
-	/>
-</WikiLayout>
+<DashboardLayout title={`Edit Wiki Page: ${titleVal || 'Untitled'}`}>
+  <div class="flex flex-col h-screen overflow-hidden bg-background text-foreground select-none">
+    <header class="h-12 w-full border-b border-default flex items-center justify-between px-4 shrink-0 z-30">
+      <div class="flex items-center gap-2.5">
+        <RLAButton
+          href={getRelativeLocaleUrl(currentLocale, "/franchises/grand-tale/wiki")}
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          leadingIcon="i-lucide-arrow-left"
+          class="!px-2"
+        >
+          Wiki
+        </RLAButton>
+        <span class="w-px h-4 bg-neutral-700" />
+        <span class="font-semibold text-sm text-foreground truncate max-w-[200px] sm:max-w-xs">{titleVal || "Untitled Page"}</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <RLAButton
+          id="save-btn"
+          variant="solid"
+          color="primary"
+          size="xs"
+          leadingIcon="i-lucide-save"
+        >
+          Save
+        </RLAButton>
+      </div>
+    </header>
+
+    <div class="flex w-full min-h-0 flex-1 overflow-hidden relative">
+      <div class="relative overflow-y-auto p-6 flex-1 w-full min-w-0">
+        <div class="max-w-7xl mx-auto flex flex-col py-2 w-full gap-6">
+          <div class="border-b border-default pb-4 flex flex-col gap-2">
+            <input
+              id="page-title-input"
+              type="text"
+              value={titleVal}
+              placeholder="Page Title"
+              class="w-full text-4xl font-bold bg-transparent border-0 focus:ring-0 focus:outline-none p-0 text-foreground"
+            />
+            <textarea
+              id="page-desc-input"
+              rows="2"
+              placeholder="Add a description..."
+              class="w-full text-lg text-dimmed bg-transparent border-0 focus:ring-0 focus:outline-none p-0 resize-none mt-1"
+            >{descVal}</textarea>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-24 gap-8 items-start w-full">
+            <div class="order-1 lg:order-2 lg:col-span-8 xl:col-span-7 flex flex-col gap-4">
+              <div class="sticky top-4">
+                <RimelightPropertiesPanel
+                  client:only="solid"
+                  pageType={pageType}
+                  initialProperties={initialProperties}
+                  class="w-full"
+                />
+              </div>
+            </div>
+
+            <div class="order-2 lg:order-1 lg:col-span-16 xl:col-span-17 flex flex-col gap-6 w-full min-w-0">
+              <div id="cms-editor-layout" class="w-full">
+                <RimelightEditorLayout
+                  client:only="solid"
+                  pageId={page.id}
+                  initialBlocks={extractedBlocks}
+                  showInternalPreview={false}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline id="initial-page-data" type="application/json" set:html={JSON.stringify({
+    id: page.id, slug: page.slug, title: titleVal, description: descVal, pageType,
+    blocks: extractedBlocks, properties: initialProperties
+  })} />
+
+  <script>
+    const initialData = JSON.parse(document.getElementById('initial-page-data')?.textContent || '{}')
+
+    const titleInput = document.getElementById('page-title-input') as HTMLInputElement | null;
+    const descInput = document.getElementById('page-desc-input') as HTMLTextAreaElement | null;
+
+    document.getElementById('save-btn')?.addEventListener('click', async () => {
+      const saveBtn = document.getElementById('save-btn') as HTMLButtonElement | null;
+      const layout = (window as any).cmsEditorLayout || document.getElementById('cms-editor-layout');
+      if (!layout) { alert('Editor not loaded'); return; }
+
+      const blocks = layout.getBlocks ? await layout.getBlocks() : initialData.blocks;
+      const content = {
+        blocks,
+        properties: (window as any).cmsPageProperties || initialData.properties
+      }
+
+      try {
+        if (saveBtn) saveBtn.disabled = true;
+        const res = await fetch(`/api/cms/pages/${initialData.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: { en: titleInput?.value || initialData.title },
+            description: { en: descInput?.value || initialData.description },
+            content
+          })
+        });
+        if (res.ok) {
+          alert('Saved!');
+        } else {
+          alert('Failed to save page');
+        }
+      } catch {
+        alert('Network error saving page');
+      } finally {
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    });
+  </script>
+</DashboardLayout>
