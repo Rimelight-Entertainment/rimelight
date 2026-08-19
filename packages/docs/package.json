@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/docs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
   "description": "Rimelight Entertainment's Documentation Package",
   "homepage": "https://rimelight.com/docs",
@@ -28,6 +28,9 @@
   },
   "scripts": {
     "check": "pnpm audit --audit-level=moderate && vp check --fix"
+  },
+  "devDependencies": {
+    "@rimelight/config": "workspace:*"
   },
   "peerDependencies": {
     "@rimelight/ui": "workspace:*"

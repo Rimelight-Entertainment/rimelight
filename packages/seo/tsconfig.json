@@ -1,5 +1,5 @@
 {
-  "extends": "../../.config/tsconfig.base.json",
+  "extends": "@rimelight/config/tsconfig/solid",
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"],
   "compilerOptions": {

@@ -295,6 +295,9 @@ importers:
 
   .:
     devDependencies:
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:packages/config
       '@types/node':
         specifier: 26.2.0
         version: 26.2.0
@@ -395,6 +398,9 @@ importers:
       '@iconify-json/lucide':
         specifier: 1.2.123
         version: 1.2.123
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@types/chroma-js':
         specifier: 3.1.2
         version: 3.1.2
@@ -492,6 +498,9 @@ importers:
       '@iconify-json/lucide':
         specifier: 1.2.123
         version: 1.2.123
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@types/node':
         specifier: 26.2.0
         version: 26.2.0
@@ -525,6 +534,10 @@ importers:
       hono:
         specifier: '>=4.12.34'
         version: 4.13.1
+    devDependencies:
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/cli:
     dependencies:
@@ -562,6 +575,9 @@ importers:
       '@astrojs/check':
         specifier: 0.9.10
         version: 0.9.10(prettier@3.9.6)(typescript@6.0.3)
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../config
       '@types/sortablejs':
         specifier: 1.15.9
         version: 1.15.9
@@ -581,11 +597,24 @@ importers:
         specifier: 4.1.10
         version: 4.1.10(@types/node@26.2.0)(@vitest/browser-preview@4.1.10)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))
 
+  packages/config:
+    devDependencies:
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vite-plus:
+        specifier: 0.2.9
+        version: 0.2.9(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(typescript@6.0.3)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))(yaml@2.9.0)
+
   packages/docs:
     dependencies:
       '@rimelight/ui':
         specifier: workspace:*
         version: link:../ui
+    devDependencies:
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/i18n:
     dependencies:
@@ -596,6 +625,9 @@ importers:
         specifier: 1.5.1
         version: 1.5.1
     devDependencies:
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../config
       astro:
         specifier: 7.2.2
         version: 7.2.2(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.2.0)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
@@ -608,6 +640,9 @@ importers:
       '@astrojs/check':
         specifier: 0.9.10
         version: 0.9.10(prettier@3.9.6)(typescript@6.0.3)
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../config
       astro:
         specifier: 7.2.2
         version: 7.2.2(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.2.0)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
@@ -617,6 +652,9 @@ importers:
 
   packages/seo:
     devDependencies:
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../config
       astro:
         specifier: 7.2.2
         version: 7.2.2(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.2.0)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
@@ -648,6 +686,9 @@ importers:
       '@astrojs/vue':
         specifier: 7.0.2
         version: 7.0.2(@types/node@26.2.0)(astro@7.2.2(@astrojs/markdown-remark@7.2.2(supports-color@10.2.2))(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.2.0)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(supports-color@10.2.2)(tsx@4.23.11)(vue@3.5.41(typescript@6.0.3))(yaml@2.9.0)
+      '@rimelight/config':
+        specifier: workspace:*
+        version: link:../config
       astro:
         specifier: 7.2.2
         version: 7.2.2(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.2.0)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)

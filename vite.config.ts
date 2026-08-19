@@ -1,24 +1,8 @@
 import { defineConfig } from "vite-plus"
+import { rimelightConfig } from "@rimelight/config/vite-plus/base"
 
 export default defineConfig({
-  staged: {
-    "*": "vp check --fix"
-  },
-  lint: {
-    options: {
-      typeAware: true,
-      typeCheck: true
-    }
-  },
-  fmt: {
-    jsdoc: {
-      bracketSpacing: true,
-      commentLineStrategy: "multiline"
-    },
-    trailingComma: "none",
-    semi: false,
-    quoteProps: "consistent"
-  },
+  ...rimelightConfig(),
   run: {
     cache: true,
     tasks: {

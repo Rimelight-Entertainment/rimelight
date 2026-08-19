@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "description": "Rimelight Entertainment's Internationalization Package",
   "homepage": "https://rimelight.com/docs",
@@ -38,6 +38,7 @@
     "nanostores": "1.5.1"
   },
   "devDependencies": {
+    "@rimelight/config": "workspace:*",
     "astro": "7.2.2",
     "typescript": "6.0.3"
   },

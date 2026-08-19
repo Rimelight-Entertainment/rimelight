@@ -53,6 +53,7 @@
     "@astrojs/ts-plugin": "1.10.10",
     "@iconify-json/logos": "1.2.13",
     "@iconify-json/lucide": "1.2.123",
+    "@rimelight/config": "workspace:*",
     "@types/node": "26.2.0",
     "drizzle-kit": "0.31.10",
     "takumi-js": "2.10.0",

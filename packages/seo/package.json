@@ -34,6 +34,7 @@
     "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
   },
   "devDependencies": {
+    "@rimelight/config": "workspace:*",
     "astro": "7.2.2",
     "typescript": "6.0.3"
   },
