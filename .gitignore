@@ -2,6 +2,9 @@
 .DS_Store
 Thumbs.db
 
+# IDE
+.idea/
+
 # Dependencies
 node_modules/
 
@@ -15,8 +18,6 @@ node_modules/
 
 # Outputs
 dist/
-public/og/
-packages/*/public/og/
 
 # Drizzle
 server/db/drizzle/*.json
@@ -33,9 +34,6 @@ test-results/
 logs/
 *.log
 *.cpuprofile
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 
 # Cloudflare
@@ -48,6 +46,3 @@ worker-configuration.d.ts
 # Misc
 *.local
 *.tsbuildinfo
-
-# IDE
-.idea/
