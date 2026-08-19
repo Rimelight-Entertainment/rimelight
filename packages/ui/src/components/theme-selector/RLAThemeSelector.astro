@@ -1,25 +1,17 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ThemeSelectorProps } from "./theme-selector"
-import themeSelectorTheme from "./theme-selector.theme"
+import { themeSelectorTheme } from "./theme-selector.theme"
 import RLAButton from "../button/RLAButton.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const themeSelector = scv(themeSelectorTheme)
 
 const {
-    size = "md",
-    ui: uiProp,
-    class: className,
-    ...rest
+  size = "md",
+  ...rest
 } = Astro.props as ThemeSelectorProps
 
-const classes = resolveClasses(themeSelector, {
-    size
-}, useUi("themeSelector", uiProp), className);
+const classes = themeSelectorTheme(Astro.props);
 ---
 
 <rla-theme-selector {...rest}>
@@ -36,7 +28,7 @@ const classes = resolveClasses(themeSelector, {
 </rla-theme-selector>
 
 <script>
-    import { defineShortcuts } from "../../utils/shortcuts"
+    import { defineShortcuts } from "../../shortcuts"
 
     function applyStoredTheme() {
         const stored = localStorage.getItem('theme');

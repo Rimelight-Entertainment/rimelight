@@ -1,13 +1,10 @@
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createFormTheme = () =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: "space-y-6"
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createFormTheme()
+export const formTheme = defineTheme("form", {
+  slots: ["root"],
+  base: {
+    root: "space-y-6"
+  },
+  variants: {},
+  defaultVariants: {}
+})

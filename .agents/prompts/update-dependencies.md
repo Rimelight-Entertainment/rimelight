@@ -28,9 +28,9 @@ This prompt is used to update dependencies in a project.
 ## Workflow
 
 1. Run `vp upgrade` to update Vite-Plus.
-2. Run `vp pm self-update` to update pnpm.
-3. Update `packageManager` in `package.json` to the latest installed version. Ensure you update all sub-packages in monorespository cases.
-4. Run `vp outdated` to identify outdated dependencies.
+2. Run `pnpm self-update` to update pnpm.
+3. Update `packageManager` or `devEngines` in `package.json` to the latest installed version. Ensure you update all sub-packages in monorespository cases.
+4. Clear the vulnerability overrides in `pnpm-workspace.yaml`, then run `vp outdated` to identify outdated dependencies.
 5. Update all dependencies to the latest listed version, updating `package.json`, `pnpm-workspace.yaml`, and other files like actions or other reported usages, using the version settings from `pnpm-workspace.yaml`.
 6. Run `vp install` to update the lockfile and install the new versions locally.
 7. Run `vp pm audit` to verify the security of the updated packages. Add overrides when possible or revert to the previous version if not.

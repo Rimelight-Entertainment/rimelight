@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import { computed, useSlots, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ButtonProps } from "./button"
-import { resolveTheme } from "../../utils/resolveTheme"
-import buttonThemeDefault, { createButtonTheme } from "./button.theme"
-const buttonTheme = resolveTheme(buttonThemeDefault, createButtonTheme)
+import { buttonTheme } from "./button.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 const attrs = useAttrs()
-const button = scv(buttonTheme)
 
 const {
   variant = "solid",
@@ -24,9 +18,7 @@ const {
   block = false,
   active = false,
   activeColor,
-  activeVariant,
-  ui: uiProp,
-  class: className
+  activeVariant
 } = defineProps<ButtonProps>()
 
 const slots = useSlots()
@@ -61,22 +53,17 @@ defineSlots<{
 }>()
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    button,
-    {
-      variant: active && activeVariant ? activeVariant : variant,
-      color: active && activeColor ? activeColor : color,
-      size,
-      block,
-      square: square || (!label && !slots.default),
-      leading: isLeading.value,
-      trailing: isTrailing.value,
-      loading,
-      active
-    },
-    useUi("button", uiProp),
-    className
-  )
+  buttonTheme({
+    variant: active && activeVariant ? activeVariant : variant,
+    color: active && activeColor ? activeColor : color,
+    size,
+    block,
+    square: square || (!label && !slots.default),
+    leading: isLeading.value,
+    trailing: isTrailing.value,
+    loading,
+    active
+  })
 )
 
 const Tag = href ? "a" : "button"

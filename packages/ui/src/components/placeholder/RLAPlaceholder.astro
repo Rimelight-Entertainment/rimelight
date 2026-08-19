@@ -1,23 +1,12 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { PlaceholderProps } from "./placeholder"
-import placeholderTheme from "./placeholder.theme"
+import { placeholderTheme } from "./placeholder.theme"
 
 
-const placeholder = scv(placeholderTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PlaceholderProps
-
-const classes = resolveClasses(placeholder, {}, useUi("placeholder", uiProp), className)
+const classes = placeholderTheme(Astro.props)
 ---
 
-<div class={classes.base} {...rest}>
+<div class={classes.base} {...Astro.props}>
   <svg class={classes.svg}>
     <defs>
       <pattern

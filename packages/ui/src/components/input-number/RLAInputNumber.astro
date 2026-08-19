@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { InputNumberProps } from "./input-number"
-import inputNumberTheme from "./input-number.theme"
+import { inputNumberTheme } from "./input-number.theme"
 
 
-const inputNumber = scv(inputNumberTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as InputNumberProps
-
-const classes = resolveClasses(inputNumber, {}, useUi("inputNumber", uiProp), className);
+const classes = inputNumberTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

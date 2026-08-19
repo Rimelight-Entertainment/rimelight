@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { TextareaProps } from "./textarea"
-import textareaTheme from "./textarea.theme"
+import { textareaTheme } from "./textarea.theme"
 
 
-const textarea = scv(textareaTheme)
 
 const {
   value = "",
@@ -18,17 +14,15 @@ const {
   rows = 4,
   autoGrow = false,
   error = false,
-  size = "md",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as TextareaProps & { autoGrow?: boolean }
+} = Astro.props as TextareaProps
 
-const classes = resolveClasses(textarea, {
-  size,
+
+
+const classes = textareaTheme({
+  ...Astro.props,
   error: !!error
-}, useUi("textarea", uiProp), className);
+});
 ---
 <div class={classes.root} data-slot="root">
   <!--

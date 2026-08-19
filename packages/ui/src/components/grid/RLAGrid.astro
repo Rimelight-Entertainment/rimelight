@@ -1,27 +1,14 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { GridProps } from "./grid"
-import gridTheme from "./grid.theme"
+import { gridTheme } from "./grid.theme"
 
 
-const grid = scv(gridTheme)
 
 const {
-  cols = 2,
-  gap = "md",
-  stagger = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as GridProps
 
-const classes = resolveClasses(grid, {
-  cols: cols as any,
-  gap,
-  stagger
-}, useUi("grid", uiProp), className)
+const classes = gridTheme(Astro.props)
 ---
 
 <div class={classes.root} {...rest}>

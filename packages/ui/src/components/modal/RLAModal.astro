@@ -1,18 +1,11 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ModalProps } from "./modal"
-import { resolveTheme } from "../../utils/resolveTheme"
-import modalThemeDefault, { createModalTheme } from "./modal.theme"
-const modalTheme = resolveTheme(modalThemeDefault, createModalTheme)
+import { modalTheme } from "./modal.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const modal = scv(modalTheme)
 
 const {
-  open = false,
   triggerLabel,
   closeOnClickOutside = true,
   closeOnEscape = true,
@@ -20,15 +13,13 @@ const {
   title,
   description,
   size = "md",
-  ui: uiProp,
-  class: className,
   unmountOnHide = true,
   ...rest
-} = Astro.props as ModalProps & { size?: "sm" | "md" | "lg" | "xl" }
+} = Astro.props as ModalProps
 
-const classes = resolveClasses(modal, {
-  size
-}, useUi("modal", uiProp), className)
+
+
+const classes = modalTheme(Astro.props)
 
 const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
 ---

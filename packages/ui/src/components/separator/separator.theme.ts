@@ -1,147 +1,144 @@
-import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createSeparatorTheme = (colors: readonly string[] = colorConfig.colors) =>
-  defineTheme({
-    slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
-    base: {
-      root: "flex items-center align-center text-center",
-      border: "",
-      container: "font-medium text-default flex",
-      icon: "shrink-0 size-5",
-      avatar: "shrink-0",
-      avatarSize: "2xs",
-      label: "text-sm"
-    },
-    variants: {
-      color: {
-        ...Object.fromEntries(colors.map((color) => [color, { border: `border-${color}` }])),
-        neutral: { border: "border-default" }
+export const separatorTheme = defineTheme("separator", {
+  slots: ["root", "border", "container", "icon", "avatar", "avatarSize", "label"],
+  base: {
+    root: "flex items-center align-center text-center",
+    border: "border-[var(--rl-border)]",
+    container: "font-medium text-default flex",
+    icon: "shrink-0 size-5",
+    avatar: "shrink-0",
+    avatarSize: "2xs",
+    label: "text-sm"
+  },
+  variants: {
+    color: "auto",
+    orientation: {
+      horizontal: {
+        root: "w-full flex-row",
+        border: "w-full",
+        container: "whitespace-nowrap"
       },
-      orientation: {
-        horizontal: {
-          root: "w-full flex-row",
-          border: "w-full",
-          container: "whitespace-nowrap"
-        },
-        vertical: {
-          root: "h-full flex-col",
-          border: "h-full",
-          container: ""
-        }
-      },
-      size: {
-        xs: {},
-        sm: {},
-        md: {},
-        lg: {},
-        xl: {}
-      },
-      position: {
-        start: {},
-        center: {},
-        end: {}
-      },
-      type: {
-        solid: {
-          border: "border-solid"
-        },
-        dashed: {
-          border: "border-dashed"
-        },
-        dotted: {
-          border: "border-dotted"
-        }
+      vertical: {
+        root: "h-full flex-col",
+        border: "h-full",
+        container: ""
       }
     },
-    compoundVariants: [
-      {
-        orientation: "horizontal",
-        position: "start",
-        classNames: { container: "me-3" }
+    size: {
+      xs: {},
+      sm: {},
+      md: {},
+      lg: {},
+      xl: {}
+    },
+    position: {
+      start: {},
+      center: {},
+      end: {}
+    },
+    type: {
+      solid: {
+        border: "border-solid"
       },
-      {
-        orientation: "horizontal",
-        position: "center",
-        classNames: { container: "mx-3" }
+      dashed: {
+        border: "border-dashed"
       },
-      {
-        orientation: "horizontal",
-        position: "end",
-        classNames: { container: "ms-3" }
-      },
-      {
-        orientation: "vertical",
-        position: "start",
-        classNames: { container: "mb-2" }
-      },
-      {
-        orientation: "vertical",
-        position: "center",
-        classNames: { container: "my-2" }
-      },
-      {
-        orientation: "vertical",
-        position: "end",
-        classNames: { container: "mt-2" }
-      },
-      {
-        orientation: "horizontal",
-        size: "xs",
-        classNames: { border: "border-t" }
-      },
-      {
-        orientation: "horizontal",
-        size: "sm",
-        classNames: { border: "border-t-[2px]" }
-      },
-      {
-        orientation: "horizontal",
-        size: "md",
-        classNames: { border: "border-t-[3px]" }
-      },
-      {
-        orientation: "horizontal",
-        size: "lg",
-        classNames: { border: "border-t-[4px]" }
-      },
-      {
-        orientation: "horizontal",
-        size: "xl",
-        classNames: { border: "border-t-[5px]" }
-      },
-      {
-        orientation: "vertical",
-        size: "xs",
-        classNames: { border: "border-s" }
-      },
-      {
-        orientation: "vertical",
-        size: "sm",
-        classNames: { border: "border-s-[2px]" }
-      },
-      {
-        orientation: "vertical",
-        size: "md",
-        classNames: { border: "border-s-[3px]" }
-      },
-      {
-        orientation: "vertical",
-        size: "lg",
-        classNames: { border: "border-s-[4px]" }
-      },
-      {
-        orientation: "vertical",
-        size: "xl",
-        classNames: { border: "border-s-[5px]" }
+      dotted: {
+        border: "border-dotted"
       }
-    ],
-    defaultVariants: {
-      color: "neutral",
-      size: "xs",
-      type: "solid",
-      orientation: "horizontal"
     }
-  })
-
-export default createSeparatorTheme()
+  },
+  compoundVariants: [
+    {
+      color: "neutral",
+      classNames: { border: "border-default" }
+    },
+    {
+      orientation: "horizontal",
+      position: "start",
+      classNames: { container: "me-3" }
+    },
+    {
+      orientation: "horizontal",
+      position: "center",
+      classNames: { container: "mx-3" }
+    },
+    {
+      orientation: "horizontal",
+      position: "end",
+      classNames: { container: "ms-3" }
+    },
+    {
+      orientation: "vertical",
+      position: "start",
+      classNames: { container: "mb-2" }
+    },
+    {
+      orientation: "vertical",
+      position: "center",
+      classNames: { container: "my-2" }
+    },
+    {
+      orientation: "vertical",
+      position: "end",
+      classNames: { container: "mt-2" }
+    },
+    {
+      orientation: "horizontal",
+      size: "xs",
+      classNames: { border: "border-t" }
+    },
+    {
+      orientation: "horizontal",
+      size: "sm",
+      classNames: { border: "border-t-[2px]" }
+    },
+    {
+      orientation: "horizontal",
+      size: "md",
+      classNames: { border: "border-t-[3px]" }
+    },
+    {
+      orientation: "horizontal",
+      size: "lg",
+      classNames: { border: "border-t-[4px]" }
+    },
+    {
+      orientation: "horizontal",
+      size: "xl",
+      classNames: { border: "border-t-[5px]" }
+    },
+    {
+      orientation: "vertical",
+      size: "xs",
+      classNames: { border: "border-s" }
+    },
+    {
+      orientation: "vertical",
+      size: "sm",
+      classNames: { border: "border-s-[2px]" }
+    },
+    {
+      orientation: "vertical",
+      size: "md",
+      classNames: { border: "border-s-[3px]" }
+    },
+    {
+      orientation: "vertical",
+      size: "lg",
+      classNames: { border: "border-s-[4px]" }
+    },
+    {
+      orientation: "vertical",
+      size: "xl",
+      classNames: { border: "border-s-[5px]" }
+    }
+  ],
+  defaultVariants: {
+    color: "neutral",
+    size: "xs",
+    type: "solid",
+    orientation: "horizontal"
+  }
+})

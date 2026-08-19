@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
+import HeaderLayer from "../header/HeaderLayer.astro"
 import type { BannerProps } from "./banner"
-import bannerTheme from "./banner.theme"
+import { bannerTheme } from "./banner.theme"
 
-
-const banner = scv(bannerTheme)
 
 const {
   contain = true,
@@ -17,117 +13,109 @@ const {
   dismissable = false,
   dismissId,
   actions = [],
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as BannerProps
 
-const classes = resolveClasses(banner, {
-  contain,
-  sticky: fixed ? false : sticky,
-  fixed,
-}, useUi("banner", uiProp), className);
+const classes = bannerTheme({
+  ...Astro.props,
+  sticky: fixed ? false : sticky
+})
 
-const bannerId = `rla-banner-${Math.random().toString(36).slice(2, 8)}`;
-const storageKey = dismissId || bannerId;
-const zIndex = 200 - stackIndex;
+const bannerId = (rest.id as string) || `rla-banner-${Math.random().toString(36).slice(2, 8)}`
+const storageKey = dismissId || bannerId
 ---
 
-<div
+<HeaderLayer
+  as="div"
   id={bannerId}
-  data-slot="root"
-  class:list={[classes.root]}
-  data-rla-banner="true"
-  data-stack-index={stackIndex}
-  data-hide-on-scroll={String(hideOnScroll)}
-  data-header-layer-id={bannerId}
-  data-layer-type="banner"
+  layerType="banner"
+  componentName="banner"
+  theme={bannerTheme}
+  contain={contain}
+  sticky={sticky}
+  fixed={fixed}
+  stackIndex={stackIndex}
+  hideOnScroll={hideOnScroll}
   data-dismiss-key={`rl-banner-dismiss-${storageKey}`}
   {...rest}
 >
-  <div class:list={[classes.content]} data-header-content>
-    <div class:list={[classes.container]}>
-      <div class:list={[classes.left, "actions-open-hidden"]} data-slot="left">
-        <slot name="left" />
-      </div>
-      <div class:list={[classes.center, "actions-open-hidden"]} data-slot="center">
-        <slot name="center">
-          <slot />
-        </slot>
-      </div>
+  {actions.length > 0 && (
+    <input
+      type="checkbox"
+      id={`${bannerId}-act`}
+      class="peer sr-only shrink-0"
+    />
+  )}
 
-      {actions.length > 0 && (
-        <input
-          type="checkbox"
-          id={`${bannerId}-act`}
-          class="peer sr-only shrink-0"
-        />
-      )}
-
-      <div class="flex-1"></div>
-
-      <div class:list={[classes.side]}>
-        <slot name="right" />
-      </div>
-
-      {actions.length > 0 && (
-        <label
-          for={`${bannerId}-act`}
-          class="flex-none flex items-center justify-center size-7 rounded-md hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer md:hidden text-sm leading-none peer-checked:order-first"
-          aria-label="Show actions"
-        >···</label>
-      )}
-
-      {actions.length > 0 && (
-        <div
-          class:list={[
-            classes.actions,
-            "hidden peer-checked:flex md:flex flex-row items-center justify-center gap-2 peer-checked:order-first"
-          ]}
-        >
-          {actions.map((action) => (
-            <a
-              href={action.href || "#"}
-              class:list={[
-                "inline-flex items-center justify-center gap-1 px-3 py-1 rounded-md text-xs font-semibold transition-colors no-underline cursor-pointer shrink-0",
-                action.variant === "solid" || !action.variant
-                  ? "bg-foreground text-background hover:opacity-90"
-                  : "bg-white/20 text-white hover:bg-white/30",
-                action.class
-              ]}
-              data-banner-action
-            >
-              {action.label}
-            </a>
-          ))}
-        </div>
-      )}
-
-      {dismissable && (
-        <button
-          class:list={[classes.dismiss]}
-          data-banner-close
-          aria-label="Close banner"
-          type="button"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      )}
-    </div>
+  <div class:list={[classes.left, "peer-checked:hidden"]} data-slot="left">
+    <slot name="left" />
   </div>
-</div>
+  <div class:list={[classes.center, "peer-checked:hidden"]} data-slot="center">
+    <slot name="center">
+      <slot />
+    </slot>
+  </div>
 
+  <div class="flex-1"></div>
 
+  <div class:list={[classes.side]}>
+    <slot name="right" />
+  </div>
+
+  {actions.length > 0 && (
+    <label
+      for={`${bannerId}-act`}
+      class="flex-none flex items-center justify-center size-7 rounded-md hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer md:hidden text-sm leading-none peer-checked:order-first"
+      aria-label="Show actions"
+    >···</label>
+  )}
+
+  {actions.length > 0 && (
+    <div
+      class:list={[
+        classes.actions,
+        "hidden peer-checked:flex md:flex flex-row items-center justify-center gap-2 peer-checked:order-first"
+      ]}
+    >
+      {actions.map((action) => (
+        <a
+          href={action.href || "#"}
+          class:list={[
+            "inline-flex items-center justify-center gap-1 px-3 py-1 rounded-md text-xs font-semibold transition-colors no-underline cursor-pointer shrink-0",
+            action.variant === "solid" || !action.variant
+              ? "bg-foreground text-background hover:opacity-90"
+              : "bg-white/20 text-white hover:bg-white/30",
+            action.class
+          ]}
+          data-banner-action
+        >
+          {action.label}
+        </a>
+      ))}
+    </div>
+  )}
+
+  {dismissable && (
+    <button
+      class:list={[classes.dismiss]}
+      data-banner-close
+      aria-label="Close banner"
+      type="button"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  )}
+</HeaderLayer>

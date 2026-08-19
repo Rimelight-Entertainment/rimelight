@@ -1,13 +1,10 @@
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createBrowserMockupTheme = () =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: ""
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createBrowserMockupTheme()
+export const browserMockupTheme = defineTheme("browser-mockup", {
+  slots: ["root"],
+  base: {
+    root: ""
+  },
+  variants: {},
+  defaultVariants: {}
+})

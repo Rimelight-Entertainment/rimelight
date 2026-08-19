@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { InputProps } from "./input"
-import inputTheme from "./input.theme"
+import { inputTheme } from "./input.theme"
 
 
-const input = scv(inputTheme)
 
 const {
   type = "text",
@@ -19,26 +15,15 @@ const {
   error = false,
   leadingIcon,
   trailingIcon,
-  variant = "default",
-  size = "md",
-  color = "primary",
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as InputProps
 
-const hasLeading = !!leadingIcon || Astro.slots.has("leading")
-const hasTrailing = !!trailingIcon || Astro.slots.has("trailing")
 
-const classes = resolveClasses(input, {
-  variant,
-  size,
-  hasLeading,
-  hasTrailing,
-  error: !!error,
-  theme
-}, useUi("input", uiProp), className);
+
+const classes = inputTheme({
+  ...Astro.props,
+  error: !!error
+});
 ---
 <div class={classes.root} data-slot="root">
   {(leadingIcon || Astro.slots.has("leading")) && (

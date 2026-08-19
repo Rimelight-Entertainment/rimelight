@@ -1,28 +1,18 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { CollapsibleProps } from "./collapsible"
-import collapsibleTheme from "./collapsible.theme"
+import { collapsibleTheme } from "./collapsible.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const collapsible = scv(collapsibleTheme)
 
 const {
   open = false,
   label = "Toggle",
   icon,
-  size = "md",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CollapsibleProps
 
-const classes = resolveClasses(collapsible, {
-  open
-}, useUi("collapsible", uiProp), className);
+const classes = collapsibleTheme(Astro.props);
 ---
 <details class={classes.root} open={open ? true : undefined} data-slot="root" {...rest}>
   <summary class={classes.trigger} data-slot="trigger">

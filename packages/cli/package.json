@@ -1,22 +1,50 @@
 {
   "name": "@rimelight/cli",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Rimelight Command Line Interface",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Rimelight Entertainment's Command Line Interface",
+  "homepage": "https://rimelight.com/docs",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rimelight Entertainment"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
+  },
   "bin": {
     "rimelight": "./bin/rimelight.js"
   },
+  "files": [
+    "bin",
+    "src"
+  ],
   "type": "module",
   "main": "./src/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "check": "node -e \"process.exit(0)\"",
-    "create": "node ./bin/rimelight.js create"
+    "create": "node ./bin/rimelight.js create",
+    "check": "pnpm audit --audit-level=moderate"
   },
   "dependencies": {
-    "@clack/prompts": "^1.7.0",
-    "cross-spawn": "^7.0.6",
-    "mri": "^1.2.0",
-    "picocolors": "^1.1.1"
+    "@clack/prompts": "1.7.0",
+    "cross-spawn": "7.0.6",
+    "mri": "1.2.0",
+    "picocolors": "1.1.1"
   },
-  "packageManager": "pnpm@11.18.0"
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.22.0",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=26.7.0"
+  }
 }

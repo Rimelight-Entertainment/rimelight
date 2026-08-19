@@ -1,29 +1,26 @@
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createDashboardSearchTheme = () =>
-  defineTheme({
-    slots: ["modal", "input"],
-    base: {
-      modal: "",
-      input: ""
-    },
-    variants: {
-      fullscreen: {
-        false: {
-          modal: "sm:max-w-3xl h-full sm:h-[28rem]"
-        }
-      },
-      size: {
-        xs: {},
-        sm: {},
-        md: {},
-        lg: {},
-        xl: {}
+export const dashboardSearchTheme = defineTheme("dashboard-search", {
+  slots: ["modal", "input"],
+  base: {
+    modal: "",
+    input: ""
+  },
+  variants: {
+    fullscreen: {
+      false: {
+        modal: "sm:max-w-3xl h-full sm:h-[28rem]"
       }
     },
-    defaultVariants: {
-      size: "md"
+    size: {
+      xs: {},
+      sm: {},
+      md: {},
+      lg: {},
+      xl: {}
     }
-  })
-
-export default createDashboardSearchTheme()
+  },
+  defaultVariants: {
+    size: "md"
+  }
+})

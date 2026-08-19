@@ -1,24 +1,22 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSearchProps } from "./dashboard-search"
-import dashboardSearchTheme from "./dashboard-search.theme"
+import { dashboardSearchTheme } from "./dashboard-search.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const dashboardSearch = scv(dashboardSearchTheme)
 
-const {
-  ui: uiProp,
-  class: className
-} = Astro.props as DashboardSearchProps
+const props = Astro.props as DashboardSearchProps
 
-const classes = resolveClasses(dashboardSearch, { fullscreen: false, size: "md" }, useUi("dashboardSearch", uiProp), className);
+const classes = dashboardSearchTheme({
+  ...Astro.props,
+  ...props,
+  fullscreen: false,
+  size: "md"
+})
 ---
 
 <template id="dashboard-search-template">
   <div data-dashboard-search data-slot="modal" class={classes.modal + " fixed inset-0 z-50 flex items-start justify-center sm:pt-16"} style="display:none">
-    <div class="fixed inset-0 bg-background/80 backdrop-blur-sm" data-dashboard-search-close></div>
+    <div class="fixed inset-0 bg-default/80 backdrop-blur-sm" data-dashboard-search-close></div>
     <div class:list={["relative w-full bg-default border border-default sm:rounded-xl shadow-2xl overflow-hidden", classes.modal]}>
       <div class="flex items-center gap-2 border-b border-default px-4">
         <RLAIcon name="search" class="size-5 shrink-0 text-muted" />

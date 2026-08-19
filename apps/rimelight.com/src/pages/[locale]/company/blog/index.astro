@@ -1,0 +1,135 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro"
+import { siteConfig } from "@/config/site.config"
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro"
+import RLATabs from "@rimelight/ui/components/tabs/RLATabs.astro"
+import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
+import RLAPost from "@rimelight/ui/components/post/RLAPost.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { and, isNull, desc, sql } from "drizzle-orm"
+
+const activeLocale = Astro.currentLocale ?? "en"
+
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
+
+const blogPages = await db
+  .select()
+  .from(pages)
+  .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
+  .orderBy(desc(pages.postedAt))
+
+const posts = blogPages.map((page) => {
+  const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content || {}
+  return {
+    ...page,
+    resolvedTitle: getLocalizedText(page.title, activeLocale),
+    resolvedDescription: getLocalizedText(page.description, activeLocale) || content.properties?.description || "",
+    category: content.properties?.category || "other",
+    heroImage: content.properties?.heroImage,
+    postDate: page.postedAt || page.createdAt
+  }
+})
+
+const groupedPosts = posts.reduce<Record<string, typeof posts>>((acc, post) => {
+  const type = post.category
+  if (!acc[type]) acc[type] = []
+  acc[type].push(post)
+  return acc
+}, {})
+
+const categoryOrder = ["company-news", "development-log", "other"] as const
+
+const badgeColorMap: Record<string, string> = {
+  "company-news": "info",
+  "development-log": "primary",
+  "other": "success",
+}
+
+const categoryMessages: Record<string, string> = {
+  "company-news": t("page_company_blog.categories_company-news"),
+  "development-log": t("page_company_blog.categories_development-log"),
+  "other": t("page_company_blog.categories_other")
+}
+
+const tabsItems = [
+  { label: "All", value: "all" },
+  ...categoryOrder
+    .filter((cat) => groupedPosts[cat]?.length)
+    .map((cat) => ({
+      label: categoryMessages[cat] ?? cat,
+      value: cat
+    }))
+]
+---
+
+<AppLayout title={siteConfig.name} description={siteConfig.description}>
+	<RLAPageSection
+		orientation="horizontal"
+		title={t("page_company_blog.meta_title")}
+		description={t("page_company_blog.meta_description")}
+	>
+		<div class="flex justify-end items-start h-full w-full">
+			<RLAButton
+				label="RSS"
+				icon="i-lucide-rss"
+				size="sm"
+				href={getRelativeLocaleUrl("/rss.xml")}
+			/>
+		</div>
+		<RLATabs slot="content" items={tabsItems} variant="underline">
+			<div role="tabpanel" data-value="all" class="hidden">
+				<RLAGrid cols={4}>
+					{posts.map((post, index) => (
+						<RLAPost
+							variant="ghost"
+							orientation={index === 0 ? "horizontal" : "vertical"}
+							class={index === 0 ? "col-span-full mb-6" : ""}
+							image={post.heroImage}
+							date={post.postDate}
+							title={post.resolvedTitle}
+							description={post.resolvedDescription}
+							to={getRelativeLocaleUrl(`/company/blog/${post.slug}/`)}
+							badge={categoryMessages[post.category] ?? post.category}
+							badgeColor={badgeColorMap[post.category] || "primary"}
+						/>
+					))}
+				</RLAGrid>
+			</div>
+			{categoryOrder.map((category) => {
+				const categoryPosts = groupedPosts[category]
+				if (!categoryPosts || categoryPosts.length === 0) return null
+				return (
+					<div role="tabpanel" data-value={category} class="hidden">
+						<RLAGrid cols={4}>
+							{
+								categoryPosts.map((post, index) => (
+									<RLAPost
+										variant="ghost"
+										orientation={index === 0 ? "horizontal" : "vertical"}
+										class={index === 0 ? "col-span-full mb-6" : ""}
+										image={post.heroImage}
+										date={post.postDate}
+										title={post.resolvedTitle}
+										description={post.resolvedDescription}
+										to={getRelativeLocaleUrl(`/company/blog/${post.slug}/`)}
+										badge={categoryMessages[category] ?? category}
+										badgeColor={badgeColorMap[category] || "primary"}
+									/>
+								))
+							}
+						</RLAGrid>
+					</div>
+				);
+			})}
+		</RLATabs>
+	</RLAPageSection>
+</AppLayout>

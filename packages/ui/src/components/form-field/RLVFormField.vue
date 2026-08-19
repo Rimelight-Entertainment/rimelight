@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { computed, useSlots } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { FormFieldProps } from "./form-field"
-import formFieldTheme from "./form-field.theme"
-
-const formField = scv(formFieldTheme)
+import { formFieldTheme } from "./form-field.theme"
 
 const props = withDefaults(defineProps<FormFieldProps>(), {
   size: "md"
@@ -15,14 +10,10 @@ const props = withDefaults(defineProps<FormFieldProps>(), {
 const slots = useSlots()
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    formField,
-    {
-      size: props.size
-    },
-    useUi("formField", props.ui),
-    props.class
-  )
+  formFieldTheme({
+    size: props.size,
+    class: props.class
+  })
 )
 </script>
 

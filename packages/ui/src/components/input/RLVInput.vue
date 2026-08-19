@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { computed, useSlots, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { InputProps } from "./input"
-import inputTheme from "./input.theme"
-
-const input = scv(inputTheme)
+import { inputTheme } from "./input.theme"
 
 const props = withDefaults(defineProps<InputProps & { modelValue?: string | number }>(), {
   type: "text",
@@ -34,20 +29,16 @@ const isLeading = computed(() => !!(props.leadingIcon || slots.leading))
 const isTrailing = computed(() => !!(props.trailingIcon || slots.trailing))
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    input,
-    {
-      size: props.size,
-      color: props.color,
-      error: !!props.error,
-      disabled: props.disabled,
-      leading: isLeading.value,
-      trailing: isTrailing.value,
-      theme: props.theme
-    },
-    useUi("input", props.ui),
-    props.class
-  )
+  inputTheme({
+    size: props.size,
+    color: props.color,
+    error: !!props.error,
+    disabled: props.disabled,
+    leading: isLeading.value,
+    trailing: isTrailing.value,
+    theme: props.theme,
+    class: props.class
+  })
 )
 
 function onInput(event: Event) {

@@ -1,0 +1,49 @@
+---
+import type { BaseBlock } from "../../core/types/blocks"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block } = Astro.props
+const { columns = [], rows = [], caption } = block.props || {}
+---
+
+<div class="cms-table my-6 overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-800" data-block-id={block.id}>
+  <table class="w-full text-left text-sm border-collapse">
+    {caption && (
+      <caption class="p-2 text-xs text-neutral-500 dark:text-neutral-400 italic text-left">
+        {caption}
+      </caption>
+    )}
+    {columns.length > 0 && (
+      <thead class="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 font-medium text-neutral-700 dark:text-neutral-200">
+        <tr>
+          {columns.map((col: any) => (
+            <th
+              class="px-4 py-3 text-xs font-semibold uppercase tracking-wider"
+              style={col.align ? `text-align: ${col.align};` : undefined}
+            >
+              {col.header || col.key}
+            </th>
+          ))}
+        </tr>
+      </thead>
+    )}
+    <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 bg-white dark:bg-neutral-950">
+      {rows.map((row: any) => (
+        <tr class="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 transition-colors">
+          {columns.map((col: any) => (
+            <td
+              class="px-4 py-3 text-neutral-800 dark:text-neutral-200"
+              style={col.align ? `text-align: ${col.align};` : undefined}
+            >
+              {row[col.key] ?? ""}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

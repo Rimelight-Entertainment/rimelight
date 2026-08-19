@@ -1,34 +1,18 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { SwitchProps } from "./switch"
-import { resolveTheme } from "../../utils/resolveTheme"
-import switchThemeDefault, { createSwitchTheme } from "./switch.theme"
-const switchTheme = resolveTheme(switchThemeDefault, createSwitchTheme)
+import { switchTheme } from "./switch.theme"
 
 
-const switchFn = scv(switchTheme)
 
 const {
   checked = false,
   disabled = false,
   name,
   label,
-  color = "primary",
-  size = "md",
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as SwitchProps
 
-const classes = resolveClasses(switchFn, {
-  color,
-  size,
-  checked,
-  theme
-}, useUi("switch", uiProp), className);
+const classes = switchTheme(Astro.props);
 ---
 <label class={classes.root} data-slot="root">
   <input

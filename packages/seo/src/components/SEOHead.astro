@@ -35,7 +35,12 @@ const twitterHandle = config?.seo?.authorHandle
 const titleTemplate = config?.seo?.titleTemplate || `%s | ${siteName}`
 
 // Calculated Values
-const displayTitle = buildPageTitle({ title, siteName, titleTemplate, is404 })
+const displayTitle = buildPageTitle({
+  ...(title !== undefined && { title }),
+  siteName,
+  titleTemplate,
+  ...(is404 !== undefined && { is404 })
+})
 
 const finalDescription = description || siteDescription
 const safeDescription = config?.seo?.maxDescriptionLength
@@ -51,7 +56,11 @@ const finalCanonical = canonical
   ? buildCanonicalUrl(canonical, Astro.site ?? Astro.url)
   : (!is404 ? buildCanonicalUrl(Astro.url, Astro.site ?? Astro.url) : undefined)
 
-const robotsContent = buildRobotsMetaContent({ noindex, is404, override: robots })
+const robotsContent = buildRobotsMetaContent({
+  noindex,
+  is404,
+  ...(robots !== undefined && { override: robots })
+})
 ---
 
 <!-- Basic Metadata -->

@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { KnobProps } from "./knob"
-import knobTheme from "./knob.theme"
+import { knobTheme } from "./knob.theme"
 
 
-const knob = scv(knobTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as KnobProps
-
-const classes = resolveClasses(knob, {}, useUi("knob", uiProp), className);
+const classes = knobTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

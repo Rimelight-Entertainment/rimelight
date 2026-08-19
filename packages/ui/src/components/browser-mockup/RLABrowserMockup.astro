@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { BrowserMockupProps } from "./browser-mockup"
-import browserMockupTheme from "./browser-mockup.theme"
+import { browserMockupTheme } from "./browser-mockup.theme"
 
 
-const browserMockup = scv(browserMockupTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as BrowserMockupProps
-
-const classes = resolveClasses(browserMockup, {}, useUi("browserMockup", uiProp), className);
+const classes = browserMockupTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

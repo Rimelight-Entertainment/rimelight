@@ -1,6 +1,7 @@
-import type { Theme, ThemeColor } from "../../types/component"
+import type { Theme, ThemeColor } from "../../types"
 
 export interface BadgeProps {
+  label?: string
   /**
    * Visual style variant.
    */

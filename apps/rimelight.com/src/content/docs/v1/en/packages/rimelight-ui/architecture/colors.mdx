@@ -1,0 +1,323 @@
+---
+title: "Colors"
+description: "How Rimelight UI handles colors, how to register custom colors, and what the system generates for you."
+---
+
+The `@rimelight/ui` color system is built on a **dynamic, factory-based architecture** with a single source of truth. You define your colors once in `astro.config.ts`, and the library handles the rest — CSS variables using `light-dark()`, UnoCSS theme mappings, component variants, and safelisting.
+
+Register a new color (like `blurple`) and every supported component automatically gains `solid`, `outline`, `soft`, `subtle`, `ghost`, and `link` variants for it — with no additional code.
+
+## How It Works
+
+### Single Source of Truth: `astro.config.ts`
+
+All color configuration lives in the `ui()` integration's `colors` option as a record of `{ name: { shade: value } }`:
+
+```typescript
+// astro.config.ts
+ui({
+  colors: {
+    blurple: {
+      "50": "#f4f0ff",
+      "100": "#e9e2ff",
+      "200": "#d6ccff",
+      "300": "#b9a8ff",
+      "400": "#967aff",
+      "500": "#7146ff",
+      "600": "#6222ff",
+      "700": "#5512e9",
+      "800": "#460ebf",
+      "900": "#3b0e9c",
+      "950": "#220869"
+    }
+  }
+})
+```
+
+From this single declaration, the system:
+
+1. **Emits** `--color-blurple-50` through `--color-blurple-950` as CSS custom properties using `light-dark()` (via the preset's preflight)
+2. **Maps** `bg-blurple-500` → `var(--color-blurple-500)` in UnoCSS's `theme.colors`
+3. **Generates** all component compound variants for `blurple`
+4. **Safelists** the single class `rl-color-blurple` so UnoCSS compiles it
+
+### UnoCSS Config
+
+No `uno.config.ts` is needed in consuming projects — the `ui()` integration configures UnoCSS with `rimelightUiPreset()` internally, passing your colors automatically.
+
+## Built-in Colors with Default Shade Scales
+
+The library ships with **10 built-in colors** including full 50–950 shade scales. You never need to re-declare them:
+
+| Name         | Purpose                             |
+| ------------ | ----------------------------------- |
+| `neutral`    | Gray / neutral tones                |
+| `primary`    | Brand / primary actions             |
+| `secondary`  | Secondary actions                   |
+| `info`       | Informational states                |
+| `success`    | Positive / success states           |
+| `warning`    | Warning states                      |
+| `error`      | Destructive / error states          |
+| `commentary` | Commentary / annotation context     |
+| `ideation`   | Ideation / creative context         |
+| `source`     | Source / reference material context |
+
+Override any built-in color by passing its name in the `colors` record with your values. User-supplied shades deep-merge over the defaults:
+
+```typescript
+ui({
+  colors: {
+    primary: {
+      "500": "#0064d7", // overrides the default primary-500
+      "600": "#0050ac"
+    }
+  }
+})
+```
+
+## The `rl-color-{name}` System
+
+Instead of safelisting 13+ utility classes per color (e.g. `bg-blurple-500`, `hover:bg-blurple-600`, `text-blurple-600`, `border-blurple-500/20`, ...), the library uses a **CSS variable indirection** layer:
+
+When the UnoCSS rule `rl-color-{name}` is applied, it sets these CSS variables:
+
+| Variable        | Maps to              | Purpose           |
+| --------------- | -------------------- | ----------------- |
+| `--rl-bg`       | `--color-{name}-500` | Background color  |
+| `--rl-bg-hover` | `--color-{name}-600` | Hover background  |
+| `--rl-text`     | `--color-{name}-600` | Text / foreground |
+| `--rl-ring`     | `--color-{name}-500` | Focus ring color  |
+| `--rl-border`   | `--color-{name}-500` | Border color      |
+
+Because each `--color-{name}-*` variable is declared with `light-dark()`, these five variables automatically reflect the correct light or dark value based on the element's inherited `color-scheme`. No separate dark-mode overrides are needed.
+
+Component compound variants then reference these variables via arbitrary-value utilities:
+
+```typescript
+// In button.theme.ts (simplified)
+compoundVariants: [
+  ...colors.map((color) => ({
+    variant: "solid",
+    color,
+    classNames: {
+      root:
+        "rl-color-" +
+        color +
+        " bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] focus-visible:ring-[var(--rl-ring)]/50"
+    }
+  }))
+]
+```
+
+The safelist shrinks from 13+ entries per color to just **one**: `rl-color-{name}`.
+
+## What Gets Generated
+
+For every registered color, each component variant uses the `--rl-*` variables with variant-specific opacities:
+
+| Variant   | Pattern                                                                                             |
+| --------- | --------------------------------------------------------------------------------------------------- |
+| `solid`   | `bg-[var(--rl-bg)] text-white hover:bg-[var(--rl-bg-hover)] focus-visible:ring-[var(--rl-ring)]/50` |
+| `outline` | `border-[var(--rl-border)]/20 text-[var(--rl-text)] bg-[var(--rl-bg)]/5`                            |
+| `soft`    | `text-[var(--rl-text)] bg-[var(--rl-bg)]/10`                                                        |
+| `subtle`  | `text-[var(--rl-text)] bg-[var(--rl-bg)]/10`                                                        |
+| `ghost`   | `text-[var(--rl-text)] hover:bg-[var(--rl-bg)]/10`                                                  |
+| `link`    | `text-[var(--rl-text)] hover:underline hover:decoration-current`                                    |
+
+Usage is identical:
+
+```astro
+<RLAButton color="blurple" variant="solid">Click me</RLAButton>
+<RLAButton color="blurple" variant="outline">Click me</RLAButton>
+<RLAButton color="blurple" variant="ghost">Click me</RLAButton>
+```
+
+## Arbitrary Shade Keys
+
+Shade keys are **not limited to 50–950**. The `theme.colors` mapping and CSS variable emission accept any key you provide. This allows non-standard shades like `blurple-374`:
+
+```typescript
+ui({
+  colors: {
+    custom: {
+      "374": "#ff3366"
+    }
+  }
+})
+```
+
+The library emits `--color-custom-374: light-dark(#ff3366, #ff3366)` and maps `bg-custom-374` → `var(--color-custom-374)`. Components that reference the standard 500/600 shades via `rl-color-custom` will be undefined for this color, but direct utility usage (`bg-custom-374`, `text-custom-374`) works as expected.
+
+## Adding a New Color: Checklist
+
+1. **Add the color record** to `astro.config.ts`:
+
+   ```typescript
+   ui({
+     colors: {
+       mygold: {
+         "50": "#fffbe6",
+         /* ... other shades ... */
+         "950": "#1a1200"
+       }
+     }
+   })
+   ```
+
+2. **No other config changes needed** — the `ui()` integration picks up the config automatically.
+
+3. **Restart your dev server** — `astro.config.ts` requires a full restart.
+
+## Light / Dark Mode Awareness
+
+Each color variable is declared once in `:root` using CSS `light-dark()`. The browser resolves each call based on the element's inherited `color-scheme`:
+
+```css
+:root {
+  color-scheme: light dark;
+  --color-blurple-500: light-dark(#7146ff, #9b7aff);
+  --color-blurple-600: light-dark(#6222ff, #b096ff);
+}
+```
+
+No `.dark {}` override block exists. Dark-mode values are baked into the same declaration.
+
+### Color Config Format
+
+Colors accept two formats that can be **mixed** within a single entry:
+
+**Flat format** — a single value used as the base for both light and dark (autogenerated if `autogenerateColorModes` is enabled):
+
+```typescript
+ui({
+  colors: {
+    // Flat: same base in both modes, auto-generates light/dark variants
+    blurple: { "500": "#7146ff", "600": "#6222ff" }
+  }
+})
+```
+
+**Mode format** — explicit `light` and/or `dark` buckets control each scheme independently:
+
+```typescript
+ui({
+  colors: {
+    blurple: {
+      // Base: used as fallback in both modes unless overridden
+      "500": "#7146ff",
+      "600": "#6222ff",
+      // Mode-specific overrides
+      "light": { "600": "#7a55ff" }, // only 600 differs in light
+      "dark": { "500": "#9b7aff", "600": "#b096ff" }
+    }
+  }
+})
+```
+
+Each shade is resolved per-mode using this fallback chain:
+
+| Mode  | Fallback order                             |
+| ----- | ------------------------------------------ |
+| Light | `light` bucket → flat keys → `dark` bucket |
+| Dark  | `dark` bucket → flat keys → `light` bucket |
+
+Defining only one side (e.g. only `dark`) propagates through the chain and autogenerates the other when `autogenerateColorModes` is enabled.
+
+### Under the Hood
+
+The preset's preflight emits one CSS variable per shade using `light-dark()`:
+
+```css
+:root {
+  color-scheme: light dark;
+  --color-blurple-500: light-dark(#7146ff, #9b7aff);
+  --color-blurple-600: light-dark(#6222ff, #b096ff);
+}
+```
+
+There is no `.dark {}` block. The browser resolves each `light-dark()` call based on the nearest ancestor's `color-scheme` value.
+
+## Pinning Components to a Fixed Scheme
+
+The `rl-color-{name}` variables resolve via `light-dark()`, which means they follow whatever `color-scheme` is in effect at that point in the tree. Pinning a component or section is as simple as changing the `color-scheme` on its root:
+
+### `rl-dark` / `rl-light` — wrapper classes
+
+Apply to any element to pin everything inside it to a fixed scheme. These classes emit `color-scheme` from the generated stylesheet — **CSP-safe**, no inline styles needed.
+
+```astro
+<!-- Footer always renders in dark mode regardless of global toggle -->
+<footer class="rl-dark bg-default">
+  <RLAButton color="primary">Always dark primary</RLAButton>
+</footer>
+```
+
+```astro
+<!-- Card always renders in light mode -->
+<div class="rl-light bg-default rounded-xl p-6">
+  Always light content
+</div>
+```
+
+### Component `theme` prop
+
+For pinning a single component without a wrapper:
+
+```astro
+<!-- Theme-aware: follows the global color-scheme -->
+<RLAButton color="blurple" variant="solid">Adaptive</RLAButton>
+
+<!-- Pinned to dark scheme -->
+<RLAButton color="blurple" variant="solid" theme="dark">Always dark</RLAButton>
+
+<!-- Pinned to light scheme -->
+<RLAButton color="blurple" variant="solid" theme="light">Always light</RLAButton>
+```
+
+`theme="dark"` applies `rl-dark` to the component root — it is exactly equivalent to wrapping with `class="rl-dark"`.
+
+### Decision rule
+
+> **Pinning one component?** → `theme="dark"` / `theme="light"` prop
+> **Pinning a section?** → `class="rl-dark"` / `class="rl-light"` on the wrapper
+
+## Overriding a Built-in Color's Values
+
+To change what `primary` looks like, pass its shades in the `colors` record:
+
+```typescript
+ui({
+  colors: {
+    primary: {
+      light: { "500": "#14b8a6", "600": "#0d9488" },
+      dark: { "500": "#2dd4bf", "600": "#14b8a6" }
+    }
+  }
+})
+```
+
+No CSS files or `@theme` blocks needed.
+
+## Refining Color Semantics & Recommendations
+
+To eliminate dark-on-dark or light-on-light contrast issues when using color modes and theme overrides (`rl-light`, `rl-dark`, `theme="dark"`), adhere to these architectural recommendations:
+
+### 1. Match Container Scope with Text Tokens
+
+- **`bg-default` containers**: Always pair with `text-default`, `text-muted`, or `text-toned`.
+- **`bg-inverted` containers**: Pair with `text-inverted` or wrap the subtree in `class="rl-dark"` so all semantic child tokens (`text-default`, `text-muted`) dynamically re-evaluate against dark background values.
+- **Section Pinning Rule**: When creating dark cards or footers inside a light page, apply `class="rl-dark"` to the wrapper element instead of only styling background utilities. This automatically recalibrates `color-scheme`, ensuring `light-dark()` and semantic tokens resolve with optimal contrast.
+
+### 2. Component Variant Contrast Guidelines
+
+- **`solid` Variant**: Emits `text-white` on `bg-500`. For custom scales with bright or yellow 500 shades, set explicit `light`/`dark` overrides in `astro.config.ts` or use `--rl-text-solid` for customized contrast text.
+- **`soft` & `subtle` Variants**: Reference `text-[var(--rl-text)]` with a 10% opacity background (`bg-[var(--rl-bg)]/10`). Because `--rl-text` points to `600`, it maintains high contrast across both light and dark modes without muddying background opacities.
+
+## Theme Source Reference
+
+| Layer             | File                                                |
+| ----------------- | --------------------------------------------------- |
+| Color & Tokens    | `packages/ui/src/config/color.config.ts`            |
+| Button theme      | `packages/ui/src/components/button/button.theme.ts` |
+| UnoCSS preset     | `packages/ui/src/presets/index.ts`                  |
+| Astro integration | `packages/ui/src/index.ts`                          |

@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { ThreeDHoverProps } from "./3d-hover"
-import hover3dTheme from "./3d-hover.theme"
+import { hover3dTheme } from "./3d-hover.theme"
 
 
-const hover3d = scv(hover3dTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ThreeDHoverProps
-
-const classes = resolveClasses(hover3d, {}, useUi("3dHover", uiProp), className);
+const classes = hover3dTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

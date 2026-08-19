@@ -1,23 +1,15 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { AspectRatioProps } from "./aspect-ratio"
-import { resolveTheme } from "../../utils/resolveTheme"
-import aspectRatioThemeDefault, { createAspectRatioTheme } from "./aspect-ratio.theme"
-const aspectRatioTheme = resolveTheme(aspectRatioThemeDefault, createAspectRatioTheme)
+import { aspectRatioTheme } from "./aspect-ratio.theme"
 
 
-const aspectRatio = scv(aspectRatioTheme)
 
 const {
   ratio = 1,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as AspectRatioProps
 
-const classes = resolveClasses(aspectRatio, {}, useUi("aspectRatio", uiProp), className)
+const classes = aspectRatioTheme(Astro.props)
 ---
 <div class:list={[classes.root]} data-slot="root" {...rest}>
   <svg viewBox={`0 0 100 ${(1 / ratio) * 100}`} class="w-full h-auto pointer-events-none block" aria-hidden="true"></svg>

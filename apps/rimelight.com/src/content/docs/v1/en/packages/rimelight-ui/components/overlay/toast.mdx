@@ -1,0 +1,182 @@
+---
+title: "Toast"
+description: "A temporary notification toast component that slides into view."
+---
+
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro"
+import ApiProps from "@/docs/components/ApiProps.astro"
+import ApiSlots from "@/docs/components/ApiSlots.astro"
+import ApiEmits from "@/docs/components/ApiEmits.astro"
+import ApiTheme from "@/docs/components/ApiTheme.astro"
+import ApiChangelog from "@/docs/components/ApiChangelog.astro"
+
+A Toast component used to display brief, temporary notifications to the user.
+
+## Usage
+
+How to use the Toast component in Astro.
+
+<ComponentShowcase>
+  <RLAToast title="Success" description="Your profile has been saved." />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
+    ---
+
+    <RLAToast title="Success" description="Your profile has been saved." />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+## Examples
+
+### Variants
+
+Use the `variant` prop to change the semantic style of the Toast. Supported variants are `"success"`, `"error"`, `"warning"`, `"info"`, and `"default"`.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 w-full max-w-md">
+    <RLAToast variant="success" title="Success" description="Operation completed successfully." />
+    <RLAToast variant="error" title="Error" description="An error occurred while saving." />
+    <RLAToast variant="warning" title="Warning" description="Please check your connection." />
+    <RLAToast variant="info" title="Info" description="A new update is available." />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
+    ---
+
+    <RLAToast variant="success" title="Success" description="Operation completed successfully." />
+    <RLAToast variant="error" title="Error" description="An error occurred while saving." />
+    <RLAToast variant="warning" title="Warning" description="Please check your connection." />
+    <RLAToast variant="info" title="Info" description="A new update is available." />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Action Button
+
+Use the `actionLabel` prop to add an action button to the Toast.
+
+<ComponentShowcase>
+  <RLAToast title="Update Available" description="Version 2.0 is now available." actionLabel="Update Now" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
+    ---
+
+    <RLAToast title="Update Available" description="Version 2.0 is now available." actionLabel="Update Now" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Dismissable and Duration
+
+By default, toasts are dismissable and disappear after 5000ms. Use `dismissable={false}` to hide the close button, or set `duration={0}` to prevent auto-dismissal.
+
+<ComponentShowcase>
+  <div class="flex flex-col gap-2 w-full max-w-md">
+    <RLAToast title="Persistent" description="This notification will not auto-dismiss." duration={0} />
+    <RLAToast title="Non-dismissable" description="This notification cannot be manually closed." dismissable={false} />
+  </div>
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAToast from "@rimelight/ui/components/toast/RLAToast.astro";
+    ---
+
+    <RLAToast title="Persistent" description="This notification will not auto-dismiss." duration={0} />
+    <RLAToast title="Non-dismissable" description="This notification cannot be manually closed." dismissable={false} />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+### Global Toaster & Reactive Store (`RLAToaster`)
+
+For app-wide toasts, mount `<RLAToaster />` globally inside your root layout (`AppLayout.astro`).
+
+```astro
+---
+import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
+---
+
+<AppLayout>
+  <slot />
+  <RLAToaster />
+</AppLayout>
+```
+
+#### Programmatic Dispatch (`addToast`)
+
+Trigger toasts dynamically from any client script or component using the Nanostores store:
+
+```ts
+import { addToast } from "@rimelight/ui/components/toast/store"
+
+addToast({
+  title: "Profile updated",
+  description: "Your changes have been saved.",
+  variant: "success"
+})
+```
+
+#### Cross-Page / Redirect Toasts
+
+To trigger a toast notification on the destination page after a page redirect:
+
+##### Option 1: Session Storage Payload
+
+```ts
+// Set pending toast payload before redirecting
+sessionStorage.setItem(
+  "pending_toast",
+  JSON.stringify({
+    title: "Signed in successfully",
+    description: "Welcome back!",
+    variant: "success"
+  })
+)
+
+window.location.href = "/dashboard"
+```
+
+##### Option 2: Generic URL Query Parameters
+
+```ts
+// Redirect with query parameters - RLAToaster automatically displays and cleans the URL
+window.location.href = "/dashboard?toast_title=Signed%20in%20successfully&toast_variant=success"
+```
+
+## API
+
+### Props
+
+<ApiProps component="toast" />
+
+### Slots
+
+<ApiSlots component="toast" />
+
+### Emits
+
+<ApiEmits component="toast" />
+
+## Theme
+
+<ApiTheme component="toast" />
+
+## Changelog
+
+<ApiChangelog component="toast" />

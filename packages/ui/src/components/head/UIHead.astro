@@ -6,7 +6,9 @@ export interface UIHeadProps {
   transitions?: boolean;
 }
 
-const { transitions = true } = Astro.props as UIHeadProps;
+const {
+  transitions = true
+} = Astro.props as UIHeadProps;
 ---
 
 <!-- Theme Mode Flash Prevention -->
@@ -18,7 +20,7 @@ const { transitions = true } = Astro.props as UIHeadProps;
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
 
-    function applyTheme(doc) {
+    function applyTheme(doc: any) {
       var pref = getThemePreference();
       doc.documentElement.classList.toggle('dark',  pref === 'dark');
       doc.documentElement.classList.toggle('light', pref === 'light');
@@ -26,7 +28,7 @@ const { transitions = true } = Astro.props as UIHeadProps;
 
     applyTheme(document);
 
-    document.addEventListener('astro:before-swap', function(e) {
+    document.addEventListener('astro:before-swap', function(e: any) {
       applyTheme(e.newDocument);
     });
 
@@ -41,13 +43,15 @@ const { transitions = true } = Astro.props as UIHeadProps;
   (function() {
     'use strict';
 
-    if (!window.RLHeaderStack) {
-      window.RLHeaderStack = {
-        layers: [],
-        register: function(id, order, naturalHeight, isVisible, el, type) {
+    const w = window as any;
+
+    if (!w.RLHeaderStack) {
+      w.RLHeaderStack = {
+        layers: [] as any[],
+        register: function(id: string, order: number, naturalHeight: number, isVisible: boolean, el: any, type?: string) {
           if (el && !el.isConnected) return;
           if (type === undefined) type = el && el.getAttribute ? (el.getAttribute('data-layer-type') || 'header') : 'header';
-          let layer = this.layers.find(function(l) { return l.id === id; });
+          let layer = this.layers.find(function(l: any) { return l.id === id; });
           if (!layer) {
             layer = { id: id, type: type, order: order, naturalHeight: naturalHeight, isVisible: isVisible, el: el };
             this.layers.push(layer);
@@ -63,10 +67,10 @@ const { transitions = true } = Astro.props as UIHeadProps;
           }
           this.update();
         },
-        unregister: function(id) {
-          const layer = this.layers.find(function(l) { return l.id === id; });
+        unregister: function(id: string) {
+          const layer = this.layers.find(function(l: any) { return l.id === id; });
           if (layer && layer.el) {
-            const el = layer.el;
+            const el = layer.el as any;
             if (el.rlScrollListener) {
               window.removeEventListener('scroll', el.rlScrollListener);
             }
@@ -74,11 +78,11 @@ const { transitions = true } = Astro.props as UIHeadProps;
               el.rlResizeObserver.disconnect();
             }
           }
-          this.layers = this.layers.filter(function(l) { return l.id !== id; });
+          this.layers = this.layers.filter(function(l: any) { return l.id !== id; });
           this.update();
         },
         sortLayers: function() {
-          this.layers.sort(function(a, b) {
+          this.layers.sort(function(a: any, b: any) {
             if (a.type !== b.type) return a.type === 'banner' ? -1 : 1;
             return a.order - b.order;
           });
@@ -87,46 +91,48 @@ const { transitions = true } = Astro.props as UIHeadProps;
           let currentTop = 0;
           for (let i = 0; i < this.layers.length; i++) {
             const layer = this.layers[i];
-            if (layer.el) {
-               const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
-               layer.el.style.top = topPx;
-               layer.el.dataset.topPx = topPx;
+            if (layer && layer.el) {
+              const topPx = layer.isVisible ? currentTop + 'px' : '-' + layer.naturalHeight + 'px';
+              layer.el.style.top = topPx;
+              layer.el.dataset.topPx = topPx;
               if (layer.isVisible) {
                 layer.el.classList.remove('opacity-0', '!pointer-events-none');
               } else {
                 layer.el.classList.add('opacity-0', '!pointer-events-none');
               }
               document.documentElement.style.setProperty('--rl-header-bottom', 'calc(' + topPx + ' + ' + layer.naturalHeight + 'px)');
+              if (layer.isVisible) currentTop += layer.naturalHeight;
             }
-            if (layer.isVisible) currentTop += layer.naturalHeight;
           }
           document.documentElement.style.setProperty('--rl-total-header-height', currentTop + 'px');
         }
       };
     }
 
-    function getHeight(el) {
+    function getHeight(el: any): number {
       if (!el) return 64;
       const h = el.offsetHeight;
       return h > 0 ? h : 64;
     }
 
-    function dismissBanner(banner) {
+    function dismissBanner(banner: any) {
       var key = banner.getAttribute('data-dismiss-key');
       if (key) localStorage.setItem(key, 'true');
       banner.classList.add('hidden', '!pointer-events-none');
       banner.setAttribute('data-rla-banner', 'false');
-      if (window.RLHeaderStack) window.RLHeaderStack.unregister(banner.id);
+      if (w.RLHeaderStack) w.RLHeaderStack.unregister(banner.id);
     }
 
     function checkDismissed() {
       var banners = document.querySelectorAll("[data-rla-banner='true']");
       for (var i = 0; i < banners.length; i++) {
         var b = banners[i];
-        var key = b.getAttribute('data-dismiss-key');
-        if (key && localStorage.getItem(key) === 'true') {
-          b.classList.add('hidden', '!pointer-events-none');
-          b.setAttribute('data-rla-banner', 'false');
+        if (b) {
+          var key = b.getAttribute('data-dismiss-key');
+          if (key && localStorage.getItem(key) === 'true') {
+            b.classList.add('hidden', '!pointer-events-none');
+            b.setAttribute('data-rla-banner', 'false');
+          }
         }
       }
     }
@@ -135,8 +141,13 @@ const { transitions = true } = Astro.props as UIHeadProps;
       return "[data-rla-header='true'],[data-rla-banner='true']";
     }
 
-    function initLayer(el) {
-      const RL = window.RLHeaderStack;
+    function initLayer(el: any) {
+      const RL = w.RLHeaderStack;
+      if (!RL) return;
+      if (el.getAttribute('data-rla-banner') === 'false' || el.classList.contains('hidden')) {
+        RL.unregister(el.id);
+        return;
+      }
       const id = el.id;
       const type = el.getAttribute('data-layer-type') || 'header';
       const stackIndex = parseInt(el.getAttribute('data-stack-index') || '0', 10);
@@ -212,51 +223,55 @@ const { transitions = true } = Astro.props as UIHeadProps;
         const layers = document.querySelectorAll(selector());
         for (let i = 0; i < layers.length; i++) initLayer(layers[i]);
 
-        window.rlHeaderObserver = new MutationObserver(function(mutations) {
+        w.rlHeaderObserver = new MutationObserver(function(mutations) {
           for (let i = 0; i < mutations.length; i++) {
-            const added = mutations[i].addedNodes;
+            const added = mutations[i]?.addedNodes || [];
             for (let j = 0; j < added.length; j++) {
-              const node = added[j];
-              if (node.nodeType !== 1) continue;
+              const node = added[j] as any;
+              if (!node || node.nodeType !== 1) continue;
               if (node.matches && node.matches(selector())) initLayer(node);
               if (node.querySelectorAll) {
                 const nested = node.querySelectorAll(selector());
                 for (let k = 0; k < nested.length; k++) initLayer(nested[k]);
               }
             }
-            const removed = mutations[i].removedNodes;
+            const removed = mutations[i]?.removedNodes || [];
             for (let j = 0; j < removed.length; j++) {
-              const node = removed[j];
-              if (node.nodeType !== 1) continue;
-              if (node.matches && node.matches(selector())) window.RLHeaderStack.unregister(node.id);
+              const node = removed[j] as any;
+              if (!node || node.nodeType !== 1) continue;
+              if (node.matches && node.matches(selector()) && w.RLHeaderStack) w.RLHeaderStack.unregister(node.id);
               if (node.querySelectorAll) {
                 const nested = node.querySelectorAll(selector());
-                for (let k = 0; k < nested.length; k++) window.RLHeaderStack.unregister(nested[k].id);
+                for (let k = 0; k < nested.length; k++) {
+                  if (w.RLHeaderStack) w.RLHeaderStack.unregister(nested[k].id);
+                }
               }
             }
           }
         });
-        window.rlHeaderObserver.observe(document.body, { childList: true, subtree: true });
+        w.rlHeaderObserver.observe(document.body, { childList: true, subtree: true });
       } else {
         document.addEventListener('DOMContentLoaded', function() { startObserver(); });
       }
     }
 
     function setupStack() {
-      if (window.rlHeaderObserver) {
-        window.rlHeaderObserver.disconnect();
-        window.rlHeaderObserver = null;
+      if (w.rlHeaderObserver) {
+        w.rlHeaderObserver.disconnect();
+        w.rlHeaderObserver = null;
       }
-      const RL = window.RLHeaderStack;
-      RL.layers = [];
-      RL.update();
+      const RL = w.RLHeaderStack;
+      if (RL) {
+        RL.layers = [];
+        RL.update();
+      }
       startObserver();
     }
 
-    if (!window.rlBannerInit) {
-      window.rlBannerInit = true;
-      document.addEventListener('click', function(e) {
-        var btn = e.target.closest('[data-banner-close]');
+    if (!w.rlBannerInit) {
+      w.rlBannerInit = true;
+      document.addEventListener('click', function(e: any) {
+        var btn = e.target?.closest?.('[data-banner-close]');
         if (!btn) return;
         var banner = btn.closest('[data-rla-banner]');
         if (!banner) return;
@@ -265,13 +280,13 @@ const { transitions = true } = Astro.props as UIHeadProps;
     }
 
     document.addEventListener('astro:before-swap', function() {
-      if (window.rlHeaderObserver) {
-        window.rlHeaderObserver.disconnect();
-        window.rlHeaderObserver = null;
+      if (w.rlHeaderObserver) {
+        w.rlHeaderObserver.disconnect();
+        w.rlHeaderObserver = null;
       }
-      if (window.RLHeaderStack) {
-        window.RLHeaderStack.layers = [];
-        window.RLHeaderStack.update();
+      if (w.RLHeaderStack) {
+        w.RLHeaderStack.layers = [];
+        w.RLHeaderStack.update();
       }
     });
 

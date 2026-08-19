@@ -1,22 +1,17 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardPanelProps } from "./dashboard-panel"
-import dashboardPanelTheme from "./dashboard-panel.theme"
+import { dashboardPanelTheme } from "./dashboard-panel.theme"
 
-const dashboardPanel = scv(dashboardPanelTheme)
 
 const {
   resizable = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardPanelProps
 
-const classes = resolveClasses(dashboardPanel, {
+const classes = dashboardPanelTheme({
+  ...Astro.props,
   size: false
-}, useUi("dashboardPanel", uiProp), className);
+});
 ---
 <div class={classes.root} data-slot="root" {...rest}>
   <slot>

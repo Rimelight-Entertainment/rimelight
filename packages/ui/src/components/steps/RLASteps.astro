@@ -1,21 +1,15 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { StepsProps } from "./steps"
-import stepsTheme from "./steps.theme"
+import { stepsTheme } from "./steps.theme"
 
 
-const steps = scv(stepsTheme)
 
 const {
   size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as StepsProps
 
-const classes = resolveClasses(steps, { size }, useUi("steps", uiProp), className)
+const classes = stepsTheme(Astro.props)
 ---
 
 <div class:list={[classes.root, "rl-steps"]} data-slot="root" data-size={size} {...rest}>

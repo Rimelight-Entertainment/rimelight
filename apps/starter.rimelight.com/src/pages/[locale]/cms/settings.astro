@@ -1,0 +1,159 @@
+---
+import { auth } from "@/auth/auth"
+import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
+import { db } from "@/db"
+import { role } from "@/db/schema"
+import { isNull, desc } from "drizzle-orm"
+
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+
+if (!session) {
+  return Astro.redirect("/auth/sign-in")
+}
+
+const dbRoles = await db.select().from(role).where(isNull(role.deletedAt)).orderBy(desc(role.createdAt))
+const defaultRoles = [
+  { name: "admin", displayName: "Administrator", description: "Full system & CMS access", permissions: ["cms:read", "cms:write", "cms:publish", "cms:delete", "templates:create", "templates:edit", "roles:manage"] },
+  { name: "editor", displayName: "Editor", description: "Can create and publish pages", permissions: ["cms:read", "cms:write", "cms:publish", "templates:read"] },
+  { name: "author", displayName: "Author", description: "Can create and edit drafts", permissions: ["cms:read", "cms:write"] },
+  { name: "reviewer", displayName: "Reviewer", description: "Can review & approve versions", permissions: ["cms:read", "cms:approve"] },
+  { name: "viewer", displayName: "Viewer", description: "Read-only access", permissions: ["cms:read"] }
+]
+
+const rolesList = (dbRoles.length > 0 ? dbRoles : defaultRoles).map((r) =>
+  Object.assign({}, r, {
+    permissionsList: typeof r.permissions === "string" ? JSON.parse(r.permissions) : (r.permissions || [])
+  })
+)
+---
+
+<CMSDashboardLayout title="Settings" description="CMS Settings" activeSection="settings">
+  <Fragment slot="toolbar-right">
+    <RLAButton variant="solid" color="primary" size="sm">
+      Save Settings
+    </RLAButton>
+  </Fragment>
+
+  <div class="max-w-3xl mx-auto space-y-8">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-6">General Settings</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Default Locale</label>
+          <RLAInput type="text" value="en" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
+          <RLAInput type="text" value="Rimelight CMS" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Items per Page</label>
+          <RLAInput type="number" value="20" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Roles & Permissions Section -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Roles & Permissions</h2>
+          <p class="text-sm text-gray-500 mt-1">Database-backed auth roles and their permissions matrix</p>
+        </div>
+        <RLABadge variant="soft" color="blue" size="sm">Auth System DB</RLABadge>
+      </div>
+
+      <div class="space-y-4">
+        {rolesList.map((r) => (
+          <div class="p-4 border border-gray-200 rounded-lg space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-gray-900">{r.displayName || r.name}</span>
+                <span class="text-xs px-2 py-0.5 bg-gray-100 font-mono text-gray-600 rounded">{r.name}</span>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600">{r.description}</p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              {r.permissionsList.map((perm: string) => (
+                <span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded font-mono">{perm}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-6">Editor Settings</h2>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-gray-900">Auto-save Drafts</p>
+            <p class="text-sm text-gray-500">Automatically save drafts every 30 seconds</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-gray-900">Require Approval for Publishing</p>
+            <p class="text-sm text-gray-500">All pages must be approved before publishing</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-gray-900">Enable Version History</p>
+            <p class="text-sm text-gray-500">Keep track of all page versions</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-6">Block Settings</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Allowed Block Types</label>
+          <div class="flex flex-wrap gap-2">
+            {['ParagraphBlock', 'HeadingBlock', 'ImageBlock', 'CodeBlock', 'QuoteBlock', 'CalloutBlock', 'DialogueBlock', 'SceneBlock', 'ScriptBlock'].map((block) => (
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{block}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-red-200">
+      <h2 class="text-xl font-semibold mb-6 text-red-700">Danger Zone</h2>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+          <div>
+            <p class="font-medium text-red-800">Delete All Drafts</p>
+            <p class="text-sm text-red-600">Permanently delete all unpublished drafts</p>
+          </div>
+          <RLAButton variant="outline" color="error">Delete Drafts</RLAButton>
+        </div>
+        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+          <div>
+            <p class="font-medium text-red-800">Reset CMS</p>
+            <p class="text-sm text-red-600">Delete all pages, templates, and versions (cannot be undone)</p>
+          </div>
+          <RLAButton variant="solid" color="error">Reset CMS</RLAButton>
+        </div>
+      </div>
+    </div>
+  </div>
+</CMSDashboardLayout>

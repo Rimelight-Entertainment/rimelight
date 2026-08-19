@@ -1,24 +1,10 @@
 packages:
+  - "apps/*"
   - "packages/*"
-configDependencies:
-  "@pnpm/pacquet": 0.11.12
-linkWorkspacePackages: true
-supportedArchitectures:
-  cpu:
-    - current
-    - wasm32
-packageImportMethod: copy
 saveExact: true
-#minimumReleaseAge: 4320 # Minutes = 3 Days
-minimumReleaseAgeExclude:
-  - "@rimelight/*"
-  # Vulnerabilty Fixes
-  - brace-expansion
 overrides:
-  esbuild: "0.28.1"
+  # Vulnerability Fixes
+  esbuild: ">=0.24.3"
 allowBuilds:
-  better-sqlite3: true
   esbuild: true
-  sharp: true
-  vue-demi: true
   workerd: true

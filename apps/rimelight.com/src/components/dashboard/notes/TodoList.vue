@@ -1,0 +1,196 @@
+<script setup lang="ts">
+import { ref } from "vue"
+import { scv } from "css-variants"
+import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
+import RLVInput from "@rimelight/ui/components/input/RLVInput.vue"
+import { useTodos } from "@/composables"
+import TodoCard from "./TodoCard.vue"
+
+export interface Todo {
+  id: string
+  title: string
+  description?: string
+  completed: boolean
+  isArchived?: boolean
+}
+
+/* region Props */
+export interface TodoListProps {
+  todos: Todo[]
+  archivedTodos?: Todo[]
+  loading?: boolean
+}
+
+const { todos, archivedTodos = [], loading = false } = defineProps<TodoListProps>()
+/* endregion */
+
+/* region Emits */
+export interface TodoListEmits {}
+defineEmits<TodoListEmits>()
+/* endregion */
+
+/* region Styles */
+const todoListStyles = scv({
+  slots: [
+    "root",
+    "header",
+    "headerTitle",
+    "mainContainer",
+    "quickAddWrapper",
+    "inputRow",
+    "descriptionRow",
+    "todoGrid",
+    "emptyText",
+    "archivedGrid"
+  ],
+  base: {
+    root: "flex flex-col gap-4",
+    header: "flex items-center justify-between",
+    headerTitle:
+      "text-xs font-bold tracking-wider text-neutral-400 dark:text-neutral-500 uppercase",
+    mainContainer: "flex flex-col gap-4",
+    quickAddWrapper: "flex flex-col gap-2",
+    inputRow: "flex gap-2 items-center",
+    descriptionRow: "pl-0",
+    todoGrid: "flex flex-col gap-1",
+    emptyText: "text-xs text-neutral-400 dark:text-neutral-500 text-center py-4",
+    archivedGrid: "flex flex-col gap-1"
+  }
+})
+
+const styles = todoListStyles()
+/* endregion */
+
+/* region State */
+const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos()
+
+const t = (key: string) => {
+  const keys: Record<string, string> = {
+    "todo.title": "Tasks",
+    "todo.hide_archive": "Hide Archived",
+    "todo.show_archive": "Show Archived",
+    "todo.add_placeholder": "Add a task...",
+    "todo.description_placeholder": "Add a description (optional)...",
+    "todo.no_active": "No active tasks",
+    "common.archive": "Archived Tasks"
+  }
+  return keys[key] || key
+}
+
+const newTodoTitle = ref("")
+const newTodoDescription = ref("")
+const isAdding = ref(false)
+const showArchived = ref(false)
+/* endregion */
+
+/* region Logic */
+const handleAddTodo = async () => {
+  if (!newTodoTitle.value.trim()) return
+  isAdding.value = true
+  try {
+    await createTodo(newTodoTitle.value.trim(), newTodoDescription.value.trim() || undefined)
+    newTodoTitle.value = ""
+    newTodoDescription.value = ""
+  } finally {
+    isAdding.value = false
+  }
+}
+/* endregion */
+
+defineOptions({ name: "TodoList" })
+</script>
+
+<template>
+  <div :class="styles.root">
+    <!-- Header -->
+    <div :class="styles.header">
+      <h3 :class="styles.headerTitle">
+        {{ t("todo.title") }}
+      </h3>
+      <RLVButton
+        :icon="showArchived ? 'i-lucide-archive-x' : 'i-lucide-archive'"
+        color="neutral"
+        size="sm"
+        variant="ghost"
+        :label="showArchived ? t('todo.hide_archive') : t('todo.show_archive')"
+        @click="showArchived = !showArchived"
+      />
+    </div>
+
+    <!-- Container Card -->
+    <div
+      class="p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900"
+    >
+      <div :class="styles.mainContainer">
+        <!-- Quick Add -->
+        <div :class="styles.quickAddWrapper">
+          <div :class="styles.inputRow">
+            <RLVInput
+              v-model="newTodoTitle"
+              :placeholder="t('todo.add_placeholder')"
+              class="flex-1"
+              @keydown.enter="handleAddTodo"
+            />
+            <RLVButton icon="i-lucide-plus" size="sm" :loading="isAdding" @click="handleAddTodo" />
+          </div>
+
+          <transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="transform -translate-y-2 opacity-0"
+            enter-to-class="transform translate-y-0 opacity-100"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="transform translate-y-0 opacity-100"
+            leave-to-class="transform -translate-y-2 opacity-0"
+          >
+            <div v-if="newTodoTitle.length > 0" :class="styles.descriptionRow">
+              <RLVInput
+                v-model="newTodoDescription"
+                :placeholder="t('todo.description_placeholder')"
+                size="sm"
+                class="w-full"
+                @keydown.enter="handleAddTodo"
+              />
+            </div>
+          </transition>
+        </div>
+
+        <!-- Active Todos Grid -->
+        <div :class="styles.todoGrid">
+          <TodoCard
+            v-for="todo in todos"
+            :key="todo.id"
+            :todo="todo"
+            @toggle="(completed) => toggleTodo(todo.id, completed)"
+            @archive="archiveTodo(todo.id)"
+          />
+          <p v-if="todos.length === 0" :class="styles.emptyText">
+            {{ t("todo.no_active") }}
+          </p>
+        </div>
+
+        <!-- Archived Section -->
+        <template v-if="showArchived">
+          <div class="relative flex py-2 items-center">
+            <div class="flex-grow border-t border-neutral-200 dark:border-neutral-800"></div>
+            <span
+              class="flex-shrink mx-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase"
+            >
+              {{ t("common.archive") }}
+            </span>
+            <div class="flex-grow border-t border-neutral-200 dark:border-neutral-800"></div>
+          </div>
+
+          <div :class="styles.archivedGrid">
+            <TodoCard
+              v-for="todo in archivedTodos"
+              :key="todo.id"
+              :todo="todo"
+              @restore="restoreTodo(todo.id)"
+              @delete="deleteTodo(todo.id)"
+            />
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>

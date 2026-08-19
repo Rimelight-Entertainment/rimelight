@@ -1,0 +1,10 @@
+{
+  "extends": "../../.config/tsconfig.base.json",
+  "include": ["**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

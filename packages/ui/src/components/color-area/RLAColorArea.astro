@@ -1,12 +1,6 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import { resolveTheme } from "../../utils/resolveTheme"
-import colorAreaThemeDefault, { createColorAreaTheme } from "./color-area.theme"
-const colorAreaTheme = resolveTheme(colorAreaThemeDefault, createColorAreaTheme)
+import { colorAreaTheme } from "./color-area.theme"
 
-const colorArea = scv(colorAreaTheme)
 
 export interface Props {
   colorSpace?: "hsl" | "rgb" | "hsb"
@@ -38,15 +32,10 @@ const {
   yName,
   color = "primary",
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as Props
 
-const classes = resolveClasses(colorArea, {
-  color,
-  theme
-}, useUi("colorArea", uiProp), className)
+const classes = colorAreaTheme(Astro.props)
 
 const initialValue = modelValue || defaultValue
 ---

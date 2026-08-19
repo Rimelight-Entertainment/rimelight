@@ -1,25 +1,17 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { SplitterProps } from "./splitter"
-import splitterTheme from "./splitter.theme"
+import { splitterTheme } from "./splitter.theme"
 
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const splitter = scv(splitterTheme)
 
 const {
   direction = "horizontal",
   defaultSizes = [50, 50],
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as SplitterProps
 
-const classes = resolveClasses(splitter, {
-  direction
-}, useUi("splitter", uiProp), className)
+const classes = splitterTheme(Astro.props)
 
 // Normalise sizes so they sum to 100
 const total = defaultSizes.reduce((s, v) => s + v, 0)
@@ -74,7 +66,7 @@ await Promise.all(
           >
             <RLAIcon
               name={direction === "horizontal" ? "gripVertical" : "gripHorizontal"}
-              class="size-3.5 text-muted-foreground/50"
+              class="size-3.5 text-muted/50"
               aria-hidden="true"
             />
           </div>

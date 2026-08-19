@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ToastProps } from "./toast"
-import toastTheme from "./toast.theme"
+import { toastTheme } from "./toast.theme"
 
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const toast = scv(toastTheme)
 
 const {
   title,
@@ -15,16 +11,17 @@ const {
   variant = "default",
   actionLabel,
   duration = 6000,
-  color = "primary",
-  ui: uiProp,
-  class: className,
   dismissable = true,
   ...rest
 } = Astro.props as ToastProps
 
-const classes = resolveClasses(toast, {
-  variant: ["success", "error", "warning", "info"].includes(variant ?? "") ? variant : "default"
-}, useUi("toast", uiProp), className)
+const classes = toastTheme({
+  ...Astro.props,
+  variant: ["success",
+  "error",
+  "warning",
+  "info"].includes(variant ?? "") ? variant : "default"
+})
 
 const variantIcons: Record<string, string> = {
   default: "bell",

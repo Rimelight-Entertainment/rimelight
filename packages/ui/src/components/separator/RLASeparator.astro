@@ -1,44 +1,23 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { SeparatorProps } from "./separator"
-import { resolveTheme } from "../../utils/resolveTheme"
-import separatorThemeDefault, { createSeparatorTheme } from "./separator.theme"
-const separatorTheme = resolveTheme(separatorThemeDefault, createSeparatorTheme)
+import { separatorTheme } from "./separator.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
-import { cx } from "css-variants"
 
 
-const separator = scv(separatorTheme)
 
 const {
   orientation = "horizontal",
-  color = "neutral",
   size = "xs",
-  type = "solid",
   label,
   icon,
   avatar,
-  position = "center",
   decorative = true,
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as SeparatorProps & {
-  color?: string
-  size?: "xs" | "sm" | "md" | "lg" | "xl"
-  type?: "solid" | "dashed" | "dotted"
-  position?: "start" | "center" | "end"
-}
+} = Astro.props as SeparatorProps
 
-const classes = resolveClasses(separator, {
-  orientation,
-  color: color as "neutral",
-  size: size as "xs",
-  type: type as "solid",
-  position: position as "center"
-}, useUi("separator", uiProp), className)
+
+
+const classes = separatorTheme(Astro.props)
 ---
 <div
   class={classes.root}
@@ -66,7 +45,7 @@ const classes = resolveClasses(separator, {
         <slot name="icon">
           {icon && (
             <span class={classes.icon} data-slot="icon">
-              <span class={cx(icon)} aria-hidden="true" />
+              <span class={icon as string} aria-hidden="true" />
             </span>
           )}
         </slot>

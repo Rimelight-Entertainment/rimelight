@@ -1,13 +1,10 @@
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createStepsTheme = () =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: "w-full"
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createStepsTheme()
+export const stepsTheme = defineTheme("steps", {
+  slots: ["root"],
+  base: {
+    root: "w-full"
+  },
+  variants: {},
+  defaultVariants: {}
+})

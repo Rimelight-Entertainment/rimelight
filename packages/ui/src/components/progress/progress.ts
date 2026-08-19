@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../types/component"
+import type { Theme, ThemeColor } from "../../types"
 
 export interface ProgressProps {
   /**

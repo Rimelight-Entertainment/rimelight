@@ -1,0 +1,113 @@
+---
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro"
+import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro"
+import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro"
+import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro"
+import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro"
+import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro"
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro"
+import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+
+const currentLocale = Astro.currentLocale ?? "en";
+
+const cmsNavItems = [
+  { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: getRelativeLocaleUrl(currentLocale, "/cms"), id: "dashboard" },
+  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: getRelativeLocaleUrl(currentLocale, "/cms/templates"), id: "templates" },
+  { icon: "i-lucide-file", label: t("cms.nav_pages"), href: getRelativeLocaleUrl(currentLocale, "/cms/pages"), id: "pages" },
+  { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: getRelativeLocaleUrl(currentLocale, "/cms/versions"), id: "versions" },
+]
+
+const settingsNavItem = { icon: "i-lucide-settings", label: t("cms.nav_settings"), href: getRelativeLocaleUrl(currentLocale, "/cms/settings"), id: "settings" }
+
+interface CMSDashboardLayoutProps {
+  title: string;
+  description: string;
+  activeSection?: string;
+  toolbarLeft?: any;
+  toolbarRight?: any;
+}
+
+const { title, description, activeSection = "dashboard", toolbarLeft, toolbarRight } = Astro.props as CMSDashboardLayoutProps;
+---
+
+<DashboardLayout title={title} description={description} noindex={true}>
+  <div class="flex-1 flex flex-col w-full h-full min-h-0">
+    <RLADashboardGroup>
+    <RLADashboardSidebar collapsible>
+      <Fragment slot="header">
+        <div class="flex items-center gap-2.5">
+          <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+            <RLAIcon name="i-lucide-shield" class="size-5 text-primary group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
+          </div>
+          <div class="flex flex-col truncate group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>
+            <span class="font-semibold text-highlighted text-sm leading-none">{t("cms.sidebar_app_name")}</span>
+            <span class="text-xs text-muted-foreground mt-0.5">Content Management System</span>
+          </div>
+        </div>
+        <RLADashboardSidebarCollapse />
+      </Fragment>
+
+      <nav class="flex flex-col gap-1" data-dashboard-nav-container>
+        {cmsNavItems.map((item) => (
+          <a
+            href={item.href}
+            data-dashboard-nav
+            data-dashboard-section={item.id}
+            class={
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0 " +
+              (item.id === activeSection
+                ? "bg-muted text-highlighted"
+                : "text-default hover:text-highlighted hover:bg-muted")
+            }
+          >
+            <RLAIcon name={item.icon} class="size-5 shrink-0" />
+            <span class="truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-nav-label>{item.label}</span>
+          </a>
+        ))}
+      </nav>
+
+      <Fragment slot="footer">
+        <div class="w-full" data-dashboard-nav-container>
+          <a
+            href={settingsNavItem.href}
+            data-dashboard-nav
+            data-dashboard-section={settingsNavItem.id}
+            class={
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors w-full group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0 " +
+              ("settings" === activeSection
+                ? "bg-muted text-highlighted"
+                : "text-default hover:text-highlighted hover:bg-muted")
+            }
+          >
+            <RLAIcon name={settingsNavItem.icon} class="size-5 shrink-0" />
+            <span class="truncate flex-1 group-data-[collapsed=true]:hidden" data-dashboard-nav-label>{settingsNavItem.label}</span>
+          </a>
+        </div>
+      </Fragment>
+    </RLADashboardSidebar>
+
+    <RLADashboardPanel>
+      <RLADashboardNavbar slot="header" title={title} icon="i-lucide-file-stack">
+        <Fragment slot="left">
+          <h1 class="text-xl font-bold text-highlighted" data-dashboard-navbar-title>{title}</h1>
+        </Fragment>
+      </RLADashboardNavbar>
+
+      <div slot="body" class="flex flex-col gap-6 flex-1 h-full min-h-0">
+        {(toolbarLeft || toolbarRight || Astro.slots.has("toolbar-left") || Astro.slots.has("toolbar-right")) && (
+          <RLADashboardToolbar>
+            <Fragment slot="left">
+              <slot name="toolbar-left">{toolbarLeft}</slot>
+            </Fragment>
+            <Fragment slot="right">
+              <slot name="toolbar-right">{toolbarRight}</slot>
+            </Fragment>
+          </RLADashboardToolbar>
+        )}
+        <slot />
+      </div>
+    </RLADashboardPanel>
+  </RLADashboardGroup>
+  </div>
+</DashboardLayout>

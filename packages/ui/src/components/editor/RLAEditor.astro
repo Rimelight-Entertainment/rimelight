@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { EditorProps } from "./editor"
-import editorTheme from "./editor.theme"
+import { editorTheme } from "./editor.theme"
 
 
-const editor = scv(editorTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as EditorProps
-
-const classes = resolveClasses(editor, {}, useUi("editor", uiProp), className);
+const classes = editorTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

@@ -1,0 +1,64 @@
+{
+  "name": "@rimelight/auth",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Rimelight Entertainment's Authentication Package",
+  "homepage": "https://rimelight.com/docs",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rimelight Entertainment"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
+  },
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server/index.ts",
+    "./client": "./src/client/index.ts",
+    "./permissions": "./src/permissions/index.ts",
+    "./schema/drizzle": "./src/schema/drizzle/index.ts",
+    "./plugins/reserved-usernames": "./src/plugins/reserved-usernames/index.ts",
+    "./plugins/discriminator-tag": "./src/plugins/discriminator-tag/index.ts",
+    "./plugins/synthetic-user": "./src/plugins/synthetic-user/index.ts",
+    "./plugins/construction-guest": "./src/plugins/construction-guest/index.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "check": "pnpm audit --audit-level=moderate && vp check --fix"
+  },
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "1.6.30",
+    "better-auth": "1.6.30",
+    "drizzle-orm": "0.45.2"
+  },
+  "peerDependencies": {
+    "better-auth": ">=1.0.0",
+    "drizzle-orm": ">=0.30.0",
+    "hono": ">=4.12.34"
+  },
+  "peerDependenciesMeta": {
+    "hono": {
+      "optional": true
+    }
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.22.0",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=26.7.0"
+  }
+}

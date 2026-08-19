@@ -1,5 +1,9 @@
 export interface HeaderProps {
   /**
+   * HTML tag to render for the root element ("header", "div", "aside", etc.).
+   */
+  as?: "header" | "div" | "aside" | "section" | (string & {})
+  /**
    * Whether to contain the header content within a max-width container.
    */
   contain?: boolean

@@ -1,0 +1,524 @@
+---
+import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
+import RLACard from "@rimelight/ui/components/card/RLACard.astro";
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
+import RLATable from "@rimelight/ui/components/table/RLATable.astro";
+import { db } from "@/db";
+import { role as roleTable } from "@/db/schema";
+import { isNull, desc } from "drizzle-orm";
+
+// Pre-defined available permission statements grouped logically
+const PERMISSION_GROUPS = [
+	{
+		name: "CMS Content",
+		icon: "i-lucide-file-text",
+		permissions: [
+			{ id: "cms:read", label: "Read Content", description: "View pages and drafts" },
+			{ id: "cms:write", label: "Write/Draft Content", description: "Create and edit draft content" },
+			{ id: "cms:publish", label: "Publish Content", description: "Publish or unpublish pages" },
+			{ id: "cms:delete", label: "Delete Content", description: "Permanently delete content" },
+			{ id: "cms:approve", label: "Approve Content", description: "Review and approve pending content" }
+		]
+	},
+	{
+		name: "Templates & Design",
+		icon: "i-lucide-layout-template",
+		permissions: [
+			{ id: "templates:read", label: "View Templates", description: "Read-only access to component library" },
+			{ id: "templates:create", label: "Create Templates", description: "Build new reusable templates" },
+			{ id: "templates:edit", label: "Edit Templates", description: "Modify global layout templates" },
+			{ id: "templates:delete", label: "Delete Templates", description: "Remove layout templates" }
+		]
+	},
+	{
+		name: "Security & Governance",
+		icon: "i-lucide-shield-check",
+		permissions: [
+			{ id: "roles:manage", label: "Manage Roles & Perms", description: "Create, edit, and assign RBAC roles" },
+			{ id: "users:manage", label: "Manage Users", description: "Invite, ban, and modify user accounts" },
+			{ id: "audit:view", label: "View Audit Logs", description: "Inspect system action logs" }
+		]
+	}
+];
+
+const ALL_AVAILABLE_PERMISSIONS = PERMISSION_GROUPS.flatMap(g => g.permissions);
+
+const DEFAULT_ROLES = [
+	{
+		id: "def-owner",
+		name: "owner",
+		displayName: "Owner",
+		description: "Primary system and organization owner with complete control over all assets and settings",
+		permissions: ["*"],
+		isSystem: true
+	},
+	{
+		id: "def-admin",
+		name: "admin",
+		displayName: "Administrator",
+		description: "Full access to manage system settings, users, CMS content, and page templates",
+		permissions: ["cms:read", "cms:write", "cms:publish", "cms:delete", "templates:read", "templates:create", "templates:edit", "templates:delete", "roles:manage", "users:manage", "audit:view"],
+		isSystem: true
+	},
+	{
+		id: "def-editor",
+		name: "editor",
+		displayName: "Editor",
+		description: "Can create, edit, publish, and manage CMS pages and content drafts",
+		permissions: ["cms:read", "cms:write", "cms:publish", "templates:read"],
+		isSystem: true
+	},
+	{
+		id: "def-author",
+		name: "author",
+		displayName: "Author",
+		description: "Can create and edit their own CMS content drafts",
+		permissions: ["cms:read", "cms:write"],
+		isSystem: true
+	},
+	{
+		id: "def-reviewer",
+		name: "reviewer",
+		displayName: "Reviewer",
+		description: "Can review, comment on, and approve pending CMS page versions",
+		permissions: ["cms:read", "cms:approve"],
+		isSystem: true
+	},
+	{
+		id: "def-viewer",
+		name: "viewer",
+		displayName: "Viewer",
+		description: "Read-only access to published CMS pages and content",
+		permissions: ["cms:read"],
+		isSystem: true
+	},
+	{
+		id: "def-user",
+		name: "user",
+		displayName: "User",
+		description: "Standard registered user with baseline application access",
+		permissions: ["cms:read"],
+		isSystem: true
+	}
+];
+
+let dbRoles: any[] = [];
+try {
+	dbRoles = await db
+		.select()
+		.from(roleTable)
+		.where(isNull(roleTable.deletedAt))
+		.orderBy(desc(roleTable.createdAt));
+} catch (err) {
+	console.warn("roleTable query skipped in roles.astro:", err);
+}
+
+const formattedDbRoles = dbRoles.map((r) => ({
+	id: r.id,
+	name: r.name,
+	displayName: r.displayName || r.name,
+	description: r.description || "",
+	permissions: typeof r.permissions === "string" ? (JSON.parse(r.permissions) as string[]) : (r.permissions || []),
+	isSystem: ["owner", "admin", "editor", "author", "reviewer", "viewer", "user"].includes(r.name)
+}));
+
+// Combine system default roles with DB custom roles
+const combinedRoles = [...DEFAULT_ROLES];
+formattedDbRoles.forEach((dbRole) => {
+	const idx = combinedRoles.findIndex(r => r.name === dbRole.name);
+	if (idx >= 0) {
+		combinedRoles[idx] = dbRole;
+	} else {
+		combinedRoles.push(dbRole);
+	}
+});
+
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
+
+const roleColumns: TableColumn[] = [
+	{ id: "displayName", accessorKey: "displayName", header: "Role Name", enableSorting: true },
+	{ id: "name", accessorKey: "name", header: "Identifier", enableSorting: true },
+	{ id: "description", accessorKey: "description", header: "Description", enableSorting: true },
+	{ id: "permissions", header: "Permissions", enableSorting: false },
+	{ id: "actions", header: "Actions", enableSorting: false, meta: { class: { th: "text-right", td: "text-right" } } }
+];
+---
+
+<AuthAdminDashboardLayout
+	title="Roles & Access Control"
+	description="Configure role definitions, assign fine-grained statements, and enforce security policies."
+	activeSection="roles"
+>
+	<Fragment slot="actions">
+		<RLAButton id="open-create-role-btn" variant="solid" color="primary" leadingIcon="i-lucide-shield-plus" size="sm">
+			Create Custom Role
+		</RLAButton>
+	</Fragment>
+
+	<div class="flex flex-col gap-6">
+		<!-- Summary Header Cards (2 cards) -->
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<RLACard class="p-5 flex flex-col justify-between border-border shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Configured Roles</span>
+					<RLAIcon name="i-lucide-shield-check" class="size-5 text-primary" />
+				</div>
+				<div class="flex items-baseline gap-2 mt-2">
+					<span class="text-3xl font-bold text-highlighted" id="total-roles-count">{combinedRoles.length}</span>
+					<span class="text-xs text-muted-foreground">({combinedRoles.filter(r => !r.isSystem).length} custom)</span>
+				</div>
+			</RLACard>
+
+			<RLACard class="p-5 flex flex-col justify-between border-border shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Available Permissions</span>
+					<RLAIcon name="i-lucide-key" class="size-5 text-purple-500" />
+				</div>
+				<span class="text-3xl font-bold text-highlighted mt-2">{ALL_AVAILABLE_PERMISSIONS.length}</span>
+			</RLACard>
+		</div>
+
+		<RLATable
+			columns={roleColumns}
+			data={combinedRoles}
+			searchable
+			searchPlaceholder="Search roles by title, identifier, or permission..."
+			showColumnsToggle
+			hoverable
+			striped
+			class="w-full"
+		>
+			{combinedRoles.map((role) => (
+				<tr
+					class="role-row hover:bg-muted/20 transition-colors"
+					data-role-id={role.id}
+					data-role-name={role.name}
+					data-role-display={role.displayName}
+					data-role-desc={role.description}
+					data-role-perms={JSON.stringify(role.permissions)}
+					data-search-text={`${role.displayName} ${role.name} ${role.description} ${role.permissions.join(" ")}`.toLowerCase()}
+				>
+					<td class="p-3.5" data-col-id="displayName">
+						<div class="flex items-center gap-2.5">
+							<RLAIcon name={role.isSystem ? "i-lucide-shield" : "i-lucide-shield-check"} class={`size-4 ${role.isSystem ? 'text-muted-foreground' : 'text-primary'}`} />
+							<div class="flex items-center gap-2">
+								<span class="font-bold text-highlighted">{role.displayName}</span>
+								{role.isSystem && (
+									<RLABadge variant="subtle" color="neutral" class="text-[9px] px-1.5 py-0">System</RLABadge>
+								)}
+							</div>
+						</div>
+					</td>
+					<td class="p-3.5 font-mono text-xs text-muted-foreground" data-col-id="name">
+						{role.name}
+					</td>
+					<td class="p-3.5 text-xs text-muted-foreground max-w-sm truncate" data-col-id="description">
+						{role.description || "—"}
+					</td>
+					<td class="p-3.5" data-col-id="permissions">
+						<div class="flex flex-wrap gap-1 max-w-xs">
+							{role.permissions.slice(0, 3).map((perm) => (
+								<RLABadge variant="subtle" color="primary" class="text-[10px] font-mono">
+									{perm}
+								</RLABadge>
+							))}
+							{role.permissions.length > 3 && (
+								<RLABadge variant="subtle" color="neutral" class="text-[10px] font-mono">
+									+{role.permissions.length - 3}
+								</RLABadge>
+							)}
+						</div>
+					</td>
+					<td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions">
+						<div class="flex items-center justify-end gap-2">
+							<RLAButton
+								type="button"
+								variant="ghost"
+								color="primary"
+								size="xs"
+								class="edit-role-btn"
+								data-role-id={role.id}
+								data-role-name={role.name}
+								data-role-display={role.displayName}
+								data-role-desc={role.description}
+								data-role-perms={JSON.stringify(role.permissions)}
+								leadingIcon="i-lucide-pencil"
+								label="Edit"
+							/>
+							{!role.isSystem && (
+								<RLAButton
+									type="button"
+									variant="ghost"
+									color="error"
+									size="xs"
+									class="delete-role-btn !text-destructive ml-1"
+									data-role-id={role.id}
+									data-role-name={role.name}
+									label="Delete"
+								/>
+							)}
+						</div>
+					</td>
+				</tr>
+			))}
+		</RLATable>
+	</div>
+
+	<!-- Modal: Create / Edit Role -->
+	<div id="role-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+		<div class="bg-background border border-border rounded-xl shadow-2xl w-full max-w-2xl p-6 flex flex-col gap-4 max-h-[90vh] overflow-hidden">
+			<div class="flex items-center justify-between border-b border-border pb-3">
+				<h3 class="text-lg font-bold text-highlighted flex items-center gap-2" id="role-modal-title">
+					<RLAIcon name="i-lucide-shield-plus" class="size-5 text-primary" />
+					Create Custom Role
+				</h3>
+				<button type="button" id="close-role-modal-btn" class="text-muted-foreground hover:text-foreground">
+					<RLAIcon name="i-lucide-x" class="size-5" />
+				</button>
+			</div>
+
+			<form id="role-form" class="flex flex-col gap-4 overflow-y-auto pr-1">
+				<input type="hidden" id="modal-role-id" />
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div class="flex flex-col gap-1.5">
+						<label class="text-xs font-semibold text-foreground">Role Identifier (Slug)</label>
+						<RLAInput id="modal-role-name" placeholder="e.g. content-manager" required class="w-full font-mono text-xs" />
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<label class="text-xs font-semibold text-foreground">Display Name</label>
+						<RLAInput id="modal-role-display-name" placeholder="e.g. Content Manager" required class="w-full" />
+					</div>
+				</div>
+
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-semibold text-foreground">Description</label>
+					<RLAInput id="modal-role-desc" placeholder="Brief description of responsibilities and permissions" class="w-full" />
+				</div>
+
+				<div class="flex flex-col gap-3">
+					<div class="flex items-center justify-between">
+						<label class="text-xs font-semibold text-foreground">Granted Permission Statements</label>
+						<div class="flex items-center gap-2">
+							<button type="button" id="select-all-perms-btn" class="text-[11px] text-primary hover:underline font-medium">Select All</button>
+							<span class="text-muted-foreground text-xs">•</span>
+							<button type="button" id="clear-all-perms-btn" class="text-[11px] text-muted-foreground hover:text-foreground font-medium">Clear All</button>
+						</div>
+					</div>
+
+					<div class="flex flex-col gap-4 border border-border p-4 rounded-lg bg-muted/10 max-h-[300px] overflow-y-auto">
+						{PERMISSION_GROUPS.map((group) => (
+							<div class="flex flex-col gap-2">
+								<div class="flex items-center gap-2 border-b border-border/40 pb-1">
+									<RLAIcon name={group.icon} class="size-4 text-primary" />
+									<span class="text-xs font-bold text-highlighted uppercase tracking-wider">{group.name}</span>
+								</div>
+								<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+									{group.permissions.map((perm) => (
+										<label class="flex items-start gap-2.5 p-2 rounded-md hover:bg-muted/40 transition-colors border border-transparent hover:border-border/60 cursor-pointer group">
+											<input type="checkbox" name="permissions" value={perm.id} class="mt-0.5 rounded border-border text-primary focus:ring-primary size-4" />
+											<div class="flex flex-col">
+												<span class="text-xs font-semibold text-highlighted group-hover:text-primary transition-colors">{perm.label}</span>
+												<span class="text-[10px] text-muted-foreground">{perm.description}</span>
+												<span class="text-[9px] font-mono text-muted-foreground/80 mt-0.5">{perm.id}</span>
+											</div>
+										</label>
+									))}
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+
+				<div id="modal-error-alert" class="text-xs text-destructive bg-destructive/10 p-2.5 rounded-md hidden"></div>
+
+				<div class="flex justify-end gap-2 pt-3 border-t border-border mt-auto">
+					<RLAButton type="button" id="cancel-role-modal-btn" variant="outline" color="neutral" size="sm">
+						Cancel
+					</RLAButton>
+					<RLAButton type="submit" id="save-role-btn" variant="solid" color="primary" size="sm">
+						Save Role
+					</RLAButton>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Client-side Interactive Logic -->
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const searchInput = document.getElementById("role-search-input") as HTMLInputElement;
+			const roleRows = Array.from(document.querySelectorAll<HTMLTableRowElement>(".role-row"));
+			const visibleCountEl = document.getElementById("visible-role-count");
+
+			const roleModal = document.getElementById("role-modal");
+			const roleForm = document.getElementById("role-form") as HTMLFormElement;
+			const openCreateBtn = document.getElementById("open-create-role-btn");
+			const closeBtn = document.getElementById("close-role-modal-btn");
+			const cancelBtn = document.getElementById("cancel-role-modal-btn");
+			const modalTitle = document.getElementById("role-modal-title");
+			const modalRoleId = document.getElementById("modal-role-id") as HTMLInputElement;
+			const modalRoleName = document.getElementById("modal-role-name") as HTMLInputElement;
+			const modalRoleDisplay = document.getElementById("modal-role-display-name") as HTMLInputElement;
+			const modalRoleDesc = document.getElementById("modal-role-desc") as HTMLInputElement;
+			const modalErrorAlert = document.getElementById("modal-error-alert");
+
+			const selectAllBtn = document.getElementById("select-all-perms-btn");
+			const clearAllBtn = document.getElementById("clear-all-perms-btn");
+			const checkboxes = document.querySelectorAll<HTMLInputElement>('input[name="permissions"]');
+
+			// 1. Search Logic
+			function filterRoles() {
+				const query = searchInput?.value.toLowerCase().trim() || "";
+				let count = 0;
+
+				roleRows.forEach((row) => {
+					const searchText = row.getAttribute("data-search-text") || "";
+					const matches = !query || searchText.includes(query);
+
+					if (matches) {
+						row.classList.remove("hidden");
+						count++;
+					} else {
+						row.classList.add("hidden");
+					}
+				});
+
+				if (visibleCountEl) visibleCountEl.textContent = String(count);
+			}
+
+			searchInput?.addEventListener("input", filterRoles);
+
+			// 2. Modal Controls
+			const openModal = () => roleModal?.classList.remove("hidden");
+			const closeModal = () => {
+				roleModal?.classList.add("hidden");
+				roleForm?.reset();
+				if (modalRoleId) modalRoleId.value = "";
+				if (modalRoleName) modalRoleName.disabled = false;
+				if (modalErrorAlert) modalErrorAlert.classList.add("hidden");
+				checkboxes.forEach((cb) => (cb.checked = false));
+			};
+
+			openCreateBtn?.addEventListener("click", () => {
+				if (modalTitle) modalTitle.textContent = "Create Custom Role";
+				openModal();
+			});
+
+			closeBtn?.addEventListener("click", closeModal);
+			cancelBtn?.addEventListener("click", closeModal);
+
+			selectAllBtn?.addEventListener("click", () => {
+				checkboxes.forEach(cb => cb.checked = true);
+			});
+
+			clearAllBtn?.addEventListener("click", () => {
+				checkboxes.forEach(cb => cb.checked = false);
+			});
+
+			// 3. Edit & Delete Action Event Handlers
+			document.addEventListener("click", async (e) => {
+				const editBtn = (e.target as HTMLElement).closest(".edit-role-btn") as HTMLElement | null;
+				const deleteBtn = (e.target as HTMLElement).closest(".delete-role-btn") as HTMLElement | null;
+
+				if (editBtn) {
+					const id = editBtn.getAttribute("data-role-id") || "";
+					const name = editBtn.getAttribute("data-role-name") || "";
+					const display = editBtn.getAttribute("data-role-display") || "";
+					const desc = editBtn.getAttribute("data-role-desc") || "";
+					const perms: string[] = JSON.parse(editBtn.getAttribute("data-role-perms") || "[]");
+
+					if (modalTitle) modalTitle.textContent = `Edit Role (${display})`;
+					if (modalRoleId) modalRoleId.value = id;
+					if (modalRoleName) {
+						modalRoleName.value = name;
+						modalRoleName.disabled = true;
+					}
+					if (modalRoleDisplay) modalRoleDisplay.value = display;
+					if (modalRoleDesc) modalRoleDesc.value = desc;
+
+					checkboxes.forEach((cb) => {
+						cb.checked = perms.includes(cb.value);
+					});
+
+					openModal();
+				}
+
+				if (deleteBtn) {
+					const id = deleteBtn.getAttribute("data-role-id") || "";
+					const display = deleteBtn.getAttribute("data-role-display") || "";
+					if (!id) return;
+					if (!confirm(`Are you sure you want to delete custom role "${display}"?`)) return;
+
+					try {
+						const res = await fetch(`/api/roles/${id}`, { method: "DELETE" });
+						if (res.ok) {
+							window.location.reload();
+						} else {
+							const data = (await res.json()) as { error?: string };
+							alert(data.error || "Failed to delete role.");
+						}
+					} catch {
+						alert("Network error deleting role.");
+					}
+				}
+			});
+
+			// 4. Submit Form (Create / Edit)
+			roleForm?.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				if (modalErrorAlert) modalErrorAlert.classList.add("hidden");
+
+				const saveBtn = document.getElementById("save-role-btn") as HTMLButtonElement;
+				if (saveBtn) saveBtn.disabled = true;
+
+				const id = modalRoleId?.value;
+				const selectedPerms = Array.from(checkboxes)
+					.filter((cb) => cb.checked)
+					.map((cb) => cb.value);
+
+				const payload = {
+					name: modalRoleName?.value,
+					displayName: modalRoleDisplay?.value,
+					description: modalRoleDesc?.value,
+					permissions: selectedPerms
+				};
+
+				try {
+					const url = id ? `/api/roles/${id}` : "/api/roles";
+					const method = id ? "PUT" : "POST";
+
+					const res = await fetch(url, {
+						method,
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload)
+					});
+
+					if (res.ok) {
+						closeModal();
+						window.location.reload();
+					} else {
+						const data = (await res.json()) as { error?: string };
+						if (modalErrorAlert) {
+							modalErrorAlert.textContent = data.error || "Failed to save role.";
+							modalErrorAlert.classList.remove("hidden");
+						}
+					}
+				} catch {
+					if (modalErrorAlert) {
+						modalErrorAlert.textContent = "Network error saving role.";
+						modalErrorAlert.classList.remove("hidden");
+					}
+				} finally {
+					if (saveBtn) saveBtn.disabled = false;
+				}
+			});
+		});
+	</script>
+</AuthAdminDashboardLayout>
+
+

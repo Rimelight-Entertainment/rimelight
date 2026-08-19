@@ -1,33 +1,23 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { SidebarProps, SidebarItem } from "./sidebar"
-import sidebarThemeDefault from "./sidebar.theme"
+import { sidebarTheme } from "./sidebar.theme"
 import RLABadge from "../badge/RLABadge.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const sidebarTheme = sidebarThemeDefault
-const sidebar = scv(sidebarTheme)
 
 const {
   items = [],
-  side = "left",
   collapsible = "none",
   variant = "sidebar",
   logo,
-  ui: uiProp,
-  class: className,
   t = (key: string) => key,
   _depth = 0,
   ...rest
-} = Astro.props as SidebarProps & { t?: (key: string) => string; _depth?: number }
+} = Astro.props as SidebarProps
 
-const classes = resolveClasses(sidebar, {
-  side,
-  collapsible,
-  variant
-}, useUi("sidebar", uiProp), className)
+
+
+const classes = sidebarTheme(Astro.props)
 
 const hasActiveChild = (item: SidebarItem): boolean => {
   if (item.active) return true
@@ -75,7 +65,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
       <!-- Body -->
       <div class={classes.content} data-slot="content">
         <slot>
-          <Astro.self items={items} t={t} _depth={1} ui={uiProp} />
+          <Astro.self items={items} t={t} _depth={1} ui={Astro.props.ui} />
         </slot>
       </div>
 
@@ -89,7 +79,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
       <button
         type="button"
         data-sidebar-toggle
-        class="fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-background border border-border shadow-sm hover:bg-muted transition-colors"
+        class="fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-default border border-default shadow-sm hover:bg-muted transition-colors"
         aria-label="Toggle sidebar"
       >
         <RLAIcon name="panelLeft" class="size-4" />
@@ -118,8 +108,8 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
             <details open={isActive} class="group/details">
               <summary
                 class={
-                  (_depth === 1 ? classes.itemLink : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ${textSizeClass}`) +
-                  (isActive ? " text-foreground bg-muted" : "") +
+                  (_depth === 1 ? classes.itemLink : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted transition-colors ${textSizeClass}`) +
+                  (isActive ? " text-highlighted bg-muted" : "") +
                   " list-none cursor-pointer"
                 }
                 data-slot="item-summary"
@@ -141,8 +131,8 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
             <a
               href={item.href ?? "#"}
               class={
-                (_depth === 1 ? classes.itemLink : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ${textSizeClass}`) +
-                (isActive ? " text-foreground bg-muted" : "")
+                (_depth === 1 ? classes.itemLink : `flex items-center gap-1.5 w-full px-2 py-1 rounded-md text-muted hover:text-highlighted hover:bg-muted transition-colors ${textSizeClass}`) +
+                (isActive ? " text-highlighted bg-muted" : "")
               }
               aria-current={isActive ? "page" : undefined}
             >

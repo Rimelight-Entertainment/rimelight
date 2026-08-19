@@ -1,14 +1,37 @@
 export interface DocEntry {
-  id: string
+  id?: string
+  slug?: string
+  version?: string
+  properties?: Record<string, any>
   [key: string]: any
 }
 
-export function getDocsVersions(entries: DocEntry[], locale: string): string[] {
+export function getDocsVersions(entries: (DocEntry | string)[], locale?: string): string[] {
   const versions = new Set<string>()
   for (const entry of entries) {
-    const id = entry.id.replace(/\\/g, "/")
-    const parts = id.split("/")
-    if (parts[1] === locale && parts[0]?.startsWith("v")) {
+    if (typeof entry === "string") {
+      const parts = entry.replace(/\\/g, "/").split("/")
+      if (parts[0]?.startsWith("v")) {
+        versions.add(parts[0])
+      }
+      continue
+    }
+
+    if (entry.version && entry.version.startsWith("v")) {
+      versions.add(entry.version)
+      continue
+    }
+
+    if (entry.properties?.version && String(entry.properties.version).startsWith("v")) {
+      versions.add(String(entry.properties.version))
+      continue
+    }
+
+    const path = (entry.slug || entry.id || "").replace(/\\/g, "/")
+    const parts = path.split("/")
+    if (locale && parts[1] === locale && parts[0]?.startsWith("v")) {
+      versions.add(parts[0])
+    } else if (parts[0]?.startsWith("v")) {
       versions.add(parts[0])
     }
   }

@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { PricingPlanProps } from "./pricing-plan"
-import pricingPlanTheme from "./pricing-plan.theme"
+import { pricingPlanTheme } from "./pricing-plan.theme"
 
 
-const pricingPlan = scv(pricingPlanTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PricingPlanProps
-
-const classes = resolveClasses(pricingPlan, {}, useUi("pricingPlan", uiProp), className);
+const classes = pricingPlanTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

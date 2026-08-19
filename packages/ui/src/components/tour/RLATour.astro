@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { TourProps } from "./tour"
-import tourTheme from "./tour.theme"
+import { tourTheme } from "./tour.theme"
 
 
-const tour = scv(tourTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as TourProps
-
-const classes = resolveClasses(tour, {}, useUi("tour", uiProp), className);
+const classes = tourTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

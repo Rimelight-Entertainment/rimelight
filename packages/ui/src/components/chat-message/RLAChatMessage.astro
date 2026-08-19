@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { ChatMessageProps } from "./chat-message"
-import chatMessageTheme from "./chat-message.theme"
+import { chatMessageTheme } from "./chat-message.theme"
 
 
-const chatMessage = scv(chatMessageTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ChatMessageProps
-
-const classes = resolveClasses(chatMessage, {}, useUi("chatMessage", uiProp), className);
+const classes = chatMessageTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

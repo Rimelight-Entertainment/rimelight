@@ -1,29 +1,20 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { LocaleSelectorProps } from "./locale-selector"
-import localeSelectorTheme from "./locale-selector.theme"
+import { localeSelectorTheme } from "./locale-selector.theme"
 import { getRelativeLocaleUrlList, getRelativeLocaleUrl } from "astro:i18n"
 import RLASelect from "../select/RLASelect.astro"
 
 
-const localeSelector = scv(localeSelectorTheme)
 
 const {
-    locales,
-    currentLocale: currentLocaleProp,
-    variant = "default",
-    size = "md",
-    ui: uiProp,
-    class: className,
-    ...rest
+  locales,
+  currentLocale: currentLocaleProp,
+  size = "md",
+  theme,
+  ...rest
 } = Astro.props as LocaleSelectorProps;
 
-const classes = resolveClasses(localeSelector, {
-    variant,
-    size
-}, useUi("localeSelector", uiProp), className);
+const classes = localeSelectorTheme(Astro.props);
 
 // Resolve the active locale: explicit prop → Astro.currentLocale → 'en'
 const currentLocale = currentLocaleProp ?? Astro.currentLocale ?? 'en';
@@ -94,11 +85,11 @@ const overrideTriggerClass = classes.select
 const gapClass = size === "sm" ? "gap-1.5" : size === "lg" ? "gap-3" : "gap-2";
 
 const selectUi = {
-    root: "!w-fit !inline-flex",
-    trigger: `flex items-center justify-between !w-fit ${gapClass} ${overrideTriggerClass}`,
-    content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
-    item: "!text-[var(--foreground)] hover:!bg-[var(--accent)] hover:!text-[var(--accent-foreground)]"
-};
+  root: "!w-fit !inline-flex",
+  trigger: `flex items-center justify-between !w-fit ${gapClass} ${overrideTriggerClass}`,
+  content: "!min-w-0 !w-full !bg-default !border-default !text-default",
+  item: "!text-default hover:!bg-muted hover:!text-highlighted"
+}
 ---
 
 <rla-locale-selector {...rest}>
@@ -114,6 +105,7 @@ const selectUi = {
                 items={items}
                 value={currentLocaleUrl}
                 size={size}
+                theme={theme}
                 ui={selectUi}
             />
         </div>

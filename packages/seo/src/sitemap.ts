@@ -26,12 +26,17 @@ export function buildSitemapUrls(entries: SeoEntry[], config: LocaleConfig): Sit
 
       const loc = `${site}${localePrefix}${path}`
 
-      entryUrls.push({
-        loc,
-        lastmod: entry.lastmod?.toISOString(),
-        changefreq: entry.changefreq,
-        priority: entry.priority
-      })
+      const item: SitemapUrl = { loc }
+      if (entry.lastmod) {
+        item.lastmod = entry.lastmod.toISOString()
+      }
+      if (entry.changefreq) {
+        item.changefreq = entry.changefreq
+      }
+      if (entry.priority !== undefined) {
+        item.priority = entry.priority
+      }
+      entryUrls.push(item)
     }
 
     // Add alternates if multiple locales
@@ -86,9 +91,8 @@ export function buildSitemapXml(urls: SitemapUrl[]): string {
       }
 
       if (url.alternates && url.alternates.length > 0) {
-        xml += `\n    <xhtml:link rel="alternate" hreflang="${url.alternates[0].hreflang}" href="${escapeXml(url.alternates[0].href)}" />`
-        for (let i = 1; i < url.alternates.length; i++) {
-          xml += `\n    <xhtml:link rel="alternate" hreflang="${url.alternates[i].hreflang}" href="${escapeXml(url.alternates[i].href)}" />`
+        for (const alt of url.alternates) {
+          xml += `\n    <xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${escapeXml(alt.href)}" />`
         }
       }
 

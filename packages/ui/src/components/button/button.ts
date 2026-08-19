@@ -1,4 +1,4 @@
-import type { Theme, ThemeColor } from "../../types/component"
+import type { Theme, ThemeColor } from "../../types"
 import type { LinkProps } from "../link/link"
 
 export interface ButtonProps extends LinkProps {

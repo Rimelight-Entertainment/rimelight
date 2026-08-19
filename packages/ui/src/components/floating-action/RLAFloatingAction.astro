@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { FloatingActionProps } from "./floating-action"
-import floatingActionTheme from "./floating-action.theme"
+import { floatingActionTheme } from "./floating-action.theme"
 
 
-const floatingAction = scv(floatingActionTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as FloatingActionProps
-
-const classes = resolveClasses(floatingAction, {}, useUi("floatingAction", uiProp), className);
+const classes = floatingActionTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

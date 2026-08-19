@@ -1,32 +1,20 @@
-import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createColorFieldTheme = (colors: readonly string[] = colorConfig.colors) =>
-  defineTheme({
-    slots: ["root", "input"],
-    base: {
-      root: "relative flex items-center border border-border rounded-lg bg-background shadow-sm px-3 py-1.5 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-      input:
-        "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-foreground placeholder-muted-foreground"
-    },
-    variants: {
-      color: Object.fromEntries(
-        colors.map((color) => [
-          color,
-          {
-            root: "rl-color-" + color,
-            input: `focus:ring-0`
-          }
-        ])
-      ),
-      theme: {
-        light: { root: "rl-light" },
-        dark: { root: "rl-dark" }
-      }
-    },
-    defaultVariants: {
-      color: "primary"
+export const colorFieldTheme = defineTheme("color-field", {
+  slots: ["root", "input"],
+  base: {
+    root: "relative flex items-center border border-default rounded-lg bg-default shadow-sm px-3 py-1.5 focus-within:ring-2 focus-within:ring-[var(--rl-ring)]/50 focus-within:ring-offset-2",
+    input:
+      "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-highlighted placeholder-muted-foreground"
+  },
+  variants: {
+    color: "auto",
+    theme: {
+      light: { root: "rl-light" },
+      dark: { root: "rl-dark" }
     }
-  })
-
-export default createColorFieldTheme()
+  },
+  defaultVariants: {
+    color: "primary"
+  }
+})

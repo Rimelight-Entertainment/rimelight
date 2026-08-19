@@ -1,45 +1,34 @@
 {
   "name": "rimelight",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "description": "Rimelight Entertainment Monorepository",
-  "keywords": [
-    "astro",
-    "typescript"
-  ],
+  "homepage": "https://rimelight.com",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
   },
   "license": "MIT",
   "author": {
-    "name": "Daniel Marchi"
+    "name": "Rimelight Entertainment"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "type": "module",
-  "scripts": {
-    "prepare": "vp config",
-    "generate:config": "vp config",
-    "create-project": "node packages/cli/bin/rimelight.js create",
-    "dev": "pnpm -r dev",
-    "build": "pnpm -r build",
-    "test": "pnpm -r test"
-  },
   "devDependencies": {
-    "@e18e/eslint-plugin": "0.6.0",
-    "@types/node": "26.1.2",
-    "@unocss/eslint-plugin": "66.7.5",
-    "eslint-plugin-regexp": "3.1.1",
-    "pkg-pr-new": "0.0.86",
-    "vite-plus": "0.2.7"
+    "@types/node": "26.2.0",
+    "pkg-pr-new": "0.0.88",
+    "vite-plus": "0.2.9"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.22.0",
+      "onFail": "download"
+    }
   },
   "engines": {
-    "node": ">=25.2.1"
-  },
-  "packageManager": "pnpm@11.18.0"
+    "node": ">=26.7.0"
+  }
 }

@@ -1,63 +1,579 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { TableProps } from "./table"
-import tableTheme from "./table.theme"
-
-
-const table = scv(tableTheme)
+import type { TableProps, TableColumn, TableRow } from "./table"
+import { tableTheme } from "./table.theme"
+import RLAIcon from "../icon/RLAIcon.astro"
+import RLAInput from "../input/RLAInput.astro"
+import RLADropdownMenu from "../dropdown-menu/RLADropdownMenu.astro"
 
 const {
+  data = [],
+  columns = [],
   headers = [],
   rows = [],
-  striped = false,
-  bordered = false,
-  hoverable = true,
   caption,
-  ui: uiProp,
+  meta,
+  sticky = false,
+  loading = false,
+  empty = "No data available",
+  virtualize = false,
+  globalFilter = "",
+  columnFilters = [],
+  columnVisibility = {},
+  columnPinning = {},
+  sorting = [],
+  rowPinning = {},
+  rowSelection = {},
+  expanded = {},
+  pagination,
+  searchable = false,
+  searchPlaceholder = "Filter table...",
+  showColumnsToggle = false,
+  getSubRows,
+  getRowId,
   class: className,
   ...rest
 } = Astro.props as TableProps
 
-const classes = resolveClasses(table, {
-  striped,
-  bordered
-}, useUi("table", uiProp), className);
+const classes = tableTheme({
+  ...Astro.props,
+  sticky: typeof sticky === "boolean" ? sticky : sticky,
+  externalScroll: Boolean(typeof virtualize === "object" && virtualize?.getScrollElement)
+})
+
+// Normalize columns from props.columns or props.headers or infer from data keys
+let resolvedColumns: TableColumn[] = []
+
+if (columns && columns.length > 0) {
+  resolvedColumns = columns
+} else if (headers && headers.length > 0) {
+  resolvedColumns = headers.map((h, i) => {
+    if (typeof h === "string") {
+      return { id: h, accessorKey: h, header: h, enableSorting: true }
+    }
+    return { id: h.key || String(i), accessorKey: h.key, header: h.label, enableSorting: true, meta: { class: { th: h.class || "", td: h.class || "" } } }
+  }) as TableColumn[]
+} else if (data && data.length > 0 && typeof data[0] === "object" && data[0] !== null) {
+  const firstRow = data[0] as Record<string, any>
+  resolvedColumns = Object.keys(firstRow).map((key) => ({
+    id: key,
+    accessorKey: key,
+    header: key.charAt(0).toUpperCase() + key.slice(1),
+    enableSorting: true
+  }))
+}
+
+// Filter visible columns based on columnVisibility map
+const visibleColumns = resolvedColumns.filter((col) => {
+  const id = col.id || (col.accessorKey as string)
+  if (!id) return true
+  if (col.enableHiding === false) return true
+  return columnVisibility[id] !== false
+})
+
+// Columns dropdown items for RLADropdownMenu
+const columnDropdownItems = resolvedColumns
+  .filter((col) => {
+    const colId = (col.id || col.accessorKey || "") as string
+    return colId && colId !== "actions" && colId !== "select"
+  })
+  .map((col) => {
+    const colId = (col.id || col.accessorKey || "") as string
+    const label = typeof col.header === "string" ? col.header : colId
+    return {
+      id: colId,
+      label: label.charAt(0).toUpperCase() + label.slice(1),
+      type: "checkbox" as const,
+      checked: columnVisibility[colId] !== false
+    }
+  })
+
+// Build row objects from data
+function buildRowTree(rawItems: any[], parentDepth = 0): TableRow[] {
+  return rawItems.map((item, idx) => {
+    const rId = getRowId ? getRowId(item, idx) : (item?.id !== undefined ? String(item.id) : String(idx))
+    const isSelected = !!rowSelection[rId] || !!rowSelection[idx]
+    const isExpanded = !!expanded[rId] || !!expanded[idx]
+    
+    let subRowsList: TableRow[] | undefined = undefined
+    if (getSubRows) {
+      const children = getSubRows(item, idx)
+      if (children && children.length > 0) {
+        subRowsList = buildRowTree(children, parentDepth + 1)
+      }
+    } else if (Array.isArray(item?.children)) {
+      subRowsList = buildRowTree(item.children, parentDepth + 1)
+    }
+
+    const rowObj: TableRow = {
+      id: rId,
+      original: item,
+      index: idx,
+      depth: parentDepth,
+      getValue: (key: string) => {
+        if (!item || typeof item !== "object") return undefined
+        if (key in item) return item[key]
+        return undefined
+      },
+      getIsSelected: () => isSelected,
+      toggleSelected: () => {},
+      getIsExpanded: () => isExpanded,
+      toggleExpanded: () => {},
+      getIsPinned: () => {
+        if (rowPinning.top?.includes(rId)) return "top"
+        if (rowPinning.bottom?.includes(rId)) return "bottom"
+        return false
+      },
+      pin: () => {},
+      getIsGrouped: () => false,
+      getCanExpand: () => !!(subRowsList && subRowsList.length > 0),
+      ...(subRowsList ? { subRows: subRowsList } : {})
+    }
+
+    return rowObj
+  })
+}
+
+let processedRows: TableRow[] = buildRowTree(data)
+
+// Global & column filtering
+if (globalFilter) {
+  const query = globalFilter.toLowerCase()
+  processedRows = processedRows.filter((r) => {
+    if (typeof r.original !== "object" || !r.original) return String(r.original).toLowerCase().includes(query)
+    return Object.values(r.original).some((val) => String(val ?? "").toLowerCase().includes(query))
+  })
+}
+
+if (columnFilters && columnFilters.length > 0) {
+  for (const filter of columnFilters) {
+    if (!filter.id || filter.value === undefined || filter.value === null || filter.value === "") continue
+    const fVal = String(filter.value).toLowerCase()
+    processedRows = processedRows.filter((r) => {
+      const val = String(r.getValue(filter.id) ?? "").toLowerCase()
+      return val.includes(fVal)
+    })
+  }
+}
+
+// Sorting logic
+if (sorting && sorting.length > 0) {
+  const activeSort = sorting[0]
+  if (activeSort && activeSort.id) {
+    const key = activeSort.id
+    const isDesc = activeSort.desc
+    processedRows = [...processedRows].toSorted((a, b) => {
+      const valA = a.getValue(key)
+      const valB = b.getValue(key)
+      if (valA === valB) return 0
+      if (valA === undefined || valA === null) return 1
+      if (valB === undefined || valB === null) return -1
+      if (typeof valA === "number" && typeof valB === "number") {
+        return isDesc ? valB - valA : valA - valB
+      }
+      return isDesc
+        ? String(valB).localeCompare(String(valA))
+        : String(valA).localeCompare(String(valB))
+    })
+  }
+}
+
+// Row Pinning logic
+if (rowPinning.top && rowPinning.top.length > 0) {
+  const pinnedTop = processedRows.filter((r) => rowPinning.top?.includes(r.id))
+  const unpinned = processedRows.filter((r) => !rowPinning.top?.includes(r.id) && !rowPinning.bottom?.includes(r.id))
+  const pinnedBottom = processedRows.filter((r) => rowPinning.bottom?.includes(r.id))
+  processedRows = [...pinnedTop, ...unpinned, ...pinnedBottom]
+}
+
+// Pagination slicing
+let paginatedRows = processedRows
+let currentPage = 1
+let pageSize = processedRows.length
+
+if (pagination) {
+  pageSize = pagination.pageSize || 10
+  currentPage = (pagination.pageIndex || 0) + 1
+  const start = (currentPage - 1) * pageSize
+  paginatedRows = processedRows.slice(start, start + pageSize)
+}
+
+const hasFooters = visibleColumns.some((col) => col.footer || Astro.slots.has(`${String(col.id || col.accessorKey)}-footer`))
+const uid = Math.random().toString(36).substring(2, 9)
+const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar")
 ---
-<div class={classes.root} data-slot="root">
-  <table class={classes.table} data-slot="table" {...rest}>
-    {caption && <caption class="sr-only">{caption}</caption>}
-    {headers.length > 0 && (
-      <thead class={classes.thead} data-slot="thead">
-        <tr class={classes.tr} data-slot="tr">
-          {headers.map(header => {
-            const label = typeof header === "string" ? header : header.label
-            const cellClass = typeof header === "string" ? "" : (header.class || "")
-            return (
-              <th scope="col" class={classes.th + " " + cellClass} data-slot="th">
-                {label}
-              </th>
-            )
-          })}
-        </tr>
-      </thead>
-    )}
-    <tbody class={classes.tbody} data-slot="tbody">
-      <slot>
-        {rows.map(row => {
-          const cells = Array.isArray(row) ? row : Object.values(row)
-          return (
-            <tr class={classes.tr} data-slot="tr">
-              {cells.map(cell => (
+
+<rla-table class:list={[classes.root, className]} data-slot="root" data-table-id={uid} {...rest}>
+  {showToolbar && (
+    <div class="flex items-center justify-between gap-3 p-3.5 border-b border-default bg-muted/20 overflow-x-auto" data-slot="toolbar">
+      {searchable && (
+        <div class="relative max-w-xs flex-1">
+          <RLAInput
+            type="search"
+            placeholder={searchPlaceholder}
+            leadingIcon="i-lucide-search"
+            class="w-full"
+            data-rla-table-search
+          />
+        </div>
+      )}
+
+      {Astro.slots.has("toolbar") && <slot name="toolbar" />}
+
+      {showColumnsToggle && (
+        <div class="ml-auto shrink-0">
+          <RLADropdownMenu
+            label="Columns"
+            icon="i-lucide-columns"
+            items={columnDropdownItems as any}
+            content={{ align: "end" }}
+            size="sm"
+            color="neutral"
+          />
+        </div>
+      )}
+    </div>
+  )}
+
+  <div class="overflow-x-auto w-full">
+    <table class={classes.base} data-slot="base">
+      {(caption || Astro.slots.has("caption")) && (
+        <caption class={classes.caption} data-slot="caption">
+          <slot name="caption">{caption}</slot>
+        </caption>
+      )}
+
+      {visibleColumns.length > 0 && (
+        <thead class={classes.thead} data-slot="thead">
+          <tr class={classes.tr} data-slot="tr">
+            {visibleColumns.map((col) => {
+              const colId = (col.id || col.accessorKey || "") as string
+              const isPinned = columnPinning.left?.includes(colId) ? "left" : columnPinning.right?.includes(colId) ? "right" : false
+              const headerSlotName = `${colId}-header`
+              const metaClass = typeof col.meta?.class?.th === "function" ? col.meta.class.th(col) : (col.meta?.class?.th || "")
+              const styleObj = typeof col.meta?.style?.th === "function" ? col.meta.style.th(col) : col.meta?.style?.th
+              const canSort = col.enableSorting !== false && (!!col.accessorKey || !!col.id) && colId !== "actions" && colId !== "select"
+              const activeSort = sorting.find((s) => s.id === colId)
+              const sortDir = activeSort ? (activeSort.desc ? "desc" : "asc") : "none"
+
+              return (
+                <th
+                  scope="col"
+                  class:list={[
+                    classes.th,
+                    isPinned && (classes as any).pinned?.th,
+                    metaClass
+                  ]}
+                  style={col.size ? `width: ${typeof col.size === 'number' ? `${col.size}px` : col.size}; ${styleObj || ''}` : styleObj}
+                  data-col-id={colId}
+                  data-slot="th"
+                >
+                  {Astro.slots.has(headerSlotName) ? (
+                    <slot name={headerSlotName} {...({ column: col } as any)} />
+                  ) : canSort ? (
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
+                      data-rla-sort-btn
+                      data-rla-col-id={colId}
+                      data-sort-dir={sortDir}
+                    >
+                      <span>
+                        {typeof col.header === "function" ? col.header({ column: col, table: {} }) : (col.header || colId)}
+                      </span>
+                      <span
+                        data-sort-icon
+                        class:list={[
+                          sortDir === "asc"
+                            ? "i-lucide-arrow-up-narrow-wide text-primary font-bold"
+                            : sortDir === "desc"
+                            ? "i-lucide-arrow-down-wide-narrow text-primary font-bold"
+                            : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100",
+                          "size-3.5 transition-all"
+                        ]}
+                      />
+                    </button>
+                  ) : typeof col.header === "function" ? (
+                    col.header({ column: col, table: {} })
+                  ) : (
+                    col.header || colId
+                  )}
+                </th>
+              )
+            })}
+          </tr>
+        </thead>
+      )}
+
+      <tbody class={classes.tbody} data-slot="tbody">
+        {Astro.slots.has("body-top") && <slot name="body-top" />}
+
+        {loading ? (
+          <tr>
+            <td colspan={Math.max(1, visibleColumns.length)} class={classes.loading} data-slot="loading">
+              {Astro.slots.has("loading") ? (
+                <slot name="loading" />
+              ) : (
+                <div class="flex items-center justify-center gap-2 text-muted py-4">
+                  <RLAIcon name="i-lucide-loader-2" class="size-5 animate-spin text-primary" />
+                  <span>Loading table data...</span>
+                </div>
+              )}
+            </td>
+          </tr>
+        ) : paginatedRows.length === 0 && (data.length > 0 || visibleColumns.length > 0) ? (
+          <tr>
+            <td colspan={Math.max(1, visibleColumns.length)} class={classes.empty} data-slot="empty">
+              {Astro.slots.has("empty") ? (
+                <slot name="empty" />
+              ) : (
+                <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted">
+                  <RLAIcon name="i-lucide-inbox" class="size-8 opacity-50" />
+                  <p class="text-sm font-medium">{empty}</p>
+                </div>
+              )}
+            </td>
+          </tr>
+        ) : (
+          <slot>
+            {/* Render data rows if data prop provided */}
+            {data.length > 0 && paginatedRows.map((row) => {
+              const trMetaClass = typeof meta?.class?.tr === "function" ? meta.class.tr(row) : (meta?.class?.tr || "")
+              const isSelected = row.getIsSelected()
+              const isExpanded = row.getIsExpanded()
+
+              return (
+                <>
+                  <tr
+                    class:list={[classes.tr, trMetaClass]}
+                    data-slot="tr"
+                    data-row-id={row.id}
+                    data-selected={isSelected ? "true" : undefined}
+                    data-expanded={isExpanded ? "true" : undefined}
+                  >
+                    {visibleColumns.map((col) => {
+                      const colId = (col.id || col.accessorKey || "") as string
+                      const cellValue = col.accessorKey ? row.getValue(col.accessorKey as string) : undefined
+                      const cellSlotName = `${colId}-cell`
+                      const metaTdClass = typeof col.meta?.class?.td === "function" ? col.meta.class.td(row) : (col.meta?.class?.td || "")
+                      const colSpanVal = typeof col.meta?.colspan?.td === "function" ? col.meta.colspan.td(row) : col.meta?.colspan?.td
+                      const rowSpanVal = typeof col.meta?.rowspan?.td === "function" ? col.meta.rowspan.td(row) : col.meta?.rowspan?.td
+
+                      return (
+                        <td
+                          class:list={[classes.td, metaTdClass]}
+                          colspan={colSpanVal}
+                          rowspan={rowSpanVal}
+                          data-slot="td"
+                          data-col-id={colId}
+                        >
+                          {Astro.slots.has(cellSlotName) ? (
+                            <slot
+                              name={cellSlotName}
+                              {...({
+                                row,
+                                column: col,
+                                cell: { value: cellValue },
+                                getValue: () => cellValue,
+                                renderValue: () => cellValue
+                              } as any)}
+                            />
+                          ) : typeof col.cell === "function" ? (
+                            col.cell({
+                              row,
+                              getValue: () => cellValue,
+                              renderValue: () => cellValue,
+                              column: col,
+                              table: {}
+                            })
+                          ) : cellValue !== undefined && cellValue !== null ? (
+                            String(cellValue)
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+
+                  {isExpanded && Astro.slots.has("expanded") && (
+                    <tr class="bg-muted/20 border-b border-default" data-slot="expanded-tr">
+                      <td colspan={visibleColumns.length} class="p-4">
+                        <slot name="expanded" {...({ row } as any)} />
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )
+            })}
+
+            {/* Render legacy rows array if rows prop provided */}
+            {data.length === 0 && rows.length > 0 && rows.map((row) => {
+              const cells = Array.isArray(row) ? row : Object.values(row)
+              return (
+                <tr class={classes.tr} data-slot="tr">
+                  {cells.map((cell) => (
+                    <td class={classes.td} data-slot="td">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              )
+            })}
+          </slot>
+        )}
+
+        {Astro.slots.has("body-bottom") && <slot name="body-bottom" />}
+      </tbody>
+
+      {hasFooters && (
+        <tfoot class={classes.tfoot} data-slot="tfoot">
+          <tr class={classes.tr} data-slot="tr">
+            {visibleColumns.map((col) => {
+              const colId = (col.id || col.accessorKey || "") as string
+              const footerSlotName = `${colId}-footer`
+              return (
                 <td class={classes.td} data-slot="td">
-                  {cell}
+                  {Astro.slots.has(footerSlotName) ? (
+                    <slot name={footerSlotName} {...({ column: col } as any)} />
+                  ) : typeof col.footer === "function" ? (
+                    col.footer({ column: col, table: {} })
+                  ) : (
+                    col.footer || ""
+                  )}
                 </td>
-              ))}
-            </tr>
-          )
-        })}
-      </slot>
-    </tbody>
-  </table>
-</div>
+              )
+            })}
+          </tr>
+        </tfoot>
+      )}
+    </table>
+  </div>
+</rla-table>
+
+<script>
+  if (typeof HTMLElement !== "undefined") {
+    class RLATableElement extends HTMLElement {
+      connectedCallback() {
+        const table = this.querySelector("table");
+        if (!table) return;
+
+        const tbody = table.querySelector("tbody");
+        if (!tbody) return;
+
+        // Interactive Live Search filter
+        const searchInput = this.querySelector("[data-rla-table-search]") as HTMLInputElement | null;
+        if (searchInput) {
+          searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase().trim();
+            const rows = tbody.querySelectorAll("tr[data-slot=tr]");
+            rows.forEach((row) => {
+              const text = row.textContent?.toLowerCase() || "";
+              if (!query || text.includes(query)) {
+                (row as HTMLElement).style.display = "";
+              } else {
+                (row as HTMLElement).style.display = "none";
+              }
+            });
+          });
+        }
+
+        // Column Visibility Toggles via RLADropdownMenu
+        this.addEventListener("rla-dropdown-checkbox-change", (e: any) => {
+          const colId = e.detail?.id;
+          const checked = e.detail?.checked;
+          if (!colId) return;
+
+          const th = table.querySelector(`th[data-col-id="${colId}"]`) as HTMLElement | null;
+          if (th) {
+            th.style.display = checked ? "" : "none";
+            const colIndex = Array.from(th.parentElement?.children || []).indexOf(th);
+            if (colIndex >= 0) {
+              const rows = tbody.querySelectorAll("tr");
+              rows.forEach((r) => {
+                const cell = r.children[colIndex] as HTMLElement | undefined;
+                if (cell) cell.style.display = checked ? "" : "none";
+              });
+            }
+          }
+
+          const tds = table.querySelectorAll(`td[data-col-id="${colId}"]`);
+          tds.forEach((td) => ((td as HTMLElement).style.display = checked ? "" : "none"));
+        });
+
+
+
+        // Interactive Column Sorting
+        const sortButtons = table.querySelectorAll("[data-rla-sort-btn]");
+        sortButtons.forEach((btnNode) => {
+          const btn = btnNode as HTMLButtonElement;
+          btn.addEventListener("click", () => {
+            const colId = btn.getAttribute("data-rla-col-id");
+            if (!colId) return;
+
+            const currentDir = btn.getAttribute("data-sort-dir") || "none";
+            const nextDir = currentDir === "asc" ? "desc" : "asc";
+
+            // Reset all other sort buttons
+            sortButtons.forEach((otherBtn) => {
+              if (otherBtn !== btn) {
+                otherBtn.setAttribute("data-sort-dir", "none");
+                const icon = otherBtn.querySelector("[data-sort-icon]");
+                if (icon) icon.className = "i-lucide-arrow-up-down size-3.5 opacity-40 group-hover:opacity-100 transition-all";
+              }
+            });
+
+            btn.setAttribute("data-sort-dir", nextDir);
+            const icon = btn.querySelector("[data-sort-icon]");
+            if (icon) {
+              icon.className = nextDir === "asc"
+                ? "i-lucide-arrow-up-narrow-wide size-3.5 text-primary font-bold transition-all"
+                : "i-lucide-arrow-down-wide-narrow size-3.5 text-primary font-bold transition-all";
+            }
+
+            // Sort rows in DOM
+            const rows = Array.from(tbody.querySelectorAll("tr[data-slot=tr]")) as HTMLTableRowElement[];
+            const colIndex = Array.from(table.querySelectorAll("thead th")).findIndex(
+              (th) => (th as HTMLElement).getAttribute("data-col-id") === colId
+            );
+
+            if (colIndex < 0) return;
+
+            rows.sort((rowA, rowB) => {
+              const cellA = rowA.children[colIndex]?.textContent?.trim() || "";
+              const cellB = rowB.children[colIndex]?.textContent?.trim() || "";
+              const numA = Number(cellA.replace(/[^0-9.-]+/g, ""));
+              const numB = Number(cellB.replace(/[^0-9.-]+/g, ""));
+
+              if (!isNaN(numA) && !isNaN(numB) && cellA !== "" && cellB !== "") {
+                return nextDir === "asc" ? numA - numB : numB - numA;
+              }
+              return nextDir === "asc" ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+            });
+
+            rows.forEach((row) => tbody.appendChild(row));
+          });
+        });
+
+        // Row Selection Event
+        this.addEventListener("click", (e) => {
+          const target = e.target as HTMLElement | null;
+          if (!target) return;
+          if (target.closest("a, button, input, select, textarea, [role=button]")) {
+            return;
+          }
+          const tr = target.closest("tbody tr[data-row-id]");
+          if (tr) {
+            const rowId = tr.getAttribute("data-row-id");
+            this.dispatchEvent(new CustomEvent("rla-row-select", { detail: { rowId, event: e }, bubbles: true }));
+          }
+        });
+      }
+    }
+
+    if (!customElements.get("rla-table")) {
+      customElements.define("rla-table", RLATableElement);
+    }
+  }
+</script>
+
+

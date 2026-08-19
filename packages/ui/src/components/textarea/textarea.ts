@@ -1,5 +1,6 @@
-import type { ThemeColor } from "../../types/component"
+import type { ThemeColor } from "../../types"
 export interface TextareaProps {
+  autoGrow?: boolean
   /**
    * The text value.
    */

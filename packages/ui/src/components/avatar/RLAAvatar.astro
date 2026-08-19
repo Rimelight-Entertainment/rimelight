@@ -1,15 +1,7 @@
 ---
-import { scv, cx } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { AvatarProps } from "./avatar"
-import { resolveTheme } from "../../utils/resolveTheme"
-import avatarThemeDefault, { createAvatarTheme } from "./avatar.theme"
-const avatarTheme = resolveTheme(avatarThemeDefault, createAvatarTheme)
+import { avatarTheme } from "./avatar.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
-
-
-const avatar = scv(avatarTheme)
 
 const {
   src,
@@ -19,26 +11,15 @@ const {
   title,
   subtitle,
   label,
-  size = "md",
   badge = false,
   badgeColor = "success",
-  badgePosition = "bottom-right",
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as AvatarProps & {
-  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left"
-  badgeColor?: string
-}
+} = Astro.props as AvatarProps
 
-const classes = resolveClasses(avatar, {
-  size,
-  color: (Astro.props.color || "neutral") as "neutral",
-  badgePosition: badgePosition as "bottom-right"
-}, useUi("avatar", uiProp), className)
-
+const classes = avatarTheme(Astro.props)
 const avatarFallback = fallback || initials
-const hasTextLayout = !!(title || subtitle)
+const hasTextLayout = Boolean(title || subtitle)
+const badgeClass = badgeColor?.startsWith("bg-") ? badgeColor : `bg-${badgeColor}-500`
 ---
 {hasTextLayout ? (
   <div class="flex items-center gap-3" data-slot="profile-wrapper">
@@ -72,7 +53,7 @@ const hasTextLayout = !!(title || subtitle)
       <slot name="badge">
         {badge && (
           <span
-            class={cx(classes.badge, badgeColor && (typeof badgeColor === 'string' && badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
+            class:list={[classes.badge, badgeClass]}
             data-slot="badge"
           >
             {typeof badge === 'string' || typeof badge === 'number' ? badge : null}
@@ -82,12 +63,12 @@ const hasTextLayout = !!(title || subtitle)
     </span>
     <div class="flex flex-col leading-tight">
       {title && (
-        <span class="font-medium text-sm text-[var(--foreground)]" data-slot="title">
+        <span class="font-medium text-sm text-default" data-slot="title">
           {title}
         </span>
       )}
       {subtitle && (
-        <span class="text-xs text-[var(--muted-foreground)]" data-slot="subtitle">
+        <span class="text-xs text-muted" data-slot="subtitle">
           {subtitle}
         </span>
       )}
@@ -124,7 +105,7 @@ const hasTextLayout = !!(title || subtitle)
     <slot name="badge">
       {badge && (
         <span
-          class={cx(classes.badge, badgeColor && (typeof badgeColor === 'string' && badgeColor.startsWith('bg-') ? badgeColor : `bg-${badgeColor}-500`))}
+          class:list={[classes.badge, badgeClass]}
           data-slot="badge"
         >
           {typeof badge === 'string' || typeof badge === 'number' ? badge : null}
@@ -133,4 +114,3 @@ const hasTextLayout = !!(title || subtitle)
     </slot>
   </span>
 )}
-

@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { ProseProps } from "./prose"
-import proseTheme from "./prose.theme"
+import { proseTheme } from "./prose.theme"
 
 
-const prose = scv(proseTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as ProseProps
-
-const classes = resolveClasses(prose, {}, useUi("prose", uiProp), className);
+const classes = proseTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

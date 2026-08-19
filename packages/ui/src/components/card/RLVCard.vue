@@ -1,31 +1,23 @@
 <script setup lang="ts">
 import { computed, useSlots, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { CardProps } from "./card"
-import cardThemeDefault from "./card.theme"
+import { cardTheme } from "./card.theme"
 
 defineOptions({ name: "RLVCard" })
 
 const attrs = useAttrs()
 const slots = useSlots()
-const cardScv = scv(cardThemeDefault)
 
 const props = withDefaults(defineProps<CardProps>(), {
   overlay: false
 })
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    cardScv,
-    {
-      interactive: !!props.href,
-      overlay: props.overlay
-    },
-    useUi("card", props.ui),
-    props.class
-  )
+  cardTheme({
+    interactive: !!props.href,
+    overlay: props.overlay,
+    class: props.class
+  })
 )
 
 const Tag = computed(() => (props.href ? "a" : "div"))

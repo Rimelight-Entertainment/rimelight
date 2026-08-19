@@ -1,26 +1,21 @@
 ---
-import type { HTMLTag } from "astro/types"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardNavbarProps } from "./dashboard-navbar"
-import dashboardNavbarTheme from "./dashboard-navbar.theme"
+import { dashboardNavbarTheme } from "./dashboard-navbar.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const dashboardNavbar = scv(dashboardNavbarTheme)
 
 const {
-  as: Tag = "div" as HTMLTag,
+  as: Tag = "header",
   icon,
   title,
   toggle = true,
   toggleSide = "left",
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as DashboardNavbarProps & { as?: HTMLTag }
+} = Astro.props as DashboardNavbarProps 
 
-const classes = resolveClasses(dashboardNavbar, { toggleSide }, useUi("dashboardNavbar", uiProp), className);
+
+
+const classes = dashboardNavbarTheme(Astro.props);
 ---
 
 <Tag class={classes.root} data-slot="root" {...rest}>

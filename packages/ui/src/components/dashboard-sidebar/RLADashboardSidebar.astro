@@ -1,25 +1,19 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSidebarProps } from "./dashboard-sidebar"
-import dashboardSidebarTheme from "./dashboard-sidebar.theme"
+import { dashboardSidebarTheme } from "./dashboard-sidebar.theme"
 
-const dashboardSidebar = scv(dashboardSidebarTheme)
 
 const {
   side = "left",
   collapsible = false,
   collapsed = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardSidebarProps
 
-const classes = resolveClasses(dashboardSidebar, {
-  side,
+const classes = dashboardSidebarTheme({
+  ...Astro.props,
   collapsed: collapsible && collapsed
-}, useUi("dashboardSidebar", uiProp), className);
+});
 
 const collapsedWidth = "4rem";
 const defaultWidth = "16rem";
@@ -48,7 +42,7 @@ const defaultWidth = "16rem";
   </div>
 </div>
 
-<div data-dashboard-sidebar-overlay data-slot="overlay" class={classes.overlay + " fixed inset-0 z-40 bg-background/80 backdrop-blur-sm transition-opacity duration-300 hidden"} />
+<div data-dashboard-sidebar-overlay data-slot="overlay" class={classes.overlay + " fixed inset-0 z-40 bg-default/80 backdrop-blur-sm transition-opacity duration-300 hidden"} />
 
 <div
   data-dashboard-sidebar-mobile

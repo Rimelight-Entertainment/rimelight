@@ -1,0 +1,67 @@
+---
+import { auth } from "@/auth/auth"
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
+import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import { db } from "@/db"
+import { pages, pageDrafts } from "@/db/schema"
+import { eq } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
+
+const currentLocale = Astro.currentLocale ?? "en"
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+const id = Astro.params.id
+
+if (!session) {
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
+}
+
+const page = await db.select().from(pages).where(eq(pages.id, id!)).limit(1)
+if (!page[0]) return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/pages"))
+
+const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id!)).limit(1)
+
+const parseContent = (c: any) => (typeof c === "string" ? JSON.parse(c) : c)
+const content = draft[0]?.content ? parseContent(draft[0].content) : parseContent(page[0].content)
+const userSession = session
+  ? {
+      userId: session.user.id,
+      roles: [session.user.role || "user"],
+      permissions: []
+    }
+  : undefined
+
+const titleVal =
+  typeof page[0].title === "object" && page[0].title !== null
+    ? (page[0].title as Record<string, string>)[currentLocale] || (page[0].title as Record<string, string>).en || ""
+    : String(page[0].title || "")
+---
+
+<CMSDashboardLayout title={`Preview: ${titleVal}`} description="Preview CMS page" activeSection="pages">
+  <Fragment slot="toolbar-right">
+    <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/pages/${id}/edit`)} variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-arrow-left">
+      Back to Editor
+    </RLAButton>
+  </Fragment>
+
+  <div class="max-w-4xl mx-auto space-y-6">
+    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+      <p class="text-sm text-blue-800">Preview Mode - This is how the page will appear to readers</p>
+    </div>
+
+    {userSession ? (
+      <PageRenderer 
+        blocks={content.blocks || []} 
+        session={userSession} 
+        locale="en"
+        class="prose prose-lg max-w-none"
+      />
+    ) : (
+      <PageRenderer 
+        blocks={content.blocks || []} 
+        locale="en"
+        class="prose prose-lg max-w-none"
+      />
+    )}
+  </div>
+</CMSDashboardLayout>

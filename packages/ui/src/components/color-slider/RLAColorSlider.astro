@@ -1,12 +1,6 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import { resolveTheme } from "../../utils/resolveTheme"
-import colorSliderThemeDefault, { createColorSliderTheme } from "./color-slider.theme"
-const colorSliderTheme = resolveTheme(colorSliderThemeDefault, createColorSliderTheme)
+import { colorSliderTheme } from "./color-slider.theme"
 
-const colorSlider = scv(colorSliderTheme)
 
 export interface Props {
   channel: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"
@@ -40,15 +34,10 @@ const {
   step = 1,
   color = "primary",
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as Props
 
-const classes = resolveClasses(colorSlider, {
-  color,
-  theme
-}, useUi("colorSlider", uiProp), className)
+const classes = colorSliderTheme(Astro.props)
 
 const initialValue = modelValue || defaultValue
 ---

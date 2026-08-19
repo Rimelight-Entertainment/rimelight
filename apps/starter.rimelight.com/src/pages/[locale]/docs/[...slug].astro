@@ -1,0 +1,103 @@
+---
+import DocsLayout from "@/layouts/DocsLayout.astro";
+import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts";
+import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/docs";
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
+import { blocksToMarkdown } from "@rimelight/cms";
+import { db } from "@/db";
+import { pages } from "@/db/schema";
+import { eq, and, isNull, inArray, sql } from "drizzle-orm";
+
+const activeLocale = Astro.currentLocale ?? "en";
+const { slug } = Astro.params;
+
+// 1. Discover versions from database (only fetch slugs + extract version from JSON)
+let allDocPages: any[] = [];
+try {
+  allDocPages = await db
+    .select({
+      slug: pages.slug,
+      version: sql<string>`(${pages.content}->'properties'->>'version')`.as('version'),
+    })
+    .from(pages)
+    .where(and(eq(pages.type, "doc"), isNull(pages.deletedAt)));
+} catch {
+  // DB query fallback if offline/initializing
+}
+
+const versions = getDocsVersions(allDocPages, activeLocale);
+
+const { activeVersion, contentPath, includeVersionInUrl } = parseDocsSlug(slug, versions);
+
+if (includeVersionInUrl && (!slug || !slug.split("/")[0]?.startsWith("v"))) {
+  return Astro.redirect(`/${activeLocale}/docs/${activeVersion}/${contentPath === "index" ? "" : contentPath}`);
+}
+
+// 2. Fetch specific doc page from CMS DB
+let dbPage: any = null;
+const candidateSlugs = [
+  slug,
+  contentPath === "index" ? (activeVersion ? `${activeVersion}/index` : "index") : (activeVersion ? `${activeVersion}/${contentPath}` : contentPath),
+  contentPath
+].filter(Boolean) as string[];
+
+try {
+  const pageResults = await db
+    .select()
+    .from(pages)
+    .where(and(eq(pages.type, "doc"), inArray(pages.slug, candidateSlugs), isNull(pages.deletedAt)));
+
+  if (pageResults && pageResults.length > 0) {
+    // Pick the most specific candidate matching order
+    for (const candidate of candidateSlugs) {
+      const match = pageResults.find((p: any) => p.slug === candidate);
+      if (match) {
+        dbPage = match;
+        break;
+      }
+    }
+  }
+} catch {
+  // continue
+}
+
+if (!dbPage) {
+  return Astro.redirect("/404");
+}
+
+const content = typeof dbPage.content === "string" ? JSON.parse(dbPage.content) : dbPage.content || {};
+const dbBlocks = content.blocks || [];
+
+const getLocalizedText = (val: unknown, loc: string): string => {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>;
+    return record[loc] || record.en || "";
+  }
+  return String(val || "");
+};
+
+const docTitle = getLocalizedText(dbPage.title, activeLocale) || "Documentation";
+const docDescription = getLocalizedText(dbPage.description, activeLocale) || content.properties?.description || "";
+const docHeadings = extractHeadingsFromBlocks(dbBlocks);
+const docTableOfContents = content.properties?.tableOfContents as TableOfContentsConfig | false | undefined;
+const docPrev = content.properties?.prev;
+const docNext = content.properties?.next;
+const docEditUrl = content.properties?.editUrl;
+const docRawMarkdown = blocksToMarkdown(dbBlocks);
+---
+
+<DocsLayout
+  title={docTitle}
+  description={docDescription}
+  headings={docHeadings}
+  tableOfContents={docTableOfContents}
+  prevOverride={docPrev}
+  nextOverride={docNext}
+  editUrl={docEditUrl}
+  rawMarkdown={docRawMarkdown}
+  activeVersion={activeVersion}
+  versions={versions}
+  includeVersionInUrl={includeVersionInUrl}
+>
+  <PageRenderer blocks={dbBlocks} locale={activeLocale} />
+</DocsLayout>

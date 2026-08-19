@@ -1,0 +1,23 @@
+---
+import type { BaseBlock } from "../core/types/blocks"
+import type { UserSessionContext } from "../auth/permissions"
+import { filterBlocksForReader } from "../auth/filter-blocks"
+import BlockRenderer from "./BlockRenderer.astro"
+
+interface Props {
+  blocks: BaseBlock[]
+  session?: UserSessionContext
+  locale?: string
+  class?: string
+}
+
+const { blocks, session, locale = "en", class: className = "" } = Astro.props
+
+const sanitizedBlocks = filterBlocksForReader(blocks, session)
+---
+
+<article class={`rimelight-cms-page ${className}`}>
+  {sanitizedBlocks.map((block) => (
+    <BlockRenderer block={block} locale={locale} />
+  ))}
+</article>

@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { CommandPaletteProps } from "./command-palette"
-import commandPaletteTheme from "./command-palette.theme"
+import { commandPaletteTheme } from "./command-palette.theme"
 
 
-const commandPalette = scv(commandPaletteTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as CommandPaletteProps
-
-const classes = resolveClasses(commandPalette, {}, useUi("commandPalette", uiProp), className);
+const classes = commandPaletteTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

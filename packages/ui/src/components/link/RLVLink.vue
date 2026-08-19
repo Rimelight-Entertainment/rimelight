@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { LinkProps } from "./link"
-import linkTheme from "./link.theme"
+import { linkTheme } from "./link.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 import { resolveLinkAttrs } from "./helpers"
-
-const link = scv(linkTheme)
 
 defineOptions({ name: "RLVLink", inheritAttrs: false })
 
@@ -27,16 +22,12 @@ const resolvedClasses = computed(() => {
     return { root: props.class || "" } as Record<string, string>
   }
 
-  return resolveClasses(
-    link,
-    {
-      theme: props.theme,
-      ...(props.active !== undefined ? { active: props.active } : {}),
-      disabled: !!props.disabled
-    },
-    useUi("link", props.ui),
-    props.class
-  )
+  return linkTheme({
+    theme: props.theme,
+    ...(props.active !== undefined ? { active: props.active } : {}),
+    disabled: !!props.disabled,
+    class: props.class
+  })
 })
 </script>
 

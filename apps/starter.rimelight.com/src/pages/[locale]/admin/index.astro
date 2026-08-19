@@ -1,0 +1,338 @@
+---
+import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
+import RLACard from "@rimelight/ui/components/card/RLACard.astro";
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
+import RLATable from "@rimelight/ui/components/table/RLATable.astro";
+import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
+import { db } from "@/db";
+import { user, session, role } from "@/db/schema";
+import { count, eq, isNull, desc, and } from "drizzle-orm";
+
+// SSR statistics query
+const [totalUsersRes] = await db.select({ count: count() }).from(user).where(isNull(user.deletedAt));
+const [verifiedUsersRes] = await db.select({ count: count() }).from(user).where(and(isNull(user.deletedAt), eq(user.emailVerified, true)));
+const [unverifiedUsersRes] = await db.select({ count: count() }).from(user).where(and(isNull(user.deletedAt), eq(user.emailVerified, false)));
+const [bannedUsersRes] = await db.select({ count: count() }).from(user).where(and(isNull(user.deletedAt), eq(user.banned, true)));
+const [activeSessionsRes] = await db.select({ count: count() }).from(session);
+
+let totalRolesRes = { count: 5 };
+try {
+	const [res] = await db.select({ count: count() }).from(role).where(isNull(role.deletedAt));
+	if (res) totalRolesRes = res;
+} catch (err) {
+	console.warn("Role table query skipped or missing in DB:", err);
+}
+
+let recentUsers: any[] = [];
+try {
+	recentUsers = await db
+		.select({
+			id: user.id,
+			name: user.name,
+			email: user.email,
+			role: user.role,
+			emailVerified: user.emailVerified,
+			banned: user.banned,
+			createdAt: user.createdAt,
+			image: user.image
+		})
+		.from(user)
+		.where(isNull(user.deletedAt))
+		.orderBy(desc(user.createdAt))
+		.limit(6);
+} catch (err) {
+	console.warn("Error fetching recent users:", err);
+}
+
+let roleDistribution: any[] = [];
+try {
+	roleDistribution = await db
+		.select({
+			role: user.role,
+			userCount: count()
+		})
+		.from(user)
+		.where(isNull(user.deletedAt))
+		.groupBy(user.role);
+} catch (err) {
+	console.warn("Error fetching role distribution:", err);
+}
+
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
+
+const stats = {
+	totalUsers: totalUsersRes?.count ?? 0,
+	verifiedUsers: verifiedUsersRes?.count ?? 0,
+	unverifiedUsers: unverifiedUsersRes?.count ?? 0,
+	bannedUsers: bannedUsersRes?.count ?? 0,
+	totalRoles: totalRolesRes?.count ?? 5,
+	activeSessions: activeSessionsRes?.count ?? 0,
+};
+
+const recentUserColumns: TableColumn[] = [
+	{ id: "user", accessorKey: "name", header: "User", enableSorting: true },
+	{ id: "role", accessorKey: "role", header: "Role", enableSorting: true },
+	{ id: "status", header: "Email Status", enableSorting: true },
+	{ id: "createdAt", accessorKey: "createdAt", header: "Registered", enableSorting: true },
+	{ id: "actions", header: "Actions", enableSorting: false, meta: { class: { th: "text-right", td: "text-right" } } }
+];
+---
+
+<AuthAdminDashboardLayout
+	title="Authentication Overview"
+	description="Comprehensive overview of system users, security sessions, and RBAC permissions."
+	activeSection="overview"
+>
+	<Fragment slot="actions">
+		<a href="/admin/users">
+			<RLAButton variant="solid" color="primary" leadingIcon="i-lucide-user-plus" size="sm">
+				Create User
+			</RLAButton>
+		</a>
+		<a href="/admin/roles">
+			<RLAButton variant="outline" color="neutral" leadingIcon="i-lucide-shield-plus" size="sm">
+				New Role
+			</RLAButton>
+		</a>
+	</Fragment>
+
+	<div class="flex flex-col gap-6">
+		<!-- Top Metrics Grid -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+			<!-- Total Users -->
+			<RLACard class="p-5 flex flex-col justify-between gap-4 border-border hover:border-primary/40 transition-colors shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Registered Users</span>
+					<div class="p-2 rounded-lg bg-primary/10 text-primary">
+						<RLAIcon name="i-lucide-users" class="size-5" />
+					</div>
+				</div>
+				<div class="flex items-baseline justify-between">
+					<span class="text-3xl font-bold text-highlighted">{stats.totalUsers}</span>
+					<RLABadge variant="subtle" color="primary" class="text-xs">
+						{stats.verifiedUsers} Verified
+					</RLABadge>
+				</div>
+			</RLACard>
+
+			<!-- Active Sessions -->
+			<RLACard class="p-5 flex flex-col justify-between gap-4 border-border hover:border-success/40 transition-colors shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Sessions</span>
+					<div class="p-2 rounded-lg bg-success/10 text-success">
+						<RLAIcon name="i-lucide-key-round" class="size-5" />
+					</div>
+				</div>
+				<div class="flex items-baseline justify-between">
+					<span class="text-3xl font-bold text-highlighted">{stats.activeSessions}</span>
+					<RLABadge variant="subtle" color="success" class="text-xs">
+						Live Connections
+					</RLABadge>
+				</div>
+			</RLACard>
+
+			<!-- Unverified Users -->
+			<RLACard class="p-5 flex flex-col justify-between gap-4 border-border hover:border-warning/40 transition-colors shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pending Email Verifications</span>
+					<div class="p-2 rounded-lg bg-warning/10 text-warning">
+						<RLAIcon name="i-lucide-mail-warning" class="size-5" />
+					</div>
+				</div>
+				<div class="flex items-baseline justify-between">
+					<span class="text-3xl font-bold text-highlighted">{stats.unverifiedUsers}</span>
+					<a href="/admin/users?status=unverified" class="text-xs text-warning hover:underline font-medium">
+						View Unverified &rarr;
+					</a>
+				</div>
+			</RLACard>
+
+			<!-- Banned Users / Security Alerts -->
+			<RLACard class="p-5 flex flex-col justify-between gap-4 border-border hover:border-destructive/40 transition-colors shadow-sm">
+				<div class="flex items-center justify-between">
+					<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Banned Accounts</span>
+					<div class="p-2 rounded-lg bg-destructive/10 text-destructive">
+						<RLAIcon name="i-lucide-user-x" class="size-5" />
+					</div>
+				</div>
+				<div class="flex items-baseline justify-between">
+					<span class="text-3xl font-bold text-highlighted">{stats.bannedUsers}</span>
+					<RLABadge variant="subtle" color={stats.bannedUsers > 0 ? "error" : "neutral"} class="text-xs">
+						{stats.bannedUsers > 0 ? "Flagged" : "Clear"}
+					</RLABadge>
+				</div>
+			</RLACard>
+		</div>
+
+		<!-- Quick Workflows & System Info Cards -->
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+			<!-- Quick Actions -->
+			<RLACard class="p-6 flex flex-col gap-4 border-border lg:col-span-2 shadow-sm">
+				<div class="flex items-center justify-between">
+					<div class="flex items-center gap-2">
+						<RLAIcon name="i-lucide-zap" class="size-5 text-primary" />
+						<h2 class="text-base font-semibold text-highlighted">Administrative Quick Actions</h2>
+					</div>
+					<span class="text-xs text-muted-foreground">Better Auth Direct Integrations</span>
+				</div>
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+					<a href="/admin/users" class="group p-4 rounded-xl border border-border/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
+						<div class="flex items-center gap-3">
+							<div class="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:scale-105 transition-transform">
+								<RLAIcon name="i-lucide-user-plus" class="size-5" />
+							</div>
+							<div>
+								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Create User Account</h3>
+								<p class="text-xs text-muted-foreground mt-0.5">Provision new credentials & assign initial roles</p>
+							</div>
+						</div>
+					</a>
+
+					<a href="/admin/roles" class="group p-4 rounded-xl border border-border/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
+						<div class="flex items-center gap-3">
+							<div class="p-2.5 rounded-lg bg-purple-500/10 text-purple-500 group-hover:scale-105 transition-transform">
+								<RLAIcon name="i-lucide-shield-check" class="size-5" />
+							</div>
+							<div>
+								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Manage Roles & Statements</h3>
+								<p class="text-xs text-muted-foreground mt-0.5">Define access control policies & RBAC rules</p>
+							</div>
+						</div>
+					</a>
+
+					<a href="/admin/sessions" class="group p-4 rounded-xl border border-border/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
+						<div class="flex items-center gap-3">
+							<div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:scale-105 transition-transform">
+								<RLAIcon name="i-lucide-activity" class="size-5" />
+							</div>
+							<div>
+								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Audit Active Sessions</h3>
+								<p class="text-xs text-muted-foreground mt-0.5">Monitor client tokens, IPs, and force revokes</p>
+							</div>
+						</div>
+					</a>
+
+					<a href="/admin/users?status=unverified" class="group p-4 rounded-xl border border-border/80 bg-muted/20 hover:bg-muted/60 hover:border-primary/30 transition-all">
+						<div class="flex items-center gap-3">
+							<div class="p-2.5 rounded-lg bg-amber-500/10 text-amber-500 group-hover:scale-105 transition-transform">
+								<RLAIcon name="i-lucide-mail" class="size-5" />
+							</div>
+							<div>
+								<h3 class="text-sm font-semibold text-highlighted group-hover:text-primary transition-colors">Resend Verification Emails</h3>
+								<p class="text-xs text-muted-foreground mt-0.5">Help unconfirmed users complete registration</p>
+							</div>
+						</div>
+					</a>
+				</div>
+			</RLACard>
+
+			<!-- Role Distribution Card -->
+			<RLACard class="p-6 flex flex-col gap-4 border-border shadow-sm">
+				<div class="flex items-center justify-between">
+					<div class="flex items-center gap-2">
+						<RLAIcon name="i-lucide-pie-chart" class="size-5 text-primary" />
+						<h2 class="text-base font-semibold text-highlighted">Role Distribution</h2>
+					</div>
+					<RLABadge variant="subtle" color="neutral" class="text-xs">
+						{stats.totalRoles} Defined Roles
+					</RLABadge>
+				</div>
+				<div class="flex flex-col gap-3 mt-1">
+					{roleDistribution.map((item) => (
+						<div class="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border/40">
+							<div class="flex items-center gap-2.5">
+								<div class="size-2.5 rounded-full bg-primary" />
+								<span class="text-sm font-medium capitalize text-highlighted">{item.role || "user"}</span>
+							</div>
+							<div class="flex items-center gap-2">
+								<span class="text-xs font-semibold text-muted-foreground">{item.userCount} user{item.userCount === 1 ? "" : "s"}</span>
+								<span class="text-[10px] text-muted-foreground/60">
+									({Math.round(((item.userCount || 0) / (stats.totalUsers || 1)) * 100)}%)
+								</span>
+							</div>
+						</div>
+					))}
+				</div>
+			</RLACard>
+		</div>
+
+		<!-- Recent User Registrations Table -->
+		<RLACard class="p-6 flex flex-col gap-4 border-border shadow-sm">
+			<div class="flex items-center justify-between">
+				<div>
+					<h2 class="text-base font-semibold text-highlighted">Recently Registered Users</h2>
+					<p class="text-xs text-muted-foreground">Latest accounts created in the system</p>
+				</div>
+				<a href="/admin/users">
+					<RLAButton variant="ghost" color="neutral" size="sm" trailingIcon="i-lucide-arrow-right">
+						View All Users
+					</RLAButton>
+				</a>
+			</div>
+
+			<RLATable
+				columns={recentUserColumns}
+				data={recentUsers}
+				searchable
+				searchPlaceholder="Filter recent users..."
+				showColumnsToggle
+				hoverable
+				striped
+				class="w-full"
+			>
+				<tbody slot="default" class="divide-y divide-border/40">
+					{recentUsers.map((u) => {
+						const actionItems = [
+							[
+								{ label: "Manage User", icon: "i-lucide-sliders", to: `/admin/users?search=${encodeURIComponent(u.email)}` }
+							]
+						];
+
+						return (
+							<tr class="hover:bg-muted/20 transition-colors">
+								<td class="p-3.5" data-col-id="user">
+									<div class="flex items-center gap-3">
+										<RLAAvatar src={u.image || `https://i.pravatar.cc/80?u=${u.id}`} size="sm" />
+										<div class="flex flex-col">
+											<span class="font-medium text-highlighted">{u.name}</span>
+											<span class="text-xs text-muted-foreground">{u.email}</span>
+										</div>
+									</div>
+								</td>
+								<td class="p-3.5" data-col-id="role">
+									<RLABadge variant="subtle" color={u.role === "admin" || u.role === "owner" ? "primary" : "neutral"} class="capitalize text-xs">
+										{u.role || "user"}
+									</RLABadge>
+								</td>
+								<td class="p-3.5" data-col-id="status">
+									{u.banned ? (
+										<RLABadge variant="subtle" color="error" class="text-xs">Banned</RLABadge>
+									) : u.emailVerified ? (
+										<RLABadge variant="subtle" color="success" class="text-xs">Verified</RLABadge>
+									) : (
+										<RLABadge variant="subtle" color="warning" class="text-xs">Pending Verification</RLABadge>
+									)}
+								</td>
+								<td class="p-3.5 text-xs text-muted-foreground" data-col-id="createdAt">
+									{new Date(u.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+								</td>
+								<td class="p-3.5 text-right" data-col-id="actions">
+									<RLADropdownMenu
+										items={actionItems as any}
+										content={{ align: "end" }}
+										size="sm"
+									/>
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</RLATable>
+		</RLACard>
+	</div>
+</AuthAdminDashboardLayout>
+
+

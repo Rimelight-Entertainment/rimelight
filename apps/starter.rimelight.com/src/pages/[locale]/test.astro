@@ -1,0 +1,204 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
+import RLACard from "@rimelight/ui/components/card/RLACard.astro"
+import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro"
+
+const COLOR_SHADES = [
+  "50",
+  "100",
+  "200",
+  "300",
+  "400",
+  "500",
+  "600",
+  "700",
+  "800",
+  "900",
+  "950"
+] as const
+
+const PALETTE_NAMES = [
+  "neutral",
+  "primary",
+  "secondary",
+  "info",
+  "success",
+  "warning",
+  "error",
+  "commentary",
+  "ideation",
+  "source"
+] as const
+---
+
+<AppLayout title="Design System Showcase" description="Palette, component, and semantic token verification">
+  <main class="container mx-auto px-md py-xl flex flex-col gap-2xl">
+    <div class="flex flex-col gap-xs">
+      <h1 class="text-3xl font-bold">Rimelight UI Design System Showcase</h1>
+      <p class="text-neutral-500">
+        Live verification of the Hybrid Seed-Matrix Palette, Component Theming, and Semantic Intent Utilities.
+      </p>
+    </div>
+
+    <!-- 1. Color Palette Scales -->
+    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+      <h2 class="text-xl font-bold">Active Hybrid Palette Scales</h2>
+      
+      <div class="flex flex-col gap-md">
+        {PALETTE_NAMES.map((name) => (
+          <div class="flex flex-col sm:flex-row sm:items-center gap-xs">
+            <span class="w-28 text-sm font-semibold capitalize">{name}</span>
+            <div class="grid grid-cols-11 gap-1 flex-1">
+              {COLOR_SHADES.map((shade) => (
+                <div class="flex flex-col items-center gap-1">
+                  <div
+                    class="w-full h-10 rounded shadow-sm border border-black/10 dark:border-white/10"
+                    style={`background-color: var(--color-${name}-${shade});`}
+                    title={`${name}-${shade}`}
+                  />
+                  <span class="text-[10px] font-mono text-neutral-500">{shade}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 2. Component Scoped Color Theming (rl-color-*) -->
+    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+      <h2 class="text-xl font-bold">Component Variants & Theming</h2>
+
+      <div class="flex flex-wrap items-center gap-md">
+        <RLAButton label="Primary Solid" color="primary" variant="solid" />
+        <RLAButton label="Secondary Soft" color="secondary" variant="soft" />
+        <RLAButton label="Success Outline" color="success" variant="outline" />
+        <RLAButton label="Warning Subtle" color="warning" variant="subtle" />
+        <RLAButton label="Error Ghost" color="error" variant="ghost" />
+        <RLAButton label="Info Link" color="info" variant="link" />
+      </div>
+
+      <div class="flex flex-wrap items-center gap-sm">
+        <RLABadge label="Neutral" color="neutral" />
+        <RLABadge label="Primary" color="primary" />
+        <RLABadge label="Secondary" color="secondary" />
+        <RLABadge label="Success" color="success" />
+        <RLABadge label="Warning" color="warning" />
+        <RLABadge label="Error" color="error" />
+        <RLABadge label="Info" color="info" />
+        <RLABadge label="Commentary" color="commentary" />
+        <RLABadge label="Ideation" color="ideation" />
+        <RLABadge label="Source" color="source" />
+      </div>
+    </section>
+
+    <!-- 3. Semantic Intent Utility Tokens -->
+    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+      <h2 class="text-xl font-bold">Semantic Intent Utility Matrix</h2>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+        <div class="p-md rounded-lg bg-default text-default border border-default shadow-sm">
+          <span class="text-xs font-mono block mb-1">bg-default / text-default</span>
+          Default surface
+        </div>
+        <div class="p-md rounded-lg bg-muted text-muted border border-muted shadow-sm">
+          <span class="text-xs font-mono block mb-1">bg-muted / text-muted</span>
+          Muted surface
+        </div>
+        <div class="p-md rounded-lg bg-elevated text-toned border border-elevated shadow-sm">
+          <span class="text-xs font-mono block mb-1">bg-elevated / text-toned</span>
+          Elevated surface
+        </div>
+        <div class="p-md rounded-lg bg-accented text-accented border border-accented shadow-sm">
+          <span class="text-xs font-mono block mb-1">bg-accented / text-accented</span>
+          Accented surface
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+        <div class="p-md rounded-lg bg-dimmed text-dimmed border border-dimmed">
+          <span class="text-xs font-mono block mb-1">bg-dimmed / text-dimmed</span>
+          Dimmed
+        </div>
+        <div class="p-md rounded-lg bg-toned text-highlighted border border-toned">
+          <span class="text-xs font-mono block mb-1">bg-toned / text-highlighted</span>
+          Toned
+        </div>
+        <div class="p-md rounded-lg bg-highlighted text-inverted border border-highlighted">
+          <span class="text-xs font-mono block mb-1">bg-highlighted / text-inverted</span>
+          Highlighted
+        </div>
+        <div class="p-md rounded-lg bg-inverted text-inverted border border-inverted">
+          <span class="text-xs font-mono block mb-1">bg-inverted / text-inverted</span>
+          Inverted
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Grid Layout Showcase -->
+    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+      <h2 class="text-xl font-bold">Layout Grid Showcase</h2>
+
+      <RLAGrid cols={3}>
+        <RLACard title="Hybrid Seed Matrix" description="Generates lightweight OKLCH scales without 200+ hardcoded number strings." />
+        <RLACard title="Component Scoping" description="Single-class rl-color-* resolver drives all button, badge, and input variants." />
+        <RLACard title="Lean Architecture" description="Unified tokens, zero intermediate preflight variables, and fast compilation." />
+      </RLAGrid>
+    </section>
+
+    <!-- 5. UI Slot Overrides (String & Function Overrides) -->
+    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+      <h2 class="text-xl font-bold">Slot UI Overrides & Theme Customization</h2>
+      <p class="text-sm text-neutral-500">
+        Testing slot class extension strings and function-based replacements via the <code>ui</code> prop.
+      </p>
+
+      <div class="flex flex-wrap items-center gap-md">
+        <!-- String slot overrides -->
+        <RLAButton
+          label="String Override (Border + Shadow)"
+          color="primary"
+          variant="outline"
+          ui={{
+            root: "border-2 shadow-lg hover:scale-105 transition-transform",
+            label: "tracking-widest uppercase font-mono font-bold"
+          }}
+        />
+
+        <!-- Function slot overrides -->
+        <RLAButton
+          label="Function Override (Custom Badge Style)"
+          color="secondary"
+          ui={{
+            root: (def: string) => `${def} ring-2 ring-secondary-400 rounded-full px-6`,
+            label: () => "text-xs italic font-semibold"
+          }}
+        />
+
+        <!-- Badge slot overrides -->
+        <RLABadge
+          label="Custom Slot Badge"
+          color="warning"
+          ui={{
+            root: "shadow-md ring-2 ring-warning-500/40",
+            label: "font-mono font-bold uppercase"
+          }}
+        />
+      </div>
+
+      <RLACard
+        title="Card Slot Customization"
+        description="Testing card slot overrides for header, title, description, and body containers."
+        ui={{
+          root: "border-2 border-primary-500/30 bg-primary-50/50 dark:bg-primary-950/20 shadow-xl",
+          title: "text-primary-600 dark:text-primary-400 font-extrabold text-lg",
+          description: "italic text-neutral-600 dark:text-neutral-400"
+        }}
+      >
+        <p class="text-sm text-neutral-500">Body content within styled container slot.</p>
+      </RLACard>
+    </section>
+  </main>
+</AppLayout>

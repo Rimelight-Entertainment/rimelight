@@ -1,22 +1,15 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardSidebarCollapseProps } from "./dashboard-sidebar-collapse"
-import dashboardSidebarCollapseTheme from "./dashboard-sidebar-collapse.theme"
+import { dashboardSidebarCollapseTheme } from "./dashboard-sidebar-collapse.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const dashboardSidebarCollapse = scv(dashboardSidebarCollapseTheme)
 
 const {
   icon = "i-lucide-panel-left",
-  side = "left",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DashboardSidebarCollapseProps
 
-const classes = resolveClasses(dashboardSidebarCollapse, { side }, useUi("dashboardSidebarCollapse", uiProp), className);
+const classes = dashboardSidebarCollapseTheme(Astro.props);
 ---
 <button
   type="button"

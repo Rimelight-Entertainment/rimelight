@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { PhoneMockupProps } from "./phone-mockup"
-import phoneMockupTheme from "./phone-mockup.theme"
+import { phoneMockupTheme } from "./phone-mockup.theme"
 
 
-const phoneMockup = scv(phoneMockupTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PhoneMockupProps
-
-const classes = resolveClasses(phoneMockup, {}, useUi("phoneMockup", uiProp), className);
+const classes = phoneMockupTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

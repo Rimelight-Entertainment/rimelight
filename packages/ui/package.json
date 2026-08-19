@@ -2,68 +2,54 @@
   "name": "@rimelight/ui",
   "version": "0.0.42",
   "private": false,
-  "description": "Rimelight Entertainment UI Library.",
-  "keywords": [
-    "astro",
-    "typescript"
-  ],
+  "description": "Rimelight Entertainment's UI Package",
   "homepage": "https://rimelight.com/docs",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
   },
   "license": "MIT",
   "author": {
-    "name": "Daniel Marchi"
+    "name": "Rimelight Entertainment"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
-    "src",
-    "worker-configuration.d.ts",
-    "README.md",
-    "LICENSE"
+    "src"
   ],
   "type": "module",
   "exports": {
-    ".": "./src/ui.ts",
-    "./components/*": "./src/components/*",
-    "./themes": "./src/themes.ts",
-    "./config/*": "./src/config/*",
-    "./utils/*": "./src/utils/*",
-    "./types/*": "./src/types/*",
-    "./icons/*": "./src/icons/*",
-    "./presets": "./src/presets/index.ts",
-    "./presets/*": "./src/presets/*",
+    ".": "./src/index.ts",
     "./*": "./src/*"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "astro": "astro"
+    "astro": "astro",
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
   },
   "dependencies": {
     "@unocss/astro": "66.7.5",
     "css-variants": "2.3.5",
-    "nanostores": "1.4.2"
+    "nanostores": "1.5.1"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/solid-js": "7.0.1",
+    "@astrojs/solid-js": "7.0.2",
     "@astrojs/ts-plugin": "1.10.10",
-    "@astrojs/vue": "7.0.1",
-    "astro": "7.1.6",
-    "solid-js": "1.9.14",
+    "@astrojs/vue": "7.0.2",
+    "astro": "7.2.2",
+    "solid-js": "1.9.15",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "vue": "3.5.40"
+    "vue": "3.5.41"
   },
   "peerDependencies": {
     "@astrojs/solid-js": ">=7.0.1",
     "@astrojs/vue": ">=7.0.1",
-    "astro": ">=7.0.1",
+    "astro": ">=7.0.0",
     "solid-js": ">=1.9.13",
     "vue": ">=3.0.0"
   },
@@ -81,5 +67,14 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@11.18.0"
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.22.0",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=26.7.0"
+  }
 }

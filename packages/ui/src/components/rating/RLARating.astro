@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { RatingProps } from "./rating"
-import ratingTheme from "./rating.theme"
+import { ratingTheme } from "./rating.theme"
 
 
-const rating = scv(ratingTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as RatingProps
-
-const classes = resolveClasses(rating, {}, useUi("rating", uiProp), className);
+const classes = ratingTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

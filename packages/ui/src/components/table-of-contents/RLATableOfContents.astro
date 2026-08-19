@@ -1,25 +1,20 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { TableOfContentsProps } from "./table-of-contents"
-import tableOfContentsTheme from "./table-of-contents.theme"
+import { tableOfContentsTheme } from "./table-of-contents.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const tableOfContents = scv(tableOfContentsTheme)
 
 const {
   headings,
-  tableOfContents: tableOfContentsConfig,
-  ui: uiProp,
-  class: className,
   collapsible = false,
   containerSelector = ".markdown-content",
+  tableOfContents: tableOfContentsConfig,
+  class: className,
   ...rest
 } = Astro.props as TableOfContentsProps
 
-const classes = resolveClasses(tableOfContents, {}, useUi("tableOfContents", uiProp), className);
+const classes = tableOfContentsTheme(Astro.props);
 
 if (tableOfContentsConfig === false) {
   // Render nothing
@@ -38,14 +33,14 @@ const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) =
 {tableOfContentsConfig !== false && filteredHeadings.length > 0 && (
   collapsible ? (
     <details class:list={[className]} data-rla-toc-collapsible data-container-selector={containerSelector} data-heading-selector={headingSelector} {...rest}>
-      <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-foreground cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
+      <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
         <span class="flex items-center gap-2">
           <RLAIcon name="list" class="size-4 text-primary shrink-0" />
           <span>On this page</span>
         </span>
-        <RLAIcon name="chevronDown" class="rla-toc-chevron size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
+        <RLAIcon name="chevronDown" class="rla-toc-chevron size-4 text-muted shrink-0 transition-transform duration-200" />
       </summary>
-      <div class="px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-border/50 bg-background">
+      <div class="px-4 pt-3 max-h-[40vh] overflow-y-auto border-t border-default/50 bg-default">
         <ul class="flex flex-col gap-0.5 pb-8">
           {filteredHeadings.map(heading => (
             <li class:list={[heading.depth === 3 && "pl-4"]}>
@@ -53,7 +48,7 @@ const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) =
                 href={`#${heading.slug}`}
                 class:list={[
                   "toc-link block py-1.5 text-sm transition-colors hover:text-primary no-underline",
-                  heading.depth === 2 ? "text-foreground font-medium" : "text-muted-foreground"
+                  heading.depth === 2 ? "text-highlighted font-medium" : "text-muted"
                 ]}
                 data-rla-toc-link
               >

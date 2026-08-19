@@ -1,6 +1,6 @@
 ---
 import RLAIcon from "../icon/RLAIcon.astro"
-import { getUIConfig } from "virtual:rimelight-ui"
+import { uiConfig } from "../../resolver"
 
 interface Props {
   categories?: Record<string, string>
@@ -11,7 +11,6 @@ const {
   ...rest
 } = Astro.props as Props
 
-const uiConfig = getUIConfig()
 const configCategories = uiConfig.shortcuts?.categories || {}
 
 // Resolve categories: prop overrides -> integration config -> fallback key
@@ -57,8 +56,8 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
 </rla-shortcuts>
 
 <script>
-  import { activeShortcutsStore, defineShortcuts } from "../../utils/shortcuts"
-  import type { RegisteredShortcut } from "../../utils/shortcuts"
+  import { activeShortcutsStore, defineShortcuts } from "../../shortcuts"
+  import type { RegisteredShortcut } from "../../shortcuts"
 
   class RLAShortcuts extends HTMLElement {
     private shortcutsCleanup: (() => void) | null = null;

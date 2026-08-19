@@ -1,23 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { InputPinProps } from "./input-pin"
-import { resolveTheme } from "../../utils/resolveTheme"
-import inputPinThemeDefault, { createInputPinTheme } from "./input-pin.theme"
-const inputPinTheme = resolveTheme(inputPinThemeDefault, createInputPinTheme)
+import { inputPinTheme } from "./input-pin.theme"
 
 
-const inputPin = scv(inputPinTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as InputPinProps
-
-const classes = resolveClasses(inputPin, {}, useUi("inputPin", uiProp), className);
+const classes = inputPinTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

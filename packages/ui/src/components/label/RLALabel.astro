@@ -1,26 +1,15 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { LabelProps } from "./label"
-import { resolveTheme } from "../../utils/resolveTheme"
-import labelThemeDefault, { createLabelTheme } from "./label.theme"
-const labelTheme = resolveTheme(labelThemeDefault, createLabelTheme)
+import { labelTheme } from "./label.theme"
 
 
-const label = scv(labelTheme)
 
 const {
   for: htmlFor,
-  size = "md",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as LabelProps
 
-const classes = resolveClasses(label, {
-  size
-}, useUi("label", uiProp), className)
+const classes = labelTheme(Astro.props)
 ---
 <label class={classes.root} data-slot="root" for={htmlFor} {...rest}>
   <slot />

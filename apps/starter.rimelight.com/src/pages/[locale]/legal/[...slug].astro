@@ -1,0 +1,66 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro"
+import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
+import RLADate from "@rimelight/ui/components/date/RLADate.astro"
+import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro"
+import { t } from "@rimelight/i18n"
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+import { eq, and, isNull } from "drizzle-orm"
+
+const activeLocale = Astro.currentLocale ?? "en"
+
+const { slug } = Astro.params
+if (!slug) return Astro.redirect("/404")
+
+const pageResult = await db
+  .select()
+  .from(pages)
+  .where(and(eq(pages.type, "legal"), eq(pages.slug, slug), isNull(pages.deletedAt)))
+  .limit(1)
+
+const page = pageResult[0]
+
+if (!page) {
+  return Astro.redirect("/404")
+}
+
+const content = typeof page.content === "string" ? JSON.parse(page.content) : page.content || {}
+
+function getLocalizedText(val: unknown, locale: string): string {
+  if (typeof val === "object" && val !== null) {
+    const record = val as Record<string, string>
+    return record[locale] || record.en || ""
+  }
+  return String(val || "")
+}
+
+const title = getLocalizedText(page.title, activeLocale)
+const description = getLocalizedText(page.description, activeLocale)
+const pubDate = page.postedAt || page.createdAt
+const updatedDate = page.updatedAt
+---
+
+<AppLayout title={title} description={description}>
+	<RLAContainer class="py-16 max-w-3xl">
+		<article>
+			<div class="prose dark:prose-invert max-w-none">
+				<div class="title mb-8">
+					<div class="date text-neutral-400 mb-2 text-sm">
+						<RLADate date={pubDate} />
+						{
+							updatedDate && (
+								<div class="last-updated-on text-xs text-neutral-500 mt-1">
+									{t("legal.lastUpdatedOn")} <RLADate date={updatedDate} />
+								</div>
+							)
+						}
+					</div>
+					<h1 class="text-4xl font-extrabold text-foreground mb-4">{title}</h1>
+					<hr class="border-border" />
+				</div>
+				<PageRenderer blocks={content.blocks || []} locale={activeLocale} />
+			</div>
+		</article>
+	</RLAContainer>
+</AppLayout>

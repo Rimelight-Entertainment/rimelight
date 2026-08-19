@@ -1,14 +1,10 @@
-import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createInputPinTheme = (_colors: readonly string[] = colorConfig.colors) =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: ""
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createInputPinTheme()
+export const inputPinTheme = defineTheme("input-pin", {
+  slots: ["root"],
+  base: {
+    root: ""
+  },
+  variants: {},
+  defaultVariants: {}
+})

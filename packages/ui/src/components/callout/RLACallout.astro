@@ -1,15 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { CalloutProps } from "./callout"
-import { resolveTheme } from "../../utils/resolveTheme"
-import calloutThemeDefault, { createCalloutTheme } from "./callout.theme"
-const calloutTheme = resolveTheme(calloutThemeDefault, createCalloutTheme)
+import { calloutTheme } from "./callout.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const callout = scv(calloutTheme)
 
 const {
   variant = "solid",
@@ -20,9 +14,6 @@ const {
   avatar,
   actions,
   close,
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CalloutProps
 
@@ -44,11 +35,11 @@ const resolvedVariant = (variant === "solid" || variant === "outline" || variant
 const resolvedIcon = icon ?? colorToIcon[resolvedColor]
 const hasTitleRow = !!(title || Astro.slots.has("title") || Astro.slots.has("header") || avatar || close || Astro.slots.has("close"))
 
-const classes = resolveClasses(callout, {
+const classes = calloutTheme({
+  ...Astro.props,
   variant: resolvedVariant,
-  color: resolvedColor as any,
-  theme
-}, useUi("callout", uiProp), className)
+  color: resolvedColor as any
+})
 ---
 <div
   class={classes.root}

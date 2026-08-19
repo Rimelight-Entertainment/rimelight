@@ -1,27 +1,19 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { BreadcrumbProps } from "./breadcrumb"
-import { resolveTheme } from "../../utils/resolveTheme"
-import breadcrumbThemeDefault, { createBreadcrumbTheme } from "./breadcrumb.theme"
-const breadcrumbTheme = resolveTheme(breadcrumbThemeDefault, createBreadcrumbTheme)
+import { breadcrumbTheme } from "./breadcrumb.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const breadcrumb = scv(breadcrumbTheme)
 
 const {
   items,
   maxVisible,
   estimatedItemWidth = 120,
   separatorIcon = "chevronRight",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as BreadcrumbProps
 
-const classes = resolveClasses(breadcrumb, {}, useUi("breadcrumb", uiProp), className)
+const classes = breadcrumbTheme(Astro.props)
 
 // ─── Responsive CSS Item Counter ─────────────────────────────────────────────
 //

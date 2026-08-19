@@ -1,0 +1,152 @@
+---
+title: "Color Mode"
+description: "How Rimelight UI handles switching between light and dark mode using native CSS color-scheme."
+---
+
+Rimelight UI uses the native CSS **`color-scheme`** property and the **`light-dark()`** function (Baseline 2024) to handle color modes. All color variables are declared once using `light-dark(lightValue, darkValue)` — the browser resolves them automatically based on the active scheme context.
+
+## Global Mode Toggle
+
+The active scheme is controlled by setting `color-scheme` on the `<html>` element. The built-in `<RLAThemeSelector>` component handles this for you, but the underlying mechanism is:
+
+```js
+// Switch to dark mode
+document.documentElement.style.colorScheme = "dark"
+
+// Switch to light mode
+document.documentElement.style.colorScheme = "light"
+
+// Restore system preference
+document.documentElement.style.colorScheme = ""
+```
+
+This is **CSP-safe** — JavaScript setting `element.style.*` is governed by `script-src`, not `style-src`, so no `unsafe-inline` is required.
+
+The `:root` declares support for both schemes, which is what enables `light-dark()` to work:
+
+```css
+:root {
+  color-scheme: light dark;
+}
+```
+
+Setting `colorScheme` on `<html>` overrides this, locking the entire page to one scheme.
+
+## Pinning Sections to a Fixed Scheme
+
+Because `color-scheme` is inherited, you can lock any subtree to a fixed scheme without touching the global mode. This is how you build headers, footers, or cards that always render in a specific brand aesthetic regardless of the user's theme.
+
+### `rl-dark` / `rl-light` — wrapper classes
+
+Apply these UnoCSS utility classes to any element. They emit `color-scheme: dark` or `color-scheme: light` from the generated stylesheet — **fully CSP-compliant** (no inline styles needed).
+
+```astro
+<!-- This footer is always dark, even on a light-mode page -->
+<footer class="rl-dark bg-default">
+  <p>Always dark text</p>
+  <!-- Nested components automatically inherit dark scheme — no theme prop needed -->
+  <RLAButton color="primary">Always dark primary button</RLAButton>
+</footer>
+```
+
+```astro
+<!-- This card is always light, even on a dark-mode page -->
+<div class="rl-light bg-default rounded-xl p-6">
+  Always light content
+</div>
+```
+
+### `rl-auto` — resetting reactivity inside a pinned wrapper
+
+If you need a subtree inside a pinned wrapper to go back to following the global page scheme, apply `rl-auto`. It sets `color-scheme: light dark`, which overrides the inherited forced scheme and re-enables reactivity.
+
+```astro
+<!-- Header is always dark -->
+<header class="rl-dark bg-black">
+  <nav>Nav links inherit dark ✓</nav>
+
+  <!-- Dropdown should follow the user's chosen theme, not be stuck dark -->
+  <div class="rl-auto bg-default">
+    Reactive mega menu content — follows the global toggle ✓
+  </div>
+</header>
+```
+
+The three classes form a complete set:
+
+| Class      | `color-scheme` value | Behaviour                              |
+| ---------- | -------------------- | -------------------------------------- |
+| `rl-dark`  | `dark`               | Pinned to dark scheme                  |
+| `rl-light` | `light`              | Pinned to light scheme                 |
+| `rl-auto`  | `light dark`         | Resets to follow the page-level scheme |
+
+### `theme` prop — individual components
+
+For pinning a single component without a wrapper, use the `theme` prop:
+
+```astro
+<!-- Always renders in dark scheme regardless of page mode -->
+<RLAButton color="primary" theme="dark">Always dark</RLAButton>
+
+<!-- Always renders in light scheme -->
+<RLAButton color="primary" theme="light">Always light</RLAButton>
+```
+
+The `theme` prop applies `rl-dark` or `rl-light` to the component's root element — it is exactly equivalent to `class="rl-dark"` / `class="rl-light"` on a wrapper.
+
+### Decision rule
+
+> **Pinning one component?** → `theme="dark"` / `theme="light"` prop  
+> **Pinning a section?** → `class="rl-dark"` / `class="rl-light"` on the wrapper
+
+When `rl-dark` is on a wrapper, all descendant components inherit `color-scheme: dark` and render in dark mode automatically — you do **not** need individual `theme` props on nested components.
+
+## Adaptive Elevation
+
+In light mode, surfaces rely on multi-layered drop shadows to express depth. In dark mode, drop shadows become invisible against dark backgrounds. Rimelight UI uses native `light-dark()` elevation swapping via the `.shadow-adaptive` utility class:
+
+```html
+<div class="shadow-adaptive bg-card rounded-2xl p-6">
+  <!-- Multi-layered drop shadows in light mode -->
+  <!-- Ambient OKLCH surface-glow border in dark mode -->
+</div>
+```
+
+- **Light Scheme**: Multi-layered soft drop shadows render cleanly; dark glowing border layers remain `transparent`.
+- **Dark Scheme**: Shadows turn `transparent`, activating a vibrant, neon glowing border mathematically derived from `oklch(from var(--rl-bg) ...)`.
+
+## Automatic Contrast & Container Style Queries
+
+Rimelight UI supports zero-JS, WCAG-compliant dynamic text contrast and sub-element palette branching via CSS `contrast-color()` and container style queries.
+
+### Automatic Contrast (`contrast-color()`)
+
+Containers using `.rl-theme-container` calculate readable text colors automatically based on their surface background (`--rl-bg` or `--background`):
+
+```html
+<!-- Custom brand surface background -->
+<div
+  class="rl-theme-container p-6 rounded-2xl"
+  style="--rl-bg: #2dd4bf; background-color: var(--rl-bg);"
+>
+  <h3>Dynamic Title</h3>
+  <p class="rl-subtext text-xs">Subtext automatically tinted to surface hue</p>
+</div>
+```
+
+### Style Query Palette Branching (`@container style()`)
+
+Rather than snapping starkly to pure black or pure white, `.rl-theme-container` registers `--rl-contrast-color` as a lightness detector. Container style queries inspect this detector to automatically compute hue-tinted secondary text (`.rl-subtext`) and borders (`.rl-border-subtle`) using OKLCH relative color syntax:
+
+- **Dark Surfaces** (`--rl-contrast-color: white`): Text resolves to clean white; `.rl-subtext` tints to soft, light hues; `.rl-border-subtle` tints to ambient glow accents.
+- **Light Surfaces** (`--rl-contrast-color: black`): Text resolves to high-contrast dark tones; `.rl-subtext` tints to rich, deep hues matching the surface's tint.
+
+## System Preference
+
+If no `colorScheme` is set on `<html>`, the browser resolves `light-dark()` using the user's OS preference (`prefers-color-scheme` media query). The `:root { color-scheme: light dark }` declaration enables this behavior.
+
+```js
+// Restore system preference by clearing the inline override
+document.documentElement.style.colorScheme = ""
+localStorage.removeItem("theme")
+```

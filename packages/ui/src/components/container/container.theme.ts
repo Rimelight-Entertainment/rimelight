@@ -1,13 +1,10 @@
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createContainerTheme = () =>
-  defineTheme({
-    slots: ["root"],
-    base: {
-      root: "w-full max-w-[var(--rl-container)] mx-auto px-xs sm:px-md md:px-xl lg:px-xl"
-    },
-    variants: {},
-    defaultVariants: {}
-  })
-
-export default createContainerTheme()
+export const containerTheme = defineTheme("container", {
+  slots: ["root"],
+  base: {
+    root: "w-full max-w-[var(--rl-container)] mx-auto px-xs sm:px-md md:px-xl lg:px-xl"
+  },
+  variants: {},
+  defaultVariants: {}
+})

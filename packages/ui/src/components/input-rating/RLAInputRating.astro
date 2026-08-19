@@ -1,24 +1,16 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { InputRatingProps } from "./input-rating"
-import { resolveTheme } from "../../utils/resolveTheme"
-import inputRatingThemeDefault, { createInputRatingTheme } from "./input-rating.theme"
-const inputRatingTheme = resolveTheme(inputRatingThemeDefault, createInputRatingTheme)
+import { inputRatingTheme } from "./input-rating.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const inputRating = scv(inputRatingTheme)
 
 const {
   id,
   readonly = false,
   icon = "star",
   emptyIcon,
-  color = "primary",
   size = "md",
-  orientation = "horizontal",
   step = 1,
   disabled = false,
   required = false,
@@ -27,23 +19,10 @@ const {
   length = 5,
   clearable = false,
   hoverable = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as InputRatingProps
 
-const classes = resolveClasses(
-  inputRating,
-  {
-    orientation,
-    size,
-    color: color as any,
-    readonly,
-    disabled
-  },
-  useUi("inputRating", uiProp),
-  className
-)
+const classes = inputRatingTheme(Astro.props)
 
 const sizeMap = {
   xs: "0.75rem",

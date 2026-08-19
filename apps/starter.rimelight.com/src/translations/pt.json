@@ -1,0 +1,63 @@
+{
+  "app_header": {
+    "links_home_label": "Início",
+    "links_blog_label": "Blog",
+    "links_docs_label": "Documentação",
+    "links_about_label": "Sobre",
+    "links_components_label": "Componentes",
+    "links_tests_label": "Testes",
+    "left-links_chat_label": "Chat"
+  },
+  "cookie_notice": {
+    "title": "Aviso de cookies",
+    "description_prefix": "Este site na verdade não usa cookies, mas é assim que um aviso de cookies seria feito, de acordo com uma ",
+    "cookie_policy_label": "Política de Cookies",
+    "description_suffix": ".",
+    "allow_all": "Permitir todos",
+    "deny_all": "Recusar todos"
+  },
+  "app_footer": {
+    "links_legal_cookie-policy": "Política de Cookies"
+  },
+  "page_construction": {
+    "meta_title": "Em Construção",
+    "meta_description": "Este site está atualmente em construção.",
+    "title": "ESTE SITE ESTÁ EM CONSTRUÇÃO",
+    "description": "Se tiver acesso, por favor conecte-se.",
+    "description_no_auth": "Por favor, volte mais tarde.",
+    "form_email_label": "E-mail",
+    "form_email_placeholder": "seu@email.com",
+    "form_password_label": "Senha",
+    "form_password_placeholder": "••••••••",
+    "form_remember_me_label": "Lembrar-me",
+    "form_sign_in_button": "Fazer Login"
+  },
+  "page_contact": {
+    "title": "Fale Conosco",
+    "description": "Entre em contato com a equipe do site.",
+    "hero_title": "Entre em Contato",
+    "hero_description": "Tem dúvidas, feedback ou precisa de ajuda? Envie-nos uma mensagem diretamente.",
+    "contact_form_title": "Enviar uma Mensagem",
+    "upload_form_title": "Enviar um Arquivo",
+    "upload_form_description": "Compartilhe documentos ou imagens diretamente conosco (PNG, JPEG, WEBP ou PDF até 5 MB)."
+  },
+  "page_test": {
+    "title": "Teste de Simplificação i18n",
+    "description": "Demonstrando busca limpa de traduções com t() e useI18n() sem código repetitivo.",
+    "welcome": "Bem-vindo(a) {name}! A busca direta de texto funciona perfeitamente."
+  },
+  "page_auth_sign-in": {
+    "sign-in_new-user": "Sua conta foi criada. Por favor, verifique seu e-mail para confirmar sua conta antes de entrar."
+  },
+  "page_auth_sign-up": {
+    "auth_newsletter_label": "Inscreva-se em nossa newsletter. Você pode cancelar a inscrição a qualquer momento."
+  },
+  "cms": {
+    "nav_dashboard": "Painel",
+    "nav_templates": "Modelos",
+    "nav_pages": "Páginas",
+    "nav_versions": "Versões",
+    "nav_settings": "Configurações",
+    "sidebar_app_name": "Admin CMS"
+  }
+}

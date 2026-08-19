@@ -1,4 +1,7 @@
 export interface KbdProps {
+  color?: string
+  variant?: string
+  theme?: string
   /**
    * The size scale of the keyboard key component.
    */

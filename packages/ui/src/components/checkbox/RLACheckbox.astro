@@ -1,34 +1,19 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { CheckboxProps } from "./checkbox"
-import { resolveTheme } from "../../utils/resolveTheme"
-import checkboxThemeDefault, { createCheckboxTheme } from "./checkbox.theme"
-const checkboxTheme = resolveTheme(checkboxThemeDefault, createCheckboxTheme)
+import { checkboxTheme } from "./checkbox.theme"
 
 
-const checkbox = scv(checkboxTheme)
 
 const {
   checked = false,
   disabled = false,
   name,
   label,
-  color = "primary",
   size = "md",
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CheckboxProps
 
-const classes = resolveClasses(checkbox, {
-  color,
-  size,
-  checked,
-  theme
-}, useUi("checkbox", uiProp), className);
+const classes = checkboxTheme(Astro.props);
 ---
 <label class={classes.root} data-slot="root">
   <input

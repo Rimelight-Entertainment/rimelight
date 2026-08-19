@@ -1,18 +1,17 @@
 import { createMemo, splitProps, type Component } from "solid-js"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import { resolveIcon } from "./resolver"
 import type { IconProps } from "./icon"
-import iconThemeDefault from "./icon.theme"
-
-const iconScv = scv(iconThemeDefault)
+import { iconTheme } from "./icon.theme"
 
 const RLSIcon: Component<IconProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, ["name", "size", "ui", "class"])
   const resolved = createMemo(() => resolveIcon(props.name))
   const classes = createMemo(() =>
-    resolveClasses(iconScv, { size: props.size ?? "md" }, useUi("icon", props.ui), props.class)
+    iconTheme({
+      size: props.size ?? "md",
+      ui: props.ui,
+      class: props.class
+    })
   )
   return (
     <span class={classes().root} data-slot="icon" aria-hidden="true" {...rest}>

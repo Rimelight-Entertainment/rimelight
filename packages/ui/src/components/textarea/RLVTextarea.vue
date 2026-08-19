@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { computed, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { TextareaProps } from "./textarea"
-import textareaThemeDefault from "./textarea.theme"
+import { textareaTheme } from "./textarea.theme"
 
 defineOptions({ name: "RLVTextarea" })
 
 const attrs = useAttrs()
-const textareaScv = scv(textareaThemeDefault)
 
 const modelValue = defineModel<string>()
 
@@ -22,17 +18,13 @@ const props = withDefaults(defineProps<TextareaProps>(), {
 })
 
 const resolvedClasses = computed(() =>
-  resolveClasses(
-    textareaScv,
-    {
-      size: props.size,
-      color: props.color,
-      error: !!props.error,
-      disabled: props.disabled
-    },
-    useUi("textarea", props.ui),
-    props.class
-  )
+  textareaTheme({
+    size: props.size,
+    color: props.color,
+    error: !!props.error,
+    disabled: props.disabled,
+    class: props.class
+  })
 )
 </script>
 

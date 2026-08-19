@@ -1,21 +1,16 @@
 ---
-import type { HTMLTag } from "astro/types"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { DashboardGroupProps } from "./dashboard-group"
-import dashboardGroupTheme from "./dashboard-group.theme"
+import { dashboardGroupTheme } from "./dashboard-group.theme"
 
-const dashboardGroup = scv(dashboardGroupTheme)
 
 const {
-  as: Tag = "div" as HTMLTag,
-  ui: uiProp,
-  class: className,
+  as: Tag = "div",
   ...rest
-} = Astro.props as DashboardGroupProps & { as?: HTMLTag }
+} = Astro.props as DashboardGroupProps 
 
-const classes = resolveClasses(dashboardGroup, {}, useUi("dashboardGroup", uiProp), className);
+
+
+const classes = dashboardGroupTheme(Astro.props);
 ---
 <Tag class={classes.root} data-slot="root" {...rest}>
   <slot />

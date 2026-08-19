@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { LinkProps } from "./link"
-import linkTheme from "./link.theme"
+import { linkTheme } from "./link.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 import { resolveLinkAttrs } from "./helpers"
 
-const link = scv(linkTheme)
 
 const {
   label,
@@ -15,8 +11,6 @@ const {
   trailingIcon,
   href,
   external,
-  externalIcon,
-  noExternalIcon,
   target,
   rel,
   prefetch,
@@ -24,27 +18,19 @@ const {
   disabled,
   raw,
   ariaLabel,
-  ariaCurrentValue,
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as LinkProps
 
 const attrs = resolveLinkAttrs(Astro.props)
 
 const classes = raw
-  ? { root: className || "", leadingIcon: "", label: "", trailingIcon: "" }
-  : (resolveClasses(
-      link,
-      {
-        theme,
+  ? { root: (Astro.props.class as string) || "", leadingIcon: "", label: "", trailingIcon: "" }
+  : (linkTheme({
+  theme,
         ...(active !== undefined ? { active } : {}),
-        disabled: !!disabled
-      },
-      useUi("link", uiProp),
-      className
-    ) as Record<string, string>)
+        disabled: !!disabled,
+}) as Record<string, string>)
 ---
 
 <a

@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { InputMenuProps } from "./input-menu"
-import inputMenuTheme from "./input-menu.theme"
+import { inputMenuTheme } from "./input-menu.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const inputMenu = scv(inputMenuTheme)
 
 const {
   items = [],
@@ -16,16 +12,10 @@ const {
   disabled = false,
   name,
   label,
-  size = "md",
-  color = "primary",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as InputMenuProps
 
-const classes = resolveClasses(inputMenu, {
-  size
-}, useUi("inputMenu", uiProp), className);
+const classes = inputMenuTheme(Astro.props);
 
 const normalizedItems = items.map(item => {
   if (typeof item === "string") {

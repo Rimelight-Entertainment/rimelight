@@ -10,7 +10,7 @@
 ></div>
 
 <script>
-  import { toasts, removeToast, addToast } from "../../stores/toast"
+  import { toasts, removeToast, addToast } from "../toast/store"
 
   function checkPendingToasts() {
     const stored = sessionStorage.getItem("pending_toast")

@@ -1,0 +1,55 @@
+---
+title: "Package Managers"
+description: "A component for presenting package installation commands across pnpm, npm, yarn, and bun."
+---
+
+import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import RLAPackageManagers from "@rimelight/ui/components/package-managers/RLAPackageManagers.astro"
+import ApiProps from "@/docs/components/ApiProps.astro"
+import ApiSlots from "@/docs/components/ApiSlots.astro"
+import ApiEmits from "@/docs/components/ApiEmits.astro"
+import ApiTheme from "@/docs/components/ApiTheme.astro"
+import ApiChangelog from "@/docs/components/ApiChangelog.astro"
+
+The Package Managers component displays installation commands tabbed by package manager (pnpm, npm, yarn, bun).
+
+## Usage
+
+Pass the package name or command to `pkg`.
+
+<ComponentShowcase>
+  <RLAPackageManagers pkg="@rimelight/ui" />
+
+  <div slot="code-astro">
+    ```astro
+    ---
+    import RLAPackageManagers from "@rimelight/ui/components/package-managers/RLAPackageManagers.astro";
+    ---
+
+    <RLAPackageManagers pkg="@rimelight/ui" />
+    ```
+
+  </div>
+</ComponentShowcase>
+
+## API
+
+### Props
+
+<ApiProps component="package-managers" />
+
+### Slots
+
+<ApiSlots component="package-managers" />
+
+### Emits
+
+<ApiEmits component="package-managers" />
+
+## Theme
+
+<ApiTheme component="package-managers" />
+
+## Changelog
+
+<ApiChangelog component="package-managers" />

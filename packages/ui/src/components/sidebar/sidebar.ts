@@ -21,6 +21,8 @@ export interface SidebarScope {
 }
 
 export interface SidebarProps {
+  t?: (key: string) => string
+  _depth?: number
   /**
    * The navigation links array.
    */

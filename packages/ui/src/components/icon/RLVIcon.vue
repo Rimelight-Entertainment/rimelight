@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import { computed, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import { resolveIcon } from "./resolver"
 import type { IconProps } from "./icon"
-import iconThemeDefault from "./icon.theme"
+import { iconTheme } from "./icon.theme"
 
 defineOptions({ name: "RLVIcon" })
 
 const attrs = useAttrs()
-const iconScv = scv(iconThemeDefault)
 
 const props = withDefaults(defineProps<IconProps>(), {
   size: "md"
 })
 
 const resolvedClasses = computed(() =>
-  resolveClasses(iconScv, { size: props.size }, useUi("icon", props.ui), props.class)
+  iconTheme({
+    size: props.size,
+    class: props.class
+  })
 )
 
 const resolved = computed(() => resolveIcon(props.name))

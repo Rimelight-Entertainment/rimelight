@@ -1,35 +1,22 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { BadgeProps } from "./badge"
-import { resolveTheme } from "../../utils/resolveTheme"
-import badgeThemeDefault, { createBadgeTheme } from "./badge.theme"
-const badgeTheme = resolveTheme(badgeThemeDefault, createBadgeTheme)
+import { badgeTheme } from "./badge.theme"
 
-const badge = scv(badgeTheme)
 
 const {
-  variant = "solid",
-  color = "primary",
-  size = "md",
-  shape = "pill",
+  variant,
   label,
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as BadgeProps & { label?: string }
+} = Astro.props as BadgeProps
+
+
 
 const resolvedVariant = (variant === "ghost") ? "soft" : ((variant === "solid" || variant === "outline" || variant === "soft" || variant === "subtle") ? variant : "solid")
 
-const classes = resolveClasses(badge, {
-  variant: resolvedVariant as "solid",
-  color: color as "neutral",
-  size,
-  shape,
-  theme
-}, useUi("badge", uiProp), className)
+const classes = badgeTheme({
+  ...Astro.props,
+  variant: resolvedVariant as "solid"
+})
 ---
 <span class={classes.root} data-slot="root" {...rest}>
   <slot>{label}</slot>

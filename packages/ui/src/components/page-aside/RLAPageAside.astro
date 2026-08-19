@@ -1,21 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import type { PageAsideProps } from "./page-aside"
-import pageAsideTheme from "./page-aside.theme"
+import { pageAsideTheme } from "./page-aside.theme"
 
 
-const pageAside = scv(pageAsideTheme)
 
-const {
-  ui: uiProp,
-  class: className,
-  ...rest
-} = Astro.props as PageAsideProps
-
-const classes = resolveClasses(pageAside, {}, useUi("pageAside", uiProp), className);
+const classes = pageAsideTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" {...Astro.props}>
   <slot />
 </div>

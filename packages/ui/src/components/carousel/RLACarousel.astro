@@ -1,25 +1,17 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { CarouselProps } from "./carousel"
-import { resolveTheme } from "../../utils/resolveTheme"
-import carouselThemeDefault, { createCarouselTheme } from "./carousel.theme"
-const carouselTheme = resolveTheme(carouselThemeDefault, createCarouselTheme)
+import { carouselTheme } from "./carousel.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const carousel = scv(carouselTheme)
 
 const {
   slides,
   autoplay = false,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as CarouselProps
 
-const classes = resolveClasses(carousel, {}, useUi("carousel", uiProp), className)
+const classes = carouselTheme(Astro.props)
 const carouselId = `rla-carousel-${Math.random().toString(36).substring(2, 9)}`
 ---
 <rla-carousel data-autoplay={autoplay ? "true" : "false"} {...rest}>

@@ -1,29 +1,18 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { DrawerProps } from "./drawer"
-import { resolveTheme } from "../../utils/resolveTheme"
-import drawerThemeDefault, { createDrawerTheme } from "./drawer.theme"
-const drawerTheme = resolveTheme(drawerThemeDefault, createDrawerTheme)
+import { drawerTheme } from "./drawer.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 
-const drawer = scv(drawerTheme)
 
 const {
-  direction = "bottom",
   title,
   description,
   triggerLabel,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as DrawerProps
 
-const classes = resolveClasses(drawer, {
-  direction
-}, useUi("drawer", uiProp), className)
+const classes = drawerTheme(Astro.props)
 
 const dialogId = `rla-drawer-${Math.random().toString(36).substring(2, 9)}`
 ---

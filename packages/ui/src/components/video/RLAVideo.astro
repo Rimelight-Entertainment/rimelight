@@ -1,9 +1,6 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { VideoProps } from "./video"
-import videoTheme from "./video.theme"
+import { videoTheme } from "./video.theme"
 import { Image } from "astro:assets"
 import RLAIcon from "../icon/RLAIcon.astro"
 
@@ -112,21 +109,19 @@ function getYoutubeEmbedUrl(rawUrl: string): string | null {
 }
 
 
-const video = scv(videoTheme)
 
 const {
   src,
   title = "YouTube Video Player",
   icon = "play",
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as VideoProps
 
-const classes = resolveClasses(video, {
+const classes = videoTheme({
+  ...Astro.props,
   title: !!(Astro.slots.has("title") || title),
-  icon: !!(Astro.slots.has("icon") || icon),
-}, useUi("video", uiProp), className);
+  icon: !!(Astro.slots.has("icon") || icon)
+});
 
 const embedUrl = getYoutubeEmbedUrl(src);
 const thumbnail = await getYoutubeThumbnail(src);

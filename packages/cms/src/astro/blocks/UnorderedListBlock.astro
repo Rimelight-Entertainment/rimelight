@@ -1,0 +1,55 @@
+---
+import type { BaseBlock } from "../../core/types/blocks"
+import type { InlineNode } from "../../core/types/inline"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block } = Astro.props
+const items = block.props?.items || block.children || []
+
+function escapeHtml(str: string): string {
+  return (str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+}
+
+function renderNodesToHtml(nodes: InlineNode[]): string {
+  if (!Array.isArray(nodes)) return ""
+  return nodes
+    .map((node) => {
+      if (!node) return ""
+      if (node.type === "text") {
+        let t = escapeHtml(node.text || "")
+        if (node.marks && Array.isArray(node.marks)) {
+          if (node.marks.includes("bold")) t = `<strong>${t}</strong>`
+          if (node.marks.includes("italic")) t = `<em>${t}</em>`
+          if (node.marks.includes("underline")) t = `<u>${t}</u>`
+          if (node.marks.includes("strikethrough")) t = `<s>${t}</s>`
+          if (node.marks.includes("code")) {
+            t = `<code class="bg-neutral-800 text-neutral-200 px-1.5 py-0.5 rounded text-sm font-mono">${t}</code>`
+          }
+        }
+        return t
+      }
+      if (node.type === "link") {
+        const inner = node.children ? renderNodesToHtml(node.children) : escapeHtml((node as any).text || "")
+        const target = node.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : ""
+        const href = escapeHtml(node.url || "#")
+        return `<a href="${href}"${target} class="text-blue-500 hover:text-blue-400 underline underline-offset-2">${inner}</a>`
+      }
+      return ""
+    })
+    .join("")
+}
+---
+
+<ul class="cms-unordered-list list-disc list-inside space-y-2 my-4 text-base text-neutral-800 dark:text-neutral-200" data-block-id={block.id}>
+  {items.map((item: BaseBlock) => (
+    <li set:html={renderNodesToHtml(item.props?.content || [])} />
+  ))}
+</ul>

@@ -1,0 +1,63 @@
+---
+import { headerTheme } from "./header.theme"
+
+
+export interface HeaderLayerProps {
+  as?: "header" | "div" | "aside" | "section" | (string & {})
+  layerType?: "header" | "banner"
+  contain?: boolean
+  sticky?: boolean
+  fixed?: boolean
+  stackIndex?: number
+  hideOnScroll?: boolean
+  theme?: any
+  componentName?: string
+  ui?: any
+  class?: any
+  [key: string]: unknown
+}
+
+const {
+  as = "header",
+  layerType = "header",
+  contain = true,
+  sticky = true,
+  fixed = false,
+  stackIndex = 0,
+  hideOnScroll = false,
+  theme = headerTheme,
+  componentName = "header",
+  ...rest
+} = Astro.props as HeaderLayerProps
+
+const Tag = (as || "header") as any
+
+const classes = theme({
+  contain,
+  sticky: fixed ? false : sticky,
+  fixed,
+})
+
+const isBanner = layerType === "banner"
+const layerId = rest.id || `rla-${componentName}-${Math.random().toString(36).slice(2, 8)}`
+---
+
+<Tag
+  id={layerId}
+  data-slot="root"
+  class:list={[classes.root]}
+  data-contain={contain ? "true" : "false"}
+  data-rla-header={isBanner ? undefined : "true"}
+  data-rla-banner={isBanner ? "true" : undefined}
+  data-stack-index={stackIndex}
+  data-hide-on-scroll={String(hideOnScroll)}
+  data-header-layer-id={layerId}
+  data-layer-type={layerType}
+  {...rest}
+>
+  <div class:list={[classes.content]} data-header-content>
+    <div class:list={[classes.container]} data-slot="container">
+      <slot />
+    </div>
+  </div>
+</Tag>

@@ -1,17 +1,13 @@
-import { colorConfig } from "../../config/color.config"
-import { defineTheme } from "../../utils/defineTheme"
+import { defineTheme } from "../../resolver"
 
-export const createAvatarGroupTheme = (_colors: readonly string[] = colorConfig.colors) =>
-  defineTheme({
-    slots: ["root", "more"],
-    base: {
-      root: "flex -space-x-3 hover:space-x-0 transition-all duration-300 [&_[data-slot=root]]:ring-2 [&_[data-slot=root]]:ring-background [&_[data-slot=root]]:transition-all",
-      more: [
-        "inline-flex items-center justify-center rounded-full shrink-0 select-none cursor-default",
-        "bg-elevated text-muted-foreground font-bold ring-2 ring-background",
-        "transition-all duration-300"
-      ]
-    }
-  })
-
-export default createAvatarGroupTheme()
+export const avatarGroupTheme = defineTheme("avatar-group", {
+  slots: ["root", "more"],
+  base: {
+    root: "flex -space-x-3 hover:space-x-0 transition-all duration-300 [&_[data-slot=root]]:ring-2 [&_[data-slot=root]]:ring-background [&_[data-slot=root]]:transition-all",
+    more: [
+      "inline-flex items-center justify-center rounded-full shrink-0 select-none cursor-default",
+      "bg-elevated text-muted font-bold ring-2 ring-background",
+      "transition-all duration-300"
+    ]
+  }
+})

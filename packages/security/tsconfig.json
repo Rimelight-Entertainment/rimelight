@@ -1,17 +1,15 @@
 {
-  "extends": "astro/tsconfigs/strictest",
+  "extends": "../../.config/tsconfig.base.json",
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"],
   "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "plugins": [
       {
         "name": "@astrojs/ts-plugin"
       }
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "allowArbitraryExtensions": true,
-    "jsx": "preserve"
+    ]
   }
 }

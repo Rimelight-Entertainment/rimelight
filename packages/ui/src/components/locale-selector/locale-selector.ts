@@ -48,6 +48,10 @@ export interface LocaleSelectorProps {
    */
   size?: "sm" | "md" | "lg"
   /**
+   * The color theme mode override for this component.
+   */
+  theme?: "light" | "dark"
+  /**
    * Slot-specific CSS class overrides.
    */
   ui?: any

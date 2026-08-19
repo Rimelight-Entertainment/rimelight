@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { computed, useSlots, useAttrs } from "vue"
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ModalProps } from "./modal"
-import modalThemeDefault from "./modal.theme"
+import { modalTheme } from "./modal.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 
 defineOptions({ name: "RLVModal" })
 
 const attrs = useAttrs()
 const slots = useSlots()
-const modalScv = scv(modalThemeDefault)
 
 const isOpen = defineModel<boolean>("open", { default: false })
 
@@ -36,7 +32,10 @@ const emit = defineEmits<{
 }>()
 
 const resolvedClasses = computed(() =>
-  resolveClasses(modalScv, { size: props.size }, useUi("modal", props.ui), props.class)
+  modalTheme({
+    size: props.size,
+    class: props.class
+  })
 )
 
 function handleClose() {

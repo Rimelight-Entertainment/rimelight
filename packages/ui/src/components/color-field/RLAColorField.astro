@@ -1,12 +1,6 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
-import { resolveTheme } from "../../utils/resolveTheme"
-import colorFieldThemeDefault, { createColorFieldTheme } from "./color-field.theme"
-const colorFieldTheme = resolveTheme(colorFieldThemeDefault, createColorFieldTheme)
+import { colorFieldTheme } from "./color-field.theme"
 
-const colorField = scv(colorFieldTheme)
 
 export interface Props {
   channel?: "hue" | "saturation" | "red" | "green" | "blue" | "alpha" | "lightness" | "brightness"
@@ -42,15 +36,10 @@ const {
   step = 1,
   color = "primary",
   theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as Props
 
-const classes = resolveClasses(colorField, {
-  color,
-  theme
-}, useUi("colorField", uiProp), className)
+const classes = colorFieldTheme(Astro.props)
 
 const initialValue = modelValue || defaultValue
 ---
@@ -65,7 +54,7 @@ const initialValue = modelValue || defaultValue
   {...rest}
 >
   <div class={classes.root} data-slot="root">
-    <div class="w-5 h-5 rounded border border-border mr-2 shrink-0 shadow-sm" data-slot="swatch"></div>
+    <div class="w-5 h-5 rounded border border-default mr-2 shrink-0 shadow-sm" data-slot="swatch"></div>
     <input
       type="text"
       class={classes.input}

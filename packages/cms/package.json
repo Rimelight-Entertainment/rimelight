@@ -1,0 +1,74 @@
+{
+  "name": "@rimelight/cms",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Rimelight Entertainment's Content Management System Package",
+  "homepage": "https://rimelight.com/docs",
+  "bugs": {
+    "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rimelight Entertainment"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
+  },
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./core/*": "./src/core/*",
+    "./astro/*": "./src/astro/*",
+    "./client/styles/*": "./src/client/styles/*",
+    "./client/components": "./src/client/components/index.ts",
+    "./client/components/*.tsx": "./src/client/components/*.tsx",
+    "./client/components/*.ts": "./src/client/components/*.ts",
+    "./client/components/*": "./src/client/components/*.tsx",
+    "./client/loader": "./src/client/loader.ts",
+    "./client/*": "./src/client/*.ts",
+    "./auth/*": "./src/auth/*",
+    "./cache/*": "./src/cache/*",
+    "./search/*": "./src/search/*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
+  },
+  "dependencies": {
+    "@rimelight/i18n": "workspace:*",
+    "@rimelight/ui": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "solid-js": "1.9.15",
+    "sortablejs": "1.15.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@types/sortablejs": "1.15.9",
+    "astro": "7.2.2",
+    "better-auth": "1.6.30",
+    "typescript": "6.0.3",
+    "unocss": "66.7.5",
+    "vitest": "4.1.10"
+  },
+  "peerDependencies": {
+    "astro": ">=7.0.0",
+    "better-auth": ">=1.0.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.22.0",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=26.7.0"
+  }
+}

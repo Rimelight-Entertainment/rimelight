@@ -1,43 +1,19 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ChipProps } from "./chip"
-import { resolveTheme } from "../../utils/resolveTheme"
-import chipThemeDefault, { createChipTheme } from "./chip.theme"
-const chipTheme = resolveTheme(chipThemeDefault, createChipTheme)
+import { chipTheme } from "./chip.theme"
 
 
-const chip = scv(chipTheme)
 
 const {
   text,
-  color = "primary",
-  size = "md",
-  position = "top-right",
-  inset = false,
   standalone = false,
   show = true,
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as ChipProps & {
-  color?: string
-  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"
-  position?: "top-right" | "bottom-right" | "top-left" | "bottom-left"
-  inset?: boolean
-  standalone?: boolean
-}
+} = Astro.props as ChipProps
 
-const classes = resolveClasses(chip, {
-  color: color as "neutral",
-  size: size as "md",
-  position: position as "top-right",
-  inset,
-  standalone,
-  theme
-}, useUi("chip", uiProp), className)
+
+
+const classes = chipTheme(Astro.props)
 ---
 {standalone ? (
   show && (

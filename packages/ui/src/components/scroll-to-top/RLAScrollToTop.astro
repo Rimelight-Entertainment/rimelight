@@ -1,12 +1,8 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ScrollToTopProps } from "./scroll-to-top"
-import scrollToTopTheme from "./scroll-to-top.theme"
+import { scrollToTopTheme } from "./scroll-to-top.theme"
 
 
-const scrollToTop = scv(scrollToTopTheme)
 
 const {
   color = "primary",
@@ -14,13 +10,10 @@ const {
   duration = 0.1,
   threshold = 200,
   showProgress = false,
-  theme,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as ScrollToTopProps
 
-const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop", uiProp), className)
+const classes = scrollToTopTheme(Astro.props)
 
 ---
 
@@ -62,7 +55,7 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
 </rla-scroll-to-top>
 
 <script>
-  import { trackScroll, scrollToTop } from "../../utils/scroll"
+  import { trackScroll, scrollToTop } from "./scroll"
 
   class RLAScrollToTop extends HTMLElement {
     private cleanupScroll: (() => void) | null = null;
@@ -106,9 +99,10 @@ const classes = resolveClasses(scrollToTop, { color, theme }, useUi("scrollToTop
       this.cleanupScroll = () => {
         button.removeEventListener('click', scrollToTop);
         unsubscribeVisibility();
-        if (this.styleEl) {
-          this.styleEl.remove();
-          this.styleEl = null;
+        const self = this as any;
+        if (self.styleEl) {
+          self.styleEl.remove();
+          self.styleEl = null;
         }
       };
 

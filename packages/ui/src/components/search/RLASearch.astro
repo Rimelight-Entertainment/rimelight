@@ -1,27 +1,21 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { SearchProps } from "./search"
-import searchTheme from "./search.theme"
+import { searchTheme } from "./search.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 import RLAInput from "../input/RLAInput.astro"
 import RLAKbd from "../kbd/RLAKbd.astro"
 import RLAButton from "../button/RLAButton.astro"
 
 
-const search = scv(searchTheme)
 
 const {
   endpoint = "/api/search",
   placeholder = "Search...",
   messages = {},
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as SearchProps
 
-const classes = resolveClasses(search, {}, useUi("search", uiProp), className)
+const classes = searchTheme(Astro.props)
 
 // Default messages
 const searchPlaceholder = messages.searchPlaceholder || placeholder
@@ -111,7 +105,7 @@ const emptyId = `search-empty-${uniqueId}`
 </rla-search>
 
 <script>
-  import { defineShortcuts } from "../../utils/shortcuts"
+  import { defineShortcuts } from "../../shortcuts"
 
   class RLASearch extends HTMLElement {
     private searchCleanup: (() => void) | null = null;

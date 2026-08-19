@@ -1,13 +1,9 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { TabsProps } from "./tabs"
-import tabsTheme from "./tabs.theme"
+import { tabsTheme } from "./tabs.theme"
 import RLABadge from "../badge/RLABadge.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const tabs = scv(tabsTheme)
 
 const {
   items = [],
@@ -18,24 +14,20 @@ const {
   size = "md",
   color = "primary",
   content = true,
-  unmountOnHide = true,
   valueKey = "value",
   labelKey = "label",
   maxTabs,
   estimatedTabWidth = 100,
-  ui: uiProp,
-  class: className,
   ...rest
 } = Astro.props as TabsProps
 
 // Normalize variant names
 const normalizedVariant = (variant === "solid" || variant === "pills") ? "pill" : (variant === "link" ? "underline" : variant);
 
-const classes = resolveClasses(tabs, {
-  variant: normalizedVariant,
-  orientation,
-  size
-}, useUi("tabs", uiProp), className);
+const classes = tabsTheme({
+  ...Astro.props,
+  variant: normalizedVariant
+});
 
 const initialValue = value || defaultValue || (items.length > 0 ? (items[0]?.[valueKey] ?? items[0]?.value ?? "0") : "")
 
@@ -135,7 +127,7 @@ if (needsOverflow && renderedListItems.length > 1) {
           <div
             id={popoverId}
             popover="auto"
-            class="rla-tb-popover rounded-lg border border-border bg-background p-1 shadow-lg backdrop-blur-sm"
+            class="rla-tb-popover rounded-lg border border-default bg-default p-1 shadow-lg backdrop-blur-sm"
           >
             <div class="flex flex-col gap-0.5 min-w-[10rem]">
               {items.map((item, index) => {
@@ -212,6 +204,11 @@ if (needsOverflow && renderedListItems.length > 1) {
   /* Show items in popover if they are hidden in list or extra */
   .rla-tb-pop-rendered {
     display: none;
+  }
+  @supports not (content-visibility: hidden) {
+    [hidden="until-found"] {
+      display: none !important;
+    }
   }
 </style>
 

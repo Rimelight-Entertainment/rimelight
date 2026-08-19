@@ -1,16 +1,10 @@
 ---
-import { scv } from "css-variants"
-import { useUi } from "../../utils/useUi"
-import { resolveClasses } from "../../utils/resolveClasses"
 import type { ButtonProps } from "./button"
-import { resolveTheme } from "../../utils/resolveTheme"
-import buttonThemeDefault, { createButtonTheme } from "./button.theme"
-const buttonTheme = resolveTheme(buttonThemeDefault, createButtonTheme)
+import { buttonTheme } from "./button.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 import RLALink from "../link/RLALink.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-const button = scv(buttonTheme)
 
 const {
   variant = "solid",
@@ -25,21 +19,14 @@ const {
   loading = false,
   loadingAuto = false,
   square = false,
-  rounded = false,
-  block = false,
   justify = "center",
   active = false,
-  theme,
   activeColor,
   activeVariant,
-  ui: uiProp,
-  class: className,
   ...rest
-} = Astro.props as ButtonProps & {
-  rounded?: boolean
-  activeColor?: string
-  activeVariant?: string
-}
+} = Astro.props as ButtonProps
+
+
 
 const isLeading = !!(leadingIcon || avatar || Astro.slots.has("leading") || loading)
 const isTrailing = !!(trailingIcon || Astro.slots.has("trailing")) || (loading && !isLeading)
@@ -55,20 +42,14 @@ const showTrailingIcon = loading
 const leadingIconClass = loading ? "animate-spin" : ""
 const trailingIconClass = loading ? "animate-spin" : ""
 
-const classes = resolveClasses(button, {
+const classes = buttonTheme({
+  ...Astro.props,
   variant: (active && activeVariant ? activeVariant : variant) as "solid",
   color: (active && activeColor ? activeColor : color) as "neutral",
-  size,
-  block,
-  justify,
   square: square || (!label && !Astro.slots.has("default")),
-  rounded,
   leading: isLeading,
-  trailing: isTrailing,
-  loading,
-  active,
-  theme
-}, useUi("button", uiProp), className);
+  trailing: isTrailing
+});
 
 const Tag = (href || to) ? RLALink : "button";
 
@@ -77,7 +58,7 @@ const loadingAutoProps = loadingAuto ? { 'data-loading-auto': '' } : {};
 <Tag
   class={classes.root}
   data-slot="root"
-  {...(Tag === RLALink ? { href, to, noExternalIcon: true } : {})}
+  {...(Tag === RLALink ? { href, to, noExternalIcon: true, raw: true } : {})}
   {...loadingAutoProps}
   {...rest}
 >
