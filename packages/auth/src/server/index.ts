@@ -135,7 +135,7 @@ export function createRimelightAuth(options: RimelightAuthFactoryOptions) {
     plugins: options.plugins ?? [],
     auth: options.statements ? { statements: options.statements } : undefined,
     advanced: {
-      useSecureCookies: process.env.NODE_ENV === "production",
+      useSecureCookies: import.meta.env.MODE === "production",
       cookiePrefix: "auth",
       database: {
         generateId: () => crypto.randomUUID()

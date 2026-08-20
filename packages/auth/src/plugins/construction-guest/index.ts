@@ -9,15 +9,16 @@ export type GuestEnv = {
   BETTER_AUTH_SECRET?: string
 }
 
-const getConfig = (env?: GuestEnv) => ({
-  email: env?.CONSTRUCTION_GUEST_EMAIL ?? process.env.CONSTRUCTION_GUEST_EMAIL,
-  password: env?.CONSTRUCTION_GUEST_PASSWORD ?? process.env.CONSTRUCTION_GUEST_PASSWORD,
-  secret:
-    env?.CONSTRUCTION_GUEST_SECRET ??
-    process.env.CONSTRUCTION_GUEST_SECRET ??
-    env?.BETTER_AUTH_SECRET ??
-    process.env.BETTER_AUTH_SECRET
-})
+const getConfig = (env?: GuestEnv) => {
+  return {
+    email: env?.CONSTRUCTION_GUEST_EMAIL ?? import.meta.env.VITE_CONSTRUCTION_GUEST_EMAIL,
+    password: env?.CONSTRUCTION_GUEST_PASSWORD ?? import.meta.env.VITE_CONSTRUCTION_GUEST_PASSWORD,
+    secret:
+      env?.CONSTRUCTION_GUEST_SECRET ??
+      import.meta.env.VITE_CONSTRUCTION_GUEST_SECRET ??
+      import.meta.env.VITE_BETTER_AUTH_SECRET
+  }
+}
 
 const encode = (value: Uint8Array) =>
   btoa(String.fromCharCode(...value))
