@@ -33,14 +33,16 @@ import { ui } from "@rimelight/ui"
 import { defineConfig } from "astro/config"
 
 export default defineConfig({
-  integrations: [
-    ui({
-      components: {
-        themes: {
-          ${componentName}: ${JSON.stringify(componentConfig, null, 10).replace(/\n/g, "\n          ")}
+  vite: {
+    plugins: [
+      ui({
+        components: {
+          themes: {
+            ${componentName}: ${JSON.stringify(componentConfig, null, 10).replace(/\n/g, "\n          ")}
+          }
         }
-      }
-    })
-  ]
+      })
+    ]
+  }
 })`
 }
