@@ -29,7 +29,10 @@ describe("block-hierarchy-and-rules", () => {
       "TabsBlock",
       "StepsBlock",
       "CardsBlock",
-      "FileTreeBlock"
+      "FileTreeBlock",
+      "ComponentShowcaseBlock",
+      "ApiDocumentationBlock",
+      "LivePreviewBlock"
     ])
   })
 
@@ -46,7 +49,10 @@ describe("block-hierarchy-and-rules", () => {
       "TabsBlock",
       "StepsBlock",
       "CardsBlock",
-      "FileTreeBlock"
+      "FileTreeBlock",
+      "ComponentShowcaseBlock",
+      "ApiDocumentationBlock",
+      "LivePreviewBlock"
     ])
   })
 

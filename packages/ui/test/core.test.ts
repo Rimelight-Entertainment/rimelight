@@ -20,7 +20,7 @@ vi.mock("virtual:rimelight/ui", () => ({
 }))
 
 import { defineTheme } from "../src/resolver"
-import { resolveIcon, DEFAULT_ICONS } from "../src/icons"
+import { resolveIcon } from "../src/icons"
 
 describe("@rimelight/ui core resolver", () => {
   it("should merge slots and variants correctly", () => {
@@ -95,10 +95,10 @@ describe("@rimelight/ui core icon resolution", () => {
     expect(icon.content).toBe("i-lucide-check")
   })
 
-  it("should resolve built-in default icons", () => {
-    const icon = resolveIcon("check")
-    expect(icon.isClass).toBe(false)
-    expect(icon.content).toBe(DEFAULT_ICONS.check)
+  it("should resolve built-in collection icons", () => {
+    const icon = resolveIcon("i-rl-check")
+    expect(icon.isClass).toBe(true)
+    expect(icon.content).toBe("i-rl-check")
   })
 
   it("should resolve custom raw SVG icons", () => {
@@ -114,10 +114,10 @@ describe("@rimelight/ui core icon resolution", () => {
     expect(icon.content).toBe("i-custom-icon")
   })
 
-  it("should support property access and enumeration on lazy DEFAULT_ICONS proxy", () => {
-    expect(DEFAULT_ICONS.arrowLeft).toContain("<svg")
-    expect("arrowRight" in DEFAULT_ICONS).toBe(true)
-    expect(Object.keys(DEFAULT_ICONS).length).toBeGreaterThan(30)
+  it("should return empty icon for empty name and custom", () => {
+    const icon = resolveIcon("")
+    expect(icon.isClass).toBe(false)
+    expect(icon.content).toBe("")
   })
 
   it("should match compound variants when color is auto", () => {
@@ -231,6 +231,47 @@ describe("@rimelight/ui shortcuts system", () => {
       // Simulate physical Ctrl + Alt + T on Windows/Linux (ctrlKey: true, altKey: true, metaKey: false)
       listener!({
         key: "t",
+        code: "KeyT",
+        ctrlKey: true,
+        altKey: true,
+        metaKey: false,
+        shiftKey: false,
+        preventDefault: () => {}
+      })
+
+      expect(triggered).toBe(true)
+      cleanup()
+    } finally {
+      ;(globalThis as any).window = origWindow
+    }
+  })
+
+  it("should resolve shortcuts using codeKey when Alt produces a special character", async () => {
+    let listener: ((e: any) => void) | null = null
+    const origWindow = (globalThis as any).window
+    ;(globalThis as any).window = {
+      addEventListener: (_event: string, fn: any) => {
+        listener = fn
+      },
+      removeEventListener: () => {
+        listener = null
+      }
+    }
+
+    try {
+      const { defineShortcuts } = await import("../src/shortcuts")
+      let triggered = false
+      const cleanup = defineShortcuts({
+        meta_alt_t: () => {
+          triggered = true
+        }
+      })
+
+      expect(listener).toBeDefined()
+      // On Mac or special layout, Alt+T produces '†' in e.key but 'KeyT' in e.code
+      listener!({
+        key: "†",
+        code: "KeyT",
         ctrlKey: true,
         altKey: true,
         metaKey: false,
