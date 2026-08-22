@@ -4,7 +4,7 @@ import { resolveIcon } from "../../icons"
 import type { IconProps } from "./icon"
 import { iconTheme } from "./icon.theme"
 
-defineOptions({ name: "RLVIcon" })
+defineOptions({ name: "RLVIcon", inheritAttrs: false })
 
 const attrs = useAttrs()
 
@@ -23,8 +23,20 @@ const resolved = computed(() => resolveIcon(props.name))
 </script>
 
 <template>
-  <span v-bind="attrs" :class="resolvedClasses.root" data-slot="icon" aria-hidden="true">
-    <span v-if="resolved.isClass" :class="[resolved.content, 'size-full']" />
-    <span v-else v-html="resolved.content" />
-  </span>
+  <span
+    v-if="resolved.isClass"
+    v-bind="attrs"
+    :class="resolvedClasses.root"
+    data-slot="icon"
+    aria-hidden="true"
+    ><span :class="[resolved.content, 'size-full']"
+  /></span>
+  <span
+    v-else
+    v-bind="attrs"
+    :class="resolvedClasses.root"
+    data-slot="icon"
+    aria-hidden="true"
+    v-html="resolved.content"
+  />
 </template>

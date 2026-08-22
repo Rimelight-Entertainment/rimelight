@@ -3,7 +3,7 @@ import { defineTheme } from "../../resolver"
 export const iconTheme = defineTheme("icon", {
   slots: ["root"],
   base: {
-    root: "shrink-0 inline-flex items-center justify-center align-middle leading-none"
+    root: "shrink-0 inline-block align-middle leading-none"
   },
   variants: {
     size: {

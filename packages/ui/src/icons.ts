@@ -3,23 +3,14 @@ import { ICONS, svg } from "./icons.raw"
 
 export { ICONS, svg }
 
-const BUILTIN_ICONS = new Set(Object.keys(ICONS))
-
 export const getSvgIcon = (k: string): string => {
   const path = (ICONS as Record<string, string>)[k]
   return path ? svg(path) : ""
 }
 
-export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = new Proxy({} as any, {
-  get: (_, prop: string) => getSvgIcon(prop),
-  has: (_, prop: string) => BUILTIN_ICONS.has(prop),
-  ownKeys: () => Reflect.ownKeys(ICONS),
-  getOwnPropertyDescriptor: (_, prop) => ({
-    value: getSvgIcon(prop as string),
-    enumerable: true,
-    configurable: true
-  })
-})
+export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = Object.fromEntries(
+  Object.keys(ICONS).map((k) => [k, getSvgIcon(k)])
+) as Record<keyof typeof ICONS, string>
 
 export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>
 
