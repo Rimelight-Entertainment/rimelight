@@ -19,7 +19,6 @@ export type {
 // Core Services & Registries
 export * from "./core/registry.ts"
 export * from "./core/validator.ts"
-export * from "./core/template-sync.ts"
 export * from "./services/component-metadata.ts"
 
 // Auth & Security Guards
@@ -31,7 +30,6 @@ export * from "./auth/filter-templates.ts"
 // Edge Cache & Search
 export * from "./cache/purge.ts"
 export * from "./search/query.ts"
-export * from "./search/sync.ts"
 
 // Database Schemas & Migration
 export * from "./schema/index.ts"

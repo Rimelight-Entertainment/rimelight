@@ -22,14 +22,12 @@
     "astro": "astro",
     "dev": "astro dev",
     "dev:remote": "astro dev --remote",
-    "prebuild": "node scripts/sync-md-to-db.ts",
     "build": "astro build",
     "preview": "astro preview",
     "check": "pnpm audit --audit-level=moderate && vp check --fix && wrangler types && astro sync && astro check"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.1",
-    "@astrojs/mdx": "7.0.5",
     "@astrojs/rss": "4.0.19",
     "@astrojs/solid-js": "7.0.2",
     "@nanostores/i18n": "1.3.3",
