@@ -98,17 +98,6 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
             ...(p === "bg" && n === "inverted" && { color: "var(--color-neutral-50)" })
           }
         }
-      ],
-      [
-        /^rl-select$/,
-        () => `
-select.rl-select, select.rl-select::picker(select) { appearance: base-select; }
-select.rl-select::picker-icon { display: none; }
-select.rl-select::picker(select) { border: 1px solid var(--color-neutral-200, rgba(255, 255, 255, 0.1)); border-radius: 0.5rem; background-color: var(--color-neutral-100, #18181b); color: var(--color-neutral-950, #f4f4f5); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5); padding: 0.25rem; margin-top: 0.25rem; }
-select.rl-select option { padding: 0.375rem 0.625rem; border-radius: 0.375rem; background-color: var(--color-neutral-100, #18181b); color: var(--color-neutral-950, #f4f4f5); font-size: 0.875rem; cursor: pointer; transition: background-color 0.15s ease, color 0.15s ease; }
-select.rl-select option:hover, select.rl-select option:focus { background-color: var(--color-neutral-200, #27272a); color: var(--color-neutral-950, #ffffff); }
-select.rl-select option:checked { background-color: var(--color-primary-500, #3b82f6); color: #ffffff; font-weight: 500; }
-`
       ]
     ],
     theme: {
@@ -139,7 +128,7 @@ select.rl-select option:checked { background-color: var(--color-primary-500, #3b
     preflights: [
       {
         getCSS: () =>
-          `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n}\n:root, .dark, .light, .rl-dark, .rl-light, [data-theme="dark"], [data-theme="light"] {\n${cssVars(options.colors)}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
+          `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${cssVars(options.colors)}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
       }
     ]
   }

@@ -23,6 +23,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
   }),
   {
     name: "rimelight/ui",
+    enforce: "pre",
     resolveId: (id: string) => (id === ID || id === "rimelight/ui" ? RESOLVED_ID : null),
     load: (id: string) =>
       id === RESOLVED_ID
