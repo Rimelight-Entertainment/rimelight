@@ -64,6 +64,23 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
   const allColors = Object.keys({ ...PALETTES, ...options.colors })
   const shadeKeys = Object.keys(SHADES)
 
+  const colors: Record<string, Record<string, string>> = {}
+  for (let i = 0; i < allColors.length; i++) {
+    const c = allColors[i]!
+    const entry: Record<string, string> = {
+      DEFAULT: `var(--${c})`,
+      foreground: `var(--${c}-foreground)`,
+      accent: `var(--${c}-accent)`
+    }
+    for (let j = 0; j < shadeKeys.length; j++) {
+      const s = shadeKeys[j]!
+      entry[s] = `var(--color-${c}-${s})`
+    }
+    colors[c] = entry
+  }
+
+  const preflightCss = `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${cssVars(options.colors)}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
+
   return {
     name: "rimelight-ui",
     outputToCssLayers: true,
@@ -130,22 +147,11 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
         "2xl": "calc(var(--radius) + 0.5rem)",
         "3xl": "calc(var(--radius) + 1rem)"
       },
-      colors: Object.fromEntries(
-        allColors.map((c) => [
-          c,
-          {
-            DEFAULT: `var(--${c})`,
-            foreground: `var(--${c}-foreground)`,
-            accent: `var(--${c}-accent)`,
-            ...Object.fromEntries(shadeKeys.map((s) => [s, `var(--color-${c}-${s})`]))
-          }
-        ])
-      )
+      colors
     },
     preflights: [
       {
-        getCSS: () =>
-          `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${cssVars(options.colors)}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
+        getCSS: () => preflightCss
       }
     ]
   }

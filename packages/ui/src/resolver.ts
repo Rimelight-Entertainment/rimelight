@@ -68,6 +68,15 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     ...(custom?.compoundVariants ?? [])
   ]
 
+  const compiledCV = compoundVariants.map((cv) => {
+    const { classNames, class: cls, ...rest } = cv
+    const matchers: Array<{ key: string; exp: any }> = []
+    for (const k in rest) {
+      matchers.push({ key: k, exp: rest[k] })
+    }
+    return { matchers, cls: classNames || cls }
+  })
+
   const baseMap: Record<string, string> = {}
   for (let i = 0; i < slots.length; i++) {
     const s = slots[i]!
@@ -81,43 +90,50 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
 
   return (props: any = {}): Record<S, string> => {
     const res = {} as Record<S, string>
+    for (let i = 0; i < slots.length; i++) {
+      res[slots[i]!] = baseMap[slots[i]!] || ""
+    }
+
     const values = { ...defaultVariants, ...props }
     const color = autoColor ? (props.color ?? defaultVariants.color) : undefined
 
-    const activeLayers: Array<Record<string, any>> = []
     for (const k in variants) {
       if (k === "color" && autoColor) continue
       const selected = values[k]
       if (selected != null && variants[k]?.[selected]) {
-        activeLayers.push(variants[k][selected])
+        const layer = variants[k][selected]
+        for (let i = 0; i < slots.length; i++) {
+          const s = slots[i]!
+          const l = layer[s]
+          if (l) res[s] = res[s] ? `${res[s]} ${cx(l)}` : cx(l)
+        }
       }
     }
 
-    for (let c = 0; c < compoundVariants.length; c++) {
-      const cv = compoundVariants[c]!
+    for (let c = 0; c < compiledCV.length; c++) {
+      const { matchers, cls } = compiledCV[c]!
+      if (!cls) continue
       let match = true
-      for (const k in cv) {
-        if (k === "classNames" || k === "class") continue
-        const expected = cv[k]
-        const actual = values[k]
-        if (Array.isArray(expected) ? !expected.includes(actual) : actual !== expected) {
+      for (let m = 0; m < matchers.length; m++) {
+        const { key, exp } = matchers[m]!
+        const actual = values[key]
+        if (Array.isArray(exp) ? !exp.includes(actual) : actual !== exp) {
           match = false
           break
         }
       }
       if (match) {
-        const cls = cv.classNames || cv.class
-        if (cls) activeLayers.push(cls)
+        for (let i = 0; i < slots.length; i++) {
+          const s = slots[i]!
+          const l = cls[s]
+          if (l) res[s] = res[s] ? `${res[s]} ${cx(l)}` : cx(l)
+        }
       }
     }
 
     for (let i = 0; i < slots.length; i++) {
       const slot = slots[i]!
-      let slotClass = baseMap[slot] || ""
-      for (let j = 0; j < activeLayers.length; j++) {
-        const l = activeLayers[j]![slot]
-        if (l) slotClass = slotClass ? `${slotClass} ${cx(l)}` : cx(l)
-      }
+      let slotClass = res[slot]!
       if (slot === rootSlot) {
         if (color) slotClass = slotClass ? `${slotClass} rl-color-${color}` : `rl-color-${color}`
         const extra = cx(props.class, props.className)
