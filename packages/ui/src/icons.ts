@@ -63,9 +63,38 @@ const ICONS = {
   arrowDownToLine: `<path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/>`
 } as const
 
-export const DEFAULT_ICONS = Object.fromEntries(
-  Object.entries(ICONS).map(([k, v]) => [k, svg(v)])
-) as { readonly [K in keyof typeof ICONS]: string }
+const getUiIcons = (): Record<string, string> | undefined => {
+  try {
+    return (typeof uiConfig !== "undefined" && uiConfig ? uiConfig.icons : undefined) as
+      | Record<string, string>
+      | undefined
+  } catch {
+    return undefined
+  }
+}
+
+export const getSvgIcon = (k: string): string => {
+  const path = (ICONS as Record<string, string>)[k]
+  return path ? svg(path) : ""
+}
+
+export const DEFAULT_ICONS = new Proxy({} as { readonly [K in keyof typeof ICONS]: string }, {
+  get(_, prop: string) {
+    return getSvgIcon(prop)
+  },
+  has(_, prop: string) {
+    return prop in ICONS
+  },
+  ownKeys() {
+    return Object.keys(ICONS)
+  },
+  getOwnPropertyDescriptor(_, prop: string) {
+    if (prop in ICONS) {
+      return { configurable: true, enumerable: true, value: getSvgIcon(prop) }
+    }
+    return undefined
+  }
+})
 
 export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>
 
@@ -79,12 +108,13 @@ export const resolveIcon = (k = "", custom?: string) => {
     cached = cache.get(id)
   if (cached) return cached
 
-  const raw = custom || uiConfig.icons?.[k] || k,
+  const iconsConfig = getUiIcons()
+  const raw = custom || iconsConfig?.[k] || k,
     res = isCls(raw)
       ? { isClass: true, content: raw }
       : isSvg(raw)
         ? { isClass: false, content: raw.startsWith("<svg") ? raw : svg(raw) }
-        : { isClass: false, content: (DEFAULT_ICONS as any)[raw] || "" }
+        : { isClass: false, content: getSvgIcon(raw) }
 
   cache.set(id, res)
   return res

@@ -23,55 +23,70 @@ export interface RegisteredShortcut {
 }
 
 interface Shortcut {
-  key: string
   handler: Handler
-  mods: number
   usingInput?: boolean | string | undefined
 }
 
 const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAgent),
-  MOD_CMD = isMac ? 2 : 1,
-  SHIFTABLE = new Set([
-    "arrowleft",
-    "arrowright",
-    "arrowup",
-    "arrowdown",
-    "tab",
-    "escape",
-    "enter",
-    "backspace"
-  ]),
-  kMap = (m: string, v: any) => m.split(",").map((k) => [k, v]),
-  MODS: Record<string, number> = Object.fromEntries([
-    ...kMap("ctrl,control", 1),
-    ...kMap("cmd,command,meta", MOD_CMD),
-    ...kMap("alt,opt,option", 4),
-    ["shift", 8]
-  ]),
-  KEYS: Record<string, string> = Object.fromEntries([
-    ...kMap("ctrl,control", "Ctrl"),
-    ...kMap("cmd,command,meta", isMac ? "⌘" : "Ctrl"),
-    ...kMap("alt,opt,option", isMac ? "⌥" : "Alt"),
-    ["shift", isMac ? "⇧" : "Shift"],
-    ..."enter:↵,delete:⌦,backspace:⌫,escape:Esc,tab:⇥,space:Space,arrowup:↑,arrowdown:↓,arrowleft:←,arrowright:→"
-      .split(",")
-      .map((s) => s.split(":") as [string, string])
-  ])
+  KEYS: Record<string, string> = {
+    ctrl: "Ctrl",
+    meta: isMac ? "⌘" : "Ctrl",
+    alt: isMac ? "⌥" : "Alt",
+    shift: isMac ? "⇧" : "Shift",
+    enter: "↵",
+    delete: "⌦",
+    backspace: "⌫",
+    escape: "Esc",
+    tab: "⇥",
+    space: "Space",
+    arrowup: "↑",
+    arrowdown: "↓",
+    arrowleft: "←",
+    arrowright: "→"
+  }
 
 export const formatShortcutKeys = (k: string): string[] =>
-  k.split(/[_-]/).map((p) => KEYS[p.toLowerCase()] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : ""))
+  k.split(/[_-]/).map((p) => {
+    const low = p.toLowerCase()
+    const norm =
+      low === "cmd" || low === "command"
+        ? "meta"
+        : low === "control"
+          ? "ctrl"
+          : low === "opt" || low === "option"
+            ? "alt"
+            : low
+    return KEYS[norm] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
+  })
 
 export const activeShortcutsStore = atom<RegisteredShortcut[]>([])
 
 const isUsingInput = (el: Element | null): boolean | string => {
-  while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement
-  return el && (/INPUT|TEXTAREA|SELECT/.test(el.nodeName) || (el as HTMLElement).isContentEditable)
-    ? el.getAttribute("name") || true
+  const target = (el?.shadowRoot?.activeElement || el) as HTMLElement | null
+  return target && (/INPUT|TEXTAREA|SELECT/.test(target.tagName) || target.isContentEditable)
+    ? target.getAttribute("name") || true
     : false
 }
 
 const isEnabled = (s: Shortcut, input: boolean | string) =>
   s.usingInput === true || (s.usingInput ? input === s.usingInput : !input)
+
+const normalizeCombo = (combo: string) => {
+  const parts = combo.toLowerCase().split("_")
+  const main = parts.pop() || ""
+  const mods = new Set(
+    parts.map((p) =>
+      p === "cmd" || p === "command"
+        ? "meta"
+        : p === "control"
+          ? "ctrl"
+          : p === "opt" || p === "option"
+            ? "alt"
+            : p
+    )
+  )
+  return `${mods.has("meta") ? "meta_" : ""}${mods.has("ctrl") ? "ctrl_" : ""}${mods.has("alt") ? "alt_" : ""}${mods.has("shift") ? "shift_" : ""}${main}`
+}
 
 export function defineShortcuts(
   config: ShortcutsConfig,
@@ -79,30 +94,20 @@ export function defineShortcuts(
 ): () => void {
   if (typeof window === "undefined") return () => {}
 
-  const standard: Shortcut[] = [],
-    chained = new Map<string, Shortcut>(),
-    reg: RegisteredShortcut[] = []
-  let maxChain = 2
+  const map = new Map<string, Shortcut>()
+  const reg: RegisteredShortcut[] = []
 
   for (const [k, cfg] of Object.entries(config)) {
     if (!cfg) continue
-    const obj = typeof cfg === "object" ? cfg : null,
-      handler = obj ? obj.handler : cfg
+    const obj = typeof cfg === "object" ? cfg : null
+    const handler = obj ? obj.handler : cfg
     if (typeof handler !== "function") continue
 
-    const chain = k.includes("-") && k !== "-" && !k.includes("_"),
-      parts = k.toLowerCase().split(chain ? "-" : "_")
-    let mods = 0
-    const nonMods = parts.filter((p) => (MODS[p] ? !(mods |= MODS[p]!) : true)),
-      base = chain ? k.toLowerCase() : nonMods.join("_"),
-      item: Shortcut = { key: base, handler, mods, usingInput: obj?.usingInput }
+    const key =
+      k.includes("-") && k !== "-" && !k.includes("_") ? k.toLowerCase() : normalizeCombo(k)
+    map.set(key, { handler, usingInput: obj?.usingInput })
 
-    if (chain) {
-      maxChain = Math.max(maxChain, parts.length)
-      chained.set(base, item)
-    } else standard.push(item)
-
-    if (obj?.label || obj?.description)
+    if (obj?.label || obj?.description) {
       reg.push({
         id: `${obj.category || "system"}-${k}`,
         keys: formatShortcutKeys(k),
@@ -111,62 +116,64 @@ export function defineShortcuts(
         description: obj.description,
         order: obj.order
       })
+    }
   }
 
   const ids = new Set(reg.map((i) => i.id))
-  if (ids.size)
+  if (ids.size && activeShortcutsStore.lc > 0) {
     activeShortcutsStore.set(
       activeShortcutsStore
         .get()
         .filter((i) => !ids.has(i.id))
         .concat(reg)
     )
+  }
 
-  const inputs: string[] = []
+  const buffer: string[] = []
   let timer: ReturnType<typeof setTimeout> | undefined
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!e.key) return
-    const input = isUsingInput(document.activeElement),
-      trigger = (s: Shortcut) => {
-        e.preventDefault()
-        s.handler(e)
-        inputs.length = 0
-      }
+    const key = e.key.toLowerCase()
+    const input = isUsingInput(document.activeElement)
 
-    inputs.push(e.key.toLowerCase())
-    if (inputs.length > maxChain) inputs.shift()
+    buffer.push(key)
+    if (buffer.length > 2) buffer.shift()
     clearTimeout(timer)
 
-    if (inputs.length >= 2 && chained.size)
-      for (let len = Math.min(inputs.length, maxChain); len >= 2; len--) {
-        const match = chained.get(inputs.slice(-len).join("-"))
-        if (match && isEnabled(match, input)) return trigger(match)
+    // Chained sequence check (e.g. g-d)
+    if (buffer.length === 2) {
+      const chainedMatch = map.get(buffer.join("-"))
+      if (chainedMatch && isEnabled(chainedMatch, input)) {
+        e.preventDefault()
+        chainedMatch.handler(e)
+        buffer.length = 0
+        return
       }
-
-    const eMods = +e.ctrlKey | (+e.metaKey << 1) | (+e.altKey << 2) | (+e.shiftKey << 3),
-      c = e.code.toLowerCase(),
-      k = e.key.toLowerCase()
-
-    for (const s of standard) {
-      if ((s.mods & 7) !== (eMods & 7)) continue
-      if (s.mods & 4 ? c !== `key${s.key}` && c !== `digit${s.key}` && c !== s.key : k !== s.key)
-        continue
-      if (
-        Boolean(s.mods & 8) !== e.shiftKey &&
-        (s.mods & 8 || /^[a-z]$/.test(s.key) || SHIFTABLE.has(s.key))
-      )
-        continue
-      if (isEnabled(s, input)) return trigger(s)
     }
 
-    timer = setTimeout(() => void (inputs.length = 0), options.chainDelay ?? 800)
+    // Unified event normalization
+    const isCtrl = isMac ? e.ctrlKey : e.ctrlKey || e.metaKey
+    const isMeta = isMac ? e.metaKey : e.metaKey || e.ctrlKey
+    const sig = `${isMeta ? "meta_" : ""}${isCtrl && isMac ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${key}`
+
+    const match = map.get(sig) || map.get(key)
+    if (match && isEnabled(match, input)) {
+      e.preventDefault()
+      match.handler(e)
+      buffer.length = 0
+      return
+    }
+
+    timer = setTimeout(() => void (buffer.length = 0), options.chainDelay ?? 800)
   }
 
   window.addEventListener("keydown", onKeyDown)
   return () => {
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
-    if (ids.size) activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !ids.has(i.id)))
+    if (ids.size && activeShortcutsStore.lc > 0) {
+      activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !ids.has(i.id)))
+    }
   }
 }

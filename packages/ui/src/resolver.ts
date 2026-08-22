@@ -1,23 +1,37 @@
-import "virtual:uno.css"
 import { scv, cx } from "css-variants"
 import uiConfig from "virtual:rimelight/ui"
 
-export const defineTheme = <const S extends string>(name: string, theme: any) => {
-  const custom = uiConfig.components?.themes?.[name],
-    merged = custom
-      ? { ...theme, ...custom, variants: { ...theme.variants, ...custom.variants } }
-      : theme,
-    root = (merged.slots.includes("root") ? "root" : merged.slots[0]) as S,
-    autoColor = merged.variants?.color === "auto",
-    scvFn = scv(autoColor ? { ...merged, variants: { ...merged.variants, color: {} } } : merged)
+export function defineTheme<const S extends string>(name: string, theme: any) {
+  const custom = uiConfig?.components?.themes?.[name]
+  const merged = custom
+    ? {
+        ...theme,
+        ...custom,
+        base: { ...theme.base, ...custom.base },
+        variants: { ...theme.variants, ...custom.variants }
+      }
+    : theme
+  const root = merged.slots?.includes("root") ? "root" : merged.slots?.[0] || "root"
+  const autoColor = merged.variants?.color === "auto"
+  const resolve = scv(
+    autoColor ? { ...merged, variants: { ...merged.variants, color: undefined } } : merged
+  )
 
   return (props: any = {}): Record<S, string> => {
-    if (uiConfig.unstyled) return { [root]: cx(props.class, props.className) } as any
-    const slots = scvFn(props),
-      color = autoColor && (props.color ?? merged.defaultVariants?.color)
+    if (uiConfig?.unstyled)
+      return Object.fromEntries((merged.slots ?? ["root"]).map((s: string) => [s, ""])) as Record<
+        S,
+        string
+      >
+    const slots = resolve(props)
+    const color = autoColor && (props.color ?? merged.defaultVariants?.color)
     slots[root] = cx(slots[root], color && `rl-color-${color}`, props.class, props.className)
-    for (const [k, v] of Object.entries(props.ui ?? {}))
-      slots[k] = cx(slots[k], typeof v === "function" ? (v as any)(slots[k] || "") : v)
-    return slots
+    if (props.ui) {
+      for (const k in props.ui) {
+        const v = props.ui[k]
+        slots[k] = cx(slots[k], typeof v === "function" ? v(slots[k] || "") : v)
+      }
+    }
+    return slots as Record<S, string>
   }
 }
