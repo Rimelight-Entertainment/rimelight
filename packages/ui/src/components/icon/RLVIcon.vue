@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from "vue"
-import { resolveIcon } from "./resolver"
+import { resolveIcon } from "../../icons"
 import type { IconProps } from "./icon"
 import { iconTheme } from "./icon.theme"
 

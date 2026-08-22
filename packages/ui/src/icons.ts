@@ -1,3 +1,5 @@
+import uiConfig from "virtual:rimelight/ui"
+
 const svg = (inner: string) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="100%" height="100%">${inner}</svg>`
 
@@ -66,3 +68,24 @@ export const DEFAULT_ICONS = Object.fromEntries(
 ) as { readonly [K in keyof typeof ICONS]: string }
 
 export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>
+
+const cache = new Map<string, { isClass: boolean; content: string }>(),
+  isCls = (s: string) => s.startsWith("i-") || s.includes(":"),
+  isSvg = (s: string) => s.startsWith("<svg") || s.startsWith("<path")
+
+export const resolveIcon = (k = "", custom?: string) => {
+  if (!k) return { isClass: false, content: "" }
+  const id = custom ? `${k}:${custom}` : k,
+    cached = cache.get(id)
+  if (cached) return cached
+
+  const raw = custom || uiConfig.icons?.[k] || k,
+    res = isCls(raw)
+      ? { isClass: true, content: raw }
+      : isSvg(raw)
+        ? { isClass: false, content: raw.startsWith("<svg") ? raw : svg(raw) }
+        : { isClass: false, content: (DEFAULT_ICONS as any)[raw] || "" }
+
+  cache.set(id, res)
+  return res
+}

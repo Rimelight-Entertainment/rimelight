@@ -1,5 +1,5 @@
 import { createMemo, splitProps, type Component } from "solid-js"
-import { resolveIcon } from "./resolver"
+import { resolveIcon } from "../../icons"
 import type { IconProps } from "./icon"
 import { iconTheme } from "./icon.theme"
 
