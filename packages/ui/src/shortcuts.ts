@@ -136,7 +136,13 @@ export function defineShortcuts(
   const onKeyDown = (e: KeyboardEvent) => {
     if (!e.key || e.isComposing) return
     const key = e.key === " " ? "space" : e.key.toLowerCase()
-    const input = isUsingInput(document.activeElement)
+    const codeKey = e.code
+      ? e.code
+          .replace(/^Key/, "")
+          .replace(/^Digit/, "")
+          .toLowerCase()
+      : ""
+    const input = isUsingInput(typeof document !== "undefined" ? document.activeElement : null)
 
     buffer.push(key)
     if (buffer.length > 2) buffer.shift()
@@ -154,18 +160,21 @@ export function defineShortcuts(
     }
 
     // Unified event normalization
-    const sig = `${e.metaKey ? "meta_" : ""}${e.ctrlKey ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${key}`
-    const primarySig =
-      !isMac && e.ctrlKey && !e.metaKey
-        ? `meta_${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${key}`
-        : sig
+    const keysToCheck = Array.from(new Set([key, codeKey].filter(Boolean)))
+    for (const k of keysToCheck) {
+      const sig = `${e.metaKey ? "meta_" : ""}${e.ctrlKey ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${k}`
+      const primarySig =
+        !isMac && e.ctrlKey && !e.metaKey
+          ? `meta_${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${k}`
+          : sig
 
-    const match = map.get(sig) || map.get(primarySig) || map.get(key)
-    if (match && isEnabled(match, input)) {
-      e.preventDefault()
-      match.handler(e)
-      buffer.length = 0
-      return
+      const match = map.get(sig) || map.get(primarySig) || map.get(k)
+      if (match && isEnabled(match, input)) {
+        e.preventDefault()
+        match.handler(e)
+        buffer.length = 0
+        return
+      }
     }
 
     timer = setTimeout(() => void (buffer.length = 0), options.chainDelay ?? 800)
