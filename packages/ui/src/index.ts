@@ -1,28 +1,32 @@
 import UnoCSS from "@unocss/vite"
-import type { UIConfig } from "./types"
 import rimelightUiPreset from "./preset"
+import type { UIConfig } from "./types"
 
-export const ui = (config: UIConfig = {}) => [
+const ID = "virtual:rimelight/ui"
+const RESOLVED_ID = `\0${ID}`
+
+export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
   ...UnoCSS({
-    ...config.unocss,
-    presets: [rimelightUiPreset(config), ...(config.unocss?.presets ?? [])],
+    ...unocss,
+    presets: [rimelightUiPreset(cfg), ...(unocss.presets || [])],
     content: {
-      ...config.unocss?.content,
-      pipeline: config.unocss?.content?.pipeline !== false && {
-        ...config.unocss?.content?.pipeline,
+      ...unocss.content,
+      pipeline: unocss.content?.pipeline !== false && {
+        ...unocss.content?.pipeline,
         include: [
           /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
           /[\\/](@rimelight\/ui|packages\/ui)[\\/]/,
-          ...[config.unocss?.content?.pipeline?.include ?? []].flat()
+          ...[unocss.content?.pipeline?.include || []].flat()
         ]
       }
     }
   }),
   {
     name: "rimelight/ui",
-    resolveId: (id: string) =>
-      id === "virtual:rimelight/ui" || id === "rimelight/ui" ? "\0virtual:rimelight/ui" : null,
+    resolveId: (id: string) => (id === ID || id === "rimelight/ui" ? RESOLVED_ID : null),
     load: (id: string) =>
-      id === "\0virtual:rimelight/ui" ? `export default ${JSON.stringify(config)}` : null
+      id === RESOLVED_ID
+        ? `import "virtual:uno.css";\nexport default ${JSON.stringify(cfg)};`
+        : null
   }
 ]
