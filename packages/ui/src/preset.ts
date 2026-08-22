@@ -103,7 +103,16 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
               return path ? svg(path) : undefined
             }
           }
-        })
+        }),
+      {
+        name: "rimelight-theme",
+        theme: {
+          spacing: {
+            md: "1rem"
+          },
+          colors
+        }
+      }
     ].filter(Boolean) as Preset[],
     shortcuts: [
       [
@@ -130,35 +139,6 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
         })
       ]
     ],
-    theme: {
-      spacing: {
-        "6xs": "0.125rem",
-        "5xs": "0.25rem",
-        "4xs": "0.375rem",
-        "3xs": "0.5rem",
-        "2xs": "0.625rem",
-        "xs": "0.75rem",
-        "sm": "0.875rem",
-        "md": "1rem",
-        "lg": "1.25rem",
-        "xl": "1.5rem",
-        "2xl": "2rem",
-        "3xl": "3rem",
-        "4xl": "4rem",
-        "5xl": "6rem",
-        "6xl": "8rem"
-      },
-      radius: {
-        "xs": "calc(var(--radius) - 0.375rem)",
-        "sm": "calc(var(--radius) - 0.25rem)",
-        "md": "calc(var(--radius) - 0.125rem)",
-        "lg": "var(--radius)",
-        "xl": "calc(var(--radius) + 0.25rem)",
-        "2xl": "calc(var(--radius) + 0.5rem)",
-        "3xl": "calc(var(--radius) + 1rem)"
-      },
-      colors
-    },
     preflights: [
       {
         getCSS: () => preflightCss

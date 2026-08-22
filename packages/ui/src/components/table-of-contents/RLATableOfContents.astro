@@ -63,12 +63,12 @@ const headingSelector = Array.from({ length: maxLevel - minLevel + 1 }, (_, i) =
     <div class={classes.root} data-slot="root" data-container-selector={containerSelector} data-heading-selector={headingSelector} {...rest}>
       <div class={classes.container} data-slot="container">
         <h4 class={classes.title} data-slot="title">On this page</h4>
-        <ul class:list={[classes.list, "mt-2xl flex flex-col gap-3xs"]} data-slot="list">
+        <ul class:list={[classes.list, "mt-2xl flex flex-col gap-xs"]} data-slot="list">
           {filteredHeadings.map(heading => (
             <li
               class:list={[
                 classes.item,
-                heading.depth === 2 && "pl-3xs",
+                heading.depth === 2 && "pl-xs",
                 heading.depth === 3 && "pl-6",
                 heading.depth >= 4 && "pl-9"
               ]}

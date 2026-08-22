@@ -10,7 +10,7 @@ export const bannerTheme = defineTheme("banner", {
     left: "absolute left-0 inset-y-0 flex items-center px-4 max-w-[30%] truncate",
     center: "absolute left-1/2 -translate-x-1/2 max-w-[50%] truncate text-center",
     side: "flex-none flex items-center gap-2",
-    actions: "flex-none flex items-center gap-2xs",
+    actions: "flex-none flex items-center gap-xs",
     dismiss:
       "flex-none flex items-center justify-center size-8 rounded-md hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
   },
