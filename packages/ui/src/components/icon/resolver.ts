@@ -1,5 +1,5 @@
 import { DEFAULT_ICONS } from "../../icons"
-import { uiConfig } from "../../resolver"
+import uiConfig from "virtual:rimelight/ui"
 
 export interface ResolvedIcon {
   isClass: boolean

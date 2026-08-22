@@ -162,33 +162,33 @@ export default defineConfig({
               }
             },
             formField: {
-              slots: {
+              base: {
                 description: "text-sm",
                 help: "text-xs"
               }
             },
             checkbox: {
-              slots: {
+              base: {
                 description: "text-sm"
               }
             },
             toast: {
-              slots: {
+              base: {
                 root: "bg-black border-none ring-0"
               }
             },
             dropdownMenu: {
-              slots: {
+              base: {
                 content: "ring-0"
               }
             },
             selectMenu: {
-              slots: {
+              base: {
                 content: "min-w-fit"
               }
             },
             popover: {
-              slots: {
+              base: {
                 content: "ring-0"
               }
             },
@@ -202,39 +202,39 @@ export default defineConfig({
               }
             },
             slideover: {
-              slots: {
+              base: {
                 content: "bg-black"
               }
             },
             banner: {
-              slots: {
+              base: {
                 icon: "text-default",
                 title: "text-default",
                 close: "text-default"
               }
             },
             page: {
-              slots: {
+              base: {
                 root: "lg:gap-8"
               }
             },
             pageAside: {
-              slots: {
+              base: {
                 root: "lg:px-4 lg:pe-0 lg:ps-0 lg:ms-0"
               }
             },
             pageHeader: {
-              slots: {
+              base: {
                 links: "justify-end"
               }
             },
             pageCTA: {
-              slots: {
+              base: {
                 root: "rounded-none"
               }
             },
             navigationMenu: {
-              slots: {
+              base: {
                 separator: "my-2",
                 viewport: "ring-0"
               },
@@ -279,7 +279,7 @@ export default defineConfig({
               ]
             },
             footerColumns: {
-              slots: {
+              base: {
                 label: "text-white"
               },
               variants: {
@@ -293,28 +293,28 @@ export default defineConfig({
               base: "flex-1 flex overflow-hidden relative"
             },
             dashboardPanel: {
-              slots: {
+              base: {
                 root: "min-h-full"
               }
             },
             dashboardNavbar: {
-              slots: {
+              base: {
                 root: "h-12",
                 title: "text-xl"
               }
             },
             dashboardSidebar: {
-              slots: {
+              base: {
                 root: "min-h-full"
               }
             },
             dashboardToolbar: {
-              slots: {
+              base: {
                 root: "h-12"
               }
             },
             blogPost: {
-              slots: {
+              base: {
                 root: "rounded-none"
               }
             }

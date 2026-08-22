@@ -19,9 +19,10 @@ export const ui = (config: UIConfig = {}) => [
     }
   }),
   {
-    name: "@rimelight/ui",
-    config: () => ({
-      define: { "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(config) }
-    })
+    name: "rimelight/ui",
+    resolveId: (id: string) =>
+      id === "virtual:rimelight/ui" || id === "rimelight/ui" ? "\0virtual:rimelight/ui" : null,
+    load: (id: string) =>
+      id === "\0virtual:rimelight/ui" ? `export default ${JSON.stringify(config)}` : null
   }
 ]

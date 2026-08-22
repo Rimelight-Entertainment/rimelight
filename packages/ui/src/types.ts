@@ -45,7 +45,13 @@ export interface UIConfig extends PresetOptions {
     themes?: Record<
       string,
       {
-        slots?: Record<string, string | ((base: string) => string) | undefined>
+        base?: string | string[] | Record<string, string | string[]>
+        variants?: Record<
+          string,
+          Record<string, string | string[] | Record<string, string | string[]>>
+        >
+        compoundVariants?: Array<Record<string, any>>
+        defaultVariants?: Record<string, any>
         [key: string]: unknown
       }
     >
