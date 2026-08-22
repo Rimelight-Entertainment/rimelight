@@ -75,9 +75,18 @@ const isEnabled = (s: Shortcut, input: boolean | string) =>
 
 const normalizeCombo = (combo: string) => {
   const parts = combo.toLowerCase().split("_")
-  const main = parts.pop() || ""
-  const mods = new Set(parts.map(normalizeModifier))
-  return `${mods.has("meta") ? "meta_" : ""}${mods.has("ctrl") ? "ctrl_" : ""}${mods.has("alt") ? "alt_" : ""}${mods.has("shift") ? "shift_" : ""}${main}`
+  let meta = ""
+  let ctrl = ""
+  let alt = ""
+  let shift = ""
+  for (let i = 0; i < parts.length - 1; i++) {
+    const m = MODS[parts[i]!] || parts[i]!
+    if (m === "meta") meta = "meta_"
+    else if (m === "ctrl") ctrl = "ctrl_"
+    else if (m === "alt") alt = "alt_"
+    else if (m === "shift") shift = "shift_"
+  }
+  return `${meta}${ctrl}${alt}${shift}${parts[parts.length - 1] || ""}`
 }
 
 export function defineShortcuts(

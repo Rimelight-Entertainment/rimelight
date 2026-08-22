@@ -89,6 +89,8 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     for (const k in custom.variants) variants[k] = { ...variants[k], ...custom.variants[k] }
   }
 
+  const variantKeys = Object.keys(variants).filter((k) => !(k === "color" && autoColor))
+
   return (props: any = {}): Record<S, string> => {
     const res = {} as Record<S, string>
     for (let i = 0; i < slots.length; i++) {
@@ -98,11 +100,11 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
     const values = { ...defaultVariants, ...props }
     const color = autoColor ? (props.color ?? defaultVariants.color) : undefined
 
-    for (const k in variants) {
-      if (k === "color" && autoColor) continue
-      const selected = values[k]
-      if (selected != null && variants[k]?.[selected]) {
-        const layer = variants[k][selected]
+    for (let k = 0; k < variantKeys.length; k++) {
+      const key = variantKeys[k]!
+      const selected = values[key]
+      if (selected != null && variants[key]?.[selected]) {
+        const layer = variants[key][selected]
         for (let i = 0; i < slots.length; i++) {
           const s = slots[i]!
           const l = layer[s]
