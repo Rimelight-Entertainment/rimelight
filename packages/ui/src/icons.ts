@@ -63,59 +63,36 @@ const ICONS = {
   arrowDownToLine: `<path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M5 21h14"/>`
 } as const
 
-const getUiIcons = (): Record<string, string> | undefined => {
-  try {
-    return (typeof uiConfig !== "undefined" && uiConfig ? uiConfig.icons : undefined) as
-      | Record<string, string>
-      | undefined
-  } catch {
-    return undefined
-  }
-}
-
 export const getSvgIcon = (k: string): string => {
   const path = (ICONS as Record<string, string>)[k]
   return path ? svg(path) : ""
 }
 
 export const DEFAULT_ICONS = new Proxy({} as { readonly [K in keyof typeof ICONS]: string }, {
-  get(_, prop: string) {
-    return getSvgIcon(prop)
-  },
-  has(_, prop: string) {
-    return prop in ICONS
-  },
-  ownKeys() {
-    return Object.keys(ICONS)
-  },
-  getOwnPropertyDescriptor(_, prop: string) {
-    if (prop in ICONS) {
-      return { configurable: true, enumerable: true, value: getSvgIcon(prop) }
-    }
-    return undefined
-  }
+  get: (_, k: string) => getSvgIcon(k),
+  has: (_, k: string) => k in ICONS,
+  ownKeys: () => Object.keys(ICONS),
+  getOwnPropertyDescriptor: (_, k: string) =>
+    k in ICONS ? { configurable: true, enumerable: true, value: getSvgIcon(k) } : undefined
 })
 
 export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>
 
-const cache = new Map<string, { isClass: boolean; content: string }>(),
-  isCls = (s: string) => s.startsWith("i-") || s.includes(":"),
-  isSvg = (s: string) => s.startsWith("<svg") || s.startsWith("<path")
+const cache = new Map<string, { isClass: boolean; content: string }>()
 
-export const resolveIcon = (k = "", custom?: string) => {
-  if (!k) return { isClass: false, content: "" }
-  const id = custom ? `${k}:${custom}` : k,
-    cached = cache.get(id)
-  if (cached) return cached
-
-  const iconsConfig = getUiIcons()
-  const raw = custom || iconsConfig?.[k] || k,
-    res = isCls(raw)
-      ? { isClass: true, content: raw }
-      : isSvg(raw)
-        ? { isClass: false, content: raw.startsWith("<svg") ? raw : svg(raw) }
-        : { isClass: false, content: getSvgIcon(raw) }
-
-  cache.set(id, res)
+export const resolveIcon = (name = "", custom?: string) => {
+  if (!name) return { isClass: false, content: "" }
+  const key = custom ? `${name}:${custom}` : name
+  let res = cache.get(key)
+  if (!res) {
+    const raw = custom || uiConfig?.icons?.[name] || name
+    const isClass = raw.startsWith("i-") || raw.includes(":")
+    const isSvg = raw.startsWith("<")
+    res = {
+      isClass,
+      content: isClass ? raw : isSvg ? (raw.startsWith("<svg") ? raw : svg(raw)) : getSvgIcon(raw)
+    }
+    cache.set(key, res)
+  }
   return res
 }
