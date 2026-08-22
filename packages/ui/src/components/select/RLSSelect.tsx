@@ -119,6 +119,15 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
           <path d="M6 9l6 6 6-6" />
         </svg>
       </span>
+
+      <style>{`
+        select.rl-select, select.rl-select::picker(select) { appearance: base-select; }
+        select.rl-select::picker-icon { display: none; }
+        select.rl-select::picker(select) { border: 1px solid var(--color-neutral-200); border-radius: var(--radius, 0.5rem); background-color: var(--color-neutral-100); color: var(--color-neutral-950); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.15); padding: 0.25rem; margin-top: 0.25rem; }
+        select.rl-select option { padding: 0.375rem 0.625rem; border-radius: calc(var(--radius, 0.5rem) - 0.125rem); background-color: var(--color-neutral-100); color: var(--color-neutral-950); font-size: 0.875rem; cursor: pointer; transition: background-color 0.15s ease, color 0.15s ease; }
+        select.rl-select option:hover, select.rl-select option:focus { background-color: var(--color-neutral-200); color: var(--color-neutral-950); }
+        select.rl-select option:checked { background-color: var(--color-primary-500); color: var(--primary-foreground, #ffffff); font-weight: 500; }
+      `}</style>
     </div>
   )
 }
