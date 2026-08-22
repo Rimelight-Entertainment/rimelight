@@ -125,8 +125,8 @@ export function defineShortcuts(
   let timer: ReturnType<typeof setTimeout> | undefined
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (!e.key) return
-    const key = e.key.toLowerCase()
+    if (!e.key || e.isComposing) return
+    const key = e.key === " " ? "space" : e.key.toLowerCase()
     const input = isUsingInput(document.activeElement)
 
     buffer.push(key)

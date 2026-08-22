@@ -88,11 +88,16 @@ export const resolveIcon = (name = "", custom?: string) => {
   const raw = custom || uiConfig?.icons?.[name] || name
   let res = cache.get(raw)
   if (!res) {
-    const isClass = raw.startsWith("i-") || raw.includes(":")
-    const isSvg = raw.startsWith("<")
-    res = {
-      isClass,
-      content: isClass ? raw : isSvg ? (raw.startsWith("<svg") ? raw : svg(raw)) : getSvgIcon(raw)
+    const path = (ICONS as Record<string, string>)[raw]
+    if (typeof path === "string") {
+      res = { isClass: false, content: svg(path) }
+    } else {
+      const isClass = raw.startsWith("i-") || raw.includes(":")
+      const isSvg = raw.startsWith("<")
+      res = {
+        isClass,
+        content: isClass ? raw : isSvg ? (raw.startsWith("<svg") ? raw : svg(raw)) : ""
+      }
     }
     cache.set(raw, res)
   }

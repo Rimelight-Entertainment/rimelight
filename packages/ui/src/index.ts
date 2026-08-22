@@ -15,7 +15,11 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
         include: [
           /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
           /[\\/](@rimelight\/ui|packages\/ui)[\\/]/,
-          ...[unocss.content?.pipeline?.include ?? []].flat()
+          ...(Array.isArray(unocss.content?.pipeline?.include)
+            ? unocss.content.pipeline.include
+            : unocss.content?.pipeline?.include
+              ? [unocss.content.pipeline.include]
+              : [])
         ]
       }
     }

@@ -51,9 +51,10 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
   if (uiConfig?.unstyled) {
     return (props: any = {}): Record<S, string> => {
       const res = {} as Record<S, string>
+      const hasClass = props.class || props.className
       for (let i = 0; i < slots.length; i++) {
         const slot = slots[i]!
-        const base = slot === rootSlot ? cx(props.class, props.className) : ""
+        const base = slot === rootSlot && hasClass ? cx(props.class, props.className) : ""
         const fn = props.ui?.[slot]
         res[slot] = typeof fn === "function" ? fn(base) : cx(base, fn)
       }
@@ -110,23 +111,25 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
       }
     }
 
-    for (let c = 0; c < compiledCV.length; c++) {
-      const { matchers, cls } = compiledCV[c]!
-      if (!cls) continue
-      let match = true
-      for (let m = 0; m < matchers.length; m++) {
-        const { key, exp } = matchers[m]!
-        const actual = values[key]
-        if (Array.isArray(exp) ? !exp.includes(actual) : actual !== exp) {
-          match = false
-          break
+    if (compiledCV.length) {
+      for (let c = 0; c < compiledCV.length; c++) {
+        const { matchers, cls } = compiledCV[c]!
+        if (!cls) continue
+        let match = true
+        for (let m = 0; m < matchers.length; m++) {
+          const { key, exp } = matchers[m]!
+          const actual = values[key]
+          if (Array.isArray(exp) ? !exp.includes(actual) : actual !== exp) {
+            match = false
+            break
+          }
         }
-      }
-      if (match) {
-        for (let i = 0; i < slots.length; i++) {
-          const s = slots[i]!
-          const l = cls[s]
-          if (l) res[s] = res[s] ? `${res[s]} ${cx(l)}` : cx(l)
+        if (match) {
+          for (let i = 0; i < slots.length; i++) {
+            const s = slots[i]!
+            const l = cls[s]
+            if (l) res[s] = res[s] ? `${res[s]} ${cx(l)}` : cx(l)
+          }
         }
       }
     }
