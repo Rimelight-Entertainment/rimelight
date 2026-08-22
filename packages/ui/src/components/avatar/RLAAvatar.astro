@@ -44,7 +44,7 @@ const badgeClass = badgeColor?.startsWith("bg-") ? badgeColor : `bg-${badgeColor
               {avatarFallback}
             </slot>
             {!avatarFallback && !Astro.slots.has("fallback") && (
-              <RLAIcon name="user" class={classes.icon} aria-hidden="true" />
+              <RLAIcon name="i-rl-user" class={classes.icon} aria-hidden="true" />
             )}
           </span>
         )}
@@ -62,16 +62,8 @@ const badgeClass = badgeColor?.startsWith("bg-") ? badgeColor : `bg-${badgeColor
       </slot>
     </span>
     <div class="flex flex-col leading-tight">
-      {title && (
-        <span class="font-medium text-sm text-default" data-slot="title">
-          {title}
-        </span>
-      )}
-      {subtitle && (
-        <span class="text-xs text-muted" data-slot="subtitle">
-          {subtitle}
-        </span>
-      )}
+      {title && <span class="font-medium text-sm text-default" data-slot="title">{title}</span>}
+      {subtitle && <span class="text-xs text-muted" data-slot="subtitle">{subtitle}</span>}
     </div>
   </div>
 ) : (
@@ -96,7 +88,7 @@ const badgeClass = badgeColor?.startsWith("bg-") ? badgeColor : `bg-${badgeColor
             {avatarFallback}
           </slot>
           {!avatarFallback && !Astro.slots.has("fallback") && (
-            <RLAIcon name="user" class={classes.icon} aria-hidden="true" />
+            <RLAIcon name="i-rl-user" class={classes.icon} aria-hidden="true" />
           )}
         </span>
       )}

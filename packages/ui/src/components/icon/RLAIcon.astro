@@ -19,7 +19,7 @@ const resolved = resolveIcon(name)
   {...rest}
 >
   {resolved.isClass ? (
-    <span class={resolved.content} />
+    <span class:list={[resolved.content, "size-full"]} />
   ) : (
     <Fragment set:html={resolved.content} />
   )}

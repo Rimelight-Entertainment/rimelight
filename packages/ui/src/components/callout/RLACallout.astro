@@ -18,10 +18,10 @@ const {
 } = Astro.props as CalloutProps
 
 const colorToIcon: Record<string, string | undefined> = {
-  error: "circleX",
-  warning: "alertTriangle",
-  info: "info",
-  success: "circleCheck",
+  error: "i-rl-circleCheck",
+  warning: "i-rl-alertTriangle",
+  info: "i-rl-info",
+  success: "i-rl-circleCheck",
   primary: undefined,
   secondary: undefined,
   commentary: undefined,
@@ -81,7 +81,7 @@ const classes = calloutTheme({
         <slot name="close">
           {close && (
             <button class={classes.close} data-slot="close">
-              <RLAIcon name="close" class="size-4" />
+              <RLAIcon name="i-rl-close" class="size-4" />
             </button>
           )}
         </slot>

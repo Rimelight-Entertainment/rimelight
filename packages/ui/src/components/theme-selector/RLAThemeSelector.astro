@@ -22,8 +22,8 @@ const classes = themeSelectorTheme(Astro.props);
             square
             aria-label="Toggle theme"
     >
-        <RLAIcon name="sun" class={classes.sun} />
-        <RLAIcon name="moon" class={classes.moon} />
+        <RLAIcon name="i-rl-sun" class={classes.sun} />
+        <RLAIcon name="i-rl-moon" class={classes.moon} />
     </RLAButton>
 </rla-theme-selector>
 
@@ -48,7 +48,7 @@ const classes = themeSelectorTheme(Astro.props);
         document.documentElement.classList.toggle('dark',  willBeDark);
         document.documentElement.classList.toggle('light', !willBeDark);
         localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
-        
+
         document.querySelectorAll('.theme-toggle-button').forEach(btn => {
             btn.setAttribute('data-state', willBeDark ? 'on' : 'off');
             btn.setAttribute('aria-pressed', willBeDark.toString());

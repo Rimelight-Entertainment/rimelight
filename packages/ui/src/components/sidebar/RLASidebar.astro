@@ -55,7 +55,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
         <slot name="header">
           {logo && (
             <span data-slot="sidebar-logo" class="flex items-center gap-2">
-              <RLAIcon name="layers" class="size-5 text-primary" />
+              <RLAIcon name="i-rl-layers" class="size-5 text-primary" />
               <span class="truncate">{logo}</span>
             </span>
           )}
@@ -82,7 +82,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
         class="fixed top-4 left-4 z-50 flex size-9 items-center justify-center rounded-md bg-default border border-default shadow-sm hover:bg-muted transition-colors"
         aria-label="Toggle sidebar"
       >
-        <RLAIcon name="panelLeft" class="size-4" />
+        <RLAIcon name="i-rl-panelLeft" class="size-4" />
       </button>
     )}
 
@@ -121,7 +121,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
                     {t(b.text)}
                   </RLABadge>
                 )}
-                <RLAIcon name="chevronRight" class="size-3 ml-auto transition-transform group-open/details:rotate-90" />
+                <RLAIcon name="i-rl-chevronRight" class="size-3 ml-auto transition-transform group-open/details:rotate-90" />
               </summary>
               <div class={`mt-0.5 ${indentClass} flex flex-col gap-0.5`}>
                 <Astro.self items={item.children} t={t} _depth={_depth + 1} />

@@ -205,6 +205,45 @@ describe("@rimelight/ui shortcuts system", () => {
       ;(globalThis as any).window = origWindow
     }
   })
+
+  it("should trigger multi-modifier shortcuts like meta_alt_t via Ctrl+Alt+T on Windows/Linux", async () => {
+    let listener: ((e: any) => void) | null = null
+    const origWindow = (globalThis as any).window
+    ;(globalThis as any).window = {
+      addEventListener: (_event: string, fn: any) => {
+        listener = fn
+      },
+      removeEventListener: () => {
+        listener = null
+      }
+    }
+
+    try {
+      const { defineShortcuts } = await import("../src/shortcuts")
+      let triggered = false
+      const cleanup = defineShortcuts({
+        meta_alt_t: () => {
+          triggered = true
+        }
+      })
+
+      expect(listener).toBeDefined()
+      // Simulate physical Ctrl + Alt + T on Windows/Linux (ctrlKey: true, altKey: true, metaKey: false)
+      listener!({
+        key: "t",
+        ctrlKey: true,
+        altKey: true,
+        metaKey: false,
+        shiftKey: false,
+        preventDefault: () => {}
+      })
+
+      expect(triggered).toBe(true)
+      cleanup()
+    } finally {
+      ;(globalThis as any).window = origWindow
+    }
+  })
 })
 
 describe("@rimelight/ui inlined cx", () => {

@@ -24,7 +24,7 @@ const resolved = computed(() => resolveIcon(props.name))
 
 <template>
   <span v-bind="attrs" :class="resolvedClasses.root" data-slot="icon" aria-hidden="true">
-    <span v-if="resolved.isClass" :class="resolved.content" />
+    <span v-if="resolved.isClass" :class="[resolved.content, 'size-full']" />
     <span v-else v-html="resolved.content" />
   </span>
 </template>

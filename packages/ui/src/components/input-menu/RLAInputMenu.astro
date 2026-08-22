@@ -40,7 +40,7 @@ const initialLabel = selectedItem ? selectedItem.label : ""
         data-inputMenu-trigger
       >
         <span data-inputMenu-value>{initialLabel || placeholder}</span>
-        <RLAIcon name="chevronsUpDown" class="opacity-50" />
+        <RLAIcon name="i-rl-chevronsUpDown" class="opacity-50" />
       </button>
 
       <div class={classes.content + " hidden"} data-inputMenu-dropdown data-slot="content">
@@ -60,7 +60,7 @@ const initialLabel = selectedItem ? selectedItem.label : ""
               data-inputMenu-item
             >
               <span class={classes.itemText}>{item.label}</span>
-              <RLAIcon name="check" class={classes.itemIcon + " hidden"} data-check-icon />
+              <RLAIcon name="i-rl-check" class={classes.itemIcon + " hidden"} data-check-icon />
             </div>
           ))}
         </div>

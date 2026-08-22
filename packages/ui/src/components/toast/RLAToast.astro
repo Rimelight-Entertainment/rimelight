@@ -24,11 +24,11 @@ const classes = toastTheme({
 })
 
 const variantIcons: Record<string, string> = {
-  default: "bell",
-  error: "circleX",
-  success: "circleCheck",
-  warning: "alertTriangle",
-  info: "info",
+  default: "i-rl-bell",
+  error: "i-rl-circleCheck",
+  success: "i-rl-circleCheck",
+  warning: "i-rl-alertTriangle",
+  info: "i-rl-info",
 }
 
 const icon = variantIcons[variant] ?? variantIcons.default!
@@ -90,7 +90,7 @@ const isError = variant === "error"
       data-toast-close
       aria-label="Dismiss notification"
     >
-      <RLAIcon name="close" class="size-3.5" aria-hidden="true" />
+      <RLAIcon name="i-rl-close" class="size-3.5" aria-hidden="true" />
     </button>
   )}
 </div>

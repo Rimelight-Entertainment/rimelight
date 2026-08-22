@@ -55,7 +55,7 @@ const emptyId = `search-empty-${uniqueId}`
       square
       aria-label="Open Search"
     >
-      <RLAIcon name="search" class="w-5 h-5" />
+      <RLAIcon name="i-rl-search" class="w-5 h-5" />
     </RLAButton>
   )}
 
@@ -77,11 +77,11 @@ const emptyId = `search-empty-${uniqueId}`
             trailing: "absolute right-0 flex items-center gap-2"
           }}
         >
-          <RLAIcon name="search" class={classes.headerIcon} slot="leading" />
+          <RLAIcon name="i-rl-search" class={classes.headerIcon} slot="leading" />
           <div slot="trailing" class="flex items-center gap-2">
             <RLAKbd size="sm">Esc</RLAKbd>
             <button id={`${modalId}-close`} class={classes.close} aria-label="Close search">
-              <RLAIcon name="close" class={classes.closeIcon} />
+              <RLAIcon name="i-rl-close" class={classes.closeIcon} />
             </button>
           </div>
         </RLAInput>

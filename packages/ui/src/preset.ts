@@ -1,6 +1,8 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
 import type { PresetOptions, UIConfig } from "./types"
 
+import { ICONS, svg } from "./icons.raw"
+
 export const PALETTES = {
   neutral: [0, 0],
   primary: [0.21, 260],
@@ -93,7 +95,15 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
     presets: [
       options.presets?.wind !== false && presetWind4(),
       options.presets?.typography !== false && presetTypography(),
-      options.presets?.icons !== false && presetIcons()
+      options.presets?.icons !== false &&
+        presetIcons({
+          collections: {
+            rl: (name: string) => {
+              const path = (ICONS as Record<string, string>)[name]
+              return path ? svg(path) : undefined
+            }
+          }
+        })
     ].filter(Boolean) as Preset[],
     shortcuts: [
       [
