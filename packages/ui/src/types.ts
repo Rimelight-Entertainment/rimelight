@@ -14,15 +14,15 @@ export interface PresetOptions {
   /**
    * Custom colors.
    */
-  colors?: Record<string, ColorModeInput>
+  colors?: Record<string, ColorModeInput> | undefined
   /**
    * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
    */
-  icons?: RimelightIcons
+  icons?: RimelightIcons | undefined
   /**
    * Configure which built-in UnoCSS presets are enabled/disabled.
    */
-  presets?: { wind?: boolean; typography?: boolean; icons?: boolean }
+  presets?: { wind?: boolean; typography?: boolean; icons?: boolean } | undefined
 }
 
 export interface UIConfig extends PresetOptions {

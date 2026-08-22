@@ -3,12 +3,11 @@ import rimelightUiPreset from "./preset"
 import type { UIConfig } from "./types"
 
 const ID = "virtual:rimelight/ui"
-const RESOLVED_ID = `\0${ID}`
 
-export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
-  ...UnoCSS({
+export const ui = ({ unocss = {}, presets, colors, ...cfg }: UIConfig = {}) => [
+  UnoCSS({
     ...unocss,
-    presets: [rimelightUiPreset(cfg), ...(unocss.presets || [])],
+    presets: [rimelightUiPreset({ presets, colors, icons: cfg.icons }), ...(unocss.presets || [])],
     content: {
       ...unocss.content,
       pipeline: unocss.content?.pipeline !== false && {
@@ -16,7 +15,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
         include: [
           /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
           /[\\/](@rimelight\/ui|packages\/ui)[\\/]/,
-          ...[unocss.content?.pipeline?.include || []].flat()
+          ...[unocss.content?.pipeline?.include ?? []].flat()
         ]
       }
     }
@@ -24,10 +23,8 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
   {
     name: "rimelight/ui",
     enforce: "pre",
-    resolveId: (id: string) => (id === ID || id === "rimelight/ui" ? RESOLVED_ID : null),
+    resolveId: (id: string) => (id === ID ? `\0${ID}` : null),
     load: (id: string) =>
-      id === RESOLVED_ID
-        ? `import "virtual:uno.css";\nexport default ${JSON.stringify(cfg)};`
-        : null
+      id === `\0${ID}` ? `import "virtual:uno.css";\nexport default ${JSON.stringify(cfg)};` : null
   }
 ]

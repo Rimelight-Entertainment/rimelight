@@ -216,3 +216,21 @@ describe("@rimelight/ui inlined cx", () => {
     )
   })
 })
+
+describe("@rimelight/ui unstyled mode", () => {
+  it("should preserve props.class and props.ui overrides when unstyled", async () => {
+    vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = true
+    const { defineTheme } = await import("../src/resolver")
+
+    const themeFn = defineTheme("testUnstyled", {
+      slots: ["root", "label"],
+      base: { root: "base-root", label: "base-label" }
+    })
+
+    const slots = themeFn({ class: "custom-class", ui: { label: "custom-ui-label" } })
+    expect(slots.root).toBe("custom-class")
+    expect(slots.root).not.toContain("base-root")
+    expect(slots.label).toBe("custom-ui-label")
+    expect(slots.label).not.toContain("base-label")
+  })
+})

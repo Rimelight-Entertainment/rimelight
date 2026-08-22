@@ -59,12 +59,12 @@ function cssVars(custom: Record<string, any> = {}) {
     }
     css += `  --${name}: var(--color-${name}-500);\n  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));\n  --${name}-accent: var(--color-${name}-600);\n`
   }
-
   return css
 }
 
 export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
   const allColors = Object.keys({ ...PALETTES, ...options.colors })
+  const shadeKeys = Object.keys(SHADES)
 
   return {
     name: "rimelight-ui",
@@ -139,7 +139,7 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
             DEFAULT: `var(--${c})`,
             foreground: `var(--${c}-foreground)`,
             accent: `var(--${c}-accent)`,
-            ...Object.fromEntries(Object.keys(SHADES).map((s) => [s, `var(--color-${c}-${s})`]))
+            ...Object.fromEntries(shadeKeys.map((s) => [s, `var(--color-${c}-${s})`]))
           }
         ])
       )

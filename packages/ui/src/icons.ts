@@ -68,9 +68,16 @@ export const getSvgIcon = (k: string): string => {
   return path ? svg(path) : ""
 }
 
-export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = Object.fromEntries(
-  Object.keys(ICONS).map((k) => [k, getSvgIcon(k)])
-) as Record<keyof typeof ICONS, string>
+export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = new Proxy({} as any, {
+  get: (_, prop: string) => getSvgIcon(prop),
+  has: (_, prop: string) => prop in ICONS,
+  ownKeys: () => Reflect.ownKeys(ICONS),
+  getOwnPropertyDescriptor: (_, prop) => ({
+    value: getSvgIcon(prop as string),
+    enumerable: true,
+    configurable: true
+  })
+})
 
 export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>
 

@@ -45,17 +45,20 @@ const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAg
     arrowright: "→"
   }
 
+export const normalizeModifier = (m: string) => {
+  const low = m.toLowerCase()
+  return low === "cmd" || low === "command"
+    ? "meta"
+    : low === "control"
+      ? "ctrl"
+      : low === "opt" || low === "option"
+        ? "alt"
+        : low
+}
+
 export const formatShortcutKeys = (k: string): string[] =>
   k.split(/[_-]/).map((p) => {
-    const low = p.toLowerCase()
-    const norm =
-      low === "cmd" || low === "command"
-        ? "meta"
-        : low === "control"
-          ? "ctrl"
-          : low === "opt" || low === "option"
-            ? "alt"
-            : low
+    const norm = normalizeModifier(p)
     return KEYS[norm] ?? (p ? p[0]!.toUpperCase() + p.slice(1) : "")
   })
 
@@ -74,17 +77,7 @@ const isEnabled = (s: Shortcut, input: boolean | string) =>
 const normalizeCombo = (combo: string) => {
   const parts = combo.toLowerCase().split("_")
   const main = parts.pop() || ""
-  const mods = new Set(
-    parts.map((p) =>
-      p === "cmd" || p === "command"
-        ? "meta"
-        : p === "control"
-          ? "ctrl"
-          : p === "opt" || p === "option"
-            ? "alt"
-            : p
-    )
-  )
+  const mods = new Set(parts.map(normalizeModifier))
   return `${mods.has("meta") ? "meta_" : ""}${mods.has("ctrl") ? "ctrl_" : ""}${mods.has("alt") ? "alt_" : ""}${mods.has("shift") ? "shift_" : ""}${main}`
 }
 

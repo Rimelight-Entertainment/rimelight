@@ -17,8 +17,10 @@ export function cx(...args: ClassValue[]): string {
     if (typeof val === "string" || typeof val === "number") {
       str += (str ? " " : "") + val
     } else if (Array.isArray(val)) {
-      const inner = cx(...val)
-      if (inner) str += (str ? " " : "") + inner
+      if (val.length) {
+        const inner = cx(...val)
+        if (inner) str += (str ? " " : "") + inner
+      }
     } else if (typeof val === "object") {
       for (const k in val) {
         if (val[k]) str += (str ? " " : "") + k
@@ -45,81 +47,85 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
   const custom = uiConfig?.components?.themes?.[name]
   const slots = (custom?.slots ?? themeConfig.slots ?? ["root" as S]) as readonly S[]
   const rootSlot = (slots.includes("root" as S) ? "root" : slots[0] || "root") as S
-  const autoColor = (custom?.variants ?? themeConfig.variants)?.color === "auto"
 
   if (uiConfig?.unstyled) {
-    const empty = Object.fromEntries(slots.map((s) => [s, ""])) as Record<S, string>
-    return (): Record<S, string> => empty
-  }
-
-  const baseMap = { ...themeConfig.base, ...custom?.base } as Record<string, ClassValue | undefined>
-  const variants: Record<string, Record<string, Record<string, ClassValue>>> = {
-    ...themeConfig.variants
-  }
-  if (custom?.variants) {
-    for (const k in custom.variants) {
-      variants[k] = { ...variants[k], ...custom.variants[k] }
+    return (props: any = {}): Record<S, string> => {
+      const res = {} as Record<S, string>
+      for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i]!
+        const base = slot === rootSlot ? cx(props.class, props.className) : ""
+        const fn = props.ui?.[slot]
+        res[slot] = typeof fn === "function" ? fn(base) : cx(base, fn)
+      }
+      return res
     }
   }
+
+  const autoColor = (custom?.variants ?? themeConfig.variants)?.color === "auto"
+  const defaultVariants = { ...themeConfig.defaultVariants, ...custom?.defaultVariants }
   const compoundVariants = [
     ...(themeConfig.compoundVariants ?? []),
     ...(custom?.compoundVariants ?? [])
   ]
-  const defaultVariants = { ...themeConfig.defaultVariants, ...custom?.defaultVariants }
+
+  const baseMap: Record<string, string> = {}
+  for (let i = 0; i < slots.length; i++) {
+    const s = slots[i]!
+    baseMap[s] = cx(themeConfig.base?.[s], custom?.base?.[s])
+  }
+
+  const variants: Record<string, Record<string, any>> = { ...themeConfig.variants }
+  if (custom?.variants) {
+    for (const k in custom.variants) variants[k] = { ...variants[k], ...custom.variants[k] }
+  }
 
   return (props: any = {}): Record<S, string> => {
     const res = {} as Record<S, string>
     const values = { ...defaultVariants, ...props }
     const color = autoColor ? (props.color ?? defaultVariants.color) : undefined
 
-    const activeCompounds: Array<Record<string, ClassValue>> = []
-    if (compoundVariants.length) {
-      for (let c = 0; c < compoundVariants.length; c++) {
-        const cv = compoundVariants[c]!
-        let match = true
-        for (const key in cv) {
-          if (key === "classNames" || key === "class") continue
-          const expected = cv[key]
-          const actual = values[key]
-          if (Array.isArray(expected) ? !expected.includes(actual) : actual !== expected) {
-            match = false
-            break
-          }
+    const activeLayers: Array<Record<string, any>> = []
+    for (const k in variants) {
+      if (k === "color" && autoColor) continue
+      const selected = values[k]
+      if (selected != null && variants[k]?.[selected]) {
+        activeLayers.push(variants[k][selected])
+      }
+    }
+
+    for (let c = 0; c < compoundVariants.length; c++) {
+      const cv = compoundVariants[c]!
+      let match = true
+      for (const k in cv) {
+        if (k === "classNames" || k === "class") continue
+        const expected = cv[k]
+        const actual = values[k]
+        if (Array.isArray(expected) ? !expected.includes(actual) : actual !== expected) {
+          match = false
+          break
         }
-        if (match) {
-          const cvClasses = cv.classNames || cv.class
-          if (cvClasses) activeCompounds.push(cvClasses)
-        }
+      }
+      if (match) {
+        const cls = cv.classNames || cv.class
+        if (cls) activeLayers.push(cls)
       }
     }
 
     for (let i = 0; i < slots.length; i++) {
       const slot = slots[i]!
-      let slotClass = cx(baseMap[slot])
+      let cls = baseMap[slot] || ""
 
-      for (const variantKey in variants) {
-        if (variantKey === "color" && autoColor) continue
-        const selected = values[variantKey]
-        if (selected != null && variants[variantKey]?.[selected]?.[slot]) {
-          slotClass = cx(slotClass, variants[variantKey][selected][slot])
-        }
-      }
-
-      for (let c = 0; c < activeCompounds.length; c++) {
-        const cls = activeCompounds[c]![slot]
-        if (cls) slotClass = cx(slotClass, cls)
+      for (let l = 0; l < activeLayers.length; l++) {
+        const layerCls = activeLayers[l]![slot]
+        if (layerCls) cls = cx(cls, layerCls)
       }
 
       if (slot === rootSlot) {
-        slotClass = cx(slotClass, color && `rl-color-${color}`, props.class, props.className)
+        cls = cx(cls, color && `rl-color-${color}`, props.class, props.className)
       }
 
-      if (props.ui?.[slot]) {
-        const override = props.ui[slot]
-        slotClass = typeof override === "function" ? override(slotClass) : cx(slotClass, override)
-      }
-
-      res[slot] = slotClass
+      const override = props.ui?.[slot]
+      res[slot] = typeof override === "function" ? override(cls) : cx(cls, override)
     }
 
     return res
