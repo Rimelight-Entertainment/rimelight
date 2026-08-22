@@ -183,4 +183,36 @@ describe("@rimelight/ui shortcuts system", () => {
     expect(formatShortcutKeys("ctrl_alt_delete")).toEqual(["Ctrl", "Alt", "⌦"])
     expect(formatShortcutKeys("g-d")).toEqual(["G", "D"])
   })
+
+  it("should register shortcuts into activeShortcutsStore before listeners subscribe", async () => {
+    const origWindow = (globalThis as any).window
+    ;(globalThis as any).window = { addEventListener: () => {}, removeEventListener: () => {} }
+    try {
+      const { defineShortcuts, activeShortcutsStore } = await import("../src/shortcuts")
+      const cleanup = defineShortcuts({
+        meta_k: {
+          handler: () => {},
+          label: "Open Search",
+          category: "navigation"
+        }
+      })
+
+      const active = activeShortcutsStore.get()
+      expect(active.some((s) => s.label === "Open Search")).toBe(true)
+      cleanup()
+      expect(activeShortcutsStore.get().some((s) => s.label === "Open Search")).toBe(false)
+    } finally {
+      ;(globalThis as any).window = origWindow
+    }
+  })
+})
+
+describe("@rimelight/ui inlined cx", () => {
+  it("should compose class names with cx", async () => {
+    const { cx } = await import("../src/resolver")
+    const isFalse = false
+    expect(cx("a", isFalse && "b", null, undefined, ["c", ["d"]], { e: true, f: false })).toBe(
+      "a c d e"
+    )
+  })
 })

@@ -120,7 +120,7 @@ export function defineShortcuts(
   }
 
   const ids = new Set(reg.map((i) => i.id))
-  if (ids.size && activeShortcutsStore.lc > 0) {
+  if (ids.size) {
     activeShortcutsStore.set(
       activeShortcutsStore
         .get()
@@ -153,11 +153,13 @@ export function defineShortcuts(
     }
 
     // Unified event normalization
-    const isCtrl = isMac ? e.ctrlKey : e.ctrlKey || e.metaKey
-    const isMeta = isMac ? e.metaKey : e.metaKey || e.ctrlKey
-    const sig = `${isMeta ? "meta_" : ""}${isCtrl && isMac ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${key}`
+    const sig = `${e.metaKey ? "meta_" : ""}${e.ctrlKey ? "ctrl_" : ""}${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${key}`
+    const primarySig =
+      !isMac && e.ctrlKey && !e.metaKey
+        ? `meta_${e.altKey ? "alt_" : ""}${e.shiftKey ? "shift_" : ""}${key}`
+        : sig
 
-    const match = map.get(sig) || map.get(key)
+    const match = map.get(sig) || map.get(primarySig) || map.get(key)
     if (match && isEnabled(match, input)) {
       e.preventDefault()
       match.handler(e)
@@ -172,7 +174,7 @@ export function defineShortcuts(
   return () => {
     window.removeEventListener("keydown", onKeyDown)
     clearTimeout(timer)
-    if (ids.size && activeShortcutsStore.lc > 0) {
+    if (ids.size) {
       activeShortcutsStore.set(activeShortcutsStore.get().filter((i) => !ids.has(i.id)))
     }
   }

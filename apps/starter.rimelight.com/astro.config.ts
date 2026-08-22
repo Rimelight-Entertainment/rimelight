@@ -103,12 +103,6 @@ export default defineConfig({
   vite: {
     plugins: [
       ui({
-        shortcuts: {
-          categories: {
-            system: { label: "System" },
-            navigation: { label: "Navigation" }
-          }
-        },
         logos: {
           logomark: {
             color: "./src/assets/logos/logomark_color.svg",
@@ -119,6 +113,12 @@ export default defineConfig({
             color: "./src/assets/logos/logotype_color.svg",
             white: "./src/assets/logos/logotype_color.svg",
             black: "./src/assets/logos/logotype_black.svg"
+          }
+        },
+        shortcuts: {
+          categories: {
+            system: { label: "System" },
+            navigation: { label: "Navigation" }
           }
         }
       })

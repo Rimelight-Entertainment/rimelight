@@ -634,9 +634,6 @@ importers:
       '@unocss/vite':
         specifier: 66.7.5
         version: 66.7.5(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))
-      css-variants:
-        specifier: 2.3.5
-        version: 2.3.5
       nanostores:
         specifier: 1.5.1
         version: 1.5.1
