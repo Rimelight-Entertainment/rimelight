@@ -43,14 +43,13 @@ const INTENTS: Record<string, Record<string, string>> = {
 
 function cssVars(custom: Record<string, any> = {}) {
   let css = ""
-  const entries: [string, any][] = [...Object.entries(PALETTES), ...Object.entries(custom)]
-
-  for (const [name, val] of entries) {
+  for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
     const isBuiltin = Array.isArray(val)
     const [c, h] = isBuiltin ? val : [0, 0]
-    const light = !isBuiltin ? ((val.light || val) ?? {}) : null
-    const dark = !isBuiltin ? ((val.dark || val) ?? {}) : null
-    const fallback = light ? (light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)") : ""
+    const v = val as any
+    const light = !isBuiltin ? v?.light || v || {} : null
+    const dark = !isBuiltin ? v?.dark || v || {} : null
+    const fallback = light?.["500"] ?? Object.values(light || {})[0] ?? "oklch(0.55 0.15 0)"
 
     for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
       const value = isBuiltin
@@ -85,10 +84,9 @@ export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
       [
         /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
         ([, p, n, o]) => {
-          const s =
-            n && p
-              ? INTENTS[n]?.[p === "divide" ? "border" : p === "outline" ? "ring" : p]
-              : undefined
+          if (!n || !p) return
+          const prop = p === "divide" ? "border" : p === "outline" ? "ring" : p
+          const s = INTENTS[n]?.[prop]
           if (!s) return
           const target = `${p}-neutral-${s}${o ? `/${o}` : ""}`
           return p === "bg" && n === "inverted" ? `${target} text-neutral-50` : target

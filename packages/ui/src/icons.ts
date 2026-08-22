@@ -68,13 +68,9 @@ export const getSvgIcon = (k: string): string => {
   return path ? svg(path) : ""
 }
 
-export const DEFAULT_ICONS = new Proxy({} as { readonly [K in keyof typeof ICONS]: string }, {
-  get: (_, k: string) => getSvgIcon(k),
-  has: (_, k: string) => k in ICONS,
-  ownKeys: () => Object.keys(ICONS),
-  getOwnPropertyDescriptor: (_, k: string) =>
-    k in ICONS ? { configurable: true, enumerable: true, value: getSvgIcon(k) } : undefined
-})
+export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = Object.fromEntries(
+  Object.keys(ICONS).map((k) => [k, getSvgIcon(k)])
+) as Record<keyof typeof ICONS, string>
 
 export type RimelightIcons = Partial<Record<keyof typeof ICONS | (string & {}), string>>
 
@@ -82,17 +78,16 @@ const cache = new Map<string, { isClass: boolean; content: string }>()
 
 export const resolveIcon = (name = "", custom?: string) => {
   if (!name) return { isClass: false, content: "" }
-  const key = custom ? `${name}:${custom}` : name
-  let res = cache.get(key)
+  const raw = custom || uiConfig?.icons?.[name] || name
+  let res = cache.get(raw)
   if (!res) {
-    const raw = custom || uiConfig?.icons?.[name] || name
     const isClass = raw.startsWith("i-") || raw.includes(":")
     const isSvg = raw.startsWith("<")
     res = {
       isClass,
       content: isClass ? raw : isSvg ? (raw.startsWith("<svg") ? raw : svg(raw)) : getSvgIcon(raw)
     }
-    cache.set(key, res)
+    cache.set(raw, res)
   }
   return res
 }
