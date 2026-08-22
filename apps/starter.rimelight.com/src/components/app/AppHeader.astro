@@ -136,34 +136,34 @@ const actions: ButtonProps[] = [
 ];
 
 const userDropdownItems = session ? [
-	{
-		type: "label",
-		label: `${session.user.name} #${session.user.tag || '0000'}`
-	},
-	{
-		label: "Dashboard",
-		icon: "i-lucide-layout-dashboard",
-		to: getRelativeLocaleUrl('/dashboard')
-	},
-	{
-		label: "Profile",
-		icon: "i-lucide-user",
-		to: getRelativeLocaleUrl('/dashboard/profile')
-	},
-	{
-		label: "Settings",
-		icon: "i-lucide-cog",
-		to: getRelativeLocaleUrl('/dashboard/settings')
-	},
-	{
-		type: "separator"
-	},
-	{
-		label: "Sign Out",
-		icon: "i-lucide-log-out",
-		to: getRelativeLocaleUrl('/auth/sign-out'),
-		color: "error"
-	}
+  {
+    type: "label",
+    label: `${session.user.name} #${session.user.tag || '0000'}`
+  },
+  {
+    label: "Dashboard",
+    icon: "i-lucide-layout-dashboard",
+    to: getRelativeLocaleUrl('/dashboard')
+  },
+  {
+    label: "Profile",
+    icon: "i-lucide-user",
+    to: getRelativeLocaleUrl('/dashboard/profile')
+  },
+  {
+    label: "Settings",
+    icon: "i-lucide-cog",
+    to: getRelativeLocaleUrl('/dashboard/settings')
+  },
+  {
+    type: "separator"
+  },
+  {
+    label: "Sign Out",
+    icon: "i-lucide-log-out",
+    to: getRelativeLocaleUrl('/auth/sign-out'),
+    color: "error"
+  }
 ] : [];
 
 const { stackIndex = 1 } = Astro.props;
@@ -191,8 +191,8 @@ const { stackIndex = 1 } = Astro.props;
         }}
       >
         <!-- Features Mega Menu -->
-        <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
-          <div class="bg-default flex flex-col lg:flex-row gap-lg p-lg flex-1">
+        <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-default dark:bg-neutral-900 w-full">
+          <div class="bg-default dark:bg-neutral-900 flex flex-col lg:flex-row gap-lg p-lg flex-1">
             <RLAImage
               class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
               src={"https://cdn.rimelight.com/Images/placeholder.webp"}
@@ -205,7 +205,7 @@ const { stackIndex = 1 } = Astro.props;
             </div>
           </div>
 
-          <div class="bg-muted p-lg w-64 shrink-0">
+          <div class="bg-muted dark:bg-neutral-800 p-lg w-64 shrink-0">
             <RLALinkGroup {...resourcesLinkGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
@@ -233,8 +233,8 @@ const { stackIndex = 1 } = Astro.props;
           }}
         >
           <!-- Features Mega Menu (Mobile/Vertical) -->
-          <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-[var(--card)] w-full">
-            <div class="bg-[var(--card)] flex flex-col lg:flex-row gap-lg p-lg flex-1">
+          <div slot="features-content" class="flex flex-col lg:flex-row gap-lg bg-[var(--card)] dark:bg-neutral-900 w-full">
+            <div class="bg-[var(--card)] dark:bg-neutral-900 flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <RLAImage
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded mb-2 lg:mb-0"
                 src={"https://cdn.rimelight.com/Images/placeholder.webp"}
@@ -253,7 +253,7 @@ const { stackIndex = 1 } = Astro.props;
               </div>
             </div>
 
-            <div class="bg-[var(--accent)] p-lg w-64 shrink-0">
+            <div class="bg-[var(--accent)] dark:bg-neutral-800 p-lg w-64 shrink-0">
               <RLALinkGroup {...resourcesLinkGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
@@ -293,8 +293,8 @@ const { stackIndex = 1 } = Astro.props;
               <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
               <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
                 session.user.availability === 'busy' ? 'bg-error-500' :
-                session.user.availability === 'invisible' ? 'bg-neutral-500' :
-                'bg-success-500'
+                  session.user.availability === 'invisible' ? 'bg-neutral-500' :
+                    'bg-success-500'
               }`} />
             </div>
             <span class="hidden md:inline text-sm font-medium">{session.user.name}</span>
@@ -305,46 +305,46 @@ const { stackIndex = 1 } = Astro.props;
           <RLAButton {...buttonProps} />
         ))
       )}
-      </div>
+    </div>
 
-      <div class="block md:hidden">
-        {session ? (
-          <RLADropdownMenu
-            items={userDropdownItems}
-            content={{ align: "end", side: "bottom" }}
-            class="text-white"
-          >
-            <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
-              <div class="relative">
-                <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
-                <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
-                  session.user.availability === 'busy' ? 'bg-error-500' :
+    <div class="block md:hidden">
+      {session ? (
+        <RLADropdownMenu
+          items={userDropdownItems}
+          content={{ align: "end", side: "bottom" }}
+          class="text-white"
+        >
+          <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
+            <div class="relative">
+              <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
+              <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
+                session.user.availability === 'busy' ? 'bg-error-500' :
                   session.user.availability === 'invisible' ? 'bg-neutral-500' :
-                  'bg-success-500'
-                }`} />
-              </div>
+                    'bg-success-500'
+              }`} />
             </div>
-          </RLADropdownMenu>
-        ) : (
-          <RLASlideover side="right" title="Actions">
-            <RLAButton
-              slot="trigger"
-              color="neutral"
-              variant="ghost"
-              rounded={true}
-              leadingIcon="i-lucide-ellipsis-vertical"
-              class="!text-white"
-              aria-label="Open Actions"
-            />
+          </div>
+        </RLADropdownMenu>
+      ) : (
+        <RLASlideover side="right" title="Actions">
+          <RLAButton
+            slot="trigger"
+            color="neutral"
+            variant="ghost"
+            rounded={true}
+            leadingIcon="i-lucide-ellipsis-vertical"
+            class="!text-white"
+            aria-label="Open Actions"
+          />
 
-            <div class="flex flex-col gap-md">
-              {actions.map((buttonProps) => (
-                <RLAButton {...buttonProps} block={true} />
-              ))}
-            </div>
-          </RLASlideover>
-        )}
-      </div>
+          <div class="flex flex-col gap-md">
+            {actions.map((buttonProps) => (
+              <RLAButton {...buttonProps} block={true} />
+            ))}
+          </div>
+        </RLASlideover>
+      )}
+    </div>
   </div>
 </RLAHeader>
 
