@@ -93,27 +93,31 @@ export default defineConfig({
       kvBinding: "starter-dot-rimelight-dot-com_translations"
     }),
 
-    ui({
-      shortcuts: {
-        categories: {
-          system: { label: "System" },
-          navigation: { label: "Navigation" }
-        }
-      },
-      logos: {
-        logomark: {
-          color: "./src/assets/logos/logomark_color.svg",
-          white: "./src/assets/logos/logomark_white.svg",
-          black: "./src/assets/logos/logomark_black.svg"
-        },
-        logotype: {
-          color: "./src/assets/logos/logotype_color.svg",
-          white: "./src/assets/logos/logotype_color.svg",
-          black: "./src/assets/logos/logotype_black.svg"
-        }
-      }
-    }),
-
     sri()
-  ]
+  ],
+
+  vite: {
+    plugins: [
+      ui({
+        shortcuts: {
+          categories: {
+            system: { label: "System" },
+            navigation: { label: "Navigation" }
+          }
+        },
+        logos: {
+          logomark: {
+            color: "./src/assets/logos/logomark_color.svg",
+            white: "./src/assets/logos/logomark_white.svg",
+            black: "./src/assets/logos/logomark_black.svg"
+          },
+          logotype: {
+            color: "./src/assets/logos/logotype_color.svg",
+            white: "./src/assets/logos/logotype_color.svg",
+            black: "./src/assets/logos/logotype_black.svg"
+          }
+        }
+      })
+    ]
+  }
 })

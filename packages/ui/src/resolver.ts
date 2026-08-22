@@ -1,3 +1,4 @@
+import "virtual:uno.css"
 import { scv, cx } from "css-variants"
 import type { UIConfig } from "./types"
 

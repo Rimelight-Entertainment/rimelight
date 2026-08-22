@@ -50,7 +50,7 @@ deno add npm:@rimelight/ui
 bun add @rimelight/ui
 ```
 
-2. Add the Rimelight UI Astro integration to your Astro configuration:
+2. Add the Rimelight UI Vite plugin to your configuration:
 
 ```typescript
 // astro.config.ts
@@ -58,18 +58,20 @@ import { ui } from "@rimelight/ui"
 import { defineConfig } from "astro/config"
 
 export default defineConfig({
-  integrations: [
-    ui({
-      // Optional: Provide global UI overrides
-      components: {
-        themes: {
-          button: {
-            defaultVariants: { variant: "primary" }
+  vite: {
+    plugins: [
+      ui({
+        // Optional: Provide global UI overrides
+        components: {
+          themes: {
+            button: {
+              defaultVariants: { variant: "primary" }
+            }
           }
         }
-      }
-    })
-  ]
+      })
+    ]
+  }
 })
 ```
 
@@ -110,7 +112,7 @@ For mixed usage please refer to the [Astro documentation on using front-end fram
 
 <details>
   <summary><b>Can I use Rimelight UI without Astro?</b></summary>
-    For the time being, no. The library is strictly distributed as an Astro integration. However, in theory, it could be modularized enough to be usable as a Vite plugin, and we are open to contributions on this topic.
+    For the time being, no. The component library itself is Astro-based (the <code>.astro</code> components require Astro's compiler), but its configuration and styling pipeline are distributed as a plain Vite plugin, so any Vite-powered project can consume the Vue/Solid components, themes, and design tokens.
 </details>
 
 <details>

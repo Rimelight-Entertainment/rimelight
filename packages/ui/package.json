@@ -31,9 +31,10 @@
     "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
   },
   "dependencies": {
-    "@unocss/astro": "66.7.5",
+    "@unocss/vite": "66.7.5",
     "css-variants": "2.3.5",
-    "nanostores": "1.5.1"
+    "nanostores": "1.5.1",
+    "unocss": "66.7.5"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
@@ -44,7 +45,6 @@
     "astro": "7.2.2",
     "solid-js": "1.9.15",
     "typescript": "6.0.3",
-    "unocss": "66.7.5",
     "vue": "3.5.41"
   },
   "peerDependencies": {

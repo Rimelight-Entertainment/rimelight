@@ -1,10 +1,9 @@
-import type { AstroIntegration } from "astro"
-import UnoCSS from "unocss/astro"
+import UnoCSS from "@unocss/vite"
 import type { UIConfig } from "./types"
 import rimelightUiPreset from "./preset"
 
-export const ui = (config: UIConfig = {}): AstroIntegration[] => [
-  UnoCSS({
+export const ui = (config: UIConfig = {}) => [
+  ...UnoCSS({
     ...config.unocss,
     presets: [rimelightUiPreset(config), ...(config.unocss?.presets ?? [])],
     content: {
@@ -21,11 +20,8 @@ export const ui = (config: UIConfig = {}): AstroIntegration[] => [
   }),
   {
     name: "@rimelight/ui",
-    hooks: {
-      "astro:config:setup": ({ updateConfig }) =>
-        void updateConfig({
-          vite: { define: { "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(config) } }
-        })
-    }
+    config: () => ({
+      define: { "import.meta.env.RIMELIGHT_UI_CONFIG": JSON.stringify(config) }
+    })
   }
 ]
