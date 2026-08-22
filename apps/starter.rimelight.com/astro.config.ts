@@ -84,6 +84,10 @@ export default defineConfig({
     domains: ["starter.rimelight.com", "cdn.starter.rimelight.com"]
   },
 
+  markdown: {
+    syntaxHighlight: "prism"
+  },
+
   integrations: [
     solid({
       include: ["**/solid/**", "**/*.tsx"]
