@@ -20,6 +20,7 @@ export type {
 export * from "./core/registry.ts"
 export * from "./core/validator.ts"
 export * from "./core/template-sync.ts"
+export * from "./services/component-metadata.ts"
 
 // Auth & Security Guards
 export * from "./auth/permissions.ts"
@@ -34,10 +35,6 @@ export * from "./search/sync.ts"
 
 // Database Schemas & Migration
 export * from "./schema/index.ts"
-export * from "./migration.ts"
-
-// Markdown Serialization & Parsing
-export * from "./markdown/index.ts"
 
 // Astro Components
 export { default as PageRenderer } from "./astro/PageRenderer.astro"

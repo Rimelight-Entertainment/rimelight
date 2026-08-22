@@ -1,6 +1,5 @@
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
-import { execSync } from "node:child_process"
 import type { ThemeMeta } from "@rimelight/docs"
 
 function getThemePath(componentName: string, componentsDir: string): string {
@@ -8,54 +7,82 @@ function getThemePath(componentName: string, componentsDir: string): string {
   return path.join(componentsDir, kebabName, `${kebabName}.theme.ts`)
 }
 
+function extractThemeFromFile(filePath: string): any {
+  const content = readFileSync(filePath, "utf-8")
+
+  const defineThemeIndex = content.indexOf("defineTheme(")
+  if (defineThemeIndex === -1) {
+    throw new Error("No defineTheme call found")
+  }
+
+  const firstBraceIndex = content.indexOf("{", defineThemeIndex)
+  if (firstBraceIndex === -1) {
+    throw new Error("No opening brace found")
+  }
+
+  let depth = 0
+  let end = -1
+  let inString = false
+  let stringChar: string | null = null
+
+  for (let i = firstBraceIndex; i < content.length; i++) {
+    const char = content[i]
+
+    if (inString) {
+      if (char === "\\") {
+        i++
+      } else if (char === stringChar) {
+        inString = false
+        stringChar = null
+      }
+      continue
+    }
+
+    if (char === '"' || char === "'" || char === "`") {
+      inString = true
+      stringChar = char
+      continue
+    }
+
+    if (char === "{") {
+      depth++
+    } else if (char === "}") {
+      depth--
+      if (depth === 0) {
+        end = i
+        break
+      }
+    }
+  }
+
+  if (end === -1) {
+    throw new Error("No matching closing brace found")
+  }
+
+  const objectLiteral = content.slice(firstBraceIndex, end + 1)
+
+  const jsonStr = objectLiteral.replace(/'/g, '"').replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":')
+
+  try {
+    return JSON.parse(jsonStr)
+  } catch {
+    const fn = new Function(`return ${objectLiteral}`)
+    return fn()
+  }
+}
+
 export async function extractAllThemesMeta(
   componentNames: string[],
   componentsDir: string
 ): Promise<Record<string, ThemeMeta>> {
-  const targets: { name: string; fileUrl: string }[] = []
+  const results: Record<string, ThemeMeta> = {}
 
   for (const name of componentNames) {
     const themePath = getThemePath(name, componentsDir)
-    if (existsSync(themePath)) {
-      const fileUrl = "file:///" + themePath.replace(/\\/g, "/")
-      targets.push({ name, fileUrl })
-    }
-  }
+    if (!existsSync(themePath)) continue
 
-  if (targets.length === 0) return {}
-
-  try {
-    // Generate script to dynamic import all theme files concurrently
-    const input = `
-const targets = ${JSON.stringify(targets)};
-const results = {};
-Promise.all(
-  targets.map(async ({ name, fileUrl }) => {
     try {
-      const m = await import(fileUrl);
-      results[name] = m.default;
-    } catch (err) {
-      // ignore
-    }
-  })
-).then(() => {
-  console.log(JSON.stringify(results));
-}).catch(err => {
-  console.error(err);
-  process.exit(1);
-});
-`
-    const output = execSync(`"${process.execPath}" -`, {
-      input,
-      encoding: "utf-8",
-      stdio: ["pipe", "pipe", "ignore"]
-    })
-
-    const allThemesObj = JSON.parse(output.trim())
-    const results: Record<string, ThemeMeta> = {}
-
-    for (const [name, themeObj] of Object.entries(allThemesObj)) {
-      if (!themeObj || typeof themeObj !== "object") continue
+      const themeObj = extractThemeFromFile(themePath)
 
       const slotsRaw = Reflect.get(themeObj, "slots")
       const slots: string[] = []
@@ -140,11 +167,10 @@ Promise.all(
       }
 
       results[name] = { slots, base, variants, compoundVariants, defaultVariants }
+    } catch (err) {
+      console.warn(`[docs] Failed to extract theme for ${name}:`, err)
     }
-
-    return results
-  } catch (err) {
-    console.warn(`[docs] Failed to extract themes in batch:`, err)
-    return {}
   }
+
+  return results
 }

@@ -1,0 +1,27 @@
+---
+import type { BaseBlock } from "@rimelight/cms"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block } = Astro.props
+const { componentCode, framework = "astro", height = "300px", width = "100%", editable = false } = block.props
+---
+
+<div class="cms-live-preview border border-border rounded-xl overflow-visible bg-background text-foreground my-6" data-block-id={block.id} data-framework={framework} data-editable={editable}>
+  <div class="controls-area p-4 border-b border-border flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Live Preview</span>
+      <span class="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">{framework}</span>
+    </div>
+    {editable && (
+      <span class="text-xs text-muted-foreground italic">Editable</span>
+    )}
+  </div>
+
+  <div class="preview-area p-4 flex items-center justify-center" style={`height: ${height}; width: ${width};`}>
+    <pre class="text-sm font-mono text-muted-foreground bg-muted p-4 rounded-lg overflow-x-auto w-full"><code>{componentCode}</code></pre>
+  </div>
+</div>

@@ -1,5 +1,7 @@
 ---
 import type { BaseBlock } from "@rimelight/cms"
+import ApiDocumentationBlock from "./blocks/ApiDocumentationBlock.astro"
+import LivePreviewBlock from "./blocks/LivePreviewBlock.astro"
 import ParagraphBlock from "./blocks/ParagraphBlock.astro"
 import CalloutBlock from "./blocks/CalloutBlock.astro"
 import ImageBlock from "./blocks/ImageBlock.astro"
@@ -30,7 +32,11 @@ const { block, locale = "en", sectionDepth = 0, index = 0 } = Astro.props
 ---
 
 {
-  block.type === "ParagraphBlock" ? (
+  block.type === "ApiDocumentationBlock" ? (
+    <ApiDocumentationBlock block={block} locale={locale} />
+  ) : block.type === "LivePreviewBlock" ? (
+    <LivePreviewBlock block={block} locale={locale} />
+  ) : block.type === "ParagraphBlock" ? (
     <ParagraphBlock block={block} locale={locale} />
   ) : block.type === "CalloutBlock" ? (
     <CalloutBlock block={block} locale={locale}>

@@ -15,6 +15,9 @@ interface Props {
   defaultProps?: Record<string, string>;
   togglingPattern?: "icon" | "select-option" | "tab-segmented" | "pill-toggle";
   theme?: any;
+  combinationClasses?: Record<string, any>;
+  initialThemeClasses?: Record<string, string>;
+  themeSlots?: string[];
 }
 
 const {
@@ -25,7 +28,9 @@ const {
   propsConfig,
   defaultProps,
   togglingPattern = "tab-segmented",
-  theme
+  combinationClasses: propCombinationClasses,
+  initialThemeClasses: propInitialThemeClasses,
+  themeSlots: propThemeSlots
 } = Astro.props;
 
 let resolvedComponentName = componentName || component || "";
@@ -49,21 +54,64 @@ if (isDynamic && togglingPattern === "select-option") {
   }
 }
 
-// Load theme for slot visualization
-let resolvedTheme = theme;
-const componentNameWithoutPrefix = resolvedComponentName.replace(/^RL[AV]/, '');
-const componentKey = componentNameWithoutPrefix.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(); // e.g. "button" or "input-number"
-let combinationClasses: Record<string, any> = {};
-let initialThemeClasses: Record<string, string> = {};
+let combinationClasses: Record<string, any> = propCombinationClasses || {};
+let initialThemeClasses: Record<string, string> = propInitialThemeClasses || {};
 
-if (componentKey) {
-  if (!resolvedTheme) {
-    try {
-      const module = await import(`../../../ui/src/components/${componentKey}/${componentKey}.theme.ts`);
-      resolvedTheme = module.default;
-    } catch (e) {
-      console.warn(`Could not load theme for component: ${resolvedComponentName}`);
+// Fallback: derive theme-based combination classes when not provided (e.g. the
+// CMS layer didn't precompute them). This keeps the compare view working.
+if (
+  (!combinationClasses || Object.keys(combinationClasses).length === 0) &&
+  propsConfig &&
+  Object.keys(propsConfig).length > 0 &&
+  resolvedComponentName
+) {
+  const compKey = resolvedComponentName
+    .replace(/^RL[AV]/, '')
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .toLowerCase();
+
+  const themeModules = import.meta.glob(
+    '../../../../packages/ui/src/components/*/*.theme.ts',
+    { eager: true }
+  );
+  const themeRegistry: Record<string, any> = {};
+  for (const [path, mod] of Object.entries(themeModules)) {
+    const m = path.match(/\/([\w-]+)\/\1\.theme\.ts$/);
+    if (m?.[1]) {
+      const fn = (mod as any).default || Object.values(mod as any).find((v: any) => typeof v === 'function');
+      if (fn) themeRegistry[m[1]] = fn;
     }
+  }
+
+  const themeFn = themeRegistry[compKey];
+  if (themeFn) {
+    const allKeys = Object.keys(propsConfig);
+    const allValues = allKeys.map((k) => propsConfig[k] || []);
+    const result: Record<string, any> = {};
+    let init: Record<string, string> = {};
+    try {
+      init = themeFn(defaultProps || {});
+    } catch {}
+
+    const cartesian = (arrays: string[][]): string[][] => {
+      if (arrays.length === 0) return [[]];
+      const [first, ...rest] = arrays;
+      const restProduct = cartesian(rest);
+      return (first || []).flatMap((val) => restProduct.map((combo) => [val, ...combo]));
+    };
+
+    for (const combo of cartesian(allValues)) {
+      const p: Record<string, any> = {};
+      allKeys.forEach((k, i) => {
+        p[k] = combo[i];
+      });
+      try {
+        result[allKeys.map((k) => `${k}:${p[k]}`).join('|')] = themeFn(p);
+      } catch {}
+    }
+
+    combinationClasses = result;
+    initialThemeClasses = init;
   }
 }
 
@@ -74,7 +122,7 @@ const hasCode = hasAstroCode || hasVueCode || hasSolidCode;
 const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
 ---
 
-<div class={`component-showcase border border-border rounded-xl overflow-visible bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(resolvedTheme?.slots || [])}>
+<div class={`component-showcase border border-border rounded-xl overflow-visible bg-background text-foreground my-6 ${isDynamic ? "dynamic-showcase" : ""} ${className}`} data-component={resolvedComponentName} data-props={JSON.stringify(propKeys)} data-config={JSON.stringify(propsConfig || {})} data-pattern={togglingPattern} data-combinations={JSON.stringify(combinationClasses)} data-initial-theme={JSON.stringify(initialThemeClasses)} data-theme-slots={JSON.stringify(propThemeSlots || Object.keys(initialThemeClasses).filter(k => k !== 'class' && k !== 'className'))}>
   <!-- Dynamic Props Configuration Area -->
   {isDynamic && (
     <div class="flex flex-wrap items-center gap-6 px-4 py-3 bg-muted/20 border-b border-border justify-between w-full">
@@ -131,7 +179,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
       )}
 
     <div class="flex items-center gap-1.5">
-         <RLAPopover class="highlight-slots-wrapper" placement="bottom" ui={{ content: "right-0 w-80 text-xs flex flex-col gap-3" }}>
+         <RLAPopover class="highlight-slots-wrapper" placement="bottom-end" ui={{ content: "right-0 w-80 text-xs flex flex-col gap-3" }}>
             <RLAButton slot="trigger" class="highlight-slots" size="sm" variant="ghost" color="neutral" title="Highlight component slots" square>
                <span class="i-lucide-boxes size-4"></span>
             </RLAButton>
@@ -496,7 +544,8 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
 
       // === Slot Visualizer ===
       const highlightBtn = showcase.querySelector('.highlight-slots');
-      const popoverContent = showcase.querySelector('.popover-content');
+      const popoverWrapper = showcase.querySelector('.highlight-slots-wrapper');
+      const popoverContent = popoverWrapper?.querySelector('[data-slot="content"]') || showcase.querySelector('.popover-content');
 
       const svState: { active: boolean; overlays: HTMLElement[] | null; activate?: () => void; deactivate?: () => void } = {
         active: false,
@@ -523,9 +572,9 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
       svState.deactivate = svDeactivate;
 
       if (popoverContent) {
-        popoverContent.addEventListener('popover-toggle', (e: Event) => {
-          const detail = (e as any).detail;
-          const isOpen = detail && detail.open;
+        popoverContent.addEventListener('toggle', (e: Event) => {
+          const te = e as ToggleEvent;
+          const isOpen = te.newState === 'open';
           if (isOpen) {
             svActivate();
           } else {

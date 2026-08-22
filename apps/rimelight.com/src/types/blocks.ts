@@ -8,6 +8,18 @@ export type BlockType =
   | "ScriptBlock"
   | "SceneBlock"
   | "DialogueBlock"
+  | "CodeBlock"
+  | "TableBlock"
+  | "TabsBlock"
+  | "TabItemBlock"
+  | "StepsBlock"
+  | "StepItemBlock"
+  | "CardsBlock"
+  | "CardBlock"
+  | "FileTreeBlock"
+  | "ComponentShowcaseBlock"
+  | "ApiDocumentationBlock"
+  | "LivePreviewBlock"
 
 export interface BaseBlock {
   id: string
@@ -115,6 +127,57 @@ export interface DialogueContentBlock extends BaseBlock {
   props: DialogueBlockProps
 }
 
+export interface ComponentShowcaseBlockProps {
+  componentName: string
+  componentPath: string
+  framework: "astro" | "vue" | "solid"
+  defaultProps: Record<string, any>
+  propsConfig: Record<string, string[]>
+  togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle"
+  codeExamples: {
+    astro?: string
+    vue?: string
+    solid?: string
+  }
+  playgroundUrl?: string
+}
+
+export interface ApiDocumentationBlockProps {
+  componentName: string
+  sections: {
+    props?: boolean
+    slots?: boolean
+    emits?: boolean
+    theme?: boolean
+    changelog?: boolean
+  }
+  hide?: string[]
+  show?: string[]
+}
+
+export interface LivePreviewBlockProps {
+  componentCode: string
+  framework: "astro" | "vue" | "solid"
+  height?: string
+  width?: string
+  editable?: boolean
+}
+
+export interface ComponentShowcaseContentBlock extends BaseBlock {
+  type: "ComponentShowcaseBlock"
+  props: ComponentShowcaseBlockProps
+}
+
+export interface ApiDocumentationContentBlock extends BaseBlock {
+  type: "ApiDocumentationBlock"
+  props: ApiDocumentationBlockProps
+}
+
+export interface LivePreviewContentBlock extends BaseBlock {
+  type: "LivePreviewBlock"
+  props: LivePreviewBlockProps
+}
+
 export type Block =
   | SectionBlock
   | ParagraphContentBlock
@@ -123,6 +186,9 @@ export type Block =
   | ScriptContentBlock
   | SceneContentBlock
   | DialogueContentBlock
+  | ComponentShowcaseContentBlock
+  | ApiDocumentationContentBlock
+  | LivePreviewContentBlock
 
 export type InlineContentType = "text" | "link" | "mention"
 

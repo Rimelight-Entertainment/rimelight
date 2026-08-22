@@ -97,3 +97,51 @@ BlockRegistry.register({
   description: "Dialogue block with character, parenthetical, and line",
   defaultProps: { character: "", parenthetical: "", line: "" }
 })
+
+BlockRegistry.register({
+  type: "ComponentShowcaseBlock",
+  label: "Component Showcase",
+  description: "Live component rendering with props injection and multi-framework code examples",
+  defaultProps: {
+    componentName: "",
+    componentPath: "",
+    framework: "astro",
+    defaultProps: {},
+    propsConfig: {},
+    togglingPattern: "tab-segmented",
+    codeExamples: {}
+  },
+  allowChildren: true
+})
+
+BlockRegistry.register({
+  type: "ApiDocumentationBlock",
+  label: "API Documentation",
+  description:
+    "Automated API documentation generation for component props, slots, emits, and theme",
+  defaultProps: {
+    componentName: "",
+    sections: {
+      props: true,
+      slots: true,
+      emits: true,
+      theme: true,
+      changelog: false
+    },
+    hide: [],
+    show: []
+  }
+})
+
+BlockRegistry.register({
+  type: "LivePreviewBlock",
+  label: "Live Preview",
+  description: "Runtime code execution with live editing and error handling",
+  defaultProps: {
+    componentCode: "",
+    framework: "astro",
+    height: "300px",
+    width: "100%",
+    editable: false
+  }
+})

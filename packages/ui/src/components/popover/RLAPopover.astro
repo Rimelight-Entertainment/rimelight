@@ -87,6 +87,10 @@ const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
     [popover][data-slot="content"] {
       position: absolute;
       position-anchor: --rla-popover-anchor;
+      /* The theme adds `top-full left-1/2 -translate-x-1/2` for non-popover
+         dropdowns; that transform shifts a top-layer popover off its anchor,
+         so neutralize it when we position via CSS anchor properties. */
+      transform: none;
     }
 
     /* bottom (default) */
@@ -234,6 +238,41 @@ const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
         });
         panel.addEventListener('mouseleave', hide);
       }
+
+      // Deterministic positioning: anchor positioning is a progressive
+      // enhancement, but we always place the popover next to its trigger
+      // via JS so it is reliably visible (no off-screen / scrollbar issues).
+      const positionPopover = () => {
+        if (!trigger) return;
+        const pw = panel.offsetWidth;
+        const ph = panel.offsetHeight;
+        if (pw === 0 || ph === 0) return; // closed or not yet rendered
+
+        const parts = (container.dataset.placement || 'bottom').split('-');
+        const vert = parts[0];            // top | bottom
+        const horiz = parts[1] || 'center'; // start | end | center
+        const gap = 8;
+        const r = trigger.getBoundingClientRect();
+
+        let top = vert === 'top' ? r.top - ph - gap : r.bottom + gap;
+        let left =
+          horiz === 'end' ? r.right - pw :
+          horiz === 'start' ? r.left :
+          r.left + r.width / 2 - pw / 2;
+
+        left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
+        top = Math.max(8, Math.min(top, window.innerHeight - ph - 8));
+
+        panel.style.position = 'fixed';
+        panel.style.transform = 'none';
+        panel.style.top = `${top}px`;
+        panel.style.left = `${left}px`;
+      };
+
+      panel.addEventListener('toggle', () => positionPopover());
+      const reposition = () => positionPopover();
+      window.addEventListener('scroll', reposition, true);
+      window.addEventListener('resize', reposition);
     });
   }
 

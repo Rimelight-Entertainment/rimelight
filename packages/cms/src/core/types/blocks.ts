@@ -17,6 +17,9 @@ export type BlockType =
   | "CardsBlock"
   | "CardBlock"
   | "FileTreeBlock"
+  | "ComponentShowcaseBlock"
+  | "ApiDocumentationBlock"
+  | "LivePreviewBlock"
   | (string & {})
 
 export type TimeOfDay = "MORNING" | "NOON" | "AFTERNOON" | "EVENING" | "NIGHT" | "OTHER"
@@ -191,6 +194,42 @@ export interface FileTreeBlockProps {
   tree: FileTreeNode[]
 }
 
+export interface ComponentShowcaseBlockProps {
+  componentName: string
+  componentPath: string
+  framework: "astro" | "vue" | "solid"
+  defaultProps: Record<string, any>
+  propsConfig: Record<string, string[]>
+  togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle"
+  codeExamples: {
+    astro?: string
+    vue?: string
+    solid?: string
+  }
+  playgroundUrl: string | undefined
+}
+
+export interface ApiDocumentationBlockProps {
+  componentName: string
+  sections: {
+    props?: boolean
+    slots?: boolean
+    emits?: boolean
+    theme?: boolean
+    changelog?: boolean
+  }
+  hide?: string[]
+  show?: string[]
+}
+
+export interface LivePreviewBlockProps {
+  componentCode: string
+  framework: "astro" | "vue" | "solid"
+  height?: string
+  width?: string
+  editable?: boolean
+}
+
 export interface TypedScriptBlockProps extends ScriptBlockProps {
   children: BaseBlock[]
 }
@@ -281,6 +320,21 @@ export interface FileTreeBlock extends BaseBlock {
   props: FileTreeBlockProps
 }
 
+export interface ComponentShowcaseBlock extends BaseBlock {
+  type: "ComponentShowcaseBlock"
+  props: ComponentShowcaseBlockProps
+}
+
+export interface ApiDocumentationBlock extends BaseBlock {
+  type: "ApiDocumentationBlock"
+  props: ApiDocumentationBlockProps
+}
+
+export interface LivePreviewBlock extends BaseBlock {
+  type: "LivePreviewBlock"
+  props: LivePreviewBlockProps
+}
+
 export type TypedBlock =
   | SectionBlock
   | ParagraphBlock
@@ -298,6 +352,9 @@ export type TypedBlock =
   | CardsBlock
   | CardBlock
   | FileTreeBlock
+  | ComponentShowcaseBlock
+  | ApiDocumentationBlock
+  | LivePreviewBlock
 
 export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
   Root: [
@@ -313,7 +370,10 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "TabsBlock",
     "StepsBlock",
     "CardsBlock",
-    "FileTreeBlock"
+    "FileTreeBlock",
+    "ComponentShowcaseBlock",
+    "ApiDocumentationBlock",
+    "LivePreviewBlock"
   ],
   SectionBlock: [
     "SectionBlock",
@@ -326,7 +386,10 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "TabsBlock",
     "StepsBlock",
     "CardsBlock",
-    "FileTreeBlock"
+    "FileTreeBlock",
+    "ComponentShowcaseBlock",
+    "ApiDocumentationBlock",
+    "LivePreviewBlock"
   ],
   CalloutBlock: [
     "ParagraphBlock",
@@ -337,7 +400,10 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "TabsBlock",
     "StepsBlock",
     "CardsBlock",
-    "FileTreeBlock"
+    "FileTreeBlock",
+    "ComponentShowcaseBlock",
+    "ApiDocumentationBlock",
+    "LivePreviewBlock"
   ],
   TabsBlock: ["TabItemBlock"],
   TabItemBlock: [
@@ -348,7 +414,10 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "TableBlock",
     "StepsBlock",
     "CardsBlock",
-    "FileTreeBlock"
+    "FileTreeBlock",
+    "ComponentShowcaseBlock",
+    "ApiDocumentationBlock",
+    "LivePreviewBlock"
   ],
   StepsBlock: ["StepItemBlock"],
   StepItemBlock: [
@@ -359,7 +428,10 @@ export const ALLOWED_CHILDREN_MAP: Record<string, BlockType[]> = {
     "TableBlock",
     "TabsBlock",
     "CardsBlock",
-    "FileTreeBlock"
+    "FileTreeBlock",
+    "ComponentShowcaseBlock",
+    "ApiDocumentationBlock",
+    "LivePreviewBlock"
   ],
   CardsBlock: ["CardBlock"],
   ScriptBlock: ["SceneBlock"],
