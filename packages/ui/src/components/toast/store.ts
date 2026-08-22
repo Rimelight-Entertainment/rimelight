@@ -1,4 +1,4 @@
-import { atom } from "nanostores"
+import { atom } from "../../stores"
 
 export interface ToastItem {
   id: string

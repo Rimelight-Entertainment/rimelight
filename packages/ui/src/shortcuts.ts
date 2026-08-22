@@ -1,4 +1,4 @@
-import { atom } from "nanostores"
+import { atom } from "./stores"
 
 export type Handler = (e: KeyboardEvent) => void
 export interface ShortcutConfig {

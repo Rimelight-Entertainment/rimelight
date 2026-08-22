@@ -4,10 +4,10 @@ import type { UIConfig } from "./types"
 
 const ID = "virtual:rimelight/ui"
 
-export const ui = ({ unocss = {}, presets, colors, ...cfg }: UIConfig = {}) => [
+export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
   UnoCSS({
     ...unocss,
-    presets: [rimelightUiPreset({ presets, colors, icons: cfg.icons }), ...(unocss.presets || [])],
+    presets: [rimelightUiPreset(cfg), ...(unocss.presets || [])],
     content: {
       ...unocss.content,
       pipeline: unocss.content?.pipeline !== false && {

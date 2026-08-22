@@ -1,5 +1,5 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
-import type { PresetOptions } from "./types"
+import type { PresetOptions, UIConfig } from "./types"
 
 export const PALETTES = {
   neutral: [0, 0],
@@ -62,7 +62,7 @@ function cssVars(custom: Record<string, any> = {}) {
   return css
 }
 
-export default function rimelightUiPreset(options: PresetOptions = {}): Preset {
+export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}): Preset {
   const allColors = Object.keys({ ...PALETTES, ...options.colors })
   const shadeKeys = Object.keys(SHADES)
 

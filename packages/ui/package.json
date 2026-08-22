@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "@unocss/vite": "66.7.5",
-    "nanostores": "1.5.1",
     "unocss": "66.7.5"
   },
   "devDependencies": {

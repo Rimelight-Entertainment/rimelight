@@ -113,17 +113,16 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
 
     for (let i = 0; i < slots.length; i++) {
       const slot = slots[i]!
-      let cls = baseMap[slot] || ""
-
+      const classes: ClassValue[] = [baseMap[slot]]
       for (let l = 0; l < activeLayers.length; l++) {
         const layerCls = activeLayers[l]![slot]
-        if (layerCls) cls = cx(cls, layerCls)
+        if (layerCls) classes.push(layerCls)
       }
-
       if (slot === rootSlot) {
-        cls = cx(cls, color && `rl-color-${color}`, props.class, props.className)
+        if (color) classes.push(`rl-color-${color}`)
+        if (props.class || props.className) classes.push(props.class, props.className)
       }
-
+      const cls = cx(...classes)
       const override = props.ui?.[slot]
       res[slot] = typeof override === "function" ? override(cls) : cx(cls, override)
     }
