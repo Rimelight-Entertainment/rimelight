@@ -45,16 +45,15 @@ const isMac = typeof navigator !== "undefined" && /Mac|iP/.test(navigator.userAg
     arrowright: "→"
   }
 
-export const normalizeModifier = (m: string) => {
-  const low = m.toLowerCase()
-  return low === "cmd" || low === "command"
-    ? "meta"
-    : low === "control"
-      ? "ctrl"
-      : low === "opt" || low === "option"
-        ? "alt"
-        : low
+const MODS: Record<string, string> = {
+  cmd: "meta",
+  command: "meta",
+  control: "ctrl",
+  opt: "alt",
+  option: "alt"
 }
+
+export const normalizeModifier = (m: string) => MODS[m.toLowerCase()] || m.toLowerCase()
 
 export const formatShortcutKeys = (k: string): string[] =>
   k.split(/[_-]/).map((p) => {

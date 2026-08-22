@@ -14,8 +14,6 @@ export const PALETTES = {
   source: [0.13, 215]
 } as const
 
-export const P = PALETTES
-
 const SHADES: Record<string, [number, number, number, number]> = {
   "50": [0.985, 0.1, 0.145, 0.2],
   "100": [0.965, 0.25, 0.2, 0.35],
