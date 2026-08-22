@@ -166,12 +166,12 @@ describe("@rimelight/ui preset intent shortcuts", () => {
     const { css } = await uno.generate(
       "text-muted bg-elevated border-accented ring-dimmed bg-inverted text-muted/50"
     )
-    expect(css).toContain("var(--color-neutral-600)")
-    expect(css).toContain("var(--color-neutral-100)")
-    expect(css).toContain("var(--color-neutral-300)")
-    expect(css).toContain("var(--color-neutral-400)")
-    expect(css).toContain("var(--color-neutral-950)")
-    expect(css).toContain("var(--color-neutral-50)")
+    expect(css).toContain("var(--colors-neutral-600)")
+    expect(css).toContain("var(--colors-neutral-100)")
+    expect(css).toContain("var(--colors-neutral-300)")
+    expect(css).toContain("var(--colors-neutral-400)")
+    expect(css).toContain("var(--colors-neutral-950)")
+    expect(css).toContain("var(--colors-neutral-50)")
     expect(css).toContain(".text-muted\\/50")
   })
 })

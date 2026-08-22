@@ -110,12 +110,12 @@ const classes = scrollToTopTheme(Astro.props)
       const gaugeProgressEl = innerElement.querySelector('[data-gauge-progress]') as HTMLElement | null;
       if (gaugeProgressEl) {
         gaugeProgressEl.style.setProperty('--gauge-stroke-width', `${gaugeBorderWidth}px`);
-        gaugeProgressEl.style.setProperty('--gauge-color', `var(--color-${color}-500)`);
+        gaugeProgressEl.style.setProperty('--gauge-color', `var(--colors-${color}-500)`);
       }
       const gaugeTrackEl = innerElement.querySelector('.gauge-track') as HTMLElement | null;
       if (gaugeTrackEl) {
         gaugeTrackEl.style.setProperty('border-width', `${gaugeBorderWidth}px`);
-        gaugeTrackEl.style.setProperty('border-color', `var(--color-${color}-900)`);
+        gaugeTrackEl.style.setProperty('border-color', `var(--colors-${color}-900)`);
         gaugeTrackEl.style.setProperty('background-color', '#000');
       }
 
@@ -195,8 +195,8 @@ const classes = scrollToTopTheme(Astro.props)
     border-radius: 50%;
     background: conic-gradient(
       from 0deg,
-      var(--gauge-color, var(--color-primary-500)) 0deg,
-      var(--gauge-color, var(--color-primary-500)) calc(var(--gauge-progress, 0) * 3.6deg),
+      var(--gauge-color, var(--colors-primary-500)) 0deg,
+      var(--gauge-color, var(--colors-primary-500)) calc(var(--gauge-progress, 0) * 3.6deg),
       transparent calc(var(--gauge-progress, 0) * 3.6deg)
     );
     -webkit-mask: radial-gradient(

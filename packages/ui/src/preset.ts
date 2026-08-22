@@ -41,8 +41,10 @@ const INTENTS: Record<string, Record<string, string>> = {
   inverted: { text: "50", bg: "950", border: "800", ring: "700" }
 }
 
-function cssVars(custom: Record<string, any> = {}) {
-  let css = ""
+type TokenMap = Record<string, Record<string, string>>
+
+function buildTokens(custom: Record<string, any> = {}): TokenMap {
+  const tokens: TokenMap = {}
   for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
     const isBuiltin = Array.isArray(val)
     const [c, h] = isBuiltin ? val : [0, 0]
@@ -51,37 +53,34 @@ function cssVars(custom: Record<string, any> = {}) {
     const dark = !isBuiltin ? v?.dark || v || {} : null
     const fallback = light?.["500"] ?? Object.values(light || {})[0] ?? "oklch(0.55 0.15 0)"
 
+    const shades: Record<string, string> = {}
     for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
-      const value = isBuiltin
+      shades[s] = isBuiltin
         ? `light-dark(oklch(${l1} ${(c1 * c).toFixed(3)} ${h}), oklch(${l2} ${(c2 * c).toFixed(3)} ${h}))`
         : `light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback})`
-      css += `  --color-${name}-${s}: ${value};\n`
     }
-    css += `  --${name}: var(--color-${name}-500);\n  --${name}-foreground: light-dark(oklch(1 0 0), oklch(0.145 0 0));\n  --${name}-accent: var(--color-${name}-600);\n`
+    tokens[name] = {
+      ...shades,
+      DEFAULT: shades["500"]!,
+      foreground: "light-dark(oklch(1 0 0), oklch(0.145 0 0))",
+      accent: shades["600"]!
+    }
   }
-  return css
+  return tokens
 }
 
 export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}): Preset {
-  const allColors = Object.keys({ ...PALETTES, ...options.colors })
-  const shadeKeys = Object.keys(SHADES)
+  const tokens = buildTokens(options.colors)
+  const allColors = Object.keys(tokens)
 
-  const colors: Record<string, Record<string, string>> = {}
-  for (let i = 0; i < allColors.length; i++) {
-    const c = allColors[i]!
-    const entry: Record<string, string> = {
-      DEFAULT: `var(--${c})`,
-      foreground: `var(--${c}-foreground)`,
-      accent: `var(--${c}-accent)`
-    }
-    for (let j = 0; j < shadeKeys.length; j++) {
-      const s = shadeKeys[j]!
-      entry[s] = `var(--color-${c}-${s})`
-    }
-    colors[c] = entry
+  let tokenCss = ""
+  let aliasCss = ""
+  for (const [name, map] of Object.entries(tokens)) {
+    for (const [k, v] of Object.entries(map)) tokenCss += `  --colors-${name}-${k}: ${v};\n`
+    aliasCss += `  --${name}: var(--colors-${name}-DEFAULT);\n  --${name}-foreground: var(--colors-${name}-foreground);\n  --${name}-accent: var(--colors-${name}-accent);\n`
   }
 
-  const preflightCss = `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${cssVars(options.colors)}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--color-neutral-50)); color: var(--color-neutral-950); }`
+  const preflightCss = `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${tokenCss}${aliasCss}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--colors-neutral-50)); color: var(--colors-neutral-950); }`
 
   return {
     name: "rimelight-ui",
@@ -110,7 +109,7 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
           spacing: {
             md: "1rem"
           },
-          colors
+          colors: tokens
         }
       }
     ].filter(Boolean) as Preset[],
@@ -131,11 +130,11 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
       [
         /^rl-color-([\w-]+)$/,
         ([, c]) => ({
-          "--rl-bg": `var(--color-${c}-500)`,
-          "--rl-ring": `var(--color-${c}-500)`,
-          "--rl-border": `var(--color-${c}-500)`,
-          "--rl-bg-hover": `var(--color-${c}-600)`,
-          "--rl-text": `var(--color-${c}-600)`
+          "--rl-bg": `var(--colors-${c}-500)`,
+          "--rl-ring": `var(--colors-${c}-500)`,
+          "--rl-border": `var(--colors-${c}-500)`,
+          "--rl-bg-hover": `var(--colors-${c}-600)`,
+          "--rl-text": `var(--colors-${c}-600)`
         })
       ]
     ],

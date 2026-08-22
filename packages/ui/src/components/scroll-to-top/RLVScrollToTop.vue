@@ -30,10 +30,10 @@ function updateCssVars() {
   if (!styleEl) return
   styleEl.textContent = `
     [data-rla-instance="${instanceId}"] {
-      --gauge-track-border-color: var(--color-${color}-900);
-      --gauge-track-bg: var(--color-${color}-950);
+      --gauge-track-border-color: var(--colors-${color}-900);
+      --gauge-track-bg: var(--colors-${color}-950);
       --gauge-stroke-width: ${gaugeBorderWidth}px;
-      --gauge-color: var(--color-${color}-500);
+      --gauge-color: var(--colors-${color}-500);
       --gauge-progress: ${scrollPercentage.value};
     }
   `
@@ -116,8 +116,8 @@ onUnmounted(() => {
   border-radius: 50%;
   border-style: solid;
   border-width: var(--gauge-stroke-width, 3px);
-  border-color: var(--gauge-track-border-color, var(--color-primary-900));
-  background-color: var(--gauge-track-bg, var(--color-primary-950));
+  border-color: var(--gauge-track-border-color, var(--colors-primary-900));
+  background-color: var(--gauge-track-bg, var(--colors-primary-950));
 }
 
 .gauge-progress {
@@ -126,8 +126,8 @@ onUnmounted(() => {
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    var(--gauge-color, var(--color-primary-500)) 0deg,
-    var(--gauge-color, var(--color-primary-500)) calc(var(--gauge-progress, 0) * 3.6deg),
+    var(--gauge-color, var(--colors-primary-500)) 0deg,
+    var(--gauge-color, var(--colors-primary-500)) calc(var(--gauge-progress, 0) * 3.6deg),
     transparent calc(var(--gauge-progress, 0) * 3.6deg)
   );
   -webkit-mask: radial-gradient(
