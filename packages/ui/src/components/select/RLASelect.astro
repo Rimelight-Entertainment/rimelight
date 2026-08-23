@@ -184,7 +184,7 @@ const isSearchable = searchInput !== false
           >
             {item.icon && <RLAIcon name={item.icon} class={classes.itemLeadingIcon} />}
             {item.avatar && <RLAAvatar {...(typeof item.avatar === "string" ? { src: item.avatar } : item.avatar)} class={classes.itemLeadingAvatar} />}
-            {item.chip && <span class={classes.itemLeadingChip} style={`background-color: ${item.chip.color || 'var(--colors-primary)'}`} />}
+            {item.chip && <span class={classes.itemLeadingChip} style={`background-color: ${item.chip.color || 'var(--rl-primary)'}`} />}
 
             <div class={classes.itemWrapper}>
               <span class={classes.itemLabel}>{item[labelKey]}</span>

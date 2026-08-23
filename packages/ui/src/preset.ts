@@ -74,14 +74,21 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
   const tokens = buildTokens(options.colors)
   const allColors = Object.keys(tokens)
 
+  const themeColors: TokenMap = {}
+  for (const [name, map] of Object.entries(tokens)) {
+    const entry: Record<string, string> = {}
+    for (const k of Object.keys(map)) entry[k] = `var(--rl-${name}-${k})`
+    themeColors[name] = entry
+  }
+
   let tokenCss = "  --rl-foreground: " + FOREGROUND + ";\n"
   let aliasCss = ""
   for (const [name, map] of Object.entries(tokens)) {
-    for (const [k, v] of Object.entries(map)) tokenCss += `  --colors-${name}-${k}: ${v};\n`
-    aliasCss += `  --${name}: var(--colors-${name}-DEFAULT);\n  --${name}-foreground: var(--colors-${name}-foreground);\n  --${name}-accent: var(--colors-${name}-600);\n`
+    for (const [k, v] of Object.entries(map)) tokenCss += `  --rl-${name}-${k}: ${v};\n`
+    aliasCss += `  --${name}: var(--rl-${name}-DEFAULT);\n  --${name}-foreground: var(--rl-${name}-foreground);\n  --${name}-accent: var(--rl-${name}-600);\n`
   }
 
-  const preflightCss = `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${tokenCss}${aliasCss}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--colors-neutral-50)); color: var(--colors-neutral-950); }`
+  const preflightCss = `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${tokenCss}${aliasCss}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--rl-neutral-50)); color: var(--rl-neutral-950); }`
 
   return {
     name: "rimelight-ui",
@@ -110,7 +117,7 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
           spacing: {
             md: "1rem"
           },
-          colors: tokens
+          colors: themeColors
         }
       }
     ].filter(Boolean) as Preset[],
@@ -131,11 +138,11 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
       [
         /^rl-color-([\w-]+)$/,
         ([, c]) => ({
-          "--rl-bg": `var(--colors-${c}-500)`,
-          "--rl-ring": `var(--colors-${c}-500)`,
-          "--rl-border": `var(--colors-${c}-500)`,
-          "--rl-bg-hover": `var(--colors-${c}-600)`,
-          "--rl-text": `var(--colors-${c}-600)`
+          "--rl-bg": `var(--rl-${c}-500)`,
+          "--rl-ring": `var(--rl-${c}-500)`,
+          "--rl-border": `var(--rl-${c}-500)`,
+          "--rl-bg-hover": `var(--rl-${c}-600)`,
+          "--rl-text": `var(--rl-${c}-600)`
         })
       ]
     ],
