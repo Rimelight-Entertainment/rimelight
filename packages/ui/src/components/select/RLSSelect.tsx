@@ -1,6 +1,6 @@
 import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
 import type { SelectItem } from "./select"
-import { selectTheme, selectPickerCss } from "./select.theme"
+import { selectTheme } from "./select.theme"
 
 export interface RLSSelectProps {
   id?: string
@@ -119,7 +119,39 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
         </svg>
       </span>
 
-      <style>{selectPickerCss}</style>
+      <style>{`
+        select.rl-select,
+        select.rl-select::picker(select) { appearance: base-select; }
+        select.rl-select::picker-icon { display: none; }
+        select.rl-select::picker(select) {
+          border: 1px solid var(--rl-neutral-200);
+          border-radius: var(--radius-md, 0.375rem);
+          background-color: var(--rl-neutral-100);
+          color: var(--rl-neutral-950);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.15);
+          padding: 0.25rem;
+          margin-top: 0.25rem;
+        }
+        select.rl-select option {
+          padding: 0.375rem 0.625rem;
+          border-radius: calc(var(--radius-md, 0.375rem) - 0.125rem);
+          background-color: var(--rl-neutral-100);
+          color: var(--rl-neutral-950);
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: background-color 0.15s ease, color 0.15s ease;
+        }
+        select.rl-select option:hover,
+        select.rl-select option:focus {
+          background-color: var(--rl-neutral-200);
+          color: var(--rl-neutral-950);
+        }
+        select.rl-select option:checked {
+          background-color: var(--rl-primary-500);
+          color: var(--rl-neutral-50);
+          font-weight: 500;
+        }
+      `}</style>
     </div>
   )
 }

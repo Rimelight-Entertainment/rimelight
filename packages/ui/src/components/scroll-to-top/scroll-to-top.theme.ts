@@ -21,13 +21,13 @@ export const scrollToTopTheme = defineTheme("scroll-to-top", {
     {
       color: "primary",
       classNames: {
-        icon: "text-primary-foreground"
+        icon: "text-neutral-50"
       }
     },
     {
       color: "secondary",
       classNames: {
-        icon: "text-secondary-foreground"
+        icon: "text-neutral-50"
       }
     }
   ],

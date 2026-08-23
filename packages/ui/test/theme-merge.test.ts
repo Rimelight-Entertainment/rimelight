@@ -37,8 +37,7 @@ describe("rimelight token architecture", () => {
       expect(css).toContain(`--rl-primary-${k}:`)
       expect(css).toContain(`--rl-commentary-${k}:`)
     }
-    expect(css).toContain("--rl-foreground: light-dark(")
-    expect(css).not.toContain("--rl-primary-foreground:")
+    expect(css).not.toContain("--rl-foreground")
   })
 
   it("spacing.md is available and does not clobber other keys", async () => {
@@ -52,7 +51,6 @@ describe("rimelight token architecture", () => {
   it("only the consumed compat aliases are emitted", async () => {
     const { css } = await uno.generate("text-highlighted", { preflights: true })
     expect(css).toContain("--primary: var(--rl-primary-DEFAULT)")
-    expect(css).toContain("--primary-foreground: var(--rl-foreground)")
     expect(css).not.toContain("--secondary:")
     expect(css).not.toContain("--success:")
   })

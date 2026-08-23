@@ -14,7 +14,7 @@ export const paginationTheme = defineTheme("pagination", {
   },
   variants: {
     active: {
-      true: { link: "border-primary bg-primary text-primary-foreground hover:bg-primary/95" },
+      true: { link: "border-primary bg-primary text-neutral-50 hover:bg-primary/95" },
       false: { link: "" }
     }
   },
