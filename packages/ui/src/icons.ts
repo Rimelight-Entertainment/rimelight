@@ -1,12 +1,9 @@
 import uiConfig from "virtual:rimelight/ui"
-import { ICONS, svg } from "./icons.raw"
+import { getIconSvg, ICONS, svg } from "./icons.raw"
 
 export { ICONS, svg }
 
-export const getSvgIcon = (k: string): string => {
-  const path = (ICONS as Record<string, string>)[k]
-  return path ? svg(path) : ""
-}
+export const getSvgIcon = (k: string): string => getIconSvg(k) ?? ""
 
 export const DEFAULT_ICONS: Record<keyof typeof ICONS, string> = Object.fromEntries(
   Object.keys(ICONS).map((k) => [k, getSvgIcon(k)])
@@ -22,10 +19,10 @@ export const resolveIcon = (name = "", custom?: string) => {
   const raw = custom || uiConfig?.icons?.[name] || name
   let res = cache.get(raw)
   if (!res) {
-    const path = (ICONS as Record<string, string>)[raw]
+    const content = getIconSvg(raw)
     res =
-      typeof path === "string"
-        ? { isClass: false, content: svg(path) }
+      content !== undefined
+        ? { isClass: false, content }
         : raw.startsWith("i-") || raw.includes(":")
           ? { isClass: true, content: raw }
           : {

@@ -8,7 +8,7 @@ describe("rimelight token architecture", () => {
   it("theme carries pointers into the canonical --rl-* namespace", () => {
     const theme = (uno as any).config.theme
     expect(theme.colors.neutral["950"]).toBe("var(--rl-neutral-950)")
-    expect(theme.colors.primary.DEFAULT).toBe("var(--rl-primary-DEFAULT)")
+    expect(theme.colors.primary.DEFAULT).toBe("var(--rl-primary-500)")
   })
 
   it("preflight defines every palette/shade literal exactly once", async () => {
@@ -33,10 +33,11 @@ describe("rimelight token architecture", () => {
 
   it("runtime consumers can rely on any --rl-* key without utilities", async () => {
     const { css } = await uno.generate("text-highlighted", { preflights: true })
-    for (const k of ["50", "100", "700", "800", "900", "600", "DEFAULT"]) {
+    for (const k of ["50", "100", "700", "800", "900", "600"]) {
       expect(css).toContain(`--rl-primary-${k}:`)
       expect(css).toContain(`--rl-commentary-${k}:`)
     }
+    expect(css).not.toContain("-DEFAULT:")
     expect(css).not.toContain("--rl-foreground")
   })
 

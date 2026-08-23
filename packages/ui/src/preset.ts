@@ -1,7 +1,7 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
 import type { PresetOptions, UIConfig } from "./types"
 
-import { ICONS, svg } from "./icons.raw"
+import { getIconSvg } from "./icons.raw"
 
 export const PALETTES = {
   neutral: [0, 0],
@@ -59,10 +59,7 @@ function buildTokens(custom: Record<string, any> = {}): TokenMap {
         ? `light-dark(oklch(${l1} ${(c1 * c).toFixed(3)} ${h}), oklch(${l2} ${(c2 * c).toFixed(3)} ${h}))`
         : `light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback})`
     }
-    tokens[name] = {
-      ...shades,
-      DEFAULT: shades["500"]!
-    }
+    tokens[name] = shades
   }
   return tokens
 }
@@ -72,23 +69,22 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
   const allColors = Object.keys(tokens)
 
   const themeColors: TokenMap = {}
-  const rootVars: string[] = [
-    "color-scheme: light dark;",
-    "--rl-header-height: 4rem;",
-    "--rl-container: 90rem;"
-  ]
+  const tokenVarLines: string[] = []
   for (const [name, map] of Object.entries(tokens)) {
     const entry: Record<string, string> = {}
     for (const [k, v] of Object.entries(map)) {
       entry[k] = `var(--rl-${name}-${k})`
-      rootVars.push(`--rl-${name}-${k}: ${v};`)
+      tokenVarLines.push(`--rl-${name}-${k}: ${v};`)
     }
-    themeColors[name] = entry
+    themeColors[name] = { DEFAULT: `var(--rl-${name}-500)`, ...entry }
   }
 
   const preflightCss = [
     ":root {",
-    ...rootVars.map((l) => `  ${l}`),
+    "  color-scheme: light dark;",
+    "  --rl-header-height: 4rem;",
+    "  --rl-container: 90rem;",
+    ...tokenVarLines.map((l) => `  ${l}`),
     "}",
     '.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }',
     '.light, [data-theme="light"], .rl-light { color-scheme: light; }',
@@ -110,10 +106,7 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
       options.presets?.icons !== false &&
         presetIcons({
           collections: {
-            rl: (name: string) => {
-              const path = (ICONS as Record<string, string>)[name]
-              return path ? svg(path) : undefined
-            }
+            rl: getIconSvg
           }
         }),
       {
@@ -129,8 +122,7 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
     shortcuts: [
       [
         /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
-        ([, p, n, o]) => {
-          if (!n || !p) return
+        ([, p = "", n = "", o]) => {
           const prop = p === "divide" ? "border" : p === "outline" ? "ring" : p
           const s = INTENTS[n]?.[prop]
           if (!s) return

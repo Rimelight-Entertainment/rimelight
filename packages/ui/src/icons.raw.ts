@@ -1,6 +1,11 @@
 export const svg = (inner: string) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="100%" height="100%">${inner}</svg>`
 
+export const getIconSvg = (name: string): string | undefined => {
+  if (!Object.prototype.hasOwnProperty.call(ICONS, name)) return undefined
+  return svg(ICONS[name as keyof typeof ICONS])
+}
+
 export const ICONS = {
   alertTriangle: `<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>`,
   alignLeft: `<line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/>`,
