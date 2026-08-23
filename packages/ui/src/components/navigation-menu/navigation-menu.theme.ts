@@ -13,7 +13,7 @@ export const navigationMenuTheme = defineTheme("navigation-menu", {
       "absolute left-0 top-full z-50 mt-1.5 w-56 rounded-md border bg-elevated p-1 text-highlighted shadow-md origin-top-left",
     viewportWrapper: "absolute left-0 top-full flex justify-center w-full",
     viewport:
-      "relative mt-1.5 h-auto w-full origin-top overflow-hidden rounded-md border bg-elevated text-highlighted shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90"
+      "relative mt-1.5 h-auto w-full origin-top overflow-hidden rounded-md bg-default text-highlighted shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90"
   },
   variants: {
     theme: {

@@ -687,7 +687,7 @@ const userDropdownItems = session ? [
         }}
       >
         <!-- Grand Tale Mega Menu -->
-        <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+        <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <Image
                 src={placeholderGrandTale}
@@ -710,14 +710,14 @@ const userDropdownItems = session ? [
             </div>
           </div>
 
-          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+          <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
             <RLALinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
             <RLALinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
 
         <!-- Community Mega Menu -->
-        <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+        <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <Image
                 src={placeholderCommunity}
@@ -736,13 +736,13 @@ const userDropdownItems = session ? [
             </div>
           </div>
 
-          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+          <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
             <RLALinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
 
         <!-- Company Mega Menu -->
-        <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+        <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <Image
                 src={placeholderCompany}
@@ -762,14 +762,14 @@ const userDropdownItems = session ? [
             </div>
           </div>
 
-          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+          <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
             <RLALinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
             <RLALinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
 
         <!-- Store Mega Menu -->
-        <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+        <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
               <Image
                 src={placeholderStore}
@@ -798,7 +798,7 @@ const userDropdownItems = session ? [
             </div>
           </div>
 
-          <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-64 shrink-0">
+          <div class="flex flex-col gap-sm p-lg bg-muted w-64 shrink-0">
             <RLALinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
           </div>
         </div>
@@ -823,11 +823,11 @@ const userDropdownItems = session ? [
           orientation="vertical"
           variant="link"
           ui={{
-            link: "text-black dark:text-white flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
+            link: "text-highlighted flex justify-start items-center w-full text-left py-2 text-lg transition-colors duration-200 hover:text-primary-400 data-[state=open]:text-primary-400 aria-[current]:text-primary-400"
           }}
         >
           <!-- Grand Tale Mobile Mega Menu -->
-          <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
                 <Image
                   src={placeholderGrandTale}
@@ -850,14 +850,14 @@ const userDropdownItems = session ? [
               </div>
             </div>
 
-            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+            <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
               <RLALinkGroup {...grandTaleResourcesGroup} ui={{ title: "!text-primary-500" }} />
               <RLALinkGroup {...grandTaleSocialsGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
           <!-- Community Mobile Mega Menu -->
-          <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
                 <Image
                   src={placeholderCommunity}
@@ -876,13 +876,13 @@ const userDropdownItems = session ? [
               </div>
             </div>
 
-            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+            <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
               <RLALinkGroup {...commSocialsGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
           <!-- Company Mobile Mega Menu -->
-          <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
                 <Image
                   src={placeholderCompany}
@@ -902,14 +902,14 @@ const userDropdownItems = session ? [
               </div>
             </div>
 
-            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+            <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
               <RLALinkGroup {...compResourcesGroup} ui={{ title: "!text-primary-500" }} />
               <RLALinkGroup {...compSocialsGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
 
           <!-- Store Mobile Mega Menu -->
-          <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-white dark:bg-neutral-900 w-full text-black dark:text-white">
+          <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
                 <Image
                   src={placeholderStore}
@@ -938,7 +938,7 @@ const userDropdownItems = session ? [
               </div>
             </div>
 
-            <div class="flex flex-col gap-sm p-lg bg-neutral-100 dark:bg-neutral-800 w-full lg:w-64 shrink-0">
+            <div class="flex flex-col gap-sm p-lg bg-muted w-full lg:w-64 shrink-0">
               <RLALinkGroup {...storeAssistanceGroup} ui={{ title: "!text-primary-500" }} />
             </div>
           </div>
@@ -1081,3 +1081,5 @@ const userDropdownItems = session ? [
     padding: 12px 4px !important;
   }
 </style>
+
+
