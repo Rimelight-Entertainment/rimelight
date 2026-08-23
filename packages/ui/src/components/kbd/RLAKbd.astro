@@ -5,6 +5,7 @@ import { kbdTheme } from "./kbd.theme"
 
 
 const {
+  theme,
   ...rest
 } = Astro.props as KbdProps
 
@@ -12,6 +13,6 @@ const {
 
 const classes = kbdTheme(Astro.props)
 ---
-<kbd class={classes.root} data-slot="root" {...rest}>
+<kbd class={classes.root} data-slot="root" data-theme={theme} {...rest}>
   <slot />
 </kbd>

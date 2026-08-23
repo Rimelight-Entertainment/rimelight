@@ -10,12 +10,13 @@ const {
   name,
   label,
   size = "md",
+  theme,
   ...rest
 } = Astro.props as CheckboxProps
 
 const classes = checkboxTheme(Astro.props);
 ---
-<label class={classes.root} data-slot="root">
+<label class={classes.root} data-slot="root" data-theme={theme}>
   <input
     type="checkbox"
     class={classes.input}

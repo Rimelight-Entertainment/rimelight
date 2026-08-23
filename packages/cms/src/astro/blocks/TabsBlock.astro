@@ -12,8 +12,8 @@ const defaultValue = block.props?.defaultValue || (children[0]?.props?.value || 
 const tabsId = `tabs-${block.id}`
 ---
 
-<div class="cms-tabs my-6 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden" data-block-id={block.id} id={tabsId}>
-  <div class="flex items-center gap-1 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 pt-2">
+<div class="cms-tabs my-6 border border-neutral-200 rounded-xl overflow-hidden" data-block-id={block.id} id={tabsId}>
+  <div class="flex items-center gap-1 border-b border-neutral-200 bg-neutral-50 px-3 pt-2">
     {children.map((child, index) => {
       const val = child.props?.value || child.props?.label || `tab-${index}`
       const isDefault = val === defaultValue || (!defaultValue && index === 0)
@@ -22,8 +22,8 @@ const tabsId = `tabs-${block.id}`
           type="button"
           class={`cms-tab-btn px-3 py-1.5 text-xs font-medium rounded-t-md transition-all border-b-2 -mb-px ${
             isDefault
-              ? "text-primary-600 dark:text-primary-400 border-primary-500 bg-white dark:bg-neutral-950 font-semibold"
-              : "text-neutral-600 dark:text-neutral-400 border-transparent hover:text-neutral-900 dark:hover:text-neutral-200"
+                ? "text-primary-600 border-primary-500 bg-white font-semibold"
+                : "text-neutral-600 border-transparent hover:text-neutral-900"
           }`}
           data-tab-target={`${tabsId}-panel-${index}`}
         >
@@ -33,7 +33,7 @@ const tabsId = `tabs-${block.id}`
       )
     })}
   </div>
-  <div class="cms-tabs-content p-4 bg-white dark:bg-neutral-950">
+  <div class="cms-tabs-content p-4 bg-white">
     <slot />
   </div>
 </div>
@@ -48,11 +48,11 @@ const tabsId = `tabs-${block.id}`
     btns.forEach((btn, idx) => {
       btn.addEventListener('click', () => {
         btns.forEach((b) => {
-          b.classList.remove('text-primary-600', 'dark:text-primary-400', 'border-primary-500', 'bg-white', 'dark:bg-neutral-950', 'font-semibold');
-          b.classList.add('text-neutral-600', 'dark:text-neutral-400', 'border-transparent');
+          b.classList.remove('text-primary-600', 'border-primary-500', 'bg-white', 'font-semibold');
+          b.classList.add('text-neutral-600', 'border-transparent');
         });
-        btn.classList.add('text-primary-600', 'dark:text-primary-400', 'border-primary-500', 'bg-white', 'dark:bg-neutral-950', 'font-semibold');
-        btn.classList.remove('text-neutral-600', 'dark:text-neutral-400', 'border-transparent');
+        btn.classList.add('text-primary-600', 'border-primary-500', 'bg-white', 'font-semibold');
+        btn.classList.remove('text-neutral-600', 'border-transparent');
 
         panels.forEach((p, pIdx) => {
           if (pIdx === idx) {

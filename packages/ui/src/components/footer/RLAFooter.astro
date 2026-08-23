@@ -6,6 +6,7 @@ import { footerTheme } from "./footer.theme"
 
 const {
   contain = false,
+  theme,
   ...rest
 } = Astro.props as FooterProps
 
@@ -16,6 +17,7 @@ const classes = footerTheme(Astro.props)
   class:list={[classes.root]}
   data-slot="root"
   data-contain={contain ? "true" : "false"}
+  data-theme={theme}
   {...rest}
 >
   <div class:list={[classes.container]} data-slot="container">

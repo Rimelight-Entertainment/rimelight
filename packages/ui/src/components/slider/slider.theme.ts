@@ -10,11 +10,7 @@ export const sliderTheme = defineTheme("slider", {
       "block size-4.5 rounded-full border border-default bg-default shadow transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50 hover:border-[var(--rl-border)] disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
   },
   variants: {
-    color: "auto",
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
-    }
+    color: "auto"
   },
   defaultVariants: {
     color: "primary"

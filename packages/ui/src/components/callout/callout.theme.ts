@@ -22,11 +22,7 @@ export const calloutTheme = defineTheme("callout", {
         root: "bg-[var(--rl-bg)]/10 text-[var(--rl-text)] ring ring-inset ring-[var(--rl-border)]/25"
       }
     },
-    color: "auto",
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
-    }
+    color: "auto"
   },
   compoundVariants: [
     {

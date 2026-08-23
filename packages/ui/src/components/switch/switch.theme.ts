@@ -24,10 +24,6 @@ export const switchTheme = defineTheme("switch", {
     checked: {
       true: { thumb: "translate-x-full" },
       false: { thumb: "translate-x-0" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   compoundVariants: [

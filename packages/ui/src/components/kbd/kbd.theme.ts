@@ -19,10 +19,6 @@ export const kbdTheme = defineTheme("kbd", {
       sm: { root: "h-4 min-w-[16px] text-[10px]" },
       md: { root: "h-5 min-w-[20px] text-[11px]" },
       lg: { root: "h-6 min-w-[24px] text-[12px]" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   compoundVariants: [

@@ -13,11 +13,7 @@ export const spinnerTheme = defineTheme("spinner", {
       lg: { root: "size-8" },
       xl: { root: "size-10" }
     },
-    color: "auto",
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
-    }
+    color: "auto"
   },
   compoundVariants: [
     {

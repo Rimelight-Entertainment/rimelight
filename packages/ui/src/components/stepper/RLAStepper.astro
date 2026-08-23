@@ -75,7 +75,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
                           size="sm"
                           class:list={[
                             classes.icon,
-                            (isActive || isCompleted) ? "!text-white" : "text-neutral-400 dark:text-neutral-500"
+                            (isActive || isCompleted) ? "!text-white" : "text-neutral-400"
                           ]}
                           data-slot="icon"
                         />
@@ -110,7 +110,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
                 class:list={[
                   classes.separator,
                   "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors",
-                  index < currentIndex ? "bg-primary-600 dark:bg-primary-500" : "bg-neutral-200 dark:bg-neutral-800"
+                  index < currentIndex ? "bg-primary-600" : "bg-neutral-200"
                 ]}
                 data-slot="separator"
                 data-separator-index={index}
@@ -251,10 +251,10 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
           if (icon) {
             if (isActive || isCompleted) {
               icon.classList.add('!text-white')
-              icon.classList.remove('text-neutral-400', 'dark:text-neutral-500')
+              icon.classList.remove('text-neutral-400')
             } else {
               icon.classList.remove('!text-white')
-              icon.classList.add('text-neutral-400', 'dark:text-neutral-500')
+              icon.classList.add('text-neutral-400')
             }
           }
 
@@ -263,11 +263,11 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
             const sep = sepNode as HTMLElement
             const sepIdx = Number(sep.dataset.separatorIndex)
             if (sepIdx < this.currentIndex) {
-              sep.classList.add('!bg-primary-600', 'dark:!bg-primary-500')
-              sep.classList.remove('bg-neutral-200', 'dark:bg-neutral-800')
+              sep.classList.add('!bg-primary-600')
+              sep.classList.remove('bg-neutral-200')
             } else {
-              sep.classList.remove('!bg-primary-600', 'dark:!bg-primary-500')
-              sep.classList.add('bg-neutral-200', 'dark:bg-neutral-800')
+              sep.classList.remove('!bg-primary-600')
+              sep.classList.add('bg-neutral-200')
             }
           })
         })

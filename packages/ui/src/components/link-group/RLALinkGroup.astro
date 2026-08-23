@@ -23,7 +23,7 @@ const classes = linkGroupTheme(Astro.props);
 
 const normalizedLinks = Array.isArray(links) ? links : [links];
 ---
-<div class={classes.root} data-slot="root" {...rest}>
+<div class={classes.root} data-slot="root" data-theme={theme} {...rest}>
   {headingLabel && (
     <h4 class={classes.title} data-slot="title">
       {headingHref ? (

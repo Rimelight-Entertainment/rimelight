@@ -30,10 +30,6 @@ export const chipTheme = defineTheme("chip", {
     },
     standalone: {
       false: { base: "absolute" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   compoundVariants: [

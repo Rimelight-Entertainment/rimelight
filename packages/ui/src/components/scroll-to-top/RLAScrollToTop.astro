@@ -10,6 +10,7 @@ const {
   duration = 0.1,
   threshold = 200,
   showProgress = false,
+  theme,
   ...rest
 } = Astro.props as ScrollToTopProps
 
@@ -17,7 +18,7 @@ const classes = scrollToTopTheme(Astro.props)
 
 ---
 
-<rla-scroll-to-top data-threshold={threshold} data-duration={duration} data-color={color} data-progress-width={progressWidth} {...rest}>
+<rla-scroll-to-top data-threshold={threshold} data-duration={duration} data-color={color} data-progress-width={progressWidth} data-theme={theme} {...rest}>
   <div
     class:list={["rla-scroll-to-top-inner", "fixed bottom-6 right-6 z-50", classes.root]}
   >

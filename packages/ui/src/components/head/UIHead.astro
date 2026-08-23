@@ -22,8 +22,7 @@ const {
 
     function applyTheme(doc: any) {
       var pref = getThemePreference();
-      doc.documentElement.classList.toggle('dark',  pref === 'dark');
-      doc.documentElement.classList.toggle('light', pref === 'light');
+      doc.documentElement.setAttribute('data-theme', pref);
     }
 
     applyTheme(document);

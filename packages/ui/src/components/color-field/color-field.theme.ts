@@ -8,11 +8,7 @@ export const colorFieldTheme = defineTheme("color-field", {
       "w-full bg-transparent border-0 p-0 text-sm focus:outline-none focus:ring-0 text-highlighted placeholder-muted-foreground"
   },
   variants: {
-    color: "auto",
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
-    }
+    color: "auto"
   },
   defaultVariants: {
     color: "primary"

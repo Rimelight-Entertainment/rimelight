@@ -23,6 +23,7 @@ const {
   active = false,
   activeColor,
   activeVariant,
+  theme,
   class: className,
   ...rest
 } = Astro.props as ButtonProps
@@ -59,6 +60,7 @@ const loadingAutoProps = loadingAuto ? { 'data-loading-auto': '' } : {};
 <Tag
   class={`${classes.root}${className ? ` ${className}` : ""}`}
   data-slot="root"
+  data-theme={theme}
   {...(Tag === RLALink ? { href, to, noExternalIcon: true, raw: true } : {})}
   {...loadingAutoProps}
   {...rest}

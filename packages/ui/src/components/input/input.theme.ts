@@ -29,10 +29,6 @@ export const inputTheme = defineTheme("input", {
     },
     error: {
       true: { root: "border-error-500 focus-within:ring-error-500/50" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   defaultVariants: {

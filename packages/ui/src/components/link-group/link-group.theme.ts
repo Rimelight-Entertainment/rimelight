@@ -9,15 +9,6 @@ export const linkGroupTheme = defineTheme("link-group", {
     item: "",
     link: "text-sm text-muted hover:text-highlighted transition-colors"
   },
-  variants: {
-    theme: {
-      dark: {
-        root: "rl-dark"
-      },
-      light: {
-        root: "rl-light"
-      }
-    }
-  },
+  variants: {},
   defaultVariants: {}
 })

@@ -6,6 +6,7 @@ import { badgeTheme } from "./badge.theme"
 const {
   variant,
   label,
+  theme,
   ...rest
 } = Astro.props as BadgeProps
 
@@ -18,6 +19,6 @@ const classes = badgeTheme({
   variant: resolvedVariant as "solid"
 })
 ---
-<span class={classes.root} data-slot="root" {...rest}>
+<span class={classes.root} data-slot="root" data-theme={theme} {...rest}>
   <slot>{label}</slot>
 </span>

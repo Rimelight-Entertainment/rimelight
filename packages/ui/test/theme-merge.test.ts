@@ -63,3 +63,45 @@ describe("rimelight token architecture", () => {
     }
   })
 })
+
+describe("custom palettes", () => {
+  const KEYS = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"]
+  const ramp = (v: string) => Object.fromEntries(KEYS.map((k) => [k, v]))
+
+  it("accepts mechanical [chroma, hue] arrays", async () => {
+    const uno = await createGenerator({
+      presets: [rimelightUiPreset({ colors: { brand: [0.2, 30] } })]
+    })
+    const { css } = await uno.generate("text-brand-500", { preflights: true })
+    expect(css).toContain("--rl-brand-500:")
+    expect(css).toMatch(/--rl-brand-500: light-dark\(oklch/)
+  })
+
+  it("accepts complete flat and explicit ramps", async () => {
+    const uno = await createGenerator({
+      presets: [
+        rimelightUiPreset({
+          colors: {
+            flat: ramp("#123456"),
+            split: { light: ramp("#e6f0ff"), dark: ramp("#0a1a33") }
+          }
+        })
+      ]
+    })
+    const { css } = await uno.generate("text-flat-500 text-split-950", { preflights: true })
+    expect(css).toContain("--rl-flat-500: light-dark(#123456, #123456);")
+    expect(css).toContain("--rl-split-950: light-dark(#e6f0ff, #0a1a33);")
+  })
+
+  it("rejects incomplete ramps instead of silently aliasing", () => {
+    expect(() => rimelightUiPreset({ colors: { bad: { 500: "#3490dc" } } })).toThrow(
+      /palette "bad": missing shade/
+    )
+    expect(() => rimelightUiPreset({ colors: { worse: { light: ramp("#111111") } } })).toThrow(
+      /\[rimelight\/ui\] palette "worse\.dark"/
+    )
+    expect(() => rimelightUiPreset({ colors: { empty: null } })).toThrow(
+      /palette "empty": expected/
+    )
+  })
+})

@@ -16,10 +16,6 @@ export const linkTheme = defineTheme("link", {
     disabled: {
       true: { root: "cursor-not-allowed opacity-75" },
       false: {}
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   compoundVariants: [

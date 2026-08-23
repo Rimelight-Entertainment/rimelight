@@ -27,26 +27,28 @@ const classes = themeSelectorTheme(Astro.props);
     </RLAButton>
 </rla-theme-selector>
 
+<style is:global>
+    .rla-theme-sun { display: none; }
+    [data-theme="dark"] .rla-theme-sun { display: block; }
+    .rla-theme-moon { display: block; }
+    [data-theme="dark"] .rla-theme-moon { display: none; }
+</style>
+
 <script>
     import { defineShortcuts } from "../../shortcuts"
 
     function applyStoredTheme() {
         const stored = localStorage.getItem('theme');
-        if (stored === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-        } else if (stored === 'light') {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
+        if (stored === 'dark' || stored === 'light') {
+            document.documentElement.setAttribute('data-theme', stored);
         }
     }
 
     applyStoredTheme();
 
     function onToggle() {
-        const willBeDark = !document.documentElement.classList.contains('dark');
-        document.documentElement.classList.toggle('dark',  willBeDark);
-        document.documentElement.classList.toggle('light', !willBeDark);
+        const willBeDark = document.documentElement.getAttribute('data-theme') !== 'dark';
+        document.documentElement.setAttribute('data-theme', willBeDark ? 'dark' : 'light');
         localStorage.setItem('theme', willBeDark ? 'dark' : 'light');
 
         document.querySelectorAll('.theme-toggle-button').forEach(btn => {
@@ -63,7 +65,7 @@ const classes = themeSelectorTheme(Astro.props);
             const button = this.querySelector('.theme-toggle-button');
             if (!button) return;
 
-            const isDark = document.documentElement.classList.contains('dark');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             button.setAttribute('data-state', isDark ? 'on' : 'off');
             button.setAttribute('aria-pressed', isDark.toString());
 

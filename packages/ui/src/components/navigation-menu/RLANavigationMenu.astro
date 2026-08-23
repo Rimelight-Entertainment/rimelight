@@ -7,6 +7,7 @@ const {
   items = [],
   color = "primary",
   orientation = "horizontal",
+  theme,
   ...rest
 } = Astro.props as NavigationMenuProps
 
@@ -22,7 +23,7 @@ await Promise.all(
 )
 ---
 
-<rla-navigation-menu orientation={orientation} {...rest}>
+<rla-navigation-menu orientation={orientation} data-theme={theme} {...rest}>
   <nav class={classes.root} data-slot="root" data-nav-menu data-orientation={orientation}>
     <ul class={classes.list} data-slot="list" role="list">
       {items.map((item, i) => {

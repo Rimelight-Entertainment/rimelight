@@ -15,6 +15,7 @@ const {
   multiple,
   ui: _ui,
   class: classAttr,
+  theme,
   ...rest
 } = Astro.props as SelectProps
 
@@ -44,7 +45,7 @@ const normalizedItems = (items || []).map((item: SelectItem) => {
 })
 ---
 
-<div class={classes.root} data-slot="root">
+<div class={classes.root} data-slot="root" data-theme={theme}>
   <select
     class={classes.select}
     name={name}

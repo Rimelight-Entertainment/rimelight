@@ -86,8 +86,8 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
     "  --rl-container: 90rem;",
     ...tokenVarLines.map((l) => `  ${l}`),
     "}",
-    '.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }',
-    '.light, [data-theme="light"], .rl-light { color-scheme: light; }',
+    '[data-theme="dark"] { color-scheme: dark; }',
+    '[data-theme="light"] { color-scheme: light; }',
     "body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }"
   ].join("\n")
 

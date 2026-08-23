@@ -4,9 +4,10 @@ import { spinnerTheme } from "./spinner.theme"
 
 
 const {
+  theme,
   ...rest
 } = Astro.props as SpinnerProps
 
 const classes = spinnerTheme(Astro.props)
 ---
-<div class={classes.root} data-slot="root" {...rest} />
+<div class={classes.root} data-slot="root" data-theme={theme} {...rest} />

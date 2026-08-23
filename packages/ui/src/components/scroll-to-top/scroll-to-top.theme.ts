@@ -11,11 +11,7 @@ export const scrollToTopTheme = defineTheme("scroll-to-top", {
     icon: "size-6 text-white"
   },
   variants: {
-    color: "auto",
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
-    }
+    color: "auto"
   },
   compoundVariants: [
     {

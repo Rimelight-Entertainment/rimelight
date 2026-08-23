@@ -15,10 +15,6 @@ export const selectTheme = defineTheme("select", {
       md: { select: "py-1.5 pl-3 pr-8 text-sm" },
       lg: { select: "py-2 pl-3.5 pr-9 text-base" },
       xl: { select: "py-2.5 pl-4 pr-10 text-base" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   defaultVariants: {

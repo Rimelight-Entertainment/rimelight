@@ -12,10 +12,6 @@ export const progressTheme = defineTheme("progress", {
       sm: { root: "h-1.5" },
       md: { root: "h-3" },
       lg: { root: "h-5" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   defaultVariants: {

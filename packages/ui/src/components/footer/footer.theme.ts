@@ -19,14 +19,6 @@ export const footerTheme = defineTheme("footer", {
       false: {
         container: "w-full"
       }
-    },
-    theme: {
-      dark: {
-        root: "rl-dark"
-      },
-      light: {
-        root: "rl-light"
-      }
     }
   },
   defaultVariants: {

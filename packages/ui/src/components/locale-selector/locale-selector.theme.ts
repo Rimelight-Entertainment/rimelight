@@ -13,14 +13,6 @@ export const localeSelectorTheme = defineTheme("locale-selector", {
       "pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-current group-hover:text-default"
   },
   variants: {
-    theme: {
-      dark: {
-        root: "rl-dark"
-      },
-      light: {
-        root: "rl-light"
-      }
-    },
     variant: {
       default: {
         select: "bg-default text-default hover:bg-accented/50 border border-default"

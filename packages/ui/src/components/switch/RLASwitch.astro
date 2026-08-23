@@ -9,12 +9,13 @@ const {
   disabled = false,
   name,
   label,
+  theme,
   ...rest
 } = Astro.props as SwitchProps
 
 const classes = switchTheme(Astro.props);
 ---
-<label class={classes.root} data-slot="root">
+<label class={classes.root} data-slot="root" data-theme={theme}>
   <input
     type="checkbox"
     class={classes.input}

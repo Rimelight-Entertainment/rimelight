@@ -8,6 +8,7 @@ const {
   text,
   standalone = false,
   show = true,
+  theme,
   ...rest
 } = Astro.props as ChipProps
 
@@ -22,7 +23,7 @@ const classes = chipTheme(Astro.props)
     </span>
   )
 ) : (
-  <div class={classes.root} data-slot="root" {...rest}>
+  <div class={classes.root} data-slot="root" data-theme={theme} {...rest}>
     <slot />
     {show && (
       <span class={classes.base} data-slot="base">

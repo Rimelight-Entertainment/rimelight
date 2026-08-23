@@ -24,10 +24,6 @@ export const checkboxTheme = defineTheme("checkbox", {
     checked: {
       true: { indicator: "scale-100" },
       false: { indicator: "scale-0" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   defaultVariants: {

@@ -10,11 +10,7 @@ export const colorSliderTheme = defineTheme("color-slider", {
       "absolute block size-5 rounded-full border-2 border-white shadow-md cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rl-ring)]/50"
   },
   variants: {
-    color: "auto",
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
-    }
+    color: "auto"
   },
   defaultVariants: {
     color: "primary"

@@ -59,10 +59,6 @@ export const badgeTheme = defineTheme("badge", {
     },
     square: {
       true: { root: "" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   compoundVariants: [

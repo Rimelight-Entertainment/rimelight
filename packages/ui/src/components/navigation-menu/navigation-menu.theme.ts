@@ -16,10 +16,6 @@ export const navigationMenuTheme = defineTheme("navigation-menu", {
       "relative mt-1.5 h-auto w-full origin-top overflow-hidden rounded-md bg-default text-highlighted shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90"
   },
   variants: {
-    theme: {
-      light: { link: "rl-light", trigger: "rl-light" },
-      dark: { link: "rl-dark", trigger: "rl-dark" }
-    },
     orientation: {
       horizontal: {
         root: "max-w-max flex-1 items-center justify-center",

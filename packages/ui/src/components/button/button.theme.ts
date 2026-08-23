@@ -93,10 +93,6 @@ export const buttonTheme = defineTheme("button", {
     active: {
       true: { root: "" },
       false: { root: "" }
-    },
-    theme: {
-      light: { root: "rl-light" },
-      dark: { root: "rl-dark" }
     }
   },
   compoundVariants: [
