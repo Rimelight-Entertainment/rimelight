@@ -29,6 +29,8 @@ const SHADES = {
   "950": [0.145, 0.3, 0.93, 0.25]
 } as const
 
+const SHADE_ENTRIES = Object.entries(SHADES)
+
 const INTENTS: Record<string, Record<string, string>> = {
   default: { text: "700", bg: "50", border: "200", ring: "300" },
   muted: { text: "600", bg: "100", border: "200", ring: "300" },
@@ -40,36 +42,39 @@ const INTENTS: Record<string, Record<string, string>> = {
   inverted: { text: "50", bg: "950", border: "800", ring: "700" }
 }
 
+const createThemeShades = (name: string) => ({
+  DEFAULT: `var(--rl-${name}-500)`,
+  ...Object.fromEntries(SHADE_ENTRIES.map(([s]) => [s, `var(--rl-${name}-${s})`]))
+})
+
+const createOklchShadeGetter = ([c, h]: readonly [number, number]) => {
+  const oklch = (l: number, factor: number) => `oklch(${l} ${(factor * c).toFixed(3)} ${h})`
+  return (_: string, [l1, c1, l2, c2]: readonly [number, number, number, number]) => [
+    oklch(l1, c1),
+    oklch(l2, c2)
+  ]
+}
+
+const createCustomShadeGetter = (val: any) => {
+  const isSplit = "light" in val || "dark" in val
+  const light = (isSplit ? val.light : val) ?? {}
+  const dark = (isSplit ? val.dark : light) ?? light
+  const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
+  return (s: string) => [light[s] ?? fallback, dark[s] ?? fallback]
+}
+
 function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
   const themeColors: Record<string, Record<string, string>> = {}
   const tokenVarLines: string[] = []
-  const allPalettes: Record<string, ColorModeInput> = { ...PALETTES, ...custom }
 
-  for (const [name, val] of Object.entries(allPalettes)) {
-    const shades: Record<string, string> = { DEFAULT: `var(--rl-${name}-500)` }
-    let getShade: (s: string, coords: readonly [number, number, number, number]) => [string, string]
+  for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
+    themeColors[name] = createThemeShades(name)
+    const getShade = Array.isArray(val) ? createOklchShadeGetter(val) : createCustomShadeGetter(val)
 
-    if (Array.isArray(val)) {
-      const [c, h] = val
-      getShade = (_, [l1, c1, l2, c2]) => [
-        `oklch(${l1} ${(c1 * c).toFixed(3)} ${h})`,
-        `oklch(${l2} ${(c2 * c).toFixed(3)} ${h})`
-      ]
-    } else {
-      const isSplit = "light" in val || "dark" in val
-      const light = (isSplit ? (val as any).light : val) ?? {}
-      const dark = (isSplit ? (val as any).dark : light) ?? light
-      const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
-      getShade = (s) => [light[s] ?? fallback, dark[s] ?? fallback]
+    for (const [s, coords] of SHADE_ENTRIES) {
+      const [light, dark] = getShade(s, coords as any)
+      tokenVarLines.push(`--rl-${name}-${s}: light-dark(${light}, ${dark});`)
     }
-
-    for (const [s, coords] of Object.entries(SHADES)) {
-      shades[s] = `var(--rl-${name}-${s})`
-      const [lightVal, darkVal] = getShade(s, coords)
-      tokenVarLines.push(`--rl-${name}-${s}: light-dark(${lightVal}, ${darkVal});`)
-    }
-
-    themeColors[name] = shades
   }
 
   return { themeColors, tokenVarLines }
@@ -90,18 +95,11 @@ export default function rimelightUiPreset({ colors, icons, presets = {} }: UICon
     presets: [
       presets.wind !== false && presetWind4(),
       presets.typography !== false && presetTypography(),
-      presets.icons !== false &&
-        presetIcons({
-          collections: {
-            rl: getIconSvg
-          }
-        }),
+      presets.icons !== false && presetIcons({ collections: { rl: getIconSvg } }),
       {
         name: "rimelight-theme",
         theme: {
-          spacing: {
-            md: "1rem"
-          },
+          spacing: { md: "1rem" },
           colors: themeColors
         }
       }
@@ -110,11 +108,10 @@ export default function rimelightUiPreset({ colors, icons, presets = {} }: UICon
       [
         /^(text|bg|ring|border)-([a-z]+)(?:\/(\d+))?$/,
         ([, p, n, o]) => {
-          if (!p || !n) return
-          const s = INTENTS[n]?.[p]
+          const s = INTENTS[n!]?.[p!]
           if (!s) return
-          const target = `${p}-neutral-${s}${o ? `/${o}` : ""}`
-          return p === "bg" && n === "inverted" ? `${target} text-neutral-50` : target
+          const base = `${p}-neutral-${s}${o ? `/${o}` : ""}`
+          return p === "bg" && n === "inverted" ? `${base} text-neutral-50` : base
         }
       ]
     ],
