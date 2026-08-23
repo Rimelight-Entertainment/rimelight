@@ -1,0 +1,15 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import { RimelightTaxonomyManager } from "@rimelight/cms/client/components";
+
+export const prerender = false;
+---
+
+<AppLayout
+  title="Taxonomy Manager | Admin"
+  description="Manage categories and tags for Rimelight content."
+>
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <RimelightTaxonomyManager client:only="solid" initialTaxonomy="category" />
+  </div>
+</AppLayout>

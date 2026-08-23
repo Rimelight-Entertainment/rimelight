@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
 import ts from "typescript"
-import type { PropMeta, SlotMeta } from "@rimelight/cms"
+import type { PropMeta, SlotMeta } from "../types.ts"
 
 function extractPropsFromProperties(members: ts.NodeArray<ts.TypeElement>): PropMeta[] {
   const props: PropMeta[] = []

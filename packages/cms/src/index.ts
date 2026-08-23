@@ -22,7 +22,6 @@ export type {
 // Core Services & Registries
 export * from "./core/registry.ts"
 export * from "./core/validator.ts"
-export * from "./services/component-metadata.ts"
 
 // Auth & Security Guards
 export * from "./auth/permissions.ts"

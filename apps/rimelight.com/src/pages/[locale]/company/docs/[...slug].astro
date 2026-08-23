@@ -9,6 +9,7 @@ import meta from "virtual:rimelight-ui-docs-meta"
 import { generateThemeCode } from "@/docs/utils"
 import ComponentShowcase from "@/components/ComponentShowcase.astro"
 import BlockRenderer from "@rimelight/cms/astro/BlockRenderer.astro"
+import { rimelightCustomBlocks } from "@/components/blocks"
 
 // Build component registry from all UI components
 const componentModules: Record<string, any> = import.meta.glob("../../../../../../../packages/ui/src/components/*/RLA*.astro", { eager: true })
@@ -277,6 +278,6 @@ for (const block of dbBlocks) {
     }
 
     {/* All other block types go through BlockRenderer */}
-    return <BlockRenderer block={block} locale={activeLocale} />
+    return <BlockRenderer block={block} locale={activeLocale} components={rimelightCustomBlocks} />
   })}
 </DocsLayout>

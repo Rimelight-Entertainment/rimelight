@@ -8,6 +8,7 @@ export { RimelightPreview } from "./components/RimelightPreview"
 export { RimelightPropertiesPanel } from "./components/RimelightPropertiesPanel"
 export { RimelightBlockPicker } from "./components/RimelightBlockPicker"
 export { RimelightTemplateEditor } from "./components/RimelightTemplateEditor"
+export { RimelightTaxonomyManager } from "./components/RimelightTaxonomyManager"
 
 export { ParagraphEditor } from "./components/editors/ParagraphEditor"
 export { CalloutEditor } from "./components/editors/CalloutEditor"

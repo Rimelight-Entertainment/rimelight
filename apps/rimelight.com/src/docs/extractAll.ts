@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, statSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta } from "@rimelight/cms"
+import type { ComponentMeta, PropMeta, SlotMeta, EmitMeta } from "./types.ts"
 import { extractAstroMeta } from "./extractors/extractAstro"
 import { extractAllThemesMeta } from "./extractors/extractTheme"
 

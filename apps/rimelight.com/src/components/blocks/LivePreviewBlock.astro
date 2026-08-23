@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { block } = Astro.props
-const { componentCode, framework = "astro", height = "300px", width = "100%", editable = false } = block.props
+const { componentCode, framework = "astro", height = "300px", width = "100%", editable = false } = (block.props || {}) as any
 ---
 
 <div class="cms-live-preview border border-default rounded-xl overflow-visible bg-neutral-50 text-highlighted my-6" data-block-id={block.id} data-framework={framework} data-editable={editable}>

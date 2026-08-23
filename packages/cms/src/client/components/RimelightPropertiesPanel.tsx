@@ -3,7 +3,7 @@ import {
   getPageDefinition,
   type PageDefinition,
   type FieldDefinition
-} from "../../core/page-definitions"
+} from "../../core/page-definitions.ts"
 import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
 import RLSSelect from "@rimelight/ui/components/select/RLSSelect.tsx"
 import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
@@ -18,6 +18,13 @@ function getTextValue(value: any): string {
   return ""
 }
 
+export interface BylineItem {
+  name: string
+  avatar?: string
+  role?: string
+  url?: string
+}
+
 export interface RimelightPropertiesPanelProps {
   pageType?: string
   initialProperties?: Record<string, any>
@@ -25,6 +32,7 @@ export interface RimelightPropertiesPanelProps {
   slug?: string
   icon?: string
   tags?: string[]
+  bylines?: BylineItem[]
   onPropertiesChange?: (props: Record<string, any>) => void
   class?: string
 }
@@ -44,11 +52,36 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     componentProps.initialProperties?.links || []
   )
 
+  // Bylines state
+  const [bylines, setBylines] = createSignal<BylineItem[]>(
+    componentProps.bylines || componentProps.initialProperties?.bylines || []
+  )
+  const [isBylineModalOpen, setIsBylineModalOpen] = createSignal(false)
+  const [editingBylineIndex, setEditingBylineIndex] = createSignal<number | null>(null)
+  const [bylineDraft, setBylineDraft] = createSignal<BylineItem>({
+    name: "",
+    avatar: "",
+    role: "",
+    url: ""
+  })
+
+  // Taxonomies state
+  const [categoriesList, setCategoriesList] = createSignal<
+    Array<{ id: string; name: string; slug: string }>
+  >([])
+  const [selectedCategory, setSelectedCategory] = createSignal<string>(
+    componentProps.initialProperties?.category || ""
+  )
+  const [tagsList, setTagsList] = createSignal<string[]>(
+    componentProps.tags || componentProps.initialProperties?.tags || []
+  )
+  const [newTagInput, setNewTagInput] = createSignal("")
+
   const [isLinkModalOpen, setIsLinkModalOpen] = createSignal(false)
   const [editingLinkIndex, setEditingLinkIndex] = createSignal<number | null>(null)
   const [linkDraft, setLinkDraft] = createSignal({ label: "", to: "", icon: "" })
 
-  onMount(() => {
+  onMount(async () => {
     const def = definition()
     if (def?.properties) {
       const initialExpanded: Record<string, boolean> = {}
@@ -61,9 +94,25 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     const handlePropsChange = (e: Event) => {
       if (e instanceof CustomEvent && e.detail?.properties) {
         setProperties(e.detail.properties)
+        if (e.detail.properties.bylines) setBylines(e.detail.properties.bylines)
+        if (e.detail.properties.tags) setTagsList(e.detail.properties.tags)
+        if (e.detail.properties.category) setSelectedCategory(e.detail.properties.category)
       }
     }
     document.addEventListener("properties-change", handlePropsChange)
+
+    // Load available taxonomy categories
+    try {
+      const res = await fetch("/api/cms/taxonomies/category/terms")
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          setCategoriesList(data.map((t: any) => ({ id: t.id, name: t.name, slug: t.slug })))
+        }
+      }
+    } catch {
+      // ignore
+    }
   })
 
   const handlePropertyChange = (key: string, value: any) => {
@@ -84,6 +133,63 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))
   }
 
+  // Bylines Handlers
+  const openBylineModal = (index: number | null = null) => {
+    setEditingBylineIndex(index)
+    if (index !== null && bylines()[index]) {
+      const b = bylines()[index]!
+      setBylineDraft({ name: b.name, avatar: b.avatar || "", role: b.role || "", url: b.url || "" })
+    } else {
+      setBylineDraft({ name: "", avatar: "", role: "", url: "" })
+    }
+    setIsBylineModalOpen(true)
+  }
+
+  const saveByline = () => {
+    const draft = bylineDraft()
+    if (!draft.name) return
+    const current = [...bylines()]
+    const idx = editingBylineIndex()
+    if (idx !== null) {
+      current[idx] = draft
+    } else {
+      current.push(draft)
+    }
+    setBylines(current)
+    handlePropertyChange("bylines", current)
+    setIsBylineModalOpen(false)
+  }
+
+  const removeByline = (index: number) => {
+    const current = [...bylines()]
+    current.splice(index, 1)
+    setBylines(current)
+    handlePropertyChange("bylines", current)
+  }
+
+  // Taxonomies Handlers
+  const handleCategoryChange = (slug: string) => {
+    setSelectedCategory(slug)
+    handlePropertyChange("category", slug)
+  }
+
+  const addTag = () => {
+    const tag = newTagInput().trim().toLowerCase()
+    if (tag && !tagsList().includes(tag)) {
+      const updated = [...tagsList(), tag]
+      setTagsList(updated)
+      handlePropertyChange("tags", updated)
+      setNewTagInput("")
+    }
+  }
+
+  const removeTag = (tagToRemove: string) => {
+    const updated = tagsList().filter((t) => t !== tagToRemove)
+    setTagsList(updated)
+    handlePropertyChange("tags", updated)
+  }
+
+  // Links Handlers
   const openLinkModal = (index: number | null = null) => {
     setEditingLinkIndex(index)
     if (index !== null && links()[index]) {
@@ -250,9 +356,139 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
             </div>
           </div>
 
-          <span class="text-xs text-dimmed uppercase tracking-wider text-center block font-semibold text-muted">
+          <span class="text-xs uppercase tracking-wider text-center block font-semibold text-muted">
             {pageType()} Properties
           </span>
+        </div>
+
+        {/* Taxonomies Section */}
+        <div class="mt-4 p-3 rounded-lg border border-default/70 bg-elevated/30 flex flex-col gap-3">
+          <h6 class="text-xs font-bold uppercase tracking-wider text-muted">Taxonomies</h6>
+
+          {/* Category */}
+          <div class="flex flex-col gap-1 w-full">
+            <span class="text-xs font-semibold text-neutral-600 block">Category</span>
+            <select
+              value={selectedCategory()}
+              onChange={(e) => handleCategoryChange(e.currentTarget.value)}
+              class="w-full text-xs py-1.5 px-2.5 rounded-md border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary"
+            >
+              <option value="">(None)</option>
+              <For each={categoriesList()}>
+                {(cat) => (
+                  <option value={cat.slug} selected={selectedCategory() === cat.slug}>
+                    {cat.name}
+                  </option>
+                )}
+              </For>
+            </select>
+          </div>
+
+          {/* Tags */}
+          <div class="flex flex-col gap-1 w-full">
+            <span class="text-xs font-semibold text-neutral-600 block">Tags</span>
+            <div class="flex flex-wrap gap-1 mb-1">
+              <For each={tagsList()}>
+                {(tag) => (
+                  <RLSBadge variant="soft" color="primary" size="sm">
+                    <span>#{tag}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      class="ml-1 text-muted hover:text-error-500 cursor-pointer bg-transparent border-0 p-0 inline-flex items-center"
+                    >
+                      ×
+                    </button>
+                  </RLSBadge>
+                )}
+              </For>
+            </div>
+            <div class="flex gap-1 mt-1">
+              <div class="flex-1">
+                <RLSInput
+                  value={newTagInput()}
+                  onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                    setNewTagInput(e.currentTarget.value)
+                  }
+                  onKeyDown={(e: KeyboardEvent) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      addTag()
+                    }
+                  }}
+                  size="sm"
+                  placeholder="Add tag..."
+                />
+              </div>
+              <RLSButton variant="outline" color="neutral" size="sm" onClick={addTag} label="+" />
+            </div>
+          </div>
+        </div>
+
+        {/* Bylines / Authors Section */}
+        <div class="mt-3 p-3 rounded-lg border border-default/70 bg-elevated/30 flex flex-col gap-2">
+          <div class="flex items-center justify-between mb-1">
+            <h6 class="text-xs font-bold uppercase tracking-wider text-muted">Bylines / Authors</h6>
+            <RLSButton
+              variant="ghost"
+              color="neutral"
+              size="xs"
+              onClick={() => openBylineModal()}
+              leadingIcon="plus"
+              label="Add"
+            />
+          </div>
+
+          <Show
+            when={bylines().length > 0}
+            fallback={<p class="text-xs text-muted italic">No authors attached</p>}
+          >
+            <div class="flex flex-col gap-2">
+              <For each={bylines()}>
+                {(byline, idx) => (
+                  <div class="flex items-center justify-between p-2 rounded-lg border border-default/50 text-xs bg-background/50">
+                    <div class="flex items-center gap-2 truncate">
+                      {byline.avatar ? (
+                        <img
+                          src={byline.avatar}
+                          alt={byline.name}
+                          class="w-6 h-6 rounded-full object-cover shrink-0"
+                        />
+                      ) : (
+                        <div class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px] shrink-0">
+                          {byline.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div class="flex flex-col truncate">
+                        <span class="font-semibold text-highlighted truncate">{byline.name}</span>
+                        {byline.role && (
+                          <span class="text-[10px] text-muted truncate">{byline.role}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => openBylineModal(idx())}
+                        class="text-muted hover:text-primary cursor-pointer p-1"
+                        title="Edit"
+                      >
+                        <RLSIcon name="edit" size="xs" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeByline(idx())}
+                        class="text-muted hover:text-error-500 cursor-pointer p-1"
+                        title="Delete"
+                      >
+                        <RLSIcon name="trash" size="xs" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </For>
+            </div>
+          </Show>
         </div>
 
         {/* Property Groups Accordion */}
@@ -346,6 +582,77 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
           </div>
         </Show>
       </div>
+
+      {/* Byline Modal */}
+      <RLSModal
+        open={isBylineModalOpen()}
+        onClose={() => setIsBylineModalOpen(false)}
+        title={editingBylineIndex() !== null ? "Edit Author Byline" : "Add Author Byline"}
+        footerSlot={
+          <>
+            <RLSButton
+              variant="outline"
+              color="neutral"
+              size="sm"
+              onClick={() => setIsBylineModalOpen(false)}
+              label="Cancel"
+            />
+            <RLSButton
+              variant="solid"
+              color="primary"
+              size="sm"
+              onClick={saveByline}
+              label={editingBylineIndex() !== null ? "Update" : "Add"}
+            />
+          </>
+        }
+      >
+        <div class="flex flex-col gap-4 py-2">
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold text-muted">Author Name *</span>
+            <RLSInput
+              value={bylineDraft().name}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                setBylineDraft({ ...bylineDraft(), name: e.currentTarget.value })
+              }
+              placeholder="e.g. Idan"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold text-muted">Role / Title</span>
+            <RLSInput
+              value={bylineDraft().role || ""}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                setBylineDraft({ ...bylineDraft(), role: e.currentTarget.value })
+              }
+              placeholder="e.g. Lead Producer"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold text-muted">Avatar URL</span>
+            <RLSInput
+              value={bylineDraft().avatar || ""}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                setBylineDraft({ ...bylineDraft(), avatar: e.currentTarget.value })
+              }
+              placeholder="https://..."
+            />
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-xs font-semibold text-muted">Profile / Website URL</span>
+            <RLSInput
+              value={bylineDraft().url || ""}
+              onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
+                setBylineDraft({ ...bylineDraft(), url: e.currentTarget.value })
+              }
+              placeholder="https://rimelight.com/authors/..."
+            />
+          </div>
+        </div>
+      </RLSModal>
 
       {/* Link Add/Edit Modal */}
       <RLSModal

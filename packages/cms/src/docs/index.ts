@@ -1,4 +1,3 @@
-export * from "./types.ts"
 export * from "./config.ts"
 export * from "./sidebar.ts"
 export * from "./routing.ts"

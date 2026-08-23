@@ -1,0 +1,16 @@
+---
+import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
+import { RimelightTaxonomyManager } from "@rimelight/cms/client/components";
+
+export const prerender = false;
+---
+
+<AuthAdminDashboardLayout
+  title="Taxonomies & Categories | Admin Dashboard"
+  description="Manage categories and tags for content classification."
+  activeNav="taxonomies"
+>
+  <div class="max-w-6xl mx-auto py-4">
+    <RimelightTaxonomyManager client:only="solid" initialTaxonomy="category" />
+  </div>
+</AuthAdminDashboardLayout>
