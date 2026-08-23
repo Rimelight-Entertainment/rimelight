@@ -1,5 +1,5 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
-import type { UIConfig } from "./types"
+import type { ColorModeInput, UIConfig } from "./types"
 import { getIconSvg } from "./icons.raw"
 
 export const PALETTES = {
@@ -40,58 +40,49 @@ const INTENTS: Record<string, Record<string, string>> = {
   inverted: { text: "50", bg: "950", border: "800", ring: "700" }
 }
 
-type TokenMap = Record<string, Record<string, string>>
+function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
+  const themeColors: Record<string, Record<string, string>> = {}
+  const tokenVarLines: string[] = []
+  const allColors: string[] = []
 
-function buildTokens(custom: Record<string, any> = {}): TokenMap {
-  const tokens: TokenMap = {}
   for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
-    const shades: Record<string, string> = {}
-    if (Array.isArray(val)) {
-      const [c, h] = val
-      for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
-        shades[s] =
-          `light-dark(oklch(${l1} ${(c1 * c).toFixed(3)} ${h}), oklch(${l2} ${(c2 * c).toFixed(3)} ${h}))`
-      }
-    } else {
-      const v = val as Record<string, any>
-      const light: Record<string, string> = v?.light ?? (v?.dark ? {} : v) ?? {}
-      const dark: Record<string, string> = v?.dark ?? light
-      const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
-      for (const s of Object.keys(SHADES)) {
-        shades[s] = `light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback})`
-      }
+    allColors.push(name)
+    const entry: Record<string, string> = {
+      DEFAULT: `var(--rl-${name}-500)`
     }
-    tokens[name] = shades
+
+    const isArray = Array.isArray(val)
+    const light = !isArray ? ((val as any)?.light ?? ((val as any)?.dark ? {} : val)) : null
+    const dark = !isArray ? ((val as any)?.dark ?? light) : null
+    const fallback = light ? (light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)") : ""
+
+    for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
+      entry[s] = `var(--rl-${name}-${s})`
+      const css = isArray
+        ? `light-dark(oklch(${l1} ${(c1 * val[0]).toFixed(3)} ${val[1]}), oklch(${l2} ${(c2 * val[0]).toFixed(3)} ${val[1]}))`
+        : `light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback})`
+
+      tokenVarLines.push(`--rl-${name}-${s}: ${css};`)
+    }
+
+    themeColors[name] = entry
   }
-  return tokens
+
+  return { themeColors, tokenVarLines, allColors }
 }
 
 export default function rimelightUiPreset(options: UIConfig = {}): Preset {
-  const tokens = buildTokens(options.colors)
-  const allColors = Object.keys(tokens)
+  const { themeColors, tokenVarLines, allColors } = resolveTokens(options.colors)
 
-  const themeColors: TokenMap = {}
-  const tokenVarLines: string[] = []
-  for (const [name, map] of Object.entries(tokens)) {
-    const entry: Record<string, string> = {}
-    for (const [k, v] of Object.entries(map)) {
-      entry[k] = `var(--rl-${name}-${k})`
-      tokenVarLines.push(`--rl-${name}-${k}: ${v};`)
-    }
-    themeColors[name] = { DEFAULT: `var(--rl-${name}-500)`, ...entry }
-  }
-
-  const preflightCss = [
-    ":root {",
-    "  color-scheme: light dark;",
-    "  --rl-header-height: 4rem;",
-    "  --rl-container: 90rem;",
-    ...tokenVarLines.map((l) => `  ${l}`),
-    "}",
-    '[data-theme="dark"] { color-scheme: dark; }',
-    '[data-theme="light"] { color-scheme: light; }',
-    "body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }"
-  ].join("\n")
+  const preflightCss = `:root {
+  color-scheme: light dark;
+  --rl-header-height: 4rem;
+  --rl-container: 90rem;
+${tokenVarLines.map((l) => `  ${l}`).join("\n")}
+}
+[data-theme="dark"] { color-scheme: dark; }
+[data-theme="light"] { color-scheme: light; }
+body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }`
 
   return {
     name: "rimelight-ui",
@@ -120,7 +111,7 @@ export default function rimelightUiPreset(options: UIConfig = {}): Preset {
           colors: themeColors
         }
       }
-    ].filter(Boolean) as Preset[],
+    ].filter((p): p is Preset => Boolean(p)),
     shortcuts: [
       [
         /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
