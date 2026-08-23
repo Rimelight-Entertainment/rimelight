@@ -15,7 +15,7 @@ export const PALETTES = {
   source: [0.13, 215]
 } as const
 
-const SHADES: Record<string, [number, number, number, number]> = {
+const SHADES = {
   "50": [0.985, 0.1, 0.145, 0.2],
   "100": [0.965, 0.25, 0.2, 0.35],
   "200": [0.925, 0.45, 0.28, 0.55],
@@ -27,7 +27,7 @@ const SHADES: Record<string, [number, number, number, number]> = {
   "800": [0.27, 0.6, 0.77, 0.55],
   "900": [0.2, 0.45, 0.86, 0.4],
   "950": [0.145, 0.3, 0.93, 0.25]
-}
+} as const
 
 const INTENTS: Record<string, Record<string, string>> = {
   default: { text: "700", bg: "50", border: "200", ring: "300" },
@@ -47,7 +47,7 @@ function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
 
   for (const [name, val] of Object.entries(allPalettes)) {
     const shades: Record<string, string> = { DEFAULT: `var(--rl-${name}-500)` }
-    let getShade: (s: string, coords: [number, number, number, number]) => [string, string]
+    let getShade: (s: string, coords: readonly [number, number, number, number]) => [string, string]
 
     if (Array.isArray(val)) {
       const [c, h] = val
@@ -55,16 +55,12 @@ function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
         `oklch(${l1} ${(c1 * c).toFixed(3)} ${h})`,
         `oklch(${l2} ${(c2 * c).toFixed(3)} ${h})`
       ]
-    } else if ("light" in val || "dark" in val) {
-      const split = val as { light?: Record<string, string>; dark?: Record<string, string> }
-      const light = split.light ?? {}
-      const dark = split.dark ?? light
+    } else {
+      const isSplit = "light" in val || "dark" in val
+      const light = (isSplit ? (val as any).light : val) ?? {}
+      const dark = (isSplit ? (val as any).dark : light) ?? light
       const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
       getShade = (s) => [light[s] ?? fallback, dark[s] ?? fallback]
-    } else {
-      const light = val as Record<string, string>
-      const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
-      getShade = (s) => [light[s] ?? fallback, light[s] ?? fallback]
     }
 
     for (const [s, coords] of Object.entries(SHADES)) {
@@ -113,7 +109,8 @@ export default function rimelightUiPreset({ colors, icons, presets = {} }: UICon
     shortcuts: [
       [
         /^(text|bg|ring|border)-([a-z]+)(?:\/(\d+))?$/,
-        ([, p = "", n = "", o]) => {
+        ([, p, n, o]) => {
+          if (!p || !n) return
           const s = INTENTS[n]?.[p]
           if (!s) return
           const target = `${p}-neutral-${s}${o ? `/${o}` : ""}`
@@ -124,13 +121,17 @@ export default function rimelightUiPreset({ colors, icons, presets = {} }: UICon
     rules: [
       [
         /^rl-color-([\w-]+)$/,
-        ([, c]) => ({
-          "--rl-bg": `var(--rl-${c}-500)`,
-          "--rl-ring": `var(--rl-${c}-500)`,
-          "--rl-border": `var(--rl-${c}-500)`,
-          "--rl-bg-hover": `var(--rl-${c}-600)`,
-          "--rl-text": `var(--rl-${c}-600)`
-        })
+        ([, c]) => {
+          const v500 = `var(--rl-${c}-500)`
+          const v600 = `var(--rl-${c}-600)`
+          return {
+            "--rl-bg": v500,
+            "--rl-ring": v500,
+            "--rl-border": v500,
+            "--rl-bg-hover": v600,
+            "--rl-text": v600
+          }
+        }
       ]
     ],
     preflights: [
