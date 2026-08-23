@@ -261,7 +261,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
         ref={(el) => (editableDiv = el)}
         aria-label="Paragraph text content"
         contentEditable={true}
-        class="editable-div py-1.5 px-2 outline-none min-h-[2.5rem] text-sm text-foreground bg-transparent leading-relaxed focus:ring-1 focus:ring-primary/40 rounded-lg"
+        class="editable-div py-1.5 px-2 outline-none min-h-[2.5rem] text-sm text-highlighted bg-transparent leading-relaxed focus:ring-1 focus:ring-primary/40 rounded-lg"
       />
 
       {/* Link URL Modal — replaces browser prompt() */}
@@ -290,7 +290,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
           }
         >
           <div class="flex flex-col gap-2 py-2">
-            <span class="text-xs font-semibold text-muted-foreground">URL</span>
+            <span class="text-xs font-semibold text-muted">URL</span>
             <RLSInput
               value={linkUrl()}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>

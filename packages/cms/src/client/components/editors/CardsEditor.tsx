@@ -80,9 +80,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
     <div class="rimelight-cards-editor flex flex-col gap-3 p-3 rounded-xl border border-default/70 w-full">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Cards Grid
-          </span>
+          <span class="text-xs font-bold uppercase tracking-wider text-muted">Cards Grid</span>
           <div class="w-32">
             <RLSSelect
               items={COLUMN_OPTIONS}
@@ -110,7 +108,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
       >
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-3">
-            <span class="text-xs text-muted-foreground block mb-2">No cards in grid</span>
+            <span class="text-xs text-muted block mb-2">No cards in grid</span>
             <RLSButton
               variant="link"
               color="primary"

@@ -40,7 +40,7 @@ const description = getLocalizedText(page.description, activeLocale) || ""
 <WikiLayout title={`Wiki | ${title} | Grand Tale`}>
   <article class="prose">
     <h1>{title}</h1>
-    {description && <p class="text-muted-foreground">{description}</p>}
+    {description && <p class="text-muted">{description}</p>}
     <PageRenderer blocks={content.blocks || []} locale={activeLocale} />
   </article>
 </WikiLayout>

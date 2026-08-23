@@ -55,6 +55,13 @@ const normalizedItems = computed(() => {
         :value="item.value"
         :disabled="item.disabled"
       >
+        <RLVIcon v-if="item.icon" :name="item.icon" class="rl-select-item-icon" />
+        <img
+          v-else-if="item.avatar"
+          :src="item.avatar.src"
+          :alt="item.avatar.alt"
+          class="rl-select-item-icon"
+        />
         {{ item.label }}
       </option>
     </select>
@@ -84,6 +91,9 @@ select.rl-select::picker(select) {
   margin-top: 0.25rem;
 }
 select.rl-select option {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
   padding: 0.375rem 0.625rem;
   border-radius: calc(var(--radius-md, 0.375rem) - 0.125rem);
   background-color: var(--rl-neutral-100);
@@ -93,6 +103,11 @@ select.rl-select option {
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
+}
+select.rl-select .rl-select-item-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 }
 select.rl-select option:hover,
 select.rl-select option:focus {

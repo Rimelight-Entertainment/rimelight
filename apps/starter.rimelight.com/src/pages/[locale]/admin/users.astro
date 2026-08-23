@@ -127,7 +127,7 @@ const userColumns: TableColumn[] = [
 			<div slot="toolbar" class="flex items-center gap-2 flex-wrap">
 				<select
 					id="role-filter-select"
-					class="h-8 px-2.5 text-xs rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+					class="h-8 px-2.5 text-xs rounded-md border border-default bg-neutral-50 text-highlighted focus:outline-none focus:ring-1 focus:ring-primary"
 				>
 					<option value="all">All Roles</option>
 					{roleOptions.map(r => (
@@ -137,7 +137,7 @@ const userColumns: TableColumn[] = [
 
 				<select
 					id="status-filter-select"
-					class="h-8 px-2.5 text-xs rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+					class="h-8 px-2.5 text-xs rounded-md border border-default bg-neutral-50 text-highlighted focus:outline-none focus:ring-1 focus:ring-primary"
 				>
 					<option value="all">All Statuses</option>
 					<option value="verified">Email Verified</option>
@@ -145,7 +145,7 @@ const userColumns: TableColumn[] = [
 					<option value="banned">Banned</option>
 				</select>
 
-				<span class="text-xs text-muted-foreground font-medium shrink-0 ml-1">
+				<span class="text-xs text-muted font-medium shrink-0 ml-1">
 					<span id="visible-count-el">{initialUsers.length}</span> users
 				</span>
 			</div>
@@ -182,13 +182,13 @@ const userColumns: TableColumn[] = [
 							<td class="p-3.5 font-bold text-highlighted" data-col-id="name">
 								{u.name}
 							</td>
-							<td class="p-3.5 font-mono text-xs text-muted-foreground" data-col-id="email">
+							<td class="p-3.5 font-mono text-xs text-muted" data-col-id="email">
 								{u.email}
 							</td>
-							<td class="p-3.5 text-xs text-foreground" data-col-id="firstName">
+							<td class="p-3.5 text-xs text-highlighted" data-col-id="firstName">
 								{u.firstName || "—"}
 							</td>
-							<td class="p-3.5 text-xs text-foreground" data-col-id="lastName">
+							<td class="p-3.5 text-xs text-highlighted" data-col-id="lastName">
 								{u.lastName || "—"}
 							</td>
 							<td class="p-3.5" data-col-id="role">
@@ -203,12 +203,12 @@ const userColumns: TableColumn[] = [
 											<RLABadge variant="subtle" color="neutral" class="text-[10px] flex items-center gap-1 font-mono">
 												<RLAIcon name="i-lucide-building-2" class="size-3 text-primary" />
 												<span>{org.orgName}</span>
-												<span class="text-muted-foreground font-normal">({org.orgRole})</span>
+												<span class="text-muted font-normal">({org.orgRole})</span>
 											</RLABadge>
 										))}
 									</div>
 								) : (
-									<span class="text-xs text-muted-foreground">—</span>
+									<span class="text-xs text-muted">—</span>
 								)}
 							</td>
 							<td class="p-3.5" data-col-id="sessions">
@@ -249,7 +249,7 @@ const userColumns: TableColumn[] = [
 									</RLABadge>
 								)}
 							</td>
-							<td class="p-3.5 text-xs text-muted-foreground whitespace-nowrap" data-col-id="createdAt">
+							<td class="p-3.5 text-xs text-muted whitespace-nowrap" data-col-id="createdAt">
 								{new Date(u.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
 							</td>
 							<td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions">
@@ -268,33 +268,33 @@ const userColumns: TableColumn[] = [
 
 	<!-- Modal: User Sessions -->
 	<div id="user-sessions-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
-		<div class="bg-background border border-border rounded-xl shadow-2xl w-full max-w-2xl p-6 flex flex-col gap-4 max-h-[85vh] overflow-hidden">
-			<div class="flex items-center justify-between border-b border-border pb-3">
+		<div class="bg-neutral-50 border border-default rounded-xl shadow-2xl w-full max-w-2xl p-6 flex flex-col gap-4 max-h-[85vh] overflow-hidden">
+			<div class="flex items-center justify-between border-b border-default pb-3">
 				<div class="flex items-center gap-2">
 					<RLAIcon name="i-lucide-key-round" class="size-5 text-primary" />
 					<div>
 						<h3 class="text-base font-bold text-highlighted">Active Security Sessions</h3>
-						<p class="text-xs text-muted-foreground">Sessions for <span id="sessions-modal-username" class="font-semibold text-foreground"></span></p>
+						<p class="text-xs text-muted">Sessions for <span id="sessions-modal-username" class="font-semibold text-highlighted"></span></p>
 					</div>
 				</div>
-				<button id="close-user-sessions-modal" class="text-muted-foreground hover:text-foreground">
+				<button id="close-user-sessions-modal" class="text-muted hover:text-highlighted">
 					<RLAIcon name="i-lucide-x" class="size-5" />
 				</button>
 			</div>
 
-			<div id="sessions-loading-spinner" class="py-8 flex flex-col items-center justify-center text-muted-foreground gap-2 text-xs">
+			<div id="sessions-loading-spinner" class="py-8 flex flex-col items-center justify-center text-muted gap-2 text-xs">
 				<RLAIcon name="i-lucide-loader-2" class="size-6 animate-spin text-primary" />
 				Loading active sessions...
 			</div>
 
 			<div id="sessions-modal-content" class="flex flex-col gap-3 overflow-y-auto hidden pr-1">
-				<div id="sessions-empty-msg" class="py-8 text-center text-xs text-muted-foreground hidden">
+				<div id="sessions-empty-msg" class="py-8 text-center text-xs text-muted hidden">
 					No active sessions found for this user account.
 				</div>
 				<div id="sessions-list-container" class="flex flex-col gap-2"></div>
 			</div>
 
-			<div class="flex justify-end pt-3 border-t border-border mt-auto">
+			<div class="flex justify-end pt-3 border-t border-default mt-auto">
 				<RLAButton type="button" id="close-user-sessions-btn" variant="outline" color="neutral" size="sm">
 					Close
 				</RLAButton>
@@ -304,24 +304,24 @@ const userColumns: TableColumn[] = [
 
 	<!-- Modal: Confirm Delete User -->
 	<div id="delete-user-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
-		<div class="bg-background border border-destructive/30 rounded-xl shadow-2xl w-full max-w-md p-6 flex flex-col gap-4">
+		<div class="bg-neutral-50 border border-error/30 rounded-xl shadow-2xl w-full max-w-md p-6 flex flex-col gap-4">
 			<div class="flex items-center gap-3">
 				<div class="p-3 rounded-full bg-destructive/10 text-destructive">
 					<RLAIcon name="i-lucide-alert-triangle" class="size-6" />
 				</div>
 				<div>
 					<h3 class="text-base font-bold text-highlighted">Delete User Account</h3>
-					<p class="text-xs text-muted-foreground">This action cannot be undone.</p>
+					<p class="text-xs text-muted">This action cannot be undone.</p>
 				</div>
 			</div>
 
-			<p class="text-xs text-foreground bg-muted/40 p-3 rounded-lg border border-border/50">
-				Are you sure you want to delete <span id="delete-user-name-display" class="font-bold text-highlighted"></span> (<span id="delete-user-email-display" class="font-mono text-muted-foreground"></span>)?
+			<p class="text-xs text-highlighted bg-muted/40 p-3 rounded-lg border border-default/50">
+				Are you sure you want to delete <span id="delete-user-name-display" class="font-bold text-highlighted"></span> (<span id="delete-user-email-display" class="font-mono text-muted"></span>)?
 			</p>
 
 			<input type="hidden" id="delete-user-id" />
 
-			<div class="flex justify-end gap-2 pt-3 border-t border-border">
+			<div class="flex justify-end gap-2 pt-3 border-t border-default">
 				<RLAButton type="button" id="cancel-delete-modal" variant="outline" color="neutral" size="sm">
 					Cancel
 				</RLAButton>
@@ -487,16 +487,16 @@ const userColumns: TableColumn[] = [
 					if (res.ok && data.sessions && data.sessions.length > 0) {
 						data.sessions.forEach((s: any) => {
 							const item = document.createElement("div");
-							item.className = "p-3 rounded-lg border border-border bg-muted/20 flex items-center justify-between gap-3 text-xs";
+							item.className = "p-3 rounded-lg border border-default bg-muted/20 flex items-center justify-between gap-3 text-xs";
 							item.innerHTML = `
 								<div class="flex flex-col gap-1 min-w-0 flex-1">
 									<div class="flex items-center gap-2">
 										<span class="font-bold text-highlighted font-mono">${s.ipAddress || "Internal IP"}</span>
-										<span class="text-[10px] text-muted-foreground">Expires: ${new Date(s.expiresAt).toLocaleDateString()}</span>
+										<span class="text-[10px] text-muted">Expires: ${new Date(s.expiresAt).toLocaleDateString()}</span>
 									</div>
-									<span class="text-muted-foreground truncate" title="${s.userAgent || ""}">${s.userAgent || "Web Browser"}</span>
+									<span class="text-muted truncate" title="${s.userAgent || ""}">${s.userAgent || "Web Browser"}</span>
 								</div>
-								<button type="button" class="revoke-single-session-btn px-2.5 py-1 text-[11px] font-medium text-destructive hover:bg-destructive/10 rounded border border-destructive/20 shrink-0" data-session-id="${s.id}">
+								<button type="button" class="revoke-single-session-btn px-2.5 py-1 text-[11px] font-medium text-destructive hover:bg-destructive/10 rounded border border-error/20 shrink-0" data-session-id="${s.id}">
 									Revoke
 								</button>
 							`;

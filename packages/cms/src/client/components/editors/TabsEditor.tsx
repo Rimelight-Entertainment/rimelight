@@ -64,9 +64,7 @@ export const TabsEditor: Component<TabsEditorProps> = (componentProps) => {
   return (
     <div class="rimelight-tabs-editor flex flex-col gap-3 p-3 rounded-xl border border-default/70 w-full">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          Tabs Container
-        </span>
+        <span class="text-xs font-bold uppercase tracking-wider text-muted">Tabs Container</span>
         <RLSButton
           variant="outline"
           color="neutral"
@@ -83,7 +81,7 @@ export const TabsEditor: Component<TabsEditorProps> = (componentProps) => {
       >
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-3">
-            <span class="text-xs text-muted-foreground block mb-2">No tabs in container</span>
+            <span class="text-xs text-muted block mb-2">No tabs in container</span>
             <RLSButton
               variant="link"
               color="primary"

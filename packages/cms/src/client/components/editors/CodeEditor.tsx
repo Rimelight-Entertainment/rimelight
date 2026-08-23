@@ -54,9 +54,7 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
     <div class="rimelight-code-editor flex flex-col gap-2 p-2 w-full">
       <div class="flex items-center justify-between mb-1">
         <div class="flex items-center gap-2">
-          <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Language
-          </span>
+          <span class="text-xs font-semibold text-muted uppercase tracking-wide">Language</span>
           <div class="w-36">
             <RLSSelect
               items={LANGUAGES}

@@ -65,10 +65,10 @@ const columns: TableColumn[] = [
   >
     {formattedPages.map((page) => (
       <tr class="hover:bg-muted/20 transition-colors" data-slot="tr" data-row-id={page.id}>
-        <td class="p-3.5 text-sm font-medium text-foreground" data-col-id="title" data-slot="td">
+        <td class="p-3.5 text-sm font-medium text-highlighted" data-col-id="title" data-slot="td">
           {page.title}
         </td>
-        <td class="p-3.5 text-sm text-muted-foreground font-mono text-xs" data-col-id="slug" data-slot="td">
+        <td class="p-3.5 text-sm text-muted font-mono text-xs" data-col-id="slug" data-slot="td">
           {page.slug}
         </td>
         <td class="p-3.5" data-col-id="type" data-slot="td">

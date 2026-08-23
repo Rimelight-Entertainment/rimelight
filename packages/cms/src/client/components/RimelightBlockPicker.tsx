@@ -207,7 +207,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
       >
         <div class="bg-elevated border border-default rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
           <div class="flex items-center justify-between px-4 py-3 border-b border-default">
-            <div class="text-sm font-semibold text-foreground">
+            <div class="text-sm font-semibold text-highlighted">
               Add Block{" "}
               {props.containerType ? `to ${props.containerType.replace("Block", "")}` : ""}
             </div>
@@ -242,9 +242,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
 
           <div class="overflow-y-auto max-h-[50vh] pb-2">
             {filteredBlocks().length === 0 ? (
-              <div class="text-center py-4 text-muted-foreground text-sm">
-                No compatible blocks found
-              </div>
+              <div class="text-center py-4 text-muted text-sm">No compatible blocks found</div>
             ) : (
               (() => {
                 let currentGroup = ""
@@ -258,7 +256,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                       return (
                         <>
                           {showHeader && (
-                            <div class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-4 py-1.5 mt-2">
+                            <div class="text-[10px] font-bold text-muted uppercase tracking-widest px-4 py-1.5 mt-2">
                               {block.group}
                             </div>
                           )}
@@ -273,21 +271,19 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
                             class="cms-picker-item flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800/80 w-full text-left bg-transparent border-none"
                             classList={{ "bg-neutral-100 dark:bg-neutral-800/80": isSelected }}
                           >
-                            <div class="text-base w-8 h-8 flex items-center justify-center shrink-0 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-foreground border border-default">
+                            <div class="text-base w-8 h-8 flex items-center justify-center shrink-0 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-highlighted border border-default">
                               <RLSIcon name={block.icon} size="sm" />
                             </div>
                             <div class="flex flex-col flex-1 min-w-0">
                               <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-foreground">
+                                <span class="text-sm font-medium text-highlighted">
                                   {block.label}
                                 </span>
-                                <span class="text-[10px] font-mono text-muted-foreground bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded border border-default/50">
+                                <span class="text-[10px] font-mono text-muted bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded border border-default/50">
                                   {block.type}
                                 </span>
                               </div>
-                              <span class="text-xs text-muted-foreground mt-0.5 truncate">
-                                {block.desc}
-                              </span>
+                              <span class="text-xs text-muted mt-0.5 truncate">{block.desc}</span>
                             </div>
                           </button>
                         </>

@@ -39,13 +39,13 @@ const description = getLocalizedText(version.description, activeLocale) || ""
 
 <WikiLayout title={`Review Wiki Version | ${title} | Grand Tale`}>
   <article class="prose">
-    <div class="text-xs text-muted-foreground mb-4">
+    <div class="text-xs text-muted mb-4">
       <span>Status: {version.status}</span>
       {version.createdAt && <span> | Created: {new Date(version.createdAt).toLocaleDateString(activeLocale)}</span>}
       {version.approvedAt && <span> | Approved: {new Date(version.approvedAt).toLocaleDateString(activeLocale)}</span>}
     </div>
     <h1>{title}</h1>
-    {description && <p class="text-muted-foreground">{description}</p>}
+    {description && <p class="text-muted">{description}</p>}
     <PageRenderer blocks={versionContent.blocks || []} locale={activeLocale} />
   </article>
 </WikiLayout>

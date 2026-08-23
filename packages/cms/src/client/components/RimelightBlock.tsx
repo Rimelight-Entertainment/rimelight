@@ -265,7 +265,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
             setMenuOpen(!menuOpen())
           }}
           aria-label="Drag handle and options menu"
-          class="cms-drag-handle !p-1 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
+          class="cms-drag-handle !p-1 text-muted hover:text-highlighted cursor-grab active:cursor-grabbing"
           title="Drag to reorder / Click for options"
           leading={<RLSIcon name="gripVertical" size="sm" />}
         />
@@ -274,7 +274,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
         <Show when={menuOpen()}>
           <div class="absolute left-0 top-7 z-50 w-48 bg-elevated border border-default rounded-xl shadow-xl py-1 text-xs">
             {isLocked() ? (
-              <div class="px-3 py-2 text-muted-foreground italic">Locked — templated block</div>
+              <div class="px-3 py-2 text-muted italic">Locked — templated block</div>
             ) : (
               <>
                 <button
@@ -283,9 +283,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                     props.onMove(props.block.id, -1)
                     setMenuOpen(false)
                   }}
-                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowUp" size="xs" class="text-muted-foreground" />
+                  <RLSIcon name="arrowUp" size="xs" class="text-muted" />
                   <span>Move Up</span>
                 </button>
                 <button
@@ -294,9 +294,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                     props.onMove(props.block.id, 1)
                     setMenuOpen(false)
                   }}
-                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowDown" size="xs" class="text-muted-foreground" />
+                  <RLSIcon name="arrowDown" size="xs" class="text-muted" />
                   <span>Move Down</span>
                 </button>
                 <div class="my-1 border-t border-default" />
@@ -306,9 +306,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                     props.onAddAdjacent(props.block.id, "before")
                     setMenuOpen(false)
                   }}
-                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowUpFromLine" size="xs" class="text-muted-foreground" />
+                  <RLSIcon name="arrowUpFromLine" size="xs" class="text-muted" />
                   <span>Add Block Above</span>
                 </button>
                 <button
@@ -317,9 +317,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                     props.onAddAdjacent(props.block.id, "after")
                     setMenuOpen(false)
                   }}
-                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="arrowDownToLine" size="xs" class="text-muted-foreground" />
+                  <RLSIcon name="arrowDownToLine" size="xs" class="text-muted" />
                   <span>Add Block Below</span>
                 </button>
                 <div class="my-1 border-t border-default" />
@@ -329,9 +329,9 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
                     props.onDuplicate(props.block.id)
                     setMenuOpen(false)
                   }}
-                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-foreground transition-colors bg-transparent border-0 text-left"
+                  class="flex items-center gap-2 w-full px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer text-highlighted transition-colors bg-transparent border-0 text-left"
                 >
-                  <RLSIcon name="copy" size="xs" class="text-muted-foreground" />
+                  <RLSIcon name="copy" size="xs" class="text-muted" />
                   <span>Duplicate Block</span>
                 </button>
                 <button
@@ -478,8 +478,8 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
           </>
         }
       >
-        <p class="text-xs text-muted-foreground mt-1">
-          Block type: <span class="font-semibold text-foreground">{props.block.type}</span>
+        <p class="text-xs text-muted mt-1">
+          Block type: <span class="font-semibold text-highlighted">{props.block.type}</span>
         </p>
       </RLSModal>
     </div>

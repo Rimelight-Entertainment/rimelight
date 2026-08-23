@@ -110,9 +110,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
 
       <div class="grid grid-cols-2 gap-3">
         <div class="col-span-2 flex flex-col gap-1">
-          <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Location
-          </span>
+          <span class="text-xs font-semibold text-muted uppercase tracking-wide">Location</span>
           <RLSInput
             id="scene-location-input"
             data-field="location"
@@ -124,9 +122,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         </div>
 
         <div class="flex flex-col gap-1">
-          <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Setting
-          </span>
+          <span class="text-xs font-semibold text-muted uppercase tracking-wide">Setting</span>
           <RLSSelect
             items={SETTINGS}
             value={componentProps.props.setting || "INT."}
@@ -136,9 +132,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         </div>
 
         <div class="flex flex-col gap-1">
-          <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Time of Day
-          </span>
+          <span class="text-xs font-semibold text-muted uppercase tracking-wide">Time of Day</span>
           <RLSSelect
             items={TIMES_OF_DAY}
             value={componentProps.props.timeOfDay || "MORNING"}
@@ -149,7 +143,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        <span class="text-xs font-semibold text-muted uppercase tracking-wide">
           Action / Description
         </span>
         <RLSTextarea
@@ -163,7 +157,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        <span class="text-xs font-semibold text-muted uppercase tracking-wide">
           Transition (End of Scene)
         </span>
         <div class="w-48">
@@ -183,7 +177,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
       >
         {childrenBlocks().length === 0 ? (
           <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-default text-center my-1">
-            <div class="text-xs font-semibold text-muted-foreground">Empty scene</div>
+            <div class="text-xs font-semibold text-muted">Empty scene</div>
             <RLSButton
               variant="outline"
               color="neutral"

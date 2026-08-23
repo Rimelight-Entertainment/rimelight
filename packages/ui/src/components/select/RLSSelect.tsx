@@ -1,6 +1,7 @@
 import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
 import type { SelectItem } from "./select"
 import { selectTheme } from "./select.theme"
+import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSSelectProps {
   id?: string
@@ -48,11 +49,19 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
       if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
         return { label: String(item), value: String(item), disabled: false }
       }
-      const i = item as { label?: string; value?: any; disabled?: boolean }
+      const i = item as {
+        label?: string
+        value?: any
+        disabled?: boolean
+        icon?: string
+        avatar?: { src?: string; alt?: string; loading?: "lazy" | "eager" }
+      }
       return {
         label: String(i.label ?? i.value ?? ""),
         value: String(i.value ?? ""),
-        disabled: !!i.disabled
+        disabled: !!i.disabled,
+        icon: i.icon,
+        avatar: i.avatar
       }
     })
   })
@@ -94,6 +103,10 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
                 disabled={item.disabled}
                 selected={currentValue() !== undefined ? currentValue() === item.value : undefined}
               >
+                {item.icon ? <RLSIcon name={item.icon} class="rl-select-item-icon" /> : null}
+                {item.avatar ? (
+                  <img src={item.avatar.src} alt={item.avatar.alt} class="rl-select-item-icon" />
+                ) : null}
                 {item.label}
               </option>
             )}
@@ -133,6 +146,9 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
           margin-top: 0.25rem;
         }
         select.rl-select option {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
           padding: 0.375rem 0.625rem;
           border-radius: calc(var(--radius-md, 0.375rem) - 0.125rem);
           background-color: var(--rl-neutral-100);
@@ -140,6 +156,11 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
           font-size: 0.875rem;
           cursor: pointer;
           transition: background-color 0.15s ease, color 0.15s ease;
+        }
+        select.rl-select .rl-select-item-icon {
+          width: 1rem;
+          height: 1rem;
+          flex-shrink: 0;
         }
         select.rl-select option:hover,
         select.rl-select option:focus {

@@ -86,11 +86,6 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
     themeColors[name] = entry
   }
 
-  themeColors.foreground = { DEFAULT: "var(--rl-neutral-950)" }
-  themeColors.background = { DEFAULT: "var(--rl-neutral-50)" }
-  themeColors.muted = { foreground: "var(--rl-neutral-600)" }
-  rootVars.push("--primary: var(--rl-primary-DEFAULT);")
-
   const preflightCss = [
     ":root {",
     ...rootVars.map((l) => `  ${l}`),

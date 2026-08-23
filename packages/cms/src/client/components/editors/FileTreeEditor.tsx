@@ -46,10 +46,8 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
   return (
     <div class="rimelight-file-tree-editor flex flex-col gap-2 p-3 rounded-xl border border-default w-full">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          File Tree JSON
-        </span>
-        <span class="text-xs text-muted-foreground italic">
+        <span class="text-xs font-bold uppercase tracking-wider text-muted">File Tree JSON</span>
+        <span class="text-xs text-muted italic">
           Format: Array of {`{ name, isDir, comment, children }`}
         </span>
       </div>

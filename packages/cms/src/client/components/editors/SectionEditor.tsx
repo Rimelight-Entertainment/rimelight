@@ -78,7 +78,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
   return (
     <div class="w-full flex flex-col gap-2 py-0.5">
       <div class="flex items-center gap-2.5">
-        <span class="text-xs font-bold text-muted-foreground select-none shrink-0 tracking-wider">
+        <span class="text-xs font-bold text-muted select-none shrink-0 tracking-wider">
           H{headingLevel()}
         </span>
         <input
@@ -87,7 +87,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
           value={componentProps.props.title || ""}
           onInput={saveProps}
           placeholder="Section Title"
-          class="flex-1 font-bold text-lg bg-transparent border-0 focus:outline-none text-foreground placeholder:text-muted-foreground/60 py-0.5"
+          class="flex-1 font-bold text-lg bg-transparent border-0 focus:outline-none text-highlighted placeholder:text-muted/60 py-0.5"
         />
       </div>
 
@@ -97,7 +97,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
         value={componentProps.props.description || ""}
         onInput={saveProps}
         placeholder="Section description (optional)..."
-        class="text-sm text-muted-foreground bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground/50 py-0.5"
+        class="text-sm text-muted bg-transparent border-0 focus:outline-none placeholder:text-muted/50 py-0.5"
       />
 
       <div
@@ -106,7 +106,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
       >
         {childrenBlocks().length === 0 ? (
           <div class="flex flex-col items-center justify-center p-3 border border-dashed border-default rounded-lg text-center">
-            <span class="text-xs text-muted-foreground">Empty section</span>
+            <span class="text-xs text-muted">Empty section</span>
             <RLSButton
               variant="link"
               color="primary"

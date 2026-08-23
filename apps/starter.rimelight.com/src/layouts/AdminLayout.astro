@@ -64,7 +64,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
     <slot name="head" />
   </head>
 	<body class="isolate">
-		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground">
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-neutral-50 focus:text-highlighted">
 			{t("app_layout.skipToContent")}
 		</a>
 
@@ -97,7 +97,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 
 		{!hasConsent && (
 			<div id="cookie-notice-container" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 pointer-events-none transition-all duration-300">
-				<RLAToast title={t("cookie_notice.title")} dismissable={false} class="pointer-events-auto shadow-2xl border-border bg-background/95 backdrop-blur-sm">
+				<RLAToast title={t("cookie_notice.title")} dismissable={false} class="pointer-events-auto shadow-2xl border-default bg-neutral-50/95 backdrop-blur-sm">
 					<span slot="description">
 						{t("cookie_notice.description_prefix")}
 						<a href={getRelativeLocaleUrl('/legal/cookie-policy')} class="underline hover:text-primary transition-colors font-medium">{t("cookie_notice.cookie_policy_label")}</a>

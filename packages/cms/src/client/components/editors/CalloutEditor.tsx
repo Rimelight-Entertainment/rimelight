@@ -105,9 +105,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
     <div class="w-full flex flex-col gap-3 p-3 rounded-xl border border-default/70">
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Callout:
-          </span>
+          <span class="text-xs font-bold uppercase tracking-wider text-muted">Callout:</span>
           <div class="w-36">
             <RLSSelect
               items={VARIANT_OPTIONS}
@@ -163,7 +161,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
       >
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-2">
-            <span class="text-xs text-muted-foreground block">Empty callout</span>
+            <span class="text-xs text-muted block">Empty callout</span>
             <RLSButton
               variant="link"
               color="primary"

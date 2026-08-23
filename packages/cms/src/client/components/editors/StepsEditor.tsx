@@ -64,9 +64,7 @@ export const StepsEditor: Component<StepsEditorProps> = (componentProps) => {
   return (
     <div class="rimelight-steps-editor flex flex-col gap-3 p-3 rounded-xl border border-default/70 w-full">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          Steps Walkthrough
-        </span>
+        <span class="text-xs font-bold uppercase tracking-wider text-muted">Steps Walkthrough</span>
         <RLSButton
           variant="outline"
           color="neutral"
@@ -83,7 +81,7 @@ export const StepsEditor: Component<StepsEditorProps> = (componentProps) => {
       >
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-3">
-            <span class="text-xs text-muted-foreground block mb-2">No steps in walkthrough</span>
+            <span class="text-xs text-muted block mb-2">No steps in walkthrough</span>
             <RLSButton
               variant="link"
               color="primary"

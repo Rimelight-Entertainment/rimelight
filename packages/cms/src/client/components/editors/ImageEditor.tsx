@@ -19,7 +19,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
   return (
     <div class="w-full flex flex-col gap-3 p-2">
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-bold text-muted-foreground uppercase">Image URL</span>
+        <span class="text-xs font-bold text-muted uppercase">Image URL</span>
         <RLSInput
           id="image-src-input"
           type="text"
@@ -32,7 +32,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div class="flex flex-col gap-1">
-          <span class="text-xs font-bold text-muted-foreground uppercase">Alt Text</span>
+          <span class="text-xs font-bold text-muted uppercase">Alt Text</span>
           <RLSInput
             id="image-alt-input"
             type="text"
@@ -44,7 +44,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
         </div>
 
         <div class="flex flex-col gap-1">
-          <span class="text-xs font-bold text-muted-foreground uppercase">Caption</span>
+          <span class="text-xs font-bold text-muted uppercase">Caption</span>
           <RLSInput
             id="image-caption-input"
             type="text"

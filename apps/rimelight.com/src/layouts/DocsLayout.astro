@@ -97,26 +97,26 @@ const tocHeadings = hasToc
     ──────────────────────────────────────────────────────────────────────────
   */}
   <div
-    class="sticky z-30 bg-background/95 backdrop-blur-sm"
+    class="sticky z-30 bg-neutral-50/95 backdrop-blur-sm"
     style="top: var(--rl-total-header-height, 64px)"
   >
     {/* ── Docs nav bar: scopes + sidebar items — hidden on lg+ ── */}
-    <details id="docs-nav-details" class="lg:hidden border-b border-border docs-mobile-bar">
-      <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-foreground cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
+    <details id="docs-nav-details" class="lg:hidden border-b border-default docs-mobile-bar">
+      <summary class="flex items-center justify-between gap-3 px-4 h-10 text-sm font-medium text-highlighted cursor-pointer select-none hover:bg-muted/40 transition-colors list-none">
         <span class="flex items-center gap-2 min-w-0">
           <span class:list={[
             activeScope?.icon || "i-lucide-book-open",
             "size-4 text-primary shrink-0"
           ]} />
           <span class="font-semibold shrink-0">{t(activeScope?.label || "navigation") || "Navigation"}</span>
-          <span class="text-muted-foreground font-normal truncate hidden sm:inline">— {title}</span>
+          <span class="text-muted font-normal truncate hidden sm:inline">— {title}</span>
         </span>
-        <span class="docs-nav-chevron i-lucide-chevron-down size-4 text-muted-foreground shrink-0 transition-transform duration-200" />
+        <span class="docs-nav-chevron i-lucide-chevron-down size-4 text-muted shrink-0 transition-transform duration-200" />
       </summary>
-      <div class="border-t border-border/50 bg-background max-h-[60vh] overflow-y-auto">
+      <div class="border-t border-default/50 bg-neutral-50 max-h-[60vh] overflow-y-auto">
         {versions.length > 1 && (
-          <div class="flex flex-col gap-1 p-3 border-b border-border/50">
-            <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-wider px-1 mb-1">Version</span>
+          <div class="flex flex-col gap-1 p-3 border-b border-default/50">
+            <span class="text-[10px] text-muted font-bold uppercase tracking-wider px-1 mb-1">Version</span>
             <rla-version-selector class="block w-full">
               <RLASelect
                 items={versions.map(v => ({ label: v, value: getVersionHomeUrl(v) }))}
@@ -127,7 +127,7 @@ const tocHeadings = hasToc
           </div>
         )}
         {/* Filter input */}
-        <div class="p-3 border-b border-border/50">
+        <div class="p-3 border-b border-default/50">
           <RLAInput
             type="text"
             placeholder={t("Filter navigation...") || "Filter navigation..."}
@@ -138,8 +138,8 @@ const tocHeadings = hasToc
           />
         </div>
         {/* Scopes — vertical */}
-        <div class="flex flex-col gap-1 p-3 border-b border-border/50">
-          <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-wider px-1 mb-1">Scopes</span>
+        <div class="flex flex-col gap-1 p-3 border-b border-default/50">
+          <span class="text-[10px] text-muted font-bold uppercase tracking-wider px-1 mb-1">Scopes</span>
           {scopes.map(scope => {
             const active = scope.active ?? false;
             return (
@@ -149,7 +149,7 @@ const tocHeadings = hasToc
                   "flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-md transition-all duration-200 no-underline",
                   active
                     ? "bg-primary text-neutral-50 shadow-sm"
-                    : "text-foreground hover:bg-muted hover:text-primary"
+                    : "text-highlighted hover:bg-muted hover:text-primary"
                 ]}
                 data-docs-nav-link
               >
@@ -171,7 +171,7 @@ const tocHeadings = hasToc
 
     {/* ── TOC bar — hidden on xl+ ── */}
     {hasToc && (
-      <div class="xl:hidden border-b border-border docs-mobile-bar">
+      <div class="xl:hidden border-b border-default docs-mobile-bar">
         <RLATableOfContents headings={tocHeadings} tableOfContents={resolvedToc} collapsible />
       </div>
     )}
@@ -181,10 +181,10 @@ const tocHeadings = hasToc
   <div class="docs-container max-w-[1400px] mx-auto px-4 lg:px-8 py-8 flex flex-col lg:flex-row gap-8 items-start relative min-h-[calc(100vh-200px)]">
 
     {/* Sidebar column — lg+ only */}
-    <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto border-r border-border pr-0">
+    <div class="docs-sidebar-wrapper hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--rl-total-header-height,64px)+2rem)] max-h-[calc(100vh-var(--rl-total-header-height,64px)-4rem)] overflow-y-auto border-r border-default pr-0">
       {versions.length > 1 && (
         <div class="mb-4 px-2">
-          <label class="block text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-1.5 px-1">Version</label>
+          <label class="block text-[10px] text-muted font-bold uppercase tracking-wider mb-1.5 px-1">Version</label>
           <rla-version-selector class="block w-full">
             <RLASelect
               items={versions.map(v => ({ label: v, value: getVersionHomeUrl(v) }))}
@@ -192,8 +192,8 @@ const tocHeadings = hasToc
               size="sm"
               ui={{
                 root: "!w-full !block",
-                trigger: "flex items-center justify-between !w-full bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium text-foreground",
-                content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
+                trigger: "flex items-center justify-between !w-full bg-neutral-50 border border-default rounded-md px-3 py-1.5 text-sm font-medium text-highlighted",
+                content: "!min-w-0 !w-full !bg-default !border-default !text-highlighted",
                 item: "!text-highlighted hover:!bg-accented"
               }}
             />
@@ -210,8 +210,8 @@ const tocHeadings = hasToc
           autocomplete="off"
         />
       </div>
-      <div class="flex flex-col gap-1 mb-4 border-b border-border pb-4 px-2">
-        <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-1.5 px-1">Scopes</span>
+      <div class="flex flex-col gap-1 mb-4 border-b border-default pb-4 px-2">
+        <span class="text-[10px] text-muted font-bold uppercase tracking-wider mb-1.5 px-1">Scopes</span>
         {scopes.map(scope => {
           const active = scope.active ?? false;
           return (
@@ -221,7 +221,7 @@ const tocHeadings = hasToc
                 "flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-md transition-all duration-200 no-underline",
                 active
                   ? "bg-primary text-neutral-50 shadow-sm"
-                  : "text-foreground hover:bg-muted hover:text-primary"
+                  : "text-highlighted hover:bg-muted hover:text-primary"
               ]}
             >
               <span class:list={[
@@ -238,9 +238,9 @@ const tocHeadings = hasToc
 
     {/* Main content */}
     <main class="docs-content flex-1 min-w-0 w-full py-2">
-      <div class="border-b border-border pb-4 mb-6">
-        <h1 class="text-3xl font-extrabold text-foreground tracking-tight">{title}</h1>
-        {description && <p class="mt-2 text-base text-muted-foreground">{description}</p>}
+      <div class="border-b border-default pb-4 mb-6">
+        <h1 class="text-3xl font-extrabold text-highlighted tracking-tight">{title}</h1>
+        {description && <p class="mt-2 text-base text-muted">{description}</p>}
       </div>
       <article class="markdown-content prose max-w-none prose-base dark:prose-invert">
         <slot />
@@ -249,12 +249,12 @@ const tocHeadings = hasToc
 
       {/* Edit link */}
       {resolvedEditUrl && (
-        <div class="mt-6 pt-4 border-t border-border">
+        <div class="mt-6 pt-4 border-t border-default">
           <a
             href={resolvedEditUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors no-underline"
+            class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors no-underline"
           >
             <span class="i-lucide-pencil size-3" />
             Edit this page on GitHub

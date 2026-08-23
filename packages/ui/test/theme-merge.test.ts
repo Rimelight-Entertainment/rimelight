@@ -48,10 +48,17 @@ describe("rimelight token architecture", () => {
     expect(css).toContain("gap:var(--spacing-md)")
   })
 
-  it("only the consumed compat aliases are emitted", async () => {
+  it("no compat aliases are emitted", async () => {
     const { css } = await uno.generate("text-highlighted", { preflights: true })
-    expect(css).toContain("--primary: var(--rl-primary-DEFAULT)")
-    expect(css).not.toContain("--secondary:")
-    expect(css).not.toContain("--success:")
+    for (const ghost of [
+      "--primary:",
+      "--secondary:",
+      "--success:",
+      "--border:",
+      "--popover",
+      "--colors-"
+    ]) {
+      expect(css).not.toContain(ghost)
+    }
   })
 })

@@ -5,7 +5,7 @@ export const selectTheme = defineTheme("select", {
   base: {
     root: "relative inline-flex items-center w-full",
     select:
-      "rl-select w-full cursor-pointer rounded-md border border-default bg-default text-foreground shadow-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50",
+      "rl-select w-full cursor-pointer rounded-md border border-default bg-default text-highlighted shadow-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50",
     icon: "pointer-events-none absolute right-2 flex items-center text-muted"
   },
   variants: {

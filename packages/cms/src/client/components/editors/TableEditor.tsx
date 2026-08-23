@@ -78,7 +78,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
   return (
     <div class="rimelight-table-editor flex flex-col gap-3 p-3 rounded-xl border border-default/70 w-full overflow-x-auto">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">Table</span>
+        <span class="text-xs font-bold uppercase tracking-wider text-muted">Table</span>
         <div class="flex items-center gap-2">
           <RLSButton
             variant="outline"
@@ -110,7 +110,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
                       <input
                         type="text"
                         aria-label={`Column ${colIdx() + 1} header`}
-                        class="w-full bg-transparent border border-transparent hover:border-default focus:border-primary rounded px-2 py-1 font-semibold outline-none text-foreground"
+                        class="w-full bg-transparent border border-transparent hover:border-default focus:border-primary rounded px-2 py-1 font-semibold outline-none text-highlighted"
                         value={col.header}
                         onBlur={(e) => updateHeader(colIdx(), e.currentTarget.value)}
                       />
@@ -118,7 +118,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
                         <button
                           type="button"
                           aria-label="Delete column"
-                          class="text-muted-foreground hover:text-danger p-1 text-xs"
+                          class="text-muted hover:text-danger p-1 text-xs"
                           onClick={() => removeColumn(colIdx())}
                           title="Delete column"
                         >
@@ -142,7 +142,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
                         <input
                           type="text"
                           aria-label={`${col.header} row ${rowIdx() + 1}`}
-                          class="w-full bg-transparent border border-transparent hover:border-default focus:border-primary rounded px-2 py-1 outline-none text-foreground"
+                          class="w-full bg-transparent border border-transparent hover:border-default focus:border-primary rounded px-2 py-1 outline-none text-highlighted"
                           value={row[col.key] || ""}
                           onBlur={(e) => updateCell(rowIdx(), col.key, e.currentTarget.value)}
                         />
@@ -154,7 +154,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
                       <button
                         type="button"
                         aria-label="Delete row"
-                        class="text-muted-foreground hover:text-danger p-1 text-xs"
+                        class="text-muted hover:text-danger p-1 text-xs"
                         onClick={() => removeRow(rowIdx())}
                         title="Delete row"
                       >

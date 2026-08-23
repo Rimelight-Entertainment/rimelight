@@ -207,7 +207,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                   <button
                     type="button"
                     onClick={() => removeArrayItem(idx())}
-                    class="ml-1 text-muted-foreground hover:text-red-500 cursor-pointer bg-transparent border-0 p-0 inline-flex items-center"
+                    class="ml-1 text-muted hover:text-red-500 cursor-pointer bg-transparent border-0 p-0 inline-flex items-center"
                   >
                     ×
                   </button>
@@ -253,12 +253,12 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         {/* Top header content */}
         <div class="flex flex-col gap-2 items-center text-center">
           <div class="relative group/icon mb-1">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center border border-default text-muted-foreground">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center border border-default text-muted">
               <RLSIcon name="fileText" size="md" />
             </div>
           </div>
 
-          <span class="text-xs text-dimmed uppercase tracking-wider text-center block font-semibold text-muted-foreground">
+          <span class="text-xs text-dimmed uppercase tracking-wider text-center block font-semibold text-muted">
             {pageType()} Properties
           </span>
         </div>
@@ -273,13 +273,13 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                   <button
                     type="button"
                     onClick={() => toggleGroup(groupId)}
-                    class="flex justify-between items-center w-full p-2 rounded-lg text-left font-medium text-sm text-foreground hover:bg-elevated transition cursor-pointer mt-2 bg-transparent border-0"
+                    class="flex justify-between items-center w-full p-2 rounded-lg text-left font-medium text-sm text-highlighted hover:bg-elevated transition cursor-pointer mt-2 bg-transparent border-0"
                   >
                     <span>{getTextValue(group.label)}</span>
                     <RLSIcon
                       name="chevronDown"
                       size="sm"
-                      class={`transition-transform duration-150 text-muted-foreground ${
+                      class={`transition-transform duration-150 text-muted ${
                         isExpanded() ? "rotate-180" : ""
                       }`}
                     />
@@ -302,7 +302,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       {/* Links section */}
       <div class="flex flex-col gap-2 pt-2 border-t border-default">
         <div class="flex items-center justify-between mb-1">
-          <h6 class="text-xs font-bold uppercase tracking-wider text-muted-foreground">Links</h6>
+          <h6 class="text-xs font-bold uppercase tracking-wider text-muted">Links</h6>
           <RLSButton
             variant="ghost"
             color="neutral"
@@ -315,15 +315,15 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
         <Show
           when={links().length > 0}
-          fallback={<p class="text-xs text-muted-foreground italic">No links added</p>}
+          fallback={<p class="text-xs text-muted italic">No links added</p>}
         >
           <div class="flex flex-col gap-2">
             <For each={links()}>
               {(item, index) => (
                 <div class="flex items-center justify-between p-2 rounded-lg border border-default text-sm">
                   <div class="flex items-center gap-2 truncate">
-                    <RLSIcon name="link" size="xs" class="text-muted-foreground shrink-0" />
-                    <span class="font-medium text-foreground truncate">{item.label}</span>
+                    <RLSIcon name="link" size="xs" class="text-muted shrink-0" />
+                    <span class="font-medium text-highlighted truncate">{item.label}</span>
                   </div>
                   <div class="flex items-center gap-1 shrink-0">
                     <RLSButton
@@ -381,7 +381,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       >
         <div class="flex flex-col gap-4 py-2">
           <div class="flex flex-col gap-1">
-            <span class="text-xs font-semibold text-muted-foreground">Label</span>
+            <span class="text-xs font-semibold text-muted">Label</span>
             <RLSInput
               value={linkDraft().label}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -392,7 +392,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
           </div>
 
           <div class="flex flex-col gap-1">
-            <span class="text-xs font-semibold text-muted-foreground">URL</span>
+            <span class="text-xs font-semibold text-muted">URL</span>
             <RLSInput
               value={linkDraft().to}
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>

@@ -65,9 +65,9 @@ export const RimelightEditor: Component<RimelightEditorProps> = (props) => {
       <div ref={canvasContainer} class="flex flex-col gap-3 w-full min-h-[200px] pl-6">
         {props.state.blocks.length === 0 ? (
           <div class="flex flex-col items-center justify-center p-8 sm:p-12 rounded-xl border border-dashed border-default text-center my-4">
-            <div class="text-3xl text-muted-foreground mb-2">📄</div>
-            <h4 class="text-base font-semibold text-foreground">No blocks yet</h4>
-            <p class="text-xs text-muted-foreground mt-1 max-w-xs">
+            <div class="text-3xl text-muted mb-2">📄</div>
+            <h4 class="text-base font-semibold text-highlighted">No blocks yet</h4>
+            <p class="text-xs text-muted mt-1 max-w-xs">
               Start building your page content by adding your first block below.
             </p>
             <div class="mt-4">

@@ -91,11 +91,11 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
 
       <div
         ref={(el) => (childrenContainer = el)}
-        class="p-2 rounded-lg border border-dashed border-default flex flex-col gap-2 min-h-[36px] bg-background"
+        class="p-2 rounded-lg border border-dashed border-default flex flex-col gap-2 min-h-[36px] bg-neutral-50"
       >
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-2">
-            <span class="text-xs text-muted-foreground block">Empty step content</span>
+            <span class="text-xs text-muted block">Empty step content</span>
             <RLSButton
               variant="link"
               color="primary"

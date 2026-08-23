@@ -122,8 +122,8 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
     <div class="cms-template-editor border border-default rounded-xl p-4 space-y-4">
       <div class="flex items-center justify-between p-3 rounded-lg border border-default">
         <div>
-          <h4 class="text-sm font-semibold text-foreground">Initial Template Blocks</h4>
-          <p class="text-xs text-muted-foreground">
+          <h4 class="text-sm font-semibold text-highlighted">Initial Template Blocks</h4>
+          <p class="text-xs text-muted">
             Visually design the initial layout and set block locks for pages instantiated from this
             template.
           </p>
@@ -156,7 +156,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
         class="space-y-3 min-h-[120px] p-3 border border-dashed border-default rounded-lg"
       >
         {blocks().length === 0 ? (
-          <div class="text-center py-8 text-xs text-muted-foreground italic">
+          <div class="text-center py-8 text-xs text-muted italic">
             No initial blocks added yet. Use the dropdown above to add initial template blocks.
           </div>
         ) : (
@@ -173,8 +173,8 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
                 >
                   <div class="flex items-center justify-between border-b border-default/60 pb-2">
                     <div class="flex items-center gap-2">
-                      <span class="font-bold text-foreground uppercase">{block.type}</span>
-                      <span class="text-[10px] text-muted-foreground">#{index() + 1}</span>
+                      <span class="font-bold text-highlighted uppercase">{block.type}</span>
+                      <span class="text-[10px] text-muted">#{index() + 1}</span>
                     </div>
                     <RLSButton
                       variant="ghost"
@@ -212,9 +212,7 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
 
                   <div>
                     <div>
-                      <span class="block text-[11px] text-muted-foreground mb-1">
-                        Block Content / Text
-                      </span>
+                      <span class="block text-[11px] text-muted mb-1">Block Content / Text</span>
                       <div class="mt-1">
                         <RLSInput
                           id={`tmpl-content-${block.id}`}

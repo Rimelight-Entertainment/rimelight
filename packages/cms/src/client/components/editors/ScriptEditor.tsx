@@ -93,9 +93,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
   return (
     <div class="rimelight-script-editor flex flex-col gap-4 p-3 border-l-2 border-primary/50 w-full">
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-          Script Title
-        </span>
+        <span class="text-xs font-bold text-muted uppercase tracking-widest">Script Title</span>
         <RLSInput
           data-field="title"
           value={componentProps.props.title || ""}
@@ -106,9 +104,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-          Synopsis
-        </span>
+        <span class="text-xs font-bold text-muted uppercase tracking-widest">Synopsis</span>
         <RLSTextarea
           data-field="synopsis"
           value={componentProps.props.synopsis || ""}
@@ -119,12 +115,10 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-          Characters
-        </span>
+        <span class="text-xs font-bold text-muted uppercase tracking-widest">Characters</span>
         <div class="chars-container flex flex-wrap gap-1.5 mb-1.5 min-h-[24px]">
           {characters().length === 0 ? (
-            <div class="text-xs text-muted-foreground italic py-0.5">No characters added</div>
+            <div class="text-xs text-muted italic py-0.5">No characters added</div>
           ) : (
             <For each={characters()}>
               {(char) => (
@@ -169,7 +163,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">Plots</span>
+        <span class="text-xs font-bold text-muted uppercase tracking-widest">Plots</span>
         <div class="grid grid-cols-3 gap-2">
           <RLSInput
             data-field="aPlot"
@@ -196,9 +190,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
       </div>
 
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-          Stinger
-        </span>
+        <span class="text-xs font-bold text-muted uppercase tracking-widest">Stinger</span>
         <RLSInput
           data-field="stinger"
           value={componentProps.props.stinger || ""}
@@ -209,7 +201,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
       </div>
 
       <div class="mt-2">
-        <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest block mb-1">
+        <span class="text-xs font-bold text-muted uppercase tracking-widest block mb-1">
           Scenes & Content
         </span>
         <div
@@ -218,7 +210,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
         >
           {childrenBlocks().length === 0 ? (
             <div class="cms-empty-placeholder relative flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-default text-center my-1">
-              <div class="text-xs font-semibold text-muted-foreground">Empty script content</div>
+              <div class="text-xs font-semibold text-muted">Empty script content</div>
               <RLSButton
                 variant="outline"
                 color="neutral"

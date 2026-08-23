@@ -94,7 +94,7 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
     <Show when={props.open || !props.unmountOnHide}>
       <dialog
         ref={(el) => (dialogRef = el)}
-        class={`w-full rounded-xl border border-default bg-default p-6 shadow-xl outline-none flex flex-col max-h-[90vh] overflow-y-auto text-foreground backdrop:bg-black/60 backdrop:backdrop-blur-sm ${
+        class={`w-full rounded-xl border border-default bg-default p-6 shadow-xl outline-none flex flex-col max-h-[90vh] overflow-y-auto text-highlighted backdrop:bg-black/60 backdrop:backdrop-blur-sm ${
           resolvedClasses().content || ""
         }  ${props.class || ""}`}
         data-slot="content"
@@ -102,7 +102,7 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
       >
         <button
           type="button"
-          class="absolute right-4 top-4 rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer border-none bg-transparent"
+          class="absolute right-4 top-4 rounded-md p-1 text-muted hover:text-highlighted hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer border-none bg-transparent"
           data-slot="close-button"
           aria-label="Close modal"
           onClick={handleClose}

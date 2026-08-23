@@ -85,7 +85,7 @@ export const RimelightPreview: Component<RimelightPreviewProps> = (props) => {
               </span>
             )}
             {title() && (
-              <h1 class="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-highlighted tracking-tight leading-tight">
                 {title()}
               </h1>
             )}

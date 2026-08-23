@@ -27,7 +27,7 @@ export const tableTheme = defineTheme("table", {
     tr: "transition-colors data-[selected=true]:bg-primary/10 data-[expanded=true]:bg-muted/40 hover:bg-muted/30",
     th: "px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider [&:has([role=checkbox])]:pe-0",
     td: "p-4 text-sm text-highlighted align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0",
-    separator: "absolute z-10 start-0 w-full h-px bg-border",
+    separator: "absolute z-10 start-0 w-full h-px bg-neutral-200",
     empty: "py-8 text-center text-sm text-muted",
     loading: "py-8 text-center text-sm text-muted"
   },

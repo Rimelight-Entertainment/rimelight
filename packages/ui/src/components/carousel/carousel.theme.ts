@@ -16,11 +16,11 @@ export const carouselTheme = defineTheme("carousel", {
       "opacity-0 scale-90 group-hover/carousel:opacity-100 group-hover/carousel:scale-100"
     ],
     dots: "absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 items-center",
-    dot: "block size-2 rounded-full bg-foreground/20 cursor-pointer transition-all duration-350 hover:bg-foreground/45"
+    dot: "block size-2 rounded-full bg-neutral-950/20 cursor-pointer transition-all duration-350 hover:bg-neutral-950/45"
   },
   variants: {
     active: {
-      true: { dot: "bg-foreground size-2.5" },
+      true: { dot: "bg-neutral-950 size-2.5" },
       false: { dot: "" }
     }
   },

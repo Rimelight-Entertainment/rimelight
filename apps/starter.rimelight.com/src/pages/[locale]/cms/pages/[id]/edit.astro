@@ -65,7 +65,7 @@ const isPublished = !!page.publishedVersionId
 ---
 
 <DashboardLayout title={`Edit: ${titleVal || 'Untitled Page'}`} description="CMS Page Editor" noindex={true}>
-  <div class="flex flex-col h-screen overflow-hidden bg-background text-foreground select-none">
+  <div class="flex flex-col h-screen overflow-hidden bg-neutral-50 text-highlighted select-none">
     <!-- Top Header Bar matching PageEditor.vue -->
     <header class="h-12 w-full bg-neutral-100 dark:bg-neutral-800/90 flex items-center justify-between px-4 border-b border-default shrink-0 z-30">
       <div class="flex items-center gap-2.5">
@@ -195,13 +195,13 @@ const isPublished = !!page.publishedVersionId
             id="banner-url-dialog"
             class="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-xl border border-default bg-default p-6 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm"
           >
-            <h3 class="text-base font-semibold text-foreground mb-4">Banner Image URL</h3>
+            <h3 class="text-base font-semibold text-highlighted mb-4">Banner Image URL</h3>
             <div class="flex flex-col gap-3">
               <input
                 id="banner-url-input"
                 type="url"
                 placeholder="https://..."
-                class="w-full rounded-md border border-default bg-elevated px-3 py-2 text-sm text-foreground placeholder:text-dimmed focus:outline-none focus:ring-2 focus:ring-primary/50"
+                class="w-full rounded-md border border-default bg-elevated px-3 py-2 text-sm text-highlighted placeholder:text-dimmed focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
               <div class="flex justify-end gap-2 pt-1">
                 <button
@@ -213,7 +213,7 @@ const isPublished = !!page.publishedVersionId
                   <button
                     id="banner-dialog-cancel"
                     type="button"
-                    class="px-3 py-1.5 text-xs font-medium rounded-md border border-default text-foreground hover:bg-elevated transition"
+                    class="px-3 py-1.5 text-xs font-medium rounded-md border border-default text-highlighted hover:bg-elevated transition"
                   >Cancel</button>
                   <button
                     id="banner-dialog-apply"
@@ -232,7 +232,7 @@ const isPublished = !!page.publishedVersionId
               type="text"
               value={titleVal}
               placeholder="Page Title"
-              class="w-full text-4xl font-bold bg-transparent border-0 focus:ring-0 focus:outline-none p-0 text-foreground"
+              class="w-full text-4xl font-bold bg-transparent border-0 focus:ring-0 focus:outline-none p-0 text-highlighted"
             />
             <textarea
               id="page-desc-input"
@@ -270,7 +270,7 @@ const isPublished = !!page.publishedVersionId
 
               <!-- Metadata Box (Clean, no extra border/bg) -->
               <div class="flex flex-col gap-1 text-xs text-dimmed pt-4 mt-6">
-                <span class="font-bold text-foreground">Metadata</span>
+                <span class="font-bold text-highlighted">Metadata</span>
                 <span>ID: {page.id}</span>
                 {page.createdAt && <span>Created: {new Date(page.createdAt).toLocaleString(currentLocale)}</span>}
                 {page.updatedAt && <span>Updated: {new Date(page.updatedAt).toLocaleString(currentLocale)}</span>}

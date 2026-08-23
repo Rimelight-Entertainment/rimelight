@@ -73,7 +73,7 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
   return (
     <div class="rimelight-tab-item-editor flex flex-col gap-2 p-3 rounded-lg border border-default bg-muted/10 w-full">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-semibold text-muted-foreground uppercase">Tab Label:</span>
+        <span class="text-xs font-semibold text-muted uppercase">Tab Label:</span>
         <div class="flex-1 max-w-xs">
           <RLSInput
             type="text"
@@ -87,11 +87,11 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
 
       <div
         ref={(el) => (childrenContainer = el)}
-        class="p-2 rounded-lg border border-dashed border-default flex flex-col gap-2 min-h-[36px] bg-background"
+        class="p-2 rounded-lg border border-dashed border-default flex flex-col gap-2 min-h-[36px] bg-neutral-50"
       >
         {childrenBlocks().length === 0 ? (
           <div class="text-center py-2">
-            <span class="text-xs text-muted-foreground block">Empty tab content</span>
+            <span class="text-xs text-muted block">Empty tab content</span>
             <RLSButton
               variant="link"
               color="primary"
