@@ -12,14 +12,16 @@ const {
   required = false,
   name,
   size = "md",
+  multiple,
+  ui: _ui,
   class: classAttr,
   ...rest
 } = Astro.props as SelectProps
 
 const classes = selectTheme({ size, class: classAttr })
 
-const currentValue =
-  value !== undefined ? String(value) : defaultValue !== undefined ? String(defaultValue) : undefined
+const currentValue = value !== undefined ? value : defaultValue !== undefined ? defaultValue : undefined
+const currentValues = Array.isArray(currentValue) ? currentValue.map(String) : undefined
 
 const normalizedItems = (items || []).map((item: SelectItem) => {
   if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
@@ -40,17 +42,18 @@ const normalizedItems = (items || []).map((item: SelectItem) => {
     name={name}
     disabled={disabled}
     required={required}
+    multiple={multiple}
     data-slot="select"
     {...rest}
   >
-    {placeholder && (
+    {placeholder && !multiple && (
       <option value="" disabled selected={currentValue === undefined}>{placeholder}</option>
     )}
     {normalizedItems.map((item) => (
       <option
         value={item.value}
         disabled={item.disabled}
-        selected={currentValue !== undefined ? currentValue === item.value : undefined}
+        selected={currentValues ? currentValues.includes(item.value) : (currentValue !== undefined ? currentValue === item.value : undefined)}
       >
         {item.label}
       </option>

@@ -46,10 +46,9 @@ const templateOptions = [
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
           <RLASelect
-            name="type"
-            placeholder="Select or create page type..."
-            createItem={true}
-            value={selectedTemplate?.pageType || ""}
+          name="type"
+          placeholder="Select or create page type..."
+          value={selectedTemplate?.pageType || ""}
             items={[
               { label: "Blog Post", value: "blog" },
               { label: "Wiki Page", value: "wiki" },

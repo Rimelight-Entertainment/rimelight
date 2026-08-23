@@ -314,7 +314,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
       const propKeys = JSON.parse(showcase.getAttribute('data-props') || '[]') as string[];
       const currentProps: Record<string, string> = {};
       propKeys.forEach((prop: string) => {
-        const input = showcase.querySelector(`input[name="${prop}"]`) as HTMLInputElement;
+        const input = showcase.querySelector(`select[name="${prop}"]`) as HTMLInputElement;
         if (input) currentProps[prop] = input.value;
       });
       const combinationClasses = JSON.parse(showcase.getAttribute('data-combinations') || '{}') as Record<string, any>;
@@ -647,7 +647,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
         const currentProps: Record<string, string> = {};
 
         propKeys.forEach((prop: string) => {
-          const input = showcase.querySelector(`input[name="${prop}"]`) as HTMLInputElement | null;
+          const input = showcase.querySelector(`select[name="${prop}"]`) as HTMLInputElement | null;
           if (input) {
             currentProps[prop] = input.value;
           }
@@ -662,7 +662,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
           });
 
           propKeys.forEach((prop: string) => {
-            const selectWrapper = showcase.querySelector(`.prop-control-group[data-prop="${prop}"] rla-select`);
+            const selectWrapper = showcase.querySelector(`.prop-control-group[data-prop="${prop}"] select.rl-select`);
             if (selectWrapper) {
               if (comparedProp && prop !== comparedProp) {
                 selectWrapper.setAttribute('disabled', 'true');
@@ -735,7 +735,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
                 btn.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');
                 btn.classList.add('text-muted-foreground', 'border-border/60');
               }
-              showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
+              showcase.querySelectorAll('.prop-control-group select.rl-select').forEach(sel => {
                 sel.removeAttribute('disabled');
                 sel.classList.remove('opacity-50', 'pointer-events-none');
               });
@@ -755,7 +755,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
 
               showcase.querySelectorAll('.prop-control-group').forEach(group => {
                 const name = group.getAttribute('data-prop');
-                const selectWrapper = group.querySelector('rla-select');
+                const selectWrapper = group.querySelector('select.rl-select');
                 if (name !== comparedProp && selectWrapper) {
                   selectWrapper.setAttribute('disabled', 'true');
                   selectWrapper.classList.add('opacity-50', 'pointer-events-none');
@@ -786,13 +786,13 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
 
             if (mode === 'compare') {
               comparedProp = propKeys[0] || null;
-              showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
+              showcase.querySelectorAll('.prop-control-group select.rl-select').forEach(sel => {
                 sel.setAttribute('disabled', 'true');
                 sel.classList.add('opacity-50', 'pointer-events-none');
               });
             } else {
               comparedProp = null;
-              showcase.querySelectorAll('.prop-control-group rla-select').forEach(sel => {
+              showcase.querySelectorAll('.prop-control-group select.rl-select').forEach(sel => {
                 sel.removeAttribute('disabled');
                 sel.classList.remove('opacity-50', 'pointer-events-none');
               });

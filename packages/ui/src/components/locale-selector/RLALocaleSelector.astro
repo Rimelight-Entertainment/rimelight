@@ -4,8 +4,6 @@ import { localeSelectorTheme } from "./locale-selector.theme"
 import { getRelativeLocaleUrlList, getRelativeLocaleUrl } from "astro:i18n"
 import RLASelect from "../select/RLASelect.astro"
 
-
-
 const {
   locales,
   currentLocale: currentLocaleProp,
@@ -62,34 +60,7 @@ const items = processedLocales.map((item) => {
 
 const currentLocaleUrl = items.find(item => item.code === currentLocale)?.value || "";
 
-// Prefix utility classes in classes.select with `!` to cleanly override conflicting styles in RLASelect's base trigger
-// Also remove `pr-` classes which were meant for absolute positioned native select icons
-const overrideTriggerClass = classes.select
-    ? classes.select
-        .split(" ")
-        .map(cls => {
-            if (!cls) return "";
-            if (cls.startsWith("pr-") || cls.startsWith("!pr-")) return ""; // Strip padding-right
-            if (cls.includes(":")) {
-                const parts = cls.split(":");
-                const state = parts.slice(0, -1).join(":");
-                const baseCls = parts[parts.length - 1];
-                return `${state}:!${baseCls}`;
-            }
-            return `!${cls}`;
-        })
-        .filter(Boolean)
-        .join(" ")
-    : "";
-
 const gapClass = size === "sm" ? "gap-1.5" : size === "lg" ? "gap-3" : "gap-2";
-
-const selectUi = {
-  root: "!w-fit !inline-flex",
-  trigger: `flex items-center justify-between !w-fit ${gapClass} ${overrideTriggerClass}`,
-  content: "!min-w-0 !w-full !bg-default !border-default !text-default",
-  item: "!text-default hover:!bg-muted hover:!text-highlighted"
-}
 ---
 
 <rla-locale-selector {...rest}>
@@ -106,7 +77,6 @@ const selectUi = {
                 value={currentLocaleUrl}
                 size={size}
                 theme={theme}
-                ui={selectUi}
             />
         </div>
     </div>
@@ -117,8 +87,8 @@ const selectUi = {
         connectedCallback() {
             this.style.display = 'contents';
             this.addEventListener('change', (event) => {
-                const target = event.target as HTMLInputElement;
-                if (target && target.hasAttribute('data-select-hidden-input')) {
+                const target = event.target as HTMLSelectElement;
+                if (target && target.tagName === 'SELECT') {
                     const targetUrl = target.value;
                     if (targetUrl) {
                         window.location.href = targetUrl;

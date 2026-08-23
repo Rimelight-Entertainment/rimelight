@@ -122,12 +122,6 @@ const tocHeadings = hasToc
                 items={versions.map(v => ({ label: v, value: getVersionHomeUrl(v) }))}
                 value={getVersionHomeUrl(activeVersion || "")}
                 size="sm"
-                ui={{
-                  root: "!w-full !block",
-                  trigger: "flex items-center justify-between !w-full bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium text-foreground",
-                  content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
-                  item: "!text-highlighted hover:!bg-accented"
-                }}
               />
             </rla-version-selector>
           </div>
@@ -339,13 +333,10 @@ const tocHeadings = hasToc
 
   class RLAVersionSelector extends HTMLElement {
     connectedCallback() {
-      const hiddenInput = this.querySelector('[data-select-hidden-input]') as HTMLInputElement | null;
-      if (!hiddenInput) return;
-      hiddenInput.addEventListener('change', (event) => {
-        const target = event.target as HTMLInputElement;
-        const targetUrl = target.value;
-        if (targetUrl) {
-          window.location.href = targetUrl;
+      this.addEventListener('change', (event) => {
+        const target = event.target as HTMLSelectElement;
+        if (target && target.tagName === 'SELECT' && target.value) {
+          window.location.href = target.value;
         }
       });
     }

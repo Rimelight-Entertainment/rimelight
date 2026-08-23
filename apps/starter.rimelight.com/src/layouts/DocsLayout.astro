@@ -171,12 +171,6 @@ const getVersionHomeUrl = (v: string) => {
                 items={versions.map(v => ({ label: v, value: getVersionHomeUrl(v) }))}
                 value={getVersionHomeUrl(activeVersion || "")}
                 size="sm"
-                ui={{
-                  root: "!w-full !block",
-                  trigger: "flex items-center justify-between !w-full bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium text-foreground",
-                  content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
-                  item: "!text-highlighted hover:!bg-accented"
-                }}
               />
             </rla-version-selector>
           </div>
@@ -509,7 +503,7 @@ const getVersionHomeUrl = (v: string) => {
       if (!target || !target.value) return;
       // Path A: native <select class="rla-select-native"> — always visible, this is what the user interacts with
       // Path B: hidden input updated by the custom rla-select element
-      const isNativeSelect = target.tagName === 'SELECT' && target.classList.contains('rla-select-native');
+      const isNativeSelect = target.tagName === 'SELECT' && target.classList.contains('rl-select');
       const isHiddenInput = target.hasAttribute('data-select-hidden-input');
       if (isNativeSelect || isHiddenInput) {
         window.location.href = target.value;
