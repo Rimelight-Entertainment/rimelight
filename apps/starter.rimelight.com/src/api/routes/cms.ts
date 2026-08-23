@@ -24,7 +24,12 @@ import {
   assignEntryTerms,
   createTerm,
   updateTerm,
-  deleteTerm
+  deleteTerm,
+  getBylines,
+  getByline,
+  createByline,
+  updateByline,
+  deleteByline
 } from "@rimelight/cms"
 
 const cms = new Hono()
@@ -782,7 +787,7 @@ cms.get("/taxonomies/:taxonomy/terms", async (c) => {
   const taxonomy = c.req.param("taxonomy")
   const includeCounts = c.req.query("includeCounts") !== "false"
   const terms = await getTaxonomyTerms(db, taxonomy, { includeCounts })
-  return c.json({ terms })
+  return c.json(terms)
 })
 
 cms.post("/taxonomies/:taxonomy/terms", async (c) => {
@@ -792,7 +797,7 @@ cms.post("/taxonomies/:taxonomy/terms", async (c) => {
   const taxonomy = c.req.param("taxonomy")
   const body = await c.req.json()
   const term = await createTerm(db, { ...body, taxonomy })
-  return c.json({ term })
+  return c.json(term, 201)
 })
 
 cms.get("/taxonomies/:taxonomy/terms/:slug", async (c) => {
@@ -800,7 +805,7 @@ cms.get("/taxonomies/:taxonomy/terms/:slug", async (c) => {
   const slug = c.req.param("slug")
   const term = await getTerm(db, taxonomy, slug)
   if (!term) return c.json({ error: "Term not found" }, 404)
-  return c.json({ term })
+  return c.json(term)
 })
 
 cms.put("/taxonomies/:taxonomy/terms/:id", async (c) => {
@@ -810,7 +815,7 @@ cms.put("/taxonomies/:taxonomy/terms/:id", async (c) => {
   const id = c.req.param("id")
   const body = await c.req.json()
   const updated = await updateTerm(db, id, body)
-  return c.json({ term: updated })
+  return c.json(updated)
 })
 
 cms.delete("/taxonomies/:taxonomy/terms/:id", async (c) => {
@@ -839,6 +844,48 @@ cms.post("/pages/:id/terms/:taxonomy", async (c) => {
   const termIds = Array.isArray(body.termIds) ? body.termIds : []
 
   await assignEntryTerms(db, id, taxonomy, termIds)
+  return c.json({ success: true })
+})
+
+// Bylines Management
+cms.get("/bylines", async (c) => {
+  const allBylines = await getBylines(db)
+  return c.json(allBylines)
+})
+
+cms.post("/bylines", async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+
+  const body = await c.req.json()
+  const byline = await createByline(db, body)
+  return c.json(byline, 201)
+})
+
+cms.get("/bylines/:id", async (c) => {
+  const id = c.req.param("id")
+  const byline = await getByline(db, id)
+  if (!byline) return c.json({ error: "Byline not found" }, 404)
+  return c.json(byline)
+})
+
+cms.put("/bylines/:id", async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+
+  const id = c.req.param("id")
+  const body = await c.req.json()
+  const updated = await updateByline(db, id, body)
+  if (!updated) return c.json({ error: "Byline not found" }, 404)
+  return c.json(updated)
+})
+
+cms.delete("/bylines/:id", async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+
+  const id = c.req.param("id")
+  await deleteByline(db, id)
   return c.json({ success: true })
 })
 

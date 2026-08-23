@@ -10,6 +10,9 @@ import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
 
 const navItems = [
 	{ icon: "i-lucide-layout-dashboard", label: "Overview", href: "/admin", id: "overview" },
+	{ icon: "i-lucide-folder", label: "Categories", href: "/admin/categories", id: "categories" },
+	{ icon: "i-lucide-tag", label: "Tags", href: "/admin/tags", id: "tags" },
+	{ icon: "i-lucide-pen-tool", label: "Bylines", href: "/admin/bylines", id: "bylines" },
 	{ icon: "i-lucide-building-2", label: "Organizations", href: "/admin/organizations", id: "organizations" },
 	{ icon: "i-lucide-users", label: "Users", href: "/admin/users", id: "users" },
 	{ icon: "i-lucide-shield-check", label: "Roles & Permissions", href: "/admin/roles", id: "roles" },
@@ -19,9 +22,11 @@ interface Props {
 	title: string;
 	description: string;
 	activeSection?: string;
+	activeNav?: string;
 }
 
-const { title, description, activeSection = "overview" } = Astro.props;
+const { title, description, activeSection, activeNav } = Astro.props;
+const currentActive = activeNav || activeSection || "overview";
 ---
 
 <DashboardLayout title={title} description={description} noindex={true}>
@@ -48,7 +53,7 @@ const { title, description, activeSection = "overview" } = Astro.props;
 						data-dashboard-section={item.id}
 						class={
 							"flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0 " +
-							(item.id === activeSection
+							(item.id === currentActive
 								? "bg-primary/10 text-primary font-semibold"
 								: "text-muted hover:text-highlighted hover:bg-muted/50")
 						}

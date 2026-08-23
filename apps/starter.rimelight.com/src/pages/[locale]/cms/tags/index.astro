@@ -1,0 +1,21 @@
+---
+import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro";
+import { RimelightTaxonomyMasterDetail } from "@rimelight/cms/client/components";
+
+export const prerender = false;
+---
+
+<CMSDashboardLayout
+  title="Tags"
+  description="Manage content tags and keywords"
+  activeSection="tags"
+>
+  <div class="w-full py-2">
+    <RimelightTaxonomyMasterDetail
+      client:only="solid"
+      taxonomy="tag"
+      title="Tags"
+      description="Label articles and posts with keywords for easy filtering."
+    />
+  </div>
+</CMSDashboardLayout>

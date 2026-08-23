@@ -5,7 +5,7 @@ import { auth } from "@/auth/auth";
 
 interface Props {
 	title?: string;
-	activeTab: 'overview' | 'organizations' | 'teams' | 'users';
+	activeTab: 'overview' | 'organizations' | 'teams' | 'users' | 'categories' | 'tags' | 'bylines';
 }
 
 const { title = 'Admin Panel', activeTab } = Astro.props;
@@ -21,8 +21,26 @@ const links = [
 	{
 		label: 'Overview',
 		icon: 'i-lucide-layout-dashboard',
-		href: getRelativeLocaleUrl('/dashboard/admin'),
+		href: getRelativeLocaleUrl('/admin'),
 		active: activeTab === 'overview'
+	},
+	{
+		label: 'Categories',
+		icon: 'i-lucide-folder',
+		href: getRelativeLocaleUrl('/admin/categories'),
+		active: activeTab === 'categories'
+	},
+	{
+		label: 'Tags',
+		icon: 'i-lucide-tag',
+		href: getRelativeLocaleUrl('/admin/tags'),
+		active: activeTab === 'tags'
+	},
+	{
+		label: 'Bylines',
+		icon: 'i-lucide-pen-tool',
+		href: getRelativeLocaleUrl('/admin/bylines'),
+		active: activeTab === 'bylines'
 	},
 	{
 		label: 'Organizations',

@@ -61,6 +61,7 @@ export * from "./mcp/index.ts"
 // Media & Bylines
 export * from "./core/types/media.ts"
 export * from "./core/types/bylines.ts"
+export * from "./services/bylines.ts"
 
 // Preview Tokens & Block Diffs
 export * from "./core/preview.ts"

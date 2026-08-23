@@ -21,6 +21,9 @@
     "nav_dashboard": "Panel",
     "nav_templates": "Plantillas",
     "nav_pages": "Páginas",
+    "nav_categories": "Categorías",
+    "nav_tags": "Etiquetas",
+    "nav_bylines": "Firmas",
     "nav_versions": "Versiones",
     "nav_settings": "Configuración",
     "sidebar_app_name": "Admin CMS"

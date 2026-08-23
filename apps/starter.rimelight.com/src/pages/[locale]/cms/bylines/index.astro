@@ -1,0 +1,16 @@
+---
+import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro";
+import { RimelightBylinesManager } from "@rimelight/cms/client/components";
+
+export const prerender = false;
+---
+
+<CMSDashboardLayout
+  title="Bylines"
+  description="Manage author profiles and multi-author attributions"
+  activeSection="bylines"
+>
+  <div class="w-full py-2">
+    <RimelightBylinesManager client:only="solid" />
+  </div>
+</CMSDashboardLayout>

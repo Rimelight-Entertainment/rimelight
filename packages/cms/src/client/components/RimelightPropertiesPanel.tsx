@@ -53,6 +53,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
   )
 
   // Bylines state
+  const [availableBylines, setAvailableBylines] = createSignal<BylineItem[]>([])
   const [bylines, setBylines] = createSignal<BylineItem[]>(
     componentProps.bylines || componentProps.initialProperties?.bylines || []
   )
@@ -108,6 +109,26 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
         const data = await res.json()
         if (Array.isArray(data)) {
           setCategoriesList(data.map((t: any) => ({ id: t.id, name: t.name, slug: t.slug })))
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    // Load available global bylines
+    try {
+      const res = await fetch("/api/cms/bylines")
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          setAvailableBylines(
+            data.map((b: any) => ({
+              name: b.name,
+              avatar: b.avatar || "",
+              role: b.bio || "",
+              url: b.websiteUrl || ""
+            }))
+          )
         }
       }
     } catch {
@@ -435,9 +456,31 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
               size="xs"
               onClick={() => openBylineModal()}
               leadingIcon="plus"
-              label="Add"
+              label="Add Custom"
             />
           </div>
+
+          <Show when={availableBylines().length > 0}>
+            <select
+              onChange={(e) => {
+                const authorName = e.currentTarget.value
+                if (!authorName) return
+                const found = availableBylines().find((b) => b.name === authorName)
+                if (found && !bylines().some((b) => b.name === found.name)) {
+                  const updated = [...bylines(), found]
+                  setBylines(updated)
+                  handlePropertyChange("bylines", updated)
+                }
+                e.currentTarget.value = ""
+              }}
+              class="w-full text-xs py-1.5 px-2 rounded-md border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary mb-1"
+            >
+              <option value="">+ Select from global bylines...</option>
+              <For each={availableBylines()}>
+                {(author) => <option value={author.name}>{author.name}</option>}
+              </For>
+            </select>
+          </Show>
 
           <Show
             when={bylines().length > 0}

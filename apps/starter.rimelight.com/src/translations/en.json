@@ -321,6 +321,9 @@
     "nav_dashboard": "Dashboard",
     "nav_templates": "Templates",
     "nav_pages": "Pages",
+    "nav_categories": "Categories",
+    "nav_tags": "Tags",
+    "nav_bylines": "Bylines",
     "nav_versions": "Versions",
     "nav_settings": "Settings",
     "sidebar_app_name": "CMS Admin"

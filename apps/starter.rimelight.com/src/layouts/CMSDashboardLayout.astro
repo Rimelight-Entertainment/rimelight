@@ -13,8 +13,11 @@ const currentLocale = Astro.currentLocale ?? "en";
 
 const cmsNavItems = [
   { icon: "i-lucide-home", label: t("cms.nav_dashboard"), href: getRelativeLocaleUrl(currentLocale, "/cms"), id: "dashboard" },
-  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: getRelativeLocaleUrl(currentLocale, "/cms/templates"), id: "templates" },
   { icon: "i-lucide-file", label: t("cms.nav_pages"), href: getRelativeLocaleUrl(currentLocale, "/cms/pages"), id: "pages" },
+  { icon: "i-lucide-file-text", label: t("cms.nav_templates"), href: getRelativeLocaleUrl(currentLocale, "/cms/templates"), id: "templates" },
+  { icon: "i-lucide-folder", label: t("cms.nav_categories"), href: getRelativeLocaleUrl(currentLocale, "/cms/categories"), id: "categories" },
+  { icon: "i-lucide-tag", label: t("cms.nav_tags"), href: getRelativeLocaleUrl(currentLocale, "/cms/tags"), id: "tags" },
+  { icon: "i-lucide-pen-tool", label: t("cms.nav_bylines"), href: getRelativeLocaleUrl(currentLocale, "/cms/bylines"), id: "bylines" },
   { icon: "i-lucide-git-branch", label: t("cms.nav_versions"), href: getRelativeLocaleUrl(currentLocale, "/cms/versions"), id: "versions" },
 ]
 
