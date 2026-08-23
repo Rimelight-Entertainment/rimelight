@@ -7,6 +7,7 @@ const {
   side = "left",
   collapsible = false,
   collapsed = false,
+  class: className,
   ...rest
 } = Astro.props as DashboardSidebarProps
 
@@ -27,9 +28,9 @@ const defaultWidth = "16rem";
   data-slot="root"
   class={classes.root}
   {...rest}
-  style={`--width: ${defaultWidth}; --collapsed-width: ${collapsedWidth}`}
+  style={`width: ${collapsible && collapsed ? collapsedWidth : defaultWidth}; min-width: ${collapsible && collapsed ? collapsedWidth : defaultWidth}; flex-shrink: 0; --width: ${defaultWidth}; --collapsed-width: ${collapsedWidth}`}
 >
-  <div data-slot="header" class={classes.header}>
+  <div data-slot="header" class={classes.header} style="height: 4rem; min-height: 4rem; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box;">
     <slot name="header" />
   </div>
 
@@ -79,8 +80,10 @@ const defaultWidth = "16rem";
     const collapseSidebar = (val?: boolean) => {
       if (!collapsible) return;
       const isCollapsed = val !== undefined ? val : sidebar.dataset.collapsed !== 'true';
-      sidebar.dataset.collapsed = isCollapsed ? 'true' : 'false';
-      sidebar.style.setProperty('--width', isCollapsed ? '4rem' : '16rem');
+      const w = isCollapsed ? '4rem' : '16rem';
+      sidebar.style.width = w;
+      sidebar.style.minWidth = w;
+      sidebar.style.setProperty('--width', w);
 
       document.querySelectorAll('[data-dashboard-toggle="collapse"]').forEach(btn => {
         btn.querySelectorAll('[data-dashboard-collapse-icon]').forEach(el => {

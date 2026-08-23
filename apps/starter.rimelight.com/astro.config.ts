@@ -6,6 +6,7 @@ import { sri } from "@rimelight/security"
 import { defineSecurity } from "@rimelight/security/config"
 import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
+import { rimelightCms } from "@rimelight/cms/integration"
 import { defineConfig, fontProviders, svgoOptimizer } from "astro/config"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 
@@ -98,7 +99,7 @@ export default defineConfig({
       translations: { en, pt },
       kvBinding: "starter-dot-rimelight-dot-com_translations"
     }),
-
+    rimelightCms(),
     sri()
   ],
 

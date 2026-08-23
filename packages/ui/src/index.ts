@@ -14,7 +14,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
         ...unocss.content?.pipeline,
         include: [
           /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
-          /[\\/](@rimelight\/ui|packages\/ui)[\\/]/,
+          /[\\/](@rimelight\/(ui|cms)|packages\/(ui|cms))[\\/]/,
           ...[unocss.content?.pipeline?.include]
             .flat()
             .filter((v): v is string | RegExp => Boolean(v))

@@ -1,6 +1,6 @@
 ---
-import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro";
-import { RimelightTaxonomyMasterDetail } from "@rimelight/cms/client/components";
+import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
+import { RimelightTaxonomyMasterDetail } from "../../client/components";
 
 export const prerender = false;
 ---
@@ -10,7 +10,7 @@ export const prerender = false;
   description="Manage content tags and keywords"
   activeSection="tags"
 >
-  <div class="w-full py-2">
+  <div class="w-full">
     <RimelightTaxonomyMasterDetail
       client:only="solid"
       taxonomy="tag"

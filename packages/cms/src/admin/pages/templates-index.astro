@@ -1,0 +1,95 @@
+---
+import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
+import { db } from "virtual:rimelight-cms/db";
+import { pageTemplates } from "../../schema/page_templates.ts";
+import { desc } from "drizzle-orm";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
+
+export const prerender = false;
+
+const currentLocale = Astro.currentLocale ?? "en";
+
+let templates: any[] = [];
+if (db) {
+  try {
+    templates = await db
+      .select()
+      .from(pageTemplates)
+      .orderBy(desc(pageTemplates.createdAt));
+  } catch (err) {
+    console.warn("Failed to fetch templates:", err);
+  }
+}
+---
+
+<CMSDashboardLayout title="Templates" description="Manage CMS templates" activeSection="templates">
+  <Fragment slot="toolbar-right">
+    <RLAButton href={getRelativeLocaleUrl(currentLocale, "/cms/templates/new")} variant="solid" color="primary" leadingIcon="i-lucide-plus">
+      Create Template
+    </RLAButton>
+  </Fragment>
+
+  <div class="bg-elevated/40 border border-default rounded-xl overflow-hidden">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-elevated/70 border-b border-default text-xs font-semibold text-muted uppercase tracking-wider">
+        <tr>
+          <th class="px-6 py-3">Name</th>
+          <th class="px-6 py-3">Type</th>
+          <th class="px-6 py-3">Version</th>
+          <th class="px-6 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-default/50">
+        {templates.map((template: any) => (
+          <tr class="hover:bg-elevated/50 transition">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-highlighted">{template.title}</div>
+              <div class="text-xs font-mono text-muted">{template.slug}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <RLABadge variant="soft" color="primary" size="xs">{template.pageType}</RLABadge>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-xs font-mono text-muted">
+              v{template.version}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex items-center justify-end gap-2">
+              <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/pages/new?templateId=${template.id}`)} variant="ghost" color="primary" size="xs">
+                Create Page
+              </RLAButton>
+              <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/templates/${template.id}/edit`)} variant="ghost" color="neutral" size="xs">
+                Edit
+              </RLAButton>
+              <RLAButton variant="ghost" color="error" size="xs" class="delete-template-btn" data-id={template.id}>
+                Delete
+              </RLAButton>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.querySelectorAll('.delete-template-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = (btn as HTMLElement).dataset.id;
+        if (!id) return;
+
+        if (!confirm('Are you sure you want to delete this template?')) return;
+
+        try {
+          const res = await fetch(`/api/cms/templates/${id}`, { method: 'DELETE' });
+          if (res.ok) {
+            window.location.reload();
+          } else {
+            alert('Failed to delete template');
+          }
+        } catch {
+          alert('Network error deleting template');
+        }
+      });
+    });
+  </script>
+</CMSDashboardLayout>

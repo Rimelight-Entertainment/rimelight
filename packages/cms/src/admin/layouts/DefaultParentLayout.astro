@@ -1,0 +1,50 @@
+---
+import UIHead from "@rimelight/ui/components/head/UIHead.astro";
+import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
+import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
+import "virtual:uno.css";
+import "../../client/styles/cms-editor.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "Rimelight CMS", description = "Content Management System" } = Astro.props;
+---
+
+<!doctype html>
+<html lang={Astro.currentLocale || "en"} class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <UIHead />
+    <slot name="head" />
+  </head>
+  <body class="isolate bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground">
+    <RLAMain id="main-content" class="dashboard-viewport-area flex flex-col min-w-0">
+      <slot />
+    </RLAMain>
+    <RLAToaster />
+  </body>
+</html>
+
+<style is:global>
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .dashboard-viewport-area {
+    box-sizing: border-box;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden;
+    transform: translate(0);
+  }
+</style>

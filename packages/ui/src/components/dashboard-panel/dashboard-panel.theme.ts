@@ -10,7 +10,7 @@ export const dashboardPanelTheme = defineTheme("dashboard-panel", {
   variants: {
     size: {
       true: {
-        root: "w-full lg:w-(--width)"
+        root: "w-full lg:w-[var(--width,16rem)]"
       },
       false: {
         root: "flex-1"

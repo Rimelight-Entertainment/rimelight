@@ -33,7 +33,9 @@
     "./client/*": "./src/client/*.ts",
     "./auth/*": "./src/auth/*",
     "./cache/*": "./src/cache/*",
-    "./search/*": "./src/search/*"
+    "./search/*": "./src/search/*",
+    "./integration": "./src/integration.ts",
+    "./admin/*": "./src/admin/*"
   },
   "publishConfig": {
     "access": "public"

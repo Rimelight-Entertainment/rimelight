@@ -1,31 +1,36 @@
 ---
-import { auth } from "@/auth/auth"
-import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
-import RLATable from "@rimelight/ui/components/table/RLATable.astro"
-import type { TableColumn } from "@rimelight/ui/components/table/table.ts"
-import { db } from "@/db"
-import { pages } from "@/db/schema"
-import { desc, isNull } from "drizzle-orm"
-import { getRelativeLocaleUrl } from "@rimelight/i18n"
+import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
+import RLATable from "@rimelight/ui/components/table/RLATable.astro";
+import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
+import { db } from "virtual:rimelight-cms/db";
+import { pages } from "../../schema/pages.ts";
+import { desc, isNull } from "drizzle-orm";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const currentLocale = Astro.currentLocale ?? "en"
+export const prerender = false;
 
-const session = await auth.api.getSession({ headers: Astro.request.headers })
+const currentLocale = Astro.currentLocale ?? "en";
 
-if (!session) {
-  return Astro.redirect("/auth/sign-in")
+let pagesList: any[] = [];
+if (db) {
+  try {
+    pagesList = await db
+      .select()
+      .from(pages)
+      .where(isNull(pages.deletedAt))
+      .orderBy(desc(pages.createdAt));
+  } catch (err) {
+    console.warn("Failed to fetch pages:", err);
+  }
 }
 
-const pagesList = await db
-  .select()
-  .from(pages)
-  .where(isNull(pages.deletedAt))
-  .orderBy(desc(pages.createdAt))
-
 const formattedPages = pagesList.map((page) => {
-  const titleVal = typeof page.title === "object" && page.title !== null ? (page.title as Record<string, string>).en || "" : String(page.title || "")
+  const titleVal =
+    typeof page.title === "object" && page.title !== null
+      ? (page.title as Record<string, string>).en || ""
+      : String(page.title || "");
   return {
     id: page.id,
     title: titleVal,
@@ -34,8 +39,8 @@ const formattedPages = pagesList.map((page) => {
     status: page.publishedVersionId ? "published" : "draft",
     publishedVersionId: page.publishedVersionId,
     createdAt: page.createdAt
-  }
-})
+  };
+});
 
 const columns: TableColumn[] = [
   { id: "title", accessorKey: "title", header: "Title", enableSorting: true },
@@ -43,7 +48,7 @@ const columns: TableColumn[] = [
   { id: "type", accessorKey: "type", header: "Type", enableSorting: true },
   { id: "status", accessorKey: "status", header: "Status", enableSorting: true },
   { id: "actions", header: "Actions", enableSorting: false, meta: { class: { th: "text-right", td: "text-right" } } }
-]
+];
 ---
 
 <CMSDashboardLayout title="Pages" description="Manage CMS pages" activeSection="pages">
@@ -119,23 +124,23 @@ const columns: TableColumn[] = [
   <script>
     document.querySelectorAll(".delete-page-btn").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        const pageId = (btn as HTMLElement).dataset.pageId
-        if (!pageId) return
-        if (!confirm("Are you sure you want to delete this page?")) return
+        const pageId = (btn as HTMLElement).dataset.pageId;
+        if (!pageId) return;
+        if (!confirm("Are you sure you want to delete this page?")) return;
 
         try {
           const res = await fetch(`/api/cms/pages/${pageId}`, {
             method: "DELETE"
-          })
+          });
           if (res.ok) {
-            window.location.reload()
+            window.location.reload();
           } else {
-            alert("Failed to delete page")
+            alert("Failed to delete page");
           }
-        } catch (err) {
-          alert("Error deleting page")
+        } catch {
+          alert("Error deleting page");
         }
-      })
-    })
+      });
+    });
   </script>
 </CMSDashboardLayout>

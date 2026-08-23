@@ -1,30 +1,32 @@
 ---
-import { auth } from "@/auth/auth"
-import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
-import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
-import RLASelect from "@rimelight/ui/components/select/RLASelect.astro"
-import { db } from "@/db"
-import { pageTemplates } from "@/db/schema"
-import { desc } from "drizzle-orm"
+import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
+import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
+import { db } from "virtual:rimelight-cms/db";
+import { pageTemplates } from "../../schema/page_templates.ts";
+import { desc } from "drizzle-orm";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
-import { getRelativeLocaleUrl } from "@rimelight/i18n"
+export const prerender = false;
 
-const currentLocale = Astro.currentLocale ?? "en"
-const session = await auth.api.getSession({ headers: Astro.request.headers })
+const currentLocale = Astro.currentLocale ?? "en";
 
-if (!session) {
-  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
+let templates: any[] = [];
+if (db) {
+  try {
+    templates = await db
+      .select()
+      .from(pageTemplates)
+      .orderBy(desc(pageTemplates.createdAt));
+  } catch (err) {
+    console.warn("Failed to fetch templates:", err);
+  }
 }
 
-const templates = await db
-  .select()
-  .from(pageTemplates)
-  .orderBy(desc(pageTemplates.createdAt))
-
-const url = new URL(Astro.request.url)
-const selectedTemplateId = url.searchParams.get("templateId") || ""
-const selectedTemplate = templates.find((t: any) => t.id === selectedTemplateId)
+const url = new URL(Astro.request.url);
+const selectedTemplateId = url.searchParams.get("templateId") || "";
+const selectedTemplate = templates.find((t: any) => t.id === selectedTemplateId);
 
 const templateOptions = [
   { label: "Blank Page", value: "" },
@@ -32,23 +34,23 @@ const templateOptions = [
     label: `${typeof t.title === "object" ? t.title.en || t.title : t.title} (${t.pageType})`,
     value: t.id
   }))
-]
+];
 ---
 
 <CMSDashboardLayout title="Create Page" description="Create a new CMS page" activeSection="pages">
   <div class="max-w-3xl mx-auto space-y-6">
-    <form id="page-form" class="bg-white p-6 rounded-lg shadow space-y-6">
-      <div class="grid grid-cols-2 gap-4">
+    <form id="page-form" class="bg-elevated/40 border border-default p-6 rounded-2xl shadow space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Slug</label>
+          <label class="block text-sm font-medium text-highlighted mb-2">Slug</label>
           <RLAInput name="slug" required />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+          <label class="block text-sm font-medium text-highlighted mb-2">Type</label>
           <RLASelect
-          name="type"
-          placeholder="Select or create page type..."
-          value={selectedTemplate?.pageType || ""}
+            name="type"
+            placeholder="Select page type..."
+            value={selectedTemplate?.pageType || "blog"}
             items={[
               { label: "Blog Post", value: "blog" },
               { label: "Wiki Page", value: "wiki" },
@@ -61,12 +63,12 @@ const templateOptions = [
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+        <label class="block text-sm font-medium text-highlighted mb-2">Title</label>
         <RLAInput name="title" required />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Template</label>
+        <label class="block text-sm font-medium text-highlighted mb-2">Template</label>
         <RLASelect
           name="templateId"
           placeholder="Select template..."
@@ -75,20 +77,17 @@ const templateOptions = [
         />
       </div>
 
-      <div class="border-t pt-6 flex items-center justify-end gap-3">
+      <div class="border-t border-default pt-6 flex items-center justify-end gap-3">
         <RLAButton href={getRelativeLocaleUrl(currentLocale, "/cms/pages")} variant="outline" color="neutral" size="sm">
           Cancel
         </RLAButton>
-        <RLAButton variant="solid" color="success" size="sm" leadingIcon="i-lucide-plus" type="submit">
+        <RLAButton variant="solid" color="primary" size="sm" leadingIcon="i-lucide-plus" type="submit">
           Create & Edit
         </RLAButton>
       </div>
     </form>
   </div>
 
-  <style is:inline slot="head">
-    @import url("@rimelight/cms/client/styles/cms-editor.css");
-  </style>
   <script is:inline define:vars={{ currentLocale }}>
     const form = document.getElementById('page-form');
     
@@ -123,7 +122,7 @@ const templateOptions = [
           const errorData = (await response.json().catch(() => ({})));
           alert(`Failed to create page: ${errorData.error || 'Unknown error'}`);
         }
-      } catch (error) {
+      } catch {
         alert('Error creating page: Network error');
       }
     });

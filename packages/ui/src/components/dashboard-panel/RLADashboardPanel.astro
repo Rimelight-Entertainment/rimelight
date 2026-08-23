@@ -5,6 +5,7 @@ import { dashboardPanelTheme } from "./dashboard-panel.theme"
 
 const {
   resizable = false,
+  class: className,
   ...rest
 } = Astro.props as DashboardPanelProps
 
@@ -13,16 +14,16 @@ const classes = dashboardPanelTheme({
   size: false
 });
 ---
-<div class={classes.root} data-slot="root" {...rest}>
-  <slot>
-    <slot name="header" />
+<div class={classes.root} data-slot="root" style="flex: 1 1 0%; min-width: 0;" {...rest}>
+  <slot name="header" />
 
-    <div data-slot="body" class={classes.body}>
-      <slot name="body" />
-    </div>
+  <div data-slot="body" class={classes.body}>
+    <slot name="body">
+      <slot />
+    </slot>
+  </div>
 
-    <slot name="footer" />
-  </slot>
+  <slot name="footer" />
 </div>
 
 {resizable && (

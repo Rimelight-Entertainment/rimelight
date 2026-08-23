@@ -1,0 +1,109 @@
+---
+import PageRenderer from "../../astro/PageRenderer.astro";
+import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
+import { db } from "virtual:rimelight-cms/db";
+import { pages, pageDrafts } from "../../schema";
+import { eq } from "drizzle-orm";
+import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { verifyPreviewToken } from "../../core/preview.ts";
+
+export const prerender = false;
+
+const currentLocale = Astro.currentLocale ?? "en";
+const id = Astro.params.id;
+
+if (!id) {
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/pages"));
+}
+
+const token = Astro.url.searchParams.get("token");
+const secret = process.env.BETTER_AUTH_SECRET || "rimelight-preview-secret-key";
+const isValidToken = token ? await verifyPreviewToken(id, token, secret) : false;
+
+let page: any = null;
+let draft: any = null;
+
+if (db) {
+  try {
+    const pageResult = await db.select().from(pages).where(eq(pages.id, id as any)).limit(1);
+    page = pageResult[0] || null;
+    if (page) {
+      const draftResult = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id as any)).limit(1);
+      draft = draftResult[0] || null;
+    }
+  } catch (err) {
+    console.warn("Failed to load page for preview:", err);
+  }
+}
+
+if (!page) {
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/pages"));
+}
+
+const parseContent = (c: any) => (typeof c === "string" ? JSON.parse(c) : c);
+const content = draft?.content ? parseContent(draft.content) : parseContent(page.content);
+
+const titleVal =
+  typeof page.title === "object" && page.title !== null
+    ? (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>).en || ""
+    : String(page.title || "");
+---
+
+<CMSDashboardLayout title={`Preview: ${titleVal}`} description="Preview CMS page" activeSection="pages">
+  <Fragment slot="toolbar-right">
+    <div class="flex items-center gap-2">
+      <button
+        id="share-preview-btn"
+        type="button"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/10 border border-primary/20 rounded-md hover:bg-primary/20 transition-colors cursor-pointer"
+      >
+        <span class="i-lucide-share-2 size-3.5"></span>
+        <span id="share-btn-text">Share Preview Link</span>
+      </button>
+
+      <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/pages/${id}/edit`)} variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-arrow-left">
+        Back to Editor
+      </RLAButton>
+    </div>
+  </Fragment>
+
+  <div class="max-w-4xl mx-auto space-y-6">
+    <div class="bg-primary/10 border border-primary/20 p-4 rounded-lg flex items-center justify-between">
+      <p class="text-sm text-primary font-medium">Live Preview Mode — displaying current draft</p>
+      <span class="text-xs px-2.5 py-0.5 bg-primary/20 text-primary rounded-full font-mono">Draft</span>
+    </div>
+
+    <div class="bg-elevated/40 rounded-xl shadow-sm border border-default p-8">
+      <h1 class="text-3xl font-bold text-highlighted mb-6">{titleVal}</h1>
+      <PageRenderer 
+        blocks={content?.blocks || []} 
+        locale={currentLocale}
+        class="prose prose-lg max-w-none"
+      />
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ pageId: id }}>
+    const shareBtn = document.getElementById("share-preview-btn");
+    const shareText = document.getElementById("share-btn-text");
+
+    shareBtn?.addEventListener("click", async () => {
+      if (shareText) shareText.textContent = "Generating...";
+      try {
+        const res = await fetch(`/api/cms/pages/${pageId}/preview-token`, { method: "POST" });
+        if (!res.ok) throw new Error("Failed to generate token");
+        const data = await res.json();
+        const fullUrl = `${window.location.origin}${data.previewUrl}`;
+        await navigator.clipboard.writeText(fullUrl);
+        if (shareText) shareText.textContent = "Copied to Clipboard!";
+        setTimeout(() => {
+          if (shareText) shareText.textContent = "Share Preview Link";
+        }, 3000);
+      } catch {
+        alert("Could not generate preview link");
+        if (shareText) shareText.textContent = "Share Preview Link";
+      }
+    });
+  </script>
+</CMSDashboardLayout>
