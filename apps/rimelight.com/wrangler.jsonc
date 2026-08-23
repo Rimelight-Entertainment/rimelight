@@ -61,6 +61,9 @@
       "remote": false
     }
   ],
+  "triggers": {
+    "crons": ["* * * * *"]
+  },
   "vars": {
     "CONSTRUCTION_MODE": "true",
     "CONSTRUCTION_AUTH": "true",
