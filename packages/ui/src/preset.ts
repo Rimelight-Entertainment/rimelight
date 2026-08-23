@@ -1,5 +1,5 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
-import type { PresetOptions, UIConfig } from "./types"
+import type { UIConfig } from "./types"
 
 import { getIconSvg } from "./icons.raw"
 
@@ -46,25 +46,28 @@ type TokenMap = Record<string, Record<string, string>>
 function buildTokens(custom: Record<string, any> = {}): TokenMap {
   const tokens: TokenMap = {}
   for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
-    const isBuiltin = Array.isArray(val)
-    const [c, h] = isBuiltin ? val : [0, 0]
-    const v = val as any
-    const light = !isBuiltin ? v?.light || v || {} : null
-    const dark = !isBuiltin ? v?.dark || v || {} : null
-    const fallback = light?.["500"] ?? Object.values(light || {})[0] ?? "oklch(0.55 0.15 0)"
-
     const shades: Record<string, string> = {}
-    for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
-      shades[s] = isBuiltin
-        ? `light-dark(oklch(${l1} ${(c1 * c).toFixed(3)} ${h}), oklch(${l2} ${(c2 * c).toFixed(3)} ${h}))`
-        : `light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback})`
+    if (Array.isArray(val)) {
+      const [c, h] = val
+      for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
+        shades[s] =
+          `light-dark(oklch(${l1} ${(c1 * c).toFixed(3)} ${h}), oklch(${l2} ${(c2 * c).toFixed(3)} ${h}))`
+      }
+    } else {
+      const v = val as Record<string, any>
+      const light: Record<string, string> = v?.light ?? (v?.dark ? {} : v) ?? {}
+      const dark: Record<string, string> = v?.dark ?? light
+      const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
+      for (const s of Object.keys(SHADES)) {
+        shades[s] = `light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback})`
+      }
     }
     tokens[name] = shades
   }
   return tokens
 }
 
-export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}): Preset {
+export default function rimelightUiPreset(options: UIConfig = {}): Preset {
   const tokens = buildTokens(options.colors)
   const allColors = Object.keys(tokens)
 
@@ -127,7 +130,9 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
           const s = INTENTS[n]?.[prop]
           if (!s) return
           const target = `${p}-neutral-${s}${o ? `/${o}` : ""}`
-          return p === "bg" && n === "inverted" ? `${target} text-neutral-50` : target
+          return p === "bg" && n === "inverted"
+            ? `${target} text-neutral-${INTENTS.inverted?.text}`
+            : target
         }
       ]
     ],
