@@ -35,7 +35,7 @@ docs.post("/metadata/extract", async (c) => {
     let content = ""
     try {
       content = fs.readFileSync(componentPath, "utf-8")
-    } catch (e) {
+    } catch {
       return c.json({ error: "Failed to read component file" }, 400)
     }
 

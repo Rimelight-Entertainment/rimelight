@@ -1,7 +1,7 @@
 ---
 import DocsLayout from "@/layouts/DocsLayout.astro"
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts"
-import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/docs"
+import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms"
 import { db } from "@/db"
 import { pages } from "@/db/schema"
 import { eq, and, isNull, inArray, sql } from "drizzle-orm"

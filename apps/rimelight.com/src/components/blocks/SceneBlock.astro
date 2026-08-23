@@ -1,5 +1,5 @@
 ---
-import type { BaseBlock, TimeOfDay, Setting, Transition } from "@rimelight/cms"
+import type { BaseBlock } from "@rimelight/cms"
 
 interface Props {
   block: BaseBlock
@@ -7,9 +7,9 @@ interface Props {
 }
 
 const { block } = Astro.props
-const { location, timeOfDay, setting, transition, description } = block.props
+const { location, timeOfDay, setting, transition, description } = (block.props || {}) as any
 
-const timeOfDayLabels: Record<TimeOfDay, string> = {
+const timeOfDayLabels: Record<string, string> = {
   MORNING: "Morning",
   NOON: "Noon",
   AFTERNOON: "Afternoon",
@@ -18,22 +18,22 @@ const timeOfDayLabels: Record<TimeOfDay, string> = {
   OTHER: "Other"
 }
 
-const settingLabels: Record<Setting, string> = { 
-  INTERIOR: "INT.", 
-  EXTERIOR: "EXT.", 
-  OTHER: "Other" 
+const settingLabels: Record<string, string> = {
+  INTERIOR: "INT.",
+  EXTERIOR: "EXT.",
+  OTHER: "Other"
 }
 
-const transitionLabels: Record<Transition, string> = {
+const transitionLabels: Record<string, string> = {
   CUT_TO: "CUT TO",
   CUT_BACK_TO: "CUT BACK TO",
   FADE_TO: "FADE TO",
   NONE: ""
 }
 
-const settingLabel = settingLabels[setting as Setting] || "Other"
-const todLabel = timeOfDayLabels[timeOfDay as TimeOfDay] || "Other"
-const transitionLabel = transitionLabels[transition as Transition] || ""
+const settingLabel = settingLabels[setting] || "Other"
+const todLabel = timeOfDayLabels[timeOfDay] || "Other"
+const transitionLabel = transitionLabels[transition] || ""
 
 const headingParts = []
 if (settingLabel && settingLabel !== "Other") headingParts.push(settingLabel)
@@ -41,8 +41,8 @@ if (location) headingParts.push(location)
 if (todLabel && todLabel !== "Other") headingParts.push(`- ${todLabel}`)
 ---
 
-<div class="my-4 p-3 border-l-4 border-info-400 bg-info-50/20 rounded-r-lg">
-  <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-info-800 mb-2">
+<div class="my-4 p-3 border-l-4 border-sky-400 bg-sky-50/20 rounded-r-lg">
+  <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-sky-800 mb-2">
     {headingParts.map((part) => (
       <span>{part}</span>
     ))}

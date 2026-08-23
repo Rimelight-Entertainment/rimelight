@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test"
-import { extractHeadingsFromBlocks, slugifyHeading } from "../src/toc"
+import { extractHeadingsFromBlocks, slugifyHeading } from "../src/docs/toc"
 
-describe("docs-toc", () => {
+describe("cms-docs-toc", () => {
   it("slugifies titles into valid URL anchor slugs", () => {
     expect(slugifyHeading("Getting Started with Rimelight!")).toBe("getting-started-with-rimelight")
     expect(slugifyHeading("Section 1.2: Advanced Features")).toBe("section-12-advanced-features")

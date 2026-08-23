@@ -9,7 +9,12 @@ export type {
   SiteConfig,
   OGImage,
   RSSFeed,
-  HeadProps
+  HeadProps,
+  LlmsPage,
+  LlmsTxtOptions,
+  LlmsFullTxtOptions,
+  ArticleSchemaOptions,
+  BreadcrumbItem
 } from "./types.js"
 
 export {
@@ -28,3 +33,9 @@ export {
   buildRobotsMetaContent,
   buildWebSiteSchema
 } from "./meta.js"
+
+export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js"
+export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
+
+export { default as SEOHead } from "./components/SEOHead.astro"
+export { default as AgentDirective } from "./components/AgentDirective.astro"

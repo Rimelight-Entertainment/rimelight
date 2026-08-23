@@ -2,6 +2,7 @@ import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "dri
 import type { BaseBlock } from "../core/types/blocks"
 import type { Localized, PageType } from "../core/types/pages"
 import type { PageVersionStatus } from "../core/types/versioning"
+import type { BylineCredit } from "../core/types/bylines"
 
 export const pageVersions = pgTable(
   "page_versions",
@@ -16,6 +17,7 @@ export const pageVersions = pgTable(
     description: jsonb("description").$type<Localized>(),
     tags: jsonb("tags").$type<Localized[]>().default([]).notNull(),
     authorIds: jsonb("author_ids").$type<string[]>().default([]),
+    bylines: jsonb("bylines").$type<BylineCredit[]>().default([]),
     content: jsonb("content")
       .$type<{
         blocks: BaseBlock[]

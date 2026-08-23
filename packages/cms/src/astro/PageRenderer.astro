@@ -9,15 +9,22 @@ interface Props {
   session?: UserSessionContext
   locale?: string
   class?: string
+  components?: Record<string, any>
 }
 
-const { blocks, session, locale = "en", class: className = "" } = Astro.props
+const {
+  blocks,
+  session,
+  locale = "en",
+  class: className = "",
+  components = {}
+} = Astro.props
 
 const sanitizedBlocks = filterBlocksForReader(blocks, session)
 ---
 
 <article class={`rimelight-cms-page ${className}`}>
   {sanitizedBlocks.map((block) => (
-    <BlockRenderer block={block} locale={locale} />
+    <BlockRenderer block={block} locale={locale} components={components} />
   ))}
 </article>

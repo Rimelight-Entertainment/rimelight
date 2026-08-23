@@ -1,5 +1,5 @@
-import { defineDocsConfig } from "@rimelight/docs"
-import type { DocsConfig } from "@rimelight/docs"
+import { defineDocsConfig } from "@rimelight/cms"
+import type { DocsConfig } from "@rimelight/cms"
 
 const config: DocsConfig = {
   editLink: {

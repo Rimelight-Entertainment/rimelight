@@ -7,12 +7,15 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
 import { db } from "@/db"
 import { role } from "@/db/schema"
 import { isNull, desc } from "drizzle-orm"
+import { getSiteSettings } from "@rimelight/cms"
 
 const session = await auth.api.getSession({ headers: Astro.request.headers })
 
 if (!session) {
   return Astro.redirect("/auth/sign-in")
 }
+
+const settings = await getSiteSettings(db)
 
 const dbRoles = await db.select().from(role).where(isNull(role.deletedAt)).orderBy(desc(role.createdAt))
 const defaultRoles = [
@@ -32,26 +35,175 @@ const rolesList = (dbRoles.length > 0 ? dbRoles : defaultRoles).map((r) =>
 
 <CMSDashboardLayout title="Settings" description="CMS Settings" activeSection="settings">
   <Fragment slot="toolbar-right">
-    <RLAButton variant="solid" color="primary" size="sm">
-      Save Settings
-    </RLAButton>
+    <button
+      id="save-settings-btn"
+      type="button"
+      class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
+    >
+      <span id="btn-text">Save Settings</span>
+    </button>
   </Fragment>
 
-  <div class="max-w-3xl mx-auto space-y-8">
+  <form id="settings-form" class="max-w-3xl mx-auto space-y-8 pb-12">
+    <!-- General Site Identity -->
     <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-xl font-semibold mb-6">General Settings</h2>
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Site Identity & Metadata</h2>
+          <p class="text-sm text-gray-500 mt-1">Dynamic database-backed site configuration</p>
+        </div>
+        <RLABadge variant="soft" color="blue" size="sm">Dynamic DB</RLABadge>
+      </div>
+
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Default Locale</label>
-          <RLAInput type="text" value="en" />
+          <label for="setting-name" class="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
+          <input
+            id="setting-name"
+            name="name"
+            type="text"
+            value={settings.name}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
         </div>
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
-          <RLAInput type="text" value="Rimelight CMS" />
+          <label for="setting-description" class="block text-sm font-medium text-gray-700 mb-1">Site Description</label>
+          <textarea
+            id="setting-description"
+            name="description"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          >{settings.description}</textarea>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="setting-url" class="block text-sm font-medium text-gray-700 mb-1">Site URL</label>
+            <input
+              id="setting-url"
+              name="url"
+              type="url"
+              value={settings.url}
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label for="setting-author" class="block text-sm font-medium text-gray-700 mb-1">Author / Organization</label>
+            <input
+              id="setting-author"
+              name="author"
+              type="text"
+              value={settings.author}
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+        </div>
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Items per Page</label>
-          <RLAInput type="number" value="20" />
+          <label for="setting-email" class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+          <input
+            id="setting-email"
+            name="email"
+            type="email"
+            value={settings.email}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Branding & Theme -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-6 text-gray-900">Branding & Assets</h2>
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="setting-logo-alt" class="block text-sm font-medium text-gray-700 mb-1">Logo Alt Text</label>
+            <input
+              id="setting-logo-alt"
+              name="branding_logo_alt"
+              type="text"
+              value={settings.branding?.logo?.alt || ""}
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label for="setting-favicon-svg" class="block text-sm font-medium text-gray-700 mb-1">Favicon Path</label>
+            <input
+              id="setting-favicon-svg"
+              name="branding_favicon_svg"
+              type="text"
+              value={settings.branding?.favicon?.svg || "/favicon.svg"}
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="setting-theme-color" class="block text-sm font-medium text-gray-700 mb-1">Theme Color</label>
+            <div class="flex items-center gap-2">
+              <input
+                id="setting-theme-color"
+                name="branding_theme_color"
+                type="text"
+                value={settings.branding?.colors?.themeColor || "#ffffff"}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono"
+              />
+            </div>
+          </div>
+          <div>
+            <label for="setting-bg-color" class="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
+            <div class="flex items-center gap-2">
+              <input
+                id="setting-bg-color"
+                name="branding_bg_color"
+                type="text"
+                value={settings.branding?.colors?.backgroundColor || "#ffffff"}
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Defaults -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-6 text-gray-900">SEO & Social Sharing</h2>
+      <div class="space-y-4">
+        <div>
+          <label for="setting-title-template" class="block text-sm font-medium text-gray-700 mb-1">Title Template</label>
+          <input
+            id="setting-title-template"
+            name="seo_title_template"
+            type="text"
+            value={settings.seo?.titleTemplate || "%s | " + settings.name}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="setting-og-image" class="block text-sm font-medium text-gray-700 mb-1">OpenGraph Image Fallback URL</label>
+          <input
+            id="setting-og-image"
+            name="og_image"
+            type="text"
+            value={settings.ogImage || settings.seo?.ogImageFallback || ""}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="setting-max-desc" class="block text-sm font-medium text-gray-700 mb-1">Max Description Length (chars)</label>
+          <input
+            id="setting-max-desc"
+            name="seo_max_description_length"
+            type="number"
+            value={settings.seo?.maxDescriptionLength || 160}
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          />
         </div>
       </div>
     </div>
@@ -85,75 +237,74 @@ const rolesList = (dbRoles.length > 0 ? dbRoles : defaultRoles).map((r) =>
         ))}
       </div>
     </div>
+  </form>
 
-    <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-xl font-semibold mb-6">Editor Settings</h2>
-      <div class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="font-medium text-gray-900">Auto-save Drafts</p>
-            <p class="text-sm text-gray-500">Automatically save drafts every 30 seconds</p>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="sr-only peer" checked />
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="font-medium text-gray-900">Require Approval for Publishing</p>
-            <p class="text-sm text-gray-500">All pages must be approved before publishing</p>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="sr-only peer" />
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="font-medium text-gray-900">Enable Version History</p>
-            <p class="text-sm text-gray-500">Keep track of all page versions</p>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="sr-only peer" checked />
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-      </div>
-    </div>
+  <script>
+    const saveBtn = document.getElementById("save-settings-btn")
+    const btnText = document.getElementById("btn-text")
 
-    <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-xl font-semibold mb-6">Block Settings</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Allowed Block Types</label>
-          <div class="flex flex-wrap gap-2">
-            {['ParagraphBlock', 'HeadingBlock', 'ImageBlock', 'CodeBlock', 'QuoteBlock', 'CalloutBlock', 'DialogueBlock', 'SceneBlock', 'ScriptBlock'].map((block) => (
-              <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{block}</span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+    saveBtn?.addEventListener("click", async () => {
+      const name = (document.getElementById("setting-name") as HTMLInputElement)?.value || ""
+      const description = (document.getElementById("setting-description") as HTMLTextAreaElement)?.value || ""
+      const url = (document.getElementById("setting-url") as HTMLInputElement)?.value || ""
+      const author = (document.getElementById("setting-author") as HTMLInputElement)?.value || ""
+      const email = (document.getElementById("setting-email") as HTMLInputElement)?.value || ""
+      const ogImage = (document.getElementById("setting-og-image") as HTMLInputElement)?.value || ""
 
-    <div class="bg-white rounded-lg shadow p-6 border border-red-200">
-      <h2 class="text-xl font-semibold mb-6 text-red-700">Danger Zone</h2>
-      <div class="space-y-4">
-        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-          <div>
-            <p class="font-medium text-red-800">Delete All Drafts</p>
-            <p class="text-sm text-red-600">Permanently delete all unpublished drafts</p>
-          </div>
-          <RLAButton variant="outline" color="error">Delete Drafts</RLAButton>
-        </div>
-        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-          <div>
-            <p class="font-medium text-red-800">Reset CMS</p>
-            <p class="text-sm text-red-600">Delete all pages, templates, and versions (cannot be undone)</p>
-          </div>
-          <RLAButton variant="solid" color="error">Reset CMS</RLAButton>
-        </div>
-      </div>
-    </div>
-  </div>
+      const logoAlt = (document.getElementById("setting-logo-alt") as HTMLInputElement)?.value || ""
+      const faviconSvg = (document.getElementById("setting-favicon-svg") as HTMLInputElement)?.value || ""
+      const themeColor = (document.getElementById("setting-theme-color") as HTMLInputElement)?.value || ""
+      const bgColor = (document.getElementById("setting-bg-color") as HTMLInputElement)?.value || ""
+
+      const titleTemplate = (document.getElementById("setting-title-template") as HTMLInputElement)?.value || ""
+      const maxDescLength = parseInt((document.getElementById("setting-max-desc") as HTMLInputElement)?.value || "160", 10)
+
+      const payload = {
+        name,
+        description,
+        url,
+        author,
+        email,
+        ogImage,
+        branding: {
+          logo: { alt: logoAlt },
+          favicon: { svg: faviconSvg },
+          colors: {
+            themeColor,
+            backgroundColor: bgColor
+          }
+        },
+        seo: {
+          titleTemplate,
+          ogImageFallback: ogImage,
+          maxDescriptionLength: maxDescLength
+        }
+      }
+
+      if (saveBtn) (saveBtn as HTMLButtonElement).disabled = true
+      if (btnText) btnText.textContent = "Saving..."
+
+      try {
+        const res = await fetch("/api/cms/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+
+        if (!res.ok) {
+          const err = await res.json()
+          alert(err.error || "Failed to save settings")
+        } else {
+          if (btnText) btnText.textContent = "Saved!"
+          setTimeout(() => {
+            if (btnText) btnText.textContent = "Save Settings"
+          }, 2000)
+        }
+      } catch (err: any) {
+        alert(err.message || "Failed to save settings")
+      } finally {
+        if (saveBtn) (saveBtn as HTMLButtonElement).disabled = false
+      }
+    })
+  </script>
 </CMSDashboardLayout>

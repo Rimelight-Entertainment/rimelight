@@ -18,6 +18,7 @@
   "type": "module",
   "devDependencies": {
     "@rimelight/config": "workspace:*",
+    "@types/node": "22.13.10",
     "pkg-pr-new": "0.0.88",
     "vite-plus": "0.2.9"
   },

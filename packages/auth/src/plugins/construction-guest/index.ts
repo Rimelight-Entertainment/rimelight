@@ -10,13 +10,22 @@ export type GuestEnv = {
 }
 
 const getConfig = (env?: GuestEnv) => {
+  const metaEnv = (import.meta as any).env || {}
   return {
-    email: env?.CONSTRUCTION_GUEST_EMAIL ?? import.meta.env.VITE_CONSTRUCTION_GUEST_EMAIL,
-    password: env?.CONSTRUCTION_GUEST_PASSWORD ?? import.meta.env.VITE_CONSTRUCTION_GUEST_PASSWORD,
+    email:
+      env?.CONSTRUCTION_GUEST_EMAIL ??
+      metaEnv.VITE_CONSTRUCTION_GUEST_EMAIL ??
+      process.env.VITE_CONSTRUCTION_GUEST_EMAIL,
+    password:
+      env?.CONSTRUCTION_GUEST_PASSWORD ??
+      metaEnv.VITE_CONSTRUCTION_GUEST_PASSWORD ??
+      process.env.VITE_CONSTRUCTION_GUEST_PASSWORD,
     secret:
       env?.CONSTRUCTION_GUEST_SECRET ??
-      import.meta.env.VITE_CONSTRUCTION_GUEST_SECRET ??
-      import.meta.env.VITE_BETTER_AUTH_SECRET
+      metaEnv.VITE_CONSTRUCTION_GUEST_SECRET ??
+      metaEnv.VITE_BETTER_AUTH_SECRET ??
+      process.env.VITE_CONSTRUCTION_GUEST_SECRET ??
+      process.env.VITE_BETTER_AUTH_SECRET
   }
 }
 

@@ -7,11 +7,11 @@ interface Props {
 }
 
 const { block } = Astro.props
-const { character, parenthetical, line } = block.props
+const { character, parenthetical, line } = (block.props || {}) as any
 ---
 
 <div class="my-3 mx-8 max-w-md">
-  <div class="text-sm font-bold text-center text-commentary-800">
+  <div class="text-sm font-bold text-center text-amber-800">
     {character}
   </div>
   {parenthetical && (

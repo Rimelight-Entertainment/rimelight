@@ -7,6 +7,7 @@ import {
   buildRobotsMetaContent,
   buildWebSiteSchema
 } from "../meta.js"
+import { buildArticleSchema, buildBreadcrumbSchema } from "../schema.js"
 
 const {
   title,
@@ -23,6 +24,10 @@ const {
   charset = 'utf-8',
   viewport = 'width=device-width, initial-scale=1',
   rssFeed,
+  articleSchema,
+  breadcrumbs,
+  markdownUrl,
+  versionAlternates = [],
 } = Astro.props as HeadProps
 
 // Resolve defaults from config if available
@@ -85,6 +90,12 @@ const robotsContent = buildRobotsMetaContent({
   <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
 ))}
 
+<!-- Agent & Version Alternates -->
+{markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} title="Markdown Format" />}
+{versionAlternates.map((alt) => (
+  <link rel="alternate" data-version={alt.version} href={alt.href} />
+))}
+
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />
 <meta property="og:locale" content={ogLocale} />
@@ -122,3 +133,16 @@ const robotsContent = buildRobotsMetaContent({
     buildWebSiteSchema(config, Astro.site?.toString())
   )} />
 )}
+
+{articleSchema && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(
+    buildArticleSchema(articleSchema)
+  )} />
+)}
+
+{breadcrumbs && breadcrumbs.length > 0 && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(
+    buildBreadcrumbSchema(breadcrumbs)
+  )} />
+)}
+

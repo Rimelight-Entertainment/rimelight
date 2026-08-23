@@ -120,10 +120,15 @@ export interface CalloutBlockProps {
   children: BaseBlock[]
 }
 
+import type { MediaValue } from "./media"
+
 export interface ImageBlockProps {
-  src: string
+  src: string | MediaValue
   alt: string
   caption?: string
+  width?: number
+  height?: number
+  aspectRatio?: string
 }
 
 export interface CodeBlockProps {

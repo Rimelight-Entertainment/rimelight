@@ -149,6 +149,18 @@ const isPublished = !!page.publishedVersionId
           content={{ align: "end" }}
           items={[
             {
+              id: "open-review-diffs-item",
+              label: "Review & Diffs...",
+              icon: "i-lucide-git-compare",
+              href: getRelativeLocaleUrl(currentLocale, `/cms/pages/${id}/review`)
+            },
+            {
+              id: "open-guest-preview-item",
+              label: "Live Guest Preview...",
+              icon: "i-lucide-share-2",
+              href: getRelativeLocaleUrl(currentLocale, `/cms/pages/${id}/preview`)
+            },
+            {
               id: "open-delete-dialog-item",
               label: "Delete Page...",
               icon: "i-lucide-trash-2",

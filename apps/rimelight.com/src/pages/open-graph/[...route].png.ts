@@ -18,7 +18,7 @@ function getLocalizedText(val: unknown, locale = "en"): string {
 }
 
 export async function getStaticPaths() {
-  const docs = await getCollection("docs").catch(() => [])
+  const docs = await ((getCollection as any)("docs") as Promise<any[]>).catch(() => [])
 
   const blogPages = await db
     .select({

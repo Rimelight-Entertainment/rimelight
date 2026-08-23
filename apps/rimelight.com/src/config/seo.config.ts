@@ -168,13 +168,15 @@ export async function seoEntries(): Promise<SeoEntry[]> {
   }
 
   // Docs entries from content collection (staying as content collections for now)
-  const docs = await getCollection("docs")
+  const docs = await ((getCollection as any)("docs") as Promise<any[]>).catch(() => [])
   for (const doc of docs) {
-    const path = `/company/docs/${doc.id}`
-    entries.push({
-      path,
-      changefreq: "weekly"
-    })
+    if (doc?.id) {
+      const path = `/company/docs/${doc.id}`
+      entries.push({
+        path,
+        changefreq: "weekly"
+      })
+    }
   }
 
   // Filter out private paths

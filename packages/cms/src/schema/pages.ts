@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm"
 import { integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core"
 import type { BaseBlock } from "../core/types/blocks"
 import type { Localized, PageType } from "../core/types/pages"
+import type { BylineCredit } from "../core/types/bylines"
 import { pageVersions } from "./page_versions.ts"
 import { pageTemplates } from "./page_templates.ts"
 
@@ -17,6 +18,7 @@ export const pages = pgTable(
     description: jsonb("description").$type<Localized>(),
     tags: jsonb("tags").$type<Localized[]>().default([]).notNull(),
     authorIds: jsonb("author_ids").$type<string[]>().default([]),
+    bylines: jsonb("bylines").$type<BylineCredit[]>().default([]),
     /**
      * Denormalized read-cache of the active published version content (NULL if unpublished draft)
      */

@@ -81,7 +81,9 @@ export default defineConfig({
   ],
 
   image: {
-    domains: ["starter.rimelight.com", "cdn.starter.rimelight.com"]
+    domains: ["starter.rimelight.com", "cdn.starter.rimelight.com"],
+    layout: "constrained",
+    responsiveStyles: true
   },
 
   markdown: {

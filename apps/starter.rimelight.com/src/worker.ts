@@ -1,5 +1,7 @@
 import { handle } from "@astrojs/cloudflare/handler"
 import { DurableObject } from "cloudflare:workers"
+import { handleCmsCron } from "@rimelight/cms"
+import { db } from "@/db"
 
 interface SessionAttachment {
   id: string
@@ -295,5 +297,9 @@ export default {
 
     // Pass the request directly to the Astro handler
     return handle(request, env, ctx)
+  },
+
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(handleCmsCron(event, env, ctx, db))
   }
 } satisfies ExportedHandler<Env>

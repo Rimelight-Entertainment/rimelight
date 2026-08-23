@@ -1,14 +1,11 @@
 ---
-import type { BaseBlock } from "@rimelight/cms"
+import type { BaseBlock } from "../core/types/blocks"
 import ApiDocumentationBlock from "./blocks/ApiDocumentationBlock.astro"
 import LivePreviewBlock from "./blocks/LivePreviewBlock.astro"
 import ParagraphBlock from "./blocks/ParagraphBlock.astro"
 import CalloutBlock from "./blocks/CalloutBlock.astro"
 import ImageBlock from "./blocks/ImageBlock.astro"
 import CodeBlock from "./blocks/CodeBlock.astro"
-import ScriptBlock from "./blocks/ScriptBlock.astro"
-import SceneBlock from "./blocks/SceneBlock.astro"
-import DialogueBlock from "./blocks/DialogueBlock.astro"
 import SectionBlock from "./blocks/SectionBlock.astro"
 import TableBlock from "./blocks/TableBlock.astro"
 import TabsBlock from "./blocks/TabsBlock.astro"
@@ -26,13 +23,36 @@ interface Props {
   locale?: string
   sectionDepth?: number
   index?: number
+  components?: Record<string, any>
 }
 
-const { block, locale = "en", sectionDepth = 0, index = 0 } = Astro.props
+const {
+  block,
+  locale = "en",
+  sectionDepth = 0,
+  index = 0,
+  components = {}
+} = Astro.props
+
+const CustomComponent = components[block.type]
+const rawChildren = block.children || block.props?.children || []
+const children = (Array.isArray(rawChildren) ? rawChildren : []) as BaseBlock[]
 ---
 
 {
-  block.type === "ApiDocumentationBlock" ? (
+  CustomComponent ? (
+    <CustomComponent block={block} locale={locale} components={components}>
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
+      ))}
+    </CustomComponent>
+  ) : block.type === "ApiDocumentationBlock" ? (
     <ApiDocumentationBlock block={block} locale={locale} />
   ) : block.type === "LivePreviewBlock" ? (
     <LivePreviewBlock block={block} locale={locale} />
@@ -40,8 +60,14 @@ const { block, locale = "en", sectionDepth = 0, index = 0 } = Astro.props
     <ParagraphBlock block={block} locale={locale} />
   ) : block.type === "CalloutBlock" ? (
     <CalloutBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
       ))}
     </CalloutBlock>
   ) : block.type === "ImageBlock" ? (
@@ -52,66 +78,125 @@ const { block, locale = "en", sectionDepth = 0, index = 0 } = Astro.props
     <TableBlock block={block} locale={locale} />
   ) : block.type === "TabsBlock" ? (
     <TabsBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
       ))}
     </TabsBlock>
   ) : block.type === "TabItemBlock" ? (
     <TabItemBlock block={block} locale={locale} index={index} isFirst={index === 0}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
       ))}
     </TabItemBlock>
   ) : block.type === "StepsBlock" ? (
     <StepsBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
       ))}
     </StepsBlock>
   ) : block.type === "StepItemBlock" ? (
     <StepItemBlock block={block} locale={locale} index={index}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
       ))}
     </StepItemBlock>
   ) : block.type === "CardsBlock" ? (
     <CardsBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
       ))}
     </CardsBlock>
   ) : block.type === "CardBlock" ? (
-    <CardBlock block={block} locale={locale} />
+    <CardBlock block={block} locale={locale}>
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
+      ))}
+    </CardBlock>
   ) : block.type === "FileTreeBlock" ? (
     <FileTreeBlock block={block} locale={locale} />
   ) : block.type === "UnorderedListBlock" ? (
-    <UnorderedListBlock block={block} locale={locale} />
+    <UnorderedListBlock block={block} locale={locale}>
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
+      ))}
+    </UnorderedListBlock>
   ) : block.type === "OrderedListBlock" ? (
-    <OrderedListBlock block={block} locale={locale} />
-  ) : block.type === "ScriptBlock" ? (
-    <ScriptBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
+    <OrderedListBlock block={block} locale={locale}>
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
       ))}
-    </ScriptBlock>
-  ) : block.type === "SceneBlock" ? (
-    <SceneBlock block={block} locale={locale}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth} index={idx} />
-      ))}
-    </SceneBlock>
-  ) : block.type === "DialogueBlock" ? (
-    <DialogueBlock block={block} locale={locale} />
+    </OrderedListBlock>
   ) : block.type === "SectionBlock" ? (
-    <SectionBlock block={block} locale={locale} sectionDepth={sectionDepth}>
-      {(block.children || block.props?.children)?.map((child: BaseBlock, idx: number) => (
-        <Astro.self block={child} locale={locale} sectionDepth={sectionDepth + 1} index={idx} />
+    <SectionBlock block={block} locale={locale} depth={sectionDepth}>
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={Math.min(6, (sectionDepth || 2) + 1)}
+          index={idx}
+          components={components}
+        />
       ))}
     </SectionBlock>
-  ) : (
-    <div class="cms-block-fallback p-4 border border-dashed border-neutral-700 rounded my-2 text-sm text-neutral-400">
-      Unknown Block Type: {block.type}
+  ) : children.length > 0 ? (
+    <div>
+      {children.map((child: BaseBlock, idx: number) => (
+        <Astro.self
+          block={child}
+          locale={locale}
+          sectionDepth={sectionDepth}
+          index={idx}
+          components={components}
+        />
+      ))}
     </div>
-  )
+  ) : null
 }
-

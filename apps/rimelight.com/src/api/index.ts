@@ -8,6 +8,7 @@ import versionRoutes from "./routes/versions"
 import emailPreviewRoutes from "./routes/email/preview"
 import constructionGuestRoutes from "./routes/construction-guest"
 import docsRoutes from "./routes/docs"
+import cmsRoutes from "./routes/cms"
 
 const api = new Hono()
 
@@ -20,5 +21,6 @@ api.route("/pages", pagesRoutes)
 api.route("/pages/versions", versionRoutes)
 api.route("/dev/email/preview", emailPreviewRoutes)
 api.route("/docs", docsRoutes)
+api.route("/cms", cmsRoutes)
 
 export default api

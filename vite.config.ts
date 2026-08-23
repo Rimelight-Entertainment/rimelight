@@ -11,7 +11,6 @@ export default defineConfig({
           "@rimelight/auth#check",
           "@rimelight/cli#check",
           "@rimelight/cms#check",
-          "@rimelight/docs#check",
           "@rimelight/i18n#check",
           "@rimelight/security#check",
           "@rimelight/seo#check",

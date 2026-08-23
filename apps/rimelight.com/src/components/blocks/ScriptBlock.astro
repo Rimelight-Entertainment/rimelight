@@ -7,17 +7,17 @@ interface Props {
 }
 
 const { block } = Astro.props
-const { title, synopsis, characters, aPlot, bPlot, cPlot, stinger } = block.props
+const { title, synopsis, characters, aPlot, bPlot, cPlot, stinger } = (block.props || {}) as any
 ---
 
-<div class="my-6 p-4 border-l-4 border-warning-400 bg-warning-50/20 rounded-r-lg">
+<div class="my-6 p-4 border-l-4 border-amber-400 bg-amber-50/20 rounded-r-lg">
   <div class="mb-4">
-    <h3 class="text-xl font-bold text-warning-900">{title}</h3>
+    <h3 class="text-xl font-bold text-amber-900">{title}</h3>
     {synopsis && <p class="text-sm text-neutral-600 mt-1 italic">{synopsis}</p>}
     {characters && characters.length > 0 && (
       <div class="flex flex-wrap gap-3 mt-3 text-xs">
         {characters.map((char: string) => (
-          <span class="px-2 py-0.5 rounded-full bg-warning-100 text-warning-800">
+          <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
             {char}
           </span>
         ))}

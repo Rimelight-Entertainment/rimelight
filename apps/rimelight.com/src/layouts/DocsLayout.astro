@@ -5,10 +5,11 @@ import RLATableOfContents from "@rimelight/ui/components/table-of-contents/RLATa
 import RLASurround from "@rimelight/ui/components/surround/RLASurround.astro";
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
-import { getDocsSidebar, getSurroundItems } from "@rimelight/docs";
+import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import docsConfig from "@/config/docs.config";
-import type { DocsConfig, TableOfContentsConfig } from "@rimelight/docs";
+import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
 import { t } from "@rimelight/i18n";
+import { AgentDirective } from "@rimelight/seo";
 
 interface Props {
   title: string;
@@ -88,6 +89,7 @@ const tocHeadings = hasToc
 ---
 
 <AppLayout title={t(title) || title} description={description}>
+  <AgentDirective markdownUrl={`${currentPath.replace(/\/$/, '')}.md`} llmsUrl="/llms.txt" />
 
   {/*
     ── Sticky mobile bars ─────────────────────────────────────────────────────

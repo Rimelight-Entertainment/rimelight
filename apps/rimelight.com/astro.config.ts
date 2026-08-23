@@ -126,7 +126,9 @@ export default defineConfig({
   ],
 
   image: {
-    domains: ["rimelight.com", "cdn.rimelight.com"]
+    domains: ["rimelight.com", "cdn.rimelight.com"],
+    layout: "constrained",
+    responsiveStyles: true
   },
 
   markdown: {

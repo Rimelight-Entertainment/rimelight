@@ -9,10 +9,11 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
 import RLASelect from "@rimelight/ui/components/select/RLASelect.astro";
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
-import { getDocsSidebar, getSurroundItems } from "@rimelight/docs";
-import type { ResolvedSidebarItem } from "@rimelight/docs";
+import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
+import type { ResolvedSidebarItem } from "@rimelight/cms";
 import docsConfig from "@/config/docs.config";
-import type { TableOfContentsConfig } from "@rimelight/docs";
+import type { TableOfContentsConfig } from "@rimelight/cms";
+import { AgentDirective } from "@rimelight/seo";
 
 function normalizeBadge(badge: any) {
   if (!badge) return null
@@ -102,7 +103,7 @@ const prev = prevOverride ?? surround.prev;
 const next = nextOverride ?? surround.next;
 
 // Resolve TOC config: per-page overrides site default
-const globalToc = (docsConfig as import('@rimelight/docs').DocsConfig).tableOfContents ?? { minHeadingLevel: 2, maxHeadingLevel: 3 };
+const globalToc = (docsConfig as import('@rimelight/cms').DocsConfig).tableOfContents ?? { minHeadingLevel: 2, maxHeadingLevel: 3 };
 const resolvedToc = tocOverride !== undefined ? tocOverride : globalToc;
 
 // Resolve edit URL: per-page > config base > disabled
@@ -138,6 +139,7 @@ const getVersionHomeUrl = (v: string) => {
 ---
 
 <AppLayout title={title} description={description}>
+  <AgentDirective markdownUrl={`${currentPath.replace(/\/$/, '')}.md`} llmsUrl="/llms.txt" />
 
   {/*
     ── Sticky mobile bars ─────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
-import type { ThemeMeta } from "@rimelight/docs"
+import type { ThemeMeta } from "@rimelight/cms"
 
 function getThemePath(componentName: string, componentsDir: string): string {
   const kebabName = componentName.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()
@@ -66,6 +66,7 @@ function extractThemeFromFile(filePath: string): any {
   try {
     return JSON.parse(jsonStr)
   } catch {
+    // eslint-disable-next-line typescript/no-implied-eval
     const fn = new Function(`return ${objectLiteral}`)
     return fn()
   }

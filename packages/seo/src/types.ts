@@ -216,4 +216,23 @@ export interface HeadProps {
    * RSS feed configuration
    */
   rssFeed?: RSSFeed
+  /**
+   * Article or BlogPosting JSON-LD configuration
+   */
+  articleSchema?: import("./schema.js").ArticleSchemaOptions
+  /**
+   * Breadcrumb list for JSON-LD structured data
+   */
+  breadcrumbs?: import("./schema.js").BreadcrumbItem[]
+  /**
+   * URL for this page's raw Markdown alternate twin
+   */
+  markdownUrl?: string
+  /**
+   * Version alternates for multi-version documentation
+   */
+  versionAlternates?: Array<{ version: string; href: string }>
 }
+
+export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js"
+export type { ArticleSchemaOptions, BreadcrumbItem } from "./schema.js"

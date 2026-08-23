@@ -1,7 +1,7 @@
 import { eq, desc } from "drizzle-orm"
 import type { NewComponentMetadata } from "../schema/index.ts"
 
-export interface ComponentMeta {
+export interface RawComponentMeta {
   componentName: string
   version: string
   framework: string
@@ -21,7 +21,7 @@ export interface ComponentDependencyRecord {
 export class ComponentMetadataService {
   constructor(private db: any) {}
 
-  async extractMetadata(componentPath: string): Promise<ComponentMeta> {
+  async extractMetadata(componentPath: string): Promise<RawComponentMeta> {
     const props: Record<string, any> = {}
     const slots: Record<string, any> = {}
     const emits: Record<string, any> = {}
@@ -49,7 +49,7 @@ export class ComponentMetadataService {
     }
   }
 
-  async storeMetadata(metadata: ComponentMeta): Promise<void> {
+  async storeMetadata(metadata: RawComponentMeta): Promise<void> {
     const record: NewComponentMetadata = {
       componentName: metadata.componentName,
       version: metadata.version,
@@ -78,7 +78,7 @@ export class ComponentMetadataService {
       })
   }
 
-  async getMetadata(componentName: string): Promise<ComponentMeta | null> {
+  async getMetadata(componentName: string): Promise<RawComponentMeta | null> {
     const result = await this.db
       .select()
       .from(this.db.componentMetadata)

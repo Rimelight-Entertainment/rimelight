@@ -42,7 +42,8 @@
     "drizzle-orm": "0.45.2"
   },
   "devDependencies": {
-    "@rimelight/config": "workspace:*"
+    "@rimelight/config": "workspace:*",
+    "@types/node": "22.13.10"
   },
   "peerDependencies": {
     "better-auth": ">=1.0.0",

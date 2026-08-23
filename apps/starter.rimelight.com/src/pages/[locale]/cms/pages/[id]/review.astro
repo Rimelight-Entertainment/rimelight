@@ -1,0 +1,221 @@
+---
+import { auth } from "@/auth/auth"
+import CMSDashboardLayout from "@/layouts/CMSDashboardLayout.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro"
+import { db } from "@/db"
+import { pages, pageDrafts, pageVersions } from "@/db/schema"
+import { eq, desc } from "drizzle-orm"
+import { getRelativeLocaleUrl } from "@rimelight/i18n"
+import { diffPageSnapshots } from "@rimelight/cms"
+
+const currentLocale = Astro.currentLocale ?? "en"
+const session = await auth.api.getSession({ headers: Astro.request.headers })
+const id = Astro.params.id
+
+if (!session || !id) {
+  return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))
+}
+
+const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
+if (!page[0]) return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/pages"))
+
+const draft = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, id)).limit(1)
+const versions = await db
+  .select()
+  .from(pageVersions)
+  .where(eq(pageVersions.pageId, id))
+  .orderBy(desc(pageVersions.versionNumber))
+  .limit(10)
+
+const parseJson = (val: any) => (typeof val === "string" ? JSON.parse(val) : val)
+
+const publishedSnapshot = { ...page[0], content: parseJson(page[0].content) }
+const draftSnapshot = draft[0] ? { ...page[0], content: parseJson(draft[0].content) } : publishedSnapshot
+
+const diffResult = diffPageSnapshots(publishedSnapshot, draftSnapshot)
+
+const titleVal =
+  typeof page[0].title === "object" && page[0].title !== null
+    ? (page[0].title as Record<string, string>)[currentLocale] || (page[0].title as Record<string, string>).en || ""
+    : String(page[0].title || "")
+---
+
+<CMSDashboardLayout title={`Review & Diffs: ${titleVal}`} description="Review content changes and block diffs" activeSection="pages">
+  <Fragment slot="toolbar-right">
+    <div class="flex items-center gap-2">
+      <RLAButton href={getRelativeLocaleUrl(currentLocale, `/cms/pages/${id}/preview`)} variant="outline" color="neutral" size="sm" leadingIcon="i-lucide-eye">
+        Live Preview
+      </RLAButton>
+      <button
+        id="approve-publish-btn"
+        type="button"
+        class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
+      >
+        <span class="i-lucide-check-circle size-4"></span>
+        <span id="approve-btn-text">Approve & Publish</span>
+      </button>
+    </div>
+  </Fragment>
+
+  <div class="max-w-4xl mx-auto space-y-8 pb-12">
+    <!-- Diff Summary Statistics -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+        <p class="text-xs font-semibold text-emerald-700 uppercase">Blocks Added</p>
+        <p class="text-3xl font-bold text-emerald-600 mt-1">+{diffResult.summary.addedCount}</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+        <p class="text-xs font-semibold text-red-700 uppercase">Blocks Removed</p>
+        <p class="text-3xl font-bold text-red-600 mt-1">-{diffResult.summary.removedCount}</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+        <p class="text-xs font-semibold text-amber-700 uppercase">Blocks Modified</p>
+        <p class="text-3xl font-bold text-amber-600 mt-1">~{diffResult.summary.modifiedCount}</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+        <p class="text-xs font-semibold text-gray-500 uppercase">Unchanged</p>
+        <p class="text-3xl font-bold text-gray-600 mt-1">{diffResult.summary.unchangedCount}</p>
+      </div>
+    </div>
+
+    <!-- Metadata Diffs -->
+    {diffResult.metaChanges.length > 0 && (
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Metadata Changes</h2>
+        <div class="divide-y divide-gray-100">
+          {diffResult.metaChanges.map((change) => (
+            <div class="py-3 flex items-start justify-between">
+              <span class="text-sm font-mono text-gray-700 font-semibold">{change.field}</span>
+              <div class="text-sm text-right space-y-1">
+                <p class="text-red-600 line-through font-mono text-xs">{JSON.stringify(change.oldValue)}</p>
+                <p class="text-emerald-600 font-mono text-xs">{JSON.stringify(change.newValue)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Block-by-Block Visual Diff -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Block-Level Comparison</h2>
+          <p class="text-sm text-gray-500">Visual breakdown comparing published content vs working draft</p>
+        </div>
+        <RLABadge variant="soft" color="blue" size="sm">Smart Diff</RLABadge>
+      </div>
+
+      <div class="space-y-3">
+        {diffResult.blocks.map((blockDiff) => (
+          <div class={`p-4 rounded-lg border text-sm ${
+            blockDiff.status === 'added' ? 'bg-emerald-50 border-emerald-200' :
+            blockDiff.status === 'removed' ? 'bg-red-50 border-red-200' :
+            blockDiff.status === 'modified' ? 'bg-amber-50 border-amber-200' :
+            'bg-gray-50 border-gray-200 opacity-75'
+          }`}>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class={`text-xs px-2 py-0.5 rounded font-mono font-semibold uppercase ${
+                  blockDiff.status === 'added' ? 'bg-emerald-200 text-emerald-800' :
+                  blockDiff.status === 'removed' ? 'bg-red-200 text-red-800' :
+                  blockDiff.status === 'modified' ? 'bg-amber-200 text-amber-800' :
+                  'bg-gray-200 text-gray-700'
+                }`}>
+                  {blockDiff.status}
+                </span>
+                <span class="font-semibold text-gray-900">{blockDiff.type}</span>
+              </div>
+              <span class="text-xs font-mono text-gray-400">{blockDiff.blockId.slice(0, 8)}...</span>
+            </div>
+
+            {blockDiff.fieldChanges && blockDiff.fieldChanges.length > 0 ? (
+              <div class="space-y-2 mt-2 pt-2 border-t border-amber-200/50">
+                {blockDiff.fieldChanges.map((change) => (
+                  <div class="text-xs font-mono">
+                    <span class="font-bold text-gray-700">{change.field}:</span>
+                    <div class="grid grid-cols-2 gap-2 mt-1">
+                      <div class="p-2 bg-red-100/70 text-red-900 rounded break-words">
+                        - {JSON.stringify(change.oldValue)}
+                      </div>
+                      <div class="p-2 bg-emerald-100/70 text-emerald-900 rounded break-words">
+                        + {JSON.stringify(change.newValue)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p class="text-xs text-gray-600 font-mono">
+                {JSON.stringify((blockDiff.newBlock || blockDiff.oldBlock)?.properties || {})}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Version History List -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Version History & Snapshots</h2>
+      <div class="space-y-2">
+        {versions.map((v) => (
+          <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-mono px-2 py-1 bg-gray-100 text-gray-800 rounded font-semibold">
+                v{v.versionNumber}
+              </span>
+              <div>
+                <p class="text-sm font-medium text-gray-900">{v.changeSummary || "Snapshot"}</p>
+                <p class="text-xs text-gray-500">{new Date(v.createdAt).toLocaleString()}</p>
+              </div>
+            </div>
+            <span class={`text-xs px-2 py-0.5 rounded font-mono ${
+              v.status === 'published' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'
+            }`}>
+              {v.status}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ pageId: id, draftContent: draftSnapshot.content }}>
+    const approveBtn = document.getElementById("approve-publish-btn")
+    const btnText = document.getElementById("approve-btn-text")
+
+    approveBtn?.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to approve and publish these changes?")) return
+
+      if (approveBtn) (approveBtn as HTMLButtonElement).disabled = true
+      if (btnText) btnText.textContent = "Publishing..."
+
+      try {
+        const res = await fetch(`/api/cms/pages/${pageId}/publish`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: draftContent,
+            changeSummary: "Approved via CMS Review"
+          })
+        })
+
+        if (!res.ok) {
+          const err = await res.json()
+          alert(err.error || "Failed to publish version")
+        } else {
+          if (btnText) btnText.textContent = "Published!"
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500)
+        }
+      } catch (err: any) {
+        alert(err.message || "Failed to publish version")
+      } finally {
+        if (approveBtn) (approveBtn as HTMLButtonElement).disabled = false
+      }
+    })
+  </script>
+</CMSDashboardLayout>
