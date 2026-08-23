@@ -1,6 +1,5 @@
 import { presetIcons, presetTypography, presetWind4, type Preset } from "unocss"
 import type { UIConfig } from "./types"
-
 import { getIconSvg } from "./icons.raw"
 
 export const PALETTES = {

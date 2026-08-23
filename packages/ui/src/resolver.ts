@@ -1,13 +1,5 @@
 import uiConfig from "virtual:rimelight/ui"
-
-export type ClassValue =
-  | string
-  | number
-  | boolean
-  | undefined
-  | null
-  | { [key: string]: any }
-  | ClassValue[]
+import type { ClassValue, ThemeConfig } from "./types"
 
 export function cx(...args: ClassValue[]): string {
   let str = ""
@@ -28,19 +20,6 @@ export function cx(...args: ClassValue[]): string {
     }
   }
   return str
-}
-
-export interface ThemeConfig<S extends string = string> {
-  slots?: readonly S[] | S[]
-  base?: Partial<Record<S, ClassValue>>
-  variants?: Record<string, any>
-  compoundVariants?: Array<
-    Record<string, any> & {
-      classNames?: Partial<Record<S, ClassValue>>
-      class?: Partial<Record<S, ClassValue>>
-    }
-  >
-  defaultVariants?: Record<string, any>
 }
 
 export function defineTheme<const S extends string>(name: string, themeConfig: ThemeConfig<S>) {

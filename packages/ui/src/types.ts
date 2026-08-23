@@ -6,6 +6,28 @@ export type Theme = "light" | "dark"
 export type BuiltinThemeColor = keyof typeof PALETTES
 export type ThemeColor = BuiltinThemeColor | (string & {})
 
+export type ClassValue =
+  | string
+  | number
+  | boolean
+  | undefined
+  | null
+  | { [key: string]: any }
+  | ClassValue[]
+
+export interface ThemeConfig<S extends string = string> {
+  slots?: readonly S[] | S[]
+  base?: Partial<Record<S, ClassValue>>
+  variants?: Record<string, any>
+  compoundVariants?: Array<
+    Record<string, any> & {
+      classNames?: Partial<Record<S, ClassValue>>
+      class?: Partial<Record<S, ClassValue>>
+    }
+  >
+  defaultVariants?: Record<string, any>
+}
+
 export type ColorModeInput =
   | [chroma: number, hue: number]
   | Record<string, string>
@@ -15,15 +37,15 @@ export interface PresetOptions {
   /**
    * Custom colors.
    */
-  colors?: Record<string, ColorModeInput> | undefined
+  colors?: Record<string, ColorModeInput>
   /**
    * Global icon overrides mapping icon names to class names (e.g. `i-lucide-x`) or raw SVG strings.
    */
-  icons?: RimelightIcons | undefined
+  icons?: RimelightIcons
   /**
    * Configure which built-in UnoCSS presets are enabled/disabled.
    */
-  presets?: { wind?: boolean; typography?: boolean; icons?: boolean } | undefined
+  presets?: { wind?: boolean; typography?: boolean; icons?: boolean }
 }
 
 export interface UIConfig extends PresetOptions {
@@ -43,19 +65,7 @@ export interface UIConfig extends PresetOptions {
    * Global component configuration overrides.
    */
   components?: {
-    themes?: Record<
-      string,
-      {
-        base?: string | string[] | Record<string, string | string[]>
-        variants?: Record<
-          string,
-          Record<string, string | string[] | Record<string, string | string[]>>
-        >
-        compoundVariants?: Array<Record<string, any>>
-        defaultVariants?: Record<string, any>
-        [key: string]: unknown
-      }
-    >
+    themes?: Record<string, ThemeConfig<string>>
   }
   /**
    * Custom UnoCSS configuration overrides.
