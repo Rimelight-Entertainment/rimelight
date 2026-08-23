@@ -33,10 +33,12 @@ describe("rimelight token architecture", () => {
 
   it("runtime consumers can rely on any --rl-* key without utilities", async () => {
     const { css } = await uno.generate("text-highlighted", { preflights: true })
-    for (const k of ["50", "100", "700", "800", "900", "600", "DEFAULT", "foreground"]) {
+    for (const k of ["50", "100", "700", "800", "900", "600", "DEFAULT"]) {
       expect(css).toContain(`--rl-primary-${k}:`)
       expect(css).toContain(`--rl-commentary-${k}:`)
     }
+    expect(css).toContain("--rl-foreground: light-dark(")
+    expect(css).not.toContain("--rl-primary-foreground:")
   })
 
   it("spacing.md is available and does not clobber other keys", async () => {
@@ -47,10 +49,12 @@ describe("rimelight token architecture", () => {
     expect(css).toContain("gap:var(--spacing-md)")
   })
 
-  it("singular aliases point at the canonical namespace", async () => {
+  it("only the consumed compat aliases are emitted", async () => {
     const { css } = await uno.generate("text-highlighted", { preflights: true })
     expect(css).toContain("--primary: var(--rl-primary-DEFAULT)")
-    expect(css).toContain("--primary-foreground: var(--rl-primary-foreground)")
+    expect(css).toContain("--primary-foreground: var(--rl-foreground)")
     expect(css).toContain("--primary-accent: var(--rl-primary-600)")
+    expect(css).not.toContain("--secondary:")
+    expect(css).not.toContain("--success:")
   })
 })

@@ -64,7 +64,7 @@ function buildTokens(custom: Record<string, any> = {}): TokenMap {
     tokens[name] = {
       ...shades,
       DEFAULT: shades["500"]!,
-      foreground: "var(--rl-foreground)"
+      foreground: FOREGROUND
     }
   }
   return tokens
@@ -75,20 +75,29 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
   const allColors = Object.keys(tokens)
 
   const themeColors: TokenMap = {}
+  const rootVars: string[] = [
+    "color-scheme: light dark;",
+    "--radius: 0.625rem;",
+    "--rl-header-height: 4rem;",
+    "--rl-container: 90rem;"
+  ]
   for (const [name, map] of Object.entries(tokens)) {
     const entry: Record<string, string> = {}
-    for (const k of Object.keys(map)) entry[k] = `var(--rl-${name}-${k})`
+    for (const [k, v] of Object.entries(map)) {
+      entry[k] = `var(--rl-${name}-${k})`
+      rootVars.push(`--rl-${name}-${k}: ${v};`)
+    }
     themeColors[name] = entry
   }
 
-  let tokenCss = "  --rl-foreground: " + FOREGROUND + ";\n"
-  let aliasCss = ""
-  for (const [name, map] of Object.entries(tokens)) {
-    for (const [k, v] of Object.entries(map)) tokenCss += `  --rl-${name}-${k}: ${v};\n`
-    aliasCss += `  --${name}: var(--rl-${name}-DEFAULT);\n  --${name}-foreground: var(--rl-${name}-foreground);\n  --${name}-accent: var(--rl-${name}-600);\n`
-  }
-
-  const preflightCss = `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${tokenCss}${aliasCss}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--rl-neutral-50)); color: var(--rl-neutral-950); }`
+  const preflightCss = [
+    ":root {",
+    ...rootVars.map((l) => `  ${l}`),
+    "}",
+    '.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }',
+    '.light, [data-theme="light"], .rl-light { color-scheme: light; }',
+    "body { background-color: light-dark(oklch(1 0 0), var(--rl-neutral-50)); color: var(--rl-neutral-950); }"
+  ].join("\n")
 
   return {
     name: "rimelight-ui",
