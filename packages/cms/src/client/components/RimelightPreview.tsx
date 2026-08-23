@@ -150,11 +150,11 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
           if (node.type === "link") {
             const inner = node.children ? renderNodes(node.children) : escapeHtml(node.text || "")
             const target = node.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : ""
-            return `<a href="${escapeHtml(node.url || "#")}"${target} class="text-blue-500 hover:text-blue-400 underline underline-offset-2">${inner}</a>`
+            return `<a href="${escapeHtml(node.url || "#")}"${target} class="text-info-500 hover:text-info-400 underline underline-offset-2">${inner}</a>`
           }
           if (node.type === "page_mention") {
             const title = escapeHtml(node.displayTitle || node.pageSlug || node.pageId || "Page")
-            return `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-sm font-medium">📄 ${title}</span>`
+            return `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-info-500/10 text-info-400 text-sm font-medium">📄 ${title}</span>`
           }
           return ""
         })
@@ -167,7 +167,7 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     } else {
       html = escapeHtml(textVal)
     }
-    return `<p class="text-neutral-800 dark:text-neutral-200 text-base leading-relaxed my-3 whitespace-pre-wrap break-words">${html || '<span class="text-neutral-500 italic">Empty paragraph</span>'}</p>`
+    return `<p class="text-neutral-800 text-base leading-relaxed my-3 whitespace-pre-wrap break-words">${html || '<span class="text-neutral-500 italic">Empty paragraph</span>'}</p>`
   }
 
   if (b.type === "SectionBlock") {
@@ -175,9 +175,8 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     const title = props.title || "Untitled Section"
     const slug = title.toLowerCase().replace(/\W+/g, "-")
     const description = props.description
-    let headingClasses = "font-bold text-neutral-900 dark:text-white"
-    if (level === 2)
-      headingClasses += " text-3xl mt-6 mb-3 border-b border-gray-200 dark:border-gray-800 pb-2"
+    let headingClasses = "font-bold text-neutral-900"
+    if (level === 2) headingClasses += " text-3xl mt-6 mb-3 border-b border-neutral-200 pb-2"
     else if (level === 3) headingClasses += " text-2xl font-semibold mt-5 mb-2.5"
     else if (level === 4) headingClasses += " text-xl font-medium mt-4 mb-2"
     else if (level === 5) headingClasses += " text-lg font-medium mt-3 mb-1.5"
@@ -185,8 +184,8 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
 
     return `<div class="section-block my-6">
       <h${level} id="${slug}" class="${headingClasses}">${escapeHtml(title)}</h${level}>
-      ${description ? `<p class="text-gray-500 dark:text-gray-400 text-sm mt-1 mb-4 italic">${escapeHtml(description)}</p>` : ""}
-      <div class="mt-4 pl-4 border-l-2 border-gray-200 dark:border-gray-800">
+      ${description ? `<p class="text-neutral-500 text-sm mt-1 mb-4 italic">${escapeHtml(description)}</p>` : ""}
+      <div class="mt-4 pl-4 border-l-2 border-neutral-200">
         ${getChildren(b)
           .map((c) => renderBlockPreviewHtml(c, sectionDepth + 1))
           .join("")}
@@ -209,26 +208,19 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     }
     const icon = icons[variant] || icons.info
 
-    let variantClasses =
-      "bg-blue-50/50 dark:bg-blue-950/10 border-blue-200 dark:border-blue-900/50 text-blue-800 dark:text-blue-200"
+    let variantClasses = "bg-info-50/50 border-info-200 text-info-800"
     if (variant === "success") {
-      variantClasses =
-        "bg-green-50/50 dark:bg-green-950/10 border-green-200 dark:border-green-900/50 text-green-800 dark:text-green-200"
+      variantClasses = "bg-success-50/50 border-success-200 text-success-800"
     } else if (variant === "warning") {
-      variantClasses =
-        "bg-yellow-50/50 dark:bg-yellow-950/10 border-yellow-200 dark:border-yellow-900/50 text-yellow-800 dark:text-yellow-200"
+      variantClasses = "bg-warning-50/50 border-warning-200 text-warning-800"
     } else if (variant === "error") {
-      variantClasses =
-        "bg-red-50/50 dark:bg-red-950/10 border-red-200 dark:border-red-900/50 text-red-800 dark:text-red-200"
+      variantClasses = "bg-error-50/50 border-error-200 text-error-800"
     } else if (variant === "commentary") {
-      variantClasses =
-        "bg-purple-50/50 dark:bg-purple-950/10 border-purple-200 dark:border-purple-900/50 text-purple-800 dark:text-purple-200"
+      variantClasses = "bg-ideation-50/50 border-ideation-200 text-ideation-800"
     } else if (variant === "ideation") {
-      variantClasses =
-        "bg-amber-50/50 dark:bg-amber-950/10 border-amber-200 dark:border-amber-900/50 text-amber-800 dark:text-amber-200"
+      variantClasses = "bg-warning-50/50 border-warning-200 text-warning-800"
     } else if (variant === "source") {
-      variantClasses =
-        "bg-indigo-50/50 dark:bg-indigo-950/10 border-indigo-200 dark:border-indigo-900/50 text-indigo-800 dark:text-indigo-200"
+      variantClasses = "bg-info-50/50 border-info-200 text-info-800"
     }
 
     const tag = to ? `a href="${escapeHtml(to)}" target="${escapeHtml(target)}"` : "div"
@@ -249,8 +241,8 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     const alt = props.alt || "Image"
     const caption = props.caption
     return `<figure class="mx-auto my-6 flex flex-col items-center max-w-full">
-      <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" class="h-auto max-w-full rounded-xl object-cover border border-neutral-200 dark:border-neutral-800 shadow-sm" />
-      ${caption ? `<figcaption class="mt-2 text-center text-xs text-neutral-500 dark:text-neutral-400 italic">${escapeHtml(caption)}</figcaption>` : ""}
+      <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" class="h-auto max-w-full rounded-xl object-cover border border-neutral-200 shadow-sm" />
+      ${caption ? `<figcaption class="mt-2 text-center text-xs text-neutral-500 italic">${escapeHtml(caption)}</figcaption>` : ""}
     </figure>`
   }
 
@@ -258,10 +250,10 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     const code = props.code || textVal
     const language = props.language || "plaintext"
     const caption = props.caption
-    return `<div class="cms-code my-4 rounded-lg bg-gray-950 p-4 font-mono text-sm border border-gray-800 overflow-x-auto">
-      <div class="text-xs text-gray-500 uppercase mb-2 select-none">${escapeHtml(language)}</div>
-      <pre class="m-0"><code class="text-green-300 font-mono">${escapeHtml(code)}</code></pre>
-      ${caption ? `<div class="mt-2 text-center text-xs text-gray-500 italic">${escapeHtml(caption)}</div>` : ""}
+    return `<div class="cms-code my-4 rounded-lg bg-neutral-950 p-4 font-mono text-sm border border-neutral-800 overflow-x-auto">
+      <div class="text-xs text-neutral-500 uppercase mb-2 select-none">${escapeHtml(language)}</div>
+      <pre class="m-0"><code class="text-success-300 font-mono">${escapeHtml(code)}</code></pre>
+      ${caption ? `<div class="mt-2 text-center text-xs text-neutral-500 italic">${escapeHtml(caption)}</div>` : ""}
     </div>`
   }
 
@@ -270,22 +262,22 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     const synopsis = props.synopsis
     const chars = props.characters || []
     const { aPlot, bPlot, cPlot, stinger } = props
-    return `<div class="my-6 p-4 border-l-4 border-amber-400 bg-amber-50/20 dark:bg-amber-950/10 rounded-r-lg">
+    return `<div class="my-6 p-4 border-l-4 border-warning-400 bg-warning-50/20 rounded-r-lg">
       <div class="mb-4">
-        <h3 class="text-xl font-bold text-amber-900 dark:text-amber-100">${escapeHtml(title)}</h3>
-        ${synopsis ? `<p class="text-sm text-gray-500 dark:text-gray-400 mt-1 italic">${escapeHtml(synopsis)}</p>` : ""}
-        ${chars.length ? `<div class="flex flex-wrap gap-3 mt-3 text-xs">${chars.map((c: string) => `<span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">${escapeHtml(c)}</span>`).join("")}</div>` : ""}
+        <h3 class="text-xl font-bold text-warning-900">${escapeHtml(title)}</h3>
+        ${synopsis ? `<p class="text-sm text-neutral-500 mt-1 italic">${escapeHtml(synopsis)}</p>` : ""}
+        ${chars.length ? `<div class="flex flex-wrap gap-3 mt-3 text-xs">${chars.map((c: string) => `<span class="px-2 py-0.5 rounded-full bg-warning-100 text-warning-800">${escapeHtml(c)}</span>`).join("")}</div>` : ""}
       </div>
       ${
         aPlot || bPlot || cPlot
           ? `<div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-3">
-        ${aPlot ? `<div class="bg-white/50 dark:bg-neutral-900/30 rounded p-2 border border-gray-200 dark:border-gray-700"><div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">A Plot</div><div class="text-sm mt-0.5">${escapeHtml(aPlot)}</div></div>` : ""}
-        ${bPlot ? `<div class="bg-white/50 dark:bg-neutral-900/30 rounded p-2 border border-gray-200 dark:border-gray-700"><div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">B Plot</div><div class="text-sm mt-0.5">${escapeHtml(bPlot)}</div></div>` : ""}
-        ${cPlot ? `<div class="bg-white/50 dark:bg-neutral-900/30 rounded p-2 border border-gray-200 dark:border-gray-700"><div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">C Plot</div><div class="text-sm mt-0.5">${escapeHtml(cPlot)}</div></div>` : ""}
+        ${aPlot ? `<div class="bg-neutral-50/50 rounded p-2 border border-neutral-200"><div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">A Plot</div><div class="text-sm mt-0.5">${escapeHtml(aPlot)}</div></div>` : ""}
+        ${bPlot ? `<div class="bg-neutral-50/50 rounded p-2 border border-neutral-200"><div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">B Plot</div><div class="text-sm mt-0.5">${escapeHtml(bPlot)}</div></div>` : ""}
+        ${cPlot ? `<div class="bg-neutral-50/50 rounded p-2 border border-neutral-200"><div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">C Plot</div><div class="text-sm mt-0.5">${escapeHtml(cPlot)}</div></div>` : ""}
       </div>`
           : ""
       }
-      ${stinger ? `<p class="text-sm text-gray-500 dark:text-gray-400 italic mt-2 border-t border-gray-200 dark:border-gray-700 pt-2">Stinger: ${escapeHtml(stinger)}</p>` : ""}
+      ${stinger ? `<p class="text-sm text-neutral-500 italic mt-2 border-t border-neutral-200 pt-2">Stinger: ${escapeHtml(stinger)}</p>` : ""}
       <div class="mt-4">
         ${getChildren(b)
           .map((c) => renderBlockPreviewHtml(c, sectionDepth))
@@ -325,12 +317,12 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     if (location) parts.push(location)
     if (tod && tod !== "Other") parts.push(`- ${tod}`)
 
-    return `<div class="my-4 p-3 border-l-4 border-indigo-400 bg-indigo-50/20 dark:bg-indigo-950/10 rounded-r-lg">
-      <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-indigo-800 dark:text-indigo-200 mb-2">
+    return `<div class="my-4 p-3 border-l-4 border-info-400 bg-info-50/20 rounded-r-lg">
+      <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-info-800 mb-2">
         ${parts.map((p) => `<span>${escapeHtml(p)}</span>`).join("")}
-        ${transition ? `<span class="ml-auto text-[10px] italic text-gray-500 dark:text-gray-400">${escapeHtml(transition)}</span>` : ""}
+        ${transition ? `<span class="ml-auto text-[10px] italic text-neutral-500">${escapeHtml(transition)}</span>` : ""}
       </div>
-      ${props.description ? `<p class="text-sm text-gray-700 dark:text-gray-300 mb-2">${escapeHtml(props.description)}</p>` : ""}
+      ${props.description ? `<p class="text-sm text-neutral-700 mb-2">${escapeHtml(props.description)}</p>` : ""}
       <div class="mt-3">
         ${getChildren(b)
           .map((c) => renderBlockPreviewHtml(c, sectionDepth))
@@ -344,11 +336,11 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
     const parenthetical = props.parenthetical
     const line = props.line || ""
     return `<div class="my-3 mx-8 max-w-md">
-      <div class="text-sm font-bold text-center text-pink-800 dark:text-pink-200">${escapeHtml(character)}</div>
-      ${parenthetical ? `<div class="text-xs italic text-center text-gray-500 dark:text-gray-400 mt-0.5">(${escapeHtml(parenthetical)})</div>` : ""}
-      <div class="text-sm text-center text-gray-700 dark:text-gray-300 mt-1">${escapeHtml(line)}</div>
+      <div class="text-sm font-bold text-center text-commentary-800">${escapeHtml(character)}</div>
+      ${parenthetical ? `<div class="text-xs italic text-center text-neutral-500 mt-0.5">(${escapeHtml(parenthetical)})</div>` : ""}
+      <div class="text-sm text-center text-neutral-700 mt-1">${escapeHtml(line)}</div>
     </div>`
   }
 
-  return `<div class="p-3 bg-gray-900 border border-gray-800 rounded text-sm text-gray-400 my-2">${escapeHtml(b.type)}: ${escapeHtml(textVal)}</div>`
+  return `<div class="p-3 bg-neutral-900 border border-neutral-800 rounded text-sm text-neutral-400 my-2">${escapeHtml(b.type)}: ${escapeHtml(textVal)}</div>`
 }

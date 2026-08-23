@@ -11,13 +11,13 @@ const { character, parenthetical, line } = block.props
 ---
 
 <div class="my-3 mx-8 max-w-md">
-  <div class="text-sm font-bold text-center text-pink-800 dark:text-pink-200">
+  <div class="text-sm font-bold text-center text-commentary-800">
     {character}
   </div>
   {parenthetical && (
-    <div class="text-xs italic text-center text-gray-600 dark:text-gray-400 mt-0.5">
+    <div class="text-xs italic text-center text-neutral-600 mt-0.5">
       ({parenthetical})
     </div>
   )}
-  <div class="text-sm text-center text-gray-700 dark:text-gray-300 mt-1">{line}</div>
+  <div class="text-sm text-center text-neutral-700 mt-1">{line}</div>
 </div>

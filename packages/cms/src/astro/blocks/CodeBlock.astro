@@ -10,7 +10,7 @@ const { block } = Astro.props
 const { code = "", language = "text" } = block.props
 ---
 
-<div class="cms-code my-4 rounded-lg bg-gray-950 p-4 font-mono text-sm border border-gray-800 overflow-x-auto" data-block-id={block.id}>
-  <div class="text-xs text-gray-500 uppercase mb-2 select-none">{language}</div>
+<div class="cms-code my-4 rounded-lg bg-neutral-950 p-4 font-mono text-sm border border-neutral-800 overflow-x-auto" data-block-id={block.id}>
+  <div class="text-xs text-neutral-500 uppercase mb-2 select-none">{language}</div>
   <pre class="m-0"><code>{code}</code></pre>
 </div>

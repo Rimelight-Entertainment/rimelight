@@ -12,6 +12,6 @@ const imageSrc = src || url
 ---
 
 <figure class="cms-image mx-auto my-6 flex flex-col items-center max-w-full" data-block-id={block.id}>
-  <img src={imageSrc} alt={alt || "Image"} class="h-auto max-w-full rounded-xl object-cover border border-neutral-200 dark:border-neutral-800 shadow-sm" />
-  {caption && <figcaption class="mt-2 text-center text-xs text-neutral-500 dark:text-neutral-400 italic">{caption}</figcaption>}
+  <img src={imageSrc} alt={alt || "Image"} class="h-auto max-w-full rounded-xl object-cover border border-neutral-200 shadow-sm" />
+  {caption && <figcaption class="mt-2 text-center text-xs text-neutral-500 italic">{caption}</figcaption>}
 </figure>

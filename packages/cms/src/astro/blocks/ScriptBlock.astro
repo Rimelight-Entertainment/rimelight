@@ -10,14 +10,14 @@ const { block } = Astro.props
 const { title, synopsis, characters, aPlot, bPlot, cPlot, stinger } = block.props
 ---
 
-<div class="my-6 p-4 border-l-4 border-amber-400 bg-amber-50/20 dark:bg-amber-950/10 rounded-r-lg">
+<div class="my-6 p-4 border-l-4 border-warning-400 bg-warning-50/20 rounded-r-lg">
   <div class="mb-4">
-    <h3 class="text-xl font-bold text-amber-900 dark:text-amber-100">{title}</h3>
-    {synopsis && <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 italic">{synopsis}</p>}
+    <h3 class="text-xl font-bold text-warning-900">{title}</h3>
+    {synopsis && <p class="text-sm text-neutral-600 mt-1 italic">{synopsis}</p>}
     {characters && characters.length > 0 && (
       <div class="flex flex-wrap gap-3 mt-3 text-xs">
         {characters.map((char: string) => (
-          <span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
+          <span class="px-2 py-0.5 rounded-full bg-warning-100 text-warning-800">
             {char}
           </span>
         ))}
@@ -27,27 +27,27 @@ const { title, synopsis, characters, aPlot, bPlot, cPlot, stinger } = block.prop
   {(aPlot || bPlot || cPlot) && (
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-3">
       {aPlot && (
-        <div class="bg-white/50 dark:bg-neutral-900/30 rounded p-2 border border-gray-200 dark:border-gray-700">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">A Plot</div>
+        <div class="bg-neutral-50/50 rounded p-2 border border-neutral-200">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-600">A Plot</div>
           <div class="text-sm mt-0.5">{aPlot}</div>
         </div>
       )}
       {bPlot && (
-        <div class="bg-white/50 dark:bg-neutral-900/30 rounded p-2 border border-gray-200 dark:border-gray-700">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">B Plot</div>
+        <div class="bg-neutral-50/50 rounded p-2 border border-neutral-200">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-600">B Plot</div>
           <div class="text-sm mt-0.5">{bPlot}</div>
         </div>
       )}
       {cPlot && (
-        <div class="bg-white/50 dark:bg-neutral-900/30 rounded p-2 border border-gray-200 dark:border-gray-700">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400">C Plot</div>
+        <div class="bg-neutral-50/50 rounded p-2 border border-neutral-200">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-600">C Plot</div>
           <div class="text-sm mt-0.5">{cPlot}</div>
         </div>
       )}
     </div>
   )}
   {stinger && (
-    <p class="text-sm text-gray-600 dark:text-gray-400 italic mt-2 border-t border-gray-200 dark:border-gray-700 pt-2">
+    <p class="text-sm text-neutral-600 italic mt-2 border-t border-neutral-200 pt-2">
       Stinger: {stinger}
     </p>
   )}

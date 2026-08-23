@@ -124,9 +124,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     if (field.type === "text") {
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 block">
-            {label}
-          </span>
+          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
           <RLSInput
             value={getTextValue(value)}
             onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) =>
@@ -142,9 +140,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     if (field.type === "number") {
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 block">
-            {label}
-          </span>
+          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
           <RLSInput
             type="number"
             value={value !== undefined ? String(value) : ""}
@@ -162,9 +158,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
       const selectItems = (field.options || []).map((opt) => getTextValue(opt))
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 block">
-            {label}
-          </span>
+          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
           <RLSSelect
             items={selectItems}
             value={getTextValue(value)}
@@ -196,9 +190,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
 
       return (
         <div class="flex flex-col gap-1 w-full">
-          <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400 block">
-            {label}
-          </span>
+          <span class="text-xs font-semibold text-neutral-600 block">{label}</span>
           <div class="flex flex-wrap gap-1 mb-1">
             <For each={arr}>
               {(item, idx) => (
@@ -207,7 +199,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                   <button
                     type="button"
                     onClick={() => removeArrayItem(idx())}
-                    class="ml-1 text-muted hover:text-red-500 cursor-pointer bg-transparent border-0 p-0 inline-flex items-center"
+                    class="ml-1 text-muted hover:text-error-500 cursor-pointer bg-transparent border-0 p-0 inline-flex items-center"
                   >
                     ×
                   </button>
@@ -344,7 +336,7 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
                       onClick={() => removeLink(index())}
                       aria-label="Delete"
                       title="Delete"
-                      class="!text-red-500 hover:!text-red-600"
+                      class="!text-error-500 hover:!text-error-600"
                       leading={<RLSIcon name="trash" size="xs" />}
                     />
                   </div>
