@@ -30,6 +30,7 @@ export interface ThemeConfig<S extends string = string> {
 
 export type ColorModeInput =
   | [chroma: number, hue: number]
+  | readonly [chroma: number, hue: number]
   | Record<string, string>
   | { light?: Record<string, string>; dark?: Record<string, string> }
 

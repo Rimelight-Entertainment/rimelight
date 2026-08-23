@@ -21,13 +21,13 @@ export const cardTheme = defineTheme("card", {
         description: "text-dimmed"
       },
       outline: {
-        root: "bg-default border border-default divide-y divide-default"
+        root: "bg-default border border-default divide-y divide-border"
       },
       soft: {
-        root: "bg-elevated/50 divide-y divide-default"
+        root: "bg-elevated/50 divide-y divide-border"
       },
       subtle: {
-        root: "bg-elevated/50 border border-default divide-y divide-default"
+        root: "bg-elevated/50 border border-default divide-y divide-border"
       }
     },
     interactive: {

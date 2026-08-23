@@ -100,7 +100,7 @@ export const buttonTheme = defineTheme("button", {
       color: "neutral",
       variant: "solid",
       classNames: {
-        root: "text-inverted bg-inverted hover:bg-inverted/90 active:bg-inverted/90 disabled:bg-inverted aria-disabled:bg-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-inverted"
+        root: "text-inverted bg-inverted hover:bg-inverted/90 active:bg-inverted/90 disabled:bg-inverted aria-disabled:bg-inverted focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-inverted"
       }
     },
     {

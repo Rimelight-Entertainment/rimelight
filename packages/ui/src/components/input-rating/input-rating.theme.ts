@@ -5,7 +5,7 @@ export const inputRatingTheme = defineTheme("input-rating", {
   base: {
     root: "inline-flex select-none",
     item: [
-      "relative inline-block cursor-pointer select-none rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rl-ring)]",
+      "relative inline-block cursor-pointer select-none rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--rl-ring)]",
       "transition-all duration-150"
     ],
     indicator:
@@ -58,7 +58,7 @@ export const inputRatingTheme = defineTheme("input-rating", {
       color: "neutral",
       classNames: {
         indicator: "text-highlighted",
-        item: "focus-visible:outline-inverted"
+        item: "focus-visible:ring-inverted"
       }
     },
     {

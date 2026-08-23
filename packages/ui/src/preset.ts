@@ -29,7 +29,7 @@ const SHADES: Record<string, [number, number, number, number]> = {
   "950": [0.145, 0.3, 0.93, 0.25]
 }
 
-const INTENTS: Record<string, Record<string, string>> = {
+const INTENTS = {
   default: { text: "700", bg: "50", border: "200", ring: "300" },
   muted: { text: "600", bg: "100", border: "200", ring: "300" },
   elevated: { text: "800", bg: "100", border: "200", ring: "400" },
@@ -38,47 +38,60 @@ const INTENTS: Record<string, Record<string, string>> = {
   toned: { text: "800", bg: "700", border: "600", ring: "900" },
   highlighted: { text: "950", bg: "200", border: "800", ring: "950" },
   inverted: { text: "50", bg: "950", border: "800", ring: "700" }
-}
+} as const satisfies Record<string, Record<string, string>>
 
 function resolveTokens(custom: Record<string, ColorModeInput> = {}) {
   const themeColors: Record<string, Record<string, string>> = {}
   const tokenVarLines: string[] = []
-  const allColors: string[] = []
+  const allPalettes: Record<string, ColorModeInput> = { ...PALETTES, ...custom }
 
-  for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
-    allColors.push(name)
+  for (const [name, val] of Object.entries(allPalettes)) {
     const entry: Record<string, string> = {
       DEFAULT: `var(--rl-${name}-500)`
     }
-
-    const isArray = Array.isArray(val)
-    const light = !isArray ? ((val as any)?.light ?? ((val as any)?.dark ? {} : val)) : null
-    const dark = !isArray ? ((val as any)?.dark ?? light) : null
-    const fallback = light ? (light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)") : ""
-
-    for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
+    for (const s of Object.keys(SHADES)) {
       entry[s] = `var(--rl-${name}-${s})`
-      const css = isArray
-        ? `light-dark(oklch(${l1} ${(c1 * val[0]).toFixed(3)} ${val[1]}), oklch(${l2} ${(c2 * val[0]).toFixed(3)} ${val[1]}))`
-        : `light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback})`
-
-      tokenVarLines.push(`--rl-${name}-${s}: ${css};`)
     }
-
     themeColors[name] = entry
+
+    if (Array.isArray(val)) {
+      const [chroma, hue] = val
+      for (const [s, [l1, c1, l2, c2]] of Object.entries(SHADES)) {
+        tokenVarLines.push(
+          `--rl-${name}-${s}: light-dark(oklch(${l1} ${(c1 * chroma).toFixed(3)} ${hue}), oklch(${l2} ${(c2 * chroma).toFixed(3)} ${hue}));`
+        )
+      }
+    } else {
+      const split =
+        "light" in val && typeof val.light === "object"
+          ? val
+          : "dark" in val && typeof val.dark === "object"
+            ? val
+            : null
+
+      const light = (split ? (split.light ?? {}) : val) as Record<string, string>
+      const dark = (split ? (split.dark ?? light) : light) as Record<string, string>
+      const fallback = light["500"] ?? Object.values(light)[0] ?? "oklch(0.55 0.15 0)"
+
+      for (const s of Object.keys(SHADES)) {
+        tokenVarLines.push(
+          `--rl-${name}-${s}: light-dark(${light[s] ?? fallback}, ${dark[s] ?? fallback});`
+        )
+      }
+    }
   }
 
-  return { themeColors, tokenVarLines, allColors }
+  return { themeColors, tokenVarLines }
 }
 
 export default function rimelightUiPreset(options: UIConfig = {}): Preset {
-  const { themeColors, tokenVarLines, allColors } = resolveTokens(options.colors)
+  const { themeColors, tokenVarLines } = resolveTokens(options.colors)
 
   const preflightCss = `:root {
   color-scheme: light dark;
   --rl-header-height: 4rem;
   --rl-container: 90rem;
-${tokenVarLines.map((l) => `  ${l}`).join("\n")}
+  ${tokenVarLines.join("\n  ")}
 }
 [data-theme="dark"] { color-scheme: dark; }
 [data-theme="light"] { color-scheme: light; }
@@ -88,7 +101,7 @@ body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }`
     name: "rimelight-ui",
     outputToCssLayers: true,
     safelist: [
-      ...allColors.map((c) => `rl-color-${c}`),
+      ...Object.keys(themeColors).map((c) => `rl-color-${c}`),
       ...Object.values(options.icons ?? {}).filter(
         (v): v is string => typeof v === "string" && v.startsWith("i-")
       )
@@ -111,17 +124,16 @@ body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }`
           colors: themeColors
         }
       }
-    ].filter((p): p is Preset => Boolean(p)),
+    ].filter(Boolean) as Preset[],
     shortcuts: [
       [
-        /^(text|bg|ring|border|outline|divide)-([a-z]+)(?:\/(\d+))?$/,
+        /^(text|bg|ring|border)-([a-z]+)(?:\/(\d+))?$/,
         ([, p = "", n = "", o]) => {
-          const prop = p === "divide" ? "border" : p === "outline" ? "ring" : p
-          const s = INTENTS[n]?.[prop]
+          const s = INTENTS[n as keyof typeof INTENTS]?.[p as "text" | "bg" | "border" | "ring"]
           if (!s) return
           const target = `${p}-neutral-${s}${o ? `/${o}` : ""}`
           return p === "bg" && n === "inverted"
-            ? `${target} text-neutral-${INTENTS.inverted?.text}`
+            ? `${target} text-neutral-${INTENTS.inverted.text}`
             : target
         }
       ]
