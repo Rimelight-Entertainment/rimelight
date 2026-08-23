@@ -7,6 +7,7 @@ export type BuiltinThemeColor = keyof typeof PALETTES
 export type ThemeColor = BuiltinThemeColor | (string & {})
 
 export type ColorModeInput =
+  | [chroma: number, hue: number]
   | Record<string, string>
   | { light?: Record<string, string>; dark?: Record<string, string> }
 

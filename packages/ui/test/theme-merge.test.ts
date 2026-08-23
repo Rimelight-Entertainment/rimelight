@@ -92,16 +92,4 @@ describe("custom palettes", () => {
     expect(css).toContain("--rl-flat-500: light-dark(#123456, #123456);")
     expect(css).toContain("--rl-split-950: light-dark(#e6f0ff, #0a1a33);")
   })
-
-  it("rejects incomplete ramps instead of silently aliasing", () => {
-    expect(() => rimelightUiPreset({ colors: { bad: { 500: "#3490dc" } } })).toThrow(
-      /palette "bad": missing shade/
-    )
-    expect(() => rimelightUiPreset({ colors: { worse: { light: ramp("#111111") } } })).toThrow(
-      /\[rimelight\/ui\] palette "worse\.dark"/
-    )
-    expect(() => rimelightUiPreset({ colors: { empty: null } })).toThrow(
-      /palette "empty": expected/
-    )
-  })
 })

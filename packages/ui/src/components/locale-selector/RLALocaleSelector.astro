@@ -59,8 +59,6 @@ const items = processedLocales.map((item) => {
 });
 
 const currentLocaleUrl = items.find(item => item.code === currentLocale)?.value || "";
-
-const gapClass = size === "sm" ? "gap-1.5" : size === "lg" ? "gap-3" : "gap-2";
 ---
 
 <rla-locale-selector data-theme={theme} {...rest}>
