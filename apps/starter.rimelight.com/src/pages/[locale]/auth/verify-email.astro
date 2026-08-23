@@ -23,14 +23,14 @@ const token = new URL(Astro.request.url).searchParams.get('token') || ''
   <AuthLayout tabs={tabs} currentPath={currentPath} backgroundMobile={bgMobile} backgroundDesktop={bgDesktop}>
     <div class="w-full flex flex-col gap-lg max-w-md">
       <div class="text-center">
-        <h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">Verify Your Email</h2>
-        <p class="text-sm text-neutral-600 dark:text-neutral-400">Please check your email and click the verification link to complete your account setup.</p>
+        <h2 class="text-2xl font-bold text-neutral-900 mb-2">Verify Your Email</h2>
+        <p class="text-sm text-neutral-600">Please check your email and click the verification link to complete your account setup.</p>
       </div>
       <div class="flex justify-center">
         <div class="text-center text-6xl">📧</div>
       </div>
       <div class="text-center">
-        <p id="verification-message" class="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+        <p id="verification-message" class="text-sm text-neutral-600 mb-4">
           {token ? "Verifying your email..." : "Enter your email address below to receive a verification link."}
         </p>
         

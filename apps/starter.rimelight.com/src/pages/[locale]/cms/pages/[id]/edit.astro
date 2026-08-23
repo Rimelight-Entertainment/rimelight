@@ -67,7 +67,7 @@ const isPublished = !!page.publishedVersionId
 <DashboardLayout title={`Edit: ${titleVal || 'Untitled Page'}`} description="CMS Page Editor" noindex={true}>
   <div class="flex flex-col h-screen overflow-hidden bg-neutral-50 text-highlighted select-none">
     <!-- Top Header Bar matching PageEditor.vue -->
-    <header class="h-12 w-full bg-neutral-100 dark:bg-neutral-800/90 flex items-center justify-between px-4 border-b border-default shrink-0 z-30">
+    <header class="h-12 w-full bg-neutral-100 flex items-center justify-between px-4 border-b border-default shrink-0 z-30">
       <div class="flex items-center gap-2.5">
         <RLAButton
           href={getRelativeLocaleUrl(currentLocale, "/cms/pages")}
@@ -80,14 +80,14 @@ const isPublished = !!page.publishedVersionId
           Pages
         </RLAButton>
 
-        <span class="w-px h-4 bg-neutral-200 dark:bg-neutral-700" />
+        <span class="w-px h-4 bg-neutral-200" />
 
-        <div class="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap overflow-hidden max-w-[200px] sm:max-w-xs">
+        <div class="flex items-center gap-1.5 text-xs text-neutral-500 font-medium whitespace-nowrap overflow-hidden max-w-[200px] sm:max-w-xs">
           <span>Editing:</span>
-          <span id="header-page-title" class="font-semibold text-neutral-900 dark:text-white truncate">{titleVal || "Untitled Page"}</span>
+          <span id="header-page-title" class="font-semibold text-neutral-900 truncate">{titleVal || "Untitled Page"}</span>
         </div>
 
-        <span class="w-px h-4 bg-neutral-200 dark:bg-neutral-700" />
+        <span class="w-px h-4 bg-neutral-200" />
 
         <div class="flex items-center gap-1">
           <RLAButton id="undo-btn" size="xs" square variant="ghost" color="neutral" leadingIcon="i-lucide-rotate-ccw" aria-label="Undo" />
@@ -121,7 +121,7 @@ const isPublished = !!page.publishedVersionId
           <span class="hidden sm:inline">Preview</span>
         </RLAButton>
 
-        <span class="w-px h-4 bg-neutral-200 dark:bg-neutral-700 hidden sm:block" />
+        <span class="w-px h-4 bg-neutral-200 hidden sm:block" />
 
         <RLAButton
           id="publish-btn"
@@ -167,7 +167,7 @@ const isPublished = !!page.publishedVersionId
         <div class="max-w-7xl mx-auto flex flex-col py-2 w-full gap-6">
           
           <!-- Banner Container -->
-          <div class="w-full relative group/banner aspect-[5/1] rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 border border-default flex items-center justify-center">
+          <div class="w-full relative group/banner aspect-[5/1] rounded-xl overflow-hidden bg-neutral-100 border border-default flex items-center justify-center">
             <img
               id="banner-img"
               src={heroImage}
@@ -207,7 +207,7 @@ const isPublished = !!page.publishedVersionId
                 <button
                   id="banner-dialog-remove"
                   type="button"
-                  class="hidden px-3 py-1.5 text-xs font-medium rounded-md text-red-500 hover:bg-red-500/10 transition border border-red-500/30"
+                  class="hidden px-3 py-1.5 text-xs font-medium rounded-md text-error-500 hover:bg-error-500/10 transition border border-error-500/30"
                 >Remove</button>
                 <div class="flex gap-2 ml-auto">
                   <button
@@ -508,9 +508,9 @@ const isPublished = !!page.publishedVersionId
           indicator.textContent = status === 'saved' ? '● Saved' : status === 'unsaved' ? '▲ Unsaved' : status === 'saving' ? '↻ Saving...' : '✖ Save Failed';
           indicator.className = `inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold select-none ${
             status === 'saved' ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/50' :
-            status === 'unsaved' ? 'bg-amber-950/40 text-amber-400 border border-amber-800/50' :
-            status === 'saving' ? 'bg-blue-950/40 text-blue-400 border border-blue-800/50' :
-            'bg-red-950/40 text-red-400 border border-red-800/50'
+            status === 'unsaved' ? 'bg-warning-950/40 text-warning-400 border border-warning-800/50' :
+            status === 'saving' ? 'bg-info-950/40 text-info-400 border border-info-800/50' :
+            'bg-error-950/40 text-error-400 border border-error-800/50'
           }`;
         }
       }

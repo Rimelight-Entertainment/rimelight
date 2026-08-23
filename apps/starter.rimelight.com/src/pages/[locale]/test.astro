@@ -43,7 +43,7 @@ const PALETTE_NAMES = [
     </div>
 
     <!-- 1. Color Palette Scales -->
-    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+    <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50">
       <h2 class="text-xl font-bold">Active Hybrid Palette Scales</h2>
       
       <div class="flex flex-col gap-md">
@@ -54,7 +54,7 @@ const PALETTE_NAMES = [
               {COLOR_SHADES.map((shade) => (
                 <div class="flex flex-col items-center gap-1">
                   <div
-                    class="w-full h-10 rounded shadow-sm border border-black/10 dark:border-white/10"
+                    class="w-full h-10 rounded shadow-sm border border-neutral-200"
                     style={`background-color: var(--rl-${name}-${shade});`}
                     title={`${name}-${shade}`}
                   />
@@ -68,7 +68,7 @@ const PALETTE_NAMES = [
     </section>
 
     <!-- 2. Component Scoped Color Theming (rl-color-*) -->
-    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+    <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50">
       <h2 class="text-xl font-bold">Component Variants & Theming</h2>
 
       <div class="flex flex-wrap items-center gap-md">
@@ -95,7 +95,7 @@ const PALETTE_NAMES = [
     </section>
 
     <!-- 3. Semantic Intent Utility Tokens -->
-    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+    <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50">
       <h2 class="text-xl font-bold">Semantic Intent Utility Matrix</h2>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
@@ -138,7 +138,7 @@ const PALETTE_NAMES = [
     </section>
 
     <!-- 4. Grid Layout Showcase -->
-    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+    <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50">
       <h2 class="text-xl font-bold">Layout Grid Showcase</h2>
 
       <RLAGrid cols={3}>
@@ -149,7 +149,7 @@ const PALETTE_NAMES = [
     </section>
 
     <!-- 5. UI Slot Overrides (String & Function Overrides) -->
-    <section class="flex flex-col gap-lg border border-neutral-200 dark:border-neutral-800 p-lg rounded-2xl bg-neutral-50 dark:bg-neutral-900">
+    <section class="flex flex-col gap-lg border border-neutral-200 p-lg rounded-2xl bg-neutral-50">
       <h2 class="text-xl font-bold">Slot UI Overrides & Theme Customization</h2>
       <p class="text-sm text-neutral-500">
         Testing slot class extension strings and function-based replacements via the <code>ui</code> prop.
@@ -192,9 +192,9 @@ const PALETTE_NAMES = [
         title="Card Slot Customization"
         description="Testing card slot overrides for header, title, description, and body containers."
         ui={{
-          root: "border-2 border-primary-500/30 bg-primary-50/50 dark:bg-primary-950/20 shadow-xl",
-          title: "text-primary-600 dark:text-primary-400 font-extrabold text-lg",
-          description: "italic text-neutral-600 dark:text-neutral-400"
+          root: "border-2 border-primary-500/30 bg-primary-50/50 shadow-xl",
+          title: "text-primary-600 font-extrabold text-lg",
+          description: "italic text-neutral-600"
         }}
       >
         <p class="text-sm text-neutral-500">Body content within styled container slot.</p>

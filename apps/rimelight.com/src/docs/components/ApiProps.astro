@@ -34,14 +34,14 @@ const props = filterProps(compMeta?.props ?? [], filterOpts)
       {props.map((prop: PropMeta) => (
         <tr>
           <td><span class="font-mono text-sm">{prop.name}</span></td>
-          <td><span class="font-mono text-xs text-gray-600 dark:text-gray-400">{prop.type}</span></td>
+          <td><span class="font-mono text-xs text-neutral-600">{prop.type}</span></td>
           <td>{prop.required ? "Yes" : "No"}</td>
-          <td>{prop.default !== undefined ? <span class="font-mono text-xs text-gray-600 dark:text-gray-400">{prop.default}</span> : "—"}</td>
+          <td>{prop.default !== undefined ? <span class="font-mono text-xs text-neutral-600">{prop.default}</span> : "—"}</td>
           <td>{prop.description || "—"}</td>
         </tr>
       ))}
     </tbody>
   </table>
 ) : (
-  <p class="text-sm italic text-gray-500">No props to display.</p>
+  <p class="text-sm italic text-neutral-500">No props to display.</p>
 )}

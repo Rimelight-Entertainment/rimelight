@@ -533,7 +533,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
             navigator.clipboard.writeText(visibleCode.textContent || '');
             const icon = copyBtn.querySelector('span');
             if (icon) {
-              icon.className = 'i-lucide-check size-4 text-green-500';
+              icon.className = 'i-lucide-check size-4 text-success-500';
               setTimeout(() => {
                 icon.className = 'i-lucide-copy size-4';
               }, 2000);

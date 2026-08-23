@@ -37,7 +37,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SI
                 type="text"
                 required
                 placeholder={t("page_contact.contact_form_placeholder_name")}
-                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
               />
             </div>
 
@@ -49,7 +49,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SI
                 type="email"
                 required
                 placeholder={t("page_contact.contact_form_placeholder_email")}
-                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
               />
             </div>
 
@@ -60,7 +60,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SI
                 name="subject"
                 type="text"
                 placeholder={t("page_contact.contact_form_placeholder_subject")}
-                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
               />
             </div>
 
@@ -72,7 +72,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SI
                 rows="5"
                 required
                 placeholder={t("page_contact.contact_form_placeholder_message")}
-                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition resize-y min-h-[120px]"
+                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition resize-y min-h-[120px]"
               ></textarea>
             </div>
 
@@ -115,7 +115,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SI
                 type="file"
                 accept="image/png,image/jpeg,image/webp,application/pdf"
                 required
-                class="w-full px-4 py-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-500 file:text-white hover:file:bg-primary-600 cursor-pointer"
+                class="w-full px-4 py-3 rounded-lg border border-neutral-300 bg-default text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-500 file:text-white hover:file:bg-primary-600 cursor-pointer"
               />
             </div>
 
@@ -160,13 +160,13 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SI
             : error.message;
 
           contactStatus.textContent = message;
-          contactStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-red-500";
+          contactStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-error-500";
           return;
         }
 
         if (data?.success) {
           contactStatus.textContent = "Message sent successfully! ✅";
-          contactStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-green-500";
+          contactStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-success-500";
           contactForm.reset();
           // @ts-ignore
           window.turnstile?.reset?.();
@@ -191,13 +191,13 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SI
             : error.message;
 
           uploadStatus.textContent = message;
-          uploadStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-red-500";
+          uploadStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-error-500";
           return;
         }
 
         if (data?.success) {
           uploadStatus.textContent = `File uploaded! Key: ${data.key} ✅`;
-          uploadStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-green-500";
+          uploadStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-success-500";
           uploadForm.reset();
         }
       });
