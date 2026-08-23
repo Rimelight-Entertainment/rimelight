@@ -420,7 +420,7 @@ const isSearchable = searchInput !== false
         // Render new item in viewport DOM
         if (this.viewport) {
           const itemEl = document.createElement("div");
-          itemEl.className = "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground";
+          itemEl.className = "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accented hover:text-highlighted";
           itemEl.setAttribute("data-slot", "item");
           itemEl.setAttribute("data-value", newItemText);
           itemEl.setAttribute("data-label", newItemText);

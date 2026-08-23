@@ -730,7 +730,7 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
             if (comparedProp === propName) {
               comparedProp = null;
               if (togglingPattern === "icon") {
-                btn.classList.remove('bg-accent', 'text-foreground');
+                btn.classList.remove('bg-accented', 'text-highlighted');
               } else {
                 btn.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');
                 btn.classList.add('text-muted-foreground', 'border-border/60');
@@ -742,8 +742,8 @@ const defaultCodeLang = hasAstroCode ? 'astro' : hasVueCode ? 'vue' : 'tsx';
             } else {
               comparedProp = propName;
               if (togglingPattern === "icon") {
-                compareButtons.forEach(b => b.classList.remove('bg-accent', 'text-foreground'));
-                btn.classList.add('bg-accent', 'text-foreground');
+                compareButtons.forEach(b => b.classList.remove('bg-accented', 'text-highlighted'));
+                btn.classList.add('bg-accented', 'text-highlighted');
               } else {
                 compareButtons.forEach(b => {
                   b.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');

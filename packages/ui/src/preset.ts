@@ -43,6 +43,8 @@ const INTENTS: Record<string, Record<string, string>> = {
 
 type TokenMap = Record<string, Record<string, string>>
 
+const FOREGROUND = "light-dark(oklch(1 0 0), oklch(0.145 0 0))"
+
 function buildTokens(custom: Record<string, any> = {}): TokenMap {
   const tokens: TokenMap = {}
   for (const [name, val] of Object.entries({ ...PALETTES, ...custom })) {
@@ -62,8 +64,7 @@ function buildTokens(custom: Record<string, any> = {}): TokenMap {
     tokens[name] = {
       ...shades,
       DEFAULT: shades["500"]!,
-      foreground: "light-dark(oklch(1 0 0), oklch(0.145 0 0))",
-      accent: shades["600"]!
+      foreground: "var(--rl-foreground)"
     }
   }
   return tokens
@@ -73,11 +74,11 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
   const tokens = buildTokens(options.colors)
   const allColors = Object.keys(tokens)
 
-  let tokenCss = ""
+  let tokenCss = "  --rl-foreground: " + FOREGROUND + ";\n"
   let aliasCss = ""
   for (const [name, map] of Object.entries(tokens)) {
     for (const [k, v] of Object.entries(map)) tokenCss += `  --colors-${name}-${k}: ${v};\n`
-    aliasCss += `  --${name}: var(--colors-${name}-DEFAULT);\n  --${name}-foreground: var(--colors-${name}-foreground);\n  --${name}-accent: var(--colors-${name}-accent);\n`
+    aliasCss += `  --${name}: var(--colors-${name}-DEFAULT);\n  --${name}-foreground: var(--colors-${name}-foreground);\n  --${name}-accent: var(--colors-${name}-600);\n`
   }
 
   const preflightCss = `:root {\n  color-scheme: light dark;\n  --radius: 0.625rem;\n  --rl-header-height: 4rem;\n  --rl-container: 90rem;\n${tokenCss}${aliasCss}}\n.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }\n.light, [data-theme="light"], .rl-light { color-scheme: light; }\nbody { background-color: light-dark(oklch(1 0 0), var(--colors-neutral-50)); color: var(--colors-neutral-950); }`

@@ -3,16 +3,12 @@ import RLAIcon from "../icon/RLAIcon.astro"
 import type { NavigationMenuProps } from "./navigation-menu"
 import { navigationMenuTheme } from "./navigation-menu.theme"
 
-
-
 const {
   items = [],
   color = "primary",
   orientation = "horizontal",
   ...rest
 } = Astro.props as NavigationMenuProps
-
-
 
 const classes = navigationMenuTheme(Astro.props)
 
@@ -31,17 +27,17 @@ await Promise.all(
     <ul class={classes.list} data-slot="list" role="list">
       {items.map((item, i) => {
         const hasChildren = item.children && item.children.length > 0
-        
+
         const itemPath = (item.href ?? item.to ?? "#") as string
         const normalizedPath = itemPath.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, '').replace(/\/+$/, '') || '/'
         const currentPath = Astro.url.pathname.replace(/^\/[a-z]{2}(?:-[a-zA-Z]{2})?(?=\/|$)/, '').replace(/\/+$/, '') || '/'
-        
+
         const isActive = item.active ?? (
-          normalizedPath !== '' && normalizedPath !== '/' 
+          normalizedPath !== '' && normalizedPath !== '/'
             ? currentPath.startsWith(normalizedPath)
             : currentPath === '/'
         )
-        
+
         return (
           <li class={classes.item} data-slot="item" data-nav-item data-index={i}>
             {hasChildren ? (
@@ -70,10 +66,10 @@ await Promise.all(
             )}
 
             {hasChildren && (
-              <div 
-                class={classes.content + " hidden"} 
-                data-slot="content" 
-                data-nav-content 
+              <div
+                class={classes.content + " hidden"}
+                data-slot="content"
+                data-nav-content
                 data-item-index={i}
                 role="region"
               >
@@ -85,7 +81,7 @@ await Promise.all(
                       <li>
                         <a
                           href={typeof child.href === "string" ? child.href : (typeof child.to === "string" ? child.to : "#")}
-                          class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                          class="flex items-start gap-3 rounded-sm px-3 py-2 text-sm hover:bg-accented hover:text-highlighted transition-colors"
                         >
                           {child.icon && <span class={child.icon + " mt-0.5 size-4 shrink-0 text-muted"} />}
                           <div>
@@ -151,7 +147,7 @@ await Promise.all(
 
       const open = (item: HTMLElement, trigger: HTMLElement, content: HTMLElement) => {
         clearTimeout(hoverTimeout);
-        
+
         if (orientation === "horizontal" && activeItem && activeItem !== item) {
           close(activeItem);
         }
@@ -182,7 +178,7 @@ await Promise.all(
       const close = (item: HTMLElement) => {
         const trigger = item.querySelector("[data-nav-trigger]") as HTMLElement | null;
         const itemIndex = item.getAttribute("data-index");
-        
+
         let content = item.querySelector("[data-nav-content]") as HTMLElement | null;
         if (!content && viewport) {
           content = viewport.querySelector(`[data-nav-content][data-item-index="${itemIndex}"]`) as HTMLElement | null;
@@ -329,7 +325,7 @@ await Promise.all(
     outline: none !important;
     outline-width: 0px !important;
     outline-color: transparent !important;
-    
+
     /* Wiping out any UnoCSS/Tailwind rings on the viewport container */
     --un-ring-width: 0px !important;
     --tw-ring-width: 0px !important;
@@ -341,7 +337,7 @@ await Promise.all(
     --tw-ring-shadow: none !important;
     --un-ring-offset-shadow: none !important;
     --tw-ring-offset-shadow: none !important;
-    
+
     /* Premium card shadow */
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.35), 0 8px 10px -6px rgb(0 0 0 / 0.35) !important; /* Premium shadow-xl */
   }
@@ -356,7 +352,7 @@ await Promise.all(
     border-width: 0px !important;
     box-shadow: none !important;
     padding: 0 !important;
-    
+
     /* Wiping out any UnoCSS/Tailwind rings on content */
     --un-ring-width: 0px !important;
     --tw-ring-width: 0px !important;

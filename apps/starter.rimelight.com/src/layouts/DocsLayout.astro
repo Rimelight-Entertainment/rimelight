@@ -14,7 +14,6 @@ import type { ResolvedSidebarItem } from "@rimelight/docs";
 import docsConfig from "@/config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/docs";
 
-
 function normalizeBadge(badge: any) {
   if (!badge) return null
   if (typeof badge === "string") {
@@ -25,10 +24,10 @@ function normalizeBadge(badge: any) {
       class: ""
     }
   }
-  
+
   let color = badge.color || "primary"
   let variant = badge.variant || "soft"
-  
+
   if (badge.variant) {
     const v = badge.variant.toLowerCase()
     if (v === "tip" || v === "success") {
@@ -48,7 +47,7 @@ function normalizeBadge(badge: any) {
       variant = "soft"
     }
   }
-  
+
   return {
     text: badge.text || "",
     color,
@@ -176,7 +175,7 @@ const getVersionHomeUrl = (v: string) => {
                   root: "!w-full !block",
                   trigger: "flex items-center justify-between !w-full bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium text-foreground",
                   content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
-                  item: "!text-[var(--foreground)] hover:!bg-[var(--accent)] hover:!text-[var(--accent-foreground)]"
+                  item: "!text-highlighted hover:!bg-accented"
                 }}
               />
             </rla-version-selector>
@@ -341,7 +340,7 @@ const getVersionHomeUrl = (v: string) => {
                 root: "!w-full !block",
                 trigger: "flex items-center justify-between !w-full bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium text-foreground",
                 content: "!min-w-0 !w-full !bg-[var(--popover)] !border-[var(--border)] !text-[var(--popover-foreground)]",
-                item: "!text-[var(--foreground)] hover:!bg-[var(--accent)] hover:!text-[var(--accent-foreground)]"
+                item: "!text-highlighted hover:!bg-accented"
               }}
             />
           </rla-version-selector>

@@ -6,9 +6,9 @@ export const navigationMenuTheme = defineTheme("navigation-menu", {
     root: "relative z-10 flex w-full",
     list: "group flex flex-1 list-none",
     item: "relative",
-    link: "text-highlighted inline-flex items-center px-4 py-2 text-sm font-medium transition-colors hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+    link: "text-highlighted inline-flex items-center px-4 py-2 text-sm font-medium transition-colors hover:text-highlighted focus:text-highlighted focus:outline-none disabled:pointer-events-none disabled:opacity-50",
     trigger:
-      "group inline-flex h-10 items-center rounded-md bg-default px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 gap-1",
+      "group inline-flex h-10 items-center rounded-md bg-default px-4 py-2 text-sm font-medium transition-colors hover:bg-accented hover:text-highlighted focus:bg-accented focus:text-highlighted focus:outline-none disabled:pointer-events-none disabled:opacity-50 gap-1",
     content:
       "absolute left-0 top-full z-50 mt-1.5 w-56 rounded-md border bg-elevated p-1 text-highlighted shadow-md origin-top-left",
     viewportWrapper: "absolute left-0 top-full flex justify-center w-full",

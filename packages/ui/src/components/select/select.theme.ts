@@ -48,7 +48,7 @@ export const selectTheme = defineTheme("select", {
     group: "p-1 isolate",
     empty: "p-3 text-center text-sm text-muted",
     separator: "-mx-1 my-1 h-px bg-border",
-    item: "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    item: "group relative w-full flex items-center justify-between select-none outline-none rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors hover:bg-accented hover:text-highlighted data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     itemLeadingIcon: "shrink-0 size-4 me-2 text-muted group-hover:text-highlighted",
     itemLeadingAvatar: "shrink-0 size-4 me-2 rounded-full object-cover",
     itemLeadingChip: "shrink-0 size-2.5 me-2 rounded-full",
@@ -59,7 +59,7 @@ export const selectTheme = defineTheme("select", {
     input:
       "w-full border-b border-default bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted",
     createOption:
-      "p-2 text-sm font-medium text-primary hover:bg-accent cursor-pointer flex items-center gap-2 border-t border-default"
+      "p-2 text-sm font-medium text-primary hover:bg-accented cursor-pointer flex items-center gap-2 border-t border-default"
   },
   variants: {
     size: {
@@ -90,10 +90,10 @@ export const selectTheme = defineTheme("select", {
       }
     },
     variant: {
-      outline: { trigger: "bg-default border border-default hover:bg-accent/50" },
-      soft: { trigger: "bg-accent/50 border-transparent hover:bg-accent" },
-      subtle: { trigger: "bg-accent border border-default hover:bg-accent/80" },
-      ghost: { trigger: "bg-transparent border-transparent hover:bg-accent" },
+      outline: { trigger: "bg-default border border-default hover:bg-accented/50" },
+      soft: { trigger: "bg-accented/50 border-transparent hover:bg-accented" },
+      subtle: { trigger: "bg-accented border border-default hover:bg-accented/80" },
+      ghost: { trigger: "bg-transparent border-transparent hover:bg-accented" },
       none: { trigger: "bg-transparent border-transparent px-0 shadow-none" }
     },
     theme: {

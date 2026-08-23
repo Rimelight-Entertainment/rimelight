@@ -26,7 +26,7 @@ export const dropdownMenuTheme = defineTheme("dropdown-menu", {
       "absolute z-50 mt-1 min-w-32 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md ring-1 ring-black/5 focus:outline-none flex flex-col gap-0.5",
     viewport: "flex flex-col gap-0.5",
     group: "p-0.5 isolate flex flex-col gap-0.5",
-    item: "group relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer disabled:pointer-events-none disabled:opacity-50 select-none transition-colors",
+    item: "group relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accented hover:text-highlighted cursor-pointer disabled:pointer-events-none disabled:opacity-50 select-none transition-colors",
     itemLeadingIcon: "shrink-0 size-4 text-muted group-hover:text-highlighted",
     itemLeadingAvatar: "shrink-0 size-4 rounded-full object-cover",
     itemLabel: "truncate flex-1 text-left",
