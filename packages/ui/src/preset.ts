@@ -44,6 +44,7 @@ const INTENTS: Record<string, Record<string, string>> = {
 type TokenMap = Record<string, Record<string, string>>
 
 const FOREGROUND = "light-dark(oklch(1 0 0), oklch(0.145 0 0))"
+const BACKGROUND = "light-dark(oklch(1 0 0), var(--rl-neutral-50))"
 
 function buildTokens(custom: Record<string, any> = {}): TokenMap {
   const tokens: TokenMap = {}
@@ -63,8 +64,7 @@ function buildTokens(custom: Record<string, any> = {}): TokenMap {
     }
     tokens[name] = {
       ...shades,
-      DEFAULT: shades["500"]!,
-      foreground: FOREGROUND
+      DEFAULT: shades["500"]!
     }
   }
   return tokens
@@ -77,7 +77,6 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
   const themeColors: TokenMap = {}
   const rootVars: string[] = [
     "color-scheme: light dark;",
-    "--radius: 0.625rem;",
     "--rl-header-height: 4rem;",
     "--rl-container: 90rem;"
   ]
@@ -90,13 +89,26 @@ export default function rimelightUiPreset(options: PresetOptions | UIConfig = {}
     themeColors[name] = entry
   }
 
+  rootVars.push(`--rl-foreground: ${FOREGROUND};`)
+  for (const name of allColors) {
+    themeColors[name]!.foreground = "var(--rl-foreground)"
+  }
+  themeColors.foreground = { DEFAULT: "var(--rl-foreground)" }
+  rootVars.push(`--rl-background: ${BACKGROUND};`)
+  themeColors.background = { DEFAULT: "var(--rl-background)" }
+  themeColors.muted = { foreground: "var(--rl-foreground)" }
+  rootVars.push(
+    "--primary: var(--rl-primary-DEFAULT);",
+    "--primary-foreground: var(--rl-foreground);"
+  )
+
   const preflightCss = [
     ":root {",
     ...rootVars.map((l) => `  ${l}`),
     "}",
     '.dark, [data-theme="dark"], .rl-dark { color-scheme: dark; }',
     '.light, [data-theme="light"], .rl-light { color-scheme: light; }',
-    "body { background-color: light-dark(oklch(1 0 0), var(--rl-neutral-50)); color: var(--rl-neutral-950); }"
+    "body { background-color: var(--rl-background); color: var(--rl-neutral-950); }"
   ].join("\n")
 
   return {

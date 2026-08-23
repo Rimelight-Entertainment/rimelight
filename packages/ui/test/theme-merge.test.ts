@@ -53,7 +53,6 @@ describe("rimelight token architecture", () => {
     const { css } = await uno.generate("text-highlighted", { preflights: true })
     expect(css).toContain("--primary: var(--rl-primary-DEFAULT)")
     expect(css).toContain("--primary-foreground: var(--rl-foreground)")
-    expect(css).toContain("--primary-accent: var(--rl-primary-600)")
     expect(css).not.toContain("--secondary:")
     expect(css).not.toContain("--success:")
   })

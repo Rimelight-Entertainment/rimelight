@@ -23,13 +23,13 @@ export const localeSelectorTheme = defineTheme("locale-selector", {
     },
     variant: {
       default: {
-        select: "bg-default text-default hover:bg-accent/50 border border-default"
+        select: "bg-default text-default hover:bg-accented/50 border border-default"
       },
       outline: {
-        select: "bg-transparent border border-default text-default hover:bg-accent/50"
+        select: "bg-transparent border border-default text-default hover:bg-accented/50"
       },
       ghost: {
-        select: "bg-transparent border border-transparent text-default hover:bg-accent/50"
+        select: "bg-transparent border border-transparent text-default hover:bg-accented/50"
       }
     },
     size: {

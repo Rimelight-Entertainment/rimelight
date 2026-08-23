@@ -1,5 +1,6 @@
 import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
 import type { SelectItem } from "./select"
+import { selectTheme, selectPickerCss } from "./select.theme"
 
 export interface RLSSelectProps {
   id?: string
@@ -16,14 +17,6 @@ export interface RLSSelectProps {
   onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void
   onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void
 }
-
-const SIZE_CLASSES = {
-  xs: "py-0.5 pl-2 pr-6 text-xs",
-  sm: "py-1 pl-2.5 pr-7 text-xs",
-  md: "py-1.5 pl-3 pr-8 text-sm",
-  lg: "py-2 pl-3.5 pr-9 text-base",
-  xl: "py-2.5 pl-4 pr-10 text-base"
-} as const
 
 const RLSSelect: Component<RLSSelectProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
@@ -42,7 +35,12 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
     "onBlur"
   ])
 
-  const sizeClass = createMemo(() => SIZE_CLASSES[props.size ?? "md"])
+  const classes = createMemo(() =>
+    selectTheme({
+      size: props.size,
+      class: props.class
+    })
+  )
 
   const normalizedItems = createMemo(() => {
     if (!props.items) return []
@@ -68,7 +66,7 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
   )
 
   return (
-    <div class={`relative inline-flex items-center w-full ${props.class || ""}`}>
+    <div class={`${classes().root}`}>
       <select
         id={props.id}
         name={props.name}
@@ -76,7 +74,8 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
         required={props.required}
         onChange={props.onChange}
         onBlur={props.onBlur}
-        class={`rl-select w-full cursor-pointer rounded-md border border-default bg-default ${sizeClass()} text-foreground shadow-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50`}
+        class={classes().select}
+        data-slot="select"
         {...rest}
       >
         {props.placeholder ? (
@@ -103,7 +102,7 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
       </select>
 
       {/* Custom Chevron arrow */}
-      <span class="pointer-events-none absolute right-2 flex items-center text-muted-foreground">
+      <span class={classes().icon} data-slot="icon">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="14"
@@ -120,14 +119,7 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
         </svg>
       </span>
 
-      <style>{`
-        select.rl-select, select.rl-select::picker(select) { appearance: base-select; }
-        select.rl-select::picker-icon { display: none; }
-        select.rl-select::picker(select) { border: 1px solid var(--rl-neutral-200); border-radius: var(--radius, 0.5rem); background-color: var(--rl-neutral-100); color: var(--rl-neutral-950); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.15); padding: 0.25rem; margin-top: 0.25rem; }
-        select.rl-select option { padding: 0.375rem 0.625rem; border-radius: calc(var(--radius, 0.5rem) - 0.125rem); background-color: var(--rl-neutral-100); color: var(--rl-neutral-950); font-size: 0.875rem; cursor: pointer; transition: background-color 0.15s ease, color 0.15s ease; }
-        select.rl-select option:hover, select.rl-select option:focus { background-color: var(--rl-neutral-200); color: var(--rl-neutral-950); }
-        select.rl-select option:checked { background-color: var(--rl-primary-500); color: var(--primary-foreground, #ffffff); font-weight: 500; }
-      `}</style>
+      <style>{selectPickerCss}</style>
     </div>
   )
 }
