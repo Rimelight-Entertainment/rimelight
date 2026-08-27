@@ -1,5 +1,5 @@
 export interface DashboardGroupProps {
-  as?: string
+  as?: any
   ui?: any
   class?: any
   [key: string]: unknown

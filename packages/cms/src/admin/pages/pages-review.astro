@@ -163,7 +163,7 @@ const titleVal =
               </div>
             ) : (
               <p class="text-xs text-muted font-mono">
-                {JSON.stringify((blockDiff.newBlock || blockDiff.oldBlock)?.properties || {})}
+                {JSON.stringify((blockDiff.newBlock || blockDiff.oldBlock)?.props || {})}
               </p>
             )}
           </div>

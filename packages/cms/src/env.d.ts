@@ -11,3 +11,7 @@ declare module "virtual:rimelight-cms/parent-layout" {
 declare module "virtual:rimelight-cms/db" {
   export const db: any
 }
+
+declare module "virtual:rimelight-cms/storage" {
+  export const storageConfig: any
+}

@@ -5,11 +5,8 @@ import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
 import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
-import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const prerender = false;
-
-const currentLocale = Astro.currentLocale ?? "en";
 
 const users = [
   { id: "usr_1", name: "Idan T.", email: "idan@rimelight.com", role: "Super Admin", status: "active", lastActive: "Just now" },

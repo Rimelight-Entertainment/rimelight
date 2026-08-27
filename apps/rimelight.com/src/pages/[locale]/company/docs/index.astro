@@ -1,7 +1,7 @@
 ---
 import DocsLayout from "@/layouts/DocsLayout.astro"
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts"
-import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks, blocksToMarkdown } from "@rimelight/cms"
+import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms"
 import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
 import { db } from "@/db"
 import { pages } from "@/db/schema"
@@ -78,7 +78,6 @@ const docTableOfContents = content.properties?.tableOfContents as TableOfContent
 const docPrev = content.properties?.prev
 const docNext = content.properties?.next
 const docEditUrl = content.properties?.editUrl
-const docRawMarkdown = blocksToMarkdown(dbBlocks)
 ---
 
 <DocsLayout
@@ -89,7 +88,6 @@ const docRawMarkdown = blocksToMarkdown(dbBlocks)
   prevOverride={docPrev}
   nextOverride={docNext}
   editUrl={docEditUrl}
-  rawMarkdown={docRawMarkdown}
   activeVersion={activeVersion}
   versions={versions}
   includeVersionInUrl={includeVersionInUrl}

@@ -1,5 +1,5 @@
 export interface DashboardNavbarProps {
-  as?: string
+  as?: any
   icon?: string
   title?: string
   toggle?: boolean

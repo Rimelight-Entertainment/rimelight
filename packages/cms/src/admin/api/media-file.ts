@@ -8,7 +8,7 @@ export const prerender = false
 export const GET: APIRoute = async ({ params, locals }) => {
   try {
     const bindingName = storageConfig?.binding ?? "BLOB"
-    const bucket = getR2Bucket(locals, bindingName)
+    const bucket = await getR2Bucket(locals, bindingName)
 
     if (!bucket) {
       return new Response("Storage binding not found.", { status: 500 })

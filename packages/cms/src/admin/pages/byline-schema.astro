@@ -3,12 +3,8 @@ import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
-import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro";
-import { getRelativeLocaleUrl } from "@rimelight/i18n";
 
 export const prerender = false;
-
-const currentLocale = Astro.currentLocale ?? "en";
 
 const schemaFields = [
   { key: "displayName", label: "Display Name", type: "string", required: true, description: "Primary author attribution name" },
