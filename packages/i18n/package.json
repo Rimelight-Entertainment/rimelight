@@ -31,7 +31,7 @@
     "access": "public"
   },
   "scripts": {
-    "check": "pnpm audit --audit-level=moderate && vp check --fix"
+    "check": "vp check --fix"
   },
   "dependencies": {
     "@nanostores/i18n": "1.3.3",

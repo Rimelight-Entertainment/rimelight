@@ -28,7 +28,7 @@
   },
   "scripts": {
     "astro": "astro",
-    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
+    "check": "vp check --fix && astro check"
   },
   "dependencies": {
     "@unocss/vite": "66.8.1",

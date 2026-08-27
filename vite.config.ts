@@ -6,8 +6,12 @@ export default defineConfig({
   run: {
     cache: true,
     tasks: {
+      audit: {
+        command: "pnpm audit --audit-level=low"
+      },
       check: {
         dependsOn: [
+          "audit",
           "@rimelight/auth#check",
           "@rimelight/cli#check",
           "@rimelight/cms#check",

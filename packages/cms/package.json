@@ -42,7 +42,7 @@
     "access": "public"
   },
   "scripts": {
-    "check": "pnpm audit --audit-level=moderate && vp check --fix && astro check"
+    "check": "vp check --fix && astro check"
   },
   "dependencies": {
     "@rimelight/i18n": "workspace:*",

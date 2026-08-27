@@ -29,7 +29,7 @@
   },
   "scripts": {
     "create": "node ./bin/rimelight.js create",
-    "check": "pnpm audit --audit-level=moderate"
+    "check": "vp check --fix"
   },
   "dependencies": {
     "@clack/prompts": "1.7.0",

@@ -19,12 +19,11 @@
   "scripts": {
     "prepare": "vp config",
     "generate-types": "wrangler types",
-    "astro": "astro",
     "dev": "astro dev",
     "dev:remote": "astro dev --remote",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "pnpm audit --audit-level=moderate && vp check --fix && wrangler types && astro sync && astro check"
+    "check": "wrangler types && astro sync && vp check --fix && astro check"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.5",

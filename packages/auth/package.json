@@ -34,7 +34,7 @@
     "access": "public"
   },
   "scripts": {
-    "check": "pnpm audit --audit-level=moderate && vp check --fix"
+    "check": "vp check --fix"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "1.7.2",
