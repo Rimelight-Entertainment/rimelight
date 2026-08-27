@@ -23,7 +23,7 @@
     "dev:remote": "astro dev --remote",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "wrangler types && astro sync && vp check --fix && astro check"
+    "check": "wrangler types && vp check --fix && astro check"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.2.5",

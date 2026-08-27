@@ -7,7 +7,14 @@ export default defineConfig({
     cache: true,
     tasks: {
       audit: {
-        command: "pnpm audit --audit-level=low"
+        command: "pnpm audit",
+        input: [
+          "pnpm-lock.yaml",
+          "pnpm-workspace.yaml",
+          "package.json",
+          "apps/*/package.json",
+          "packages/*/package.json"
+        ]
       },
       check: {
         dependsOn: [
