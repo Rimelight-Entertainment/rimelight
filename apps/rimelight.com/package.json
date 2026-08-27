@@ -19,6 +19,7 @@
   "scripts": {
     "prepare": "vp config",
     "generate-types": "wrangler types",
+    "astro": "astro",
     "dev": "astro dev",
     "dev:remote": "astro dev --remote",
     "build": "astro build",
