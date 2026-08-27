@@ -34,7 +34,7 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@rimelight/config": "workspace:*",
-    "astro": "7.2.2",
+    "astro": "7.2.7",
     "typescript": "6.0.3"
   },
   "peerDependencies": {
@@ -43,5 +43,5 @@
   "engines": {
     "node": ">=26.7.0"
   },
-  "packageManager": "pnpm@11.22.0"
+  "packageManager": "pnpm@12.0.0"
 }

@@ -2,28 +2,41 @@ import type { AstroIntegration } from "astro"
 import path from "node:path"
 import fs from "node:fs"
 import { fileURLToPath } from "node:url"
+import type { StorageConfig } from "./storage/index"
 
 export interface RimelightCmsOptions {
   /**
    * Route prefix for CMS admin pages. Defaults to "/[locale]/cms" (or "/cms" if no locale routing).
    */
-  routePrefix?: string
+  routePrefix?: string | undefined
 
   /**
    * Optional outer layout to wrap the CMS dashboard in (e.g. "./src/layouts/AppLayout.astro"). When
    * omitted, renders as a dedicated standalone full-viewport dashboard.
    */
-  parentLayout?: string
+  parentLayout?: string | undefined
 
   /**
    * Path to the app database instance module exporting `db`. Defaults to "./src/db/index.ts" or
    * "./src/db".
    */
-  db?: string
+  db?: string | undefined
+
+  /**
+   * Storage backend configuration (e.g. r2({ binding: "BLOB", publicUrl:
+   * "https://media.example.com" })).
+   */
+  storage?: StorageConfig | undefined
 }
 
 export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegration {
   const routePrefix = options.routePrefix ?? "/[locale]/cms"
+  const storageConfig = {
+    provider: options.storage?.provider ?? "r2",
+    binding: options.storage?.binding ?? "BLOB",
+    publicUrl: options.storage?.publicUrl,
+    prefix: options.storage?.prefix ?? "media/"
+  }
 
   return {
     name: "@rimelight/cms",
@@ -127,6 +140,16 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
           entrypoint: "@rimelight/cms/admin/pages/settings.astro"
         })
 
+        // Media API Routes
+        injectRoute({
+          pattern: `${routePrefix}/api/media`,
+          entrypoint: "@rimelight/cms/admin/api/media.ts"
+        })
+        injectRoute({
+          pattern: `${routePrefix}/api/media/file/[...key]`,
+          entrypoint: "@rimelight/cms/admin/api/media-file.ts"
+        })
+
         // 2. Vite plugin for virtual modules
         updateConfig({
           vite: {
@@ -139,6 +162,9 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
                   }
                   if (id === "virtual:rimelight-cms/db") {
                     return "\0virtual:rimelight-cms/db"
+                  }
+                  if (id === "virtual:rimelight-cms/storage") {
+                    return "\0virtual:rimelight-cms/storage"
                   }
                   return undefined
                 },
@@ -154,6 +180,9 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
                       return `export * from ${JSON.stringify(resolvedDb)};`
                     }
                     return `export const db = null;`
+                  }
+                  if (id === "\0virtual:rimelight-cms/storage") {
+                    return `export const storageConfig = ${JSON.stringify(storageConfig)};`
                   }
                   return undefined
                 }

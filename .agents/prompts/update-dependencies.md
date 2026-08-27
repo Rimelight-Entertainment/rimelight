@@ -10,6 +10,8 @@ This prompt is used to update dependencies in a project.
   - []
 - Dependencies to keep at the current version:
   - []
+- Additional Notes:
+  -
 
 ## Instructions
 

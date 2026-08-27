@@ -76,3 +76,6 @@ export * from "./services/taxonomies.ts"
 
 // Documentation Engine & Navigation
 export * from "./docs/index.ts"
+
+// Storage Adapters (R2, etc.)
+export * from "./storage/index.ts"
