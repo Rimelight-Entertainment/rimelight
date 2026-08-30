@@ -1,5 +1,16 @@
 {
   "page_auth_sign-up": {
     "auth_newsletter_label": "Inscreva-se em nossa newsletter. Você pode cancelar a inscrição a qualquer momento."
+  },
+  "page_construction": {
+    "meta_title": "Em Construção",
+    "meta_description": "Este site está atualmente em construção.",
+    "title": "ESTE SITE ESTÁ EM CONSTRUÇÃO",
+    "description": "Se tiver acesso, por favor insira a frase-passe.",
+    "description_no_auth": "Por favor, volte mais tarde.",
+    "form_passphrase_label": "Frase-passe",
+    "form_passphrase_placeholder": "Digite a frase-passe...",
+    "form_remember_me_label": "Lembrar-me",
+    "form_sign_in_button": "Entrar"
   }
 }

@@ -6,8 +6,6 @@ import ConstructionSignIn from '@/components/auth/ConstructionSignIn.astro'
 import { t, getRelativeLocaleUrl } from '@rimelight/i18n'
 import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
 
-const constructionAuth = (import.meta.env.CONSTRUCTION_AUTH ?? process.env.CONSTRUCTION_AUTH) === "true"
-
 const targetLanguages = [
   { code: 'en', label: 'English', href: getRelativeLocaleUrl('en', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
   { code: 'pt', label: 'Português', href: getRelativeLocaleUrl('pt', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
@@ -22,12 +20,15 @@ const targetLanguages = [
         {t("page_construction.title")}
       </h1>
       <p class="text-inverted">
-        {constructionAuth ? t("page_construction.description") : t("page_construction.description_no_auth")}
+        {t("page_construction.description")}
       </p>
 
-      {constructionAuth && (
-        <ConstructionSignIn />
-      )}
+      <ConstructionSignIn
+        passphraseLabel={t("page_construction.form_passphrase_label")}
+        passphrasePlaceholder={t("page_construction.form_passphrase_placeholder")}
+        rememberMeLabel={t("page_construction.form_remember_me_label")}
+        signInButtonLabel={t("page_construction.form_sign_in_button")}
+      />
 
       <div class="flex flex-col gap-md">
         <RLALocaleSelector locales={targetLanguages} currentLocale={Astro.currentLocale} />

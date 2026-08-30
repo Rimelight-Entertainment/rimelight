@@ -4,34 +4,22 @@ import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro
 import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
-import { t } from "@rimelight/i18n"
 
 interface Props {
-  allowAuth?: boolean | undefined
-  emailLabel?: string | undefined
-  emailPlaceholder?: string | undefined
-  passwordLabel?: string | undefined
-  passwordPlaceholder?: string | undefined
-  rememberMeLabel?: string | undefined
-  signInButtonLabel?: string | undefined
+  allowAuth?: boolean
+  passphraseLabel?: string
+  passphrasePlaceholder?: string
+  rememberMeLabel?: string
+  signInButtonLabel?: string
 }
 
 const {
   allowAuth = true,
-  emailLabel,
-  emailPlaceholder,
-  passwordLabel,
-  passwordPlaceholder,
-  rememberMeLabel,
-  signInButtonLabel
+  passphraseLabel = "Passphrase",
+  passphrasePlaceholder = "Enter passphrase...",
+  rememberMeLabel = "Remember me",
+  signInButtonLabel = "Sign In"
 } = Astro.props
-
-const resolvedEmailLabel = emailLabel ?? t("page_construction.form_email_label")
-const resolvedEmailPlaceholder = emailPlaceholder ?? t("page_construction.form_email_placeholder")
-const resolvedPasswordLabel = passwordLabel ?? t("page_construction.form_password_label")
-const resolvedPasswordPlaceholder = passwordPlaceholder ?? t("page_construction.form_password_placeholder")
-const resolvedRememberMeLabel = rememberMeLabel ?? t("page_construction.form_remember_me_label")
-const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form_sign_in_button")
 ---
 
 {allowAuth ? (
@@ -41,7 +29,7 @@ const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form
 
       <div class="flex flex-col gap-4">
         <RLAFormField
-          label={resolvedEmailLabel}
+          label={passphraseLabel}
           required
           ui={{
             label: 'text-white',
@@ -49,28 +37,10 @@ const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form
           }}
         >
           <RLAInput
-            id="email-input"
-            type="email"
-            name="email"
-            placeholder={resolvedEmailPlaceholder}
-            class="w-full text-white"
-            required
-          />
-        </RLAFormField>
-
-        <RLAFormField
-          label={resolvedPasswordLabel}
-          required
-          ui={{
-            label: 'text-white',
-            description: 'text-neutral-500'
-          }}
-        >
-          <RLAInput
-            id="password-input"
+            id="passphrase-input"
             type="password"
-            name="password"
-            placeholder={resolvedPasswordPlaceholder}
+            name="passphrase"
+            placeholder={passphrasePlaceholder}
             class="w-full text-white"
             required
           />
@@ -79,7 +49,7 @@ const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form
         <RLACheckbox
           id="remember-me-checkbox"
           name="rememberMe"
-          label={resolvedRememberMeLabel}
+          label={rememberMeLabel}
           checked
           ui={{
             label: 'text-white',
@@ -94,9 +64,9 @@ const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form
           variant="solid"
           block
           class="text-white bg-primary-500 hover:bg-primary-600 w-full"
-          data-label={resolvedSignInButtonLabel}
+          data-label={signInButtonLabel}
         >
-          {resolvedSignInButtonLabel}
+          {signInButtonLabel}
         </RLAButton>
       </div>
     </form>
@@ -112,8 +82,7 @@ const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form
   }
 
   const form = document.getElementById("sign-in-form")
-  const emailInput = document.getElementById("email-input") as HTMLInputElement | null
-  const passwordInput = document.getElementById("password-input") as HTMLInputElement | null
+  const passphraseInput = document.getElementById("passphrase-input") as HTMLInputElement | null
   const rememberCheckbox = document.getElementById("remember-me-checkbox") as HTMLInputElement | null
   const errorMessage = document.getElementById("error-message")
   const submitButton = document.getElementById("submit-button")
@@ -121,7 +90,7 @@ const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form
   if (form) {
     form.addEventListener("submit", async (event) => {
       event.preventDefault()
-      if (!emailInput || !passwordInput || !submitButton || !errorMessage) return
+      if (!passphraseInput || !submitButton || !errorMessage) return
 
       // Set loading state
       submitButton.setAttribute("disabled", "true")
@@ -134,9 +103,8 @@ const resolvedSignInButtonLabel = signInButtonLabel ?? t("page_construction.form
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: emailInput.value,
-            password: passwordInput.value,
-            rememberMe: rememberCheckbox ? rememberCheckbox.checked : true
+            passphrase: passphraseInput.value,
+            rememberMe: rememberCheckbox?.checked ?? true
           })
         })
         const errorBody = response.ok ? null : await response.json() as { error?: string }

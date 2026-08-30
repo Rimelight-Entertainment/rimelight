@@ -5,8 +5,6 @@ import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocal
 import ConstructionSignIn from '@/components/auth/ConstructionSignIn.astro'
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
 
-const constructionAuth = (import.meta.env.CONSTRUCTION_AUTH ?? process.env.CONSTRUCTION_AUTH) === "true"
-
 const targetLanguages = [
   { code: 'en', label: 'English', href: getRelativeLocaleUrl('en', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
   { code: 'pt', label: 'Português', href: getRelativeLocaleUrl('pt', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
@@ -22,20 +20,16 @@ const targetLanguages = [
           {t("page_construction.title")}
         </h1>
         <p class="m-0 text-neutral-400">
-          {constructionAuth ? t("page_construction.description") : t("page_construction.description_no_auth")}
+          {t("page_construction.description")}
         </p>
       </div>
 
-      {constructionAuth && (
-        <ConstructionSignIn
-          emailLabel={t("page_construction.form_email_label")}
-          emailPlaceholder={t("page_construction.form_email_placeholder")}
-          passwordLabel={t("page_construction.form_password_label")}
-          passwordPlaceholder={t("page_construction.form_password_placeholder")}
-          rememberMeLabel={t("page_construction.form_remember_me_label")}
-          signInButtonLabel={t("page_construction.form_sign_in_button")}
-        />
-      )}
+      <ConstructionSignIn
+        passphraseLabel={t("page_construction.form_passphrase_label")}
+        passphrasePlaceholder={t("page_construction.form_passphrase_placeholder")}
+        rememberMeLabel={t("page_construction.form_remember_me_label")}
+        signInButtonLabel={t("page_construction.form_sign_in_button")}
+      />
 
       <div class="flex flex-col items-center gap-2 text-xs text-neutral-500">
         <RLALocaleSelector locales={targetLanguages} currentLocale={Astro.currentLocale} />

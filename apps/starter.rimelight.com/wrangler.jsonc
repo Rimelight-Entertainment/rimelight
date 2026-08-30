@@ -80,8 +80,6 @@
   ],
   "vars": {
     "CONSTRUCTION_MODE": "false",
-    "CONSTRUCTION_AUTH": "false",
-    "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
     "EMAIL_DOMAIN": "rimelight.com",
     "CONTACT_OWNER_EMAIL": "owner@rimelight.com"
   },

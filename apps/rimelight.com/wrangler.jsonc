@@ -66,8 +66,6 @@
   },
   "vars": {
     "CONSTRUCTION_MODE": "true",
-    "CONSTRUCTION_AUTH": "true",
-    "CONSTRUCTION_GUEST_EMAIL": "guest@rimelight.com",
     "EMAIL_DOMAIN": "rimelight.com"
   },
   "env": {
