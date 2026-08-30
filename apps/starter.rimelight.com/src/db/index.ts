@@ -1,8 +1,16 @@
-import { neon } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-http"
-import type { NeonHttpDatabase } from "drizzle-orm/neon-http"
+import { drizzle } from "drizzle-orm/d1"
 import * as schema from "./schema/index.ts"
+import { env } from "cloudflare:workers"
 
+export function getDb(d1?: D1Database) {
+  const d1Binding = d1 || (env as any)?.DB
+  if (!d1Binding) {
+    throw new Error("[db] D1 database binding 'DB' is not available.")
+  }
+  return drizzle(d1Binding, { schema })
+}
+
+export type DbClient = ReturnType<typeof getDb>
 export * from "./schema/index.ts"
 export { schema }
 
@@ -10,31 +18,10 @@ function anyObject(): any {
   return {}
 }
 
-function createDbProxy(): NeonHttpDatabase<typeof schema> {
-  let cachedDb: NeonHttpDatabase<typeof schema> | null = null
-  let cachedUrl: string | null = null
-  return new Proxy(anyObject(), {
-    get(_target, prop) {
-      if (prop === "then") return undefined
-
-      const databaseUrl =
-        (typeof import.meta.env !== "undefined" ? import.meta.env.DATABASE_URL : undefined) ||
-        process.env.DATABASE_URL
-
-      if (!databaseUrl) {
-        throw new Error(
-          "[db] DATABASE_URL is not set. Set the variable and restart the dev server."
-        )
-      }
-
-      if (!cachedDb || cachedUrl !== databaseUrl) {
-        cachedUrl = databaseUrl
-        cachedDb = drizzle(neon(databaseUrl), { schema })
-      }
-
-      return Reflect.get(cachedDb, prop)
-    }
-  })
-}
-
-export const db = createDbProxy()
+export const db: DbClient = new Proxy(anyObject(), {
+  get(_target, prop) {
+    if (prop === "then") return undefined
+    const client = getDb()
+    return Reflect.get(client, prop)
+  }
+})

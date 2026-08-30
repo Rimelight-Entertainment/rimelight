@@ -11,7 +11,7 @@ import { sendExistingUserSignUpNotification } from "./email/notifications"
 
 export const auth = createRimelightAuth({
   database: drizzleAdapter(db, {
-    provider: "pg"
+    provider: "sqlite"
   }),
   db,
   userTable,

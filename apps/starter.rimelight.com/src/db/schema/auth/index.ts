@@ -1,1 +1,1 @@
-export * from "@rimelight/auth/schema/drizzle"
+export * from "@rimelight/auth/schema/drizzle/sqlite"

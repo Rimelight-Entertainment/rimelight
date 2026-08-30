@@ -32,6 +32,14 @@
     "directory": "./dist",
     "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "starter-dot-rimelight-dot-com",
+      "database_id": "starter-rimelight-com-db",
+      "migrations_dir": "./drizzle"
+    }
+  ],
   "r2_buckets": [
     {
       "binding": "BLOB",

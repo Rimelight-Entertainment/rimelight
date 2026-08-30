@@ -24,6 +24,9 @@
     "dev:remote": "astro dev --remote",
     "build": "astro build",
     "preview": "astro preview",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "wrangler d1 migrations apply starter-dot-rimelight-dot-com --local",
+    "db:migrate:remote": "wrangler d1 migrations apply starter-dot-rimelight-dot-com --remote",
     "check": "wrangler types && vp check --fix && astro check"
   },
   "dependencies": {
@@ -31,7 +34,6 @@
     "@astrojs/rss": "4.0.19",
     "@astrojs/solid-js": "7.0.2",
     "@nanostores/i18n": "1.3.3",
-    "@neondatabase/serverless": "1.1.0",
     "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
     "@rimelight/i18n": "workspace:*",

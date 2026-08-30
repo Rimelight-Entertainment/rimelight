@@ -25,6 +25,7 @@
     "./client": "./src/client/index.ts",
     "./permissions": "./src/permissions/index.ts",
     "./schema/drizzle": "./src/schema/drizzle/index.ts",
+    "./schema/drizzle/sqlite": "./src/schema/drizzle/sqlite.ts",
     "./plugins/reserved-usernames": "./src/plugins/reserved-usernames/index.ts",
     "./plugins/discriminator-tag": "./src/plugins/discriminator-tag/index.ts",
     "./plugins/synthetic-user": "./src/plugins/synthetic-user/index.ts",

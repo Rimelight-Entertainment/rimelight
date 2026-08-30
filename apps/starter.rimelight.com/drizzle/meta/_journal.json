@@ -1,33 +1,12 @@
 {
   "version": "7",
-  "dialect": "postgresql",
+  "dialect": "sqlite",
   "entries": [
     {
       "idx": 0,
-      "version": "7",
-      "when": 1785707065786,
-      "tag": "0000_nasty_queen_noir",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1785707065787,
-      "tag": "0001_add_role_permissions",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1786199438571,
-      "tag": "0002_clear_wrecking_crew",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1787523502396,
-      "tag": "0003_slow_nextwave",
+      "version": "6",
+      "when": 1788110567775,
+      "tag": "0000_blushing_layla_miller",
       "breakpoints": true
     }
   ]
