@@ -40,10 +40,10 @@
     "@astrojs/ts-plugin": "1.10.11",
     "@astrojs/vue": "7.0.2",
     "@rimelight/config": "workspace:*",
-    "astro": "7.2.7",
+    "astro": "7.2.9",
     "solid-js": "1.9.15",
     "typescript": "6.0.3",
-    "vue": "3.5.41"
+    "vue": "3.5.42"
   },
   "peerDependencies": {
     "@astrojs/solid-js": ">=7.0.1",

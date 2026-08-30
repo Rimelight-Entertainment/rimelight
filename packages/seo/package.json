@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "astro": "7.2.7",
+    "astro": "7.2.9",
     "typescript": "6.0.3"
   },
   "peerDependencies": {
