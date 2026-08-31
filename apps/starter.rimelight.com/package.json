@@ -21,7 +21,6 @@
     "generate-types": "wrangler types",
     "astro": "astro",
     "dev": "astro dev",
-    "dev:remote": "astro dev --remote",
     "build": "astro build",
     "preview": "astro preview",
     "db:generate": "drizzle-kit generate",

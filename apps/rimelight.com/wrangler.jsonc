@@ -36,13 +36,14 @@
     {
       "binding": "BLOB",
       "bucket_name": "rimelight-dot-com",
-      "remote": false
+      "remote": true
     }
   ],
   "kv_namespaces": [
     {
       "binding": "rimelight-dot-com_translations",
-      "id": "e1ae79418e4c4532a9344102bf663861"
+      "id": "e1ae79418e4c4532a9344102bf663861",
+      "remote": true
     }
   ],
   "ratelimits": [
@@ -58,7 +59,7 @@
   "send_email": [
     {
       "name": "EMAIL",
-      "remote": false
+      "remote": true
     }
   ],
   "triggers": {

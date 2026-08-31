@@ -37,20 +37,22 @@
       "binding": "DB",
       "database_name": "starter-dot-rimelight-dot-com",
       "database_id": "starter-rimelight-com-db",
-      "migrations_dir": "./drizzle"
+      "migrations_dir": "./drizzle",
+      "remote": true
     }
   ],
   "r2_buckets": [
     {
       "binding": "BLOB",
       "bucket_name": "starter-dot-rimelight-dot-com",
-      "remote": false
+      "remote": true
     }
   ],
   "kv_namespaces": [
     {
       "binding": "starter-dot-rimelight-dot-com_translations",
-      "id": "8c09f90741704096bd1dcdf2abadc974"
+      "id": "8c09f90741704096bd1dcdf2abadc974",
+      "remote": true
     }
   ],
   "durable_objects": {
@@ -74,7 +76,7 @@
   "send_email": [
     {
       "name": "EMAIL",
-      "remote": false
+      "remote": true
     }
   ],
   "triggers": {
