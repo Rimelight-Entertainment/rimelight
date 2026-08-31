@@ -26,11 +26,10 @@ const defaultWidth = "16rem";
   data-collapsible={collapsible ? "true" : "false"}
   data-collapsed={collapsible && collapsed ? "true" : "false"}
   data-slot="root"
-  class={classes.root}
+  class:list={[classes.root, className]}
   {...rest}
-  style={`width: ${collapsible && collapsed ? collapsedWidth : defaultWidth}; min-width: ${collapsible && collapsed ? collapsedWidth : defaultWidth}; flex-shrink: 0; --width: ${defaultWidth}; --collapsed-width: ${collapsedWidth}`}
 >
-  <div data-slot="header" class={classes.header} style="height: 4rem; min-height: 4rem; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; box-sizing: border-box;">
+  <div data-slot="header" class={classes.header}>
     <slot name="header" />
   </div>
 
@@ -48,15 +47,15 @@ const defaultWidth = "16rem";
 <div
   data-dashboard-sidebar-mobile
   data-slot="content"
-  class={classes.content + " fixed inset-y-0 left-0 z-50 w-64 bg-default shadow-xl border-e border-default transform -translate-x-full transition-transform duration-300"}
+  class:list={[classes.content, "fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-default shadow-2xl border-e border-default transform -translate-x-full transition-transform duration-300 flex flex-col h-full"]}
 >
-  <div data-slot="header" class={classes.header + " " + "sm:px-6"} data-menu>
+  <div data-slot="header" class:list={[classes.header, "sm:px-6 shrink-0"]} data-menu>
     <slot name="header" />
   </div>
-  <div data-slot="body" class={classes.body + " " + "sm:px-6"} data-menu>
+  <div data-slot="body" class:list={[classes.body, "sm:px-6 overflow-y-auto flex-1"]} data-menu>
     <slot />
   </div>
-  <div data-slot="footer" class={classes.footer + " " + "sm:px-6"} data-menu>
+  <div data-slot="footer" class:list={[classes.footer, "sm:px-6 shrink-0"]} data-menu>
     <slot name="footer" />
   </div>
 </div>
@@ -80,10 +79,8 @@ const defaultWidth = "16rem";
     const collapseSidebar = (val?: boolean) => {
       if (!collapsible) return;
       const isCollapsed = val !== undefined ? val : sidebar.dataset.collapsed !== 'true';
-      const w = isCollapsed ? '4rem' : '16rem';
-      sidebar.style.width = w;
-      sidebar.style.minWidth = w;
-      sidebar.style.setProperty('--width', w);
+      sidebar.dataset.collapsed = isCollapsed ? 'true' : 'false';
+      sidebar.setAttribute('data-collapsed', isCollapsed ? 'true' : 'false');
 
       document.querySelectorAll('[data-dashboard-toggle="collapse"]').forEach(btn => {
         btn.querySelectorAll('[data-dashboard-collapse-icon]').forEach(el => {

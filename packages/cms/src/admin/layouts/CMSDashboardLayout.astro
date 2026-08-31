@@ -6,6 +6,7 @@ import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADas
 import RLADashboardPanel from "@rimelight/ui/components/dashboard-panel/RLADashboardPanel.astro";
 import RLADashboardToolbar from "@rimelight/ui/components/dashboard-toolbar/RLADashboardToolbar.astro";
 import RLADashboardSidebarCollapse from "@rimelight/ui/components/dashboard-sidebar-collapse/RLADashboardSidebarCollapse.astro";
+import RLADashboardSidebarToggle from "@rimelight/ui/components/dashboard-sidebar-toggle/RLADashboardSidebarToggle.astro";
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
 import { getRelativeLocaleUrl } from "@rimelight/i18n";
 import "../../client/styles/cms-editor.css";
@@ -149,10 +150,12 @@ const {
     </RLADashboardSidebar>
 
     <RLADashboardPanel>
-      <RLADashboardNavbar slot="header" title={title} icon="i-lucide-file-text" style="height: 4rem; min-height: 4rem;">
+      <RLADashboardNavbar slot="header" title={title} icon="i-lucide-file-text" class="h-16 min-h-16">
         <Fragment slot="left">
-          <div class="h-16 min-h-16 flex items-center gap-3" style="height: 4rem; min-height: 4rem; display: flex; align-items: center;">
-            <h1 class="text-xl font-semibold text-highlighted" data-dashboard-navbar-title>{title}</h1>
+          <div class="h-16 min-h-16 flex items-center gap-3">
+            <RLADashboardSidebarToggle class="flex lg:hidden size-9 rounded-lg items-center justify-center border border-default hover:bg-muted text-toned hover:text-highlighted transition-colors shrink-0" />
+            <RLADashboardSidebarCollapse side="left" class="hidden lg:flex size-9 rounded-lg" />
+            <h1 class="text-lg sm:text-xl font-semibold text-highlighted truncate" data-dashboard-navbar-title>{title}</h1>
           </div>
         </Fragment>
         <Fragment slot="right">
