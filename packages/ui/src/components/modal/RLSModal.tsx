@@ -41,6 +41,7 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
 
   const closeOnClickOutside = () => props.closeOnClickOutside !== false
   const closeOnEscape = () => props.closeOnEscape !== false
+  const unmountOnHide = () => props.unmountOnHide !== false
 
   const handleClose = () => {
     props.onClose?.()
@@ -54,8 +55,8 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
         e.preventDefault()
       } else {
         e.preventDefault()
-        handleClose()
       }
+      handleClose()
     }
     const handleClick = (e: MouseEvent) => {
       // Clicking the ::backdrop means e.target IS the dialog element
@@ -91,12 +92,13 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
   })
 
   return (
-    <Show when={props.open || !props.unmountOnHide}>
+    <Show when={props.open || !unmountOnHide()}>
       <dialog
         ref={(el) => (dialogRef = el)}
         class={`w-full rounded-xl border border-default bg-default p-6 shadow-xl outline-none flex flex-col max-h-[90vh] overflow-y-auto text-highlighted backdrop:bg-black/60 backdrop:backdrop-blur-sm ${
-          resolvedClasses().content || ""
-        }  ${props.class || ""}`}
+          props.open ? "" : "hidden"
+        } ${resolvedClasses().content || ""}  ${props.class || ""}`}
+        data-state={props.open ? "open" : "closed"}
         data-slot="content"
         {...rest}
       >
