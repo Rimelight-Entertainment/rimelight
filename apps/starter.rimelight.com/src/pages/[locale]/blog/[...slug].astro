@@ -10,8 +10,8 @@ import { eq, and, isNull } from "drizzle-orm"
 const slug = Astro.params.slug || ""
 const activeLocale = Astro.currentLocale ?? "en"
 
-const session = await auth.api.getSession({ headers: Astro.request.headers })
-const currentUser = session?.user
+const session = await auth.getSession(Astro.request)
+const currentUser = session
 
 // Fetch from CMS
 const pageResult = await db
@@ -83,19 +83,11 @@ const postDate = page.postedAt || page.createdAt
     </header>
 
     <article class="cms-article">
-      {currentUser ? (
-        <PageRenderer
-          blocks={content.blocks || []}
-          session={{
-            userId: currentUser.id,
-            roles: [(currentUser as any).role || "user"],
-            permissions: []
-          }}
-          locale={activeLocale}
-        />
-      ) : (
-        <PageRenderer blocks={content.blocks || []} locale={activeLocale} />
-      )}
+      <PageRenderer
+        blocks={content.blocks || []}
+        session={currentUser ?? undefined}
+        locale={activeLocale}
+      />
     </article>
   </div>
 </AppLayout>

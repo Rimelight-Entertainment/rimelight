@@ -6,10 +6,10 @@ import BlockRenderer from "./BlockRenderer.astro"
 
 interface Props {
   blocks: BaseBlock[]
-  session?: UserSessionContext
-  locale?: string
-  class?: string
-  components?: Record<string, any>
+  session?: UserSessionContext | undefined
+  locale?: string | undefined
+  class?: string | undefined
+  components?: Record<string, any> | undefined
 }
 
 const {

@@ -1,18 +1,4 @@
 ---
-import { auth } from "@/auth/auth"
-
-try {
-  const response = await auth.api.signOut({
-    headers: Astro.request.headers,
-    asResponse: true
-  })
-
-  for (const cookie of response.headers.getSetCookie()) {
-    Astro.response.headers.append('Set-Cookie', cookie)
-  }
-} catch (error) {
-  console.error("Sign out error:", error)
-}
-
-return Astro.redirect("/")
+// Auth0 logout: redirect to /api/auth/logout which clears session cookie and redirects to Auth0 logout
+return Astro.redirect("/api/auth/logout")
 ---

@@ -10,7 +10,7 @@ import {
 } from "solid-js"
 import type { ModalProps } from "./modal"
 import { modalTheme } from "./modal.theme"
-import RLSIcon from "../icon/RLSIcon"
+import RLSButton from "../button/RLSButton"
 
 export interface RLSModalProps extends ModalProps {
   onClose?: () => void
@@ -95,22 +95,25 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
     <Show when={props.open || !unmountOnHide()}>
       <dialog
         ref={(el) => (dialogRef = el)}
-        class={`w-full rounded-xl border border-default bg-default p-6 shadow-xl outline-none flex flex-col max-h-[90vh] overflow-y-auto text-highlighted backdrop:bg-black/60 backdrop:backdrop-blur-sm ${
+        class={`w-[calc(100%-1.5rem)] sm:w-full rounded-xl border border-default bg-default p-5 sm:p-6 shadow-xl outline-none flex flex-col max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] overflow-y-auto text-highlighted backdrop:bg-black/60 backdrop:backdrop-blur-sm ${
           props.open ? "" : "hidden"
         } ${resolvedClasses().content || ""}  ${props.class || ""}`}
         data-state={props.open ? "open" : "closed"}
         data-slot="content"
         {...rest}
       >
-        <button
+        <RLSButton
           type="button"
-          class="absolute right-4 top-4 rounded-md p-1 text-muted hover:text-highlighted hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer border-none bg-transparent"
-          data-slot="close-button"
+          variant="ghost"
+          color="neutral"
+          size="sm"
+          square
+          leadingIcon="close"
           aria-label="Close modal"
+          data-slot="close-button"
+          class="absolute right-4 top-4 text-muted hover:text-highlighted"
           onClick={handleClose}
-        >
-          <RLSIcon name="close" size="sm" aria-hidden="true" />
-        </button>
+        />
 
         {props.title || props.description || props.titleSlot || props.descriptionSlot ? (
           <div class={resolvedClasses().header || "mb-4"} data-slot="header">

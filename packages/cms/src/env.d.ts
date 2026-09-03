@@ -15,3 +15,9 @@ declare module "virtual:rimelight-cms/db" {
 declare module "virtual:rimelight-cms/storage" {
   export const storageConfig: any
 }
+
+declare module "virtual:rimelight-cms/auth" {
+  import type { AuthAdapter } from "@rimelight/auth"
+  export const authAdapter: AuthAdapter
+  export default authAdapter
+}

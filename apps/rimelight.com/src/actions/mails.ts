@@ -124,8 +124,8 @@ Tel: (555) 234-5678`,
 export const mails = {
   getMails: defineAction({
     handler: async (_input, context) => {
-      const sessionData = await auth.api.getSession({ headers: context.request.headers })
-      const user = sessionData?.user
+      const sessionData = await auth.getSession(context.request)
+      const user = sessionData
       if (!user) {
         throw new ActionError({
           code: "UNAUTHORIZED",

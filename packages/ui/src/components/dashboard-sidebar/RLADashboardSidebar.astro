@@ -15,9 +15,6 @@ const classes = dashboardSidebarTheme({
   ...Astro.props,
   collapsed: collapsible && collapsed
 });
-
-const collapsedWidth = "4rem";
-const defaultWidth = "16rem";
 ---
 
 <div
@@ -69,11 +66,27 @@ const defaultWidth = "16rem";
     const mobilePanel = document.querySelector<HTMLElement>('[data-dashboard-sidebar-mobile]');
     const overlay = document.querySelector<HTMLElement>('[data-dashboard-sidebar-overlay]');
 
-    const toggleMobile = () => {
+    const openMobile = () => {
       if (!mobilePanel || !overlay) return;
-      const isOpen = mobilePanel.classList.toggle('translate-x-0');
-      mobilePanel.classList.toggle('-translate-x-full', !isOpen);
-      overlay.classList.toggle('hidden', !isOpen);
+      mobilePanel.classList.remove('-translate-x-full');
+      mobilePanel.classList.add('translate-x-0');
+      overlay.classList.remove('hidden');
+    };
+
+    const closeMobile = () => {
+      if (!mobilePanel || !overlay) return;
+      mobilePanel.classList.add('-translate-x-full');
+      mobilePanel.classList.remove('translate-x-0');
+      overlay.classList.add('hidden');
+    };
+
+    const toggleMobile = () => {
+      if (!mobilePanel) return;
+      if (mobilePanel.classList.contains('translate-x-0')) {
+        closeMobile();
+      } else {
+        openMobile();
+      }
     };
 
     const collapseSidebar = (val?: boolean) => {
@@ -89,16 +102,32 @@ const defaultWidth = "16rem";
       });
     };
 
-    document.addEventListener('click', (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
       const target = e.target as Element | null;
-      const toggle = target?.closest<HTMLElement>('[data-dashboard-toggle]');
+      if (!target) return;
+
+      // Toggle buttons (mobile drawer + collapse)
+      const toggle = target.closest<HTMLElement>('[data-dashboard-toggle]');
       if (toggle) {
         const side = toggle.dataset.dashboardToggle;
         if (side === 'mobile') toggleMobile();
         if (side === 'collapse') collapseSidebar();
+        return;
       }
 
-      const navItem = target?.closest<HTMLElement>('[data-dashboard-nav]');
+      // Backdrop overlay click
+      if (target.closest('[data-dashboard-sidebar-overlay]')) {
+        closeMobile();
+        return;
+      }
+
+      // Close the mobile drawer when clicking a navigation link inside it
+      if (target.closest('[data-dashboard-sidebar-mobile] a')) {
+        closeMobile();
+        return;
+      }
+
+      const navItem = target.closest<HTMLElement>('[data-dashboard-nav]');
       if (navItem) {
         const container = navItem.closest('[data-dashboard-nav-container]');
         if (container) {
@@ -110,10 +139,13 @@ const defaultWidth = "16rem";
           navItem.classList.add('bg-muted', 'text-highlighted');
         }
       }
-    });
+    };
 
-    overlay?.addEventListener('click', toggleMobile);
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMobile();
+    };
 
-    (window as any).dashboardSidebar = { toggleMobile, collapseSidebar };
+    document.addEventListener('click', handleClick);
+    document.addEventListener('keydown', handleKey);
   })();
 </script>

@@ -2,7 +2,7 @@
   "name": "@rimelight/auth",
   "version": "0.0.2",
   "private": false,
-  "description": "Rimelight Entertainment's Authentication Package",
+  "description": "Rimelight Entertainment's Universal Authentication & Identity Package",
   "homepage": "https://rimelight.com/docs",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
@@ -21,14 +21,12 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./server": "./src/server/index.ts",
-    "./client": "./src/client/index.ts",
+    "./types": "./src/types.ts",
+    "./cf-access": "./src/adapters/cf-access.ts",
+    "./auth0": "./src/adapters/auth0.ts",
+    "./mock": "./src/adapters/mock.ts",
     "./permissions": "./src/permissions/index.ts",
-    "./schema/drizzle": "./src/schema/drizzle/index.ts",
-    "./schema/drizzle/sqlite": "./src/schema/drizzle/sqlite.ts",
     "./plugins/reserved-usernames": "./src/plugins/reserved-usernames/index.ts",
-    "./plugins/discriminator-tag": "./src/plugins/discriminator-tag/index.ts",
-    "./plugins/synthetic-user": "./src/plugins/synthetic-user/index.ts",
     "./plugins/construction-guest": "./src/plugins/construction-guest/index.ts"
   },
   "publishConfig": {
@@ -38,20 +36,21 @@
     "check": "vp check --fix"
   },
   "dependencies": {
-    "@better-auth/drizzle-adapter": "1.7.2",
-    "better-auth": "1.7.2",
-    "drizzle-orm": "0.45.2"
+    "drizzle-orm": "0.45.2",
+    "jose": "6.0.8"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
     "@types/node": "26.4.0"
   },
   "peerDependencies": {
-    "better-auth": ">=1.0.0",
     "drizzle-orm": ">=0.30.0",
     "hono": ">=4.12.34"
   },
   "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    },
     "hono": {
       "optional": true
     }

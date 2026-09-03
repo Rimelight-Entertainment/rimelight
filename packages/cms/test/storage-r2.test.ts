@@ -21,7 +21,7 @@ describe("CMS R2 Storage Adapter", () => {
     expect(config.prefix).toBe("media/")
   })
 
-  it("should extract bucket from locals runtime env", () => {
+  it("should extract bucket from locals runtime env", async () => {
     const mockBucket = { list: vi.fn(), put: vi.fn() }
     const locals = {
       runtime: {
@@ -30,7 +30,7 @@ describe("CMS R2 Storage Adapter", () => {
         }
       }
     }
-    expect(getR2Bucket(locals, "BLOB")).toBe(mockBucket)
+    expect(await getR2Bucket(locals, "BLOB")).toBe(mockBucket)
   })
 
   it("should list files and map URLs properly", async () => {

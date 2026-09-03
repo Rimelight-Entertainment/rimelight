@@ -15,9 +15,7 @@ import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
 const { auth } = await import("@/auth/auth");
-const session = await auth.api.getSession({
-  headers: Astro.request.headers
-}) as { user: { status?: string; tag?: string; availability?: string; name?: string; image?: string | null; id?: string; email?: string; emailVerified?: boolean; createdAt?: Date; updatedAt?: Date } & Record<string, unknown> } | null;
+const session = await auth.getSession(Astro.request) as any;
 
 const foundationLinkGroup: LinkGroupProps = {
   label: t("app_header.link-groups_center_foundations_label"),
@@ -138,7 +136,7 @@ const actions: ButtonProps[] = [
 const userDropdownItems = session ? [
   {
     type: "label",
-    label: `${session.user.name} #${session.user.tag || '0000'}`
+    label: session?.tag && session?.tag !== '0000' ? `${session?.name} #${session?.tag}` : `${session?.name || session?.email || 'User'}`
   },
   {
     label: "Dashboard",
@@ -291,14 +289,14 @@ const { stackIndex = 1 } = Astro.props;
         >
           <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
             <div class="relative">
-              <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
+              <RLAAvatar src={session?.avatar || session?.image} alt={session?.name} size="sm" />
               <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
-                session.user.availability === 'busy' ? 'bg-error-500' :
-                  session.user.availability === 'invisible' ? 'bg-neutral-500' :
+                session?.availability === 'busy' ? 'bg-error-500' :
+                  session?.availability === 'invisible' ? 'bg-neutral-500' :
                     'bg-success-500'
               }`} />
             </div>
-            <span class="hidden md:inline text-sm font-medium">{session.user.name}</span>
+            <span class="hidden md:inline text-sm font-medium">{session?.name}</span>
           </div>
         </RLADropdownMenu>
       ) : (
@@ -317,10 +315,10 @@ const { stackIndex = 1 } = Astro.props;
         >
           <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
             <div class="relative">
-              <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
+              <RLAAvatar src={session?.avatar || session?.image} alt={session?.name} size="sm" />
               <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
-                session.user.availability === 'busy' ? 'bg-error-500' :
-                  session.user.availability === 'invisible' ? 'bg-neutral-500' :
+                session?.availability === 'busy' ? 'bg-error-500' :
+                  session?.availability === 'invisible' ? 'bg-neutral-500' :
                     'bg-success-500'
               }`} />
             </div>

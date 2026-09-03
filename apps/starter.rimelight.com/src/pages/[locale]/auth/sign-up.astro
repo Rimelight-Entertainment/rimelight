@@ -1,27 +1,5 @@
 ---
-import AppLayout from '@/layouts/AppLayout.astro'
-import AuthLayout from '@/layouts/AuthLayout.astro'
-import AuthSignUpForm from '@/components/auth/AuthSignUpForm.astro'
-import { t } from "@rimelight/i18n"
-import { env } from "cloudflare:workers"
-
-const bgMobile = "https://cdn.rimelight.com/Images/auth_background_mobile.jpg"
-const bgDesktop = "https://cdn.rimelight.com/Images/auth_background_desktop.jpg"
-
-const currentPath = Astro.url.pathname
-const activeLocale = Astro.currentLocale ?? "en"
-const localePrefix = `/${activeLocale}`
-const tabs = [
-  { label: t('page_auth_sign-up.sign-in_title'), path: `${localePrefix}/auth/sign-in` },
-  { label: t('page_auth_sign-up.sign-up_title'), path: `${localePrefix}/auth/sign-up` },
-]
-
-const isDev = import.meta.env.DEV
-const turnstileSiteKey = isDev ? "" : (import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SITE_KEY || "")
+export const prerender = false;
+// Cloudflare Access transparent edge authentication
+return Astro.redirect("/");
 ---
-
-<AppLayout title={t('page_auth_sign-up.meta_title')} description={t('page_auth_sign-up.sign-up_description')}>
-  <AuthLayout tabs={tabs} currentPath={currentPath} backgroundMobile={bgMobile} backgroundDesktop={bgDesktop}>
-    <AuthSignUpForm turnstileSiteKey={turnstileSiteKey} />
-  </AuthLayout>
-</AppLayout>

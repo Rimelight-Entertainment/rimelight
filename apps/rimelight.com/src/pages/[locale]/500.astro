@@ -8,6 +8,9 @@ interface Props {
 }
 
 const { error } = Astro.props;
+if (error) {
+  console.error("[500 SSR Error]:", error);
+}
 ---
 
 <AppLayout title={t("page_error.error_server_title")} description={t("page_error.error_server_description")}>

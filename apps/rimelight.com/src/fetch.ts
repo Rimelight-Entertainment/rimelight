@@ -1,7 +1,7 @@
 import { Hono } from "hono"
 import { security } from "@/api/middleware/security"
 import { ratelimit } from "@/api/middleware/ratelimit"
-import { auth } from "@/api/middleware/auth"
+import { authMiddleware } from "@/api/middleware/auth"
 import { construction } from "@/api/middleware/construction"
 import { devOnly } from "@rimelight/security/middleware"
 import api from "@/api"
@@ -13,7 +13,7 @@ const app = new Hono()
 // Middlewares
 app.use(security)
 app.use(ratelimit)
-app.use(auth)
+app.use(authMiddleware)
 app.use(construction)
 app.use(devOnly)
 

@@ -6,10 +6,8 @@ interface CloudflareEnv {
   R2: R2Bucket
 }
 
-function getCloudflareEnv(
-  locals: App.Locals & { runtime?: { env: CloudflareEnv } }
-): CloudflareEnv | undefined {
-  return locals.runtime?.env
+function getCloudflareEnv(locals: App.Locals): CloudflareEnv | undefined {
+  return locals.runtime?.env as unknown as CloudflareEnv | undefined
 }
 
 async function listAll(
@@ -28,8 +26,8 @@ async function listAll(
 export const assets = {
   getAssets: defineAction({
     handler: async (_input, context) => {
-      const sessionData = await auth.api.getSession({ headers: context.request.headers })
-      const user = sessionData?.user
+      const sessionData = await auth.getSession(context.request)
+      const user = sessionData
       if (!user) {
         throw new ActionError({
           code: "UNAUTHORIZED",

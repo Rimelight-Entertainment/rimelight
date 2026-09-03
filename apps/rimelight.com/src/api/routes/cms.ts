@@ -34,9 +34,11 @@ cms.get("/settings", async (c) => {
 })
 
 cms.put("/settings", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
-  const isOwnerOrAdmin = ["owner", "admin"].includes(session.user.role?.toLowerCase() || "")
+  const isOwnerOrAdmin = (session.roles || []).some((r: string) =>
+    ["owner", "admin"].includes(r.toLowerCase())
+  )
   if (!isOwnerOrAdmin) return c.json({ error: "Forbidden" }, 403)
 
   const body = await c.req.json()
@@ -46,14 +48,14 @@ cms.put("/settings", async (c) => {
 
 // Guest Preview Tokens
 cms.post("/pages/:id/preview-token", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
   const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
   if (!page[0]) return c.json({ error: "Page not found" }, 404)
 
-  const secret = process.env.BETTER_AUTH_SECRET || "rimelight-preview-secret-key"
+  const secret = process.env.AUTH0_SECRET || "rimelight-preview-secret-key"
   const { token, expiresAt } = await generatePreviewToken(id, secret, 86400 * 7)
 
   return c.json({
@@ -65,7 +67,7 @@ cms.post("/pages/:id/preview-token", async (c) => {
 
 // Visual Revision Diffs
 cms.get("/pages/:id/diff", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
@@ -122,7 +124,7 @@ cms.get("/taxonomies/:taxonomy/terms", async (c) => {
 })
 
 cms.post("/taxonomies/:taxonomy/terms", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const taxonomy = c.req.param("taxonomy")
@@ -140,7 +142,7 @@ cms.get("/taxonomies/:taxonomy/terms/:slug", async (c) => {
 })
 
 cms.put("/taxonomies/:taxonomy/terms/:id", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
@@ -150,7 +152,7 @@ cms.put("/taxonomies/:taxonomy/terms/:id", async (c) => {
 })
 
 cms.delete("/taxonomies/:taxonomy/terms/:id", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
@@ -166,7 +168,7 @@ cms.get("/pages/:id/terms", async (c) => {
 })
 
 cms.post("/pages/:id/terms/:taxonomy", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
@@ -185,7 +187,7 @@ cms.get("/bylines", async (c) => {
 })
 
 cms.post("/bylines", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const body = await c.req.json()
@@ -201,7 +203,7 @@ cms.get("/bylines/:id", async (c) => {
 })
 
 cms.put("/bylines/:id", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")
@@ -212,7 +214,7 @@ cms.put("/bylines/:id", async (c) => {
 })
 
 cms.delete("/bylines/:id", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.getSession(c.req.raw)
   if (!session) return c.json({ error: "Unauthorized" }, 401)
 
   const id = c.req.param("id")

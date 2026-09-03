@@ -19,11 +19,14 @@ const placeholderGrandTale = "https://cdn.rimelight.com/Images/placeholder_heade
 const placeholderCommunity = "https://cdn.rimelight.com/Images/placeholder_header_community.jpg";
 const placeholderCompany = "https://cdn.rimelight.com/Images/placeholder_header_company.jpg";
 const placeholderStore = "https://cdn.rimelight.com/Images/placeholder_header_store.jpg";
-
-const { auth } = await import("@/auth/auth");
-  const session = await auth.api.getSession({
-    headers: Astro.request.headers
-  }) as { user: { status?: string; tag?: string; availability?: string; name?: string; image?: string | null; id?: string; email?: string; emailVerified?: boolean; createdAt?: Date; updatedAt?: Date } & Record<string, unknown> } | null;
+let session: any = Astro.locals?.session ?? null;
+try {
+  const { auth } = await import("@/auth/auth");
+  session = session ?? (await auth.getSession(Astro.request));
+} catch (err) {
+  console.error("[AppHeader] Failed to resolve auth session:", err);
+}
+const currentUser = Astro.locals?.user ?? session?.user ?? session;
 
 const leftLinks: NavigationMenuItem[] = [
 	{
@@ -283,14 +286,16 @@ const actions: ButtonProps[] = [
 	{
     color: "neutral",
 		variant: "outline",
-		href: getRelativeLocaleUrl('/auth/sign-up'),
-		label: t("app_header.actions_sign-up")
+		href: "/api/auth/login?screen_hint=signup",
+		label: t("app_header.actions_sign-up"),
+		prefetch: false
 	},
 	{
 		variant: "solid",
 		color: "primary",
-		href: getRelativeLocaleUrl('/auth/sign-in'),
-		label: t("app_header.actions_sign-in")
+		href: "/api/auth/login",
+		label: t("app_header.actions_sign-in"),
+		prefetch: false
 	}
 ];
 
@@ -635,7 +640,7 @@ const storeAssistanceGroup: LinkGroupProps = {
 const userDropdownItems = session ? [
 	{
 		type: "label",
-		label: `${session.user.name} #${session.user.tag || '0000'}`
+		label: currentUser?.tag && currentUser?.tag !== '0000' ? `${currentUser?.name} #${currentUser?.tag}` : `${currentUser?.name || currentUser?.email || 'User'}`
 	},
 	{
 		label: t("app_header.user_dropdown_dashboard"),
@@ -658,8 +663,9 @@ const userDropdownItems = session ? [
 	{
 		label: t("app_header.user_dropdown_sign-out"),
 		icon: "i-lucide-log-out",
-		to: getRelativeLocaleUrl('/auth/sign-out'),
-		color: "error"
+		to: '/api/auth/logout',
+		color: "error",
+		prefetch: false
 	}
 ] : [];
 ---
@@ -975,14 +981,14 @@ const userDropdownItems = session ? [
           >
             <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
               <div class="relative">
-                <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
+                <RLAAvatar src={currentUser?.avatar || currentUser?.image} alt={currentUser?.name} size="sm" />
                 <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
-                  session.user.availability === 'busy' ? 'bg-error-500' :
-                  session.user.availability === 'invisible' ? 'bg-neutral-500' :
+                  currentUser?.availability === 'busy' ? 'bg-error-500' :
+                  currentUser?.availability === 'invisible' ? 'bg-neutral-500' :
                   'bg-success-500'
                 }`} />
               </div>
-              <span class="hidden md:inline text-sm font-medium">{session.user.name}</span>
+              <span class="hidden md:inline text-sm font-medium">{currentUser?.name}</span>
             </div>
           </RLADropdownMenu>
         ) : (
@@ -1001,10 +1007,10 @@ const userDropdownItems = session ? [
           >
             <div slot="trigger" class="flex items-center gap-xs cursor-pointer text-white hover:text-primary-400 transition-colors py-1 px-2 rounded-lg">
               <div class="relative">
-                <RLAAvatar src={session.user.image} alt={session.user.name} size="sm" />
+                <RLAAvatar src={currentUser?.avatar || currentUser?.image} alt={currentUser?.name} size="sm" />
                 <span class={`absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-black ${
-                  session.user.availability === 'busy' ? 'bg-error-500' :
-                  session.user.availability === 'invisible' ? 'bg-neutral-500' :
+                  currentUser?.availability === 'busy' ? 'bg-error-500' :
+                  currentUser?.availability === 'invisible' ? 'bg-neutral-500' :
                   'bg-success-500'
                 }`} />
               </div>

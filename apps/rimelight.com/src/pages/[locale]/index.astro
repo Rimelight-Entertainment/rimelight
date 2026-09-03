@@ -31,11 +31,16 @@ function getLocalizedText(val: unknown, locale: string): string {
   return String(val || "")
 }
 
-const blogPages = await db
-  .select()
-  .from(pages)
-  .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
-  .orderBy(desc(pages.postedAt));
+let blogPages: any[] = [];
+try {
+  blogPages = await db
+    .select()
+    .from(pages)
+    .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
+    .orderBy(desc(pages.postedAt));
+} catch (dbErr) {
+  console.error("[index.astro] Failed to fetch blog pages:", dbErr);
+}
 
 const latestPosts = blogPages.slice(0, 3);
 

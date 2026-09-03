@@ -75,7 +75,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
       justify: props.justify,
       block: props.block,
       square: props.square !== undefined ? props.square : !props.label && !props.children,
-      rounded: props.rounded,
+      rounded: props.rounded ?? false,
       leading: isLeading(),
       trailing: isTrailing(),
       loading: props.loading,

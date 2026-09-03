@@ -12,11 +12,16 @@ const activeLocale = Astro.currentLocale ?? "en"
 const { slug } = Astro.params
 if (!slug) return Astro.redirect("/company/blog")
 
-const pageResult = await db
-  .select()
-  .from(pages)
-  .where(and(sql`${pages.type} = ${"blog"}`, eq(pages.slug, slug), isNull(pages.deletedAt)))
-  .limit(1)
+let pageResult: any[] = []
+try {
+  pageResult = await db
+    .select()
+    .from(pages)
+    .where(and(sql`${pages.type} = ${"blog"}`, eq(pages.slug, slug), isNull(pages.deletedAt)))
+    .limit(1)
+} catch (dbErr) {
+  console.error("[blog/[...slug].astro] Failed to query page:", dbErr)
+}
 
 const page = pageResult[0]
 

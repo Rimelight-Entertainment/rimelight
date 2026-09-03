@@ -1,8 +1,7 @@
 import { relations } from "drizzle-orm"
 import { boolean, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core"
 
-export * from "@rimelight/auth/schema/drizzle"
-import { user } from "@rimelight/auth/schema/drizzle"
+import { users } from "../users.ts"
 
 // ============================================================================
 // Note & Todo Tables (rimelight.com app feature)
@@ -10,9 +9,7 @@ import { user } from "@rimelight/auth/schema/drizzle"
 
 export const todo = pgTable("todo", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull(),
   title: text("title").notNull(),
   description: text("description"),
   completed: boolean("completed").default(false).notNull(),
@@ -27,9 +24,7 @@ export const todo = pgTable("todo", {
 
 export const note = pgTable("note", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull(),
   title: text("title"),
   content: text("content"),
   isPinned: boolean("is_pinned").default(false).notNull(),
@@ -43,9 +38,7 @@ export const note = pgTable("note", {
 
 export const noteLabel = pgTable("noteLabel", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull(),
   name: text("name").notNull(),
   updatedAt: timestamp("updated_at", {
     withTimezone: true
@@ -72,17 +65,17 @@ export const note_noteLabel = pgTable(
 // ============================================================================
 
 export const noteRelations = relations(note, ({ one, many }) => ({
-  user: one(user, {
+  user: one(users, {
     fields: [note.userId],
-    references: [user.id]
+    references: [users.auth0Id]
   }),
   noteLabels: many(note_noteLabel)
 }))
 
 export const noteLabelRelations = relations(noteLabel, ({ one, many }) => ({
-  user: one(user, {
+  user: one(users, {
     fields: [noteLabel.userId],
-    references: [user.id]
+    references: [users.auth0Id]
   }),
   noteLabels: many(note_noteLabel)
 }))
@@ -99,9 +92,9 @@ export const note_noteLabelRelations = relations(note_noteLabel, ({ one }) => ({
 }))
 
 export const todoRelations = relations(todo, ({ one }) => ({
-  user: one(user, {
+  user: one(users, {
     fields: [todo.userId],
-    references: [user.id]
+    references: [users.auth0Id]
   })
 }))
 

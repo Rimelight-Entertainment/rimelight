@@ -65,8 +65,11 @@ export async function getR2Bucket(locals?: any, bindingName = "BLOB"): Promise<a
     }
   } catch {}
 
-  // 2. Direct locals property check (locals.env or locals[bindingName])
+  // 2. Direct locals property check (locals.runtime.env, locals.env or locals[bindingName])
   if (locals) {
+    if (locals.runtime?.env && locals.runtime.env[bindingName]) {
+      return locals.runtime.env[bindingName]
+    }
     if (locals.env && locals.env[bindingName]) {
       return locals.env[bindingName]
     }

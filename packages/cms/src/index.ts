@@ -23,11 +23,25 @@ export type {
 export * from "./core/registry.ts"
 export * from "./core/validator.ts"
 
-// Auth & Security Guards
+// Universal Auth & Pluggable Adapters (RFC-0004 & RFC-0006)
 export * from "./auth/permissions.ts"
 export * from "./auth/filter-blocks.ts"
 export * from "./auth/editor-guards.ts"
 export * from "./auth/filter-templates.ts"
+export {
+  cfAccessAuth,
+  auth0Auth,
+  mockAuth,
+  hasRole,
+  hasPermission,
+  evaluateAccess
+} from "@rimelight/auth"
+export type {
+  AuthAdapter as CmsAuthAdapter,
+  AuthAdapter,
+  UserSessionContext,
+  UserType
+} from "@rimelight/auth"
 
 // Edge Cache & Search
 export * from "./cache/purge.ts"
@@ -36,7 +50,8 @@ export * from "./search/query.ts"
 // Database Schemas & Migration
 export * from "./schema/index.ts"
 
-// Astro Components
+// Astro Integration & Components
+export { rimelightCms, type RimelightCmsOptions } from "./integration.ts"
 export { default as PageRenderer } from "./astro/PageRenderer.astro"
 export { default as BlockRenderer } from "./astro/BlockRenderer.astro"
 

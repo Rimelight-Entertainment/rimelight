@@ -17,8 +17,9 @@ export const modalTheme = defineTheme("modal", {
     trigger: "",
     backdrop: "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300",
     content: [
-      "fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border border-default",
-      "bg-default p-6 shadow-xl transition-all duration-300 outline-none",
+      "fixed left-1/2 top-1/2 z-50 w-[calc(100%-1.5rem)] sm:w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border border-default",
+      "bg-default p-5 sm:p-6 shadow-xl transition-all duration-300 outline-none",
+      "max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] overflow-y-auto",
       "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-1/2",
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-1/2"
     ],
@@ -27,8 +28,8 @@ export const modalTheme = defineTheme("modal", {
     description: "text-sm text-muted leading-relaxed",
     footer: "flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-6",
     closeButton: [
-      "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
-      "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+      "absolute right-4 top-4 opacity-70 transition-opacity hover:opacity-100",
+      "focus:outline-none"
     ]
   },
   variants: {
