@@ -42,7 +42,6 @@ export const authMiddleware = async (c: any, next: any) => {
     }
 
     const guest = !sessionCtx && (await isConstructionGuest(c))
-
     const user =
       sessionCtx ??
       (guest

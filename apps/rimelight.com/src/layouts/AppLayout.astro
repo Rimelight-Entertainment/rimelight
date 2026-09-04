@@ -19,13 +19,14 @@ interface AppLayoutProps {
 	description: string;
 	noindex?: boolean;
 	is404?: boolean;
+	minimal?: boolean;
 	robots?: string;
 	languageAlternates?: Array<{ hreflang: string; href: string }>;
 	ogImageSrc?: string;
 	ogImageAlt?: string;
 }
 
-const { title, description, noindex, is404, robots, languageAlternates, ogImageSrc, ogImageAlt } = Astro.props as AppLayoutProps;
+const { title, description, noindex, is404, minimal = false, robots, languageAlternates, ogImageSrc, ogImageAlt } = Astro.props as AppLayoutProps;
 
 const localeMap: Record<string, string> = {
 	en: 'en_US',
@@ -64,7 +65,7 @@ const ogImageUrl = (() => {
     <slot name="head" />
   </head>
 	<body class="isolate">
-		<AppHeader />
+		{!minimal && <AppHeader />}
 		<RLAMain>
 			<slot />
 		</RLAMain>

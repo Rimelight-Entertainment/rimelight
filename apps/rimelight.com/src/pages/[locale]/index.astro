@@ -38,8 +38,8 @@ try {
     .from(pages)
     .where(and(sql`${pages.type} = ${"blog"}`, isNull(pages.deletedAt)))
     .orderBy(desc(pages.postedAt));
-} catch (dbErr) {
-  console.error("[index.astro] Failed to fetch blog pages:", dbErr);
+} catch (error) {
+  console.error("[index.astro] Failed to query blog pages:", error);
 }
 
 const latestPosts = blogPages.slice(0, 3);
