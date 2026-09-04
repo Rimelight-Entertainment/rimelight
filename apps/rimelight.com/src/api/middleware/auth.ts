@@ -8,18 +8,6 @@ const PROTECTED_ROUTES = ["/internal"]
 export const authMiddleware = async (c: any, next: any) => {
   const url = new URL(c.req.url)
 
-  // Fast-path bypass for static assets and client scripts to avoid interference with CSS/JS/images
-  const isStaticAsset =
-    url.pathname.startsWith("/_astro/") ||
-    url.pathname.startsWith("/assets/") ||
-    url.pathname === "/favicon.ico" ||
-    url.pathname.startsWith("/open-graph/") ||
-    /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico)$/i.test(url.pathname)
-
-  if (isStaticAsset) {
-    return await next()
-  }
-
   const isIgnored = IGNORED_ROUTES.some((path) => url.pathname.includes(path))
   const isProtected = PROTECTED_ROUTES.some((path) => url.pathname.startsWith(path))
 

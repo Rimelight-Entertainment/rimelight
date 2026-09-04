@@ -5,19 +5,8 @@ const WHITELISTED_ROUTES = ["/construction", "/api/auth", "/api/construction-gue
 const getLocaleFromPath = (path: string) => {
   return languages.find((loc) => path === `/${loc}` || path.startsWith(`/${loc}/`)) ?? "en"
 }
+
 export const construction = async (c: any, next: any) => {
-  const url = new URL(c.req.url)
-  const isStaticAsset =
-    url.pathname.startsWith("/_astro/") ||
-    url.pathname.startsWith("/assets/") ||
-    url.pathname === "/favicon.ico" ||
-    url.pathname.startsWith("/open-graph/") ||
-    /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico)$/i.test(url.pathname)
-
-  if (isStaticAsset) {
-    return next()
-  }
-
   const constructionMode =
     (import.meta.env.CONSTRUCTION_MODE ?? process.env.CONSTRUCTION_MODE) === "true"
 
