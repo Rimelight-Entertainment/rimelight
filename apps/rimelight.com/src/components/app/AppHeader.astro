@@ -20,10 +20,15 @@ const placeholderCommunity = "https://cdn.rimelight.com/Images/placeholder_heade
 const placeholderCompany = "https://cdn.rimelight.com/Images/placeholder_header_company.jpg";
 const placeholderStore = "https://cdn.rimelight.com/Images/placeholder_header_store.jpg";
 
-const { auth } = await import("@/auth/auth");
-  const session = await auth.api.getSession({
+let session: { user: { status?: string; tag?: string; availability?: string; name?: string; image?: string | null; id?: string; email?: string; emailVerified?: boolean; createdAt?: Date; updatedAt?: Date } & Record<string, unknown> } | null = null;
+try {
+  const { auth } = await import("@/auth/auth");
+  session = (await auth.api.getSession({
     headers: Astro.request.headers
-  }) as { user: { status?: string; tag?: string; availability?: string; name?: string; image?: string | null; id?: string; email?: string; emailVerified?: boolean; createdAt?: Date; updatedAt?: Date } & Record<string, unknown> } | null;
+  })) as typeof session;
+} catch (error) {
+  console.error("[AppHeader] Failed to fetch session during SSR:", error);
+}
 
 const leftLinks: NavigationMenuItem[] = [
 	{

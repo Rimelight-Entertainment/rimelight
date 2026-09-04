@@ -8,9 +8,11 @@ interface Props {
 }
 
 const { error } = Astro.props;
+Astro.response.status = 500;
+Astro.response.statusText = "Internal Server Error";
 ---
 
-<AppLayout title={t("page_error.error_server_title")} description={t("page_error.error_server_description")}>
+<AppLayout title={t("page_error.error_server_title")} description={t("page_error.error_server_description")} minimal={true} noindex={true}>
   <div class="error-container">
     <p class="error-code">500</p>
     <h1 class="error-title">{t("page_error.error_server_title")}</h1>

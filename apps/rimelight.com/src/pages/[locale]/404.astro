@@ -1,9 +1,11 @@
 ---
 import AppLayout from '@/layouts/AppLayout.astro';
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+Astro.response.status = 404;
+Astro.response.statusText = "Not Found";
 ---
 
-<AppLayout title={t("page_error.error_not-found_title")} description={t("page_error.error_not-found_description")}>
+<AppLayout title={t("page_error.error_not-found_title")} description={t("page_error.error_not-found_description")} minimal={true} noindex={true}>
   <div class="error-container">
     <p class="error-code">404</p>
     <h1 class="error-title">{t("page_error.error_not-found_title")}</h1>

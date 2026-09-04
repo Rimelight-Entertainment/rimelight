@@ -6,13 +6,16 @@ const mockGetActionResult: any = () => undefined
 const mockCallAction: any = () => Promise.resolve(undefined)
 
 export const security = async (c: any, next: any) => {
+  await next()
+  if (!c.res) return
+
   const state = getFetchState(c)
   const context: APIContext = {
     request: c.req.raw,
     url: new URL(c.req.url),
     redirect: (path: string, status?: number) => c.redirect(path, status ?? 302),
-    locals: state.locals,
-    cookies: state.cookies,
+    locals: state?.locals ?? {},
+    cookies: state?.cookies as any,
     site: undefined,
     generator: "",
     clientAddress: "",
@@ -46,11 +49,9 @@ export const security = async (c: any, next: any) => {
     callAction: mockCallAction,
     rewrite: async () => new Response()
   }
-  const response = await astroSecurity(context, async () => {
-    await next()
-    return c.res
-  })
-  if (response instanceof Response && response !== c.res) {
+
+  const response = await astroSecurity(context, async () => c.res)
+  if (response instanceof Response) {
     c.res = response
   }
 }

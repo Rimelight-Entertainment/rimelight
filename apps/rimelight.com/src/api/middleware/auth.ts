@@ -13,7 +13,12 @@ export const auth = async (c: any, next: any) => {
     c.set("user", null)
     c.set("session", null)
   } else {
-    const isAuthed = await betterAuth.api.getSession({ headers: c.req.raw.headers })
+    let isAuthed: any = null
+    try {
+      isAuthed = await betterAuth.api.getSession({ headers: c.req.raw.headers })
+    } catch (error) {
+      console.error("[auth middleware] Failed to fetch session:", error)
+    }
     const guest = !isAuthed?.session && (await isConstructionGuest(c))
     const user =
       isAuthed?.user ??
