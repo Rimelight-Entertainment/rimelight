@@ -4,6 +4,8 @@ Thumbs.db
 
 # IDE
 .idea/
+.vscode/
+.zed/
 
 # Dependencies
 node_modules/
@@ -32,9 +34,8 @@ test-results/
 
 # Logs
 logs/
-*.log
+*.log*
 *.cpuprofile
-pnpm-debug.log*
 
 # Cloudflare
 .wrangler/
