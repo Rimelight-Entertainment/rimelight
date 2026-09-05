@@ -2,9 +2,5 @@
   "extends": "@rimelight/config/tsconfig/base",
   "include": ["**/*"],
   "exclude": ["dist"],
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+  "compilerOptions": {}
 }

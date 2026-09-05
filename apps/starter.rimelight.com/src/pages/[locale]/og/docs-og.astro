@@ -1,7 +1,7 @@
 ---
-import OgLayout from '@/layouts/OgLayout.astro';
-import logomarkWhiteRaw from '@/assets/logos/logomark_white.svg?raw';
-import logotypeWhiteRaw from '@/assets/logos/logotype_white.svg?raw';
+import OgLayout from '#layouts/OgLayout.astro';
+import logomarkWhiteRaw from '#assets/logos/logomark_white.svg?raw';
+import logotypeWhiteRaw from '#assets/logos/logotype_white.svg?raw';
 const logomarkWhite = `data:image/svg+xml,${encodeURIComponent(logomarkWhiteRaw)}`;
 const logotypeWhite = `data:image/svg+xml,${encodeURIComponent(logotypeWhiteRaw)}`;
 const title = Astro.url.searchParams.get("title") || "Untitled";

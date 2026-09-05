@@ -1,15 +1,15 @@
 ---
-import DocsLayout from "@/layouts/DocsLayout.astro"
+import DocsLayout from "#layouts/DocsLayout.astro"
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts"
 import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks } from "@rimelight/cms"
-import { db } from "@/db"
-import { pages } from "@/db/schema"
+import { db } from "#db"
+import { pages } from "#db/schema"
 import { eq, and, isNull, inArray, sql } from "drizzle-orm"
 import meta from "virtual:rimelight-ui-docs-meta"
-import { generateThemeCode } from "@/docs/utils"
-import ComponentShowcase from "@/components/ComponentShowcase.astro"
+import { generateThemeCode } from "#docs/utils"
+import ComponentShowcase from "#components/ComponentShowcase.astro"
 import BlockRenderer from "@rimelight/cms/astro/BlockRenderer.astro"
-import { rimelightCustomBlocks } from "@/components/blocks"
+import { rimelightCustomBlocks } from "#components/blocks"
 
 // Build component registry from all UI components
 const componentModules: Record<string, any> = import.meta.glob("../../../../../../../packages/ui/src/components/*/RLA*.astro", { eager: true })

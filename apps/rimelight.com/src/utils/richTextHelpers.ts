@@ -1,4 +1,4 @@
-import type { RichTextContent, InlineText } from "@/types/blocks"
+import type { RichTextContent, InlineText } from "#types/blocks"
 
 /**
  * Helper: Converts RichTextContent array into a plain string for a simple contenteditable area.

@@ -1,8 +1,8 @@
 ---
-import WikiLayout from '@/layouts/WikiLayout.astro';
+import WikiLayout from '#layouts/WikiLayout.astro';
 import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
-import { db } from "@/db"
-import { pages } from "@/db/schema"
+import { db } from "#db"
+import { pages } from "#db/schema"
 import { eq, and, isNull } from "drizzle-orm"
 
 const activeLocale = Astro.currentLocale ?? "en"

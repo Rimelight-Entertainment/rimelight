@@ -1,5 +1,5 @@
-import { db } from "@/db"
-import { pages } from "@/db/schema"
+import { db } from "#db"
+import { pages } from "#db/schema"
 import { and, eq, inArray, isNull } from "drizzle-orm"
 import { renderPageAsMarkdown } from "@rimelight/cms"
 

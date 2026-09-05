@@ -1,5 +1,5 @@
-import { auth } from "@/auth/auth"
-import { isConstructionGuest } from "@/auth/construction-guest"
+import { auth } from "#auth/auth"
+import { isConstructionGuest } from "#auth/construction-guest"
 
 const IGNORED_ROUTES = ["/docs/"]
 const PROTECTED_ROUTES = ["/internal"]

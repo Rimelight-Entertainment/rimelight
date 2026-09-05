@@ -1,10 +1,10 @@
 ---
-import EmailPreviewLayout from "@/components/email/EmailPreviewLayout.astro"
-import VerificationEmail from "@/components/email/VerificationEmail.astro"
-import PasswordResetEmail from "@/components/email/PasswordResetEmail.astro"
-import SignupNotificationEmail from "@/components/email/SignupNotificationEmail.astro"
-import ContactEmail from "@/components/email/ContactEmail.astro"
-import { getEmailMessages } from "@/auth/email/messages"
+import EmailPreviewLayout from "#components/email/EmailPreviewLayout.astro"
+import VerificationEmail from "#components/email/VerificationEmail.astro"
+import PasswordResetEmail from "#components/email/PasswordResetEmail.astro"
+import SignupNotificationEmail from "#components/email/SignupNotificationEmail.astro"
+import ContactEmail from "#components/email/ContactEmail.astro"
+import { getEmailMessages } from "#auth/email/messages"
 
 const { template } = Astro.params
 const locale = Astro.currentLocale ?? "en"

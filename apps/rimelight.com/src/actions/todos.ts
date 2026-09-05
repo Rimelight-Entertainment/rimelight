@@ -1,7 +1,7 @@
 import { defineAction, ActionError } from "astro:actions"
 import { z } from "astro/zod"
-import { db } from "@/db"
-import { todo } from "@/db/schema/auth"
+import { db } from "#db"
+import { todo } from "#db/schema/auth"
 import { and, desc, eq } from "drizzle-orm"
 
 function checkAuth(context: any) {

@@ -1,6 +1,6 @@
 import { Hono } from "hono"
-import { db } from "@/db"
-import { pages } from "@/db/schema"
+import { db } from "#db"
+import { pages } from "#db/schema"
 
 const api = new Hono()
 

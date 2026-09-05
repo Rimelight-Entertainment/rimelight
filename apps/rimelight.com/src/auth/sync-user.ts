@@ -8,9 +8,9 @@ export async function syncAuth0UserToDb(session: UserSessionContext) {
   try {
     if (!session.email) return null
 
-    const { db } = await import("@/db")
-    const { employees } = await import("@/db/schema/employees")
-    const { users } = await import("@/db/schema/users")
+    const { db } = await import("#db")
+    const { employees } = await import("#db/schema/employees")
+    const { users } = await import("#db/schema/users")
     const { eq, or } = await import("drizzle-orm")
 
     if (session.userType === "employee") {

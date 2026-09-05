@@ -1,5 +1,5 @@
 import { Hono } from "hono"
-import { db } from "@/db"
+import { db } from "#db"
 import {
   getSiteSettings,
   updateSiteSettings,
@@ -22,7 +22,7 @@ import {
   updateByline,
   deleteByline
 } from "@rimelight/cms"
-import { auth } from "@/auth/auth"
+import { auth } from "#auth/auth"
 import { eq, and } from "drizzle-orm"
 
 const cms = new Hono()

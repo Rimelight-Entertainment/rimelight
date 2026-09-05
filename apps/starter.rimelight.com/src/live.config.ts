@@ -1,6 +1,6 @@
 import { defineLiveCollection } from "astro:content"
 import { rimelightCmsLoader } from "@rimelight/cms"
-import { db } from "@/db"
+import { db } from "#db"
 
 const blog = defineLiveCollection({
   loader: rimelightCmsLoader({ type: "blog", db })

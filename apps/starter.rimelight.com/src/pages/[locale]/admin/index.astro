@@ -1,11 +1,11 @@
 ---
-import AuthAdminDashboardLayout from "@/layouts/AuthAdminDashboardLayout.astro";
+import AuthAdminDashboardLayout from "#layouts/AuthAdminDashboardLayout.astro";
 import RLACard from "@rimelight/ui/components/card/RLACard.astro";
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
-import { db } from "@/db";
-import { pages, bylines, categories, tags } from "@/db/schema";
+import { db } from "#db";
+import { pages, bylines, taxonomyTerms as categories, taxonomyTerms as tags } from "#db/schema";
 import { count } from "drizzle-orm";
 
 let totalPages = 0;

@@ -1,6 +1,6 @@
 import { Hono } from "hono"
-import { db } from "@/db"
-import { pages } from "@/db/schema"
+import { db } from "#db"
+import { pages } from "#db/schema"
 import { eq } from "drizzle-orm"
 
 const api = new Hono()

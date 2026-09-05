@@ -1,10 +1,10 @@
 ---
-import DocsLayout from "@/layouts/DocsLayout.astro";
+import DocsLayout from "#layouts/DocsLayout.astro";
 import type { TableOfContentsConfig } from "@rimelight/ui/components/table-of-contents/table-of-contents.ts";
 import { getDocsVersions, parseDocsSlug, extractHeadingsFromBlocks, blocksToMarkdown } from "@rimelight/cms";
 import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
-import { db } from "@/db";
-import { pages } from "@/db/schema";
+import { db } from "#db";
+import { pages } from "#db/schema";
 import { eq, and, isNull, inArray, sql } from "drizzle-orm";
 
 const activeLocale = Astro.currentLocale ?? "en";

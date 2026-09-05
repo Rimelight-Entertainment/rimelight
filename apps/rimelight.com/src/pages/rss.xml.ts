@@ -1,7 +1,7 @@
 import rss from "@astrojs/rss"
 import type { APIRoute } from "astro"
 import { getCmsCollection, getSiteSettings } from "@rimelight/cms"
-import { db } from "@/db"
+import { db } from "#db"
 
 export const GET: APIRoute = async (context) => {
   const settings = await getSiteSettings(db)

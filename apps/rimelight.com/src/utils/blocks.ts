@@ -1,4 +1,4 @@
-import type { BlockType } from "@/types/blocks"
+import type { BlockType } from "#types/blocks"
 
 export interface AllowedChildren {
   types: BlockType[]

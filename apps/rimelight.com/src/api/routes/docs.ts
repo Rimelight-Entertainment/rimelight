@@ -1,6 +1,6 @@
 import { Hono } from "hono"
-import { db } from "@/db"
-import { componentMetadata } from "@/db/schema"
+import { db } from "#db"
+import { componentMetadata } from "#db/schema"
 import { eq, desc } from "drizzle-orm"
 
 const docs = new Hono()

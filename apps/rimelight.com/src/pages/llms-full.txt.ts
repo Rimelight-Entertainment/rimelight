@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "#db"
 import { renderCorpusMarkdown } from "@rimelight/cms"
 
 export const prerender = false

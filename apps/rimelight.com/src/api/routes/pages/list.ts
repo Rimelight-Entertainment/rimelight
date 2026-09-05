@@ -1,8 +1,8 @@
 import { Hono } from "hono"
-import { db } from "@/db"
-import { pages } from "@/db/schema"
+import { db } from "#db"
+import { pages } from "#db/schema"
 import { sql, desc, like, inArray, asc, isNull, and } from "drizzle-orm"
-import type { PageType } from "@/types/pages"
+import type { PageType } from "#types/pages"
 
 const isPageType = (_t: string): _t is PageType => true
 const api = new Hono()

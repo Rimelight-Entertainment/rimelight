@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "#db"
 import { pages } from "@rimelight/cms"
 import { and, isNotNull, isNull } from "drizzle-orm"
 import { buildLlmsTxt } from "@rimelight/seo"

@@ -1,7 +1,7 @@
 import { handle } from "@astrojs/cloudflare/handler"
 import { DurableObject } from "cloudflare:workers"
 import { handleCmsCron } from "@rimelight/cms"
-import { db } from "@/db"
+import { db } from "#db"
 
 interface SessionAttachment {
   id: string

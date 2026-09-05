@@ -6,8 +6,8 @@ import type {
   PageDefinition,
   Property,
   PropertyGroup
-} from "@/types/pages"
-import type { Block, SectionBlock } from "@/types/blocks"
+} from "#types/pages"
+import type { Block, SectionBlock } from "#types/blocks"
 
 type MaybeRefOrGetter<T> = T | (() => T)
 

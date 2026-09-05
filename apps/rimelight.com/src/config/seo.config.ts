@@ -1,8 +1,8 @@
 import type { SeoEntry, LocaleConfig } from "@rimelight/seo"
 import { getCollection } from "astro:content"
 import docsConfig from "./docs.config"
-import { db } from "@/db"
-import { pages } from "@/db/schema"
+import { db } from "#db"
+import { pages } from "#db/schema"
 import { and, isNull, sql } from "drizzle-orm"
 
 /**
