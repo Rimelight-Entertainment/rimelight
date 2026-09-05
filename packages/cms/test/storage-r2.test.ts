@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vite-plus/test"
 import { r2, getR2Bucket, listR2Files, uploadR2File, deleteR2File } from "../src/storage/index"
 
 describe("CMS R2 Storage Adapter", () => {

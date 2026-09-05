@@ -18,12 +18,12 @@
   "type": "module",
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@types/node": "26.4.0",
+    "@types/node": "26.4.1",
     "pkg-pr-new": "0.0.88",
     "vite-plus": "0.3.0"
   },
   "engines": {
     "node": ">=26.7.0"
   },
-  "packageManager": "pnpm@12.0.0"
+  "packageManager": "pnpm@12.3.4"
 }
