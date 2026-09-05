@@ -6,7 +6,7 @@ import { sri } from "@rimelight/security"
 import { defineSecurity } from "@rimelight/security/config"
 import cloudflare from "@astrojs/cloudflare"
 import { rimelightI18n } from "@rimelight/i18n/integration"
-import { defineConfig, fontProviders, svgoOptimizer } from "astro/config"
+import { defineConfig, fontProviders } from "astro/config"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import { extractAllMeta } from "./src/docs/extractAll"
 
@@ -55,25 +55,6 @@ function localDocsIntegration() {
 }
 
 export default defineConfig({
-  experimental: {
-    incrementalBuild: true,
-    contentIntellisense: true,
-    clientPrerender: true,
-    collectionStorage: "chunked",
-    svgOptimizer: svgoOptimizer({
-      plugins: [
-        "preset-default",
-        "removeXMLNS",
-        {
-          name: "removeXlink",
-          params: {
-            includeLegacy: true
-          }
-        }
-      ]
-    })
-  },
-
   site: "https://rimelight.com",
   prefetch: {
     prefetchAll: true
