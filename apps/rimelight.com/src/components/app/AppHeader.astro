@@ -19,14 +19,14 @@ const placeholderGrandTale = "https://cdn.rimelight.com/Images/placeholder_heade
 const placeholderCommunity = "https://cdn.rimelight.com/Images/placeholder_header_community.jpg";
 const placeholderCompany = "https://cdn.rimelight.com/Images/placeholder_header_company.jpg";
 const placeholderStore = "https://cdn.rimelight.com/Images/placeholder_header_store.jpg";
-let session: any = Astro.locals?.session ?? null;
+let session: any = null;
 try {
   const { auth } = await import("@/auth/auth");
-  session = session ?? (await auth.getSession(Astro.request));
+  session = await auth.getSession(Astro.request);
 } catch (err) {
   console.error("[AppHeader] Failed to resolve auth session:", err);
 }
-const currentUser = Astro.locals?.user ?? session?.user ?? session;
+const currentUser = session?.user ?? session;
 
 const leftLinks: NavigationMenuItem[] = [
 	{

@@ -7,9 +7,9 @@ import {
   createSessionToken,
   exchangeAuth0Code,
   loginWithAuth0Password,
-  refreshAuth0Token,
-  syncAuth0UserToDb
+  refreshAuth0Token
 } from "@/auth/auth"
+import { syncAuth0UserToDb } from "@/auth/sync-user"
 import { mapAuth0PayloadToSession, decodeJwt } from "@rimelight/auth/auth0"
 
 const api = new Hono()

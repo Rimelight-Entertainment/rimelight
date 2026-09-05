@@ -1,6 +1,5 @@
 import { auth } from "@/auth/auth"
 import { isConstructionGuest } from "@/auth/construction-guest"
-import { getFetchState } from "astro/hono"
 
 const IGNORED_ROUTES = ["/docs/"]
 const PROTECTED_ROUTES = ["/internal"]
@@ -8,19 +7,23 @@ const PROTECTED_ROUTES = ["/internal"]
 export const authMiddleware = async (c: any, next: any) => {
   const url = new URL(c.req.url)
 
+  const isStaticAsset =
+    url.pathname.startsWith("/_astro/") ||
+    url.pathname.startsWith("/assets/") ||
+    url.pathname === "/favicon.ico" ||
+    url.pathname.startsWith("/open-graph/") ||
+    /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico)$/i.test(url.pathname)
+
+  if (isStaticAsset) {
+    return await next()
+  }
+
   const isIgnored = IGNORED_ROUTES.some((path) => url.pathname.includes(path))
   const isProtected = PROTECTED_ROUTES.some((path) => url.pathname.startsWith(path))
 
   if (isIgnored) {
     c.set("user", null)
     c.set("session", null)
-    try {
-      const state = getFetchState(c)
-      if (state && state.locals) {
-        state.locals.user = null
-        state.locals.session = null
-      }
-    } catch {}
   } else {
     let sessionCtx = null
     try {
@@ -62,16 +65,6 @@ export const authMiddleware = async (c: any, next: any) => {
 
     c.set("user", user)
     c.set("session", session)
-
-    try {
-      const state = getFetchState(c)
-      if (state && state.locals) {
-        state.locals.user = user ? { ...user, id: user.userId } : null
-        state.locals.session = session
-      }
-    } catch {
-      // Ignore in non-Astro context
-    }
   }
 
   const session = c.get("session")
