@@ -18,7 +18,7 @@ if (!id) {
 }
 
 const token = Astro.url.searchParams.get("token");
-const secret = process.env.BETTER_AUTH_SECRET || "rimelight-preview-secret-key";
+const secret = process.env.CMS_PREVIEW_SECRET || "rimelight-preview-secret-key";
 if (token) {
   await verifyPreviewToken(id, token, secret);
 }

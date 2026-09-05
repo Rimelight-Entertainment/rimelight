@@ -5,15 +5,14 @@ import { auth } from "@/auth/auth";
 
 interface Props {
 	title?: string;
-	activeTab: 'overview' | 'organizations' | 'teams' | 'users' | 'categories' | 'tags' | 'bylines';
+	activeTab: 'overview' | 'categories' | 'tags' | 'bylines' | 'taxonomies';
 }
 
 const { title = 'Admin Panel', activeTab } = Astro.props;
 
 // Auth / permission check
-const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
-const user = sessionData?.user;
-if (!user || !['admin', 'owner'].includes((user as { role?: string }).role || '')) {
+const user = await auth.getSession(Astro.request);
+if (!user || !['admin', 'owner'].some(r => (user.roles ?? []).includes(r))) {
 	return Astro.redirect(getRelativeLocaleUrl('/dashboard'));
 }
 
@@ -43,22 +42,10 @@ const links = [
 		active: activeTab === 'bylines'
 	},
 	{
-		label: 'Organizations',
-		icon: 'i-lucide-building-2',
-		href: getRelativeLocaleUrl('/dashboard/admin/organizations'),
-		active: activeTab === 'organizations'
-	},
-	{
-		label: 'Teams',
-		icon: 'i-lucide-users-2',
-		href: getRelativeLocaleUrl('/dashboard/admin/teams'),
-		active: activeTab === 'teams'
-	},
-	{
-		label: 'Users',
-		icon: 'i-lucide-user',
-		href: getRelativeLocaleUrl('/dashboard/admin/users'),
-		active: activeTab === 'users'
+		label: 'CMS Dashboard',
+		icon: 'i-lucide-file-text',
+		href: getRelativeLocaleUrl('/cms'),
+		active: false
 	}
 ];
 ---

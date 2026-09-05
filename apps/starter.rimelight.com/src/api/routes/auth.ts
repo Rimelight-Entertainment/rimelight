@@ -3,33 +3,27 @@ import { auth } from "@/auth/auth"
 
 const api = new Hono()
 
-api.post("/resend-verification", async (c) => {
-  try {
-    const { email } = await c.req.json()
-
-    if (!email) {
-      return c.json({ error: "Email is required" }, 400)
-    }
-
-    // Generate a verification token and send email using better-auth
-    // Use better-auth's internal method to send verification email
-    // This will generate a proper token and send it via the configured email service
-    await auth.api.sendVerificationEmail({
-      body: {
-        email
-      },
-      headers: c.req.raw.headers
-    })
-
-    return c.json({ success: true })
-  } catch (error: any) {
-    console.error("Resend verification error:", error)
-    return c.json({ error: error.message || "Failed to resend verification email" }, 500)
+/**
+ * GET /api/auth/session Returns the current CF Access session context, or null.
+ */
+api.get("/session", async (c) => {
+  const session = await auth.getSession(c.req.raw)
+  if (!session) {
+    return c.json({ user: null, session: null })
   }
+  return c.json({
+    user: session,
+    session: { id: session.userId, userId: session.userId }
+  })
 })
 
-api.on(["GET", "POST"], "/*", async (c) => {
-  return auth.handler(c.req.raw)
+/**
+ * GET /api/auth/me Returns the authenticated user or 401.
+ */
+api.get("/me", async (c) => {
+  const session = await auth.getSession(c.req.raw)
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+  return c.json({ user: session })
 })
 
 export default api

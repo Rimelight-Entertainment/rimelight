@@ -3,6 +3,7 @@ import path from "node:path"
 import fs from "node:fs"
 import { fileURLToPath } from "node:url"
 import type { StorageConfig } from "./storage/index"
+import type { AuthAdapter } from "@rimelight/auth"
 
 export interface RimelightCmsOptions {
   /**
@@ -27,6 +28,12 @@ export interface RimelightCmsOptions {
    * "https://media.example.com" })).
    */
   storage?: StorageConfig | undefined
+
+  /**
+   * Pluggable Auth Adapter instance or module path (RFC-0004 / RFC-0006). E.g. cfAccessAuth({ ...
+   * }), auth0Auth({ ... }), or mockAuth().
+   */
+  auth?: AuthAdapter | string | undefined
 }
 
 export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegration {
@@ -64,6 +71,47 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
           } else if (fs.existsSync(defaultDbJs)) {
             resolvedDb = defaultDbJs
           }
+        }
+
+        // Resolve auth module / adapter code
+        let resolvedAuthCode: string
+        if (typeof options.auth === "string") {
+          const resolvedAuthPath = path.isAbsolute(options.auth)
+            ? options.auth
+            : path.resolve(rootDir, options.auth)
+          resolvedAuthCode = `export { authAdapter, authAdapter as default } from ${JSON.stringify(resolvedAuthPath)};`
+        } else if (options.auth && typeof options.auth === "object") {
+          const authObj = options.auth as any
+          const adapterName = authObj.name || "mock"
+          const adapterOpts = authObj.options || {}
+
+          if (adapterName === "cf-access") {
+            resolvedAuthCode = `import { cfAccessAuth } from "@rimelight/auth/cf-access";
+export const authAdapter = cfAccessAuth(${JSON.stringify(adapterOpts)});
+export default authAdapter;`
+          } else if (adapterName === "auth0") {
+            resolvedAuthCode = `import { auth0Auth } from "@rimelight/auth/auth0";
+export const authAdapter = auth0Auth(${JSON.stringify(adapterOpts)});
+export default authAdapter;`
+          } else {
+            resolvedAuthCode = `import { mockAuth } from "@rimelight/auth/mock";
+export const authAdapter = mockAuth(${JSON.stringify(adapterOpts)});
+export default authAdapter;`
+          }
+        } else {
+          // Default fallback mock admin adapter for development
+          resolvedAuthCode = `import { mockAuth } from "@rimelight/auth/mock";
+export const authAdapter = mockAuth({
+  session: {
+    userId: "cms-admin",
+    name: "CMS Administrator",
+    email: "admin@rimelight.com",
+    roles: ["admin", "editor"],
+    permissions: ["*"],
+    userType: "employee"
+  }
+});
+export default authAdapter;`
         }
 
         // 1. Inject CMS admin routes
@@ -166,6 +214,9 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
                   if (id === "virtual:rimelight-cms/storage") {
                     return "\0virtual:rimelight-cms/storage"
                   }
+                  if (id === "virtual:rimelight-cms/auth") {
+                    return "\0virtual:rimelight-cms/auth"
+                  }
                   return undefined
                 },
                 load(id) {
@@ -183,6 +234,9 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
                   }
                   if (id === "\0virtual:rimelight-cms/storage") {
                     return `export const storageConfig = ${JSON.stringify(storageConfig)};`
+                  }
+                  if (id === "\0virtual:rimelight-cms/auth") {
+                    return resolvedAuthCode
                   }
                   return undefined
                 }

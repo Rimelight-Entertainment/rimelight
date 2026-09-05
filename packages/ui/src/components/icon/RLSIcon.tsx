@@ -16,7 +16,7 @@ const RLSIcon: Component<IconProps> = (allProps) => {
   return (
     <span class={classes().root} data-slot="icon" aria-hidden="true" {...rest}>
       {resolved().isClass ? (
-        <span class={`${resolved().content} size-full`} />
+        <span class={`${resolved().content} block size-full`} />
       ) : (
         <span innerHTML={resolved().content} />
       )}

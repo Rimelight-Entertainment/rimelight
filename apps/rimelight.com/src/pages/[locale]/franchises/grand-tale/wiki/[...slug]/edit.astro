@@ -12,7 +12,7 @@ const currentLocale = Astro.currentLocale ?? "en"
 const { slug } = Astro.params;
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
 
-const sessionData = await auth.api.getSession({ headers: Astro.request.headers });
+const sessionData = await auth.getSession(Astro.request);
 
 if (!sessionData) {
   return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/auth/sign-in"))

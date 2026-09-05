@@ -14,9 +14,8 @@ const navItems = [
 	{ icon: "i-lucide-folder", label: "Categories", href: "/admin/categories", id: "categories" },
 	{ icon: "i-lucide-tag", label: "Tags", href: "/admin/tags", id: "tags" },
 	{ icon: "i-lucide-pen-tool", label: "Bylines", href: "/admin/bylines", id: "bylines" },
-	{ icon: "i-lucide-building-2", label: "Organizations", href: "/admin/organizations", id: "organizations" },
-	{ icon: "i-lucide-users", label: "Users", href: "/admin/users", id: "users" },
-	{ icon: "i-lucide-shield-check", label: "Roles & Permissions", href: "/admin/roles", id: "roles" },
+	{ icon: "i-lucide-network", label: "Taxonomies", href: "/admin/taxonomies", id: "taxonomies" },
+	{ icon: "i-lucide-file-text", label: "CMS Content", href: "/cms", id: "cms" },
 ];
 
 interface Props {
@@ -39,8 +38,8 @@ const currentActive = activeNav || activeSection || "overview";
 						<RLAIcon name="i-lucide-shield" class="size-5 text-primary group-data-[collapsed=true]:hidden" data-dashboard-sidebar-logo />
 					</div>
 					<div class="flex flex-col truncate group-data-[collapsed=true]:hidden" data-dashboard-sidebar-label>
-						<span class="font-semibold text-highlighted text-sm leading-none">Auth Admin</span>
-						<span class="text-xs text-muted mt-0.5">Better Auth Engine</span>
+						<span class="font-semibold text-highlighted text-sm leading-none">Identity Admin</span>
+						<span class="text-xs text-muted mt-0.5">Cloudflare Access</span>
 					</div>
 				</div>
 				<RLADashboardSidebarCollapse side="left" class="shrink-0 ml-auto group-data-[collapsed=true]:mx-auto" />

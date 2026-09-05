@@ -83,8 +83,11 @@ async function deindexDatabasePage(id: string) {
 
 function getRole(user: unknown): string | undefined {
   if (!user || typeof user !== "object") return undefined
+  if ("roles" in user && Array.isArray((user as any).roles) && (user as any).roles.length > 0) {
+    return (user as any).roles[0]
+  }
   if ("role" in user) {
-    return typeof user.role === "string" ? user.role : undefined
+    return typeof (user as any).role === "string" ? (user as any).role : undefined
   }
   return undefined
 }
@@ -100,8 +103,8 @@ function toLocalizedOptional(
 }
 
 async function checkOwnerOrMember(context: any) {
-  const sessionData = await auth.api.getSession({ headers: context.request.headers })
-  const user = sessionData?.user
+  const sessionData = await auth.getSession(context.request)
+  const user = sessionData
   if (!user) {
     throw new ActionError({
       code: "UNAUTHORIZED",
@@ -137,8 +140,8 @@ export const pageActions = {
     }),
     handler: async (input, context) => {
       const { limit, offset, type, status, orderBy: orderByField, order: orderDirection } = input
-      const sessionData = await auth.api.getSession({ headers: context.request.headers })
-      const user = sessionData?.user
+      const sessionData = await auth.getSession(context.request)
+      const user = sessionData
       const role = getRole(user)
       const isAuthorized = role === "owner" || role === "member"
 
@@ -224,7 +227,7 @@ export const pageActions = {
         title: toLocalized(input.title),
         description: toLocalizedOptional(input.description),
         tags: input.tags?.map(toLocalized) ?? [],
-        authorIds: [user.id],
+        authorIds: [user.userId],
         content: {
           properties: input.properties || {},
           blocks: input.blocks || []
@@ -295,7 +298,7 @@ export const pageActions = {
           blocks: body.blocks || []
         },
         postedAt: body.postedAt ? new Date(body.postedAt) : null,
-        createdBy: user.id
+        createdBy: user.userId
       }
 
       try {
@@ -426,7 +429,7 @@ export const pageActions = {
         .update(pageVersions)
         .set({
           status: "approved",
-          approvedBy: user.id,
+          approvedBy: user.userId,
           approvedAt: new Date()
         })
         .where(eq(pageVersions.id, input.versionId))

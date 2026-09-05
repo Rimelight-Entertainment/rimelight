@@ -1,7 +1,7 @@
 ---
 import type { ModalProps } from "./modal"
 import { modalTheme } from "./modal.theme"
-import RLAIcon from "../icon/RLAIcon.astro"
+import RLAButton from "../button/RLAButton.astro"
 
 
 
@@ -49,15 +49,18 @@ const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
     data-unmount-on-hide={unmountOnHide ? "true" : "false"}
     {...rest}
   >
-    <button
+    <RLAButton
       class={classes.closeButton}
       data-slot="close-button"
       type="button"
+      variant="ghost"
+      color="neutral"
+      size="sm"
+      square
+      leadingIcon="i-rl-close"
       data-dialog-close={modalId}
       aria-label="Close modal"
-    >
-      <RLAIcon name="i-rl-close" class="size-4" aria-hidden="true" />
-    </button>
+    />
 
     <div class={classes.header} data-slot="header">
       {title && <h3 class={classes.title} data-slot="title">{title}</h3>}

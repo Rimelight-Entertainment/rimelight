@@ -1,13 +1,11 @@
 import { relations } from "drizzle-orm"
 import { boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import { user } from "../auth/index.ts"
+import { users } from "../users.ts"
 
 // --- Boards ---
 export const board = pgTable("kanban_board", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull(),
   title: text("title").notNull(),
   description: text("description"),
   isArchived: boolean("is_archived").default(false).notNull(),
@@ -20,7 +18,11 @@ export const board = pgTable("kanban_board", {
 
 export type Board = typeof board.$inferSelect
 
-export const boardRelations = relations(board, ({ many }) => ({
+export const boardRelations = relations(board, ({ one, many }) => ({
+  user: one(users, {
+    fields: [board.userId],
+    references: [users.auth0Id]
+  }),
   lists: many(list),
   customFields: many(customFieldDefinition)
 }))

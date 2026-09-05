@@ -10,6 +10,9 @@ interface Props {
 const { error } = Astro.props;
 Astro.response.status = 500;
 Astro.response.statusText = "Internal Server Error";
+if (error) {
+  console.error("[500 SSR Error]:", error);
+}
 ---
 
 <AppLayout title={t("page_error.error_server_title")} description={t("page_error.error_server_description")} minimal={true} noindex={true}>

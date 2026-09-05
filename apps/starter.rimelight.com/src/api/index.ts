@@ -4,8 +4,6 @@ import searchRoutes from "./routes/search"
 import emailPreviewRoutes from "./routes/email/preview"
 import constructionGuestRoutes from "./routes/construction-guest"
 import cmsRoutes from "./routes/cms"
-import rolesRoutes from "./routes/roles"
-import adminRoutes from "./routes/admin"
 
 const api = new Hono()
 
@@ -14,7 +12,5 @@ api.route("/construction-guest", constructionGuestRoutes)
 api.route("/search", searchRoutes)
 api.route("/dev/email/preview", emailPreviewRoutes)
 api.route("/cms", cmsRoutes)
-api.route("/roles", rolesRoutes)
-api.route("/admin", adminRoutes)
 
 export default api

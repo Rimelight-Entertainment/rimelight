@@ -1,5 +1,6 @@
 ---
 import ParentLayout from "virtual:rimelight-cms/parent-layout";
+import authAdapter from "virtual:rimelight-cms/auth";
 import RLADashboardGroup from "@rimelight/ui/components/dashboard-group/RLADashboardGroup.astro";
 import RLADashboardSidebar from "@rimelight/ui/components/dashboard-sidebar/RLADashboardSidebar.astro";
 import RLADashboardNavbar from "@rimelight/ui/components/dashboard-navbar/RLADashboardNavbar.astro";
@@ -10,6 +11,15 @@ import RLADashboardSidebarToggle from "@rimelight/ui/components/dashboard-sideba
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
 import { getRelativeLocaleUrl } from "@rimelight/i18n";
 import "../../client/styles/cms-editor.css";
+
+const session = await authAdapter.getSession(Astro.request);
+if (!session) {
+  if (authAdapter.handleUnauthorized) {
+    const res = await authAdapter.handleUnauthorized(Astro.request);
+    if (res instanceof Response) return res;
+  }
+  return Astro.redirect(getRelativeLocaleUrl(Astro.currentLocale ?? "en", "/auth/sign-in"));
+}
 
 const currentLocale = Astro.currentLocale ?? "en";
 

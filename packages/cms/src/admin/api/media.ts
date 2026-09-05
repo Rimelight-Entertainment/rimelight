@@ -2,11 +2,20 @@ import type { APIRoute } from "astro"
 import { getR2Bucket, listR2Files, uploadR2File, deleteR2File } from "../../storage/index"
 // @ts-ignore
 import { storageConfig } from "virtual:rimelight-cms/storage"
+// @ts-ignore
+import authAdapter from "virtual:rimelight-cms/auth"
 
 export const prerender = false
 
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
+    const session = await authAdapter.getSession(request)
+    if (!session) {
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      })
+    }
     const url = new URL(request.url)
     const prefix = (url.searchParams.get("prefix") ??
       (storageConfig?.prefix as string | undefined) ??
@@ -17,7 +26,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const typeFilter = url.searchParams.get("type")?.toLowerCase()
 
     const bindingName = (storageConfig?.binding as string | undefined) ?? "BLOB"
-    const bucket = getR2Bucket(locals, bindingName)
+    const bucket = await getR2Bucket(locals, bindingName)
 
     if (!bucket) {
       return new Response(
@@ -87,8 +96,16 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    const session = await authAdapter.getSession(request)
+    if (!session) {
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      })
+    }
+
     const bindingName = storageConfig?.binding ?? "BLOB"
-    const bucket = getR2Bucket(locals, bindingName)
+    const bucket = await getR2Bucket(locals, bindingName)
 
     if (!bucket) {
       return new Response(
@@ -150,8 +167,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 export const DELETE: APIRoute = async ({ request, locals }) => {
   try {
+    const session = await authAdapter.getSession(request)
+    if (!session) {
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      })
+    }
+
     const bindingName = storageConfig?.binding ?? "BLOB"
-    const bucket = getR2Bucket(locals, bindingName)
+    const bucket = await getR2Bucket(locals, bindingName)
 
     if (!bucket) {
       return new Response(

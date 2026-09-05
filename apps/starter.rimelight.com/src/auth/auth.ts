@@ -1,41 +1,29 @@
-import { createRimelightAuth } from "@rimelight/auth/server"
-import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { db } from "@/db"
-import { admin as adminPlugin, organization as organizationPlugin } from "better-auth/plugins"
-import { ac, owner, admin, member, user as userRole } from "@/auth/permissions"
-import { cmsStatements } from "@rimelight/cms"
-import { user as userTable } from "@/db/schema/auth"
-import { sendVerificationEmail } from "./email/verification"
-import { sendPasswordResetEmail } from "./email/password-reset"
-import { sendExistingUserSignUpNotification } from "./email/notifications"
+import { cfAccessAuth } from "@rimelight/auth/cf-access"
+import type { AuthAdapter } from "@rimelight/auth"
 
-export const auth = createRimelightAuth({
-  database: drizzleAdapter(db, {
-    provider: "sqlite"
-  }),
-  db,
-  userTable,
-  emailHandlers: {
-    sendVerificationEmail,
-    sendPasswordResetEmail,
-    sendExistingUserSignUpNotification: async (existingUser: any) => {
-      await sendExistingUserSignUpNotification({ user: { email: existingUser.email } })
-    }
-  },
-  statements: cmsStatements,
-  plugins: [
-    adminPlugin(),
-    organizationPlugin({
-      teams: {
-        enabled: true
-      },
-      ac,
-      roles: {
-        owner,
-        admin,
-        member,
-        user: userRole
-      }
-    })
-  ]
+function getEnv(key: string, fallback = ""): string {
+  if (typeof process !== "undefined" && process.env?.[key]) return process.env[key]!
+  // @ts-ignore
+  if (typeof import.meta !== "undefined" && import.meta.env?.[key]) return import.meta.env[key]
+  return fallback
+}
+
+/**
+ * Cloudflare Access auth adapter for starter.rimelight.com. This is an internal CMS tool — identity
+ * is entirely managed by Cloudflare Access. No user registration, password management, or email
+ * verification here.
+ */
+export const auth: AuthAdapter = cfAccessAuth({
+  teamDomain: getEnv("CF_ACCESS_TEAM_DOMAIN"),
+  aud: getEnv("CF_ACCESS_AUD"),
+  verifyJwt: getEnv("CF_ACCESS_VERIFY_JWT") === "true",
+  adminEmails: getEnv("CF_ACCESS_ADMIN_EMAILS")
+    ? getEnv("CF_ACCESS_ADMIN_EMAILS")
+        .split(",")
+        .map((e) => e.trim())
+    : [],
+  defaultRole: "admin"
 })
+
+export const authAdapter = auth
+export default auth

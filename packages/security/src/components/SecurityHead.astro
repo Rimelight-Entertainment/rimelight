@@ -10,11 +10,17 @@
   (function() {
     const w = window as any;
     if (w.trustedTypes && w.trustedTypes.createPolicy) {
-      w.trustedTypes.createPolicy('default', {
-        createHTML: function(input: string) { return input; },
-        createScript: function(input: string) { return input; },
-        createScriptURL: function(input: string) { return input; }
-      });
+      try {
+        if (!w.trustedTypes.defaultPolicy) {
+          w.trustedTypes.createPolicy('default', {
+            createHTML: function(input: string) { return input; },
+            createScript: function(input: string) { return input; },
+            createScriptURL: function(input: string) { return input; }
+          });
+        }
+      } catch {
+        // Policy already exists or cannot be created
+      }
     }
   })();
 </script>
