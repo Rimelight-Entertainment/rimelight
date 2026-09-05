@@ -22,3 +22,18 @@ export function rimelightConfig(): UserConfig {
     }
   }
 }
+
+export function rimelightPackConfig(
+  options: { entry?: string[]; pack?: Record<string, any>; [key: string]: any } = {}
+): any {
+  const { entry = ["src/index.ts"], pack = {}, ...rest } = options
+  return {
+    ...rimelightConfig(),
+    ...rest,
+    pack: {
+      entry,
+      dts: true,
+      ...pack
+    }
+  }
+}

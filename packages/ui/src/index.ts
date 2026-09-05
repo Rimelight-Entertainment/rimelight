@@ -4,8 +4,18 @@ import type { UIConfig } from "./types"
 
 const ID = "virtual:rimelight/ui"
 
-export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
-  UnoCSS({
+export interface RimelightUIPlugin {
+  name: string
+  enforce?: "pre" | "post"
+  resolveId?: (id: string) => string | null | undefined
+  load?: (id: string) => string | null | undefined
+  [key: string]: any
+}
+
+export type RimelightUIPlugins = (RimelightUIPlugin | RimelightUIPlugin[])[]
+
+export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins => [
+  ...(UnoCSS({
     ...unocss,
     presets: [rimelightUiPreset(cfg), ...(unocss.presets || [])],
     content: {
@@ -21,7 +31,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}) => [
         ]
       }
     }
-  }),
+  }) as RimelightUIPlugin[]),
   {
     name: "rimelight/ui",
     enforce: "pre",

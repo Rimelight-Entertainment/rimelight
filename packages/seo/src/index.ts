@@ -36,6 +36,3 @@ export {
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js"
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
-
-export { default as SEOHead } from "./components/SEOHead.astro"
-export { default as AgentDirective } from "./components/AgentDirective.astro"

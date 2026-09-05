@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": false,
   "description": "Rimelight Entertainment's Internationalization Package",
   "homepage": "https://rimelight.com/docs",
@@ -16,21 +16,41 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
-    "src"
+    "dist"
   ],
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./integration": "./src/integration.ts",
-    "./middleware": "./src/middleware.ts",
-    "./runtime": "./src/runtime.ts",
-    "./types": "./src/types.ts",
-    "./utils": "./src/utils.ts"
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./integration": {
+      "types": "./dist/integration.d.mts",
+      "import": "./dist/integration.mjs"
+    },
+    "./middleware": {
+      "types": "./dist/middleware.d.mts",
+      "import": "./dist/middleware.mjs"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.mts",
+      "import": "./dist/runtime.mjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.mts",
+      "import": "./dist/utils.mjs"
+    }
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
+    "build": "vp pack",
+    "prepack": "pnpm run build",
     "check": "vp check --fix"
   },
   "dependencies": {

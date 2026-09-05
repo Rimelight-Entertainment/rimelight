@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/seo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "description": "Rimelight Entertainment's SEO Package",
   "homepage": "https://rimelight.com/docs",
@@ -16,14 +16,27 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
-    "src"
+    "dist",
+    "src/components"
   ],
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./types": "./src/types.ts",
-    "./sitemap": "./src/sitemap.ts",
-    "./robots": "./src/robots.ts",
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
+    },
+    "./sitemap": {
+      "types": "./dist/sitemap.d.mts",
+      "import": "./dist/sitemap.mjs"
+    },
+    "./robots": {
+      "types": "./dist/robots.d.mts",
+      "import": "./dist/robots.mjs"
+    },
     "./components/*": "./src/components/*",
     "./*": "./src/*"
   },
@@ -31,6 +44,8 @@
     "access": "public"
   },
   "scripts": {
+    "build": "vp pack",
+    "prepack": "pnpm run build",
     "check": "vp check --fix && astro check"
   },
   "devDependencies": {

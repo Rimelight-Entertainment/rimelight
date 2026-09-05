@@ -16,6 +16,9 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "type": "module",
+  "scripts": {
+    "build": "pnpm -r run build"
+  },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
     "@types/node": "26.4.1",

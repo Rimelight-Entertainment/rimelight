@@ -52,8 +52,6 @@ export * from "./schema/index.ts"
 
 // Astro Integration & Components
 export { rimelightCms, type RimelightCmsOptions } from "./integration.ts"
-export { default as PageRenderer } from "./astro/PageRenderer.astro"
-export { default as BlockRenderer } from "./astro/BlockRenderer.astro"
 
 // Toast API
 export * from "./client/toast.ts"

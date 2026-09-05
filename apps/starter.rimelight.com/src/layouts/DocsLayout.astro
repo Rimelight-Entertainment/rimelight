@@ -13,7 +13,7 @@ import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import type { ResolvedSidebarItem } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/cms";
-import { AgentDirective } from "@rimelight/seo";
+import AgentDirective from "@rimelight/seo/components/AgentDirective.astro";
 
 function normalizeBadge(badge: any) {
   if (!badge) return null

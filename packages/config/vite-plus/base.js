@@ -20,3 +20,16 @@ export function rimelightConfig() {
     }
   }
 }
+
+export function rimelightPackConfig(options = {}) {
+  const { entry = ["src/index.ts"], pack = {}, ...rest } = options
+  return {
+    ...rimelightConfig(),
+    ...rest,
+    pack: {
+      entry,
+      dts: true,
+      ...pack
+    }
+  }
+}

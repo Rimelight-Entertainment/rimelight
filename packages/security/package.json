@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/security",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": false,
   "description": "Rimelight Entertainment's Security Package",
   "homepage": "https://rimelight.com/docs",
@@ -16,19 +16,31 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
-    "src"
+    "dist",
+    "src/components"
   ],
   "type": "module",
   "exports": {
-    ".": "./src/integrations/index.ts",
-    "./middleware": "./src/middleware/index.ts",
-    "./config": "./src/config/index.ts",
+    ".": {
+      "types": "./dist/integrations/index.d.mts",
+      "import": "./dist/integrations/index.mjs"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.mts",
+      "import": "./dist/middleware/index.mjs"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.mts",
+      "import": "./dist/config/index.mjs"
+    },
     "./*": "./src/*"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
+    "build": "vp pack",
+    "prepack": "pnpm run build",
     "check": "vp check --fix && astro check"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cms",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": false,
   "description": "Rimelight Entertainment's Content Management System Package",
   "homepage": "https://rimelight.com/docs",
@@ -16,13 +16,31 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "files": [
+    "dist",
     "src"
   ],
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./schema": "./src/schema/index.ts",
-    "./schema/sqlite": "./src/schema/sqlite.ts",
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./schema": {
+      "types": "./dist/schema/index.d.mts",
+      "import": "./dist/schema/index.mjs"
+    },
+    "./schema/sqlite": {
+      "types": "./dist/schema/sqlite.d.mts",
+      "import": "./dist/schema/sqlite.mjs"
+    },
+    "./integration": {
+      "types": "./dist/integration.d.mts",
+      "import": "./dist/integration.mjs"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.mts",
+      "import": "./dist/storage/index.mjs"
+    },
     "./core/*": "./src/core/*",
     "./astro/*": "./src/astro/*",
     "./client/styles/*": "./src/client/styles/*",
@@ -35,14 +53,14 @@
     "./auth/*": "./src/auth/*",
     "./cache/*": "./src/cache/*",
     "./search/*": "./src/search/*",
-    "./integration": "./src/integration.ts",
-    "./storage": "./src/storage/index.ts",
     "./admin/*": "./src/admin/*"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
+    "build": "vp pack",
+    "prepack": "pnpm run build",
     "check": "vp check --fix && astro check"
   },
   "dependencies": {
