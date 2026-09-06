@@ -31,7 +31,7 @@
     "generate-types": "wrangler types",
     "astro": "astro",
     "dev": "astro dev",
-    "prebuild": "pnpm --filter './packages/*' run build",
+    "prebuild": "pnpm --filter '@rimelight/*' run --if-present build",
     "build": "astro build",
     "preview": "astro preview",
     "db:generate": "drizzle-kit generate",
