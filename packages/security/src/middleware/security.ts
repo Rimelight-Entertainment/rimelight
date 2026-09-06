@@ -3,12 +3,19 @@ import { buildCspHeader } from "../csp"
 
 // @ts-ignore virtual module resolved by SRI Vite plugin
 import { manifest as sriManifest } from "virtual:sri-manifest"
+// @ts-ignore virtual module resolved by SRI Vite plugin
+import { config as pluginConfig } from "virtual:rimelight-security-config"
 
 function isManifestRecord(obj: unknown): obj is Record<string, string> {
   return typeof obj === "object" && obj !== null && !Array.isArray(obj)
 }
 
+function isConfigRecord(obj: unknown): obj is SecurityOptions {
+  return typeof obj === "object" && obj !== null && !Array.isArray(obj)
+}
+
 const manifest: Record<string, string> = isManifestRecord(sriManifest) ? sriManifest : {}
+const defaultPluginConfig: SecurityOptions = isConfigRecord(pluginConfig) ? pluginConfig : {}
 
 declare const HTMLRewriter: any
 
@@ -25,14 +32,8 @@ function applySecurityHeaders(
   headers.set("X-Content-Type-Options", "nosniff")
   headers.set("X-Frame-Options", "DENY")
   headers.set("Cross-Origin-Resource-Policy", "same-origin")
-  headers.set(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains; preload"
-  )
-  headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
-  )
+  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
   headers.set("No-Vary-Search", 'except=("q" "search" "locale"), params=?1')
 
   if (cspHeader) {
@@ -65,10 +66,38 @@ function applySecurityHeaders(
 }
 
 /**
- * Universal Security Middleware for Hono and Web Standards (Fetch API).
- * Injects security headers, CSP with per-request nonce, and SRI attributes.
+ * Universal Security Middleware for Hono and Web Standards (Fetch API). Injects security headers,
+ * CSP with per-request nonce, and SRI attributes.
  */
 export function security(options: SecurityOptions = {}) {
+  const mergedOptions: SecurityOptions = {
+    ...defaultPluginConfig,
+    ...options,
+    allowedDomains: [
+      ...(defaultPluginConfig.allowedDomains || []),
+      ...(options.allowedDomains || [])
+    ],
+    imgSrc: [...(defaultPluginConfig.imgSrc || []), ...(options.imgSrc || [])],
+    connectSrc: [...(defaultPluginConfig.connectSrc || []), ...(options.connectSrc || [])],
+    frameSrc: [...(defaultPluginConfig.frameSrc || []), ...(options.frameSrc || [])],
+    scriptResources: [
+      ...(defaultPluginConfig.scriptResources || []),
+      ...(options.scriptResources || [])
+    ],
+    styleResources: [
+      ...(defaultPluginConfig.styleResources || []),
+      ...(options.styleResources || [])
+    ],
+    directives: {
+      ...defaultPluginConfig.directives,
+      ...options.directives
+    },
+    headers: {
+      ...defaultPluginConfig.headers,
+      ...options.headers
+    }
+  }
+
   return async (c: any, next: any): Promise<Response | void> => {
     const isProd = import.meta.env?.PROD ?? process.env.NODE_ENV === "production"
     const isDev = import.meta.env?.DEV ?? process.env.NODE_ENV === "development"
@@ -90,13 +119,17 @@ export function security(options: SecurityOptions = {}) {
 
     // For non-HTML responses (e.g. JSON API, static images), apply headers only
     if (!contentType.includes("text/html")) {
-      c.res = applySecurityHeaders(response, options, origin)
+      c.res = applySecurityHeaders(response, mergedOptions, origin)
       return c.res
     }
 
     // In dev mode, keep it simple without full CSP restrictions
     if (isDev) {
-      c.res = applySecurityHeaders(response, { ...options, directives: { ...options.directives, "default-src": false } }, origin)
+      c.res = applySecurityHeaders(
+        response,
+        { ...mergedOptions, directives: { ...mergedOptions.directives, "default-src": false } },
+        origin
+      )
       return c.res
     }
 
@@ -137,7 +170,7 @@ export function security(options: SecurityOptions = {}) {
           }
         })
 
-      c.res = applySecurityHeaders(rewriter.transform(response), options, origin, nonce)
+      c.res = applySecurityHeaders(rewriter.transform(response), mergedOptions, origin, nonce)
       return c.res
     }
 
@@ -158,8 +191,14 @@ export function security(options: SecurityOptions = {}) {
       if (!hash) continue
       const scriptRegex = new RegExp(`(<script[^>]+src=["']${url}["'][^>]*)(/?>)`, "g")
       const linkRegex = new RegExp(`(<link[^>]+href=["']${url}["'][^>]*)(/?>)`, "g")
-      modifiedHtml = modifiedHtml.replace(scriptRegex, `$1 integrity="${hash}" crossorigin="anonymous"$2`)
-      modifiedHtml = modifiedHtml.replace(linkRegex, `$1 integrity="${hash}" crossorigin="anonymous"$2`)
+      modifiedHtml = modifiedHtml.replace(
+        scriptRegex,
+        `$1 integrity="${hash}" crossorigin="anonymous"$2`
+      )
+      modifiedHtml = modifiedHtml.replace(
+        linkRegex,
+        `$1 integrity="${hash}" crossorigin="anonymous"$2`
+      )
     }
 
     c.res = applySecurityHeaders(
@@ -168,7 +207,7 @@ export function security(options: SecurityOptions = {}) {
         statusText: response.statusText,
         headers: response.headers
       }),
-      options,
+      mergedOptions,
       origin,
       nonce
     )

@@ -10,12 +10,7 @@ import { astro } from "astro/hono"
 const app = new Hono()
 
 // Middlewares
-app.use(
-  security({
-    domain: "starter.rimelight.com",
-    imgSrc: ["https://cdn.rimelight.com"]
-  })
-)
+app.use(security())
 app.use(ratelimit)
 app.use(authMiddleware)
 app.use(construction)

@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto"
 
+import type { SecurityOptions } from "./types"
+
 export interface RimelightSecurityPlugin {
   name: string
   enforce?: "pre" | "post"
@@ -10,34 +12,37 @@ export interface RimelightSecurityPlugin {
   [key: string]: any
 }
 
-export interface SecurityPluginOptions {
+export interface SecurityPluginOptions extends SecurityOptions {
   /**
    * Additional external script/style URLs to fetch and hash for SRI at build time.
    */
   resources?: string[]
 }
 
-const DEFAULT_RESOURCES = [
-  "https://betterlytics.io/analytics.js"
-]
+const DEFAULT_RESOURCES = ["https://betterlytics.io/analytics.js"]
 
 function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
-  const hash = createHash("sha384").update(buffer as any).digest("base64")
+  const hash = createHash("sha384")
+    .update(buffer as any)
+    .digest("base64")
   return `sha384-${hash}`
 }
 
 /**
- * Pure Vite Security & SRI Plugin.
- * 1. Fetches and hashes external 3rd-party scripts/styles at build time.
- * 2. Emits SRI hashes for locally bundled JS/CSS chunks (Nuxt-security style).
- * 3. Exposes virtual:sri-manifest with a unified URL -> hash mapping.
+ * Pure Vite Security & SRI Plugin. 1. Accepts framework-agnostic security options (domain, imgSrc,
+ * etc.) and exposes virtual:rimelight-security-config. 2. Fetches and hashes external 3rd-party
+ * scripts/styles at build time. 3. Emits SRI hashes for locally bundled JS/CSS chunks
+ * (Nuxt-security style). 4. Exposes virtual:sri-manifest with a unified URL -> hash mapping.
  */
 export function security(options: SecurityPluginOptions = {}): RimelightSecurityPlugin {
   const sriManifest: Record<string, string> = {}
   const externalUrls = Array.from(new Set([...DEFAULT_RESOURCES, ...(options.resources || [])]))
 
-  const virtualModuleId = "virtual:sri-manifest"
-  const resolvedVirtualModuleId = "\0" + virtualModuleId
+  const sriVirtualId = "virtual:sri-manifest"
+  const resolvedSriVirtualId = "\0" + sriVirtualId
+
+  const configVirtualId = "virtual:rimelight-security-config"
+  const resolvedConfigVirtualId = "\0" + configVirtualId
 
   return {
     name: "vite-plugin-rimelight-security",
@@ -89,13 +94,17 @@ export function security(options: SecurityPluginOptions = {}): RimelightSecurity
     },
 
     resolveId(id: string) {
-      if (id === virtualModuleId) return resolvedVirtualModuleId
+      if (id === sriVirtualId) return resolvedSriVirtualId
+      if (id === configVirtualId) return resolvedConfigVirtualId
       return null
     },
 
     load(id: string) {
-      if (id === resolvedVirtualModuleId) {
+      if (id === resolvedSriVirtualId) {
         return `export const manifest = ${JSON.stringify(sriManifest)};`
+      }
+      if (id === resolvedConfigVirtualId) {
+        return `export const config = ${JSON.stringify(options)};`
       }
       return null
     }

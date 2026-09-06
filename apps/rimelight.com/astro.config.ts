@@ -115,7 +115,10 @@ export default defineConfig({
 
   vite: {
     plugins: [
-      security(),
+      security({
+        domain: "rimelight.com",
+        imgSrc: ["https://cdn.rimelight.com"]
+      }),
       i18n({
         locales: ["en", "pt"],
         defaultLocale: "en",
