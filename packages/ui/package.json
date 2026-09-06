@@ -56,6 +56,7 @@
   },
   "scripts": {
     "build": "vp pack",
+    "prepare": "pnpm run build",
     "prepack": "pnpm run build",
     "astro": "astro",
     "check": "vp check --fix && astro check"
