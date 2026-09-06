@@ -4,8 +4,6 @@ import { db } from "#db"
 import { pages } from "#db/schema"
 import { eq, and, isNull } from "drizzle-orm"
 
-export const prerender = true
-
 function getLocalizedText(val: unknown, locale = "en"): string {
   if (typeof val === "object" && val !== null) {
     const record = val as Record<string, string>
