@@ -85,7 +85,7 @@
   "migrations": [
     {
       "tag": "v2",
-      "new_sqlite_classes": ["ChatRoom"]
+      "new_classes": ["ChatRoom"]
     }
   ],
   "vars": {
