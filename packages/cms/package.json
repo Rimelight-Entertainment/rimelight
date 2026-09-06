@@ -60,7 +60,6 @@
   },
   "scripts": {
     "build": "vp pack",
-    "prepare": "pnpm run build",
     "prepack": "pnpm run build",
     "check": "vp check --fix && astro check"
   },

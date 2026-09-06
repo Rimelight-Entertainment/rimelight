@@ -2,10 +2,9 @@ import en from "./src/translations/en.json"
 import pt from "./src/translations/pt.json"
 import solid from "@astrojs/solid-js"
 import { ui } from "@rimelight/ui"
-import { sri } from "@rimelight/security"
-import { defineSecurity } from "@rimelight/security/config"
+import { security } from "@rimelight/security"
 import cloudflare from "@astrojs/cloudflare"
-import { i18n } from "@rimelight/i18n/plugin"
+import { i18n } from "@rimelight/i18n"
 import { defineConfig, fontProviders } from "astro/config"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import { extractAllMeta } from "./src/docs/extractAll"
@@ -75,11 +74,6 @@ export default defineConfig({
     }
   },
 
-  security: defineSecurity({
-    domain: "rimelight.com",
-    imgSrc: ["https://cdn.rimelight.com"]
-  }),
-
   fonts: [
     {
       provider: fontProviders.fontsource(),
@@ -116,13 +110,12 @@ export default defineConfig({
       include: ["**/solid/**", "**/*.tsx"]
     }),
 
-    sri(),
-
     localDocsIntegration()
   ],
 
   vite: {
     plugins: [
+      security(),
       i18n({
         locales: ["en", "pt"],
         defaultLocale: "en",

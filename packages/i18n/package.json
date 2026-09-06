@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": false,
   "description": "Rimelight Entertainment's Internationalization Package",
   "homepage": "https://rimelight.com/docs",
@@ -50,7 +50,6 @@
   },
   "scripts": {
     "build": "vp pack",
-    "prepare": "pnpm run build",
     "prepack": "pnpm run build",
     "check": "vp check --fix"
   },

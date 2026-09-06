@@ -18,12 +18,23 @@ import {
   initializeI18n
 } from "./runtime"
 import { i18n, rimelightI18n, type RimelightI18nOptions, type RimelightI18nPlugins } from "./plugin"
-import {
-  locales,
-  defaultLocale,
-  prefixDefaultLocale,
-  translations
-} from "virtual:rimelight-i18n-config"
+let locales: string[] = ["en"]
+let defaultLocale: string = "en"
+let prefixDefaultLocale: boolean = true
+let translations: Record<string, any> = {}
+
+try {
+  // @ts-ignore
+  const cfg = await import("virtual:rimelight-i18n-config")
+  if (cfg) {
+    if (cfg.locales) locales = cfg.locales
+    if (cfg.defaultLocale) defaultLocale = cfg.defaultLocale
+    if (cfg.prefixDefaultLocale !== undefined) prefixDefaultLocale = cfg.prefixDefaultLocale
+    if (cfg.translations) translations = cfg.translations
+  }
+} catch {
+  // Virtual module is resolved inside Vite during app bundle, not in Node config evaluation
+}
 
 // Auto-initialize runtime state from Vite plugin config
 if (translations && Object.keys(translations).length > 0) {

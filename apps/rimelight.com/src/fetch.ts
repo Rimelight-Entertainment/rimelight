@@ -1,9 +1,8 @@
 import { Hono } from "hono"
-import { security } from "#api/middleware/security"
+import { security, devOnly } from "@rimelight/security/middleware"
 import { ratelimit } from "#api/middleware/ratelimit"
 import { authMiddleware } from "#api/middleware/auth"
 import { construction } from "#api/middleware/construction"
-import { devOnly } from "@rimelight/security/middleware"
 import api from "#api"
 import { i18n } from "@rimelight/i18n/hono"
 import { getRelativeLocaleUrl } from "@rimelight/i18n"
@@ -12,7 +11,12 @@ import { astro } from "astro/hono"
 const app = new Hono()
 
 // Middlewares
-app.use(security)
+app.use(
+  security({
+    domain: "rimelight.com",
+    imgSrc: ["https://cdn.rimelight.com"]
+  })
+)
 app.use(ratelimit)
 app.use(authMiddleware)
 app.use(construction)

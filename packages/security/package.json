@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/security",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": false,
   "description": "Rimelight Entertainment's Security Package",
   "homepage": "https://rimelight.com/docs",
@@ -22,8 +22,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/integrations/index.d.mts",
-      "import": "./dist/integrations/index.mjs"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./middleware": {
       "types": "./dist/middleware/index.d.mts",
@@ -40,7 +40,6 @@
   },
   "scripts": {
     "build": "vp pack",
-    "prepare": "pnpm run build",
     "prepack": "pnpm run build",
     "check": "vp check --fix && astro check"
   },
