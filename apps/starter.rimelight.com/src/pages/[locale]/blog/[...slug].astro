@@ -6,9 +6,10 @@ import { auth } from "#auth/auth"
 import { db } from "#db"
 import { pages } from "#db/schema"
 import { eq, and, isNull } from "drizzle-orm"
+import { getLocale } from "@rimelight/i18n"
 
 const slug = Astro.params.slug || ""
-const activeLocale = Astro.currentLocale ?? "en"
+const activeLocale = getLocale()
 
 const session = await auth.getSession(Astro.request)
 const currentUser = session

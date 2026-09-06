@@ -2,13 +2,13 @@
 import DashboardLayout from '#layouts/DashboardLayout.astro';
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { RimelightEditorLayout, RimelightPropertiesPanel } from "@rimelight/cms/client/components";
-import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 import { db } from "#db"
 import { pages } from "#db/schema"
 import { eq, and, isNull } from "drizzle-orm"
 import { auth } from "#auth/auth";
 
-const currentLocale = Astro.currentLocale ?? "en"
+const currentLocale = getLocale()
 const { slug } = Astro.params;
 const lookupSlug = `franchises/grand-tale/wiki/${slug}`;
 

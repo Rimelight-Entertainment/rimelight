@@ -5,7 +5,7 @@ import { authMiddleware } from "#api/middleware/auth"
 import { construction } from "#api/middleware/construction"
 import { devOnly } from "@rimelight/security/middleware"
 import api from "#api"
-import { i18n } from "#api/middleware/i18n"
+import { i18n } from "@rimelight/i18n/hono"
 import { astro } from "astro/hono"
 
 const app = new Hono()
@@ -21,7 +21,7 @@ app.use(devOnly)
 app.route("/api", api)
 
 // Localization & Astro Pipeline
-app.use(i18n)
+app.use(i18n())
 app.use(astro())
 
 export default app

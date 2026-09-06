@@ -10,9 +10,7 @@ import RLAShortcuts from "@rimelight/ui/components/shortcuts/RLAShortcuts.astro"
 import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
 import { siteConfig } from '#config/site.config';
 import { Font } from 'astro:assets';
-import { currentLocale } from '@rimelight/i18n';
-
-currentLocale.set(Astro.currentLocale ?? 'en');
+import { getHtmlLang, getOgLocale, getLanguageAlternates } from '@rimelight/i18n';
 
 interface AppLayoutProps {
 	title: string;
@@ -26,31 +24,35 @@ interface AppLayoutProps {
 	ogImageAlt?: string;
 }
 
-const { title, description, noindex, is404, minimal = false, robots, languageAlternates, ogImageSrc, ogImageAlt } = Astro.props as AppLayoutProps;
+const {
+	title,
+	description,
+	noindex,
+	is404,
+	minimal = false,
+	robots,
+	languageAlternates = getLanguageAlternates(Astro.url.pathname, siteConfig.url),
+	ogImageSrc,
+	ogImageAlt
+} = Astro.props as AppLayoutProps;
 
-const localeMap: Record<string, string> = {
-	en: 'en_US',
-	pt: 'pt_BR',
-	es: 'es_ES',
-};
-const ogLocale = localeMap[Astro.currentLocale || 'en'] || 'en_US';
-const ogImageUrl = (() => {
-	if (ogImageSrc) return new URL(ogImageSrc, Astro.site).toString();
-	const params = new URLSearchParams({ title, description });
-	return new URL(`/open-graph/page.png?${params.toString()}`, Astro.site).toString();
-})();
+const ogImageUrl = ogImageSrc
+	? new URL(ogImageSrc, Astro.site).toString()
+	: new URL(`/open-graph/page.png?${new URLSearchParams({ title, description })}`, Astro.site).toString();
 ---
 
 <!doctype html>
-<html lang={Astro.currentLocale || 'en'}>
+<html lang={getHtmlLang()}>
   <head>
+
     <SecurityHead />
     <SEOHead
       title={title}
       description={description}
       config={siteConfig}
-      ogLocale={ogLocale}
+      ogLocale={getOgLocale()}
       rssFeed={{ href: '/rss.xml', title: siteConfig.name }}
+
       noindex={noindex}
       is404={is404}
       robots={robots}

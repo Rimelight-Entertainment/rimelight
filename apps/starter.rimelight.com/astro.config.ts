@@ -5,7 +5,7 @@ import { ui } from "@rimelight/ui"
 import { sri } from "@rimelight/security"
 import { defineSecurity } from "@rimelight/security/config"
 import cloudflare from "@astrojs/cloudflare"
-import { rimelightI18n } from "@rimelight/i18n/integration"
+import { i18n } from "@rimelight/i18n/plugin"
 import { rimelightCms } from "@rimelight/cms/integration"
 import { r2 } from "@rimelight/cms/storage"
 import { defineConfig, fontProviders } from "astro/config"
@@ -36,12 +36,6 @@ export default defineConfig({
     domain: "starter.rimelight.com",
     imgSrc: ["https://cdn.rimelight.com"]
   }),
-
-  i18n: {
-    locales: ["en", "pt"],
-    defaultLocale: "en",
-    routing: "manual"
-  },
 
   fonts: [
     {
@@ -78,10 +72,6 @@ export default defineConfig({
     solid({
       include: ["**/solid/**", "**/*.tsx"]
     }),
-    rimelightI18n({
-      translations: { en, pt },
-      kvBinding: "starter-dot-rimelight-dot-com_translations"
-    }),
     rimelightCms({
       storage: r2({
         binding: "BLOB"
@@ -93,6 +83,13 @@ export default defineConfig({
 
   vite: {
     plugins: [
+      i18n({
+        locales: ["en", "pt"],
+        defaultLocale: "en",
+        prefixDefaultLocale: true,
+        translations: { en, pt },
+        kvBinding: "starter-dot-rimelight-dot-com_translations"
+      }),
       ui({
         logos: {
           logomark: {

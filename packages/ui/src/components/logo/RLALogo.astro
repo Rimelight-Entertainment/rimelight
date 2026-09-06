@@ -11,20 +11,6 @@ const {
   ...rest
 } = Astro.props as LogoProps;
 
-let resolvedHref = href;
-if (href === "/") {
-  try {
-    const { getRelativeLocaleUrl } = await import("astro:i18n");
-    resolvedHref = Astro.currentLocale
-      ? getRelativeLocaleUrl(Astro.currentLocale, "/")
-      : getRelativeLocaleUrl("/");
-  } catch {
-    if (Astro.currentLocale) {
-      resolvedHref = `/${Astro.currentLocale}/`;
-    }
-  }
-}
-
 const classes = logoTheme(Astro.props);
 
 let logoSrc: string | null = null;
@@ -68,7 +54,7 @@ const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
 
 <a
   class={classes.root}
-  href={resolvedHref}
+  href={href}
   aria-label={alt || variant}
   data-slot="root"
   {...rest}

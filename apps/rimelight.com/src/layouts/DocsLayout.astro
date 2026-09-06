@@ -8,7 +8,7 @@ import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
 import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
-import { t } from "@rimelight/i18n";
+import { t, getLocale } from "@rimelight/i18n";
 import AgentDirective from "@rimelight/seo/components/AgentDirective.astro";
 
 interface Props {
@@ -37,7 +37,7 @@ const {
   includeVersionInUrl = false
 } = Astro.props;
 
-const locale = Astro.currentLocale ?? "en";
+const locale = getLocale();
 const currentPath = Astro.url.pathname;
 
 const { items: sidebarItems, scopes, activeScope } = await getDocsSidebar(

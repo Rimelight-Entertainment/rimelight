@@ -1,9 +1,9 @@
 ---
 import WikiLayout from '#layouts/WikiLayout.astro';
-import { getRelativeLocaleUrl } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 
 const { category } = Astro.params;
-const activeLocale = Astro.currentLocale ?? "en";
+const activeLocale = getLocale();
 
 const validCategories = ['timeline', 'characters', 'locations', 'species', 'objects', 'groups'];
 if (!category || !validCategories.includes(category)) {

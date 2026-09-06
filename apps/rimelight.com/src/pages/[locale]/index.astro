@@ -1,7 +1,7 @@
 ---
 import AppLayout from "#layouts/AppLayout.astro";
 import { siteConfig } from "#config/site.config";
-import { getRelativeLocaleUrl, t } from "@rimelight/i18n";
+import { getRelativeLocaleUrl, t, getLocale } from "@rimelight/i18n";
 import { db } from "#db";
 import { pages } from "#db/schema";
 import { and, isNull, desc, sql } from "drizzle-orm";
@@ -21,7 +21,7 @@ const NewsBg = "https://cdn.rimelight.com/Images/placeholder_home_news_backgroun
 const CtaBg = "https://cdn.rimelight.com/Images/placeholder_home_cta_background.jpg";
 
 // Fetch the 3 latest blog posts from CMS
-const activeLocale = Astro.currentLocale ?? "en";
+const activeLocale = getLocale();
 
 function getLocalizedText(val: unknown, locale: string): string {
   if (typeof val === "object" && val !== null) {

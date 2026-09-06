@@ -1,5 +1,6 @@
 ---
 import BlankLayout from "#layouts/BlankLayout.astro"
+import { getLocale } from "@rimelight/i18n"
 
 const links = [
   ["verification", "Verify Email"],
@@ -7,7 +8,7 @@ const links = [
   ["signup-notification", "Sign-up Notification"],
   ["contact", "Contact Form"]
 ]
-const locale = Astro.currentLocale ?? Astro.params.locale ?? "en"
+const locale = getLocale()
 ---
 
 <BlankLayout title="Email Templates Preview" description="Preview Rimelight email templates">

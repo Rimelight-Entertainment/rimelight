@@ -14,6 +14,7 @@ import type { ResolvedSidebarItem } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/cms";
 import AgentDirective from "@rimelight/seo/components/AgentDirective.astro";
+import { getLocale } from "@rimelight/i18n";
 
 function normalizeBadge(badge: any) {
   if (!badge) return null
@@ -88,7 +89,7 @@ const {
   includeVersionInUrl = false
 } = Astro.props;
 
-const locale = Astro.currentLocale ?? "en";
+const locale = getLocale();
 const currentPath = Astro.url.pathname;
 
 const { items: sidebarItems, scopes, activeScope } = await getDocsSidebar(

@@ -42,3 +42,26 @@ export function extractKeys(source: ComponentsJSON): string[] {
   }
   return keys
 }
+
+/**
+ * Compares a target translation dictionary against a base/source translation dictionary, returning
+ * any missing component keys.
+ */
+export function findMissingKeys(
+  base: Record<string, Record<string, any>>,
+  target: Record<string, Record<string, any>>
+): string[] {
+  const missing: string[] = []
+  for (const [component, keys] of Object.entries(base)) {
+    if (!target[component] || typeof target[component] !== "object") {
+      missing.push(component)
+      continue
+    }
+    for (const key of Object.keys(keys)) {
+      if (target[component]![key] === undefined) {
+        missing.push(`${component}.${key}`)
+      }
+    }
+  }
+  return missing
+}

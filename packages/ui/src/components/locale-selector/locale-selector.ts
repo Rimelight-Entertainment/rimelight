@@ -4,13 +4,8 @@ export interface LocaleItem {
   /**
    * The URL to navigate to when this locale is selected.
    *
-   * Supply this to make the component fully routing-agnostic: it will use `href` directly and will
-   * not call any Astro i18n APIs. The caller is responsible for constructing URLs using whatever
-   * strategy their project uses — `getRelativeLocaleUrl`, `@rimelight/i18n`, a custom helper, or a
-   * plain string.
-   *
-   * When omitted the component falls back to computing the URL via Astro's built-in
-   * `getRelativeLocaleUrl` helper (requires Astro i18n to be configured).
+   * Supply this to make the component fully routing-agnostic: it will use `href` directly. When
+   * omitted, the component falls back to updating the first URL segment to match the locale code.
    */
   href?: string
 }

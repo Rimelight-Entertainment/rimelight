@@ -4,8 +4,9 @@ import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
 import { db } from "#db"
 import { pages } from "#db/schema"
 import { eq, and, isNull } from "drizzle-orm"
+import { getLocale } from "@rimelight/i18n"
 
-const activeLocale = Astro.currentLocale ?? "en"
+const activeLocale = getLocale()
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/franchises/grand-tale/wiki");

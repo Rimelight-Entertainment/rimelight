@@ -252,28 +252,7 @@ export async function useI18nAsync(
 /**
  * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")`).
  */
-export function t(key: string, params?: Record<string, any>): string
-export function t(
-  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
-  key: string,
-  params?: Record<string, any>
-): string
-export function t(arg1: any, arg2?: any, arg3?: any): string {
-  let key: string
-  let params: Record<string, any> | undefined
-
-  if (typeof arg1 === "string") {
-    key = arg1
-    params = arg2
-  } else {
-    const locale = arg1?.currentLocale || arg1?.params?.locale
-    if (locale) {
-      currentLocale.set(locale)
-    }
-    key = arg2
-    params = arg3
-  }
-
+export function t(key: string, params?: Record<string, any>): string {
   const dotIndex = key.indexOf(".")
   if (dotIndex === -1) {
     return key
@@ -287,7 +266,14 @@ export function t(arg1: any, arg2?: any, arg3?: any): string {
     getCachedComponent(baseLocaleDefault, componentName) ??
     {}
 
-  const value = componentDict[keyName] ?? key
+  let value = componentDict[keyName] ?? key
+
+  // Pluralization support if count parameter is provided and translation value is a plural object
+  if (params && typeof params.count === "number" && typeof value === "object" && value !== null) {
+    const pluralCategory = getPluralCategory(params.count, activeLocale)
+    value =
+      (value as Record<string, any>)[pluralCategory] ?? (value as Record<string, any>).other ?? key
+  }
 
   if (typeof value === "function") {
     return (value as Function)(params)
@@ -297,7 +283,15 @@ export function t(arg1: any, arg2?: any, arg3?: any): string {
     return value.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`))
   }
 
-  return value
+  return typeof value === "string" ? value : String(value)
+}
+
+/**
+ * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale
+ * using the native browser Intl.PluralRules API.
+ */
+export function getPluralCategory(count: number, locale: string = "en"): Intl.LDMLPluralRule {
+  return new Intl.PluralRules(locale).select(count)
 }
 
 /**

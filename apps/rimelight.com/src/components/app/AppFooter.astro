@@ -6,7 +6,7 @@ import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 import RLALinkGroup from "@rimelight/ui/components/link-group/RLALinkGroup.astro";
 import RLAThemeSelector from "@rimelight/ui/components/theme-selector/RLAThemeSelector.astro";
 import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
 
 const columns = [
   {
@@ -102,7 +102,7 @@ const targetLanguages = [
   <div slot="right" class="flex flex-col items-center lg:items-end flex-1 justify-between gap-sm">
     <div class="flex flex-col gap-sm items-center lg:items-end">
       <RLAThemeSelector />
-      <RLALocaleSelector locales={targetLanguages} currentLocale={Astro.currentLocale} />
+      <RLALocaleSelector locales={targetLanguages} currentLocale={getLocale()} />
     </div>
     <div class="flex flex-row flex-wrap gap-sm justify-center lg:justify-end items-center lg:items-end">
       {socials.map((social) => (

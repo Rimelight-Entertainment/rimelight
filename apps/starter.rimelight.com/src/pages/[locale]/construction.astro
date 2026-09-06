@@ -3,7 +3,7 @@ import ConstructionLayout from '#layouts/ConstructionLayout.astro'
 import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro"
 import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
 import ConstructionSignIn from '#components/auth/ConstructionSignIn.astro'
-import { t, getRelativeLocaleUrl } from '@rimelight/i18n'
+import { t, getRelativeLocaleUrl, getLocale } from '@rimelight/i18n'
 import RLAContainer from "@rimelight/ui/components/container/RLAContainer.astro";
 
 const targetLanguages = [
@@ -31,7 +31,7 @@ const targetLanguages = [
       />
 
       <div class="flex flex-col gap-md">
-        <RLALocaleSelector locales={targetLanguages} currentLocale={Astro.currentLocale} />
+        <RLALocaleSelector locales={targetLanguages} currentLocale={getLocale()} />
         <span class="text-inverted text-sm">&copy; {new Date().getFullYear()} Rimelight Entertainment</span>
       </div>
     </RLAContainer>

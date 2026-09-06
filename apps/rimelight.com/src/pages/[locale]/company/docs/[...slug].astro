@@ -10,6 +10,7 @@ import { generateThemeCode } from "#docs/utils"
 import ComponentShowcase from "#components/ComponentShowcase.astro"
 import BlockRenderer from "@rimelight/cms/astro/BlockRenderer.astro"
 import { rimelightCustomBlocks } from "#components/blocks"
+import { getLocale } from "@rimelight/i18n"
 
 // Build component registry from all UI components
 const componentModules: Record<string, any> = import.meta.glob("../../../../../../../packages/ui/src/components/*/RLA*.astro", { eager: true })
@@ -100,7 +101,7 @@ function parseComponentTag(html: string): { tag: string; props: Record<string, a
   return parseTag(trimmed)
 }
 
-const activeLocale = Astro.currentLocale ?? "en"
+const activeLocale = getLocale()
 const { slug } = Astro.params
 
 // 1. Discover versions from database

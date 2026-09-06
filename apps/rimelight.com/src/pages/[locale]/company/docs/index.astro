@@ -6,8 +6,9 @@ import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro"
 import { db } from "#db"
 import { pages } from "#db/schema"
 import { eq, and, isNull, inArray, sql } from "drizzle-orm"
+import { getLocale } from "@rimelight/i18n"
 
-const activeLocale = Astro.currentLocale ?? "en"
+const activeLocale = getLocale()
 
 // 1. Discover versions from database
 let allDocPages: any[] = []

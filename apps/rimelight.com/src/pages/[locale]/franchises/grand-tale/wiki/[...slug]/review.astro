@@ -4,8 +4,9 @@ import PageRenderer from "@rimelight/cms/astro/PageRenderer.astro";
 import { db } from "#db"
 import { pageVersions } from "#db/schema"
 import { eq } from "drizzle-orm"
+import { getLocale } from "@rimelight/i18n"
 
-const activeLocale = Astro.currentLocale ?? "en"
+const activeLocale = getLocale()
 
 const versionId = Astro.url.searchParams.get('version') || '';
 

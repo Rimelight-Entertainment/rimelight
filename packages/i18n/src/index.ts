@@ -1,90 +1,174 @@
 import type { TranslationLoader } from "@nanostores/i18n"
-import type { ComponentsJSON, KVNamespaceBinding } from "./types"
+import type {
+  ComponentsJSON,
+  KVNamespaceBinding,
+  TranslationKey,
+  CustomTranslations,
+  NestedTranslationKeys
+} from "./types"
 import {
   useI18n as baseUseI18n,
   useI18nAsync as baseUseI18nAsync,
-  t,
+  t as baseT,
   currentLocale,
   useFormat,
   clearCache,
   getI18nInstance,
-  getFormatterInstance
-} from "@rimelight/i18n:runtime"
-import type { Translations } from "@nanostores/i18n"
+  getFormatterInstance,
+  initializeI18n
+} from "./runtime"
+import { i18n, rimelightI18n, type RimelightI18nOptions, type RimelightI18nPlugins } from "./plugin"
+import {
+  locales,
+  defaultLocale,
+  prefixDefaultLocale,
+  translations
+} from "virtual:rimelight-i18n-config"
 
-export { t, currentLocale, useFormat, clearCache, getI18nInstance, getFormatterInstance }
-
-export interface ComponentMessages {
-  [key: string]: string
+// Auto-initialize runtime state from Vite plugin config
+if (translations && Object.keys(translations).length > 0) {
+  initializeI18n({
+    defaultLocale: defaultLocale || "en",
+    translations
+  })
 }
 
-export function useI18n(componentName: string): ComponentMessages
-export function useI18n<Body extends Translations>(
-  componentName: string,
-  baseTranslations: Body
-): ComponentMessages & Body
-export function useI18n(
-  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
-  componentName: string
-): ComponentMessages
-export function useI18n<Body extends Translations>(
-  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
-  componentName: string,
-  baseTranslations: Body
-): ComponentMessages & Body
-export function useI18n(arg1: any, arg2?: any, arg3?: any): any {
-  if (typeof arg1 === "string") {
-    return baseUseI18n(arg1, arg2)
-  } else {
-    const locale = arg1?.currentLocale || arg1?.params?.locale
-    if (locale) {
-      currentLocale.set(locale)
-    }
-    return baseUseI18n(arg2, arg3)
-  }
+export {
+  currentLocale,
+  useFormat,
+  clearCache,
+  getI18nInstance,
+  getFormatterInstance,
+  initializeI18n,
+  locales,
+  defaultLocale,
+  prefixDefaultLocale,
+  i18n,
+  rimelightI18n
+}
+export type { RimelightI18nOptions, RimelightI18nPlugins }
+export type { TranslationKey, CustomTranslations, NestedTranslationKeys }
+
+/**
+ * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")`).
+ * When augmented via CustomTranslations, keys are strictly type-checked and autocompleted.
+ */
+export function t<K extends string = TranslationKey>(
+  key: K | TranslationKey,
+  params?: Record<string, any>
+): string {
+  return baseT(key, params)
 }
 
-export function useI18nAsync(componentName: string): Promise<Record<string, string>>
-export function useI18nAsync<Body extends Translations>(
-  componentName: string,
-  baseTranslations: Body
-): Promise<Record<string, string> & Body>
-export function useI18nAsync(
-  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
-  componentName: string
-): Promise<Record<string, string>>
-export function useI18nAsync<Body extends Translations>(
-  astro: { currentLocale?: string | undefined; params?: Record<string, any> } | undefined | null,
-  componentName: string,
-  baseTranslations: Body
-): Promise<Record<string, string> & Body>
-export function useI18nAsync(arg1: any, arg2?: any, arg3?: any): any {
-  if (typeof arg1 === "string") {
-    return baseUseI18nAsync(arg1, arg2)
-  } else {
-    const locale = arg1?.currentLocale || arg1?.params?.locale
-    if (locale) {
-      currentLocale.set(locale)
-    }
-    return baseUseI18nAsync(arg2, arg3)
-  }
-}
-
-import { getRelativeLocaleUrl as astroGetRelativeLocaleUrl } from "astro:i18n"
+export { baseUseI18n as useI18n, baseUseI18nAsync as useI18nAsync }
 
 export function getLocale(): string {
-  return currentLocale.get() || "en"
+  return currentLocale.get() || defaultLocale || "en"
+}
+
+/**
+ * Returns a standard BCP 47 / RFC 5646 language tag suitable for HTML `<html lang="...">`. Maps
+ * 2-letter codes like 'en' to 'en-US', 'pt' to 'pt-BR', 'es' to 'es-ES', etc.
+ */
+export function getHtmlLang(): string {
+  const loc = getLocale()
+  const langMap: Record<string, string> = {
+    en: "en-US",
+    pt: "pt-BR",
+    es: "es-ES"
+  }
+  return langMap[loc] || loc
+}
+
+/**
+ * Returns an OpenGraph-compliant locale tag (e.g. 'en_US', 'pt_BR', 'es_ES').
+ */
+export function getOgLocale(): string {
+  const loc = getLocale()
+  const ogMap: Record<string, string> = {
+    en: "en_US",
+    pt: "pt_BR",
+    es: "es_ES"
+  }
+  return ogMap[loc] || `${loc}_${loc.toUpperCase()}`
 }
 
 export function getRelativeLocaleUrl(path: string): string
 export function getRelativeLocaleUrl(locale: string, path: string): string
 export function getRelativeLocaleUrl(arg1: string, arg2?: string): string {
+  let targetLocale: string
+  let targetPath: string
+
   if (arg2 !== undefined) {
-    return astroGetRelativeLocaleUrl(arg1, arg2)
+    targetLocale = arg1
+    targetPath = arg2
   } else {
-    const locale = getLocale()
-    return astroGetRelativeLocaleUrl(locale, arg1)
+    targetLocale = getLocale()
+    targetPath = arg1
   }
+
+  // Handle external / absolute URLs or hash / mailto / tel directly
+  if (
+    /^(?:[a-z]+:|\/\/|#)/i.test(targetPath) ||
+    targetPath.startsWith("mailto:") ||
+    targetPath.startsWith("tel:")
+  ) {
+    return targetPath
+  }
+
+  const [pathWithoutQueryAndHash, queryAndHash] = (() => {
+    const match = targetPath.match(/^([^?#]*)([?#].*)?$/)
+    return [match?.[1] ?? "", match?.[2] ?? ""]
+  })()
+
+  const rawCleanPath = pathWithoutQueryAndHash.replace(/^\/+/, "")
+  const segments = rawCleanPath ? rawCleanPath.split("/") : []
+
+  // If the path already begins with a known locale (e.g. /en/about), strip it
+  if (segments.length > 0 && locales.includes(segments[0]!)) {
+    segments.shift()
+  }
+
+  const cleanPath = segments.join("/")
+  const shouldPrefix = prefixDefaultLocale || targetLocale !== defaultLocale
+  const prefix = shouldPrefix ? `/${targetLocale}` : ""
+
+  if (!cleanPath) {
+    // Return root path with trailing slash if prefix is present: e.g. /en/
+    return `${prefix ? `${prefix}/` : "/"}${queryAndHash}`
+  }
+
+  const hasTrailingSlash = pathWithoutQueryAndHash.endsWith("/")
+  const formattedPath = `${prefix}/${cleanPath}${hasTrailingSlash ? "/" : ""}`
+  return `${formattedPath}${queryAndHash}`
+}
+
+export function getRelativeLocaleUrlList(path: string = "/"): string[] {
+  return locales.map((locale) => getRelativeLocaleUrl(locale, path))
+}
+
+export interface LanguageAlternate {
+  hreflang: string
+  href: string
+}
+
+/**
+ * Generates an array of hreflang alternates for SEO tags (<link rel="alternate" hreflang="...">).
+ * Automatically includes all supported locales and 'x-default'.
+ */
+export function getLanguageAlternates(pathname: string, siteUrl: string = ""): LanguageAlternate[] {
+  const normalizedSiteUrl = siteUrl.replace(/\/+$/, "")
+  const alternates: LanguageAlternate[] = locales.map((loc) => ({
+    hreflang: loc,
+    href: `${normalizedSiteUrl}${getRelativeLocaleUrl(loc, pathname)}`
+  }))
+
+  alternates.push({
+    hreflang: "x-default",
+    href: `${normalizedSiteUrl}${getRelativeLocaleUrl(defaultLocale, pathname)}`
+  })
+
+  return alternates
 }
 
 let kvBinding: KVNamespaceBinding | null = null
@@ -134,10 +218,4 @@ export function createTranslationLoader(
   }
 }
 
-/**
- * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale
- * using the native browser Intl.PluralRules API.
- */
-export function getPluralCategory(count: number, locale: string = "en"): Intl.LDMLPluralRule {
-  return new Intl.PluralRules(locale).select(count)
-}
+export { getPluralCategory } from "./runtime"

@@ -3,7 +3,7 @@ import ConstructionLayout from '#layouts/ConstructionLayout.astro'
 import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro"
 import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
 import ConstructionSignIn from '#components/auth/ConstructionSignIn.astro'
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n"
+import { t, getRelativeLocaleUrl, getLocale } from "@rimelight/i18n"
 
 const targetLanguages = [
   { code: 'en', label: 'English', href: getRelativeLocaleUrl('en', Astro.url.pathname.replace(/^\/[^/]+/, '') || '/') },
@@ -32,7 +32,7 @@ const targetLanguages = [
       />
 
       <div class="flex flex-col items-center gap-2 text-xs text-neutral-500">
-        <RLALocaleSelector locales={targetLanguages} currentLocale={Astro.currentLocale} />
+        <RLALocaleSelector locales={targetLanguages} currentLocale={getLocale()} />
         <span>&copy; {new Date().getFullYear()} Rimelight Entertainment</span>
       </div>
     </div>
