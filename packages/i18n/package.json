@@ -24,13 +24,13 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
-    "./integration": {
-      "types": "./dist/integration.d.mts",
-      "import": "./dist/integration.mjs"
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
     },
-    "./middleware": {
-      "types": "./dist/middleware.d.mts",
-      "import": "./dist/middleware.mjs"
+    "./hono": {
+      "types": "./dist/hono.d.mts",
+      "import": "./dist/hono.mjs"
     },
     "./runtime": {
       "types": "./dist/runtime.d.mts",
@@ -59,16 +59,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "astro": "7.3.1",
     "typescript": "6.0.3"
-  },
-  "peerDependencies": {
-    "astro": ">=7.0.0"
-  },
-  "peerDependenciesMeta": {
-    "astro": {
-      "optional": true
-    }
   },
   "engines": {
     "node": ">=26.7.0"
