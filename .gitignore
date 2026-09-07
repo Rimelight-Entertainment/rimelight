@@ -14,17 +14,11 @@ node_modules/
 .astro/
 
 # Environment Variables
-*.env
-*.env.*
+*.env*
 !.env.example
 
 # Outputs
 dist/
-
-# Drizzle
-server/db/drizzle/*.json
-server/db/drizzle/_journal.json
-server/db/drizzle/*_draft.sql
 
 # Testing
 reports/
@@ -37,6 +31,10 @@ logs/
 *.log*
 *.cpuprofile
 
+# Misc
+*.local
+*.tsbuildinfo
+
 # Cloudflare
 .wrangler/
 .dev.vars*
@@ -44,6 +42,7 @@ logs/
 worker-configuration.d.ts
 .cache/
 
-# Misc
-*.local
-*.tsbuildinfo
+# Drizzle
+server/db/drizzle/*.json
+server/db/drizzle/_journal.json
+server/db/drizzle/*_draft.sql
