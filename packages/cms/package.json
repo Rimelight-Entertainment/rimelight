@@ -43,6 +43,11 @@
     },
     "./core/*": "./src/core/*",
     "./astro/*": "./src/astro/*",
+    "./cron/scheduled": {
+      "types": "./src/cron/scheduled.ts",
+      "import": "./src/cron/scheduled.ts"
+    },
+    "./cron/*": "./src/cron/*",
     "./client/styles/*": "./src/client/styles/*",
     "./client/components": "./src/client/components/index.ts",
     "./client/components/*.tsx": "./src/client/components/*.tsx",

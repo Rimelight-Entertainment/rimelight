@@ -1,6 +1,6 @@
 import { handle } from "@astrojs/cloudflare/handler"
 import { DurableObject } from "cloudflare:workers"
-import { handleCmsCron } from "@rimelight/cms"
+import { handleCmsCron } from "@rimelight/cms/cron/scheduled"
 import { db } from "#db"
 
 interface SessionAttachment {
