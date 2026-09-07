@@ -121,3 +121,46 @@
     });
   })();
 </script>
+
+<!-- Development CSP Violation Reporter -->
+{import.meta.env.DEV && (
+  <script>
+    (function() {
+      // Ignore known internal dev-only tooling noise
+      function isDevInternal(e: SecurityPolicyViolationEvent): boolean {
+        const file = e.sourceFile || "";
+        const sample = e.sample || "";
+        const blockedUri = e.blockedURI || "";
+
+        if (file.includes("dev-toolbar") || file.includes("toolbar-") || file.includes("astro_runtime_client")) return true;
+        if (file.includes("vite/client") || file.includes("@vite/client") || file.includes("/@fs/") || file.includes("/@id/")) return true;
+        if (file.includes("node_modules/.vite") || file.includes("client:")) return true;
+        if (blockedUri.startsWith("ws://") || blockedUri.startsWith("wss://")) return true;
+        if (sample.includes("--astro-dev-toolbar") || sample.includes("astro-dev-toolbar")) return true;
+        return false;
+      }
+
+      const reported = new Set<string>();
+
+      window.addEventListener("securitypolicyviolation", function(e) {
+        if (e.disposition !== "report") return; // Only notify on report-only (prod violation simulation)
+        if (isDevInternal(e)) return;
+
+        const key = `${e.effectiveDirective}:${e.blockedURI || e.sample || ""}`;
+        if (reported.has(key)) return;
+        reported.add(key);
+
+        console.warn(
+          `%c[Rimelight Security]%c Allowed in DEV, but will fail in PRODUCTION:\n` +
+          `Directive: ${e.effectiveDirective}\n` +
+          (e.blockedURI ? `Blocked URI: ${e.blockedURI}\n` : "") +
+          (e.sourceFile ? `Source: ${e.sourceFile}:${e.lineNumber || 0}\n` : "") +
+          (e.sample ? `Sample: ${e.sample.slice(0, 100)}\n` : "") +
+          `Fix: Add to imgSrc, scriptResources, styleResources or use nonces in astro.config.ts`,
+          "background: #e11d48; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;",
+          "color: inherit; font-weight: normal;"
+        );
+      });
+    })();
+  </script>
+)}

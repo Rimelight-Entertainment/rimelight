@@ -117,7 +117,12 @@ export default defineConfig({
     plugins: [
       security({
         domain: "rimelight.com",
-        imgSrc: ["https://cdn.rimelight.com"]
+        imgSrc: [
+          "https://cdn.rimelight.com",
+          "https://s.gravatar.com",
+          "https://cdn.auth0.com",
+          "https://i1.wp.com"
+        ]
       }),
       i18n({
         locales: ["en", "pt"],

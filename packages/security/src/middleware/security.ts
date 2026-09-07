@@ -23,9 +23,19 @@ function applySecurityHeaders(
   response: Response,
   options: SecurityOptions,
   origin?: string,
-  nonce?: string
+  nonce?: string,
+  reportOnlyOptions?: SecurityOptions
 ): Response {
   const cspHeader = buildCspHeader(options, nonce)
+  const reportOnlyHeader = reportOnlyOptions
+    ? buildCspHeader(
+        {
+          ...reportOnlyOptions,
+          directives: { ...reportOnlyOptions.directives, "upgrade-insecure-requests": false }
+        },
+        nonce
+      )
+    : undefined
 
   const headers = new Headers(response.headers)
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
@@ -38,6 +48,10 @@ function applySecurityHeaders(
 
   if (cspHeader) {
     headers.set("Content-Security-Policy", cspHeader)
+  }
+
+  if (reportOnlyHeader) {
+    headers.set("Content-Security-Policy-Report-Only", reportOnlyHeader)
   }
 
   if (origin) {
@@ -123,12 +137,43 @@ export function security(options: SecurityOptions = {}) {
       return c.res
     }
 
-    // In dev mode, keep it simple without full CSP restrictions
+    // In dev mode, keep active CSP relaxed for Vite/Toolbar.
+    // In Report-Only, enforce strict prod external origins (img-src, connect-src, frame-src)
+    // while permitting dev-internal inline styles/scripts so the browser doesn't spam for Vite HMR.
     if (isDev) {
+      const devDirectives: Record<string, string[] | boolean> = {
+        ...mergedOptions.directives,
+        "default-src": false,
+        "script-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "https:",
+          "http:",
+          "ws:",
+          "wss:"
+        ],
+        "style-src": ["'self'", "'unsafe-inline'", "https:", "http:"],
+        "connect-src": ["'self'", "ws:", "wss:", "http:", "https:"],
+        "img-src": ["'self'", "data:", "blob:", "https:", "http:"]
+      }
+
+      // Prod simulation: check strict domain / asset permissions without tripping on Vite HMR inline CSS
+      const reportOnlySimulation: SecurityOptions = {
+        ...mergedOptions,
+        directives: {
+          ...mergedOptions.directives,
+          "style-src": ["'self'", "'unsafe-inline'"],
+          "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
+        }
+      }
+
       c.res = applySecurityHeaders(
         response,
-        { ...mergedOptions, directives: { ...mergedOptions.directives, "default-src": false } },
-        origin
+        { ...mergedOptions, directives: devDirectives },
+        origin,
+        undefined,
+        reportOnlySimulation
       )
       return c.res
     }
