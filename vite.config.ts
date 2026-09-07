@@ -20,7 +20,6 @@ export default defineConfig({
         dependsOn: [
           "audit",
           "@rimelight/auth#check",
-          "@rimelight/cli#check",
           "@rimelight/cms#check",
           "@rimelight/i18n#check",
           "@rimelight/security#check",
