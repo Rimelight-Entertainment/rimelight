@@ -5,12 +5,13 @@ import GrandTaleHeader from '#components/franchises/grand-tale/GrandTaleHeader.a
 interface Props {
 	title?: string;
 	description?: string;
+	favicon?: string;
 }
 
-const { title = 'Grand Tale', description = 'Grand Tale' } = Astro.props;
+const { title = 'Grand Tale', description = 'Grand Tale', favicon = '/grand-tale.ico' } = Astro.props;
 ---
 
-<AppLayout title={title} description={description}>
+<AppLayout title={title} description={description} favicon={favicon}>
 	<GrandTaleHeader />
 	<div class="bg-grand-tale-primary-900 min-h-screen">
 		<slot />

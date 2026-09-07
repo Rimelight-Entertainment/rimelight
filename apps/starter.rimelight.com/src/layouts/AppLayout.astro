@@ -25,6 +25,7 @@ interface AppLayoutProps {
 	languageAlternates?: Array<{ hreflang: string; href: string }>;
 	ogImageSrc?: string;
 	ogImageAlt?: string;
+	favicon?: string;
 }
 
 const {
@@ -35,7 +36,8 @@ const {
 	robots,
 	languageAlternates = getLanguageAlternates(Astro.url.pathname, siteConfig.url),
 	ogImageSrc,
-	ogImageAlt
+	ogImageAlt,
+	favicon
 } = Astro.props as AppLayoutProps;
 
 const hasConsent = Astro.cookies.has("cookie-consent");
@@ -56,6 +58,7 @@ const ogImageUrl = ogImageSrc
       config={siteConfig}
       ogLocale={getOgLocale()}
       rssFeed={{ href: '/rss.xml', title: siteConfig.name }}
+      favicon={favicon}
       noindex={noindex}
       is404={is404}
       robots={robots}

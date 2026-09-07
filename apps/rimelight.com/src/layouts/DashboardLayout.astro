@@ -11,9 +11,10 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 interface Props {
 	title?: string;
 	description?: string;
+	favicon?: string;
 }
 
-const { title = 'Dashboard', description = 'Rimelight Dashboard' } = Astro.props;
+const { title = 'Dashboard', description = 'Rimelight Dashboard', favicon } = Astro.props;
 
 const links = [
 	{ label: 'Home', icon: 'lucide:home', to: '/dashboard' },
@@ -27,7 +28,7 @@ const footerLinks = [
 ];
 ---
 
-<AppLayout title={title} description={description} noindex={true}>
+<AppLayout title={title} description={description} noindex={true} favicon={favicon}>
 	<RLADashboardGroup style="padding-top: var(--rl-total-header-height, 0px)">
 		<RLADashboardSidebar side="left" collapsible class="h-full border-r border-neutral-200/50 bg-neutral-50">
 			<template #header>

@@ -9,16 +9,17 @@ import { Font } from 'astro:assets';
 interface ConstructionLayoutProps {
 	title: string;
 	description: string;
+	favicon?: string;
 }
 
-const { title, description } = Astro.props as ConstructionLayoutProps;
+const { title, description, favicon } = Astro.props as ConstructionLayoutProps;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <SecurityHead />
-    <SEOHead title={title} description={description} config={siteConfig} />
+    <SEOHead title={title} description={description} config={siteConfig} favicon={favicon} />
     <UIHead />
     <Font cssVariable="--font-sans" preload={true} />
     <Font cssVariable="--font-serif" preload={true} />

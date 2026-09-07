@@ -6,12 +6,13 @@ import GuidesSidebar from '#components/franchises/grand-tale/GuidesSidebar.astro
 interface Props {
 	title?: string;
 	description?: string;
+	favicon?: string;
 }
 
-const { title = 'Guides | Grand Tale', description = 'Grand Tale Guides' } = Astro.props;
+const { title = 'Guides | Grand Tale', description = 'Grand Tale Guides', favicon = '/grand-tale.ico' } = Astro.props;
 ---
 
-<AppLayout title={title} description={description}>
+<AppLayout title={title} description={description} favicon={favicon}>
 	<GrandTaleHeader />
 	<div class="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
 		<aside class="w-full lg:w-64 shrink-0">

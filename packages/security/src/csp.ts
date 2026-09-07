@@ -19,11 +19,7 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
   )
 
   const connectSources = Array.from(
-    new Set([
-      "'self'",
-      "https://cloudflareinsights.com",
-      ...(options.connectSrc || [])
-    ])
+    new Set(["'self'", "https://cloudflareinsights.com", ...(options.connectSrc || [])])
   )
 
   const frameSources = Array.from(

@@ -197,6 +197,10 @@ export interface HeadProps {
    */
   languageAlternates?: Array<{ hreflang: string; href: string }>
   /**
+   * Custom favicon SVG or image path (overrides config.branding.favicon.svg)
+   */
+  favicon?: string
+  /**
    * Site configuration for defaults
    */
   config?: SiteConfig

@@ -21,6 +21,7 @@ const {
   canonical,
   languageAlternates = [],
   config,
+  favicon: customFavicon,
   charset = 'utf-8',
   viewport = 'width=device-width, initial-scale=1',
   rssFeed,
@@ -35,7 +36,12 @@ const siteName = config?.name || 'Rimelight'
 const siteDescription = config?.description || ''
 const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || ''
 const themeColor = config?.branding?.colors?.themeColor
-const favicon = config?.branding?.favicon?.svg || '/favicon.svg'
+const favicon = customFavicon || config?.branding?.favicon?.svg || '/favicon.svg'
+const faviconType = favicon.endsWith('.ico')
+  ? 'image/x-icon'
+  : favicon.endsWith('.png')
+    ? 'image/png'
+    : 'image/svg+xml'
 const twitterHandle = config?.seo?.authorHandle
 const titleTemplate = config?.seo?.titleTemplate || `%s | ${siteName}`
 
@@ -117,8 +123,8 @@ const robotsContent = buildRobotsMetaContent({
 {twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
 
 <!-- Icons & Manifest -->
-<link rel="icon" type="image/svg+xml" href={favicon} />
-<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" type={faviconType} href={favicon} />
+{!customFavicon && <link rel="icon" href="/favicon.ico" sizes="32x32" />}
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
 

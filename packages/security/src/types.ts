@@ -1,7 +1,7 @@
 export interface SecurityOptions {
   /**
-   * The base domain name for this project (e.g. "idantity.me") used to autoconfigure
-   * standard allowed domains and img-src CDN targets.
+   * The base domain name for this project (e.g. "idantity.me") used to autoconfigure standard
+   * allowed domains and img-src CDN targets.
    */
   domain?: string
 
@@ -41,8 +41,8 @@ export interface SecurityOptions {
   trustedTypes?: boolean
 
   /**
-   * Granular CSP directive overrides. Values are arrays of directive tokens, e.g.:
-   * { "frame-ancestors": ["'self'"] }
+   * Granular CSP directive overrides. Values are arrays of directive tokens, e.g.: {
+   * "frame-ancestors": ["'self'"] }
    */
   directives?: Record<string, string[] | string | boolean>
 

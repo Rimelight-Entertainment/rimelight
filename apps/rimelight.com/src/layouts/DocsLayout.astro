@@ -22,6 +22,7 @@ interface Props {
   activeVersion?: string | undefined;
   versions?: string[] | undefined;
   includeVersionInUrl?: boolean | undefined;
+  favicon?: string | undefined;
 }
 
 const {
@@ -34,7 +35,8 @@ const {
   nextOverride,
   activeVersion,
   versions = [],
-  includeVersionInUrl = false
+  includeVersionInUrl = false,
+  favicon
 } = Astro.props;
 
 const locale = getLocale();
@@ -88,7 +90,7 @@ const tocHeadings = hasToc
   : [];
 ---
 
-<AppLayout title={t(title) || title} description={description}>
+<AppLayout title={t(title) || title} description={description} favicon={favicon}>
   <AgentDirective markdownUrl={`${currentPath.replace(/\/$/, '')}.md`} llmsUrl="/llms.txt" />
 
   {/*
