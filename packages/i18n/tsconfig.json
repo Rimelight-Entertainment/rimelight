@@ -1,12 +1,6 @@
 {
-  "extends": "@rimelight/config/tsconfig/solid",
-  "include": [".astro/types.d.ts", "**/*"],
+  "extends": "@rimelight/config/tsconfig/base",
+  "include": ["**/*"],
   "exclude": ["dist"],
-  "compilerOptions": {
-    "plugins": [
-      {
-        "name": "@astrojs/ts-plugin"
-      }
-    ]
-  }
+  "compilerOptions": {}
 }

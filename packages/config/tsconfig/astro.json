@@ -1,9 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Rimelight SolidJS",
+  "display": "Rimelight Astro",
   "extends": "./base.json",
   "compilerOptions": {
-    "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "plugins": [
+      {
+        "name": "@astrojs/ts-plugin"
+      }
+    ]
   }
 }

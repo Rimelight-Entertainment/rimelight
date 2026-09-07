@@ -20,13 +20,23 @@ Default strict TypeScript configuration for all Rimelight projects:
 }
 ```
 
-### SolidJS Config
+### Astro Config
 
-For SolidJS/Astro projects:
+For pure Astro projects:
 
 ```json
 {
-  "extends": "@rimelight/config/tsconfig/solid.json"
+  "extends": "@rimelight/config/tsconfig/astro.json"
+}
+```
+
+### Astro + SolidJS Config
+
+For Astro projects using SolidJS components:
+
+```json
+{
+  "extends": "@rimelight/config/tsconfig/astro-solid.json"
 }
 ```
 
