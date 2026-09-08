@@ -464,7 +464,7 @@ export const PAGE_MAP: Record<string, PageDefinition> = {
 }
 
 export function getPageDefinition(type: string): PageDefinition {
-  if (!type) return PAGE_MAP.Default!
+  if (!type) return PAGE_MAP["Default"]!
 
   // Exact match
   if (PAGE_MAP[type]) return PAGE_MAP[type]
@@ -498,5 +498,5 @@ export function getPageDefinition(type: string): PageDefinition {
     if (key.toLowerCase() === normalized) return def
   }
 
-  return PAGE_MAP.Default!
+  return PAGE_MAP["Default"]!
 }

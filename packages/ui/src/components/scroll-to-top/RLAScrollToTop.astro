@@ -69,12 +69,12 @@ const classes = scrollToTopTheme(Astro.props)
       if (!button || !innerElement) return;
 
       const id = ++RLAScrollToTop.instanceCounter;
-      const threshold = Number(this.dataset.threshold) || 200;
-      const color = this.dataset.color || 'primary';
-      const progressWidth = Number(this.dataset.progressWidth) || 6;
+      const threshold = Number(this.dataset["threshold"]) || 200;
+      const color = this.dataset["color"] || 'primary';
+      const progressWidth = Number(this.dataset["progressWidth"]) || 6;
       const gaugeBorderWidth = progressWidth * 0.5;
 
-      innerElement.dataset.rlaInstance = String(id);
+      innerElement.dataset["rlaInstance"] = String(id);
 
       button.addEventListener('click', scrollToTop);
 

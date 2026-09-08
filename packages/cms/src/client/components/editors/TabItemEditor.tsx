@@ -23,7 +23,7 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {
@@ -66,7 +66,7 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
     componentProps.onPropsChange({
       ...componentProps.props,
       label,
-      value: componentProps.props.value || label.toLowerCase().replace(/\s+/g, "-")
+      value: componentProps.props["value"] || label.toLowerCase().replace(/\s+/g, "-")
     })
   }
 
@@ -78,7 +78,7 @@ export const TabItemEditor: Component<TabItemEditorProps> = (componentProps) => 
           <RLSInput
             type="text"
             placeholder="e.g. pnpm, Astro, TypeScript"
-            value={componentProps.props.label || ""}
+            value={componentProps.props["label"] || ""}
             onBlur={(e) => saveLabel(e.currentTarget.value)}
             size="sm"
           />

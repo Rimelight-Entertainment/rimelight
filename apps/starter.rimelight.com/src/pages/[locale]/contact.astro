@@ -7,7 +7,7 @@ import { t } from "@rimelight/i18n";
 import { env } from "cloudflare:workers";
 
 
-const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY || env?.TURNSTILE_SITE_KEY || "";
+const turnstileSiteKey = import.meta.env["TURNSTILE_SITE_KEY"] || env?.TURNSTILE_SITE_KEY || "";
 ---
 
 <AppLayout title={t("page_contact.title")} description={t("page_contact.description")}>

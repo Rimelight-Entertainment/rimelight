@@ -80,7 +80,7 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
                   data-slot="item"
                   data-dropdown-item
                   data-item-type={item.type}
-                  data-item-id={item.id || item.label}
+                  data-item-id={item["id"] || item["label"]}
                   data-item-action={item.label}
                   disabled={item.disabled}
                 >

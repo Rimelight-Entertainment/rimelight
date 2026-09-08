@@ -19,7 +19,7 @@ const {
 } = Astro.props
 
 const Component = components[block.type] ?? defaultBlockComponents[block.type]
-const rawChildren = block.children || block.props?.children || []
+const rawChildren = block.children || block.props?.["children"] || []
 const children = (Array.isArray(rawChildren) ? rawChildren : []) as BaseBlock[]
 const nextDepth = block.type === "SectionBlock" ? Math.min(6, (sectionDepth || 2) + 1) : sectionDepth
 ---

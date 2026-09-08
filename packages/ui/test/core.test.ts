@@ -50,13 +50,13 @@ describe("@rimelight/ui core resolver", () => {
     const themeFn = defineTheme("testComponent", baseTheme)
     const slots = themeFn({ size: "sm", class: "custom-root", ui: { label: "font-bold" } })
 
-    expect(slots.root).toContain("flex items-center")
-    expect(slots.root).toContain("bg-blue-500")
-    expect(slots.root).toContain("p-2")
-    expect(slots.root).toContain("custom-root")
-    expect(slots.label).toContain("text-xs")
-    expect(slots.label).toContain("font-bold")
-    expect(slots.icon).toBe("size-4")
+    expect(slots["root"]).toContain("flex items-center")
+    expect(slots["root"]).toContain("bg-blue-500")
+    expect(slots["root"]).toContain("p-2")
+    expect(slots["root"]).toContain("custom-root")
+    expect(slots["label"]).toContain("text-xs")
+    expect(slots["label"]).toContain("font-bold")
+    expect(slots["icon"]).toBe("size-4")
   })
 
   it("should deep merge custom overrides without losing base slots", () => {
@@ -79,12 +79,12 @@ describe("@rimelight/ui core resolver", () => {
     const slots = themeFn({ size: "sm" })
 
     // slot 'icon' should not be lost even though testOverride only defined 'label'
-    expect(slots.icon).toBe("size-4")
+    expect(slots["icon"]).toBe("size-4")
     // base.root should still be present
-    expect(slots.root).toContain("flex items-center")
+    expect(slots["root"]).toContain("flex items-center")
     // overridden variant and base slot should apply
-    expect(slots.root).toContain("override-sm")
-    expect(slots.label).toContain("overridden-label")
+    expect(slots["root"]).toContain("override-sm")
+    expect(slots["label"]).toContain("overridden-label")
   })
 })
 
@@ -145,13 +145,13 @@ describe("@rimelight/ui core icon resolution", () => {
 
     const themeFn = defineTheme("testAutoColor", baseTheme)
     const primarySlots = themeFn({ color: "primary" })
-    expect(primarySlots.root).toContain("rl-color-primary")
-    expect(primarySlots.root).toContain("btn-solid")
-    expect(primarySlots.root).not.toContain("btn-neutral-solid")
+    expect(primarySlots["root"]).toContain("rl-color-primary")
+    expect(primarySlots["root"]).toContain("btn-solid")
+    expect(primarySlots["root"]).not.toContain("btn-neutral-solid")
 
     const neutralSlots = themeFn({ color: "neutral" })
-    expect(neutralSlots.root).toContain("rl-color-neutral")
-    expect(neutralSlots.root).toContain("btn-neutral-solid")
+    expect(neutralSlots["root"]).toContain("rl-color-neutral")
+    expect(neutralSlots["root"]).toContain("btn-neutral-solid")
   })
 })
 
@@ -309,9 +309,9 @@ describe("@rimelight/ui unstyled mode", () => {
     })
 
     const slots = themeFn({ class: "custom-class", ui: { label: "custom-ui-label" } })
-    expect(slots.root).toBe("custom-class")
-    expect(slots.root).not.toContain("base-root")
-    expect(slots.label).toBe("custom-ui-label")
-    expect(slots.label).not.toContain("base-label")
+    expect(slots["root"]).toBe("custom-class")
+    expect(slots["root"]).not.toContain("base-root")
+    expect(slots["label"]).toBe("custom-ui-label")
+    expect(slots["label"]).not.toContain("base-label")
   })
 })

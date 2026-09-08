@@ -65,7 +65,7 @@ const textSizeClass = _depth === 0 ? "" : "text-xs"
       <!-- Body -->
       <div class={classes.content} data-slot="content">
         <slot>
-          <Astro.self items={items} t={t} _depth={1} ui={Astro.props.ui} />
+          <Astro.self items={items} t={t} _depth={1} ui={Astro.props["ui"]} />
         </slot>
       </div>
 

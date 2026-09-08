@@ -41,13 +41,13 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   const slugText = () => {
-    const setting = componentProps.props.setting || "INT."
-    const loc = (componentProps.props.location || "LOCATION").toUpperCase()
-    const time = componentProps.props.timeOfDay || "MORNING"
+    const setting = componentProps.props["setting"] || "INT."
+    const loc = (componentProps.props["location"] || "LOCATION").toUpperCase()
+    const time = componentProps.props["timeOfDay"] || "MORNING"
     return `${setting} ${loc} - ${time}`
   }
 
@@ -114,7 +114,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
           <RLSInput
             id="scene-location-input"
             data-field="location"
-            value={componentProps.props.location || ""}
+            value={componentProps.props["location"] || ""}
             onBlur={(e) => saveProps({ location: e.currentTarget.value })}
             placeholder="E.g. LIVING ROOM"
             size="sm"
@@ -125,7 +125,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
           <span class="text-xs font-semibold text-muted uppercase tracking-wide">Setting</span>
           <RLSSelect
             items={SETTINGS}
-            value={componentProps.props.setting || "INT."}
+            value={componentProps.props["setting"] || "INT."}
             onChange={(e) => saveProps({ setting: e.currentTarget.value })}
             size="sm"
           />
@@ -135,7 +135,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
           <span class="text-xs font-semibold text-muted uppercase tracking-wide">Time of Day</span>
           <RLSSelect
             items={TIMES_OF_DAY}
-            value={componentProps.props.timeOfDay || "MORNING"}
+            value={componentProps.props["timeOfDay"] || "MORNING"}
             onChange={(e) => saveProps({ timeOfDay: e.currentTarget.value })}
             size="sm"
           />
@@ -149,7 +149,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         <RLSTextarea
           id="scene-description-textarea"
           data-field="description"
-          value={componentProps.props.description || ""}
+          value={componentProps.props["description"] || ""}
           onBlur={(e) => saveProps({ description: e.currentTarget.value })}
           placeholder="Action lines..."
           rows={3}
@@ -163,7 +163,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
         <div class="w-48">
           <RLSSelect
             items={TRANSITIONS}
-            value={componentProps.props.transition || "NONE"}
+            value={componentProps.props["transition"] || "NONE"}
             onChange={(e) => saveProps({ transition: e.currentTarget.value })}
             size="sm"
           />

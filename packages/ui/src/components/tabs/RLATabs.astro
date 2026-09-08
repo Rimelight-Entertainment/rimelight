@@ -225,7 +225,7 @@ if (needsOverflow && renderedListItems.length > 1) {
 
         const list = container.querySelector("[data-slot=list]") as HTMLElement | null;
         const indicator = container.querySelector("[data-slot=indicator]") as HTMLElement | null;
-        const orientation = this.dataset.orientation || "horizontal";
+        const orientation = this.dataset["orientation"] || "horizontal";
         const isVertical = orientation === "vertical";
 
         const updateIndicator = (activeTrigger: HTMLElement | null) => {
@@ -263,7 +263,7 @@ if (needsOverflow && renderedListItems.length > 1) {
           }
         };
 
-        const containerValue = container.dataset.value;
+        const containerValue = container.dataset["value"];
         const triggers = container.querySelectorAll("[role=tab]");
         const panels = container.querySelectorAll("[role=tabpanel]");
         const popoverItems = container.querySelectorAll("[data-popover-item]");
@@ -273,7 +273,7 @@ if (needsOverflow && renderedListItems.length > 1) {
         const syncState = (targetValue: string | undefined) => {
           triggers.forEach(trigger => {
             const el = trigger as HTMLElement;
-            const val = el.dataset.value;
+            const val = el.dataset["value"];
             const isActive = val === targetValue;
             el.setAttribute("data-state", isActive ? "active" : "inactive");
             if (isActive) activeTrigger = el;
@@ -281,7 +281,7 @@ if (needsOverflow && renderedListItems.length > 1) {
 
           popoverItems.forEach(item => {
             const el = item as HTMLElement;
-            const val = el.dataset.tabOverflowValue;
+            const val = el.dataset["tabOverflowValue"];
             if (val === targetValue) {
               el.setAttribute("data-active", "true");
               el.classList.add("bg-muted/80", "font-medium");
@@ -292,7 +292,7 @@ if (needsOverflow && renderedListItems.length > 1) {
           });
 
           panels.forEach(panel => {
-            const val = (panel as HTMLElement).dataset.value;
+            const val = (panel as HTMLElement).dataset["value"];
             if (val === targetValue) {
               panel.removeAttribute("hidden");
             } else {
@@ -319,7 +319,7 @@ if (needsOverflow && renderedListItems.length > 1) {
         // Watch for browser Find-in-Page auto-expands
         panels.forEach(panel => {
           const onBeforeMatch = () => {
-            const targetValue = (panel as HTMLElement).dataset.value;
+            const targetValue = (panel as HTMLElement).dataset["value"];
             const trigger = container.querySelector(`[role=tab][data-value="${targetValue}"]`) as HTMLButtonElement | null;
             if (trigger) {
               trigger.click();
@@ -335,7 +335,7 @@ if (needsOverflow && renderedListItems.length > 1) {
           const trigger = triggerNode as HTMLButtonElement;
           const onClick = () => {
             if (trigger.disabled) return;
-            const targetValue = trigger.dataset.value;
+            const targetValue = trigger.dataset["value"];
             syncState(targetValue);
             updateIndicator(trigger);
           };
@@ -346,7 +346,7 @@ if (needsOverflow && renderedListItems.length > 1) {
         popoverItems.forEach(itemNode => {
           const item = itemNode as HTMLButtonElement;
           const onClick = () => {
-            const targetValue = item.dataset.tabOverflowValue;
+            const targetValue = item.dataset["tabOverflowValue"];
             syncState(targetValue);
             const activeTrig = container.querySelector(`[role=tab][data-value="${targetValue}"]`) as HTMLElement | null;
             updateIndicator(activeTrig);

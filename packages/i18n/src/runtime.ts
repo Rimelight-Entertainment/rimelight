@@ -269,10 +269,17 @@ export function t(key: string, params?: Record<string, any>): string {
   let value = componentDict[keyName] ?? key
 
   // Pluralization support if count parameter is provided and translation value is a plural object
-  if (params && typeof params.count === "number" && typeof value === "object" && value !== null) {
-    const pluralCategory = getPluralCategory(params.count, activeLocale)
+  if (
+    params &&
+    typeof params["count"] === "number" &&
+    typeof value === "object" &&
+    value !== null
+  ) {
+    const pluralCategory = getPluralCategory(params["count"], activeLocale)
     value =
-      (value as Record<string, any>)[pluralCategory] ?? (value as Record<string, any>).other ?? key
+      (value as Record<string, any>)[pluralCategory] ??
+      (value as Record<string, any>)["other"] ??
+      key
   }
 
   if (typeof value === "function") {

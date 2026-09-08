@@ -66,7 +66,7 @@ const heightStyle = height
     const viewport = area.querySelector("[data-scroll-viewport]") as HTMLElement | null;
     if (!viewport) return;
 
-    const hideDelay = parseInt((area as HTMLElement).dataset.hideDelay ?? "600", 10);
+    const hideDelay = parseInt((area as HTMLElement).dataset["hideDelay"] ?? "600", 10);
 
     const vBar = area.querySelector("[data-scroll-bar='vertical']") as HTMLElement | null;
     const hBar = area.querySelector("[data-scroll-bar='horizontal']") as HTMLElement | null;

@@ -46,18 +46,18 @@ export function blocksToMarkdown(
 
   for (const block of blocks) {
     if (!block) continue
-    const children = block.children || block.props?.children || []
+    const children = block.children || block.props?.["children"] || []
 
     switch (block.type) {
       case "SectionBlock": {
-        const level = (block.props?.level as HeadingLevel) || (baseLevel as HeadingLevel)
+        const level = (block.props?.["level"] as HeadingLevel) || (baseLevel as HeadingLevel)
         const hashes = "#".repeat(Math.min(6, Math.max(1, level)))
-        const title = block.props?.title || ""
+        const title = block.props?.["title"] || ""
         if (title) {
           lines.push(`${hashes} ${title}`)
         }
-        if (block.props?.description) {
-          lines.push(`_${block.props.description}_`)
+        if (block.props?.["description"]) {
+          lines.push(`_${block.props["description"]}_`)
         }
         if (children.length > 0) {
           lines.push(blocksToMarkdown(children, { sectionLevel: Math.min(6, level + 1) }))
@@ -66,13 +66,13 @@ export function blocksToMarkdown(
       }
 
       case "ParagraphBlock": {
-        const text = inlinesToMarkdown(block.props?.text)
+        const text = inlinesToMarkdown(block.props?.["text"])
         if (text) lines.push(text)
         break
       }
 
       case "CalloutBlock": {
-        const variant = (block.props?.variant || "info").toUpperCase()
+        const variant = (block.props?.["variant"] || "info").toUpperCase()
         const childMd = blocksToMarkdown(children, options)
         const calloutHeader = `> [!${variant}]`
         if (childMd) {
@@ -88,16 +88,16 @@ export function blocksToMarkdown(
       }
 
       case "CodeBlock": {
-        const lang = block.props?.language || ""
-        const code = block.props?.code || ""
-        const caption = block.props?.caption ? `\n_${block.props.caption}_` : ""
+        const lang = block.props?.["language"] || ""
+        const code = block.props?.["code"] || ""
+        const caption = block.props?.["caption"] ? `\n_${block.props["caption"]}_` : ""
         lines.push(`\`\`\`${lang}\n${code}\n\`\`\`${caption}`)
         break
       }
 
       case "TableBlock": {
-        const columns = block.props?.columns || []
-        const rows = block.props?.rows || []
+        const columns = block.props?.["columns"] || []
+        const rows = block.props?.["rows"] || []
         if (columns.length > 0) {
           const headerRow = `| ${columns.map((c: any) => c.header || c.key).join(" | ")} |`
           const alignRow = `| ${columns
@@ -111,16 +111,16 @@ export function blocksToMarkdown(
             (r: any) => `| ${columns.map((c: any) => r[c.key] || "").join(" | ")} |`
           )
           const tableMd = [headerRow, alignRow, ...bodyRows].join("\n")
-          const caption = block.props?.caption ? `\n_${block.props.caption}_` : ""
+          const caption = block.props?.["caption"] ? `\n_${block.props["caption"]}_` : ""
           lines.push(`${tableMd}${caption}`)
         }
         break
       }
 
       case "ImageBlock": {
-        const alt = block.props?.alt || ""
-        const src = block.props?.src || ""
-        const caption = block.props?.caption ? `\n_${block.props.caption}_` : ""
+        const alt = block.props?.["alt"] || ""
+        const src = block.props?.["src"] || ""
+        const caption = block.props?.["caption"] ? `\n_${block.props["caption"]}_` : ""
         lines.push(`![${alt}](${src})${caption}`)
         break
       }
@@ -135,7 +135,7 @@ export function blocksToMarkdown(
       }
 
       case "TabItemBlock": {
-        const label = block.props?.label || "Tab"
+        const label = block.props?.["label"] || "Tab"
         lines.push(`#### ${label}\n\n${blocksToMarkdown(children, options)}`)
         break
       }
@@ -156,8 +156,8 @@ export function blocksToMarkdown(
       }
 
       case "StepItemBlock": {
-        const title = block.props?.title || "Step"
-        const desc = block.props?.description ? ` - ${block.props.description}` : ""
+        const title = block.props?.["title"] || "Step"
+        const desc = block.props?.["description"] ? ` - ${block.props["description"]}` : ""
         lines.push(`- **${title}**${desc}`)
         if (children.length > 0) {
           lines.push(blocksToMarkdown(children, options))
@@ -176,9 +176,9 @@ export function blocksToMarkdown(
       }
 
       case "CardBlock": {
-        const title = block.props?.title || ""
-        const href = block.props?.href || "#"
-        const desc = block.props?.description ? `: ${block.props.description}` : ""
+        const title = block.props?.["title"] || ""
+        const href = block.props?.["href"] || "#"
+        const desc = block.props?.["description"] ? `: ${block.props["description"]}` : ""
         lines.push(`- [${title}](${href})${desc}`)
         break
       }
@@ -196,19 +196,19 @@ export function blocksToMarkdown(
           }
           return treeLines
         }
-        const treeNodes = block.props?.tree || []
+        const treeNodes = block.props?.["tree"] || []
         lines.push(`\`\`\`text\n${renderTree(treeNodes).join("\n")}\n\`\`\``)
         break
       }
 
       case "DialogueBlock": {
-        lines.push(`**${block.props?.character}:** "${block.props?.line || ""}"`)
+        lines.push(`**${block.props?.["character"]}:** "${block.props?.["line"] || ""}"`)
         break
       }
 
       default: {
-        if (block.props?.text) {
-          lines.push(inlinesToMarkdown(block.props.text))
+        if (block.props?.["text"]) {
+          lines.push(inlinesToMarkdown(block.props["text"]))
         }
         break
       }

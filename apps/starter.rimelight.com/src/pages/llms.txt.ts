@@ -22,7 +22,7 @@ export async function GET(context: { url: URL; site?: URL }) {
     if (typeof val === "string") return val
     if (typeof val === "object" && val !== null) {
       const rec = val as Record<string, string>
-      return rec.en || Object.values(rec)[0] || ""
+      return rec["en"] || Object.values(rec)[0] || ""
     }
     return typeof val === "number" ? String(val) : ""
   }

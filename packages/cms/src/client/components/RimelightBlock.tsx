@@ -84,7 +84,7 @@ export const RimelightBlock: Component<RimelightBlockProps> = (props) => {
 
     const childrenList = () => {
       if (Array.isArray(blockItem.children)) return blockItem.children
-      if (Array.isArray(blockItem.props?.children)) return blockItem.props.children
+      if (Array.isArray(blockItem.props?.["children"])) return blockItem.props["children"]
       return []
     }
 

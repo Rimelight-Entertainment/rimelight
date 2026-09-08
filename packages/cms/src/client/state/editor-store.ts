@@ -20,7 +20,7 @@ function findBlockInfo(
     }
     const isSec = b.type === "SectionBlock"
     const nextDepth = isSec ? currentDepth + 1 : currentDepth
-    const children = b.children || b.props?.children
+    const children = b.children || b.props?.["children"]
     if (Array.isArray(children)) {
       const found = findBlockInfo(children, targetId, nextDepth)
       if (found) {
@@ -37,7 +37,7 @@ function findBlockInfo(
 function getMaxSubtreeSectionHeight(b: BaseBlock | null): number {
   if (!b) return 0
   const isSec = b.type === "SectionBlock"
-  const children = b.children || b.props?.children
+  const children = b.children || b.props?.["children"]
   let maxChildHeight = 0
   if (Array.isArray(children)) {
     for (const c of children) {
@@ -106,13 +106,13 @@ export function createEditorState(
         if (!item) continue
         if (item.id === id) {
           item.props = { ...item.props, ...newProps }
-          if (newProps.children !== undefined) {
-            item.children = newProps.children
-            item.props.children = newProps.children
+          if (newProps["children"] !== undefined) {
+            item.children = newProps["children"]
+            item.props["children"] = newProps["children"]
           }
           return true
         }
-        const childrenList = item.children || item.props?.children
+        const childrenList = item.children || item.props?.["children"]
         if (childrenList && findAndUpdate(childrenList)) {
           return true
         }
@@ -148,8 +148,8 @@ export function createEditorState(
         if (b.children) {
           b.children = removeFromList(b.children)
         }
-        if (b.props?.children) {
-          b.props.children = removeFromList(b.props.children)
+        if (b.props?.["children"]) {
+          b.props["children"] = removeFromList(b.props["children"])
         }
         return true
       })
@@ -172,10 +172,10 @@ export function createEditorState(
         }
       }
       for (const item of list) {
-        const children = item.children || item.props?.children
+        const children = item.children || item.props?.["children"]
         if (children && findAndMove(children)) {
           item.children = children
-          item.props.children = children
+          item.props["children"] = children
           return true
         }
       }
@@ -200,10 +200,10 @@ export function createEditorState(
         return true
       }
       for (const item of list) {
-        const children = item.children || item.props?.children
+        const children = item.children || item.props?.["children"]
         if (children && findAndDup(children)) {
           item.children = children
-          item.props.children = children
+          item.props["children"] = children
           return true
         }
       }
@@ -259,23 +259,23 @@ export function createEditorState(
       if (parentId) {
         for (const item of list) {
           if (item.id === parentId) {
-            const children = item.children || item.props?.children || []
+            const children = item.children || item.props?.["children"] || []
             if (position === "after") {
               children.push(newBlock)
             } else {
               children.unshift(newBlock)
             }
             item.children = children
-            item.props.children = children
+            item.props["children"] = children
             return true
           }
         }
       }
       for (const item of list) {
-        const children = item.children || item.props?.children
+        const children = item.children || item.props?.["children"]
         if (children && insertIntoList(children)) {
           item.children = children
-          item.props.children = children
+          item.props["children"] = children
           return true
         }
       }
@@ -319,10 +319,10 @@ export function createEditorState(
         }
         if (b.children) {
           b.children = remove(b.children)
-          if (b.props) b.props.children = b.children
-        } else if (b.props?.children) {
-          b.props.children = remove(b.props.children)
-          b.children = b.props.children
+          if (b.props) b.props["children"] = b.children
+        } else if (b.props?.["children"]) {
+          b.props["children"] = remove(b.props["children"])
+          b.children = b.props["children"]
         }
         return true
       })
@@ -361,14 +361,14 @@ export function createEditorState(
       const insertIntoTarget = (list: BaseBlock[]): boolean => {
         for (const item of list) {
           if (item.id === targetParentId) {
-            const children = item.children || item.props?.children || []
+            const children = item.children || item.props?.["children"] || []
             const idx = Math.min(Math.max(0, newIndex), children.length)
             children.splice(idx, 0, extractedBlock!)
             item.children = children
-            item.props.children = children
+            item.props["children"] = children
             return true
           }
-          const sub = item.children || item.props?.children
+          const sub = item.children || item.props?.["children"]
           if (sub && insertIntoTarget(sub)) return true
         }
         return false

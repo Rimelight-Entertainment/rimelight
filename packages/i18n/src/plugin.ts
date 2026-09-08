@@ -85,13 +85,14 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
             })
           }
         }
-        const outDir = process.env.WRANGLER_OUT_DIR ?? "dist"
+        const outDir = process.env["WRANGLER_OUT_DIR"] ?? "dist"
         const seedFile = path.join(outDir, "_translations-seed.json")
         try {
           fs.mkdirSync(path.dirname(seedFile), { recursive: true })
           fs.writeFileSync(seedFile, JSON.stringify(seedData, null, 2))
 
-          const autoSeed = process.env.WRANGLER_SEED_KV === "true" || process.env.CI === "true"
+          const autoSeed =
+            process.env["WRANGLER_SEED_KV"] === "true" || process.env["CI"] === "true"
           if (autoSeed) {
             const { execSync } = await import("node:child_process")
             execSync(`npx wrangler kv:bulk put --binding "${kvBinding}" "${seedFile}"`, {

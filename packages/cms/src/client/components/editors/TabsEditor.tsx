@@ -22,7 +22,7 @@ export const TabsEditor: Component<TabsEditorProps> = (componentProps) => {
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {

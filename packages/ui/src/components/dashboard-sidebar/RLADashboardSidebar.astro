@@ -62,7 +62,7 @@ const classes = dashboardSidebarTheme({
     const sidebar = document.querySelector<HTMLElement>('[data-dashboard-sidebar]');
     if (!sidebar) return;
 
-    const collapsible = sidebar.dataset.collapsible === 'true';
+    const collapsible = sidebar.dataset["collapsible"] === 'true';
     const mobilePanel = document.querySelector<HTMLElement>('[data-dashboard-sidebar-mobile]');
     const overlay = document.querySelector<HTMLElement>('[data-dashboard-sidebar-overlay]');
 
@@ -91,8 +91,8 @@ const classes = dashboardSidebarTheme({
 
     const collapseSidebar = (val?: boolean) => {
       if (!collapsible) return;
-      const isCollapsed = val !== undefined ? val : sidebar.dataset.collapsed !== 'true';
-      sidebar.dataset.collapsed = isCollapsed ? 'true' : 'false';
+      const isCollapsed = val !== undefined ? val : sidebar.dataset["collapsed"] !== 'true';
+      sidebar.dataset["collapsed"] = isCollapsed ? 'true' : 'false';
       sidebar.setAttribute('data-collapsed', isCollapsed ? 'true' : 'false');
 
       document.querySelectorAll('[data-dashboard-toggle="collapse"]').forEach(btn => {
@@ -109,7 +109,7 @@ const classes = dashboardSidebarTheme({
       // Toggle buttons (mobile drawer + collapse)
       const toggle = target.closest<HTMLElement>('[data-dashboard-toggle]');
       if (toggle) {
-        const side = toggle.dataset.dashboardToggle;
+        const side = toggle.dataset["dashboardToggle"];
         if (side === 'mobile') toggleMobile();
         if (side === 'collapse') collapseSidebar();
         return;

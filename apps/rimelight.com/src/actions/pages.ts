@@ -44,10 +44,10 @@ async function indexDatabasePage(page: {
   content: { blocks: Block[] }
 }) {
   const titleObj = page.title
-  const title = titleObj?.en || Object.values(titleObj || {})[0] || "Untitled Page"
+  const title = titleObj?.["en"] || Object.values(titleObj || {})[0] || "Untitled Page"
 
   const descObj = page.description
-  const description = descObj?.en || Object.values(descObj || {})[0] || ""
+  const description = descObj?.["en"] || Object.values(descObj || {})[0] || ""
 
   const bodyContent = `${description} ${extractTextFromBlocks(page.content?.blocks || [])}`.trim()
   const url = `/${page.slug}`

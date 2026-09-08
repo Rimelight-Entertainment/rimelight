@@ -47,12 +47,12 @@ const extractedBlocks = Array.isArray(rawContent?.blocks)
 
 const titleVal =
   typeof page.title === "object" && page.title !== null
-    ? (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>).en || ""
+    ? (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>)["en"] || ""
     : String(page.title || "")
 
 const descVal =
   typeof page.description === "object" && page.description !== null
-    ? (page.description as Record<string, string>)[currentLocale] || (page.description as Record<string, string>).en || ""
+    ? (page.description as Record<string, string>)[currentLocale] || (page.description as Record<string, string>)["en"] || ""
     : String(page.description || "")
 
 const pageType = (page as any).type || "Default"

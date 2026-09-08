@@ -23,7 +23,7 @@ api.post("/:key{.*}", async (c) => {
   }
 
   const body: Record<string, unknown> = await c.req.json()
-  const newKey = body.to
+  const newKey = body["to"]
   if (typeof newKey !== "string") return c.text("Missing or invalid target key ('to')", 400)
 
   const obj = await BLOB.get(key)

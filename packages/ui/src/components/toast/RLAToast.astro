@@ -31,7 +31,7 @@ const variantIcons: Record<string, string> = {
   info: "i-rl-info",
 }
 
-const icon = variantIcons[variant] ?? variantIcons.default!
+const icon = variantIcons[variant] ?? variantIcons["default"]!
 const isError = variant === "error"
 ---
 
@@ -102,7 +102,7 @@ const isError = variant === "error"
     if (!dismissable) return;
 
     const close = toast.querySelector("[data-toast-close]");
-    const duration = parseInt(toast.dataset.duration ?? "6000", 10);
+    const duration = parseInt(toast.dataset["duration"] ?? "6000", 10);
     let timerId: ReturnType<typeof setTimeout> | null = null;
     let startTime = Date.now();
     let remaining = duration;

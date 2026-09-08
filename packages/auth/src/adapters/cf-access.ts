@@ -52,11 +52,11 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
           }
 
           const { payload } = await jwtVerify(jwtAssertion, jwks, verifyOpts)
-          if (payload.email && typeof payload.email === "string") {
-            email = payload.email.toLowerCase().trim()
+          if (payload["email"] && typeof payload["email"] === "string") {
+            email = payload["email"].toLowerCase().trim()
           }
-          if (payload.name && typeof payload.name === "string") {
-            name = payload.name
+          if (payload["name"] && typeof payload["name"] === "string") {
+            name = payload["name"]
           }
           customClaims = payload
         } catch {

@@ -79,7 +79,7 @@ const inputId = `fileUpload-${Math.random().toString(36).slice(2, 9)}`
       const fileList = zone.querySelector("[data-fileUpload-filelist]") as HTMLElement | null;
       if (!input) return;
 
-      const isDisabled = zone.dataset.disabled === "true";
+      const isDisabled = zone.dataset["disabled"] === "true";
       if (isDisabled) return;
 
       const showFiles = (files: FileList | null) => {

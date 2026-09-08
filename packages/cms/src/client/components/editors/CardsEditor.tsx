@@ -30,7 +30,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {
@@ -84,7 +84,7 @@ export const CardsEditor: Component<CardsEditorProps> = (componentProps) => {
           <div class="w-32">
             <RLSSelect
               items={COLUMN_OPTIONS}
-              value={String(componentProps.props.columns || 2)}
+              value={String(componentProps.props["columns"] || 2)}
               onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
                 setColumns(e.currentTarget.value)
               }

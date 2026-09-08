@@ -192,10 +192,10 @@ export async function exchangeAuth0Code(
   }
 
   if (options.clientSecret) {
-    body.client_secret = options.clientSecret
+    body["client_secret"] = options.clientSecret
   }
   if (options.codeVerifier) {
-    body.code_verifier = options.codeVerifier
+    body["code_verifier"] = options.codeVerifier
   }
 
   const response = await fetch(tokenUrl, {
@@ -233,13 +233,13 @@ export async function loginWithAuth0Password(
   }
 
   if (options.realm) {
-    body.realm = options.realm
+    body["realm"] = options.realm
   }
   if (options.clientSecret) {
-    body.client_secret = options.clientSecret
+    body["client_secret"] = options.clientSecret
   }
   if (options.audience) {
-    body.audience = options.audience
+    body["audience"] = options.audience
   }
 
   const response = await fetch(tokenUrl, {
@@ -275,10 +275,10 @@ export async function refreshAuth0Token(
   }
 
   if (options.clientSecret) {
-    body.client_secret = options.clientSecret
+    body["client_secret"] = options.clientSecret
   }
   if (options.scope) {
-    body.scope = options.scope
+    body["scope"] = options.scope
   }
 
   const response = await fetch(tokenUrl, {
@@ -433,28 +433,28 @@ export function mapAuth0PayloadToSession(
 ): UserSessionContext {
   const roles: string[] = Array.isArray(payload[options.rolesClaim])
     ? payload[options.rolesClaim]
-    : Array.isArray(payload.roles)
-      ? payload.roles
+    : Array.isArray(payload["roles"])
+      ? payload["roles"]
       : [options.defaultRole]
 
   const permissions: string[] = Array.isArray(payload[options.permissionsClaim])
     ? payload[options.permissionsClaim]
-    : Array.isArray(payload.permissions)
-      ? payload.permissions
+    : Array.isArray(payload["permissions"])
+      ? payload["permissions"]
       : []
 
   const isStaff = roles.some((r) =>
     ["owner", "admin", "editor", "employee", "superadmin"].includes(r.toLowerCase())
   )
 
-  const explicitUserType = payload[options.userTypeClaim] || payload.user_type
+  const explicitUserType = payload[options.userTypeClaim] || payload["user_type"]
   const userType: UserType = explicitUserType || (isStaff ? "employee" : "user")
 
   return {
-    userId: payload.sub || "anonymous",
-    email: payload.email,
-    name: payload.name || payload.nickname || payload.email?.split("@")[0] || "User",
-    avatar: payload.picture,
+    userId: payload["sub"] || "anonymous",
+    email: payload["email"],
+    name: payload["name"] || payload["nickname"] || payload["email"]?.split("@")[0] || "User",
+    avatar: payload["picture"],
     roles,
     permissions,
     userType,

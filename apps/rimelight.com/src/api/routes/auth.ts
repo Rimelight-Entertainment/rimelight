@@ -17,10 +17,10 @@ const api = new Hono()
 function getBaseUrl(c: any): string {
   const envBase =
     (typeof import.meta.env !== "undefined"
-      ? import.meta.env.AUTH0_BASE_URL || import.meta.env.APP_BASE_URL
+      ? import.meta.env["AUTH0_BASE_URL"] || import.meta.env["APP_BASE_URL"]
       : undefined) ||
     (typeof process !== "undefined"
-      ? process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL
+      ? process.env["AUTH0_BASE_URL"] || process.env["APP_BASE_URL"]
       : undefined)
   if (envBase) return envBase.replace(/\/$/, "")
 

@@ -21,7 +21,7 @@ const classes = bannerTheme({
   sticky: fixed ? false : sticky
 })
 
-const bannerId = (rest.id as string) || `rla-banner-${Math.random().toString(36).slice(2, 8)}`
+const bannerId = (rest["id"] as string) || `rla-banner-${Math.random().toString(36).slice(2, 8)}`
 const storageKey = dismissId || bannerId
 ---
 

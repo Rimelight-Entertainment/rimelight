@@ -137,7 +137,7 @@ export const RimelightBlockPicker: Component<RimelightBlockPickerProps> = (props
 
   const allowedTypes = (): string[] => {
     const parent = props.containerType || "Root"
-    return ALLOWED_CHILDREN_MAP[parent] || ALLOWED_CHILDREN_MAP.Root || []
+    return ALLOWED_CHILDREN_MAP[parent] || ALLOWED_CHILDREN_MAP["Root"] || []
   }
 
   const filteredBlocks = () => {

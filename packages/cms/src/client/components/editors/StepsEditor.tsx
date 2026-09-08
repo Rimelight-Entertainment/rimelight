@@ -22,7 +22,7 @@ export const StepsEditor: Component<StepsEditorProps> = (componentProps) => {
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {

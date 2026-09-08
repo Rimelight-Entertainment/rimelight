@@ -10,7 +10,7 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
   let jsonTextarea: HTMLTextAreaElement | undefined
 
   const tree = (): FileTreeNode[] =>
-    componentProps.props.tree || [
+    componentProps.props["tree"] || [
       { name: "src", isDir: true, children: [{ name: "index.ts", isDir: false }] },
       { name: "package.json", isDir: false }
     ]

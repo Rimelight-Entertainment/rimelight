@@ -92,7 +92,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
         href={props.href}
         target={props.target}
         rel={props.rel || undefined}
-        class={classes().root}
+        class={classes()["root"]}
         data-slot="root"
         aria-label={props.ariaLabel}
         aria-disabled={props.disabled ? "true" : undefined}
@@ -102,7 +102,10 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
         {props.leading ? (
           props.leading
         ) : isLeading() && showLeadingIcon() ? (
-          <span class={`${classes().leadingIcon}  ${leadingIconClass()}`} data-slot="leading-icon">
+          <span
+            class={`${classes()["leadingIcon"]}  ${leadingIconClass()}`}
+            data-slot="leading-icon"
+          >
             <RLSIcon name={showLeadingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
           </span>
         ) : null}
@@ -110,7 +113,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
         {props.children !== undefined && props.children !== null ? (
           props.children
         ) : props.label !== undefined && props.label !== null ? (
-          <span class={classes().label} data-slot="label">
+          <span class={classes()["label"]} data-slot="label">
             {props.label}
           </span>
         ) : null}
@@ -119,7 +122,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
           props.trailing
         ) : isTrailing() && showTrailingIcon() ? (
           <span
-            class={`${classes().trailingIcon}  ${trailingIconClass()}`}
+            class={`${classes()["trailingIcon"]}  ${trailingIconClass()}`}
             data-slot="trailing-icon"
           >
             <RLSIcon name={showTrailingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
@@ -133,7 +136,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
     <button
       type={props.type || "button"}
       disabled={props.disabled}
-      class={classes().root}
+      class={classes()["root"]}
       data-slot="root"
       aria-label={props.ariaLabel}
       onClick={props.onClick}
@@ -142,7 +145,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
       {props.leading ? (
         props.leading
       ) : isLeading() && showLeadingIcon() ? (
-        <span class={`${classes().leadingIcon}  ${leadingIconClass()}`} data-slot="leading-icon">
+        <span class={`${classes()["leadingIcon"]}  ${leadingIconClass()}`} data-slot="leading-icon">
           <RLSIcon name={showLeadingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
         </span>
       ) : null}
@@ -150,7 +153,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
       {props.children !== undefined && props.children !== null ? (
         props.children
       ) : props.label !== undefined && props.label !== null ? (
-        <span class={classes().label} data-slot="label">
+        <span class={classes()["label"]} data-slot="label">
           {props.label}
         </span>
       ) : null}
@@ -158,7 +161,10 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
       {props.trailing ? (
         props.trailing
       ) : isTrailing() && showTrailingIcon() ? (
-        <span class={`${classes().trailingIcon}  ${trailingIconClass()}`} data-slot="trailing-icon">
+        <span
+          class={`${classes()["trailingIcon"]}  ${trailingIconClass()}`}
+          data-slot="trailing-icon"
+        >
           <RLSIcon name={showTrailingIcon()!} size={props.size ?? "md"} aria-hidden="true" />
         </span>
       ) : null}

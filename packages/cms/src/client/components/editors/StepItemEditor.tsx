@@ -23,7 +23,7 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {
@@ -65,8 +65,9 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
   const saveMeta = (title?: string, description?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      title: title !== undefined ? title : componentProps.props.title || "",
-      description: description !== undefined ? description : componentProps.props.description || ""
+      title: title !== undefined ? title : componentProps.props["title"] || "",
+      description:
+        description !== undefined ? description : componentProps.props["description"] || ""
     })
   }
 
@@ -76,14 +77,14 @@ export const StepItemEditor: Component<StepItemEditorProps> = (componentProps) =
         <RLSInput
           type="text"
           placeholder="Step title (e.g. Install Dependencies)"
-          value={componentProps.props.title || ""}
+          value={componentProps.props["title"] || ""}
           onBlur={(e) => saveMeta(e.currentTarget.value, undefined)}
           size="sm"
         />
         <RLSInput
           type="text"
           placeholder="Step description (optional)"
-          value={componentProps.props.description || ""}
+          value={componentProps.props["description"] || ""}
           onBlur={(e) => saveMeta(undefined, e.currentTarget.value)}
           size="sm"
         />

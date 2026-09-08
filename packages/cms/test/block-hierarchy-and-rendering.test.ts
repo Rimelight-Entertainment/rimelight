@@ -122,33 +122,40 @@ describe("block-hierarchy-and-rules", () => {
 
       // Insert nested section (depth 1 -> H3)
       state.insertBlock("SectionBlock", null, "after", secH2Id)
-      expect(state.blocks[0]!.props.children).toHaveLength(1)
-      const secH3Id = state.blocks[0]!.props.children[0]!.id
+      expect(state.blocks[0]!.props["children"]).toHaveLength(1)
+      const secH3Id = state.blocks[0]!.props["children"][0]!.id
 
       // Insert nested section (depth 2 -> H4)
       state.insertBlock("SectionBlock", null, "after", secH3Id)
-      expect(state.blocks[0]!.props.children[0]!.props.children).toHaveLength(1)
-      const secH4Id = state.blocks[0]!.props.children[0]!.props.children[0]!.id
+      expect(state.blocks[0]!.props["children"][0]!.props["children"]).toHaveLength(1)
+      const secH4Id = state.blocks[0]!.props["children"][0]!.props["children"][0]!.id
 
       // Insert nested section (depth 3 -> H5)
       state.insertBlock("SectionBlock", null, "after", secH4Id)
-      expect(state.blocks[0]!.props.children[0]!.props.children[0]!.props.children).toHaveLength(1)
-      const secH5Id = state.blocks[0]!.props.children[0]!.props.children[0]!.props.children[0]!.id
+      expect(
+        state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"]
+      ).toHaveLength(1)
+      const secH5Id =
+        state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.id
 
       // Insert nested section (depth 4 -> H6)
       state.insertBlock("SectionBlock", null, "after", secH5Id)
       expect(
-        state.blocks[0]!.props.children[0]!.props.children[0]!.props.children[0]!.props.children
+        state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.props[
+          "children"
+        ]
       ).toHaveLength(1)
       const secH6Id =
-        state.blocks[0]!.props.children[0]!.props.children[0]!.props.children[0]!.props.children[0]!
-          .id
+        state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.props[
+          "children"
+        ][0]!.id
 
       // Try inserting another section inside H6 (depth 5 -> would be H7, invalid!)
       state.insertBlock("SectionBlock", null, "after", secH6Id)
       expect(
-        state.blocks[0]!.props.children[0]!.props.children[0]!.props.children[0]!.props.children[0]!
-          .props.children || []
+        state.blocks[0]!.props["children"][0]!.props["children"][0]!.props["children"][0]!.props[
+          "children"
+        ][0]!.props["children"] || []
       ).toHaveLength(0)
 
       // Toast error should have been dispatched

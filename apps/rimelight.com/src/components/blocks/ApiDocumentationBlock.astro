@@ -13,8 +13,8 @@ interface Props {
 
 const { block } = Astro.props
 const { componentName, sections = {}, hide = [], show = [] } = (block.props || {}) as any
-const compMeta = block.props?.meta
-const themeCode = block.props?.themeCode
+const compMeta = block.props?.["meta"]
+const themeCode = block.props?.["themeCode"]
 
 const filterOpts: { hide?: string[]; show?: string[] } = { hide, show }
 const props = filterProps(compMeta?.props ?? [], filterOpts)

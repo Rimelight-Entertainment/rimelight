@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
       return new Response("Storage binding not found.", { status: 500 })
     }
 
-    const key = params.key as string
+    const key = params["key"] as string
     if (!key) {
       return new Response("Missing file key.", { status: 400 })
     }

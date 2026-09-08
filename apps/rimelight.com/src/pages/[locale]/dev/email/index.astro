@@ -46,11 +46,11 @@ const locale = getLocale()
 </style>
 
 <script>
-  const locale = document.querySelector<HTMLElement>("[data-email-locale]")?.dataset.emailLocale ?? "en"
+  const locale = document.querySelector<HTMLElement>("[data-email-locale]")?.dataset["emailLocale"] ?? "en"
 
   document.querySelectorAll<HTMLButtonElement>("[data-email-test]").forEach((button) => {
     button.addEventListener("click", async () => {
-      const template = button.dataset.emailTest
+      const template = button.dataset["emailTest"]
       const status = document.querySelector<HTMLElement>(`[data-email-status="${template}"]`)
       if (!template || !status) return
 

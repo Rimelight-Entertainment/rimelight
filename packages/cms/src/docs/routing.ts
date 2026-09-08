@@ -22,8 +22,8 @@ export function getDocsVersions(entries: (DocEntry | string)[], locale?: string)
       continue
     }
 
-    if (entry.properties?.version && String(entry.properties.version).startsWith("v")) {
-      versions.add(String(entry.properties.version))
+    if (entry.properties?.["version"] && String(entry.properties["version"]).startsWith("v")) {
+      versions.add(String(entry.properties["version"]))
       continue
     }
 

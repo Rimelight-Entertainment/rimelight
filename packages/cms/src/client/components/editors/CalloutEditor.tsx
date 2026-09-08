@@ -37,17 +37,17 @@ const TARGET_OPTIONS = [
 ]
 
 export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => {
-  const [linkSettingsOpen, setLinkSettingsOpen] = createSignal(!!componentProps.props.to)
+  const [linkSettingsOpen, setLinkSettingsOpen] = createSignal(!!componentProps.props["to"])
   let childrenContainer: HTMLDivElement | undefined = undefined
   let sortableInstance: any = null
 
-  const variant = () => componentProps.props.variant || "info"
+  const variant = () => componentProps.props["variant"] || "info"
 
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {
@@ -89,8 +89,8 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
   const saveLinkProps = (to?: string, target?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      to: to !== undefined ? to : componentProps.props.to,
-      target: target !== undefined ? target : componentProps.props.target
+      to: to !== undefined ? to : componentProps.props["to"],
+      target: target !== undefined ? target : componentProps.props["target"]
     })
   }
 
@@ -125,7 +125,7 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
           onClick={() => setLinkSettingsOpen(!linkSettingsOpen())}
           title="Link settings"
           leadingIcon="link"
-          label={componentProps.props.to ? "Linked" : "Add Link"}
+          label={componentProps.props["to"] ? "Linked" : "Add Link"}
         />
       </div>
 
@@ -135,9 +135,9 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
             <RLSInput
               type="text"
               placeholder="Link URL (e.g. https://... or /slug)"
-              value={componentProps.props.to || ""}
+              value={componentProps.props["to"] || ""}
               onBlur={(e: FocusEvent & { currentTarget: HTMLInputElement }) =>
-                saveLinkProps(e.currentTarget.value, componentProps.props.target)
+                saveLinkProps(e.currentTarget.value, componentProps.props["target"])
               }
               size="sm"
             />
@@ -145,9 +145,9 @@ export const CalloutEditor: Component<CalloutEditorProps> = (componentProps) => 
           <div class="w-32">
             <RLSSelect
               items={TARGET_OPTIONS}
-              value={componentProps.props.target || "_self"}
+              value={componentProps.props["target"] || "_self"}
               onChange={(e: Event & { currentTarget: HTMLSelectElement }) =>
-                saveLinkProps(componentProps.props.to, e.currentTarget.value)
+                saveLinkProps(componentProps.props["to"], e.currentTarget.value)
               }
               size="xs"
             />

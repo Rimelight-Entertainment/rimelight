@@ -136,7 +136,7 @@ const classes = layoutGridTheme(Astro.props)
       this.updateGrid()
 
       // Set up shortcuts using the library system
-      const shortcutKey = this.dataset.shortcut || 'meta_shift_g'
+      const shortcutKey = this.dataset["shortcut"] || 'meta_shift_g'
       this.shortcutsCleanup = defineShortcuts({
         [shortcutKey]: {
           handler: (e) => {
@@ -160,10 +160,10 @@ const classes = layoutGridTheme(Astro.props)
 
     private handleResize() {
       const width = document.documentElement.clientWidth
-      const smBreakpoint = parseInt(this.dataset.smBreakpoint || '640')
-      const mdBreakpoint = parseInt(this.dataset.mdBreakpoint || '768')
-      const lgBreakpoint = parseInt(this.dataset.lgBreakpoint || '1024')
-      const xlBreakpoint = parseInt(this.dataset.xlBreakpoint || '1280')
+      const smBreakpoint = parseInt(this.dataset["smBreakpoint"] || '640')
+      const mdBreakpoint = parseInt(this.dataset["mdBreakpoint"] || '768')
+      const lgBreakpoint = parseInt(this.dataset["lgBreakpoint"] || '1024')
+      const xlBreakpoint = parseInt(this.dataset["xlBreakpoint"] || '1280')
 
       let newBreakpoint: 'base' | 'sm' | 'md' | 'lg' | 'xl' = 'base'
 
@@ -185,57 +185,57 @@ const classes = layoutGridTheme(Astro.props)
       if (!this.columnsContainer) return
 
       const width = document.documentElement.clientWidth
-      const smBreakpoint = parseInt(this.dataset.smBreakpoint || '640')
-      const mdBreakpoint = parseInt(this.dataset.mdBreakpoint || '768')
-      const lgBreakpoint = parseInt(this.dataset.lgBreakpoint || '1024')
-      const xlBreakpoint = parseInt(this.dataset.xlBreakpoint || '1280')
+      const smBreakpoint = parseInt(this.dataset["smBreakpoint"] || '640')
+      const mdBreakpoint = parseInt(this.dataset["mdBreakpoint"] || '768')
+      const lgBreakpoint = parseInt(this.dataset["lgBreakpoint"] || '1024')
+      const xlBreakpoint = parseInt(this.dataset["xlBreakpoint"] || '1280')
 
       let breakpointIndex = 0
-      let colCount = parseInt(this.dataset.cols || '4')
+      let colCount = parseInt(this.dataset["cols"] || '4')
       let breakpointThreshold = 0
 
       switch (this.currentBreakpoint) {
         case 'xl':
           breakpointIndex = 4
-          colCount = parseInt(this.dataset.xlCols || '12')
+          colCount = parseInt(this.dataset["xlCols"] || '12')
           breakpointThreshold = xlBreakpoint
           break
         case 'lg':
           breakpointIndex = 3
-          colCount = parseInt(this.dataset.lgCols || '12')
+          colCount = parseInt(this.dataset["lgCols"] || '12')
           breakpointThreshold = lgBreakpoint
           break
         case 'md':
           breakpointIndex = 2
-          colCount = parseInt(this.dataset.mdCols || '8')
+          colCount = parseInt(this.dataset["mdCols"] || '8')
           breakpointThreshold = mdBreakpoint
           break
         case 'sm':
           breakpointIndex = 1
-          colCount = parseInt(this.dataset.smCols || '4')
+          colCount = parseInt(this.dataset["smCols"] || '4')
           breakpointThreshold = smBreakpoint
           break
         default:
           breakpointIndex = 0
-          colCount = parseInt(this.dataset.cols || '4')
+          colCount = parseInt(this.dataset["cols"] || '4')
           breakpointThreshold = 0
           break
       }
 
-      const gutterArray = JSON.parse(this.dataset.gutter || '[1,1,1,1,1]')
-      const marginArray = JSON.parse(this.dataset.margin || '[1,1,1,1,1]')
+      const gutterArray = JSON.parse(this.dataset["gutter"] || '[1,1,1,1,1]')
+      const marginArray = JSON.parse(this.dataset["margin"] || '[1,1,1,1,1]')
 
       const gutterValue = gutterArray[breakpointIndex] ?? gutterArray[gutterArray.length - 1]
       const marginValue = marginArray[breakpointIndex] ?? marginArray[marginArray.length - 1]
 
-      const gridColor = this.dataset.gridColor || '#ff0000'
-      const gridOpacity = parseFloat(this.dataset.gridOpacity || '0.1')
-      const showBackground = this.dataset.showBackground === 'true'
+      const gridColor = this.dataset["gridColor"] || '#ff0000'
+      const gridOpacity = parseFloat(this.dataset["gridOpacity"] || '0.1')
+      const showBackground = this.dataset["showBackground"] === 'true'
 
-      const showFullWidth = this.dataset.showFullWidth !== 'false'
-      const fullWidthColor = this.dataset.fullWidthColor || '#3b82f6'
-      const fullWidthOpacity = parseFloat(this.dataset.fullWidthOpacity || '0.05')
-      const showFullWidthBackground = this.dataset.showFullWidthBackground === 'true'
+      const showFullWidth = this.dataset["showFullWidth"] !== 'false'
+      const fullWidthColor = this.dataset["fullWidthColor"] || '#3b82f6'
+      const fullWidthOpacity = parseFloat(this.dataset["fullWidthOpacity"] || '0.05')
+      const showFullWidthBackground = this.dataset["showFullWidthBackground"] === 'true'
 
       // Convert rem spacings to pixels dynamically based on root font size
       const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
@@ -243,20 +243,20 @@ const classes = layoutGridTheme(Astro.props)
       const gutterPx = gutterValue * rootFontSize
 
       // Calculate max width boundaries
-      const maxWidthVal = this.dataset.maxWidth || '1440px'
+      const maxWidthVal = this.dataset["maxWidth"] || '1440px'
       let maxWidthPx = width
       if (!maxWidthVal.includes('vw')) {
         maxWidthPx = parseInt(maxWidthVal)
       }
 
-      const innerMaxWidthVal = this.dataset.innerMaxWidth || '768px'
+      const innerMaxWidthVal = this.dataset["innerMaxWidth"] || '768px'
       let innerMaxWidthPx = width
       if (!innerMaxWidthVal.includes('vw')) {
         innerMaxWidthPx = parseInt(innerMaxWidthVal)
       }
-      const innerGridColor = this.dataset.innerColor || '#10b981'
-      const innerGridOpacity = parseFloat(this.dataset.innerOpacity || '0.1')
-      const showInnerBackground = this.dataset.showInnerBackground === 'true'
+      const innerGridColor = this.dataset["innerColor"] || '#10b981'
+      const innerGridOpacity = parseFloat(this.dataset["innerOpacity"] || '0.1')
+      const showInnerBackground = this.dataset["showInnerBackground"] === 'true'
 
       // Calculate grid properties based on container width or screen width
       const activeWidth = width > maxWidthPx ? maxWidthPx : width

@@ -37,7 +37,7 @@ const {
 const classes = tableTheme({
   ...Astro.props,
   sticky: typeof sticky === "boolean" ? sticky : sticky,
-  externalScroll: Boolean(typeof virtualize === "object" && virtualize?.getScrollElement)
+  externalScroll: Boolean(typeof virtualize === "object" && virtualize?.["getScrollElement"])
 })
 
 // Normalize columns from props.columns or props.headers or infer from data keys

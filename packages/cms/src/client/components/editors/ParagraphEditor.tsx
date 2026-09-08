@@ -155,7 +155,7 @@ export const ParagraphEditor: Component<ParagraphEditorProps> = (componentProps)
 
   onMount(() => {
     if (!editableDiv) return
-    const text = componentProps.props.text
+    const text = componentProps.props["text"]
     if (!text) {
       editableDiv.innerHTML = ""
     } else if (Array.isArray(text)) {

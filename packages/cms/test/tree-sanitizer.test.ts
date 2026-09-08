@@ -26,8 +26,8 @@ describe("sanitizeBlockTree", () => {
 
     expect(sanitized.length).toBe(1)
     expect(sanitized[0]?.id).toBe("section-1")
-    expect(sanitized[0]?.props.children).toHaveLength(1)
-    expect(sanitized[0]?.props.children[0]?.id).toBe("child-1")
+    expect(sanitized[0]?.props["children"]).toHaveLength(1)
+    expect(sanitized[0]?.props["children"][0]?.id).toBe("child-1")
   })
 
   it("preserves non-orphaned top-level blocks and their children", () => {
@@ -59,7 +59,7 @@ describe("sanitizeBlockTree", () => {
 
     expect(sanitized.length).toBe(2)
     expect(sanitized[0]?.id).toBe("section-1")
-    expect(sanitized[0]?.props.children[0]?.id).toBe("child-1")
+    expect(sanitized[0]?.props["children"][0]?.id).toBe("child-1")
     expect(sanitized[1]?.id).toBe("outside-1")
   })
 })

@@ -100,7 +100,7 @@ const initialLabel = selectedItem ? selectedItem.label : ""
       const onSearchInput = (e: Event) => {
         const q = (e.target as HTMLInputElement).value.toLowerCase();
         items.forEach(item => {
-          const label = (item as HTMLElement).dataset.label?.toLowerCase() || "";
+          const label = (item as HTMLElement).dataset["label"]?.toLowerCase() || "";
           if (label.includes(q)) {
             (item as HTMLElement).classList.remove("hidden");
           } else {
@@ -114,8 +114,8 @@ const initialLabel = selectedItem ? selectedItem.label : ""
       items.forEach(item => {
         const onItemClick = (e: MouseEvent) => {
           e.stopPropagation();
-          const val = (item as HTMLElement).dataset.value || "";
-          const label = (item as HTMLElement).dataset.label || "";
+          const val = (item as HTMLElement).dataset["value"] || "";
+          const label = (item as HTMLElement).dataset["label"] || "";
           
           if (hiddenInput) hiddenInput.value = val;
           if (valueSpan) valueSpan.textContent = label;

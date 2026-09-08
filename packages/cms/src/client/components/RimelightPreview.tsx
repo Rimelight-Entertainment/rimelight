@@ -25,8 +25,8 @@ export const RimelightPreview: Component<RimelightPreviewProps> = (props) => {
   }
 
   const [blocks, setBlocks] = createSignal<BaseBlock[]>(getInitialBlocks())
-  const [title, setTitle] = createSignal<string>(props.title || "")
-  const [description, setDescription] = createSignal<string>(props.description || "")
+  const [title, setTitle] = createSignal<string>(props["title"] || "")
+  const [description, setDescription] = createSignal<string>(props["description"] || "")
   const [banner, setBanner] = createSignal<string>(props.banner || "")
   const [category, setCategory] = createSignal<string>(props.category || "")
 
@@ -120,14 +120,14 @@ function escapeHtml(str: string): string {
 function getChildren(b: BaseBlock): BaseBlock[] {
   if (!b) return []
   if (Array.isArray(b.children)) return b.children
-  if (Array.isArray(b.props?.children)) return b.props.children
+  if (Array.isArray(b.props?.["children"])) return b.props["children"]
   return []
 }
 
 function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string {
   if (!b) return ""
   const props = b.props || {}
-  const rawText = props.text
+  const rawText = props["text"]
   const textVal = typeof rawText === "object" && rawText !== null ? rawText.en || "" : rawText || ""
 
   if (b.type === "ParagraphBlock") {
@@ -172,9 +172,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
 
   if (b.type === "SectionBlock") {
     const level = calculateHeadingLevel(sectionDepth)
-    const title = props.title || "Untitled Section"
+    const title = props["title"] || "Untitled Section"
     const slug = title.toLowerCase().replace(/\W+/g, "-")
-    const description = props.description
+    const description = props["description"]
     let headingClasses = "font-bold text-neutral-900"
     if (level === 2) headingClasses += " text-3xl mt-6 mb-3 border-b border-neutral-200 pb-2"
     else if (level === 3) headingClasses += " text-2xl font-semibold mt-5 mb-2.5"
@@ -194,9 +194,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "CalloutBlock") {
-    const variant = props.variant || "info"
-    const to = props.to
-    const target = props.target || "_self"
+    const variant = props["variant"] || "info"
+    const to = props["to"]
+    const target = props["target"] || "_self"
     const icons: Record<string, string> = {
       info: "ℹ️",
       success: "✅",
@@ -206,7 +206,7 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
       ideation: "💡",
       source: "💻"
     }
-    const icon = icons[variant] || icons.info
+    const icon = icons[variant] || icons["info"]
 
     let variantClasses = "bg-info-50/50 border-info-200 text-info-800"
     if (variant === "success") {
@@ -237,9 +237,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "ImageBlock") {
-    const src = props.src || props.url || ""
-    const alt = props.alt || "Image"
-    const caption = props.caption
+    const src = props["src"] || props["url"] || ""
+    const alt = props["alt"] || "Image"
+    const caption = props["caption"]
     return `<figure class="mx-auto my-6 flex flex-col items-center max-w-full">
       <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" class="h-auto max-w-full rounded-xl object-cover border border-neutral-200 shadow-sm" />
       ${caption ? `<figcaption class="mt-2 text-center text-xs text-neutral-500 italic">${escapeHtml(caption)}</figcaption>` : ""}
@@ -247,9 +247,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "CodeBlock") {
-    const code = props.code || textVal
-    const language = props.language || "plaintext"
-    const caption = props.caption
+    const code = props["code"] || textVal
+    const language = props["language"] || "plaintext"
+    const caption = props["caption"]
     return `<div class="cms-code my-4 rounded-lg bg-neutral-950 p-4 font-mono text-sm border border-neutral-800 overflow-x-auto">
       <div class="text-xs text-neutral-500 uppercase mb-2 select-none">${escapeHtml(language)}</div>
       <pre class="m-0"><code class="text-success-300 font-mono">${escapeHtml(code)}</code></pre>
@@ -258,9 +258,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "ScriptBlock") {
-    const title = props.title || "Untitled Script"
-    const synopsis = props.synopsis
-    const chars = props.characters || []
+    const title = props["title"] || "Untitled Script"
+    const synopsis = props["synopsis"]
+    const chars = props["characters"] || []
     const { aPlot, bPlot, cPlot, stinger } = props
     return `<div class="my-6 p-4 border-l-4 border-warning-400 bg-warning-50/20 rounded-r-lg">
       <div class="mb-4">
@@ -307,10 +307,10 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
       NONE: ""
     }
 
-    const setting = settingLabels[props.setting] || props.setting || "INT."
-    const location = props.location || ""
-    const tod = timeOfDayLabels[props.timeOfDay] || props.timeOfDay || "Morning"
-    const transition = transitionLabels[props.transition] || ""
+    const setting = settingLabels[props["setting"]] || props["setting"] || "INT."
+    const location = props["location"] || ""
+    const tod = timeOfDayLabels[props["timeOfDay"]] || props["timeOfDay"] || "Morning"
+    const transition = transitionLabels[props["transition"]] || ""
 
     const parts: string[] = []
     if (setting && setting !== "Other") parts.push(setting)
@@ -322,7 +322,7 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
         ${parts.map((p) => `<span>${escapeHtml(p)}</span>`).join("")}
         ${transition ? `<span class="ml-auto text-[10px] italic text-neutral-500">${escapeHtml(transition)}</span>` : ""}
       </div>
-      ${props.description ? `<p class="text-sm text-neutral-700 mb-2">${escapeHtml(props.description)}</p>` : ""}
+      ${props["description"] ? `<p class="text-sm text-neutral-700 mb-2">${escapeHtml(props["description"])}</p>` : ""}
       <div class="mt-3">
         ${getChildren(b)
           .map((c) => renderBlockPreviewHtml(c, sectionDepth))
@@ -332,9 +332,9 @@ function renderBlockPreviewHtml(b: BaseBlock, sectionDepth: number = 0): string 
   }
 
   if (b.type === "DialogueBlock") {
-    const character = props.character || "CHARACTER"
-    const parenthetical = props.parenthetical
-    const line = props.line || ""
+    const character = props["character"] || "CHARACTER"
+    const parenthetical = props["parenthetical"]
+    const line = props["line"] || ""
     return `<div class="my-3 mx-8 max-w-md">
       <div class="text-sm font-bold text-center text-commentary-800">${escapeHtml(character)}</div>
       ${parenthetical ? `<div class="text-xs italic text-center text-neutral-500 mt-0.5">(${escapeHtml(parenthetical)})</div>` : ""}

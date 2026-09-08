@@ -45,22 +45,23 @@ export function buildArticleSchema(options: ArticleSchemaOptions): Record<string
     }
   }
 
-  if (description) schema.description = description
-  if (image) schema.image = image
+  if (description) schema["description"] = description
+  if (image) schema["image"] = image
 
   if (datePublished) {
-    schema.datePublished =
+    schema["datePublished"] =
       datePublished instanceof Date ? datePublished.toISOString() : datePublished
   }
 
   if (dateModified) {
-    schema.dateModified = dateModified instanceof Date ? dateModified.toISOString() : dateModified
+    schema["dateModified"] =
+      dateModified instanceof Date ? dateModified.toISOString() : dateModified
   } else if (datePublished) {
-    schema.dateModified = schema.datePublished
+    schema["dateModified"] = schema["datePublished"]
   }
 
   if (authorName) {
-    schema.author = {
+    schema["author"] = {
       "@type": "Person",
       "name": authorName,
       ...(authorUrl ? { url: authorUrl } : {})
@@ -68,7 +69,7 @@ export function buildArticleSchema(options: ArticleSchemaOptions): Record<string
   }
 
   if (publisherName) {
-    schema.publisher = {
+    schema["publisher"] = {
       "@type": "Organization",
       "name": publisherName,
       ...(publisherLogo ? { logo: { "@type": "ImageObject", "url": publisherLogo } } : {})

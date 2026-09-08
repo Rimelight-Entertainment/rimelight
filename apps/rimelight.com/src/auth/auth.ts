@@ -32,27 +32,28 @@ const getEnvVal = (
 }
 
 export const auth0Config: Auth0AdapterOptions = {
-  domain: getEnvVal(import.meta.env?.AUTH0_DOMAIN, "AUTH0_DOMAIN", "rimelight.eu.auth0.com"),
+  domain: getEnvVal(import.meta.env?.["AUTH0_DOMAIN"], "AUTH0_DOMAIN", "rimelight.eu.auth0.com"),
   audience:
-    getEnvVal(import.meta.env?.AUTH0_USE_CUSTOM_AUDIENCE, "AUTH0_USE_CUSTOM_AUDIENCE") === "true"
-      ? getEnvVal(import.meta.env?.AUTH0_AUDIENCE, "AUTH0_AUDIENCE") || undefined
+    getEnvVal(import.meta.env?.["AUTH0_USE_CUSTOM_AUDIENCE"], "AUTH0_USE_CUSTOM_AUDIENCE") ===
+    "true"
+      ? getEnvVal(import.meta.env?.["AUTH0_AUDIENCE"], "AUTH0_AUDIENCE") || undefined
       : undefined,
-  clientId: getEnvVal(import.meta.env?.AUTH0_CLIENT_ID, "AUTH0_CLIENT_ID", ""),
-  clientSecret: getEnvVal(import.meta.env?.AUTH0_CLIENT_SECRET, "AUTH0_CLIENT_SECRET", ""),
+  clientId: getEnvVal(import.meta.env?.["AUTH0_CLIENT_ID"], "AUTH0_CLIENT_ID", ""),
+  clientSecret: getEnvVal(import.meta.env?.["AUTH0_CLIENT_SECRET"], "AUTH0_CLIENT_SECRET", ""),
   rolesClaim: getEnvVal(
-    import.meta.env?.AUTH0_ROLES_CLAIM,
+    import.meta.env?.["AUTH0_ROLES_CLAIM"],
     "AUTH0_ROLES_CLAIM",
     "https://rimelight.com/roles"
   ),
   userTypeClaim: getEnvVal(
-    import.meta.env?.AUTH0_USER_TYPE_CLAIM,
+    import.meta.env?.["AUTH0_USER_TYPE_CLAIM"],
     "AUTH0_USER_TYPE_CLAIM",
     "https://rimelight.com/user_type"
   ),
   permissionsClaim: "permissions",
   sessionCookieName: "rimelight_session",
   sessionSecret: getEnvVal(
-    import.meta.env?.AUTH0_SECRET,
+    import.meta.env?.["AUTH0_SECRET"],
     "AUTH0_SECRET",
     "rimelight_default_development_secret_key_32bytes_minimum_length"
   ),

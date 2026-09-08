@@ -15,9 +15,9 @@ describe("seo-schema", () => {
 
     expect(schema["@context"]).toBe("https://schema.org")
     expect(schema["@type"]).toBe("TechArticle")
-    expect(schema.headline).toBe("Building on Cloudflare Workers")
-    expect(schema.author).toEqual({ "@type": "Person", "name": "Idan" })
-    expect(schema.datePublished).toBe("2026-08-01T12:00:00.000Z")
+    expect(schema["headline"]).toBe("Building on Cloudflare Workers")
+    expect(schema["author"]).toEqual({ "@type": "Person", "name": "Idan" })
+    expect(schema["datePublished"]).toBe("2026-08-01T12:00:00.000Z")
   })
 
   it("builds BreadcrumbList JSON-LD schema", () => {
@@ -28,14 +28,14 @@ describe("seo-schema", () => {
     ])
 
     expect(schema["@type"]).toBe("BreadcrumbList")
-    expect(schema.itemListElement).toHaveLength(3)
-    expect(schema.itemListElement[0]).toEqual({
+    expect(schema["itemListElement"]).toHaveLength(3)
+    expect(schema["itemListElement"][0]).toEqual({
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
       "item": "https://rimelight.com"
     })
-    expect(schema.itemListElement[2]).toEqual({
+    expect(schema["itemListElement"][2]).toEqual({
       "@type": "ListItem",
       "position": 3,
       "name": "Installation",

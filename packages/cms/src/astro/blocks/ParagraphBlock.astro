@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { block, locale = "en" } = Astro.props
-const rawText = block.props?.text
+const rawText = block.props?.["text"]
 
 function escapeHtml(str: string): string {
   return (str || "")

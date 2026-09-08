@@ -2,8 +2,8 @@ import Sortable from "sortablejs"
 
 const sortableProto: Record<string, any> | undefined = Sortable?.prototype
 
-if (typeof window !== "undefined" && sortableProto && !sortableProto.patchedParentNodeGuard) {
-  sortableProto.patchedParentNodeGuard = true
+if (typeof window !== "undefined" && sortableProto && !sortableProto["patchedParentNodeGuard"]) {
+  sortableProto["patchedParentNodeGuard"] = true
   const originalOnDragOver = sortableProto["_onDragOver"]
   if (typeof originalOnDragOver === "function") {
     sortableProto["_onDragOver"] = function (evt: Event) {
@@ -109,10 +109,11 @@ export function initBlockSortable(container: HTMLElement, options: SortableOptio
     onAdd: (evt) => {
       runCleanup(evt.item)
       const itemEl = evt.item
-      const blockId = itemEl.dataset.id || itemEl.getAttribute("data-id")
+      const blockId = itemEl.dataset["id"] || itemEl.getAttribute("data-id")
       if (blockId && evt.newIndex !== undefined && options.onAdd) {
         const target = evt.from.closest("[data-block-id]")
-        const containerBlockId = target instanceof HTMLElement ? target.dataset.blockId : undefined
+        const containerBlockId =
+          target instanceof HTMLElement ? target.dataset["blockId"] : undefined
         // Remove the physically-moved DOM node before calling the callback.
         // The reactive framework (SolidJS) will re-render the authoritative element
         // from state, so leaving the SortableJS-placed node causes a visual duplicate.
@@ -123,7 +124,7 @@ export function initBlockSortable(container: HTMLElement, options: SortableOptio
     onRemove: (evt) => {
       runCleanup(evt.item)
       const itemEl = evt.item
-      const blockId = itemEl.dataset.id || itemEl.getAttribute("data-id")
+      const blockId = itemEl.dataset["id"] || itemEl.getAttribute("data-id")
       if (blockId && evt.oldIndex !== undefined && options.onRemove) {
         options.onRemove(blockId, evt.oldIndex)
       }
@@ -167,8 +168,8 @@ export function cleanAllSortableClasses(specificItem?: HTMLElement | Element) {
 }
 
 const customWin: Record<string, any> | null = typeof window !== "undefined" ? window : null
-if (customWin && !customWin.cmsSortableGlobalListenersAttached) {
-  customWin.cmsSortableGlobalListenersAttached = true
+if (customWin && !customWin["cmsSortableGlobalListenersAttached"]) {
+  customWin["cmsSortableGlobalListenersAttached"] = true
   const globalClean = () => {
     const doClean = () => cleanAllSortableClasses()
     doClean()
@@ -176,9 +177,9 @@ if (customWin && !customWin.cmsSortableGlobalListenersAttached) {
     setTimeout(doClean, 150)
     setTimeout(doClean, 300)
   }
-  customWin.addEventListener("mouseup", globalClean, { capture: true })
-  customWin.addEventListener("pointerup", globalClean, { capture: true })
-  customWin.addEventListener("touchend", globalClean, { capture: true })
-  customWin.addEventListener("dragend", globalClean, { capture: true })
-  customWin.addEventListener("drop", globalClean, { capture: true })
+  customWin["addEventListener"]("mouseup", globalClean, { capture: true })
+  customWin["addEventListener"]("pointerup", globalClean, { capture: true })
+  customWin["addEventListener"]("touchend", globalClean, { capture: true })
+  customWin["addEventListener"]("dragend", globalClean, { capture: true })
+  customWin["addEventListener"]("drop", globalClean, { capture: true })
 }

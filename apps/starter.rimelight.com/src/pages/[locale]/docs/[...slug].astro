@@ -71,7 +71,7 @@ const dbBlocks = content.blocks || [];
 const getLocalizedText = (val: unknown, loc: string): string => {
   if (typeof val === "object" && val !== null) {
     const record = val as Record<string, string>;
-    return record[loc] || record.en || "";
+    return record[loc] || record["en"] || "";
   }
   return String(val || "");
 };

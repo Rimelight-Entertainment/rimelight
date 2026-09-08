@@ -10,20 +10,20 @@ export interface TableEditorProps {
 
 export const TableEditor: Component<TableEditorProps> = (componentProps) => {
   const columns = (): TableColumnDef[] =>
-    componentProps.props.columns || [
+    componentProps.props["columns"] || [
       { key: "col1", header: "Header 1", align: "left" },
       { key: "col2", header: "Header 2", align: "left" }
     ]
 
   const rows = (): Record<string, string>[] =>
-    componentProps.props.rows || [{ col1: "Cell 1", col2: "Cell 2" }]
+    componentProps.props["rows"] || [{ col1: "Cell 1", col2: "Cell 2" }]
 
   const save = (newCols: TableColumnDef[], newRows: Record<string, string>[], caption?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
       columns: newCols,
       rows: newRows,
-      caption: caption !== undefined ? caption : componentProps.props.caption || ""
+      caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
     })
   }
 
@@ -172,7 +172,7 @@ export const TableEditor: Component<TableEditorProps> = (componentProps) => {
       <RLSInput
         type="text"
         placeholder="Table caption (optional)"
-        value={componentProps.props.caption || ""}
+        value={componentProps.props["caption"] || ""}
         onBlur={(e) => save(columns(), rows(), e.currentTarget.value)}
         size="sm"
       />

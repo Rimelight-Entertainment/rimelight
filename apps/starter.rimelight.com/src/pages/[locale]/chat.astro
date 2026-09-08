@@ -508,7 +508,7 @@ import { t } from "@rimelight/i18n";
   channelBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const target = e.currentTarget as HTMLButtonElement;
-      const channel = target.dataset.channel;
+      const channel = target.dataset["channel"];
       if (channel && channel !== activeChannel) {
         // Update active class
         document.querySelector('.channel-btn.active')?.classList.remove('active');

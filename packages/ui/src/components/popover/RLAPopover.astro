@@ -198,7 +198,7 @@ const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
    */
   function setupPopovers() {
     document.querySelectorAll<HTMLElement>('[data-slot="popover-container"]').forEach(container => {
-      const mode = container.dataset.mode || 'both';
+      const mode = container.dataset["mode"] || 'both';
       const popoverId = container.querySelector<HTMLElement>('[data-slot="content"]')?.id;
       if (!popoverId) return;
 
@@ -248,7 +248,7 @@ const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
         const ph = panel.offsetHeight;
         if (pw === 0 || ph === 0) return; // closed or not yet rendered
 
-        const parts = (container.dataset.placement || 'bottom').split('-');
+        const parts = (container.dataset["placement"] || 'bottom').split('-');
         const vert = parts[0];            // top | bottom
         const horiz = parts[1] || 'center'; // start | end | center
         const gap = 8;

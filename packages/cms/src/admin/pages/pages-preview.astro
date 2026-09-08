@@ -11,14 +11,14 @@ import { verifyPreviewToken } from "../../core/preview.ts";
 export const prerender = false;
 
 const currentLocale = Astro.currentLocale ?? "en";
-const id = Astro.params.id;
+const id = Astro.params["id"];
 
 if (!id) {
   return Astro.redirect(getRelativeLocaleUrl(currentLocale, "/cms/pages"));
 }
 
 const token = Astro.url.searchParams.get("token");
-const secret = process.env.CMS_PREVIEW_SECRET || "rimelight-preview-secret-key";
+const secret = process.env["CMS_PREVIEW_SECRET"] || "rimelight-preview-secret-key";
 if (token) {
   await verifyPreviewToken(id, token, secret);
 }
@@ -48,7 +48,7 @@ const content = draft?.content ? parseContent(draft.content) : parseContent(page
 
 const titleVal =
   typeof page.title === "object" && page.title !== null
-    ? (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>).en || ""
+    ? (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>)["en"] || ""
     : String(page.title || "");
 ---
 

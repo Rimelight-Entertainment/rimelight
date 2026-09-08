@@ -22,12 +22,12 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
   let childrenContainer: HTMLDivElement | null = null as HTMLDivElement | null
   let sortableInstance: any = null
 
-  const characters = (): string[] => componentProps.props.characters || []
+  const characters = (): string[] => componentProps.props["characters"] || []
   const childrenBlocks = (): BaseBlock[] => {
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {
@@ -96,7 +96,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
         <span class="text-xs font-bold text-muted uppercase tracking-widest">Script Title</span>
         <RLSInput
           data-field="title"
-          value={componentProps.props.title || ""}
+          value={componentProps.props["title"] || ""}
           onInput={(e) => saveProps({ title: e.currentTarget.value })}
           placeholder="Script Title"
           size="sm"
@@ -107,7 +107,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
         <span class="text-xs font-bold text-muted uppercase tracking-widest">Synopsis</span>
         <RLSTextarea
           data-field="synopsis"
-          value={componentProps.props.synopsis || ""}
+          value={componentProps.props["synopsis"] || ""}
           onInput={(e) => saveProps({ synopsis: e.currentTarget.value })}
           placeholder="Synopsis..."
           rows={2}
@@ -167,21 +167,21 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
         <div class="grid grid-cols-3 gap-2">
           <RLSInput
             data-field="aPlot"
-            value={componentProps.props.aPlot || ""}
+            value={componentProps.props["aPlot"] || ""}
             onInput={(e) => saveProps({ aPlot: e.currentTarget.value })}
             placeholder="A-Plot"
             size="sm"
           />
           <RLSInput
             data-field="bPlot"
-            value={componentProps.props.bPlot || ""}
+            value={componentProps.props["bPlot"] || ""}
             onInput={(e) => saveProps({ bPlot: e.currentTarget.value })}
             placeholder="B-Plot"
             size="sm"
           />
           <RLSInput
             data-field="cPlot"
-            value={componentProps.props.cPlot || ""}
+            value={componentProps.props["cPlot"] || ""}
             onInput={(e) => saveProps({ cPlot: e.currentTarget.value })}
             placeholder="C-Plot"
             size="sm"
@@ -193,7 +193,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
         <span class="text-xs font-bold text-muted uppercase tracking-widest">Stinger</span>
         <RLSInput
           data-field="stinger"
-          value={componentProps.props.stinger || ""}
+          value={componentProps.props["stinger"] || ""}
           onInput={(e) => saveProps({ stinger: e.currentTarget.value })}
           placeholder="Stinger (post-credits etc)"
           size="sm"

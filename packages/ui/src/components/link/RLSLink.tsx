@@ -53,7 +53,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
 
   return (
     <a
-      class={classes().root}
+      class={classes()["root"]}
       data-slot="root"
       href={attrs().href}
       target={attrs().target}
@@ -67,7 +67,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       {props.leading ? (
         props.leading
       ) : props.leadingIcon ? (
-        <span class={classes().leadingIcon} data-slot="leading-icon">
+        <span class={classes()["leadingIcon"]} data-slot="leading-icon">
           <RLSIcon name={props.leadingIcon} size="sm" aria-hidden="true" />
         </span>
       ) : null}
@@ -75,7 +75,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       {props.children !== undefined && props.children !== null ? (
         props.children
       ) : props.label !== undefined && props.label !== null ? (
-        <span class={classes().label} data-slot="label">
+        <span class={classes()["label"]} data-slot="label">
           {props.label}
         </span>
       ) : null}
@@ -83,7 +83,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
       {props.trailing ? (
         props.trailing
       ) : attrs().showTrailingIcon ? (
-        <span class={classes().trailingIcon} data-slot="trailing-icon">
+        <span class={classes()["trailingIcon"]} data-slot="trailing-icon">
           <RLSIcon name={attrs().showTrailingIcon!} size="sm" aria-hidden="true" />
         </span>
       ) : null}

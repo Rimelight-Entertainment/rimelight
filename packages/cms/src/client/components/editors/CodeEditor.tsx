@@ -37,15 +37,15 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
   const saveProps = (lang?: string, code?: string, caption?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      language: lang !== undefined ? lang : componentProps.props.language || "typescript",
+      language: lang !== undefined ? lang : componentProps.props["language"] || "typescript",
       code: code !== undefined ? code : codeTextarea?.value || "",
-      caption: caption !== undefined ? caption : componentProps.props.caption || ""
+      caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
     })
   }
 
   onMount(() => {
     if (codeTextarea) {
-      codeTextarea.value = componentProps.props.code || ""
+      codeTextarea.value = componentProps.props["code"] || ""
       autoResize()
     }
   })
@@ -58,7 +58,7 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
           <div class="w-36">
             <RLSSelect
               items={LANGUAGES}
-              value={componentProps.props.language || "typescript"}
+              value={componentProps.props["language"] || "typescript"}
               onChange={(e) => saveProps(e.currentTarget.value)}
               size="xs"
             />
@@ -89,7 +89,7 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
       <RLSInput
         type="text"
         data-field="caption"
-        value={componentProps.props.caption || ""}
+        value={componentProps.props["caption"] || ""}
         onBlur={(e) => saveProps(undefined, undefined, e.currentTarget.value)}
         size="sm"
         placeholder="Caption (optional)"

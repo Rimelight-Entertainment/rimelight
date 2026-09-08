@@ -22,7 +22,7 @@ function extractTextFromProperty(prop: unknown, locale: string = "en"): string {
     }
     const record = prop as Record<string, unknown>
     if (typeof record[locale] === "string") return record[locale] as string
-    if (typeof record.en === "string") return record.en as string
+    if (typeof record["en"] === "string") return record["en"] as string
     const firstVal = Object.values(record)[0]
     if (typeof firstVal === "string") return firstVal
   }
@@ -47,35 +47,35 @@ export function extractTextFromBlocks(
 
     switch (block.type) {
       case "ParagraphBlock": {
-        const text = extractTextFromProperty(props.text, locale)
+        const text = extractTextFromProperty(props["text"], locale)
         if (text) chunks.push(text)
         break
       }
       case "SectionBlock": {
-        if (props.title) chunks.push(String(props.title))
-        if (props.description) chunks.push(String(props.description))
-        if (Array.isArray(props.children)) {
-          const childText = extractTextFromBlocks(props.children, locale)
+        if (props["title"]) chunks.push(String(props["title"]))
+        if (props["description"]) chunks.push(String(props["description"]))
+        if (Array.isArray(props["children"])) {
+          const childText = extractTextFromBlocks(props["children"], locale)
           if (childText) chunks.push(childText)
         }
         break
       }
       case "CardBlock": {
-        if (props.title) chunks.push(String(props.title))
-        if (props.description) chunks.push(String(props.description))
+        if (props["title"]) chunks.push(String(props["title"]))
+        if (props["description"]) chunks.push(String(props["description"]))
         break
       }
       case "DialogueBlock": {
-        if (props.character && props.line) {
-          chunks.push(`${props.character}: ${props.line}`)
-        } else if (props.line) {
-          chunks.push(String(props.line))
+        if (props["character"] && props["line"]) {
+          chunks.push(`${props["character"]}: ${props["line"]}`)
+        } else if (props["line"]) {
+          chunks.push(String(props["line"]))
         }
         break
       }
       case "StepItemBlock": {
-        if (props.title) chunks.push(String(props.title))
-        if (props.description) chunks.push(String(props.description))
+        if (props["title"]) chunks.push(String(props["title"]))
+        if (props["description"]) chunks.push(String(props["description"]))
         break
       }
       default:
@@ -133,8 +133,8 @@ export function createPageExcerpt(
 
   if (contentObj && typeof contentObj === "object") {
     const props = (contentObj as { properties?: Record<string, unknown> }).properties
-    if (props && props.description) {
-      const descText = extractTextFromProperty(props.description, locale)
+    if (props && props["description"]) {
+      const descText = extractTextFromProperty(props["description"], locale)
       if (descText) return truncateExcerpt(descText, maxLength)
     }
 

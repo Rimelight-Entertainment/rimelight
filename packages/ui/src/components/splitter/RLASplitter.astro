@@ -85,7 +85,7 @@ await Promise.all(
       const container = this.querySelector("[data-resizable]") as HTMLElement | null;
       if (!container) return;
 
-      const direction = container.dataset.direction ?? "horizontal";
+      const direction = container.dataset["direction"] ?? "horizontal";
       const isHorizontal = direction === "horizontal";
 
       const panels = Array.from(

@@ -12,7 +12,7 @@ import { getRelativeLocaleUrl } from "@rimelight/i18n";
 export const prerender = false;
 
 const currentLocale = Astro.currentLocale ?? "en";
-const id = Astro.params.id;
+const id = Astro.params["id"];
 
 let template: any = null;
 if (db && id) {

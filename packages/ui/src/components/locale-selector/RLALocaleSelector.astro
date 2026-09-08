@@ -28,7 +28,7 @@ function getLocaleDisplayName(localeCode: string): string {
 // Normalize locales: string or LocaleItem
 const processedLocales: LocaleItem[] = locales.map(item =>
   typeof item === 'string'
-    ? { code: item, label: getLocaleDisplayName(item), href: undefined }
+    ? { code: item, label: getLocaleDisplayName(item) }
     : { ...item, label: item.label || getLocaleDisplayName(item.code) }
 );
 

@@ -117,12 +117,12 @@ const ratingItems = Array.from({ length }, (_, idx) => {
       const input = this.querySelector('.rating-hidden-input') as HTMLInputElement | null
       const items = this.querySelectorAll('.input-rating-item') as NodeListOf<HTMLElement>
 
-      const step = parseFloat(this.dataset.step || '1')
-      const length = parseInt(this.dataset.length || '5')
-      const clearable = this.dataset.clearable === 'true'
-      const hoverable = this.dataset.hoverable === 'true'
-      const disabled = this.dataset.disabled === 'true'
-      const readonly = this.dataset.readonly === 'true'
+      const step = parseFloat(this.dataset["step"] || '1')
+      const length = parseInt(this.dataset["length"] || '5')
+      const clearable = this.dataset["clearable"] === 'true'
+      const hoverable = this.dataset["hoverable"] === 'true'
+      const disabled = this.dataset["disabled"] === 'true'
+      const readonly = this.dataset["readonly"] === 'true'
 
       if (disabled || readonly) return
 
@@ -130,7 +130,7 @@ const ratingItems = Array.from({ length }, (_, idx) => {
 
       function updateVisuals(val: number) {
         items.forEach((item) => {
-          const idx = parseInt(item.dataset.index || '0')
+          const idx = parseInt(item.dataset["index"] || '0')
           const indicator = item.querySelector('.rating-item-indicator') as HTMLElement | null
           if (indicator) {
             indicator.style.width = getWidthForVal(val, idx)
@@ -153,7 +153,7 @@ const ratingItems = Array.from({ length }, (_, idx) => {
       const clickListeners = new Map<HTMLElement, (e: MouseEvent) => void>()
 
       items.forEach((item) => {
-        const idx = parseInt(item.dataset.index || '0')
+        const idx = parseInt(item.dataset["index"] || '0')
 
         const onMouseMove = (event: MouseEvent) => {
           const val = getValueFromEvent(event, item, idx)

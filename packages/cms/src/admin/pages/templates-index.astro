@@ -74,7 +74,7 @@ if (db) {
   <script>
     document.querySelectorAll('.delete-template-btn').forEach((btn) => {
       btn.addEventListener('click', async () => {
-        const id = (btn as HTMLElement).dataset.id;
+        const id = (btn as HTMLElement).dataset["id"];
         if (!id) return;
 
         if (!confirm('Are you sure you want to delete this template?')) return;

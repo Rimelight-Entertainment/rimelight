@@ -56,7 +56,7 @@ function resolveLocalized(val: unknown, locale: string = "en"): string {
   if (typeof val === "string") return val
   if (typeof val === "object" && val !== null) {
     const rec = val as Record<string, string>
-    return rec[locale] || rec.en || Object.values(rec)[0] || ""
+    return rec[locale] || rec["en"] || Object.values(rec)[0] || ""
   }
   return typeof val === "number" ? String(val) : ""
 }

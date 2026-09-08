@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { block } = Astro.props
-const items = block.props?.items || block.children || []
+const items = block.props?.["items"] || block.children || []
 
 function escapeHtml(str: string): string {
   return (str || "")
@@ -50,6 +50,6 @@ function renderNodesToHtml(nodes: InlineNode[]): string {
 
 <ol class="cms-ordered-list list-decimal list-inside space-y-2 my-4 text-base text-neutral-800" data-block-id={block.id}>
   {items.map((item: BaseBlock) => (
-    <li set:html={renderNodesToHtml(item.props?.content || [])} />
+    <li set:html={renderNodesToHtml(item.props?.["content"] || [])} />
   ))}
 </ol>

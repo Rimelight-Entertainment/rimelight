@@ -26,7 +26,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
     if (typeof componentProps.children === "function") {
       return componentProps.children() || []
     }
-    return componentProps.children || componentProps.props.children || []
+    return componentProps.children || componentProps.props["children"] || []
   }
 
   onMount(() => {
@@ -84,7 +84,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
         <input
           ref={(el) => (titleInput = el)}
           type="text"
-          value={componentProps.props.title || ""}
+          value={componentProps.props["title"] || ""}
           onInput={saveProps}
           placeholder="Section Title"
           class="flex-1 font-bold text-lg bg-transparent border-0 focus:outline-none text-highlighted placeholder:text-muted/60 py-0.5"
@@ -94,7 +94,7 @@ export const SectionEditor: Component<SectionEditorProps> = (componentProps) => 
       <input
         ref={(el) => (descInput = el)}
         type="text"
-        value={componentProps.props.description || ""}
+        value={componentProps.props["description"] || ""}
         onInput={saveProps}
         placeholder="Section description (optional)..."
         class="text-sm text-muted bg-transparent border-0 focus:outline-none placeholder:text-muted/50 py-0.5"

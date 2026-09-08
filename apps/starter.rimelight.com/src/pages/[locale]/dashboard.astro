@@ -498,7 +498,7 @@ const settingsConfig = [
     navLink.addEventListener('click', (e) => {
       e.preventDefault();
 
-      const sectionId = navLink.dataset.dashboardSection;
+      const sectionId = navLink.dataset["dashboardSection"];
       if (!sectionId) return;
 
       // Hide all sections

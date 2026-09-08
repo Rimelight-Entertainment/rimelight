@@ -2,7 +2,7 @@ import type { BaseBlock } from "../../core/types/blocks"
 
 export function getBlockChildren(b: BaseBlock): BaseBlock[] {
   if (!b) return []
-  if (Array.isArray(b.props?.children)) return b.props.children
+  if (Array.isArray(b.props?.["children"])) return b.props["children"]
   if (Array.isArray(b.children)) return b.children
   return []
 }

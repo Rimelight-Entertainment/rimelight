@@ -51,7 +51,7 @@ const { title, synopsis, characters, aPlot, bPlot, cPlot, stinger } = (block.pro
       Stinger: {stinger}
     </p>
   )}
-  {((block.children && block.children.length > 0) || (block.props?.children && block.props.children.length > 0)) && (
+  {((block.children && block.children.length > 0) || (block.props?.["children"] && block.props["children"].length > 0)) && (
     <div class="mt-4">
       <slot />
     </div>

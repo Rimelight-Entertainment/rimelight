@@ -13,7 +13,7 @@ api.get("/changelog", async (c) => {
     .map((seg) => seg.charAt(0).toUpperCase() + seg.slice(1))
     .join("")
 
-  const token = import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN
+  const token = import.meta.env["GITHUB_TOKEN"] || process.env["GITHUB_TOKEN"]
   const headers: Record<string, string> = {
     "User-Agent": "Rimelight-Docs-Changelog",
     "Accept": "application/vnd.github.v3+json"

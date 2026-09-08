@@ -39,7 +39,7 @@ const classes = theme({
 })
 
 const isBanner = layerType === "banner"
-const layerId = rest.id || `rla-${componentName}-${Math.random().toString(36).slice(2, 8)}`
+const layerId = rest["id"] || `rla-${componentName}-${Math.random().toString(36).slice(2, 8)}`
 ---
 
 <Tag

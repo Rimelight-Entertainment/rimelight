@@ -20,14 +20,14 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
         <RLSInput
           type="text"
           placeholder="Card Title"
-          value={componentProps.props.title || ""}
+          value={componentProps.props["title"] || ""}
           onBlur={(e) => save("title", e.currentTarget.value)}
           size="sm"
         />
         <RLSInput
           type="text"
           placeholder="Link (href e.g. /docs/getting-started)"
-          value={componentProps.props.href || ""}
+          value={componentProps.props["href"] || ""}
           onBlur={(e) => save("href", e.currentTarget.value)}
           size="sm"
         />
@@ -35,7 +35,7 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
       <RLSInput
         type="text"
         placeholder="Card Description"
-        value={componentProps.props.description || ""}
+        value={componentProps.props["description"] || ""}
         onBlur={(e) => save("description", e.currentTarget.value)}
         size="sm"
       />
@@ -43,14 +43,14 @@ export const CardEditor: Component<CardEditorProps> = (componentProps) => {
         <RLSInput
           type="text"
           placeholder="Icon (e.g. i-lucide-book-open)"
-          value={componentProps.props.icon || ""}
+          value={componentProps.props["icon"] || ""}
           onBlur={(e) => save("icon", e.currentTarget.value)}
           size="sm"
         />
         <RLSInput
           type="text"
           placeholder="Badge (optional e.g. New, Beta)"
-          value={componentProps.props.badge || ""}
+          value={componentProps.props["badge"] || ""}
           onBlur={(e) => save("badge", e.currentTarget.value)}
           size="sm"
         />

@@ -25,7 +25,7 @@ const {
 const attrs = resolveLinkAttrs(Astro.props)
 
 const classes = raw
-  ? { root: (Astro.props.class as string) || "", leadingIcon: "", label: "", trailingIcon: "" }
+  ? { root: (Astro.props["class"] as string) || "", leadingIcon: "", label: "", trailingIcon: "" }
   : (linkTheme({
   theme,
         ...(active !== undefined ? { active } : {}),
@@ -34,7 +34,7 @@ const classes = raw
 ---
 
 <a
-  class={classes.root}
+  class={classes["root"]}
   data-slot="root"
   href={attrs.href}
   target={attrs.target}
@@ -48,21 +48,21 @@ const classes = raw
 >
   <slot name="leading">
     {leadingIcon && (
-      <span class={classes.leadingIcon} data-slot="leading-icon">
+      <span class={classes["leadingIcon"]} data-slot="leading-icon">
         <RLAIcon name={leadingIcon} size="sm" aria-hidden="true" />
       </span>
     )}
   </slot>
 
   {label !== undefined && label !== null ? (
-    <span class={classes.label} data-slot="label">{label}</span>
+    <span class={classes["label"]} data-slot="label">{label}</span>
   ) : (
     <slot />
   )}
 
   <slot name="trailing">
     {attrs.showTrailingIcon && (
-      <span class={classes.trailingIcon} data-slot="trailing-icon">
+      <span class={classes["trailingIcon"]} data-slot="trailing-icon">
         <RLAIcon
           name={attrs.showTrailingIcon}
           size="sm"

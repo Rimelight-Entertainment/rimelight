@@ -163,7 +163,11 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
           <For each={blocks()}>
             {(block, index) => {
               const rawText =
-                block.props.text || block.props.title || block.props.code || block.props.src || ""
+                block.props["text"] ||
+                block.props["title"] ||
+                block.props["code"] ||
+                block.props["src"] ||
+                ""
               const textVal = typeof rawText === "object" ? rawText.en || "" : rawText || ""
 
               return (
@@ -220,10 +224,10 @@ export const RimelightTemplateEditor: Component<RimelightTemplateEditorProps> = 
                           onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => {
                             const val = e.currentTarget.value
                             updateBlockItem(block.id, (b) => {
-                              if (b.type === "SectionBlock") b.props.title = val
-                              else if (b.type === "CodeBlock") b.props.code = val
-                              else if (b.type === "ImageBlock") b.props.src = val
-                              else b.props.text = { en: val }
+                              if (b.type === "SectionBlock") b.props["title"] = val
+                              else if (b.type === "CodeBlock") b.props["code"] = val
+                              else if (b.type === "ImageBlock") b.props["src"] = val
+                              else b.props["text"] = { en: val }
                             })
                           }}
                           size="sm"

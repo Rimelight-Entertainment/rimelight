@@ -24,10 +24,10 @@ describe("HistoryStack", () => {
 
     expect(history.canUndo()).toBe(true)
     const undone = history.undo()
-    expect(undone?.[0]?.props.text).toBe("Step 1")
+    expect(undone?.[0]?.props["text"]).toBe("Step 1")
 
     expect(history.canRedo()).toBe(true)
     const redone = history.redo()
-    expect(redone?.[0]?.props.text).toBe("Step 2")
+    expect(redone?.[0]?.props["text"]).toBe("Step 2")
   })
 })

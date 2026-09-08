@@ -99,12 +99,12 @@ describe("buildWebSiteSchema", () => {
     const schema = buildWebSiteSchema(config)
     expect(schema["@context"]).toBe("https://schema.org")
     expect(schema["@type"]).toBe("WebSite")
-    expect(schema.name).toBe("My Site")
-    expect(schema.url).toBe("https://example.com")
+    expect(schema["name"]).toBe("My Site")
+    expect(schema["url"]).toBe("https://example.com")
   })
 
   it("prefers site param over config.url", () => {
     const schema = buildWebSiteSchema(config, "https://override.com")
-    expect(schema.url).toBe("https://override.com")
+    expect(schema["url"]).toBe("https://override.com")
   })
 })

@@ -8,8 +8,8 @@ export interface CachePurgeOptions {
 
 export async function invalidatePageCache(options: CachePurgeOptions): Promise<boolean> {
   const { slug, locales, domain = "rimelight.com", basePath = "", isEnterpriseCloudflare } = options
-  const zoneId = process.env.CLOUDFLARE_ZONE_ID
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+  const zoneId = process.env["CLOUDFLARE_ZONE_ID"]
+  const apiToken = process.env["CLOUDFLARE_API_TOKEN"]
 
   if (!zoneId || !apiToken) {
     return false

@@ -19,10 +19,10 @@ function createDbProxy(): NeonHttpDatabase<typeof schema> {
 
       const databaseUrl =
         (typeof import.meta.env !== "undefined"
-          ? import.meta.env.HYPERDRIVE_URL || import.meta.env.DATABASE_URL
+          ? import.meta.env["HYPERDRIVE_URL"] || import.meta.env["DATABASE_URL"]
           : undefined) ||
         (typeof process !== "undefined" && process.env
-          ? process.env.HYPERDRIVE_URL || process.env.DATABASE_URL
+          ? process.env["HYPERDRIVE_URL"] || process.env["DATABASE_URL"]
           : undefined)
 
       if (!databaseUrl) {

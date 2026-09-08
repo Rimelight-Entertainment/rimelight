@@ -158,9 +158,9 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
       private isDisabled: boolean = false
 
       connectedCallback() {
-        this.currentIndex = Number(this.dataset.currentIndex || 0)
-        this.isLinear = this.dataset.linear === "true"
-        this.isDisabled = this.dataset.disabled === "true"
+        this.currentIndex = Number(this.dataset["currentIndex"] || 0)
+        this.isLinear = this.dataset["linear"] === "true"
+        this.isDisabled = this.dataset["disabled"] === "true"
 
         const items = this.querySelectorAll('[data-slot="item"]')
         this.itemsCount = items.length
@@ -168,7 +168,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
         const triggers = this.querySelectorAll('[data-step-trigger]')
         triggers.forEach(trig => {
           trig.addEventListener('click', () => {
-            const index = Number((trig as HTMLElement).dataset.stepTrigger)
+            const index = Number((trig as HTMLElement).dataset["stepTrigger"])
             if (!isNaN(index)) {
               this.goTo(index)
             }
@@ -205,11 +205,11 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
 
         const oldIndex = this.currentIndex
         this.currentIndex = index
-        this.dataset.currentIndex = String(index)
+        this.dataset["currentIndex"] = String(index)
         this.updateState()
 
         const itemEl = this.querySelector(`[data-slot="item"][data-index="${index}"]`) as HTMLElement | null
-        const itemVal = itemEl?.dataset.value ?? index
+        const itemVal = itemEl?.dataset["value"] ?? index
 
         if (index > oldIndex) {
           this.dispatchEvent(new CustomEvent('next', { detail: { index, value: itemVal } }))
@@ -223,7 +223,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
         const items = this.querySelectorAll('[data-slot="item"]')
         items.forEach((itemNode) => {
           const item = itemNode as HTMLElement
-          const idx = Number(item.dataset.index)
+          const idx = Number(item.dataset["index"])
           const isCompleted = idx < this.currentIndex
           const isActive = idx === this.currentIndex
           const isDisabled = this.isDisabled || (this.isLinear && idx > this.currentIndex)
@@ -261,7 +261,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
           const separators = this.querySelectorAll('[data-slot="separator"]')
           separators.forEach((sepNode) => {
             const sep = sepNode as HTMLElement
-            const sepIdx = Number(sep.dataset.separatorIndex)
+            const sepIdx = Number(sep.dataset["separatorIndex"])
             if (sepIdx < this.currentIndex) {
               sep.classList.add('!bg-primary-600')
               sep.classList.remove('bg-neutral-200')
@@ -275,7 +275,7 @@ const currentIndex = activeIndex >= 0 ? activeIndex : 0
         const panels = this.querySelectorAll('[data-stepper-panel]')
         panels.forEach((panelNode) => {
           const panel = panelNode as HTMLElement
-          const idx = Number(panel.dataset.stepperPanel)
+          const idx = Number(panel.dataset["stepperPanel"])
           if (idx === this.currentIndex) {
             panel.removeAttribute('hidden')
           } else {

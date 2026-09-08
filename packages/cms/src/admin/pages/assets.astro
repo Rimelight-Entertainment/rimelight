@@ -199,7 +199,7 @@ function formatDate(dateStr?: string): string {
     const root = document.getElementById("assets-page-root");
     if (!root) return;
 
-    const apiEndpoint = root.dataset.apiEndpoint || "/cms/api/media";
+    const apiEndpoint = root.dataset["apiEndpoint"] || "/cms/api/media";
     const uploadInput = document.getElementById("media-upload-input") as HTMLInputElement | null;
     const dropzone = document.getElementById("media-dropzone");
     const indicator = document.getElementById("upload-status-indicator");
@@ -280,10 +280,10 @@ function formatDate(dateStr?: string): string {
 
       const card = document.createElement("div");
       card.className = "border border-default rounded-lg bg-default overflow-hidden flex flex-col hover:border-primary/50 transition-all group asset-card animate-in fade-in";
-      card.dataset.key = asset.key;
-      card.dataset.name = asset.name;
-      card.dataset.type = asset.mimeType;
-      card.dataset.url = asset.url;
+      card.dataset["key"] = asset.key;
+      card.dataset["name"] = asset.name;
+      card.dataset["type"] = asset.mimeType;
+      card.dataset["url"] = asset.url;
 
       card.innerHTML = `
         <div class="h-40 bg-muted/30 flex items-center justify-center relative overflow-hidden">
@@ -320,7 +320,7 @@ function formatDate(dateStr?: string): string {
       parent.querySelectorAll(".copy-url-btn").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
           e.stopPropagation();
-          const url = (btn as HTMLElement).dataset.url;
+          const url = (btn as HTMLElement).dataset["url"];
           if (url) {
             const fullUrl = url.startsWith("http") ? url : window.location.origin + url;
             await navigator.clipboard.writeText(fullUrl);
@@ -337,7 +337,7 @@ function formatDate(dateStr?: string): string {
       parent.querySelectorAll(".delete-asset-btn").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
           e.stopPropagation();
-          const key = (btn as HTMLElement).dataset.key;
+          const key = (btn as HTMLElement).dataset["key"];
           if (!key) return;
           if (!confirm(`Are you sure you want to delete this file from R2 storage?\nKey: ${key}`)) return;
 
@@ -368,9 +368,9 @@ function formatDate(dateStr?: string): string {
       let visibleCount = 0;
 
       cards.forEach((card) => {
-        const name = (card.dataset.name || "").toLowerCase();
-        const key = (card.dataset.key || "").toLowerCase();
-        const type = (card.dataset.type || "").toLowerCase();
+        const name = (card.dataset["name"] || "").toLowerCase();
+        const key = (card.dataset["key"] || "").toLowerCase();
+        const type = (card.dataset["type"] || "").toLowerCase();
 
         const matchesSearch = !searchQuery || name.includes(searchQuery) || key.includes(searchQuery);
         let matchesFilter = true;
@@ -408,7 +408,7 @@ function formatDate(dateStr?: string): string {
         btn.classList.remove("bg-muted", "text-muted-foreground");
         btn.classList.add("bg-primary", "text-white");
 
-        currentFilter = (btn as HTMLElement).dataset.filter || "all";
+        currentFilter = (btn as HTMLElement).dataset["filter"] || "all";
         filterCards();
       });
     });

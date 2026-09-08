@@ -70,8 +70,8 @@ const modalId = `rla-shortcuts-${Math.random().toString(36).substring(2, 9)}`
       const body = dialog.querySelector('.rla-shortcuts-body');
       const closeBtn = dialog.querySelector('.rla-shortcuts-close');
 
-      const resolvedCategories = JSON.parse(dialog.dataset.categories || '{}');
-      const categoryOrder = JSON.parse(dialog.dataset.categoryOrder || '[]');
+      const resolvedCategories = JSON.parse(dialog.dataset["categories"] || '{}');
+      const categoryOrder = JSON.parse(dialog.dataset["categoryOrder"] || '[]');
 
       let escapeCleanup: (() => void) | null = null;
 

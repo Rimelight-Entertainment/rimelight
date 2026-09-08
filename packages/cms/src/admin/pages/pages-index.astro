@@ -29,7 +29,7 @@ if (db) {
 const formattedPages = pagesList.map((page) => {
   const titleVal =
     typeof page.title === "object" && page.title !== null
-      ? (page.title as Record<string, string>).en || ""
+      ? (page.title as Record<string, string>)["en"] || ""
       : String(page.title || "");
   return {
     id: page.id,
@@ -124,7 +124,7 @@ const columns: TableColumn[] = [
   <script>
     document.querySelectorAll(".delete-page-btn").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        const pageId = (btn as HTMLElement).dataset.pageId;
+        const pageId = (btn as HTMLElement).dataset["pageId"];
         if (!pageId) return;
         if (!confirm("Are you sure you want to delete this page?")) return;
 

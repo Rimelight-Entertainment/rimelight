@@ -289,7 +289,7 @@ function ogUrl(page: typeof pages[0]) {
   // Copy URL buttons
   document.querySelectorAll<HTMLButtonElement>(".og-copy-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      const url = btn.dataset.url
+      const url = btn.dataset["url"]
       if (!url) return
       const full = new URL(url, location.origin).toString()
       await navigator.clipboard.writeText(full)

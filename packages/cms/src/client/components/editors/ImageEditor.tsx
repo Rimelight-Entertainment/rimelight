@@ -10,9 +10,9 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
   const saveProps = (src?: string, alt?: string, caption?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
-      src: src !== undefined ? src : componentProps.props.src || "",
-      alt: alt !== undefined ? alt : componentProps.props.alt || "",
-      caption: caption !== undefined ? caption : componentProps.props.caption || ""
+      src: src !== undefined ? src : componentProps.props["src"] || "",
+      alt: alt !== undefined ? alt : componentProps.props["alt"] || "",
+      caption: caption !== undefined ? caption : componentProps.props["caption"] || ""
     })
   }
 
@@ -23,7 +23,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
         <RLSInput
           id="image-src-input"
           type="text"
-          value={componentProps.props.src || ""}
+          value={componentProps.props["src"] || ""}
           onBlur={(e) => saveProps(e.currentTarget.value)}
           placeholder="https://..."
           leadingIcon="image"
@@ -36,7 +36,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
           <RLSInput
             id="image-alt-input"
             type="text"
-            value={componentProps.props.alt || ""}
+            value={componentProps.props["alt"] || ""}
             onBlur={(e) => saveProps(undefined, e.currentTarget.value)}
             placeholder="Alt description"
             size="sm"
@@ -48,7 +48,7 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
           <RLSInput
             id="image-caption-input"
             type="text"
-            value={componentProps.props.caption || ""}
+            value={componentProps.props["caption"] || ""}
             onBlur={(e) => saveProps(undefined, undefined, e.currentTarget.value)}
             placeholder="Image caption"
             size="sm"
@@ -56,11 +56,11 @@ export const ImageEditor: Component<ImageEditorProps> = (componentProps) => {
         </div>
       </div>
 
-      {componentProps.props.src && (
+      {componentProps.props["src"] && (
         <div class="mt-2 flex justify-center p-2 rounded-lg border border-default">
           <img
-            src={componentProps.props.src}
-            alt={componentProps.props.alt || "Image preview"}
+            src={componentProps.props["src"]}
+            alt={componentProps.props["alt"] || "Image preview"}
             class="max-h-48 object-cover rounded shadow-sm"
           />
         </div>

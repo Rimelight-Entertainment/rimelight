@@ -112,12 +112,12 @@ const emptyId = `search-empty-${uniqueId}`
 
     connectedCallback() {
       this.style.display = 'contents';
-      const triggerId = this.dataset.triggerId;
-      const modalId = this.dataset.modalId;
-      const inputId = this.dataset.inputId;
-      const resultsId = this.dataset.resultsId;
-      const emptyId = this.dataset.emptyId;
-      const endpoint = this.dataset.endpoint;
+      const triggerId = this.dataset["triggerId"];
+      const modalId = this.dataset["modalId"];
+      const inputId = this.dataset["inputId"];
+      const resultsId = this.dataset["resultsId"];
+      const emptyId = this.dataset["emptyId"];
+      const endpoint = this.dataset["endpoint"];
 
       const trigger = this.querySelector(`#${triggerId}`);
       const modal = this.querySelector(`#${modalId}`) as HTMLElement | null;

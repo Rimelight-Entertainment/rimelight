@@ -4,7 +4,7 @@ import VerificationEmail from "#components/email/VerificationEmail.astro"
 import { getEmailMessages } from "#auth/email/messages"
 
 const url = "http://localhost:4321/api/auth/verify-email?token=fake-token-123"
-const messages = getEmailMessages(Astro.params.locale)
+const messages = getEmailMessages(Astro.params["locale"])
 ---
 
 <EmailPreviewLayout template="verification" title="Verify Email">

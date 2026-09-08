@@ -49,13 +49,13 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
   const [expandedGroups, setExpandedGroups] = createSignal<Record<string, boolean>>({})
   const [arrayInputs, setArrayInputs] = createSignal<Record<string, string>>({})
   const [links, setLinks] = createSignal<Array<{ label: string; to: string; icon?: string }>>(
-    componentProps.initialProperties?.links || []
+    componentProps.initialProperties?.["links"] || []
   )
 
   // Bylines state
   const [availableBylines, setAvailableBylines] = createSignal<BylineItem[]>([])
   const [bylines, setBylines] = createSignal<BylineItem[]>(
-    componentProps.bylines || componentProps.initialProperties?.bylines || []
+    componentProps.bylines || componentProps.initialProperties?.["bylines"] || []
   )
   const [isBylineModalOpen, setIsBylineModalOpen] = createSignal(false)
   const [editingBylineIndex, setEditingBylineIndex] = createSignal<number | null>(null)
@@ -71,10 +71,10 @@ export const RimelightPropertiesPanel: Component<RimelightPropertiesPanelProps> 
     Array<{ id: string; name: string; slug: string }>
   >([])
   const [selectedCategory, setSelectedCategory] = createSignal<string>(
-    componentProps.initialProperties?.category || ""
+    componentProps.initialProperties?.["category"] || ""
   )
   const [tagsList, setTagsList] = createSignal<string[]>(
-    componentProps.tags || componentProps.initialProperties?.tags || []
+    componentProps.tags || componentProps.initialProperties?.["tags"] || []
   )
   const [newTagInput, setNewTagInput] = createSignal("")
 

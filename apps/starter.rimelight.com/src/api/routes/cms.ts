@@ -648,7 +648,7 @@ cms.post("/pages/:id/preview-token", async (c) => {
   const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
   if (!page[0]) return c.json({ error: "Page not found" }, 404)
 
-  const secret = process.env.CMS_PREVIEW_SECRET || "rimelight-preview-secret-key"
+  const secret = process.env["CMS_PREVIEW_SECRET"] || "rimelight-preview-secret-key"
   const { token, expiresAt } = await generatePreviewToken(id, secret, 86400 * 7) // 7 days
 
   return c.json({
