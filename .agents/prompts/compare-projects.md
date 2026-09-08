@@ -9,7 +9,7 @@ This prompt is used to compare all projects within the active directory to ident
 - Projects to ignore:
   - []
 - Discrepancies to ignore:
-  - []f
+  - []
 - Additional Notes:
   -
 

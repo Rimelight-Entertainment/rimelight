@@ -50,7 +50,7 @@ export function security(options: SecurityPluginOptions = {}): RimelightSecurity
 
     async buildStart() {
       // 1. Fetch & Hash External Resources (3rd-party SRI)
-      if (process.env.NODE_ENV === "development") return
+      if (process.env["NODE_ENV"] === "development") return
 
       await Promise.all(
         externalUrls.map(async (url) => {

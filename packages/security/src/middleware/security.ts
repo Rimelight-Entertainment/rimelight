@@ -113,8 +113,8 @@ export function security(options: SecurityOptions = {}) {
   }
 
   return async (c: any, next: any): Promise<Response | void> => {
-    const isProd = import.meta.env?.PROD ?? process.env.NODE_ENV === "production"
-    const isDev = import.meta.env?.DEV ?? process.env.NODE_ENV === "development"
+    const isProd = import.meta.env?.PROD ?? process.env["NODE_ENV"] === "production"
+    const isDev = import.meta.env?.DEV ?? process.env["NODE_ENV"] === "development"
 
     const req = c.req?.raw || c.request || c.req
     const proto = req?.headers?.get("x-forwarded-proto")
