@@ -23,6 +23,7 @@
     "@rimelight/config": "workspace:*",
     "@types/node": "26.5.0",
     "pkg-pr-new": "0.0.88",
+    "typescript": "6.0.3",
     "vite-plus": "0.3.0"
   },
   "engines": {
