@@ -18,6 +18,7 @@ This prompt is used to update dependencies in a project.
 - Adhere strictly to the commands provided. If `vp` was instructed, use `vp`. If `pnpm` was instructed, use `pnpm`.
 - Verify the current directory to ensure the correct packages are updated, not assuming the root to be a monorepository. Run the commands inside all sub-packages in any monorepositories requested – do not rely on the root.
 - Verify `pnpm-workspace.yaml` for configurations like catalogs, overrides, peer dependency rules, build allowlist, `saveExact` and `minimumReleaseAge` before changing a version.
+- Verify `.node-version` and `engines.node` in `package.json` match the locally installed Node.js version.
 - Keep `workspace:*` references for internal packages and do not replace them with registry versions. Be aware some package-related changes might require updating registry versions to resolve fully.
 - Do not remove or weaken `pnpm-workspace.yaml` safeguards such as `strictSsl`, `minimumReleaseAge`, `overrides`, `peerDependencyRules`, or `allowBuilds` to make an update pass.
 - If a version is listed at vulnerable but within the minimumReleaseAge, add it as an allowed override under the `# Vulnerability Fixes` comment.
@@ -29,12 +30,14 @@ This prompt is used to update dependencies in a project.
 
 ## Workflow
 
-1. Run `vp upgrade` to update Vite-Plus.
-2. Run `pnpm self-update` to update pnpm.
-3. Update `packageManager` or `devEngines` in `package.json` to the latest installed version. Ensure you update all sub-packages in monorespository cases.
-4. Clear the vulnerability overrides in `pnpm-workspace.yaml`, then run `vp outdated` to identify outdated dependencies.
-5. Update all dependencies to the latest listed version, updating `package.json`, `pnpm-workspace.yaml`, and other files like actions or other reported usages, using the version settings from `pnpm-workspace.yaml`.
-6. Run `vp install` to update the lockfile and install the new versions locally.
-7. Run `vp pm audit` to verify the security of the updated packages. Add overrides when possible or revert to the previous version if not.
-8. Run `vp check --fix` to check for possible breaking changes.
-9. Report back on the updated packages and any errors. Do not fix them automatically or commit the changes unless requested.
+1. Check the locally installed Node.js version with `node --version` and compare it to the latest release with `npm view node version`. Update the local Node.js to the latest LTS/current version via the version manager (`nvm install latest; nvm use latest` / `fnm install latest`). Restart the shell so the new version takes effect.
+2. Update each project's `.node-version` and `package.json` `engines.node` to the latest version. Ensure you update all sub-packages in monorespository cases.
+3. Run `vp upgrade` to update Vite-Plus.
+4. Run `pnpm self-update` to update pnpm.
+5. Update `packageManager` or `devEngines` in `package.json` to the latest installed version. Ensure you update all sub-packages in monorespository cases.
+6. Clear the vulnerability overrides in `pnpm-workspace.yaml`, then run `vp outdated` to identify outdated dependencies.
+7. Update all dependencies to the latest listed version, updating `package.json`, `pnpm-workspace.yaml`, and other files like actions or other reported usages, using the version settings from `pnpm-workspace.yaml`.
+8. Run `vp install` to update the lockfile and install the new versions locally.
+9. Run `vp pm audit` to verify the security of the updated packages. Add overrides when possible or revert to the previous version if not.
+10. Run `vp check --fix` to check for possible breaking changes.
+11. Report back on the updated packages and any errors. Do not fix them automatically or commit the changes unless requested.
