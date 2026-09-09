@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/seo",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": false,
   "description": "Rimelight Entertainment's SEO Package",
   "homepage": "https://rimelight.com/docs",
@@ -17,7 +17,7 @@
   },
   "files": [
     "dist",
-    "src/components"
+    "src"
   ],
   "type": "module",
   "exports": {
