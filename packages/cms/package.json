@@ -80,7 +80,7 @@
     "@astrojs/check": "0.9.10",
     "@rimelight/config": "workspace:*",
     "@types/sortablejs": "1.15.9",
-    "astro": "7.3.1",
+    "astro": "7.3.2",
     "typescript": "6.0.3",
     "unocss": "66.10.0"
   },
