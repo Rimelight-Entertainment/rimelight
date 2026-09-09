@@ -141,7 +141,61 @@ export default function rimelightUiPreset({ colors, icons, presets = {} }: UICon
 }
 [data-theme="dark"] { color-scheme: dark; }
 [data-theme="light"] { color-scheme: light; }
-body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }`
+body { background-color: var(--rl-neutral-50); color: var(--rl-neutral-950); }
+
+/* Reduced motion - disable all animations for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Global focus-visible ring for consistent keyboard focus */
+:focus-visible {
+  outline: 2px solid var(--rl-primary-500);
+  outline-offset: 2px;
+}
+
+/* Ensure minimum touch target sizes (WCAG 2.2 - 24x24 minimum, 44x44 enhanced) */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+a[href],
+input:not([type="hidden"]),
+select,
+textarea,
+summary {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* Enhanced touch targets for primary interactive elements */
+@media (pointer: coarse) {
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  a[href] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Improve skip link visibility */
+.skip-link:focus-visible {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background: var(--rl-primary-600);
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+}`
       }
     ]
   }

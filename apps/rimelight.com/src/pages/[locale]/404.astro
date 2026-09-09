@@ -5,7 +5,7 @@ Astro.response.status = 404;
 Astro.response.statusText = "Not Found";
 ---
 
-<AppLayout title={t("page_error.error_not-found_title")} description={t("page_error.error_not-found_description")} minimal={true} noindex={true}>
+<AppLayout title={t("page_error.error_not-found_title")} description={t("page_error.error_not-found_description")} minimal={true} noindex={true} is404={true}>
   <div class="error-container">
     <p class="error-code">404</p>
     <h1 class="error-title">{t("page_error.error_not-found_title")}</h1>

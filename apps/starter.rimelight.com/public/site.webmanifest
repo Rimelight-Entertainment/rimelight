@@ -1,6 +1,6 @@
 {
   "name": "Rimelight Starter",
-  "short_name": "Rimelight",
+  "short_name": "Rimelight Starter",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
