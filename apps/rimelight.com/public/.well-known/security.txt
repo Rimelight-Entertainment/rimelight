@@ -1,0 +1,3 @@
+Contact: mailto:security@rimelight.com
+Preferred-Languages: en, pt
+Policy: https://rimelight.com/legal/security/
