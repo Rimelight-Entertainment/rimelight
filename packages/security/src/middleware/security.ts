@@ -153,6 +153,7 @@ export function security(options: SecurityOptions = {}) {
           "ws:",
           "wss:"
         ],
+        "script-src-attr": ["'unsafe-inline'"],
         "style-src": ["'self'", "'unsafe-inline'", "https:", "http:"],
         "connect-src": ["'self'", "ws:", "wss:", "http:", "https:"],
         "img-src": ["'self'", "data:", "blob:", "https:", "http:"]
@@ -163,6 +164,7 @@ export function security(options: SecurityOptions = {}) {
         ...mergedOptions,
         directives: {
           ...mergedOptions.directives,
+          "script-src-attr": ["'none'"],
           "style-src": ["'self'", "'unsafe-inline'"],
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
         }

@@ -60,6 +60,7 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
     "frame-ancestors": ["'none'"],
     "frame-src": frameSources,
     "script-src": scriptSources,
+    "script-src-attr": ["'none'"],
     "style-src": styleSources,
     "base-uri": ["'self'"],
     "form-action": ["'self'"],
