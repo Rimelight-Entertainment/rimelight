@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "rimelight-dot-com",
-  "main": "@astrojs/cloudflare/entrypoints/server",
+  "main": "./src/fetch.ts",
   "compatibility_date": "2026-08-27",
   "cache": {
     "enabled": true
@@ -61,9 +61,6 @@
       "remote": true
     }
   ],
-  "triggers": {
-    "crons": ["* * * * *"]
-  },
   "vars": {
     "CONSTRUCTION_MODE": "true",
     "EMAIL_DOMAIN": "rimelight.com"
