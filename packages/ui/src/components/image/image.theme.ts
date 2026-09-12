@@ -3,6 +3,8 @@ import { defineTheme } from "../../resolver"
 export const imageTheme = defineTheme("image", {
   slots: [
     "root",
+    "figure",
+    "caption",
     "trigger",
     "triggerImage",
     "dialog",
@@ -13,9 +15,11 @@ export const imageTheme = defineTheme("image", {
   ],
   base: {
     root: "relative inline-block group/image",
+    figure: "m-0 p-0 inline-flex flex-col max-w-full",
+    caption: "mt-2 text-xs text-muted text-center italic",
     trigger:
       "cursor-pointer overflow-hidden rounded-lg block hover:scale-[1.02] active:scale-95 transition-transform duration-300",
-    triggerImage: "",
+    triggerImage: "max-w-full h-auto object-cover rounded-lg",
     dialog:
       "backdrop:bg-black/60 max-w-[98vw] sm:max-w-[95vw] w-fit max-h-[90vh] rounded-xl p-0 overflow-hidden border-0 m-auto",
     image: "object-contain max-w-full max-h-[65vh] rounded-lg",
@@ -25,6 +29,18 @@ export const imageTheme = defineTheme("image", {
     closeButton:
       "inline-flex items-center justify-center size-8 rounded-full bg-default/80 hover:bg-accented text-muted hover:text-highlighted transition-colors"
   },
-  variants: {},
-  defaultVariants: {}
+  variants: {
+    fit: {
+      "cover": { triggerImage: "object-cover", image: "object-cover" },
+      "contain": { triggerImage: "object-contain", image: "object-contain" },
+      "fill": { triggerImage: "object-fill", image: "object-fill" },
+      "none": { triggerImage: "object-none", image: "object-none" },
+      "scale-down": { triggerImage: "object-scale-down", image: "object-scale-down" },
+      "inside": { triggerImage: "object-contain", image: "object-contain" },
+      "outside": { triggerImage: "object-cover", image: "object-cover" }
+    }
+  },
+  defaultVariants: {
+    fit: "cover"
+  }
 })

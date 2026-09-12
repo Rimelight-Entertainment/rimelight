@@ -5,18 +5,64 @@ import RLAIcon from "../icon/RLAIcon.astro"
 import type { ImageProps } from "./image"
 import { imageTheme } from "./image.theme"
 
+const localImages = import.meta.glob<{ default: ImageMetadata }>([
+  "/src/assets/**/*.{jpeg,jpg,png,tiff,webp,gif,svg,avif,JPEG,JPG,PNG,TIFF,WEBP,GIF,SVG,AVIF}",
+  "/src/images/**/*.{jpeg,jpg,png,tiff,webp,gif,svg,avif,JPEG,JPG,PNG,TIFF,WEBP,GIF,SVG,AVIF}",
+], { eager: true })
 
+function resolveAsset(input?: string | ImageMetadata): ImageMetadata | string | undefined {
+  if (!input || typeof input !== "string") return input
+  if (
+    input.startsWith("http://") ||
+    input.startsWith("https://") ||
+    input.startsWith("//") ||
+    input.startsWith("data:")
+  ) {
+    return input
+  }
+
+  const clean = input.startsWith("/") ? input : `/${input}`
+  if (localImages[clean]) {
+    return localImages[clean].default ?? (localImages[clean] as unknown as ImageMetadata)
+  }
+
+  const withSrc = clean.startsWith("/src/") ? clean : `/src/${clean.replace(/^\//, "")}`
+  if (localImages[withSrc]) {
+    return localImages[withSrc].default ?? (localImages[withSrc] as unknown as ImageMetadata)
+  }
+
+  const stripped = input.replace(/^(@\/|~|\/src\/|\/)/, "")
+  for (const [key, mod] of Object.entries(localImages)) {
+    if (key.endsWith(stripped) || key.replace(/^\/src\//, "").endsWith(stripped)) {
+      return mod.default ?? (mod as unknown as ImageMetadata)
+    }
+  }
+
+  return input
+}
 
 const {
-  src,
-  mobileSrc,
-  desktopSrc,
+  src: rawSrc,
+  lightSrc: rawLightSrc,
+  darkSrc: rawDarkSrc,
+  mobileSrc: rawMobileSrc,
+  desktopSrc: rawDesktopSrc,
   breakpoint,
   formats,
+  widths,
+  sizes,
+  densities,
+  caption,
+  figure: propFigure,
+  lightbox: propLightbox,
+  interactive: propInteractive,
   alt = "",
   height,
   width,
   loading = "lazy",
+  decoding = "async",
+  fit,
+  theme,
   metadata: preMetadata,
   metaSource = true,
   metaFormat = true,
@@ -27,10 +73,22 @@ const {
   ...rest
 } = Astro.props as ImageProps
 
+const isInteractive = propLightbox ?? propInteractive ?? true
+const isFigure = propFigure ?? !!caption
+
+const src = resolveAsset(rawSrc)
+const lightSrc = resolveAsset(rawLightSrc)
+const darkSrc = resolveAsset(rawDarkSrc)
+const mobileSrc = resolveAsset(rawMobileSrc)
+const desktopSrc = resolveAsset(rawDesktopSrc)
+
 const classes = imageTheme(Astro.props)
 
 const isResponsive = !!(mobileSrc && desktopSrc)
-const isFormatFallback = !isResponsive && !!(formats && formats.length > 0)
+const effectiveLight = lightSrc || (!darkSrc ? src : (src || lightSrc))
+const effectiveDark = darkSrc
+const hasColorMode = !isResponsive && !effectiveLight ? false : !isResponsive && !!(effectiveLight && effectiveDark && effectiveLight !== effectiveDark)
+const isFormatFallback = !isResponsive && !hasColorMode && !!(formats && formats.length > 0)
 const breakpointVal = breakpoint ?? 768
 
 let mobileImg = null
@@ -40,160 +98,402 @@ if (isResponsive) {
   mobileImg = await getImage({
     src: mobileSrc!,
     format: "webp",
+    ...(widths ? { widths: widths as any } : {}),
+    ...(densities ? { densities: densities as any } : {}),
   })
   desktopImg = await getImage({
     src: desktopSrc!,
     format: "webp",
+    ...(widths ? { widths: widths as any } : {}),
+    ...(densities ? { densities: densities as any } : {}),
   })
 }
 
-const activeSrc = isResponsive ? desktopSrc : src
+const activeSrc = isResponsive ? desktopSrc : (effectiveLight || src)
 const isMetadata = typeof activeSrc !== "string" && activeSrc !== undefined
 const imgWidth = width ?? (isMetadata ? (activeSrc as any).width : undefined)
 const imgHeight = height ?? (isMetadata ? (activeSrc as any).height : undefined)
 const imgFormat = isMetadata ? (activeSrc as any).format : (preMetadata?.format ?? undefined)
 const rawName = activeSrc
-  ? (typeof activeSrc === "string" ? activeSrc.split("/").pop() || "image" : (activeSrc as any).src.split("/").pop() || "image")
+  ? (typeof activeSrc === "string" ? activeSrc.split("/").pop() || "image" : ((activeSrc as any).src || "").split("/").pop() || "image")
   : "image"
 const fileName = rawName.split("?")[0]
 const fileExtension = imgFormat?.toUpperCase() || (fileName.includes(".") ? fileName.split(".").pop()?.toUpperCase() : "IMG")
 const initialSize = preMetadata?.size ?? undefined
+
+const lightUrl = effectiveLight ? (typeof effectiveLight === "string" ? effectiveLight : (effectiveLight as ImageMetadata).src) : ""
+const darkUrl = effectiveDark ? (typeof effectiveDark === "string" ? effectiveDark : (effectiveDark as ImageMetadata).src) : ""
+
+const baseImageProps: Record<string, any> = {
+  alt,
+  loading,
+  decoding,
+  class: classes.triggerImage,
+  ...(widths ? { widths } : { width: imgWidth ?? 800, height: imgHeight ?? 400 }),
+  ...(sizes ? { sizes } : {}),
+  ...(densities ? { densities } : {}),
+}
 ---
 
 <rla-image {...rest}>
-  <div class={classes.root} data-slot="root">
-    <slot name="trigger">
-      <button
-        type="button"
-        class={classes.trigger}
-        data-image-trigger
-      >
-        {isResponsive && mobileImg && desktopImg ? (
-          <picture>
-            <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
-            <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
-            <img src={desktopImg.src} alt={alt} loading={loading} class="w-full h-full object-cover rounded-lg" />
-          </picture>
-        ) : isFormatFallback ? (
-          typeof src === "string" ? (
-            <Picture src={src} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
+  <div class={classes.root} data-slot="root" data-theme={theme} style={theme ? `color-scheme: ${theme};` : undefined}>
+    {isFigure ? (
+      <figure class={classes.figure} data-slot="figure">
+        <slot name="trigger">
+          {isInteractive ? (
+            <button
+              type="button"
+              class={classes.trigger}
+              data-image-trigger
+            >
+              {isResponsive && mobileImg && desktopImg ? (
+                <picture>
+                  <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+                  <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+                  <img src={desktopImg.src} alt={alt} loading={loading} decoding={decoding} class={classes.triggerImage} />
+                </picture>
+              ) : hasColorMode ? (
+                <div
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
+                >
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveLight as any}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                  />
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveDark as any}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                  />
+                </div>
+              ) : isFormatFallback ? (
+                <Picture
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                  formats={formats!}
+                />
+              ) : (
+                <Image
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                />
+              )}
+            </button>
           ) : (
-            <Picture src={src as ImageMetadata} formats={formats!} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class="w-full h-full object-cover rounded-lg" />
-          )
-        ) : (
-          typeof src === "string" ? (
-            <Image src={src} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
-          ) : (
-            <Image src={src as ImageMetadata} alt={alt} width={imgWidth ?? 800} height={imgHeight ?? 400} loading={loading} class={classes.triggerImage} />
-          )
-        )}
-      </button>
-    </slot>
-
-    <dialog
-      class={classes.dialog}
-      data-image-dialog
-    >
-      <div class="flex flex-col bg-default text-highlighted max-h-[90vh]">
-        <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
-          {isResponsive && mobileImg && desktopImg ? (
-            <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
-              <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
-              <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
-              <img src={desktopImg.src} alt={alt} class={classes.image} data-modal-img />
-            </picture>
-          ) : (
-            <img
-              src={typeof src === "string" ? src : src!.src}
-              alt={alt}
-              class={classes.image}
-              data-modal-img
-            />
+            <div class="overflow-hidden rounded-lg block">
+              {isResponsive && mobileImg && desktopImg ? (
+                <picture>
+                  <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+                  <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+                  <img src={desktopImg.src} alt={alt} loading={loading} decoding={decoding} class={classes.triggerImage} />
+                </picture>
+              ) : hasColorMode ? (
+                <div
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
+                >
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveLight as any}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                  />
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveDark as any}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                  />
+                </div>
+              ) : isFormatFallback ? (
+                <Picture
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                  formats={formats!}
+                />
+              ) : (
+                <Image
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                />
+              )}
+            </div>
           )}
-        </div>
+        </slot>
+        {caption && <figcaption class={classes.caption} data-slot="caption">{caption}</figcaption>}
+        <slot name="caption" />
+      </figure>
+    ) : (
+      <>
+        <slot name="trigger">
+          {isInteractive ? (
+            <button
+              type="button"
+              class={classes.trigger}
+              data-image-trigger
+            >
+              {isResponsive && mobileImg && desktopImg ? (
+                <picture>
+                  <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+                  <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+                  <img src={desktopImg.src} alt={alt} loading={loading} decoding={decoding} class={classes.triggerImage} />
+                </picture>
+              ) : hasColorMode ? (
+                <div
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
+                >
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveLight as any}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                  />
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveDark as any}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                  />
+                </div>
+              ) : isFormatFallback ? (
+                <Picture
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                  formats={formats!}
+                />
+              ) : (
+                <Image
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                />
+              )}
+            </button>
+          ) : (
+            <div class="overflow-hidden rounded-lg block">
+              {isResponsive && mobileImg && desktopImg ? (
+                <picture>
+                  <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+                  <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+                  <img src={desktopImg.src} alt={alt} loading={loading} decoding={decoding} class={classes.triggerImage} />
+                </picture>
+              ) : hasColorMode ? (
+                <div
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
+                >
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveLight as any}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                  />
+                  <Image
+                    {...(baseImageProps as any)}
+                    src={effectiveDark as any}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                  />
+                </div>
+              ) : isFormatFallback ? (
+                <Picture
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                  formats={formats!}
+                />
+              ) : (
+                <Image
+                  {...(baseImageProps as any)}
+                  src={src as any}
+                />
+              )}
+            </div>
+          )}
+        </slot>
+        {caption && <p class={classes.caption} data-slot="caption">{caption}</p>}
+        <slot name="caption" />
+      </>
+    )}
 
-        <hr class="border-default mx-4 mb-3 shrink-0" />
+    {isInteractive && (
+      <dialog
+        class={classes.dialog}
+        data-image-dialog
+      >
+        <div class="flex flex-col bg-default text-highlighted max-h-[90vh]">
+          <div class="flex-1 min-h-0 flex items-center justify-center p-4 overflow-hidden">
+            {isResponsive && mobileImg && desktopImg ? (
+              <picture class="max-w-full max-h-[65vh] flex items-center justify-center overflow-hidden">
+                <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
+                <source media={`(min-width: ${breakpointVal}px)`} srcset={desktopImg.src} />
+                <img src={desktopImg.src} alt={alt} class={classes.image} data-modal-img />
+              </picture>
+            ) : hasColorMode ? (
+              <div
+                class="rla-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden"
+                style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
+              >
+                <img
+                  src={lightUrl}
+                  alt={alt}
+                  class:list={[classes.image, "rla-img-light"]}
+                  data-modal-img
+                  data-light-src={lightUrl}
+                  data-dark-src={darkUrl}
+                />
+                <img
+                  src={darkUrl}
+                  alt={alt}
+                  class:list={[classes.image, "rla-img-dark hidden"]}
+                  data-modal-img-dark
+                />
+              </div>
+            ) : (
+              <img
+                src={typeof src === "string" ? src : src!.src}
+                alt={alt}
+                class={classes.image}
+                data-modal-img
+              />
+            )}
+          </div>
 
-        <div class={classes.fileInfo}>
-          <div class="flex flex-col gap-xs text-sm">
+          <hr class="border-default mx-4 mb-3 shrink-0" />
+
+          <div class={classes.fileInfo}>
+            <div class="flex flex-col gap-xs text-sm">
+              {
+                metaSource && (
+                  <div class="flex flex-row gap-xs items-center">
+                    <RLAIcon name="image" class="size-4 shrink-0 text-muted" />
+                    <span class="text-muted">Source:</span>
+                    <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
+                  </div>
+                )
+              }
+              {
+                metaFormat && (
+                  <div class="flex flex-row gap-xs items-center">
+                    <RLAIcon name="fileQuestion" class="size-4 shrink-0 text-muted" />
+                    <span class="text-muted">Format:</span>
+                    <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
+                  </div>
+                )
+              }
+              {
+                metaDimensions && (
+                  <div class="flex flex-row gap-xs items-center">
+                    <RLAIcon name="imageUpscale" class="size-4 shrink-0 text-muted" />
+                    <span class="text-muted">Dimensions:</span>
+                    <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
+                  </div>
+                )
+              }
+              {
+                metaSize && (
+                  <div class="flex flex-row gap-xs items-center">
+                    <RLAIcon name="hardDrive" class="size-4 shrink-0 text-muted" />
+                    <span class="text-muted">Size:</span>
+                    <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
+                  </div>
+                )
+              }
+              {
+                metaAlt && (
+                  <div class="flex flex-row gap-xs items-center">
+                    <RLAIcon name="alignLeft" class="size-4 shrink-0 text-muted" />
+                    <span class="text-muted">Alt:</span>
+                    <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
+                  </div>
+                )
+              }
+            </div>
+
             {
-              metaSource && (
-                <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="image" class="size-4 shrink-0 text-muted" />
-                  <span class="text-muted">Source:</span>
-                  <span class="text-dimmed truncate max-w-[40vw]">{fileName}</span>
-                </div>
-              )
-            }
-            {
-              metaFormat && (
-                <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="fileQuestion" class="size-4 shrink-0 text-muted" />
-                  <span class="text-muted">Format:</span>
-                  <span class="text-dimmed" data-metadata-format>{fileExtension || "IMG"}</span>
-                </div>
-              )
-            }
-            {
-              metaDimensions && (
-                <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="imageUpscale" class="size-4 shrink-0 text-muted" />
-                  <span class="text-muted">Dimensions:</span>
-                  <span class="text-dimmed">{(imgWidth || "?")} x {(imgHeight || "?")}</span>
-                </div>
-              )
-            }
-            {
-              metaSize && (
-                <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="hardDrive" class="size-4 shrink-0 text-muted" />
-                  <span class="text-muted">Size:</span>
-                  <span class="text-dimmed" data-metadata-size>{initialSize !== undefined ? `${initialSize} bytes` : "fetching..."}</span>
-                </div>
-              )
-            }
-            {
-              metaAlt && (
-                <div class="flex flex-row gap-xs items-center">
-                  <RLAIcon name="alignLeft" class="size-4 shrink-0 text-muted" />
-                  <span class="text-muted">Alt:</span>
-                  <span class="text-dimmed truncate max-w-[30vw]" class:list={{ "italic opacity-50": !alt }}>{alt || "none"}</span>
-                </div>
+              metaDownload && (
+                <button
+                  type="button"
+                  class={classes.download}
+                  data-image-download
+                >
+                  <RLAIcon name="download" class="size-4 shrink-0" />
+                  Download Original
+                </button>
               )
             }
           </div>
 
-          {
-            metaDownload && (
-              <button
-                type="button"
-                class={classes.download}
-                data-image-download
-              >
-                <RLAIcon name="download" class="size-4 shrink-0" />
-                Download Original
-              </button>
-            )
-          }
+          <form method="dialog" class="absolute top-2 right-2">
+            <button
+              type="submit"
+              class={classes.closeButton}
+              aria-label="Close"
+            >
+              <RLAIcon name="close" class="size-4" />
+            </button>
+          </form>
         </div>
-
-        <form method="dialog" class="absolute top-2 right-2">
-          <button
-            type="submit"
-            class={classes.closeButton}
-            aria-label="Close"
-          >
-            <RLAIcon name="close" class="size-4" />
-          </button>
-        </form>
-      </div>
-    </dialog>
+      </dialog>
+    )}
   </div>
 </rla-image>
 
 <style>
   rla-image {
     display: contents;
+  }
+
+  :global(:root[data-theme="dark"]) .rla-img-light,
+  :global([data-theme="dark"]) .rla-img-light,
+  :global([data-theme="dark"]) .rla-image-color-mode .rla-img-light,
+  :global(.rla-image-color-mode[data-theme="dark"]) .rla-img-light {
+    display: none !important;
+  }
+
+  :global(:root[data-theme="dark"]) .rla-img-dark,
+  :global([data-theme="dark"]) .rla-img-dark,
+  :global([data-theme="dark"]) .rla-image-color-mode .rla-img-dark,
+  :global(.rla-image-color-mode[data-theme="dark"]) .rla-img-dark {
+    display: block !important;
+  }
+
+  :global(:root[data-theme="light"]) .rla-img-light,
+  :global([data-theme="light"]) .rla-img-light,
+  :global([data-theme="light"]) .rla-image-color-mode .rla-img-light,
+  :global(.rla-image-color-mode[data-theme="light"]) .rla-img-light {
+    display: block !important;
+  }
+
+  :global(:root[data-theme="light"]) .rla-img-dark,
+  :global([data-theme="light"]) .rla-img-dark,
+  :global([data-theme="light"]) .rla-image-color-mode .rla-img-dark,
+  :global(.rla-image-color-mode[data-theme="light"]) .rla-img-dark {
+    display: none !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .rla-img-light {
+      display: none !important;
+    }
+    :global(:root:not([data-theme="light"])) .rla-img-dark {
+      display: block !important;
+    }
+    :global(:root:not([data-theme="light"])) :global([data-theme="light"]) .rla-img-light {
+      display: block !important;
+    }
+    :global(:root:not([data-theme="light"])) :global([data-theme="light"]) .rla-img-dark {
+      display: none !important;
+    }
+  }
+
+  @supports (background-image: light-dark(none, none)) {
+    .rla-image-color-mode {
+      background-image: light-dark(var(--rla-img-light), var(--rla-img-dark));
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .rla-image-color-mode > .rla-img-light,
+    .rla-image-color-mode > .rla-img-dark {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
   }
 </style>
 
@@ -210,22 +510,32 @@ const initialSize = preMetadata?.size ?? undefined
       const formatEl = this.querySelector("[data-metadata-format]");
       let fetched = false;
 
+      const getActiveImgSrc = () => {
+        const rootTheme = document.documentElement.getAttribute('data-theme');
+        const isDark = rootTheme === 'dark' || (window.matchMedia('(prefers-color-scheme: dark)').matches && rootTheme !== 'light');
+        const imgEl = dialog.querySelector("[data-modal-img]");
+        if (imgEl) {
+          if (isDark && imgEl.getAttribute("data-dark-src")) {
+            return imgEl.getAttribute("data-dark-src");
+          }
+          return imgEl.getAttribute("src");
+        }
+        return null;
+      };
+
       trigger.addEventListener("click", () => {
         if (!fetched) {
           fetched = true;
-          const imgEl = dialog.querySelector("[data-modal-img]");
-          if (imgEl) {
-            const src = imgEl.getAttribute("src");
-            if (src) {
-              fetch(src).then(r => r.blob()).then(blob => {
-                if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB";
-                if (formatEl && blob.type) {
-                  const mime = blob.type.split("/").pop()?.toUpperCase();
-                  if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime;
-                }
-                return;
-              }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable"; });
-            }
+          const src = getActiveImgSrc();
+          if (src) {
+            fetch(src).then(r => r.blob()).then(blob => {
+              if (sizeEl) sizeEl.textContent = (blob.size / 1024).toFixed(2) + " KB";
+              if (formatEl && blob.type) {
+                const mime = blob.type.split("/").pop()?.toUpperCase();
+                if (mime && mime !== "OCTET-STREAM") formatEl.textContent = mime;
+              }
+              return;
+            }).catch(() => { if (sizeEl) sizeEl.textContent = "unavailable"; });
           }
         }
         dialog.showModal();
@@ -238,8 +548,7 @@ const initialSize = preMetadata?.size ?? undefined
       const downloadBtn = dialog.querySelector("[data-image-download]");
       if (downloadBtn) {
         downloadBtn.addEventListener("click", async () => {
-          const img = dialog.querySelector("img");
-          const imgSrc = img?.getAttribute("src");
+          const imgSrc = getActiveImgSrc();
           if (!imgSrc) return;
           try {
             const response = await fetch(imgSrc);
@@ -249,7 +558,7 @@ const initialSize = preMetadata?.size ?? undefined
             link.href = url;
             const triggerImg = trigger.querySelector("img");
             const srcAttr = triggerImg ? triggerImg.getAttribute("src") || "" : "";
-            link.download = (srcAttr.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`;
+            link.download = (srcAttr.split("/").pop() || "").split("?")[0] || (imgSrc.split("/").pop() || "").split("?")[0] || `image-${Date.now()}`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

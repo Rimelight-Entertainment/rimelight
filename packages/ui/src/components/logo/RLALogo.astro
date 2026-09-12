@@ -6,6 +6,7 @@ import uiConfig from "virtual:rimelight/ui"
 const {
   variant = "logomark",
   mode,
+  theme,
   href = "/",
   alt,
   ...rest
@@ -57,24 +58,29 @@ const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
   href={href}
   aria-label={alt || variant}
   data-slot="root"
+  data-theme={theme}
+  style={theme ? `color-scheme: ${theme};` : undefined}
   {...rest}
 >
   {logoSrc ? (
     isIcon ? (
       <span class:list={[logoSrc, "size-full block shrink-0"]} aria-hidden="true" />
     ) : hasAutoMode ? (
-      <>
+      <span
+        class="rla-logo-image size-full flex items-center justify-center shrink-0"
+        style={`--rla-logo-light: url('${lightSrc}'); --rla-logo-dark: url('${darkSrc}');`}
+      >
         <img
           src={lightSrc}
           alt={alt || ""}
-          class="size-full block object-contain shrink-0 dark:hidden"
+          class="rla-logo-light size-full block object-contain shrink-0"
         />
         <img
           src={darkSrc}
           alt={alt || ""}
-          class="size-full hidden object-contain shrink-0 dark:block"
+          class="rla-logo-dark size-full hidden object-contain shrink-0"
         />
-      </>
+      </span>
     ) : (
       <img
         src={logoSrc}
@@ -86,3 +92,62 @@ const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
     <slot />
   )}
 </a>
+
+<style>
+  :global(:root[data-theme="dark"]) .rla-logo-light,
+  :global([data-theme="dark"]) .rla-logo-light,
+  :global([data-theme="dark"]) .rla-logo-image .rla-logo-light,
+  :global(.rla-logo-image[data-theme="dark"]) .rla-logo-light {
+    display: none !important;
+  }
+
+  :global(:root[data-theme="dark"]) .rla-logo-dark,
+  :global([data-theme="dark"]) .rla-logo-dark,
+  :global([data-theme="dark"]) .rla-logo-image .rla-logo-dark,
+  :global(.rla-logo-image[data-theme="dark"]) .rla-logo-dark {
+    display: block !important;
+  }
+
+  :global(:root[data-theme="light"]) .rla-logo-light,
+  :global([data-theme="light"]) .rla-logo-light,
+  :global([data-theme="light"]) .rla-logo-image .rla-logo-light,
+  :global(.rla-logo-image[data-theme="light"]) .rla-logo-light {
+    display: block !important;
+  }
+
+  :global(:root[data-theme="light"]) .rla-logo-dark,
+  :global([data-theme="light"]) .rla-logo-dark,
+  :global([data-theme="light"]) .rla-logo-image .rla-logo-dark,
+  :global(.rla-logo-image[data-theme="light"]) .rla-logo-dark {
+    display: none !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .rla-logo-light {
+      display: none !important;
+    }
+    :global(:root:not([data-theme="light"])) .rla-logo-dark {
+      display: block !important;
+    }
+    :global(:root:not([data-theme="light"])) :global([data-theme="light"]) .rla-logo-light {
+      display: block !important;
+    }
+    :global(:root:not([data-theme="light"])) :global([data-theme="light"]) .rla-logo-dark {
+      display: none !important;
+    }
+  }
+
+  @supports (background-image: light-dark(none, none)) {
+    .rla-logo-image {
+      background-image: light-dark(var(--rla-logo-light), var(--rla-logo-dark));
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .rla-logo-image > .rla-logo-light,
+    .rla-logo-image > .rla-logo-dark {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+  }
+</style>

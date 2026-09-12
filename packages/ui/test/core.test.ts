@@ -315,3 +315,27 @@ describe("@rimelight/ui unstyled mode", () => {
     expect(slots["label"]).not.toContain("base-label")
   })
 })
+
+describe("@rimelight/ui logo & image themes", () => {
+  it("should export and resolve logoTheme properly", async () => {
+    vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = false
+    const { logoTheme } = await import("../src/components/logo/logo.theme")
+    const slots = logoTheme({ class: "custom-logo" })
+    expect(slots["root"]).toContain("flex items-center")
+    expect(slots["root"]).toContain("custom-logo")
+  })
+
+  it("should export and resolve imageTheme properly", async () => {
+    vi.mocked((await import("virtual:rimelight/ui")).default).unstyled = false
+    const { imageTheme } = await import("../src/components/image/image.theme")
+    const slots = imageTheme({ class: "custom-image", fit: "contain" })
+    expect(slots["root"]).toContain("relative inline-block")
+    expect(slots["root"]).toContain("custom-image")
+    expect(slots["trigger"]).toContain("cursor-pointer")
+    expect(slots["triggerImage"]).toContain("max-w-full")
+    expect(slots["triggerImage"]).toContain("h-auto")
+    expect(slots["triggerImage"]).toContain("object-contain")
+    expect(slots["figure"]).toContain("inline-flex")
+    expect(slots["caption"]).toContain("text-muted")
+  })
+})

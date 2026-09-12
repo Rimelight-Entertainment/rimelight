@@ -13,6 +13,7 @@ const {
   name,
   size = "md",
   multiple,
+  leadingIcon,
   ui: _ui,
   class: classAttr,
   theme,
@@ -46,6 +47,12 @@ const normalizedItems = (items || []).map((item: SelectItem) => {
 ---
 
 <div class={classes.root} data-slot="root" data-theme={theme}>
+  {(leadingIcon || Astro.slots.has("leading")) && (
+    <span class={classes.leading} data-slot="leading">
+      {leadingIcon ? <RLAIcon name={leadingIcon} class="size-4" /> : <slot name="leading" />}
+    </span>
+  )}
+
   <select
     class={classes.select}
     name={name}

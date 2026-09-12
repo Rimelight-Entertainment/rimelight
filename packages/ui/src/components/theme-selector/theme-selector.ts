@@ -1,8 +1,18 @@
 export interface ThemeSelectorProps {
   /**
-   * The size of the button.
+   * The display mode of the theme selector.
+   *
+   * @default "select"
+   */
+  mode?: "select" | "icon"
+  /**
+   * The size of the select/button.
    */
   size?: "xs" | "sm" | "md" | "lg" | "xl"
+  /**
+   * Theme variant/mode.
+   */
+  theme?: "light" | "dark"
   /**
    * Slot-specific CSS class overrides.
    */
