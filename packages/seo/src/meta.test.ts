@@ -4,7 +4,8 @@ import {
   buildPageTitle,
   buildSafeDescription,
   buildRobotsMetaContent,
-  buildWebSiteSchema
+  buildWebSiteSchema,
+  deepMerge
 } from "./meta.js"
 
 const BASE = "https://example.com"
@@ -48,6 +49,29 @@ describe("buildPageTitle", () => {
     expect(buildPageTitle({ ...opts, title: "Oops", is404: true })).toBe(
       "404 - Not Found | My Site"
     )
+  })
+
+  it("bypasses title template when absolute is true", () => {
+    expect(buildPageTitle({ ...opts, title: "Landing Page", absolute: true })).toBe("Landing Page")
+  })
+})
+
+describe("deepMerge", () => {
+  it("deep merges nested objects", () => {
+    const base = {
+      openGraph: { type: "website", siteName: "Base", locale: "en_US" },
+      twitter: { card: "summary", site: "@base" }
+    }
+    const override = {
+      openGraph: { siteName: "Override" },
+      twitter: { card: "summary_large_image" }
+    }
+    const result = deepMerge(base, override)
+    expect(result.openGraph.type).toBe("website")
+    expect(result.openGraph.siteName).toBe("Override")
+    expect(result.openGraph.locale).toBe("en_US")
+    expect(result.twitter.card).toBe("summary_large_image")
+    expect(result.twitter.site).toBe("@base")
   })
 })
 

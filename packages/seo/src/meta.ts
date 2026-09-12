@@ -13,18 +13,48 @@ export function buildCanonicalUrl(url: string | URL, base: string | URL): string
 }
 
 /**
+ * Deep merge two metadata or configuration objects.
+ */
+export function deepMerge<T extends Record<string, any>>(
+  base: T,
+  override?: Record<string, any>
+): T {
+  if (!override) return { ...base }
+  const result: Record<string, any> = { ...base }
+  for (const key of Object.keys(override)) {
+    const baseVal = base[key]
+    const overrideVal = override[key]
+    if (
+      baseVal &&
+      overrideVal &&
+      typeof baseVal === "object" &&
+      typeof overrideVal === "object" &&
+      !Array.isArray(baseVal) &&
+      !Array.isArray(overrideVal)
+    ) {
+      result[key] = deepMerge(baseVal, overrideVal)
+    } else if (overrideVal !== undefined) {
+      result[key] = overrideVal
+    }
+  }
+  return result as T
+}
+
+/**
  * Build a page title using a site's title template. Falls back to siteName for untitled pages; uses
- * a 404 label for error pages.
+ * a 404 label for error pages. Supports absolute title bypass.
  */
 export function buildPageTitle(opts: {
   title?: string
   siteName: string
   titleTemplate: string
   is404?: boolean
+  absolute?: boolean
 }): string {
-  const { title, siteName, titleTemplate, is404 } = opts
+  const { title, siteName, titleTemplate, is404, absolute } = opts
   if (is404) return `404 - Not Found | ${siteName}`
   if (!title) return siteName
+  if (absolute) return title
   return titleTemplate.replace("%s", title)
 }
 

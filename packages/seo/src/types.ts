@@ -90,6 +90,27 @@ export interface UserAgentRule {
   allow?: string[]
 }
 
+export interface OpenGraphMeta {
+  type?: string
+  locale?: string
+  url?: string
+  title?: string
+  description?: string
+  images?: OGImage[] | OGImage
+  siteName?: string
+  [key: string]: unknown
+}
+
+export interface TwitterMeta {
+  card?: "summary" | "summary_large_image" | "player" | "app"
+  site?: string
+  creator?: string
+  title?: string
+  description?: string
+  images?: OGImage[] | OGImage | string
+  [key: string]: unknown
+}
+
 /**
  * Site identity and SEO defaults shared across all Rimelight Astro sites. The UI-specific overrides
  * (component themes, shortcuts, etc.) live in UIConfig (packages/ui) and are passed directly to the
@@ -121,6 +142,8 @@ export interface SiteConfig {
     maxDescriptionLength: number
     authorHandle?: string
   }
+  openGraph?: OpenGraphMeta
+  twitter?: TwitterMeta
 }
 
 /**
@@ -236,6 +259,22 @@ export interface HeadProps {
    * Version alternates for multi-version documentation
    */
   versionAlternates?: Array<{ version: string; href: string }>
+  /**
+   * Whether the title should bypass site title template
+   */
+  absolute?: boolean
+  /**
+   * Twitter card type
+   */
+  twitterCard?: "summary" | "summary_large_image" | "player" | "app"
+  /**
+   * Open Graph metadata overrides
+   */
+  openGraph?: OpenGraphMeta
+  /**
+   * Twitter metadata overrides
+   */
+  twitter?: TwitterMeta
 }
 
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js"

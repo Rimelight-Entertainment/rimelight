@@ -10,6 +10,8 @@ export type {
   OGImage,
   RSSFeed,
   HeadProps,
+  OpenGraphMeta,
+  TwitterMeta,
   LlmsPage,
   LlmsTxtOptions,
   LlmsFullTxtOptions,
@@ -31,7 +33,8 @@ export {
   buildPageTitle,
   buildSafeDescription,
   buildRobotsMetaContent,
-  buildWebSiteSchema
+  buildWebSiteSchema,
+  deepMerge
 } from "./meta.js"
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js"
