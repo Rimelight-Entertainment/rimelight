@@ -41,6 +41,36 @@ export interface SecurityOptions {
   trustedTypes?: boolean
 
   /**
+   * Cross-Origin-Embedder-Policy header value. Allowed values: "require-corp", "credentialless",
+   * "unsafe-none" or false to disable. Defaults to "credentialless".
+   */
+  crossOriginEmbedderPolicy?:
+    | "require-corp"
+    | "credentialless"
+    | "unsafe-none"
+    | (string & {})
+    | false
+
+  /**
+   * Cross-Origin-Opener-Policy header value. Allowed values: "same-origin",
+   * "same-origin-allow-popups", "noopener-allow-popups", "unsafe-none" or false to disable.
+   * Defaults to "same-origin".
+   */
+  crossOriginOpenerPolicy?:
+    | "same-origin"
+    | "same-origin-allow-popups"
+    | "noopener-allow-popups"
+    | "unsafe-none"
+    | (string & {})
+    | false
+
+  /**
+   * Cross-Origin-Resource-Policy header value. Allowed values: "same-origin", "same-site",
+   * "cross-origin" or false to disable. Defaults to "same-origin".
+   */
+  crossOriginResourcePolicy?: "same-origin" | "same-site" | "cross-origin" | (string & {}) | false
+
+  /**
    * Granular CSP directive overrides. Values are arrays of directive tokens, e.g.: {
    * "frame-ancestors": ["'self'"] }
    */

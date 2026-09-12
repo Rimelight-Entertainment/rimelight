@@ -41,7 +41,34 @@ function applySecurityHeaders(
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
   headers.set("X-Content-Type-Options", "nosniff")
   headers.set("X-Frame-Options", "DENY")
-  headers.set("Cross-Origin-Resource-Policy", "same-origin")
+
+  if (options.crossOriginResourcePolicy !== false) {
+    headers.set(
+      "Cross-Origin-Resource-Policy",
+      typeof options.crossOriginResourcePolicy === "string"
+        ? options.crossOriginResourcePolicy
+        : "same-origin"
+    )
+  }
+
+  if (options.crossOriginOpenerPolicy !== false) {
+    headers.set(
+      "Cross-Origin-Opener-Policy",
+      typeof options.crossOriginOpenerPolicy === "string"
+        ? options.crossOriginOpenerPolicy
+        : "same-origin"
+    )
+  }
+
+  if (options.crossOriginEmbedderPolicy !== false) {
+    headers.set(
+      "Cross-Origin-Embedder-Policy",
+      typeof options.crossOriginEmbedderPolicy === "string"
+        ? options.crossOriginEmbedderPolicy
+        : "credentialless"
+    )
+  }
+
   headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
   headers.set("No-Vary-Search", 'except=("q" "search" "locale"), params=?1')
