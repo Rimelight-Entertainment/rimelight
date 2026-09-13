@@ -22,7 +22,7 @@ const items = [
 ---
 
 <rla-theme-selector data-mode={mode} data-theme={theme} {...rest}>
-  <div class:list={[classes.root]} data-theme-selector>
+  <div class:list={[classes.root, classAttr]} data-theme-selector>
     <div class:list={[classes.wrapper]}>
       <RLASelect
         items={items}
@@ -61,7 +61,10 @@ const items = [
 
             const select = this.querySelector('select');
             this.select = select;
-            if (select) select.value = pref;
+            if (select) {
+                select.value = pref;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
 
             const updateTheme = (next: string) => {
                 this.setAttribute('data-theme-preference', next);

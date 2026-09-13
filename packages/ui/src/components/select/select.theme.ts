@@ -1,33 +1,32 @@
 import { defineTheme } from "../../resolver"
 
 export const selectTheme = defineTheme("select", {
-  slots: ["root", "select", "icon", "leading"],
+  slots: ["root", "select", "icon", "leading", "label"],
   base: {
     root: "relative inline-flex items-center gap-2",
-    select:
-      "rl-select bg-transparent outline-none cursor-pointer appearance-none pr-6 text-sm font-medium w-full",
-    icon: "pointer-events-none absolute right-2.5 flex items-center text-muted",
-    leading: "flex items-center text-muted shrink-0 pointer-events-none"
+    select: "rl-select appearance-none absolute inset-0 h-full w-full opacity-0 cursor-pointer",
+    label: "text-sm font-medium",
+    icon: "pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-current",
+    leading: "flex items-center text-current shrink-0 pointer-events-none self-center"
   },
   variants: {
     variant: {
       default: {
-        root: "w-full rounded-md border border-default bg-default shadow-sm text-highlighted hover:bg-accented/50 transition-colors cursor-pointer",
-        select: "text-highlighted"
+        root: "w-full rounded-md border border-default bg-default shadow-sm text-highlighted hover:bg-accented/50 transition-colors cursor-pointer"
       },
       icon: {
         root: "rounded-lg focus-within:ring-2 focus-within:ring-ring",
-        select: "absolute inset-0 h-full w-full opacity-0 cursor-pointer",
+        label: "hidden",
         icon: "hidden",
         leading: "hidden"
       }
     },
     size: {
-      xs: { root: "text-xs", select: "text-xs pr-5" },
-      sm: { root: "text-xs", select: "text-xs pr-6" },
-      md: { root: "text-sm", select: "text-sm pr-7" },
-      lg: { root: "text-base", select: "text-base pr-8" },
-      xl: { root: "text-base", select: "text-base pr-9" }
+      xs: { root: "text-xs", label: "text-xs pr-5" },
+      sm: { root: "text-xs", label: "text-xs pr-6" },
+      md: { root: "text-sm", label: "text-sm pr-7" },
+      lg: { root: "text-base", label: "text-base pr-8" },
+      xl: { root: "text-base", label: "text-base pr-9" }
     }
   },
   compoundVariants: [

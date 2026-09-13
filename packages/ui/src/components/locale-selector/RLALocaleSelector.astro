@@ -8,6 +8,7 @@ const {
   currentLocale = "en",
   size = "md",
   theme,
+  class: classAttr,
   ...rest
 } = Astro.props as LocaleSelectorProps;
 
@@ -69,7 +70,7 @@ const currentLocaleUrl = items.find(item => item.code === currentLocale)?.value 
 ---
 
 <rla-locale-selector data-theme={theme} {...rest}>
-    <div class:list={[classes.root]} data-locale-selector>
+    <div class:list={[classes.root, classAttr]} data-locale-selector>
         {Astro.slots.has("label") && (
                 <label class:list={[classes.label]}>
                     <slot name="label" />

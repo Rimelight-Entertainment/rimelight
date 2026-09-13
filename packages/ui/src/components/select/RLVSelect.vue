@@ -43,6 +43,13 @@ const normalizedItems = computed(() => {
     return item
   })
 })
+
+const displayLabel = computed(() => {
+  const value = modelValue.value
+  if (props.placeholder && (value === undefined || value === "")) return props.placeholder
+  const item = normalizedItems.value.find((i) => String(i.value) === String(value))
+  return item?.label ?? ""
+})
 </script>
 
 <template>
@@ -72,6 +79,14 @@ const normalizedItems = computed(() => {
       <RLVIcon v-if="leadingIcon" :name="leadingIcon" class="size-4" />
       <slot v-else name="leading" />
     </div>
+    <span
+      v-if="resolvedVariant !== 'icon'"
+      :class="resolvedClasses.label"
+      data-slot="label"
+      aria-hidden="true"
+    >
+      {{ displayLabel }}
+    </span>
     <select
       v-bind="attrs"
       v-model="modelValue"

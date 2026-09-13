@@ -3,19 +3,19 @@
   "version": "0.0.1",
   "private": true,
   "description": "Rimelight Entertainment Monorepository",
+  "keywords": [],
   "homepage": "https://rimelight.com",
   "bugs": {
     "url": "https://github.com/Rimelight-Entertainment/rimelight/issues"
   },
   "license": "MIT",
-  "author": {
-    "name": "Rimelight Entertainment"
-  },
+  "author": "Rimelight Entertainment",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "build": "pnpm -r run build"
   },

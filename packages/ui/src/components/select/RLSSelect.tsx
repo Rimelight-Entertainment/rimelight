@@ -1,4 +1,4 @@
-import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
+import { createMemo, createSignal, splitProps, For, type Component, type JSX } from "solid-js"
 import type { SelectItem } from "./select"
 import { selectTheme } from "./select.theme"
 import RLSButton, { type RLSButtonProps } from "../button/RLSButton"
@@ -92,6 +92,19 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
         : undefined
   )
 
+  const labelFrom = (value?: string) => {
+    if (props.placeholder && (value === undefined || value === "")) return props.placeholder
+    const item = normalizedItems().find((i) => String(i.value) === String(value))
+    return item?.label ?? ""
+  }
+
+  const [labelText, setLabelText] = createSignal(labelFrom(currentValue()))
+
+  const handleChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
+    setLabelText(e.currentTarget.options[e.currentTarget.selectedIndex]?.text ?? "")
+    props.onChange?.(e)
+  }
+
   const triggerProps = () => {
     const p: RLSButtonProps = {
       "variant": buttonVariant(),
@@ -119,12 +132,18 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
         </span>
       ) : null}
 
+      {resolvedVariant() !== "icon" ? (
+        <span class={classes().label} data-slot="label" aria-hidden="true">
+          {labelText()}
+        </span>
+      ) : null}
+
       <select
         id={props.id}
         name={props.name}
         disabled={props.disabled}
         required={props.required}
-        onChange={props.onChange}
+        onChange={handleChange}
         onBlur={props.onBlur}
         class={classes().select}
         data-slot="select"
