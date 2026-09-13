@@ -1,8 +1,7 @@
 ---
 import type { InputProps } from "./input"
 import { inputTheme } from "./input.theme"
-
-
+import RLAIcon from "../icon/RLAIcon.astro"
 
 const {
   type = "text",
@@ -15,21 +14,32 @@ const {
   error = false,
   leadingIcon,
   trailingIcon,
+  size = "md",
+  variant = "default",
   theme,
+  class: className,
+  ui,
   ...rest
 } = Astro.props as InputProps
 
-
+const hasLeading = !!(leadingIcon || Astro.slots.has("leading"))
+const hasTrailing = !!(trailingIcon || Astro.slots.has("trailing"))
 
 const classes = inputTheme({
-  ...Astro.props,
-  error: !!error
-});
+  variant,
+  size,
+  hasLeading,
+  hasTrailing,
+  error: !!error,
+  theme,
+  ui,
+  class: className
+})
 ---
 <div class={classes.root} data-slot="root" data-theme={theme}>
   {(leadingIcon || Astro.slots.has("leading")) && (
     <span class={classes.leading} data-slot="leading">
-      {leadingIcon ? <span class={leadingIcon} /> : <slot name="leading" />}
+      {leadingIcon ? <RLAIcon name={leadingIcon} size="sm" aria-hidden="true" /> : <slot name="leading" />}
     </span>
   )}
   <input
@@ -45,7 +55,7 @@ const classes = inputTheme({
   />
   {(trailingIcon || Astro.slots.has("trailing")) && (
     <span class={classes.trailing} data-slot="trailing">
-      {trailingIcon ? <span class={trailingIcon} /> : <slot name="trailing" />}
+      {trailingIcon ? <RLAIcon name={trailingIcon} size="sm" aria-hidden="true" /> : <slot name="trailing" />}
     </span>
   )}
 </div>

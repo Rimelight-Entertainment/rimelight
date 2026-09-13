@@ -1,17 +1,17 @@
 export interface TableColumnMeta {
   class?: {
-    td?: string | ((cell: any) => string)
-    th?: string | ((column: any) => string)
+    td?: string | ((row: TableRow) => string)
+    th?: string | ((column: TableColumn) => string)
   }
   style?: {
-    td?: string | ((cell: any) => string)
-    th?: string | ((column: any) => string)
+    td?: string | ((row: TableRow) => string)
+    th?: string | ((column: TableColumn) => string)
   }
   colspan?: {
-    td?: number | string | ((cell: any) => number | string)
+    td?: number | string | ((row: TableRow) => number | string)
   }
   rowspan?: {
-    td?: number | string | ((cell: any) => number | string)
+    td?: number | string | ((row: TableRow) => number | string)
   }
   [key: string]: any
 }
@@ -20,21 +20,18 @@ export interface TableColumn<T = any> {
   id?: string
   accessorKey?: keyof T | string
   header?: string | ((props: { column: TableColumn<T>; table: any }) => any)
-  cell?:
-    | string
-    | ((props: {
-        row: TableRow<T>
-        getValue: () => any
-        renderValue: () => any
-        column: TableColumn<T>
-        table: any
-      }) => any)
+  cell?: (props: {
+    row: TableRow<T>
+    getValue: () => any
+    renderValue: () => any
+    column: TableColumn<T>
+    table: any
+  }) => any
   footer?: string | ((props: { column: TableColumn<T>; table: any }) => any)
   meta?: TableColumnMeta
   enableSorting?: boolean
   enableHiding?: boolean
   size?: number | string
-  aggregationFn?: string | ((rows: any[], id: string) => any)
   [key: string]: any
 }
 
@@ -56,6 +53,13 @@ export interface TableRow<T = any> {
   [key: string]: any
 }
 
+export interface TableGroup<T = any> {
+  id: string
+  columnId: string
+  value: any
+  rows: TableRow<T>[]
+}
+
 export interface TableMeta<T = any> {
   class?: {
     tr?: string | ((row: TableRow<T>) => string)
@@ -71,10 +75,14 @@ export interface TableSortingItem {
   desc: boolean
 }
 
+export type SortingState = TableSortingItem[]
+
 export interface TableColumnFilter {
   id: string
   value: any
 }
+
+export type ColumnFiltersState = TableColumnFilter[]
 
 export interface TableRowPinningState {
   top?: string[]
@@ -91,145 +99,173 @@ export interface TablePaginationState {
   pageSize: number
 }
 
+/**
+ * Imperative API exposed by RLATable (on the custom element) and RLSTable (via ref callback).
+ */
+export interface TableApi<T = any> {
+  tableRef: HTMLTableElement | null
+  getFilteredRows(): TableRow<T>[]
+  getSortedRows(): TableRow<T>[]
+  getSelectedRows(): TableRow<T>[]
+  getAllColumns(): TableColumn<T>[]
+  getColumn(id: string): TableColumn<T> | undefined
+  setGlobalFilter(value: string): void
+  setColumnFilter(id: string, value: any): void
+  setColumnVisibility(id: string, visible: boolean): void
+  setColumnPinning(pinning: TableColumnPinningState): void
+  setRowPinning(pinning: TableRowPinningState): void
+  setSorting(state: SortingState): void
+  setPagination(state: TablePaginationState): void
+  getState(): {
+    sorting: SortingState
+    globalFilter: string
+    columnFilters: ColumnFiltersState
+    columnVisibility: Record<string, boolean>
+    columnPinning: TableColumnPinningState
+    rowSelection: Record<string, boolean>
+    expanded: Record<string, boolean>
+    rowPinning: TableRowPinningState
+    pagination: TablePaginationState
+  }
+}
+
 export interface TableProps<T = any> {
   /**
-   * Data rows array.
+   * Data rows. Auto-infers columns from the first row's keys when `columns` is omitted.
    */
   data?: T[]
   /**
-   * Columns definition array.
+   * Column definitions.
    */
   columns?: TableColumn<T>[]
   /**
-   * Column headers array (legacy/backwards-compatible mode).
-   */
-  headers?: Array<string | { label: string; key: string; class?: string }>
-  /**
-   * Data rows array (legacy/backwards-compatible mode).
-   */
-  rows?: Array<Record<string, any> | any[]>
-  /**
-   * Accessible description or title of the table.
+   * Accessible table caption (visually hidden).
    */
   caption?: string
   /**
-   * Table meta properties (e.g., dynamic row classes).
+   * Table-level metadata, e.g. a per-row `class.tr` function.
    */
   meta?: TableMeta<T>
   /**
-   * Sticky header or footer ('header', 'footer', or true for both).
+   * Stick the header, footer, or both when the table scrolls.
    */
   sticky?: boolean | "header" | "footer"
   /**
-   * Loading state.
+   * Show a loading progress bar.
    */
   loading?: boolean
   /**
-   * Loading color variant.
+   * Color of the loading bar. @default 'primary'
    */
   loadingColor?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral"
   /**
-   * Loading animation variant.
+   * Animation of the loading bar. @default 'carousel'
    */
   loadingAnimation?: "carousel" | "carousel-inverse" | "swing" | "elastic"
   /**
-   * Empty state text message.
+   * Empty-state text. @default 'No data available'
    */
   empty?: string
   /**
-   * Virtualization state or options object.
-   */
-  virtualize?: boolean | Record<string, any>
-  /**
-   * Striped row style.
+   * Alternate row background colors.
    */
   striped?: boolean
   /**
-   * Hoverable rows state.
-   */
-  hoverable?: boolean
-  /**
-   * Bordered cells.
+   * Show borders on every cell.
    */
   bordered?: boolean
   /**
-   * Global search filter text.
+   * Highlight row on hover.
+   */
+  hoverable?: boolean
+  /**
+   * Global text filter across all columns.
    */
   globalFilter?: string
   /**
-   * Per-column filter criteria.
+   * Per-column filter state.
    */
-  columnFilters?: TableColumnFilter[]
+  columnFilters?: ColumnFiltersState
   /**
-   * Column visibility toggles (e.g. { id: false }).
+   * Column visibility map — `{ [columnId]: boolean }`.
    */
   columnVisibility?: Record<string, boolean>
   /**
-   * Column pinning state ({ left: string[], right: string[] }).
+   * Sticky column pinning — `{ left?: string[], right?: string[] }`.
    */
   columnPinning?: TableColumnPinningState
   /**
-   * Active column sorting list.
+   * Active sort state.
    */
-  sorting?: TableSortingItem[]
+  sorting?: SortingState
   /**
-   * Grouping column ids list.
+   * Column IDs to group rows by (first entry is used).
    */
   grouping?: string[]
   /**
-   * Row pinning state ({ top: string[], bottom: string[] }).
+   * Row pinning — `{ top?: string[], bottom?: string[] }`.
    */
   rowPinning?: TableRowPinningState
   /**
-   * Selected row ids map.
+   * Row selection map — `{ [rowId]: boolean }`.
    */
   rowSelection?: Record<string, boolean>
   /**
-   * Expanded row ids map.
+   * Expanded rows map — `{ [rowId]: boolean }`.
    */
   expanded?: Record<string, boolean>
   /**
-   * Pagination state ({ pageIndex: number, pageSize: number }).
+   * Pagination state.
    */
   pagination?: TablePaginationState
   /**
-   * Function to derive sub-rows for tree/hierarchical data.
+   * Extract sub-rows for tree/hierarchical data.
    */
   getSubRows?: (row: T, index: number) => T[] | undefined
   /**
-   * Custom function to derive unique row ID.
+   * Custom row ID extractor. Defaults to `row.id ?? String(index)`.
    */
   getRowId?: (row: T, index: number) => string
   /**
-   * Row select callback.
+   * Called when a data row is clicked (skips clicks on interactive elements).
    */
   onSelect?: (e: Event, row: TableRow<T>) => void
   /**
-   * Row hover callback.
+   * Called when the pointer enters or leaves a row (`null` on leave).
    */
   onHover?: (e: Event, row: TableRow<T> | null) => void
   /**
-   * Row contextmenu callback.
+   * Called on row right-click.
    */
   onContextmenu?: (e: Event, row: TableRow<T>) => void
+  // Controlled-mode callbacks — provide these to take ownership of state externally
+  onSortingChange?: (state: SortingState) => void
+  onColumnFiltersChange?: (state: ColumnFiltersState) => void
+  onGlobalFilterChange?: (value: string) => void
+  onColumnVisibilityChange?: (state: Record<string, boolean>) => void
+  onColumnPinningChange?: (state: TableColumnPinningState) => void
+  onRowSelectionChange?: (state: Record<string, boolean>) => void
+  onExpandedChange?: (state: Record<string, boolean>) => void
+  onRowPinningChange?: (state: TableRowPinningState) => void
+  onPaginationChange?: (state: TablePaginationState) => void
   /**
-   * Enable integrated search toolbar input.
+   * Render a built-in search input in the toolbar.
    */
   searchable?: boolean
   /**
-   * Custom placeholder text for integrated search input.
+   * Placeholder for the built-in search input. @default 'Filter table...'
    */
   searchPlaceholder?: string
   /**
-   * Enable integrated column visibility dropdown toggle.
+   * Render a column-visibility dropdown in the toolbar.
    */
   showColumnsToggle?: boolean
   /**
-   * Slot-specific CSS class overrides.
+   * Per-slot class overrides.
    */
-  ui?: any
+  ui?: Partial<Record<string, string>>
   /**
-   * Additional CSS classes to apply to root element.
+   * Additional classes on the root element.
    */
   class?: any
   [key: string]: unknown

@@ -3,8 +3,8 @@ import { defineTheme } from "../../resolver"
 export const checkboxTheme = defineTheme("checkbox", {
   slots: ["root", "input", "box", "indicator", "label"],
   base: {
-    root: "inline-flex items-center gap-2 cursor-pointer select-none",
-    input: "absolute opacity-0 size-0 pointer-events-none peer",
+    root: "relative inline-flex items-center gap-2 cursor-pointer select-none",
+    input: "sr-only peer",
     box: [
       "size-4 shrink-0 rounded border border-default bg-default transition-all focus-within:ring-2 focus-within:ring-[var(--rl-ring)]/50 focus-within:ring-offset-2",
       "peer-checked:bg-[var(--rl-bg)] peer-checked:border-[var(--rl-border)] peer-checked:[&_[data-slot=indicator]]:scale-100",

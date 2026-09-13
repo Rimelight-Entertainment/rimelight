@@ -136,7 +136,7 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
         const side = this.getAttribute("data-side") || "bottom";
 
         content.style.position = "fixed";
-        content.style.zIndex = "9999";
+        content.style.zIndex = "99999";
 
         if (side === "top") {
           content.style.top = `${rect.top - content.offsetHeight - 4}px`;
@@ -145,11 +145,14 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
         }
 
         if (align === "end") {
-          content.style.left = `${rect.right - content.offsetWidth}px`;
+          content.style.right = `${window.innerWidth - rect.right}px`;
+          content.style.left = "auto";
         } else if (align === "center") {
           content.style.left = `${rect.left + (rect.width / 2) - (content.offsetWidth / 2)}px`;
+          content.style.right = "auto";
         } else {
           content.style.left = `${rect.left}px`;
+          content.style.right = "auto";
         }
       };
 
@@ -162,6 +165,9 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
         });
 
         if (isHidden) {
+          if (content.parentElement !== document.body) {
+            document.body.appendChild(content);
+          }
           content.classList.remove("hidden");
           updatePosition();
         } else {
@@ -224,6 +230,9 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
         window.removeEventListener("scroll", onScrollOrResize, true);
         window.removeEventListener("resize", onScrollOrResize);
         content.removeEventListener("click", onItemClick);
+        if (content.parentElement === document.body) {
+          content.remove();
+        }
       };
     }
 

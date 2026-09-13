@@ -1,0 +1,163 @@
+import { createMemo, For, splitProps, type Component, type JSX } from "solid-js"
+import type { TimelineProps, TimelineItem } from "./timeline"
+import { timelineTheme } from "./timeline.theme"
+import RLSAvatar from "../avatar/RLSAvatar"
+import RLSIcon from "../icon/RLSIcon"
+
+export interface RLSTimelineProps extends TimelineProps {
+  children?: JSX.Element
+  indicator?: (ctx: { item: TimelineItem; index: number }) => JSX.Element
+  wrapper?: (ctx: { item: TimelineItem; index: number }) => JSX.Element
+}
+
+const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
+  const [props, rest] = splitProps(allProps, [
+    "items",
+    "size",
+    "color",
+    "orientation",
+    "valueKey",
+    "defaultValue",
+    "modelValue",
+    "reverse",
+    "ui",
+    "class",
+    "children",
+    "indicator",
+    "wrapper"
+  ])
+
+  const items = (): TimelineItem[] => props.items ?? []
+  const valueKey = (): string => props.valueKey ?? "value"
+  const reverse = (): boolean => props.reverse === true
+  const orientation = (): string => props.orientation ?? "vertical"
+
+  const getItemValue = (item: TimelineItem, index: number): string | number =>
+    item[valueKey()] !== undefined ? item[valueKey()] : index
+
+  const getItemState = (_item: TimelineItem, index: number): "active" | "completed" | undefined => {
+    const activeVal = props.modelValue !== undefined ? props.modelValue : props.defaultValue
+    if (activeVal === undefined) return undefined
+
+    let currentIndex = -1
+    if (items().length > 0) {
+      if (typeof activeVal === "string") {
+        currentIndex = items().findIndex((i) => getItemValue(i, items().indexOf(i)) === activeVal)
+      } else if (typeof activeVal === "number") {
+        currentIndex = reverse() ? items().length - 1 - activeVal : activeVal
+      }
+    }
+
+    if (currentIndex === -1) return undefined
+    if (index === currentIndex) return "active"
+    if (reverse()) return index > currentIndex ? "completed" : undefined
+    return index < currentIndex ? "completed" : undefined
+  }
+
+  const resolvedClasses = createMemo(() =>
+    timelineTheme({
+      size: props.size ?? "md",
+      color: props.color ?? "primary",
+      orientation: props.orientation ?? "vertical",
+      reverse: props.reverse ?? false,
+      ui: props.ui,
+      class: props.class
+    })
+  )
+
+  return (
+    <div data-slot="root" class={resolvedClasses().root} data-orientation={orientation()} {...rest}>
+      {items().length > 0 ? (
+        <For each={items()}>
+          {(item, index) => {
+            const state = getItemState(item, index())
+            const isLast = index() === items().length - 1
+            const avatar =
+              typeof item.avatar === "object" && item.avatar !== null ? item.avatar : undefined
+
+            return (
+              <div
+                data-slot="item"
+                class={`${resolvedClasses().item}  ${item.ui?.item || ""}  ${item.class || ""}`}
+                data-state={state}
+              >
+                <div
+                  data-slot="container"
+                  class={`${resolvedClasses().container}  ${item.ui?.container || ""}`}
+                >
+                  <RLSAvatar
+                    size={props.size ?? "md"}
+                    src={avatar?.src}
+                    alt={avatar?.alt}
+                    {...(avatar ? avatar : {})}
+                    data-slot="indicator"
+                    class={`${resolvedClasses().indicator}  ${item.ui?.indicator || ""}`}
+                    ui={{
+                      icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
+                      fallback:
+                        "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted"
+                    }}
+                  >
+                    {props.indicator ? (
+                      props.indicator({ item, index: index() })
+                    ) : item.icon ? (
+                      <RLSIcon name={item.icon} class="text-inherit" />
+                    ) : null}
+                  </RLSAvatar>
+
+                  {!isLast ? (
+                    <div
+                      data-slot="separator"
+                      class={`${resolvedClasses().separator}  ${item.ui?.separator || ""}`}
+                      data-orientation={orientation()}
+                    />
+                  ) : null}
+                </div>
+
+                <div
+                  data-slot="wrapper"
+                  class={`${resolvedClasses().wrapper}  ${item.ui?.wrapper || ""}`}
+                >
+                  {props.wrapper ? (
+                    props.wrapper({ item, index: index() })
+                  ) : (
+                    <>
+                      {item.date ? (
+                        <div
+                          data-slot="date"
+                          class={`${resolvedClasses().date}  ${item.ui?.date || ""}`}
+                        >
+                          {item.date}
+                        </div>
+                      ) : null}
+                      {item.title ? (
+                        <div
+                          data-slot="title"
+                          class={`${resolvedClasses().title}  ${item.ui?.title || ""}`}
+                        >
+                          {item.title}
+                        </div>
+                      ) : null}
+                      {item.description ? (
+                        <div
+                          data-slot="description"
+                          class={`${resolvedClasses().description}  ${item.ui?.description || ""}`}
+                        >
+                          {item.description}
+                        </div>
+                      ) : null}
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          }}
+        </For>
+      ) : props.children ? (
+        props.children
+      ) : null}
+    </div>
+  )
+}
+
+export default RLSTimeline

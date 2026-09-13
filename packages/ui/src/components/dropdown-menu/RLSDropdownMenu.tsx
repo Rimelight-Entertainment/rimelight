@@ -9,6 +9,7 @@ import {
   type Component,
   type JSX
 } from "solid-js"
+import { Portal } from "solid-js/web"
 import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
 import { dropdownMenuTheme } from "./dropdown-menu.theme"
 import RLSIcon from "../icon/RLSIcon"
@@ -35,16 +36,52 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
   ])
 
   const [isOpen, setIsOpen] = createSignal(false)
+  const [coords, setCoords] = createSignal<{ top: number; left?: number; right?: number }>({
+    top: 0
+  })
   let menuContainer: HTMLDivElement | undefined
+  let menuContentRef: HTMLDivElement | undefined
+  let triggerBtn: HTMLButtonElement | undefined
+
+  const updatePosition = () => {
+    if (!triggerBtn) return
+    const rect = triggerBtn.getBoundingClientRect()
+    const align = props.content?.align || "start"
+    const top = rect.bottom + 4
+    if (align === "end") {
+      const right = window.innerWidth - rect.right
+      setCoords({ top, right })
+    } else if (align === "center") {
+      const left = rect.left + rect.width / 2
+      setCoords({ top, left })
+    } else {
+      setCoords({ top, left: rect.left })
+    }
+  }
 
   onMount(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (isOpen() && menuContainer && !menuContainer.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (
+        isOpen() &&
+        menuContainer &&
+        !menuContainer.contains(target) &&
+        (!menuContentRef || !menuContentRef.contains(target))
+      ) {
         setIsOpen(false)
       }
     }
+    const handleScroll = () => {
+      if (isOpen()) updatePosition()
+    }
     document.addEventListener("click", handleOutsideClick)
-    onCleanup(() => document.removeEventListener("click", handleOutsideClick))
+    window.addEventListener("scroll", handleScroll, true)
+    window.addEventListener("resize", handleScroll)
+    onCleanup(() => {
+      document.removeEventListener("click", handleOutsideClick)
+      window.removeEventListener("scroll", handleScroll, true)
+      window.removeEventListener("resize", handleScroll)
+    })
   })
 
   const resolvedClasses = createMemo(() =>
@@ -63,13 +100,6 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
     return [props.items as DropdownMenuItem[]]
   })
 
-  const alignClass = () => {
-    const align = props.content?.align || "start"
-    if (align === "end") return "right-0"
-    if (align === "center") return "left-1/2 -translate-x-1/2"
-    return "left-0"
-  }
-
   return (
     <div
       ref={(el) => (menuContainer = el)}
@@ -78,11 +108,14 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
       {...rest}
     >
       <button
+        ref={(el) => (triggerBtn = el)}
         type="button"
         disabled={props.disabled}
         onClick={(e) => {
           e.stopPropagation()
-          setIsOpen(!isOpen())
+          const next = !isOpen()
+          if (next) updatePosition()
+          setIsOpen(next)
         }}
         class={resolvedClasses().trigger}
         data-slot="trigger"
@@ -101,38 +134,100 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
       </button>
 
       <Show when={isOpen()}>
-        <div
-          class={`${resolvedClasses().content}  ${alignClass()}`}
-          data-slot="content"
-          role="menu"
-        >
-          {props.arrow && <div class={resolvedClasses().arrow} />}
-          <div class={resolvedClasses().viewport}>
-            <For each={itemGroups()}>
-              {(group, groupIdx) => (
-                <div class={resolvedClasses().group}>
-                  {groupIdx() > 0 && <div class={resolvedClasses().separator} />}
-                  <For each={group}>
-                    {(item) => {
-                      if (item.type === "separator") {
-                        return <div class={resolvedClasses().separator} />
-                      }
-                      if (item.type === "label") {
-                        return <div class={resolvedClasses().label}>{item.label}</div>
-                      }
+        <Portal>
+          <div
+            ref={(el) => (menuContentRef = el)}
+            class={resolvedClasses().content}
+            style={{
+              "position": "fixed",
+              "z-index": "99999",
+              "top": `${coords().top}px`,
+              ...(coords().right !== undefined ? { right: `${coords().right}px`, left: "auto" } : {}),
+              ...(coords().left !== undefined ? { left: `${coords().left}px` } : {})
+            }}
+            data-slot="content"
+            role="menu"
+          >
+            {props.arrow && <div class={resolvedClasses().arrow} />}
+            <div class={resolvedClasses().viewport}>
+              <For each={itemGroups()}>
+                {(group, groupIdx) => (
+                  <div class={resolvedClasses().group}>
+                    {groupIdx() > 0 && <div class={resolvedClasses().separator} />}
+                    <For each={group}>
+                      {(item) => {
+                        if (item.type === "separator") {
+                          return <div class={resolvedClasses().separator} />
+                        }
+                        if (item.type === "label") {
+                          return <div class={resolvedClasses().label}>{item.label}</div>
+                        }
 
-                      const itemColor = () =>
-                        item.color === "error"
-                          ? "text-destructive hover:bg-destructive/10"
-                          : item.color === "primary"
-                            ? "text-primary hover:bg-primary/10"
-                            : ""
+                        const itemColor = () =>
+                          item.color === "error"
+                            ? "text-destructive hover:bg-destructive/10"
+                            : item.color === "primary"
+                              ? "text-primary hover:bg-primary/10"
+                              : ""
 
-                      if (item.to) {
+                        if (item.to) {
+                          return (
+                            <a
+                              href={item.to}
+                              target={item.target}
+                              class={`${resolvedClasses().item}  ${itemColor()}  ${item.class || ""}`}
+                              data-slot="item"
+                              role="menuitem"
+                              onClick={(e) => {
+                                setIsOpen(false)
+                                item.onSelect?.(e)
+                              }}
+                            >
+                              {item.icon && (
+                                <RLSIcon
+                                  name={item.icon}
+                                  size="sm"
+                                  class={resolvedClasses().itemLeadingIcon}
+                                />
+                              )}
+                              <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                              {item.shortcut && (
+                                <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
+                              )}
+                            </a>
+                          )
+                        }
+
+                        if (item.type === "checkbox") {
+                          const isChecked = () => !!item.checked
+                          return (
+                            <button
+                              type="button"
+                              disabled={item.disabled}
+                              class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
+                              data-slot="item"
+                              role="menuitemcheckbox"
+                              aria-checked={isChecked()}
+                              onClick={(e) => {
+                                const next = !isChecked()
+                                item.onUpdateChecked?.(next)
+                                item.onSelect?.(e)
+                              }}
+                            >
+                              <span class="shrink-0 size-4 flex items-center justify-center border border-default rounded bg-default">
+                                <Show when={isChecked()}>
+                                  <RLSIcon name="check" size="xs" class="text-primary" />
+                                </Show>
+                              </span>
+                              <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                            </button>
+                          )
+                        }
+
                         return (
-                          <a
-                            href={item.to}
-                            target={item.target}
+                          <button
+                            type="button"
+                            disabled={item.disabled}
                             class={`${resolvedClasses().item}  ${itemColor()}  ${item.class || ""}`}
                             data-slot="item"
                             role="menuitem"
@@ -152,42 +247,16 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
                             {item.shortcut && (
                               <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
                             )}
-                          </a>
+                          </button>
                         )
-                      }
-
-                      return (
-                        <button
-                          type="button"
-                          disabled={item.disabled}
-                          class={`${resolvedClasses().item}  ${itemColor()}  ${item.class || ""}`}
-                          data-slot="item"
-                          role="menuitem"
-                          onClick={(e) => {
-                            setIsOpen(false)
-                            item.onSelect?.(e)
-                          }}
-                        >
-                          {item.icon && (
-                            <RLSIcon
-                              name={item.icon}
-                              size="sm"
-                              class={resolvedClasses().itemLeadingIcon}
-                            />
-                          )}
-                          <span class={resolvedClasses().itemLabel}>{item.label}</span>
-                          {item.shortcut && (
-                            <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
-                          )}
-                        </button>
-                      )
-                    }}
-                  </For>
-                </div>
-              )}
-            </For>
+                      }}
+                    </For>
+                  </div>
+                )}
+              </For>
+            </div>
           </div>
-        </div>
+        </Portal>
       </Show>
     </div>
   )

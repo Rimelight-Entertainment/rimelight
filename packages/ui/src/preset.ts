@@ -195,6 +195,24 @@ summary {
   border-radius: 0.5rem;
   font-weight: 600;
   text-decoration: none;
+}
+
+@keyframes carousel {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+@keyframes carousel-inverse {
+  0% { transform: translateX(350%); }
+  100% { transform: translateX(-100%); }
+}
+@keyframes swing {
+  0%, 100% { transform: translateX(-50%); }
+  50% { transform: translateX(250%); }
+}
+@keyframes elastic {
+  0% { transform: scaleX(0.1) translateX(-100%); }
+  50% { transform: scaleX(0.7) translateX(100%); }
+  100% { transform: scaleX(0.1) translateX(350%); }
 }`
       }
     ]
