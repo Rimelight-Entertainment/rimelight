@@ -51,11 +51,23 @@ export interface SelectProps {
   /**
    * The visual variant of the select.
    *
-   * `icon` renders the trigger as an icon-only button that opens the option picker.
+   * `icon` renders the trigger as an icon-only `RLButton` that opens the option picker.
    *
    * @default "default"
    */
   variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none"
+  /**
+   * The `RLButton` variant used when `variant="icon"`.
+   *
+   * @default "ghost"
+   */
+  buttonVariant?: "solid" | "outline" | "soft" | "subtle" | "ghost" | "link"
+  /**
+   * The `RLButton` color used when `variant="icon"`.
+   *
+   * @default "neutral"
+   */
+  buttonColor?: ThemeColor
   theme?: "light" | "dark"
   size?: "xs" | "sm" | "md" | "lg" | "xl"
   highlight?: boolean

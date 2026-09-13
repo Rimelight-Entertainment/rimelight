@@ -1,6 +1,7 @@
 ---
 import type { SelectProps, SelectItem } from "./select"
 import { selectTheme } from "./select.theme"
+import RLAButton from "../button/RLAButton.astro"
 import RLAIcon from "../icon/RLAIcon.astro"
 
 const {
@@ -13,6 +14,8 @@ const {
   name,
   size = "md",
   variant = "default",
+  buttonVariant = "ghost",
+  buttonColor = "neutral",
   multiple,
   leadingIcon,
   ui: _ui,
@@ -26,6 +29,8 @@ const {
 const resolvedVariant = variant === "default" || variant === "icon" ? variant : "default"
 
 const classes = selectTheme({ size, variant: resolvedVariant, class: classAttr })
+
+const hasLeading = !!(leadingIcon || Astro.slots.has("leading"))
 
 const currentValue = value !== undefined ? value : defaultValue !== undefined ? defaultValue : undefined
 const currentValues = Array.isArray(currentValue) ? currentValue.map(String) : undefined
@@ -52,11 +57,27 @@ const normalizedItems = (items || []).map((item: SelectItem) => {
 ---
 
 <div class={classes.root} data-slot="root" data-theme={theme}>
-  {(leadingIcon || Astro.slots.has("leading")) && (
+  {resolvedVariant === "icon" ? (
+    <RLAButton
+      variant={buttonVariant}
+      color={buttonColor}
+      size={size}
+      theme={theme}
+      square
+      disabled={disabled}
+      leadingIcon={leadingIcon}
+      aria-hidden="true"
+      tabindex={-1}
+      type="button"
+      data-slot="trigger"
+    >
+      <slot name="leading" />
+    </RLAButton>
+  ) : hasLeading ? (
     <span class={classes.leading} data-slot="leading">
       {leadingIcon ? <RLAIcon name={leadingIcon} class="size-4" /> : <slot name="leading" />}
     </span>
-  )}
+  ) : null}
 
   <select
     class={classes.select}

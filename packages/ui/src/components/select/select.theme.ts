@@ -3,7 +3,7 @@ import { defineTheme } from "../../resolver"
 export const selectTheme = defineTheme("select", {
   slots: ["root", "select", "icon", "leading"],
   base: {
-    root: "relative inline-flex items-center gap-2 rounded-md",
+    root: "relative inline-flex items-center gap-2",
     select:
       "rl-select bg-transparent outline-none cursor-pointer appearance-none pr-6 text-sm font-medium w-full",
     icon: "pointer-events-none absolute right-2.5 flex items-center text-muted",
@@ -12,14 +12,14 @@ export const selectTheme = defineTheme("select", {
   variants: {
     variant: {
       default: {
-        root: "w-full border border-default bg-default shadow-sm text-highlighted hover:bg-accented/50 transition-colors cursor-pointer",
+        root: "w-full rounded-md border border-default bg-default shadow-sm text-highlighted hover:bg-accented/50 transition-colors cursor-pointer",
         select: "text-highlighted"
       },
       icon: {
-        root: "inline-flex items-center justify-center rounded-lg border border-default bg-default text-highlighted shadow-sm hover:bg-accented/50 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-ring",
-        select: "absolute inset-0 h-full w-full opacity-0",
+        root: "rounded-lg focus-within:ring-2 focus-within:ring-ring",
+        select: "absolute inset-0 h-full w-full opacity-0 cursor-pointer",
         icon: "hidden",
-        leading: "pointer-events-none flex items-center justify-center text-current m-0"
+        leading: "hidden"
       }
     },
     size: {
@@ -35,12 +35,7 @@ export const selectTheme = defineTheme("select", {
     { variant: "default", size: "sm", class: { root: "px-2.5 py-1" } },
     { variant: "default", size: "md", class: { root: "px-3 py-1.5" } },
     { variant: "default", size: "lg", class: { root: "px-3.5 py-2" } },
-    { variant: "default", size: "xl", class: { root: "px-4 py-2.5" } },
-    { variant: "icon", size: "xs", class: { root: "size-7", leading: "size-7" } },
-    { variant: "icon", size: "sm", class: { root: "size-8", leading: "size-8" } },
-    { variant: "icon", size: "md", class: { root: "size-9", leading: "size-9" } },
-    { variant: "icon", size: "lg", class: { root: "size-10", leading: "size-10" } },
-    { variant: "icon", size: "xl", class: { root: "size-11", leading: "size-11" } }
+    { variant: "default", size: "xl", class: { root: "px-4 py-2.5" } }
   ],
   defaultVariants: {
     variant: "default",

@@ -2,6 +2,7 @@
 import { computed, useAttrs } from "vue"
 import type { SelectProps } from "./select"
 import { selectTheme } from "./select.theme"
+import RLVButton from "../button/RLVButton.vue"
 import RLVIcon from "../icon/RLVIcon.vue"
 
 defineOptions({ name: "RLVSelect" })
@@ -13,6 +14,8 @@ const modelValue = defineModel<string | number | undefined>()
 const props = withDefaults(defineProps<SelectProps>(), {
   size: "md",
   variant: "default",
+  buttonVariant: "ghost",
+  buttonColor: "neutral",
   color: "neutral",
   disabled: false
 })
@@ -44,7 +47,28 @@ const normalizedItems = computed(() => {
 
 <template>
   <div :class="resolvedClasses.root" data-slot="root">
-    <div v-if="$slots.leading || leadingIcon" :class="resolvedClasses.leading" data-slot="leading">
+    <RLVButton
+      v-if="resolvedVariant === 'icon'"
+      :variant="buttonVariant"
+      :color="buttonColor"
+      :size="size"
+      square
+      :disabled="disabled"
+      :leading-icon="leadingIcon"
+      aria-hidden="true"
+      tabindex="-1"
+      type="button"
+      data-slot="trigger"
+    >
+      <template #leading>
+        <slot name="leading" />
+      </template>
+    </RLVButton>
+    <div
+      v-else-if="$slots.leading || leadingIcon"
+      :class="resolvedClasses.leading"
+      data-slot="leading"
+    >
       <RLVIcon v-if="leadingIcon" :name="leadingIcon" class="size-4" />
       <slot v-else name="leading" />
     </div>

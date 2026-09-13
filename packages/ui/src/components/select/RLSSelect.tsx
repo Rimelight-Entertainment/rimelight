@@ -1,6 +1,7 @@
 import { createMemo, splitProps, For, type Component, type JSX } from "solid-js"
 import type { SelectItem } from "./select"
 import { selectTheme } from "./select.theme"
+import RLSButton, { type RLSButtonProps } from "../button/RLSButton"
 import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSSelectProps {
@@ -13,8 +14,11 @@ export interface RLSSelectProps {
   required?: boolean
   size?: "xs" | "sm" | "md" | "lg" | "xl"
   variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none"
+  buttonVariant?: RLSButtonProps["variant"]
+  buttonColor?: RLSButtonProps["color"]
   class?: string
   items?: SelectItem[]
+  leadingIcon?: string
   leading?: JSX.Element
   children?: JSX.Element
   onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void
@@ -32,8 +36,11 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
     "required",
     "size",
     "variant",
+    "buttonVariant",
+    "buttonColor",
     "class",
     "items",
+    "leadingIcon",
     "leading",
     "children",
     "onChange",
@@ -42,6 +49,9 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
 
   const resolvedVariant = () =>
     props.variant === "default" || props.variant === "icon" ? props.variant : "default"
+
+  const buttonVariant = () => props.buttonVariant ?? "ghost"
+  const buttonColor = () => props.buttonColor ?? "neutral"
 
   const classes = createMemo(() =>
     selectTheme({
@@ -82,9 +92,28 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
         : undefined
   )
 
+  const triggerProps = () => {
+    const p: RLSButtonProps = {
+      "variant": buttonVariant(),
+      "color": buttonColor(),
+      "square": true,
+      "aria-hidden": "true",
+      "tabIndex": -1,
+      "data-slot": "trigger",
+      "type": "button"
+    }
+    if (props.size) p.size = props.size
+    if (props.disabled !== undefined) p.disabled = props.disabled
+    if (props.leadingIcon) p.leadingIcon = props.leadingIcon
+    if (props.leading) p.leading = props.leading
+    return p
+  }
+
   return (
     <div class={`${classes().root}`}>
-      {props.leading ? (
+      {resolvedVariant() === "icon" ? (
+        <RLSButton {...triggerProps()} />
+      ) : props.leading ? (
         <span class={classes().leading} data-slot="leading">
           {props.leading}
         </span>
