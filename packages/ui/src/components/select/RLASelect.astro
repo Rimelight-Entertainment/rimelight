@@ -12,6 +12,7 @@ const {
   required = false,
   name,
   size = "md",
+  variant = "default",
   multiple,
   leadingIcon,
   ui: _ui,
@@ -20,7 +21,11 @@ const {
   ...rest
 } = Astro.props as SelectProps
 
-const classes = selectTheme({ size, class: classAttr })
+// Legacy prop values ("outline", "soft", "subtle", "ghost", "none") were never
+// implemented by the theme; normalize them to the default look.
+const resolvedVariant = variant === "default" || variant === "icon" ? variant : "default"
+
+const classes = selectTheme({ size, variant: resolvedVariant, class: classAttr })
 
 const currentValue = value !== undefined ? value : defaultValue !== undefined ? defaultValue : undefined
 const currentValues = Array.isArray(currentValue) ? currentValue.map(String) : undefined
@@ -78,9 +83,11 @@ const normalizedItems = (items || []).map((item: SelectItem) => {
     ))}
   </select>
 
-  <span class={classes.icon} data-slot="icon">
-    <RLAIcon name="i-lucide-chevron-down" class="size-4" />
-  </span>
+  {resolvedVariant !== "icon" && (
+    <span class={classes.icon} data-slot="icon">
+      <RLAIcon name="i-lucide-chevron-down" class="size-4" />
+    </span>
+  )}
 </div>
 
 <style is:global>

@@ -19,156 +19,95 @@ const items = [
   { label: "Light", value: "light", icon: "i-rl-sun" },
   { label: "Dark", value: "dark", icon: "i-rl-moon" }
 ];
-
-const sizeClasses: Record<string, string> = {
-  xs: "size-7 text-xs",
-  sm: "size-8 text-xs",
-  md: "size-9 text-sm",
-  lg: "size-10 text-base",
-  xl: "size-11 text-base"
-};
 ---
 
 <rla-theme-selector data-mode={mode} data-theme={theme} {...rest}>
-    {mode === "icon" ? (
-        <div class:list={[classes.root]} data-theme-selector>
-            <div class:list={[classes.wrapper]}>
-                <details class="relative inline-block text-left" data-theme-dropdown>
-                    <summary class:list={[sizeClasses[size] || sizeClasses.md, "list-none cursor-pointer inline-flex items-center justify-center rounded-lg border border-default bg-default shadow-sm hover:bg-accented/50 transition-all text-highlighted outline-none focus:ring-2 focus:ring-ring"]} aria-label="Toggle theme">
-                        <RLAIcon name="i-lucide-laptop" class="rla-theme-icon-system size-4 text-current" style="display: block;" />
-                        <RLAIcon name="i-rl-sun" class="rla-theme-icon-light size-4 text-current" style="display: none;" />
-                        <RLAIcon name="i-rl-moon" class="rla-theme-icon-dark size-4 text-current" style="display: none;" />
-                    </summary>
-                    <div class="absolute right-0 mt-2 w-36 origin-top-right rounded-lg border border-default bg-elevated p-1 shadow-xl z-50 text-highlighted" data-dropdown-content>
-                        {items.map(item => (
-                            <button
-                                type="button"
-                                data-value={item.value}
-                                class="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-md hover:bg-accented/50 transition-colors cursor-pointer text-left"
-                            >
-                                <RLAIcon name={item.icon} class="size-4 shrink-0" />
-                                <span>{item.label}</span>
-                            </button>
-                        ))}
-                    </div>
-                </details>
-            </div>
-        </div>
-    ) : (
-        <div class:list={[classes.root]} data-theme-selector>
-            <div class:list={[classes.wrapper]}>
-                <RLASelect
-                    items={items}
-                    value="system"
-                    size={size}
-                    theme={theme}
-                    aria-label="Toggle theme"
-                    class={classes.select}
-                >
-                    <span slot="leading" class="flex items-center">
-                        <RLAIcon name="i-lucide-laptop" class="rla-theme-icon-system size-4" style="display: block;" />
-                        <RLAIcon name="i-rl-sun" class="rla-theme-icon-light size-4" style="display: none;" />
-                        <RLAIcon name="i-rl-moon" class="rla-theme-icon-dark size-4" style="display: none;" />
-                    </span>
-                </RLASelect>
-            </div>
-        </div>
-    )}
+  <div class:list={[classes.root]} data-theme-selector>
+    <div class:list={[classes.wrapper]}>
+      <RLASelect
+        items={items}
+        defaultValue="system"
+        size={size}
+        theme={theme}
+        variant={mode === "icon" ? "icon" : "default"}
+        aria-label="Toggle theme"
+        class={classes.select}
+      >
+        <span slot="leading" class="flex items-center">
+          <RLAIcon name="i-lucide-laptop" class="rla-theme-icon-system size-4" style="display: block;" />
+          <RLAIcon name="i-rl-sun" class="rla-theme-icon-light size-4" style="display: none;" />
+          <RLAIcon name="i-rl-moon" class="rla-theme-icon-dark size-4" style="display: none;" />
+        </span>
+      </RLASelect>
+    </div>
+  </div>
 </rla-theme-selector>
-
-<style>
-    details summary::-webkit-details-marker {
-        display: none;
-    }
-</style>
 
 <script>
     import { defineShortcuts } from "../../shortcuts"
 
     class RLAThemeSelector extends HTMLElement {
         private cleanup: (() => void) | null = null;
+        private select: HTMLSelectElement | null = null;
+
+        private getPreference(): string {
+            const stored = localStorage.getItem('theme');
+            return stored === 'system' || stored === 'light' || stored === 'dark' ? stored : 'system';
+        }
 
         connectedCallback() {
             this.style.display = 'contents';
-            const mode = this.getAttribute('data-mode') || 'select';
-            const stored = localStorage.getItem('theme') || 'system';
+            const pref = this.getPreference();
 
-            const updateTheme = (pref: string) => {
-                this.setAttribute('data-theme-preference', pref);
+            const select = this.querySelector('select');
+            this.select = select;
+            if (select) select.value = pref;
+
+            const updateTheme = (next: string) => {
+                this.setAttribute('data-theme-preference', next);
 
                 const sysIcons = this.querySelectorAll('.rla-theme-icon-system');
                 const lightIcons = this.querySelectorAll('.rla-theme-icon-light');
                 const darkIcons = this.querySelectorAll('.rla-theme-icon-dark');
+                sysIcons.forEach(el => ((el as HTMLElement).style.display = next === 'system' ? 'block' : 'none'));
+                lightIcons.forEach(el => ((el as HTMLElement).style.display = next === 'light' ? 'block' : 'none'));
+                darkIcons.forEach(el => ((el as HTMLElement).style.display = next === 'dark' ? 'block' : 'none'));
 
-                sysIcons.forEach(el => (el as HTMLElement).style.display = pref === 'system' ? 'block' : 'none');
-                lightIcons.forEach(el => (el as HTMLElement).style.display = pref === 'light' ? 'block' : 'none');
-                darkIcons.forEach(el => (el as HTMLElement).style.display = pref === 'dark' ? 'block' : 'none');
-
-                let resolved = pref;
-                if (pref === 'system') {
-                    resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                }
+                const resolved = next === 'system'
+                    ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+                    : next;
                 document.documentElement.setAttribute('data-theme', resolved);
-                localStorage.setItem('theme', pref);
+                localStorage.setItem('theme', next);
             };
 
-            updateTheme(stored);
+            updateTheme(pref);
 
-            if (mode === 'icon') {
-                const details = this.querySelector('details');
-                const buttons = this.querySelectorAll('[data-value]');
-
-                buttons.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const val = (e.currentTarget as HTMLElement).getAttribute('data-value');
-                        if (val) {
-                            updateTheme(val);
-                            if (details) details.removeAttribute('open');
-                        }
-                    });
-                });
-
-                const onClickOutside = (e: MouseEvent) => {
-                    if (details && !details.contains(e.target as Node)) {
-                        details.removeAttribute('open');
-                    }
-                };
-                document.addEventListener('click', onClickOutside);
-
-                this.cleanup = () => {
-                    document.removeEventListener('click', onClickOutside);
-                };
-            } else {
-                const select = this.querySelector('select') as HTMLSelectElement;
-                if (select) {
-                    select.value = stored;
-                    select.addEventListener('change', (e: Event) => {
-                        const val = (e.target as HTMLSelectElement).value;
-                        updateTheme(val);
-                    });
+            const onChange = (event: Event) => {
+                const target = event.target as HTMLSelectElement | null;
+                if (target && target.tagName === 'SELECT' && target.value) {
+                    updateTheme(target.value);
                 }
-            }
+            };
+            this.addEventListener('change', onChange);
+
+            const cycle = () => {
+                const current = localStorage.getItem('theme') || 'system';
+                const next = current === 'system' ? 'light' : current === 'light' ? 'dark' : 'system';
+                if (this.select) this.select.value = next;
+                updateTheme(next);
+            };
 
             const cleanupShortcut = defineShortcuts({
                 meta_alt_t: {
-                    handler: () => {
-                        const current = localStorage.getItem('theme') || 'system';
-                        const next = current === 'system' ? 'light' : current === 'light' ? 'dark' : 'system';
-                        if (mode === 'select') {
-                            const select = this.querySelector('select') as HTMLSelectElement;
-                            if (select) select.value = next;
-                        }
-                        updateTheme(next);
-                    },
+                    handler: cycle,
                     label: "Cycle Theme",
                     description: "Cycle between system, light, and dark theme mode",
                     category: "system"
                 }
             });
 
-            const originalCleanup = this.cleanup;
             this.cleanup = () => {
-                if (originalCleanup) originalCleanup();
+                this.removeEventListener('change', onChange);
                 cleanupShortcut();
             };
         }

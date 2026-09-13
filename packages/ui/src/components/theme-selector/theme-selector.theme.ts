@@ -6,17 +6,5 @@ export const themeSelectorTheme = defineTheme("theme-selector", {
     root: "inline-flex flex-col gap-1.5",
     wrapper: "relative inline-block",
     select: ""
-  },
-  variants: {
-    size: {
-      xs: {},
-      sm: {},
-      md: {},
-      lg: {},
-      xl: {}
-    }
-  },
-  defaultVariants: {
-    size: "md"
   }
 })

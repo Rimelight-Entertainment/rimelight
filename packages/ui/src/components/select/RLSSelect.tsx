@@ -12,8 +12,10 @@ export interface RLSSelectProps {
   disabled?: boolean
   required?: boolean
   size?: "xs" | "sm" | "md" | "lg" | "xl"
+  variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none"
   class?: string
   items?: SelectItem[]
+  leading?: JSX.Element
   children?: JSX.Element
   onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void
   onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void
@@ -29,16 +31,22 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
     "disabled",
     "required",
     "size",
+    "variant",
     "class",
     "items",
+    "leading",
     "children",
     "onChange",
     "onBlur"
   ])
 
+  const resolvedVariant = () =>
+    props.variant === "default" || props.variant === "icon" ? props.variant : "default"
+
   const classes = createMemo(() =>
     selectTheme({
       size: props.size,
+      variant: resolvedVariant(),
       class: props.class
     })
   )
@@ -76,6 +84,12 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
 
   return (
     <div class={`${classes().root}`}>
+      {props.leading ? (
+        <span class={classes().leading} data-slot="leading">
+          {props.leading}
+        </span>
+      ) : null}
+
       <select
         id={props.id}
         name={props.name}
@@ -115,22 +129,24 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
       </select>
 
       {/* Custom Chevron arrow */}
-      <span class={classes().icon} data-slot="icon">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M6 9l6 6 6-6" />
-        </svg>
-      </span>
+      {resolvedVariant() !== "icon" ? (
+        <span class={classes().icon} data-slot="icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
+      ) : null}
 
       <style>{`
         select.rl-select,

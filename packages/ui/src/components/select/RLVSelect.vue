@@ -12,13 +12,19 @@ const modelValue = defineModel<string | number | undefined>()
 
 const props = withDefaults(defineProps<SelectProps>(), {
   size: "md",
+  variant: "default",
   color: "neutral",
   disabled: false
 })
 
+const resolvedVariant = computed(() =>
+  props.variant === "default" || props.variant === "icon" ? props.variant : "default"
+)
+
 const resolvedClasses = computed(() =>
   selectTheme({
     size: props.size,
+    variant: resolvedVariant.value,
     color: props.color,
     disabled: props.disabled,
     class: props.class
@@ -38,6 +44,10 @@ const normalizedItems = computed(() => {
 
 <template>
   <div :class="resolvedClasses.root" data-slot="root">
+    <div v-if="$slots.leading || leadingIcon" :class="resolvedClasses.leading" data-slot="leading">
+      <RLVIcon v-if="leadingIcon" :name="leadingIcon" class="size-4" />
+      <slot v-else name="leading" />
+    </div>
     <select
       v-bind="attrs"
       v-model="modelValue"
@@ -65,7 +75,7 @@ const normalizedItems = computed(() => {
         {{ item.label }}
       </option>
     </select>
-    <span :class="resolvedClasses.icon" data-slot="icon">
+    <span v-if="resolvedVariant !== 'icon'" :class="resolvedClasses.icon" data-slot="icon">
       <RLVIcon name="i-lucide-chevron-down" class="size-4" />
     </span>
   </div>

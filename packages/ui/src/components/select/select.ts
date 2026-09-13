@@ -48,7 +48,14 @@ export interface SelectProps {
     | "warning"
     | "error"
     | "neutral"
-  variant?: "outline" | "soft" | "subtle" | "ghost" | "none"
+  /**
+   * The visual variant of the select.
+   *
+   * `icon` renders the trigger as an icon-only button that opens the option picker.
+   *
+   * @default "default"
+   */
+  variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none"
   theme?: "light" | "dark"
   size?: "xs" | "sm" | "md" | "lg" | "xl"
   highlight?: boolean
