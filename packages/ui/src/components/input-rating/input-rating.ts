@@ -72,6 +72,10 @@ export interface InputRatingProps {
    */
   name?: string
   /**
+   * The controlled rating value.
+   */
+  value?: number
+  /**
    * The controlled rating value. Can be bound with v-model.
    */
   modelValue?: number

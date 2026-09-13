@@ -45,6 +45,8 @@ export interface TableRow<T = any> {
   toggleSelected: (value?: boolean) => void
   getIsExpanded: () => boolean
   toggleExpanded: (value?: boolean) => void
+  getToggleExpandedHandler?: () => (e?: Event) => void
+  getToggleSelectedHandler?: () => (e?: Event) => void
   getIsPinned: () => boolean | "top" | "bottom"
   pin: (position: boolean | "top" | "bottom") => void
   getIsGrouped: () => boolean

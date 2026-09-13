@@ -53,7 +53,7 @@ const RLSPost: Component<RLSPostProps> = (allProps) => {
   const imageSrc = () =>
     typeof props.image === "string"
       ? props.image
-      : (props.image as Record<string, any> | undefined)?.src
+      : (props.image as { src?: string } | undefined)?.src
 
   const body = () => (
     <>

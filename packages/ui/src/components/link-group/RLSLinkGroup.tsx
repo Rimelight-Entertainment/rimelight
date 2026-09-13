@@ -90,11 +90,11 @@ const RLSLinkGroup: Component<RLSLinkGroupProps> = (allProps) => {
                         {link.label}
                       </span>
                     )}
-                    {attrs().showTrailingIcon && (
+                    {attrs().showTrailingIcon ? (
                       <span class={linkClasses()["trailingIcon"]} data-slot="trailing-icon">
-                        <RLSIcon name={attrs().showTrailingIcon} size="sm" aria-hidden="true" />
+                        <RLSIcon name={attrs().showTrailingIcon!} size="sm" aria-hidden="true" />
                       </span>
-                    )}
+                    ) : null}
                   </a>
                 </li>
               )

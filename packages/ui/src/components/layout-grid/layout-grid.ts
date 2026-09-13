@@ -134,6 +134,30 @@ export interface LayoutGridProps {
    */
   devOnly?: boolean
   /**
+   * Maximum width of the inner content container (CSS max-width string).
+   *
+   * @default "768px"
+   */
+  innerMaxWidth?: string
+  /**
+   * Color value for inner grid.
+   *
+   * @default "#10b981"
+   */
+  innerGridColor?: string
+  /**
+   * Opacity for inner grid background.
+   *
+   * @default 0.1
+   */
+  innerGridOpacity?: number
+  /**
+   * Whether to display background for inner grid.
+   *
+   * @default true
+   */
+  showInnerBackground?: boolean
+  /**
    * UI class overrides for components elements slots.
    */
   ui?: any
@@ -141,5 +165,5 @@ export interface LayoutGridProps {
    * CSS class to apply to the root wrapper.
    */
   class?: any
-  [key: string]: unknown
+  [key: string]: any
 }

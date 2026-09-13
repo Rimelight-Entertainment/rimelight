@@ -142,7 +142,9 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
               "position": "fixed",
               "z-index": "99999",
               "top": `${coords().top}px`,
-              ...(coords().right !== undefined ? { right: `${coords().right}px`, left: "auto" } : {}),
+              ...(coords().right !== undefined
+                ? { right: `${coords().right}px`, left: "auto" }
+                : {}),
               ...(coords().left !== undefined ? { left: `${coords().left}px` } : {})
             }}
             data-slot="content"

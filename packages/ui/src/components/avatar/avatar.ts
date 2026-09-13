@@ -8,24 +8,24 @@ export interface AvatarProps {
    * @default "span"
    */
   as?: any
-  src?: string
-  alt?: string
+  src?: string | undefined
+  alt?: string | undefined
   icon?: any
-  text?: string
-  fallback?: string
+  text?: string | undefined
+  fallback?: string | undefined
   /**
    * @default "md"
    */
-  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"
+  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | undefined
   /**
    * @default "neutral"
    */
-  color?: ThemeColor
-  chip?: boolean | ChipProps
-  badge?: boolean | string | number
-  badgeColor?: string
-  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left"
-  loading?: "lazy" | "eager"
+  color?: ThemeColor | undefined
+  chip?: boolean | ChipProps | undefined
+  badge?: boolean | string | number | undefined
+  badgeColor?: string | undefined
+  badgePosition?: "top-right" | "bottom-right" | "top-left" | "bottom-left" | undefined
+  loading?: "lazy" | "eager" | undefined
   referrerpolicy?:
     | ""
     | "no-referrer"
@@ -36,25 +36,26 @@ export interface AvatarProps {
     | "strict-origin"
     | "strict-origin-when-cross-origin"
     | "unsafe-url"
-  crossorigin?: "" | "anonymous" | "use-credentials"
-  decoding?: "async" | "auto" | "sync"
-  height?: string | number
-  width?: string | number
-  sizes?: string
-  srcset?: string
-  usemap?: string
+    | undefined
+  crossorigin?: "" | "anonymous" | "use-credentials" | undefined
+  decoding?: "async" | "auto" | "sync" | undefined
+  height?: string | number | undefined
+  width?: string | number | undefined
+  sizes?: string | undefined
+  srcset?: string | undefined
+  usemap?: string | undefined
   /**
    * Compact initials displayed inside the avatar circle (alias for fallback)
    */
-  initials?: string
+  initials?: string | undefined
   /**
    * Display name rendered adjacent to the avatar (e.g. "Daniel Marchi")
    */
-  title?: string
+  title?: string | undefined
   /**
    * Secondary description rendered below the title (e.g. "Lead Developer")
    */
-  subtitle?: string
+  subtitle?: string | undefined
   /**
    * Accessible aria-label fallback for screen readers when avatar is purely visual
    */

@@ -26,7 +26,7 @@ export interface NavigationMenuItem extends Omit<LinkProps, "type" | "raw" | "cu
    * Additional CSS classes to apply to the root element.
    */
   class?: any
-  [key: string]: unknown
+  [key: string]: any
 }
 
 export interface NavigationMenuChildItem extends Omit<NavigationMenuItem, "type" | "ui"> {
@@ -56,5 +56,5 @@ export interface NavigationMenuProps {
    * Additional CSS classes to apply to the root element.
    */
   class?: any
-  [key: string]: unknown
+  [key: string]: any
 }

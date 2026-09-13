@@ -182,21 +182,21 @@ const RLSChart: Component<RLSChartProps> = (allProps) => {
                       x2={LINE_W - LINE_PAD}
                       y2={y}
                       stroke="currentColor"
-                      strokeOpacity="0.08"
+                      stroke-opacity={0.08}
                     />
                   )
                 }}
               </For>
 
               <Show when={chartType() === "area"}>
-                <path d={areaPath()} fill={palette[0]} fillOpacity="0.15" />
+                <path d={areaPath()} fill={palette[0] ?? "currentColor"} fill-opacity={0.15} />
               </Show>
 
               <path
                 d={linePath()}
                 class={resolvedClasses().line}
-                stroke={palette[0]}
-                strokeWidth="2.5"
+                stroke={palette[0] ?? "currentColor"}
+                stroke-width={2.5}
               />
 
               <For each={linePoints()}>
@@ -204,10 +204,10 @@ const RLSChart: Component<RLSChartProps> = (allProps) => {
                   <circle
                     cx={p.x}
                     cy={p.y}
-                    r="4"
+                    r={4}
                     fill={getColor(p.d, p.i)}
                     stroke="white"
-                    strokeWidth="1.5"
+                    stroke-width={1.5}
                   >
                     <title>
                       {p.d.label}: {p.d.value}
@@ -218,7 +218,7 @@ const RLSChart: Component<RLSChartProps> = (allProps) => {
 
               <For each={linePoints()}>
                 {(p) => (
-                  <text x={p.x} y={LINE_H - 4} textAnchor="middle" class={resolvedClasses().axis}>
+                  <text x={p.x} y={LINE_H - 4} text-anchor="middle" class={resolvedClasses().axis}>
                     {p.d.label}
                   </text>
                 )}

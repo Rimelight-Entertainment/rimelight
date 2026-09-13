@@ -71,7 +71,7 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
         : internalValue()
 
   const [hoverValue, setHoverValue] = createSignal<number | null>(null)
-  const display = () => (hoverValue() !== null ? hoverValue() : value())
+  const display = (): number => (hoverValue() !== null ? hoverValue()! : value())
 
   const items = createMemo(() => Array.from({ length: length() }, (_, idx) => idx + 1))
 

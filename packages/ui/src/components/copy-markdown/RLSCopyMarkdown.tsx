@@ -40,7 +40,7 @@ const RLSCopyMarkdown: Component<RLSCopyMarkdownProps> = (allProps) => {
 
   return (
     <RLSButton
-      class={`rl-copy-markdown  ${props.class || ""}`}
+      class={`rl-copy-markdown ${typeof props.class === "string" ? props.class : ""}`.trim()}
       color="neutral"
       variant="outline"
       size="sm"

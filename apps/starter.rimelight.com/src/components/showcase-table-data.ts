@@ -1,5 +1,3 @@
-import type { TableColumn } from "@rimelight/ui/components/table/table"
-
 export interface PaymentItem {
   id: string
   date: string
@@ -12,7 +10,12 @@ export interface PaymentItem {
 
 export const formatShowcaseDate = (dateStr: string) => {
   const d = new Date(dateStr)
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  })
 }
 
 export const formatShowcaseCurrency = (amount: number) => {

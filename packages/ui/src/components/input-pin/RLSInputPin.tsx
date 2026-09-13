@@ -122,7 +122,8 @@ const RLSInputPin: Component<RLSInputPinProps> = (allProps) => {
     e.preventDefault()
     const next = current().split("")
     for (let i = 0; i < pasted.length; i++) {
-      if (index + i < length()) next[index + i] = pasted[i]
+      const char = pasted[i]
+      if (char !== undefined && index + i < length()) next[index + i] = char
     }
     const joined = next.join("")
     setCurrent(joined)

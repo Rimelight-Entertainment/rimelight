@@ -89,10 +89,10 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
   const imgHeight = props.height ?? heightOf(activeSrc)
   const imgFormat = formatOf(activeSrc) ?? props.metadata?.format
   const rawName = activeUrl ? activeUrl.split("/").pop() || "image" : "image"
-  const fileName = rawName.split("?")[0]
+  const fileName = rawName.split("?")[0] ?? ""
   const fileExtension =
     imgFormat?.toUpperCase() ||
-    ((fileName ?? "").includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG")
+    (fileName.includes(".") ? (fileName.split(".").pop()?.toUpperCase() ?? "IMG") : "IMG")
 
   const resolvedClasses = createMemo(() =>
     imageTheme({ fit: props.fit ?? "cover", ui: props.ui, class: props.class })

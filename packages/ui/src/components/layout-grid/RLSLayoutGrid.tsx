@@ -329,7 +329,7 @@ const RLSLayoutGrid: Component<RLSLayoutGridProps> = (allProps) => {
     <Show when={shouldRender()}>
       <Dynamic
         component={"rla-layout-grid"}
-        ref={(el) => (hostRef = el as HTMLElement | undefined)}
+        ref={(el: Element) => (hostRef = el as HTMLElement | undefined)}
         class={resolvedClasses().root}
         data-cols={props.cols ?? 4}
         data-sm-cols={props.smCols ?? 4}

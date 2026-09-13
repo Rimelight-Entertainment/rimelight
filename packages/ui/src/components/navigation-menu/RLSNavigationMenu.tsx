@@ -88,7 +88,11 @@ const RLSNavigationMenu: Component<RLSNavigationMenuProps> = (allProps) => {
   })
 
   const itemHref = (item: NavigationMenuItem) =>
-    typeof item["href"] === "string" ? item["href"] : typeof item["to"] === "string" ? item["to"] : "#"
+    typeof item["href"] === "string"
+      ? item["href"]
+      : typeof item["to"] === "string"
+        ? item["to"]
+        : "#"
 
   const childHref = (child: NavigationMenuChildItem) =>
     typeof child["href"] === "string"

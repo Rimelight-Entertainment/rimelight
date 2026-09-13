@@ -1,14 +1,19 @@
 import { createSignal, createMemo, Show } from "solid-js"
-import RLSTable from "@rimelight/ui/components/table/RLSTable"
-import type { TableColumn, TableApi } from "@rimelight/ui/components/table/table"
-import RLSButton from "@rimelight/ui/components/button/RLSButton"
-import RLSBadge from "@rimelight/ui/components/badge/RLSBadge"
-import RLSCheckbox from "@rimelight/ui/components/checkbox/RLSCheckbox"
-import RLSDropdownMenu from "@rimelight/ui/components/dropdown-menu/RLSDropdownMenu"
-import { SHOWCASE_PAYMENTS_DATA, formatShowcaseDate, formatShowcaseCurrency, type PaymentItem } from "./showcase-table-data"
+import RLSTable from "@rimelight/ui/components/table/RLSTable.tsx"
+import type { TableColumn, TableApi, TableRow } from "@rimelight/ui/components/table/table.ts"
+import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
+import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
+import RLSCheckbox from "@rimelight/ui/components/checkbox/RLSCheckbox.tsx"
+import RLSDropdownMenu from "@rimelight/ui/components/dropdown-menu/RLSDropdownMenu.tsx"
+import {
+  SHOWCASE_PAYMENTS_DATA,
+  formatShowcaseDate,
+  formatShowcaseCurrency,
+  type PaymentItem
+} from "./showcase-table-data"
 
 export default function TableShowcase() {
-  let tableRef: TableApi<PaymentItem> | null = null
+  const [tableRef, setTableRef] = createSignal<TableApi<PaymentItem> | null>(null)
   const [data, setData] = createSignal<PaymentItem[]>(SHOWCASE_PAYMENTS_DATA)
   const [loading, setLoading] = createSignal<boolean>(false)
   const [striped, setStriped] = createSignal<boolean>(true)
@@ -17,34 +22,36 @@ export default function TableShowcase() {
   const [grouping, setGrouping] = createSignal<string[]>(["category"])
   const [selectedRows, setSelectedRows] = createSignal<Record<string, boolean>>({})
   const [lastClickedRow, setLastClickedRow] = createSignal<string>("None")
-  const [loadingAnimation, setLoadingAnimation] = createSignal<"carousel" | "carousel-inverse" | "swing" | "elastic">("carousel")
+  const [loadingAnimation, setLoadingAnimation] = createSignal<
+    "carousel" | "carousel-inverse" | "swing" | "elastic"
+  >("carousel")
 
   const columns = createMemo<TableColumn<PaymentItem>[]>(() => [
     {
       id: "select",
       size: 44,
-      header: ({ table }) => {
+      header: ({ table }: { table: TableApi<PaymentItem> }) => {
         const total = () => table?.getFilteredRows().length || 0
         const selCount = () => Object.values(selectedRows()).filter(Boolean).length
         const allSelected = () => total() > 0 && selCount() === total()
         return (
           <RLSCheckbox
             checked={allSelected()}
-            onChange={(e) => {
+            onChange={(e: { currentTarget: HTMLInputElement }) => {
               const checked = e.currentTarget.checked
               const next: Record<string, boolean> = {}
               if (checked) {
-                table?.getFilteredRows().forEach((r) => (next[r.id] = true))
+                table?.getFilteredRows().forEach((r: TableRow<PaymentItem>) => (next[r.id] = true))
               }
               setSelectedRows(next)
             }}
           />
         )
       },
-      cell: ({ row }) => (
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <RLSCheckbox
           checked={!!selectedRows()[row.id]}
-          onChange={(e) => {
+          onChange={(e: { currentTarget: HTMLInputElement }) => {
             setSelectedRows({ ...selectedRows(), [row.id]: e.currentTarget.checked })
           }}
         />
@@ -56,20 +63,23 @@ export default function TableShowcase() {
       accessorKey: "id",
       header: "Payment ID",
       size: 140,
-      cell: ({ row }) => (
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <div class="flex items-center gap-2">
           <Show when={row.getCanExpand()}>
             <button
               type="button"
               class="size-5 rounded border border-default flex items-center justify-center text-muted hover:text-highlighted bg-muted/20"
-              onClick={() => row.toggleExpanded()}
+              onClick={(e) => {
+                e.stopPropagation()
+                row.toggleExpanded()
+              }}
             >
-              <span class={`size-3 transition-transform ${row.getIsExpanded() ? "i-lucide-chevron-down" : "i-lucide-chevron-right"}`} />
+              <span
+                class={`size-3 transition-transform ${row.getIsExpanded() ? "i-lucide-chevron-down" : "i-lucide-chevron-right"}`}
+              />
             </button>
           </Show>
-          <span class="font-mono text-xs font-bold text-highlighted">
-            {row.getValue("id")}
-          </span>
+          <span class="font-mono text-xs font-bold text-highlighted">{row.getValue("id")}</span>
         </div>
       )
     },
@@ -77,7 +87,7 @@ export default function TableShowcase() {
       accessorKey: "category",
       header: "Category",
       size: 140,
-      cell: ({ row }) => (
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <span class="text-xs text-toned font-medium">{row.getValue("category")}</span>
       )
     },
@@ -85,17 +95,15 @@ export default function TableShowcase() {
       accessorKey: "date",
       header: "Date",
       size: 150,
-      cell: ({ row }) => (
-        <span class="font-mono text-xs text-muted">
-          {formatShowcaseDate(row.getValue("date"))}
-        </span>
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
+        <span class="font-mono text-xs text-muted">{formatShowcaseDate(row.getValue("date"))}</span>
       )
     },
     {
       accessorKey: "email",
       header: "Customer Email",
       size: 220,
-      cell: ({ row }) => (
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <span class="text-xs text-toned truncate block max-w-[200px]" title={row.getValue("email")}>
           {row.getValue("email")}
         </span>
@@ -105,11 +113,11 @@ export default function TableShowcase() {
       accessorKey: "status",
       header: "Status",
       size: 110,
-      cell: ({ row }) => {
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => {
         const st = row.getValue("status")
         const color = st === "paid" ? "success" : st === "failed" ? "error" : "neutral"
         return (
-          <RLSBadge variant="subtle" color={color} size="xs" class="capitalize">
+          <RLSBadge variant="soft" color={color} size="sm" class="capitalize">
             {st}
           </RLSBadge>
         )
@@ -125,9 +133,13 @@ export default function TableShowcase() {
           td: "text-right font-mono font-bold text-highlighted"
         }
       },
-      cell: ({ row }) => formatShowcaseCurrency(Number(row.getValue("amount"))),
-      footer: ({ table }) => {
-        const total = (table?.getFilteredRows() || []).reduce((acc, r) => acc + (Number(r.getValue("amount")) || 0), 0)
+      cell: ({ row }: { row: TableRow<PaymentItem> }) =>
+        formatShowcaseCurrency(Number(row.getValue("amount"))),
+      footer: ({ table }: { table: TableApi<PaymentItem> }) => {
+        const total = (table?.getFilteredRows() || []).reduce(
+          (acc: number, r: TableRow<PaymentItem>) => acc + (Number(r.getValue("amount")) || 0),
+          0
+        )
         return (
           <span class="font-mono font-bold text-xs text-highlighted block text-right">
             Total: {formatShowcaseCurrency(total)}
@@ -147,7 +159,7 @@ export default function TableShowcase() {
           td: "text-center"
         }
       },
-      cell: ({ row }) => {
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => {
         const dropdownItems = [
           [
             {
@@ -198,7 +210,8 @@ export default function TableShowcase() {
       <div class="flex flex-wrap items-center gap-3 p-4 rounded-xl border border-default bg-muted/20">
         <RLSButton
           size="sm"
-          variant={striped() ? "primary" : "outline"}
+          color={striped() ? "primary" : "neutral"}
+          variant={striped() ? "solid" : "outline"}
           onClick={() => setStriped(!striped())}
         >
           {striped() ? "Striped: ON" : "Striped: OFF"}
@@ -206,7 +219,8 @@ export default function TableShowcase() {
 
         <RLSButton
           size="sm"
-          variant={bordered() ? "primary" : "outline"}
+          color={bordered() ? "primary" : "neutral"}
+          variant={bordered() ? "solid" : "outline"}
           onClick={() => setBordered(!bordered())}
         >
           {bordered() ? "Bordered: ON" : "Bordered: OFF"}
@@ -214,7 +228,8 @@ export default function TableShowcase() {
 
         <RLSButton
           size="sm"
-          variant={hoverable() ? "primary" : "outline"}
+          color={hoverable() ? "primary" : "neutral"}
+          variant={hoverable() ? "solid" : "outline"}
           onClick={() => setHoverable(!hoverable())}
         >
           {hoverable() ? "Hoverable: ON" : "Hoverable: OFF"}
@@ -222,7 +237,8 @@ export default function TableShowcase() {
 
         <RLSButton
           size="sm"
-          variant={grouping().length > 0 ? "primary" : "outline"}
+          color={grouping().length > 0 ? "primary" : "neutral"}
+          variant={grouping().length > 0 ? "solid" : "outline"}
           onClick={() => setGrouping(grouping().length > 0 ? [] : ["category"])}
         >
           {grouping().length > 0 ? "Grouping: ON (Category)" : "Grouping: OFF"}
@@ -230,6 +246,7 @@ export default function TableShowcase() {
 
         <RLSButton
           size="sm"
+          color="neutral"
           variant="outline"
           onClick={() => {
             setLoading(true)
@@ -239,26 +256,27 @@ export default function TableShowcase() {
           Test Loading Bar
         </RLSButton>
 
-        <RLSButton
-          size="sm"
-          variant="outline"
-          onClick={() => {
-            const next =
-              loadingAnimation() === "carousel"
-                ? "carousel-inverse"
-                : loadingAnimation() === "carousel-inverse"
-                  ? "swing"
-                  : loadingAnimation() === "swing"
-                    ? "elastic"
-                    : "carousel"
-            setLoadingAnimation(next)
-          }}
-        >
-          Anim: {loadingAnimation()}
-        </RLSButton>
+        <div class="flex items-center gap-2 ml-auto">
+          <span class="text-xs text-muted">Anim:</span>
+          <select
+            class="text-xs bg-muted/20 border border-default rounded px-2 py-1 text-toned"
+            value={loadingAnimation()}
+            onChange={(e) =>
+              setLoadingAnimation(
+                e.currentTarget.value as "carousel" | "carousel-inverse" | "swing" | "elastic"
+              )
+            }
+          >
+            <option value="carousel">Carousel</option>
+            <option value="carousel-inverse">Carousel-Inverse</option>
+            <option value="swing">Swing</option>
+            <option value="elastic">Elastic</option>
+          </select>
+        </div>
 
         <RLSButton
           size="sm"
+          color="neutral"
           variant="outline"
           onClick={() => {
             if (data().length > 0) setData([])
@@ -271,8 +289,8 @@ export default function TableShowcase() {
 
       {/* Solid Table Component */}
       <RLSTable<PaymentItem>
-        ref={(api) => {
-          tableRef = api
+        ref={(api: TableApi<PaymentItem>) => {
+          setTableRef(api)
         }}
         data={data()}
         columns={columns()}
@@ -288,13 +306,16 @@ export default function TableShowcase() {
         onRowSelectionChange={setSelectedRows}
         columnPinning={{ left: ["select", "id"], right: ["actions"] }}
         pagination={{ pageIndex: 0, pageSize: 6 }}
-        getSubRows={(row) => row.children}
-        onSelect={(_e, row) => {
+        getSubRows={(row: PaymentItem) => row.children}
+        onSelect={(_e: Event, row: TableRow<PaymentItem>) => {
           setLastClickedRow(`${row.id} (${row.original.email})`)
+          row.toggleExpanded()
         }}
-        expandedContent={(row) => (
+        expandedContent={(row: TableRow<PaymentItem>) => (
           <div class="p-4 rounded bg-muted/40 text-xs font-mono flex flex-col gap-1 border border-default/50">
-            <span class="font-bold text-highlighted uppercase tracking-wider">Sub-row Detail Inspector:</span>
+            <span class="font-bold text-highlighted uppercase tracking-wider">
+              Sub-row Detail Inspector:
+            </span>
             <pre class="overflow-x-auto text-toned">{JSON.stringify(row.original, null, 2)}</pre>
           </div>
         )}
@@ -305,6 +326,7 @@ export default function TableShowcase() {
         <div class="p-3 rounded-lg border border-default bg-muted/10">
           <span class="text-muted block">Selected rows:</span>
           <span class="font-bold text-highlighted">
+            {tableRef()?.getFilteredRows().length ?? data().length} rows |{" "}
             {Object.values(selectedRows()).filter(Boolean).length} selected
           </span>
         </div>

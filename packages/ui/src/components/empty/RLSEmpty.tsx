@@ -101,17 +101,20 @@ const RLSEmpty: Component<RLSEmptyProps> = (allProps) => {
             props.actionsSlot
           ) : (
             <For each={actionList}>
-              {(action) => (
-                <RLSButton
-                  size={props.size === "xs" || props.size === "sm" ? "xs" : "sm"}
-                  color={(action.color || "primary") as any}
-                  variant={(action.variant || "solid") as any}
-                  leadingIcon={action.icon}
-                  {...action}
-                >
-                  {action.label}
-                </RLSButton>
-              )}
+              {(action) => {
+                const { icon, label, color, variant, ...actionRest } = action
+                return (
+                  <RLSButton
+                    size={props.size === "xs" || props.size === "sm" ? "xs" : "sm"}
+                    color={(color || "primary") as any}
+                    variant={(variant || "solid") as any}
+                    {...(icon ? { leadingIcon: icon } : {})}
+                    {...actionRest}
+                  >
+                    {label}
+                  </RLSButton>
+                )
+              }}
             </For>
           )}
         </div>

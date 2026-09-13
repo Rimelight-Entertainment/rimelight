@@ -152,19 +152,12 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
 
   // ─── Row Hierarchy Building ──────────────────────────────────────────────────
   const buildRowTree = (rawItems: T[], parentDepth = 0): TableRow<T>[] => {
-    const sel = currentRowSelection()
-    const exp = currentExpanded()
-    const pin = currentRowPinning()
-
     return rawItems.map((item, idx) => {
       const rId = props.getRowId
         ? props.getRowId(item, idx)
         : (item as any)?.id !== undefined
           ? String((item as any).id)
           : String(idx)
-
-      const isSelected = !!sel[rId]
-      const isExpanded = !!exp[rId]
 
       let subRowsList: TableRow<T>[] | undefined = undefined
       if (props.getSubRows) {
@@ -182,17 +175,28 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         index: idx,
         depth: parentDepth,
         getValue: (key: string) => getNestedValue(item as AnyData, key),
-        getIsSelected: () => isSelected,
+        getIsSelected: () => !!currentRowSelection()[rId],
         toggleSelected: (val?: boolean) => {
-          const nextVal = val !== undefined ? val : !isSelected
+          const nextVal = val !== undefined ? val : !currentRowSelection()[rId]
           updateRowSelection({ ...currentRowSelection(), [rId]: nextVal })
         },
-        getIsExpanded: () => isExpanded,
+        getIsExpanded: () => !!currentExpanded()[rId],
         toggleExpanded: (val?: boolean) => {
-          const nextVal = val !== undefined ? val : !isExpanded
+          const nextVal = val !== undefined ? val : !currentExpanded()[rId]
           updateExpanded({ ...currentExpanded(), [rId]: nextVal })
         },
+        getToggleExpandedHandler: () => (e?: Event) => {
+          e?.stopPropagation?.()
+          const nextVal = !currentExpanded()[rId]
+          updateExpanded({ ...currentExpanded(), [rId]: nextVal })
+        },
+        getToggleSelectedHandler: () => (e?: Event) => {
+          e?.stopPropagation?.()
+          const nextVal = !currentRowSelection()[rId]
+          updateRowSelection({ ...currentRowSelection(), [rId]: nextVal })
+        },
         getIsPinned: () => {
+          const pin = currentRowPinning()
           if (pin.top?.includes(rId)) return "top"
           if (pin.bottom?.includes(rId)) return "bottom"
           return false
@@ -206,7 +210,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
           updateRowPinning({ top: nextTop, bottom: nextBottom })
         },
         getIsGrouped: () => false,
-        getCanExpand: () => !!(subRowsList && subRowsList.length > 0),
+        getCanExpand: () => !!(subRowsList && subRowsList.length > 0) || !!props.expandedContent,
         ...(subRowsList ? { subRows: subRowsList } : {})
       }
       return rowObj
