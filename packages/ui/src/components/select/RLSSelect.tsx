@@ -1,17 +1,18 @@
 import { createMemo, createSignal, splitProps, For, type Component, type JSX } from "solid-js"
-import type { SelectItem } from "./select"
+import type { SelectItem, SelectProps } from "./select"
 import { selectTheme } from "./select.theme"
 import RLSButton, { type RLSButtonProps } from "../button/RLSButton"
 import RLSIcon from "../icon/RLSIcon"
 
-export interface RLSSelectProps {
+export interface RLSSelectProps extends Partial<Omit<SelectProps, "onChange" | "onBlur">> {
   id?: string
   name?: string
-  value?: string | number
-  defaultValue?: string | number
+  value?: string | number | (string | number)[]
+  defaultValue?: string | number | (string | number)[]
   placeholder?: string
   disabled?: boolean
   required?: boolean
+  multiple?: boolean
   size?: "xs" | "sm" | "md" | "lg" | "xl"
   variant?: "default" | "icon" | "outline" | "soft" | "subtle" | "ghost" | "none"
   buttonVariant?: RLSButtonProps["variant"]
@@ -21,6 +22,8 @@ export interface RLSSelectProps {
   leadingIcon?: string
   leading?: JSX.Element
   children?: JSX.Element
+  theme?: string
+  ui?: any
   onChange?: (e: Event & { currentTarget: HTMLSelectElement }) => void
   onBlur?: (e: FocusEvent & { currentTarget: HTMLSelectElement }) => void
 }
@@ -34,6 +37,7 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
     "placeholder",
     "disabled",
     "required",
+    "multiple",
     "size",
     "variant",
     "buttonVariant",
@@ -43,6 +47,8 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
     "leadingIcon",
     "leading",
     "children",
+    "theme",
+    "ui",
     "onChange",
     "onBlur"
   ])
@@ -57,6 +63,7 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
     selectTheme({
       size: props.size,
       variant: resolvedVariant(),
+      ui: props.ui,
       class: props.class
     })
   )
@@ -86,14 +93,15 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
 
   const currentValue = createMemo(() =>
     props.value !== undefined
-      ? String(props.value)
+      ? props.value
       : props.defaultValue !== undefined
-        ? String(props.defaultValue)
+        ? props.defaultValue
         : undefined
   )
 
-  const labelFrom = (value?: string) => {
+  const labelFrom = (value?: string | number | (string | number)[]) => {
     if (props.placeholder && (value === undefined || value === "")) return props.placeholder
+    if (Array.isArray(value)) return props.placeholder ?? ""
     const item = normalizedItems().find((i) => String(i.value) === String(value))
     return item?.label ?? ""
   }
@@ -123,12 +131,16 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
   }
 
   return (
-    <div class={`${classes().root}`}>
+    <div class={classes().root} data-slot="root" data-theme={props.theme}>
       {resolvedVariant() === "icon" ? (
-        <RLSButton {...triggerProps()} />
+        <RLSButton data-slot="trigger" {...triggerProps()} />
       ) : props.leading ? (
         <span class={classes().leading} data-slot="leading">
           {props.leading}
+        </span>
+      ) : props.leadingIcon ? (
+        <span class={classes().leading} data-slot="leading">
+          <RLSIcon name={props.leadingIcon} size="sm" class="size-4" />
         </span>
       ) : null}
 
@@ -143,13 +155,14 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
         name={props.name}
         disabled={props.disabled}
         required={props.required}
+        multiple={props.multiple}
         onChange={handleChange}
         onBlur={props.onBlur}
         class={classes().select}
         data-slot="select"
         {...rest}
       >
-        {props.placeholder ? (
+        {props.placeholder && !props.multiple ? (
           <option value="" disabled selected={!currentValue()}>
             {props.placeholder}
           </option>
@@ -159,19 +172,23 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
           props.children
         ) : (
           <For each={normalizedItems()}>
-            {(item) => (
-              <option
-                value={item.value}
-                disabled={item.disabled}
-                selected={currentValue() !== undefined ? currentValue() === item.value : undefined}
-              >
-                {item.icon ? <RLSIcon name={item.icon} class="rl-select-item-icon" /> : null}
-                {item.avatar ? (
-                  <img src={item.avatar.src} alt={item.avatar.alt} class="rl-select-item-icon" />
-                ) : null}
-                {item.label}
-              </option>
-            )}
+            {(item) => {
+              const val = currentValue()
+              const isSelected = Array.isArray(val)
+                ? val.map(String).includes(String(item.value))
+                : val !== undefined
+                  ? String(val) === String(item.value)
+                  : undefined
+              return (
+                <option value={item.value} disabled={item.disabled} selected={isSelected}>
+                  {item.icon ? <RLSIcon name={item.icon} class="rl-select-item-icon" /> : null}
+                  {item.avatar ? (
+                    <img src={item.avatar.src} alt={item.avatar.alt} class="rl-select-item-icon" />
+                  ) : null}
+                  {item.label}
+                </option>
+              )
+            }}
           </For>
         )}
       </select>
@@ -179,20 +196,7 @@ const RLSSelect: Component<RLSSelectProps> = (allProps) => {
       {/* Custom Chevron arrow */}
       {resolvedVariant() !== "icon" ? (
         <span class={classes().icon} data-slot="icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
+          <RLSIcon name="chevronDown" size="sm" class="size-4" aria-hidden="true" />
         </span>
       ) : null}
 

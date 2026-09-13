@@ -1,8 +1,7 @@
 import { createMemo, splitProps, For, Show, type Component, type JSX } from "solid-js"
 import type { LinkGroupProps } from "./link-group"
 import { linkGroupTheme } from "./link-group.theme"
-import { linkTheme } from "../link/link.theme"
-import { resolveLinkAttrs } from "../link/helpers"
+import RLSLink from "../link/RLSLink"
 import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSLinkGroupProps extends LinkGroupProps {
@@ -57,48 +56,16 @@ const RLSLinkGroup: Component<RLSLinkGroupProps> = (allProps) => {
       <ul class={resolvedClasses().list} data-slot="list">
         <Show when={!props.children} fallback={props.children}>
           <For each={normalizedLinks()}>
-            {(link) => {
-              const linkClasses = createMemo(() =>
-                linkTheme({
-                  theme: link.theme ?? props.theme,
-                  ...(link.active !== undefined ? { active: link.active } : {}),
-                  disabled: !!link.disabled,
-                  ui: link.ui,
-                  class: `${resolvedClasses().link} w-full !justify-start`
-                })
-              )
-              const attrs = createMemo(() => resolveLinkAttrs(link))
-              return (
-                <li class={resolvedClasses().item} data-slot="item">
-                  <a
-                    class={linkClasses()["root"]}
-                    data-slot="link"
-                    href={attrs().href}
-                    target={attrs().target}
-                    rel={attrs().rel}
-                    aria-current={attrs().ariaCurrent}
-                    aria-disabled={attrs().ariaDisabled}
-                    aria-label={link.ariaLabel}
-                  >
-                    {link.leadingIcon && (
-                      <span class={linkClasses()["leadingIcon"]} data-slot="leading-icon">
-                        <RLSIcon name={link.leadingIcon} size="sm" aria-hidden="true" />
-                      </span>
-                    )}
-                    {link.label && (
-                      <span class={linkClasses()["label"]} data-slot="label">
-                        {link.label}
-                      </span>
-                    )}
-                    {attrs().showTrailingIcon ? (
-                      <span class={linkClasses()["trailingIcon"]} data-slot="trailing-icon">
-                        <RLSIcon name={attrs().showTrailingIcon!} size="sm" aria-hidden="true" />
-                      </span>
-                    ) : null}
-                  </a>
-                </li>
-              )
-            }}
+            {(link) => (
+              <li class={resolvedClasses().item} data-slot="item">
+                <RLSLink
+                  theme={link.theme ?? props.theme}
+                  class={`${resolvedClasses().link} w-full !justify-start`}
+                  data-slot="link"
+                  {...link}
+                />
+              </li>
+            )}
           </For>
         </Show>
       </ul>

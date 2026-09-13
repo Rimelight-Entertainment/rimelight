@@ -22,71 +22,80 @@ export interface LinkProps {
    *
    * @default false
    */
-  external?: boolean
+  external?: boolean | undefined
   /**
    * Custom external link icon name.
    *
    * @default "externalLink"
    */
-  externalIcon?: string
+  externalIcon?: string | undefined
   /**
    * Suppress the automatic external link icon.
    *
    * @default false
    */
-  noExternalIcon?: boolean
+  noExternalIcon?: boolean | undefined
   /**
    * Where to open the linked URL. External links default to `"_blank"`.
    *
    * @default undefined
    */
-  target?: string
+  target?: string | undefined
   /**
    * Relationship of the linked URL. External links default to `"noopener noreferrer"`. Set to empty
    * string to suppress the attribute entirely.
    *
    * @default undefined
    */
-  rel?: string | null
+  rel?: string | null | undefined
   /**
    * Enables Astro's built-in prefetch strategy.
    *
    * @default undefined;
    */
-  prefetch?: boolean | "hover" | "tap" | "load" | "viewport"
+  prefetch?: boolean | "hover" | "tap" | "load" | "viewport" | undefined
   /**
    * Applies active styling to the link.
    *
    * @default undefined
    */
-  active?: boolean
+  active?: boolean | undefined
   /**
    * Disables the link, preventing navigation and applying disabled styling.
    *
    * @default false
    */
-  disabled?: boolean
+  disabled?: boolean | undefined
   /**
    * When true, only `class` is applied — all default theme styles are skipped.
    *
    * @default false
    */
-  raw?: boolean
+  raw?: boolean | undefined
   /**
    * Screen reader accessibility label. When omitted on external links, "(opens in a new tab)" is
    * appended automatically.
    */
-  ariaLabel?: string
+  ariaLabel?: string | undefined
   /**
    * The value of `aria-current` when the link is the active/current page.
    *
    * @default "page"
    */
-  ariaCurrentValue?: "page" | "step" | "location" | "date" | "time" | "true" | "false" | boolean
+  ariaCurrentValue?:
+    | "page"
+    | "step"
+    | "location"
+    | "date"
+    | "time"
+    | "true"
+    | "false"
+    | boolean
+    | undefined
   /**
    * Force a color-scheme context on the component.
    */
-  theme?: Theme
+  theme?: Theme | undefined
   /**
    * Slot-specific CSS class overrides.
    */

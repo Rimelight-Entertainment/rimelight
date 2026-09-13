@@ -23,7 +23,7 @@ const classes = modalTheme(Astro.props)
 
 const modalId = `rla-modal-${Math.random().toString(36).substring(2, 9)}`
 ---
-<div class={classes.root} data-slot="modal-container">
+<div class={classes.root} data-slot="root">
   {triggerLabel ? (
     <button
       class={classes.trigger}

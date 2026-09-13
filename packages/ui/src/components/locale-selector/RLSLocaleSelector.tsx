@@ -69,29 +69,28 @@ const RLSLocaleSelector: Component<RLSLocaleSelectorProps> = (allProps) => {
   )
 
   const items = createMemo(() =>
-    typeof window === "undefined"
-      ? []
-      : processedLocales().map((item) => {
-          let targetUrl: string
-          if (item.href !== undefined && item.href !== null) {
-            targetUrl = item.href + (item.href.includes("?") ? "" : window.location.search)
-          } else {
-            const knownCodes = new Set(processedLocales().map((l) => l.code))
-            const pathname = window.location.pathname
-            const segments = pathname.split("/").filter(Boolean)
-            const firstIsLocale = segments.length > 0 && knownCodes.has(segments[0]!)
+    processedLocales().map((item) => {
+      let targetUrl: string
+      const search = typeof window !== "undefined" ? window.location.search : ""
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "/"
+      if (item.href !== undefined && item.href !== null) {
+        targetUrl = item.href + (item.href.includes("?") ? "" : search)
+      } else {
+        const knownCodes = new Set(processedLocales().map((l) => l.code))
+        const segments = pathname.split("/").filter(Boolean)
+        const firstIsLocale = segments.length > 0 && knownCodes.has(segments[0]!)
 
-            if (firstIsLocale) {
-              segments[0] = item.code
-              targetUrl = `/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${window.location.search}`
-            } else if (segments.length > 0) {
-              targetUrl = `/${item.code}/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${window.location.search}`
-            } else {
-              targetUrl = `/${item.code}/${window.location.search}`
-            }
-          }
-          return { label: item.label, value: targetUrl, code: item.code }
-        })
+        if (firstIsLocale) {
+          segments[0] = item.code
+          targetUrl = `/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`
+        } else if (segments.length > 0) {
+          targetUrl = `/${item.code}/${segments.join("/")}${pathname.endsWith("/") ? "/" : ""}${search}`
+        } else {
+          targetUrl = `/${item.code}/${search}`
+        }
+      }
+      return { label: item.label, value: targetUrl, code: item.code }
+    })
   )
 
   const currentItem = createMemo(() => items().find((item) => item.code === currentCode()))

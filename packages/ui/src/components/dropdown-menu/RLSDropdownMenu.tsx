@@ -172,12 +172,52 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
                               ? "text-primary hover:bg-primary/10"
                               : ""
 
+                        const renderLeadingContent = () => {
+                          if (item.avatar) {
+                            return (
+                              <img
+                                src={item.avatar.src}
+                                alt={item.avatar.alt || item.label || ""}
+                                class={resolvedClasses().itemLeadingAvatar}
+                              />
+                            )
+                          }
+                          if (item.icon) {
+                            return (
+                              <RLSIcon
+                                name={item.icon}
+                                size="sm"
+                                class={resolvedClasses().itemLeadingIcon}
+                              />
+                            )
+                          }
+                          return null
+                        }
+
+                        const renderTrailingContent = () => {
+                          if (!item.shortcut && (!item.kbds || item.kbds.length === 0)) return null
+                          return (
+                            <span class={resolvedClasses().itemTrailing}>
+                              {item.shortcut && (
+                                <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
+                              )}
+                              {item.kbds && (
+                                <For each={item.kbds}>
+                                  {(kbd) => (
+                                    <kbd class={resolvedClasses().itemTrailingKbds}>{kbd}</kbd>
+                                  )}
+                                </For>
+                              )}
+                            </span>
+                          )
+                        }
+
                         if (item.to) {
                           return (
                             <a
                               href={item.to}
                               target={item.target}
-                              class={`${resolvedClasses().item}  ${itemColor()}  ${item.class || ""}`}
+                              class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
                               data-slot="item"
                               role="menuitem"
                               onClick={(e) => {
@@ -185,17 +225,9 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
                                 item.onSelect?.(e)
                               }}
                             >
-                              {item.icon && (
-                                <RLSIcon
-                                  name={item.icon}
-                                  size="sm"
-                                  class={resolvedClasses().itemLeadingIcon}
-                                />
-                              )}
+                              {renderLeadingContent()}
                               <span class={resolvedClasses().itemLabel}>{item.label}</span>
-                              {item.shortcut && (
-                                <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
-                              )}
+                              {renderTrailingContent()}
                             </a>
                           )
                         }
@@ -221,7 +253,9 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
                                   <RLSIcon name="check" size="xs" class="text-primary" />
                                 </Show>
                               </span>
+                              {renderLeadingContent()}
                               <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                              {renderTrailingContent()}
                             </button>
                           )
                         }
@@ -230,7 +264,7 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
                           <button
                             type="button"
                             disabled={item.disabled}
-                            class={`${resolvedClasses().item}  ${itemColor()}  ${item.class || ""}`}
+                            class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
                             data-slot="item"
                             role="menuitem"
                             onClick={(e) => {
@@ -238,17 +272,9 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
                               item.onSelect?.(e)
                             }}
                           >
-                            {item.icon && (
-                              <RLSIcon
-                                name={item.icon}
-                                size="sm"
-                                class={resolvedClasses().itemLeadingIcon}
-                              />
-                            )}
+                            {renderLeadingContent()}
                             <span class={resolvedClasses().itemLabel}>{item.label}</span>
-                            {item.shortcut && (
-                              <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
-                            )}
+                            {renderTrailingContent()}
                           </button>
                         )
                       }}

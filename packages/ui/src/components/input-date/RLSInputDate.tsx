@@ -1,5 +1,6 @@
 import { createMemo, splitProps, type Component } from "solid-js"
 import type { InputDateProps } from "./input-date"
+import { inputDateTheme } from "./input-date.theme"
 import { inputTheme } from "../input/input.theme"
 
 export interface RLSInputDateProps extends InputDateProps {
@@ -44,17 +45,23 @@ const RLSInputDate: Component<RLSInputDateProps> = (allProps) => {
   ])
 
   const resolvedClasses = createMemo(() =>
-    inputTheme({
-      variant: "default",
-      size: props.size ?? "md",
-      error: false,
+    inputDateTheme({
       ui: props.ui,
       class: props.class
     })
   )
 
+  const inputClasses = createMemo(() =>
+    inputTheme({
+      variant: "default",
+      size: props.size ?? "md",
+      error: false,
+      ui: props.ui
+    })
+  )
+
   return (
-    <div class={resolvedClasses().root} data-slot="root">
+    <div class={`${resolvedClasses().root} ${inputClasses().root}`} data-slot="root">
       <input
         type="date"
         name={props.name}
@@ -66,7 +73,7 @@ const RLSInputDate: Component<RLSInputDateProps> = (allProps) => {
         min={props.min}
         max={props.max}
         step={props.step}
-        class={resolvedClasses().input}
+        class={inputClasses().input}
         data-slot="input"
         onInput={props.onInput}
         onChange={props.onChange}

@@ -183,7 +183,7 @@ const RLSCarousel: Component<RLSCarouselProps> = (allProps) => {
 
   return (
     <div data-autoplay={props.autoplay ? "true" : "false"} style="display: contents" {...rest}>
-      <div id={carouselId} class={resolvedClasses().root} data-slot="carousel-root">
+      <div id={carouselId} class={resolvedClasses().root} data-slot="root">
         <div
           ref={(el) => (viewportRef = el)}
           class={resolvedClasses().viewport}

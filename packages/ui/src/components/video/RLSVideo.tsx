@@ -92,6 +92,8 @@ const RLSVideo: Component<RLSVideoProps> = (allProps) => {
 
   const resolvedClasses = createMemo(() =>
     videoTheme({
+      title: !!props.title,
+      icon: !!props.icon,
       ui: props.ui,
       class: props.class
     })

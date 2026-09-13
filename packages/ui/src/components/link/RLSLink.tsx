@@ -4,7 +4,7 @@ import { linkTheme } from "./link.theme"
 import RLSIcon from "../icon/RLSIcon"
 import { resolveLinkAttrs } from "./helpers"
 
-type RLSLinkProps = LinkProps & {
+export interface RLSLinkProps extends LinkProps {
   children?: JSX.Element
   leading?: JSX.Element
   trailing?: JSX.Element

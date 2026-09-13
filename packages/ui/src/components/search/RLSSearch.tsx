@@ -173,6 +173,20 @@ const RLSSearch: Component<RLSSearchProps> = (allProps) => {
                 placeholder={searchPlaceholder()}
                 autocomplete="off"
                 onInput={(e) => handleInput(e.currentTarget.value)}
+                leading={<RLSIcon name="i-rl-search" class={resolvedClasses().headerIcon} />}
+                trailing={
+                  <div class="flex items-center gap-2">
+                    <RLSKbd size="sm">Esc</RLSKbd>
+                    <button
+                      type="button"
+                      class={resolvedClasses().close}
+                      aria-label="Close search"
+                      onClick={closeModal}
+                    >
+                      <RLSIcon name="i-rl-close" class={resolvedClasses().closeIcon} />
+                    </button>
+                  </div>
+                }
                 ui={{
                   root: "relative flex items-center w-full",
                   input:
@@ -180,24 +194,7 @@ const RLSSearch: Component<RLSSearchProps> = (allProps) => {
                   leading: "absolute left-0 text-neutral-400 flex items-center",
                   trailing: "absolute right-0 flex items-center gap-2"
                 }}
-              >
-                <RLSIcon
-                  name="i-rl-search"
-                  class={resolvedClasses().headerIcon}
-                  data-slot="leading"
-                />
-                <div class="flex items-center gap-2" data-slot="trailing">
-                  <RLSKbd size="sm">Esc</RLSKbd>
-                  <button
-                    type="button"
-                    class={resolvedClasses().close}
-                    aria-label="Close search"
-                    onClick={closeModal}
-                  >
-                    <RLSIcon name="i-rl-close" class={resolvedClasses().closeIcon} />
-                  </button>
-                </div>
-              </RLSInput>
+              />
             </div>
 
             <div class={resolvedClasses().results} data-slot="results">

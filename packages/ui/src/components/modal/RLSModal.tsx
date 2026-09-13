@@ -1,10 +1,11 @@
 import {
   createMemo,
+  createSignal,
+  createEffect,
   splitProps,
   Show,
   onMount,
   onCleanup,
-  createEffect,
   type Component,
   type JSX
 } from "solid-js"
@@ -15,6 +16,7 @@ import RLSButton from "../button/RLSButton"
 export interface RLSModalProps extends ModalProps {
   onClose?: () => void
   children?: JSX.Element
+  triggerSlot?: JSX.Element
   titleSlot?: JSX.Element
   descriptionSlot?: JSX.Element
   footerSlot?: JSX.Element
@@ -26,6 +28,7 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
     "onClose",
     "title",
     "description",
+    "triggerLabel",
     "size",
     "closeOnClickOutside",
     "closeOnEscape",
@@ -34,32 +37,48 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
     "ui",
     "class",
     "children",
+    "triggerSlot",
     "titleSlot",
     "descriptionSlot",
     "footerSlot"
   ])
+
+  const [internalOpen, setInternalOpen] = createSignal(props.open ?? false)
+  const isControlled = () => props.open !== undefined
+  const isOpen = () => (isControlled() ? !!props.open : internalOpen())
+
+  createEffect(() => {
+    if (props.open !== undefined) {
+      setInternalOpen(props.open)
+    }
+  })
 
   const closeOnClickOutside = () => props.closeOnClickOutside !== false
   const closeOnEscape = () => props.closeOnEscape !== false
   const unmountOnHide = () => props.unmountOnHide !== false
 
   const handleClose = () => {
+    if (!isControlled()) setInternalOpen(false)
     props.onClose?.()
   }
 
+  const handleOpen = () => {
+    if (!isControlled()) setInternalOpen(true)
+  }
+
+  let dialogRef: HTMLDialogElement | undefined
+
   onMount(() => {
     const handleCancel = (e: Event) => {
-      // Native Escape fires 'cancel' on the dialog element
       if (e.target !== dialogRef) return
       if (!closeOnEscape()) {
         e.preventDefault()
-      } else {
-        e.preventDefault()
+        return
       }
+      e.preventDefault()
       handleClose()
     }
     const handleClick = (e: MouseEvent) => {
-      // Clicking the ::backdrop means e.target IS the dialog element
       if (closeOnClickOutside() && e.target === dialogRef) {
         handleClose()
       }
@@ -80,81 +99,91 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
     })
   )
 
-  let dialogRef: HTMLDialogElement | undefined
-
   createEffect(() => {
     if (!dialogRef) return
-    if (props.open) {
-      if (!dialogRef.open) dialogRef.showModal()
+    if (isOpen()) {
+      if (!dialogRef.open && typeof dialogRef.showModal === "function") {
+        dialogRef.showModal()
+        if (props.lockScroll !== false) {
+          document.body.style.overflow = "hidden"
+        }
+      }
     } else {
-      if (dialogRef.open) dialogRef.close()
+      if (dialogRef.open && typeof dialogRef.close === "function") {
+        dialogRef.close()
+        if (props.lockScroll !== false) {
+          document.body.style.overflow = ""
+        }
+      }
     }
   })
 
   return (
-    <Show when={props.open || !unmountOnHide()}>
-      <dialog
-        ref={(el) => (dialogRef = el)}
-        class={`w-[calc(100%-1.5rem)] sm:w-full rounded-xl border border-default bg-default p-5 sm:p-6 shadow-xl outline-none flex flex-col max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] overflow-y-auto text-highlighted backdrop:bg-black/60 backdrop:backdrop-blur-sm ${
-          props.open ? "" : "hidden"
-        } ${resolvedClasses().content || ""}  ${props.class || ""}`}
-        data-state={props.open ? "open" : "closed"}
-        data-slot="content"
-        {...rest}
-      >
-        <RLSButton
+    <div class={resolvedClasses().root} data-slot="root">
+      {props.triggerSlot ? (
+        <span onClick={handleOpen}>{props.triggerSlot}</span>
+      ) : props.triggerLabel ? (
+        <button
           type="button"
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          square
-          leadingIcon="close"
-          aria-label="Close modal"
-          data-slot="close-button"
-          class="absolute right-4 top-4 text-muted hover:text-highlighted"
-          onClick={handleClose}
-        />
+          class={resolvedClasses().trigger}
+          data-slot="trigger"
+          onClick={handleOpen}
+        >
+          {props.triggerLabel}
+        </button>
+      ) : null}
 
-        {props.title || props.description || props.titleSlot || props.descriptionSlot ? (
-          <div class={resolvedClasses().header || "mb-4"} data-slot="header">
-            {props.titleSlot ? (
-              props.titleSlot
-            ) : props.title ? (
-              <h3
-                class={resolvedClasses().title || "text-lg font-semibold text-highlighted"}
-                data-slot="title"
-              >
-                {props.title}
-              </h3>
-            ) : null}
+      <Show when={isOpen() || !unmountOnHide()}>
+        <dialog
+          ref={(el) => (dialogRef = el)}
+          class={resolvedClasses().content}
+          data-state={isOpen() ? "open" : "closed"}
+          data-slot="content"
+          {...rest}
+        >
+          <RLSButton
+            type="button"
+            variant="ghost"
+            color="neutral"
+            size="sm"
+            square
+            leadingIcon="close"
+            aria-label="Close modal"
+            data-slot="close-button"
+            class={resolvedClasses().closeButton}
+            onClick={handleClose}
+          />
 
-            {props.descriptionSlot ? (
-              props.descriptionSlot
-            ) : props.description ? (
-              <p
-                class={resolvedClasses().description || "text-sm text-muted"}
-                data-slot="description"
-              >
-                {props.description}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+          {props.title || props.description || props.titleSlot || props.descriptionSlot ? (
+            <div class={resolvedClasses().header} data-slot="header">
+              {props.titleSlot ? (
+                props.titleSlot
+              ) : props.title ? (
+                <h3 class={resolvedClasses().title} data-slot="title">
+                  {props.title}
+                </h3>
+              ) : null}
 
-        {props.children}
+              {props.descriptionSlot ? (
+                props.descriptionSlot
+              ) : props.description ? (
+                <p class={resolvedClasses().description} data-slot="description">
+                  {props.description}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
-        {props.footerSlot ? (
-          <div
-            class={
-              resolvedClasses().footer || "flex justify-end gap-2 mt-6 pt-4 border-t border-default"
-            }
-            data-slot="footer"
-          >
-            {props.footerSlot}
-          </div>
-        ) : null}
-      </dialog>
-    </Show>
+          {props.children}
+
+          {props.footerSlot ? (
+            <div class={resolvedClasses().footer} data-slot="footer">
+              {props.footerSlot}
+            </div>
+          ) : null}
+        </dialog>
+      </Show>
+    </div>
   )
 }
 

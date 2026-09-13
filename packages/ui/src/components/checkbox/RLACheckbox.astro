@@ -20,6 +20,7 @@ const classes = checkboxTheme(Astro.props);
   <input
     type="checkbox"
     class={classes.input}
+    data-slot="input"
     checked={checked}
     disabled={disabled}
     name={name}

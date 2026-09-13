@@ -3,7 +3,9 @@ import { resolveIcon } from "../../icons"
 import type { IconProps } from "./icon"
 import { iconTheme } from "./icon.theme"
 
-const RLSIcon: Component<IconProps> = (allProps) => {
+export interface RLSIconProps extends IconProps {}
+
+const RLSIcon: Component<RLSIconProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, ["name", "size", "ui", "class"])
   const resolved = createMemo(() => resolveIcon(props.name))
   const classes = createMemo(() =>

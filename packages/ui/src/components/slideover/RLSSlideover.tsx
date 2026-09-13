@@ -79,7 +79,7 @@ const RLSSlideover: Component<RLSSlideoverProps> = (allProps) => {
   )
 
   return (
-    <div class={resolvedClasses().root} data-slot="slideover-container" {...rest}>
+    <div class={resolvedClasses().root} data-slot="root" {...rest}>
       {props.triggerSlot ? (
         <span onClick={() => setOpenState(true)}>{props.triggerSlot}</span>
       ) : props.triggerLabel ? (

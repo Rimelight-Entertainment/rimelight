@@ -18,7 +18,7 @@ const classes = slideoverTheme(Astro.props)
 
 const dialogId = `rla-slideover-${Math.random().toString(36).substring(2, 9)}`
 ---
-<div class={classes.root} data-slot="slideover-container">
+<div class={classes.root} data-slot="root">
   {triggerLabel ? (
     <button
       class={classes.trigger}

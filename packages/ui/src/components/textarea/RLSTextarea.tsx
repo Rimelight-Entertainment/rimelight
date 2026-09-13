@@ -20,6 +20,7 @@ const RLSTextarea: Component<RLSTextareaProps> = (allProps) => {
     "name",
     "required",
     "rows",
+    "autoGrow",
     "error",
     "size",
     "color",
@@ -47,7 +48,8 @@ const RLSTextarea: Component<RLSTextareaProps> = (allProps) => {
       <textarea
         ref={props.ref}
         name={props.name}
-        rows={props.rows ?? 3}
+        rows={props.autoGrow ? undefined : (props.rows ?? 4)}
+        style={props.autoGrow ? "field-sizing: content; min-height: unset;" : undefined}
         value={props.value !== undefined ? props.value : ""}
         placeholder={props.placeholder}
         disabled={props.disabled}

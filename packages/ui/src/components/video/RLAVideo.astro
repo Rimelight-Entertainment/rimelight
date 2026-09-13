@@ -131,10 +131,12 @@ const ariaLabel = isPlayable ? "Play YouTube Video" : "YouTube Video Unavailable
 
 <div
     class:list={[classes.root]}
+    data-slot="root"
     {...rest}
 >
   <button
     type="button"
+    data-slot="trigger"
     data-youtube-trigger
     aria-label={ariaLabel}
     data-embed-url={isPlayable ? embedUrl : undefined}
@@ -150,10 +152,11 @@ const ariaLabel = isPlayable ? "Play YouTube Video" : "YouTube Video Unavailable
       height="720"
       loading="lazy"
       class:list={[classes.image]}
+      data-slot="image"
     />
 
     <slot name="icon">
-      <RLAIcon name={icon} class={classes.icon} aria-hidden="true" />
+      <RLAIcon name={icon} class={classes.icon} data-slot="icon" aria-hidden="true" />
     </slot>
   </button>
 </div>
