@@ -1,0 +1,9 @@
+---
+import UIHead, { type UIHeadProps } from "./UIHead.astro"
+
+export interface Props extends UIHeadProps {}
+---
+
+<UIHead {...Astro.props}>
+  <slot />
+</UIHead>
