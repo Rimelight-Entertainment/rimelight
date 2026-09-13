@@ -47,6 +47,14 @@ This document serves as a standardized checklist for onboarding and configuring 
   - [ ] Configure caching rules for static assets (`/assets/*`, `/_astro/*`, images, fonts).
   - [ ] Enable Brotli and Early Hints where supported.
 
+- [ ] **Object Storage & Upload Performance (Cloudflare R2)**
+  - [ ] Create required R2 buckets for media, assets, user uploads, or telemetry.
+  - [ ] Enable **R2 Local Uploads** for buckets receiving cross-region/global writes:
+    - _Dashboard:_ Navigate to **R2** > Select Bucket > **Settings** > Toggle **Local Uploads**.
+    - _CLI:_ `npx wrangler r2 bucket local-uploads enable <BUCKET_NAME>`
+    - _Benefits:_ Reduces upload latency (TTLB) by up to 75% for globally distributed clients by writing locally to edge storage first with immediate consistency, followed by asynchronous replication to the primary bucket region.
+    - _Considerations / When NOT to use:_ Do not use if the bucket requires strict legal/regulatory jurisdiction restrictions (e.g., EU-only, FedRAMP data residency locks), as data is temporarily written close to the client before replication. Also unnecessary if all client uploads originate from the exact same region as the bucket.
+
 ---
 
 ## 2. Repository & Development Toolchain
@@ -63,18 +71,37 @@ This document serves as a standardized checklist for onboarding and configuring 
 
 ---
 
-## 3. SEO, Metadata & Discovery
+## 3. SEO, AEO & Agent Readiness (Discovery & Diagnostics)
 
-- [ ] **Search Engines & AI Discovery**
-  - [ ] Configure `robots.txt` and sitemap generation (`sitemap.xml`).
-  - [ ] Optional: Add `llms.txt` or `llms-full.txt` if specific agent guides/summaries are provided.
+- [ ] **Search Engines & Core Discovery**
+  - [ ] Configure `robots.txt` and XML sitemap generation (`sitemap.xml`).
   - [ ] Configure standard metadata (title, description, OpenGraph, Twitter cards, canonical URLs).
-  - [ ] Set up `.well-known` endpoints if required (`security.txt`, `api-catalog`).
+  - [ ] Optional: Add `llms.txt` or `llms-full.txt` if specific agent guides/summaries are provided.
+  - [ ] Set up `.well-known` endpoints if required (`security.txt`, `api-catalog`, `oauth-authorization-server`).
+
+- [ ] **Cloudflare Agent Readiness Diagnostics & Auditing**
+  - [ ] In Cloudflare Dashboard, run the **Agent Readiness Diagnostics** scan (under Overview / Agent Readiness tab) to verify technical readiness across all tiers:
+    - [ ] **Quick wins:** Verify crawler-readable `robots.txt`, valid XML sitemaps, AI-crawler access rules, and Markdown for Agents toggle.
+    - [ ] **Technical groundwork:** Verify Content Signals policy headers, API catalog publishing, link headers, and agent authentication/login instructions.
+    - [ ] **Advanced integration:** Check agent cards (MCP / Model Context Protocol & A2A / Agent2Agent), skills index, Web Bot Auth, and WebMCP where applicable.
+    - [ ] **Commerce protocols (if e-commerce):** Verify support for emerging agent payment standards (x402, ACP, UCP, AP2).
+  - [ ] Review any failed checks, apply recommended next steps / agent prompts, and re-scan to achieve green status.
+
+- [ ] **Answer Engine Optimization (AEO) & AI Visibility**
+  - [ ] Check AEO dashboard in Cloudflare (or request early access) to evaluate brand discovery and recommendation rates in leading models (Claude, GPT, etc.).
+  - [ ] Track key visibility metrics:
+    - _Citation Rate:_ Frequency of being cited as an authoritative source in category prompts.
+    - _Prominence & Mention Rate:_ How early/substantially content appears, separating brand awareness from citation attribution.
+    - _Share of Voice & Industry Fit:_ Citation share compared to competitors for category queries.
 
 ---
 
 ## 4. Analytics & Monitoring
 
-- [ ] **Analytics & Observability**
+- [ ] **Analytics & AI Operator Observability**
   - [ ] Enable Cloudflare Web Analytics or Cloudflare Radar bot/agent tracking.
+  - [ ] Monitor **AI Operator Activity** in Cloudflare Dashboard:
+    - [ ] Inspect crawl volume vs. referral traffic per operator (OpenAI, Google, Anthropic, etc.).
+    - [ ] Identify crawl-heavy bots that generate zero referrals and adjust crawler policies if necessary.
+    - [ ] Monitor bot errors (e.g., 403 Forbidden, 404 Not Found) encountered by AI crawlers.
   - [ ] Configure error monitoring / logging (e.g., Sentry, Logflare) if needed.
