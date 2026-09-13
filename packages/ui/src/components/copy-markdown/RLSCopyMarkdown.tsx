@@ -46,6 +46,7 @@ const RLSCopyMarkdown: Component<RLSCopyMarkdownProps> = (allProps) => {
       size="sm"
       leadingIcon="copy"
       label={copied() ? "Copied!" : "Copy Markdown"}
+      data-raw={props.raw}
       ui={props.ui}
       onClick={handleCopy}
       {...rest}

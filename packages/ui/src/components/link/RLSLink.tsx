@@ -55,6 +55,7 @@ const RLSLink: Component<RLSLinkProps> = (allProps) => {
     <a
       class={classes()["root"]}
       data-slot="root"
+      data-theme={props.theme}
       href={attrs().href}
       target={attrs().target}
       rel={attrs().rel}

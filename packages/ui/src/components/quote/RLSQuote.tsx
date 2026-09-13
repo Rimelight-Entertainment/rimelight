@@ -1,22 +1,35 @@
-import { type Component, type JSX } from "solid-js"
+import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import type { QuoteProps } from "./quote"
+import { quoteTheme } from "./quote.theme"
 import RLSIcon from "../icon/RLSIcon"
 
-export interface RLSQuoteProps {
+export interface RLSQuoteProps extends QuoteProps {
+  children?: JSX.Element
   quote?: JSX.Element
   caption?: JSX.Element
-  class?: string
 }
 
-const RLSQuote: Component<RLSQuoteProps> = (props) => {
+const RLSQuote: Component<RLSQuoteProps> = (allProps) => {
+  const [props, rest] = splitProps(allProps, ["quote", "caption", "children", "ui", "class"])
+
+  const resolvedClasses = createMemo(() =>
+    quoteTheme({
+      ui: props.ui,
+      class: props.class
+    })
+  )
+
   return (
-    <figure class={`relative my-8 border-y-[3px] border-astro-gray-500 py-4 ${props.class ?? ""}`}>
-      <RLSIcon name="quote" class="mb-2 s-10 md:absolute md:right-[calc(100%+1rem)] md:top-6" />
-      <blockquote class="font-heading heading-3 text-xl font-medium text-white md:text-[32px] md:leading-[40px]">
-        {props.quote}
+    <figure class={resolvedClasses().root} data-slot="root" {...rest}>
+      <RLSIcon name="quote" class={resolvedClasses().icon} data-slot="icon" />
+      <blockquote class={resolvedClasses().quote} data-slot="quote">
+        {props.quote !== undefined ? props.quote : props.children}
       </blockquote>
-      <figcaption class="font-mono mt-4 text-right text-astro-pink-light">
-        {props.caption}
-      </figcaption>
+      {props.caption ? (
+        <figcaption class={resolvedClasses().caption} data-slot="caption">
+          {props.caption}
+        </figcaption>
+      ) : null}
     </figure>
   )
 }

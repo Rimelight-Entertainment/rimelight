@@ -59,7 +59,7 @@ const RLSInput: Component<RLSInputProps> = (allProps) => {
   )
 
   return (
-    <div class={resolvedClasses().root} data-slot="root">
+    <div class={resolvedClasses().root} data-slot="root" data-theme={props.theme}>
       {props.leading ? (
         props.leading
       ) : props.leadingIcon ? (

@@ -105,6 +105,7 @@ const RLSNavigationMenu: Component<RLSNavigationMenuProps> = (allProps) => {
     <nav
       class={resolvedClasses().root}
       data-slot="root"
+      data-theme={props.theme}
       data-nav-menu
       data-orientation={orientation()}
       {...rest}

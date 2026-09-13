@@ -15,9 +15,11 @@ import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSSlideoverProps extends SlideoverProps {
   children?: JSX.Element
+  trigger?: JSX.Element
   triggerSlot?: JSX.Element
   titleSlot?: JSX.Element
   descriptionSlot?: JSX.Element
+  footer?: JSX.Element
   footerSlot?: JSX.Element
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
@@ -35,9 +37,11 @@ const RLSSlideover: Component<RLSSlideoverProps> = (allProps) => {
     "ui",
     "class",
     "children",
+    "trigger",
     "triggerSlot",
     "titleSlot",
     "descriptionSlot",
+    "footer",
     "footerSlot",
     "onOpenChange"
   ])
@@ -78,11 +82,12 @@ const RLSSlideover: Component<RLSSlideoverProps> = (allProps) => {
     })
   )
 
+  const triggerContent = () => props.trigger ?? props.triggerSlot
+  const footerContent = () => props.footer ?? props.footerSlot
+
   return (
     <div class={resolvedClasses().root} data-slot="root" {...rest}>
-      {props.triggerSlot ? (
-        <span onClick={() => setOpenState(true)}>{props.triggerSlot}</span>
-      ) : props.triggerLabel ? (
+      {props.triggerLabel ? (
         <button
           type="button"
           class={resolvedClasses().trigger}
@@ -91,6 +96,8 @@ const RLSSlideover: Component<RLSSlideoverProps> = (allProps) => {
         >
           {props.triggerLabel}
         </button>
+      ) : triggerContent() ? (
+        <span onClick={() => setOpenState(true)}>{triggerContent()}</span>
       ) : null}
 
       <Show when={!unmountOnHide() || isOpen()}>
@@ -138,9 +145,9 @@ const RLSSlideover: Component<RLSSlideoverProps> = (allProps) => {
 
           {props.children}
 
-          {props.footerSlot !== undefined && (
+          {footerContent() !== undefined && (
             <div class={resolvedClasses().footer} data-slot="footer">
-              {props.footerSlot}
+              {footerContent()}
             </div>
           )}
         </div>

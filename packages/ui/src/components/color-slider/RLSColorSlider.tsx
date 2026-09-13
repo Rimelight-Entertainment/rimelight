@@ -321,6 +321,7 @@ const RLSColorSlider: Component<RLSColorSliderProps> = (allProps) => {
     <div
       class={`${resolvedClasses().root} ${props.disabled ? "opacity-50 pointer-events-none" : ""}`}
       data-slot="root"
+      data-theme={props.theme}
       data-orientation={orientation()}
       data-channel={channel()}
       data-color-space={colorSpace()}

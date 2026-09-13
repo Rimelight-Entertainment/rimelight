@@ -14,6 +14,7 @@ import type {
 import { tableTheme } from "./table.theme"
 import RLSInput from "../input/RLSInput"
 import RLSDropdownMenu from "../dropdown-menu/RLSDropdownMenu"
+import RLSIcon from "../icon/RLSIcon"
 
 type AnyData = Record<string, any>
 
@@ -644,7 +645,10 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                       when={props.loadingContent}
                       fallback={
                         <div class="flex items-center justify-center gap-2 text-muted py-4">
-                          <span class="i-lucide-loader-2 size-5 animate-spin text-primary" />
+                          <RLSIcon
+                            name="i-lucide-loader-2"
+                            class="size-5 animate-spin text-primary"
+                          />
                           <span>Loading...</span>
                         </div>
                       }
@@ -668,7 +672,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         when={props.emptyContent}
                         fallback={
                           <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted">
-                            <span class="i-lucide-inbox size-8 opacity-40" />
+                            <RLSIcon name="i-lucide-inbox" class="size-8 opacity-40" />
                             <p class="text-sm font-medium">{props.empty ?? "No data available"}</p>
                           </div>
                         }

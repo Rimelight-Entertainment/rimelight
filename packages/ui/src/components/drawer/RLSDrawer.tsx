@@ -15,9 +15,11 @@ import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSDrawerProps extends DrawerProps {
   children?: JSX.Element
+  trigger?: JSX.Element
   triggerSlot?: JSX.Element
   titleSlot?: JSX.Element
   descriptionSlot?: JSX.Element
+  footer?: JSX.Element
   footerSlot?: JSX.Element
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
@@ -37,9 +39,11 @@ const RLSDrawer: Component<RLSDrawerProps> = (allProps) => {
     "ui",
     "class",
     "children",
+    "trigger",
     "triggerSlot",
     "titleSlot",
     "descriptionSlot",
+    "footer",
     "footerSlot",
     "onOpenChange",
     "closeOnClickOutside",
@@ -100,6 +104,9 @@ const RLSDrawer: Component<RLSDrawerProps> = (allProps) => {
     })
   )
 
+  const triggerContent = () => props.trigger ?? props.triggerSlot
+  const footerContent = () => props.footer ?? props.footerSlot
+
   return (
     <div class={resolvedClasses().root} data-slot="drawer-container">
       {props.triggerLabel ? (
@@ -111,8 +118,8 @@ const RLSDrawer: Component<RLSDrawerProps> = (allProps) => {
         >
           {props.triggerLabel}
         </button>
-      ) : props.triggerSlot ? (
-        <span onClick={() => handleOpenChange(true)}>{props.triggerSlot}</span>
+      ) : triggerContent() ? (
+        <span onClick={() => handleOpenChange(true)}>{triggerContent()}</span>
       ) : null}
 
       <Show when={isOpen()}>
@@ -120,6 +127,7 @@ const RLSDrawer: Component<RLSDrawerProps> = (allProps) => {
           ref={(el) => (dialogRef = el)}
           class={`${resolvedClasses().content} ${isOpen() ? "" : "hidden"}`}
           data-slot="content"
+          aria-modal="true"
           data-state={isOpen() ? "open" : "closed"}
           {...rest}
         >
@@ -155,9 +163,11 @@ const RLSDrawer: Component<RLSDrawerProps> = (allProps) => {
 
           {props.children}
 
-          <div class={resolvedClasses().footer} data-slot="footer">
-            {props.footerSlot}
-          </div>
+          {footerContent() ? (
+            <div class={resolvedClasses().footer} data-slot="footer">
+              {footerContent()}
+            </div>
+          ) : null}
         </dialog>
       </Show>
     </div>

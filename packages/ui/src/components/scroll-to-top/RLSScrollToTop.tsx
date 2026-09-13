@@ -103,6 +103,7 @@ const RLSScrollToTop: Component<RLSScrollToTopProps> = (allProps) => {
         isVisible() ? "js-visible" : ""
       }`}
       data-slot="root"
+      data-theme={props.theme}
       {...rest}
     >
       <button

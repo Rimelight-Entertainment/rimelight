@@ -1,9 +1,10 @@
-import { createMemo, createSignal, splitProps, For, type Component } from "solid-js"
+import { createMemo, createSignal, splitProps, For, type Component, type JSX } from "solid-js"
 import type { InputPinProps } from "./input-pin"
 import { inputPinTheme } from "./input-pin.theme"
 import { inputTheme } from "../input/input.theme"
 
 export interface RLSInputPinProps extends InputPinProps {
+  children?: JSX.Element
   length?: number
   value?: string
   defaultValue?: string
@@ -20,6 +21,7 @@ export interface RLSInputPinProps extends InputPinProps {
 
 const RLSInputPin: Component<RLSInputPinProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
+    "children",
     "length",
     "value",
     "defaultValue",
@@ -175,6 +177,7 @@ const RLSInputPin: Component<RLSInputPinProps> = (allProps) => {
           )}
         </For>
       </div>
+      {props.children}
     </div>
   )
 }

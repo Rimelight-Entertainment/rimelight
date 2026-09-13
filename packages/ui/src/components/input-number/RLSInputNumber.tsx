@@ -1,10 +1,11 @@
-import { createMemo, createSignal, splitProps, type Component } from "solid-js"
+import { createMemo, createSignal, splitProps, type Component, type JSX } from "solid-js"
 import type { InputNumberProps } from "./input-number"
 import { inputNumberTheme } from "./input-number.theme"
 import { inputTheme } from "../input/input.theme"
 import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSInputNumberProps extends InputNumberProps {
+  children?: JSX.Element
   value?: number
   defaultValue?: number
   min?: number
@@ -26,6 +27,7 @@ export interface RLSInputNumberProps extends InputNumberProps {
 
 const RLSInputNumber: Component<RLSInputNumberProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
+    "children",
     "value",
     "defaultValue",
     "min",
@@ -174,6 +176,7 @@ const RLSInputNumber: Component<RLSInputNumberProps> = (allProps) => {
           </button>
         </div>
       </div>
+      {props.children}
     </div>
   )
 }

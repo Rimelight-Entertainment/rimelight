@@ -1,4 +1,5 @@
 import { createMemo, For, splitProps, type Component, type JSX } from "solid-js"
+import { Dynamic } from "solid-js/web"
 import type { TimelineProps, TimelineItem } from "./timeline"
 import { timelineTheme } from "./timeline.theme"
 import RLSAvatar from "../avatar/RLSAvatar"
@@ -12,6 +13,7 @@ export interface RLSTimelineProps extends TimelineProps {
 
 const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
+    "as",
     "items",
     "size",
     "color",
@@ -66,7 +68,13 @@ const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
   )
 
   return (
-    <div data-slot="root" class={resolvedClasses().root} data-orientation={orientation()} {...rest}>
+    <Dynamic
+      component={props.as || "div"}
+      data-slot="root"
+      class={resolvedClasses().root}
+      data-orientation={orientation()}
+      {...rest}
+    >
       {items().length > 0 ? (
         <For each={items()}>
           {(item, index) => {
@@ -156,7 +164,7 @@ const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
       ) : props.children ? (
         props.children
       ) : null}
-    </div>
+    </Dynamic>
   )
 }
 

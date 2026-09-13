@@ -36,7 +36,7 @@ const RLSCheckbox: Component<RLSCheckboxProps> = (allProps) => {
   )
 
   return (
-    <label class={resolvedClasses().root} data-slot="root">
+    <label class={resolvedClasses().root} data-slot="root" data-theme={props.theme}>
       <input
         id={props.id}
         type="checkbox"

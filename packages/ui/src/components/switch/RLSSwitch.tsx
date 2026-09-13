@@ -16,7 +16,8 @@ const RLSSwitch: Component<RLSSwitchProps> = (allProps) => {
     "name",
     "label",
     "value",
-    "trailing"
+    "trailing",
+    "theme"
   ])
 
   const resolvedClasses = createMemo(() =>
@@ -28,7 +29,7 @@ const RLSSwitch: Component<RLSSwitchProps> = (allProps) => {
   )
 
   return (
-    <label class={resolvedClasses().root} data-slot="root" {...rest}>
+    <label class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
       <input
         type="checkbox"
         class={resolvedClasses().input}

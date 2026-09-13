@@ -1,9 +1,10 @@
-import { createMemo, splitProps, type Component } from "solid-js"
+import { createMemo, splitProps, type Component, type JSX } from "solid-js"
 import type { InputTimeProps } from "./input-time"
 import { inputTimeTheme } from "./input-time.theme"
 import { inputTheme } from "../input/input.theme"
 
 export interface RLSInputTimeProps extends InputTimeProps {
+  children?: JSX.Element
   value?: string
   defaultValue?: string
   name?: string
@@ -24,6 +25,7 @@ export interface RLSInputTimeProps extends InputTimeProps {
 
 const RLSInputTime: Component<RLSInputTimeProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
+    "children",
     "value",
     "defaultValue",
     "name",
@@ -82,6 +84,7 @@ const RLSInputTime: Component<RLSInputTimeProps> = (allProps) => {
         onKeyDown={props.onKeyDown}
         {...rest}
       />
+      {props.children}
     </div>
   )
 }

@@ -16,9 +16,11 @@ import RLSButton from "../button/RLSButton"
 export interface RLSModalProps extends ModalProps {
   onClose?: () => void
   children?: JSX.Element
+  trigger?: JSX.Element
   triggerSlot?: JSX.Element
   titleSlot?: JSX.Element
   descriptionSlot?: JSX.Element
+  footer?: JSX.Element
   footerSlot?: JSX.Element
 }
 
@@ -37,9 +39,11 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
     "ui",
     "class",
     "children",
+    "trigger",
     "triggerSlot",
     "titleSlot",
     "descriptionSlot",
+    "footer",
     "footerSlot"
   ])
 
@@ -118,10 +122,13 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
     }
   })
 
+  const triggerContent = () => props.trigger ?? props.triggerSlot
+  const footerContent = () => props.footer ?? props.footerSlot
+
   return (
     <div class={resolvedClasses().root} data-slot="root">
-      {props.triggerSlot ? (
-        <span onClick={handleOpen}>{props.triggerSlot}</span>
+      {triggerContent() ? (
+        <span onClick={handleOpen}>{triggerContent()}</span>
       ) : props.triggerLabel ? (
         <button
           type="button"
@@ -137,6 +144,7 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
         <dialog
           ref={(el) => (dialogRef = el)}
           class={resolvedClasses().content}
+          aria-modal="true"
           data-state={isOpen() ? "open" : "closed"}
           data-slot="content"
           {...rest}
@@ -176,9 +184,9 @@ const RLSModal: Component<RLSModalProps> = (allProps) => {
 
           {props.children}
 
-          {props.footerSlot ? (
+          {footerContent() ? (
             <div class={resolvedClasses().footer} data-slot="footer">
-              {props.footerSlot}
+              {footerContent()}
             </div>
           ) : null}
         </dialog>

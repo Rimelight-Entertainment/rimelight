@@ -32,7 +32,7 @@ const RLSBadge: Component<RLSBadgeProps> = (allProps) => {
   )
 
   return (
-    <span class={resolvedClasses().root} data-slot="root" {...rest}>
+    <span class={resolvedClasses().root} data-slot="root" data-theme={props.theme} {...rest}>
       {props.children !== undefined && props.children !== null ? props.children : props.label}
     </span>
   )

@@ -6,7 +6,9 @@ import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSSidebarProps extends SidebarProps {
   children?: JSX.Element
+  header?: JSX.Element
   headerSlot?: JSX.Element
+  footer?: JSX.Element
   footerSlot?: JSX.Element
   _depth?: number
 }
@@ -171,7 +173,9 @@ const RLSSidebar: Component<RLSSidebarProps> = (allProps) => {
     "ui",
     "class",
     "children",
+    "header",
     "headerSlot",
+    "footer",
     "footerSlot"
   ])
 
@@ -197,6 +201,20 @@ const RLSSidebar: Component<RLSSidebarProps> = (allProps) => {
     }
   }
 
+  const headerContent = () =>
+    props.header !== undefined ? (
+      props.header
+    ) : props.headerSlot !== undefined ? (
+      props.headerSlot
+    ) : props.logo ? (
+      <span data-slot="sidebar-logo" class="flex items-center gap-2">
+        <RLSIcon name="i-rl-layers" class="size-5 text-primary" />
+        <span class="truncate">{props.logo}</span>
+      </span>
+    ) : null
+
+  const footerContent = () => (props.footer !== undefined ? props.footer : props.footerSlot)
+
   return (
     <Show
       when={isRoot()}
@@ -217,14 +235,7 @@ const RLSSidebar: Component<RLSSidebarProps> = (allProps) => {
         {...rest}
       >
         <div class={resolvedClasses().header} data-slot="header">
-          {props.headerSlot !== undefined ? (
-            props.headerSlot
-          ) : props.logo ? (
-            <span data-slot="sidebar-logo" class="flex items-center gap-2">
-              <RLSIcon name="i-rl-layers" class="size-5 text-primary" />
-              <span class="truncate">{props.logo}</span>
-            </span>
-          ) : null}
+          {headerContent()}
         </div>
 
         <div class={resolvedClasses().content} data-slot="content">
@@ -235,9 +246,9 @@ const RLSSidebar: Component<RLSSidebarProps> = (allProps) => {
           )}
         </div>
 
-        {props.footerSlot !== undefined && (
+        {footerContent() !== undefined && (
           <div class={resolvedClasses().footer} data-slot="footer">
-            {props.footerSlot}
+            {footerContent()}
           </div>
         )}
       </aside>

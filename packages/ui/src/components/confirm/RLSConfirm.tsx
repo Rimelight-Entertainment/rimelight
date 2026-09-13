@@ -15,6 +15,7 @@ export interface RLSConfirmProps extends ConfirmProps {
   trigger?: JSX.Element
   titleSlot?: JSX.Element
   descriptionSlot?: JSX.Element
+  footer?: JSX.Element
   footerSlot?: JSX.Element
   onOpenChange?: (open: boolean) => void
   onConfirm?: () => void
@@ -36,6 +37,7 @@ const RLSConfirm: Component<RLSConfirmProps> = (allProps) => {
     "trigger",
     "titleSlot",
     "descriptionSlot",
+    "footer",
     "footerSlot",
     "onOpenChange",
     "onConfirm",
@@ -106,6 +108,7 @@ const RLSConfirm: Component<RLSConfirmProps> = (allProps) => {
         ref={(el) => (dialogRef = el)}
         class={resolvedClasses().content}
         data-slot="content"
+        aria-modal="true"
         data-lock-scroll="true"
         data-state={isOpen() ? "open" : "closed"}
         onCancel={(e) => {
@@ -135,8 +138,8 @@ const RLSConfirm: Component<RLSConfirmProps> = (allProps) => {
         {props.children}
 
         <div class={resolvedClasses().footer} data-slot="footer">
-          {props.footerSlot ? (
-            props.footerSlot
+          {props.footer !== undefined || props.footerSlot !== undefined ? (
+            (props.footer ?? props.footerSlot)
           ) : (
             <>
               <RLSButton

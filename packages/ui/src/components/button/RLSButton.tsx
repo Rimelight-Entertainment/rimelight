@@ -19,6 +19,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
     "color",
     "size",
     "href",
+    "to",
     "label",
     "leadingIcon",
     "trailingIcon",
@@ -52,6 +53,7 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
     "ariaCurrentValue"
   ])
 
+  const href = () => props.href || (props.to as string | undefined)
   const isLeading = () => !!(props.leadingIcon || props.avatar || props.leading) || !!props.loading
   const isTrailing = () =>
     !!(props.trailingIcon || props.trailing) || (!!props.loading && !isLeading())
@@ -120,15 +122,17 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
     )
   }
 
-  if (props.href) {
+  if (href()) {
     return (
       <a
-        href={props.href}
+        href={href()}
         target={props.target}
         rel={props.rel || undefined}
         class={classes()["root"]}
         data-slot="root"
         data-theme={props.theme}
+        data-loading={props.loading ? "true" : undefined}
+        data-loading-auto={props.loadingAuto ? "true" : undefined}
         aria-label={props.ariaLabel}
         aria-disabled={props.disabled ? "true" : undefined}
         onClick={props.onClick}
@@ -156,6 +160,8 @@ const RLSButton: Component<RLSButtonProps> = (allProps) => {
       class={classes()["root"]}
       data-slot="root"
       data-theme={props.theme}
+      data-loading={props.loading ? "true" : undefined}
+      data-loading-auto={props.loadingAuto ? "true" : undefined}
       aria-label={props.ariaLabel}
       onClick={props.onClick}
       {...rest}

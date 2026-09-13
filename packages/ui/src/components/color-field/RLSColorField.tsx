@@ -200,6 +200,7 @@ const RLSColorField: Component<RLSColorFieldProps> = (allProps) => {
     <div
       class={resolvedClasses().root}
       data-slot="root"
+      data-theme={props.theme}
       data-channel={props.channel}
       data-color-space={colorSpace()}
       data-value={currentHex()}

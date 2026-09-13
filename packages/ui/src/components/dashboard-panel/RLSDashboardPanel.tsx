@@ -4,9 +4,13 @@ import { dashboardPanelTheme } from "./dashboard-panel.theme"
 
 export interface RLSDashboardPanelProps extends DashboardPanelProps {
   children?: JSX.Element
+  header?: JSX.Element
   headerSlot?: JSX.Element
+  body?: JSX.Element
   bodySlot?: JSX.Element
+  footer?: JSX.Element
   footerSlot?: JSX.Element
+  resizeHandle?: JSX.Element
   resizeHandleSlot?: JSX.Element
 }
 
@@ -16,9 +20,13 @@ const RLSDashboardPanel: Component<RLSDashboardPanelProps> = (allProps) => {
     "ui",
     "class",
     "children",
+    "header",
     "headerSlot",
+    "body",
     "bodySlot",
+    "footer",
     "footerSlot",
+    "resizeHandle",
     "resizeHandleSlot"
   ])
 
@@ -32,6 +40,16 @@ const RLSDashboardPanel: Component<RLSDashboardPanelProps> = (allProps) => {
     })
   )
 
+  const headerContent = () => props.header ?? props.headerSlot
+  const bodyContent = () =>
+    props.body !== undefined
+      ? props.body
+      : props.bodySlot !== undefined
+        ? props.bodySlot
+        : props.children
+  const footerContent = () => props.footer ?? props.footerSlot
+  const resizeHandleContent = () => props.resizeHandle ?? props.resizeHandleSlot
+
   return (
     <>
       <div
@@ -40,18 +58,18 @@ const RLSDashboardPanel: Component<RLSDashboardPanelProps> = (allProps) => {
         style={{ "flex": "1 1 0%", "min-width": "0" }}
         {...rest}
       >
-        {props.headerSlot}
+        {headerContent()}
 
         <div data-slot="body" class={resolvedClasses().body}>
-          {props.bodySlot !== undefined ? props.bodySlot : props.children}
+          {bodyContent()}
         </div>
 
-        {props.footerSlot}
+        {footerContent()}
       </div>
 
       <Show when={resizable()}>
-        {props.resizeHandleSlot !== undefined ? (
-          props.resizeHandleSlot
+        {resizeHandleContent() !== undefined ? (
+          resizeHandleContent()
         ) : (
           <div
             data-slot="handle"
