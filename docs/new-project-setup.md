@@ -19,6 +19,25 @@ This document serves as a standardized checklist for onboarding and configuring 
     - _Code changes required:_ **None** on the origin application for serving content — Cloudflare handles content negotiation and conversion at the edge.
   - [ ] Review and configure **Content Signals** policies (`content-signal` headers for training/search/input permissions).
 
+- [ ] **Feature Flags & Progressive Delivery (Cloudflare Flagship)**
+  - [ ] In Cloudflare Dashboard, create or configure a **Flagship** app for the project.
+  - [ ] Configure Flagship binding in `wrangler.jsonc` (or `wrangler.toml`) for edge evaluation:
+    ```jsonc
+    {
+      "flagship": [
+        {
+          "binding": "FLAGS",
+          "app_id": "<APP_ID>"
+        }
+      ]
+    }
+    ```
+  - [ ] Standardize evaluation via native bindings (`env.FLAGS`) or OpenFeature provider (`@cloudflare/flagship/server` and `@openfeature/server-sdk`):
+    - _Worker binding access:_ `await env.FLAGS.getBooleanValue('flag-key', false, context)`
+    - _OpenFeature provider:_ `new FlagshipServerProvider({ binding: env.FLAGS })`
+  - [ ] For browser-side flag evaluations, configure `@cloudflare/flagship` client provider with appropriate caching/TTL.
+  - [ ] Define targeting rules and percentage rollouts to maximize release safety and minimize blast radius.
+
 - [ ] **Security & Bot Management**
   - [ ] Configure Bot Fight Mode / AI crawler access rules based on project requirements.
   - [ ] Set up Web Application Firewall (WAF) rules and rate limiting if applicable.
