@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<BadgeProps>(), {
   variant: "solid",
   color: "primary",
   size: "md",
-  shape: "rounded"
+  shape: "pill"
 })
 
 const resolvedClasses = computed(() =>
@@ -20,13 +20,15 @@ const resolvedClasses = computed(() =>
     color: props.color,
     size: props.size,
     shape: props.shape,
+    theme: props.theme,
+    ui: props.ui,
     class: props.class
   })
 )
 </script>
 
 <template>
-  <span v-bind="attrs" :class="resolvedClasses.root" data-slot="root">
-    <slot />
+  <span v-bind="attrs" :class="resolvedClasses.root" data-slot="root" :data-theme="theme">
+    <slot>{{ label }}</slot>
   </span>
 </template>

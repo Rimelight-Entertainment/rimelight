@@ -9,13 +9,17 @@ const attrs = useAttrs()
 const slots = useSlots()
 
 const props = withDefaults(defineProps<CardProps>(), {
+  variant: "outline",
   overlay: false
 })
 
 const resolvedClasses = computed(() =>
   cardTheme({
+    variant: props.variant,
     interactive: !!props.href,
     overlay: props.overlay,
+    theme: props.theme,
+    ui: props.ui,
     class: props.class
   })
 )

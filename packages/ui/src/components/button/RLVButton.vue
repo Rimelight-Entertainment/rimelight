@@ -5,45 +5,43 @@ import { buttonTheme } from "./button.theme"
 import RLVIcon from "../icon/RLVIcon.vue"
 const attrs = useAttrs()
 
-const {
-  variant = "solid",
-  color = "primary",
-  size = "md",
-  href,
-  label,
-  leadingIcon,
-  trailingIcon,
-  loading = false,
-  square = false,
-  block = false,
-  active = false,
-  activeColor,
-  activeVariant
-} = defineProps<ButtonProps>()
+const props = withDefaults(defineProps<ButtonProps>(), {
+  variant: "solid",
+  color: "primary",
+  size: "md",
+  justify: "center",
+  loading: false,
+  square: undefined,
+  block: false,
+  active: false,
+  rounded: false
+})
 
 const slots = useSlots()
 
-const isLeading = computed(() => !!(leadingIcon || slots.leading) || loading)
+const isLeading = computed(
+  () => !!(props.leadingIcon || props.avatar || slots.leading) || props.loading
+)
 const isTrailing = computed(
-  () => !!(trailingIcon || slots.trailing) || (loading && !isLeading.value)
+  () => !!(props.trailingIcon || slots.trailing) || (props.loading && !isLeading.value)
 )
 
 const showLeadingIcon = computed(() => {
-  if (loading) return "loaderCircle"
-  return leadingIcon
+  if (props.loading) return "loaderCircle"
+  return props.leadingIcon
 })
 
 const showTrailingIcon = computed(() => {
-  if (loading) return "loaderCircle"
-  return trailingIcon
+  if (props.loading) return "loaderCircle"
+  return props.trailingIcon
 })
 
 const leadingIconClass = computed(() => {
-  return loading && isLeading.value ? "animate-spin" : ""
+  return props.loading && isLeading.value ? "animate-spin" : ""
 })
 
 const trailingIconClass = computed(() => {
-  return loading && isTrailing.value ? "animate-spin" : ""
+  return props.loading && isTrailing.value ? "animate-spin" : ""
 })
 
 defineSlots<{
@@ -54,23 +52,37 @@ defineSlots<{
 
 const resolvedClasses = computed(() =>
   buttonTheme({
-    variant: active && activeVariant ? activeVariant : variant,
-    color: active && activeColor ? activeColor : color,
-    size,
-    block,
-    square: square || (!label && !slots.default),
+    variant: props.active && props.activeVariant ? props.activeVariant : props.variant,
+    color: props.active && props.activeColor ? props.activeColor : props.color,
+    size: props.size,
+    justify: props.justify,
+    block: props.block,
+    square: props.square !== undefined ? props.square : !props.label && !slots.default,
+    rounded: props.rounded,
     leading: isLeading.value,
     trailing: isTrailing.value,
-    loading,
-    active
+    loading: props.loading,
+    active: props.active,
+    theme: props.theme,
+    ui: props.ui,
+    class: props.class
   })
 )
 
-const Tag = href ? "a" : "button"
+const Tag = props.href ? "a" : "button"
 </script>
 
 <template>
-  <component v-bind="attrs" :is="Tag" :href="href" :class="resolvedClasses.root" data-slot="root">
+  <component
+    v-bind="attrs"
+    :is="Tag"
+    :href="props.href"
+    :type="!props.href ? (props.type as any) || 'button' : undefined"
+    :disabled="!props.href ? (props.disabled as any) : undefined"
+    :class="resolvedClasses.root"
+    data-slot="root"
+    :data-theme="props.theme"
+  >
     <slot name="leading" :ui="resolvedClasses">
       <span v-if="isLeading" :class="resolvedClasses.leadingIcon" data-slot="leading-icon">
         <RLVIcon :name="showLeadingIcon" :class="leadingIconClass" />

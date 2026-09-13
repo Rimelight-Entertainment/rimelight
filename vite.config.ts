@@ -3,6 +3,9 @@ import { rimelightConfig } from "@rimelight/config/vite-plus/base"
 
 export default defineConfig({
   ...rimelightConfig(),
+  test: {
+    projects: ["packages/*/vite.config.ts"]
+  },
   run: {
     cache: true,
     tasks: {

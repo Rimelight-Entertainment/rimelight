@@ -1,4 +1,14 @@
+import type { Theme } from "../../types"
+
 export interface CardProps {
+  /**
+   * The visual style variant of the card.
+   */
+  variant?: "solid" | "outline" | "soft" | "subtle"
+  /**
+   * Theme mode override.
+   */
+  theme?: Theme
   /**
    * Card heading title.
    */

@@ -76,7 +76,12 @@ export function defineTheme<const S extends string>(name: string, themeConfig: T
       res[slots[i]!] = baseMap[slots[i]!] || ""
     }
 
-    const values = { ...defaultVariants, ...props }
+    const values: Record<string, any> = { ...defaultVariants }
+    for (const k in props) {
+      if (props[k] !== undefined) {
+        values[k] = props[k]
+      }
+    }
     const color = autoColor ? (props.color ?? defaultVariants.color) : undefined
 
     for (let k = 0; k < variantKeys.length; k++) {

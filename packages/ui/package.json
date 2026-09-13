@@ -70,9 +70,11 @@
     "@astrojs/ts-plugin": "1.10.11",
     "@astrojs/vue": "7.0.2",
     "@rimelight/config": "workspace:*",
+    "@vitejs/plugin-vue": "6.0.8",
     "astro": "7.3.2",
     "solid-js": "1.9.15",
     "typescript": "6.0.3",
+    "vite-plugin-solid": "2.11.14",
     "vue": "3.5.42"
   },
   "peerDependencies": {

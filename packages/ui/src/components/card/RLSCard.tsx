@@ -16,6 +16,8 @@ const RLSCard: Component<RLSCardProps> = (allProps) => {
     "mediaSrc",
     "href",
     "overlay",
+    "variant",
+    "theme",
     "ui",
     "class",
     "children",
@@ -26,8 +28,10 @@ const RLSCard: Component<RLSCardProps> = (allProps) => {
 
   const resolvedClasses = createMemo(() =>
     cardTheme({
+      variant: props.variant,
       interactive: !!props.href,
       overlay: !!props.overlay,
+      theme: props.theme,
       ui: props.ui,
       class: props.class
     })
