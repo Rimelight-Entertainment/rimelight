@@ -7,29 +7,20 @@ export interface RLSStepsProps extends StepsProps {
 }
 
 const RLSSteps: Component<RLSStepsProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["size", "ui", "class", "children"])
+
+  const size = () => props.size || "md"
 
   const resolvedClasses = createMemo(() =>
     stepsTheme({
       ui: props.ui,
-      class: props.class,
-      ...allProps
+      class: props.class
     })
   )
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
-      {props.children}
+    <div class={`${resolvedClasses().root} rl-steps`} data-slot="root" data-size={size()} {...rest}>
+      <ol class="rl-steps-list">{props.children}</ol>
     </div>
   )
 }

@@ -7,17 +7,7 @@ export interface RLSRatingProps extends RatingProps {
 }
 
 const RLSRating: Component<RLSRatingProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
 
   const resolvedClasses = createMemo(() =>
     ratingTheme({

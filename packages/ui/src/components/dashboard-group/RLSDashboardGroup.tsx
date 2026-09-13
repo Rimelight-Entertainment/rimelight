@@ -1,4 +1,5 @@
 import { createMemo, splitProps, type Component, type JSX } from "solid-js"
+import { Dynamic } from "solid-js/web"
 import type { DashboardGroupProps } from "./dashboard-group"
 import { dashboardGroupTheme } from "./dashboard-group.theme"
 
@@ -7,30 +8,21 @@ export interface RLSDashboardGroupProps extends DashboardGroupProps {
 }
 
 const RLSDashboardGroup: Component<RLSDashboardGroupProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["as", "ui", "class", "children"])
+
+  const Tag = () => props.as || "div"
 
   const resolvedClasses = createMemo(() =>
     dashboardGroupTheme({
       ui: props.ui,
-      class: props.class,
-      ...allProps
+      class: props.class
     })
   )
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <Dynamic component={Tag()} class={resolvedClasses().root} data-slot="root" {...rest}>
       {props.children}
-    </div>
+    </Dynamic>
   )
 }
 

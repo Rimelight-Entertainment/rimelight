@@ -1,36 +1,34 @@
 import { createMemo, splitProps, type Component, type JSX } from "solid-js"
 import type { DashboardSidebarToggleProps } from "./dashboard-sidebar-toggle"
 import { dashboardSidebarToggleTheme } from "./dashboard-sidebar-toggle.theme"
+import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSDashboardSidebarToggleProps extends DashboardSidebarToggleProps {
   children?: JSX.Element
 }
 
 const RLSDashboardSidebarToggle: Component<RLSDashboardSidebarToggleProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["icon", "ui", "class", "children"])
 
   const resolvedClasses = createMemo(() =>
     dashboardSidebarToggleTheme({
       ui: props.ui,
-      class: props.class,
-      ...allProps
+      class: props.class
     })
   )
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
+    <button
+      type="button"
+      data-dashboard-toggle="mobile"
+      class={resolvedClasses().root}
+      data-slot="root"
+      aria-label="Toggle sidebar"
+      {...rest}
+    >
+      <RLSIcon name={props.icon || "menu"} class="size-5" />
       {props.children}
-    </div>
+    </button>
   )
 }
 

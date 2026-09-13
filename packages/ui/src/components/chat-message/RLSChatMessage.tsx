@@ -7,17 +7,7 @@ export interface RLSChatMessageProps extends ChatMessageProps {
 }
 
 const RLSChatMessage: Component<RLSChatMessageProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
 
   const resolvedClasses = createMemo(() =>
     chatMessageTheme({

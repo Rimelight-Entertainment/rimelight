@@ -4,32 +4,43 @@ import { tooltipTheme } from "./tooltip.theme"
 
 export interface RLSTooltipProps extends TooltipProps {
   children?: JSX.Element
+  contentSlot?: JSX.Element
 }
 
 const RLSTooltip: Component<RLSTooltipProps> = (allProps) => {
   const [props, rest] = splitProps(allProps, [
+    "content",
+    "placement",
     "ui",
     "class",
     "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
+    "contentSlot"
   ])
+
+  const placement = () => props.placement ?? "top"
 
   const resolvedClasses = createMemo(() =>
     tooltipTheme({
+      placement: placement(),
       ui: props.ui,
-      class: props.class,
-      ...allProps
+      class: props.class
     })
   )
 
   return (
-    <div class={resolvedClasses().root} data-slot="root" {...rest}>
-      {props.children}
+    <div
+      class={resolvedClasses().root}
+      data-slot="tooltip-container"
+      data-placement={placement()}
+      {...rest}
+    >
+      <div class={resolvedClasses().trigger} data-slot="trigger" tabIndex={0}>
+        {props.children}
+      </div>
+
+      <div class={resolvedClasses().content} data-slot="content" role="tooltip">
+        {props.contentSlot !== undefined ? props.contentSlot : props.content}
+      </div>
     </div>
   )
 }

@@ -7,17 +7,7 @@ export interface RLSSpeedDialProps extends SpeedDialProps {
 }
 
 const RLSSpeedDial: Component<RLSSpeedDialProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
 
   const resolvedClasses = createMemo(() =>
     speedDialTheme({

@@ -7,17 +7,7 @@ export interface RLSKnobProps extends KnobProps {
 }
 
 const RLSKnob: Component<RLSKnobProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
 
   const resolvedClasses = createMemo(() =>
     knobTheme({

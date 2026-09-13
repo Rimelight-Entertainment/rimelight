@@ -7,17 +7,7 @@ export interface RLSListboxProps extends ListboxProps {
 }
 
 const RLSListbox: Component<RLSListboxProps> = (allProps) => {
-  const [props, rest] = splitProps(allProps, [
-    "ui",
-    "class",
-    "children",
-    "checked",
-    "disabled",
-    "name",
-    "label",
-    "value",
-    "trailing"
-  ])
+  const [props, rest] = splitProps(allProps, ["ui", "class", "children"])
 
   const resolvedClasses = createMemo(() =>
     listboxTheme({
