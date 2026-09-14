@@ -18,6 +18,7 @@
   "files": [
     "tsconfig",
     "vite-plus",
+    "astro",
     "src"
   ],
   "type": "module",
@@ -28,14 +29,52 @@
     "./vite-plus/base": {
       "types": "./vite-plus/base.ts",
       "default": "./vite-plus/base.js"
+    },
+    "./astro": {
+      "types": "./astro/index.ts",
+      "default": "./astro/index.js"
     }
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@astrojs/cloudflare": "14.3.1",
+    "astro": "7.3.2",
     "typescript": "6.0.3",
     "vite-plus": "0.3.1"
+  },
+  "peerDependencies": {
+    "@astrojs/cloudflare": ">=14.0.0",
+    "@astrojs/solid-js": ">=7.0.0",
+    "@rimelight/cms": ">=0.0.1",
+    "@rimelight/i18n": ">=0.0.1",
+    "@rimelight/security": ">=0.0.1",
+    "@rimelight/ui": ">=0.0.1",
+    "astro": ">=7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@astrojs/cloudflare": {
+      "optional": true
+    },
+    "@astrojs/solid-js": {
+      "optional": true
+    },
+    "@rimelight/cms": {
+      "optional": true
+    },
+    "@rimelight/i18n": {
+      "optional": true
+    },
+    "@rimelight/security": {
+      "optional": true
+    },
+    "@rimelight/ui": {
+      "optional": true
+    },
+    "astro": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=26.8.2"

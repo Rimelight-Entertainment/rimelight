@@ -42,12 +42,85 @@ For Astro projects using SolidJS components:
 
 ## Vite+ Configs
 
+### App / Standard Config
+
 ```typescript
+import { defineConfig } from "vite-plus"
 import { rimelightConfig } from "@rimelight/config/vite-plus/base"
 
 export default defineConfig({
   ...rimelightConfig()
   // your custom config
+})
+```
+
+### Package Config (with Auto-Entry Discovery)
+
+For library / workspace packages:
+
+```typescript
+import { defineConfig } from "vite-plus"
+import { rimelightPackConfig } from "@rimelight/config/vite-plus/base"
+
+export default defineConfig(
+  rimelightPackConfig({
+    // Automatically discovers all entry modules in src/ (ignoring tests and .d.ts)
+    autoEntry: true
+  })
+)
+```
+
+## Astro Configs
+
+### Full Standard Rimelight Site Config
+
+Zero-boilerplate setup with preconfigured Cloudflare adapter, Cloudflare cache, SWR route rules, Fontsource fonts (Noto Sans, Noto Serif, JetBrains Mono), responsive image defaults, and declarative package flags:
+
+```typescript
+import { defineConfig } from "astro/config"
+import { rimelightAstroConfig } from "@rimelight/config/astro"
+import en from "./src/translations/en.json"
+import pt from "./src/translations/pt.json"
+
+export default defineConfig(
+  rimelightAstroConfig({
+    // Automatically derives site: "https://example.com"
+    // and image.domains: ["example.com", "cdn.example.com", "cdn.rimelight.com"]
+    domain: "example.com",
+
+    // Declarative package flags (dynamically imported, tree-shakeable)
+    solid: true,
+    cms: true,
+    security: true,
+    i18n: {
+      translations: { en, pt }
+    },
+    ui: {
+      logos: { ... }
+    }
+  })
+)
+```
+
+### Granular / Composable Presets
+
+If you prefer to compose configuration piecemeal:
+
+```typescript
+import { defineConfig } from "astro/config"
+import {
+  cloudflarePreset,
+  cacheRulesPreset,
+  fontsPreset,
+  imagePreset
+} from "@rimelight/config/astro"
+
+export default defineConfig({
+  site: "https://example.com",
+  ...cloudflarePreset(),
+  ...cacheRulesPreset(),
+  ...fontsPreset(),
+  ...imagePreset({ domains: ["example.com"] })
 })
 ```
 

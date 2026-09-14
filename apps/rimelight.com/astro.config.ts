@@ -1,13 +1,8 @@
 import en from "./src/translations/en.json"
 import pt from "./src/translations/pt.json"
-import solid from "@astrojs/solid-js"
-import { ui } from "@rimelight/ui"
-import { security } from "@rimelight/security"
-import cloudflare from "@astrojs/cloudflare"
-import { i18n } from "@rimelight/i18n"
-import { defineConfig, fontProviders } from "astro/config"
-import { cacheCloudflare } from "@astrojs/cloudflare/cache"
+import { defineConfig } from "astro/config"
 import { extractAllMeta } from "./src/docs/extractAll"
+import { rimelightAstroConfig } from "@rimelight/config/astro"
 
 function localDocsIntegration() {
   return {
@@ -53,113 +48,36 @@ function localDocsIntegration() {
   }
 }
 
-export default defineConfig({
-  site: "https://rimelight.com",
-  prefetch: {
-    prefetchAll: true
-  },
-
-  output: "server",
-  session: false,
-  adapter: cloudflare(),
-  cache: {
-    provider: cacheCloudflare()
-  },
-  routeRules: {
-    "/api/[...path]": {
-      swr: 600 // 10 minutes stale-while-revalidate
+export default defineConfig(
+  rimelightAstroConfig({
+    domain: "rimelight.com",
+    solid: true,
+    security: {
+      imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
     },
-    "/[...path]": {
-      maxAge: 300 // 5 minutes cache
-    }
-  },
-
-  fonts: [
-    {
-      provider: fontProviders.fontsource(),
-      name: "Noto Sans",
-      cssVariable: "--font-sans",
-      fallbacks: ["sans-serif"],
-      subsets: ["latin", "latin-ext"],
-      weights: [400, 500, 600, 700],
-      styles: ["normal"]
+    i18n: {
+      translations: { en, pt }
     },
-    {
-      provider: fontProviders.fontsource(),
-      name: "Noto Serif",
-      cssVariable: "--font-serif",
-      fallbacks: ["serif"],
-      subsets: ["latin", "latin-ext"],
-      weights: [400, 700],
-      styles: ["normal"]
-    },
-    {
-      provider: fontProviders.fontsource(),
-      name: "JetBrains Mono",
-      cssVariable: "--font-mono",
-      fallbacks: ["monospace"],
-      subsets: ["latin", "latin-ext"],
-      weights: [400, 500, 700],
-      styles: ["normal"]
-    }
-  ],
-
-  image: {
-    domains: ["rimelight.com", "cdn.rimelight.com"],
-    layout: "constrained",
-    responsiveStyles: true
-  },
-
-  markdown: {
-    syntaxHighlight: "prism"
-  },
-
-  integrations: [
-    solid({
-      include: ["**/solid/**", "**/*.tsx"]
-    }),
-
-    localDocsIntegration()
-  ],
-
-  vite: {
-    plugins: [
-      security({
-        domain: "rimelight.com",
-        imgSrc: [
-          "https://cdn.rimelight.com",
-          "https://s.gravatar.com",
-          "https://cdn.auth0.com",
-          "https://i1.wp.com"
-        ]
-      }),
-      i18n({
-        locales: ["en", "pt"],
-        defaultLocale: "en",
-        prefixDefaultLocale: true,
-        translations: { en, pt },
-        kvBinding: "rimelight-dot-com_translations"
-      }),
-      ui({
-        logos: {
-          logomark: {
-            color: "./src/assets/logos/logomark_color.svg",
-            white: "./src/assets/logos/logomark_white.svg",
-            black: "./src/assets/logos/logomark_black.svg"
-          },
-          logotype: {
-            color: "./src/assets/logos/logotype_color.svg",
-            white: "./src/assets/logos/logotype_color.svg",
-            black: "./src/assets/logos/logotype_black.svg"
-          }
+    ui: {
+      logos: {
+        logomark: {
+          color: "./src/assets/logos/logomark_color.svg",
+          white: "./src/assets/logos/logomark_white.svg",
+          black: "./src/assets/logos/logomark_black.svg"
         },
-        shortcuts: {
-          categories: {
-            system: { label: "System" },
-            navigation: { label: "Navigation" }
-          }
+        logotype: {
+          color: "./src/assets/logos/logotype_color.svg",
+          white: "./src/assets/logos/logotype_color.svg",
+          black: "./src/assets/logos/logotype_black.svg"
         }
-      })
-    ]
-  }
-})
+      },
+      shortcuts: {
+        categories: {
+          system: { label: "System" },
+          navigation: { label: "Navigation" }
+        }
+      }
+    },
+    integrations: [localDocsIntegration()]
+  })
+)
