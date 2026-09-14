@@ -70,7 +70,7 @@ function applySecurityHeaders(
   }
 
   headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
-  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()")
   headers.set("No-Vary-Search", 'except=("q" "search" "locale"), params=?1')
 
   if (cspHeader) {
