@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@types/node": "26.5.0"
+    "@types/node": "26.5.1"
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.30.0",
