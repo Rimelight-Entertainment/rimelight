@@ -65,6 +65,9 @@
     "CONSTRUCTION_MODE": "true",
     "EMAIL_DOMAIN": "rimelight.com"
   },
+  "secrets": {
+    "required": ["AUTH0_SECRET", "DATABASE_URL"]
+  },
   "env": {
     "remote": {
       "r2_buckets": [
