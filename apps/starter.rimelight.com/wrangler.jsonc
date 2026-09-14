@@ -92,6 +92,9 @@
     "EMAIL_DOMAIN": "rimelight.com",
     "CONTACT_OWNER_EMAIL": "owner@rimelight.com"
   },
+  "secrets": {
+    "required": ["TURNSTILE_SECRET_KEY", "BETTER_AUTH_SECRET"]
+  },
   "env": {
     "remote": {
       "r2_buckets": [
