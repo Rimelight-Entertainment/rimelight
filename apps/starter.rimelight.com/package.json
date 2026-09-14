@@ -33,7 +33,7 @@
     "dev": "astro dev",
     "prebuild": "pnpm --filter '@rimelight/*' run --if-present build",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro build && wrangler dev",
     "profile": "astro build && wrangler check startup",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply starter-dot-rimelight-dot-com --local",

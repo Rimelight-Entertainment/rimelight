@@ -33,7 +33,7 @@
     "dev": "astro dev",
     "prebuild": "pnpm --filter '@rimelight/*' run --if-present build",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro build && wrangler dev",
     "profile": "astro build && wrangler check startup",
     "check": "wrangler types && vp check --fix && astro check"
   },
