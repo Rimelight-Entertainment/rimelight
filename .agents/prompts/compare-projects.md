@@ -32,5 +32,8 @@ This prompt is used to compare all projects within the active directory to ident
    - Flag missing or inconsistent configuration files across projects.
 3. **Script Audit**:
    - Flag missing or misaligned utility scripts in `package.json`.
-4. **Report Output**:
+4. **Routes, API, Pages Audit**:
+   - Flag missing or misaligned routes, API endpoints, and page components across projects.
+5. **Public Assets & Meta Standards**:
+   - Check standard public files (`favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `site.webmanifest`, `robots.txt`, `llms.txt`). 6.**Report Output**:
    - Produce a structured Markdown report categorizing findings by severity and component area.

@@ -35,6 +35,9 @@
     "build": "astro build",
     "preview": "astro build && wrangler dev",
     "profile": "astro build && wrangler check startup",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
     "check": "wrangler types && vp check --fix && astro check"
   },
   "dependencies": {
