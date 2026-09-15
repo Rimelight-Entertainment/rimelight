@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test"
-import { generatePng, generateMaskablePng, generateIco } from "./assets.js"
+import { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets.js"
 import sharp from "sharp"
 
 const sampleSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
@@ -53,5 +53,18 @@ describe("Asset Generation", () => {
     expect(meta.format).toBe("png")
     expect(meta.width).toBe(32)
     expect(meta.height).toBe(32)
+  })
+
+  it("generates standard 1200x630 OG card buffer", async () => {
+    const ogBuffer = await generateOgCard({
+      logoBuffer: Buffer.from(sampleSvg),
+      background: "#0a0a0a"
+    })
+    expect(ogBuffer).toBeInstanceOf(Buffer)
+
+    const meta = await sharp(ogBuffer).metadata()
+    expect(meta.format).toBe("png")
+    expect(meta.width).toBe(1200)
+    expect(meta.height).toBe(630)
   })
 })

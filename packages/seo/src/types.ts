@@ -123,7 +123,7 @@ export interface SiteConfig {
   name: string
   description: string
   url: string
-  ogImage: string
+  ogImage?: string
   author: string
   email: string
   branding: {
@@ -141,7 +141,7 @@ export interface SiteConfig {
   }
   seo: {
     titleTemplate: string
-    ogImageFallback: string
+    ogImageFallback?: string
     maxDescriptionLength: number
     authorHandle?: string
   }
@@ -512,6 +512,10 @@ export interface AssetRouteOptions {
    * Whether to inject /icon-maskable-512.png (default: true)
    */
   iconMaskable?: boolean
+  /**
+   * Whether to generate and emit /og.png branded card (default: true)
+   */
+  ogImage?: boolean
 }
 
 export interface RimelightSeoOptions {

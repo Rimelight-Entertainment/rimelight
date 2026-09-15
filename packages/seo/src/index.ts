@@ -64,7 +64,7 @@ export { buildSecurityTxt } from "./security.js"
 export { buildWebManifest } from "./manifest.js"
 export { buildApiCatalog } from "./catalog.js"
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
-export { generatePng, generateMaskablePng, generateIco } from "./assets.js"
+export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets.js"
 export type { OgFontConfig, OgLayoutOptions, OgRenderConfig } from "./og.js"
 
 import { rimelightSeo } from "./integration.js"

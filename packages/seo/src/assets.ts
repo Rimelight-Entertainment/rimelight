@@ -12,6 +12,13 @@ export interface GenerateMaskableOptions {
   paddingRatio?: number
 }
 
+export interface GenerateOgCardOptions {
+  width?: number
+  height?: number
+  background?: string
+  logoBuffer?: Buffer | Uint8Array | string | null
+}
+
 /**
  * Generate a PNG buffer resized to specific dimensions from an SVG or image buffer.
  */
@@ -89,4 +96,42 @@ export async function generateIco(
   header.writeUInt32LE(22, 18) // Offset of image data (header size = 22)
 
   return Buffer.concat([header, pngBuffer])
+}
+
+/**
+ * Generate a standard 1200x630 branded Open Graph card from a master logo and background color.
+ */
+export async function generateOgCard(options: GenerateOgCardOptions = {}): Promise<Buffer> {
+  const { width = 1200, height = 630, background = "#0a0a0a", logoBuffer } = options
+
+  if (logoBuffer) {
+    const logoSize = Math.min(Math.round(height * 0.45), 280)
+    const logoPng = await generatePng(logoBuffer, { width: logoSize, height: logoSize })
+    const topPad = Math.floor((height - logoSize) / 2)
+    const bottomPad = height - logoSize - topPad
+    const leftPad = Math.floor((width - logoSize) / 2)
+    const rightPad = width - logoSize - leftPad
+
+    return sharp(logoPng)
+      .extend({
+        top: topPad,
+        bottom: bottomPad,
+        left: leftPad,
+        right: rightPad,
+        background
+      })
+      .png()
+      .toBuffer()
+  }
+
+  return sharp({
+    create: {
+      width,
+      height,
+      channels: 4,
+      background
+    }
+  })
+    .png()
+    .toBuffer()
 }

@@ -3,7 +3,7 @@ import path from "node:path"
 import fs from "node:fs"
 import { fileURLToPath } from "node:url"
 import type { RimelightSeoOptions } from "./types.js"
-import { generateIco, generatePng, generateMaskablePng } from "./assets.js"
+import { generateIco, generatePng, generateMaskablePng, generateOgCard } from "./assets.js"
 
 export { type RimelightSeoOptions } from "./types.js"
 
@@ -216,6 +216,16 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
                       res.end(masterIconBuffer)
                       return
                     }
+                    if (url === "/og.png" && assetOpts.ogImage !== false) {
+                      const og = await generateOgCard({
+                        logoBuffer: masterIconBuffer,
+                        background: bgColor
+                      })
+                      res.setHeader("Content-Type", "image/png")
+                      res.setHeader("Cache-Control", "no-cache")
+                      res.end(og)
+                      return
+                    }
                     next()
                   })
                 },
@@ -247,6 +257,17 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
                       type: "asset",
                       fileName: "icon-maskable-512.png",
                       source: png
+                    })
+                  }
+                  if (assetOpts.ogImage !== false) {
+                    const og = await generateOgCard({
+                      logoBuffer: masterIconBuffer,
+                      background: bgColor
+                    })
+                    this.emitFile({
+                      type: "asset",
+                      fileName: "og.png",
+                      source: og
                     })
                   }
                   if (isSvg) {

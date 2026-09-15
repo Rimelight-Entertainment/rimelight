@@ -39,7 +39,7 @@ const {
 // Resolve defaults from config if available
 const siteName = config?.name || 'Rimelight'
 const siteDescription = config?.description || ''
-const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || ''
+const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || '/og.png'
 const themeColor = config?.branding?.colors?.themeColor
 const favicon = customFavicon || config?.branding?.favicon?.svg || '/favicon.svg'
 const faviconType = favicon.endsWith('.ico')
