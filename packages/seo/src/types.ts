@@ -1,3 +1,5 @@
+import type { LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js"
+
 /**
  * Change frequency for sitemap entries
  */
@@ -296,15 +298,24 @@ export interface RssFeedOptions {
   items: RssItem[]
 }
 
-export interface RssOptions extends Partial<RssFeedOptions> {
+export interface RssCollectionConfig {
+  name: string
+  pathPrefix?: string
+}
+
+export interface RssOptions extends Omit<Partial<RssFeedOptions>, "items"> {
   /**
    * Custom RSS route pattern (default: "/rss.xml")
    */
   path?: string
   /**
-   * Custom items loader
+   * Custom items loader or static items array
    */
-  items?: RssItem[]
+  items?: RssItem[] | (() => Promise<RssItem[]> | RssItem[])
+  /**
+   * Collections to include in RSS feed (defaults to ["blog", "posts", "news", "articles"])
+   */
+  collections?: (string | RssCollectionConfig)[]
 }
 
 export interface SitemapOptions {
@@ -316,6 +327,136 @@ export interface SitemapOptions {
   entries?: () => Promise<SeoEntry[]> | SeoEntry[]
   locales?: LocaleConfig
   [key: string]: unknown
+}
+
+export interface SecurityTxtOptions {
+  /**
+   * Contact URI or list of contact URIs (e.g. "mailto:security@example.com") - REQUIRED by RFC 9116
+   */
+  contact: string | string[]
+  /**
+   * Expiration date/time (ISO 8601 string or Date) - REQUIRED by RFC 9116
+   */
+  expires?: Date | string
+  /**
+   * URI to PGP/GPG public key
+   */
+  encryption?: string | string[]
+  /**
+   * URI to security acknowledgments / hall of fame
+   */
+  acknowledgments?: string | string[]
+  /**
+   * Comma-separated list of preferred languages (e.g. "en, pt")
+   */
+  preferredLanguages?: string
+  /**
+   * Canonical URI of the security.txt file
+   */
+  canonical?: string
+  /**
+   * URI to security policy
+   */
+  policy?: string
+  /**
+   * URI to security hiring page
+   */
+  hiring?: string
+  /**
+   * URI to Common Security Advisory Framework (CSAF) provider
+   */
+  csaf?: string
+}
+
+export interface SecurityRouteOptions extends Partial<SecurityTxtOptions> {
+  /**
+   * Route pattern (default: "/.well-known/security.txt")
+   */
+  path?: string
+  /**
+   * Whether to also inject legacy fallback route at "/security.txt" (default: true)
+   */
+  legacyRoute?: boolean
+}
+
+export interface WebManifestIcon {
+  src: string
+  sizes: string
+  type: string
+  purpose?: "any" | "maskable" | "monochrome"
+}
+
+export interface WebManifestShortcut {
+  name: string
+  url: string
+  short_name?: string
+  description?: string
+  icons?: WebManifestIcon[]
+}
+
+export interface WebManifest {
+  name: string
+  short_name?: string
+  description?: string
+  start_url: string
+  display: "fullscreen" | "standalone" | "minimal-ui" | "browser"
+  background_color: string
+  theme_color: string
+  icons: WebManifestIcon[]
+  shortcuts?: WebManifestShortcut[]
+  categories?: string[]
+  lang?: string
+  dir?: "auto" | "ltr" | "rtl"
+  orientation?: "any" | "natural" | "landscape" | "portrait"
+  scope?: string
+  [key: string]: unknown
+}
+
+export interface WebManifestOptions {
+  name: string
+  shortName?: string
+  description?: string
+  startUrl?: string
+  display?: "fullscreen" | "standalone" | "minimal-ui" | "browser"
+  backgroundColor?: string
+  themeColor?: string
+  icons?: WebManifestIcon[]
+  shortcuts?: WebManifestShortcut[]
+  categories?: string[]
+  lang?: string
+  dir?: "auto" | "ltr" | "rtl"
+  orientation?: "any" | "natural" | "landscape" | "portrait"
+  scope?: string
+}
+
+export interface ManifestRouteOptions extends Partial<WebManifestOptions> {
+  /**
+   * Route pattern (default: "/site.webmanifest")
+   */
+  path?: string
+}
+
+export interface ApiCatalogItem {
+  rel: string
+  href: string
+  type?: string
+  title?: string
+  [key: string]: unknown
+}
+
+export interface ApiCatalog {
+  "api-catalog": ApiCatalogItem[]
+}
+
+export interface ApiCatalogOptions {
+  items: ApiCatalogItem[]
+}
+
+export interface ApiCatalogRouteOptions extends Partial<ApiCatalogOptions> {
+  /**
+   * Route pattern (default: "/.well-known/api-catalog")
+   */
+  path?: string
 }
 
 export interface RobotsRouteOptions extends Partial<RobotsOptions> {
@@ -360,8 +501,21 @@ export interface RimelightSeoOptions {
    * LLMs-full.txt configuration or false to disable automatic /llms-full.txt (default: true)
    */
   llmsFull?: boolean | LlmsFullRouteOptions
+  /**
+   * Security.txt configuration or false to disable automatic /.well-known/security.txt (default:
+   * true)
+   */
+  security?: boolean | SecurityRouteOptions
+  /**
+   * RFC 9652 API Catalog configuration or false to disable automatic /.well-known/api-catalog
+   * (default: true)
+   */
+  apiCatalog?: boolean | ApiCatalogRouteOptions
+  /**
+   * Web App Manifest configuration or false to disable automatic /site.webmanifest (default: true)
+   */
+  manifest?: boolean | ManifestRouteOptions
 }
 
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js"
 export type { ArticleSchemaOptions, BreadcrumbItem } from "./schema.js"
-

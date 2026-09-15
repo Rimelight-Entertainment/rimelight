@@ -9,7 +9,7 @@ export const prerender = false
 
 export const GET: APIRoute = async ({ site, url }) => {
   const siteConfig = siteConfigMod.siteConfig || {}
-  const siteUrl = site ? site.toString() : (siteConfig.url || `${url.protocol}//${url.host}`)
+  const siteUrl = site ? site.toString() : siteConfig.url || `${url.protocol}//${url.host}`
   const llmsOpts = typeof seoOptions?.llms === "object" ? seoOptions.llms : {}
 
   let pages: LlmsPage[] = []
@@ -52,7 +52,10 @@ export const GET: APIRoute = async ({ site, url }) => {
           const description = resolveLocalized(p.description)
           const slug = p.slug === "index" ? "" : p.slug
           const pathPrefix = p.type === "doc" ? "docs" : p.type || "docs"
-          const pageUrl = `${siteUrl.replace(/\/$/, "")}/en/${pathPrefix}/${slug}`.replace(/\/+$/, "")
+          const pageUrl = `${siteUrl.replace(/\/$/, "")}/en/${pathPrefix}/${slug}`.replace(
+            /\/+$/,
+            ""
+          )
           const markdownUrl = `${pageUrl}.md`
 
           return {

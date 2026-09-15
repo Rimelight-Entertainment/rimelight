@@ -7,7 +7,7 @@ export const prerender = false
 
 export const GET: APIRoute = async ({ site, url }) => {
   const siteConfig = siteConfigMod.siteConfig || {}
-  const siteUrl = site ? site.toString() : (siteConfig.url || `${url.protocol}//${url.host}`)
+  const siteUrl = site ? site.toString() : siteConfig.url || `${url.protocol}//${url.host}`
   const title = siteConfig.name
     ? `${siteConfig.name} Full Documentation Corpus`
     : "Full Documentation Corpus"

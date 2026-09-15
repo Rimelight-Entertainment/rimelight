@@ -14,6 +14,7 @@ export type {
   RssItem,
   RssFeedOptions,
   RssOptions,
+  RssCollectionConfig,
   HeadProps,
   OpenGraphMeta,
   TwitterMeta,
@@ -23,7 +24,18 @@ export type {
   LlmsRouteOptions,
   LlmsFullRouteOptions,
   ArticleSchemaOptions,
-  BreadcrumbItem
+  BreadcrumbItem,
+  SecurityTxtOptions,
+  SecurityRouteOptions,
+  WebManifestIcon,
+  WebManifestShortcut,
+  WebManifest,
+  WebManifestOptions,
+  ManifestRouteOptions,
+  ApiCatalogItem,
+  ApiCatalog,
+  ApiCatalogOptions,
+  ApiCatalogRouteOptions
 } from "./types.js"
 
 export {
@@ -47,6 +59,9 @@ export {
 } from "./meta.js"
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js"
+export { buildSecurityTxt } from "./security.js"
+export { buildWebManifest } from "./manifest.js"
+export { buildApiCatalog } from "./catalog.js"
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
 export type { OgFontConfig, OgLayoutOptions, OgRenderConfig } from "./og.js"
 

@@ -5,7 +5,7 @@ import * as siteConfigMod from "virtual:rimelight-seo/site-config"
 import seoOptions from "virtual:rimelight-seo/options"
 
 export const GET: APIRoute = ({ site, url }) => {
-  const siteUrl = site ? site.toString() : (siteConfigMod.siteConfig?.url || url.origin)
+  const siteUrl = site ? site.toString() : siteConfigMod.siteConfig?.url || url.origin
   const sitemapURL = new URL("sitemap.xml", siteUrl).toString()
 
   const defaultPrivatePrefixes = [

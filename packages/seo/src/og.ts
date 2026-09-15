@@ -135,15 +135,7 @@ export async function loadOgFonts(
  * `renderOgResponse()` directly -- this function is just the house style.
  */
 export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = NOTO_SANS): object {
-  const {
-    title = "",
-    description,
-    brand,
-    badge,
-    date,
-    background = "dark",
-    preview = false
-  } = options
+  const { title, description, brand, badge, date, background = "dark", preview = false } = options
 
   const MAX_TITLE_LEN = 160
   const MAX_DESC_LEN = 240

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "vite-plus/test"
 import { buildRssXml } from "./rss.js"
 
 describe("buildRssXml", () => {
@@ -17,7 +17,7 @@ describe("buildRssXml", () => {
       ]
     })
 
-    expect(xml).toContain("<rss version=\"2.0\"")
+    expect(xml).toContain('<rss version="2.0"')
     expect(xml).toContain("<title>My Site</title>")
     expect(xml).toContain("<description>My site description</description>")
     expect(xml).toContain("<link>https://example.com</link>")

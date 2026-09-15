@@ -6,9 +6,9 @@ import seoOptions from "virtual:rimelight-seo/options"
 
 export const GET: APIRoute = async ({ site, url }) => {
   const sitemapOpts = typeof seoOptions?.sitemap === "object" ? seoOptions.sitemap : {}
-  const siteUrl = site ? site.toString() : (siteConfigMod.siteConfig?.url || url.origin)
+  const siteUrl = site ? site.toString() : siteConfigMod.siteConfig?.url || url.origin
 
-  let entries = []
+  let entries: any[] = []
   if (typeof sitemapOpts.entries === "function") {
     entries = await sitemapOpts.entries()
   } else if (typeof seoConfig.seoEntries === "function") {

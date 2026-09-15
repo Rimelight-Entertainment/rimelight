@@ -45,6 +45,18 @@
       "types": "./dist/rss.d.mts",
       "import": "./dist/rss.mjs"
     },
+    "./security": {
+      "types": "./dist/security.d.mts",
+      "import": "./dist/security.mjs"
+    },
+    "./manifest": {
+      "types": "./dist/manifest.d.mts",
+      "import": "./dist/manifest.mjs"
+    },
+    "./catalog": {
+      "types": "./dist/catalog.d.mts",
+      "import": "./dist/catalog.mjs"
+    },
     "./og": {
       "types": "./dist/og.d.mts",
       "import": "./dist/og.mjs"

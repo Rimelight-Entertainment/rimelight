@@ -94,6 +94,48 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
           })
         }
 
+        if (options.security !== false) {
+          const pattern =
+            typeof options.security === "object" && options.security.path
+              ? options.security.path
+              : "/.well-known/security.txt"
+          injectRoute({
+            pattern,
+            entrypoint: "@rimelight/seo/routes/security.txt.ts"
+          })
+
+          const legacyRoute =
+            typeof options.security === "object" ? options.security.legacyRoute !== false : true
+          if (legacyRoute && pattern === "/.well-known/security.txt") {
+            injectRoute({
+              pattern: "/security.txt",
+              entrypoint: "@rimelight/seo/routes/security.txt.ts"
+            })
+          }
+        }
+
+        if (options.apiCatalog !== false) {
+          const pattern =
+            typeof options.apiCatalog === "object" && options.apiCatalog.path
+              ? options.apiCatalog.path
+              : "/.well-known/api-catalog"
+          injectRoute({
+            pattern,
+            entrypoint: "@rimelight/seo/routes/api-catalog.ts"
+          })
+        }
+
+        if (options.manifest !== false) {
+          const pattern =
+            typeof options.manifest === "object" && options.manifest.path
+              ? options.manifest.path
+              : "/site.webmanifest"
+          injectRoute({
+            pattern,
+            entrypoint: "@rimelight/seo/routes/site.webmanifest.ts"
+          })
+        }
+
         updateConfig({
           vite: {
             plugins: [
@@ -169,4 +211,3 @@ export const pages = null;`
 }
 
 export default rimelightSeo
-
