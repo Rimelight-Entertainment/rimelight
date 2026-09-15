@@ -27,5 +27,3 @@ export interface Link {
   color?: LinkColor
   variant?: LinkVariant
 }
-
-export type UserAvailability = "available" | "busy" | "invisible"
