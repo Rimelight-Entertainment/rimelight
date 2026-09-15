@@ -3,6 +3,7 @@ import path from "node:path"
 import fs from "node:fs"
 import { fileURLToPath } from "node:url"
 import type { RimelightSeoOptions } from "./types.js"
+import { generateIco, generatePng, generateMaskablePng } from "./assets.js"
 
 export { type RimelightSeoOptions } from "./types.js"
 
@@ -42,7 +43,33 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
           "src/config/llms.corpus.mjs"
         ])
 
-        // Inject routes
+        // Master Icon Discovery for dynamic public asset generation
+        const assetOpts = typeof options.assets === "object" ? options.assets : {}
+        const explicitIcon = assetOpts.icon ? path.resolve(rootDir, assetOpts.icon) : null
+        const masterIconPath =
+          explicitIcon && fs.existsSync(explicitIcon)
+            ? explicitIcon
+            : findFile([
+                "src/assets/logos/logomark_color.svg",
+                "src/assets/logos/logo_color.svg",
+                "src/assets/logos/logomark.svg",
+                "src/assets/logos/logo.svg",
+                "src/assets/icon.svg",
+                "src/assets/logo.svg",
+                "src/assets/icon.png",
+                "public/favicon.svg"
+              ])
+
+        let masterIconBuffer: Buffer | null = null
+        let isSvg = false
+        if (masterIconPath && fs.existsSync(masterIconPath)) {
+          masterIconBuffer = fs.readFileSync(masterIconPath)
+          isSvg = masterIconPath.endsWith(".svg")
+        }
+
+        const bgColor = assetOpts.backgroundColor || "#ffffff"
+
+        // Inject standard routes
         if (options.robots !== false) {
           const pattern =
             typeof options.robots === "object" && options.robots.path
@@ -139,6 +166,98 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
         updateConfig({
           vite: {
             plugins: [
+              {
+                name: "vite-plugin-rimelight-seo-assets",
+                configureServer(server) {
+                  if (!masterIconBuffer) return
+                  server.middlewares.use(async (req, res, next) => {
+                    const url = req.url?.split("?")[0]
+                    if (url === "/favicon.ico" && assetOpts.faviconIco !== false) {
+                      const ico = await generateIco(masterIconBuffer, 32)
+                      res.setHeader("Content-Type", "image/x-icon")
+                      res.setHeader("Cache-Control", "no-cache")
+                      res.end(ico)
+                      return
+                    }
+                    if (url === "/apple-touch-icon.png" && assetOpts.appleTouchIcon !== false) {
+                      const png = await generatePng(masterIconBuffer, { width: 180, height: 180 })
+                      res.setHeader("Content-Type", "image/png")
+                      res.setHeader("Cache-Control", "no-cache")
+                      res.end(png)
+                      return
+                    }
+                    if (url === "/icon-192.png" && assetOpts.icon192 !== false) {
+                      const png = await generatePng(masterIconBuffer, { width: 192, height: 192 })
+                      res.setHeader("Content-Type", "image/png")
+                      res.setHeader("Cache-Control", "no-cache")
+                      res.end(png)
+                      return
+                    }
+                    if (url === "/icon-512.png" && assetOpts.icon512 !== false) {
+                      const png = await generatePng(masterIconBuffer, { width: 512, height: 512 })
+                      res.setHeader("Content-Type", "image/png")
+                      res.setHeader("Cache-Control", "no-cache")
+                      res.end(png)
+                      return
+                    }
+                    if (url === "/icon-maskable-512.png" && assetOpts.iconMaskable !== false) {
+                      const png = await generateMaskablePng(masterIconBuffer, {
+                        size: 512,
+                        background: bgColor
+                      })
+                      res.setHeader("Content-Type", "image/png")
+                      res.setHeader("Cache-Control", "no-cache")
+                      res.end(png)
+                      return
+                    }
+                    if (url === "/favicon.svg" && isSvg) {
+                      res.setHeader("Content-Type", "image/svg+xml")
+                      res.setHeader("Cache-Control", "no-cache")
+                      res.end(masterIconBuffer)
+                      return
+                    }
+                    next()
+                  })
+                },
+                async generateBundle() {
+                  if (options.assets === false || !masterIconBuffer) return
+
+                  if (assetOpts.faviconIco !== false) {
+                    const ico = await generateIco(masterIconBuffer, 32)
+                    this.emitFile({ type: "asset", fileName: "favicon.ico", source: ico })
+                  }
+                  if (assetOpts.appleTouchIcon !== false) {
+                    const png = await generatePng(masterIconBuffer, { width: 180, height: 180 })
+                    this.emitFile({ type: "asset", fileName: "apple-touch-icon.png", source: png })
+                  }
+                  if (assetOpts.icon192 !== false) {
+                    const png = await generatePng(masterIconBuffer, { width: 192, height: 192 })
+                    this.emitFile({ type: "asset", fileName: "icon-192.png", source: png })
+                  }
+                  if (assetOpts.icon512 !== false) {
+                    const png = await generatePng(masterIconBuffer, { width: 512, height: 512 })
+                    this.emitFile({ type: "asset", fileName: "icon-512.png", source: png })
+                  }
+                  if (assetOpts.iconMaskable !== false) {
+                    const png = await generateMaskablePng(masterIconBuffer, {
+                      size: 512,
+                      background: bgColor
+                    })
+                    this.emitFile({
+                      type: "asset",
+                      fileName: "icon-maskable-512.png",
+                      source: png
+                    })
+                  }
+                  if (isSvg) {
+                    this.emitFile({
+                      type: "asset",
+                      fileName: "favicon.svg",
+                      source: masterIconBuffer
+                    })
+                  }
+                }
+              },
               {
                 name: "vite-plugin-rimelight-seo",
                 resolveId(id) {

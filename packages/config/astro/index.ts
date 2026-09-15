@@ -139,6 +139,7 @@ export interface RimelightAstroOptions {
         rss?: boolean | Record<string, any>
         llms?: boolean | Record<string, any>
         llmsFull?: boolean | Record<string, any>
+        assets?: boolean | Record<string, any>
         [key: string]: any
       }
   cms?:

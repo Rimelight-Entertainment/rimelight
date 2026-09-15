@@ -130,9 +130,10 @@ export interface SiteConfig {
     logo: {
       alt: string
     }
-    favicon: {
+    favicon?: {
       svg: string
     }
+    icon?: string
     colors: {
       themeColor: string
       backgroundColor: string
@@ -480,6 +481,39 @@ export interface LlmsFullRouteOptions extends Partial<LlmsFullTxtOptions> {
   path?: string
 }
 
+export interface AssetRouteOptions {
+  /**
+   * Path to the master SVG/PNG icon file (relative to project root or absolute). If omitted, will
+   * search in src/assets/logos/ or siteConfig.branding.icon.
+   */
+  icon?: string
+  /**
+   * Background color for maskable icons (defaults to siteConfig.branding.colors.backgroundColor or
+   * #ffffff)
+   */
+  backgroundColor?: string
+  /**
+   * Whether to inject /favicon.ico (default: true)
+   */
+  faviconIco?: boolean
+  /**
+   * Whether to inject /apple-touch-icon.png (default: true)
+   */
+  appleTouchIcon?: boolean
+  /**
+   * Whether to inject /icon-192.png (default: true)
+   */
+  icon192?: boolean
+  /**
+   * Whether to inject /icon-512.png (default: true)
+   */
+  icon512?: boolean
+  /**
+   * Whether to inject /icon-maskable-512.png (default: true)
+   */
+  iconMaskable?: boolean
+}
+
 export interface RimelightSeoOptions {
   /**
    * Sitemap configuration or false to disable automatic /sitemap.xml (default: true)
@@ -515,6 +549,11 @@ export interface RimelightSeoOptions {
    * Web App Manifest configuration or false to disable automatic /site.webmanifest (default: true)
    */
   manifest?: boolean | ManifestRouteOptions
+  /**
+   * Automatic generation of compliant public image assets (favicon.ico, apple-touch-icon.png, PWA
+   * icons) from a single master icon (default: true)
+   */
+  assets?: boolean | AssetRouteOptions
 }
 
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js"

@@ -174,10 +174,7 @@ function rimelightIntegration(options, imageDomains, domain) {
         if (options.seo) {
           const seoMod = await import("@rimelight/seo")
           const seoFn =
-            seoMod.rimelightSeo ||
-            seoMod.default?.rimelightSeo ||
-            seoMod.default ||
-            seoMod
+            seoMod.rimelightSeo || seoMod.default?.rimelightSeo || seoMod.default || seoMod
           const seoOpts = typeof options.seo === "object" ? options.seo : {}
           integrations.push(seoFn(seoOpts))
         }
