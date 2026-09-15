@@ -19,6 +19,7 @@
     "tsconfig",
     "vite-plus",
     "astro",
+    "drizzle",
     "src"
   ],
   "type": "module",
@@ -33,6 +34,10 @@
     "./astro": {
       "types": "./astro/index.ts",
       "default": "./astro/index.js"
+    },
+    "./drizzle": {
+      "types": "./drizzle/index.ts",
+      "default": "./drizzle/index.js"
     }
   },
   "publishConfig": {
@@ -41,6 +46,7 @@
   "devDependencies": {
     "@astrojs/cloudflare": "14.3.1",
     "astro": "7.3.2",
+    "drizzle-kit": "0.31.10",
     "typescript": "6.0.3",
     "vite-plus": "0.3.1"
   },
@@ -52,7 +58,8 @@
     "@rimelight/security": ">=0.0.1",
     "@rimelight/seo": ">=0.0.1",
     "@rimelight/ui": ">=0.0.1",
-    "astro": ">=7.0.0"
+    "astro": ">=7.0.0",
+    "drizzle-kit": ">=0.30.0"
   },
   "peerDependenciesMeta": {
     "@astrojs/cloudflare": {
@@ -77,6 +84,9 @@
       "optional": true
     },
     "astro": {
+      "optional": true
+    },
+    "drizzle-kit": {
       "optional": true
     }
   },

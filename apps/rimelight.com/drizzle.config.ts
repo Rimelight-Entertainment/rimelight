@@ -1,7 +1,6 @@
-import { defineConfig } from "drizzle-kit"
+import { rimelightDrizzleConfig } from "@rimelight/config/drizzle"
 
-export default defineConfig({
-  out: "./drizzle",
+export default rimelightDrizzleConfig({
   schema: "./src/db/schema",
   dialect: "postgresql",
   dbCredentials: {

@@ -124,6 +124,27 @@ export default defineConfig({
 })
 ```
 
+## Drizzle Configs
+
+Zero-boilerplate Drizzle Kit configuration with standard defaults (`sqlite` dialect, `./drizzle` out directory, `./src/db/schema/index.ts` schema):
+
+```typescript
+import { rimelightDrizzleConfig } from "@rimelight/config/drizzle"
+
+export default rimelightDrizzleConfig()
+```
+
+Custom / overridden options:
+
+```typescript
+import { rimelightDrizzleConfig } from "@rimelight/config/drizzle"
+
+export default rimelightDrizzleConfig({
+  schema: "./src/db/schema.ts",
+  tablesFilter: ["custom_*"]
+})
+```
+
 ## Config Details
 
 ### TypeScript Base Config
