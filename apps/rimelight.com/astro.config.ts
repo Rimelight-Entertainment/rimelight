@@ -1,5 +1,3 @@
-import en from "./src/translations/en.json"
-import pt from "./src/translations/pt.json"
 import { defineConfig } from "astro/config"
 import { extractAllMeta } from "./src/docs/extractAll"
 import { rimelightAstroConfig } from "@rimelight/config/astro"
@@ -55,9 +53,7 @@ export default defineConfig(
     security: {
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
     },
-    i18n: {
-      translations: { en, pt }
-    },
+    i18n: true,
     ui: {
       logos: {
         logomark: {

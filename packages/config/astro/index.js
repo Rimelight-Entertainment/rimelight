@@ -1,3 +1,5 @@
+import fs from "node:fs"
+import path from "node:path"
 import cloudflare from "@astrojs/cloudflare"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import { fontProviders } from "astro/config"
@@ -78,6 +80,24 @@ export function cloudflarePreset(options = {}) {
   }
 }
 
+function discoverTranslations(dir = "./src/translations") {
+  const translations = {}
+  try {
+    const resolvedDir = path.resolve(process.cwd(), dir)
+    if (fs.existsSync(resolvedDir)) {
+      const files = fs.readdirSync(resolvedDir)
+      for (const file of files) {
+        if (file.endsWith(".json")) {
+          const locale = path.basename(file, ".json")
+          const content = JSON.parse(fs.readFileSync(path.join(resolvedDir, file), "utf8"))
+          translations[locale] = content
+        }
+      }
+    }
+  } catch {}
+  return translations
+}
+
 function rimelightIntegration(options, imageDomains, domain) {
   return {
     name: "rimelight-auto-plugins",
@@ -97,11 +117,13 @@ function rimelightIntegration(options, imageDomains, domain) {
         }
 
         if (options.cms) {
-          const { rimelightCms } = await import("@rimelight/cms/integration")
+          const cmsMod = await import("@rimelight/cms/integration")
+          const { rimelightCms } = cmsMod
           const cmsOpts = typeof options.cms === "object" ? options.cms : {}
           let storage = cmsOpts.storage
           if (!storage) {
-            const { r2 } = await import("@rimelight/cms/storage")
+            const storageMod = await import("@rimelight/cms/storage")
+            const { r2 } = storageMod
             storage = r2({ binding: cmsOpts.binding || "BLOB" })
           }
           integrations.push(
@@ -114,7 +136,8 @@ function rimelightIntegration(options, imageDomains, domain) {
         }
 
         if (options.security) {
-          const { security: securityFn } = await import("@rimelight/security")
+          const secMod = await import("@rimelight/security")
+          const { security: securityFn } = secMod
           const secOpts = typeof options.security === "object" ? options.security : {}
           const defaultImgSrc = imageDomains.map((d) =>
             d.startsWith("http://") || d.startsWith("https://") ? d : `https://${d}`
@@ -133,29 +156,31 @@ function rimelightIntegration(options, imageDomains, domain) {
         }
 
         if (options.i18n) {
-          const { i18n: i18nFn } = await import("@rimelight/i18n")
-          const translations = options.i18n.translations || {}
-          const locales = options.i18n.locales || Object.keys(translations)
-          const defaultLocale =
-            options.i18n.defaultLocale || (locales.length > 0 ? locales[0] : "en")
+          const i18nMod = await import("@rimelight/i18n")
+          const { i18n: i18nFn } = i18nMod
+          const i18nOpts = typeof options.i18n === "object" ? options.i18n : {}
+          const translations = i18nOpts.translations || discoverTranslations()
+          const locales = i18nOpts.locales || Object.keys(translations)
+          const defaultLocale = i18nOpts.defaultLocale || (locales.length > 0 ? locales[0] : "en")
           const kvBinding =
-            options.i18n.kvBinding ||
+            i18nOpts.kvBinding ||
             (domain ? `${domain.replaceAll(".", "-")}_translations` : undefined)
 
           plugins.push(
             i18nFn({
               locales,
               defaultLocale,
-              prefixDefaultLocale: options.i18n.prefixDefaultLocale ?? true,
+              prefixDefaultLocale: i18nOpts.prefixDefaultLocale ?? true,
               translations,
               ...(kvBinding ? { kvBinding } : {}),
-              ...options.i18n
+              ...i18nOpts
             })
           )
         }
 
         if (options.ui) {
-          const { ui: uiFn } = await import("@rimelight/ui")
+          const uiMod = await import("@rimelight/ui")
+          const { ui: uiFn } = uiMod
           const uiOpts = typeof options.ui === "object" ? options.ui : {}
           plugins.push(uiFn(uiOpts))
         }

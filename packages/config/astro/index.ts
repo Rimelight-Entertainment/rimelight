@@ -1,3 +1,5 @@
+import fs from "node:fs"
+import path from "node:path"
 import cloudflare from "@astrojs/cloudflare"
 import { cacheCloudflare } from "@astrojs/cloudflare/cache"
 import { fontProviders } from "astro/config"
@@ -119,14 +121,16 @@ export interface RimelightAstroOptions {
         directives?: Record<string, any>
         [key: string]: any
       }
-  i18n?: {
-    translations?: Record<string, any>
-    locales?: string[]
-    defaultLocale?: string
-    prefixDefaultLocale?: boolean
-    kvBinding?: string
-    [key: string]: any
-  }
+  i18n?:
+    | boolean
+    | {
+        translations?: Record<string, any>
+        locales?: string[]
+        defaultLocale?: string
+        prefixDefaultLocale?: boolean
+        kvBinding?: string
+        [key: string]: any
+      }
   cms?:
     | boolean
     | {
@@ -148,6 +152,24 @@ export interface RimelightAstroOptions {
     [key: string]: any
   }
   [key: string]: any
+}
+
+function discoverTranslations(dir = "./src/translations"): Record<string, any> {
+  const translations: Record<string, any> = {}
+  try {
+    const resolvedDir = path.resolve(process.cwd(), dir)
+    if (fs.existsSync(resolvedDir)) {
+      const files = fs.readdirSync(resolvedDir)
+      for (const file of files) {
+        if (file.endsWith(".json")) {
+          const locale = path.basename(file, ".json")
+          const content = JSON.parse(fs.readFileSync(path.join(resolvedDir, file), "utf8"))
+          translations[locale] = content
+        }
+      }
+    }
+  } catch {}
+  return translations
 }
 
 function rimelightIntegration(
@@ -214,22 +236,22 @@ function rimelightIntegration(
         if (options.i18n) {
           const i18nMod = await import("@rimelight/i18n")
           const { i18n: i18nFn } = i18nMod as any
-          const translations = options.i18n.translations || {}
-          const locales = options.i18n.locales || Object.keys(translations)
-          const defaultLocale =
-            options.i18n.defaultLocale || (locales.length > 0 ? locales[0] : "en")
+          const i18nOpts = typeof options.i18n === "object" ? options.i18n : {}
+          const translations = i18nOpts.translations || discoverTranslations()
+          const locales = i18nOpts.locales || Object.keys(translations)
+          const defaultLocale = i18nOpts.defaultLocale || (locales.length > 0 ? locales[0] : "en")
           const kvBinding =
-            options.i18n.kvBinding ||
+            i18nOpts.kvBinding ||
             (domain ? `${domain.replaceAll(".", "-")}_translations` : undefined)
 
           plugins.push(
             i18nFn({
               locales,
               defaultLocale,
-              prefixDefaultLocale: options.i18n.prefixDefaultLocale ?? true,
+              prefixDefaultLocale: i18nOpts.prefixDefaultLocale ?? true,
               translations,
               ...(kvBinding ? { kvBinding } : {}),
-              ...options.i18n
+              ...i18nOpts
             })
           )
         }
