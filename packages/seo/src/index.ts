@@ -39,3 +39,4 @@ export {
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js"
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
+export { rimelightSeo, type RimelightSeoOptions } from "./integration.js"

@@ -64,15 +64,78 @@ export function rimelightConfig(): UserConfig {
   }
 }
 
+export function findPackageExternals(pkgJsonPath = "package.json"): string[] {
+  try {
+    const fullPath = path.resolve(process.cwd(), pkgJsonPath)
+    if (!fs.existsSync(fullPath)) return ["@rimelight/*"]
+    const pkg = JSON.parse(fs.readFileSync(fullPath, "utf8"))
+    const externals = new Set<string>()
+
+    if (pkg.peerDependencies) {
+      Object.keys(pkg.peerDependencies).forEach((dep) => externals.add(dep))
+    }
+    if (pkg.dependencies) {
+      Object.keys(pkg.dependencies).forEach((dep) => externals.add(dep))
+    }
+
+    return Array.from(externals)
+  } catch {
+    return []
+  }
+}
+
+export interface ExportValidationResult {
+  valid: boolean
+  missingExports: string[]
+  extraExports: string[]
+}
+
+export function verifyPackageExports(
+  pkgJsonPath = "package.json",
+  srcDir = "src"
+): ExportValidationResult {
+  try {
+    const fullPath = path.resolve(process.cwd(), pkgJsonPath)
+    if (!fs.existsSync(fullPath)) {
+      return { valid: false, missingExports: ["package.json not found"], extraExports: [] }
+    }
+    const pkg = JSON.parse(fs.readFileSync(fullPath, "utf8"))
+    const exportsMap = pkg.exports || {}
+    const sourceEntries = findSourceEntries(srcDir)
+
+    const expectedKeys = sourceEntries.map((file) => {
+      const rel = file.replace(new RegExp(`^${srcDir}/`), "").replace(/\.(ts|tsx|js|jsx)$/, "")
+      return rel === "index" ? "." : `./${rel}`
+    })
+
+    const definedKeys = Object.keys(exportsMap)
+    const missingExports = expectedKeys.filter(
+      (k) => !definedKeys.includes(k) && !definedKeys.includes("./*")
+    )
+    const extraExports = definedKeys.filter(
+      (k) => k !== "." && k !== "./*" && !k.includes("*") && !expectedKeys.includes(k)
+    )
+
+    return {
+      valid: missingExports.length === 0,
+      missingExports,
+      extraExports
+    }
+  } catch (err: any) {
+    return { valid: false, missingExports: [err.message], extraExports: [] }
+  }
+}
+
 export interface RimelightPackOptions {
   entry?: string[] | "auto"
   autoEntry?: boolean | string
   pack?: Record<string, any>
+  autoExternal?: boolean
   [key: string]: any
 }
 
 export function rimelightPackConfig(options: RimelightPackOptions = {}): any {
-  const { entry, autoEntry, pack = {}, ...rest } = options
+  const { entry, autoEntry, pack = {}, autoExternal = true, ...rest } = options
 
   let resolvedEntry: string[] = ["src/index.ts"]
 
@@ -88,12 +151,22 @@ export function rimelightPackConfig(options: RimelightPackOptions = {}): any {
     resolvedEntry = [entry]
   }
 
+  const discoveredExternals = autoExternal ? findPackageExternals() : []
+  const userExternal = pack["external"] || []
+  const userExternalList = Array.isArray(userExternal) ? userExternal : [userExternal]
+  const userNeverBundle = (pack["deps"] as Record<string, any> | undefined)?.["neverBundle"] || []
+  const userNeverBundleList = Array.isArray(userNeverBundle) ? userNeverBundle : [userNeverBundle]
+  const mergedExternal = Array.from(
+    new Set([...userExternalList, ...userNeverBundleList, ...discoveredExternals])
+  ).filter(Boolean)
+
   return {
     ...rimelightConfig(),
     ...rest,
     pack: {
       entry: resolvedEntry,
       dts: true,
+      ...(mergedExternal.length > 0 ? { deps: { neverBundle: mergedExternal } } : {}),
       ...pack
     }
   }

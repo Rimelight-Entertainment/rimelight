@@ -98,6 +98,61 @@ function discoverTranslations(dir = "./src/translations") {
   return translations
 }
 
+function discoverLogos(dir = "./src/assets/logos") {
+  try {
+    const candidateDirs = [dir, "./src/assets/logo"]
+    let resolvedDir = null
+    for (const d of candidateDirs) {
+      const p = path.resolve(process.cwd(), d)
+      if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
+        resolvedDir = p
+        break
+      }
+    }
+    if (!resolvedDir) return undefined
+
+    const files = fs.readdirSync(resolvedDir)
+    const logos = {}
+
+    const variants = ["logomark", "logotype", "logo"]
+    const modes = ["color", "white", "black", "light", "dark"]
+    const extensions = [".svg", ".png", ".webp", ".jpg", ".jpeg", ".gif"]
+
+    for (const variant of variants) {
+      for (const mode of modes) {
+        for (const ext of extensions) {
+          const fileName = `${variant}_${mode}${ext}`
+          if (files.includes(fileName)) {
+            if (!logos[variant]) logos[variant] = {}
+            const relPath = `./${path.relative(process.cwd(), path.join(resolvedDir, fileName)).replace(/\\/g, "/")}`
+            logos[variant][mode] = relPath
+          }
+        }
+      }
+      for (const ext of extensions) {
+        const fileName = `${variant}${ext}`
+        if (files.includes(fileName) && !logos[variant]) {
+          const relPath = `./${path.relative(process.cwd(), path.join(resolvedDir, fileName)).replace(/\\/g, "/")}`
+          logos[variant] = relPath
+        }
+      }
+    }
+
+    return Object.keys(logos).length > 0 ? logos : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function defaultShortcuts() {
+  return {
+    categories: {
+      system: { label: "System" },
+      navigation: { label: "Navigation" }
+    }
+  }
+}
+
 function rimelightIntegration(options, imageDomains, domain) {
   return {
     name: "rimelight-auto-plugins",
@@ -114,6 +169,13 @@ function rimelightIntegration(options, imageDomains, domain) {
               ? options.solid
               : { include: ["**/solid/**", "**/*.tsx"] }
           integrations.push(solidFn(solidOpts))
+        }
+
+        if (options.seo) {
+          const seoMod = await import("@rimelight/seo")
+          const { rimelightSeo } = seoMod
+          const seoOpts = typeof options.seo === "object" ? options.seo : {}
+          integrations.push(rimelightSeo(seoOpts))
         }
 
         if (options.cms) {
@@ -182,7 +244,27 @@ function rimelightIntegration(options, imageDomains, domain) {
           const uiMod = await import("@rimelight/ui")
           const { ui: uiFn } = uiMod
           const uiOpts = typeof options.ui === "object" ? options.ui : {}
-          plugins.push(uiFn(uiOpts))
+          const discoveredLogos = discoverLogos()
+
+          const mergedLogos = uiOpts.logos
+            ? { ...discoveredLogos, ...uiOpts.logos }
+            : discoveredLogos
+
+          const mergedShortcuts =
+            uiOpts.shortcuts === false
+              ? undefined
+              : {
+                  ...defaultShortcuts(),
+                  ...(typeof uiOpts.shortcuts === "object" ? uiOpts.shortcuts : {})
+                }
+
+          plugins.push(
+            uiFn({
+              ...(mergedLogos ? { logos: mergedLogos } : {}),
+              ...(mergedShortcuts ? { shortcuts: mergedShortcuts } : {}),
+              ...uiOpts
+            })
+          )
         }
 
         updateConfig({
@@ -211,12 +293,13 @@ export function rimelightAstroConfig(options = {}) {
     i18n,
     cms,
     ui,
+    seo,
     integrations = [],
     vite = {},
     ...rest
   } = options
 
-  const hasFlags = Boolean(solid || security || i18n || cms || ui)
+  const hasFlags = Boolean(solid || security || i18n || cms || ui || seo)
 
   return {
     ...(site ? { site } : {}),

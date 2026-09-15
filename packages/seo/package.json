@@ -37,7 +37,12 @@
       "types": "./dist/robots.d.mts",
       "import": "./dist/robots.mjs"
     },
+    "./integration": {
+      "types": "./dist/integration.d.mts",
+      "import": "./dist/integration.mjs"
+    },
     "./components/*": "./src/components/*",
+    "./routes/*": "./src/routes/*",
     "./*": "./src/*"
   },
   "publishConfig": {

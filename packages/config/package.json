@@ -50,6 +50,7 @@
     "@rimelight/cms": ">=0.0.1",
     "@rimelight/i18n": ">=0.0.1",
     "@rimelight/security": ">=0.0.1",
+    "@rimelight/seo": ">=0.0.1",
     "@rimelight/ui": ">=0.0.1",
     "astro": ">=7.0.0"
   },
@@ -67,6 +68,9 @@
       "optional": true
     },
     "@rimelight/security": {
+      "optional": true
+    },
+    "@rimelight/seo": {
       "optional": true
     },
     "@rimelight/ui": {
