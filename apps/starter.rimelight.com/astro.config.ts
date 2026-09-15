@@ -4,6 +4,7 @@ import { rimelightAstroConfig } from "@rimelight/config/astro"
 export default defineConfig(
   rimelightAstroConfig({
     domain: "starter.rimelight.com",
+    seo: true,
     solid: true,
     cms: true,
     security: true,

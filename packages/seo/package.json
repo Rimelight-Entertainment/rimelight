@@ -41,9 +41,12 @@
       "types": "./dist/integration.d.mts",
       "import": "./dist/integration.mjs"
     },
+    "./rss": {
+      "types": "./dist/rss.d.mts",
+      "import": "./dist/rss.mjs"
+    },
     "./components/*": "./src/components/*",
-    "./routes/*": "./src/routes/*",
-    "./*": "./src/*"
+    "./routes/*": "./src/routes/*"
   },
   "publishConfig": {
     "access": "public"

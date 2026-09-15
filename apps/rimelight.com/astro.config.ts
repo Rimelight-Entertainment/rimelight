@@ -49,6 +49,7 @@ function localDocsIntegration() {
 export default defineConfig(
   rimelightAstroConfig({
     domain: "rimelight.com",
+    seo: true,
     solid: true,
     security: {
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]

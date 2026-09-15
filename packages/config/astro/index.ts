@@ -136,7 +136,9 @@ export interface RimelightAstroOptions {
     | {
         robots?: boolean | Record<string, any>
         sitemap?: boolean | Record<string, any>
+        rss?: boolean | Record<string, any>
         llms?: boolean | Record<string, any>
+        llmsFull?: boolean | Record<string, any>
         [key: string]: any
       }
   cms?:
@@ -259,9 +261,13 @@ function rimelightIntegration(
 
         if (options.seo) {
           const seoMod = await import("@rimelight/seo")
-          const { rimelightSeo } = seoMod as any
+          const seoFn =
+            (seoMod as any).rimelightSeo ||
+            (seoMod as any).default?.rimelightSeo ||
+            (seoMod as any).default ||
+            seoMod
           const seoOpts = typeof options.seo === "object" ? options.seo : {}
-          integrations.push(rimelightSeo(seoOpts))
+          integrations.push(seoFn(seoOpts))
         }
 
         if (options.cms) {

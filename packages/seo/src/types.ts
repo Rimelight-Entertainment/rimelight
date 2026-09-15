@@ -277,5 +277,91 @@ export interface HeadProps {
   twitter?: TwitterMeta
 }
 
+export interface RssItem {
+  title: string
+  link: string
+  pubDate: Date | string | number
+  description?: string
+  content?: string
+  guid?: string
+  author?: string
+}
+
+export interface RssFeedOptions {
+  title: string
+  description: string
+  site: string
+  feedUrl?: string
+  language?: string
+  items: RssItem[]
+}
+
+export interface RssOptions extends Partial<RssFeedOptions> {
+  /**
+   * Custom RSS route pattern (default: "/rss.xml")
+   */
+  path?: string
+  /**
+   * Custom items loader
+   */
+  items?: RssItem[]
+}
+
+export interface SitemapOptions {
+  /**
+   * Sitemap route pattern (default: "/sitemap.xml")
+   */
+  path?: string
+  urls?: SitemapUrl[]
+  entries?: () => Promise<SeoEntry[]> | SeoEntry[]
+  locales?: LocaleConfig
+  [key: string]: unknown
+}
+
+export interface RobotsRouteOptions extends Partial<RobotsOptions> {
+  /**
+   * Route pattern (default: "/robots.txt")
+   */
+  path?: string
+}
+
+export interface LlmsRouteOptions extends Partial<LlmsTxtOptions> {
+  /**
+   * Route pattern (default: "/llms.txt")
+   */
+  path?: string
+}
+
+export interface LlmsFullRouteOptions extends Partial<LlmsFullTxtOptions> {
+  /**
+   * Route pattern (default: "/llms-full.txt")
+   */
+  path?: string
+}
+
+export interface RimelightSeoOptions {
+  /**
+   * Sitemap configuration or false to disable automatic /sitemap.xml (default: true)
+   */
+  sitemap?: boolean | SitemapOptions
+  /**
+   * Robots.txt configuration or false to disable automatic /robots.txt (default: true)
+   */
+  robots?: boolean | RobotsRouteOptions
+  /**
+   * RSS feed configuration or false to disable automatic /rss.xml (default: true)
+   */
+  rss?: boolean | RssOptions
+  /**
+   * LLMs.txt configuration or false to disable automatic /llms.txt (default: true)
+   */
+  llms?: boolean | LlmsRouteOptions
+  /**
+   * LLMs-full.txt configuration or false to disable automatic /llms-full.txt (default: true)
+   */
+  llmsFull?: boolean | LlmsFullRouteOptions
+}
+
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js"
 export type { ArticleSchemaOptions, BreadcrumbItem } from "./schema.js"
+
