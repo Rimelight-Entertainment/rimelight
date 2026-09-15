@@ -48,6 +48,7 @@ export {
 
 export { buildLlmsTxt, buildLlmsFullTxt } from "./llms.js"
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
+export type { OgFontConfig, OgLayoutOptions, OgRenderConfig } from "./og.js"
 
 import { rimelightSeo } from "./integration.js"
 export type { RimelightSeoOptions } from "./integration.js"

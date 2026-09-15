@@ -45,8 +45,13 @@
       "types": "./dist/rss.d.mts",
       "import": "./dist/rss.mjs"
     },
+    "./og": {
+      "types": "./dist/og.d.mts",
+      "import": "./dist/og.mjs"
+    },
     "./components/*": "./src/components/*",
-    "./routes/*": "./src/routes/*"
+    "./routes/*": "./src/routes/*",
+    "./*": "./src/*"
   },
   "publishConfig": {
     "access": "public"
@@ -62,7 +67,13 @@
     "typescript": "6.0.3"
   },
   "peerDependencies": {
-    "astro": ">=7.0.0"
+    "astro": ">=7.0.0",
+    "takumi-js": ">=2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "takumi-js": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=26.8.2"
