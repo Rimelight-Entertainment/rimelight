@@ -29,6 +29,16 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
           "src/config/seo.config.mjs"
         ])
 
+        const hasConfigExport = (name: string): boolean => {
+          if (!seoConfigPath) return false
+          const content = fs.readFileSync(seoConfigPath, "utf8")
+          return (
+            new RegExp(
+              `export\\s+(?:const|let|var|async\\s+function|function|class)\\s+${name}\\b`
+            ).test(content) || new RegExp(`export\\s*\\{[^}]*\\b${name}\\b}`).test(content)
+          )
+        }
+
         const siteConfigPath = findFile([
           "src/config/site.config.ts",
           "src/config/site.config.js",
@@ -308,11 +318,13 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
                   }
                   if (id === "\0virtual:rimelight-seo/config") {
                     if (seoConfigPath) {
+                      const seoEntriesExport = hasConfigExport("seoEntries")
+                      const rssEntriesExport = hasConfigExport("rssEntries")
                       return `import * as customConfig from ${JSON.stringify(seoConfigPath)};
 export const SEO_LOCALES = customConfig.SEO_LOCALES;
 export const PRIVATE_PATH_PREFIXES = customConfig.PRIVATE_PATH_PREFIXES || [];
-export const seoEntries = customConfig.seoEntries;
-export const rssEntries = customConfig.rssEntries;
+export const seoEntries = ${seoEntriesExport ? "customConfig.seoEntries" : "undefined"};
+export const rssEntries = ${rssEntriesExport ? "customConfig.rssEntries" : "undefined"};
 export default customConfig;`
                     }
                     return `export const SEO_LOCALES = undefined;

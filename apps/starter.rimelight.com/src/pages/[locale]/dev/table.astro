@@ -1,10 +1,10 @@
 ---
 import AppLayout from "#layouts/AppLayout.astro"
 import RLATable from "@rimelight/ui/components/table/RLATable.astro"
-import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table"
-import { badgeTheme } from "@rimelight/ui/components/badge/badge.theme"
-import { checkboxTheme } from "@rimelight/ui/components/checkbox/checkbox.theme"
-import { dropdownMenuTheme } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.theme"
+import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table.ts"
+import { badgeTheme } from "@rimelight/ui/components/badge/badge.theme.ts"
+import { checkboxTheme } from "@rimelight/ui/components/checkbox/checkbox.theme.ts"
+import { dropdownMenuTheme } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.theme.ts"
 import TableShowcase from "../../../components/TableShowcase.tsx"
 import {
   SHOWCASE_PAYMENTS_DATA,
@@ -185,7 +185,7 @@ const astroColumns: TableColumn<PaymentItem>[] = [
         grouping={["category"]}
         columnPinning={{ left: ["select", "id"], right: ["actions"] }}
         pagination={{ pageIndex: 0, pageSize: 6 }}
-        getSubRows={(row) => row.children}
+        getSubRows={(row: PaymentItem) => row.children}
       />
     </section>
   </main>

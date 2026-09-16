@@ -60,6 +60,13 @@ export function rimelightConfig(): UserConfig {
     },
     test: {
       environment: "node"
+    },
+    run: {
+      tasks: {
+        test: {
+          command: "vp test"
+        }
+      }
     }
   }
 }
@@ -126,6 +133,34 @@ export function verifyPackageExports(
   }
 }
 
+export function findVirtualExternals(baseDir = "src"): string[] {
+  if (!fs.existsSync(baseDir)) {
+    return []
+  }
+
+  const externals = new Set<string>()
+
+  function walk(currentDir: string) {
+    const files = fs.readdirSync(currentDir, { withFileTypes: true })
+    for (const file of files) {
+      const fullPath = path.join(currentDir, file.name)
+      if (file.isDirectory()) {
+        walk(fullPath)
+      } else if (file.isFile() && /\.(ts|tsx|js|jsx|astro|vue)$/.test(file.name)) {
+        const content = fs.readFileSync(fullPath, "utf8")
+        const regex = /["']((?:virtual|cloudflare):[^"']+)["']/g
+        let match: RegExpExecArray | null
+        while ((match = regex.exec(content)) !== null) {
+          externals.add(match[1]!)
+        }
+      }
+    }
+  }
+
+  walk(baseDir)
+  return Array.from(externals)
+}
+
 export interface RimelightPackOptions {
   entry?: string[] | "auto"
   autoEntry?: boolean | string
@@ -152,13 +187,23 @@ export function rimelightPackConfig(options: RimelightPackOptions = {}): any {
   }
 
   const discoveredExternals = autoExternal ? findPackageExternals() : []
+  const discoveredVirtualExternals = autoExternal ? findVirtualExternals() : []
   const userExternal = pack["external"] || []
   const userExternalList = Array.isArray(userExternal) ? userExternal : [userExternal]
-  const userNeverBundle = (pack["deps"] as Record<string, any> | undefined)?.["neverBundle"] || []
+  const userDeps = (pack["deps"] as Record<string, any> | undefined) || {}
+  const userNeverBundle = userDeps["neverBundle"] || []
   const userNeverBundleList = Array.isArray(userNeverBundle) ? userNeverBundle : [userNeverBundle]
   const mergedExternal = Array.from(
-    new Set([...userExternalList, ...userNeverBundleList, ...discoveredExternals])
+    new Set([
+      ...userExternalList,
+      ...userNeverBundleList,
+      ...discoveredExternals,
+      ...discoveredVirtualExternals
+    ])
   ).filter(Boolean)
+
+  const hasUserDeps = pack["deps"] !== undefined
+  const hasExternals = mergedExternal.length > 0
 
   return {
     ...rimelightConfig(),
@@ -166,8 +211,11 @@ export function rimelightPackConfig(options: RimelightPackOptions = {}): any {
     pack: {
       entry: resolvedEntry,
       dts: true,
-      ...(mergedExternal.length > 0 ? { deps: { neverBundle: mergedExternal } } : {}),
-      ...pack
+      checks: { pluginTimings: false },
+      ...pack,
+      ...(hasUserDeps || hasExternals
+        ? { deps: { ...userDeps, ...(hasExternals ? { neverBundle: mergedExternal } : {}) } }
+        : {})
     }
   }
 }

@@ -1,9 +1,7 @@
 import type { SecurityOptions } from "../types"
 import { buildCspHeader } from "../csp"
 
-// @ts-ignore virtual module resolved by SRI Vite plugin
 import { manifest as sriManifest } from "virtual:sri-manifest"
-// @ts-ignore virtual module resolved by SRI Vite plugin
 import { config as pluginConfig } from "virtual:rimelight-security-config"
 
 function isManifestRecord(obj: unknown): obj is Record<string, string> {

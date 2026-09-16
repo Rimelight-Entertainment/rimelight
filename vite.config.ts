@@ -1,14 +1,18 @@
 import { defineConfig } from "vite-plus"
 import { rimelightConfig } from "@rimelight/config/vite-plus/base"
 
+const baseConfig = rimelightConfig()
+
 export default defineConfig({
-  ...rimelightConfig(),
+  ...baseConfig,
   test: {
     projects: ["packages/*/vite.config.ts"]
   },
   run: {
+    ...baseConfig.run,
     cache: true,
     tasks: {
+      ...baseConfig.run?.tasks,
       audit: {
         command: "pnpm audit",
         input: [

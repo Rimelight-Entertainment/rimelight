@@ -15,6 +15,15 @@ interface ChatMessage {
   timestamp: number
 }
 
+function isSessionAttachment(value: unknown): value is SessionAttachment {
+  if (typeof value !== "object" || value === null) return false
+  return (
+    typeof Reflect.get(value, "id") === "string" &&
+    typeof Reflect.get(value, "userId") === "string" &&
+    typeof Reflect.get(value, "username") === "string"
+  )
+}
+
 export class ChatRoom extends DurableObject<Env> {
   // Map of WebSocket -> session data
   // When the DO hibernates, this gets reconstructed in the constructor
@@ -30,10 +39,9 @@ export class ChatRoom extends DurableObject<Env> {
     // Restore hibernating WebSocket connections
     // When the DO wakes up, we need to restore session data from attachments
     this.ctx.getWebSockets().forEach((ws) => {
-      // eslint-disable-next-line typescript/no-unsafe-type-assertion
-      const attachment = ws.deserializeAttachment() as SessionAttachment | null
-      if (attachment) {
-        this.sessions.set(ws, attachment)
+      const raw = ws.deserializeAttachment()
+      if (isSessionAttachment(raw)) {
+        this.sessions.set(ws, raw)
       }
     })
 
@@ -113,9 +121,11 @@ export class ChatRoom extends DurableObject<Env> {
     // Get session data from the map (or deserialize if just woken)
     let session = this.sessions.get(ws)
     if (!session) {
-      // eslint-disable-next-line typescript/no-unsafe-type-assertion
-      session = ws.deserializeAttachment() as SessionAttachment
-      if (session) this.sessions.set(ws, session)
+      const raw = ws.deserializeAttachment()
+      if (isSessionAttachment(raw)) {
+        session = raw
+        this.sessions.set(ws, session)
+      }
     }
     if (!session) return
 
@@ -157,9 +167,8 @@ export class ChatRoom extends DurableObject<Env> {
     _wasClean: boolean
   ): Promise<void> {
     // Get session data
-    const session =
-      // eslint-disable-next-line typescript/no-unsafe-type-assertion
-      this.sessions.get(ws) || (ws.deserializeAttachment() as SessionAttachment | null)
+    const raw = ws.deserializeAttachment()
+    const session = this.sessions.get(ws) || (isSessionAttachment(raw) ? raw : null)
 
     // Remove from sessions
     this.sessions.delete(ws)

@@ -2,12 +2,9 @@
 import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table";
-import { dropdownMenuTheme } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.theme";
+import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table.ts";
 
 export const prerender = false;
-
-const dropdownClasses = dropdownMenuTheme({ size: "xs" });
 
 const users = [
   { id: "usr_1", name: "Idan T.", email: "idan@rimelight.com", role: "Super Admin", status: "active", lastActive: "Just now" },
@@ -20,7 +17,7 @@ const userColumns: TableColumn<any>[] = [
   {
     accessorKey: "name",
     header: "User",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const user = row.original;
       return `<div class="flex items-center gap-3 py-1">
         <div class="size-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center border border-primary/20 shrink-0">
@@ -37,7 +34,7 @@ const userColumns: TableColumn<any>[] = [
     accessorKey: "role",
     header: "Role",
     size: 150,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const user = row.original;
       const roleColor = user.role === "Super Admin" ? "primary" : user.role === "Editor" ? "secondary" : "neutral";
       return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${
@@ -51,7 +48,7 @@ const userColumns: TableColumn<any>[] = [
     accessorKey: "status",
     header: "Status",
     size: 130,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const user = row.original;
       if (user.status === "active") {
         return `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
@@ -69,14 +66,14 @@ const userColumns: TableColumn<any>[] = [
     accessorKey: "lastActive",
     header: "Last Active",
     size: 140,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const user = row.original;
       return `<span class="text-xs text-muted">${user.lastActive}</span>`;
     }
   },
   {
     id: "actions",
-    actions: (row) => [
+    actions: (row: TableRow<any>) => [
       {
         label: "Edit Role & Permissions",
         icon: "i-lucide-shield-check",
@@ -88,12 +85,12 @@ const userColumns: TableColumn<any>[] = [
         id: `activity-${row.original.id}`
       },
       {
-        type: "separator"
+        type: "separator" as const
       },
       {
         label: "Remove Member",
         icon: "i-lucide-trash-2",
-        color: "error",
+        color: "error" as const,
         id: `remove-${row.original.id}`
       }
     ]

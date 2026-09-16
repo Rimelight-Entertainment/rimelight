@@ -24,7 +24,6 @@ let prefixDefaultLocale: boolean = true
 let translations: Record<string, any> = {}
 
 try {
-  // @ts-ignore
   const cfg = await import("virtual:rimelight-i18n-config")
   if (cfg) {
     if (cfg.locales) locales = cfg.locales

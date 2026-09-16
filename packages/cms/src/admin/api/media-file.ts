@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro"
 import { getR2Bucket } from "../../storage/index"
-// @ts-ignore
 import { storageConfig } from "virtual:rimelight-cms/storage"
 
 export const prerender = false

@@ -438,13 +438,13 @@ export const pageActions = {
         .update(pageVersions)
         .set({
           status: "approved",
-          approvedBy: user.userId,
+          approvedBy: [user.userId],
           approvedAt: new Date()
         })
         .where(eq(pageVersions.id, input.versionId))
         .returning()
 
-      await db
+      const [updatedPage] = await db
         .update(pages)
         .set({
           title: version.title,
@@ -452,11 +452,12 @@ export const pageActions = {
           tags: version.tags,
           authorIds: version.authorIds,
           content: version.content,
-          postedAt: version.postedAt
+          publishedVersionId: version.id
         })
         .where(eq(pages.id, version.pageId))
+        .returning()
 
-      if (version.postedAt) {
+      if (updatedPage?.postedAt) {
         await indexDatabasePage({
           id: version.pageId,
           slug: version.slug,

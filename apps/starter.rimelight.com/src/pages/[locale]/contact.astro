@@ -7,7 +7,7 @@ import { t } from "@rimelight/i18n";
 import { env } from "cloudflare:workers";
 
 
-const turnstileSiteKey = import.meta.env["TURNSTILE_SITE_KEY"] || env?.TURNSTILE_SITE_KEY || "";
+const turnstileSiteKey = import.meta.env["TURNSTILE_SITE_KEY"] || (env as any)?.TURNSTILE_SITE_KEY || "";
 ---
 
 <AppLayout title={t("page_contact.title")} description={t("page_contact.description")}>
@@ -168,7 +168,6 @@ const turnstileSiteKey = import.meta.env["TURNSTILE_SITE_KEY"] || env?.TURNSTILE
           contactStatus.textContent = "Message sent successfully! ✅";
           contactStatus.className = "text-sm min-h-[1.5rem] mt-2 font-medium text-success-500";
           contactForm.reset();
-          // @ts-ignore
           window.turnstile?.reset?.();
         }
       });

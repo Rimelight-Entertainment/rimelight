@@ -218,7 +218,6 @@ function buildRowTree(rawItems: any[], parentDepth = 0): TableRow[] {
         ? String(item.id)
         : String(idx)
 
-    const isSelected = !!rowSelection[rId]
     const isExpanded = !!expanded[rId]
 
     let subRowsList: TableRow[] | undefined = undefined
@@ -257,8 +256,10 @@ function buildRowTree(rawItems: any[], parentDepth = 0): TableRow[] {
         return count > 0 && !subRowsList.every((s) => s.getIsSelected())
       },
       toggleSelected: () => {},
+      getToggleSelectedHandler: () => () => {},
       getIsExpanded: () => isExpanded,
       toggleExpanded: () => {},
+      getToggleExpandedHandler: () => () => {},
       getIsPinned: () => {
         if (rowPinning.top?.includes(rId)) return "top"
         if (rowPinning.bottom?.includes(rId)) return "bottom"

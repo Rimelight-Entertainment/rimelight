@@ -131,8 +131,7 @@ export async function getCmsCollection(
   const conditions: SQL[] = [isNull(pages.deletedAt)]
 
   if (type) {
-    // eslint-disable-next-line typescript/no-unsafe-type-assertion
-    conditions.push(eq(pages.type, type as PageType))
+    conditions.push(eq(pages.type, type))
   }
 
   if (!includeDrafts) {

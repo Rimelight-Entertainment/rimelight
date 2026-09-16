@@ -1,7 +1,7 @@
 ---
 import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table";
+import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table.ts";
 import { db } from "virtual:rimelight-cms/db";
 import { pageVersions, pages } from "../../schema";
 import { desc, eq } from "drizzle-orm";
@@ -37,7 +37,7 @@ const columns: TableColumn<any>[] = [
   {
     accessorKey: "pageTitle",
     header: "Page",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const v = row.original;
       return `<div>
         <div class="text-sm font-semibold text-highlighted">${v.pageTitle}</div>
@@ -49,13 +49,13 @@ const columns: TableColumn<any>[] = [
     accessorKey: "versionNumber",
     header: "Version",
     size: 110,
-    cell: ({ row }) => `<span class="font-mono text-xs text-muted font-bold">v${row.getValue("versionNumber")}</span>`
+    cell: ({ row }: { row: TableRow<any> }) => `<span class="font-mono text-xs text-muted font-bold">v${row.getValue("versionNumber")}</span>`
   },
   {
     accessorKey: "status",
     header: "Status",
     size: 140,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const st = row.getValue("status");
       const color = st === "published" ? "success" : st === "pending" ? "warning" : "neutral";
       return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold capitalize bg-${color}-500/10 text-${color}-500 border border-${color}-500/20">${st}</span>`;
@@ -65,7 +65,7 @@ const columns: TableColumn<any>[] = [
     accessorKey: "createdAt",
     header: "Created",
     size: 150,
-    cell: ({ row }) => `<span class="text-xs text-muted font-mono">${new Date(row.getValue("createdAt")).toLocaleDateString(currentLocale)}</span>`
+    cell: ({ row }: { row: TableRow<any> }) => `<span class="text-xs text-muted font-mono">${new Date(row.getValue("createdAt")).toLocaleDateString(currentLocale)}</span>`
   }
 ];
 ---

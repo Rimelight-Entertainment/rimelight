@@ -505,13 +505,6 @@ importers:
       '@astrojs/solid-js':
         specifier: '>=7.0.0'
         version: 7.0.2(@types/node@26.5.1)(esbuild@0.28.1)(jiti@2.7.0)(solid-js@1.9.15)(supports-color@10.2.2)(tsx@4.23.11)(yaml@2.9.0)
-    devDependencies:
-      '@astrojs/cloudflare':
-        specifier: 14.3.1
-        version: 14.3.1(@types/node@26.5.1)(astro@7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(wrangler@4.131.1(@types/node@26.5.1))(yaml@2.9.0)
-      '@rimelight/auth':
-        specifier: workspace:*
-        version: link:../auth
       '@rimelight/cms':
         specifier: workspace:*
         version: link:../cms
@@ -527,6 +520,10 @@ importers:
       '@rimelight/ui':
         specifier: workspace:*
         version: link:../ui
+    devDependencies:
+      '@astrojs/cloudflare':
+        specifier: 14.3.1
+        version: 14.3.1(@types/node@26.5.1)(astro@7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(wrangler@4.131.1(@types/node@26.5.1))(yaml@2.9.0)
       astro:
         specifier: 7.3.2
         version: 7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
@@ -572,8 +569,8 @@ importers:
         specifier: 7.3.2
         version: 7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
       hono:
-        specifier: 4.12.3
-        version: 4.12.3
+        specifier: 4.13.7
+        version: 4.13.7
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -3640,10 +3637,6 @@ packages:
 
   hast-util-whitespace@3.0.0:
     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
-
-  hono@4.12.3:
-    resolution: {integrity: sha512-SFsVSjp8sj5UumXOOFlkZOG6XS9SJDKw0TbwFeV+AJ8xlST8kxK5Z/5EYa111UY8732lK2S/xB653ceuaoGwpg==}
-    engines: {node: '>=16.9.0'}
 
   hono@4.13.7:
     resolution: {integrity: sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==}
@@ -7620,8 +7613,6 @@ snapshots:
   hast-util-whitespace@3.0.0:
     dependencies:
       '@types/hast': 3.0.5
-
-  hono@4.12.3: {}
 
   hono@4.13.7: {}
 

@@ -3,8 +3,11 @@ import type { AuthAdapter } from "@rimelight/auth"
 
 function getEnv(key: string, fallback = ""): string {
   if (typeof process !== "undefined" && process.env?.[key]) return process.env[key]!
-  // @ts-ignore
-  if (typeof import.meta !== "undefined" && import.meta.env?.[key]) return import.meta.env[key]
+  const env = typeof import.meta !== "undefined" ? import.meta.env : undefined
+  if (env) {
+    const value = Reflect.get(env, key)
+    if (typeof value === "string" && value !== "") return value
+  }
   return fallback
 }
 

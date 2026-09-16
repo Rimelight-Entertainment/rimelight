@@ -61,15 +61,102 @@ function extractThemeFromFile(filePath: string): any {
 
   const objectLiteral = content.slice(firstBraceIndex, end + 1)
 
-  const jsonStr = objectLiteral.replace(/'/g, '"').replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":')
+  return JSON.parse(objectLiteralToJson(objectLiteral))
+}
 
-  try {
-    return JSON.parse(jsonStr)
-  } catch {
-    // eslint-disable-next-line typescript/no-implied-eval
-    const fn = new Function(`return ${objectLiteral}`)
-    return fn()
+/**
+ * Converts a JS object literal (single-quoted strings, unquoted keys, numeric keys, trailing
+ * commas, `//` and `/*` comments) into valid JSON.
+ */
+function objectLiteralToJson(literal: string): string {
+  let out = ""
+  let i = 0
+  const n = literal.length
+  const escapes: Record<string, string> = {
+    "n": "\n",
+    "t": "\t",
+    "r": "\r",
+    "b": "\b",
+    "f": "\f",
+    "v": "\v",
+    "0": "\0"
   }
+
+  while (i < n) {
+    const ch = literal[i]!
+
+    if (ch === " " || ch === "\t" || ch === "\n" || ch === "\r") {
+      out += ch
+      i++
+      continue
+    }
+
+    if (ch === "/" && literal[i + 1] === "/") {
+      while (i < n && literal[i] !== "\n") i++
+      continue
+    }
+    if (ch === "/" && literal[i + 1] === "*") {
+      i += 2
+      while (i < n && !(literal[i] === "*" && literal[i + 1] === "/")) i++
+      i = Math.min(n, i + 2)
+      continue
+    }
+
+    if (ch === "'" || ch === '"' || ch === "`") {
+      const quote = ch
+      let body = ""
+      i++
+      while (i < n) {
+        const c = literal[i]
+        if (c === "\\") {
+          const next = literal[i + 1]
+          if (next === quote) {
+            body += quote
+          } else if (next === undefined) {
+            body += "\\"
+          } else {
+            body += next === "\\" ? "\\" : (escapes[next] ?? next)
+          }
+          i += 2
+          continue
+        }
+        if (c === quote) break
+        body += c
+        i++
+      }
+      out += JSON.stringify(body)
+      i++
+      continue
+    }
+
+    if (ch === ",") {
+      let j = i + 1
+      while (
+        j < n &&
+        (literal[j] === " " || literal[j] === "\t" || literal[j] === "\n" || literal[j] === "\r")
+      ) {
+        j++
+      }
+      if (literal[j] === "}" || literal[j] === "]") {
+        i++
+        continue
+      }
+      out += ch
+      i++
+      continue
+    }
+
+    const keyMatch = /^([A-Za-z_$][\w$]*|\d+)(\s*):/.exec(literal.slice(i))
+    if (keyMatch) {
+      out += `"${keyMatch[1]}"${keyMatch[2]}:`
+      i += keyMatch[0].length
+      continue
+    }
+
+    out += ch
+    i++
+  }
+  return out
 }
 
 export async function extractAllThemesMeta(

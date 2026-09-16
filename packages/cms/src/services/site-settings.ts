@@ -32,6 +32,22 @@ export const DEFAULT_SITE_SETTINGS: InsertSiteSettings = {
   }
 }
 
+function fallbackSettings(overrides?: Partial<InsertSiteSettings>): SiteSettings {
+  return {
+    id: overrides?.id ?? "default",
+    name: overrides?.name ?? DEFAULT_SITE_SETTINGS.name,
+    description: overrides?.description ?? DEFAULT_SITE_SETTINGS.description,
+    url: overrides?.url ?? DEFAULT_SITE_SETTINGS.url,
+    ogImage: overrides?.ogImage ?? DEFAULT_SITE_SETTINGS.ogImage,
+    author: overrides?.author ?? DEFAULT_SITE_SETTINGS.author,
+    email: overrides?.email ?? "",
+    branding: overrides?.branding ?? DEFAULT_SITE_SETTINGS.branding,
+    seo: overrides?.seo ?? DEFAULT_SITE_SETTINGS.seo,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+}
+
 /**
  * Retrieves the dynamic site settings from the database. If no settings are found, seeds the
  * default record and returns it.
@@ -41,13 +57,7 @@ export async function getSiteSettings(
   fallbackDefaults?: Partial<InsertSiteSettings>
 ): Promise<SiteSettings> {
   if (!db) {
-    // eslint-disable-next-line typescript/no-unsafe-type-assertion
-    return {
-      ...DEFAULT_SITE_SETTINGS,
-      ...fallbackDefaults,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    } as SiteSettings
+    return fallbackSettings(fallbackDefaults)
   }
 
   try {
@@ -71,13 +81,7 @@ export async function getSiteSettings(
     return inserted[0]
   } catch (error) {
     console.warn("Failed to fetch site settings from DB, using fallback:", error)
-    // eslint-disable-next-line typescript/no-unsafe-type-assertion
-    return {
-      ...DEFAULT_SITE_SETTINGS,
-      ...fallbackDefaults,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    } as SiteSettings
+    return fallbackSettings(fallbackDefaults)
   }
 }
 

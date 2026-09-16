@@ -202,14 +202,13 @@ const popoverId = `rla-popover-${Math.random().toString(36).substring(2, 9)}`
       const popoverId = container.querySelector<HTMLElement>('[data-slot="content"]')?.id;
       if (!popoverId) return;
 
-      const panel = document.getElementById(popoverId) as HTMLElement & { hidePopover?: () => void; showPopover?: () => void } | null;
+      const panel = document.getElementById(popoverId) as HTMLElement & { hidePopover?: () => void; showPopover?: () => void; togglePopover?: () => void } | null;
       if (!panel || typeof panel.showPopover !== 'function') return;
 
       // For slot-based triggers (not a <button popovertarget>), wire click manually
       const trigger = container.querySelector<HTMLElement>('[data-slot="trigger"]');
       if (trigger && !trigger.querySelector('[popovertarget]')) {
         trigger.addEventListener('click', () => {
-          // @ts-ignore
           panel.togglePopover?.();
         });
       }

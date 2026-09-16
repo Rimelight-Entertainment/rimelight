@@ -172,7 +172,7 @@ const currentLabel =
 <script>
   document.addEventListener("change", (event) => {
     const target = event.target as HTMLSelectElement | null
-    if (!target || target.dataset.slot !== "select") return
+    if (!target || target.dataset["slot"] !== "select") return
     const root = target.closest('[data-slot="root"]')
     const label = root?.querySelector('[data-slot="label"]')
     if (label) {

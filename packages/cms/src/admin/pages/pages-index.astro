@@ -2,8 +2,7 @@
 import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table";
-import { dropdownMenuTheme } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.theme";
+import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table.ts";
 import { db } from "virtual:rimelight-cms/db";
 import { pages } from "../../schema/pages.ts";
 import { desc, isNull } from "drizzle-orm";
@@ -12,7 +11,6 @@ import { getRelativeLocaleUrl } from "@rimelight/i18n";
 export const prerender = false;
 
 const currentLocale = Astro.currentLocale ?? "en";
-const dropdownClasses = dropdownMenuTheme({ size: "xs" });
 
 let rawPages: any[] = [];
 
@@ -32,7 +30,8 @@ if (db) {
 const pagesList = rawPages.map((page) => {
   let titleStr = "";
   if (typeof page.title === "object" && page.title !== null) {
-    titleStr = (page.title as Record<string, string>)[currentLocale] || (page.title as Record<string, string>)["en"] || Object.values(page.title)[0] || "";
+    const titleObj = page.title as Record<string, string>;
+    titleStr = titleObj[currentLocale] || titleObj["en"] || (Object.values(titleObj)[0] as string | undefined) || "";
   } else {
     titleStr = String(page.title || "Untitled");
   }
@@ -130,7 +129,7 @@ const pageColumns: TableColumn<any>[] = [
   {
     accessorKey: "title",
     header: "Page & Slug",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const page = row.original;
       return `<div class="flex items-start gap-3 py-1">
         <div class="mt-0.5 size-8 rounded-lg bg-elevated border border-default text-muted flex items-center justify-center shrink-0">
@@ -155,7 +154,7 @@ const pageColumns: TableColumn<any>[] = [
     accessorKey: "type",
     header: "Type",
     size: 130,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const page = row.original;
       const color = getTypeBadgeColor(page.type);
       return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider bg-${color}-500/10 text-${color}-500 border border-${color}-500/20">${page.type}</span>`;
@@ -165,7 +164,7 @@ const pageColumns: TableColumn<any>[] = [
     accessorKey: "status",
     header: "Status",
     size: 130,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const page = row.original;
       return page.isPublished
         ? `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"><span class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Published</span></div>`
@@ -176,14 +175,14 @@ const pageColumns: TableColumn<any>[] = [
     accessorKey: "updatedAt",
     header: "Last Updated",
     size: 160,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const page = row.original;
       return `<div class="text-xs font-medium text-highlighted" title="${formatDate(page.updatedAt)}">${timeAgo(page.updatedAt)}</div><div class="text-[11px] text-muted font-mono mt-0.5">${page.updatedAt.toISOString().slice(0, 10)}</div>`;
     }
   },
   {
     id: "actions",
-    actions: (row) => {
+    actions: (row: TableRow<any>) => {
       const page = row.original;
       return [
         {
@@ -210,20 +209,20 @@ const pageColumns: TableColumn<any>[] = [
           }
         ] : []),
         {
-          type: "separator"
+          type: "separator" as const
         },
         ...(page.isPublished ? [
           {
             label: "Unpublish to Draft",
             icon: "i-lucide-archive",
-            color: "warning",
+            color: "warning" as const,
             id: `unpublish-page-${page.id}`
           }
         ] : []),
         {
           label: "Delete Page",
           icon: "i-lucide-trash-2",
-          color: "error",
+          color: "error" as const,
           id: `delete-page-${page.id}`
         }
       ];

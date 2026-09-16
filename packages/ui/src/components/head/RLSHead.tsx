@@ -27,13 +27,8 @@ const RLSHead: Component<RLSHeadProps> = (_allProps) => {
       if (localStorage.getItem("theme") === "system") applyTheme()
     }
 
-    if (typeof mql.addEventListener === "function") {
-      mql.addEventListener("change", onChange)
-      onCleanup(() => mql.removeEventListener("change", onChange))
-    } else {
-      mql.addListener(onChange)
-      onCleanup(() => mql.removeListener(onChange))
-    }
+    mql.addEventListener("change", onChange)
+    onCleanup(() => mql.removeEventListener("change", onChange))
   })
 
   return null

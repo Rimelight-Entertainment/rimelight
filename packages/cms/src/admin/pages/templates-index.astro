@@ -2,8 +2,7 @@
 import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table";
-import { dropdownMenuTheme } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.theme";
+import type { TableColumn, TableRow } from "@rimelight/ui/components/table/table.ts";
 import { db } from "virtual:rimelight-cms/db";
 import { pageTemplates } from "../../schema/page_templates.ts";
 import { desc } from "drizzle-orm";
@@ -13,7 +12,6 @@ import { ensureDefaultTemplates } from "../../services/template-seeder.ts";
 export const prerender = false;
 
 const currentLocale = Astro.currentLocale ?? "en";
-const dropdownClasses = dropdownMenuTheme({ size: "xs" });
 
 let templates: any[] = [];
 if (db) {
@@ -34,7 +32,8 @@ if (db) {
 const formattedTemplates = templates.map((tmpl) => {
   let titleStr = "";
   if (typeof tmpl.title === "object" && tmpl.title !== null) {
-    titleStr = (tmpl.title as Record<string, string>)[currentLocale] || (tmpl.title as Record<string, string>)["en"] || Object.values(tmpl.title)[0] || "";
+    const titleObj = tmpl.title as Record<string, string>;
+    titleStr = titleObj[currentLocale] || titleObj["en"] || (Object.values(titleObj)[0] as string | undefined) || "";
   } else {
     titleStr = String(tmpl.title || "Untitled Template");
   }
@@ -64,7 +63,6 @@ const formattedTemplates = templates.map((tmpl) => {
   };
 });
 
-const totalCount = formattedTemplates.length;
 const typeCounts: Record<string, number> = {};
 for (const t of formattedTemplates) {
   typeCounts[t.pageType] = (typeCounts[t.pageType] || 0) + 1;
@@ -130,7 +128,7 @@ const templateColumns: TableColumn<any>[] = [
   {
     accessorKey: "title",
     header: "Template & Slug",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const tmpl = row.original;
       return `<div class="flex items-start gap-3 py-1">
         <div class="mt-0.5 size-8 rounded-lg bg-elevated border border-default text-muted flex items-center justify-center shrink-0">
@@ -154,7 +152,7 @@ const templateColumns: TableColumn<any>[] = [
     accessorKey: "pageType",
     header: "Page Type",
     size: 140,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const tmpl = row.original;
       const color = getTypeBadgeColor(tmpl.pageType);
       return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider bg-${color}-500/10 text-${color}-500 border border-${color}-500/20">${tmpl.pageType}</span>`;
@@ -164,7 +162,7 @@ const templateColumns: TableColumn<any>[] = [
     id: "specs",
     header: "Schema Specs",
     size: 160,
-    cell: ({ row }) => {
+    cell: ({ row }: { row: TableRow<any> }) => {
       const tmpl = row.original;
       return `<div class="flex items-center gap-2 text-xs text-muted font-mono">
         <span>${tmpl.initialBlocksCount} ${tmpl.initialBlocksCount === 1 ? "block" : "blocks"}</span>
@@ -177,11 +175,11 @@ const templateColumns: TableColumn<any>[] = [
     accessorKey: "version",
     header: "Version",
     size: 100,
-    cell: ({ row }) => `<span class="px-2 py-0.5 rounded bg-elevated border border-default text-highlighted font-semibold text-xs font-mono">v${row.getValue("version")}</span>`
+    cell: ({ row }: { row: TableRow<any> }) => `<span class="px-2 py-0.5 rounded bg-elevated border border-default text-highlighted font-semibold text-xs font-mono">v${row.getValue("version")}</span>`
   },
   {
     id: "actions",
-    actions: (row) => [
+    actions: (row: TableRow<any>) => [
       {
         label: "Create Page",
         icon: "i-lucide-plus",
@@ -193,12 +191,12 @@ const templateColumns: TableColumn<any>[] = [
         to: getRelativeLocaleUrl(currentLocale, `/cms/templates/${row.original.id}/edit`)
       },
       {
-        type: "separator"
+        type: "separator" as const
       },
       {
         label: "Delete Template",
         icon: "i-lucide-trash-2",
-        color: "error",
+        color: "error" as const,
         id: `delete-tmpl-${row.original.id}`
       }
     ]
