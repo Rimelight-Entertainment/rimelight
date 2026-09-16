@@ -34,7 +34,10 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
     ) : (
       <button
         type="button"
-        class={classes.trigger}
+        class:list={[
+          classes.trigger,
+          !label && !Astro.slots.has("default") && !Astro.slots.has("trigger") && "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0"
+        ]}
         data-slot="trigger"
         data-dropdown-trigger
         disabled={disabled}

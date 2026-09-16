@@ -134,9 +134,24 @@ function buildRowTree(rawItems: any[], parentDepth = 0): TableRow[] {
       depth: parentDepth,
       getValue: (key: string) => {
         if (!item || typeof item !== "object") return undefined
+        const colDef = resolvedColumns.find((c) => (c.id || c.accessorKey) === key)
+        if (colDef && typeof colDef.accessorFn === "function") {
+          return colDef.accessorFn(item)
+        }
         return getNestedValue(item as AnyData, key)
       },
-      getIsSelected: () => isSelected,
+      getIsSelected: () => {
+        if (rowSelection[rId]) return true
+        if (subRowsList && subRowsList.length > 0) {
+          return subRowsList.every((s) => s.getIsSelected())
+        }
+        return false
+      },
+      getIsSomeSelected: () => {
+        if (!subRowsList || subRowsList.length === 0) return false
+        const count = subRowsList.filter((s) => s.getIsSelected() || s.getIsSomeSelected()).length
+        return count > 0 && !subRowsList.every((s) => s.getIsSelected())
+      },
       toggleSelected: () => {},
       getIsExpanded: () => isExpanded,
       toggleExpanded: () => {},
@@ -147,7 +162,12 @@ function buildRowTree(rawItems: any[], parentDepth = 0): TableRow[] {
       },
       pin: () => {},
       getIsGrouped: () => false,
-      getCanExpand: () => !!(subRowsList && subRowsList.length > 0),
+      getCanExpand: () => {
+        if (typeof getRowCanExpand === "function") {
+          return getRowCanExpand(rowObj)
+        }
+        return !!(subRowsList && subRowsList.length > 0)
+      },
       ...(subRowsList ? { subRows: subRowsList } : {})
     }
     return rowObj
@@ -163,8 +183,16 @@ if (globalFilter) {
   processedRows = processedRows.filter((r) => {
     if (typeof r.original !== "object" || !r.original)
       return String(r.original).toLowerCase().includes(query)
-    return Object.values(r.original as AnyData).some((val) =>
-      String(val ?? "").toLowerCase().includes(query)
+    return (
+      Object.values(r.original as AnyData).some((val) =>
+        String(val ?? "").toLowerCase().includes(query)
+      ) ||
+      resolvedColumns.some((col) => {
+        const v = col.accessorFn
+          ? col.accessorFn(r.original)
+          : r.getValue((col.id || col.accessorKey || "") as string)
+        return String(v ?? "").toLowerCase().includes(query)
+      })
     )
   })
 }
@@ -191,8 +219,16 @@ if (sorting && sorting.length > 0) {
       let cmp: number
       if (typeof valA === "number" && typeof valB === "number") {
         cmp = valA - valB
+      } else if (valA instanceof Date && valB instanceof Date) {
+        cmp = valA.getTime() - valB.getTime()
       } else {
-        cmp = String(valA).localeCompare(String(valB))
+        const numA = Number(valA)
+        const numB = Number(valB)
+        if (!isNaN(numA) && !isNaN(numB)) {
+          cmp = numA - numB
+        } else {
+          cmp = String(valA).localeCompare(String(valB))
+        }
       }
       return desc ? -cmp : cmp
     }
@@ -220,6 +256,8 @@ if (grouping && grouping.length > 0) {
       groupMap.set(val, [])
       groupOrder.push(val)
     }
+    row.groupingColumnId = groupColId
+    row.groupingValue = val
     groupMap.get(val)!.push(row)
   }
 
@@ -328,6 +366,20 @@ function getPinStyle(colId: string): string {
 function isPinned(colId: string): boolean {
   return colId in colOffsetLeft || colId in colOffsetRight
 }
+
+function getColumnSizeStyle(col: TableColumn): string {
+  const styles: string[] = []
+  if (col.size) {
+    styles.push(`width:${typeof col.size === "number" ? `${col.size}px` : col.size};`)
+  }
+  if (col.minSize) {
+    styles.push(`min-width:${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`)
+  }
+  if (col.maxSize) {
+    styles.push(`max-width:${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`)
+  }
+  return styles.join(" ")
+}
 ---
 
 <rla-table
@@ -337,7 +389,7 @@ function isPinned(colId: string): boolean {
 >
   {showToolbar && (
     <div
-      class="flex items-center gap-3 px-3.5 py-3 border-b border-default bg-muted/20 overflow-x-auto"
+      class={classes.toolbar}
       data-slot="toolbar"
     >
       {searchable && (
@@ -370,6 +422,14 @@ function isPinned(colId: string): boolean {
 
   <div class="overflow-x-auto w-full">
     <table class={classes.base} data-slot="base">
+      <colgroup>
+        {visibleColumns.map((col) => {
+          const colId = (col.id || col.accessorKey || "") as string
+          const sizeStyle = getColumnSizeStyle(col)
+          return <col data-col-id={colId} style={sizeStyle || undefined} />
+        })}
+      </colgroup>
+
       {(caption || Astro.slots.has("caption")) && (
         <caption class={classes.caption} data-slot="caption">
           <slot name="caption">{caption}</slot>
@@ -393,16 +453,14 @@ function isPinned(colId: string): boolean {
                   : col.meta?.style?.th || ""
               const canSort =
                 col.enableSorting !== false &&
-                !!(col.accessorKey || col.id) &&
+                !!(col.accessorKey || col.id || col.accessorFn) &&
                 colId !== "actions" &&
                 colId !== "select"
               const activeSort = (sorting as SortingState).find((s) => s.id === colId)
               const sortDir = activeSort ? (activeSort.desc ? "desc" : "asc") : "none"
               const headerSlotName = `${colId}-header`
 
-              const sizeStyle = col.size
-                ? `width:${typeof col.size === "number" ? `${col.size}px` : col.size};`
-                : ""
+              const sizeStyle = getColumnSizeStyle(col)
               const pinStyle = getPinStyle(colId)
               const combinedStyle = [sizeStyle, pinStyle, metaThStyle]
                 .filter(Boolean)
@@ -558,8 +616,11 @@ function isPinned(colId: string): boolean {
                 >
                   {visibleColumns.map((col) => {
                     const colId = (col.id || col.accessorKey || "") as string
-                    const accessorKey = (col.accessorKey || col.id || "") as string
-                    const cellValue = accessorKey ? row.getValue(accessorKey) : undefined
+                    const cellValue = typeof col.accessorFn === "function"
+                      ? col.accessorFn(row.original)
+                      : (col.accessorKey || col.id)
+                        ? row.getValue((col.accessorKey || col.id) as string)
+                        : undefined
                     const cellSlotName = `${colId}-cell`
                     const pinned = isPinned(colId)
 
@@ -626,7 +687,7 @@ function isPinned(colId: string): boolean {
                 </tr>
 
                 {/* Expanded sub-row */}
-                {isExpanded && Astro.slots.has("expanded") && (
+                {row.getCanExpand() && isExpanded && Astro.slots.has("expanded") && (
                   <tr class={classes.trExpanded} data-slot="tr-expanded" data-row-id={row.id}>
                     <td
                       colspan={Math.max(1, visibleColumns.length)}
@@ -654,17 +715,44 @@ function isPinned(colId: string): boolean {
                       >
                         {visibleColumns.map((col) => {
                           const colId = (col.id || col.accessorKey || "") as string
-                          const accessorKey = (col.accessorKey || col.id || "") as string
-                          const cellValue = accessorKey ? subRow.getValue(accessorKey) : undefined
+                          const cellValue = typeof col.accessorFn === "function"
+                            ? col.accessorFn(subRow.original)
+                            : (col.accessorKey || col.id)
+                              ? subRow.getValue((col.accessorKey || col.id) as string)
+                              : undefined
                           const cellSlotName = `${colId}-cell`
+                          const pinned = isPinned(colId)
                           const metaTdClass =
                             typeof col.meta?.class?.td === "function"
                               ? col.meta.class.td(subRow)
                               : col.meta?.class?.td || ""
+                          const metaTdStyle =
+                            typeof col.meta?.style?.td === "function"
+                              ? col.meta.style.td(subRow)
+                              : col.meta?.style?.td || ""
+                          const colSpanVal =
+                            typeof col.meta?.colspan?.td === "function"
+                              ? col.meta.colspan.td(subRow)
+                              : col.meta?.colspan?.td
+                          const rowSpanVal =
+                            typeof col.meta?.rowspan?.td === "function"
+                              ? col.meta.rowspan.td(subRow)
+                              : col.meta?.rowspan?.td
+
+                          const sizeStyle = getColumnSizeStyle(col)
+                          const pinStyle_ = getPinStyle(colId)
+                          const combinedTdStyle = [sizeStyle, pinStyle_, metaTdStyle].filter(Boolean).join("")
 
                           return (
                             <td
-                              class:list={[classes.td, metaTdClass]}
+                              class:list={[
+                                classes.td,
+                                pinned ? "sticky bg-default z-10" : "",
+                                metaTdClass
+                              ]}
+                              style={combinedTdStyle || undefined}
+                              colspan={colSpanVal}
+                              rowspan={rowSpanVal}
                               data-slot="td"
                               data-col-id={colId}
                             >
@@ -680,13 +768,13 @@ function isPinned(colId: string): boolean {
                                   } as any)}
                                 />
                               ) : typeof col.cell === "function" ? (
-                                col.cell({
+                                <Fragment set:html={col.cell({
                                   row: subRow,
                                   getValue: () => cellValue,
                                   renderValue: () => cellValue,
                                   column: col,
                                   table: {}
-                                })
+                                })} />
                               ) : cellValue !== undefined && cellValue !== null ? (
                                 String(cellValue)
                               ) : (
@@ -750,6 +838,8 @@ function isPinned(colId: string): boolean {
         this._initColumnVisibility(table, tbody)
         this._initSort(table, tbody)
         this._initRowEvents(tbody)
+        this._initSelection(tbody)
+        this._initExpandToggles(tbody)
       }
 
       // ── Search ────────────────────────────────────────────────────────────
@@ -986,6 +1076,98 @@ function isPinned(colId: string): boolean {
         })
       }
 
+      // ── Selection handling ────────────────────────────────────────────────
+      private _initSelection(tbody: Element) {
+        const selectAll = this.querySelector<HTMLInputElement>("[data-rla-select-all]")
+        const rowCheckboxes = tbody.querySelectorAll<HTMLInputElement>("[data-row-checkbox]")
+
+        const updateSelectAllState = () => {
+          if (!selectAll) return
+          const checkedCount = Array.from(rowCheckboxes).filter((cb) => cb.checked).length
+          if (checkedCount === 0) {
+            selectAll.checked = false
+            selectAll.indeterminate = false
+          } else if (checkedCount === rowCheckboxes.length) {
+            selectAll.checked = true
+            selectAll.indeterminate = false
+          } else {
+            selectAll.checked = false
+            selectAll.indeterminate = true
+          }
+        }
+
+        if (selectAll) {
+          selectAll.addEventListener("change", () => {
+            const isChecked = selectAll.checked
+            rowCheckboxes.forEach((cb) => {
+              cb.checked = isChecked
+              const tr = cb.closest<HTMLTableRowElement>("tr[data-row-id]")
+              if (tr) {
+                if (isChecked) tr.setAttribute("data-selected", "true")
+                else tr.removeAttribute("data-selected")
+              }
+            })
+          })
+        }
+
+        rowCheckboxes.forEach((cb) => {
+          cb.addEventListener("change", () => {
+            const tr = cb.closest<HTMLTableRowElement>("tr[data-row-id]")
+            if (tr) {
+              if (cb.checked) tr.setAttribute("data-selected", "true")
+              else tr.removeAttribute("data-selected")
+            }
+            updateSelectAllState()
+          })
+        })
+      }
+
+      // ── Row Expand Toggles ────────────────────────────────────────────────
+      private _initExpandToggles(tbody: Element) {
+        tbody.addEventListener("click", (e) => {
+          const target = e.target as HTMLElement
+          const btn = target.closest<HTMLButtonElement>("[data-row-expand]")
+          if (!btn) return
+          e.stopPropagation()
+
+          const rowId = btn.getAttribute("data-row-expand")
+          if (!rowId) return
+
+          const tr = tbody.querySelector<HTMLTableRowElement>(`tr[data-slot=tr][data-row-id="${rowId}"]`)
+          const expandedRow = tbody.querySelector<HTMLTableRowElement>(`tr[data-slot=tr-expanded][data-row-id="${rowId}"]`)
+
+          const isExpanded = tr?.getAttribute("data-expanded") === "true"
+          const next = !isExpanded
+
+          if (tr) {
+            if (next) tr.setAttribute("data-expanded", "true")
+            else tr.removeAttribute("data-expanded")
+          }
+
+          if (expandedRow) {
+            expandedRow.style.display = next ? "" : "none"
+          }
+
+          const chevron = btn.querySelector(".i-lucide-chevron-right, .i-lucide-chevron-down")
+          if (chevron) {
+            if (next) {
+              chevron.classList.remove("i-lucide-chevron-right")
+              chevron.classList.add("i-lucide-chevron-down")
+            } else {
+              chevron.classList.remove("i-lucide-chevron-down")
+              chevron.classList.add("i-lucide-chevron-right")
+            }
+          }
+
+          this.dispatchEvent(
+            new CustomEvent("rla-row-expand-change", {
+              detail: { rowId, expanded: next },
+              bubbles: true
+            })
+          )
+        })
+      }
+
       // ── Public API (imperative) ───────────────────────────────────────────
 
       /** Filter visible rows by a text query (case-insensitive). */
@@ -995,7 +1177,6 @@ function isPinned(colId: string): boolean {
           searchInput.value = query
           searchInput.dispatchEvent(new Event("input"))
         } else {
-          // Manual DOM filter when no search input is rendered
           const tbody = this.querySelector("tbody")
           if (!tbody) return
           const q = query.toLowerCase().trim()

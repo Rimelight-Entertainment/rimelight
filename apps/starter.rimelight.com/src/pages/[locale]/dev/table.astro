@@ -159,7 +159,7 @@ const astroColumns: TableColumn<PaymentItem>[] = [
         <h2 class="text-xl font-bold text-highlighted">SolidJS Reactive Table (<code class="text-xs font-mono">RLSTable</code>)</h2>
       </div>
       <p class="text-xs text-muted">
-        Includes sorting (shift+click for multi-sort), global live search, column visibility toggling, row selection, expandable sub-row inspector, category grouping, pinned columns, and custom action dropdowns.
+        Includes sorting (shift+click for multi-sort), global live search, column visibility toggling, row selection, expandable sub-row inspector, category grouping, pinned columns, virtualization (500+ rows), and custom action dropdowns.
       </p>
       
       <TableShowcase client:load />
@@ -172,7 +172,7 @@ const astroColumns: TableColumn<PaymentItem>[] = [
         <h2 class="text-xl font-bold text-highlighted">Astro SSR Native Table (<code class="text-xs font-mono">RLATable</code>)</h2>
       </div>
       <p class="text-xs text-muted">
-        Server-side rendered identical dataset with native custom element (<code class="font-mono">&lt;rla-table&gt;</code>) client enhancement for instant DOM sorting within category groups, live filtering, and column visibility.
+        Server-side rendered identical dataset with native custom element (<code class="font-mono">&lt;rla-table&gt;</code>) client enhancement for instant DOM sorting within category groups, live filtering, column visibility, and expandable sub-rows.
       </p>
 
       <RLATable

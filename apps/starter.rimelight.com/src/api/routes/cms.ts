@@ -648,7 +648,9 @@ cms.post("/pages/:id/unpublish", async (c) => {
   if (!page[0]) return c.json({ error: "Page not found" }, 404)
 
   const userRoles = session.roles || ["member"]
-  const isOwnerOrAdmin = userRoles.some((role: string) => ["owner", "admin"].includes(role.toLowerCase()))
+  const isOwnerOrAdmin = userRoles.some((role: string) =>
+    ["owner", "admin"].includes(role.toLowerCase())
+  )
   if (!isOwnerOrAdmin && page[0].authorIds && !page[0].authorIds.includes(session.userId)) {
     return c.json({ error: "Forbidden: insufficient permissions to unpublish page" }, 403)
   }

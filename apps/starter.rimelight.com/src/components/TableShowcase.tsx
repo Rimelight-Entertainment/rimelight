@@ -22,38 +22,61 @@ export default function TableShowcase() {
   const [grouping, setGrouping] = createSignal<string[]>(["category"])
   const [selectedRows, setSelectedRows] = createSignal<Record<string, boolean>>({})
   const [lastClickedRow, setLastClickedRow] = createSignal<string>("None")
+  const [isVirtual, setIsVirtual] = createSignal<boolean>(false)
   const [loadingAnimation, setLoadingAnimation] = createSignal<
     "carousel" | "carousel-inverse" | "swing" | "elastic"
   >("carousel")
+
+  const largeDataset = Array.from({ length: 500 }, (_, i) => ({
+    id: `PAY-VIRT-${2000 + i}`,
+    date: "2026-03-12T12:00:00",
+    status: (i % 3 === 0 ? "paid" : i % 3 === 1 ? "failed" : "refunded") as
+      | "paid"
+      | "failed"
+      | "refunded",
+    category: (i % 3 === 0 ? "Subscriptions" : i % 3 === 1 ? "Infrastructure" : "Hardware") as
+      | "Subscriptions"
+      | "Infrastructure"
+      | "Hardware",
+    email: `customer.${i + 1}@example.com`,
+    amount: 100 + ((i * 17) % 900)
+  }))
+
+  const toggleVirtualize = () => {
+    if (!isVirtual()) {
+      setIsVirtual(true)
+      setData(largeDataset)
+      setGrouping([])
+    } else {
+      setIsVirtual(false)
+      setData(SHOWCASE_PAYMENTS_DATA)
+      setGrouping(["category"])
+    }
+  }
 
   const columns = createMemo<TableColumn<PaymentItem>[]>(() => [
     {
       id: "select",
       size: 44,
       header: ({ table }: { table: TableApi<PaymentItem> }) => {
-        const total = () => table?.getFilteredRows().length || 0
-        const selCount = () => Object.values(selectedRows()).filter(Boolean).length
-        const allSelected = () => total() > 0 && selCount() === total()
+        const isAll = () => table?.getIsAllRowsSelected() ?? false
+        const isSome = () => table?.getIsSomeRowsSelected() ?? false
+
         return (
           <RLSCheckbox
-            checked={allSelected()}
-            onChange={(e: { currentTarget: HTMLInputElement }) => {
-              const checked = e.currentTarget.checked
-              const next: Record<string, boolean> = {}
-              if (checked) {
-                table?.getFilteredRows().forEach((r: TableRow<PaymentItem>) => (next[r.id] = true))
-              }
-              setSelectedRows(next)
+            checked={isAll()}
+            indeterminate={isSome()}
+            onChange={() => {
+              table?.toggleAllRowsSelected()
             }}
           />
         )
       },
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
         <RLSCheckbox
-          checked={!!selectedRows()[row.id]}
-          onChange={(e: { currentTarget: HTMLInputElement }) => {
-            setSelectedRows({ ...selectedRows(), [row.id]: e.currentTarget.checked })
-          }}
+          checked={row.getIsSelected()}
+          indeterminate={row.getIsSomeSelected()}
+          onChange={() => row.toggleSelected()}
         />
       ),
       enableSorting: false,
@@ -167,11 +190,15 @@ export default function TableShowcase() {
               icon: "info",
               onSelect: () => alert(`Payment ${row.id}: $${row.getValue("amount")}`)
             },
-            {
-              label: row.getIsExpanded() ? "Collapse Row" : "Expand Row",
-              icon: row.getIsExpanded() ? "chevronUp" : "chevronDown",
-              onSelect: () => row.toggleExpanded()
-            }
+            ...(row.getCanExpand()
+              ? [
+                  {
+                    label: row.getIsExpanded() ? "Collapse Row" : "Expand Row",
+                    icon: row.getIsExpanded() ? "chevronUp" : "chevronDown",
+                    onSelect: () => row.toggleExpanded()
+                  }
+                ]
+              : [])
           ],
           [
             {
@@ -246,6 +273,15 @@ export default function TableShowcase() {
 
         <RLSButton
           size="sm"
+          color={isVirtual() ? "primary" : "neutral"}
+          variant={isVirtual() ? "solid" : "outline"}
+          onClick={toggleVirtualize}
+        >
+          {isVirtual() ? "Virtualization: 500 Rows" : "Virtualize (500 rows)"}
+        </RLSButton>
+
+        <RLSButton
+          size="sm"
           color="neutral"
           variant="outline"
           onClick={() => {
@@ -302,14 +338,14 @@ export default function TableShowcase() {
         grouping={grouping()}
         loading={loading()}
         loadingAnimation={loadingAnimation()}
+        virtualize={isVirtual()}
         rowSelection={selectedRows()}
         onRowSelectionChange={setSelectedRows}
         columnPinning={{ left: ["select", "id"], right: ["actions"] }}
-        pagination={{ pageIndex: 0, pageSize: 6 }}
+        pagination={isVirtual() ? undefined : { pageIndex: 0, pageSize: 6 }}
         getSubRows={(row: PaymentItem) => row.children}
         onSelect={(_e: Event, row: TableRow<PaymentItem>) => {
           setLastClickedRow(`${row.id} (${row.original.email})`)
-          row.toggleExpanded()
         }}
         expandedContent={(row: TableRow<PaymentItem>) => (
           <div class="p-4 rounded bg-muted/40 text-xs font-mono flex flex-col gap-1 border border-default/50">
@@ -326,8 +362,11 @@ export default function TableShowcase() {
         <div class="p-3 rounded-lg border border-default bg-muted/10">
           <span class="text-muted block">Selected rows:</span>
           <span class="font-bold text-highlighted">
-            {tableRef()?.getFilteredRows().length ?? data().length} rows |{" "}
-            {Object.values(selectedRows()).filter(Boolean).length} selected
+            {tableRef()?.getFlatRows().length ?? data().length} total rows (
+            {tableRef()?.getFilteredRows().length ?? data().length} root) |{" "}
+            {tableRef()?.getSelectedRows().length ??
+              Object.values(selectedRows()).filter(Boolean).length}{" "}
+            selected
           </span>
         </div>
         <div class="p-3 rounded-lg border border-default bg-muted/10">

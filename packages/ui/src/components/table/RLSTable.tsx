@@ -1,4 +1,5 @@
-import { createMemo, createSignal, For, Show, type JSX } from "solid-js"
+import { createMemo, createSignal, For, onCleanup, onMount, Show, type JSX } from "solid-js"
+import { isServer } from "solid-js/web"
 import type {
   TableProps,
   TableColumn,
@@ -9,7 +10,8 @@ import type {
   ColumnFiltersState,
   TableColumnPinningState,
   TableRowPinningState,
-  TablePaginationState
+  TablePaginationState,
+  TableVirtualizeOptions
 } from "./table"
 import { tableTheme } from "./table.theme"
 import RLSInput from "../input/RLSInput"
@@ -40,6 +42,7 @@ function getNestedValue(obj: AnyData, key: string): any {
 
 export function RLSTable<T = any>(props: RLSTableProps<T>) {
   let tableElementRef: HTMLTableElement | null = null
+  let containerRef: HTMLDivElement | null = null
 
   // ─── Controlled / Uncontrolled State Store ──────────────────────────────────
   const [internalSorting, setInternalSorting] = createSignal<SortingState>(props.sorting ?? [])
@@ -68,7 +71,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
     TablePaginationState | undefined
   >(props.pagination)
 
-  // Reactive state readers that prefer controlled props if provided
+  // Reactive state readers
   const currentSorting = () => (props.sorting !== undefined ? props.sorting : internalSorting())
   const currentGlobalFilter = () =>
     props.globalFilter !== undefined ? props.globalFilter : internalGlobalFilter()
@@ -152,6 +155,27 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
   })
 
   // ─── Row Hierarchy Building ──────────────────────────────────────────────────
+  const getAllRowDescendants = (row: TableRow<T>): TableRow<T>[] => {
+    if (!row.subRows || row.subRows.length === 0) return []
+    const res: TableRow<T>[] = []
+    for (const child of row.subRows) {
+      res.push(child)
+      res.push(...getAllRowDescendants(child))
+    }
+    return res
+  }
+
+  const getAllFlatRows = (rows: TableRow<T>[]): TableRow<T>[] => {
+    const flat: TableRow<T>[] = []
+    for (const r of rows) {
+      flat.push(r)
+      if (r.subRows && r.subRows.length > 0) {
+        flat.push(...getAllFlatRows(r.subRows))
+      }
+    }
+    return flat
+  }
+
   const buildRowTree = (rawItems: T[], parentDepth = 0): TableRow<T>[] => {
     return rawItems.map((item, idx) => {
       const rId = props.getRowId
@@ -175,11 +199,42 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         original: item,
         index: idx,
         depth: parentDepth,
-        getValue: (key: string) => getNestedValue(item as AnyData, key),
-        getIsSelected: () => !!currentRowSelection()[rId],
+        getValue: (key: string) => {
+          const colDef = resolvedColumns().find((c) => (c.id || c.accessorKey) === key)
+          if (colDef && typeof colDef.accessorFn === "function") {
+            return colDef.accessorFn(item)
+          }
+          return getNestedValue(item as AnyData, key)
+        },
+        getIsSelected: () => {
+          const sel = currentRowSelection()
+          if (subRowsList && subRowsList.length > 0) {
+            const descendants = getAllRowDescendants(rowObj)
+            if (descendants.length > 0) {
+              return descendants.every((d) => !!sel[d.id])
+            }
+          }
+          return !!sel[rId]
+        },
+        getIsSomeSelected: () => {
+          if (!subRowsList || subRowsList.length === 0) return false
+          const sel = currentRowSelection()
+          const descendants = getAllRowDescendants(rowObj)
+          if (descendants.length === 0) return false
+          const count = descendants.filter((d) => !!sel[d.id]).length
+          return count > 0 && count < descendants.length
+        },
         toggleSelected: (val?: boolean) => {
-          const nextVal = val !== undefined ? val : !currentRowSelection()[rId]
-          updateRowSelection({ ...currentRowSelection(), [rId]: nextVal })
+          const isCurrentlySelected = rowObj.getIsSelected()
+          const nextVal = val !== undefined ? val : !isCurrentlySelected
+          const nextMap = { ...currentRowSelection(), [rId]: nextVal }
+          if (subRowsList) {
+            const descendants = getAllRowDescendants(rowObj)
+            for (const d of descendants) {
+              nextMap[d.id] = nextVal
+            }
+          }
+          updateRowSelection(nextMap)
         },
         getIsExpanded: () => !!currentExpanded()[rId],
         toggleExpanded: (val?: boolean) => {
@@ -188,13 +243,11 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         },
         getToggleExpandedHandler: () => (e?: Event) => {
           e?.stopPropagation?.()
-          const nextVal = !currentExpanded()[rId]
-          updateExpanded({ ...currentExpanded(), [rId]: nextVal })
+          rowObj.toggleExpanded()
         },
         getToggleSelectedHandler: () => (e?: Event) => {
           e?.stopPropagation?.()
-          const nextVal = !currentRowSelection()[rId]
-          updateRowSelection({ ...currentRowSelection(), [rId]: nextVal })
+          rowObj.toggleSelected()
         },
         getIsPinned: () => {
           const pin = currentRowPinning()
@@ -211,7 +264,12 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
           updateRowPinning({ top: nextTop, bottom: nextBottom })
         },
         getIsGrouped: () => false,
-        getCanExpand: () => !!(subRowsList && subRowsList.length > 0) || !!props.expandedContent,
+        getCanExpand: () => {
+          if (typeof props.getRowCanExpand === "function") {
+            return props.getRowCanExpand(rowObj)
+          }
+          return !!(subRowsList && subRowsList.length > 0)
+        },
         ...(subRowsList ? { subRows: subRowsList } : {})
       }
       return rowObj
@@ -227,10 +285,20 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         if (typeof r.original !== "object" || !r.original) {
           return String(r.original).toLowerCase().includes(q)
         }
-        return Object.values(r.original as AnyData).some((val) =>
-          String(val ?? "")
-            .toLowerCase()
-            .includes(q)
+        return (
+          Object.values(r.original as AnyData).some((val) =>
+            String(val ?? "")
+              .toLowerCase()
+              .includes(q)
+          ) ||
+          resolvedColumns().some((col) => {
+            const v = col.accessorFn
+              ? col.accessorFn(r.original)
+              : r.getValue((col.id || col.accessorKey || "") as string)
+            return String(v ?? "")
+              .toLowerCase()
+              .includes(q)
+          })
         )
       })
     }
@@ -271,8 +339,16 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         let cmp: number
         if (typeof valA === "number" && typeof valB === "number") {
           cmp = valA - valB
+        } else if (valA instanceof Date && valB instanceof Date) {
+          cmp = valA.getTime() - valB.getTime()
         } else {
-          cmp = String(valA).localeCompare(String(valB))
+          const numA = Number(valA)
+          const numB = Number(valB)
+          if (!isNaN(numA) && !isNaN(numB)) {
+            cmp = numA - numB
+          } else {
+            cmp = String(valA).localeCompare(String(valB))
+          }
         }
         return desc ? -cmp : cmp
       }
@@ -300,6 +376,8 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         groupMap.set(val, [])
         groupOrder.push(val)
       }
+      row.groupingColumnId = groupColId
+      row.groupingValue = val
       groupMap.get(val)!.push(row)
     }
 
@@ -369,6 +447,66 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
     return pageRows
   })
 
+  // ─── Virtualization Windowing ────────────────────────────────────────────────
+  const [scrollTop, setScrollTop] = createSignal(0)
+  const isVirtual = () => !!props.virtualize
+  const virtualOpts = (): TableVirtualizeOptions =>
+    typeof props.virtualize === "object" ? props.virtualize : {}
+
+  const estimateRowHeight = () => {
+    const opt = virtualOpts().estimateSize
+    if (typeof opt === "number") return opt
+    return 48
+  }
+
+  const overscan = () => virtualOpts().overscan ?? 8
+
+  const virtualizedView = createMemo(() => {
+    const items = paginatedItems()
+    if (!isVirtual()) {
+      return {
+        items,
+        padTop: 0,
+        padBottom: 0,
+        startIndex: 0
+      }
+    }
+
+    const rowH = estimateRowHeight()
+    const scrollPos = scrollTop()
+    const containerHeight = containerRef?.clientHeight || 400
+    const totalCount = items.length
+
+    const rawStart = Math.floor(scrollPos / rowH)
+    const startIndex = Math.max(0, rawStart - overscan())
+    const visibleCount = Math.ceil(containerHeight / rowH) + overscan() * 2
+    const endIndex = Math.min(totalCount, startIndex + visibleCount)
+
+    const padTop = startIndex * rowH
+    const padBottom = Math.max(0, (totalCount - endIndex) * rowH)
+    const sliced = items.slice(startIndex, endIndex)
+
+    return {
+      items: sliced,
+      padTop,
+      padBottom,
+      startIndex
+    }
+  })
+
+  if (!isServer) {
+    onMount(() => {
+      if (isVirtual()) {
+        const scrollEl = virtualOpts().getScrollElement?.() || containerRef
+        if (scrollEl) {
+          const handleScroll = () => setScrollTop(scrollEl.scrollTop)
+          scrollEl.addEventListener("scroll", handleScroll, { passive: true })
+          onCleanup(() => scrollEl.removeEventListener("scroll", handleScroll))
+        }
+      }
+    })
+  }
+
   // ─── Column offsets ──────────────────────────────────────────────────────────
   const columnOffsets = createMemo(() => {
     const cols = resolvedColumns()
@@ -415,15 +553,78 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
   }
 
   // ─── Expose TableApi ─────────────────────────────────────────────────────────
+  const getPageRows = () => {
+    return paginatedItems()
+      .filter((i) => i.type === "row")
+      .map((i) => (i as { type: "row"; row: TableRow<T> }).row)
+  }
+
   const tableApi: TableApi<T> = {
     get tableRef() {
       return tableElementRef
     },
     getFilteredRows: () => filteredRows(),
+    getFlatRows: () => getAllFlatRows(filteredRows()),
     getSortedRows: () => sortedRows(),
-    getSelectedRows: () => filteredRows().filter((r) => r.getIsSelected()),
+    getSelectedRows: () => getAllFlatRows(filteredRows()).filter((r) => r.getIsSelected()),
+    getFilteredSelectedRowModel: () => {
+      const flatSelected = getAllFlatRows(filteredRows()).filter((r) => r.getIsSelected())
+      return {
+        rows: filteredRows().filter((r) => r.getIsSelected()),
+        flatRows: flatSelected
+      }
+    },
+    getFilteredRowModel: () => ({
+      rows: filteredRows(),
+      flatRows: getAllFlatRows(filteredRows())
+    }),
     getAllColumns: () => resolvedColumns(),
     getColumn: (id: string) => resolvedColumns().find((c) => (c.id || c.accessorKey) === id),
+    getIsAllRowsSelected: () => {
+      const flat = getAllFlatRows(filteredRows())
+      if (flat.length === 0) return false
+      return flat.every((r) => r.getIsSelected())
+    },
+    getIsSomeRowsSelected: () => {
+      const flat = getAllFlatRows(filteredRows())
+      if (flat.length === 0) return false
+      const selCount = flat.filter((r) => r.getIsSelected()).length
+      return selCount > 0 && selCount < flat.length
+    },
+    toggleAllRowsSelected: (selected?: boolean) => {
+      const flat = getAllFlatRows(filteredRows())
+      const isAll = flat.length > 0 && flat.every((r) => r.getIsSelected())
+      const targetState = selected !== undefined ? selected : !isAll
+      const nextMap = { ...currentRowSelection() }
+      for (const r of flat) {
+        nextMap[r.id] = targetState
+      }
+      updateRowSelection(nextMap)
+    },
+    getIsAllPageRowsSelected: () => {
+      const rows = getPageRows()
+      const flat = getAllFlatRows(rows)
+      if (flat.length === 0) return false
+      return flat.every((r) => r.getIsSelected())
+    },
+    getIsSomePageRowsSelected: () => {
+      const rows = getPageRows()
+      const flat = getAllFlatRows(rows)
+      if (flat.length === 0) return false
+      const selCount = flat.filter((r) => r.getIsSelected()).length
+      return selCount > 0 && selCount < flat.length
+    },
+    toggleAllPageRowsSelected: (selected?: boolean) => {
+      const rows = getPageRows()
+      const flat = getAllFlatRows(rows)
+      const isAll = flat.length > 0 && flat.every((r) => r.getIsSelected())
+      const targetState = selected !== undefined ? selected : !isAll
+      const nextMap = { ...currentRowSelection() }
+      for (const r of flat) {
+        nextMap[r.id] = targetState
+      }
+      updateRowSelection(nextMap)
+    },
     setGlobalFilter: (val: string) => updateGlobalFilter(val),
     setColumnFilter: (id: string, val: any) => {
       const current = currentColumnFilters().filter((f) => f.id !== id)
@@ -439,6 +640,14 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
     setRowPinning: (pinning: TableRowPinningState) => updateRowPinning(pinning),
     setSorting: (st: SortingState) => updateSorting(st),
     setPagination: (pag: TablePaginationState) => updatePagination(pag),
+    setPageIndex: (pageIndex: number) => {
+      const cur = currentPagination() || { pageIndex: 0, pageSize: 10 }
+      updatePagination({ ...cur, pageIndex })
+    },
+    setPageSize: (pageSize: number) => {
+      const cur = currentPagination() || { pageIndex: 0, pageSize: 10 }
+      updatePagination({ ...cur, pageSize })
+    },
     getState: () => ({
       sorting: currentSorting(),
       globalFilter: currentGlobalFilter(),
@@ -473,7 +682,8 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
   )
 
   const showToolbar = createMemo(
-    () => props.searchable || props.showColumnsToggle || !!props.toolbar
+    () =>
+      props.searchable || props.showColumnsToggle || !!props.toolbar || !!props.slots?.["toolbar"]
   )
 
   const columnDropdownItems = createMemo(() =>
@@ -495,16 +705,18 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
   )
 
   const hasFooters = createMemo(() =>
-    visibleColumns().some((col) => typeof col.footer === "function" || col.footer)
+    visibleColumns().some(
+      (col) =>
+        typeof col.footer === "function" ||
+        col.footer ||
+        props.slots?.[`${String(col.id || col.accessorKey || "")}-footer`]
+    )
   )
 
   return (
     <div class={classes().root} data-slot="root">
       <Show when={showToolbar()}>
-        <div
-          class="flex items-center gap-3 px-3.5 py-3 border-b border-default bg-muted/20 overflow-x-auto"
-          data-slot="toolbar"
-        >
+        <div class={classes().toolbar} data-slot="toolbar">
           <Show when={props.searchable}>
             <RLSInput
               type="search"
@@ -516,7 +728,9 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
             />
           </Show>
 
-          {props.toolbar?.()}
+          {props.slots?.["toolbar"]
+            ? props.slots["toolbar"]({ table: tableApi })
+            : props.toolbar?.()}
 
           <Show when={props.showColumnsToggle}>
             <div class="ml-auto shrink-0">
@@ -533,11 +747,45 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         </div>
       </Show>
 
-      <div class="overflow-x-auto w-full">
+      <div
+        ref={(el) => (containerRef = el)}
+        class="overflow-x-auto w-full relative"
+        style={isVirtual() ? "max-height: 400px; overflow-y: auto;" : undefined}
+      >
         <table ref={(el) => (tableElementRef = el)} class={classes().base} data-slot="base">
-          <Show when={props.caption || props.captionContent}>
+          <colgroup>
+            <For each={visibleColumns()}>
+              {(col) => {
+                const styles: string[] = []
+                if (typeof col.size === "number") styles.push(`width: ${col.size}px;`)
+                else if (col.size) styles.push(`width: ${col.size};`)
+                if (col.minSize) {
+                  styles.push(
+                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                  )
+                }
+                if (col.maxSize) {
+                  styles.push(
+                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                  )
+                }
+                return (
+                  <col
+                    data-col-id={String(col.id || col.accessorKey || "")}
+                    style={styles.join(" ") || undefined}
+                  />
+                )
+              }}
+            </For>
+          </colgroup>
+
+          <Show when={props.caption || props.captionContent || props.slots?.["caption"]}>
             <caption class={classes().caption} data-slot="caption">
-              {props.captionContent ? props.captionContent() : props.caption}
+              {props.slots?.["caption"]
+                ? props.slots["caption"]({ table: tableApi })
+                : props.captionContent
+                  ? props.captionContent()
+                  : props.caption}
             </caption>
           </Show>
 
@@ -547,7 +795,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
               <tr class={classes().tr} data-slot="tr">
                 <For each={visibleColumns()}>
                   {(col) => {
-                    const colId = () => (col.id || col.accessorKey || "") as string
+                    const colId = () => String(col.id || col.accessorKey || "")
                     const pinned = () =>
                       colId() in columnOffsets().left || colId() in columnOffsets().right
                     const pinStyle = () => {
@@ -559,6 +807,22 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                       }
                       return ""
                     }
+                    const sizeStyle = () => {
+                      const styles: string[] = []
+                      if (typeof col.size === "number") styles.push(`width: ${col.size}px;`)
+                      else if (col.size) styles.push(`width: ${col.size};`)
+                      if (col.minSize) {
+                        styles.push(
+                          `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                        )
+                      }
+                      if (col.maxSize) {
+                        styles.push(
+                          `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                        )
+                      }
+                      return styles.join(" ")
+                    }
                     const metaThClass = () =>
                       typeof col.meta?.class?.th === "function"
                         ? col.meta.class.th(col)
@@ -569,7 +833,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         : col.meta?.style?.th || ""
                     const canSort = () =>
                       col.enableSorting !== false &&
-                      !!(col.accessorKey || col.id) &&
+                      !!(col.accessorKey || col.id || col.accessorFn) &&
                       colId() !== "actions" &&
                       colId() !== "select"
 
@@ -577,10 +841,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                     const sortDir = () =>
                       activeSort() ? (activeSort()!.desc ? "desc" : "asc") : "none"
 
-                    const sizeStyle = () =>
-                      col.size
-                        ? `width: ${typeof col.size === "number" ? `${col.size}px` : col.size};`
-                        : ""
+                    const slotHeader = props.slots?.[`${colId()}-header`]
 
                     return (
                       <th
@@ -591,34 +852,39 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         data-slot="th"
                       >
                         <Show
-                          when={canSort()}
-                          fallback={
-                            typeof col.header === "function"
-                              ? col.header({ column: col, table: tableApi })
-                              : col.header || colId()
-                          }
+                          when={!slotHeader}
+                          fallback={slotHeader?.({ column: col, table: tableApi })}
                         >
-                          <button
-                            type="button"
-                            class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
-                            onClick={(e) => toggleSort(colId(), e.shiftKey)}
-                            aria-label={`Sort by ${colId()}`}
-                          >
-                            <span>
-                              {typeof col.header === "function"
+                          <Show
+                            when={canSort()}
+                            fallback={
+                              typeof col.header === "function"
                                 ? col.header({ column: col, table: tableApi })
-                                : col.header || colId()}
-                            </span>
-                            <span
-                              class={`size-3.5 transition-all shrink-0 ${
-                                sortDir() === "asc"
-                                  ? "i-lucide-arrow-up-narrow-wide text-primary"
-                                  : sortDir() === "desc"
-                                    ? "i-lucide-arrow-down-wide-narrow text-primary"
-                                    : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100"
-                              }`}
-                            />
-                          </button>
+                                : col.header || colId()
+                            }
+                          >
+                            <button
+                              type="button"
+                              class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
+                              onClick={(e) => toggleSort(colId(), e.shiftKey)}
+                              aria-label={`Sort by ${colId()}`}
+                            >
+                              <span>
+                                {typeof col.header === "function"
+                                  ? col.header({ column: col, table: tableApi })
+                                  : col.header || colId()}
+                              </span>
+                              <span
+                                class={`size-3.5 transition-all shrink-0 ${
+                                  sortDir() === "asc"
+                                    ? "i-lucide-arrow-up-narrow-wide text-primary"
+                                    : sortDir() === "desc"
+                                      ? "i-lucide-arrow-down-wide-narrow text-primary"
+                                      : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100"
+                                }`}
+                              />
+                            </button>
+                          </Show>
                         </Show>
                       </th>
                     )
@@ -630,7 +896,9 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
 
           {/* ── tbody ── */}
           <tbody class={classes().tbody} data-slot="tbody">
-            {props.bodyTop?.()}
+            {props.slots?.["body-top"]
+              ? props.slots["body-top"]({ table: tableApi })
+              : props.bodyTop?.()}
 
             <Show
               when={!props.loading}
@@ -642,7 +910,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                     data-slot="loading"
                   >
                     <Show
-                      when={props.loadingContent}
+                      when={props.slots?.["loading"] || props.loadingContent}
                       fallback={
                         <div class="flex items-center justify-center gap-2 text-muted py-4">
                           <RLSIcon
@@ -653,7 +921,9 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         </div>
                       }
                     >
-                      {props.loadingContent?.()}
+                      {props.slots?.["loading"]
+                        ? props.slots["loading"]({ table: tableApi })
+                        : props.loadingContent?.()}
                     </Show>
                   </td>
                 </tr>
@@ -669,7 +939,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                       data-slot="empty"
                     >
                       <Show
-                        when={props.emptyContent}
+                        when={props.slots?.["empty"] || props.emptyContent}
                         fallback={
                           <div class="flex flex-col items-center justify-center py-6 gap-2 text-muted">
                             <RLSIcon name="i-lucide-inbox" class="size-8 opacity-40" />
@@ -677,16 +947,30 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                           </div>
                         }
                       >
-                        {props.emptyContent?.()}
+                        {props.slots?.["empty"]
+                          ? props.slots["empty"]({ table: tableApi })
+                          : props.emptyContent?.()}
                       </Show>
                     </td>
                   </tr>
                 }
               >
-                <For each={paginatedItems()}>
+                {/* Virtual Top Spacer */}
+                <Show when={isVirtual() && virtualizedView().padTop > 0}>
+                  <tr>
+                    <td
+                      colSpan={Math.max(1, visibleColumns().length)}
+                      style={`height: ${virtualizedView().padTop}px; padding: 0; border: 0;`}
+                    />
+                  </tr>
+                </Show>
+
+                <For each={virtualizedView().items}>
                   {(item) => {
                     if (item.type === "group") {
                       const { group } = item
+                      const groupHeaderSlot = props.slots?.["group-header"]
+
                       return (
                         <tr class={classes().trGroup} data-slot="tr-group">
                           <td
@@ -695,7 +979,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                             data-slot="td-group"
                           >
                             <Show
-                              when={props.groupHeader}
+                              when={groupHeaderSlot || props.groupHeader}
                               fallback={
                                 <span class="flex items-center gap-2">
                                   <span class="i-lucide-layers size-3.5 text-primary opacity-70" />
@@ -706,7 +990,13 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                 </span>
                               }
                             >
-                              {props.groupHeader?.(group, visibleColumns().length)}
+                              {groupHeaderSlot
+                                ? groupHeaderSlot({
+                                    group,
+                                    colSpan: visibleColumns().length,
+                                    table: tableApi
+                                  })
+                                : props.groupHeader?.(group, visibleColumns().length)}
                             </Show>
                           </td>
                         </tr>
@@ -745,10 +1035,14 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         >
                           <For each={visibleColumns()}>
                             {(col) => {
-                              const colId = () => (col.id || col.accessorKey || "") as string
-                              const accessorKey = () => (col.accessorKey || col.id || "") as string
-                              const cellValue = () =>
-                                accessorKey() ? row.getValue(accessorKey()) : undefined
+                              const colId = () => String(col.id || col.accessorKey || "")
+                              const cellValue = () => {
+                                if (typeof col.accessorFn === "function") {
+                                  return col.accessorFn(row.original)
+                                }
+                                const key = (col.accessorKey || col.id || "") as string
+                                return key ? row.getValue(key) : undefined
+                              }
                               const pinned = () =>
                                 colId() in columnOffsets().left || colId() in columnOffsets().right
 
@@ -769,6 +1063,24 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                   ? col.meta.rowspan.td(row)
                                   : col.meta?.rowspan?.td
 
+                              const sizeStyle = () => {
+                                const styles: string[] = []
+                                if (typeof col.size === "number")
+                                  styles.push(`width: ${col.size}px;`)
+                                else if (col.size) styles.push(`width: ${col.size};`)
+                                if (col.minSize) {
+                                  styles.push(
+                                    `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                                  )
+                                }
+                                if (col.maxSize) {
+                                  styles.push(
+                                    `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                                  )
+                                }
+                                return styles.join(" ")
+                              }
+
                               const pinStyle = () => {
                                 if (colId() in columnOffsets().left) {
                                   return `left: ${columnOffsets().left[colId()]}px;`
@@ -779,26 +1091,40 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                 return ""
                               }
 
+                              const cellSlot = props.slots?.[`${colId()}-cell`]
+
                               return (
                                 <td
                                   class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
-                                  style={`${pinStyle()} ${metaTdStyle()}`}
+                                  style={`${sizeStyle()} ${pinStyle()} ${metaTdStyle()}`}
                                   colSpan={colSpanVal()}
                                   rowSpan={rowSpanVal()}
                                   data-slot="td"
                                   data-col-id={colId()}
                                 >
-                                  {typeof col.cell === "function"
-                                    ? col.cell({
-                                        row,
-                                        getValue: cellValue,
-                                        renderValue: cellValue,
-                                        column: col,
-                                        table: tableApi
-                                      })
-                                    : cellValue() !== undefined && cellValue() !== null
-                                      ? String(cellValue())
-                                      : "—"}
+                                  <Show
+                                    when={!cellSlot}
+                                    fallback={cellSlot?.({
+                                      row,
+                                      column: col,
+                                      cell: { value: cellValue() },
+                                      getValue: cellValue,
+                                      renderValue: cellValue,
+                                      table: tableApi
+                                    })}
+                                  >
+                                    {typeof col.cell === "function"
+                                      ? col.cell({
+                                          row,
+                                          getValue: cellValue,
+                                          renderValue: cellValue,
+                                          column: col,
+                                          table: tableApi
+                                        })
+                                      : cellValue() !== undefined && cellValue() !== null
+                                        ? String(cellValue())
+                                        : "—"}
+                                  </Show>
                                 </td>
                               )
                             }}
@@ -806,14 +1132,22 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         </tr>
 
                         {/* Expanded sub-row content */}
-                        <Show when={row.getIsExpanded() && props.expandedContent}>
+                        <Show
+                          when={
+                            row.getCanExpand() &&
+                            row.getIsExpanded() &&
+                            (props.slots?.["expanded"] || props.expandedContent)
+                          }
+                        >
                           <tr class={classes().trExpanded} data-slot="tr-expanded">
                             <td
                               colSpan={Math.max(1, visibleColumns().length)}
                               class={classes().tdExpanded}
                               data-slot="td-expanded"
                             >
-                              {props.expandedContent?.(row)}
+                              {props.slots?.["expanded"]
+                                ? props.slots["expanded"]({ row, table: tableApi })
+                                : props.expandedContent?.(row)}
                             </td>
                           </tr>
                         </Show>
@@ -821,49 +1155,160 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         {/* Tree / Sub-rows */}
                         <Show when={row.getIsExpanded() && row.subRows && row.subRows.length > 0}>
                           <For each={row.subRows}>
-                            {(subRow) => (
-                              <tr
-                                class={classes().tr}
-                                data-slot="tr"
-                                data-row-id={subRow.id}
-                                data-depth={subRow.depth}
-                              >
-                                <For each={visibleColumns()}>
-                                  {(col) => {
-                                    const colId = () => (col.id || col.accessorKey || "") as string
-                                    const accessorKey = () =>
-                                      (col.accessorKey || col.id || "") as string
-                                    const cellValue = () =>
-                                      accessorKey() ? subRow.getValue(accessorKey()) : undefined
-                                    return (
-                                      <td class={classes().td} data-slot="td" data-col-id={colId()}>
-                                        {typeof col.cell === "function"
-                                          ? col.cell({
+                            {(subRow) => {
+                              const subMetaClass = () =>
+                                typeof props.meta?.class?.tr === "function"
+                                  ? props.meta.class.tr(subRow)
+                                  : props.meta?.class?.tr || ""
+                              const subMetaStyle = () =>
+                                typeof props.meta?.style?.tr === "function"
+                                  ? props.meta.style.tr(subRow)
+                                  : props.meta?.style?.tr || ""
+
+                              return (
+                                <tr
+                                  class={`${classes().tr} ${subMetaClass()}`}
+                                  style={subMetaStyle() || undefined}
+                                  data-slot="tr"
+                                  data-row-id={subRow.id}
+                                  data-depth={subRow.depth}
+                                  data-selected={subRow.getIsSelected() ? "true" : undefined}
+                                  onClick={(e) => {
+                                    const target = e.target as HTMLElement
+                                    if (
+                                      target.closest(
+                                        "a, button, input, select, textarea, [role=button]"
+                                      )
+                                    )
+                                      return
+                                    props.onSelect?.(e, subRow)
+                                  }}
+                                  onMouseEnter={(e) => props.onHover?.(e, subRow)}
+                                  onMouseLeave={(e) => props.onHover?.(e, null)}
+                                  onContextMenu={(e) => props.onContextmenu?.(e, subRow)}
+                                >
+                                  <For each={visibleColumns()}>
+                                    {(col) => {
+                                      const colId = () => String(col.id || col.accessorKey || "")
+                                      const cellValue = () => {
+                                        if (typeof col.accessorFn === "function") {
+                                          return col.accessorFn(subRow.original)
+                                        }
+                                        const key = (col.accessorKey || col.id || "") as string
+                                        return key ? subRow.getValue(key) : undefined
+                                      }
+                                      const pinned = () =>
+                                        colId() in columnOffsets().left ||
+                                        colId() in columnOffsets().right
+
+                                      const metaTdClass = () =>
+                                        typeof col.meta?.class?.td === "function"
+                                          ? col.meta.class.td(subRow)
+                                          : col.meta?.class?.td || ""
+                                      const metaTdStyle = () =>
+                                        typeof col.meta?.style?.td === "function"
+                                          ? col.meta.style.td(subRow)
+                                          : col.meta?.style?.td || ""
+                                      const colSpanVal = () =>
+                                        typeof col.meta?.colspan?.td === "function"
+                                          ? col.meta.colspan.td(subRow)
+                                          : col.meta?.colspan?.td
+                                      const rowSpanVal = () =>
+                                        typeof col.meta?.rowspan?.td === "function"
+                                          ? col.meta.rowspan.td(subRow)
+                                          : col.meta?.rowspan?.td
+
+                                      const sizeStyle = () => {
+                                        const styles: string[] = []
+                                        if (typeof col.size === "number")
+                                          styles.push(`width: ${col.size}px;`)
+                                        else if (col.size) styles.push(`width: ${col.size};`)
+                                        if (col.minSize) {
+                                          styles.push(
+                                            `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
+                                          )
+                                        }
+                                        if (col.maxSize) {
+                                          styles.push(
+                                            `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
+                                          )
+                                        }
+                                        return styles.join(" ")
+                                      }
+
+                                      const pinStyle = () => {
+                                        if (colId() in columnOffsets().left) {
+                                          return `left: ${columnOffsets().left[colId()]}px;`
+                                        }
+                                        if (colId() in columnOffsets().right) {
+                                          return `right: ${columnOffsets().right[colId()]}px;`
+                                        }
+                                        return ""
+                                      }
+
+                                      const cellSlot = props.slots?.[`${colId()}-cell`]
+
+                                      return (
+                                        <td
+                                          class={`${classes().td} ${pinned() ? "sticky bg-default z-10" : ""} ${metaTdClass()}`}
+                                          style={`${sizeStyle()} ${pinStyle()} ${metaTdStyle()}`}
+                                          colSpan={colSpanVal()}
+                                          rowSpan={rowSpanVal()}
+                                          data-slot="td"
+                                          data-col-id={colId()}
+                                        >
+                                          <Show
+                                            when={!cellSlot}
+                                            fallback={cellSlot?.({
                                               row: subRow,
+                                              column: col,
+                                              cell: { value: cellValue() },
                                               getValue: cellValue,
                                               renderValue: cellValue,
-                                              column: col,
                                               table: tableApi
-                                            })
-                                          : cellValue() !== undefined && cellValue() !== null
-                                            ? String(cellValue())
-                                            : "—"}
-                                      </td>
-                                    )
-                                  }}
-                                </For>
-                              </tr>
-                            )}
+                                            })}
+                                          >
+                                            {typeof col.cell === "function"
+                                              ? col.cell({
+                                                  row: subRow,
+                                                  getValue: cellValue,
+                                                  renderValue: cellValue,
+                                                  column: col,
+                                                  table: tableApi
+                                                })
+                                              : cellValue() !== undefined && cellValue() !== null
+                                                ? String(cellValue())
+                                                : "—"}
+                                          </Show>
+                                        </td>
+                                      )
+                                    }}
+                                  </For>
+                                </tr>
+                              )
+                            }}
                           </For>
                         </Show>
                       </>
                     )
                   }}
                 </For>
+
+                {/* Virtual Bottom Spacer */}
+                <Show when={isVirtual() && virtualizedView().padBottom > 0}>
+                  <tr>
+                    <td
+                      colSpan={Math.max(1, visibleColumns().length)}
+                      style={`height: ${virtualizedView().padBottom}px; padding: 0; border: 0;`}
+                    />
+                  </tr>
+                </Show>
               </Show>
             </Show>
 
-            {props.bodyBottom?.()}
+            {props.slots?.["body-bottom"]
+              ? props.slots["body-bottom"]({ table: tableApi })
+              : props.bodyBottom?.()}
           </tbody>
 
           {/* ── tfoot ── */}
@@ -872,11 +1317,19 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
               <tr class={classes().tr} data-slot="tr">
                 <For each={visibleColumns()}>
                   {(col) => {
+                    const colId = () => String(col.id || col.accessorKey || "")
+                    const footerSlot = props.slots?.[`${colId()}-footer`]
+
                     return (
                       <td class={classes().td} data-slot="td">
-                        {typeof col.footer === "function"
-                          ? col.footer({ column: col, table: tableApi })
-                          : col.footer || ""}
+                        <Show
+                          when={!footerSlot}
+                          fallback={footerSlot?.({ column: col, table: tableApi })}
+                        >
+                          {typeof col.footer === "function"
+                            ? col.footer({ column: col, table: tableApi })
+                            : col.footer || ""}
+                        </Show>
                       </td>
                     )
                   }}

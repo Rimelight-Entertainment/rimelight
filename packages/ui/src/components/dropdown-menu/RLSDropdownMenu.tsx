@@ -9,7 +9,7 @@ import {
   type Component,
   type JSX
 } from "solid-js"
-import { Portal } from "solid-js/web"
+import { isServer, Portal } from "solid-js/web"
 import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
 import { dropdownMenuTheme } from "./dropdown-menu.theme"
 import RLSIcon from "../icon/RLSIcon"
@@ -117,7 +117,7 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
           if (next) updatePosition()
           setIsOpen(next)
         }}
-        class={resolvedClasses().trigger}
+        class={`${resolvedClasses().trigger} ${!props.label && !props.children && !props.trigger ? "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0" : ""}`}
         data-slot="trigger"
       >
         {props.trigger ? (
@@ -133,7 +133,7 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
         )}
       </button>
 
-      <Show when={isOpen()}>
+      <Show when={!isServer && isOpen()}>
         <Portal>
           <div
             ref={(el) => (menuContentRef = el)}

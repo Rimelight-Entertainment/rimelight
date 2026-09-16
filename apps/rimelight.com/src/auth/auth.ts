@@ -75,7 +75,12 @@ export const auth: AuthAdapter = {
     if (session) return session
 
     // In local development without active Auth0 session, provide dev admin session
-    if (import.meta.env.DEV && (!auth0Config.clientId || auth0Config.clientId === "" || auth0Config.clientId === "default_client_id")) {
+    if (
+      import.meta.env.DEV &&
+      (!auth0Config.clientId ||
+        auth0Config.clientId === "" ||
+        auth0Config.clientId === "default_client_id")
+    ) {
       return {
         userId: "dev-admin-user",
         email: "admin@rimelight.com",

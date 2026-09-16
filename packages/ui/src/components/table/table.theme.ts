@@ -17,32 +17,36 @@ export const tableTheme = defineTheme("table", {
     "trGroup",
     "tdGroup",
     "trExpanded",
-    "tdExpanded"
+    "tdExpanded",
+    "toolbar"
   ],
   base: {
     root: "relative w-full overflow-auto rounded-lg border border-default shadow-sm outline-primary/25 focus-visible:outline-3",
-    base: "min-w-full overflow-clip border-collapse text-sm text-left",
+    base: "min-w-full w-full border-separate border-spacing-0 text-sm text-left",
     caption: "sr-only p-4 text-xs text-muted text-center",
+    toolbar:
+      "flex items-center gap-3 px-3.5 py-3 border-b border-default bg-muted/20 overflow-x-auto",
     thead:
       "relative bg-muted/50 border-b border-default text-xs uppercase font-semibold text-muted",
     tbody:
       "divide-y divide-default/60 [&>tr]:data-[selectable=true]:hover:bg-muted/30 [&>tr]:data-[selectable=true]:cursor-pointer",
     tfoot: "relative bg-muted/30 border-t border-default font-medium text-xs text-muted",
     tr: "transition-colors data-[selected=true]:bg-primary/10 data-[expanded=true]:bg-muted/40",
-    th: "px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider [&:has([role=checkbox])]:pe-0",
-    td: "p-4 text-sm text-highlighted align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0",
+    th: "px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider border-b border-default [&:has([role=checkbox])]:pe-0",
+    td: "p-4 text-sm text-highlighted align-middle whitespace-nowrap border-b border-default/40 [&:has([role=checkbox])]:pe-0",
     separator: "absolute z-10 start-0 w-full h-px bg-neutral-200",
     empty: "py-8 text-center text-sm text-muted",
     loading: "py-8 text-center text-sm text-muted",
     trGroup: "bg-muted/40",
-    tdGroup: "px-4 py-2 text-xs font-bold uppercase tracking-wider text-highlighted",
+    tdGroup:
+      "px-4 py-2 text-xs font-bold uppercase tracking-wider text-highlighted border-b border-default",
     trExpanded: "bg-muted/20 border-b border-default",
-    tdExpanded: "p-4"
+    tdExpanded: "p-4 border-b border-default"
   },
   variants: {
     pinned: {
       true: {
-        th: "sticky bg-default z-10",
+        th: "sticky bg-muted z-10",
         td: "sticky bg-default z-10"
       }
     },
@@ -72,7 +76,7 @@ export const tableTheme = defineTheme("table", {
     striped: {
       true: {
         tbody:
-          "[&>tr:not([data-slot=tr-group]):not([data-slot=tr-expanded])]:odd:bg-default [&>tr:not([data-slot=tr-group]):not([data-slot=tr-expanded])]:even:bg-muted/20"
+          "[&>tr:nth-child(even):not([data-slot=tr-group]):not([data-slot=tr-expanded])]:bg-muted/25 [&>tr:nth-child(even):not([data-slot=tr-group]):not([data-slot=tr-expanded])>td]:bg-muted/25"
       }
     },
     hoverable: {
@@ -114,25 +118,21 @@ export const tableTheme = defineTheme("table", {
     { loading: true, loadingColor: "error", classNames: { thead: "after:bg-destructive" } },
     { loading: true, loadingColor: "neutral", classNames: { thead: "after:bg-muted" } },
     // Loading animation variants
-    // carousel: left-to-right sweep  (keyframe: @keyframes carousel { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} })
     {
       loading: true,
       loadingAnimation: "carousel",
       classNames: { thead: "motion-safe:after:animate-[carousel_2s_linear_infinite]" }
     },
-    // carousel-inverse: right-to-left sweep
     {
       loading: true,
       loadingAnimation: "carousel-inverse",
       classNames: { thead: "motion-safe:after:animate-[carousel-inverse_2s_linear_infinite]" }
     },
-    // swing: pendulum back-and-forth
     {
       loading: true,
       loadingAnimation: "swing",
       classNames: { thead: "motion-safe:after:animate-[swing_2s_ease-in-out_infinite]" }
     },
-    // elastic: springy bounce
     {
       loading: true,
       loadingAnimation: "elastic",

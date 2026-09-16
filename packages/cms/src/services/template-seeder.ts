@@ -1,4 +1,4 @@
-import { pageTemplates } from "../schema/page_templates.ts";
+import { pageTemplates } from "../schema/page_templates.ts"
 import {
   BLOG_POST_DEFINITION,
   DOCUMENT_DEFINITION,
@@ -10,27 +10,27 @@ import {
   ITEM_DEFINITION,
   SPECIES_DEFINITION,
   SKILL_DEFINITION
-} from "../core/page-definitions.ts";
+} from "../core/page-definitions.ts"
 
 export interface BuiltinTemplate {
-  slug: string;
-  title: { en: string };
-  description: { en: string };
-  pageType: string;
-  version: number;
-  allowedRoles: string[];
+  slug: string
+  title: { en: string }
+  description: { en: string }
+  pageType: string
+  version: number
+  allowedRoles: string[]
   rolePermissions: {
-    whoCanCreate: string[];
-    whoCanEdit: string[];
-    whoCanReview: string[];
-    whoCanView: string[];
-  };
+    whoCanCreate: string[]
+    whoCanEdit: string[]
+    whoCanReview: string[]
+    whoCanView: string[]
+  }
   approvalRules: {
-    allowSelfApproval: boolean;
-    minApprovals: number;
-  };
-  defaultProperties: Record<string, any>;
-  initialBlocks: any[];
+    allowSelfApproval: boolean
+    minApprovals: number
+  }
+  defaultProperties: Record<string, any>
+  initialBlocks: any[]
 }
 
 export function getBuiltinTemplates(): BuiltinTemplate[] {
@@ -38,7 +38,9 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
     {
       slug: "blog-post",
       title: { en: "Blog Post" },
-      description: { en: "Standard blog article with category metadata, author attribution, and formatted headings" },
+      description: {
+        en: "Standard blog article with category metadata, author attribution, and formatted headings"
+      },
       pageType: "blog",
       version: 1,
       allowedRoles: [],
@@ -63,7 +65,9 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
     {
       slug: "documentation",
       title: { en: "Documentation Guide" },
-      description: { en: "Technical documentation page with structured sections, callouts, and code blocks" },
+      description: {
+        en: "Technical documentation page with structured sections, callouts, and code blocks"
+      },
       pageType: "doc",
       version: 1,
       allowedRoles: [],
@@ -94,7 +98,9 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
     {
       slug: "character-profile",
       title: { en: "Character Profile" },
-      description: { en: "Franchise character sheet with identity, characteristics, inventory, and backstory lore" },
+      description: {
+        en: "Franchise character sheet with identity, characteristics, inventory, and backstory lore"
+      },
       pageType: "character",
       version: 1,
       allowedRoles: [],
@@ -106,7 +112,9 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
     {
       slug: "hero-sheet",
       title: { en: "Hero Combat Sheet" },
-      description: { en: "Hero character with combat stats, progression mechanics, and playstyle lore" },
+      description: {
+        en: "Hero character with combat stats, progression mechanics, and playstyle lore"
+      },
       pageType: "hero",
       version: 1,
       allowedRoles: [],
@@ -118,7 +126,9 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
     {
       slug: "series-overview",
       title: { en: "Series Overview" },
-      description: { en: "Media show / series page with genre, season metadata, and episode overviews" },
+      description: {
+        en: "Media show / series page with genre, season metadata, and episode overviews"
+      },
       pageType: "series",
       version: 1,
       allowedRoles: [],
@@ -130,7 +140,9 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
     {
       slug: "patch-note",
       title: { en: "Release / Patch Note" },
-      description: { en: "Version changelog, release highlights, balance adjustments, and bug fixes" },
+      description: {
+        en: "Version changelog, release highlights, balance adjustments, and bug fixes"
+      },
       pageType: "patchnote",
       version: 1,
       allowedRoles: [],
@@ -200,35 +212,38 @@ export function getBuiltinTemplates(): BuiltinTemplate[] {
       defaultProperties: SKILL_DEFINITION.properties,
       initialBlocks: []
     }
-  ];
+  ]
 }
 
 /**
- * Ensures built-in page templates exist in the database.
- * If page_templates table is empty, populates it with starter templates.
+ * Ensures built-in page templates exist in the database. If page_templates table is empty,
+ * populates it with starter templates.
  */
-export async function ensureDefaultTemplates(dbInstance: any, templateTable = pageTemplates): Promise<number> {
-  if (!dbInstance) return 0;
+export async function ensureDefaultTemplates(
+  dbInstance: any,
+  templateTable = pageTemplates
+): Promise<number> {
+  if (!dbInstance) return 0
 
   try {
-    const existing = await dbInstance.select({ id: templateTable.id }).from(templateTable);
+    const existing = await dbInstance.select({ id: templateTable.id }).from(templateTable)
     if (existing.length > 0) {
-      return existing.length;
+      return existing.length
     }
 
-    const defaultTemplates = getBuiltinTemplates();
+    const defaultTemplates = getBuiltinTemplates()
     for (const tmpl of defaultTemplates) {
       try {
-        await dbInstance.insert(templateTable).values(tmpl);
+        await dbInstance.insert(templateTable).values(tmpl)
       } catch (insertErr) {
-        console.warn(`Failed to seed template ${tmpl.slug}:`, insertErr);
+        console.warn(`Failed to seed template ${tmpl.slug}:`, insertErr)
       }
     }
 
-    const seeded = await dbInstance.select().from(templateTable);
-    return seeded.length;
+    const seeded = await dbInstance.select().from(templateTable)
+    return seeded.length
   } catch (err) {
-    console.warn("Error checking or seeding default templates:", err);
-    return 0;
+    console.warn("Error checking or seeding default templates:", err)
+    return 0
   }
 }

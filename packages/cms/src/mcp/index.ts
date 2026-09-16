@@ -22,7 +22,10 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        type: { type: "string", description: "Filter by page type (e.g. 'blog', 'doc', 'legal', 'wiki')" },
+        type: {
+          type: "string",
+          description: "Filter by page type (e.g. 'blog', 'doc', 'legal', 'wiki')"
+        },
         includeDrafts: { type: "boolean", description: "Whether to include unpublished drafts" },
         limit: { type: "number", description: "Maximum number of pages to return (default 20)" },
         offset: { type: "number", description: "Offset for pagination (default 0)" }
@@ -31,7 +34,8 @@ export const CMS_MCP_TOOLS = [
   },
   {
     name: "cms_get_page",
-    description: "Get full details, block tree, properties, bylines, and active draft for a page by slug or UUID.",
+    description:
+      "Get full details, block tree, properties, bylines, and active draft for a page by slug or UUID.",
     inputSchema: {
       type: "object",
       properties: {
@@ -47,13 +51,25 @@ export const CMS_MCP_TOOLS = [
       type: "object",
       properties: {
         slug: { type: "string", description: "Unique URL slug for the page" },
-        type: { type: "string", description: "Page type (e.g. 'blog', 'doc', 'legal', 'wiki', 'character')" },
+        type: {
+          type: "string",
+          description: "Page type (e.g. 'blog', 'doc', 'legal', 'wiki', 'character')"
+        },
         title: { type: "object", description: "Localized title object, e.g. { en: 'Page Title' }" },
-        description: { type: "object", description: "Localized description object, e.g. { en: 'Page description' }" },
-        templateId: { type: "string", description: "Optional UUID of the template to base the page on" },
+        description: {
+          type: "object",
+          description: "Localized description object, e.g. { en: 'Page description' }"
+        },
+        templateId: {
+          type: "string",
+          description: "Optional UUID of the template to base the page on"
+        },
         tags: { type: "array", description: "Array of localized tags or strings" },
         authorIds: { type: "array", description: "Array of author user IDs" },
-        bylines: { type: "array", description: "Array of structured byline credits [{ bylineId, role, customCredit }]" },
+        bylines: {
+          type: "array",
+          description: "Array of structured byline credits [{ bylineId, role, customCredit }]"
+        },
         blocks: { type: "array", description: "Initial structured CMS blocks array" },
         properties: { type: "object", description: "Content type specific custom properties" }
       },
@@ -330,7 +346,10 @@ export const CMS_MCP_TOOLS = [
       type: "object",
       properties: {
         pageId: { type: "string", description: "Page UUID" },
-        termIds: { type: "array", description: "Array of taxonomy term UUIDs to assign to the page" }
+        termIds: {
+          type: "array",
+          description: "Array of taxonomy term UUIDs to assign to the page"
+        }
       },
       required: ["pageId", "termIds"]
     }
@@ -368,7 +387,10 @@ export const CMS_MCP_TOOLS = [
         bio: { type: "string", description: "Bio or summary text" },
         avatar: { type: "string", description: "Avatar image URL or asset key" },
         userId: { type: "string", description: "Linked user ID if applicable" },
-        socials: { type: "object", description: "Social links, e.g. { twitter: '...', github: '...' }" },
+        socials: {
+          type: "object",
+          description: "Social links, e.g. { twitter: '...', github: '...' }"
+        },
         metadata: { type: "object", description: "Custom author metadata" }
       },
       required: ["name", "slug"]
@@ -431,15 +453,25 @@ export const CMS_MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        slug: { type: "string", description: "Unique slug identifier (e.g. 'products', 'characters')" },
+        slug: {
+          type: "string",
+          description: "Unique slug identifier (e.g. 'products', 'characters')"
+        },
         name: { type: "object", description: "Localized name, e.g. { en: 'Products' }" },
         description: { type: "object", description: "Localized description" },
         icon: { type: "string", description: "Icon name (e.g. 'i-lucide-shopping-bag')" },
-        mode: { type: "string", description: "'document' (blocks), 'data' (structured table), or 'singleton'" },
-        fieldSchema: { type: "object", description: "Dynamic property field schemas and validation rules" },
+        mode: {
+          type: "string",
+          description: "'document' (blocks), 'data' (structured table), or 'singleton'"
+        },
+        fieldSchema: {
+          type: "object",
+          description: "Dynamic property field schemas and validation rules"
+        },
         ecomSettings: {
           type: "object",
-          description: "E-commerce settings { enabled, currencyDefault, trackInventory, hasVariants, allowDigitalDownloads, stripeSync }"
+          description:
+            "E-commerce settings { enabled, currencyDefault, trackInventory, hasVariants, allowDigitalDownloads, stripeSync }"
         },
         initialBlocks: { type: "array", description: "Starter blocks for document mode" },
         isSystem: { type: "boolean", description: "Whether this is a protected system schema" }
@@ -587,18 +619,32 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_get_page": {
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(args.slugOrId)
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          args.slugOrId
+        )
         const condition = isUuid ? eq(pages.id, args.slugOrId) : eq(pages.slug, args.slugOrId)
 
-        const row = await db.select().from(pages).where(and(isNull(pages.deletedAt), condition)).limit(1)
+        const row = await db
+          .select()
+          .from(pages)
+          .where(and(isNull(pages.deletedAt), condition))
+          .limit(1)
         const page = row[0] || null
         if (!page) {
-          return { jsonrpc: "2.0", id, error: { code: -32004, message: `Page '${args.slugOrId}' not found` } }
+          return {
+            jsonrpc: "2.0",
+            id,
+            error: { code: -32004, message: `Page '${args.slugOrId}' not found` }
+          }
         }
 
         let draft = null
         try {
-          const draftRow = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, page.id)).limit(1)
+          const draftRow = await db
+            .select()
+            .from(pageDrafts)
+            .where(eq(pageDrafts.pageId, page.id))
+            .limit(1)
           draft = draftRow[0] || null
         } catch {}
 
@@ -611,7 +657,8 @@ export async function handleCmsMcpRequest(
 
       case "cms_create_page": {
         const titlePayload = typeof args.title === "string" ? { en: args.title } : args.title
-        const descPayload = typeof args.description === "string" ? { en: args.description } : args.description || null
+        const descPayload =
+          typeof args.description === "string" ? { en: args.description } : args.description || null
         const blocksPayload = Array.isArray(args.blocks) ? args.blocks : []
         const propertiesPayload = args.properties || {}
 
@@ -657,9 +704,11 @@ export async function handleCmsMcpRequest(
       case "cms_update_page": {
         const updateData: Record<string, any> = { updatedAt: new Date() }
         if (args.slug) updateData["slug"] = args.slug
-        if (args.title) updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title
+        if (args.title)
+          updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title
         if (args.description !== undefined) {
-          updateData["description"] = typeof args.description === "string" ? { en: args.description } : args.description
+          updateData["description"] =
+            typeof args.description === "string" ? { en: args.description } : args.description
         }
         if (args.tags) updateData["tags"] = args.tags
         if (args.bylines) updateData["bylines"] = args.bylines
@@ -673,7 +722,11 @@ export async function handleCmsMcpRequest(
           }
         }
 
-        const updated = await db.update(pages).set(updateData).where(eq(pages.id, args.id)).returning()
+        const updated = await db
+          .update(pages)
+          .set(updateData)
+          .where(eq(pages.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
@@ -715,10 +768,18 @@ export async function handleCmsMcpRequest(
         const pageResult = await db.select().from(pages).where(eq(pages.id, args.pageId)).limit(1)
         const page = pageResult[0]
         if (!page) {
-          return { jsonrpc: "2.0", id, error: { code: -32004, message: `Page '${args.pageId}' not found` } }
+          return {
+            jsonrpc: "2.0",
+            id,
+            error: { code: -32004, message: `Page '${args.pageId}' not found` }
+          }
         }
 
-        const draftResult = await db.select().from(pageDrafts).where(eq(pageDrafts.pageId, args.pageId)).limit(1)
+        const draftResult = await db
+          .select()
+          .from(pageDrafts)
+          .where(eq(pageDrafts.pageId, args.pageId))
+          .limit(1)
         const content = draftResult[0]?.content || page.content
 
         const lastVersion = await db
@@ -783,7 +844,14 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ success: true, page: updated[0] || null }, null, 2) }] }
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ success: true, page: updated[0] || null }, null, 2)
+              }
+            ]
+          }
         }
       }
 
@@ -797,7 +865,14 @@ export async function handleCmsMcpRequest(
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ success: true, page: deleted[0] || null }, null, 2) }] }
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ success: true, page: deleted[0] || null }, null, 2)
+              }
+            ]
+          }
         }
       }
 
@@ -819,7 +894,11 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_get_page_version": {
-        const row = await db.select().from(pageVersions).where(eq(pageVersions.id, args.versionId)).limit(1)
+        const row = await db
+          .select()
+          .from(pageVersions)
+          .where(eq(pageVersions.id, args.versionId))
+          .limit(1)
         return {
           jsonrpc: "2.0",
           id,
@@ -828,10 +907,18 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_rollback_page_version": {
-        const vRow = await db.select().from(pageVersions).where(eq(pageVersions.id, args.versionId)).limit(1)
+        const vRow = await db
+          .select()
+          .from(pageVersions)
+          .where(eq(pageVersions.id, args.versionId))
+          .limit(1)
         const targetVersion = vRow[0]
         if (!targetVersion) {
-          return { jsonrpc: "2.0", id, error: { code: -32004, message: "Version snapshot not found" } }
+          return {
+            jsonrpc: "2.0",
+            id,
+            error: { code: -32004, message: "Version snapshot not found" }
+          }
         }
 
         const draft = await db
@@ -858,7 +945,15 @@ export async function handleCmsMcpRequest(
             content: [
               {
                 type: "text",
-                text: JSON.stringify({ success: true, rolledBackToVersion: targetVersion.versionNumber, draft: draft[0] }, null, 2)
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    rolledBackToVersion: targetVersion.versionNumber,
+                    draft: draft[0]
+                  },
+                  null,
+                  2
+                )
               }
             ]
           }
@@ -923,8 +1018,12 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_get_template": {
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(args.slugOrId)
-        const condition = isUuid ? eq(pageTemplates.id, args.slugOrId) : eq(pageTemplates.slug, args.slugOrId)
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          args.slugOrId
+        )
+        const condition = isUuid
+          ? eq(pageTemplates.id, args.slugOrId)
+          : eq(pageTemplates.slug, args.slugOrId)
         const row = await db.select().from(pageTemplates).where(condition).limit(1)
 
         return {
@@ -936,7 +1035,8 @@ export async function handleCmsMcpRequest(
 
       case "cms_create_template": {
         const titlePayload = typeof args.title === "string" ? { en: args.title } : args.title
-        const descPayload = typeof args.description === "string" ? { en: args.description } : args.description || null
+        const descPayload =
+          typeof args.description === "string" ? { en: args.description } : args.description || null
 
         const tmpl = await db
           .insert(pageTemplates)
@@ -947,7 +1047,12 @@ export async function handleCmsMcpRequest(
             pageType: args.pageType,
             version: args.version || 1,
             allowedRoles: args.allowedRoles || [],
-            rolePermissions: args.rolePermissions || { whoCanCreate: [], whoCanEdit: [], whoCanReview: [], whoCanView: [] },
+            rolePermissions: args.rolePermissions || {
+              whoCanCreate: [],
+              whoCanEdit: [],
+              whoCanReview: [],
+              whoCanView: []
+            },
             approvalRules: args.approvalRules || { allowSelfApproval: true, minApprovals: 1 },
             defaultProperties: args.defaultProperties || {},
             initialBlocks: args.initialBlocks || []
@@ -964,9 +1069,11 @@ export async function handleCmsMcpRequest(
       case "cms_update_template": {
         const updateData: Record<string, any> = { updatedAt: new Date() }
         if (args.slug) updateData["slug"] = args.slug
-        if (args.title) updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title
+        if (args.title)
+          updateData["title"] = typeof args.title === "string" ? { en: args.title } : args.title
         if (args.description !== undefined) {
-          updateData["description"] = typeof args.description === "string" ? { en: args.description } : args.description
+          updateData["description"] =
+            typeof args.description === "string" ? { en: args.description } : args.description
         }
         if (args.pageType) updateData["pageType"] = args.pageType
         if (args.version) updateData["version"] = args.version
@@ -975,7 +1082,11 @@ export async function handleCmsMcpRequest(
         if (args.rolePermissions) updateData["rolePermissions"] = args.rolePermissions
         if (args.approvalRules) updateData["approvalRules"] = args.approvalRules
 
-        const updated = await db.update(pageTemplates).set(updateData).where(eq(pageTemplates.id, args.id)).returning()
+        const updated = await db
+          .update(pageTemplates)
+          .set(updateData)
+          .where(eq(pageTemplates.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
@@ -984,11 +1095,21 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_delete_template": {
-        const deleted = await db.delete(pageTemplates).where(eq(pageTemplates.id, args.id)).returning()
+        const deleted = await db
+          .delete(pageTemplates)
+          .where(eq(pageTemplates.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ success: true, template: deleted[0] || null }, null, 2) }] }
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ success: true, template: deleted[0] || null }, null, 2)
+              }
+            ]
+          }
         }
       }
 
@@ -1004,7 +1125,8 @@ export async function handleCmsMcpRequest(
 
       case "cms_create_taxonomy_term": {
         const labelPayload = typeof args.label === "string" ? { en: args.label } : args.label
-        const descPayload = typeof args.description === "string" ? { en: args.description } : args.description || null
+        const descPayload =
+          typeof args.description === "string" ? { en: args.description } : args.description || null
 
         const term = await db
           .insert(taxonomyTerms)
@@ -1028,14 +1150,20 @@ export async function handleCmsMcpRequest(
       case "cms_update_taxonomy_term": {
         const updateData: Record<string, any> = { updatedAt: new Date() }
         if (args.slug) updateData["slug"] = args.slug
-        if (args.label) updateData["label"] = typeof args.label === "string" ? { en: args.label } : args.label
+        if (args.label)
+          updateData["label"] = typeof args.label === "string" ? { en: args.label } : args.label
         if (args.description !== undefined) {
-          updateData["description"] = typeof args.description === "string" ? { en: args.description } : args.description
+          updateData["description"] =
+            typeof args.description === "string" ? { en: args.description } : args.description
         }
         if (args.parentId !== undefined) updateData["parentId"] = args.parentId || null
         if (args.displayOrder !== undefined) updateData["displayOrder"] = args.displayOrder
 
-        const updated = await db.update(taxonomyTerms).set(updateData).where(eq(taxonomyTerms.id, args.id)).returning()
+        const updated = await db
+          .update(taxonomyTerms)
+          .set(updateData)
+          .where(eq(taxonomyTerms.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
@@ -1044,11 +1172,21 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_delete_taxonomy_term": {
-        const deleted = await db.delete(taxonomyTerms).where(eq(taxonomyTerms.id, args.id)).returning()
+        const deleted = await db
+          .delete(taxonomyTerms)
+          .where(eq(taxonomyTerms.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ success: true, term: deleted[0] || null }, null, 2) }] }
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ success: true, term: deleted[0] || null }, null, 2)
+              }
+            ]
+          }
         }
       }
 
@@ -1058,14 +1196,24 @@ export async function handleCmsMcpRequest(
         const termIds = Array.isArray(args.termIds) ? args.termIds : []
         const assigned = []
         for (const termId of termIds) {
-          const row = await db.insert(pageTaxonomyTerms).values({ pageId: args.pageId, termId }).returning()
+          const row = await db
+            .insert(pageTaxonomyTerms)
+            .values({ pageId: args.pageId, termId })
+            .returning()
           assigned.push(row[0])
         }
 
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ success: true, assignedCount: assigned.length }, null, 2) }] }
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ success: true, assignedCount: assigned.length }, null, 2)
+              }
+            ]
+          }
         }
       }
 
@@ -1085,9 +1233,15 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_get_byline": {
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(args.slugOrId)
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          args.slugOrId
+        )
         const condition = isUuid ? eq(bylines.id, args.slugOrId) : eq(bylines.slug, args.slugOrId)
-        const row = await db.select().from(bylines).where(and(isNull(bylines.deletedAt), condition)).limit(1)
+        const row = await db
+          .select()
+          .from(bylines)
+          .where(and(isNull(bylines.deletedAt), condition))
+          .limit(1)
 
         return {
           jsonrpc: "2.0",
@@ -1129,7 +1283,11 @@ export async function handleCmsMcpRequest(
         if (args.socials) updateData["socials"] = args.socials
         if (args.metadata) updateData["metadata"] = args.metadata
 
-        const updated = await db.update(bylines).set(updateData).where(eq(bylines.id, args.id)).returning()
+        const updated = await db
+          .update(bylines)
+          .set(updateData)
+          .where(eq(bylines.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
@@ -1138,11 +1296,22 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_delete_byline": {
-        const deleted = await db.update(bylines).set({ deletedAt: new Date() }).where(eq(bylines.id, args.id)).returning()
+        const deleted = await db
+          .update(bylines)
+          .set({ deletedAt: new Date() })
+          .where(eq(bylines.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ success: true, byline: deleted[0] || null }, null, 2) }] }
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ success: true, byline: deleted[0] || null }, null, 2)
+              }
+            ]
+          }
         }
       }
 
@@ -1157,8 +1326,12 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_get_content_type": {
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(args.slugOrId)
-        const condition = isUuid ? eq(contentTypes.id, args.slugOrId) : eq(contentTypes.slug, args.slugOrId)
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          args.slugOrId
+        )
+        const condition = isUuid
+          ? eq(contentTypes.id, args.slugOrId)
+          : eq(contentTypes.slug, args.slugOrId)
         const row = await db.select().from(contentTypes).where(condition).limit(1)
 
         return {
@@ -1170,7 +1343,8 @@ export async function handleCmsMcpRequest(
 
       case "cms_create_content_type": {
         const namePayload = typeof args.name === "string" ? { en: args.name } : args.name
-        const descPayload = typeof args.description === "string" ? { en: args.description } : args.description || null
+        const descPayload =
+          typeof args.description === "string" ? { en: args.description } : args.description || null
 
         const row = await db
           .insert(contentTypes)
@@ -1197,9 +1371,11 @@ export async function handleCmsMcpRequest(
       case "cms_update_content_type": {
         const updateData: Record<string, any> = { updatedAt: new Date() }
         if (args.slug) updateData["slug"] = args.slug
-        if (args.name) updateData["name"] = typeof args.name === "string" ? { en: args.name } : args.name
+        if (args.name)
+          updateData["name"] = typeof args.name === "string" ? { en: args.name } : args.name
         if (args.description !== undefined) {
-          updateData["description"] = typeof args.description === "string" ? { en: args.description } : args.description
+          updateData["description"] =
+            typeof args.description === "string" ? { en: args.description } : args.description
         }
         if (args.icon) updateData["icon"] = args.icon
         if (args.mode) updateData["mode"] = args.mode
@@ -1207,7 +1383,11 @@ export async function handleCmsMcpRequest(
         if (args.ecomSettings !== undefined) updateData["ecomSettings"] = args.ecomSettings
         if (args.initialBlocks) updateData["initialBlocks"] = args.initialBlocks
 
-        const updated = await db.update(contentTypes).set(updateData).where(eq(contentTypes.id, args.id)).returning()
+        const updated = await db
+          .update(contentTypes)
+          .set(updateData)
+          .where(eq(contentTypes.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
@@ -1216,11 +1396,21 @@ export async function handleCmsMcpRequest(
       }
 
       case "cms_delete_content_type": {
-        const deleted = await db.delete(contentTypes).where(eq(contentTypes.id, args.id)).returning()
+        const deleted = await db
+          .delete(contentTypes)
+          .where(eq(contentTypes.id, args.id))
+          .returning()
         return {
           jsonrpc: "2.0",
           id,
-          result: { content: [{ type: "text", text: JSON.stringify({ success: true, contentType: deleted[0] || null }, null, 2) }] }
+          result: {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({ success: true, contentType: deleted[0] || null }, null, 2)
+              }
+            ]
+          }
         }
       }
 

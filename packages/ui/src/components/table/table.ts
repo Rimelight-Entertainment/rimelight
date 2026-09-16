@@ -16,11 +16,31 @@ export interface TableColumnMeta {
   [key: string]: any
 }
 
+export type TableAggregationFn<T = any> =
+  | "count"
+  | "sum"
+  | "min"
+  | "max"
+  | "extent"
+  | "mean"
+  | "median"
+  | "unique"
+  | "uniqueCount"
+  | ((values: any[], rows: TableRow<T>[]) => any)
+
 export interface TableColumn<T = any> {
   id?: string
   accessorKey?: keyof T | string
+  accessorFn?: (row: T) => any
   header?: string | ((props: { column: TableColumn<T>; table: any }) => any)
   cell?: (props: {
+    row: TableRow<T>
+    getValue: () => any
+    renderValue: () => any
+    column: TableColumn<T>
+    table: any
+  }) => any
+  aggregatedCell?: (props: {
     row: TableRow<T>
     getValue: () => any
     renderValue: () => any
@@ -31,7 +51,11 @@ export interface TableColumn<T = any> {
   meta?: TableColumnMeta
   enableSorting?: boolean
   enableHiding?: boolean
+  enablePinning?: boolean
+  aggregationFn?: TableAggregationFn<T>
   size?: number | string
+  minSize?: number | string
+  maxSize?: number | string
   [key: string]: any
 }
 
@@ -40,13 +64,16 @@ export interface TableRow<T = any> {
   original: T
   index: number
   depth: number
+  groupingColumnId?: string
+  groupingValue?: any
   getValue: (key: string) => any
   getIsSelected: () => boolean
+  getIsSomeSelected: () => boolean
   toggleSelected: (value?: boolean) => void
   getIsExpanded: () => boolean
   toggleExpanded: (value?: boolean) => void
-  getToggleExpandedHandler?: () => (e?: Event) => void
-  getToggleSelectedHandler?: () => (e?: Event) => void
+  getToggleExpandedHandler: () => (e?: Event) => void
+  getToggleSelectedHandler: () => (e?: Event) => void
   getIsPinned: () => boolean | "top" | "bottom"
   pin: (position: boolean | "top" | "bottom") => void
   getIsGrouped: () => boolean
@@ -101,16 +128,32 @@ export interface TablePaginationState {
   pageSize: number
 }
 
+export interface TableVirtualizeOptions {
+  estimateSize?: number | ((index: number) => number)
+  overscan?: number
+  scrollMargin?: number
+  getScrollElement?: () => HTMLElement | null
+}
+
 /**
  * Imperative API exposed by RLATable (on the custom element) and RLSTable (via ref callback).
  */
 export interface TableApi<T = any> {
   tableRef: HTMLTableElement | null
   getFilteredRows(): TableRow<T>[]
+  getFlatRows(): TableRow<T>[]
   getSortedRows(): TableRow<T>[]
   getSelectedRows(): TableRow<T>[]
+  getFilteredSelectedRowModel(): { rows: TableRow<T>[]; flatRows: TableRow<T>[] }
+  getFilteredRowModel(): { rows: TableRow<T>[]; flatRows: TableRow<T>[] }
   getAllColumns(): TableColumn<T>[]
   getColumn(id: string): TableColumn<T> | undefined
+  getIsAllRowsSelected(): boolean
+  getIsSomeRowsSelected(): boolean
+  toggleAllRowsSelected(selected?: boolean): void
+  getIsAllPageRowsSelected(): boolean
+  getIsSomePageRowsSelected(): boolean
+  toggleAllPageRowsSelected(selected?: boolean): void
   setGlobalFilter(value: string): void
   setColumnFilter(id: string, value: any): void
   setColumnVisibility(id: string, visible: boolean): void
@@ -118,6 +161,8 @@ export interface TableApi<T = any> {
   setRowPinning(pinning: TableRowPinningState): void
   setSorting(state: SortingState): void
   setPagination(state: TablePaginationState): void
+  setPageIndex(pageIndex: number): void
+  setPageSize(pageSize: number): void
   getState(): {
     sorting: SortingState
     globalFilter: string
@@ -135,140 +180,161 @@ export interface TableProps<T = any> {
   /**
    * Data rows. Auto-infers columns from the first row's keys when `columns` is omitted.
    */
-  data?: T[]
+  data?: T[] | undefined
   /**
    * Column definitions.
    */
-  columns?: TableColumn<T>[]
+  columns?: TableColumn<T>[] | undefined
   /**
-   * Accessible table caption (visually hidden).
+   * Accessible table caption (visually hidden or styled).
    */
-  caption?: string
+  caption?: string | undefined
   /**
    * Table-level metadata, e.g. a per-row `class.tr` function.
    */
-  meta?: TableMeta<T>
+  meta?: TableMeta<T> | undefined
   /**
    * Stick the header, footer, or both when the table scrolls.
    */
-  sticky?: boolean | "header" | "footer"
+  sticky?: boolean | "header" | "footer" | undefined
+  /**
+   * Enable virtualization for large datasets.
+   */
+  virtualize?: boolean | TableVirtualizeOptions | undefined
   /**
    * Show a loading progress bar.
    */
-  loading?: boolean
+  loading?: boolean | undefined
   /**
    * Color of the loading bar. @default 'primary'
    */
-  loadingColor?: "primary" | "secondary" | "success" | "info" | "warning" | "error" | "neutral"
+  loadingColor?:
+    | "primary"
+    | "secondary"
+    | "success"
+    | "info"
+    | "warning"
+    | "error"
+    | "neutral"
+    | undefined
   /**
    * Animation of the loading bar. @default 'carousel'
    */
-  loadingAnimation?: "carousel" | "carousel-inverse" | "swing" | "elastic"
+  loadingAnimation?: "carousel" | "carousel-inverse" | "swing" | "elastic" | undefined
   /**
    * Empty-state text. @default 'No data available'
    */
-  empty?: string
+  empty?: string | undefined
   /**
    * Alternate row background colors.
    */
-  striped?: boolean
+  striped?: boolean | undefined
   /**
    * Show borders on every cell.
    */
-  bordered?: boolean
+  bordered?: boolean | undefined
   /**
    * Highlight row on hover.
    */
-  hoverable?: boolean
+  hoverable?: boolean | undefined
   /**
    * Global text filter across all columns.
    */
-  globalFilter?: string
+  globalFilter?: string | undefined
   /**
    * Per-column filter state.
    */
-  columnFilters?: ColumnFiltersState
+  columnFilters?: ColumnFiltersState | undefined
   /**
    * Column visibility map — `{ [columnId]: boolean }`.
    */
-  columnVisibility?: Record<string, boolean>
+  columnVisibility?: Record<string, boolean> | undefined
   /**
    * Sticky column pinning — `{ left?: string[], right?: string[] }`.
    */
-  columnPinning?: TableColumnPinningState
+  columnPinning?: TableColumnPinningState | undefined
   /**
    * Active sort state.
    */
-  sorting?: SortingState
+  sorting?: SortingState | undefined
   /**
    * Column IDs to group rows by (first entry is used).
    */
-  grouping?: string[]
+  grouping?: string[] | undefined
   /**
    * Row pinning — `{ top?: string[], bottom?: string[] }`.
    */
-  rowPinning?: TableRowPinningState
+  rowPinning?: TableRowPinningState | undefined
   /**
    * Row selection map — `{ [rowId]: boolean }`.
    */
-  rowSelection?: Record<string, boolean>
+  rowSelection?: Record<string, boolean> | undefined
   /**
    * Expanded rows map — `{ [rowId]: boolean }`.
    */
-  expanded?: Record<string, boolean>
+  expanded?: Record<string, boolean> | undefined
   /**
    * Pagination state.
    */
-  pagination?: TablePaginationState
+  pagination?: TablePaginationState | undefined
   /**
    * Extract sub-rows for tree/hierarchical data.
    */
-  getSubRows?: (row: T, index: number) => T[] | undefined
+  getSubRows?: ((row: T, index: number) => T[] | undefined) | undefined
+  /**
+   * Custom predicate to determine whether a row can be expanded. Defaults to checking if subRows
+   * exist.
+   */
+  getRowCanExpand?: ((row: TableRow<T>) => boolean) | undefined
   /**
    * Custom row ID extractor. Defaults to `row.id ?? String(index)`.
    */
-  getRowId?: (row: T, index: number) => string
+  getRowId?: ((row: T, index: number) => string) | undefined
   /**
    * Called when a data row is clicked (skips clicks on interactive elements).
    */
-  onSelect?: (e: Event, row: TableRow<T>) => void
+  onSelect?: ((e: Event, row: TableRow<T>) => void) | undefined
   /**
    * Called when the pointer enters or leaves a row (`null` on leave).
    */
-  onHover?: (e: Event, row: TableRow<T> | null) => void
+  onHover?: ((e: Event, row: TableRow<T> | null) => void) | undefined
   /**
    * Called on row right-click.
    */
-  onContextmenu?: (e: Event, row: TableRow<T>) => void
+  onContextmenu?: ((e: Event, row: TableRow<T>) => void) | undefined
   // Controlled-mode callbacks — provide these to take ownership of state externally
-  onSortingChange?: (state: SortingState) => void
-  onColumnFiltersChange?: (state: ColumnFiltersState) => void
-  onGlobalFilterChange?: (value: string) => void
-  onColumnVisibilityChange?: (state: Record<string, boolean>) => void
-  onColumnPinningChange?: (state: TableColumnPinningState) => void
-  onRowSelectionChange?: (state: Record<string, boolean>) => void
-  onExpandedChange?: (state: Record<string, boolean>) => void
-  onRowPinningChange?: (state: TableRowPinningState) => void
-  onPaginationChange?: (state: TablePaginationState) => void
+  onSortingChange?: ((state: SortingState) => void) | undefined
+  onColumnFiltersChange?: ((state: ColumnFiltersState) => void) | undefined
+  onGlobalFilterChange?: ((value: string) => void) | undefined
+  onColumnVisibilityChange?: ((state: Record<string, boolean>) => void) | undefined
+  onColumnPinningChange?: ((state: TableColumnPinningState) => void) | undefined
+  onRowSelectionChange?: ((state: Record<string, boolean>) => void) | undefined
+  onExpandedChange?: ((state: Record<string, boolean>) => void) | undefined
+  onRowPinningChange?: ((state: TableRowPinningState) => void) | undefined
+  onPaginationChange?: ((state: TablePaginationState) => void) | undefined
   /**
    * Render a built-in search input in the toolbar.
    */
-  searchable?: boolean
+  searchable?: boolean | undefined
   /**
    * Placeholder for the built-in search input. @default 'Filter table...'
    */
-  searchPlaceholder?: string
+  searchPlaceholder?: string | undefined
   /**
    * Render a column-visibility dropdown in the toolbar.
    */
-  showColumnsToggle?: boolean
+  showColumnsToggle?: boolean | undefined
   /**
    * Per-slot class overrides.
    */
-  ui?: Partial<Record<string, string>>
+  ui?: Partial<Record<string, string>> | undefined
   /**
    * Additional classes on the root element.
    */
   class?: any
+  /**
+   * Solid slot overrides dictionary (e.g. { "name-cell": ({ row }) => ... })
+   */
+  slots?: Record<string, (props: any) => any> | undefined
   [key: string]: unknown
 }

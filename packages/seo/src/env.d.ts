@@ -1,4 +1,3 @@
-
 declare module "virtual:rimelight-seo-config" {
   const config: import("./integration.js").RimelightSeoOptions
   export default config
