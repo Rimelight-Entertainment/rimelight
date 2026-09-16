@@ -41,7 +41,7 @@ async function indexDatabasePage(page: {
   slug: string
   title: Localized
   description?: Localized | null
-  content: { blocks: Block[] }
+  content: { blocks?: any[]; [key: string]: any }
 }) {
   const titleObj = page.title
   const title = titleObj?.["en"] || Object.values(titleObj || {})[0] || "Untitled Page"
@@ -284,8 +284,18 @@ export const pageActions = {
         })
       }
 
+      const lastVersion = await db
+        .select()
+        .from(pageVersions)
+        .where(eq(pageVersions.pageId, id))
+        .orderBy(desc(pageVersions.versionNumber))
+        .limit(1)
+
+      const nextVersionNumber = (lastVersion[0]?.versionNumber || 0) + 1
+
       const versionData: typeof pageVersions.$inferInsert = {
         pageId: id,
+        versionNumber: nextVersionNumber,
         status: "pending" as const,
         slug: body.slug || existingPage.slug,
         type: existingPage.type,
@@ -297,7 +307,6 @@ export const pageActions = {
           properties: body.properties || {},
           blocks: body.blocks || []
         },
-        postedAt: body.postedAt ? new Date(body.postedAt) : null,
         createdBy: user.userId
       }
 

@@ -1,0 +1,39 @@
+---
+import type { BaseBlock } from "../../core/types/blocks"
+
+interface Props {
+  block: BaseBlock
+  locale?: string
+}
+
+const { block } = Astro.props
+const {
+  location = "LOCATION",
+  timeOfDay = "DAY",
+  setting = "INT.",
+  transition = "CUT TO:",
+  description = ""
+} = block.props || {}
+---
+
+<div class="cms-scene-block my-6 font-mono text-sm" data-block-id={block.id}>
+  {transition && (
+    <div class="text-right text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">
+      {transition}
+    </div>
+  )}
+
+  <div class="bg-neutral-100 dark:bg-neutral-800/80 px-4 py-2.5 rounded-lg border-l-4 border-primary-500 font-bold uppercase tracking-wide text-neutral-900 dark:text-neutral-100 mb-3">
+    {setting} {location} - {timeOfDay}
+  </div>
+
+  {description && (
+    <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4 pl-4 border-l-2 border-transparent">
+      {description}
+    </p>
+  )}
+
+  <div class="scene-content pl-4 space-y-3">
+    <slot />
+  </div>
+</div>

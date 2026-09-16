@@ -3,8 +3,8 @@ import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
-import RLATable from "@rimelight/ui/components/table/RLATable.astro";
-import type { TableColumn } from "@rimelight/ui/components/table/table.ts";
+import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 
 export const prerender = false;
 
@@ -14,61 +14,111 @@ const users = [
   { id: "usr_3", name: "Alex Rivers", email: "alex@rimelight.com", role: "Author", status: "active", lastActive: "Yesterday" },
   { id: "usr_4", name: "Elena Vance", email: "elena@rimelight.com", role: "Reviewer", status: "invited", lastActive: "Never" },
 ];
-
-const columns: TableColumn[] = [
-  { id: "user", accessorKey: "name", header: "User", enableSorting: true },
-  { id: "role", accessorKey: "role", header: "Role", enableSorting: true },
-  { id: "status", accessorKey: "status", header: "Status", enableSorting: true },
-  { id: "lastActive", accessorKey: "lastActive", header: "Last Active", enableSorting: true },
-  { id: "actions", header: "Actions", enableSorting: false, meta: { class: { th: "text-right", td: "text-right" } } }
-];
 ---
 
 <CMSDashboardLayout title="CMS Users" description="Manage team permissions, editor roles, and workspace access" activeSection="users">
   <Fragment slot="toolbar-right">
-    <RLAButton variant="solid" color="success" leadingIcon="i-lucide-user-plus">
+    <RLAButton variant="solid" color="primary" size="sm" leadingIcon="i-lucide-user-plus">
       Invite Member
     </RLAButton>
   </Fragment>
 
-  <RLATable
-    columns={columns}
-    data={users}
-    searchable
-    searchPlaceholder="Search users..."
-    class="w-full"
-  >
-    {users.map((user) => (
-      <tr class="hover:bg-muted/20 transition-colors" data-slot="tr" data-row-id={user.id}>
-        <td class="p-3.5 text-sm font-medium text-highlighted flex items-center gap-3" data-col-id="user" data-slot="td">
-          <RLAAvatar name={user.name} size="sm" />
-          <div class="flex flex-col">
-            <span>{user.name}</span>
-            <span class="text-xs text-muted font-normal">{user.email}</span>
-          </div>
-        </td>
-        <td class="p-3.5 text-sm text-toned" data-col-id="role" data-slot="td">
-          <RLABadge variant="soft" color={user.role === "Super Admin" ? "primary" : user.role === "Editor" ? "blue" : "neutral"} size="xs">
-            {user.role}
-          </RLABadge>
-        </td>
-        <td class="p-3.5" data-col-id="status" data-slot="td">
-          {user.status === "active" ? (
-            <RLABadge variant="soft" color="green" size="xs">Active</RLABadge>
-          ) : (
-            <RLABadge variant="soft" color="yellow" size="xs">Invited</RLABadge>
-          )}
-        </td>
-        <td class="p-3.5 text-sm text-muted text-xs" data-col-id="lastActive" data-slot="td">
-          {user.lastActive}
-        </td>
-        <td class="p-3.5 text-right whitespace-nowrap" data-col-id="actions" data-slot="td">
-          <div class="flex items-center justify-end gap-2">
-            <RLAButton variant="ghost" color="neutral" size="xs">Change Role</RLAButton>
-            <RLAButton variant="ghost" color="error" size="xs" leadingIcon="i-lucide-trash-2" aria-label="Remove user" />
-          </div>
-        </td>
-      </tr>
-    ))}
-  </RLATable>
+  <div class="space-y-6">
+    <div class="bg-elevated/40 border border-default rounded-xl shadow-xs overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead class="bg-elevated/80 border-b border-default text-xs font-semibold text-muted uppercase tracking-wider">
+            <tr>
+              <th scope="col" class="px-5 py-3.5">User</th>
+              <th scope="col" class="px-4 py-3.5">Role</th>
+              <th scope="col" class="px-4 py-3.5">Status</th>
+              <th scope="col" class="px-4 py-3.5">Last Active</th>
+              <th scope="col" class="px-5 py-3.5 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-default/50">
+            {users.map((user) => {
+              const actionItems = [
+                [
+                  {
+                    label: "Edit Role & Permissions",
+                    icon: "i-lucide-shield-check",
+                    id: `edit-role-${user.id}`
+                  },
+                  {
+                    label: "View Activity Log",
+                    icon: "i-lucide-activity",
+                    id: `activity-${user.id}`
+                  }
+                ],
+                [
+                  {
+                    label: "Remove Member",
+                    icon: "i-lucide-trash-2",
+                    id: `remove-${user.id}`,
+                    color: "error" as const,
+                    class: "remove-user-item"
+                  }
+                ]
+              ];
+
+              return (
+                <tr class="hover:bg-elevated/60 transition group">
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <RLAAvatar name={user.name} size="sm" />
+                      <div class="flex flex-col">
+                        <span class="font-medium text-highlighted text-sm">{user.name}</span>
+                        <span class="text-xs text-muted font-normal">{user.email}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <RLABadge variant="soft" color={user.role === "Super Admin" ? "primary" : user.role === "Editor" ? "secondary" : "neutral"} size="sm">
+                      {user.role}
+                    </RLABadge>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    {user.status === "active" ? (
+                      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                        <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Active</span>
+                      </div>
+                    ) : (
+                      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                        <span class="size-1.5 rounded-full bg-amber-500"></span>
+                        <span>Invited</span>
+                      </div>
+                    )}
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap text-xs text-muted">
+                    {user.lastActive}
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap text-right">
+                    <div class="flex items-center justify-end">
+                      <RLADropdownMenu
+                        items={actionItems as any}
+                        content={{ align: "end", side: "bottom" }}
+                        size="xs"
+                        color="neutral"
+                      >
+                        <button
+                          slot="trigger"
+                          type="button"
+                          class="size-8 rounded-lg border border-default bg-elevated/70 text-muted hover:text-highlighted hover:border-accented hover:bg-elevated flex items-center justify-center transition-colors cursor-pointer"
+                          aria-label="Actions"
+                        >
+                          <RLAIcon name="i-lucide-ellipsis-vertical" class="size-4 pointer-events-none" />
+                        </button>
+                      </RLADropdownMenu>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </CMSDashboardLayout>

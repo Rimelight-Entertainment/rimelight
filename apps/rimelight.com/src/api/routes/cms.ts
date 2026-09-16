@@ -3,7 +3,6 @@ import { db } from "#db"
 import {
   getSiteSettings,
   updateSiteSettings,
-  handleCmsMcpRequest,
   generatePreviewToken,
   diffPageSnapshots,
   pages,
@@ -22,6 +21,7 @@ import {
   updateByline,
   deleteByline
 } from "@rimelight/cms"
+import { handleCmsMcpRequest } from "@rimelight/cms/mcp"
 import { auth } from "#auth/auth"
 import { eq, and } from "drizzle-orm"
 
@@ -222,11 +222,44 @@ cms.delete("/bylines/:id", async (c) => {
   return c.json({ success: true })
 })
 
-// MCP JSON-RPC Endpoint
+// MCP JSON-RPC Endpoint (Protected)
 cms.post("/mcp", async (c) => {
+  const authHeader = c.req.header("Authorization")
+  const expectedApiKey = process.env["CMS_MCP_API_KEY"] || process.env["AUTH0_SECRET"]
+
+  let isAuthenticated = false
+
+  // 1. Check Bearer API key if configured
+  if (authHeader && authHeader.startsWith("Bearer ") && expectedApiKey) {
+    const token = authHeader.slice(7).trim()
+    if (token === expectedApiKey) {
+      isAuthenticated = true
+    }
+  }
+
+  // 2. Check active user session
+  if (!isAuthenticated) {
+    const session = await auth.getSession(c.req.raw)
+    if (session) {
+      isAuthenticated = true
+    }
+  }
+
+  if (!isAuthenticated && (expectedApiKey || process.env["NODE_ENV"] === "production")) {
+    return c.json(
+      {
+        jsonrpc: "2.0",
+        id: null,
+        error: { code: -32000, message: "Unauthorized: Invalid or missing API key / session" }
+      },
+      401
+    )
+  }
+
   const body = await c.req.json()
   const result = await handleCmsMcpRequest(body, db)
   return c.json(result)
 })
 
+// Unified CMS Hono Route
 export default cms

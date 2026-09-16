@@ -1,4 +1,3 @@
-
 declare module "virtual:rimelight-cms/parent-layout" {
   const layout: any
   export default layout

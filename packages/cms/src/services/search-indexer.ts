@@ -36,23 +36,34 @@ export async function indexPageForSearch(
         .where(and(eq(contentSearchIndex.pageId, page.id), eq(contentSearchIndex.locale, locale)))
         .limit(1)
 
+      const hasSearchVector = "searchVector" in contentSearchIndex
+
+      const updatePayload: Record<string, any> = {
+        titleText,
+        contentText
+      }
+      if (hasSearchVector) {
+        updatePayload["searchVector"] =
+          sql`to_tsvector('english', ${titleText} || ' ' || ${contentText})`
+      }
+
       if (existing.length > 0) {
         await db
           .update(contentSearchIndex)
-          .set({
-            titleText,
-            contentText,
-            searchVector: sql`to_tsvector('english', ${titleText} || ' ' || ${contentText})`
-          })
+          .set(updatePayload)
           .where(eq(contentSearchIndex.id, existing[0].id))
       } else {
-        await db.insert(contentSearchIndex).values({
+        const insertPayload: Record<string, any> = {
           pageId: page.id,
           locale,
           titleText,
-          contentText,
-          searchVector: sql`to_tsvector('english', ${titleText} || ' ' || ${contentText})`
-        })
+          contentText
+        }
+        if (hasSearchVector) {
+          insertPayload["searchVector"] =
+            sql`to_tsvector('english', ${titleText} || ' ' || ${contentText})`
+        }
+        await db.insert(contentSearchIndex).values(insertPayload)
       }
     } catch (err) {
       console.error(`[Search Indexer] Failed to index page ${page.id} for locale ${locale}:`, err)

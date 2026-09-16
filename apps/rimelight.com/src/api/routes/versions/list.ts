@@ -1,7 +1,7 @@
 import { Hono } from "hono"
 import { db } from "#db"
 import { pageVersions } from "#db/schema"
-import { eq, and, isNull, desc } from "drizzle-orm"
+import { eq, desc } from "drizzle-orm"
 
 const api = new Hono()
 
@@ -10,7 +10,7 @@ api.get("/page/:pageId", async (c) => {
     const versions = await db
       .select()
       .from(pageVersions)
-      .where(and(eq(pageVersions.pageId, c.req.param("pageId")), isNull(pageVersions.deletedAt)))
+      .where(eq(pageVersions.pageId, c.req.param("pageId")))
       .orderBy(desc(pageVersions.createdAt))
     return c.json(versions)
   } catch (err: any) {
@@ -23,7 +23,7 @@ api.get("/:id", async (c) => {
     const [version] = await db
       .select()
       .from(pageVersions)
-      .where(and(eq(pageVersions.id, c.req.param("id")), isNull(pageVersions.deletedAt)))
+      .where(eq(pageVersions.id, c.req.param("id")))
       .limit(1)
     if (!version) return c.json({ error: "Version not found" }, 404)
     return c.json(version)

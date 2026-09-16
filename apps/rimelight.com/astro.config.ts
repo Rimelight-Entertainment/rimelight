@@ -51,6 +51,7 @@ export default defineConfig(
     domain: "rimelight.com",
     seo: true,
     solid: true,
+    cms: true,
     security: {
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
     },

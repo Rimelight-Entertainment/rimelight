@@ -13,6 +13,10 @@ import CardBlock from "./CardBlock.astro"
 import FileTreeBlock from "./FileTreeBlock.astro"
 import UnorderedListBlock from "./UnorderedListBlock.astro"
 import OrderedListBlock from "./OrderedListBlock.astro"
+import ScriptBlock from "./ScriptBlock.astro"
+import SceneBlock from "./SceneBlock.astro"
+import DialogueBlock from "./DialogueBlock.astro"
+import LivePreviewBlock from "./LivePreviewBlock.astro"
 
 export const defaultBlockComponents: Record<string, any> = {
   ParagraphBlock,
@@ -29,7 +33,11 @@ export const defaultBlockComponents: Record<string, any> = {
   CardBlock,
   FileTreeBlock,
   UnorderedListBlock,
-  OrderedListBlock
+  OrderedListBlock,
+  ScriptBlock,
+  SceneBlock,
+  DialogueBlock,
+  LivePreviewBlock
 }
 
 export default defaultBlockComponents

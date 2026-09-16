@@ -18,9 +18,12 @@ if (!id) {
 }
 
 const token = Astro.url.searchParams.get("token");
-const secret = process.env["CMS_PREVIEW_SECRET"] || "rimelight-preview-secret-key";
+const secret = process.env["CMS_PREVIEW_SECRET"] || process.env["AUTH0_SECRET"] || "rimelight-preview-secret-key";
 if (token) {
-  await verifyPreviewToken(id, token, secret);
+  const isTokenValid = await verifyPreviewToken(id, token, secret);
+  if (!isTokenValid) {
+    return new Response("Forbidden: Invalid or expired preview token", { status: 403 });
+  }
 }
 
 let page: any = null;

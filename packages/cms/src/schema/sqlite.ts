@@ -342,3 +342,38 @@ export type Byline = typeof bylines.$inferSelect
 export type NewByline = typeof bylines.$inferInsert
 export type SiteSettings = typeof siteSettings.$inferSelect
 export type InsertSiteSettings = typeof siteSettings.$inferInsert
+
+// 12. Dynamic Content Types
+export const contentTypes = sqliteTable(
+  "content_types",
+  {
+    id: text("id")
+      .$defaultFn(() => crypto.randomUUID())
+      .primaryKey(),
+    slug: text("slug").notNull(),
+    name: text("name", { mode: "json" }).$type<Localized>().notNull(),
+    description: text("description", { mode: "json" }).$type<Localized>(),
+    icon: text("icon").default("i-lucide-box").notNull(),
+    mode: text("mode").$type<"document" | "data" | "singleton">().default("document").notNull(),
+    fieldSchema: text("field_schema", { mode: "json" })
+      .$type<Record<string, any>>()
+      .default(sql`'{}'`)
+      .notNull(),
+    ecomSettings: text("ecom_settings", { mode: "json" }).$type<Record<string, any>>(),
+    initialBlocks: text("initial_blocks", { mode: "json" })
+      .$type<BaseBlock[]>()
+      .default(sql`'[]'`)
+      .notNull(),
+    isSystem: integer("is_system", { mode: "boolean" }).default(false).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .$defaultFn(() => new Date())
+      .$onUpdate(() => new Date())
+  },
+  (table) => [uniqueIndex("content_types_slug_idx").on(table.slug)]
+)
+
+export type ContentType = typeof contentTypes.$inferSelect
+export type InsertContentType = typeof contentTypes.$inferInsert

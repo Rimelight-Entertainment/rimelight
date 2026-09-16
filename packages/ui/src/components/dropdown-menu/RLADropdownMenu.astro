@@ -3,7 +3,6 @@ import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
 import { dropdownMenuTheme } from "./dropdown-menu.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-
 const {
   items = [],
   label,
@@ -28,28 +27,31 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
 ---
 <rla-dropdown-menu data-align={align} data-side={side} {...rest}>
   <div class={classes.root} data-slot="root" data-dropdown-menu>
-    <button
-      type="button"
-      class={classes.trigger}
-      data-slot="trigger"
-      data-dropdown-trigger
-      disabled={disabled}
-    >
-      <slot name="trigger">
+    {Astro.slots.has("trigger") ? (
+      <div class="inline-flex cursor-pointer" data-slot="trigger" data-dropdown-trigger>
+        <slot name="trigger" />
+      </div>
+    ) : (
+      <button
+        type="button"
+        class={classes.trigger}
+        data-slot="trigger"
+        data-dropdown-trigger
+        disabled={disabled}
+      >
         <slot>
           {icon && <span class={icon + " shrink-0"} />}
           {label && <span>{label}</span>}
           {!icon && !label && <RLAIcon name="i-lucide-ellipsis-vertical" class="size-4" />}
         </slot>
-      </slot>
-    </button>
+      </button>
+    )}
 
     <div
       class={`${classes.content} hidden`}
       data-slot="content"
       data-dropdown-content
     >
-
       {arrow && <div class={classes.arrow} />}
       <div class={classes.viewport}>
         {itemGroups.map((group, groupIdx) => (
@@ -136,7 +138,8 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
         const side = this.getAttribute("data-side") || "bottom";
 
         content.style.position = "fixed";
-        content.style.zIndex = "99999";
+        content.style.zIndex = "999999";
+        content.style.margin = "0";
 
         if (side === "top") {
           content.style.top = `${rect.top - content.offsetHeight - 4}px`;
@@ -158,6 +161,7 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
 
       const toggleMenu = (e: MouseEvent) => {
         e.stopPropagation();
+        e.preventDefault();
         const isHidden = content.classList.contains("hidden");
 
         document.querySelectorAll("[data-dropdown-content]").forEach(el => {
@@ -178,9 +182,10 @@ const itemGroups: DropdownMenuItem[][] = Array.isArray(items) && items.length > 
       trigger.addEventListener("click", toggleMenu);
 
       const onDocumentClick = (e: MouseEvent) => {
-        if (!this.contains(e.target as Node) && !content.contains(e.target as Node)) {
-          content.classList.add("hidden");
-        }
+        const target = e.target as Node | null;
+        if (!target) return;
+        if (trigger.contains(target) || content.contains(target)) return;
+        content.classList.add("hidden");
       };
       document.addEventListener("click", onDocumentClick);
 

@@ -71,9 +71,29 @@ export const auth: AuthAdapter = {
   name: "auth0",
   options: auth0Config,
   async getSession(req: Request): Promise<UserSessionContext | null> {
-    return auth0Adapter.getSession(req)
+    const session = await auth0Adapter.getSession(req)
+    if (session) return session
+
+    // In local development without active Auth0 session, provide dev admin session
+    if (import.meta.env.DEV && (!auth0Config.clientId || auth0Config.clientId === "" || auth0Config.clientId === "default_client_id")) {
+      return {
+        userId: "dev-admin-user",
+        email: "admin@rimelight.com",
+        name: "Admin (Dev)",
+        avatar: "https://cdn.rimelight.com/Images/default_avatar.png",
+        roles: ["admin", "owner", "editor"],
+        permissions: ["*"],
+        userType: "employee",
+        metadata: { isDev: true }
+      }
+    }
+
+    return null
   },
   handleUnauthorized(req: Request) {
     return auth0Adapter.handleUnauthorized?.(req) ?? new Response("Unauthorized", { status: 401 })
   }
 }
+
+export const authAdapter = auth
+export default auth

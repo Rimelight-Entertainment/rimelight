@@ -639,6 +639,32 @@ cms.post("/pages/:id/publish", async (c) => {
   return c.json({ version: version[0] })
 })
 
+cms.post("/pages/:id/unpublish", async (c) => {
+  const session = await auth.getSession(c.req.raw)
+  if (!session) return c.json({ error: "Unauthorized" }, 401)
+
+  const id = c.req.param("id")
+  const page = await db.select().from(pages).where(eq(pages.id, id)).limit(1)
+  if (!page[0]) return c.json({ error: "Page not found" }, 404)
+
+  const userRoles = session.roles || ["member"]
+  const isOwnerOrAdmin = userRoles.some((role: string) => ["owner", "admin"].includes(role.toLowerCase()))
+  if (!isOwnerOrAdmin && page[0].authorIds && !page[0].authorIds.includes(session.userId)) {
+    return c.json({ error: "Forbidden: insufficient permissions to unpublish page" }, 403)
+  }
+
+  await db
+    .update(pages)
+    .set({
+      postedAt: null,
+      publishedVersionId: null,
+      updatedAt: new Date()
+    })
+    .where(eq(pages.id, id))
+
+  return c.json({ success: true, message: "Page unpublished successfully" })
+})
+
 // Guest Preview Tokens
 cms.post("/pages/:id/preview-token", async (c) => {
   const session = await auth.getSession(c.req.raw)
@@ -891,8 +917,40 @@ cms.delete("/bylines/:id", async (c) => {
   return c.json({ success: true })
 })
 
-// MCP JSON-RPC Endpoint
+// MCP JSON-RPC Endpoint (Protected)
 cms.post("/mcp", async (c) => {
+  const authHeader = c.req.header("Authorization")
+  const expectedApiKey = process.env.CMS_MCP_API_KEY || process.env.BETTER_AUTH_SECRET
+
+  let isAuthenticated = false
+
+  // 1. Check Bearer API key if configured
+  if (authHeader && authHeader.startsWith("Bearer ") && expectedApiKey) {
+    const token = authHeader.slice(7).trim()
+    if (token === expectedApiKey) {
+      isAuthenticated = true
+    }
+  }
+
+  // 2. Check active user session
+  if (!isAuthenticated) {
+    const session = await auth.getSession(c.req.raw)
+    if (session) {
+      isAuthenticated = true
+    }
+  }
+
+  if (!isAuthenticated && (expectedApiKey || process.env.NODE_ENV === "production")) {
+    return c.json(
+      {
+        jsonrpc: "2.0",
+        id: null,
+        error: { code: -32000, message: "Unauthorized: Invalid or missing API key / session" }
+      },
+      401
+    )
+  }
+
   const body = await c.req.json()
   const result = await handleCmsMcpRequest(body, db)
   return c.json(result)

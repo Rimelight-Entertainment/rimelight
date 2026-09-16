@@ -581,7 +581,10 @@ const isPublished = !!page.publishedVersionId;
         if (confirmDeletePageBtn) (confirmDeletePageBtn as HTMLButtonElement).disabled = true;
         const res = await fetch(`/api/cms/pages/${initialData.id}`, { method: 'DELETE' });
         if (res.ok) {
-          window.location.href = '/cms/pages';
+          const currentPath = window.location.pathname;
+          const match = currentPath.match(/^\/([a-z]{2}(?:-[a-z]{2})?)\/cms/i);
+          const localePrefix = match ? `/${match[1]}` : '';
+          window.location.href = `${localePrefix}/cms/pages`;
         } else {
           alert('Failed to delete page');
           if (confirmDeletePageBtn) (confirmDeletePageBtn as HTMLButtonElement).disabled = false;

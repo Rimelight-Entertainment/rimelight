@@ -1,4 +1,3 @@
-
 declare namespace App {
   interface Locals {
     user?: (import("@rimelight/auth").UserSessionContext & { id: string }) | null | undefined
@@ -13,7 +12,6 @@ declare namespace App {
       | undefined
   }
 }
-
 
 declare module "virtual:rimelight-ui-docs-meta" {
   const meta: Record<string, any>
