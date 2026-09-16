@@ -198,11 +198,6 @@ export default authAdapter;`
           entrypoint: "@rimelight/cms/admin/api/media-file.ts"
         })
 
-        const defaultParentLayoutPath = path.resolve(
-          fileURLToPath(new URL(".", import.meta.url)),
-          "admin/layouts/DefaultParentLayout.astro"
-        )
-
         // 2. Vite plugin for virtual modules
         updateConfig({
           vite: {
@@ -229,7 +224,7 @@ export default authAdapter;`
                     if (resolvedParentLayout && fs.existsSync(resolvedParentLayout)) {
                       return `export { default } from ${JSON.stringify(resolvedParentLayout)};`
                     }
-                    return `export { default } from ${JSON.stringify(defaultParentLayoutPath)};`
+                    return `export { default } from "@rimelight/cms/admin/layouts/DefaultParentLayout.astro";`
                   }
                   if (id === "\0virtual:rimelight-cms/db") {
                     if (resolvedDb && fs.existsSync(resolvedDb)) {

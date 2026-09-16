@@ -1,5 +1,7 @@
 ---
 import type { BaseBlock } from "../../core/types/blocks"
+import RLATable from "@rimelight/ui/components/table/RLATable.astro"
+import type { TableColumn } from "@rimelight/ui/components/table/table"
 
 interface Props {
   block: BaseBlock
@@ -7,43 +9,34 @@ interface Props {
 }
 
 const { block } = Astro.props
-const { columns = [], rows = [], caption } = block.props || {}
+const { columns = [], rows = [], caption, striped = true, bordered = false, hoverable = true } = block.props || {}
+
+const resolvedColumns: TableColumn[] = columns.map((col: any) => {
+  const key = typeof col === "string" ? col : col.key || col.id
+  const header = typeof col === "string" ? col : col.header || key
+  const align = typeof col === "object" ? col.align : undefined
+  return {
+    accessorKey: key,
+    header,
+    meta: align
+      ? {
+          class: {
+            th: align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left",
+            td: align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left"
+          }
+        }
+      : undefined
+  }
+})
 ---
 
-<div class="cms-table my-6 overflow-x-auto rounded-lg border border-neutral-200" data-block-id={block.id}>
-  <table class="w-full text-left text-sm border-collapse">
-    {caption && (
-      <caption class="p-2 text-xs text-neutral-500 italic text-left">
-        {caption}
-      </caption>
-    )}
-    {columns.length > 0 && (
-      <thead class="bg-neutral-50 border-b border-neutral-200 font-medium text-neutral-700">
-        <tr>
-          {columns.map((col: any) => (
-            <th
-              class="px-4 py-3 text-xs font-semibold uppercase tracking-wider"
-              style={col.align ? `text-align: ${col.align};` : undefined}
-            >
-              {col.header || col.key}
-            </th>
-          ))}
-        </tr>
-      </thead>
-    )}
-    <tbody class="divide-y divide-neutral-200 bg-default">
-      {rows.map((row: any) => (
-        <tr class="hover:bg-neutral-50/50 transition-colors">
-          {columns.map((col: any) => (
-            <td
-              class="px-4 py-3 text-neutral-800"
-              style={col.align ? `text-align: ${col.align};` : undefined}
-            >
-              {row[col.key] ?? ""}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
+<div class="cms-table my-6" data-block-id={block.id}>
+  <RLATable
+    data={rows}
+    columns={resolvedColumns}
+    caption={caption}
+    striped={striped}
+    bordered={bordered}
+    hoverable={hoverable}
+  />
 </div>

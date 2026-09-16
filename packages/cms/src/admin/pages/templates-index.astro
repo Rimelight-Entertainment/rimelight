@@ -1,10 +1,9 @@
 ---
 import CMSDashboardLayout from "../layouts/CMSDashboardLayout.astro";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
-import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
-import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
-import RLAInput from "@rimelight/ui/components/input/RLAInput.astro";
-import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
+import RLATable from "@rimelight/ui/components/table/RLATable.astro";
+import type { TableColumn } from "@rimelight/ui/components/table/table";
+import { dropdownMenuTheme } from "@rimelight/ui/components/dropdown-menu/dropdown-menu.theme";
 import { db } from "virtual:rimelight-cms/db";
 import { pageTemplates } from "../../schema/page_templates.ts";
 import { desc } from "drizzle-orm";
@@ -14,6 +13,7 @@ import { ensureDefaultTemplates } from "../../services/template-seeder.ts";
 export const prerender = false;
 
 const currentLocale = Astro.currentLocale ?? "en";
+const dropdownClasses = dropdownMenuTheme({ size: "xs" });
 
 let templates: any[] = [];
 if (db) {
@@ -69,7 +69,6 @@ const typeCounts: Record<string, number> = {};
 for (const t of formattedTemplates) {
   typeCounts[t.pageType] = (typeCounts[t.pageType] || 0) + 1;
 }
-const availableTypes = Object.keys(typeCounts).sort();
 
 function getTypeBadgeColor(type: string): "primary" | "secondary" | "success" | "warning" | "error" | "neutral" {
   switch (type) {
@@ -126,6 +125,97 @@ function getTypeIcon(type: string): string {
       return "i-lucide-layout-template";
   }
 }
+
+const templateColumns: TableColumn<any>[] = [
+  {
+    accessorKey: "title",
+    header: "Template & Slug",
+    cell: ({ row }) => {
+      const tmpl = row.original;
+      return `<div class="flex items-start gap-3 py-1">
+        <div class="mt-0.5 size-8 rounded-lg bg-elevated border border-default text-muted flex items-center justify-center shrink-0">
+          <span class="${getTypeIcon(tmpl.pageType)} size-4"></span>
+        </div>
+        <div class="min-w-0 flex-1">
+          <a href="${getRelativeLocaleUrl(currentLocale, `/cms/templates/${tmpl.id}/edit`)}" class="font-semibold text-highlighted hover:text-primary transition-colors text-sm truncate block" title="${tmpl.title}">
+            ${tmpl.title}
+          </a>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="font-mono text-xs text-muted bg-elevated px-1.5 py-0.5 rounded border border-default/60 truncate max-w-xs">
+              ${tmpl.slug}
+            </span>
+          </div>
+          ${tmpl.description ? `<p class="text-xs text-muted/80 mt-1 line-clamp-1 max-w-md">${tmpl.description}</p>` : ''}
+        </div>
+      </div>`;
+    }
+  },
+  {
+    accessorKey: "pageType",
+    header: "Page Type",
+    size: 140,
+    cell: ({ row }) => {
+      const tmpl = row.original;
+      const color = getTypeBadgeColor(tmpl.pageType);
+      return `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider bg-${color}-500/10 text-${color}-500 border border-${color}-500/20">${tmpl.pageType}</span>`;
+    }
+  },
+  {
+    id: "specs",
+    header: "Schema Specs",
+    size: 160,
+    cell: ({ row }) => {
+      const tmpl = row.original;
+      return `<div class="flex items-center gap-2 text-xs text-muted font-mono">
+        <span>${tmpl.initialBlocksCount} ${tmpl.initialBlocksCount === 1 ? "block" : "blocks"}</span>
+        <span class="opacity-40">•</span>
+        <span>${tmpl.propertiesCount} ${tmpl.propertiesCount === 1 ? "prop" : "props"}</span>
+      </div>`;
+    }
+  },
+  {
+    accessorKey: "version",
+    header: "Version",
+    size: 100,
+    cell: ({ row }) => `<span class="px-2 py-0.5 rounded bg-elevated border border-default text-highlighted font-semibold text-xs font-mono">v${row.getValue("version")}</span>`
+  },
+  {
+    id: "actions",
+    header: "",
+    size: 70,
+    enableSorting: false,
+    enableHiding: false,
+    meta: {
+      class: {
+        th: "text-center",
+        td: "text-center"
+      }
+    },
+    cell: ({ row }) => {
+      const tmpl = row.original;
+      return `<div class="${dropdownClasses.root}" data-astro-actions="${tmpl.id}">
+        <button type="button" class="size-8 rounded-lg border border-default bg-elevated/70 text-muted hover:text-highlighted hover:border-accented flex items-center justify-center transition-colors cursor-pointer mx-auto" data-astro-action-trigger aria-label="Actions">
+          <span class="i-lucide-ellipsis-vertical size-4 pointer-events-none"></span>
+        </button>
+        <div class="fixed hidden z-[99999] min-w-44 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md flex flex-col gap-0.5 text-xs text-left" data-astro-action-menu>
+          <a href="${getRelativeLocaleUrl(currentLocale, `/cms/pages/new?templateId=${tmpl.id}`)}" class="${dropdownClasses.item}">
+            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-plus"></span>
+            <span class="${dropdownClasses.itemLabel}">Create Page</span>
+          </a>
+          <a href="${getRelativeLocaleUrl(currentLocale, `/cms/templates/${tmpl.id}/edit`)}" class="${dropdownClasses.item}">
+            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-pencil"></span>
+            <span class="${dropdownClasses.itemLabel}">Edit Template</span>
+          </a>
+          <div class="h-px bg-default/60 my-1 -mx-1"></div>
+          <button type="button" class="${dropdownClasses.item} text-destructive hover:bg-destructive/10" data-delete-tmpl-id="${tmpl.id}">
+            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-trash-2 text-destructive"></span>
+            <span class="${dropdownClasses.itemLabel}">Delete Template</span>
+          </button>
+        </div>
+      </div>`;
+    }
+  }
+];
 ---
 
 <CMSDashboardLayout title="Templates" description="Manage page templates, property schemas, and starter blocks" activeSection="templates">
@@ -153,332 +243,81 @@ function getTypeIcon(type: string): string {
   </Fragment>
 
   <div class="space-y-6">
-    <!-- Top KPI Overview Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="bg-elevated/40 border border-default p-4 rounded-xl shadow-xs transition hover:border-accented flex items-center gap-3">
-        <div class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-          <RLAIcon name="i-lucide-layout-template" class="size-5" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-highlighted leading-tight">{totalCount}</div>
-          <div class="text-xs text-muted font-medium">Total Templates</div>
-        </div>
-      </div>
-
-      <div class="bg-elevated/40 border border-default p-4 rounded-xl shadow-xs transition hover:border-accented flex items-center gap-3">
-        <div class="size-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
-          <RLAIcon name="i-lucide-blocks" class="size-5" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-highlighted leading-tight">
-            {formattedTemplates.reduce((acc, t) => acc + t.initialBlocksCount, 0)}
-          </div>
-          <div class="text-xs text-muted font-medium">Starter Blocks</div>
-        </div>
-      </div>
-
-      <div class="bg-elevated/40 border border-default p-4 rounded-xl shadow-xs transition hover:border-accented flex items-center gap-3">
-        <div class="size-10 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0">
-          <RLAIcon name="i-lucide-layout-grid" class="size-5" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-highlighted leading-tight">{availableTypes.length}</div>
-          <div class="text-xs text-muted font-medium">Page Types</div>
-        </div>
-      </div>
-
-      <div class="bg-elevated/40 border border-default p-4 rounded-xl shadow-xs transition hover:border-accented flex items-center gap-3">
-        <div class="size-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
-          <RLAIcon name="i-lucide-sliders" class="size-5" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-highlighted leading-tight">
-            {formattedTemplates.reduce((acc, t) => acc + t.propertiesCount, 0)}
-          </div>
-          <div class="text-xs text-muted font-medium">Property Groups</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filter & Search Toolbar -->
-    <div class="bg-elevated/30 border border-default rounded-xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-      <!-- Search Input -->
-      <div class="relative flex-1 max-w-md">
-        <RLAInput
-          id="templates-search-input"
-          type="search"
-          placeholder="Search templates by title, slug, or type..."
-          leadingIcon="i-lucide-search"
-          size="sm"
-          class="w-full"
-        />
-      </div>
-
-      <!-- Type Filter Select -->
-      {availableTypes.length > 0 && (
-        <select
-          id="template-type-select"
-          class="bg-elevated border border-default text-highlighted text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer self-start md:self-auto"
-        >
-          <option value="all">All Types ({totalCount})</option>
-          {availableTypes.map((t) => (
-            <option value={t}>{t.charAt(0).toUpperCase() + t.slice(1)} ({typeCounts[t]})</option>
-          ))}
-        </select>
-      )}
-    </div>
-
-    <!-- Main Templates Table -->
-    <div class="bg-elevated/40 border border-default rounded-xl shadow-xs overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse" id="templates-table">
-          <thead class="bg-elevated/80 border-b border-default text-xs font-semibold text-muted uppercase tracking-wider">
-            <tr>
-              <th scope="col" class="px-5 py-3.5 w-5/12">Template & Slug</th>
-              <th scope="col" class="px-4 py-3.5 w-2/12">Page Type</th>
-              <th scope="col" class="px-4 py-3.5 w-2/12">Schema Specs</th>
-              <th scope="col" class="px-4 py-3.5 w-1/12">Version</th>
-              <th scope="col" class="px-5 py-3.5 w-2/12 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-default/50" id="templates-table-body">
-            {formattedTemplates.map((template) => {
-              const actionItems = [
-                [
-                  {
-                    label: "Use Template to Create Page",
-                    icon: "i-lucide-plus",
-                    to: getRelativeLocaleUrl(currentLocale, `/cms/pages/new?templateId=${template.id}`)
-                  },
-                  {
-                    label: "Edit Template",
-                    icon: "i-lucide-pencil",
-                    to: getRelativeLocaleUrl(currentLocale, `/cms/templates/${template.id}/edit`)
-                  }
-                ],
-                [
-                  {
-                    label: "Delete Template",
-                    icon: "i-lucide-trash-2",
-                    id: `delete-tmpl-${template.id}`,
-                    color: "error" as const,
-                    class: "delete-template-item"
-                  }
-                ]
-              ];
-
-              return (
-                <tr
-                  class="hover:bg-elevated/60 transition group template-row"
-                  data-id={template.id}
-                  data-title={template.title.toLowerCase()}
-                  data-slug={template.slug.toLowerCase()}
-                  data-type={template.pageType}
-                  data-desc={template.description.toLowerCase()}
-                >
-                  <!-- Template Name & Slug -->
-                  <td class="px-5 py-4">
-                    <div class="flex items-start gap-3">
-                      <div class="mt-0.5 size-8 rounded-lg bg-elevated border border-default text-muted flex items-center justify-center shrink-0 group-hover:border-primary/40 group-hover:text-primary transition-colors">
-                        <RLAIcon name={getTypeIcon(template.pageType)} class="size-4" />
-                      </div>
-                      <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2">
-                          <a
-                            href={getRelativeLocaleUrl(currentLocale, `/cms/templates/${template.id}/edit`)}
-                            class="font-semibold text-highlighted hover:text-primary transition-colors text-sm truncate"
-                            title={template.title}
-                          >
-                            {template.title}
-                          </a>
-                        </div>
-
-                        <div class="flex items-center gap-2 mt-1">
-                          <span class="font-mono text-xs text-muted bg-elevated px-1.5 py-0.5 rounded border border-default/60 truncate max-w-xs">
-                            {template.slug}
-                          </span>
-                        </div>
-
-                        {template.description && (
-                          <p class="text-xs text-muted/80 mt-1 line-clamp-1 max-w-md">
-                            {template.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-
-                  <!-- Page Type Badge -->
-                  <td class="px-4 py-4 whitespace-nowrap">
-                    <RLABadge variant="soft" color={getTypeBadgeColor(template.pageType)} size="sm">
-                      {template.pageType.toUpperCase()}
-                    </RLABadge>
-                  </td>
-
-                  <!-- Schema Specs (Blocks & Properties) -->
-                  <td class="px-4 py-4 whitespace-nowrap text-xs text-muted">
-                    <div class="flex items-center gap-2">
-                      <span class="inline-flex items-center gap-1 font-mono">
-                        <RLAIcon name="i-lucide-blocks" class="size-3 text-muted" />
-                        {template.initialBlocksCount} {template.initialBlocksCount === 1 ? "block" : "blocks"}
-                      </span>
-                      <span class="text-muted/40">•</span>
-                      <span class="inline-flex items-center gap-1 font-mono">
-                        <RLAIcon name="i-lucide-sliders" class="size-3 text-muted" />
-                        {template.propertiesCount} {template.propertiesCount === 1 ? "prop" : "props"}
-                      </span>
-                    </div>
-                  </td>
-
-                  <!-- Version -->
-                  <td class="px-4 py-4 whitespace-nowrap text-xs font-mono text-muted">
-                    <span class="px-2 py-0.5 rounded bg-elevated border border-default text-highlighted font-semibold">
-                      v{template.version}
-                    </span>
-                  </td>
-
-                  <!-- Actions: Vertical ... Popover Dropdown Menu -->
-                  <td class="px-5 py-4 whitespace-nowrap text-right">
-                    <div class="flex items-center justify-end">
-                      <RLADropdownMenu
-                        items={actionItems as any}
-                        content={{ align: "end", side: "bottom" }}
-                        size="xs"
-                        color="neutral"
-                      >
-                        <button
-                          slot="trigger"
-                          type="button"
-                          class="size-8 rounded-lg border border-default bg-elevated/70 text-muted hover:text-highlighted hover:border-accented hover:bg-elevated flex items-center justify-center transition-colors cursor-pointer"
-                          aria-label="Actions"
-                        >
-                          <RLAIcon name="i-lucide-ellipsis-vertical" class="size-4 pointer-events-none" />
-                        </button>
-                      </RLADropdownMenu>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <!-- No Results / Filter Empty State -->
-      <div id="no-template-results" class="hidden py-16 px-4 text-center">
-        <div class="size-12 rounded-full bg-elevated border border-default mx-auto flex items-center justify-center text-muted mb-3">
-          <RLAIcon name="i-lucide-search-x" class="size-6" />
-        </div>
-        <h3 class="text-base font-semibold text-highlighted">No matching templates</h3>
-        <p class="text-xs text-muted max-w-sm mx-auto mt-1">
-          Try changing your search query or reset the type filter.
-        </p>
-      </div>
-
-      <!-- Overall Empty State -->
-      {totalCount === 0 && (
-        <div class="py-20 px-4 text-center">
-          <div class="size-16 rounded-2xl bg-primary/10 border border-primary/20 mx-auto flex items-center justify-center text-primary mb-4 shadow-sm">
-            <RLAIcon name="i-lucide-layout-template" class="size-8" />
-          </div>
-          <h3 class="text-lg font-bold text-highlighted">No templates found</h3>
-          <p class="text-sm text-muted max-w-md mx-auto mt-1.5">
-            Create custom templates to standardize page structure, properties, and role permissions across your team.
-          </p>
-          <div class="mt-6">
-            <RLAButton
-              href={getRelativeLocaleUrl(currentLocale, "/cms/templates/new")}
-              variant="solid"
-              color="primary"
-              size="md"
-              leadingIcon="i-lucide-plus"
-            >
-              Create First Template
-            </RLAButton>
-          </div>
-        </div>
-      )}
-    </div>
+    <RLATable
+      data={formattedTemplates}
+      columns={templateColumns}
+      bordered
+      striped
+      hoverable
+      searchable
+      showColumnsToggle
+      exportable
+      exportFilename="rimelight-templates-export"
+    />
   </div>
 
   <script>
-    // ─── Filter and Search State ───────────────────────────────────────────────
-    let currentSearch = "";
-    let currentTypeFilter = "all";
-
-    const searchInput = document.getElementById("templates-search-input") as HTMLInputElement | null;
-    const typeSelect = document.getElementById("template-type-select") as HTMLSelectElement | null;
-    const tableRows = document.querySelectorAll<HTMLTableRowElement>(".template-row");
-    const noResults = document.getElementById("no-template-results");
-
-    function applyFilters() {
-      let visibleCount = 0;
-
-      tableRows.forEach((row) => {
-        const title = row.dataset["title"] || "";
-        const slug = row.dataset["slug"] || "";
-        const desc = row.dataset["desc"] || "";
-        const type = row.dataset["type"] || "";
-
-        const matchesSearch =
-          !currentSearch ||
-          title.includes(currentSearch) ||
-          slug.includes(currentSearch) ||
-          desc.includes(currentSearch) ||
-          type.includes(currentSearch);
-
-        const matchesType =
-          currentTypeFilter === "all" || type === currentTypeFilter;
-
-        if (matchesSearch && matchesType) {
-          row.style.display = "";
-          visibleCount++;
-        } else {
-          row.style.display = "none";
-        }
-      });
-
-      if (noResults) {
-        if (visibleCount === 0 && tableRows.length > 0) {
-          noResults.classList.remove("hidden");
-        } else {
-          noResults.classList.add("hidden");
-        }
-      }
-    }
-
-    searchInput?.addEventListener("input", () => {
-      currentSearch = searchInput.value.toLowerCase().trim();
-      applyFilters();
-    });
-
-    typeSelect?.addEventListener("change", () => {
-      currentTypeFilter = typeSelect.value;
-      applyFilters();
-    });
-
-    // ─── Delete Template Click Handler ────────────────────────────────────────
+    // ─── Actions Popover interactive script ───────────────────────────────────
     document.addEventListener("click", async (e) => {
       const target = e.target as HTMLElement;
-      const deleteItem = target.closest<HTMLElement>(".delete-template-item");
-      if (!deleteItem) return;
+      const trigger = target.closest<HTMLButtonElement>("[data-astro-action-trigger]");
+      const allMenus = document.querySelectorAll<HTMLElement>("[data-astro-action-menu]");
 
-      const rawId = deleteItem.getAttribute("data-item-id") || "";
-      const templateId = rawId.replace("delete-tmpl-", "");
-      if (!templateId) return;
-
-      if (!confirm("Are you sure you want to delete this template? This will not delete existing pages created with this template.")) return;
-
-      try {
-        const res = await fetch(`/api/cms/templates/${templateId}`, { method: "DELETE" });
-        if (res.ok) {
-          window.location.reload();
-        } else {
-          alert("Failed to delete template");
+      // Handle delete button click inside menu
+      const deleteBtn = target.closest<HTMLElement>("[data-delete-tmpl-id]");
+      if (deleteBtn) {
+        allMenus.forEach((m) => m.classList.add("hidden"));
+        const templateId = deleteBtn.getAttribute("data-delete-tmpl-id") || "";
+        if (!templateId) return;
+        if (!confirm("Are you sure you want to delete this template? This will not delete existing pages created with this template.")) return;
+        try {
+          const res = await fetch(`/api/cms/templates/${templateId}`, { method: "DELETE" });
+          if (res.ok) {
+            window.location.reload();
+          } else {
+            alert("Failed to delete template");
+          }
+        } catch {
+          alert("Network error deleting template");
         }
-      } catch {
-        alert("Network error deleting template");
+        return;
       }
+
+      if (trigger) {
+        e.stopPropagation();
+        const wrapper = trigger.closest("[data-astro-actions]");
+        const rowId = wrapper?.getAttribute("data-astro-actions") || "";
+        const menu = wrapper?.querySelector<HTMLElement>("[data-astro-action-menu]")
+          || document.querySelector<HTMLElement>(`[data-astro-action-menu][data-menu-for="${rowId}"]`);
+        if (!menu) return;
+
+        const isHidden = menu.classList.contains("hidden");
+        allMenus.forEach((m) => m.classList.add("hidden"));
+
+        if (isHidden) {
+          menu.setAttribute("data-menu-for", rowId);
+          if (menu.parentElement !== document.body) {
+            document.body.appendChild(menu);
+          }
+          const rect = trigger.getBoundingClientRect();
+          menu.style.position = "fixed";
+          menu.style.zIndex = "99999";
+          menu.style.top = `${rect.bottom + 4}px`;
+          menu.style.right = `${window.innerWidth - rect.right}px`;
+          menu.style.left = "auto";
+          menu.classList.remove("hidden");
+        }
+      } else {
+        allMenus.forEach((m) => m.classList.add("hidden"));
+      }
+    });
+
+    // Close menus on scroll/resize
+    window.addEventListener("scroll", () => {
+      document.querySelectorAll<HTMLElement>("[data-astro-action-menu]").forEach((m) => m.classList.add("hidden"));
+    }, true);
+    window.addEventListener("resize", () => {
+      document.querySelectorAll<HTMLElement>("[data-astro-action-menu]").forEach((m) => m.classList.add("hidden"));
     });
   </script>
 </CMSDashboardLayout>
