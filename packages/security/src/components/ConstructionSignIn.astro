@@ -1,0 +1,148 @@
+---
+import RLACard from "@rimelight/ui/components/card/RLACard.astro"
+import RLAFormField from "@rimelight/ui/components/form-field/RLAFormField.astro"
+import RLAInput from "@rimelight/ui/components/input/RLAInput.astro"
+import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
+import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
+
+interface Props {
+  allowAuth?: boolean
+  endpoint?: string
+  passphraseLabel?: string
+  passphrasePlaceholder?: string
+  rememberMeLabel?: string
+  signInButtonLabel?: string
+  loadingButtonLabel?: string
+  returnLaterText?: string
+  class?: string
+}
+
+const {
+  allowAuth = true,
+  endpoint = "/api/construction-guest",
+  passphraseLabel = "Passphrase",
+  passphrasePlaceholder = "Enter passphrase...",
+  rememberMeLabel = "Remember me",
+  signInButtonLabel = "Sign In",
+  loadingButtonLabel = "Signing In...",
+  returnLaterText = "Please return at a later stage.",
+  class: className = ""
+} = Astro.props
+---
+
+{
+  allowAuth ? (
+    <RLACard class={`bg-black text-left w-full max-w-md ${className}`}>
+      <slot name="header" />
+      <form id="construction-sign-in-form" data-endpoint={endpoint} class="flex flex-col gap-4">
+        <p id="construction-error-message" class="text-red-500 text-sm hidden" role="alert" />
+
+        <div class="flex flex-col gap-4">
+          <RLAFormField
+            label={passphraseLabel}
+            required
+            ui={{
+              label: "text-white",
+              description: "text-neutral-500"
+            }}
+          >
+            <RLAInput
+              id="construction-passphrase-input"
+              type="password"
+              name="passphrase"
+              placeholder={passphrasePlaceholder}
+              class="w-full text-white"
+              required
+              autocomplete="current-password"
+            />
+          </RLAFormField>
+
+          <RLACheckbox
+            id="construction-remember-me-checkbox"
+            name="rememberMe"
+            label={rememberMeLabel}
+            checked
+            ui={{
+              label: "text-white",
+              indicator: "data-[state=checked]:bg-primary-500 data-[state=checked]:text-white"
+            }}
+          />
+
+          <RLAButton
+            id="construction-submit-button"
+            type="submit"
+            color="primary"
+            variant="solid"
+            block
+            class="text-white bg-primary-500 hover:bg-primary-600 w-full"
+            data-label={signInButtonLabel}
+            data-loading-label={loadingButtonLabel}
+          >
+            {signInButtonLabel}
+          </RLAButton>
+        </div>
+      </form>
+      <slot name="footer" />
+    </RLACard>
+  ) : (
+    <p class="text-neutral-400">{returnLaterText}</p>
+  )
+}
+
+<script>
+  function getRedirectParam() {
+    const params = new URLSearchParams(window.location.search)
+    return params.get("redirect") || "/"
+  }
+
+  const form = document.getElementById("construction-sign-in-form") as HTMLFormElement | null
+  const passphraseInput = document.getElementById("construction-passphrase-input") as HTMLInputElement | null
+  const rememberCheckbox = document.getElementById("construction-remember-me-checkbox") as HTMLInputElement | null
+  const errorMessage = document.getElementById("construction-error-message")
+  const submitButton = document.getElementById("construction-submit-button")
+
+  if (form) {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault()
+      if (!passphraseInput || !submitButton || !errorMessage) return
+
+      const endpoint = form.getAttribute("data-endpoint") || "/api/construction-guest"
+      const defaultLabel = submitButton.getAttribute("data-label") || "Sign In"
+      const loadingLabel = submitButton.getAttribute("data-loading-label") || "Signing In..."
+
+      // Set loading state
+      submitButton.setAttribute("disabled", "true")
+      submitButton.textContent = loadingLabel
+      errorMessage.classList.add("hidden")
+      errorMessage.textContent = ""
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            passphrase: passphraseInput.value,
+            rememberMe: rememberCheckbox ? rememberCheckbox.checked : true
+          })
+        })
+
+        const data = (await response.json().catch(() => ({}))) as { error?: string; success?: boolean }
+
+        if (!response.ok || !data.success) {
+          errorMessage.textContent = data?.error || "Invalid credentials"
+          errorMessage.classList.remove("hidden")
+          submitButton.removeAttribute("disabled")
+          submitButton.textContent = defaultLabel
+          return
+        }
+
+        window.location.href = getRedirectParam()
+      } catch (err: any) {
+        errorMessage.textContent = err?.message || "An unexpected error occurred."
+        errorMessage.classList.remove("hidden")
+        submitButton.removeAttribute("disabled")
+        submitButton.textContent = defaultLabel
+      }
+    })
+  }
+</script>

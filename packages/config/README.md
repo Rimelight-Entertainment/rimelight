@@ -79,8 +79,8 @@ Zero-boilerplate setup with preconfigured Cloudflare adapter, Cloudflare cache, 
 ```typescript
 import { defineConfig } from "astro/config"
 import { rimelightAstroConfig } from "@rimelight/config/astro"
-import en from "./src/translations/en.json"
-import pt from "./src/translations/pt.json"
+import en from "./src/i18n/en.json"
+import pt from "./src/i18n/pt.json"
 
 export default defineConfig(
   rimelightAstroConfig({

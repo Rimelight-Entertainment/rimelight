@@ -81,3 +81,72 @@ export interface SecurityOptions {
    */
   headers?: Record<string, string>
 }
+
+export interface ConstructionOptions {
+  /**
+   * Environment variable key for construction mode flag ("true" | "false"). Defaults to
+   * "CONSTRUCTION_MODE".
+   */
+  modeEnvKey?: string
+
+  /**
+   * Environment variable key for the passphrase secret. Defaults to "CONSTRUCTION_PASSPHRASE".
+   */
+  passphraseEnvKey?: string
+
+  /**
+   * Explicit passphrase override (if not reading from env).
+   */
+  passphrase?: string
+
+  /**
+   * Cookie name used for guest authorization token. Defaults to "rimelight-construction-guest".
+   */
+  cookieName?: string
+
+  /**
+   * Cookie max age in seconds when "remember me" is enabled. Defaults to 7 days (604,800 seconds).
+   */
+  cookieMaxAge?: number
+
+  /**
+   * List of supported locales or custom resolver.
+   */
+  locales?: string[]
+
+  /**
+   * Custom locale extractor from request path.
+   */
+  getLocale?: (path: string) => string
+
+  /**
+   * Custom path for the construction page. Defaults to "/construction".
+   */
+  constructionPath?: string
+
+  /**
+   * API endpoint to automatically handle guest sign-in. Set to `false` to disable automatic API
+   * interception. Defaults to "/api/construction-guest".
+   */
+  apiPath?: string | false
+
+  /**
+   * Additional routes / prefixes to whitelist and skip gating.
+   */
+  whitelist?: (string | RegExp)[] | ((path: string) => boolean)
+
+  /**
+   * Custom authorization predicate. If returns true, request is allowed through. Defaults to
+   * checking `c.get("session") || await isConstructionGuest(c, options)`.
+   */
+  isAuthorized?: (c: any) => boolean | Promise<boolean>
+
+  /**
+   * Custom handler when unauthorized. Defaults to redirecting to
+   * `/${locale}/construction?redirect=${encodeURIComponent(path)}`.
+   */
+  onUnauthorized?: (
+    c: any,
+    meta: { locale: string; path: string; redirectUrl: string }
+  ) => Response | Promise<Response>
+}

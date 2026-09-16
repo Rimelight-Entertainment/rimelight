@@ -165,7 +165,7 @@ export interface RimelightAstroOptions {
   [key: string]: any
 }
 
-function discoverTranslations(dir = "./src/translations"): Record<string, any> {
+function discoverTranslations(dir = "./src/i18n"): Record<string, any> {
   const translations: Record<string, any> = {}
   try {
     const resolvedDir = path.resolve(process.cwd(), dir)

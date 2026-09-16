@@ -6,15 +6,14 @@ import assetsRoutes from "./routes/assets"
 import pagesRoutes from "./routes/pages"
 import versionRoutes from "./routes/versions"
 import emailPreviewRoutes from "./routes/email/preview"
-import constructionGuestRoutes from "./routes/construction-guest"
 import docsRoutes from "./routes/docs"
 import cmsRoutes from "./routes/cms"
 
 const api = new Hono()
 
 api.route("/auth", authRoutes)
-api.route("/construction-guest", constructionGuestRoutes)
 api.route("/search", searchRoutes)
+
 api.route("/github", changelogRoutes)
 api.route("/assets", assetsRoutes)
 api.route("/pages", pagesRoutes)

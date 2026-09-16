@@ -1,7 +1,3 @@
-declare module "*.astro" {
-  const component: any
-  export default component
-}
 
 declare module "virtual:rimelight-cms/parent-layout" {
   const layout: any

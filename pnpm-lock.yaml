@@ -563,6 +563,10 @@ importers:
         version: 6.0.3
 
   packages/security:
+    dependencies:
+      '@rimelight/ui':
+        specifier: workspace:*
+        version: link:../ui
     devDependencies:
       '@astrojs/check':
         specifier: 0.9.10
@@ -573,6 +577,9 @@ importers:
       astro:
         specifier: 7.3.2
         version: 7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
+      hono:
+        specifier: 4.12.3
+        version: 4.12.3
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -3655,6 +3662,10 @@ packages:
 
   hast-util-whitespace@3.0.0:
     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
+
+  hono@4.12.3:
+    resolution: {integrity: sha512-SFsVSjp8sj5UumXOOFlkZOG6XS9SJDKw0TbwFeV+AJ8xlST8kxK5Z/5EYa111UY8732lK2S/xB653ceuaoGwpg==}
+    engines: {node: '>=16.9.0'}
 
   hono@4.13.7:
     resolution: {integrity: sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==}
@@ -7672,6 +7683,8 @@ snapshots:
   hast-util-whitespace@3.0.0:
     dependencies:
       '@types/hast': 3.0.5
+
+  hono@4.12.3: {}
 
   hono@4.13.7: {}
 

@@ -80,7 +80,7 @@ export function cloudflarePreset(options = {}) {
   }
 }
 
-function discoverTranslations(dir = "./src/translations") {
+function discoverTranslations(dir = "./src/i18n") {
   const translations = {}
   try {
     const resolvedDir = path.resolve(process.cwd(), dir)

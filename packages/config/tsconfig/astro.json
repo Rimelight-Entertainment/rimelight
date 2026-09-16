@@ -5,6 +5,9 @@
       {
         "name": "@astrojs/ts-plugin"
       }
+    ],
+    "types": [
+      "@rimelight/config/astro-env"
     ]
   },
   "display": "Rimelight Astro",

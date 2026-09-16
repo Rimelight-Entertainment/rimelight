@@ -34,7 +34,7 @@ export type NestedTranslationKeys<T> = T extends object
  *
  * ```ts
  * declare module "@rimelight/i18n" {
- *   interface CustomTranslations extends typeof import("./translations/en.json") {}
+ *   interface CustomTranslations extends typeof import("./i18n/en.json") {}
  * }
  * ```
  */
