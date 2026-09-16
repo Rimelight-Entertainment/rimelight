@@ -110,6 +110,8 @@ for (const c of rawColumns) {
   if (c.id === "actions" || c.actions || c.items) {
     if (c.enableSorting === undefined) c.enableSorting = false
     if (c.header === undefined && c.id === "actions") c.header = ""
+    if (c.size === undefined && c.id === "actions") c.size = 60
+    if (c.minSize === undefined && c.id === "actions") c.minSize = 60
     if (!c.meta?.class?.td && c.id === "actions") {
       c.meta = {
         ...c.meta,

@@ -23,7 +23,8 @@ export const tableTheme = defineTheme("table", {
     "dragHandle"
   ],
   base: {
-    root: "relative w-full overflow-auto rounded-lg border border-default shadow-sm outline-primary/25 focus-visible:outline-3",
+    root:
+      "relative block w-full overflow-hidden rounded-lg border border-default shadow-sm outline-primary/25 focus-visible:outline-3",
     base: "min-w-full w-full border-separate border-spacing-0 text-sm text-left",
     caption: "sr-only p-4 text-xs text-muted text-center",
     toolbar:
