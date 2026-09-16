@@ -30,6 +30,11 @@ const {
   columnFilters = [],
   columnVisibility = {},
   columnPinning = {},
+  columnSizing = {},
+  columnOrder = [],
+  enableColumnResizing = false,
+  enableColumnReordering = false,
+  enableRowReordering = false,
   sorting = [],
   grouping = [],
   rowPinning = {},
@@ -37,10 +42,13 @@ const {
   expanded = {},
   pagination,
   getSubRows,
+  getRowCanExpand,
   getRowId,
   searchable = false,
   searchPlaceholder = "Filter table...",
   showColumnsToggle = false,
+  exportable = false,
+  exportFilename = "export",
   class: className,
   ui,
   ...rest
@@ -61,18 +69,51 @@ const classes = tableTheme({
 
 // ─── Column resolution ────────────────────────────────────────────────────────
 
-let resolvedColumns: TableColumn[] = []
+let rawColumns: TableColumn[] = []
 
 if (columns && columns.length > 0) {
-  resolvedColumns = columns
+  rawColumns = [...columns]
 } else if (data && data.length > 0 && typeof data[0] === "object" && data[0] !== null) {
   const firstRow = data[0] as AnyData
-  resolvedColumns = Object.keys(firstRow).map((key) => ({
+  rawColumns = Object.keys(firstRow).map((key) => ({
     id: key,
     accessorKey: key,
     header: key.charAt(0).toUpperCase() + key.slice(1),
     enableSorting: true
   }))
+}
+
+if (enableRowReordering && !rawColumns.some((c) => c.id === "reorder" || c.id === "dragHandle")) {
+  const reorderCol: TableColumn = {
+    id: "reorder",
+    size: 36,
+    minSize: 36,
+    maxSize: 36,
+    enableSorting: false,
+    enableHiding: false,
+    header: "",
+    cell: () => `<div class="flex items-center justify-center"><span class="${classes.dragHandle}" data-slot="drag-handle" draggable="true"><span class="i-lucide-grip-vertical size-4"></span></span></div>`
+  }
+  rawColumns = [reorderCol, ...rawColumns]
+}
+
+let resolvedColumns: TableColumn[] = rawColumns
+if (columnOrder && columnOrder.length > 0) {
+  const ordered: TableColumn[] = []
+  const map = new Map<string, TableColumn>()
+  for (const c of rawColumns) {
+    map.set(String(c.id || c.accessorKey || ""), c)
+  }
+  for (const id of columnOrder) {
+    if (map.has(id)) {
+      ordered.push(map.get(id)!)
+      map.delete(id)
+    }
+  }
+  for (const remaining of map.values()) {
+    ordered.push(remaining)
+  }
+  resolvedColumns = ordered
 }
 
 // Filter by column visibility
@@ -85,7 +126,7 @@ const visibleColumns = resolvedColumns.filter((col) => {
 
 // Dropdown items for column visibility toggle
 const columnDropdownItems = resolvedColumns
-  .filter((col) => col.enableHiding !== false)
+  .filter((col) => col.enableHiding !== false && col.id !== "reorder")
   .map((col) => {
     const colId = (col.id || col.accessorKey || "") as string
     const rawLabel = typeof col.header === "string" ? col.header : colId
@@ -96,6 +137,19 @@ const columnDropdownItems = resolvedColumns
       checked: columnVisibility[colId] !== false
     }
   })
+
+const exportDropdownItems = [
+  {
+    id: "csv",
+    label: "Export as CSV",
+    icon: "i-lucide-file-spreadsheet"
+  },
+  {
+    id: "json",
+    label: "Export as JSON",
+    icon: "i-lucide-file-json"
+  }
+]
 
 // ─── Row building ─────────────────────────────────────────────────────────────
 
@@ -236,45 +290,57 @@ if (sorting && sorting.length > 0) {
   })
 }
 
-// ─── Grouping ─────────────────────────────────────────────────────────────────
+// ─── Multi-level Grouping ─────────────────────────────────────────────────────
 
 type GroupedItem =
-  | { type: "group"; group: TableGroup }
+  | { type: "group"; group: TableGroup; depth: number }
   | { type: "row"; row: TableRow }
 
-let groupedItems: GroupedItem[] = []
-let groups: TableGroup[] = []
+function groupRowsRecursively(
+  rows: TableRow[],
+  groupCols: string[],
+  depth = 0,
+  parentPath = ""
+): GroupedItem[] {
+  if (depth >= groupCols.length || rows.length === 0) {
+    return rows.map((r) => ({ type: "row", row: r }))
+  }
 
-if (grouping && grouping.length > 0) {
-  const groupColId = grouping[0]!
+  const colId = groupCols[depth]!
   const groupMap = new Map<string, TableRow[]>()
   const groupOrder: string[] = []
 
-  for (const row of processedRows) {
-    const val = String(row.getValue(groupColId) ?? "")
+  for (const row of rows) {
+    const val = String(row.getValue(colId) ?? "")
     if (!groupMap.has(val)) {
       groupMap.set(val, [])
       groupOrder.push(val)
     }
-    row.groupingColumnId = groupColId
+    row.groupingColumnId = colId
     row.groupingValue = val
     groupMap.get(val)!.push(row)
   }
 
+  const result: GroupedItem[] = []
   for (const val of groupOrder) {
-    const rows = groupMap.get(val)!
+    const subRows = groupMap.get(val)!
+    const groupId = `group-${parentPath}${colId}-${val}`
     const group: TableGroup = {
-      id: `group-${groupColId}-${val}`,
-      columnId: groupColId,
+      id: groupId,
+      columnId: colId,
       value: val,
-      rows
+      depth,
+      rows: subRows
     }
-    groups.push(group)
-    groupedItems.push({ type: "group", group })
-    for (const row of rows) {
-      groupedItems.push({ type: "row", row, groupId: group.id } as any)
-    }
+    result.push({ type: "group", group, depth })
+    result.push(...groupRowsRecursively(subRows, groupCols, depth + 1, `${groupId}/`))
   }
+  return result
+}
+
+let groupedItems: GroupedItem[] = []
+if (grouping && grouping.length > 0) {
+  groupedItems = groupRowsRecursively(processedRows, grouping, 0, "")
 } else {
   groupedItems = processedRows.map((row) => ({ type: "row", row }))
 }
@@ -332,7 +398,8 @@ if (columnPinning.left && columnPinning.left.length > 0) {
   for (const colId of columnPinning.left) {
     colOffsetLeft[colId] = offset
     const col = resolvedColumns.find((c) => (c.id || c.accessorKey) === colId)
-    offset += typeof col?.size === "number" ? col.size : 150
+    const sized = columnSizing[colId]
+    offset += typeof sized === "number" ? sized : typeof col?.size === "number" ? col.size : 150
   }
 }
 
@@ -341,7 +408,8 @@ if (columnPinning.right && columnPinning.right.length > 0) {
   for (const colId of [...columnPinning.right].reverse()) {
     colOffsetRight[colId] = offset
     const col = resolvedColumns.find((c) => (c.id || c.accessorKey) === colId)
-    offset += typeof col?.size === "number" ? col.size : 150
+    const sized = columnSizing[colId]
+    offset += typeof sized === "number" ? sized : typeof col?.size === "number" ? col.size : 150
   }
 }
 
@@ -353,7 +421,7 @@ const hasFooters = visibleColumns.some(
     Astro.slots.has(`${String(col.id || col.accessorKey)}-footer`)
 )
 
-const showToolbar = searchable || showColumnsToggle || Astro.slots.has("toolbar")
+const showToolbar = searchable || showColumnsToggle || exportable || Astro.slots.has("toolbar")
 
 function getPinStyle(colId: string): string {
   if (colOffsetLeft[colId] !== undefined)
@@ -368,9 +436,11 @@ function isPinned(colId: string): boolean {
 }
 
 function getColumnSizeStyle(col: TableColumn): string {
+  const colId = (col.id || col.accessorKey || "") as string
+  const sizeVal = columnSizing[colId] ?? col.size
   const styles: string[] = []
-  if (col.size) {
-    styles.push(`width:${typeof col.size === "number" ? `${col.size}px` : col.size};`)
+  if (sizeVal) {
+    styles.push(`width:${typeof sizeVal === "number" ? `${sizeVal}px` : sizeVal};`)
   }
   if (col.minSize) {
     styles.push(`min-width:${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`)
@@ -405,8 +475,20 @@ function getColumnSizeStyle(col: TableColumn): string {
 
       <slot name="toolbar" />
 
-      {showColumnsToggle && (
-        <div class="ml-auto shrink-0">
+      <div class="ml-auto flex items-center gap-2 shrink-0">
+        {exportable && (
+          <RLADropdownMenu
+            label="Export"
+            icon="i-lucide-download"
+            items={exportDropdownItems as any}
+            content={{ align: "end" }}
+            size="sm"
+            color="neutral"
+            data-rla-export-menu
+          />
+        )}
+
+        {showColumnsToggle && (
           <RLADropdownMenu
             label="Columns"
             icon="i-lucide-columns"
@@ -415,8 +497,8 @@ function getColumnSizeStyle(col: TableColumn): string {
             size="sm"
             color="neutral"
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )}
 
@@ -455,7 +537,9 @@ function getColumnSizeStyle(col: TableColumn): string {
                 col.enableSorting !== false &&
                 !!(col.accessorKey || col.id || col.accessorFn) &&
                 colId !== "actions" &&
-                colId !== "select"
+                colId !== "select" &&
+                colId !== "reorder" &&
+                colId !== "dragHandle"
               const activeSort = (sorting as SortingState).find((s) => s.id === colId)
               const sortDir = activeSort ? (activeSort.desc ? "desc" : "asc") : "none"
               const headerSlotName = `${colId}-header`
@@ -465,6 +549,15 @@ function getColumnSizeStyle(col: TableColumn): string {
               const combinedStyle = [sizeStyle, pinStyle, metaThStyle]
                 .filter(Boolean)
                 .join("")
+
+              const headerLabel =
+                typeof col.header === "string"
+                  ? col.header
+                  : col.header !== undefined
+                    ? ""
+                    : colId === "reorder" || colId === "select" || colId === "actions" || colId === "dragHandle"
+                      ? ""
+                      : colId.charAt(0).toUpperCase() + colId.slice(1)
 
               return (
                 <th
@@ -478,38 +571,60 @@ function getColumnSizeStyle(col: TableColumn): string {
                   data-col-id={colId}
                   data-slot="th"
                 >
-                  {Astro.slots.has(headerSlotName) ? (
-                    <slot name={headerSlotName} {...({ column: col } as any)} />
-                  ) : canSort ? (
-                    <button
-                      type="button"
-                      class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
-                      data-rla-sort-btn
-                      data-rla-col-id={colId}
-                      data-sort-dir={sortDir}
-                      aria-label={`Sort by ${colId}`}
-                    >
-                      <span>
-                        {typeof col.header === "function"
-                          ? col.header({ column: col, table: {} })
-                          : col.header || colId}
-                      </span>
+                  <div class="flex items-center gap-1.5">
+                    {enableColumnReordering && colId !== "reorder" && colId !== "select" && colId !== "actions" && colId !== "dragHandle" && (
                       <span
-                        data-sort-icon
-                        class:list={[
-                          sortDir === "asc"
-                            ? "i-lucide-arrow-up-narrow-wide text-primary"
-                            : sortDir === "desc"
-                              ? "i-lucide-arrow-down-wide-narrow text-primary"
-                              : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100",
-                          "size-3.5 transition-all shrink-0"
-                        ]}
-                      />
-                    </button>
-                  ) : typeof col.header === "function" ? (
-                    <Fragment set:html={col.header({ column: col, table: {} })} />
-                  ) : (
-                    col.header || colId
+                        class={classes.dragHandle}
+                        data-slot="drag-handle"
+                        draggable="true"
+                      >
+                        <span class="i-lucide-grip-vertical size-3.5 opacity-40 hover:opacity-100" />
+                      </span>
+                    )}
+
+                    <div class="flex-1 min-w-0">
+                      {Astro.slots.has(headerSlotName) ? (
+                        <slot name={headerSlotName} {...({ column: col } as any)} />
+                      ) : canSort ? (
+                        <button
+                          type="button"
+                          class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
+                          data-rla-sort-btn
+                          data-rla-col-id={colId}
+                          data-sort-dir={sortDir}
+                          aria-label={`Sort by ${colId}`}
+                        >
+                          <span>
+                            {typeof col.header === "function"
+                              ? col.header({ column: col, table: {} })
+                              : headerLabel}
+                          </span>
+                          <span
+                            data-sort-icon
+                            class:list={[
+                              sortDir === "asc"
+                                ? "i-lucide-arrow-up-narrow-wide text-primary"
+                                : sortDir === "desc"
+                                  ? "i-lucide-arrow-down-wide-narrow text-primary"
+                                  : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100",
+                              "size-3.5 transition-all shrink-0"
+                            ]}
+                          />
+                        </button>
+                      ) : typeof col.header === "function" ? (
+                        <Fragment set:html={col.header({ column: col, table: {} })} />
+                      ) : (
+                        headerLabel
+                      )}
+                    </div>
+                  </div>
+
+                  {enableColumnResizing && (
+                    <div
+                      class={classes.resizer}
+                      data-slot="resizer"
+                      data-col-id={colId}
+                    />
                   )}
                 </th>
               )
@@ -560,12 +675,13 @@ function getColumnSizeStyle(col: TableColumn): string {
           paginatedItems.map((item) => {
             // ── Group header row ──────────────────────────────────────────
             if (item.type === "group") {
-              const { group } = item
+              const { group, depth } = item
               return (
-                <tr class={classes.trGroup} data-slot="tr-group" data-group-id={group.id}>
+                <tr class={classes.trGroup} data-slot="tr-group" data-group-id={group.id} data-depth={depth}>
                   <td
                     colspan={Math.max(1, visibleColumns.length)}
                     class={classes.tdGroup}
+                    style={depth ? `padding-left: ${depth * 1.5 + 1}rem;` : undefined}
                     data-slot="td-group"
                   >
                     {Astro.slots.has("group-header") ? (
@@ -576,6 +692,7 @@ function getColumnSizeStyle(col: TableColumn): string {
                     ) : (
                       <span class="flex items-center gap-2">
                         <span class="i-lucide-layers size-3.5 text-primary opacity-70" />
+                        <span class="text-xs uppercase text-muted font-medium">{group.columnId}:</span>
                         <span class="text-highlighted">{String(group.value)}</span>
                         <span class="ml-auto text-muted font-normal normal-case">
                           {group.rows.length} {group.rows.length === 1 ? "row" : "rows"}
@@ -609,6 +726,7 @@ function getColumnSizeStyle(col: TableColumn): string {
                   style={trMetaStyle || undefined}
                   data-slot="tr"
                   data-row-id={row.id}
+                  data-row-index={row.index}
                   data-group-id={currentGroupId}
                   data-selected={isSelected ? "true" : undefined}
                   data-expanded={isExpanded ? "true" : undefined}
@@ -711,6 +829,7 @@ function getColumnSizeStyle(col: TableColumn): string {
                         class:list={[classes.tr, subTrMetaClass]}
                         data-slot="tr"
                         data-row-id={subRow.id}
+                        data-row-index={subRow.index}
                         data-depth={subRow.depth}
                       >
                         {visibleColumns.map((col) => {
@@ -769,7 +888,7 @@ function getColumnSizeStyle(col: TableColumn): string {
                                 />
                               ) : typeof col.cell === "function" ? (
                                 <Fragment set:html={col.cell({
-                                  row: subRow,
+                                  row,
                                   getValue: () => cellValue,
                                   renderValue: () => cellValue,
                                   column: col,
@@ -821,133 +940,260 @@ function getColumnSizeStyle(col: TableColumn): string {
 </rla-table>
 
 <script>
-  if (typeof HTMLElement !== "undefined") {
+  if (typeof window !== "undefined") {
     class RLATableElement extends HTMLElement {
-      private _allRows: HTMLTableRowElement[] = []
-
       connectedCallback() {
-        const table = this.querySelector<HTMLTableElement>("table")
-        if (!table) return
-        const tbody = table.querySelector("tbody")
-        if (!tbody) return
-
-        // Cache original row order for sort resets
-        this._allRows = Array.from(tbody.querySelectorAll<HTMLTableRowElement>("tr[data-slot=tr]"))
-
-        this._initSearch(tbody)
-        this._initColumnVisibility(table, tbody)
-        this._initSort(table, tbody)
-        this._initRowEvents(tbody)
-        this._initSelection(tbody)
-        this._initExpandToggles(tbody)
+        this._initSearch()
+        this._initSorting()
+        this._initRowEvents()
+        this._initSelection()
+        this._initExpandToggles()
+        this._initColumnResizing()
+        this._initColumnReordering()
+        this._initRowReordering()
       }
 
-      // ── Search ────────────────────────────────────────────────────────────
-      private _initSearch(tbody: Element) {
-        const input = this.querySelector<HTMLInputElement>("[data-rla-table-search]")
-        if (!input) return
-        input.addEventListener("input", () => {
-          const q = input.value.toLowerCase().trim()
-          tbody.querySelectorAll<HTMLTableRowElement>("tr[data-slot=tr]").forEach((row) => {
-            if (!q || (row.textContent?.toLowerCase() ?? "").includes(q)) {
-              row.style.display = ""
-            } else {
-              row.style.display = "none"
+      private _initColumnResizing() {
+        const resizers = this.querySelectorAll<HTMLElement>("[data-slot=resizer]")
+        resizers.forEach((resizer) => {
+          resizer.addEventListener("pointerdown", (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            const startX = e.clientX
+            const th = resizer.closest<HTMLTableCellElement>("th")
+            const colId = resizer.getAttribute("data-col-id") || th?.getAttribute("data-col-id")
+            if (!th || !colId) return
+            const initialWidth = th.offsetWidth
+            const colEl = this.querySelector<HTMLTableColElement>(`col[data-col-id="${colId}"]`)
+
+            const onPointerMove = (moveEv: PointerEvent) => {
+              const deltaX = moveEv.clientX - startX
+              const newWidth = Math.max(40, initialWidth + deltaX)
+              th.style.width = `${newWidth}px`
+              if (colEl) colEl.style.width = `${newWidth}px`
+            }
+
+            const onPointerUp = () => {
+              window.removeEventListener("pointermove", onPointerMove)
+              window.removeEventListener("pointerup", onPointerUp)
+              this.dispatchEvent(
+                new CustomEvent("rla-column-resize", {
+                  detail: { colId, width: th.offsetWidth },
+                  bubbles: true
+                })
+              )
+            }
+
+            window.addEventListener("pointermove", onPointerMove)
+            window.addEventListener("pointerup", onPointerUp)
+          })
+        })
+      }
+
+      private _initColumnReordering() {
+        const handles = this.querySelectorAll<HTMLElement>("thead th [data-slot=drag-handle]")
+        let draggedColId: string | null = null
+
+        handles.forEach((handle) => {
+          handle.addEventListener("dragstart", (e) => {
+            const th = handle.closest<HTMLTableCellElement>("th")
+            draggedColId = th?.getAttribute("data-col-id") || null
+            e.dataTransfer?.setData("text/plain", draggedColId || "")
+            if (e.dataTransfer) {
+              e.dataTransfer.effectAllowed = "move"
+            }
+          })
+          handle.addEventListener("dragend", () => {
+            draggedColId = null
+            this.querySelectorAll("thead th").forEach((th) => th.removeAttribute("data-drop-position"))
+          })
+        })
+
+        const ths = this.querySelectorAll<HTMLTableCellElement>("thead th")
+        ths.forEach((th) => {
+          th.addEventListener("dragover", (e) => {
+            if (!draggedColId) return
+            e.preventDefault()
+            const rect = th.getBoundingClientRect()
+            const pos = e.clientX < rect.left + rect.width / 2 ? "left" : "right"
+            ths.forEach((other) => {
+              if (other !== th) other.removeAttribute("data-drop-position")
+            })
+            th.setAttribute("data-drop-position", pos)
+          })
+          th.addEventListener("dragleave", () => {
+            th.removeAttribute("data-drop-position")
+          })
+          th.addEventListener("drop", (e) => {
+            if (!draggedColId) return
+            e.preventDefault()
+            const targetColId = th.getAttribute("data-col-id")
+            const pos = th.getAttribute("data-drop-position") || "left"
+            th.removeAttribute("data-drop-position")
+            if (!targetColId || draggedColId === targetColId) return
+            this.dispatchEvent(
+              new CustomEvent("rla-column-reorder", {
+                detail: { from: draggedColId, to: targetColId, position: pos },
+                bubbles: true
+              })
+            )
+          })
+        })
+      }
+
+      private _initRowReordering() {
+        const handles = this.querySelectorAll<HTMLElement>("tbody tr [data-slot=drag-handle]")
+        let draggedRowId: string | null = null
+
+        handles.forEach((handle) => {
+          handle.addEventListener("dragstart", (e) => {
+            const tr = handle.closest<HTMLTableRowElement>("tr")
+            draggedRowId = tr?.getAttribute("data-row-id") || null
+            e.dataTransfer?.setData("text/plain", draggedRowId || "")
+            if (e.dataTransfer) {
+              e.dataTransfer.effectAllowed = "move"
+            }
+          })
+          handle.addEventListener("dragend", () => {
+            draggedRowId = null
+            this.querySelectorAll("tbody tr").forEach((tr) => tr.removeAttribute("data-drop-position"))
+          })
+        })
+
+        const trs = this.querySelectorAll<HTMLTableRowElement>("tbody tr[data-slot=tr]")
+        trs.forEach((tr) => {
+          tr.addEventListener("dragover", (e) => {
+            if (!draggedRowId) return
+            e.preventDefault()
+            const rect = tr.getBoundingClientRect()
+            const pos = e.clientY < rect.top + rect.height / 2 ? "top" : "bottom"
+            trs.forEach((other) => {
+              if (other !== tr) other.removeAttribute("data-drop-position")
+            })
+            tr.setAttribute("data-drop-position", pos)
+          })
+          tr.addEventListener("dragleave", () => {
+            tr.removeAttribute("data-drop-position")
+          })
+          tr.addEventListener("drop", (e) => {
+            if (!draggedRowId) return
+            e.preventDefault()
+            const targetRowId = tr.getAttribute("data-row-id")
+            const pos = tr.getAttribute("data-drop-position") || "top"
+            tr.removeAttribute("data-drop-position")
+            if (!targetRowId || draggedRowId === targetRowId) return
+
+            // Move in DOM
+            const sourceTr = this.querySelector<HTMLTableRowElement>(`tbody tr[data-row-id="${draggedRowId}"]`)
+            if (sourceTr && tr) {
+              if (pos === "top") {
+                tr.insertAdjacentElement("beforebegin", sourceTr)
+              } else {
+                tr.insertAdjacentElement("afterend", sourceTr)
+              }
+            }
+
+            this.dispatchEvent(
+              new CustomEvent("rla-row-reorder", {
+                detail: { from: draggedRowId, to: targetRowId, position: pos },
+                bubbles: true
+              })
+            )
+          })
+        })
+      }
+
+      // ── Search / Filtering ────────────────────────────────────────────────
+      private _initSearch() {
+        const searchInput = this.querySelector<HTMLInputElement>("[data-rla-table-search]")
+        if (!searchInput) return
+
+        searchInput.addEventListener("input", () => {
+          const query = searchInput.value.toLowerCase().trim()
+          const tbody = this.querySelector("tbody")
+          if (!tbody) return
+
+          const rows = tbody.querySelectorAll<HTMLTableRowElement>("tr[data-slot=tr]")
+          rows.forEach((row) => {
+            const text = row.textContent?.toLowerCase() ?? ""
+            const match = !query || text.includes(query)
+            row.style.display = match ? "" : "none"
+            const rowId = row.getAttribute("data-row-id")
+            if (rowId) {
+              const expandedRow = tbody.querySelector<HTMLTableRowElement>(
+                `tr[data-slot=tr-expanded][data-row-id="${rowId}"]`
+              )
+              if (expandedRow) {
+                expandedRow.style.display = match && row.getAttribute("data-expanded") === "true" ? "" : "none"
+              }
             }
           })
         })
       }
 
-      // ── Column visibility ─────────────────────────────────────────────────
-      private _initColumnVisibility(table: HTMLTableElement, tbody: Element) {
-        this.addEventListener("rla-dropdown-checkbox-change", (e: Event) => {
-          const ev = e as CustomEvent<{ id: string; checked: boolean }>
-          const { id: colId, checked } = ev.detail ?? {}
-          if (!colId) return
+      // ── Sorting ───────────────────────────────────────────────────────────
+      private _initSorting() {
+        const sortButtons = this.querySelectorAll<HTMLButtonElement>("[data-rla-sort-btn]")
+        const activeSorts: Array<{ id: string; dir: "asc" | "desc" }> = []
 
-          const display = checked ? "" : "none"
-
-          // Header th
-          const th = table.querySelector<HTMLElement>(`th[data-col-id="${colId}"]`)
-          if (th) th.style.display = display
-
-          // Footer td (tfoot)
-          const tfoot = table.querySelector<HTMLElement>("tfoot")
-          if (tfoot) {
-            tfoot
-              .querySelectorAll<HTMLElement>(`td[data-col-id="${colId}"]`)
-              .forEach((td) => (td.style.display = display))
-          }
-
-          // All body tds for this column
-          tbody
-            .querySelectorAll<HTMLElement>(`td[data-col-id="${colId}"]`)
-            .forEach((td) => (td.style.display = display))
-
-          this.dispatchEvent(
-            new CustomEvent("rla-column-visibility-change", {
-              detail: { id: colId, visible: checked },
-              bubbles: true
-            })
-          )
-        })
-      }
-
-      // ── Column sort ───────────────────────────────────────────────────────
-      private _initSort(table: HTMLTableElement, tbody: Element) {
-        const sortBtns = table.querySelectorAll<HTMLButtonElement>("[data-rla-sort-btn]")
-
-        sortBtns.forEach((btn) => {
+        sortButtons.forEach((btn) => {
           btn.addEventListener("click", (e) => {
             const colId = btn.getAttribute("data-rla-col-id")
             if (!colId) return
 
+            const currentDir = btn.getAttribute("data-sort-dir") ?? "none"
             const isMulti = (e as MouseEvent).shiftKey
-            const currentDir = btn.getAttribute("data-sort-dir") || "none"
-            const nextDir = currentDir === "asc" ? "desc" : currentDir === "desc" ? "none" : "asc"
+
+            let nextDir: "asc" | "desc" | "none" = "asc"
+            if (currentDir === "asc") nextDir = "desc"
+            else if (currentDir === "desc") nextDir = "none"
 
             if (!isMulti) {
-              // Reset all other buttons
-              sortBtns.forEach((other) => {
-                if (other !== btn) {
-                  other.setAttribute("data-sort-dir", "none")
-                  const icon = other.querySelector<HTMLElement>("[data-sort-icon]")
+              activeSorts.length = 0
+              sortButtons.forEach((otherBtn) => {
+                if (otherBtn !== btn) {
+                  otherBtn.setAttribute("data-sort-dir", "none")
+                  const icon = otherBtn.querySelector("[data-sort-icon]")
                   if (icon) {
                     icon.className =
-                      "i-lucide-arrow-up-down size-3.5 opacity-40 group-hover:opacity-100 transition-all shrink-0"
+                      "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100 size-3.5 transition-all shrink-0"
                   }
                 }
               })
             }
 
             btn.setAttribute("data-sort-dir", nextDir)
-            const icon = btn.querySelector<HTMLElement>("[data-sort-icon]")
+            const icon = btn.querySelector("[data-sort-icon]")
             if (icon) {
-              icon.className =
-                nextDir === "asc"
-                  ? "i-lucide-arrow-up-narrow-wide size-3.5 text-primary transition-all shrink-0"
-                  : nextDir === "desc"
-                    ? "i-lucide-arrow-down-wide-narrow size-3.5 text-primary transition-all shrink-0"
-                    : "i-lucide-arrow-up-down size-3.5 opacity-40 group-hover:opacity-100 transition-all shrink-0"
+              if (nextDir === "asc") {
+                icon.className =
+                  "i-lucide-arrow-up-narrow-wide text-primary size-3.5 transition-all shrink-0"
+              } else if (nextDir === "desc") {
+                icon.className =
+                  "i-lucide-arrow-down-wide-narrow text-primary size-3.5 transition-all shrink-0"
+              } else {
+                icon.className =
+                  "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100 size-3.5 transition-all shrink-0"
+              }
             }
 
-            // Gather all active sorts
-            const activeSorts: Array<{ id: string; dir: string }> = []
-            sortBtns.forEach((b) => {
-              const dir = b.getAttribute("data-sort-dir") || "none"
-              if (dir !== "none") {
-                activeSorts.push({ id: b.getAttribute("data-rla-col-id") || "", dir })
-              }
-            })
-
-            if (nextDir === "none" && !isMulti) {
-              // Restore original DOM order
-              this._allRows.forEach((row) => tbody.appendChild(row))
+            const existingIdx = activeSorts.findIndex((s) => s.id === colId)
+            if (nextDir === "none") {
+              if (existingIdx >= 0) activeSorts.splice(existingIdx, 1)
+            } else if (existingIdx >= 0) {
+              activeSorts[existingIdx] = { id: colId, dir: nextDir }
             } else {
-              const groupRows = Array.from(tbody.querySelectorAll<HTMLTableRowElement>("tr[data-slot=tr-group]"))
-              
+              activeSorts.push({ id: colId, dir: nextDir })
+            }
+
+            const tbody = this.querySelector("tbody")
+            const table = this.querySelector("table")
+            if (tbody && table) {
+              const groupRows = Array.from(
+                tbody.querySelectorAll<HTMLTableRowElement>("tr[data-slot=tr-group]")
+              )
+
               if (groupRows.length > 0) {
-                // Sort within each group
                 groupRows.forEach((groupHeader) => {
                   const groupId = groupHeader.getAttribute("data-group-id")
                   const rowsInGroup = Array.from(
@@ -977,7 +1223,6 @@ function getColumnSizeStyle(col: TableColumn): string {
                     }
                     return 0
                   })
-                  // Re-insert sorted rows directly following the group header
                   let lastElement: Element = groupHeader
                   rowsInGroup.forEach((r) => {
                     lastElement.insertAdjacentElement("afterend", r)
@@ -1027,8 +1272,10 @@ function getColumnSizeStyle(col: TableColumn): string {
       }
 
       // ── Row events ────────────────────────────────────────────────────────
-      private _initRowEvents(tbody: Element) {
-        // Select
+      private _initRowEvents() {
+        const tbody = this.querySelector("tbody")
+        if (!tbody) return
+
         tbody.addEventListener("click", (e) => {
           const target = e.target as HTMLElement
           if (target.closest("a, button, input, select, textarea, [role=button]")) return
@@ -1042,7 +1289,6 @@ function getColumnSizeStyle(col: TableColumn): string {
           )
         })
 
-        // Hover
         tbody.addEventListener("mouseover", (e) => {
           const tr = (e.target as HTMLElement).closest<HTMLElement>("tr[data-row-id]")
           if (!tr) return
@@ -1063,7 +1309,6 @@ function getColumnSizeStyle(col: TableColumn): string {
           )
         })
 
-        // Context menu
         tbody.addEventListener("contextmenu", (e) => {
           const tr = (e.target as HTMLElement).closest<HTMLElement>("tr[data-row-id]")
           if (!tr) return
@@ -1077,7 +1322,9 @@ function getColumnSizeStyle(col: TableColumn): string {
       }
 
       // ── Selection handling ────────────────────────────────────────────────
-      private _initSelection(tbody: Element) {
+      private _initSelection() {
+        const tbody = this.querySelector("tbody")
+        if (!tbody) return
         const selectAll = this.querySelector<HTMLInputElement>("[data-rla-select-all]")
         const rowCheckboxes = tbody.querySelectorAll<HTMLInputElement>("[data-row-checkbox]")
 
@@ -1123,7 +1370,10 @@ function getColumnSizeStyle(col: TableColumn): string {
       }
 
       // ── Row Expand Toggles ────────────────────────────────────────────────
-      private _initExpandToggles(tbody: Element) {
+      private _initExpandToggles() {
+        const tbody = this.querySelector("tbody")
+        if (!tbody) return
+
         tbody.addEventListener("click", (e) => {
           const target = e.target as HTMLElement
           const btn = target.closest<HTMLButtonElement>("[data-row-expand]")
@@ -1215,6 +1465,110 @@ function getColumnSizeStyle(col: TableColumn): string {
         return Array.from(
           tbody.querySelectorAll<HTMLTableRowElement>("tr[data-selected=true]")
         )
+      }
+
+      /** Export table data to CSV. */
+      exportToCsv(options?: { filename?: string; selectedOnly?: boolean; columns?: string[] }): string {
+        const table = this.querySelector("table")
+        if (!table) return ""
+        const ths = Array.from(table.querySelectorAll("thead th"))
+        const colIds = ths
+          .map((th) => th.getAttribute("data-col-id") || "")
+          .filter((id) => id && id !== "select" && id !== "actions" && id !== "reorder" && id !== "dragHandle")
+        const targetCols = options?.columns && options.columns.length > 0 ? options.columns : colIds
+
+        const escapeCsv = (val: string) => {
+          if (val.includes(",") || val.includes('"') || val.includes("\n")) {
+            return `"${val.replace(/"/g, '""')}"`
+          }
+          return val
+        }
+
+        const headers = targetCols.map((id) => escapeCsv(id.charAt(0).toUpperCase() + id.slice(1)))
+        const rows = options?.selectedOnly ? this.getSelectedRows() : this.getVisibleRows()
+
+        const lines: string[] = [headers.join(",")]
+        rows.forEach((tr) => {
+          const cells = targetCols.map((colId) => {
+            const td = tr.querySelector(`td[data-col-id="${colId}"]`)
+            return escapeCsv(td?.textContent?.trim() ?? "")
+          })
+          lines.push(cells.join(","))
+        })
+
+        const csvContent = lines.join("\r\n")
+        if (options?.filename) {
+          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement("a")
+          link.href = url
+          link.download = options.filename.endsWith(".csv") ? options.filename : `${options.filename}.csv`
+          link.click()
+          URL.revokeObjectURL(url)
+        }
+        return csvContent
+      }
+
+      /** Export table data to JSON. */
+      exportToJson(options?: { filename?: string; selectedOnly?: boolean; columns?: string[] }): string {
+        const table = this.querySelector("table")
+        if (!table) return "[]"
+        const ths = Array.from(table.querySelectorAll("thead th"))
+        const colIds = ths
+          .map((th) => th.getAttribute("data-col-id") || "")
+          .filter((id) => id && id !== "select" && id !== "actions" && id !== "reorder" && id !== "dragHandle")
+        const targetCols = options?.columns && options.columns.length > 0 ? options.columns : colIds
+        const rows = options?.selectedOnly ? this.getSelectedRows() : this.getVisibleRows()
+
+        const dataArr = rows.map((tr) => {
+          const rowObj: Record<string, string> = {}
+          targetCols.forEach((colId) => {
+            const td = tr.querySelector(`td[data-col-id="${colId}"]`)
+            rowObj[colId] = td?.textContent?.trim() ?? ""
+          })
+          return rowObj
+        })
+
+        const jsonContent = JSON.stringify(dataArr, null, 2)
+        if (options?.filename) {
+          const blob = new Blob([jsonContent], { type: "application/json;charset=utf-8;" })
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement("a")
+          link.href = url
+          link.download = options.filename.endsWith(".json") ? options.filename : `${options.filename}.json`
+          link.click()
+          URL.revokeObjectURL(url)
+        }
+        return jsonContent
+      }
+
+      /** Return map of unique values and counts for a given column. */
+      getFacetedUniqueValues(columnId: string): Map<string, number> {
+        const map = new Map<string, number>()
+        const rows = this.getVisibleRows()
+        rows.forEach((tr) => {
+          const td = tr.querySelector(`td[data-col-id="${columnId}"]`)
+          const val = td?.textContent?.trim() ?? ""
+          map.set(val, (map.get(val) || 0) + 1)
+        })
+        return map
+      }
+
+      /** Return min/max numeric range for a given column. */
+      getFacetedMinMaxValues(columnId: string): [number, number] | undefined {
+        const rows = this.getVisibleRows()
+        let min: number | undefined
+        let max: number | undefined
+        rows.forEach((tr) => {
+          const td = tr.querySelector(`td[data-col-id="${columnId}"]`)
+          const text = (td?.textContent?.trim() ?? "").replace(/[$€£,\s]/g, "")
+          const val = Number(text)
+          if (!isNaN(val)) {
+            if (min === undefined || val < min) min = val
+            if (max === undefined || val > max) max = val
+          }
+        })
+        return min !== undefined && max !== undefined ? [min, max] : undefined
       }
     }
 

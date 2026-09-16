@@ -24,6 +24,8 @@ describe("RLTable Theme & Logic Parity", () => {
     expect(classes.th).toContain("text-xs")
     expect(classes.td).toContain("text-sm")
     expect(classes.toolbar).toContain("flex")
+    expect(classes.resizer).toContain("cursor-col-resize")
+    expect(classes.dragHandle).toContain("cursor-grab")
   })
 
   it("applies sticky, striped, bordered, and hoverable variants", () => {
@@ -100,16 +102,18 @@ describe("RLTable Theme & Logic Parity", () => {
       expect(emptyHtml).toContain("Custom empty message")
     })
 
-    it("supports grouping by column and aggregations", () => {
+    it("supports multi-level grouping with nested depth", () => {
       const html = renderSolid(RLSTable, {
         data: sampleData,
         columns,
-        grouping: ["role"]
+        grouping: ["role", "name"]
       })
 
       expect(html).toContain("Admin")
       expect(html).toContain("Developer")
       expect(html).toContain('data-slot="tr-group"')
+      expect(html).toContain('data-depth="0"')
+      expect(html).toContain('data-depth="1"')
     })
 
     it("supports slot dictionary overrides for cells and headers", () => {
@@ -220,6 +224,104 @@ describe("RLTable Theme & Logic Parity", () => {
       api!.toggleAllRowsSelected(true)
       expect(api!.getIsAllRowsSelected()).toBe(true)
       expect(api!.getSelectedRows().length).toBe(4)
+    })
+
+    it("supports column sizing, column ordering, and editing state via TableApi", () => {
+      let api: TableApi | null = null
+
+      renderSolid(RLSTable, {
+        data: sampleData,
+        columns,
+        ref: (a: TableApi) => {
+          api = a
+        }
+      })
+
+      expect(api).not.toBeNull()
+
+      // Column sizing
+      api!.setColumnSizing("name", 250)
+      expect(api!.getState().columnSizing["name"]).toBe(250)
+      api!.resetColumnSizing()
+      expect(api!.getState().columnSizing["name"]).toBeUndefined()
+
+      // Column ordering
+      api!.setColumnOrder(["role", "name", "id", "score", "team"])
+      expect(api!.getState().columnOrder).toEqual(["role", "name", "id", "score", "team"])
+      expect(api!.getAllColumns()[0]!.accessorKey).toBe("role")
+
+      // Cell editing state
+      api!.setEditingCell({ rowId: "1", columnId: "name" })
+      expect(api!.getEditingCell()).toEqual({ rowId: "1", columnId: "name" })
+      api!.setEditingCell(null)
+      expect(api!.getEditingCell()).toBeNull()
+    })
+
+    it("supports CSV and JSON data export", () => {
+      let api: TableApi | null = null
+
+      renderSolid(RLSTable, {
+        data: sampleData,
+        columns,
+        ref: (a: TableApi) => {
+          api = a
+        }
+      })
+
+      expect(api).not.toBeNull()
+
+      // CSV Export
+      const csv = api!.exportToCsv()
+      expect(csv).toContain("ID,Name,Role,Score,Team")
+      expect(csv).toContain("1,Alice,Admin,95,Core")
+      expect(csv).toContain("2,Bob,Developer,82,UI")
+
+      // JSON Export
+      const json = api!.exportToJson()
+      const parsed = JSON.parse(json)
+      expect(parsed).toHaveLength(3)
+      expect(parsed[0].name).toBe("Alice")
+      expect(parsed[0].team).toBe("Core")
+    })
+
+    it("computes faceted unique value counts and min/max ranges", () => {
+      let api: TableApi | null = null
+
+      renderSolid(RLSTable, {
+        data: sampleData,
+        columns,
+        ref: (a: TableApi) => {
+          api = a
+        }
+      })
+
+      expect(api).not.toBeNull()
+
+      // Faceted Unique Values
+      const roleMap = api!.getFacetedUniqueValues("role")
+      expect(roleMap.get("Admin")).toBe(1)
+      expect(roleMap.get("Developer")).toBe(2)
+
+      // Faceted Min/Max
+      const scoreRange = api!.getFacetedMinMaxValues("score")
+      expect(scoreRange).toEqual([82, 95])
+    })
+
+    it("renders dedicated drag handles for column and row reordering", () => {
+      const htmlCols = renderSolid(RLSTable, {
+        data: sampleData,
+        columns,
+        enableColumnReordering: true
+      })
+      expect(htmlCols).toContain('data-slot="drag-handle"')
+
+      const htmlRows = renderSolid(RLSTable, {
+        data: sampleData,
+        columns,
+        enableRowReordering: true
+      })
+      expect(htmlRows).toContain('data-col-id="reorder"')
+      expect(htmlRows).toContain('data-slot="drag-handle"')
     })
   })
 })

@@ -11,7 +11,11 @@ import type {
   TableColumnPinningState,
   TableRowPinningState,
   TablePaginationState,
-  TableVirtualizeOptions
+  TableVirtualizeOptions,
+  TableColumnSizingState,
+  TableColumnOrderState,
+  TableEditingCellState,
+  TableExportOptions
 } from "./table"
 import { tableTheme } from "./table.theme"
 import RLSInput from "../input/RLSInput"
@@ -70,6 +74,29 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
   const [internalPagination, setInternalPagination] = createSignal<
     TablePaginationState | undefined
   >(props.pagination)
+  const [internalColumnSizing, setInternalColumnSizing] = createSignal<TableColumnSizingState>(
+    props.columnSizing ?? {}
+  )
+  const [internalColumnOrder, setInternalColumnOrder] = createSignal<TableColumnOrderState>(
+    props.columnOrder ?? []
+  )
+  const [internalEditingCell, setInternalEditingCell] = createSignal<TableEditingCellState>(
+    props.editingCell ?? null
+  )
+
+  // Drag & drop indicator states
+  const [draggedColId, setDraggedColId] = createSignal<string | null>(null)
+  const [dropTargetCol, setDropTargetCol] = createSignal<{
+    id: string
+    position: "left" | "right"
+  } | null>(null)
+
+  const [draggedRowIndex, setDraggedRowIndex] = createSignal<number | null>(null)
+  const [dropTargetRow, setDropTargetRow] = createSignal<{
+    id: string
+    index: number
+    position: "top" | "bottom"
+  } | null>(null)
 
   // Reactive state readers
   const currentSorting = () => (props.sorting !== undefined ? props.sorting : internalSorting())
@@ -88,6 +115,12 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
     props.rowPinning !== undefined ? props.rowPinning : internalRowPinning()
   const currentPagination = () =>
     props.pagination !== undefined ? props.pagination : internalPagination()
+  const currentColumnSizing = () =>
+    props.columnSizing !== undefined ? props.columnSizing : internalColumnSizing()
+  const currentColumnOrder = () =>
+    props.columnOrder !== undefined ? props.columnOrder : internalColumnOrder()
+  const currentEditingCell = () =>
+    props.editingCell !== undefined ? props.editingCell : internalEditingCell()
 
   const updateSorting = (next: SortingState) => {
     setInternalSorting(next)
@@ -125,23 +158,102 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
     setInternalPagination(next)
     props.onPaginationChange?.(next)
   }
+  const updateColumnSizing = (next: TableColumnSizingState) => {
+    setInternalColumnSizing(next)
+    props.onColumnSizingChange?.(next)
+  }
+  const updateColumnOrder = (next: TableColumnOrderState) => {
+    setInternalColumnOrder(next)
+    props.onColumnOrderChange?.(next)
+  }
+  const updateEditingCell = (next: TableEditingCellState) => {
+    setInternalEditingCell(next)
+    props.onEditingCellChange?.(next)
+  }
 
-  // ─── Column resolution ───────────────────────────────────────────────────────
-  const resolvedColumns = createMemo<TableColumn<T>[]>(() => {
+  // ─── Column resolution & ordering ───────────────────────────────────────────
+  const rawResolvedColumns = createMemo<TableColumn<T>[]>(() => {
+    let cols: TableColumn<T>[] = []
     if (props.columns && props.columns.length > 0) {
-      return props.columns
+      cols = [...props.columns]
+    } else {
+      const d = props.data
+      if (d && d.length > 0 && typeof d[0] === "object" && d[0] !== null) {
+        const firstRow = d[0] as AnyData
+        cols = Object.keys(firstRow).map((key) => ({
+          id: key,
+          accessorKey: key as any,
+          header: key.charAt(0).toUpperCase() + key.slice(1),
+          enableSorting: true
+        }))
+      }
     }
-    const d = props.data
-    if (d && d.length > 0 && typeof d[0] === "object" && d[0] !== null) {
-      const firstRow = d[0] as AnyData
-      return Object.keys(firstRow).map((key) => ({
-        id: key,
-        accessorKey: key as any,
-        header: key.charAt(0).toUpperCase() + key.slice(1),
-        enableSorting: true
-      }))
+
+    // If row reordering is enabled and no dedicated reorder column exists, auto-prepend a grip column
+    if (
+      props.enableRowReordering &&
+      !cols.some((c) => c.id === "reorder" || c.id === "dragHandle")
+    ) {
+      const reorderCol: TableColumn<T> = {
+        id: "reorder",
+        size: 36,
+        minSize: 36,
+        maxSize: 36,
+        enableSorting: false,
+        enableHiding: false,
+        header: "",
+        cell: ({ row }) => (
+          <div class="flex items-center justify-center">
+            <span
+              class={classes().dragHandle}
+              data-slot="drag-handle"
+              draggable={true}
+              onDragStart={(e) => {
+                setDraggedRowIndex(row.index)
+                e.dataTransfer?.setData("text/plain", String(row.index))
+                if (e.dataTransfer) {
+                  e.dataTransfer.effectAllowed = "move"
+                }
+              }}
+              onDragEnd={() => {
+                setDraggedRowIndex(null)
+                setDropTargetRow(null)
+              }}
+            >
+              <span class="i-lucide-grip-vertical size-4" />
+            </span>
+          </div>
+        )
+      }
+      return [reorderCol, ...cols]
     }
-    return []
+
+    return cols
+  })
+
+  const resolvedColumns = createMemo<TableColumn<T>[]>(() => {
+    const raw = rawResolvedColumns()
+    const order = currentColumnOrder()
+    if (!order || order.length === 0) return raw
+
+    const ordered: TableColumn<T>[] = []
+    const rawMap = new Map<string, TableColumn<T>>()
+    for (const col of raw) {
+      const id = String(col.id || col.accessorKey || "")
+      rawMap.set(id, col)
+    }
+
+    for (const id of order) {
+      if (rawMap.has(id)) {
+        ordered.push(rawMap.get(id)!)
+        rawMap.delete(id)
+      }
+    }
+    // Append any columns not explicitly in order
+    for (const remaining of rawMap.values()) {
+      ordered.push(remaining)
+    }
+    return ordered
   })
 
   const visibleColumns = createMemo(() => {
@@ -153,6 +265,53 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
       return visibility[id] !== false
     })
   })
+
+  // ─── Column Resizing Handler ────────────────────────────────────────────────
+  const [resizingColId, setResizingColId] = createSignal<string | null>(null)
+
+  const startResize = (
+    e: PointerEvent,
+    colId: string,
+    minSize?: number | string,
+    maxSize?: number | string
+  ) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const startX = e.clientX
+    const thElement = (e.target as HTMLElement).closest("th")
+    const initialWidth = currentColumnSizing()[colId] ?? thElement?.offsetWidth ?? 150
+    const minW = typeof minSize === "number" ? minSize : 40
+    const maxW = typeof maxSize === "number" ? maxSize : 2000
+    setResizingColId(colId)
+
+    let liveWidth = initialWidth
+
+    const onPointerMove = (moveEv: PointerEvent) => {
+      const deltaX = moveEv.clientX - startX
+      liveWidth = Math.max(minW, Math.min(maxW, initialWidth + deltaX))
+      if (props.columnResizeMode !== "onEnd") {
+        updateColumnSizing({
+          ...currentColumnSizing(),
+          [colId]: liveWidth
+        })
+      }
+    }
+
+    const onPointerUp = () => {
+      if (props.columnResizeMode === "onEnd") {
+        updateColumnSizing({
+          ...currentColumnSizing(),
+          [colId]: liveWidth
+        })
+      }
+      setResizingColId(null)
+      window.removeEventListener("pointermove", onPointerMove)
+      window.removeEventListener("pointerup", onPointerUp)
+    }
+
+    window.addEventListener("pointermove", onPointerMove)
+    window.addEventListener("pointerup", onPointerUp)
+  }
 
   // ─── Row Hierarchy Building ──────────────────────────────────────────────────
   const getAllRowDescendants = (row: TableRow<T>): TableRow<T>[] => {
@@ -356,8 +515,52 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
     })
   })
 
-  // ─── Grouping pipeline ───────────────────────────────────────────────────────
-  type GroupedItem = { type: "group"; group: TableGroup<T> } | { type: "row"; row: TableRow<T> }
+  // ─── Multi-level Grouping pipeline ──────────────────────────────────────────
+  type GroupedItem =
+    | { type: "group"; group: TableGroup<T>; depth: number }
+    | { type: "row"; row: TableRow<T> }
+
+  function groupRowsRecursively(
+    rows: TableRow<T>[],
+    groupCols: string[],
+    depth = 0,
+    parentPath = ""
+  ): GroupedItem[] {
+    if (depth >= groupCols.length || rows.length === 0) {
+      return rows.map((r) => ({ type: "row", row: r }))
+    }
+
+    const colId = groupCols[depth]!
+    const groupMap = new Map<string, TableRow<T>[]>()
+    const groupOrder: string[] = []
+
+    for (const row of rows) {
+      const val = String(row.getValue(colId) ?? "")
+      if (!groupMap.has(val)) {
+        groupMap.set(val, [])
+        groupOrder.push(val)
+      }
+      row.groupingColumnId = colId
+      row.groupingValue = val
+      groupMap.get(val)!.push(row)
+    }
+
+    const result: GroupedItem[] = []
+    for (const val of groupOrder) {
+      const subRows = groupMap.get(val)!
+      const groupId = `group-${parentPath}${colId}-${val}`
+      const group: TableGroup<T> = {
+        id: groupId,
+        columnId: colId,
+        value: val,
+        depth,
+        rows: subRows
+      }
+      result.push({ type: "group", group, depth })
+      result.push(...groupRowsRecursively(subRows, groupCols, depth + 1, `${groupId}/`))
+    }
+    return result
+  }
 
   const groupedItems = createMemo<GroupedItem[]>(() => {
     const sRows = sortedRows()
@@ -365,37 +568,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
     if (!grp || grp.length === 0) {
       return sRows.map((r) => ({ type: "row", row: r }))
     }
-
-    const groupColId = grp[0]!
-    const groupMap = new Map<string, TableRow<T>[]>()
-    const groupOrder: string[] = []
-
-    for (const row of sRows) {
-      const val = String(row.getValue(groupColId) ?? "")
-      if (!groupMap.has(val)) {
-        groupMap.set(val, [])
-        groupOrder.push(val)
-      }
-      row.groupingColumnId = groupColId
-      row.groupingValue = val
-      groupMap.get(val)!.push(row)
-    }
-
-    const result: GroupedItem[] = []
-    for (const val of groupOrder) {
-      const rows = groupMap.get(val)!
-      const group: TableGroup<T> = {
-        id: `group-${groupColId}-${val}`,
-        columnId: groupColId,
-        value: val,
-        rows
-      }
-      result.push({ type: "group", group })
-      for (const row of rows) {
-        result.push({ type: "row", row })
-      }
-    }
-    return result
+    return groupRowsRecursively(sRows, grp, 0, "")
   })
 
   // ─── Row Pinning ─────────────────────────────────────────────────────────────
@@ -508,6 +681,14 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
   }
 
   // ─── Column offsets ──────────────────────────────────────────────────────────
+  const getColSizeNumber = (col: TableColumn<T>): number => {
+    const colId = String(col.id || col.accessorKey || "")
+    const sized = currentColumnSizing()[colId]
+    if (typeof sized === "number") return sized
+    if (typeof col.size === "number") return col.size
+    return 150
+  }
+
   const columnOffsets = createMemo(() => {
     const cols = resolvedColumns()
     const pin = currentColumnPinning()
@@ -519,7 +700,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
       for (const colId of pin.left) {
         left[colId] = offset
         const col = cols.find((c) => (c.id || c.accessorKey) === colId)
-        offset += typeof col?.size === "number" ? col.size : 150
+        offset += col ? getColSizeNumber(col) : 150
       }
     }
 
@@ -528,7 +709,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
       for (const colId of [...pin.right].reverse()) {
         right[colId] = offset
         const col = cols.find((c) => (c.id || c.accessorKey) === colId)
-        offset += typeof col?.size === "number" ? col.size : 150
+        offset += col ? getColSizeNumber(col) : 150
       }
     }
 
@@ -648,16 +829,154 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
       const cur = currentPagination() || { pageIndex: 0, pageSize: 10 }
       updatePagination({ ...cur, pageSize })
     },
+    // Resizing & Ordering
+    setColumnSizing: (id: string, size: number) => {
+      updateColumnSizing({ ...currentColumnSizing(), [id]: size })
+    },
+    resetColumnSizing: () => updateColumnSizing({}),
+    setColumnOrder: (order: TableColumnOrderState) => updateColumnOrder(order),
+    resetColumnOrder: () => updateColumnOrder([]),
+    // Exporting
+    exportToCsv: (options?: TableExportOptions) => {
+      const targetRows = options?.selectedOnly ? tableApi.getSelectedRows() : tableApi.getFlatRows()
+      const colsToExport = resolvedColumns().filter((col) => {
+        const id = String(col.id || col.accessorKey || "")
+        if (id === "select" || id === "actions" || id === "reorder" || id === "dragHandle")
+          return false
+        if (options?.columns && options.columns.length > 0) {
+          return options.columns.includes(id)
+        }
+        return currentColumnVisibility()[id] !== false
+      })
+
+      const escapeCsv = (val: any): string => {
+        if (val === undefined || val === null) return ""
+        const str = String(val)
+        if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+          return `"${str.replace(/"/g, '""')}"`
+        }
+        return str
+      }
+
+      const headers = colsToExport.map((c) => {
+        const label = typeof c.header === "string" ? c.header : String(c.id || c.accessorKey || "")
+        return escapeCsv(label)
+      })
+
+      const lines: string[] = [headers.join(",")]
+
+      for (const row of targetRows) {
+        const rowVals = colsToExport.map((col) => {
+          let val: any
+          if (typeof col.accessorFn === "function") {
+            val = col.accessorFn(row.original)
+          } else {
+            const key = String(col.accessorKey || col.id || "")
+            val = row.getValue(key)
+          }
+          return escapeCsv(val)
+        })
+        lines.push(rowVals.join(","))
+      }
+
+      const csvContent = lines.join("\r\n")
+
+      if (!isServer && options?.filename) {
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = url
+        link.download = options.filename.endsWith(".csv")
+          ? options.filename
+          : `${options.filename}.csv`
+        link.click()
+        URL.revokeObjectURL(url)
+      }
+
+      return csvContent
+    },
+    exportToJson: (options?: TableExportOptions) => {
+      const targetRows = options?.selectedOnly ? tableApi.getSelectedRows() : tableApi.getFlatRows()
+      const colsToExport = resolvedColumns().filter((col) => {
+        const id = String(col.id || col.accessorKey || "")
+        if (id === "select" || id === "actions" || id === "reorder" || id === "dragHandle")
+          return false
+        if (options?.columns && options.columns.length > 0) {
+          return options.columns.includes(id)
+        }
+        return currentColumnVisibility()[id] !== false
+      })
+
+      const jsonArray = targetRows.map((row) => {
+        const obj: Record<string, any> = {}
+        for (const col of colsToExport) {
+          const key = String(col.id || col.accessorKey || "")
+          let val: any
+          if (typeof col.accessorFn === "function") {
+            val = col.accessorFn(row.original)
+          } else {
+            val = row.getValue(key)
+          }
+          obj[key] = val
+        }
+        return obj
+      })
+
+      const jsonContent = JSON.stringify(jsonArray, null, 2)
+
+      if (!isServer && options?.filename) {
+        const blob = new Blob([jsonContent], { type: "application/json;charset=utf-8;" })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = url
+        link.download = options.filename.endsWith(".json")
+          ? options.filename
+          : `${options.filename}.json`
+        link.click()
+        URL.revokeObjectURL(url)
+      }
+
+      return jsonContent
+    },
+    // Faceted statistics
+    getFacetedUniqueValues: (columnId: string) => {
+      const map = new Map<any, number>()
+      const rows = getAllFlatRows(filteredRows())
+      for (const r of rows) {
+        const val = r.getValue(columnId)
+        map.set(val, (map.get(val) || 0) + 1)
+      }
+      return map
+    },
+    getFacetedMinMaxValues: (columnId: string) => {
+      const rows = getAllFlatRows(filteredRows())
+      let min: number | undefined
+      let max: number | undefined
+      for (const r of rows) {
+        const val = r.getValue(columnId)
+        if (typeof val === "number" && !isNaN(val)) {
+          if (min === undefined || val < min) min = val
+          if (max === undefined || val > max) max = val
+        }
+      }
+      return min !== undefined && max !== undefined ? [min, max] : undefined
+    },
+    // Inline editing support
+    setEditingCell: (cell: TableEditingCellState) => updateEditingCell(cell),
+    getEditingCell: () => currentEditingCell(),
     getState: () => ({
       sorting: currentSorting(),
       globalFilter: currentGlobalFilter(),
       columnFilters: currentColumnFilters(),
       columnVisibility: currentColumnVisibility(),
       columnPinning: currentColumnPinning(),
+      columnSizing: currentColumnSizing(),
+      columnOrder: currentColumnOrder(),
       rowSelection: currentRowSelection(),
       expanded: currentExpanded(),
       rowPinning: currentRowPinning(),
-      pagination: currentPagination() || { pageIndex: 0, pageSize: 10 }
+      pagination: currentPagination() || { pageIndex: 0, pageSize: 10 },
+      editingCell: currentEditingCell()
     })
   }
 
@@ -683,12 +1002,16 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
 
   const showToolbar = createMemo(
     () =>
-      props.searchable || props.showColumnsToggle || !!props.toolbar || !!props.slots?.["toolbar"]
+      props.searchable ||
+      props.showColumnsToggle ||
+      props.exportable ||
+      !!props.toolbar ||
+      !!props.slots?.["toolbar"]
   )
 
   const columnDropdownItems = createMemo(() =>
     resolvedColumns()
-      .filter((col) => col.enableHiding !== false)
+      .filter((col) => col.enableHiding !== false && col.id !== "reorder")
       .map((col) => {
         const colId = (col.id || col.accessorKey || "") as string
         const rawLabel = typeof col.header === "string" ? col.header : colId
@@ -703,6 +1026,25 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
         }
       })
   )
+
+  const exportDropdownItems = createMemo(() => [
+    {
+      id: "csv",
+      label: "Export as CSV",
+      icon: "i-lucide-file-spreadsheet",
+      onSelect: () => {
+        tableApi.exportToCsv({ filename: props.exportFilename ?? "export" })
+      }
+    },
+    {
+      id: "json",
+      label: "Export as JSON",
+      icon: "i-lucide-file-json",
+      onSelect: () => {
+        tableApi.exportToJson({ filename: props.exportFilename ?? "export" })
+      }
+    }
+  ])
 
   const hasFooters = createMemo(() =>
     visibleColumns().some(
@@ -732,8 +1074,19 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
             ? props.slots["toolbar"]({ table: tableApi })
             : props.toolbar?.()}
 
-          <Show when={props.showColumnsToggle}>
-            <div class="ml-auto shrink-0">
+          <div class="ml-auto flex items-center gap-2 shrink-0">
+            <Show when={props.exportable}>
+              <RLSDropdownMenu
+                label="Export"
+                icon="i-lucide-download"
+                items={exportDropdownItems()}
+                content={{ align: "end" }}
+                size="sm"
+                color="neutral"
+              />
+            </Show>
+
+            <Show when={props.showColumnsToggle}>
               <RLSDropdownMenu
                 label="Columns"
                 icon="i-lucide-columns"
@@ -742,8 +1095,8 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                 size="sm"
                 color="neutral"
               />
-            </div>
-          </Show>
+            </Show>
+          </div>
         </div>
       </Show>
 
@@ -756,9 +1109,11 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
           <colgroup>
             <For each={visibleColumns()}>
               {(col) => {
+                const colId = () => String(col.id || col.accessorKey || "")
+                const sizeVal = () => currentColumnSizing()[colId()] ?? col.size
                 const styles: string[] = []
-                if (typeof col.size === "number") styles.push(`width: ${col.size}px;`)
-                else if (col.size) styles.push(`width: ${col.size};`)
+                if (typeof sizeVal() === "number") styles.push(`width: ${sizeVal()}px;`)
+                else if (sizeVal()) styles.push(`width: ${sizeVal()};`)
                 if (col.minSize) {
                   styles.push(
                     `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
@@ -769,12 +1124,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                     `max-width: ${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`
                   )
                 }
-                return (
-                  <col
-                    data-col-id={String(col.id || col.accessorKey || "")}
-                    style={styles.join(" ") || undefined}
-                  />
-                )
+                return <col data-col-id={colId()} style={styles.join(" ") || undefined} />
               }}
             </For>
           </colgroup>
@@ -808,9 +1158,10 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                       return ""
                     }
                     const sizeStyle = () => {
+                      const sizeVal = currentColumnSizing()[colId()] ?? col.size
                       const styles: string[] = []
-                      if (typeof col.size === "number") styles.push(`width: ${col.size}px;`)
-                      else if (col.size) styles.push(`width: ${col.size};`)
+                      if (typeof sizeVal === "number") styles.push(`width: ${sizeVal}px;`)
+                      else if (sizeVal) styles.push(`width: ${sizeVal};`)
                       if (col.minSize) {
                         styles.push(
                           `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
@@ -835,13 +1186,38 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                       col.enableSorting !== false &&
                       !!(col.accessorKey || col.id || col.accessorFn) &&
                       colId() !== "actions" &&
-                      colId() !== "select"
+                      colId() !== "select" &&
+                      colId() !== "reorder" &&
+                      colId() !== "dragHandle"
 
                     const activeSort = () => currentSorting().find((s) => s.id === colId())
                     const sortDir = () =>
                       activeSort() ? (activeSort()!.desc ? "desc" : "asc") : "none"
 
                     const slotHeader = props.slots?.[`${colId()}-header`]
+
+                    const isDropTarget = () =>
+                      dropTargetCol()?.id === colId() && draggedColId() !== colId()
+                    const dropPosition = () =>
+                      isDropTarget() ? dropTargetCol()?.position : undefined
+
+                    const headerLabel = () => {
+                      if (typeof col.header === "function") {
+                        return col.header({ column: col, table: tableApi })
+                      }
+                      if (col.header !== undefined && col.header !== null) {
+                        return col.header
+                      }
+                      if (
+                        colId() === "reorder" ||
+                        colId() === "select" ||
+                        colId() === "actions" ||
+                        colId() === "dragHandle"
+                      ) {
+                        return ""
+                      }
+                      return colId().charAt(0).toUpperCase() + colId().slice(1)
+                    }
 
                     return (
                       <th
@@ -850,41 +1226,115 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         style={`${sizeStyle()} ${pinStyle()} ${metaThStyle()}`}
                         data-col-id={colId()}
                         data-slot="th"
+                        data-drop-position={dropPosition()}
+                        onDragOver={(e) => {
+                          if (!props.enableColumnReordering || !draggedColId()) return
+                          e.preventDefault()
+                          const th = e.currentTarget as HTMLElement
+                          const rect = th.getBoundingClientRect()
+                          const pos = e.clientX < rect.left + rect.width / 2 ? "left" : "right"
+                          const cur = dropTargetCol()
+                          if (!cur || cur.id !== colId() || cur.position !== pos) {
+                            setDropTargetCol({ id: colId(), position: pos })
+                          }
+                        }}
+                        onDragLeave={() => {
+                          if (dropTargetCol()?.id === colId()) {
+                            setDropTargetCol(null)
+                          }
+                        }}
+                        onDrop={(e) => {
+                          if (!props.enableColumnReordering || !draggedColId()) return
+                          e.preventDefault()
+                          const sourceId = draggedColId()!
+                          const target = dropTargetCol()
+                          setDraggedColId(null)
+                          setDropTargetCol(null)
+                          if (!target || sourceId === target.id) return
+
+                          const cols = resolvedColumns().map((c) =>
+                            String(c.id || c.accessorKey || "")
+                          )
+                          const fromIdx = cols.indexOf(sourceId)
+                          if (fromIdx === -1) return
+                          const newOrder = [...cols]
+                          newOrder.splice(fromIdx, 1)
+                          let toIdx = newOrder.indexOf(target.id)
+                          if (toIdx === -1) return
+                          if (target.position === "right") {
+                            toIdx += 1
+                          }
+                          newOrder.splice(toIdx, 0, sourceId)
+                          updateColumnOrder(newOrder)
+                        }}
                       >
-                        <Show
-                          when={!slotHeader}
-                          fallback={slotHeader?.({ column: col, table: tableApi })}
-                        >
+                        <div class="flex items-center gap-1.5">
+                          {/* Column Drag Handle */}
                           <Show
-                            when={canSort()}
-                            fallback={
-                              typeof col.header === "function"
-                                ? col.header({ column: col, table: tableApi })
-                                : col.header || colId()
+                            when={
+                              props.enableColumnReordering &&
+                              colId() !== "reorder" &&
+                              colId() !== "select" &&
+                              colId() !== "actions" &&
+                              colId() !== "dragHandle"
                             }
                           >
-                            <button
-                              type="button"
-                              class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
-                              onClick={(e) => toggleSort(colId(), e.shiftKey)}
-                              aria-label={`Sort by ${colId()}`}
+                            <span
+                              class={classes().dragHandle}
+                              data-slot="drag-handle"
+                              draggable={true}
+                              onDragStart={(e) => {
+                                setDraggedColId(colId())
+                                e.dataTransfer?.setData("text/plain", colId())
+                                if (e.dataTransfer) {
+                                  e.dataTransfer.effectAllowed = "move"
+                                }
+                              }}
+                              onDragEnd={() => {
+                                setDraggedColId(null)
+                                setDropTargetCol(null)
+                              }}
                             >
-                              <span>
-                                {typeof col.header === "function"
-                                  ? col.header({ column: col, table: tableApi })
-                                  : col.header || colId()}
-                              </span>
-                              <span
-                                class={`size-3.5 transition-all shrink-0 ${
-                                  sortDir() === "asc"
-                                    ? "i-lucide-arrow-up-narrow-wide text-primary"
-                                    : sortDir() === "desc"
-                                      ? "i-lucide-arrow-down-wide-narrow text-primary"
-                                      : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100"
-                                }`}
-                              />
-                            </button>
+                              <span class="i-lucide-grip-vertical size-3.5 opacity-40 hover:opacity-100" />
+                            </span>
                           </Show>
+
+                          <div class="flex-1 min-w-0">
+                            <Show
+                              when={!slotHeader}
+                              fallback={slotHeader?.({ column: col, table: tableApi })}
+                            >
+                              <Show when={canSort()} fallback={<span>{headerLabel()}</span>}>
+                                <button
+                                  type="button"
+                                  class="inline-flex items-center gap-1.5 hover:text-highlighted focus:outline-none transition-colors cursor-pointer group -mx-1 px-1 py-0.5 rounded"
+                                  onClick={(e) => toggleSort(colId(), e.shiftKey)}
+                                  aria-label={`Sort by ${colId()}`}
+                                >
+                                  <span>{headerLabel()}</span>
+                                  <span
+                                    class={`size-3.5 transition-all shrink-0 ${
+                                      sortDir() === "asc"
+                                        ? "i-lucide-arrow-up-narrow-wide text-primary"
+                                        : sortDir() === "desc"
+                                          ? "i-lucide-arrow-down-wide-narrow text-primary"
+                                          : "i-lucide-arrow-up-down opacity-40 group-hover:opacity-100"
+                                    }`}
+                                  />
+                                </button>
+                              </Show>
+                            </Show>
+                          </div>
+                        </div>
+
+                        {/* Column Resizer Handle */}
+                        <Show when={props.enableColumnResizing}>
+                          <div
+                            class={classes().resizer}
+                            data-slot="resizer"
+                            data-resizing={resizingColId() === colId() ? "true" : undefined}
+                            onPointerDown={(e) => startResize(e, colId(), col.minSize, col.maxSize)}
+                          />
                         </Show>
                       </th>
                     )
@@ -968,14 +1418,15 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                 <For each={virtualizedView().items}>
                   {(item) => {
                     if (item.type === "group") {
-                      const { group } = item
+                      const { group, depth } = item
                       const groupHeaderSlot = props.slots?.["group-header"]
 
                       return (
-                        <tr class={classes().trGroup} data-slot="tr-group">
+                        <tr class={classes().trGroup} data-slot="tr-group" data-depth={depth}>
                           <td
                             colSpan={Math.max(1, visibleColumns().length)}
                             class={classes().tdGroup}
+                            style={{ "padding-left": `${depth * 1.5 + 1}rem` }}
                             data-slot="td-group"
                           >
                             <Show
@@ -983,6 +1434,9 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                               fallback={
                                 <span class="flex items-center gap-2">
                                   <span class="i-lucide-layers size-3.5 text-primary opacity-70" />
+                                  <span class="text-xs uppercase text-muted font-medium">
+                                    {group.columnId}:
+                                  </span>
                                   <span class="text-highlighted">{String(group.value)}</span>
                                   <span class="ml-auto text-muted font-normal normal-case">
                                     {group.rows.length} {group.rows.length === 1 ? "row" : "rows"}
@@ -1013,6 +1467,13 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                         ? props.meta.style.tr(row)
                         : props.meta?.style?.tr || ""
 
+                    const isRowDropTarget = () =>
+                      dropTargetRow()?.id === row.id &&
+                      draggedRowIndex() !== null &&
+                      draggedRowIndex() !== row.index
+                    const rowDropPos = () =>
+                      isRowDropTarget() ? dropTargetRow()?.position : undefined
+
                     return (
                       <>
                         <tr
@@ -1023,6 +1484,51 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                           data-selected={row.getIsSelected() ? "true" : undefined}
                           data-expanded={row.getIsExpanded() ? "true" : undefined}
                           data-pinned={row.getIsPinned() || undefined}
+                          data-drop-position={rowDropPos()}
+                          onDragOver={(e) => {
+                            if (!props.enableRowReordering || draggedRowIndex() === null) return
+                            e.preventDefault()
+                            const tr = e.currentTarget as HTMLElement
+                            const rect = tr.getBoundingClientRect()
+                            const pos = e.clientY < rect.top + rect.height / 2 ? "top" : "bottom"
+                            const cur = dropTargetRow()
+                            if (!cur || cur.id !== row.id || cur.position !== pos) {
+                              setDropTargetRow({ id: row.id, index: row.index, position: pos })
+                            }
+                          }}
+                          onDragLeave={() => {
+                            if (dropTargetRow()?.id === row.id) {
+                              setDropTargetRow(null)
+                            }
+                          }}
+                          onDrop={(e) => {
+                            if (
+                              !props.enableRowReordering ||
+                              draggedRowIndex() === null ||
+                              !props.data
+                            )
+                              return
+                            e.preventDefault()
+                            const fromIdx = draggedRowIndex()!
+                            const target = dropTargetRow()
+                            setDraggedRowIndex(null)
+                            setDropTargetRow(null)
+                            if (!target || fromIdx === target.index) return
+
+                            const newData = [...props.data]
+                            const [movedItem] = newData.splice(fromIdx, 1)
+                            if (movedItem !== undefined) {
+                              let toIdx = target.index
+                              if (fromIdx < target.index && target.position === "top") {
+                                toIdx = target.index - 1
+                              } else if (fromIdx > target.index && target.position === "bottom") {
+                                toIdx = target.index + 1
+                              }
+                              toIdx = Math.max(0, Math.min(newData.length, toIdx))
+                              newData.splice(toIdx, 0, movedItem)
+                              props.onRowReorder?.(newData, fromIdx, toIdx)
+                            }
+                          }}
                           onClick={(e) => {
                             const target = e.target as HTMLElement
                             if (target.closest("a, button, input, select, textarea, [role=button]"))
@@ -1064,10 +1570,10 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                   : col.meta?.rowspan?.td
 
                               const sizeStyle = () => {
+                                const sizeVal = currentColumnSizing()[colId()] ?? col.size
                                 const styles: string[] = []
-                                if (typeof col.size === "number")
-                                  styles.push(`width: ${col.size}px;`)
-                                else if (col.size) styles.push(`width: ${col.size};`)
+                                if (typeof sizeVal === "number") styles.push(`width: ${sizeVal}px;`)
+                                else if (sizeVal) styles.push(`width: ${sizeVal};`)
                                 if (col.minSize) {
                                   styles.push(
                                     `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
@@ -1091,6 +1597,15 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                 return ""
                               }
 
+                              const isEditing = () =>
+                                currentEditingCell()?.rowId === row.id &&
+                                currentEditingCell()?.columnId === colId()
+                              const setEditing = (editing: boolean) => {
+                                tableApi.setEditingCell(
+                                  editing ? { rowId: row.id, columnId: colId() } : null
+                                )
+                              }
+
                               const cellSlot = props.slots?.[`${colId()}-cell`]
 
                               return (
@@ -1110,6 +1625,8 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                       cell: { value: cellValue() },
                                       getValue: cellValue,
                                       renderValue: cellValue,
+                                      isEditing,
+                                      setEditing,
                                       table: tableApi
                                     })}
                                   >
@@ -1118,6 +1635,8 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                           row,
                                           getValue: cellValue,
                                           renderValue: cellValue,
+                                          isEditing,
+                                          setEditing,
                                           column: col,
                                           table: tableApi
                                         })
@@ -1219,10 +1738,11 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                           : col.meta?.rowspan?.td
 
                                       const sizeStyle = () => {
+                                        const sizeVal = currentColumnSizing()[colId()] ?? col.size
                                         const styles: string[] = []
-                                        if (typeof col.size === "number")
-                                          styles.push(`width: ${col.size}px;`)
-                                        else if (col.size) styles.push(`width: ${col.size};`)
+                                        if (typeof sizeVal === "number")
+                                          styles.push(`width: ${sizeVal}px;`)
+                                        else if (sizeVal) styles.push(`width: ${sizeVal};`)
                                         if (col.minSize) {
                                           styles.push(
                                             `min-width: ${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`
@@ -1246,6 +1766,15 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                         return ""
                                       }
 
+                                      const isEditing = () =>
+                                        currentEditingCell()?.rowId === subRow.id &&
+                                        currentEditingCell()?.columnId === colId()
+                                      const setEditing = (editing: boolean) => {
+                                        tableApi.setEditingCell(
+                                          editing ? { rowId: subRow.id, columnId: colId() } : null
+                                        )
+                                      }
+
                                       const cellSlot = props.slots?.[`${colId()}-cell`]
 
                                       return (
@@ -1265,14 +1794,18 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                               cell: { value: cellValue() },
                                               getValue: cellValue,
                                               renderValue: cellValue,
+                                              isEditing,
+                                              setEditing,
                                               table: tableApi
                                             })}
                                           >
                                             {typeof col.cell === "function"
                                               ? col.cell({
-                                                  row: subRow,
+                                                  row,
                                                   getValue: cellValue,
                                                   renderValue: cellValue,
+                                                  isEditing,
+                                                  setEditing,
                                                   column: col,
                                                   table: tableApi
                                                 })

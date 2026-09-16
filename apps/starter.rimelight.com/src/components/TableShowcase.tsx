@@ -1,4 +1,4 @@
-import { createSignal, createMemo, Show } from "solid-js"
+import { createSignal, createMemo, Show, For } from "solid-js"
 import RLSTable from "@rimelight/ui/components/table/RLSTable.tsx"
 import type { TableColumn, TableApi, TableRow } from "@rimelight/ui/components/table/table.ts"
 import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
@@ -13,19 +13,71 @@ import {
 } from "./showcase-table-data"
 
 export default function TableShowcase() {
-  const [tableRef, setTableRef] = createSignal<TableApi<PaymentItem> | null>(null)
   const [data, setData] = createSignal<PaymentItem[]>(SHOWCASE_PAYMENTS_DATA)
   const [loading, setLoading] = createSignal<boolean>(false)
   const [striped, setStriped] = createSignal<boolean>(true)
   const [bordered, setBordered] = createSignal<boolean>(false)
   const [hoverable, setHoverable] = createSignal<boolean>(true)
-  const [grouping, setGrouping] = createSignal<string[]>(["category"])
+  const [groupingLevel, setGroupingLevel] = createSignal<"none" | "category" | "multi">("category")
+  const [enableResizing, setEnableResizing] = createSignal<boolean>(true)
+  const [enableColumnReordering, setEnableColumnReordering] = createSignal<boolean>(true)
+  const [enableRowReordering, setEnableRowReordering] = createSignal<boolean>(false)
   const [selectedRows, setSelectedRows] = createSignal<Record<string, boolean>>({})
   const [lastClickedRow, setLastClickedRow] = createSignal<string>("None")
   const [isVirtual, setIsVirtual] = createSignal<boolean>(false)
   const [loadingAnimation, setLoadingAnimation] = createSignal<
     "carousel" | "carousel-inverse" | "swing" | "elastic"
   >("carousel")
+
+  const grouping = createMemo(() => {
+    if (groupingLevel() === "multi") return ["category", "status"]
+    if (groupingLevel() === "category") return ["category"]
+    return []
+  })
+
+  const facetedStatusCounts = createMemo(() => {
+    const map = new Map<string, number>()
+    const scan = (items: PaymentItem[]) => {
+      for (const item of items) {
+        map.set(item.status, (map.get(item.status) ?? 0) + 1)
+        if (item.children) scan(item.children)
+      }
+    }
+    scan(data())
+    return Array.from(map.entries())
+  })
+
+  const facetedAmountRange = createMemo(() => {
+    let min = Infinity
+    let max = -Infinity
+    const scan = (items: PaymentItem[]) => {
+      for (const item of items) {
+        const val = Number(item.amount) || 0
+        if (val < min) min = val
+        if (val > max) max = val
+        if (item.children) scan(item.children)
+      }
+    }
+    scan(data())
+    if (min === Infinity) return "N/A"
+    return `$${min} - $${max}`
+  })
+
+  const totalRowCount = createMemo(() => {
+    let count = 0
+    const scan = (items: PaymentItem[]) => {
+      for (const item of items) {
+        count += 1
+        if (item.children) scan(item.children)
+      }
+    }
+    scan(data())
+    return count
+  })
+
+  const selectedCount = createMemo(() => {
+    return Object.values(selectedRows()).filter(Boolean).length
+  })
 
   const largeDataset = Array.from({ length: 500 }, (_, i) => ({
     id: `PAY-VIRT-${2000 + i}`,
@@ -46,11 +98,11 @@ export default function TableShowcase() {
     if (!isVirtual()) {
       setIsVirtual(true)
       setData(largeDataset)
-      setGrouping([])
+      setGroupingLevel("none")
     } else {
       setIsVirtual(false)
       setData(SHOWCASE_PAYMENTS_DATA)
-      setGrouping(["category"])
+      setGroupingLevel("category")
     }
   }
 
@@ -119,61 +171,60 @@ export default function TableShowcase() {
       header: "Date",
       size: 150,
       cell: ({ row }: { row: TableRow<PaymentItem> }) => (
-        <span class="font-mono text-xs text-muted">{formatShowcaseDate(row.getValue("date"))}</span>
-      )
-    },
-    {
-      accessorKey: "email",
-      header: "Customer Email",
-      size: 220,
-      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
-        <span class="text-xs text-toned truncate block max-w-[200px]" title={row.getValue("email")}>
-          {row.getValue("email")}
-        </span>
+        <span class="text-xs font-mono text-muted">{formatShowcaseDate(row.getValue("date"))}</span>
       )
     },
     {
       accessorKey: "status",
       header: "Status",
-      size: 110,
+      size: 120,
       cell: ({ row }: { row: TableRow<PaymentItem> }) => {
-        const st = row.getValue("status")
-        const color = st === "paid" ? "success" : st === "failed" ? "error" : "neutral"
+        const val = row.getValue("status")
+        const badgeColor = val === "paid" ? "success" : val === "failed" ? "error" : "warning"
         return (
-          <RLSBadge variant="soft" color={color} size="sm" class="capitalize">
-            {st}
+          <RLSBadge size="sm" color={badgeColor} variant="soft" class="capitalize">
+            {val}
           </RLSBadge>
         )
       }
     },
     {
+      accessorKey: "email",
+      header: "Customer",
+      size: 200,
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
+        <span class="text-xs text-highlighted truncate">{row.getValue("email")}</span>
+      )
+    },
+    {
       accessorKey: "amount",
       header: "Amount",
-      size: 130,
+      size: 110,
       meta: {
         class: {
           th: "text-right",
-          td: "text-right font-mono font-bold text-highlighted"
+          td: "text-right font-mono font-semibold"
         }
       },
-      cell: ({ row }: { row: TableRow<PaymentItem> }) =>
-        formatShowcaseCurrency(Number(row.getValue("amount"))),
+      cell: ({ row }: { row: TableRow<PaymentItem> }) => (
+        <span>{formatShowcaseCurrency(row.getValue("amount"))}</span>
+      ),
       footer: ({ table }: { table: TableApi<PaymentItem> }) => {
-        const total = (table?.getFilteredRows() || []).reduce(
-          (acc: number, r: TableRow<PaymentItem>) => acc + (Number(r.getValue("amount")) || 0),
-          0
-        )
+        const total = () =>
+          table
+            ?.getFilteredRows()
+            .reduce((sum, r) => sum + (Number(r.getValue("amount")) || 0), 0) ?? 0
         return (
-          <span class="font-mono font-bold text-xs text-highlighted block text-right">
-            Total: {formatShowcaseCurrency(total)}
-          </span>
+          <div class="text-right font-mono font-bold text-highlighted">
+            {formatShowcaseCurrency(total())}
+          </div>
         )
       }
     },
     {
       id: "actions",
-      header: "Actions",
-      size: 90,
+      size: 60,
+      header: "",
       enableSorting: false,
       enableHiding: false,
       meta: {
@@ -186,15 +237,15 @@ export default function TableShowcase() {
         const dropdownItems = [
           [
             {
-              label: "Payment Details",
-              icon: "info",
-              onSelect: () => alert(`Payment ${row.id}: $${row.getValue("amount")}`)
+              label: "Copy ID",
+              icon: "copy",
+              onSelect: () => navigator.clipboard.writeText(row.id)
             },
             ...(row.getCanExpand()
               ? [
                   {
-                    label: row.getIsExpanded() ? "Collapse Row" : "Expand Row",
-                    icon: row.getIsExpanded() ? "chevronUp" : "chevronDown",
+                    label: row.getIsExpanded() ? "Collapse Sub-rows" : "Expand Sub-rows",
+                    icon: row.getIsExpanded() ? "chevron-up" : "chevron-down",
                     onSelect: () => row.toggleExpanded()
                   }
                 ]
@@ -234,7 +285,7 @@ export default function TableShowcase() {
   return (
     <div class="flex flex-col gap-6 w-full">
       {/* Controls Bar */}
-      <div class="flex flex-wrap items-center gap-3 p-4 rounded-xl border border-default bg-muted/20">
+      <div class="flex flex-wrap items-center gap-2.5 p-4 rounded-xl border border-default bg-muted/20">
         <RLSButton
           size="sm"
           color={striped() ? "primary" : "neutral"}
@@ -264,11 +315,50 @@ export default function TableShowcase() {
 
         <RLSButton
           size="sm"
-          color={grouping().length > 0 ? "primary" : "neutral"}
-          variant={grouping().length > 0 ? "solid" : "outline"}
-          onClick={() => setGrouping(grouping().length > 0 ? [] : ["category"])}
+          color={groupingLevel() !== "none" ? "primary" : "neutral"}
+          variant={groupingLevel() !== "none" ? "solid" : "outline"}
+          onClick={() =>
+            setGroupingLevel(
+              groupingLevel() === "category"
+                ? "multi"
+                : groupingLevel() === "multi"
+                  ? "none"
+                  : "category"
+            )
+          }
         >
-          {grouping().length > 0 ? "Grouping: ON (Category)" : "Grouping: OFF"}
+          {groupingLevel() === "multi"
+            ? "Grouping: Category + Status"
+            : groupingLevel() === "category"
+              ? "Grouping: Category"
+              : "Grouping: OFF"}
+        </RLSButton>
+
+        <RLSButton
+          size="sm"
+          color={enableResizing() ? "primary" : "neutral"}
+          variant={enableResizing() ? "solid" : "outline"}
+          onClick={() => setEnableResizing(!enableResizing())}
+        >
+          {enableResizing() ? "Column Resizing: ON" : "Column Resizing: OFF"}
+        </RLSButton>
+
+        <RLSButton
+          size="sm"
+          color={enableColumnReordering() ? "primary" : "neutral"}
+          variant={enableColumnReordering() ? "solid" : "outline"}
+          onClick={() => setEnableColumnReordering(!enableColumnReordering())}
+        >
+          {enableColumnReordering() ? "Column Reorder: ON" : "Column Reorder: OFF"}
+        </RLSButton>
+
+        <RLSButton
+          size="sm"
+          color={enableRowReordering() ? "primary" : "neutral"}
+          variant={enableRowReordering() ? "solid" : "outline"}
+          onClick={() => setEnableRowReordering(!enableRowReordering())}
+        >
+          {enableRowReordering() ? "Row Reorder: ON" : "Row Reorder: OFF"}
         </RLSButton>
 
         <RLSButton
@@ -309,33 +399,24 @@ export default function TableShowcase() {
             <option value="elastic">Elastic</option>
           </select>
         </div>
-
-        <RLSButton
-          size="sm"
-          color="neutral"
-          variant="outline"
-          onClick={() => {
-            if (data().length > 0) setData([])
-            else setData(SHOWCASE_PAYMENTS_DATA)
-          }}
-        >
-          {data().length === 0 ? "Restore Data" : "Clear (Test Empty State)"}
-        </RLSButton>
       </div>
 
       {/* Solid Table Component */}
       <RLSTable<PaymentItem>
-        ref={(api: TableApi<PaymentItem>) => {
-          setTableRef(api)
-        }}
         data={data()}
         columns={columns()}
         searchable={true}
         showColumnsToggle={true}
+        exportable={true}
+        exportFilename="rimelight-payments-export"
         striped={striped()}
         bordered={bordered()}
         hoverable={hoverable()}
         grouping={grouping()}
+        enableColumnResizing={enableResizing()}
+        enableColumnReordering={enableColumnReordering()}
+        enableRowReordering={enableRowReordering()}
+        onRowReorder={(reordered) => setData(reordered)}
         loading={loading()}
         loadingAnimation={loadingAnimation()}
         virtualize={isVirtual()}
@@ -357,21 +438,33 @@ export default function TableShowcase() {
         )}
       />
 
-      {/* Event state readouts */}
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+      {/* Faceted Statistics & Event state readouts */}
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
         <div class="p-3 rounded-lg border border-default bg-muted/10">
           <span class="text-muted block">Selected rows:</span>
           <span class="font-bold text-highlighted">
-            {tableRef()?.getFlatRows().length ?? data().length} total rows (
-            {tableRef()?.getFilteredRows().length ?? data().length} root) |{" "}
-            {tableRef()?.getSelectedRows().length ??
-              Object.values(selectedRows()).filter(Boolean).length}{" "}
-            selected
+            {totalRowCount()} total rows ({data().length} root) | {selectedCount()} selected
           </span>
         </div>
         <div class="p-3 rounded-lg border border-default bg-muted/10">
-          <span class="text-muted block">Last clicked row (onSelect):</span>
-          <span class="font-bold text-highlighted">{lastClickedRow()}</span>
+          <span class="text-muted block">Last clicked (onSelect):</span>
+          <span class="font-bold text-highlighted truncate block">{lastClickedRow()}</span>
+        </div>
+        <div class="p-3 rounded-lg border border-default bg-muted/10">
+          <span class="text-muted block">Faceted Status Counts:</span>
+          <div class="flex items-center gap-2 mt-1">
+            <For each={facetedStatusCounts()}>
+              {([status, count]) => (
+                <span class="px-1.5 py-0.5 rounded bg-muted/30 text-highlighted font-bold">
+                  {status}: {count}
+                </span>
+              )}
+            </For>
+          </div>
+        </div>
+        <div class="p-3 rounded-lg border border-default bg-muted/10">
+          <span class="text-muted block">Amount Range (Min / Max):</span>
+          <span class="font-bold text-highlighted">{facetedAmountRange()}</span>
         </div>
       </div>
     </div>

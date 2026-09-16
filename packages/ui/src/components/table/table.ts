@@ -37,6 +37,8 @@ export interface TableColumn<T = any> {
     row: TableRow<T>
     getValue: () => any
     renderValue: () => any
+    isEditing?: () => boolean
+    setEditing?: (editing: boolean) => void
     column: TableColumn<T>
     table: any
   }) => any
@@ -44,6 +46,8 @@ export interface TableColumn<T = any> {
     row: TableRow<T>
     getValue: () => any
     renderValue: () => any
+    isEditing?: () => boolean
+    setEditing?: (editing: boolean) => void
     column: TableColumn<T>
     table: any
   }) => any
@@ -86,6 +90,7 @@ export interface TableGroup<T = any> {
   id: string
   columnId: string
   value: any
+  depth?: number
   rows: TableRow<T>[]
 }
 
@@ -121,6 +126,16 @@ export interface TableRowPinningState {
 export interface TableColumnPinningState {
   left?: string[]
   right?: string[]
+}
+
+export type TableColumnSizingState = Record<string, number>
+export type TableColumnOrderState = string[]
+export type TableEditingCellState = { rowId: string; columnId: string } | null
+
+export interface TableExportOptions {
+  filename?: string
+  selectedOnly?: boolean
+  columns?: string[]
 }
 
 export interface TablePaginationState {
@@ -163,16 +178,33 @@ export interface TableApi<T = any> {
   setPagination(state: TablePaginationState): void
   setPageIndex(pageIndex: number): void
   setPageSize(pageSize: number): void
+  // Resizing & Ordering
+  setColumnSizing(id: string, size: number): void
+  resetColumnSizing(): void
+  setColumnOrder(order: TableColumnOrderState): void
+  resetColumnOrder(): void
+  // Exporting
+  exportToCsv(options?: TableExportOptions): string
+  exportToJson(options?: TableExportOptions): string
+  // Faceted statistics
+  getFacetedUniqueValues(columnId: string): Map<any, number>
+  getFacetedMinMaxValues(columnId: string): [number, number] | undefined
+  // Inline editing support
+  setEditingCell(cell: TableEditingCellState): void
+  getEditingCell(): TableEditingCellState
   getState(): {
     sorting: SortingState
     globalFilter: string
     columnFilters: ColumnFiltersState
     columnVisibility: Record<string, boolean>
     columnPinning: TableColumnPinningState
+    columnSizing: TableColumnSizingState
+    columnOrder: TableColumnOrderState
     rowSelection: Record<string, boolean>
     expanded: Record<string, boolean>
     rowPinning: TableRowPinningState
     pagination: TablePaginationState
+    editingCell: TableEditingCellState
   }
 }
 
@@ -313,6 +345,42 @@ export interface TableProps<T = any> {
   onRowPinningChange?: ((state: TableRowPinningState) => void) | undefined
   onPaginationChange?: ((state: TablePaginationState) => void) | undefined
   /**
+   * Enable interactive drag resizing for columns.
+   */
+  enableColumnResizing?: boolean | undefined
+  /**
+   * Column resize mode: "onChange" updates dynamically during drag, "onEnd" updates when mouse is
+   * released. @default 'onChange'
+   */
+  columnResizeMode?: "onChange" | "onEnd" | undefined
+  /**
+   * Controlled column sizing state — `{ [columnId]: widthInPixels }`.
+   */
+  columnSizing?: TableColumnSizingState | undefined
+  onColumnSizingChange?: ((state: TableColumnSizingState) => void) | undefined
+  /**
+   * Enable drag-and-drop column reordering.
+   */
+  enableColumnReordering?: boolean | undefined
+  /**
+   * Controlled column order state — `[columnId1, columnId2, ...]`.
+   */
+  columnOrder?: TableColumnOrderState | undefined
+  onColumnOrderChange?: ((state: TableColumnOrderState) => void) | undefined
+  /**
+   * Enable drag-and-drop row reordering.
+   */
+  enableRowReordering?: boolean | undefined
+  /**
+   * Called when a row is reordered via drag-and-drop.
+   */
+  onRowReorder?: ((newOrder: T[], fromIndex: number, toIndex: number) => void) | undefined
+  /**
+   * Active cell being edited — `{ rowId: string, columnId: string } | null`.
+   */
+  editingCell?: TableEditingCellState | undefined
+  onEditingCellChange?: ((cell: TableEditingCellState) => void) | undefined
+  /**
    * Render a built-in search input in the toolbar.
    */
   searchable?: boolean | undefined
@@ -324,6 +392,14 @@ export interface TableProps<T = any> {
    * Render a column-visibility dropdown in the toolbar.
    */
   showColumnsToggle?: boolean | undefined
+  /**
+   * Render an export dropdown (CSV, JSON) in the toolbar. @default false
+   */
+  exportable?: boolean | undefined
+  /**
+   * Default filename prefix for exported files. @default 'export'
+   */
+  exportFilename?: string | undefined
   /**
    * Per-slot class overrides.
    */

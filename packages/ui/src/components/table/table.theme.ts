@@ -18,7 +18,9 @@ export const tableTheme = defineTheme("table", {
     "tdGroup",
     "trExpanded",
     "tdExpanded",
-    "toolbar"
+    "toolbar",
+    "resizer",
+    "dragHandle"
   ],
   base: {
     root: "relative w-full overflow-auto rounded-lg border border-default shadow-sm outline-primary/25 focus-visible:outline-3",
@@ -31,8 +33,8 @@ export const tableTheme = defineTheme("table", {
     tbody:
       "divide-y divide-default/60 [&>tr]:data-[selectable=true]:hover:bg-muted/30 [&>tr]:data-[selectable=true]:cursor-pointer",
     tfoot: "relative bg-muted/30 border-t border-default font-medium text-xs text-muted",
-    tr: "transition-colors data-[selected=true]:bg-primary/10 data-[expanded=true]:bg-muted/40",
-    th: "px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider border-b border-default [&:has([role=checkbox])]:pe-0",
+    tr: "relative transition-colors data-[selected=true]:bg-primary/10 data-[expanded=true]:bg-muted/40 data-[drop-position=top]:after:absolute data-[drop-position=top]:after:inset-x-0 data-[drop-position=top]:after:top-0 data-[drop-position=top]:after:h-0.5 data-[drop-position=top]:after:bg-primary data-[drop-position=top]:after:z-30 data-[drop-position=bottom]:after:absolute data-[drop-position=bottom]:after:inset-x-0 data-[drop-position=bottom]:after:bottom-0 data-[drop-position=bottom]:after:h-0.5 data-[drop-position=bottom]:after:bg-primary data-[drop-position=bottom]:after:z-30",
+    th: "relative group/th px-4 py-3.5 text-xs font-semibold text-muted text-left uppercase tracking-wider border-b border-default [&:has([role=checkbox])]:pe-0 data-[drop-position=left]:after:absolute data-[drop-position=left]:after:inset-y-0 data-[drop-position=left]:after:start-0 data-[drop-position=left]:after:w-0.5 data-[drop-position=left]:after:bg-primary data-[drop-position=left]:after:z-30 data-[drop-position=right]:after:absolute data-[drop-position=right]:after:inset-y-0 data-[drop-position=right]:after:end-0 data-[drop-position=right]:after:w-0.5 data-[drop-position=right]:after:bg-primary data-[drop-position=right]:after:z-30",
     td: "p-4 text-sm text-highlighted align-middle whitespace-nowrap border-b border-default/40 [&:has([role=checkbox])]:pe-0",
     separator: "absolute z-10 start-0 w-full h-px bg-neutral-200",
     empty: "py-8 text-center text-sm text-muted",
@@ -41,7 +43,11 @@ export const tableTheme = defineTheme("table", {
     tdGroup:
       "px-4 py-2 text-xs font-bold uppercase tracking-wider text-highlighted border-b border-default",
     trExpanded: "bg-muted/20 border-b border-default",
-    tdExpanded: "p-4 border-b border-default"
+    tdExpanded: "p-4 border-b border-default",
+    resizer:
+      "absolute top-0 end-0 h-full w-1.5 cursor-col-resize select-none touch-none hover:bg-primary/50 transition-colors opacity-0 group-hover/th:opacity-60",
+    dragHandle:
+      "inline-flex items-center justify-center cursor-grab active:cursor-grabbing text-muted/50 hover:text-highlighted touch-none select-none p-1 rounded hover:bg-muted/40 transition-colors"
   },
   variants: {
     pinned: {
