@@ -39,11 +39,13 @@
     "./schema/*": "./src/schema/*",
     "./integration": {
       "types": "./dist/integration.d.mts",
-      "import": "./dist/integration.mjs"
+      "import": "./src/integration.ts",
+      "default": "./src/integration.ts"
     },
     "./storage": {
       "types": "./dist/storage/index.d.mts",
-      "import": "./dist/storage/index.mjs"
+      "import": "./src/storage/index.ts",
+      "default": "./src/storage/index.ts"
     },
     "./mcp": {
       "types": "./src/mcp/index.ts",

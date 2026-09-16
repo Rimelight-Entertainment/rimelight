@@ -18,6 +18,7 @@ import type {
   TableExportOptions
 } from "./table"
 import { tableTheme } from "./table.theme"
+import { dropdownMenuTheme } from "../dropdown-menu/dropdown-menu.theme"
 import RLSInput from "../input/RLSInput"
 import RLSDropdownMenu from "../dropdown-menu/RLSDropdownMenu"
 import RLSIcon from "../icon/RLSIcon"
@@ -228,8 +229,114 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
       return [reorderCol, ...cols]
     }
 
+    // Auto-inject rowActions / actions column if defined on table props and not in columns
+    const actionsDef = props.actions || props.rowActions
+    if (actionsDef && !cols.some((c) => c.id === "actions")) {
+      cols.push({
+        id: "actions",
+        header: "",
+        size: 80,
+        minSize: 60,
+        enableSorting: false,
+        enableHiding: false,
+        meta: {
+          class: {
+            th: "text-right",
+            td: "text-right"
+          }
+        },
+        actions: actionsDef
+      })
+    }
+
+    // Normalize actions column defaults
+    for (const c of cols) {
+      if (c.id === "actions" || c.actions || c.items) {
+        if (c.enableSorting === undefined) c.enableSorting = false
+        if (c.header === undefined && c.id === "actions") c.header = ""
+        if (!c.meta?.class?.td && c.id === "actions") {
+          c.meta = {
+            ...c.meta,
+            class: {
+              ...c.meta?.class,
+              th: c.meta?.class?.th || "text-right",
+              td: c.meta?.class?.td || "text-right"
+            }
+          }
+        }
+      }
+    }
+
     return cols
   })
+
+  function getCellActions(row: TableRow<T>, col: TableColumn<T>) {
+    const actionsFn =
+      col.actions ??
+      col.items ??
+      (col.id === "actions" ? props.actions || props.rowActions : undefined)
+    if (actionsFn) {
+      return typeof actionsFn === "function" ? (actionsFn as any)(row) : actionsFn
+    }
+    return undefined
+  }
+
+  function renderCellContent(
+    row: TableRow<T>,
+    col: TableColumn<T>,
+    cellValue: () => any,
+    isEditing: () => boolean,
+    setEditing: (e: boolean) => void
+  ) {
+    const actions = getCellActions(row, col)
+    if (Array.isArray(actions) && actions.length > 0) {
+      const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" })
+      return (
+        <div class="flex items-center justify-end">
+          <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
+            <button
+              type="button"
+              class={`${dmClasses.trigger} aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0`}
+              data-slot="trigger"
+              data-dropdown-trigger
+            >
+              <span class="i-lucide-ellipsis-vertical size-4" />
+            </button>
+          </div>
+        </div>
+      )
+    }
+    if (typeof col.cell === "function") {
+      const rendered = col.cell({
+        row,
+        getValue: cellValue,
+        renderValue: cellValue,
+        isEditing,
+        setEditing,
+        column: col,
+        table: tableApi
+      })
+      if (Array.isArray(rendered) && rendered.length > 0) {
+        const dmClasses = dropdownMenuTheme({ size: "xs", color: "neutral" })
+        return (
+          <div class="flex items-center justify-end">
+            <div class={dmClasses.root} data-slot="root" data-dropdown-menu>
+              <button
+                type="button"
+                class={`${dmClasses.trigger} aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0`}
+                data-slot="trigger"
+                data-dropdown-trigger
+              >
+                <span class="i-lucide-ellipsis-vertical size-4" />
+              </button>
+            </div>
+          </div>
+        )
+      }
+      return rendered
+    }
+    return cellValue() !== undefined && cellValue() !== null ? String(cellValue()) : "—"
+  }
 
   const resolvedColumns = createMemo<TableColumn<T>[]>(() => {
     const raw = rawResolvedColumns()
@@ -1630,19 +1737,7 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                       table: tableApi
                                     })}
                                   >
-                                    {typeof col.cell === "function"
-                                      ? col.cell({
-                                          row,
-                                          getValue: cellValue,
-                                          renderValue: cellValue,
-                                          isEditing,
-                                          setEditing,
-                                          column: col,
-                                          table: tableApi
-                                        })
-                                      : cellValue() !== undefined && cellValue() !== null
-                                        ? String(cellValue())
-                                        : "—"}
+                                    {renderCellContent(row, col, cellValue, isEditing, setEditing)}
                                   </Show>
                                 </td>
                               )
@@ -1799,19 +1894,13 @@ export function RLSTable<T = any>(props: RLSTableProps<T>) {
                                               table: tableApi
                                             })}
                                           >
-                                            {typeof col.cell === "function"
-                                              ? col.cell({
-                                                  row,
-                                                  getValue: cellValue,
-                                                  renderValue: cellValue,
-                                                  isEditing,
-                                                  setEditing,
-                                                  column: col,
-                                                  table: tableApi
-                                                })
-                                              : cellValue() !== undefined && cellValue() !== null
-                                                ? String(cellValue())
-                                                : "—"}
+                                            {renderCellContent(
+                                              subRow,
+                                              col,
+                                              cellValue,
+                                              isEditing,
+                                              setEditing
+                                            )}
                                           </Show>
                                         </td>
                                       )

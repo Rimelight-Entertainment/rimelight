@@ -28,6 +28,8 @@ export type TableAggregationFn<T = any> =
   | "uniqueCount"
   | ((values: any[], rows: TableRow<T>[]) => any)
 
+import type { DropdownMenuItem } from "../dropdown-menu/dropdown-menu"
+
 export interface TableColumn<T = any> {
   id?: string
   accessorKey?: keyof T | string
@@ -42,6 +44,14 @@ export interface TableColumn<T = any> {
     column: TableColumn<T>
     table: any
   }) => any
+  actions?:
+    | ((row: TableRow<T>) => DropdownMenuItem[] | DropdownMenuItem[][])
+    | DropdownMenuItem[]
+    | DropdownMenuItem[][]
+  items?:
+    | ((row: TableRow<T>) => DropdownMenuItem[] | DropdownMenuItem[][])
+    | DropdownMenuItem[]
+    | DropdownMenuItem[][]
   aggregatedCell?: (props: {
     row: TableRow<T>
     getValue: () => any
@@ -400,6 +410,22 @@ export interface TableProps<T = any> {
    * Default filename prefix for exported files. @default 'export'
    */
   exportFilename?: string | undefined
+  /**
+   * Row actions dropdown definition. Generates an Actions column automatically.
+   */
+  actions?:
+    | ((row: TableRow<T>) => DropdownMenuItem[] | DropdownMenuItem[][])
+    | DropdownMenuItem[]
+    | DropdownMenuItem[][]
+    | undefined
+  /**
+   * Alias for actions.
+   */
+  rowActions?:
+    | ((row: TableRow<T>) => DropdownMenuItem[] | DropdownMenuItem[][])
+    | DropdownMenuItem[]
+    | DropdownMenuItem[][]
+    | undefined
   /**
    * Per-slot class overrides.
    */

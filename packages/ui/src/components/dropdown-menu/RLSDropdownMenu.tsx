@@ -9,7 +9,6 @@ import {
   type Component,
   type JSX
 } from "solid-js"
-import { isServer, Portal } from "solid-js/web"
 import type { DropdownMenuProps, DropdownMenuItem } from "./dropdown-menu"
 import { dropdownMenuTheme } from "./dropdown-menu.theme"
 import RLSIcon from "../icon/RLSIcon"
@@ -60,6 +59,7 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
   }
 
   onMount(() => {
+    if (typeof window === "undefined" || typeof document === "undefined") return
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node
       if (
@@ -102,13 +102,17 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
 
   return (
     <div
-      ref={(el) => (menuContainer = el)}
+      ref={(el) => {
+        menuContainer = el
+      }}
       class={resolvedClasses().root}
       data-slot="root"
       {...rest}
     >
       <button
-        ref={(el) => (triggerBtn = el)}
+        ref={(el) => {
+          triggerBtn = el
+        }}
         type="button"
         disabled={props.disabled}
         onClick={(e) => {
@@ -120,150 +124,121 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
         class={`${resolvedClasses().trigger} ${!props.label && !props.children && !props.trigger ? "aspect-square !px-1.5 !py-1.5 inline-flex items-center justify-center shrink-0" : ""}`}
         data-slot="trigger"
       >
-        {props.trigger ? (
-          props.trigger
-        ) : props.children ? (
-          props.children
-        ) : (
-          <>
-            {props.icon && <RLSIcon name={props.icon} size="sm" class="shrink-0" />}
-            {props.label && <span>{props.label}</span>}
-            {!props.icon && !props.label && <RLSIcon name="ellipsisVertical" size="sm" />}
-          </>
-        )}
+        <Show
+          when={props.trigger}
+          fallback={
+            <Show
+              when={props.children}
+              fallback={
+                <Show
+                  when={props.icon}
+                  fallback={
+                    <Show
+                      when={props.label}
+                      fallback={<span class="i-lucide-ellipsis-vertical size-4" />}
+                    >
+                      <span>{props.label}</span>
+                    </Show>
+                  }
+                >
+                  <RLSIcon name={props.icon!} size="sm" class="shrink-0" />
+                  <Show when={props.label}>
+                    <span>{props.label}</span>
+                  </Show>
+                </Show>
+              }
+            >
+              {props.children}
+            </Show>
+          }
+        >
+          {props.trigger}
+        </Show>
       </button>
 
-      <Show when={!isServer && isOpen()}>
-        <Portal>
-          <div
-            ref={(el) => (menuContentRef = el)}
-            class={resolvedClasses().content}
-            style={{
-              "position": "fixed",
-              "z-index": "99999",
-              "top": `${coords().top}px`,
-              ...(coords().right !== undefined
-                ? { right: `${coords().right}px`, left: "auto" }
-                : {}),
-              ...(coords().left !== undefined ? { left: `${coords().left}px` } : {})
-            }}
-            data-slot="content"
-            role="menu"
-          >
-            {props.arrow && <div class={resolvedClasses().arrow} />}
-            <div class={resolvedClasses().viewport}>
-              <For each={itemGroups()}>
-                {(group, groupIdx) => (
-                  <div class={resolvedClasses().group}>
-                    {groupIdx() > 0 && <div class={resolvedClasses().separator} />}
-                    <For each={group}>
-                      {(item) => {
-                        if (item.type === "separator") {
-                          return <div class={resolvedClasses().separator} />
-                        }
-                        if (item.type === "label") {
-                          return <div class={resolvedClasses().label}>{item.label}</div>
-                        }
+      <Show when={isOpen()}>
+        <div
+          ref={(el) => {
+            menuContentRef = el
+          }}
+          class={resolvedClasses().content}
+          style={{
+            "position": "fixed",
+            "z-index": "99999",
+            "top": `${coords().top}px`,
+            ...(coords().right !== undefined ? { right: `${coords().right}px`, left: "auto" } : {}),
+            ...(coords().left !== undefined ? { left: `${coords().left}px` } : {})
+          }}
+          data-slot="content"
+          role="menu"
+        >
+          {props.arrow && <div class={resolvedClasses().arrow} />}
+          <div class={resolvedClasses().viewport}>
+            <For each={itemGroups()}>
+              {(group, groupIdx) => (
+                <div class={resolvedClasses().group}>
+                  {groupIdx() > 0 && <div class={resolvedClasses().separator} />}
+                  <For each={group}>
+                    {(item) => {
+                      if (item.type === "separator") {
+                        return <div class={resolvedClasses().separator} />
+                      }
+                      if (item.type === "label") {
+                        return <div class={resolvedClasses().label}>{item.label}</div>
+                      }
 
-                        const itemColor = () =>
-                          item.color === "error"
-                            ? "text-destructive hover:bg-destructive/10"
-                            : item.color === "primary"
-                              ? "text-primary hover:bg-primary/10"
-                              : ""
+                      const itemColor = () =>
+                        item.color === "error"
+                          ? "text-destructive hover:bg-destructive/10"
+                          : item.color === "primary"
+                            ? "text-primary hover:bg-primary/10"
+                            : ""
 
-                        const renderLeadingContent = () => {
-                          if (item.avatar) {
-                            return (
-                              <img
-                                src={item.avatar.src}
-                                alt={item.avatar.alt || item.label || ""}
-                                class={resolvedClasses().itemLeadingAvatar}
-                              />
-                            )
-                          }
-                          if (item.icon) {
-                            return (
-                              <RLSIcon
-                                name={item.icon}
-                                size="sm"
-                                class={resolvedClasses().itemLeadingIcon}
-                              />
-                            )
-                          }
-                          return null
-                        }
-
-                        const renderTrailingContent = () => {
-                          if (!item.shortcut && (!item.kbds || item.kbds.length === 0)) return null
+                      const renderLeadingContent = () => {
+                        if (item.avatar) {
                           return (
-                            <span class={resolvedClasses().itemTrailing}>
-                              {item.shortcut && (
-                                <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
-                              )}
-                              {item.kbds && (
-                                <For each={item.kbds}>
-                                  {(kbd) => (
-                                    <kbd class={resolvedClasses().itemTrailingKbds}>{kbd}</kbd>
-                                  )}
-                                </For>
-                              )}
-                            </span>
+                            <img
+                              src={item.avatar.src}
+                              alt={item.avatar.alt || item.label || ""}
+                              class={resolvedClasses().itemLeadingAvatar}
+                            />
                           )
                         }
-
-                        if (item.to) {
+                        if (item.icon) {
                           return (
-                            <a
-                              href={item.to}
-                              target={item.target}
-                              class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
-                              data-slot="item"
-                              role="menuitem"
-                              onClick={(e) => {
-                                setIsOpen(false)
-                                item.onSelect?.(e)
-                              }}
-                            >
-                              {renderLeadingContent()}
-                              <span class={resolvedClasses().itemLabel}>{item.label}</span>
-                              {renderTrailingContent()}
-                            </a>
+                            <RLSIcon
+                              name={item.icon}
+                              size="sm"
+                              class={resolvedClasses().itemLeadingIcon}
+                            />
                           )
                         }
+                        return null
+                      }
 
-                        if (item.type === "checkbox") {
-                          const isChecked = () => !!item.checked
-                          return (
-                            <button
-                              type="button"
-                              disabled={item.disabled}
-                              class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
-                              data-slot="item"
-                              role="menuitemcheckbox"
-                              aria-checked={isChecked()}
-                              onClick={(e) => {
-                                const next = !isChecked()
-                                item.onUpdateChecked?.(next)
-                                item.onSelect?.(e)
-                              }}
-                            >
-                              <span class="shrink-0 size-4 flex items-center justify-center border border-default rounded bg-default">
-                                <Show when={isChecked()}>
-                                  <RLSIcon name="check" size="xs" class="text-primary" />
-                                </Show>
-                              </span>
-                              {renderLeadingContent()}
-                              <span class={resolvedClasses().itemLabel}>{item.label}</span>
-                              {renderTrailingContent()}
-                            </button>
-                          )
-                        }
-
+                      const renderTrailingContent = () => {
+                        if (!item.shortcut && (!item.kbds || item.kbds.length === 0)) return null
                         return (
-                          <button
-                            type="button"
-                            disabled={item.disabled}
+                          <span class={resolvedClasses().itemTrailing}>
+                            {item.shortcut && (
+                              <span class={resolvedClasses().shortcut}>{item.shortcut}</span>
+                            )}
+                            {item.kbds && (
+                              <For each={item.kbds}>
+                                {(kbd) => (
+                                  <kbd class={resolvedClasses().itemTrailingKbds}>{kbd}</kbd>
+                                )}
+                              </For>
+                            )}
+                          </span>
+                        )
+                      }
+
+                      if (item.to) {
+                        return (
+                          <a
+                            href={item.to}
+                            target={item.target}
                             class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
                             data-slot="item"
                             role="menuitem"
@@ -275,16 +250,62 @@ const RLSDropdownMenu: Component<RLSDropdownMenuProps> = (allProps) => {
                             {renderLeadingContent()}
                             <span class={resolvedClasses().itemLabel}>{item.label}</span>
                             {renderTrailingContent()}
+                          </a>
+                        )
+                      }
+
+                      if (item.type === "checkbox") {
+                        const isChecked = () => !!item.checked
+                        return (
+                          <button
+                            type="button"
+                            disabled={item.disabled}
+                            class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
+                            data-slot="item"
+                            role="menuitemcheckbox"
+                            aria-checked={isChecked()}
+                            onClick={(e) => {
+                              const next = !isChecked()
+                              item.onUpdateChecked?.(next)
+                              item.onSelect?.(e)
+                            }}
+                          >
+                            <span class="shrink-0 size-4 flex items-center justify-center border border-default rounded bg-default">
+                              <Show when={isChecked()}>
+                                <RLSIcon name="check" size="xs" class="text-primary" />
+                              </Show>
+                            </span>
+                            {renderLeadingContent()}
+                            <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                            {renderTrailingContent()}
                           </button>
                         )
-                      }}
-                    </For>
-                  </div>
-                )}
-              </For>
-            </div>
+                      }
+
+                      return (
+                        <button
+                          type="button"
+                          disabled={item.disabled}
+                          class={`${resolvedClasses().item} ${itemColor()} ${item.class || ""}`}
+                          data-slot="item"
+                          role="menuitem"
+                          onClick={(e) => {
+                            setIsOpen(false)
+                            item.onSelect?.(e)
+                          }}
+                        >
+                          {renderLeadingContent()}
+                          <span class={resolvedClasses().itemLabel}>{item.label}</span>
+                          {renderTrailingContent()}
+                        </button>
+                      )
+                    }}
+                  </For>
+                </div>
+              )}
+            </For>
           </div>
-        </Portal>
+        </div>
       </Show>
     </div>
   )

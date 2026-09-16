@@ -49,6 +49,8 @@ const {
   showColumnsToggle = false,
   exportable = false,
   exportFilename = "export",
+  actions: tableActions,
+  rowActions,
   class: className,
   ui,
   ...rest
@@ -81,6 +83,52 @@ if (columns && columns.length > 0) {
     header: key.charAt(0).toUpperCase() + key.slice(1),
     enableSorting: true
   }))
+}
+
+// Auto-inject rowActions / actions column if defined on table props and not in columns
+const tableActionsDef = tableActions || rowActions
+if (tableActionsDef && !rawColumns.some((c) => c.id === "actions")) {
+  rawColumns.push({
+    id: "actions",
+    header: "",
+    size: 80,
+    minSize: 60,
+    enableSorting: false,
+    enableHiding: false,
+    meta: {
+      class: {
+        th: "text-right",
+        td: "text-right"
+      }
+    },
+    actions: tableActionsDef
+  })
+}
+
+// Normalize actions column defaults
+for (const c of rawColumns) {
+  if (c.id === "actions" || c.actions || c.items) {
+    if (c.enableSorting === undefined) c.enableSorting = false
+    if (c.header === undefined && c.id === "actions") c.header = ""
+    if (!c.meta?.class?.td && c.id === "actions") {
+      c.meta = {
+        ...c.meta,
+        class: {
+          ...c.meta?.class,
+          th: c.meta?.class?.th || "text-right",
+          td: c.meta?.class?.td || "text-right"
+        }
+      }
+    }
+  }
+}
+
+function getCellActions(row: TableRow, col: TableColumn) {
+  const actionsFn = col.actions ?? col.items ?? (col.id === "actions" ? tableActionsDef : undefined)
+  if (actionsFn) {
+    return typeof actionsFn === "function" ? actionsFn(row) : actionsFn
+  }
+  return null
 }
 
 if (enableRowReordering && !rawColumns.some((c) => c.id === "reorder" || c.id === "dragHandle")) {
@@ -786,19 +834,50 @@ function getColumnSizeStyle(col: TableColumn): string {
                               renderValue: () => cellValue
                             } as any)}
                           />
-                        ) : typeof col.cell === "function" ? (
-                          <Fragment set:html={col.cell({
-                            row,
-                            getValue: () => cellValue,
-                            renderValue: () => cellValue,
-                            column: col,
-                            table: {}
-                          })} />
-                        ) : cellValue !== undefined && cellValue !== null ? (
-                          String(cellValue)
-                        ) : (
-                          "—"
-                        )}
+                        ) : (() => {
+                          const actionItems = getCellActions(row, col)
+                          if (Array.isArray(actionItems) && actionItems.length > 0) {
+                            return (
+                              <div class="flex items-center justify-end">
+                                <RLADropdownMenu
+                                  items={actionItems as any}
+                                  content={{ align: "end", side: "bottom" }}
+                                  size="xs"
+                                  color="neutral"
+                                />
+                              </div>
+                            )
+                          }
+
+                          if (typeof col.cell === "function") {
+                            const rendered = col.cell({
+                              row,
+                              getValue: () => cellValue,
+                              renderValue: () => cellValue,
+                              column: col,
+                              table: {}
+                            })
+                            if (Array.isArray(rendered) && rendered.length > 0) {
+                              return (
+                                <div class="flex items-center justify-end">
+                                  <RLADropdownMenu
+                                    items={rendered as any}
+                                    content={{ align: "end", side: "bottom" }}
+                                    size="xs"
+                                    color="neutral"
+                                  />
+                                </div>
+                              )
+                            }
+                            return <Fragment set:html={rendered} />
+                          }
+
+                          return cellValue !== undefined && cellValue !== null ? (
+                            String(cellValue)
+                          ) : (
+                            "—"
+                          )
+                        })()}
                       </td>
                     )
                   })}
@@ -886,19 +965,50 @@ function getColumnSizeStyle(col: TableColumn): string {
                                     renderValue: () => cellValue
                                   } as any)}
                                 />
-                              ) : typeof col.cell === "function" ? (
-                                <Fragment set:html={col.cell({
-                                  row,
-                                  getValue: () => cellValue,
-                                  renderValue: () => cellValue,
-                                  column: col,
-                                  table: {}
-                                })} />
-                              ) : cellValue !== undefined && cellValue !== null ? (
-                                String(cellValue)
-                              ) : (
-                                "—"
-                              )}
+                              ) : (() => {
+                                const actionItems = getCellActions(subRow, col)
+                                if (Array.isArray(actionItems) && actionItems.length > 0) {
+                                  return (
+                                    <div class="flex items-center justify-end">
+                                      <RLADropdownMenu
+                                        items={actionItems as any}
+                                        content={{ align: "end", side: "bottom" }}
+                                        size="xs"
+                                        color="neutral"
+                                      />
+                                    </div>
+                                  )
+                                }
+
+                                if (typeof col.cell === "function") {
+                                  const rendered = col.cell({
+                                    row: subRow,
+                                    getValue: () => cellValue,
+                                    renderValue: () => cellValue,
+                                    column: col,
+                                    table: {}
+                                  })
+                                  if (Array.isArray(rendered) && rendered.length > 0) {
+                                    return (
+                                      <div class="flex items-center justify-end">
+                                        <RLADropdownMenu
+                                          items={rendered as any}
+                                          content={{ align: "end", side: "bottom" }}
+                                          size="xs"
+                                          color="neutral"
+                                        />
+                                      </div>
+                                    )
+                                  }
+                                  return <Fragment set:html={rendered} />
+                                }
+
+                                return cellValue !== undefined && cellValue !== null ? (
+                                  String(cellValue)
+                                ) : (
+                                  "—"
+                                )
+                              })()}
                             </td>
                           )
                         })}

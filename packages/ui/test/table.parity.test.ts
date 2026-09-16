@@ -323,5 +323,35 @@ describe("RLTable Theme & Logic Parity", () => {
       expect(htmlRows).toContain('data-col-id="reorder"')
       expect(htmlRows).toContain('data-slot="drag-handle"')
     })
+
+    it("renders actions dropdown column cleanly from actions property", () => {
+      const actionsCols: TableColumn<any>[] = [
+        { accessorKey: "name", header: "Name" },
+        {
+          id: "actions",
+          actions: (row) => [
+            { label: "Edit", icon: "i-lucide-pencil", to: `/edit/${row.original.id}` },
+            { type: "separator" },
+            { label: "Delete", icon: "i-lucide-trash-2", color: "error" }
+          ]
+        }
+      ]
+      const html = renderSolid(RLSTable, {
+        data: sampleData,
+        columns: actionsCols
+      })
+      expect(html).toContain('data-col-id="actions"')
+      expect(html).toContain('data-slot="trigger"')
+    })
+
+    it("auto-injects actions column when rowActions prop is passed to table", () => {
+      const html = renderSolid(RLSTable, {
+        data: sampleData,
+        columns: [{ accessorKey: "name", header: "Name" }],
+        rowActions: (row: any) => [{ label: "View Profile", to: `/profile/${row.original.id}` }]
+      })
+      expect(html).toContain('data-col-id="actions"')
+      expect(html).toContain('data-slot="trigger"')
+    })
   })
 })

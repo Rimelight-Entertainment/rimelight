@@ -183,54 +183,50 @@ const pageColumns: TableColumn<any>[] = [
   },
   {
     id: "actions",
-    header: "",
-    size: 70,
-    enableSorting: false,
-    enableHiding: false,
-    meta: {
-      class: {
-        th: "text-center",
-        td: "text-center"
-      }
-    },
-    cell: ({ row }) => {
+    actions: (row) => {
       const page = row.original;
-      return `<div class="${dropdownClasses.root}" data-astro-actions="${page.id}">
-        <button type="button" class="size-8 rounded-lg border border-default bg-elevated/70 text-muted hover:text-highlighted hover:border-accented flex items-center justify-center transition-colors cursor-pointer mx-auto" data-astro-action-trigger aria-label="Actions">
-          <span class="i-lucide-ellipsis-vertical size-4 pointer-events-none"></span>
-        </button>
-        <div class="fixed hidden z-[99999] min-w-44 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md flex flex-col gap-0.5 text-xs text-left" data-astro-action-menu>
-          <a href="${getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/edit`)}" class="${dropdownClasses.item}">
-            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-pencil"></span>
-            <span class="${dropdownClasses.itemLabel}">Edit Page</span>
-          </a>
-          <a href="${getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/preview`)}" class="${dropdownClasses.item}">
-            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-eye"></span>
-            <span class="${dropdownClasses.itemLabel}">Live Preview</span>
-          </a>
-          <a href="${getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/review`)}" class="${dropdownClasses.item}">
-            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-git-compare"></span>
-            <span class="${dropdownClasses.itemLabel}">Version History</span>
-          </a>
-          ${page.isPublished ? `
-            <a href="/${currentLocale}/${page.slug}" target="_blank" rel="noopener noreferrer" class="${dropdownClasses.item}">
-              <span class="${dropdownClasses.itemLeadingIcon} i-lucide-external-link"></span>
-              <span class="${dropdownClasses.itemLabel}">View on Live Site</span>
-            </a>
-          ` : ''}
-          <div class="h-px bg-default/60 my-1 -mx-1"></div>
-          ${page.isPublished ? `
-            <button type="button" class="${dropdownClasses.item} text-amber-500 hover:bg-amber-500/10" data-unpublish-page-id="${page.id}">
-              <span class="${dropdownClasses.itemLeadingIcon} i-lucide-archive text-amber-500"></span>
-              <span class="${dropdownClasses.itemLabel}">Unpublish to Draft</span>
-            </button>
-          ` : ''}
-          <button type="button" class="${dropdownClasses.item} text-destructive hover:bg-destructive/10" data-delete-page-id="${page.id}">
-            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-trash-2 text-destructive"></span>
-            <span class="${dropdownClasses.itemLabel}">Delete Page</span>
-          </button>
-        </div>
-      </div>`;
+      return [
+        {
+          label: "Edit Page",
+          icon: "i-lucide-pencil",
+          to: getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/edit`)
+        },
+        {
+          label: "Live Preview",
+          icon: "i-lucide-eye",
+          to: getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/preview`)
+        },
+        {
+          label: "Version History",
+          icon: "i-lucide-git-compare",
+          to: getRelativeLocaleUrl(currentLocale, `/cms/pages/${page.id}/review`)
+        },
+        ...(page.isPublished ? [
+          {
+            label: "View on Live Site",
+            icon: "i-lucide-external-link",
+            to: `/${currentLocale}/${page.slug}`,
+            target: "_blank"
+          }
+        ] : []),
+        {
+          type: "separator"
+        },
+        ...(page.isPublished ? [
+          {
+            label: "Unpublish to Draft",
+            icon: "i-lucide-archive",
+            color: "warning",
+            id: `unpublish-page-${page.id}`
+          }
+        ] : []),
+        {
+          label: "Delete Page",
+          icon: "i-lucide-trash-2",
+          color: "error",
+          id: `delete-page-${page.id}`
+        }
+      ];
     }
   }
 ];
@@ -275,17 +271,13 @@ const pageColumns: TableColumn<any>[] = [
   </div>
 
   <script>
-    // ─── Actions Popover interactive script ───────────────────────────────────
     document.addEventListener("click", async (e) => {
       const target = e.target as HTMLElement;
-      const trigger = target.closest<HTMLButtonElement>("[data-astro-action-trigger]");
-      const allMenus = document.querySelectorAll<HTMLElement>("[data-astro-action-menu]");
 
       // Handle unpublish
-      const unpublishBtn = target.closest<HTMLElement>("[data-unpublish-page-id]");
-      if (unpublishBtn) {
-        allMenus.forEach((m) => m.classList.add("hidden"));
-        const pageId = unpublishBtn.getAttribute("data-unpublish-page-id") || "";
+      const unpublishItem = target.closest<HTMLElement>("[data-item-id^='unpublish-page-']");
+      if (unpublishItem) {
+        const pageId = unpublishItem.getAttribute("data-item-id")?.replace("unpublish-page-", "") || "";
         if (!pageId) return;
         if (!confirm("Are you sure you want to unpublish this page?")) return;
         try {
@@ -299,10 +291,9 @@ const pageColumns: TableColumn<any>[] = [
       }
 
       // Handle delete
-      const deleteBtn = target.closest<HTMLElement>("[data-delete-page-id]");
-      if (deleteBtn) {
-        allMenus.forEach((m) => m.classList.add("hidden"));
-        const pageId = deleteBtn.getAttribute("data-delete-page-id") || "";
+      const deleteItem = target.closest<HTMLElement>("[data-item-id^='delete-page-']");
+      if (deleteItem) {
+        const pageId = deleteItem.getAttribute("data-item-id")?.replace("delete-page-", "") || "";
         if (!pageId) return;
         if (!confirm("Are you sure you want to delete this page? This action cannot be undone.")) return;
         try {
@@ -312,44 +303,7 @@ const pageColumns: TableColumn<any>[] = [
         } catch {
           alert("Network error deleting page");
         }
-        return;
       }
-
-      if (trigger) {
-        e.stopPropagation();
-        const wrapper = trigger.closest("[data-astro-actions]");
-        const rowId = wrapper?.getAttribute("data-astro-actions") || "";
-        const menu = wrapper?.querySelector<HTMLElement>("[data-astro-action-menu]")
-          || document.querySelector<HTMLElement>(`[data-astro-action-menu][data-menu-for="${rowId}"]`);
-        if (!menu) return;
-
-        const isHidden = menu.classList.contains("hidden");
-        allMenus.forEach((m) => m.classList.add("hidden"));
-
-        if (isHidden) {
-          menu.setAttribute("data-menu-for", rowId);
-          if (menu.parentElement !== document.body) {
-            document.body.appendChild(menu);
-          }
-          const rect = trigger.getBoundingClientRect();
-          menu.style.position = "fixed";
-          menu.style.zIndex = "99999";
-          menu.style.top = `${rect.bottom + 4}px`;
-          menu.style.right = `${window.innerWidth - rect.right}px`;
-          menu.style.left = "auto";
-          menu.classList.remove("hidden");
-        }
-      } else {
-        allMenus.forEach((m) => m.classList.add("hidden"));
-      }
-    });
-
-    // Close menus on scroll/resize
-    window.addEventListener("scroll", () => {
-      document.querySelectorAll<HTMLElement>("[data-astro-action-menu]").forEach((m) => m.classList.add("hidden"));
-    }, true);
-    window.addEventListener("resize", () => {
-      document.querySelectorAll<HTMLElement>("[data-astro-action-menu]").forEach((m) => m.classList.add("hidden"));
     });
   </script>
 </CMSDashboardLayout>

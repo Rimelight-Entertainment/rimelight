@@ -76,36 +76,27 @@ const userColumns: TableColumn<any>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
-    size: 90,
-    cell: ({ row }) => {
-      const user = row.original;
-      return `<div class="relative flex items-center justify-end" data-astro-actions="user-${user.id}">
-        <button
-          type="button"
-          class="size-8 rounded-lg border border-default bg-elevated/70 text-muted hover:text-highlighted hover:border-accented hover:bg-elevated flex items-center justify-center transition-colors cursor-pointer"
-          aria-label="Actions"
-          data-astro-action-trigger
-        >
-          <span class="i-lucide-ellipsis-vertical size-4 pointer-events-none"></span>
-        </button>
-        <div class="fixed hidden z-[99999] min-w-44 rounded-md border border-default bg-elevated p-1 text-highlighted shadow-md flex flex-col gap-0.5 text-xs text-left" data-astro-action-menu>
-          <button type="button" class="${dropdownClasses.item}" data-edit-role="${user.id}">
-            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-shield-check"></span>
-            <span class="${dropdownClasses.itemLabel}">Edit Role & Permissions</span>
-          </button>
-          <button type="button" class="${dropdownClasses.item}" data-view-activity="${user.id}">
-            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-activity"></span>
-            <span class="${dropdownClasses.itemLabel}">View Activity Log</span>
-          </button>
-          <div class="h-px bg-default/60 my-1 -mx-1"></div>
-          <button type="button" class="${dropdownClasses.item} text-destructive hover:bg-destructive/10" data-remove-user="${user.id}">
-            <span class="${dropdownClasses.itemLeadingIcon} i-lucide-trash-2 text-destructive"></span>
-            <span class="${dropdownClasses.itemLabel}">Remove Member</span>
-          </button>
-        </div>
-      </div>`;
-    }
+    actions: (row) => [
+      {
+        label: "Edit Role & Permissions",
+        icon: "i-lucide-shield-check",
+        id: `edit-role-${row.original.id}`
+      },
+      {
+        label: "View Activity Log",
+        icon: "i-lucide-activity",
+        id: `activity-${row.original.id}`
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "Remove Member",
+        icon: "i-lucide-trash-2",
+        color: "error",
+        id: `remove-${row.original.id}`
+      }
+    ]
   }
 ];
 ---
@@ -130,49 +121,4 @@ const userColumns: TableColumn<any>[] = [
       exportFilename="rimelight-users-export"
     />
   </div>
-
-  <script>
-    // ─── Actions Popover interactive script ───────────────────────────────────
-    document.addEventListener("click", (e) => {
-      const target = e.target as HTMLElement;
-      const trigger = target.closest<HTMLButtonElement>("[data-astro-action-trigger]");
-      const allMenus = document.querySelectorAll<HTMLElement>("[data-astro-action-menu]");
-
-      if (trigger) {
-        e.stopPropagation();
-        const wrapper = trigger.closest("[data-astro-actions]");
-        const rowId = wrapper?.getAttribute("data-astro-actions") || "";
-        const menu = wrapper?.querySelector<HTMLElement>("[data-astro-action-menu]")
-          || document.querySelector<HTMLElement>(`[data-astro-action-menu][data-menu-for="${rowId}"]`);
-        if (!menu) return;
-
-        const isHidden = menu.classList.contains("hidden");
-        allMenus.forEach((m) => m.classList.add("hidden"));
-
-        if (isHidden) {
-          menu.setAttribute("data-menu-for", rowId);
-          if (menu.parentElement !== document.body) {
-            document.body.appendChild(menu);
-          }
-          const rect = trigger.getBoundingClientRect();
-          menu.style.position = "fixed";
-          menu.style.zIndex = "99999";
-          menu.style.top = `${rect.bottom + 4}px`;
-          menu.style.right = `${window.innerWidth - rect.right}px`;
-          menu.style.left = "auto";
-          menu.classList.remove("hidden");
-        }
-      } else {
-        allMenus.forEach((m) => m.classList.add("hidden"));
-      }
-    });
-
-    // Close menus on scroll/resize
-    window.addEventListener("scroll", () => {
-      document.querySelectorAll<HTMLElement>("[data-astro-action-menu]").forEach((m) => m.classList.add("hidden"));
-    }, true);
-    window.addEventListener("resize", () => {
-      document.querySelectorAll<HTMLElement>("[data-astro-action-menu]").forEach((m) => m.classList.add("hidden"));
-    });
-  </script>
 </CMSDashboardLayout>
