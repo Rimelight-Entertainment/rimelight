@@ -99,7 +99,7 @@
     "astro": ">=7.0.0"
   },
   "engines": {
-    "node": ">=26.9.0"
+    "node": ">=26.8.2"
   },
   "packageManager": "pnpm@12.4.2"
 }
