@@ -1,3 +1,14 @@
+declare module "virtual:rimelight/seo" {
+  export const siteConfig: import("./types.js").SiteConfig
+  export const SEO_LOCALES: import("./types.js").LocaleConfig | Record<string, string> | undefined
+  export const PRIVATE_PATH_PREFIXES: string[]
+  export const seoConfig: {
+    SEO_LOCALES?: import("./types.js").LocaleConfig | Record<string, string>
+    PRIVATE_PATH_PREFIXES: string[]
+  }
+  export default siteConfig
+}
+
 declare module "virtual:rimelight-seo-config" {
   const config: import("./integration.js").RimelightSeoOptions
   export default config

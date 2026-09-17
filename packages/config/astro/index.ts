@@ -268,7 +268,13 @@ function rimelightIntegration(
             (seoMod as any).default ||
             seoMod
           const seoOpts = typeof options.seo === "object" ? options.seo : {}
-          integrations.push(seoFn(seoOpts))
+          integrations.push(
+            seoFn({
+              id: domain,
+              url: site || (domain ? `https://${domain}` : undefined),
+              ...seoOpts
+            })
+          )
         }
 
         if (options.cms) {

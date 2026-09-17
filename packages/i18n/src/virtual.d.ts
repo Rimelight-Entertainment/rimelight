@@ -1,5 +1,18 @@
+declare module "virtual:rimelight/i18n" {
+  export const locales: string[]
+  export const languages: string[]
+  export const defaultLocale: string
+  export const prefixDefaultLocale: boolean
+  export const translations: Record<string, Record<string, any>> | undefined
+  export default {
+    locales: [] as string[],
+    defaultLocale: ""
+  }
+}
+
 declare module "virtual:rimelight-i18n-config" {
   export const locales: string[]
+  export const languages: string[]
   export const defaultLocale: string
   export const prefixDefaultLocale: boolean
   export const translations: Record<string, Record<string, any>> | undefined

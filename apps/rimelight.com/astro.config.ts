@@ -49,13 +49,44 @@ function localDocsIntegration() {
 export default defineConfig(
   rimelightAstroConfig({
     domain: "rimelight.com",
-    seo: true,
+    seo: {
+      name: "Rimelight",
+      description: "Welcome to my website!",
+      author: "Rimelight",
+      branding: {
+        logo: {
+          alt: "Rimelight"
+        },
+        colors: {
+          themeColor: "#ffffff",
+          backgroundColor: "#ffffff"
+        }
+      },
+      titleTemplate: "%s | Rimelight",
+      locales: {
+        en: "en-US",
+        pt: "pt-BR"
+      },
+      privatePathPrefixes: [
+        "/dashboard",
+        "/admin",
+        "/internal",
+        "/api",
+        "/dev",
+        "/og",
+        "/open-graph",
+        "/auth"
+      ]
+    },
     solid: true,
     cms: true,
     security: {
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
     },
-    i18n: true,
+    i18n: {
+      locales: ["en", "pt"],
+      defaultLocale: "en"
+    },
     ui: true,
     integrations: [localDocsIntegration()]
   })

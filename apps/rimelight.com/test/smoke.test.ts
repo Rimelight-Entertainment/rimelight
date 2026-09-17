@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test"
-import { siteConfig } from "../src/config/site.config"
-import { languages } from "../src/config/i18n.config"
+import { siteConfig } from "virtual:rimelight/seo"
+import { languages } from "virtual:rimelight/i18n"
 
 describe("rimelight.com site configuration", () => {
   it("defines the canonical site id and url", () => {

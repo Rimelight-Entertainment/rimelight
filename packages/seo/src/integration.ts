@@ -23,27 +23,57 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
           return null
         }
 
-        const seoConfigPath = findFile([
-          "src/config/seo.config.ts",
-          "src/config/seo.config.js",
-          "src/config/seo.config.mjs"
-        ])
-
-        const hasConfigExport = (name: string): boolean => {
-          if (!seoConfigPath) return false
-          const content = fs.readFileSync(seoConfigPath, "utf8")
-          return (
-            new RegExp(
-              `export\\s+(?:const|let|var|async\\s+function|function|class)\\s+${name}\\b`
-            ).test(content) || new RegExp(`export\\s*\\{[^}]*\\b${name}\\b}`).test(content)
-          )
+        const siteOpt = options.site || {}
+        const normalizedSiteConfig = {
+          id: siteOpt.id || options.id || "",
+          name: siteOpt.name || options.name || "",
+          description: siteOpt.description || options.description || "",
+          url: siteOpt.url || options.url || "",
+          ogImage: siteOpt.ogImage || options.ogImage || undefined,
+          author: siteOpt.author || options.author || siteOpt.name || options.name || "",
+          email: siteOpt.email || options.email || "",
+          branding: {
+            logo: {
+              alt:
+                siteOpt.branding?.logo?.alt ||
+                options.branding?.logo?.alt ||
+                siteOpt.name ||
+                options.name ||
+                ""
+            },
+            colors: {
+              themeColor:
+                siteOpt.branding?.colors?.themeColor ||
+                options.branding?.colors?.themeColor ||
+                "#ffffff",
+              backgroundColor:
+                siteOpt.branding?.colors?.backgroundColor ||
+                options.branding?.colors?.backgroundColor ||
+                "#ffffff"
+            },
+            ...siteOpt.branding,
+            ...options.branding
+          },
+          seo: {
+            titleTemplate:
+              siteOpt.seo?.titleTemplate ||
+              options.titleTemplate ||
+              (options.name ? `%s | ${options.name}` : "%s"),
+            maxDescriptionLength:
+              siteOpt.seo?.maxDescriptionLength || options.maxDescriptionLength || 160,
+            authorHandle: siteOpt.seo?.authorHandle || options.authorHandle || undefined,
+            ...siteOpt.seo
+          },
+          ...(siteOpt.openGraph || options.openGraph
+            ? { openGraph: siteOpt.openGraph || options.openGraph }
+            : {}),
+          ...(siteOpt.twitter || options.twitter
+            ? { twitter: siteOpt.twitter || options.twitter }
+            : {})
         }
 
-        const siteConfigPath = findFile([
-          "src/config/site.config.ts",
-          "src/config/site.config.js",
-          "src/config/site.config.mjs"
-        ])
+        const seoLocales = options.locales
+        const privatePathPrefixes = options.privatePathPrefixes || []
 
         const dbPath = findFile(["src/db/index.ts", "src/db/index.js", "src/db/index.mjs"])
 
@@ -298,6 +328,9 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
                   ) {
                     return "\0virtual:rimelight-seo/options"
                   }
+                  if (id === "virtual:rimelight/seo") {
+                    return "\0virtual:rimelight/seo"
+                  }
                   if (id === "virtual:rimelight-seo/config") {
                     return "\0virtual:rimelight-seo/config"
                   }
@@ -316,27 +349,26 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
                   if (id === "\0virtual:rimelight-seo/options") {
                     return `export default ${JSON.stringify(options)};`
                   }
+                  if (id === "\0virtual:rimelight/seo") {
+                    return `export const siteConfig = ${JSON.stringify(normalizedSiteConfig)};
+export const SEO_LOCALES = ${JSON.stringify(seoLocales)};
+export const PRIVATE_PATH_PREFIXES = ${JSON.stringify(privatePathPrefixes)};
+export const seoConfig = {
+  SEO_LOCALES: ${JSON.stringify(seoLocales)},
+  PRIVATE_PATH_PREFIXES: ${JSON.stringify(privatePathPrefixes)}
+};
+export default siteConfig;`
+                  }
                   if (id === "\0virtual:rimelight-seo/config") {
-                    if (seoConfigPath) {
-                      const seoEntriesExport = hasConfigExport("seoEntries")
-                      const rssEntriesExport = hasConfigExport("rssEntries")
-                      return `import * as customConfig from ${JSON.stringify(seoConfigPath)};
-export const SEO_LOCALES = customConfig.SEO_LOCALES;
-export const PRIVATE_PATH_PREFIXES = customConfig.PRIVATE_PATH_PREFIXES || [];
-export const seoEntries = ${seoEntriesExport ? "customConfig.seoEntries" : "undefined"};
-export const rssEntries = ${rssEntriesExport ? "customConfig.rssEntries" : "undefined"};
-export default customConfig;`
-                    }
-                    return `export const SEO_LOCALES = undefined;
-export const PRIVATE_PATH_PREFIXES = [];
+                    return `export const SEO_LOCALES = ${JSON.stringify(seoLocales)};
+export const PRIVATE_PATH_PREFIXES = ${JSON.stringify(privatePathPrefixes)};
 export const seoEntries = async () => [];
-export const rssEntries = undefined;`
+export const rssEntries = undefined;
+export default { SEO_LOCALES: ${JSON.stringify(seoLocales)}, PRIVATE_PATH_PREFIXES: ${JSON.stringify(privatePathPrefixes)} };`
                   }
                   if (id === "\0virtual:rimelight-seo/site-config") {
-                    if (siteConfigPath) {
-                      return `export * from ${JSON.stringify(siteConfigPath)};`
-                    }
-                    return `export const siteConfig = { name: "Site", description: "", url: "" };`
+                    return `export const siteConfig = ${JSON.stringify(normalizedSiteConfig)};
+export default siteConfig;`
                   }
                   if (id === "\0virtual:rimelight-seo/db") {
                     if (dbPath) {

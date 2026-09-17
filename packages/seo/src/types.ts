@@ -520,6 +520,47 @@ export interface AssetRouteOptions {
 
 export interface RimelightSeoOptions {
   /**
+   * Site identifier / domain (e.g. "rimelight.com")
+   */
+  id?: string
+  /**
+   * Primary site name (e.g. "Rimelight")
+   */
+  name?: string
+  /**
+   * Default site description
+   */
+  description?: string
+  /**
+   * Canonical origin URL (e.g. "https://rimelight.com")
+   */
+  url?: string
+  ogImage?: string
+  author?: string
+  email?: string
+  branding?: Partial<SiteConfig["branding"]>
+  titleTemplate?: string
+  maxDescriptionLength?: number
+  authorHandle?: string
+  openGraph?: OpenGraphMeta
+  twitter?: TwitterMeta
+  /**
+   * Full or partial SiteConfig object
+   */
+  site?: Partial<SiteConfig>
+  /**
+   * Locale mappings for hreflang / sitemaps
+   */
+  locales?: LocaleConfig | Record<string, string>
+  /**
+   * Path prefixes to exclude from sitemap and indexing
+   */
+  privatePathPrefixes?: string[]
+  /**
+   * Custom SEO entry generator function
+   */
+  entries?: () => Promise<SeoEntry[]> | SeoEntry[]
+  /**
    * Sitemap configuration or false to disable automatic /sitemap.xml (default: true)
    */
   sitemap?: boolean | SitemapOptions

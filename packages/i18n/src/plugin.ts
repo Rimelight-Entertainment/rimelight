@@ -59,16 +59,19 @@ export function i18n(options?: RimelightI18nOptions): RimelightI18nPlugins {
     {
       name: "vite-plugin-rimelight-i18n-config",
       resolveId(id: string) {
-        if (id === "virtual:rimelight-i18n-config") return "\0" + id
+        if (id === "virtual:rimelight-i18n-config" || id === "virtual:rimelight/i18n")
+          return "\0" + id
         return null
       },
       load(id: string) {
-        if (id === "\0virtual:rimelight-i18n-config") {
+        if (id === "\0virtual:rimelight-i18n-config" || id === "\0virtual:rimelight/i18n") {
           return `
             export const locales = ${JSON.stringify(locales)};
+            export const languages = ${JSON.stringify(locales)};
             export const defaultLocale = ${JSON.stringify(defaultLocale)};
             export const prefixDefaultLocale = ${JSON.stringify(prefixDefaultLocale)};
             export const translations = ${JSON.stringify(normalisedTranslations)};
+            export default { locales: ${JSON.stringify(locales)}, defaultLocale: ${JSON.stringify(defaultLocale)} };
           `
         }
         return null
