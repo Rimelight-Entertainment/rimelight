@@ -2,6 +2,7 @@
 import AppLayout from './AppLayout.astro';
 import GrandTaleHeader from '#components/franchises/grand-tale/GrandTaleHeader.astro';
 import GuidesSidebar from '#components/franchises/grand-tale/GuidesSidebar.astro';
+import grandTaleIcon from '#assets/grand-tale.ico';
 
 interface Props {
 	title?: string;
@@ -9,7 +10,7 @@ interface Props {
 	favicon?: string;
 }
 
-const { title = 'Guides | Grand Tale', description = 'Grand Tale Guides', favicon = '/grand-tale.ico' } = Astro.props;
+const { title = 'Guides | Grand Tale', description = 'Grand Tale Guides', favicon = grandTaleIcon } = Astro.props;
 ---
 
 <AppLayout title={title} description={description} favicon={favicon}>

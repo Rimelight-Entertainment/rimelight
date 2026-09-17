@@ -1,5 +1,6 @@
 ---
 import DashboardLayout from '#layouts/DashboardLayout.astro';
+import grandTaleIcon from '#assets/grand-tale.ico';
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import { RimelightEditorLayout, RimelightPropertiesPanel } from "@rimelight/cms/client/components";
 import { getRelativeLocaleUrl, getLocale } from "@rimelight/i18n";
@@ -59,7 +60,7 @@ const pageType = (page as any).type || "Default"
 const initialProperties = rawContent?.properties || {}
 ---
 
-<DashboardLayout title={`Edit Wiki Page: ${titleVal || 'Untitled'}`} favicon="/grand-tale.ico">
+<DashboardLayout title={`Edit Wiki Page: ${titleVal || 'Untitled'}`} favicon={grandTaleIcon}>
   <div class="flex flex-col h-screen overflow-hidden bg-neutral-50 text-highlighted select-none">
     <header class="h-12 w-full border-b border-default flex items-center justify-between px-4 shrink-0 z-30">
       <div class="flex items-center gap-2.5">
