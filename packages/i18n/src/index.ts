@@ -39,7 +39,8 @@ try {
 if (translations && Object.keys(translations).length > 0) {
   initializeI18n({
     defaultLocale: defaultLocale || "en",
-    translations
+    translations,
+    get: createTranslationLoader(translations)
   })
 }
 

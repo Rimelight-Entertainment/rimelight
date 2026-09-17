@@ -111,3 +111,40 @@ describe("translation runtime", () => {
     expect(t("missing.key")).toBe("missing.key")
   })
 })
+
+describe("translation loader & KV binding", () => {
+  it("loads translations statically when KV is not set", async () => {
+    const { createTranslationLoader } = await import("../src/index")
+    const loader = createTranslationLoader({
+      en: { nav: { home: "Home" } }
+    })
+    const loaded = await loader("en", ["nav"])
+    expect(loaded).toEqual({ nav: { home: "Home" } })
+  })
+
+  it("loads translations from KV when present, falling back to static", async () => {
+    const { createTranslationLoader, setKVBinding } = await import("../src/index")
+    const mockKV = {
+      get: async (key: string) => {
+        if (key === "locale:en:nav") {
+          return { home: "Homepage (KV)" }
+        }
+        return null
+      }
+    }
+    setKVBinding(mockKV as any)
+
+    const loader = createTranslationLoader({
+      en: {
+        nav: { home: "Home" },
+        footer: { copyright: "© 2026" }
+      }
+    })
+
+    const loaded = await loader("en", ["nav", "footer"])
+    expect(loaded).toEqual({
+      nav: { home: "Homepage (KV)" },
+      footer: { copyright: "© 2026" }
+    })
+  })
+})
