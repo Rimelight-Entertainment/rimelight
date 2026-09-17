@@ -1,10 +1,6 @@
-﻿# Cloudflare
+# Cloudflare
 TURNSTILE_SITE_KEY=
 TURNSTILE_SECRET_KEY=
 
-# Better Auth
-BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=http://localhost:4321
-
 # Construction Mode
-CONSTRUCTION_MODE=false
+CONSTRUCTION_PASSPHRASE=

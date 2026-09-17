@@ -922,7 +922,7 @@ cms.delete("/bylines/:id", async (c) => {
 // MCP JSON-RPC Endpoint (Protected)
 cms.post("/mcp", async (c) => {
   const authHeader = c.req.header("Authorization")
-  const expectedApiKey = process.env["CMS_MCP_API_KEY"] || process.env.BETTER_AUTH_SECRET
+  const expectedApiKey = process.env["CMS_MCP_API_KEY"]
 
   let isAuthenticated = false
 
