@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@astrojs/cloudflare": "14.3.1",
-    "astro": "7.3.2",
+    "astro": "7.3.3",
     "drizzle-kit": "0.31.10",
     "typescript": "6.0.3",
     "vite-plus": "0.3.2"
@@ -93,7 +93,7 @@
     }
   },
   "engines": {
-    "node": ">=26.8.2"
+    "node": ">=26.9.0"
   },
   "packageManager": "pnpm@12.4.2"
 }

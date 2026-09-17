@@ -2,12 +2,12 @@
 import { ClientRouter } from 'astro:transitions';
 
 export interface UIHeadProps {
-  /** Whether to enable View Transitions (ClientRouter) */
+  /** Whether to enable View Transitions (ClientRouter). Defaults to false in dev, true in prod. */
   transitions?: boolean;
 }
 
 const {
-  transitions = true
+  transitions = !import.meta.env.DEV
 } = Astro.props as UIHeadProps;
 ---
 
