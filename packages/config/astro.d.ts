@@ -6,7 +6,10 @@ declare module "*.astro" {
 
 declare module "virtual:rimelight/seo" {
   export const siteConfig: import("@rimelight/seo").SiteConfig
-  export const SEO_LOCALES: import("@rimelight/seo").LocaleConfig | Record<string, string> | undefined
+  export const SEO_LOCALES:
+    | import("@rimelight/seo").LocaleConfig
+    | Record<string, string>
+    | undefined
   export const PRIVATE_PATH_PREFIXES: string[]
   export const seoConfig: {
     SEO_LOCALES?: import("@rimelight/seo").LocaleConfig | Record<string, string>
@@ -26,4 +29,3 @@ declare module "virtual:rimelight/i18n" {
     defaultLocale: ""
   }
 }
-
