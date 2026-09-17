@@ -25,12 +25,14 @@ This RFC proposes abstracting Git hook setup and standard toolfile synchronizati
 - **Git Hygiene**: Having tracked tool-specific hook folders across numerous projects clutters repository roots when the configuration logic already lives centrally in `@rimelight/config` (via `rimelightConfig()` / `staged`).
 
 ### Goals
+
 - Centralize pre-commit and git hook policy management in `@rimelight/config`.
 - Automatically provision and maintain `.vite-hooks` via lifecycle scripts (`pnpm prepare` / `vp config`).
 - Provide an optional sync path for `.editorconfig` to ensure uniform editor behavior without manual file copies.
 - Allow projects to add `.vite-hooks` to `.gitignore` without losing hook protection during local development.
 
 ### Non-Goals
+
 - Replacing Vite+ (`vp`) as the underlying git hook engine.
 - Managing `.npmrc` or `tsconfig.json` (these are handled through standard package-manager mechanisms and TypeScript `extends`).
 - Preventing individual projects from overriding or defining custom project-specific hooks or editor rules when explicitly needed.
@@ -44,6 +46,7 @@ This RFC proposes abstracting Git hook setup and standard toolfile synchronizati
 Vite+ uses Git's `core.hooksPath` pointing to `.vite-hooks/_`. During hook execution, `.vite-hooks/_/pre-commit` executes `.vite-hooks/pre-commit`. Editors (e.g. WebStorm, VS Code) look for `.editorconfig` in the root workspace.
 
 Under the proposed design:
+
 1. `prepare` runs `rimelight-config sync` (or `vp config && rimelight-hooks`).
 2. `@rimelight/config` ensures `.vite-hooks/pre-commit` is generated with standardized tasks (`pnpm audit && vp staged`).
 3. `@rimelight/config` ensures a standard `.editorconfig` is synchronized in the project root.
@@ -64,6 +67,7 @@ flowchart TD
 ### 3.2. Proposed API & Implementation
 
 #### 1. In `@rimelight/config` (CLI / Helper)
+
 Add a lightweight script / binary export (e.g., `rimelight-sync` or `rimelight-config prepare`):
 
 ```typescript
@@ -115,12 +119,15 @@ export function syncEditorConfig(content = DEFAULT_EDITORCONFIG): void {
 export function syncProject(options?: SyncOptions): void {
   syncHooks(options)
   if (options?.editorconfig !== false) {
-    syncEditorConfig(typeof options?.editorconfig === "string" ? options.editorconfig : DEFAULT_EDITORCONFIG)
+    syncEditorConfig(
+      typeof options?.editorconfig === "string" ? options.editorconfig : DEFAULT_EDITORCONFIG
+    )
   }
 }
 ```
 
 #### 2. In Consumer `package.json`
+
 ```json
 {
   "scripts": {
@@ -130,6 +137,7 @@ export function syncProject(options?: SyncOptions): void {
 ```
 
 #### 3. In Consumer `.gitignore`
+
 ```gitignore
 # Git Hooks (auto-generated on prepare)
 .vite-hooks/
@@ -148,12 +156,12 @@ export function syncProject(options?: SyncOptions): void {
 ## 5. Alternatives Considered
 
 1. **Status Quo (Explicit files tracked in each repo)**:
-   - *Pros*: Completely visible in repository file tree.
-   - *Cons*: Repetitive file maintenance and configuration drift across sibling repositories.
+   - _Pros_: Completely visible in repository file tree.
+   - _Cons_: Repetitive file maintenance and configuration drift across sibling repositories.
 
 2. **Full Declarative Vite+ Plugin / Config Property**:
    - Defining `hooks: { preCommit: "..." }` inside `vite.config.ts`.
-   - *Assessment*: Vite+ and IDEs currently require physical files on disk (`.vite-hooks/`, `.editorconfig`). Generating/syncing physical files during `prepare` provides a non-invasive bridge without upstream runtime changes.
+   - _Assessment_: Vite+ and IDEs currently require physical files on disk (`.vite-hooks/`, `.editorconfig`). Generating/syncing physical files during `prepare` provides a non-invasive bridge without upstream runtime changes.
 
 ---
 
@@ -171,12 +179,14 @@ export function syncProject(options?: SyncOptions): void {
 ## 7. Verification & Testing Plan
 
 ### Automated Tests
+
 - Unit tests in `@rimelight/config` verifying:
   - `.vite-hooks` directory creation and default `pre-commit` hook generation.
   - `.editorconfig` creation and synchronization.
   - Preservation of custom scripts/configurations if explicit overrides are provided.
 
 ### Manual Verification
+
 1. Run `pnpm prepare` in a test project.
 2. Verify `.vite-hooks/pre-commit` and `.editorconfig` exist with the standardized contents.
 3. Stage a sample file and run `git commit` to verify the pre-commit audit and staged checks execute seamlessly.

@@ -44,5 +44,4 @@ export default defineConfig(
     },
     ui: true
   })
-
 )

@@ -65,8 +65,6 @@
       "import": "./dist/vite.mjs"
     }
   },
-
-
   "publishConfig": {
     "access": "public"
   },

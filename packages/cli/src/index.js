@@ -8,7 +8,7 @@ import spawn from "cross-spawn"
 const starterPath = path.resolve(import.meta.dirname, "../../starter")
 
 // Helper to parse JSON with comments (JSONC)
-function parseJsonc(content) {
+export function parseJsonc(content) {
   let stripped = content.replace(/(?:^|\s)\/\*[\s\S]*?\*\//g, "")
   stripped = stripped.replace(/(^|[^\\:])\/\/.*$/gm, "$1")
   return JSON.parse(stripped)
@@ -44,7 +44,7 @@ async function copyDir(src, dest) {
 }
 
 // Helper to update astro.config.ts and wrangler.jsonc with the chosen domain
-async function updateDomainConfigs(resolvedTargetDir, domain, displayProjectName) {
+export async function updateDomainConfigs(resolvedTargetDir, domain, displayProjectName) {
   // Update astro.config.ts
   const astroConfigPath = path.join(resolvedTargetDir, "astro.config.ts")
   if (existsSync(astroConfigPath) && domain) {
@@ -360,7 +360,7 @@ export async function runCreate(options) {
 }
 
 // Helper to get nested properties in an object
-function getNested(obj, propPath) {
+export function getNested(obj, propPath) {
   const parts = propPath.split(".")
   let current = obj
   for (const part of parts) {
@@ -371,7 +371,7 @@ function getNested(obj, propPath) {
 }
 
 // Helper to set nested properties in an object
-function setNested(obj, propPath, value) {
+export function setNested(obj, propPath, value) {
   const parts = propPath.split(".")
   let current = obj
   for (let i = 0; i < parts.length - 1; i++) {
@@ -385,13 +385,13 @@ function setNested(obj, propPath, value) {
 }
 
 // Generic index finder for arrays containing primitives or objects
-function findArrayItemIndex(arr, item) {
+export function findArrayItemIndex(arr, item) {
   const itemStr = JSON.stringify(item)
   return arr.findIndex((x) => JSON.stringify(x) === itemStr)
 }
 
 // Inject an item at the exact index matched semantically against the starter array order
-function injectIntoArray(targetArr, starterArr, value) {
+export function injectIntoArray(targetArr, starterArr, value) {
   const sIdx = findArrayItemIndex(starterArr, value)
   if (sIdx === -1) {
     targetArr.push(value)
@@ -433,7 +433,7 @@ function injectIntoArray(targetArr, starterArr, value) {
 const cleanLine = (l) => l.trim().replace(/\s+/g, "")
 
 // Inject a missing line cleanly at its semantic index inside targetLines based on starterLines order
-function injectIntoLines(targetLines, starterLines, value) {
+export function injectIntoLines(targetLines, starterLines, value) {
   const valueClean = cleanLine(value)
 
   const sIdx = starterLines.findIndex((x) => cleanLine(x) === valueClean)
@@ -479,7 +479,7 @@ function injectIntoLines(targetLines, starterLines, value) {
 }
 
 // Reorder target object keys to cleanly match starter template order, preserving custom keys
-function reorderKeys(targetObj, starterObj) {
+export function reorderKeys(targetObj, starterObj) {
   const ordered = {}
   for (const key of Object.keys(starterObj)) {
     if (targetObj[key] !== undefined) {
@@ -505,7 +505,7 @@ function reorderKeys(targetObj, starterObj) {
 }
 
 // Resolve domains in injected lines specifically for astro.config.ts
-function resolveDomainInLine(line, targetContent) {
+export function resolveDomainInLine(line, targetContent) {
   const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/)
   const targetDomain = siteMatch ? siteMatch[1] : ""
   if (targetDomain) {
@@ -517,7 +517,7 @@ function resolveDomainInLine(line, targetContent) {
 }
 
 // Helper to structurally diff JSON/JSONC
-function getStructuredJsonDiffs(starterContent, targetContent, file) {
+export function getStructuredJsonDiffs(starterContent, targetContent, file) {
   const starterObj = parseJsonc(starterContent)
   const targetObj = parseJsonc(targetContent)
 
@@ -623,7 +623,7 @@ const cleanLines = (c) =>
     .filter(Boolean)
 
 // Helper to diff files line-by-line
-function getStructuredLineDiffs(starterContent, targetContent, file, targetDir) {
+export function getStructuredLineDiffs(starterContent, targetContent, file, targetDir) {
   let normalizedTarget = targetContent
   let normalizedStarter = starterContent
 
@@ -665,7 +665,7 @@ function getStructuredLineDiffs(starterContent, targetContent, file, targetDir) 
 }
 
 // Helper to dynamically calculate line-level differences between config files
-function getDiffLines(starterContent, targetContent, file, targetDir) {
+export function getDiffLines(starterContent, targetContent, file, targetDir) {
   // Parse JSONC config structurally (tsconfig, wrangler, knip, lunaria, etc.)
   if (file.endsWith(".json") || file.endsWith(".jsonc")) {
     try {

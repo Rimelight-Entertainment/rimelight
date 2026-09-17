@@ -32,14 +32,10 @@ export const auth: AuthAdapter = {
   },
   handleUnauthorized(req: Request) {
     return (
-      getDefaultAuth().handleUnauthorized?.(req) ??
-      new Response("Unauthorized", { status: 401 })
+      getDefaultAuth().handleUnauthorized?.(req) ?? new Response("Unauthorized", { status: 401 })
     )
   }
 }
 
 export const authAdapter = auth
 export default auth
-
-
-

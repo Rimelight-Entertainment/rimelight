@@ -83,58 +83,63 @@ export interface AuthMiddlewareOptions {
 
   /**
    * Fall back to construction guest session if no user is signed in.
+   *
    * @default true
    */
   allowConstructionGuest?: boolean
 
   /**
    * Whether to automatically skip static asset paths.
+   *
    * @default true
    */
   skipStaticAssets?: boolean
 
   /**
    * Route patterns to completely bypass session resolution.
+   *
    * @default ["/docs/"]
    */
   ignoredRoutes?: (string | RegExp)[] | ((path: string) => boolean)
 
   /**
    * Route patterns that require an authenticated session.
+   *
    * @default ["/internal"]
    */
   protectedRoutes?: (string | RegExp)[] | ((path: string) => boolean)
 
   /**
-   * Role / permission requirements for specific route prefixes.
-   * E.g.:
-   * {
-   *   "/admin": ["admin", "owner"],
-   *   "/internal": { roles: ["employee", "staff", "admin", "owner"], userTypes: ["employee"] }
-   * }
+   * Role / permission requirements for specific route prefixes. E.g.: { "/admin": ["admin",
+   * "owner"], "/internal": { roles: ["employee", "staff", "admin", "owner"], userTypes:
+   * ["employee"] } }
    */
   roleGuards?: Record<string, string[] | RoleGuard>
 
   /**
    * Routes that should redirect to home/dashboard if user is already logged in.
+   *
    * @default ["/auth/sign-in", "/auth/sign-up"]
    */
   guestOnlyRoutes?: (string | RegExp)[]
 
   /**
    * URL to redirect to when `/auth` is accessed directly.
+   *
    * @default "/auth/sign-in"
    */
   authRedirectUrl?: string
 
   /**
    * URL to redirect unauthenticated users accessing protected pages.
+   *
    * @default "/auth/sign-in"
    */
   signInUrl?: string
 
   /**
    * Home URL to redirect logged-in users away from guest routes or forbidden pages.
+   *
    * @default "/"
    */
   homeUrl?: string
@@ -152,4 +157,3 @@ export interface AuthMiddlewareOptions {
     meta: { isApi: boolean; path: string; requiredRoles?: string[] }
   ) => Response | Promise<Response>
 }
-

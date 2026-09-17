@@ -8,7 +8,10 @@ const DEFAULT_IGNORED_ROUTES = ["/docs/"]
 const DEFAULT_PROTECTED_ROUTES = ["/internal"]
 const DEFAULT_GUEST_ONLY_ROUTES = ["/auth/sign-in", "/auth/sign-up"]
 
-function matchesPattern(path: string, pattern: string | RegExp | ((path: string) => boolean)): boolean {
+function matchesPattern(
+  path: string,
+  pattern: string | RegExp | ((path: string) => boolean)
+): boolean {
   if (typeof pattern === "function") return pattern(path)
   if (typeof pattern === "string") return path.startsWith(pattern) || path.includes(pattern)
   return pattern.test(path)
@@ -205,9 +208,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
 
         if (Array.isArray(guardConfig)) {
           const allowedRoles = guardConfig.map((r) => r.toLowerCase())
-          isAllowed =
-            userRoles.includes("*") ||
-            allowedRoles.some((r) => userRoles.includes(r))
+          isAllowed = userRoles.includes("*") || allowedRoles.some((r) => userRoles.includes(r))
         } else if (typeof guardConfig === "object" && guardConfig !== null) {
           const { roles, userTypes, check } = guardConfig as RoleGuard
 
@@ -218,9 +219,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
               ? userRoles.includes("*") || roles.some((r) => userRoles.includes(r.toLowerCase()))
               : true
 
-            const typeMatch = userTypes
-              ? userType ? userTypes.includes(userType) : false
-              : true
+            const typeMatch = userTypes ? (userType ? userTypes.includes(userType) : false) : true
 
             isAllowed = roleMatch && typeMatch
           }

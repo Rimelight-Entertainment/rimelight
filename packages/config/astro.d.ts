@@ -53,4 +53,3 @@ declare module "#auth/auth-client" {
   export const createAuthClient: typeof import("@rimelight/auth/client").createAuthClient
   export default authClient
 }
-

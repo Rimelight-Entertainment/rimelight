@@ -1,6 +1,7 @@
 export interface RimelightAuthPluginOptions {
   /**
    * Auth adapter to initialize: "cf-access" (default), "auth0", "mock", or "custom".
+   *
    * @default "cf-access"
    */
   adapter?: "cf-access" | "auth0" | "mock" | "custom" | (string & {})
@@ -26,6 +27,7 @@ export interface RimelightAuthPlugin {
  * Pure Vite Auth Plugin for Rimelight applications.
  *
  * Exposes virtual modules:
+ *
  * - `virtual:rimelight-auth` (alias `#auth/auth`, `#auth`)
  * - `virtual:rimelight-auth-client` (alias `#auth/auth-client`)
  * - `virtual:rimelight-auth-config`

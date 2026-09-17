@@ -229,7 +229,6 @@ function rimelightIntegration(options, imageDomains, domain) {
         }
 
         if (options.i18n) {
-
           const i18nMod = await import("@rimelight/i18n")
           const { i18n: i18nFn } = i18nMod
           const i18nOpts = typeof options.i18n === "object" ? options.i18n : {}

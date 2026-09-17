@@ -1,11 +1,6 @@
 import type { RateLimitOptions, RateLimiterBinding } from "../types"
 
-const DEFAULT_SENSITIVE_ROUTES = [
-  "/auth/sign-in",
-  "/auth/sign-up",
-  "/api/upload",
-  "/api/chat"
-]
+const DEFAULT_SENSITIVE_ROUTES = ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"]
 
 /**
  * Middleware to enforce rate limits on sensitive endpoints using Cloudflare Rate Limiting bindings.
@@ -32,9 +27,7 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
     retryAfter = 60,
     fallback = "pass",
     keyGenerator = (c: any) =>
-      c.req.header("CF-Connecting-IP") ||
-      c.req.header("x-forwarded-for") ||
-      "unknown",
+      c.req.header("CF-Connecting-IP") || c.req.header("x-forwarded-for") || "unknown",
     onRateLimited = (c: any, retry: number) => {
       if (typeof c.json === "function") {
         return c.json(

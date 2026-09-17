@@ -8,7 +8,11 @@ describe("Auth Client", () => {
       if (url === "/api/auth/session") {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ user: { userId: "user-1" }, session: { id: "user-1", userId: "user-1" } })
+          json: () =>
+            Promise.resolve({
+              user: { userId: "user-1" },
+              session: { id: "user-1", userId: "user-1" }
+            })
         })
       }
       if (url === "/api/auth/me") {
@@ -47,7 +51,9 @@ describe("Auth Vite Plugin", () => {
     expect(plugin.resolveId("virtual:rimelight-auth")).toBe("\0virtual:rimelight-auth")
     expect(plugin.resolveId("#auth/auth")).toBe("\0virtual:rimelight-auth")
     expect(plugin.resolveId("#auth")).toBe("\0virtual:rimelight-auth")
-    expect(plugin.resolveId("virtual:rimelight-auth-client")).toBe("\0virtual:rimelight-auth-client")
+    expect(plugin.resolveId("virtual:rimelight-auth-client")).toBe(
+      "\0virtual:rimelight-auth-client"
+    )
     expect(plugin.resolveId("#auth/auth-client")).toBe("\0virtual:rimelight-auth-client")
   })
 

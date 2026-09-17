@@ -125,11 +125,7 @@ describe("Rate Limit Middleware", () => {
 
     await middleware(ctx, async () => {})
     expect(limitMock).toHaveBeenCalledWith({ key: "Bearer token-123" })
-    expect(jsonMock).toHaveBeenCalledWith(
-      expect.anything(),
-      429,
-      { "Retry-After": "120" }
-    )
+    expect(jsonMock).toHaveBeenCalledWith(expect.anything(), 429, { "Retry-After": "120" })
   })
 
   it("fails open during local dev when no binding is present by default", async () => {

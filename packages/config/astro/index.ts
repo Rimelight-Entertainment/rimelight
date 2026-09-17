@@ -175,7 +175,6 @@ export interface RimelightAstroOptions {
   [key: string]: any
 }
 
-
 function discoverTranslations(dir = "./src/i18n"): Record<string, any> {
   const translations: Record<string, any> = {}
   try {
@@ -252,7 +251,8 @@ function defaultShortcuts(): Record<string, any> {
 function rimelightIntegration(
   options: RimelightAstroOptions,
   imageDomains: string[],
-  domain?: string
+  domain?: string,
+  site?: string
 ) {
   return {
     name: "rimelight-auto-plugins",
@@ -338,7 +338,6 @@ function rimelightIntegration(
         }
 
         if (options.i18n) {
-
           const i18nMod = await import("@rimelight/i18n")
           const { i18n: i18nFn } = i18nMod as any
           const i18nOpts = typeof options.i18n === "object" ? options.i18n : {}
@@ -441,7 +440,7 @@ export function rimelightAstroConfig(options: RimelightAstroOptions = {}): any {
       syntaxHighlight: "prism" as const
     },
     integrations: [
-      ...(hasFlags ? [rimelightIntegration(options, imageDomains, domain)] : []),
+      ...(hasFlags ? [rimelightIntegration(options, imageDomains, domain, site)] : []),
       ...integrations
     ],
     vite,

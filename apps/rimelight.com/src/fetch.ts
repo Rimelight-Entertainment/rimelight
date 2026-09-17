@@ -34,7 +34,6 @@ app.use(
 app.use(construction())
 app.use(devOnly)
 
-
 // Hono API Routing
 app.route("/api", api)
 

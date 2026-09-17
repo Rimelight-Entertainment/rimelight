@@ -37,6 +37,12 @@
     "mri": "1.2.0",
     "picocolors": "1.1.1"
   },
+  "devDependencies": {
+    "@rimelight/config": "workspace:*",
+    "@types/node": "26.5.1",
+    "typescript": "6.0.3",
+    "vite-plus": "0.3.2"
+  },
   "engines": {
     "node": ">=26.8.2"
   },

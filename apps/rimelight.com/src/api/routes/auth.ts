@@ -16,7 +16,6 @@ import { syncAuth0UserToDb } from "#auth/sync-user"
 const auth0Config = getAuth0ConfigFromEnv()
 const api = new Hono()
 
-
 function getBaseUrl(c: any): string {
   const envBase =
     (typeof import.meta.env !== "undefined"
