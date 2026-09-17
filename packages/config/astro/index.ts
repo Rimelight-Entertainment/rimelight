@@ -301,7 +301,7 @@ function rimelightIntegration(
           integrations.push(
             rimelightCms({
               storage,
-              auth: cmsOpts.auth || "./src/auth/auth.ts",
+              ...(cmsOpts.auth ? { auth: cmsOpts.auth } : {}),
               ...cmsOpts
             })
           )
@@ -414,12 +414,13 @@ export function rimelightAstroConfig(options: RimelightAstroOptions = {}): any {
     cms,
     ui,
     seo,
+    auth,
     integrations = [],
     vite = {},
     ...rest
   } = options
 
-  const hasFlags = Boolean(solid || security || i18n || cms || ui || seo)
+  const hasFlags = Boolean(solid || security || i18n || cms || ui || seo || auth)
 
   return {
     ...(site ? { site } : {}),

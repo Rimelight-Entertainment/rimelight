@@ -153,7 +153,7 @@ function defaultShortcuts() {
   }
 }
 
-function rimelightIntegration(options, imageDomains, domain) {
+function rimelightIntegration(options, imageDomains, domain, site) {
   return {
     name: "rimelight-auto-plugins",
     hooks: {
@@ -176,7 +176,13 @@ function rimelightIntegration(options, imageDomains, domain) {
           const seoFn =
             seoMod.rimelightSeo || seoMod.default?.rimelightSeo || seoMod.default || seoMod
           const seoOpts = typeof options.seo === "object" ? options.seo : {}
-          integrations.push(seoFn(seoOpts))
+          integrations.push(
+            seoFn({
+              id: domain,
+              url: site || (domain ? `https://${domain}` : undefined),
+              ...seoOpts
+            })
+          )
         }
 
         if (options.cms) {
@@ -192,7 +198,7 @@ function rimelightIntegration(options, imageDomains, domain) {
           integrations.push(
             rimelightCms({
               storage,
-              auth: cmsOpts.auth || "./src/auth/auth.ts",
+              ...(cmsOpts.auth ? { auth: cmsOpts.auth } : {}),
               ...cmsOpts
             })
           )
@@ -305,12 +311,13 @@ export function rimelightAstroConfig(options = {}) {
     cms,
     ui,
     seo,
+    auth,
     integrations = [],
     vite = {},
     ...rest
   } = options
 
-  const hasFlags = Boolean(solid || security || i18n || cms || ui || seo)
+  const hasFlags = Boolean(solid || security || i18n || cms || ui || seo || auth)
 
   return {
     ...(site ? { site } : {}),
@@ -331,7 +338,7 @@ export function rimelightAstroConfig(options = {}) {
       syntaxHighlight: "prism"
     },
     integrations: [
-      ...(hasFlags ? [rimelightIntegration(options, imageDomains, domain)] : []),
+      ...(hasFlags ? [rimelightIntegration(options, imageDomains, domain, site)] : []),
       ...integrations
     ],
     vite,

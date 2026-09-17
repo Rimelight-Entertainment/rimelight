@@ -79,10 +79,15 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
           const resolvedAuthPath = path.isAbsolute(options.auth)
             ? options.auth
             : path.resolve(rootDir, options.auth)
-          resolvedAuthCode = `export { authAdapter, authAdapter as default } from ${JSON.stringify(resolvedAuthPath)};`
+          if (fs.existsSync(resolvedAuthPath)) {
+            resolvedAuthCode = `export { authAdapter, authAdapter as default } from ${JSON.stringify(resolvedAuthPath)};`
+          } else {
+            resolvedAuthCode = `import { authAdapter } from "virtual:rimelight-auth";
+export { authAdapter, authAdapter as default };`
+          }
         } else if (options.auth && typeof options.auth === "object") {
           const authObj = options.auth as any
-          const adapterName = authObj.name || "mock"
+          const adapterName = authObj.name || authObj.adapter || "mock"
           const adapterOpts = authObj.options || {}
 
           if (adapterName === "cf-access") {
@@ -90,8 +95,8 @@ export function rimelightCms(options: RimelightCmsOptions = {}): AstroIntegratio
 export const authAdapter = cfAccessAuth(${JSON.stringify(adapterOpts)});
 export default authAdapter;`
           } else if (adapterName === "auth0") {
-            resolvedAuthCode = `import { auth0Auth } from "@rimelight/auth/auth0";
-export const authAdapter = auth0Auth(${JSON.stringify(adapterOpts)});
+            resolvedAuthCode = `import { createAuth0FromEnv } from "@rimelight/auth/auth0";
+export const authAdapter = createAuth0FromEnv(${JSON.stringify(adapterOpts)});
 export default authAdapter;`
           } else {
             resolvedAuthCode = `import { mockAuth } from "@rimelight/auth/mock";
@@ -99,19 +104,8 @@ export const authAdapter = mockAuth(${JSON.stringify(adapterOpts)});
 export default authAdapter;`
           }
         } else {
-          // Default fallback mock admin adapter for development
-          resolvedAuthCode = `import { mockAuth } from "@rimelight/auth/mock";
-export const authAdapter = mockAuth({
-  session: {
-    userId: "cms-admin",
-    name: "CMS Administrator",
-    email: "admin@rimelight.com",
-    roles: ["admin", "editor"],
-    permissions: ["*"],
-    userType: "employee"
-  }
-});
-export default authAdapter;`
+          resolvedAuthCode = `import { authAdapter } from "virtual:rimelight-auth";
+export { authAdapter, authAdapter as default };`
         }
 
         // 1. Inject CMS admin routes

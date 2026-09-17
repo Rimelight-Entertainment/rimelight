@@ -519,6 +519,9 @@ importers:
       '@astrojs/solid-js':
         specifier: '>=7.0.0'
         version: 7.0.2(@types/node@26.5.1)(esbuild@0.28.1)(jiti@2.7.0)(solid-js@1.9.15)(supports-color@10.2.2)(tsx@4.23.11)(yaml@2.9.0)
+      '@rimelight/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@rimelight/cms':
         specifier: workspace:*
         version: link:../cms

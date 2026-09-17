@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/config",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "private": false,
   "description": "Rimelight Entertainment's shared configuration package",
   "homepage": "https://rimelight.com/docs",
@@ -55,6 +55,7 @@
   "peerDependencies": {
     "@astrojs/cloudflare": ">=14.0.0",
     "@astrojs/solid-js": ">=7.0.0",
+    "@rimelight/auth": "workspace:*",
     "@rimelight/cms": "workspace:*",
     "@rimelight/i18n": "workspace:*",
     "@rimelight/security": "workspace:*",
@@ -68,6 +69,9 @@
       "optional": true
     },
     "@astrojs/solid-js": {
+      "optional": true
+    },
+    "@rimelight/auth": {
       "optional": true
     },
     "@rimelight/cms": {
