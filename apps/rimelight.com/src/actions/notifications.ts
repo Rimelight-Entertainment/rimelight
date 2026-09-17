@@ -1,5 +1,5 @@
 import { defineAction, ActionError } from "astro:actions"
-import { auth } from "#auth/auth"
+import { auth } from "@rimelight/auth"
 
 const mockNotifications = [
   {

@@ -29,3 +29,28 @@ declare module "virtual:rimelight/i18n" {
     defaultLocale: ""
   }
 }
+
+declare module "virtual:rimelight-auth" {
+  export const auth: import("@rimelight/auth").AuthAdapter
+  export const authAdapter: import("@rimelight/auth").AuthAdapter
+  export default auth
+}
+
+declare module "virtual:rimelight-auth-client" {
+  export const authClient: import("@rimelight/auth/client").AuthClient
+  export const createAuthClient: typeof import("@rimelight/auth/client").createAuthClient
+  export default authClient
+}
+
+declare module "#auth/auth" {
+  export const auth: import("@rimelight/auth").AuthAdapter
+  export const authAdapter: import("@rimelight/auth").AuthAdapter
+  export default auth
+}
+
+declare module "#auth/auth-client" {
+  export const authClient: import("@rimelight/auth/client").AuthClient
+  export const createAuthClient: typeof import("@rimelight/auth/client").createAuthClient
+  export default authClient
+}
+

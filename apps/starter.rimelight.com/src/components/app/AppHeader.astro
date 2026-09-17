@@ -14,7 +14,7 @@ import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-gr
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
 
-const { auth } = await import("#auth/auth");
+const { auth } = await import("@rimelight/auth");
 const session = await auth.getSession(Astro.request) as any;
 
 const foundationLinkGroup: LinkGroupProps = {

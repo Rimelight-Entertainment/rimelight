@@ -218,7 +218,18 @@ function rimelightIntegration(options, imageDomains, domain) {
           )
         }
 
+        if (options.auth) {
+          const authMod = await import("@rimelight/auth/vite")
+          const { auth: authFn } = authMod
+          const authOpts =
+            typeof options.auth === "object"
+              ? options.auth
+              : { adapter: options.auth === true ? "cf-access" : options.auth }
+          plugins.push(authFn(authOpts))
+        }
+
         if (options.i18n) {
+
           const i18nMod = await import("@rimelight/i18n")
           const { i18n: i18nFn } = i18nMod
           const i18nOpts = typeof options.i18n === "object" ? options.i18n : {}

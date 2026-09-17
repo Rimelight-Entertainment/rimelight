@@ -21,7 +21,7 @@ const placeholderCompany = "https://cdn.rimelight.com/Images/placeholder_header_
 const placeholderStore = "https://cdn.rimelight.com/Images/placeholder_header_store.jpg";
 let session: any = null;
 try {
-  const { auth } = await import("#auth/auth");
+  const { auth } = await import("@rimelight/auth");
   session = await auth.getSession(Astro.request);
 } catch (err) {
   console.error("[AppHeader] Failed to resolve auth session:", err);

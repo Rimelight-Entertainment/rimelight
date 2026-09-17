@@ -55,8 +55,17 @@
     "./middleware": {
       "types": "./dist/middleware/index.d.mts",
       "import": "./dist/middleware/index.mjs"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.mts",
+      "import": "./dist/client/index.mjs"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.mts",
+      "import": "./dist/vite.mjs"
     }
   },
+
 
   "publishConfig": {
     "access": "public"

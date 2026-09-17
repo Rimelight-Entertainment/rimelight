@@ -5,7 +5,7 @@ import { pages, pageVersions, searchIndex } from "#db/schema"
 import { and, asc, desc, eq, isNotNull, isNull, sql } from "drizzle-orm"
 import { type Block, type PageType, type Localized, type Page } from "#types/pages"
 import { PAGE_MAP } from "#types/pageDefinitions"
-import { auth } from "#auth/auth"
+import { auth } from "@rimelight/auth"
 
 function extractTextFromBlocks(blocks: Block[]): string {
   if (!blocks || !Array.isArray(blocks)) return ""

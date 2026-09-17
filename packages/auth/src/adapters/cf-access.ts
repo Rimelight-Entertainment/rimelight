@@ -102,3 +102,38 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
     }
   }
 }
+
+function getEnv(key: string, fallback = ""): string {
+  if (typeof process !== "undefined" && process.env?.[key]) return process.env[key]!
+  if (typeof import.meta !== "undefined" && (import.meta as any).env?.[key]) {
+    return (import.meta as any).env[key]
+  }
+  return fallback
+}
+
+/**
+ * Creates a Cloudflare Access auth adapter automatically configured from environment variables.
+ */
+export function createCfAccessFromEnv(
+  overrides: Partial<CfAccessAdapterOptions> = {}
+): AuthAdapter {
+  return cfAccessAuth({
+    teamDomain: overrides.teamDomain || getEnv("CF_ACCESS_TEAM_DOMAIN"),
+    aud: overrides.aud || getEnv("CF_ACCESS_AUD"),
+    verifyJwt:
+      overrides.verifyJwt ??
+      (getEnv("CF_ACCESS_VERIFY_JWT") === "true" ||
+        (typeof import.meta !== "undefined" &&
+          (import.meta as any).env?.["CF_ACCESS_VERIFY_JWT"] === "true")),
+    adminEmails:
+      overrides.adminEmails ||
+      (getEnv("CF_ACCESS_ADMIN_EMAILS")
+        ? getEnv("CF_ACCESS_ADMIN_EMAILS")
+            .split(",")
+            .map((e) => e.trim())
+        : []),
+    defaultRole: overrides.defaultRole || "admin",
+    ...overrides
+  })
+}
+

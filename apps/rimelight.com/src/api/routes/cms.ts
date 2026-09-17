@@ -22,7 +22,7 @@ import {
   deleteByline
 } from "@rimelight/cms"
 import { handleCmsMcpRequest } from "@rimelight/cms/mcp"
-import { auth } from "#auth/auth"
+import { auth } from "@rimelight/auth"
 import { eq, and } from "drizzle-orm"
 
 const cms = new Hono()

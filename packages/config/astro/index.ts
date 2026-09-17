@@ -150,6 +150,16 @@ export interface RimelightAstroOptions {
         auth?: string
         [key: string]: any
       }
+  auth?:
+    | boolean
+    | "cf-access"
+    | "auth0"
+    | "mock"
+    | {
+        adapter?: "cf-access" | "auth0" | "mock" | "custom" | (string & {})
+        customModule?: string
+        [key: string]: any
+      }
   ui?:
     | boolean
     | {
@@ -164,6 +174,7 @@ export interface RimelightAstroOptions {
   }
   [key: string]: any
 }
+
 
 function discoverTranslations(dir = "./src/i18n"): Record<string, any> {
   const translations: Record<string, any> = {}
@@ -316,7 +327,18 @@ function rimelightIntegration(
           )
         }
 
+        if (options.auth) {
+          const authMod = await import("@rimelight/auth/vite")
+          const { auth: authFn } = authMod as any
+          const authOpts =
+            typeof options.auth === "object"
+              ? options.auth
+              : { adapter: options.auth === true ? "cf-access" : options.auth }
+          plugins.push(authFn(authOpts))
+        }
+
         if (options.i18n) {
+
           const i18nMod = await import("@rimelight/i18n")
           const { i18n: i18nFn } = i18nMod as any
           const i18nOpts = typeof options.i18n === "object" ? options.i18n : {}

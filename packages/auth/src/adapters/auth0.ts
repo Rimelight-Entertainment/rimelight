@@ -461,3 +461,89 @@ export function mapAuth0PayloadToSession(
     metadata: payload
   }
 }
+
+function getEnv(key: string, fallback = ""): string {
+  if (typeof process !== "undefined" && process.env?.[key]) return process.env[key]!
+  if (typeof import.meta !== "undefined" && (import.meta as any).env?.[key]) {
+    return (import.meta as any).env[key]
+  }
+  return fallback
+}
+
+export function getAuth0ConfigFromEnv(
+  overrides: Partial<Auth0AdapterOptions> = {}
+): Auth0AdapterOptions {
+  return {
+    domain: overrides.domain || getEnv("AUTH0_DOMAIN", "rimelight.eu.auth0.com"),
+    audience:
+      overrides.audience ||
+      (getEnv("AUTH0_USE_CUSTOM_AUDIENCE") === "true"
+        ? getEnv("AUTH0_AUDIENCE") || undefined
+        : undefined),
+    clientId: overrides.clientId || getEnv("AUTH0_CLIENT_ID", ""),
+    clientSecret: overrides.clientSecret || getEnv("AUTH0_CLIENT_SECRET", ""),
+    rolesClaim: overrides.rolesClaim || getEnv("AUTH0_ROLES_CLAIM", "https://rimelight.com/roles"),
+    userTypeClaim:
+      overrides.userTypeClaim || getEnv("AUTH0_USER_TYPE_CLAIM", "https://rimelight.com/user_type"),
+    permissionsClaim: overrides.permissionsClaim || "permissions",
+    sessionCookieName: overrides.sessionCookieName || "rimelight_session",
+    sessionSecret:
+      overrides.sessionSecret ||
+      getEnv(
+        "AUTH0_SECRET",
+        "rimelight_default_development_secret_key_32bytes_minimum_length"
+      ),
+    loginUrl: overrides.loginUrl || "/api/auth/login",
+    defaultRole: overrides.defaultRole || "user",
+    ...overrides
+  }
+}
+
+/**
+ * Creates an Auth0 auth adapter automatically configured from environment variables.
+ */
+export function createAuth0FromEnv(
+  overrides: Partial<Auth0AdapterOptions> & { devFallback?: boolean } = {}
+): AuthAdapter {
+  const config = getAuth0ConfigFromEnv(overrides)
+
+
+  const baseAdapter = auth0Auth(config)
+  if (!overrides.devFallback) {
+    return baseAdapter
+  }
+
+  return {
+    name: "auth0",
+    options: config,
+    async getSession(req: Request): Promise<UserSessionContext | null> {
+      const session = await baseAdapter.getSession(req)
+      if (session) return session
+
+      const isDev =
+        (typeof process !== "undefined" && process.env?.["NODE_ENV"] === "development") ||
+        (typeof import.meta !== "undefined" && (import.meta as any).env?.DEV)
+
+      if (
+        isDev &&
+        (!config.clientId || config.clientId === "" || config.clientId === "default_client_id")
+      ) {
+        return {
+          userId: "dev-admin-user",
+          email: "admin@rimelight.com",
+          name: "Admin (Dev)",
+          avatar: "https://cdn.rimelight.com/Images/default_avatar.png",
+          roles: ["admin", "owner", "editor"],
+          permissions: ["*"],
+          userType: "employee",
+          metadata: { isDev: true }
+        }
+      }
+      return null
+    },
+    handleUnauthorized(req: Request) {
+      return baseAdapter.handleUnauthorized?.(req) ?? new Response("Unauthorized", { status: 401 })
+    }
+  }
+}
+

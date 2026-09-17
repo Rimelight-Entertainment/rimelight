@@ -80,6 +80,7 @@ export default defineConfig(
     },
     solid: true,
     cms: true,
+    auth: "auth0",
     security: {
       imgSrc: ["https://s.gravatar.com", "https://cdn.auth0.com", "https://i1.wp.com"]
     },
@@ -88,6 +89,7 @@ export default defineConfig(
       defaultLocale: "en"
     },
     ui: true,
+
     integrations: [localDocsIntegration()]
   })
 )

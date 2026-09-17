@@ -1,18 +1,21 @@
 import { Hono } from "hono"
+import { auth } from "@rimelight/auth"
 import {
-  auth,
-  auth0Config,
+  getAuth0ConfigFromEnv,
   createAuth0AuthorizeUrl,
   createAuth0LogoutUrl,
   createSessionToken,
   exchangeAuth0Code,
   loginWithAuth0Password,
-  refreshAuth0Token
-} from "#auth/auth"
+  refreshAuth0Token,
+  mapAuth0PayloadToSession,
+  decodeJwt
+} from "@rimelight/auth/auth0"
 import { syncAuth0UserToDb } from "#auth/sync-user"
-import { mapAuth0PayloadToSession, decodeJwt } from "@rimelight/auth/auth0"
 
+const auth0Config = getAuth0ConfigFromEnv()
 const api = new Hono()
+
 
 function getBaseUrl(c: any): string {
   const envBase =
