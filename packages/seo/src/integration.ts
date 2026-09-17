@@ -130,6 +130,10 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
             pattern,
             entrypoint: "@rimelight/seo/routes/sitemap.xml.ts"
           })
+          injectRoute({
+            pattern: "/sitemap-index.xml",
+            entrypoint: "@rimelight/seo/routes/sitemap-index.xml.ts"
+          })
         }
 
         if (options.rss !== false) {
