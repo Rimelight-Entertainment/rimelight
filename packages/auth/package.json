@@ -51,8 +51,13 @@
     "./plugins/construction-guest": {
       "types": "./dist/plugins/construction-guest/index.d.mts",
       "import": "./dist/plugins/construction-guest/index.mjs"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.mts",
+      "import": "./dist/middleware/index.mjs"
     }
   },
+
   "publishConfig": {
     "access": "public"
   },

@@ -5,3 +5,5 @@ export * from "./adapters/mock"
 export * from "./permissions/index"
 export * from "./plugins/reserved-usernames/index"
 export * from "./plugins/construction-guest/index"
+export * from "./middleware/index"
+

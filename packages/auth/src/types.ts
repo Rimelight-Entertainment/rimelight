@@ -65,3 +65,91 @@ export interface AuthAdapter {
    */
   handleUnauthorized?: ((request: Request) => Response | Promise<Response>) | undefined
 }
+
+export interface RoleGuard {
+  roles?: string[]
+  userTypes?: UserType[]
+  check?: (user: UserSessionContext | null, c: any) => boolean | Promise<boolean>
+}
+
+export interface AuthMiddlewareOptions {
+  /**
+   * The auth adapter instance or custom session resolver function.
+   */
+  auth?:
+    | AuthAdapter
+    | { getSession(req: Request): Promise<UserSessionContext | null> }
+    | ((c: any) => Promise<UserSessionContext | null>)
+
+  /**
+   * Fall back to construction guest session if no user is signed in.
+   * @default true
+   */
+  allowConstructionGuest?: boolean
+
+  /**
+   * Whether to automatically skip static asset paths.
+   * @default true
+   */
+  skipStaticAssets?: boolean
+
+  /**
+   * Route patterns to completely bypass session resolution.
+   * @default ["/docs/"]
+   */
+  ignoredRoutes?: (string | RegExp)[] | ((path: string) => boolean)
+
+  /**
+   * Route patterns that require an authenticated session.
+   * @default ["/internal"]
+   */
+  protectedRoutes?: (string | RegExp)[] | ((path: string) => boolean)
+
+  /**
+   * Role / permission requirements for specific route prefixes.
+   * E.g.:
+   * {
+   *   "/admin": ["admin", "owner"],
+   *   "/internal": { roles: ["employee", "staff", "admin", "owner"], userTypes: ["employee"] }
+   * }
+   */
+  roleGuards?: Record<string, string[] | RoleGuard>
+
+  /**
+   * Routes that should redirect to home/dashboard if user is already logged in.
+   * @default ["/auth/sign-in", "/auth/sign-up"]
+   */
+  guestOnlyRoutes?: (string | RegExp)[]
+
+  /**
+   * URL to redirect to when `/auth` is accessed directly.
+   * @default "/auth/sign-in"
+   */
+  authRedirectUrl?: string
+
+  /**
+   * URL to redirect unauthenticated users accessing protected pages.
+   * @default "/auth/sign-in"
+   */
+  signInUrl?: string
+
+  /**
+   * Home URL to redirect logged-in users away from guest routes or forbidden pages.
+   * @default "/"
+   */
+  homeUrl?: string
+
+  /**
+   * Custom response when unauthorized (not logged in).
+   */
+  onUnauthorized?: (c: any, meta: { isApi: boolean; path: string }) => Response | Promise<Response>
+
+  /**
+   * Custom response when forbidden (insufficient role/permissions).
+   */
+  onForbidden?: (
+    c: any,
+    meta: { isApi: boolean; path: string; requiredRoles?: string[] }
+  ) => Response | Promise<Response>
+}
+
