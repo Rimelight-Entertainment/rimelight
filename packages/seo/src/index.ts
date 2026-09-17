@@ -66,6 +66,7 @@ export { buildApiCatalog } from "./catalog.js"
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
 export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets.js"
 export type { OgFontConfig, OgLayoutOptions, OgRenderConfig } from "./og.js"
+export type { OgRouteOptions } from "./types.js"
 
 import { rimelightSeo } from "./integration.js"
 export type { RimelightSeoOptions } from "./integration.js"

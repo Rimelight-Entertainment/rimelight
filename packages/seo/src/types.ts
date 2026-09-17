@@ -599,6 +599,41 @@ export interface RimelightSeoOptions {
    * icons) from a single master icon (default: true)
    */
   assets?: boolean | AssetRouteOptions
+  /**
+   * Open Graph image route configuration, or false to disable automatic /open-graph/[...route].png
+   * (default: true). When enabled, the route reads brand/background from seo.name and injects a
+   * handler that supports query-param overrides and optional DB slug lookup.
+   */
+  og?: boolean | OgRouteOptions
+}
+
+/**
+ * Configuration for the auto-injected /open-graph/[...route].png route.
+ */
+export interface OgRouteOptions {
+  /**
+   * Route pattern for the OG image handler.
+   *
+   * @default "/open-graph/[...route].png"
+   */
+  path?: string
+  /**
+   * Brand name shown top-left of every OG image. Defaults to seo.name / site.name from integration
+   * config.
+   */
+  brand?: string
+  /**
+   * Background style used for standard pages.
+   *
+   * @default "dark"
+   */
+  defaultBackground?: "dark" | "gradient" | (string & {})
+  /**
+   * Background style used when ?isDocs=true or the route segment contains "docs".
+   *
+   * @default "gradient"
+   */
+  docsBackground?: "dark" | "gradient" | (string & {})
 }
 
 export type { LlmsPage, LlmsTxtOptions, LlmsFullTxtOptions } from "./llms.js"

@@ -203,6 +203,17 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
           })
         }
 
+        if (options.og !== false) {
+          const pattern =
+            typeof options.og === "object" && options.og.path
+              ? options.og.path
+              : "/open-graph/[...route].png"
+          injectRoute({
+            pattern,
+            entrypoint: "@rimelight/seo/routes/open-graph.[...route].png.ts"
+          })
+        }
+
         updateConfig({
           vite: {
             plugins: [
