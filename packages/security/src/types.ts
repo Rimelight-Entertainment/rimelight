@@ -150,3 +150,53 @@ export interface ConstructionOptions {
     meta: { locale: string; path: string; redirectUrl: string }
   ) => Response | Promise<Response>
 }
+
+export interface RateLimiterBinding {
+  limit(options: { key: string }): Promise<{ success: boolean }>
+}
+
+export interface RateLimitOptions {
+  /**
+   * Name of the Cloudflare Rate Limiter binding on `c.env` / `env`.
+   * @default "MY_RATE_LIMITER"
+   */
+  bindingName?: string
+
+  /**
+   * Direct rate limiter instance or binding resolver.
+   */
+  limiter?: (c: any) => RateLimiterBinding | undefined
+
+  /**
+   * Routes / path prefixes or a custom predicate to check if the request should be rate limited.
+   * Can be an array of strings/RegExp or a matcher function `(c: any) => boolean`.
+   * @default ["/auth/sign-in", "/auth/sign-up", "/api/upload", "/api/chat"]
+   */
+  routes?: (string | RegExp)[] | ((c: any) => boolean)
+
+  /**
+   * Function to extract the rate limit key from the context (e.g., client IP, user ID, API key).
+   * @default c.req.header("CF-Connecting-IP") || c.req.header("x-forwarded-for") || "unknown"
+   */
+  keyGenerator?: (c: any) => string | Promise<string>
+
+  /**
+   * Retry-After header value in seconds.
+   * @default 60
+   */
+  retryAfter?: number
+
+  /**
+   * Behavior when no rate limiter binding exists (e.g., in local development without mock binding).
+   * - "pass": Fail open (call `next()`)
+   * - "block": Fail closed (return 429/500)
+   * @default "pass"
+   */
+  fallback?: "pass" | "block"
+
+  /**
+   * Custom handler when the rate limit is exceeded.
+   */
+  onRateLimited?: (c: any, retryAfter: number) => Response | Promise<Response>
+}
+

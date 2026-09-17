@@ -1,5 +1,5 @@
 import { Hono } from "hono"
-import { getCloudflareEnv } from "../../lib/env"
+import { env } from "cloudflare:workers"
 
 const api = new Hono()
 
@@ -15,8 +15,7 @@ api.post("/:key{.*}", async (c) => {
   const key = c.req.param("key")
   if (!key) return c.text("Bad Request", 400)
 
-  const env = await getCloudflareEnv(c)
-  const BLOB = env?.BLOB
+  const BLOB = (env as any)?.BLOB || (c.env as any)?.BLOB
   if (!BLOB) {
     console.warn("[R2 Assets] Cloudflare R2 bucket (BLOB) not bound for POST.")
     return c.json({ success: true, localMock: true })

@@ -1,7 +1,6 @@
 import { Hono } from "hono"
 import { cf } from "@astrojs/cloudflare/hono"
-import { security, devOnly, construction } from "@rimelight/security/middleware"
-import { ratelimit } from "#api/middleware/ratelimit"
+import { security, devOnly, construction, ratelimit } from "@rimelight/security/middleware"
 import { authMiddleware } from "#api/middleware/auth"
 import { i18n } from "@rimelight/i18n/hono"
 import { handleCmsCron } from "@rimelight/cms/cron/scheduled"
@@ -17,7 +16,7 @@ const app = new Hono<{ Bindings: Env }>()
 // Middlewares
 app.use(cf())
 app.use(security())
-app.use(ratelimit)
+app.use(ratelimit())
 app.use(authMiddleware)
 app.use(construction())
 app.use(devOnly)

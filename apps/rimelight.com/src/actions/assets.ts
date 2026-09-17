@@ -1,14 +1,6 @@
 import { defineAction, ActionError } from "astro:actions"
 import { auth } from "#auth/auth"
-
-interface CloudflareEnv {
-  BLOB: R2Bucket
-  R2: R2Bucket
-}
-
-function getCloudflareEnv(locals: App.Locals): CloudflareEnv | undefined {
-  return locals.runtime?.env as unknown as CloudflareEnv | undefined
-}
+import { env } from "cloudflare:workers"
 
 async function listAll(
   BLOB: {
@@ -35,8 +27,7 @@ export const assets = {
         })
       }
 
-      const cloudflareEnv = getCloudflareEnv(context.locals)
-      const BLOB = cloudflareEnv?.BLOB
+      const BLOB = (env as any)?.BLOB || (context.locals.runtime?.env as any)?.BLOB
 
       if (!BLOB) {
         // Safe fallback for local development or non-Cloudflare platforms
