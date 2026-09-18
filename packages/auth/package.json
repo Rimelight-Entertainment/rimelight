@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/auth",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": false,
   "description": "Rimelight Entertainment's Universal Authentication & Identity Package",
   "homepage": "https://rimelight.com/docs",
