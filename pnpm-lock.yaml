@@ -571,6 +571,12 @@ importers:
 
   packages/security:
     dependencies:
+      '@rimelight/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@rimelight/seo':
+        specifier: workspace:*
+        version: link:../seo
       '@rimelight/ui':
         specifier: workspace:*
         version: link:../ui

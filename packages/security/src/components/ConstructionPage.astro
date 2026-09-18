@@ -1,0 +1,166 @@
+---
+import ConstructionLayout from "../layouts/ConstructionLayout.astro";
+import ConstructionSignIn from "./ConstructionSignIn.astro";
+import RLALogo from "@rimelight/ui/components/logo/RLALogo.astro";
+import RLALocaleSelector from "@rimelight/ui/components/locale-selector/RLALocaleSelector.astro";
+import { t, getLocale } from "@rimelight/i18n";
+import { siteConfig } from "virtual:rimelight/seo";
+
+export interface LocaleOption {
+  code: string;
+  label?: string;
+  href?: string;
+}
+
+export interface Props {
+  title?: string | undefined;
+  description?: string | undefined;
+  metaTitle?: string | undefined;
+  metaDescription?: string | undefined;
+  noindex?: boolean | undefined;
+  favicon?: string | undefined;
+
+  // Branding & Logo
+  logoAlt?: string | undefined;
+  siteName?: string | undefined;
+  copyright?: string | undefined;
+
+  // Locales
+  locales?: (LocaleOption | string)[] | undefined;
+  currentLocale?: string | undefined;
+  showLocaleSelector?: boolean | undefined;
+
+  // Guest Passphrase Form
+  allowAuth?: boolean | undefined;
+  endpoint?: string | undefined;
+  passphraseLabel?: string | undefined;
+  passphrasePlaceholder?: string | undefined;
+  rememberMeLabel?: string | undefined;
+  signInButtonLabel?: string | undefined;
+  loadingButtonLabel?: string | undefined;
+  returnLaterText?: string | undefined;
+
+  // Layout & Styling
+  class?: string | undefined;
+  containerClass?: string | undefined;
+  bodyClass?: string | undefined;
+}
+
+const {
+  title,
+  description,
+  metaTitle,
+  metaDescription,
+  noindex = true,
+  favicon,
+  logoAlt,
+  siteName = (siteConfig as any)?.["name"] || "Rimelight Entertainment",
+  copyright,
+  locales = [
+    { code: "en", label: "English" },
+    { code: "pt", label: "Português" },
+  ],
+  currentLocale,
+  showLocaleSelector = true,
+  allowAuth = true,
+  endpoint = "/api/construction-guest",
+  passphraseLabel,
+  passphrasePlaceholder,
+  rememberMeLabel,
+  signInButtonLabel,
+  loadingButtonLabel,
+  returnLaterText,
+  class: className = "flex min-h-screen flex-col items-center justify-center bg-black px-4 py-12",
+  containerClass = "z-10 w-full max-w-md space-y-8 text-center",
+  bodyClass = "isolate bg-black"
+} = Astro.props;
+
+// Safe i18n translation helper with fallback
+const translate = (key: string, fallback: string): string => {
+  try {
+    const val = t(key);
+    if (val && val !== key) return val;
+  } catch {}
+  return fallback;
+};
+
+const resolvedMetaTitle = metaTitle ?? translate("page_construction.meta_title", title ?? "Under Construction");
+const resolvedMetaDescription = metaDescription ?? translate("page_construction.meta_description", description ?? "This site is currently undergoing scheduled maintenance.");
+const resolvedTitle = title ?? translate("page_construction.title", "Under Construction");
+const resolvedDescription = description ?? translate("page_construction.description", "This site is currently undergoing scheduled maintenance and is restricted to authorized personnel.");
+
+const resolvedPassphraseLabel = passphraseLabel ?? translate("page_construction.form_passphrase_label", "Passphrase");
+const resolvedPassphrasePlaceholder = passphrasePlaceholder ?? translate("page_construction.form_passphrase_placeholder", "Enter passphrase...");
+const resolvedRememberMeLabel = rememberMeLabel ?? translate("page_construction.form_remember_me_label", "Remember me");
+const resolvedSignInButtonLabel = signInButtonLabel ?? translate("page_construction.form_sign_in_button", "Sign In");
+const resolvedCopyright = copyright ?? `© ${new Date().getFullYear()} ${siteName}`;
+
+let resolvedCurrentLocale = currentLocale;
+if (!resolvedCurrentLocale) {
+  try {
+    resolvedCurrentLocale = getLocale();
+  } catch {
+    resolvedCurrentLocale = "en";
+  }
+}
+---
+
+<ConstructionLayout
+  title={resolvedMetaTitle}
+  description={resolvedMetaDescription}
+  favicon={favicon}
+  noindex={noindex}
+  bodyClass={bodyClass}
+>
+  <slot name="head" slot="head" />
+
+  <div class={className}>
+    <div class={containerClass}>
+      <slot name="header">
+        <div class="flex flex-col items-center gap-4">
+          <slot name="logo">
+            <RLALogo class="h-12 w-auto text-white" variant="logomark" mode="white" alt={logoAlt || siteName} />
+          </slot>
+          <slot name="title">
+            <h1 class="m-0 text-3xl font-bold text-white sm:text-4xl">
+              {resolvedTitle}
+            </h1>
+          </slot>
+          <slot name="description">
+            <p class="m-0 text-neutral-400">
+              {resolvedDescription}
+            </p>
+          </slot>
+        </div>
+      </slot>
+
+      <slot name="header-extra" />
+
+      <slot name="form">
+        <ConstructionSignIn
+          allowAuth={allowAuth}
+          endpoint={endpoint}
+          passphraseLabel={resolvedPassphraseLabel}
+          passphrasePlaceholder={resolvedPassphrasePlaceholder}
+          rememberMeLabel={resolvedRememberMeLabel}
+          signInButtonLabel={resolvedSignInButtonLabel}
+          loadingButtonLabel={loadingButtonLabel}
+          returnLaterText={returnLaterText}
+        />
+      </slot>
+
+      <slot name="footer">
+        <div class="flex flex-col items-center gap-2 text-xs text-neutral-500">
+          <slot name="locale-selector">
+            {showLocaleSelector && locales && locales.length > 1 && (
+              <RLALocaleSelector locales={locales as any} currentLocale={resolvedCurrentLocale} />
+            )}
+          </slot>
+          <slot name="copyright">
+            <span>{resolvedCopyright}</span>
+          </slot>
+        </div>
+      </slot>
+    </div>
+  </div>
+</ConstructionLayout>

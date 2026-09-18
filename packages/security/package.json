@@ -17,7 +17,7 @@
   },
   "files": [
     "dist",
-    "src/components"
+    "src"
   ],
   "type": "module",
   "exports": {
@@ -33,6 +33,13 @@
       "types": "./dist/config/index.d.mts",
       "import": "./dist/config/index.mjs"
     },
+    "./integration": {
+      "types": "./dist/integration.d.mts",
+      "import": "./dist/integration.mjs"
+    },
+    "./components/*": "./src/components/*",
+    "./layouts/*": "./src/layouts/*",
+    "./pages/*": "./src/pages/*",
     "./*": "./src/*"
   },
   "publishConfig": {
@@ -44,6 +51,8 @@
     "check": "vp check --fix && astro check"
   },
   "dependencies": {
+    "@rimelight/i18n": "workspace:*",
+    "@rimelight/seo": "workspace:*",
     "@rimelight/ui": "workspace:*"
   },
   "devDependencies": {

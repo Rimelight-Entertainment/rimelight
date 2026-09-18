@@ -6,15 +6,15 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro"
 import RLACheckbox from "@rimelight/ui/components/checkbox/RLACheckbox.astro"
 
 interface Props {
-  allowAuth?: boolean
-  endpoint?: string
-  passphraseLabel?: string
-  passphrasePlaceholder?: string
-  rememberMeLabel?: string
-  signInButtonLabel?: string
-  loadingButtonLabel?: string
-  returnLaterText?: string
-  class?: string
+  allowAuth?: boolean | undefined
+  endpoint?: string | undefined
+  passphraseLabel?: string | undefined
+  passphrasePlaceholder?: string | undefined
+  rememberMeLabel?: string | undefined
+  signInButtonLabel?: string | undefined
+  loadingButtonLabel?: string | undefined
+  returnLaterText?: string | undefined
+  class?: string | undefined
 }
 
 const {
