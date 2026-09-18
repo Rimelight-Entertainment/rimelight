@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "@types/node": "26.5.1",
+    "@types/node": "26.6.1",
     "pkg-pr-new": "0.0.88",
     "typescript": "6.0.3",
     "vite-plus": "0.3.2"

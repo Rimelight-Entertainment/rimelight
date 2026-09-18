@@ -68,14 +68,14 @@
     "@astrojs/check": "0.9.10",
     "@astrojs/solid-js": "7.0.2",
     "@astrojs/ts-plugin": "1.10.12",
-    "@astrojs/vue": "7.0.2",
+    "@astrojs/vue": "7.0.3",
     "@rimelight/config": "workspace:*",
     "@vitejs/plugin-vue": "6.0.9",
     "astro": "7.3.3",
     "solid-js": "1.9.15",
     "typescript": "6.0.3",
     "vite-plugin-solid": "2.11.14",
-    "vue": "3.5.42"
+    "vue": "3.5.43"
   },
   "peerDependencies": {
     "@astrojs/solid-js": ">=7.0.1",
