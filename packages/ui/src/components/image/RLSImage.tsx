@@ -237,7 +237,7 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
     if (hasColorMode) {
       return (
         <div
-          class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+          class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center"
           style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
         >
           <img
@@ -245,7 +245,7 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
             alt={alt}
             loading={loading}
             decoding={decoding}
-            class={`${resolvedClasses().triggerImage} rla-img-light w-full h-full object-cover rounded-lg`}
+            class={`${resolvedClasses().triggerImage} rla-img-light w-full h-full object-cover rounded-[inherit]`}
             onError={handleError}
             onLoad={handleLoad}
           />
@@ -254,7 +254,7 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
             alt={alt}
             loading={loading}
             decoding={decoding}
-            class={`${resolvedClasses().triggerImage} rla-img-dark w-full h-full object-cover rounded-lg hidden`}
+            class={`${resolvedClasses().triggerImage} rla-img-dark w-full h-full object-cover rounded-[inherit] hidden`}
           />
         </div>
       )
@@ -289,7 +289,7 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
         {triggerImage()}
       </button>
     ) : (
-      <div class="overflow-hidden rounded-lg block">{triggerImage()}</div>
+      <div class="overflow-hidden rounded-[inherit] block">{triggerImage()}</div>
     )
 
   return (

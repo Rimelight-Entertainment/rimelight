@@ -154,18 +154,18 @@ const baseImageProps: Record<string, any> = {
                 </picture>
               ) : hasColorMode ? (
                 <div
-                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center"
                   style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
                 >
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveLight as any}
-                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-[inherit]"]}
                   />
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveDark as any}
-                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-[inherit] hidden"]}
                   />
                 </div>
               ) : isFormatFallback ? (
@@ -182,7 +182,7 @@ const baseImageProps: Record<string, any> = {
               )}
             </button>
           ) : (
-            <div class="overflow-hidden rounded-lg block">
+            <div class="overflow-hidden rounded-[inherit] block">
               {isResponsive && mobileImg && desktopImg ? (
                 <picture>
                   <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
@@ -191,18 +191,18 @@ const baseImageProps: Record<string, any> = {
                 </picture>
               ) : hasColorMode ? (
                 <div
-                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center"
                   style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
                 >
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveLight as any}
-                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-[inherit]"]}
                   />
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveDark as any}
-                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-[inherit] hidden"]}
                   />
                 </div>
               ) : isFormatFallback ? (
@@ -240,18 +240,18 @@ const baseImageProps: Record<string, any> = {
                 </picture>
               ) : hasColorMode ? (
                 <div
-                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center"
                   style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
                 >
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveLight as any}
-                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-[inherit]"]}
                   />
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveDark as any}
-                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-[inherit] hidden"]}
                   />
                 </div>
               ) : isFormatFallback ? (
@@ -268,7 +268,7 @@ const baseImageProps: Record<string, any> = {
               )}
             </button>
           ) : (
-            <div class="overflow-hidden rounded-lg block">
+            <div class="overflow-hidden rounded-[inherit] block">
               {isResponsive && mobileImg && desktopImg ? (
                 <picture>
                   <source media={`(max-width: ${breakpointVal - 1}px)`} srcset={mobileImg.src} />
@@ -277,18 +277,18 @@ const baseImageProps: Record<string, any> = {
                 </picture>
               ) : hasColorMode ? (
                 <div
-                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-lg flex items-center justify-center"
+                  class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center"
                   style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
                 >
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveLight as any}
-                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-lg"]}
+                    class:list={[classes.triggerImage, "rla-img-light w-full h-full object-cover rounded-[inherit]"]}
                   />
                   <Image
                     {...(baseImageProps as any)}
                     src={effectiveDark as any}
-                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-lg hidden"]}
+                    class:list={[classes.triggerImage, "rla-img-dark w-full h-full object-cover rounded-[inherit] hidden"]}
                   />
                 </div>
               ) : isFormatFallback ? (
