@@ -10,8 +10,14 @@ const DEFAULT_WHITELISTED_PATTERNS = [
   "/_astro/",
   "/_image",
   "/favicon.",
+  "/apple-touch-icon",
+  "/site.webmanifest",
+  "manifest.json",
+  ".webmanifest",
   "/robots.txt",
   "/sitemap",
+  "/rss.xml",
+  "/llms.txt",
   "/.well-known/"
 ]
 

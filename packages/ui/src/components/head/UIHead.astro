@@ -206,17 +206,6 @@ const {
         el.rlScrollListener = scrollListener;
         window.addEventListener('scroll', scrollListener, { passive: true });
       }
-
-      (function retry() {
-        if (!el.isConnected) return;
-        const h = getHeight(contentEl);
-        if (h !== naturalHeight) {
-          naturalHeight = h;
-          RL.register(id, stackIndex, naturalHeight, isVisible, el, type);
-        }
-        if (h > 0 && h !== 64 && contentEl && contentEl.offsetHeight > 0) return;
-        requestAnimationFrame(retry);
-      })();
     }
 
     function startObserver() {
