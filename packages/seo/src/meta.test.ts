@@ -5,6 +5,7 @@ import {
   buildSafeDescription,
   buildRobotsMetaContent,
   buildWebSiteSchema,
+  buildDefaultOgImageUrl,
   deepMerge
 } from "./meta.js"
 
@@ -130,5 +131,28 @@ describe("buildWebSiteSchema", () => {
   it("prefers site param over config.url", () => {
     const schema = buildWebSiteSchema(config, "https://override.com")
     expect(schema["url"]).toBe("https://override.com")
+  })
+})
+
+describe("buildDefaultOgImageUrl", () => {
+  it("builds query params for title and description", () => {
+    const url = buildDefaultOgImageUrl({
+      title: "My Page",
+      description: "My description"
+    })
+    expect(url).toBe("/open-graph/page.png?title=My+Page&description=My+description")
+  })
+
+  it("falls back to siteName if title is missing", () => {
+    const url = buildDefaultOgImageUrl({
+      siteName: "Rimelight",
+      description: "Welcome"
+    })
+    expect(url).toBe("/open-graph/page.png?title=Rimelight&description=Welcome")
+  })
+
+  it("returns base path when no params provided", () => {
+    const url = buildDefaultOgImageUrl({})
+    expect(url).toBe("/open-graph/page.png")
   })
 })

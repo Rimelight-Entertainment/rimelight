@@ -41,9 +41,6 @@ const {
 } = Astro.props as AppLayoutProps;
 
 const hasConsent = Astro.cookies.has("cookie-consent");
-const ogImageUrl = ogImageSrc
-	? new URL(ogImageSrc, Astro.site).toString()
-	: new URL(`/open-graph/page.png?${new URLSearchParams({ title, description })}`, Astro.site).toString();
 ---
 
 
@@ -68,7 +65,6 @@ const ogImageUrl = ogImageSrc
     <Font cssVariable="--font-sans" />
     <Font cssVariable="--font-serif" />
     <Font cssVariable="--font-mono" />
-    <meta property="og:image" content={ogImageUrl} />
     <slot name="head" />
   </head>
 	<body class="isolate">

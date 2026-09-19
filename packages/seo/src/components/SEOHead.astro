@@ -6,6 +6,7 @@ import {
   buildSafeDescription,
   buildRobotsMetaContent,
   buildWebSiteSchema,
+  buildDefaultOgImageUrl,
   deepMerge
 } from "../meta.js"
 import { buildArticleSchema, buildBreadcrumbSchema } from "../schema.js"
@@ -40,7 +41,6 @@ const {
 // Resolve defaults from config if available
 const siteName = config?.name || 'Rimelight'
 const siteDescription = config?.description || ''
-const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || '/og.png'
 const themeColor = config?.branding?.colors?.themeColor
 
 const rawFavicon = customFavicon || (typeof config?.branding?.favicon === 'string' ? config.branding.favicon : config?.branding?.favicon?.svg) || config?.branding?.icon || '/favicon.svg'
@@ -70,7 +70,20 @@ const safeDescription = config?.seo?.maxDescriptionLength
   ? buildSafeDescription(finalDescription, config.seo.maxDescriptionLength)
   : finalDescription
 
-const finalOgImage = ogImage || (ogImageFallback ? { src: ogImageFallback, alt: siteName } : undefined)
+const defaultDynamicOg = buildDefaultOgImageUrl({
+  title,
+  description: finalDescription,
+  siteName
+})
+const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || defaultDynamicOg
+
+const rawOgImage = Array.isArray(ogImage)
+  ? ogImage[0]
+  : typeof ogImage === 'string'
+    ? { src: ogImage, alt: siteName }
+    : ogImage
+
+const finalOgImage = rawOgImage || (ogImageFallback ? (typeof ogImageFallback === 'string' ? { src: ogImageFallback, alt: siteName } : ogImageFallback) : undefined)
 const absoluteOgImage = finalOgImage
   ? new URL(finalOgImage.src, Astro.site ?? Astro.url).toString()
   : undefined

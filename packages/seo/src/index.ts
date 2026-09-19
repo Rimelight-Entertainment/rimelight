@@ -56,6 +56,7 @@ export {
   buildSafeDescription,
   buildRobotsMetaContent,
   buildWebSiteSchema,
+  buildDefaultOgImageUrl,
   deepMerge
 } from "./meta.js"
 

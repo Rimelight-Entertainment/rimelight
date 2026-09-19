@@ -83,8 +83,24 @@ export function buildRobotsMetaContent(opts: {
 }
 
 /**
- * \n * Build a Schema.org WebSite JSON-LD object.\n * Pass the result to JSON.stringify and emit
- * via <script type="application/ld+json">.\n
+ * Build dynamic Open Graph image URL fallback when no explicit image is provided.
+ */
+export function buildDefaultOgImageUrl(opts: {
+  title?: string
+  description?: string
+  siteName?: string
+}): string {
+  const params = new URLSearchParams()
+  const title = opts.title || opts.siteName
+  if (title) params.set("title", title)
+  if (opts.description) params.set("description", opts.description)
+  const qs = params.toString()
+  return qs ? `/open-graph/page.png?${qs}` : "/open-graph/page.png"
+}
+
+/**
+ * Build a Schema.org WebSite JSON-LD object. Pass the result to JSON.stringify and emit via <script
+ * type="application/ld+json">.
  */
 export function buildWebSiteSchema(
   config: Pick<SiteConfig, "name" | "url" | "description">,
