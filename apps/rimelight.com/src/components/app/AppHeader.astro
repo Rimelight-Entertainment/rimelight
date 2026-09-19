@@ -8,17 +8,13 @@ import RLASlideover from "@rimelight/ui/components/slideover/RLASlideover.astro"
 import RLAAvatar from "@rimelight/ui/components/avatar/RLAAvatar.astro";
 import RLASearch from "@rimelight/ui/components/search/RLASearch.astro";
 import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
+import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
 import type { NavigationMenuItem } from "@rimelight/ui/components/navigation-menu/navigation-menu.ts"
 import type { LinkGroupProps } from "@rimelight/ui/components/link-group/link-group.ts"
 import type { ButtonProps } from "@rimelight/ui/components/button/button.ts";
 
 import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
-import { Image } from "astro:assets";
 
-const placeholderGrandTale = "https://cdn.rimelight.com/Images/placeholder_header_grand-tale.jpg";
-const placeholderCommunity = "https://cdn.rimelight.com/Images/placeholder_header_community.jpg";
-const placeholderCompany = "https://cdn.rimelight.com/Images/placeholder_header_company.jpg";
-const placeholderStore = "https://cdn.rimelight.com/Images/placeholder_header_store.jpg";
 let session: any = null;
 try {
   const { auth } = await import("@rimelight/auth");
@@ -695,8 +691,8 @@ const userDropdownItems = session ? [
         <!-- Grand Tale Mega Menu -->
         <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <Image
-                src={placeholderGrandTale}
+              <RLAImage
+                src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                 width={320}
@@ -725,8 +721,8 @@ const userDropdownItems = session ? [
         <!-- Community Mega Menu -->
         <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <Image
-                src={placeholderCommunity}
+              <RLAImage
+                src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                 width={320}
@@ -750,8 +746,8 @@ const userDropdownItems = session ? [
         <!-- Company Mega Menu -->
         <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <Image
-                src={placeholderCompany}
+              <RLAImage
+                src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                 width={320}
@@ -777,8 +773,8 @@ const userDropdownItems = session ? [
         <!-- Store Mega Menu -->
         <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-              <Image
-                src={placeholderStore}
+              <RLAImage
+                src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
                 alt=""
                 class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                 width={320}
@@ -835,8 +831,8 @@ const userDropdownItems = session ? [
           <!-- Grand Tale Mobile Mega Menu -->
           <div slot="grand-tale-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <Image
-                  src={placeholderGrandTale}
+                <RLAImage
+                  src="https://cdn.rimelight.com/images/placeholder_header_grand-tale.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                   width={320}
@@ -865,8 +861,8 @@ const userDropdownItems = session ? [
           <!-- Community Mobile Mega Menu -->
           <div slot="community-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <Image
-                  src={placeholderCommunity}
+                <RLAImage
+                  src="https://cdn.rimelight.com/images/placeholder_header_community.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                   width={320}
@@ -890,8 +886,8 @@ const userDropdownItems = session ? [
           <!-- Company Mobile Mega Menu -->
           <div slot="company-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <Image
-                  src={placeholderCompany}
+                <RLAImage
+                  src="https://cdn.rimelight.com/images/placeholder_header_company.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                   width={320}
@@ -917,8 +913,8 @@ const userDropdownItems = session ? [
           <!-- Store Mobile Mega Menu -->
           <div slot="store-content" class="flex flex-col lg:flex-row gap-lg bg-default w-full">
 <div class="flex flex-col lg:flex-row gap-lg p-lg flex-1">
-                <Image
-                  src={placeholderStore}
+                <RLAImage
+                  src="https://cdn.rimelight.com/images/placeholder_header_store.jpg"
                   alt=""
                   class="h-32 lg:h-full w-full lg:w-auto object-cover lg:max-w-80 shrink-0 rounded"
                   width={320}

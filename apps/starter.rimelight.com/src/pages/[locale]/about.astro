@@ -1,7 +1,5 @@
 ---
 import AppLayout from '#layouts/AppLayout.astro';
-
-const AboutHeroImage = "https://cdn.rimelight.com/Images/placeholder.webp";
 import RLAPageSection from "@rimelight/ui/components/page-section/RLAPageSection.astro";
 import RLAGrid from "@rimelight/ui/components/grid/RLAGrid.astro";
 import RLACard from "@rimelight/ui/components/card/RLACard.astro";
@@ -16,7 +14,7 @@ import { t } from '@rimelight/i18n';
     description={t("page_about.hero_description")}
     orientation="horizontal"
   >
-    <RLAImage src={AboutHeroImage} alt="" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />
+    <RLAImage src="https://cdn.rimelight.com/images/placeholder.webp" alt="" ui={{ root: "w-full aspect-video relative block", trigger: "absolute inset-0 w-full h-full block", triggerImage: "absolute inset-0 w-full h-full object-cover rounded-lg" }} />
   </RLAPageSection>
 
   <RLAPageSection

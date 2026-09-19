@@ -2,7 +2,6 @@
 import AppLayout from './AppLayout.astro';
 import GrandTaleHeader from '#components/franchises/grand-tale/GrandTaleHeader.astro';
 import WikiSidebar from '#components/franchises/grand-tale/WikiSidebar.astro';
-import grandTaleIcon from '#assets/grand-tale.ico';
 
 interface Props {
 	title?: string;
@@ -10,7 +9,7 @@ interface Props {
 	favicon?: string;
 }
 
-const { title = 'Wiki | Grand Tale', description = 'Grand Tale Wiki', favicon = grandTaleIcon } = Astro.props;
+const { title = 'Wiki | Grand Tale', description = 'Grand Tale Wiki', favicon = 'https://cdn.rimelight.com/logos/grand-tale.ico' } = Astro.props;
 ---
 
 <AppLayout title={title} description={description} favicon={favicon}>

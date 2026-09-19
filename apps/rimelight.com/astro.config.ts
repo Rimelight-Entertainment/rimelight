@@ -54,6 +54,7 @@ export default defineConfig(
       description: "Welcome to my website!",
       author: "Rimelight",
       branding: {
+        favicon: "https://cdn.rimelight.com/logos/logomark_color.svg",
         logo: {
           alt: "Rimelight"
         },
@@ -88,7 +89,20 @@ export default defineConfig(
       locales: ["en", "pt"],
       defaultLocale: "en"
     },
-    ui: true,
+    ui: {
+      logos: {
+        logomark: {
+          color: "https://cdn.rimelight.com/logos/logomark_color.svg",
+          white: "https://cdn.rimelight.com/logos/logomark_white.svg",
+          black: "https://cdn.rimelight.com/logos/logomark_black.svg"
+        },
+        logotype: {
+          color: "https://cdn.rimelight.com/logos/logotype_color.svg",
+          white: "https://cdn.rimelight.com/logos/logotype_white.svg",
+          black: "https://cdn.rimelight.com/logos/logotype_black.svg"
+        }
+      }
+    },
 
     integrations: [localDocsIntegration()]
   })

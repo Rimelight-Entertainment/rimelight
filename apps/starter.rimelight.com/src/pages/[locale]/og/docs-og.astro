@@ -1,9 +1,5 @@
 ---
 import OgLayout from '#layouts/OgLayout.astro';
-import logomarkWhiteRaw from '#assets/logos/logomark_white.svg?raw';
-import logotypeWhiteRaw from '#assets/logos/logotype_white.svg?raw';
-const logomarkWhite = `data:image/svg+xml,${encodeURIComponent(logomarkWhiteRaw)}`;
-const logotypeWhite = `data:image/svg+xml,${encodeURIComponent(logotypeWhiteRaw)}`;
 const title = Astro.url.searchParams.get("title") || "Untitled";
 const description = Astro.url.searchParams.get("description") || "";
 const isPreview = Astro.url.searchParams.get("preview") === "1";
@@ -26,8 +22,8 @@ const isPreview = Astro.url.searchParams.get("preview") === "1";
 
   <div class="og-frame flex flex-col p-14 relative overflow-hidden">
     <div class="flex items-center gap-3">
-      <img class="h-9 w-auto" src={logomarkWhite} alt="" />
-      <img class="h-[22px] w-auto" src={logotypeWhite} alt="Rimelight" />
+      <img class="h-9 w-auto" src="https://cdn.rimelight.com/logos/logomark_white.svg" alt="" />
+      <img class="h-[22px] w-auto" src="https://cdn.rimelight.com/logos/logotype_white.svg" alt="Rimelight" />
     </div>
     <div class="flex-1 flex flex-col justify-center pt-5">
       <div class="w-[60px] h-1 bg-[#60a5fa] rounded mb-4"></div>

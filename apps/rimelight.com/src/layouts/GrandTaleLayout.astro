@@ -1,7 +1,6 @@
 ---
 import AppLayout from './AppLayout.astro';
 import GrandTaleHeader from '#components/franchises/grand-tale/GrandTaleHeader.astro';
-import grandTaleIcon from '#assets/grand-tale.ico';
 
 interface Props {
 	title?: string;
@@ -9,7 +8,7 @@ interface Props {
 	favicon?: string;
 }
 
-const { title = 'Grand Tale', description = 'Grand Tale', favicon = grandTaleIcon } = Astro.props;
+const { title = 'Grand Tale', description = 'Grand Tale', favicon = 'https://cdn.rimelight.com/logos/grand-tale.ico' } = Astro.props;
 ---
 
 <AppLayout title={title} description={description} favicon={favicon}>

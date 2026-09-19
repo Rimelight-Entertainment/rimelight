@@ -1,16 +1,14 @@
 ---
-import { Image } from 'astro:assets';
 import AppLayout from '#layouts/AppLayout.astro';
-
-const AboutHeroImage = "https://cdn.rimelight.com/Images/placeholder.webp";
 import RLADate from "@rimelight/ui/components/date/RLADate.astro";
+import RLAImage from "@rimelight/ui/components/image/RLAImage.astro";
 import { t } from "@rimelight/i18n";
 ---
 
 <AppLayout title={t("page_about.title")} description={t("page_about.description")}>
 		<article>
 			<div class="hero-image">
-				<Image width={1020} height={510} src={AboutHeroImage} alt="" />
+				<RLAImage width={1020} height={510} src="https://cdn.rimelight.com/images/placeholder.webp" alt="" />
 			</div>
 			<div class="prose">
 				<div class="title">
