@@ -18,14 +18,22 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
     ])
   )
 
+  const allowTurnstile = options.turnstile !== false
+
   const connectSources = Array.from(
-    new Set(["'self'", "https://cloudflareinsights.com", ...(options.connectSrc || [])])
+    new Set([
+      "'self'",
+      "https://cloudflareinsights.com",
+      ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
+      ...(options.connectSrc || [])
+    ])
   )
 
   const frameSources = Array.from(
     new Set([
       "https://www.youtube.com",
       "https://www.youtube-nocookie.com",
+      ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
       ...(options.frameSrc || [])
     ])
   )
@@ -36,6 +44,7 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       ...(nonce ? [`'nonce-${nonce}'`] : []),
       "https://static.cloudflareinsights.com",
       "https://betterlytics.io/analytics.js",
+      ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
       "'inline-speculation-rules'",
       // Astro ClientRouter (View Transitions inline script sha)
       "'sha256-ZuMSxilKU+4KIM8LWna4lqBEKzd6WaiAjz6gamhm7zM='",

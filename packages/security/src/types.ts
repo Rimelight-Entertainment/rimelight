@@ -36,6 +36,12 @@ export interface SecurityOptions {
   styleResources?: string[]
 
   /**
+   * Enables Cloudflare Turnstile CSP allowances (challenges.cloudflare.com in script-src,
+   * frame-src, connect-src). Defaults to true.
+   */
+  turnstile?: boolean
+
+  /**
    * Enables the 'require-trusted-types-for' directive
    */
   trustedTypes?: boolean

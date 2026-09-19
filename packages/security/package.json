@@ -37,6 +37,10 @@
       "types": "./dist/integration.d.mts",
       "import": "./dist/integration.mjs"
     },
+    "./turnstile": {
+      "types": "./dist/turnstile.d.mts",
+      "import": "./dist/turnstile.mjs"
+    },
     "./components/*": "./src/components/*",
     "./layouts/*": "./src/layouts/*",
     "./pages/*": "./src/pages/*",
