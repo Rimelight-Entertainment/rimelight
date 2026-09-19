@@ -1,15 +1,19 @@
 ---
-import AppLayout from '#layouts/AppLayout.astro';
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import AppLayout from "#layouts/AppLayout.astro";
+import AppError from "#components/app/AppError.astro";
+import { t } from "@rimelight/i18n";
+
 Astro.response.status = 404;
 Astro.response.statusText = "Not Found";
 ---
 
-<AppLayout title={t("page_error.error_not-found_title")} description={t("page_error.error_not-found_description")} minimal={true} noindex={true} is404={true}>
-  <div class="error-container">
-    <p class="error-code">404</p>
-    <h1 class="error-title">{t("page_error.error_not-found_title")}</h1>
-    <p class="error-desc">{t("page_error.error_not-found_description")}</p>
-    <a href={getRelativeLocaleUrl('/')} class="error-link">{t("page_error.go-home")}</a>
-  </div>
+<AppLayout title={t("page_error.error_not-found_title") || "Page Not Found"} description={t("page_error.error_not-found_description") || "The page you are looking for does not exist."} is404={true} noindex={true}>
+	<AppError
+		code={404}
+		title={t("page_error.error_not-found_title") || "Page Not Found"}
+		description={t("page_error.error_not-found_description") || "The page you are looking for does not exist or has been moved."}
+		actions={[
+			{ label: "Go to Home Page", href: "/", variant: "solid", color: "primary", icon: "i-lucide-home" }
+		]}
+	/>
 </AppLayout>

@@ -1,13 +1,14 @@
 ---
-import AppLayout from '#layouts/AppLayout.astro';
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
-
+import AppLayout from "#layouts/AppLayout.astro";
+import AppError from "#components/app/AppError.astro";
+import { t } from "@rimelight/i18n";
 
 interface Props {
-    error: unknown;
+	error?: unknown;
 }
 
 const { error } = Astro.props;
+
 Astro.response.status = 500;
 Astro.response.statusText = "Internal Server Error";
 if (error) {
@@ -15,11 +16,13 @@ if (error) {
 }
 ---
 
-<AppLayout title={t("page_error.error_server_title")} description={t("page_error.error_server_description")} minimal={true} noindex={true}>
-  <div class="error-container">
-    <p class="error-code">500</p>
-    <h1 class="error-title">{t("page_error.error_server_title")}</h1>
-    <p class="error-desc">{error instanceof Error ? error.message : t("page_error.error_unknown_description")}</p>
-    <a href={getRelativeLocaleUrl('/')} class="error-link">{t("page_error.go-home")}</a>
-  </div>
+<AppLayout title={t("page_error.error_server_title") || "Internal Server Error"} description={t("page_error.error_server_description") || "An unexpected error occurred on the server."} noindex={true}>
+	<AppError
+		code={500}
+		title={t("page_error.error_server_title") || "Internal Server Error"}
+		description={error instanceof Error ? error.message : (t("page_error.error_unknown_description") || "An unexpected error occurred on the server.")}
+		actions={[
+			{ label: "Go to Home Page", href: "/", variant: "solid", color: "primary", icon: "i-lucide-home" }
+		]}
+	/>
 </AppLayout>

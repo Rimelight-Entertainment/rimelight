@@ -1,16 +1,19 @@
 ---
-import AppLayout from '#layouts/AppLayout.astro';
-import { t, getRelativeLocaleUrl } from "@rimelight/i18n";
+import AppLayout from "#layouts/AppLayout.astro";
+import AppError from "#components/app/AppError.astro";
 
 Astro.response.status = 403;
 Astro.response.statusText = "Forbidden";
 ---
 
-<AppLayout title="403 - Access Denied" description="Your account does not have administrator privileges required to access this page." minimal={true} noindex={true}>
-  <div class="error-container">
-    <p class="error-code">403</p>
-    <h1 class="error-title">Access Denied</h1>
-    <p class="error-desc">Your account does not have administrator privileges required to access this page.</p>
-    <a href={getRelativeLocaleUrl('/')} class="error-link">{t("page_error.go-home")}</a>
-  </div>
+<AppLayout title="403 - Access Denied" description="Your account does not have administrator privileges required to access this page." noindex={true}>
+	<AppError
+		code={403}
+		title="Access Denied"
+		description="Your account does not have administrator privileges required to access this page."
+		requiredRole="admin"
+		actions={[
+			{ label: "Go to Home Page", href: "/", variant: "solid", color: "primary", icon: "i-lucide-home" }
+		]}
+	/>
 </AppLayout>
