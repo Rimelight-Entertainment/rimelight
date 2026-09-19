@@ -39,11 +39,16 @@ export function base64UrlDecodeToString(str: string): string {
 
 export function parseDuration(duration: string | number): number {
   if (typeof duration === "number") return Math.floor(duration)
-  if (!duration) return 7 * 24 * 3600 // default 7 days
+  if (duration === "" || duration === undefined || duration === null) {
+    return 7 * 24 * 3600 // default 7 days
+  }
 
-  const match = duration.trim().match(/^(\d+)\s*(s|m|h|d|w|y)?$/i)
+  const str = String(duration).trim()
+  if (str === "0") return 0
+
+  const match = str.match(/^(\d+)\s*(s|m|h|d|w|y)?$/i)
   if (!match) {
-    const num = Number(duration)
+    const num = Number(str)
     return isNaN(num) ? 7 * 24 * 3600 : Math.floor(num)
   }
 
@@ -170,7 +175,8 @@ export async function verifySessionToken<T = Record<string, any>>(
 
     const payload = JSON.parse(base64UrlDecodeToString(payloadB64))
     const now = Math.floor(Date.now() / 1000)
-    const clockTolerance = options.clockTolerance ?? 60
+    // First-party session tokens use tighter 5s tolerance against replay/expiration window
+    const clockTolerance = options.clockTolerance ?? 5
 
     if (payload["exp"] !== undefined && typeof payload["exp"] === "number") {
       if (now > payload["exp"] + clockTolerance) {
@@ -307,6 +313,7 @@ export async function verifyJwtRs256<T = Record<string, any>>(
     // 4. Claims Validation (exp, nbf, iss, aud)
     const payload = JSON.parse(base64UrlDecodeToString(payloadB64))
     const now = Math.floor(Date.now() / 1000)
+    // Remote IdP tokens (Auth0, Cloudflare Access) use 60s tolerance for cross-provider network/clock drift
     const clockTolerance = options.clockTolerance ?? 60
 
     if (payload["exp"] !== undefined && typeof payload["exp"] === "number") {

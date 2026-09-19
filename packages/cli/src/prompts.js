@@ -35,9 +35,17 @@ function styleTextSafe(format, text) {
   return `${open}${text}${close}`
 }
 
-// --- Cancellation Symbol ---
+// --- Cancellation Symbol & Global Terminal Cleanup ---
 
 const CANCEL_SYMBOL = Symbol("rimelight:cancel")
+
+if (typeof process !== "undefined" && typeof process.on === "function") {
+  process.on("exit", () => {
+    if (process.stdout?.isTTY) {
+      process.stdout.write("\x1b[?25h")
+    }
+  })
+}
 
 export function isCancel(value) {
   return value === CANCEL_SYMBOL
@@ -137,6 +145,7 @@ export async function select(options) {
 
   return new Promise((resolve) => {
     const { stdin, stdout } = process
+    let cleaned = false
 
     const render = (first = false) => {
       if (!first) {
@@ -154,9 +163,22 @@ export async function select(options) {
     }
 
     const cleanup = () => {
+      if (cleaned) return
+      cleaned = true
       stdin.removeListener("keypress", onKeyPress)
+      stdin.removeListener("error", onStdinError)
+      process.removeListener("exit", onProcessExit)
       if (stdin.isTTY) stdin.setRawMode(false)
       stdout.write("\x1b[?25h") // show cursor
+    }
+
+    const onStdinError = () => {
+      cleanup()
+      resolve(CANCEL_SYMBOL)
+    }
+
+    const onProcessExit = () => {
+      cleanup()
     }
 
     const onKeyPress = (_, key) => {
@@ -189,6 +211,8 @@ export async function select(options) {
       }
     }
 
+    stdin.once("error", onStdinError)
+    process.once("exit", onProcessExit)
     readline.emitKeypressEvents(stdin)
     if (stdin.isTTY) stdin.setRawMode(true)
     stdout.write("\x1b[?25l") // hide cursor
@@ -210,6 +234,7 @@ export async function multiselect(options) {
 
   return new Promise((resolve) => {
     const { stdin, stdout } = process
+    let cleaned = false
 
     const render = (first = false) => {
       if (!first) {
@@ -232,9 +257,22 @@ export async function multiselect(options) {
     }
 
     const cleanup = () => {
+      if (cleaned) return
+      cleaned = true
       stdin.removeListener("keypress", onKeyPress)
+      stdin.removeListener("error", onStdinError)
+      process.removeListener("exit", onProcessExit)
       if (stdin.isTTY) stdin.setRawMode(false)
       stdout.write("\x1b[?25h") // show cursor
+    }
+
+    const onStdinError = () => {
+      cleanup()
+      resolve(CANCEL_SYMBOL)
+    }
+
+    const onProcessExit = () => {
+      cleanup()
     }
 
     const onKeyPress = (_, key) => {
@@ -281,6 +319,8 @@ export async function multiselect(options) {
       }
     }
 
+    stdin.once("error", onStdinError)
+    process.once("exit", onProcessExit)
     readline.emitKeypressEvents(stdin)
     if (stdin.isTTY) stdin.setRawMode(true)
     stdout.write("\x1b[?25l") // hide cursor
@@ -298,10 +338,17 @@ export function spinner() {
   let currentMessage = ""
   const isTTY = process.stdout.isTTY
 
+  const onProcessExit = () => {
+    if (isTTY) {
+      process.stdout.write("\x1b[?25h") // restore cursor
+    }
+  }
+
   return {
     start(msg = "") {
       currentMessage = msg
       if (isTTY) {
+        process.once("exit", onProcessExit)
         process.stdout.write("\x1b[?25l") // hide cursor
         intervalId = setInterval(() => {
           const frame = pc.cyan(frames[frameIndex] || "⠋")
@@ -321,6 +368,7 @@ export function spinner() {
         intervalId = null
       }
       if (isTTY) {
+        process.removeListener("exit", onProcessExit)
         process.stdout.write(`\r\x1b[K`) // clear line
         process.stdout.write("\x1b[?25h") // show cursor
       }

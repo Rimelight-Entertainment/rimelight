@@ -84,6 +84,10 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
     })
 
     it("parses duration strings into seconds accurately", () => {
+      expect(parseDuration(0)).toBe(0)
+      expect(parseDuration("0")).toBe(0)
+      expect(parseDuration("0s")).toBe(0)
+      expect(parseDuration("")).toBe(604800) // Default 7d
       expect(parseDuration(120)).toBe(120)
       expect(parseDuration("45s")).toBe(45)
       expect(parseDuration("10m")).toBe(600)
@@ -91,7 +95,10 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
       expect(parseDuration("7d")).toBe(604800)
       expect(parseDuration("2w")).toBe(1209600)
       expect(parseDuration("1y")).toBe(31536000)
-      expect(parseDuration("")).toBe(604800) // Default 7d
+    })
+
+    it("handles invalid duration strings by falling back safely to default duration", () => {
+      expect(parseDuration("abc")).toBe(604800)
     })
   })
 
@@ -167,12 +174,28 @@ describe("Zero-Dependency Web Crypto JWT Engine", () => {
       expect(verified).toBeNull()
     })
 
-    it("rejects expired session tokens", async () => {
+    it("rejects expired session tokens beyond clock tolerance", async () => {
       const session = { userId: "user-expired" }
-      // -100 seconds
+      // -100 seconds (well past default 10s tolerance)
       const token = await createSessionToken(session, secret, -100)
-      const verified = await verifySessionToken(token, secret, { clockTolerance: 5 })
+      const verified = await verifySessionToken(token, secret)
       expect(verified).toBeNull()
+
+      // -10 seconds (past default 5s tolerance)
+      const pastToleranceToken = await createSessionToken(session, secret, -10)
+      const verifiedPastTolerance = await verifySessionToken(pastToleranceToken, secret)
+      expect(verifiedPastTolerance).toBeNull()
+
+      // -2 seconds (within default 5s tolerance)
+      const recentExpiredToken = await createSessionToken(session, secret, -2)
+      const verifiedWithinTolerance = await verifySessionToken(recentExpiredToken, secret)
+      expect(verifiedWithinTolerance).not.toBeNull()
+
+      // -2 seconds with strict clockTolerance: 0 should be rejected
+      const verifiedStrict = await verifySessionToken(recentExpiredToken, secret, {
+        clockTolerance: 0
+      })
+      expect(verifiedStrict).toBeNull()
     })
 
     it("rejects tokens with invalid alg header (e.g. none or RS256)", async () => {
