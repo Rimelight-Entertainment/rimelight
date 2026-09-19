@@ -88,28 +88,11 @@
     }
   ],
   "vars": {
-    "CONSTRUCTION_MODE": "false",
+    "CONSTRUCTION_MODE": "true",
     "EMAIL_DOMAIN": "rimelight.com",
     "CONTACT_OWNER_EMAIL": "owner@rimelight.com"
   },
   "secrets": {
     "required": ["TURNSTILE_SECRET_KEY"]
-  },
-  "env": {
-    "remote": {
-      "r2_buckets": [
-        {
-          "binding": "BLOB",
-          "bucket_name": "starter-dot-rimelight-dot-com",
-          "remote": true
-        }
-      ],
-      "send_email": [
-        {
-          "name": "EMAIL",
-          "remote": true
-        }
-      ]
-    }
   }
 }

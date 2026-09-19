@@ -67,22 +67,5 @@
   },
   "secrets": {
     "required": ["AUTH0_CLIENT_SECRET", "AUTH0_SECRET", "DATABASE_URL"]
-  },
-  "env": {
-    "remote": {
-      "r2_buckets": [
-        {
-          "binding": "BLOB",
-          "bucket_name": "rimelight-dot-com",
-          "remote": true
-        }
-      ],
-      "send_email": [
-        {
-          "name": "EMAIL",
-          "remote": true
-        }
-      ]
-    }
   }
 }
