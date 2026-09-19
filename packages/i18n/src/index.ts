@@ -1,26 +1,25 @@
-import type { TranslationLoader } from "@nanostores/i18n"
 import type {
   ComponentsJSON,
+  TranslationLoader,
   KVNamespaceBinding,
   TranslationKey,
   CustomTranslations,
-  NestedTranslationKeys
+  NestedTranslationKeys,
+  ReadableAtom,
+  WritableAtom
 } from "./types"
 import {
-  useI18n as baseUseI18n,
-  useI18nAsync as baseUseI18nAsync,
+  atom,
   t as baseT,
   tRaw as baseTRaw,
   tArray as baseTArray,
   getRawTranslation,
   currentLocale,
-  useFormat,
-  clearCache,
-  getI18nInstance,
-  getFormatterInstance,
-  initializeI18n
+  initializeI18n,
+  getPluralCategory
 } from "./runtime"
 import { i18n, rimelightI18n, type RimelightI18nOptions, type RimelightI18nPlugins } from "./plugin"
+
 let locales: string[] = ["en"]
 let defaultLocale: string = "en"
 let prefixDefaultLocale: boolean = true
@@ -48,11 +47,8 @@ if (translations && Object.keys(translations).length > 0) {
 }
 
 export {
+  atom,
   currentLocale,
-  useFormat,
-  clearCache,
-  getI18nInstance,
-  getFormatterInstance,
   initializeI18n,
   locales,
   defaultLocale,
@@ -61,10 +57,17 @@ export {
   rimelightI18n,
   baseTRaw as tRaw,
   baseTArray as tArray,
-  getRawTranslation
+  getRawTranslation,
+  getPluralCategory
 }
 export type { RimelightI18nOptions, RimelightI18nPlugins }
-export type { TranslationKey, CustomTranslations, NestedTranslationKeys }
+export type {
+  TranslationKey,
+  CustomTranslations,
+  NestedTranslationKeys,
+  ReadableAtom,
+  WritableAtom
+}
 
 export interface TFunction {
   <K extends string = TranslationKey>(key: K | TranslationKey, params?: Record<string, any>): string
@@ -89,8 +92,6 @@ export const t: TFunction = Object.assign(
     array: baseTArray
   }
 )
-
-export { baseUseI18n as useI18n, baseUseI18nAsync as useI18nAsync }
 
 export function getLocale(): string {
   return currentLocale.get() || defaultLocale || "en"
@@ -118,7 +119,7 @@ export function getOgLocale(): string {
   const ogMap: Record<string, string> = {
     en: "en_US",
     pt: "pt_BR",
-    es: "es_ES"
+    es: "es-ES"
   }
   return ogMap[loc] || `${loc}_${loc.toUpperCase()}`
 }
@@ -247,5 +248,3 @@ export function createTranslationLoader(
     return Object.assign({}, ...results)
   }
 }
-
-export { getPluralCategory } from "./runtime"

@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vite-plus/test"
-import { flatten, unflatten, extractKeys, findMissingKeys } from "../src/utils"
+import {
+  flatten,
+  unflatten,
+  extractKeys,
+  findMissingKeys,
+  findStaleKeys,
+  verifyTranslations,
+  formatAuditReport,
+  fixTranslations
+} from "../src/utils"
 import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime"
 import { getHtmlLang, getOgLocale, getRelativeLocaleUrl, getLanguageAlternates } from "../src/index"
 
@@ -34,7 +43,53 @@ describe("translation dictionary utils", () => {
 
   it("finds missing keys between dictionaries", () => {
     const missing = findMissingKeys(source, { hero: { title: "Hello" } })
-    expect(missing).toEqual(["hero.subtitle", "nav"])
+    expect(missing).toEqual(["hero.subtitle", "nav.home"])
+  })
+
+  it("finds stale keys between dictionaries", () => {
+    const stale = findStaleKeys(source, {
+      hero: { title: "Hello", old_cta: "Legacy" },
+      legacy_nav: { item: "Old" }
+    })
+    expect(stale).toEqual(["hero.old_cta", "legacy_nav.item"])
+  })
+
+  it("runs full translation verification and formats audit reports", () => {
+    const translations = {
+      en: {
+        nav: { home: "Home", welcome: "Hello {name}" },
+        footer: { text: "© 2026" }
+      },
+      pt: {
+        nav: { home: "Início", welcome: "Olá {name}", old_item: "Velho" },
+        footer: { text: "" }
+      }
+    }
+
+    const report = verifyTranslations(translations, { defaultLocale: "en" })
+    expect(report.isValid).toBe(false)
+    expect(report.staleKeys["pt"]).toEqual(["nav.old_item"])
+    expect(report.emptyKeys["pt"]).toEqual(["footer.text"])
+
+    const formatted = formatAuditReport(report)
+    expect(formatted).toContain("Translation verification failed")
+    expect(formatted).toContain("nav.old_item")
+  })
+
+  it("auto-fixes translations by pruning stale keys and filling missing keys", () => {
+    const translations = {
+      en: {
+        nav: { home: "Home", contact: "Contact" }
+      },
+      pt: {
+        nav: { home: "Início", stale_button: "Remover" }
+      }
+    }
+
+    const fixed = fixTranslations(translations, "en")
+    expect((fixed["pt"]?.["nav"] as any)?.["home"]).toBe("Início")
+    expect((fixed["pt"]?.["nav"] as any)?.["contact"]).toBe("Contact")
+    expect((fixed["pt"]?.["nav"] as any)?.["stale_button"]).toBeUndefined()
   })
 })
 

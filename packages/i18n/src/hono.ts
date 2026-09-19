@@ -1,13 +1,36 @@
-import { setKVBinding } from "./index"
-import { env } from "cloudflare:workers"
-import { locales, defaultLocale, prefixDefaultLocale } from "virtual:rimelight-i18n-config"
+import {
+  locales as configLocales,
+  defaultLocale as configDefaultLocale,
+  prefixDefaultLocale as configPrefixDefaultLocale,
+  setKVBinding
+} from "./index"
 import { currentLocale } from "./runtime"
 
-const SUPPORTED_LOCALES = new Set(locales)
-const DEFAULT_LOCALE = defaultLocale
+export interface HonoI18nOptions {
+  /**
+   * List of supported locale codes. Defaults to configured Vite plugin locales.
+   */
+  locales?: string[]
+  /**
+   * The default fallback locale code. Defaults to configured Vite plugin defaultLocale.
+   */
+  defaultLocale?: string
+  /**
+   * Whether the default locale is prefixed in URLs. Defaults to configured Vite plugin setting.
+   */
+  prefixDefaultLocale?: boolean
+  /**
+   * The Cloudflare KV namespace binding name (default: "TRANSLATIONS_KV").
+   */
+  kvBinding?: string
+}
 
-function getPreferredLocale(acceptLanguage: string | null): string {
-  if (!acceptLanguage) return DEFAULT_LOCALE
+function getPreferredLocale(
+  acceptLanguage: string | null,
+  supportedLocales: Set<string>,
+  defaultLocale: string
+): string {
+  if (!acceptLanguage) return defaultLocale
 
   const parsed = acceptLanguage
     .split(",")
@@ -28,32 +51,37 @@ function getPreferredLocale(acceptLanguage: string | null): string {
     .toSorted((a, b) => b.q - a.q)
 
   for (const item of parsed) {
-    if (SUPPORTED_LOCALES.has(item.code)) {
+    if (supportedLocales.has(item.code)) {
       return item.code
     }
     const base: string = item.base
-    if (SUPPORTED_LOCALES.has(base)) {
+    if (supportedLocales.has(base)) {
       return base
     }
   }
 
-  return DEFAULT_LOCALE
+  return defaultLocale
 }
 
 /**
  * Hono middleware for Rimelight i18n. Handles locale routing, redirection, currentLocale store
  * updates, and Cloudflare KV binding setup.
  */
-export function i18n() {
+export function i18n(options?: HonoI18nOptions) {
+  const supportedLocales = new Set(options?.locales ?? configLocales)
+  const defaultLocale = options?.defaultLocale ?? configDefaultLocale
+  const prefixDefaultLocale = options?.prefixDefaultLocale ?? configPrefixDefaultLocale
+  const kvKey = options?.kvBinding ?? "TRANSLATIONS_KV"
+
   return async (c: any, next: any) => {
-    // 1. Initialize KV if available in worker environment
+    // 1. Initialize KV if available in Hono context or worker env
     try {
-      const kv = Reflect.get(env, "TRANSLATIONS_KV") || c.env?.TRANSLATIONS_KV
+      const kv = c.env?.[kvKey]
       if (kv) {
         setKVBinding(kv)
       }
     } catch {
-      // Ignore if not running in Cloudflare worker
+      // Ignore if env is not accessible
     }
 
     // 2. Execute routing & locale detection
@@ -65,28 +93,28 @@ export function i18n() {
       const paramLocale = c.req.param("locale")
       const firstSegment = pathname.split("/").find(Boolean)
       const activeLocale =
-        (paramLocale && SUPPORTED_LOCALES.has(paramLocale) ? paramLocale : null) ||
-        (firstSegment && SUPPORTED_LOCALES.has(firstSegment) ? firstSegment : null) ||
-        DEFAULT_LOCALE
+        (paramLocale && supportedLocales.has(paramLocale) ? paramLocale : null) ||
+        (firstSegment && supportedLocales.has(firstSegment) ? firstSegment : null) ||
+        defaultLocale
       currentLocale.set(activeLocale)
       return next()
     }
 
-    // Skip API routes, internal Astro routes, and static files with extensions
+    // Skip API routes, internal framework routes (Astro, SvelteKit, Next, Nuxt), and static assets
     if (pathname.startsWith("/api") || pathname.startsWith("/_") || pathname.includes(".")) {
       return next()
     }
 
     const firstSegment = pathname.split("/").find(Boolean)
-    const firstIsLocale = firstSegment !== undefined && SUPPORTED_LOCALES.has(firstSegment)
+    const firstIsLocale = firstSegment !== undefined && supportedLocales.has(firstSegment)
 
     if (prefixDefaultLocale) {
       // All locales are prefixed (e.g. /en/about, /pt/about)
       const paramLocale = c.req.param("locale")
       const activeLocale =
-        (paramLocale && SUPPORTED_LOCALES.has(paramLocale) ? paramLocale : null) ||
+        (paramLocale && supportedLocales.has(paramLocale) ? paramLocale : null) ||
         (firstIsLocale ? firstSegment! : null) ||
-        DEFAULT_LOCALE
+        defaultLocale
 
       currentLocale.set(activeLocale)
 
@@ -97,17 +125,17 @@ export function i18n() {
 
       // Otherwise redirect to preferred locale
       const acceptLanguage = c.req.header("accept-language") || null
-      const locale = getPreferredLocale(acceptLanguage)
+      const locale = getPreferredLocale(acceptLanguage, supportedLocales, defaultLocale)
       currentLocale.set(locale)
       const targetPath = `/${locale}${pathname}${url.search}`
       return c.redirect(targetPath, 302)
     } else {
       // Only non-default locales are prefixed (e.g. /about, /pt/about)
       if (firstIsLocale) {
-        if (firstSegment === DEFAULT_LOCALE) {
+        if (firstSegment === defaultLocale) {
           // Strip the redundant default-locale prefix: /en/about → /about
-          const rest = pathname.slice(DEFAULT_LOCALE.length + 1) || "/"
-          currentLocale.set(DEFAULT_LOCALE)
+          const rest = pathname.slice(defaultLocale.length + 1) || "/"
+          currentLocale.set(defaultLocale)
           return c.redirect(`${rest}${url.search}`, 302)
         }
         // Non-default locale — serve as-is
@@ -116,7 +144,7 @@ export function i18n() {
       }
 
       // No locale prefix → default locale, serve as-is
-      currentLocale.set(DEFAULT_LOCALE)
+      currentLocale.set(defaultLocale)
       return next()
     }
   }

@@ -1,9 +1,47 @@
-import type { ComponentsJSON } from "@nanostores/i18n"
+export type ComponentsJSON = Record<string, Record<string, any>>
+export type Translations = Record<string, any>
+export type TranslationLoader = (
+  locale: string,
+  components: string[]
+) => Promise<ComponentsJSON | Record<string, any>>
 
-export type { ComponentsJSON }
+export interface ReadableAtom<T> {
+  get(): T
+  subscribe(listener: (value: T) => void): () => void
+  listen(listener: (value: T) => void): () => void
+}
+
+export interface WritableAtom<T> extends ReadableAtom<T> {
+  set(value: T): void
+}
 
 export interface FlattenedTranslations {
   [key: string]: string
+}
+
+export interface PlaceholderMismatch {
+  key: string
+  basePlaceholders: string[]
+  targetPlaceholders: string[]
+}
+
+export interface TranslationAuditReport {
+  isValid: boolean
+  totalKeys: number
+  locales: string[]
+  defaultLocale: string
+  missingKeys: Record<string, string[]>
+  staleKeys: Record<string, string[]>
+  emptyKeys: Record<string, string[]>
+  placeholderMismatches: Record<string, PlaceholderMismatch[]>
+  stats: {
+    completion: Record<string, string>
+  }
+}
+
+export interface VerifyTranslationsOptions {
+  defaultLocale?: string
+  allowEmpty?: boolean
 }
 
 export interface LocaleFile {

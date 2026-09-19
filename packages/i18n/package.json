@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/i18n",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "private": false,
   "description": "Rimelight Entertainment's Internationalization Package",
   "homepage": "https://rimelight.com/docs",
@@ -14,6 +14,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
+  },
+  "bin": {
+    "rimelight-i18n": "./dist/cli.mjs"
   },
   "files": [
     "dist"
@@ -43,6 +46,10 @@
     "./utils": {
       "types": "./dist/utils.d.mts",
       "import": "./dist/utils.mjs"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.mts",
+      "import": "./dist/cli.mjs"
     }
   },
   "publishConfig": {
@@ -52,10 +59,6 @@
     "build": "vp pack",
     "prepack": "pnpm run build",
     "check": "vp check --fix"
-  },
-  "dependencies": {
-    "@nanostores/i18n": "1.3.3",
-    "nanostores": "1.5.3"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",

@@ -42,7 +42,7 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
 
   it("extracts and diffs translation keys across languages", () => {
     const missing = findMissingKeys(translations.en, translations.fr)
-    expect(missing).toContain("messages")
+    expect(missing).toContain("messages.welcome")
     expect(missing).toContain("nav.nested")
   })
 

@@ -1,65 +1,46 @@
-import { createI18n, formatter, translationsLoading } from "@nanostores/i18n"
-import type {
-  TranslationLoader,
-  Translations,
-  I18n,
-  Components,
-  ComponentsJSON
-} from "@nanostores/i18n"
-import { atom } from "nanostores"
+import type { TranslationLoader, WritableAtom } from "./types"
+
+/**
+ * Creates a lightweight reactive atom store compatible with Nanostores / Svelte store contracts.
+ */
+export function atom<T>(initialValue: T): WritableAtom<T> {
+  let value = initialValue
+  const listeners = new Set<(val: T) => void>()
+
+  return {
+    get: (): T => value,
+    set: (nextValue: T): void => {
+      if (value !== nextValue) {
+        value = nextValue
+        for (const listener of listeners) {
+          listener(value)
+        }
+      }
+    },
+    subscribe: (listener: (val: T) => void): (() => void) => {
+      listeners.add(listener)
+      listener(value)
+      return () => {
+        listeners.delete(listener)
+      }
+    },
+    listen: (listener: (val: T) => void): (() => void) => {
+      listeners.add(listener)
+      return () => {
+        listeners.delete(listener)
+      }
+    }
+  }
+}
 
 /**
  * A reactive store containing the current locale code. Set by middleware on each request, or
  * manually via `currentLocale.set(locale)`.
  */
-export const currentLocale = atom("")
+export const currentLocale: WritableAtom<string> = atom<string>("")
 
-type I18nInstance = I18n
-type FormatterInstance = ReturnType<typeof formatter>
-
-let i18nInstance: I18nInstance | undefined
-let formatterInstance: FormatterInstance | undefined
 let baseLocaleDefault: string = "en"
 let rawTranslationsDict: Record<string, Record<string, any>> = {}
-
-function throwNotInitialized(): never {
-  throw new Error("i18n not initialized. Call initializeI18n first.")
-}
-
-/**
- * Wraps a TranslationLoader so that the returned object is guaranteed to contain a key for every
- * requested component.
- *
- * The nanostores i18n library uses the keys of the object returned from `get` to clear its internal
- * "requested" set. If a requested component is missing from the result (e.g. because the backend
- * has no translations for it in the given locale yet), the internal loading atom is never set back
- * to `false`, which causes useI18nAsync / translationsLoading to hang forever.
- *
- * This wrapper normalises the loader output so missing components are filled in with empty
- * translation objects, falling back to the base translations defined at the call site.
- */
-function wrapLoader(loader: TranslationLoader): TranslationLoader {
-  return async (code, components): Promise<ComponentsJSON> => {
-    const raw = await loader(code, components)
-    const normalised: ComponentsJSON = Array.isArray(raw)
-      ? Object.assign({} as ComponentsJSON, ...raw)
-      : { ...raw }
-    for (const component of components) {
-      if (!(component in normalised)) normalised[component] = {}
-    }
-    return normalised
-  }
-}
-
-interface StoreWithGet {
-  get: () => unknown
-}
-
-function isStoreWithGet(obj: unknown): obj is StoreWithGet {
-  if (typeof obj !== "object" || obj === null) return false
-  const getFn = Reflect.get(obj, "get")
-  return typeof getFn === "function"
-}
 
 function isObjectRecord(obj: unknown): obj is Record<string, any> {
   return typeof obj === "object" && obj !== null
@@ -75,9 +56,9 @@ export interface InitializeI18nOptions {
    */
   translations: Record<string, Record<string, any>>
   /**
-   * Optional dynamic loader called when a locale is not in cache.
+   * Optional dynamic loader called when a locale or component is not in cache.
    */
-  get?: TranslationLoader
+  get?: TranslationLoader | undefined
 }
 
 /**
@@ -85,71 +66,19 @@ export interface InitializeI18nOptions {
  * integration virtual module does this automatically).
  */
 export function initializeI18n(options: InitializeI18nOptions): void {
-  const { defaultLocale, translations, get } = options
+  const { defaultLocale, translations } = options
   baseLocaleDefault = defaultLocale
-  rawTranslationsDict = translations || {}
+  rawTranslationsDict = translations ? { ...translations } : {}
 
-  if (!i18nInstance) {
+  if (!currentLocale.get()) {
     currentLocale.set(defaultLocale)
-
-    // Convert plain JSON dictionaries to nanostores atoms expected by nanostores/i18n cache
-    const formattedCache: Record<string, Components> = {}
-    for (const [locale, components] of Object.entries(translations)) {
-      formattedCache[locale] = {}
-      for (const [compName, compBody] of Object.entries(components)) {
-        let bodyObj: Record<string, any> = {}
-        if (isObjectRecord(compBody)) {
-          bodyObj = compBody
-        } else if (isStoreWithGet(compBody)) {
-          const res: unknown = compBody.get()
-          if (isObjectRecord(res)) {
-            bodyObj = res
-          }
-        }
-        formattedCache[locale][compName] = atom(bodyObj)
-      }
-    }
-
-    i18nInstance = createI18n(currentLocale, {
-      baseLocale: defaultLocale,
-      get: wrapLoader(get ?? (async (): Promise<ComponentsJSON> => ({}))),
-      cache: formattedCache,
-      isSSR: true
-    })
   }
-  formatterInstance = formatter(currentLocale)
 }
 
 /**
- * Returns the underlying nanostores/i18n instance. Throws if not initialized.
+ * Helper to safely resolve nested dot-notation and array indices while guarding against prototype
+ * pollution.
  */
-export function getI18nInstance(): I18nInstance {
-  if (!i18nInstance) throwNotInitialized()
-  return i18nInstance
-}
-
-/**
- * Returns the formatter instance. Throws if not initialized.
- */
-export function getFormatterInstance(): FormatterInstance {
-  if (!formatterInstance) throwNotInitialized()
-  return formatterInstance
-}
-
-/**
- * Returns a Formatter object for the current locale with methods for formatting numbers, dates, and
- * relative times using the native Intl API.
- */
-export function useFormat(): ReturnType<FormatterInstance["get"]> {
-  return getFormatterInstance().get()
-}
-
-/**
- * Helper to safely extract raw translation JSON object from cache regardless of whether it is an
- * atom or object. Checks exact locale code (e.g. 'zh-CN'), base language code (e.g. 'zh'), and
- * default locale fallback.
- */
-
 function resolvePath(obj: unknown, path: string): unknown {
   if (obj == null || typeof obj !== "object") return undefined
   if (Object.prototype.hasOwnProperty.call(obj, path)) {
@@ -164,6 +93,9 @@ function resolvePath(obj: unknown, path: string): unknown {
       return undefined
     }
     const seg = segments[i]!
+    if (seg === "__proto__" || seg === "constructor" || seg === "prototype") {
+      return undefined
+    }
     if (
       Object.prototype.hasOwnProperty.call(current, seg) ||
       (Array.isArray(current) && seg in current)
@@ -181,33 +113,53 @@ function resolvePath(obj: unknown, path: string): unknown {
   return current
 }
 
+function getLocaleCandidateChain(activeLocale: string, defaultLocale: string): string[] {
+  const chain: string[] = []
+
+  function addCandidates(code: string) {
+    if (!code) return
+    const exact = code
+    const normalized = code.toLowerCase()
+    const baseLang = normalized.split("-")[0] ?? normalized
+
+    if (!chain.includes(exact)) chain.push(exact)
+    if (!chain.includes(normalized)) chain.push(normalized)
+    if (!chain.includes(baseLang)) chain.push(baseLang)
+  }
+
+  addCandidates(activeLocale)
+  addCandidates(defaultLocale)
+  addCandidates("en")
+
+  return chain
+}
+
 function getCachedComponent(
   locale: string,
   componentName: string
 ): Record<string, any> | undefined {
-  const normalizedLocale = locale.toLowerCase()
-  const baseLanguage = normalizedLocale.split("-")[0] ?? normalizedLocale
-
-  const candidates = [locale, normalizedLocale, baseLanguage, baseLocaleDefault]
+  const candidates = getLocaleCandidateChain(locale, baseLocaleDefault)
 
   for (const code of candidates) {
     const rawComp: unknown = rawTranslationsDict[code]?.[componentName]
-    if (isStoreWithGet(rawComp)) {
-      const res: unknown = rawComp.get()
-      if (isObjectRecord(res)) return res
-    } else if (isObjectRecord(rawComp)) {
+    if (isObjectRecord(rawComp)) {
       return rawComp
     }
   }
 
-  if (!i18nInstance) return undefined
+  return undefined
+}
+
+function resolveKeyInLocales(locale: string, componentName: string, keyName: string): unknown {
+  const candidates = getLocaleCandidateChain(locale, baseLocaleDefault)
+
   for (const code of candidates) {
-    const rawComp: unknown = i18nInstance.cache[code]?.[componentName]
-    if (isStoreWithGet(rawComp)) {
-      const res: unknown = rawComp.get()
-      if (isObjectRecord(res)) return res
-    } else if (isObjectRecord(rawComp)) {
-      return rawComp
+    const rawComp: unknown = rawTranslationsDict[code]?.[componentName]
+    if (isObjectRecord(rawComp)) {
+      const val = resolvePath(rawComp, keyName)
+      if (val !== undefined) {
+        return val
+      }
     }
   }
 
@@ -229,13 +181,7 @@ export function getRawTranslation(key: string): unknown {
   const componentName = key.slice(0, dotIndex)
   const keyName = key.slice(dotIndex + 1)
 
-  const componentDict =
-    getCachedComponent(activeLocale, componentName) ??
-    getCachedComponent(baseLocaleDefault, componentName)
-
-  if (!componentDict) return undefined
-
-  return resolvePath(componentDict, keyName)
+  return resolveKeyInLocales(activeLocale, componentName, keyName)
 }
 
 /**
@@ -262,71 +208,6 @@ export function tArray<T = string>(key: string, fallback: T[] = []): T[] {
 }
 
 /**
- * Returns the translated strings for a component in the current locale. Falls back to defaultLocale
- * loaded translations or `baseTranslations` if provided.
- */
-export interface ComponentMessages {
-  [key: string]: any
-}
-
-export function useI18n(componentName: string): ComponentMessages
-export function useI18n<Body extends Translations>(
-  componentName: string,
-  baseTranslations: Body
-): ComponentMessages & Body
-export function useI18n(componentName: string, baseTranslations?: Translations): ComponentMessages {
-  const i18n = getI18nInstance()
-  const activeLocale = currentLocale.get() || baseLocaleDefault
-  const fallbackDict: Record<string, any> = isObjectRecord(baseTranslations) ? baseTranslations : {}
-  const baseDict =
-    getCachedComponent(activeLocale, componentName) ??
-    getCachedComponent(baseLocaleDefault, componentName) ??
-    fallbackDict
-
-  const store = i18n(componentName, baseDict)
-  const targetObj = store.get()
-
-  return new Proxy(targetObj, {
-    get(target: Record<string, any>, prop: string | symbol): any {
-      if (typeof prop === "symbol" || prop in Object.prototype) {
-        const val: unknown = Reflect.get(target, prop)
-        return typeof val === "string" ? val : ""
-      }
-      const val = target[prop] ?? baseDict[prop]
-      return val ?? prop
-    }
-  })
-}
-
-/**
- * Async version of useI18n that waits for translations to finish loading.
- */
-export async function useI18nAsync(componentName: string): Promise<ComponentMessages>
-export async function useI18nAsync<Body extends Translations>(
-  componentName: string,
-  baseTranslations: Body
-): Promise<ComponentMessages & Body>
-export async function useI18nAsync(
-  componentName: string,
-  baseTranslations?: Translations
-): Promise<ComponentMessages> {
-  const i18n = getI18nInstance()
-  const activeLocale = currentLocale.get() || baseLocaleDefault
-  const cachedActive = getCachedComponent(activeLocale, componentName)
-  const cachedDefault = getCachedComponent(baseLocaleDefault, componentName)
-  let baseDict: Record<string, any> = cachedActive ?? cachedDefault ?? {}
-  if (!cachedActive && !cachedDefault && isObjectRecord(baseTranslations)) {
-    baseDict = baseTranslations
-  }
-
-  const store = i18n(componentName, baseDict)
-  const unsubscribe = store.listen(() => {})
-  await translationsLoading(i18n)
-  unsubscribe()
-  return store.get()
-}
-
-/**
  * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")` or
  * nested/array paths like `t("page_resume.experiences.0.role")`).
  */
@@ -339,12 +220,7 @@ export function t(key: string, params?: Record<string, any>): string {
   const keyName = key.slice(dotIndex + 1)
 
   const activeLocale = currentLocale.get() || baseLocaleDefault
-  const componentDict =
-    getCachedComponent(activeLocale, componentName) ??
-    getCachedComponent(baseLocaleDefault, componentName) ??
-    {}
-
-  let value = resolvePath(componentDict, keyName) ?? key
+  let value = resolveKeyInLocales(activeLocale, componentName, keyName) ?? key
 
   // Pluralization support if count parameter is provided and translation value is a plural object
   if (
@@ -387,19 +263,4 @@ t.array = tArray
  */
 export function getPluralCategory(count: number, locale: string = "en"): Intl.LDMLPluralRule {
   return new Intl.PluralRules(locale).select(count)
-}
-
-/**
- * Clears the translation cache.
- *
- * @param locale - If provided, clears only that locale's cache. Otherwise clears all.
- */
-export function clearCache(locale?: string): void {
-  if (!i18nInstance) throwNotInitialized()
-  const cache = i18nInstance.cache
-  if (locale) {
-    cache[locale] = {}
-  } else {
-    for (const key in cache) cache[key] = {}
-  }
 }

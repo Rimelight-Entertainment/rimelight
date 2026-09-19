@@ -86,9 +86,9 @@ export function buildRobotsMetaContent(opts: {
  * Build dynamic Open Graph image URL fallback when no explicit image is provided.
  */
 export function buildDefaultOgImageUrl(opts: {
-  title?: string
-  description?: string
-  siteName?: string
+  title?: string | undefined
+  description?: string | undefined
+  siteName?: string | undefined
 }): string {
   const params = new URLSearchParams()
   const title = opts.title || opts.siteName
