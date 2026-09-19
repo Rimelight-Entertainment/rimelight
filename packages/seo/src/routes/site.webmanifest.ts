@@ -16,6 +16,7 @@ export const GET: APIRoute = () => {
     backgroundColor:
       manifestOpts.backgroundColor || siteConfig.branding?.colors?.backgroundColor || "#ffffff",
     themeColor: manifestOpts.themeColor || siteConfig.branding?.colors?.themeColor || "#ffffff",
+    icons: manifestOpts.icons || siteConfig.branding?.icons,
     ...manifestOpts
   })
 

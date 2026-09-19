@@ -129,15 +129,25 @@ export interface SiteConfig {
   branding: {
     logo: {
       alt: string
+      src?: string
+      [key: string]: unknown
     }
-    favicon?: {
-      svg: string
-    }
+    favicon?:
+      | {
+          svg?: string
+          ico?: string
+          png?: string
+          [key: string]: string | undefined
+        }
+      | string
+    appleTouchIcon?: string
+    icons?: WebManifestIcon[]
     icon?: string
     colors: {
       themeColor: string
       backgroundColor: string
     }
+    [key: string]: unknown
   }
   seo: {
     titleTemplate: string
@@ -223,9 +233,13 @@ export interface HeadProps {
    */
   languageAlternates?: Array<{ hreflang: string; href: string }>
   /**
-   * Custom favicon SVG or image path (overrides config.branding.favicon.svg)
+   * Custom favicon SVG or image path (overrides config.branding.favicon)
    */
   favicon?: string
+  /**
+   * Custom Apple Touch Icon path or CDN URL (overrides config.branding.appleTouchIcon)
+   */
+  appleTouchIcon?: string
   /**
    * Site configuration for defaults
    */

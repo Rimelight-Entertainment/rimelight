@@ -38,4 +38,28 @@ describe("buildWebManifest", () => {
     expect(manifest.background_color).toBe("#111111")
     expect(manifest.shortcuts).toHaveLength(1)
   })
+
+  it("supports remote CDN icon URLs", () => {
+    const manifest = buildWebManifest({
+      name: "CDN App",
+      icons: [
+        {
+          src: "https://cdn.example.com/icons/icon-192.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any"
+        },
+        {
+          src: "https://cdn.example.com/icons/icon-512.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "maskable"
+        }
+      ]
+    })
+
+    expect(manifest.icons).toHaveLength(2)
+    expect(manifest.icons?.[0]?.src).toBe("https://cdn.example.com/icons/icon-192.png")
+    expect(manifest.icons?.[1]?.src).toBe("https://cdn.example.com/icons/icon-512.png")
+  })
 })

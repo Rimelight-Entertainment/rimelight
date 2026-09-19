@@ -358,11 +358,21 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): AstroIntegratio
                   if (id === "virtual:rimelight-seo/corpus") {
                     return "\0virtual:rimelight-seo/corpus"
                   }
+                  if (id === "virtual:rimelight-seo/assets") {
+                    return "\0virtual:rimelight-seo/assets"
+                  }
                   return null
                 },
                 load(id) {
                   if (id === "\0virtual:rimelight-seo/options") {
                     return `export default ${JSON.stringify(options)};`
+                  }
+                  if (id === "\0virtual:rimelight-seo/assets") {
+                    const b64 = masterIconBuffer ? masterIconBuffer.toString("base64") : null
+                    return `const b64 = ${JSON.stringify(b64)};
+export const masterIconBuffer = b64 ? (typeof Buffer !== "undefined" ? Buffer.from(b64, "base64") : Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))) : null;
+export const isSvg = ${JSON.stringify(isSvg)};
+export const backgroundColor = ${JSON.stringify(bgColor)};`
                   }
                   if (id === "\0virtual:rimelight/seo") {
                     return `export const siteConfig = ${JSON.stringify(normalizedSiteConfig)};

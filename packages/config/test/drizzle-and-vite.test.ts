@@ -1,13 +1,7 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vite-plus/test"
 import path from "node:path"
 import { rimelightDrizzleConfig } from "../drizzle/index"
-import {
-  rimelightConfig,
-  rimelightPackConfig,
-  findSourceEntries,
-  findPackageExternals,
-  verifyPackageExports
-} from "../vite-plus/base"
+import { rimelightConfig, rimelightPackConfig, findSourceEntries } from "../vite-plus/base"
 
 describe("@rimelight/config drizzle and vite-plus helpers", () => {
   describe("rimelightDrizzleConfig", () => {
@@ -37,7 +31,7 @@ describe("@rimelight/config drizzle and vite-plus helpers", () => {
       expect(config.fmt?.trailingComma).toBe("none")
       expect(config.lint?.options?.typeCheck).toBe(true)
       expect(config.test?.environment).toBe("node")
-      expect(config.run?.tasks?.test?.command).toBe("vp test")
+      expect((config.run?.tasks?.["test"] as any)?.command).toBe("vp test")
     })
   })
 

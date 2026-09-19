@@ -23,6 +23,7 @@ const {
   languageAlternates = [],
   config,
   favicon: customFavicon,
+  appleTouchIcon: customAppleTouchIcon,
   charset = 'utf-8',
   viewport = 'width=device-width, initial-scale=1',
   rssFeed,
@@ -41,12 +42,17 @@ const siteName = config?.name || 'Rimelight'
 const siteDescription = config?.description || ''
 const ogImageFallback = config?.seo?.ogImageFallback || config?.ogImage || '/og.png'
 const themeColor = config?.branding?.colors?.themeColor
-const favicon = customFavicon || config?.branding?.favicon?.svg || '/favicon.svg'
+
+const rawFavicon = customFavicon || (typeof config?.branding?.favicon === 'string' ? config.branding.favicon : config?.branding?.favicon?.svg) || config?.branding?.icon || '/favicon.svg'
+const rawFaviconIco = typeof config?.branding?.favicon === 'object' ? config?.branding?.favicon?.ico : undefined
+const favicon = rawFavicon
 const faviconType = favicon.endsWith('.ico')
   ? 'image/x-icon'
   : favicon.endsWith('.png')
     ? 'image/png'
     : 'image/svg+xml'
+
+const appleTouchIcon = customAppleTouchIcon || config?.branding?.appleTouchIcon || '/apple-touch-icon.png'
 const twitterHandle = config?.seo?.authorHandle
 const titleTemplate = config?.seo?.titleTemplate || `%s | ${siteName}`
 
@@ -171,8 +177,8 @@ if (!resolvedTwitter.card) {
 
 <!-- Icons & Manifest -->
 <link rel="icon" type={faviconType} href={favicon} />
-{!customFavicon && <link rel="icon" href="/favicon.ico" sizes="32x32" />}
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+{rawFaviconIco ? <link rel="icon" href={rawFaviconIco} sizes="32x32" /> : (!customFavicon && <link rel="icon" href="/favicon.ico" sizes="32x32" />)}
+<link rel="apple-touch-icon" href={appleTouchIcon} />
 <link rel="manifest" href="/site.webmanifest" />
 
 <!-- Theme Metadata -->

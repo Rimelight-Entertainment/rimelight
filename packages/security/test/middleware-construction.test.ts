@@ -1,10 +1,5 @@
-import { describe, it, expect, vi } from "vitest"
-import {
-  construction,
-  isConstructionGuest,
-  signInConstructionGuest,
-  CONSTRUCTION_GUEST_COOKIE
-} from "../src/middleware/construction"
+import { describe, it, expect, vi } from "vite-plus/test"
+import { construction, CONSTRUCTION_GUEST_COOKIE } from "../src/middleware/construction"
 
 describe("@rimelight/security construction middleware", () => {
   const passphrase = "secret-passphrase-999"
@@ -56,7 +51,7 @@ describe("@rimelight/security construction middleware", () => {
     const ctx = createMockContext({ mode: "false" })
     const next = vi.fn().mockResolvedValue("next-called")
 
-    const res = await middleware(ctx, next)
+    await middleware(ctx, next)
     expect(next).toHaveBeenCalled()
   })
 

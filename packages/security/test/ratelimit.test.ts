@@ -82,7 +82,7 @@ describe("Rate Limit Middleware", () => {
       nextCalled = true
     }
 
-    const response = await middleware(ctx, next)
+    await middleware(ctx, next)
     expect(nextCalled).toBe(false)
     expect(limitMock).toHaveBeenCalledWith({ key: "9.9.9.9" })
     expect(jsonMock).toHaveBeenCalledWith(

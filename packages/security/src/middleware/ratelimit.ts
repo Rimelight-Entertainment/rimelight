@@ -58,7 +58,7 @@ export const ratelimit = (options: RateLimitOptions = {}) => {
     }
   } = options
 
-  return async (c: any, next: () => Promise<any> | any): Promise<Response | any> => {
+  return async (c: any, next: () => Promise<any>): Promise<any> => {
     const path = c?.req?.path || ""
 
     // 1. Check if the current request matches the rate-limited routes

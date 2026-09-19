@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi } from "vite-plus/test"
 import {
   cacheRulesPreset,
   fontsPreset,
@@ -127,7 +127,7 @@ describe("@rimelight/config astro presets", () => {
       await config.integrations[0].hooks["astro:config:setup"]({ updateConfig })
 
       expect(updateConfig).toHaveBeenCalled()
-      const callArgs = updateConfig.mock.calls[0][0]
+      const callArgs = updateConfig.mock.calls?.[0]?.[0]
       expect(callArgs).toHaveProperty("integrations")
       expect(callArgs).toHaveProperty("vite")
     })

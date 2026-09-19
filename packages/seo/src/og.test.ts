@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vite-plus/test"
 import { defaultOgLayout, NOTO_SANS } from "./og"
 
 describe("@rimelight/seo defaultOgLayout", () => {
