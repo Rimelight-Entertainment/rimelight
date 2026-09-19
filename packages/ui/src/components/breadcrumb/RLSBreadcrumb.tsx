@@ -30,7 +30,8 @@ const RLSBreadcrumb: Component<RLSBreadcrumbProps> = (allProps) => {
   const allItems = () => props.items ?? []
   const firstItem = () => allItems()[0]
   const lastItem = () => (allItems().length > 1 ? allItems()[allItems().length - 1] : null)
-  const allMidItems = () => (allItems().length > 2 ? allItems().slice(1, allItems().length - 1) : [])
+  const allMidItems = () =>
+    allItems().length > 2 ? allItems().slice(1, allItems().length - 1) : []
 
   const effectiveMaxMid = () =>
     props.maxVisible !== undefined ? Math.max(0, props.maxVisible - 2) : allMidItems().length
@@ -68,7 +69,9 @@ const RLSBreadcrumb: Component<RLSBreadcrumbProps> = (allProps) => {
         "@type": "ListItem",
         "position": idx + 1,
         "name": item.label,
-        "item": item.href ? new URL(item.href, "https://starter.rimelight.com").toString() : undefined
+        "item": item.href
+          ? new URL(item.href, "https://starter.rimelight.com").toString()
+          : undefined
       }))
     })
 
@@ -85,7 +88,11 @@ const RLSBreadcrumb: Component<RLSBreadcrumbProps> = (allProps) => {
             )}
 
             {hiddenMidCount() > 0 && (
-              <li class="inline-flex items-center gap-1 list-none shrink-0" aria-hidden="true" data-slot="overflow">
+              <li
+                class="inline-flex items-center gap-1 list-none shrink-0"
+                aria-hidden="true"
+                data-slot="overflow"
+              >
                 <span class="text-muted tracking-wider font-medium">…</span>
                 <span class="text-muted text-[11px] font-semibold">+{hiddenMidCount()}</span>
                 {separatorEl()}

@@ -42,12 +42,12 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
       expect(session?.permissions).toEqual(["*"])
     })
 
-    it("handles unauthorized redirect with absolute vs relative URLs properly", () => {
+    it("handles unauthorized redirect with absolute vs relative URLs properly", async () => {
       const unauthAdapter = cfAccessAuth({
         loginUrl: "/auth/login"
       })
       const req = new Request("https://rimelight.com/dashboard/settings")
-      const res = unauthAdapter.handleUnauthorized!(req)
+      const res = await unauthAdapter.handleUnauthorized!(req)
       expect(res.status).toBe(302)
       expect(res.headers.get("Location")).toBe("https://rimelight.com/auth/login")
     })
@@ -74,7 +74,7 @@ describe("@rimelight/auth - Security, Token Tampering and Edge Failure Tests", (
         }
       })
 
-      const session = await customMock.getSession()
+      const session = await customMock.getSession(new Request("https://rimelight.com"))
       expect(session?.userId).toBe("custom-agent-id")
       expect(session?.email).toBe("agent@rimelight.com")
       expect(session?.roles).toEqual(["editor"])

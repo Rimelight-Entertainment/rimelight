@@ -45,6 +45,8 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
 
   const step = () => props.step ?? 1
   const length = () => props.length ?? 5
+  const hoverable = () => !!props.hoverable
+  const clearable = () => !!props.clearable
   const itemSizeClass = () => {
     const map: Record<string, string> = {
       xs: "size-3",

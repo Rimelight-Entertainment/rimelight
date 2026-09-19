@@ -45,12 +45,7 @@ const RLSDashboardNavbar: Component<RLSDashboardNavbarProps> = (allProps) => {
   )
 
   return (
-    <Dynamic
-      component={Tag()}
-      class={resolvedClasses().root}
-      data-slot="root"
-      {...rest}
-    >
+    <Dynamic component={Tag()} class={resolvedClasses().root} data-slot="root" {...rest}>
       <div data-slot="left" class={resolvedClasses().left}>
         <Show when={showToggle() && toggleSide() === "left"}>
           <button

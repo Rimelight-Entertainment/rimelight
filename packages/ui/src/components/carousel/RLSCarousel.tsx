@@ -157,10 +157,7 @@ const RLSCarousel: Component<RLSCarouselProps> = (allProps) => {
   }
 
   const renderSlide = (slide: CarouselSlide) => (
-    <div
-      class={`${resolvedClasses().slide} rla-carousel-slide`}
-      data-slot="slide"
-    >
+    <div class={`${resolvedClasses().slide} rla-carousel-slide`} data-slot="slide">
       <div class="relative w-full aspect-video">
         {slide.imageSrc ? (
           <img
@@ -205,10 +202,7 @@ const RLSCarousel: Component<RLSCarouselProps> = (allProps) => {
               <For each={props.slides}>{(slide) => renderSlide(slide)}</For>
             ) : (
               childrenContent.toArray().map((child) => (
-                <div
-                  class={`${resolvedClasses().slide} rla-carousel-slide`}
-                  data-slot="slide"
-                >
+                <div class={`${resolvedClasses().slide} rla-carousel-slide`} data-slot="slide">
                   {child}
                 </div>
               ))

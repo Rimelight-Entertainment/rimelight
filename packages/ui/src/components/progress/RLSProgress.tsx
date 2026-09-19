@@ -31,12 +31,17 @@ const RLSProgress: Component<RLSProgressProps> = (allProps) => {
 
   const widthClass = () => {
     const pct = Math.round(percentage())
-    return pct === 100 ? "w-full" :
-      pct === 75 ? "w-3/4" :
-      pct === 50 ? "w-1/2" :
-      pct === 25 ? "w-1/4" :
-      pct === 0 ? "w-0" :
-      `w-[${pct}%]`
+    return pct === 100
+      ? "w-full"
+      : pct === 75
+        ? "w-3/4"
+        : pct === 50
+          ? "w-1/2"
+          : pct === 25
+            ? "w-1/4"
+            : pct === 0
+              ? "w-0"
+              : `w-[${pct}%]`
   }
 
   return (
@@ -50,10 +55,7 @@ const RLSProgress: Component<RLSProgressProps> = (allProps) => {
       data-theme={props.theme}
       {...rest}
     >
-      <div
-        class={`${resolvedClasses().indicator} ${widthClass()}`}
-        data-slot="indicator"
-      />
+      <div class={`${resolvedClasses().indicator} ${widthClass()}`} data-slot="indicator" />
       {props.children}
     </div>
   )

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect } from "vite-plus/test"
 import {
   isConstructionGuest,
   signInConstructionGuest,
@@ -13,6 +13,7 @@ describe("@rimelight/auth construction-guest plugin", () => {
       ? { [CONSTRUCTION_GUEST_COOKIE]: cookieValue }
       : {}
     const setCookies: Record<string, { value: string; options?: any }> = {}
+    const resHeaders = new Headers()
 
     return {
       req: {
@@ -29,9 +30,11 @@ describe("@rimelight/auth construction-guest plugin", () => {
         }
       },
       res: {
-        headers: new Headers()
+        headers: resHeaders
       },
-      header: (name: string, value: string) => {},
+      header: (name: string, value: string) => {
+        resHeaders.append(name, value)
+      },
       env: {
         CONSTRUCTION_PASSPHRASE: envPassphrase || passphrase
       },
@@ -65,7 +68,8 @@ describe("@rimelight/auth construction-guest plugin", () => {
     // Capture set-cookie
     const cookieHeader = signCtx.res.headers.get("set-cookie") || ""
     const tokenMatch = cookieHeader.match(new RegExp(`${CONSTRUCTION_GUEST_COOKIE}=([^;]+)`))
-    if (tokenMatch) {
+    expect(tokenMatch).not.toBeNull()
+    if (tokenMatch && tokenMatch[1]) {
       const validToken = tokenMatch[1]
       const validCtx = createMockContext(validToken)
       expect(await isConstructionGuest(validCtx)).toBe(true)

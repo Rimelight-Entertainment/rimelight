@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test"
-import { flatten, unflatten, extractKeys, findMissingKeys } from "../src/utils"
+import { flatten, unflatten, findMissingKeys } from "../src/utils"
 import { initializeI18n, currentLocale, t } from "../src/runtime"
 
 describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety", () => {
@@ -34,10 +34,10 @@ describe("@rimelight/i18n - Deep Keys, Flattener and Prototype Pollution Safety"
       "footer.contact": "Contact Us"
     }
 
-    const unflattened = unflatten(flat)
-    expect(unflattened.nav.home).toBe("Home")
-    expect(unflattened.nav.about).toBe("About")
-    expect(unflattened.footer.contact).toBe("Contact Us")
+    const unflattened = unflatten(flat) as Record<string, Record<string, string>>
+    expect(unflattened["nav"]?.["home"]).toBe("Home")
+    expect(unflattened["nav"]?.["about"]).toBe("About")
+    expect(unflattened["footer"]?.["contact"]).toBe("Contact Us")
   })
 
   it("extracts and diffs translation keys across languages", () => {

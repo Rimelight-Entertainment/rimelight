@@ -20,7 +20,7 @@ type FormatterInstance = ReturnType<typeof formatter>
 let i18nInstance: I18nInstance | undefined
 let formatterInstance: FormatterInstance | undefined
 let baseLocaleDefault: string = "en"
-let rawTranslationsDict: Record<string, Components> = {}
+let rawTranslationsDict: Record<string, Record<string, any>> = {}
 
 function throwNotInitialized(): never {
   throw new Error("i18n not initialized. Call initializeI18n first.")
@@ -59,7 +59,7 @@ export interface InitializeI18nOptions {
   /**
    * Pre-loaded translations keyed by locale then component.
    */
-  translations: Record<string, Components>
+  translations: Record<string, Record<string, any>>
   /**
    * Optional dynamic loader called when a locale is not in cache.
    */

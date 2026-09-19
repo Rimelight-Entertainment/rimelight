@@ -1,9 +1,8 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vite-plus/test"
 import {
   parseJsonc,
   getNested,
   setNested,
-  findArrayItemIndex,
   injectIntoArray,
   injectIntoLines,
   reorderKeys,
@@ -111,7 +110,7 @@ describe("@rimelight/cli diff and synchronization engine", () => {
 
       const diffs = getStructuredLineDiffs(starter, target, "astro.config.ts", "")
       expect(diffs).toHaveLength(1)
-      expect(diffs[0].line).toBe("beta: 2")
+      expect(diffs[0]?.line).toBe("beta: 2")
     })
   })
 })

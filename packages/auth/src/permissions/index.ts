@@ -48,7 +48,7 @@ export function evaluateAccess(
 export type StatementMap = Record<string, readonly string[]>
 
 export interface AccessRole<TStatements extends StatementMap> {
-  statements: Partial<{ [K in keyof TStatements]: TStatements[K][number][] }>
+  statements: Partial<{ [K in keyof TStatements]: (TStatements[K][number] | "*")[] }>
   can(statement: string, action: string): boolean
 }
 
@@ -60,7 +60,7 @@ export class AccessControl<TStatements extends StatementMap> {
   }
 
   newRole(
-    permissions: Partial<{ [K in keyof TStatements]: TStatements[K][number][] }>
+    permissions: Partial<{ [K in keyof TStatements]: (TStatements[K][number] | "*")[] }>
   ): AccessRole<TStatements> {
     const stmts = permissions
     return {

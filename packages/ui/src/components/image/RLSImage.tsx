@@ -236,9 +236,7 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
 
     if (hasColorMode) {
       return (
-        <div
-          class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center"
-        >
+        <div class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center">
           <img
             src={show() ? lightUrl : undefined}
             alt={alt}
@@ -355,9 +353,7 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
                   />
                 </picture>
               ) : hasColorMode ? (
-                <div
-                  class="rla-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden"
-                >
+                <div class="rla-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden">
                   <img
                     src={show() ? lightUrl : undefined}
                     alt={alt}

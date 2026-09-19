@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vite-plus/test"
 import { CMS_MCP_TOOLS, handleCmsMcpRequest } from "../src/mcp/index"
 
 describe("@rimelight/cms Model Context Protocol (MCP) server", () => {

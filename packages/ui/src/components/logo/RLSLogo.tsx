@@ -93,9 +93,7 @@ const RLSLogo: Component<RLSLogoProps> = (allProps) => {
           <Show
             when={!hasAutoMode()}
             fallback={
-              <span
-                class="rla-logo-image size-full flex items-center justify-center shrink-0"
-              >
+              <span class="rla-logo-image size-full flex items-center justify-center shrink-0">
                 <img
                   src={logoInfo().lightSrc || ""}
                   alt={props.alt || ""}

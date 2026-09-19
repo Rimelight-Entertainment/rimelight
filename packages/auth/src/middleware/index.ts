@@ -49,7 +49,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     onForbidden
   } = options
 
-  return async (c: any, next: () => Promise<any> | any): Promise<Response | any> => {
+  return async (c: any, next: () => Promise<any>): Promise<any> => {
     const rawUrl = c?.req?.url || "http://localhost/"
     const url = new URL(rawUrl)
     const pathname = url.pathname

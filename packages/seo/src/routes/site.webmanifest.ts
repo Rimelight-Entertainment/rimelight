@@ -11,8 +11,16 @@ export const GET: APIRoute = () => {
 
   let defaultIcons = manifestOpts.icons || siteConfig.branding?.icons
   if (!defaultIcons) {
-    const faviconUrl = siteConfig.branding?.favicon?.svg || siteConfig.branding?.favicon || siteConfig.branding?.appleTouchIcon
-    if (typeof faviconUrl === "string" && (faviconUrl.startsWith("http://") || faviconUrl.startsWith("https://") || faviconUrl.startsWith("/"))) {
+    const faviconUrl =
+      siteConfig.branding?.favicon?.svg ||
+      siteConfig.branding?.favicon ||
+      siteConfig.branding?.appleTouchIcon
+    if (
+      typeof faviconUrl === "string" &&
+      (faviconUrl.startsWith("http://") ||
+        faviconUrl.startsWith("https://") ||
+        faviconUrl.startsWith("/"))
+    ) {
       const isSvg = faviconUrl.endsWith(".svg")
       defaultIcons = [
         {

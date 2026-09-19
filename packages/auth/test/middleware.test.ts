@@ -78,8 +78,8 @@ describe("Auth Middleware", () => {
     })
 
     expect(nextCalled).toBe(true)
-    expect(state.user?.userId).toBe("user-123")
-    expect(state.session?.userId).toBe("user-123")
+    expect(state["user"]?.userId).toBe("user-123")
+    expect(state["session"]?.userId).toBe("user-123")
   })
 
   it("redirects unauthenticated user accessing protected route", async () => {

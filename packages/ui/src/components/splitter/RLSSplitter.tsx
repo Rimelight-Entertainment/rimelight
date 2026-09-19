@@ -121,8 +121,7 @@ const RLSSplitter: Component<RLSSplitterProps> = (allProps) => {
     setSizes(next)
   }
 
-  const panelClass = (size: number) =>
-    isHorizontal() ? `w-[${size}%]` : `h-[${size}%]`
+  const panelClass = (size: number) => (isHorizontal() ? `w-[${size}%]` : `h-[${size}%]`)
 
   return (
     <div

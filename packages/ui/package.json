@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/ui",
-  "version": "0.0.57",
+  "version": "0.0.58",
   "private": false,
   "description": "Rimelight Entertainment's UI Package",
   "homepage": "https://rimelight.com/docs",
@@ -99,7 +99,7 @@
     }
   },
   "engines": {
-    "node": ">=26.8.2"
+    "node": ">=26.9.0"
   },
   "packageManager": "pnpm@12.4.2"
 }

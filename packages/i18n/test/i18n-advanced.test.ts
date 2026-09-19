@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest"
-import { getPluralCategory, initializeI18n, currentLocale, t, useFormat } from "../src/runtime"
-import { getHtmlLang, getOgLocale, getRelativeLocaleUrl, getLanguageAlternates } from "../src/index"
+import { describe, expect, it } from "vite-plus/test"
+import { getPluralCategory, initializeI18n, currentLocale, t } from "../src/runtime"
+import { getLanguageAlternates } from "../src/index"
 
 describe("@rimelight/i18n advanced runtime & edge cases", () => {
   it("should handle plural categories for multiple languages", () => {

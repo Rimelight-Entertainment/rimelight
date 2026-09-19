@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi } from "vite-plus/test"
 import { normalizeModifier, formatShortcutKeys } from "../src/shortcuts"
 import { atom } from "../src/stores"
 

@@ -1,9 +1,8 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vite-plus/test"
 import {
   normalizeUsername,
   createRestrictedUsernameSet,
-  RESTRICTED_SET,
-  STANDARD_RESTRICTED_GROUPS
+  RESTRICTED_SET
 } from "../src/plugins/reserved-usernames/index"
 
 describe("@rimelight/auth reserved-usernames plugin", () => {
