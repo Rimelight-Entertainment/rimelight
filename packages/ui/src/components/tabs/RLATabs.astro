@@ -31,36 +31,15 @@ const classes = tabsTheme({
 
 const initialValue = value || defaultValue || (items.length > 0 ? (items[0]?.[valueKey] ?? items[0]?.value ?? "0") : "")
 
-// ─── Responsive CSS Item Counter + Native Popover Overflow ───────────────────
+// ─── Native Popover Overflow ───────────────────
 const uid = Math.random().toString(36).substring(2, 9)
-const cName = `rla-tb-${uid}`
 const popoverId = `rla-tb-pop-${uid}`
 
 const effectiveMaxTabs = maxTabs !== undefined ? Math.max(1, maxTabs) : items.length
 const renderedListItems = items.slice(0, effectiveMaxTabs)
 const overflowItems = items.slice(effectiveMaxTabs)
 const baseHiddenCount = overflowItems.length
-const needsOverflow = items.length > 1 && orientation === "horizontal"
-
-// Generate per-instance container-query CSS for horizontal layout
-let instanceCss = ""
-if (needsOverflow && renderedListItems.length > 1) {
-  const maxBreaks = renderedListItems.length - 1
-  for (let i = 0; i < maxBreaks; i++) {
-    const hiddenItems = i + 1
-    const visibleCount = renderedListItems.length - hiddenItems
-    const maxWidth = visibleCount * estimatedTabWidth + 90
-    const hideNthChild = renderedListItems.length - i
-
-    instanceCss += `\n@container ${cName} (max-width: ${maxWidth}px) {`
-    instanceCss += `\n  [data-tb="${uid}"] { --hidden-items: ${hiddenItems}; }`
-    instanceCss += `\n  [data-tb="${uid}"] [data-slot=list] > button.hidable:nth-child(${hideNthChild + 1}) { display: none !important; }`
-    if (baseHiddenCount === 0) {
-      instanceCss += `\n  [data-tb="${uid}"] .rla-tb-overflow-hidden { display: inline-flex !important; }`
-    }
-    instanceCss += `\n}`
-  }
-}
+const needsOverflow = items.length > 1 && orientation === "horizontal" && baseHiddenCount > 0
 ---
 <rla-tabs {...rest} data-orientation={orientation} data-variant={normalizedVariant}>
   <div
@@ -69,19 +48,17 @@ if (needsOverflow && renderedListItems.length > 1) {
     data-tabs-container
     data-value={initialValue}
     data-tb={uid}
-    style={orientation === "horizontal" ? `container-type: inline-size; container-name: ${cName}; --base-hidden: ${baseHiddenCount}; --hidden-items: 0;` : undefined}
   >
     <div class={classes.list} data-slot="list" role="tablist">
-      <div class={classes.indicator} data-slot="indicator" style="display: none;"></div>
+      <div class:list={[classes.indicator, "hidden"]} data-slot="indicator"></div>
       {renderedListItems.map((item, index) => {
         const itemVal = item[valueKey] ?? item.value ?? String(index)
         const itemLabel = item[labelKey] ?? item.label
         const active = itemVal === initialValue
-        const isHidable = needsOverflow && index > 0
         return (
           <button
             type="button"
-            class:list={[classes.trigger, isHidable && "hidable"]}
+            class:list={[classes.trigger]}
             data-slot="trigger"
             role="tab"
             data-value={itemVal}
@@ -119,7 +96,7 @@ if (needsOverflow && renderedListItems.length > 1) {
             aria-label="More tabs"
           >
             <span class="rla-tb-label">
-              +<span class="rla-tb-count"></span> more
+              +{baseHiddenCount} more
             </span>
             <RLAIcon name="chevronDown" class="ml-1 size-3.5 opacity-70" />
           </button>
@@ -180,18 +157,9 @@ if (needsOverflow && renderedListItems.length > 1) {
   </div>
 </rla-tabs>
 
-<style is:inline set:html={instanceCss} />
-
 <style>
   .rla-tb-host {
     width: 100%;
-  }
-  .rla-tb-overflow-hidden {
-    display: none !important;
-  }
-  .rla-tb-count::after {
-    counter-reset: rla-tb-cnt calc(var(--base-hidden, 0) + var(--hidden-items, 0));
-    content: counter(rla-tb-cnt);
   }
   .rla-tb-popover {
     margin: 0;
@@ -201,7 +169,6 @@ if (needsOverflow && renderedListItems.length > 1) {
   .rla-tb-popover:popover-open {
     display: block;
   }
-  /* Show items in popover if they are hidden in list or extra */
   .rla-tb-pop-rendered {
     display: none;
   }

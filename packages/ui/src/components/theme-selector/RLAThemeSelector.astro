@@ -34,9 +34,9 @@ const items = [
         class={classes.select}
       >
         <span slot="leading" class="flex items-center">
-          <RLAIcon name="i-lucide-laptop" class="rla-theme-icon-system size-4" style="display: block;" />
-          <RLAIcon name="i-rl-sun" class="rla-theme-icon-light size-4" style="display: none;" />
-          <RLAIcon name="i-rl-moon" class="rla-theme-icon-dark size-4" style="display: none;" />
+          <RLAIcon name="i-lucide-laptop" class="rla-theme-icon-system size-4 block" />
+          <RLAIcon name="i-rl-sun" class="rla-theme-icon-light size-4 hidden" />
+          <RLAIcon name="i-rl-moon" class="rla-theme-icon-dark size-4 hidden" />
         </span>
       </RLASelect>
     </div>
@@ -72,9 +72,9 @@ const items = [
                 const sysIcons = this.querySelectorAll('.rla-theme-icon-system');
                 const lightIcons = this.querySelectorAll('.rla-theme-icon-light');
                 const darkIcons = this.querySelectorAll('.rla-theme-icon-dark');
-                sysIcons.forEach(el => ((el as HTMLElement).style.display = next === 'system' ? 'block' : 'none'));
-                lightIcons.forEach(el => ((el as HTMLElement).style.display = next === 'light' ? 'block' : 'none'));
-                darkIcons.forEach(el => ((el as HTMLElement).style.display = next === 'dark' ? 'block' : 'none'));
+                sysIcons.forEach(el => el.classList.toggle('hidden', next !== 'system'));
+                lightIcons.forEach(el => el.classList.toggle('hidden', next !== 'light'));
+                darkIcons.forEach(el => el.classList.toggle('hidden', next !== 'dark'));
 
                 const resolved = next === 'system'
                     ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'

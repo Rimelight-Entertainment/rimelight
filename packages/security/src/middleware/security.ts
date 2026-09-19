@@ -184,14 +184,12 @@ export function security(options: SecurityOptions = {}) {
         "img-src": ["'self'", "data:", "blob:", "https:", "http:"]
       }
 
-      // Prod simulation: check strict domain / asset permissions without tripping on Vite HMR inline CSS
+      // Prod simulation: check strict production directives in Report-Only mode
+      // so any violation that will break in production emits a warning in dev
       const reportOnlySimulation: SecurityOptions = {
         ...mergedOptions,
         directives: {
-          ...mergedOptions.directives,
-          "script-src-attr": ["'none'"],
-          "style-src": ["'self'", "'unsafe-inline'"],
-          "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
+          ...mergedOptions.directives
         }
       }
 

@@ -3,8 +3,6 @@ import type { AvatarGroupProps } from "./avatar-group"
 import { avatarGroupTheme } from "./avatar-group.theme"
 import RLAAvatar from "../avatar/RLAAvatar.astro"
 
-
-
 const {
   items,
   displayLimit = 5,
@@ -14,175 +12,53 @@ const {
 
 const classes = avatarGroupTheme(Astro.props)
 
-// ─── Responsive CSS Item Counter ────────────────────────────────────────────
-//
-// Technique: CSS Container Queries + Custom Properties + CSS Counters.
-//
-// 1. Server-side: compute baseHiddenCount = max(0, total - displayLimit).
-//    Set --base-hidden on the list element.
-// 2. Per-instance container queries: as the container shrinks, each breakpoint
-//    hides one more avatar (nth-child) and bumps --hidden-items.
-// 3. CSS counter: "+N more" = counter-reset: calc(--base-hidden + --hidden-items).
-//    Entirely CSS arithmetic — zero JS resize observers.
-//
-// ─────────────────────────────────────────────────────────────────────────────
-
-const uid = Math.random().toString(36).substring(2, 9)
-const cName = `rla-ag-${uid}` // unique CSS container-name
-
-// Avatar pixel sizes (matching avatar.theme.ts size variants)
-const sizePx: Record<string, number> = {
-  "3xs": 16, "2xs": 20, "xs": 24, "sm": 28,
-  "md": 32, "lg": 36, "xl": 40, "2xl": 44, "3xl": 48
-}
-// UnoCSS utility classes for the "+more" bubble sized to match the avatar
 const sizeCls: Record<string, string> = {
-  "3xs": "size-4 text-[7px]", "2xs": "size-5 text-[8px]",
-  "xs": "size-6 text-[9px]",  "sm": "size-7 text-[10px]",
-  "md": "size-8 text-[11px]", "lg": "size-9 text-xs",
-  "xl": "size-10 text-xs",   "2xl": "size-11 text-sm", "3xl": "size-12 text-sm"
+  "3xs": "size-4 text-[7px]",
+  "2xs": "size-5 text-[8px]",
+  "xs": "size-6 text-[9px]",
+  "sm": "size-7 text-[10px]",
+  "md": "size-8 text-[11px]",
+  "lg": "size-9 text-xs",
+  "xl": "size-10 text-xs",
+  "2xl": "size-11 text-sm",
+  "3xl": "size-12 text-sm"
 }
-
-const avatarPx      = sizePx[size] ?? 32
-const overlapPx     = 12                      // -space-x-3 = -0.75rem = 12px
-const effectivePx   = avatarPx - overlapPx    // width each extra avatar adds
-const morePx        = avatarPx + 4            // "+more" bubble ~= avatar with tiny padding
 
 const normalizedItems = items ?? []
-const renderedItems   = normalizedItems.slice(0, displayLimit)
-const baseHiddenCount = Math.max(0, normalizedItems.length - displayLimit)
-
-// We need an overflow indicator when total ≥ displayLimit so that even when
-// base-hidden is 0, CSS breakpoints can still surface the "+N more" bubble.
-const needsOverflow = normalizedItems.length >= displayLimit
-
-// ── Generate per-instance container-query CSS ────────────────────────────────
-// Each breakpoint hides exactly ONE new nth-child (CSS cascade accumulates them).
-//
-// Breakpoint i (0-indexed):
-//   hiddenItems = i + 1            → value set on --hidden-items
-//   visibleCount = rendered - hiddenItems → avatars still showing
-//   maxWidth = width of visibleCount avatars + more bubble
-//   hideNthChild = rendered - i    → the avatar position to newly hide
-//
-// At container width W:
-//   every breakpoint with maxWidth ≥ W matches.
-//   Each matching rule adds one hidden nth-child and raises --hidden-items.
-//   The LAST matching rule's --hidden-items wins (correct, since smaller
-//   containers match more rules and the last has the highest count).
-// ─────────────────────────────────────────────────────────────────────────────
-let instanceCss = ""
-if (needsOverflow && renderedItems.length > 1) {
-  const maxBreaks = renderedItems.length - 1 // keep at least 1 avatar always
-  for (let i = 0; i < maxBreaks; i++) {
-    const hiddenItems  = i + 1
-    const visibleCount = renderedItems.length - hiddenItems
-    // Min container width for this many avatars + the more bubble
-    const maxWidth     = avatarPx + Math.max(0, visibleCount - 1) * effectivePx + morePx + 4
-    const hideNthChild = renderedItems.length - i  // count from end
-
-    instanceCss += `\n@container ${cName} (max-width: ${maxWidth}px) {`
-    instanceCss += `\n  [data-ag="${uid}"] { --hidden-items: ${hiddenItems}; }`
-    instanceCss += `\n  [data-ag="${uid}"] > .rla-ag-item.hidable:nth-child(${hideNthChild}) { display: none; }`
-    // When base-hidden is 0, the bubble starts hidden; show it once a breakpoint fires
-    if (baseHiddenCount === 0) {
-      instanceCss += `\n  [data-ag="${uid}"] > .rla-ag-more-hidden { display: inline-flex; }`
-    }
-    instanceCss += `\n}`
-  }
-}
+const renderedItems = normalizedItems.slice(0, displayLimit)
+const hiddenCount = normalizedItems.length - displayLimit
 ---
 
 {normalizedItems.length > 0 ? (
-  <div
-    class="rla-ag-host"
-    style={`container-type: inline-size; container-name: ${cName};`}
-    {...rest}
-  >
-    <div
-      class:list={[classes.root, "rla-ag-list"]}
-      data-slot="avatar-group"
-      data-ag={uid}
-      style={`--base-hidden: ${baseHiddenCount}; --hidden-items: 0;`}
-    >
-      {renderedItems.map((item, idx) => (
-        <span class:list={["rla-ag-item", needsOverflow && idx > 0 && "hidable"]}>
-          <RLAAvatar
-            src={item.src}
-            alt={item.alt ?? ""}
-            fallback={item.fallback}
-            initials={item.initials}
-            size={size}
-            color={(item.color ?? "neutral") as any}
-          />
-        </span>
-      ))}
+  <div class:list={[classes.root]} data-slot="avatar-group" {...rest}>
+    {renderedItems.map((item) => (
+      <span class="inline-flex shrink-0">
+        <RLAAvatar
+          src={item.src}
+          alt={item.alt ?? ""}
+          fallback={item.fallback}
+          initials={item.initials}
+          size={size}
+          color={(item.color ?? "neutral") as any}
+        />
+      </span>
+    ))}
 
-      {needsOverflow && (
-        <span
-          class:list={[
-            classes.more,
-            sizeCls[size] ?? sizeCls["md"],
-            "rla-ag-more",
-            baseHiddenCount === 0 && "rla-ag-more-hidden"
-          ]}
-          aria-hidden="true"
-          data-slot="more"
-        >
-          +<span class="rla-ag-count" />
-        </span>
-      )}
-    </div>
+    {hiddenCount > 0 && (
+      <span
+        class:list={[
+          classes.more,
+          sizeCls[size] ?? sizeCls["md"]
+        ]}
+        aria-hidden="true"
+        data-slot="more"
+      >
+        +{hiddenCount}
+      </span>
+    )}
   </div>
 ) : (
   <div class={classes.root} data-slot="avatar-group" {...rest}>
     <slot />
   </div>
 )}
-
-<!-- Per-instance container-query CSS (scoped via unique data-ag attribute) -->
-<style is:inline set:html={instanceCss} />
-
-<style>
-  .rla-ag-host {
-    /* Inline so the group doesn't stretch to full column width */
-    display: inline-block;
-  }
-
-  .rla-ag-item {
-    display: inline-flex;
-    flex-shrink: 0;
-  }
-
-  /* "+more" bubble — base styles; size/color come from theme + sizeCls above */
-  .rla-ag-more {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    white-space: nowrap;
-    font-feature-settings: "tnum";
-  }
-
-  /* Hidden by default when base-hidden is 0 (no pre-truncation).
-     Container queries restore display when responsive hiding fires. */
-  .rla-ag-more-hidden {
-    display: none;
-  }
-
-  /*
-   * CSS Counter — the entire "+N" calculation happens here.
-   *
-   * counter-reset creates a named counter with an initial value equal to
-   * the sum of:
-   *   --base-hidden  (set at render time: total - displayLimit)
-   *   --hidden-items (set by container queries: how many are responsively hidden)
-   *
-   * The `content` property reads it back as a string.
-   * Zero JS arithmetic. Automatic — no resize observers.
-   */
-  .rla-ag-count::after {
-    counter-reset: rla-ag-cnt calc(var(--base-hidden, 0) + var(--hidden-items, 0));
-    content: counter(rla-ag-cnt);
-  }
-</style>

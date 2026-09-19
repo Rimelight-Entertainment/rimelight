@@ -45,9 +45,9 @@ const TitleTag = variant === "hero" ? "h1" : "h2";
   data-orientation={orientation}
   class:list={[
     classes.root,
-    contentVisibility === "auto" && "[content-visibility:auto] [contain-intrinsic-size:var(--rla-contain-intrinsic-size,auto_500px)]"
+    contentVisibility === "auto" && "[content-visibility:auto]",
+    containIntrinsicSize ? `[contain-intrinsic-size:${containIntrinsicSize}]` : (contentVisibility === "auto" && "[contain-intrinsic-size:auto_500px]")
   ]}
-  style={containIntrinsicSize ? `--rla-contain-intrinsic-size: ${containIntrinsicSize};` : undefined}
   {...rest}
 >
   {Astro.slots.has("background") && (

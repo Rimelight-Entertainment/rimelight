@@ -238,7 +238,6 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
       return (
         <div
           class="rla-image-color-mode w-full h-full relative overflow-hidden rounded-[inherit] flex items-center justify-center"
-          style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
         >
           <img
             src={show() ? lightUrl : undefined}
@@ -298,7 +297,6 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
       class={resolvedClasses().root}
       data-slot="root"
       data-theme={props.theme}
-      style={props.theme ? `color-scheme: ${props.theme};` : undefined}
       {...rest}
     >
       {isFigure ? (
@@ -359,7 +357,6 @@ const RLSImage: Component<RLSImageProps> = (allProps) => {
               ) : hasColorMode ? (
                 <div
                   class="rla-image-color-mode max-w-full max-h-[65vh] relative flex items-center justify-center overflow-hidden"
-                  style={`--rla-img-light: url('${lightUrl}'); --rla-img-dark: url('${darkUrl}');`}
                 >
                   <img
                     src={show() ? lightUrl : undefined}

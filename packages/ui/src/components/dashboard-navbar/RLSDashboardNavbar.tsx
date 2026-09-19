@@ -49,15 +49,6 @@ const RLSDashboardNavbar: Component<RLSDashboardNavbarProps> = (allProps) => {
       component={Tag()}
       class={resolvedClasses().root}
       data-slot="root"
-      style={{
-        "height": "4rem",
-        "min-height": "4rem",
-        "padding": "1rem 1.5rem",
-        "display": "flex",
-        "align-items": "center",
-        "justify-content": "space-between",
-        "box-sizing": "border-box"
-      }}
       {...rest}
     >
       <div data-slot="left" class={resolvedClasses().left}>

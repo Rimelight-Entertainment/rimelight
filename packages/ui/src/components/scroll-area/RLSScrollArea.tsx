@@ -141,21 +141,20 @@ const RLSScrollArea: Component<RLSScrollAreaProps> = (allProps) => {
     })
   )
 
-  const heightStyle = () =>
+  const heightClass = () =>
     props.height
       ? typeof props.height === "number"
-        ? `${props.height}px`
-        : props.height
-      : undefined
+        ? `h-[${props.height}px]`
+        : `h-[${props.height}]`
+      : ""
 
   return (
     <div
-      class={resolvedClasses().root}
+      class={`${resolvedClasses().root} ${heightClass()}`}
       data-slot="root"
       data-scroll-area
       data-orientation={orientation()}
       data-hide-delay={hideDelay()}
-      style={{ height: heightStyle() }}
       {...rest}
     >
       <div

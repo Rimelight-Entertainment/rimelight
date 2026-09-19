@@ -12,23 +12,20 @@ const {
 
 const classes = tooltipTheme(Astro.props)
 
-const anchorName = `--rla-tt-${Math.random().toString(36).substring(2, 9)}`
 ---
 <div class={classes.root} data-slot="tooltip-container" data-placement={placement} {...rest}>
   <div
-    class={classes.trigger}
+    class:list={[classes.trigger, "rla-tt-trigger"]}
     data-slot="trigger"
     tabindex="0"
-    style={`anchor-name: ${anchorName}`}
   >
     <slot />
   </div>
 
   <div
-    class={classes.content}
+    class:list={[classes.content, "rla-tt-content"]}
     data-slot="content"
     role="tooltip"
-    style={`position-anchor: ${anchorName}`}
   >
     <slot name="content">
       {content}
@@ -44,15 +41,14 @@ const anchorName = `--rla-tt-${Math.random().toString(36).substring(2, 9)}`
    * fall back to the existing absolute + translate-based placement
    * defined in tooltip.theme.ts. No JavaScript needed in either path.
    */
+  .rla-tt-trigger {
+    anchor-name: --rla-tooltip-anchor;
+  }
+
   @supports (anchor-name: --x) {
     [data-slot="tooltip-container"] [data-slot="content"] {
-      /*
-       * Switch from the theme's translate-based absolute positioning
-       * to anchor-relative positioning so the browser handles overflow
-       * and viewport clipping automatically.
-       */
       position: absolute;
-      position-anchor: inherit; /* resolved from inline style */
+      position-anchor: --rla-tooltip-anchor;
 
       /* Reset theme's translate hacks — anchor() handles the math */
       transform: none !important;

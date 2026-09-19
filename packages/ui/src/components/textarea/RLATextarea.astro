@@ -33,7 +33,7 @@ const classes = textareaTheme({
       back to the min-height defined in textarea.theme.ts.
   -->
   <textarea
-    class={classes.textarea}
+    class:list={[classes.textarea, autoGrow && "[field-sizing:content] min-h-unset"]}
     data-slot="textarea"
     placeholder={placeholder}
     disabled={disabled}
@@ -41,7 +41,6 @@ const classes = textareaTheme({
     name={name}
     required={required}
     rows={autoGrow ? undefined : rows}
-    style={autoGrow ? "field-sizing: content; min-height: unset;" : undefined}
     {...rest}
   >{value}</textarea>
 </div>

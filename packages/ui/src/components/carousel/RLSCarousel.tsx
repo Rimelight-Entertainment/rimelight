@@ -160,7 +160,6 @@ const RLSCarousel: Component<RLSCarouselProps> = (allProps) => {
     <div
       class={`${resolvedClasses().slide} rla-carousel-slide`}
       data-slot="slide"
-      style="container-type: scroll-state; container-name: rla-slide;"
     >
       <div class="relative w-full aspect-video">
         {slide.imageSrc ? (
@@ -182,7 +181,7 @@ const RLSCarousel: Component<RLSCarouselProps> = (allProps) => {
   )
 
   return (
-    <div data-autoplay={props.autoplay ? "true" : "false"} style="display: contents" {...rest}>
+    <div data-autoplay={props.autoplay ? "true" : "false"} class="contents" {...rest}>
       <div id={carouselId} class={resolvedClasses().root} data-slot="root">
         <div
           ref={(el) => (viewportRef = el)}
@@ -209,7 +208,6 @@ const RLSCarousel: Component<RLSCarouselProps> = (allProps) => {
                 <div
                   class={`${resolvedClasses().slide} rla-carousel-slide`}
                   data-slot="slide"
-                  style="container-type: scroll-state; container-name: rla-slide;"
                 >
                   {child}
                 </div>

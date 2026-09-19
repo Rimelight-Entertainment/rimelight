@@ -121,10 +121,8 @@ const RLSSplitter: Component<RLSSplitterProps> = (allProps) => {
     setSizes(next)
   }
 
-  const panelStyle = (size: number) =>
-    isHorizontal()
-      ? { "flex": `0 0 ${size}%` as const, "min-width": "0" }
-      : { "flex": `0 0 ${size}%` as const, "min-height": "0" }
+  const panelClass = (size: number) =>
+    isHorizontal() ? `w-[${size}%]` : `h-[${size}%]`
 
   return (
     <div
@@ -139,10 +137,9 @@ const RLSSplitter: Component<RLSSplitterProps> = (allProps) => {
         {(size, i) => (
           <>
             <div
-              class={resolvedClasses().panel}
+              class={`${resolvedClasses().panel} ${panelClass(size)}`}
               data-slot="panel"
               data-resizable-panel={i()}
-              style={panelStyle(size)}
             >
               {panelContents()[i()]}
             </div>

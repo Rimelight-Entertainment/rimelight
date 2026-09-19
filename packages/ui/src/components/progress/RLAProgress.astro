@@ -12,8 +12,15 @@ const {
 
 const classes = progressTheme(Astro.props)
 
-const percentage = Math.min(100, Math.max(0, (value / max) * 100))
-const id = `progress-${Math.random().toString(36).substring(2, 9)}`
+const percentage = Math.min(100, Math.max(0, Math.round((value / max) * 100)))
+
+const widthClass =
+  percentage === 100 ? "w-full" :
+  percentage === 75 ? "w-3/4" :
+  percentage === 50 ? "w-1/2" :
+  percentage === 25 ? "w-1/4" :
+  percentage === 0 ? "w-0" :
+  `w-[${percentage}%]`
 ---
 <div
   class={classes.root}
@@ -26,13 +33,7 @@ const id = `progress-${Math.random().toString(36).substring(2, 9)}`
   {...rest}
 >
   <div
-    class:list={[classes.indicator, id]}
+    class:list={[classes.indicator, widthClass]}
     data-slot="indicator"
   />
 </div>
-
-<style is:inline set:html={`
-  .${id} {
-    transform: translateX(-${100 - percentage}%) !important;
-  }
-`} />

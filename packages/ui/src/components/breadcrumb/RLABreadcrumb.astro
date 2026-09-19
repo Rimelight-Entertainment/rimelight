@@ -3,229 +3,92 @@ import type { BreadcrumbProps } from "./breadcrumb"
 import { breadcrumbTheme } from "./breadcrumb.theme"
 import RLAIcon from "../icon/RLAIcon.astro"
 
-
-
 const {
   items,
   maxVisible,
-  estimatedItemWidth = 120,
   separatorIcon = "chevronRight",
   ...rest
 } = Astro.props as BreadcrumbProps
 
 const classes = breadcrumbTheme(Astro.props)
 
-// ─── Responsive CSS Item Counter ─────────────────────────────────────────────
-//
-// Breadcrumb-specific adaptation of the CSS counter technique:
-//
-//   • First and last items are ALWAYS visible.
-//   • Middle items (everything between first and last) get `.hidable` class.
-//   • Server-side: if `maxVisible` is set, excess middle items are pre-hidden
-//     (not rendered) and counted in --base-hidden.
-//   • Client-side: container queries progressively hide rendered middle items
-//     from left to right (oldest ancestors first), updating --hidden-items.
-//   • The overflow `<li>` always lives in the DOM between the first item and
-//     the first middle item. CSS shows/hides it based on whether any items
-//     are hidden.
-//   • CSS counter: "…+N" = counter-reset: calc(--base-hidden + --hidden-items).
-//
-// ─────────────────────────────────────────────────────────────────────────────
-
-const uid   = Math.random().toString(36).substring(2, 9)
-const cName = `rla-bc-${uid}`
-
-// Restructure items into: first | midItems | last
-const allItems    = items ?? []
-const firstItem   = allItems[0]
-const lastItem    = allItems.length > 1 ? allItems[allItems.length - 1] : null
+const allItems = items ?? []
+const firstItem = allItems[0]
+const lastItem = allItems.length > 1 ? allItems[allItems.length - 1] : null
 const allMidItems = allItems.length > 2 ? allItems.slice(1, allItems.length - 1) : []
 
-// If maxVisible is provided, pre-truncate middle items:
-//   always keep the last (maxVisible - 2) mid items (closest to current page).
-//   The rest are base-hidden.
 const effectiveMaxMid = maxVisible !== undefined
-  ? Math.max(0, maxVisible - 2)   // -2 for first + last
-  : allMidItems.length             // show all at full width
+  ? Math.max(0, maxVisible - 2)
+  : allMidItems.length
 
-// Keep mid items closest to the last page (most recent ancestors)
 const renderedMidItems = allMidItems.slice(allMidItems.length - effectiveMaxMid)
-const baseHiddenCount  = Math.max(0, allMidItems.length - effectiveMaxMid)
-
-// We show the overflow indicator when:
-//   a) There are already pre-hidden items (base-hidden > 0), OR
-//   b) There are rendered mid items that could be collapsed by container queries
-const hasMidItems  = renderedMidItems.length > 0
-const needsOverflow = allItems.length > 2 // need both first AND last to have a middle
-
-// ── Generate per-instance container-query CSS ─────────────────────────────────
-//
-// DOM layout (positions):
-//   1 = first item
-//   2 = overflow indicator (always in DOM)
-//   3..N = rendered mid items (hidable, starting from leftmost = oldest ancestor)
-//   N+1 = last item
-//
-// We hide mid items from left to right (oldest ancestor first), so breakpoints
-// target nth-child(3), then nth-child(4), etc.
-// ─────────────────────────────────────────────────────────────────────────────
-let instanceCss = ""
-if (needsOverflow && hasMidItems) {
-  for (let i = 0; i < renderedMidItems.length; i++) {
-    const hiddenItems  = i + 1
-    // Visible items after hiding: first + (midItems - hiddenItems) + last
-    const visibleMids  = renderedMidItems.length - hiddenItems
-    const visibleTotal = 2 + visibleMids // first + last always shown
-    // Min container width for the visible breadcrumb items
-    const maxWidth     = visibleTotal * estimatedItemWidth + 60 // 60px for overflow indicator
-    // The mid item to newly hide at this breakpoint (nth-child position):
-    //   overflow indicator is at position 2, mids start at position 3
-    //   we hide from the leftmost (position 3) first
-    const hideNthChild = 3 + i
-
-    instanceCss += `\n@container ${cName} (max-width: ${maxWidth}px) {`
-    instanceCss += `\n  [data-bc="${uid}"] { --hidden-items: ${hiddenItems}; }`
-    instanceCss += `\n  [data-bc="${uid}"] > li.hidable:nth-child(${hideNthChild}) { display: none; }`
-    // Always show the overflow indicator when any mid item is hidden
-    instanceCss += `\n  [data-bc="${uid}"] > .rla-bc-overflow { display: flex; }`
-    instanceCss += `\n}`
-  }
-}
+const hiddenMidCount = Math.max(0, allMidItems.length - effectiveMaxMid)
+const hasMidItems = renderedMidItems.length > 0
 ---
 
 <nav class={classes.root} data-slot="breadcrumb-root" {...rest}>
   {items ? (
-    <div
-      class="rla-bc-host"
-      style={`container-type: inline-size; container-name: ${cName};`}
-    >
-      <ol
-        class={classes.list}
-        data-slot="list"
-        data-bc={uid}
-        style={`--base-hidden: ${baseHiddenCount}; --hidden-items: 0;`}
-      >
-        {/* ── First item (always visible) ─────────────────────────────── */}
-        {firstItem && (
-          <li class={classes.item} data-slot="item">
-            {firstItem.href ? (
-              <a href={firstItem.href} class={classes.link} data-slot="link">
-                {firstItem.label}
-              </a>
-            ) : (
-              <span class={classes.page} data-slot="page">{firstItem.label}</span>
-            )}
-            {(hasMidItems || lastItem) && (
-              <span class={classes.separator} data-slot="separator" aria-hidden="true">
-                <RLAIcon name={separatorIcon} />
-              </span>
-            )}
-          </li>
-        )}
-
-        {/* ── Overflow indicator (always in DOM; shown by CSS when items are hidden) */}
-        {needsOverflow && (
-          <li
-            class:list={[
-              "rla-bc-overflow",
-              // Shown by default only when there are pre-hidden base items
-              baseHiddenCount === 0 && "rla-bc-overflow-hidden"
-            ]}
-            aria-hidden="true"
-            data-slot="overflow"
-          >
-            <span class="rla-bc-ellipsis">…</span>
-            <span class="rla-bc-more-count" />
+    <ol class={classes.list} data-slot="list">
+      {/* ── First item ─────────────────────────────── */}
+      {firstItem && (
+        <li class={classes.item} data-slot="item">
+          {firstItem.href ? (
+            <a href={firstItem.href} class={classes.link} data-slot="link">
+              {firstItem.label}
+            </a>
+          ) : (
+            <span class={classes.page} data-slot="page">{firstItem.label}</span>
+          )}
+          {(hasMidItems || hiddenMidCount > 0 || lastItem) && (
             <span class={classes.separator} data-slot="separator" aria-hidden="true">
               <RLAIcon name={separatorIcon} />
             </span>
-          </li>
-        )}
+          )}
+        </li>
+      )}
 
-        {/* ── Middle items (hidable — oldest ancestors first) ─────────── */}
-        {renderedMidItems.map((item) => (
-          <li class:list={[classes.item, "hidable"]} data-slot="item">
-            {item.href ? (
-              <a href={item.href} class={classes.link} data-slot="link">
-                {item.label}
-              </a>
-            ) : (
-              <span class={classes.page} data-slot="page">{item.label}</span>
-            )}
-            <span class={classes.separator} data-slot="separator" aria-hidden="true">
-              <RLAIcon name={separatorIcon} />
-            </span>
-          </li>
-        ))}
+      {/* ── Truncation overflow indicator if maxVisible was exceeded */}
+      {hiddenMidCount > 0 && (
+        <li class="inline-flex items-center gap-1 list-none shrink-0" aria-hidden="true" data-slot="overflow">
+          <span class="text-muted tracking-wider font-medium">…</span>
+          <span class="text-muted text-[11px] font-semibold">+{hiddenMidCount}</span>
+          <span class={classes.separator} data-slot="separator" aria-hidden="true">
+            <RLAIcon name={separatorIcon} />
+          </span>
+        </li>
+      )}
 
-        {/* ── Last item (always visible, current page) ─────────────────── */}
-        {lastItem && (
-          <li class={classes.item} data-slot="item">
-            <span class={classes.page} data-slot="page" aria-current="page">
-              {lastItem.label}
-            </span>
-          </li>
-        )}
-      </ol>
-    </div>
+      {/* ── Middle items ─────────── */}
+      {renderedMidItems.map((item) => (
+        <li class={classes.item} data-slot="item">
+          {item.href ? (
+            <a href={item.href} class={classes.link} data-slot="link">
+              {item.label}
+            </a>
+          ) : (
+            <span class={classes.page} data-slot="page">{item.label}</span>
+          )}
+          <span class={classes.separator} data-slot="separator" aria-hidden="true">
+            <RLAIcon name={separatorIcon} />
+          </span>
+        </li>
+      ))}
+
+      {/* ── Last item ─────────────────── */}
+      {lastItem && (
+        <li class={classes.item} data-slot="item">
+          <span class={classes.page} data-slot="page" aria-current="page">
+            {lastItem.label}
+          </span>
+        </li>
+      )}
+    </ol>
   ) : (
     <ol class={classes.list} data-slot="list">
       <slot />
     </ol>
   )}
 </nav>
-
-<!-- Per-instance container-query CSS scoped via data-bc attribute -->
-<style is:inline set:html={instanceCss} />
-
-<style>
-  .rla-bc-host {
-    display: block;
-    width: 100%;
-  }
-
-  /* Overflow indicator: shown by CSS, hidden by default when base-hidden is 0 */
-  .rla-bc-overflow {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    list-style: none;
-    flex-shrink: 0;
-  }
-
-  /* When base-hidden is 0 AND no container query has fired yet */
-  .rla-bc-overflow-hidden {
-    display: none;
-  }
-
-  .rla-bc-ellipsis {
-    color: var(--rl-neutral-600);
-    letter-spacing: 0.05em;
-    font-weight: 500;
-  }
-
-  /*
-   * CSS Counter — sums --base-hidden (render-time, from maxVisible prop) +
-   * --hidden-items (set by container queries as width shrinks).
-   *
-   * Shows nothing when the count is 0.
-   * Shows "+N" when N > 0.
-   */
-  .rla-bc-more-count::after {
-    counter-reset: rla-bc-cnt calc(var(--base-hidden, 0) + var(--hidden-items, 0));
-    content: "+" counter(rla-bc-cnt);
-    /* Hide the "+0" case by using color:transparent when counter is 0.
-       CSS cannot conditionally suppress content based on counter value,
-       so we rely on the counter never being 0 when this element is visible
-       (the overflow li is only shown when --base-hidden > 0 or a container
-       query is active). */
-    color: var(--rl-neutral-600);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    vertical-align: super;
-    line-height: 1;
-  }
-</style>
 
 {items && (
   <script type="application/ld+json" is:inline set:html={JSON.stringify({

@@ -474,11 +474,11 @@ const hasFooters = visibleColumns.some(
 
 const showToolbar = searchable || showColumnsToggle || exportable || Astro.slots.has("toolbar")
 
-function getPinStyle(colId: string): string {
+function getPinClass(colId: string): string {
   if (colOffsetLeft[colId] !== undefined)
-    return `left:${colOffsetLeft[colId]}px;`
+    return `left-[${colOffsetLeft[colId]}px]`
   if (colOffsetRight[colId] !== undefined)
-    return `right:${colOffsetRight[colId]}px;`
+    return `right-[${colOffsetRight[colId]}px]`
   return ""
 }
 
@@ -486,20 +486,20 @@ function isPinned(colId: string): boolean {
   return colId in colOffsetLeft || colId in colOffsetRight
 }
 
-function getColumnSizeStyle(col: TableColumn): string {
+function getColumnSizeClasses(col: TableColumn): string[] {
   const colId = (col.id || col.accessorKey || "") as string
   const sizeVal = columnSizing[colId] ?? col.size
-  const styles: string[] = []
+  const classes: string[] = []
   if (sizeVal) {
-    styles.push(`width:${typeof sizeVal === "number" ? `${sizeVal}px` : sizeVal};`)
+    classes.push(typeof sizeVal === "number" ? `w-[${sizeVal}px]` : `w-[${sizeVal}]`)
   }
   if (col.minSize) {
-    styles.push(`min-width:${typeof col.minSize === "number" ? `${col.minSize}px` : col.minSize};`)
+    classes.push(typeof col.minSize === "number" ? `min-w-[${col.minSize}px]` : `min-w-[${col.minSize}]`)
   }
   if (col.maxSize) {
-    styles.push(`max-width:${typeof col.maxSize === "number" ? `${col.maxSize}px` : col.maxSize};`)
+    classes.push(typeof col.maxSize === "number" ? `max-w-[${col.maxSize}px]` : `max-w-[${col.maxSize}]`)
   }
-  return styles.join(" ")
+  return classes
 }
 ---
 
@@ -558,8 +558,7 @@ function getColumnSizeStyle(col: TableColumn): string {
       <colgroup>
         {visibleColumns.map((col) => {
           const colId = (col.id || col.accessorKey || "") as string
-          const sizeStyle = getColumnSizeStyle(col)
-          return <col data-col-id={colId} style={sizeStyle || undefined} />
+          return <col data-col-id={colId} class:list={[getColumnSizeClasses(col)]} />
         })}
       </colgroup>
 
@@ -580,10 +579,6 @@ function getColumnSizeStyle(col: TableColumn): string {
                 typeof col.meta?.class?.th === "function"
                   ? col.meta.class.th(col)
                   : col.meta?.class?.th || ""
-              const metaThStyle =
-                typeof col.meta?.style?.th === "function"
-                  ? col.meta.style.th(col)
-                  : col.meta?.style?.th || ""
               const canSort =
                 col.enableSorting !== false &&
                 !!(col.accessorKey || col.id || col.accessorFn) &&
@@ -594,12 +589,6 @@ function getColumnSizeStyle(col: TableColumn): string {
               const activeSort = (sorting as SortingState).find((s) => s.id === colId)
               const sortDir = activeSort ? (activeSort.desc ? "desc" : "asc") : "none"
               const headerSlotName = `${colId}-header`
-
-              const sizeStyle = getColumnSizeStyle(col)
-              const pinStyle = getPinStyle(colId)
-              const combinedStyle = [sizeStyle, pinStyle, metaThStyle]
-                .filter(Boolean)
-                .join("")
 
               const headerLabel =
                 typeof col.header === "string"
@@ -616,9 +605,10 @@ function getColumnSizeStyle(col: TableColumn): string {
                   class:list={[
                     classes.th,
                     pinned ? "sticky bg-default z-10" : "",
+                    getPinClass(colId),
+                    getColumnSizeClasses(col),
                     metaThClass
                   ]}
-                  style={combinedStyle || undefined}
                   data-col-id={colId}
                   data-slot="th"
                 >
@@ -731,8 +721,7 @@ function getColumnSizeStyle(col: TableColumn): string {
                 <tr class={classes.trGroup} data-slot="tr-group" data-group-id={group.id} data-depth={depth}>
                   <td
                     colspan={Math.max(1, visibleColumns.length)}
-                    class={classes.tdGroup}
-                    style={depth ? `padding-left: ${depth * 1.5 + 1}rem;` : undefined}
+                    class:list={[classes.tdGroup, depth ? `pl-[${depth * 1.5 + 1}rem]` : ""]}
                     data-slot="td-group"
                   >
                     {Astro.slots.has("group-header") ? (
@@ -762,10 +751,6 @@ function getColumnSizeStyle(col: TableColumn): string {
               typeof meta?.class?.tr === "function"
                 ? meta.class.tr(row)
                 : meta?.class?.tr || ""
-            const trMetaStyle =
-              typeof meta?.style?.tr === "function"
-                ? meta.style.tr(row)
-                : meta?.style?.tr || ""
             const isSelected = row.getIsSelected()
             const isExpanded = row.getIsExpanded()
             const isPinned_ = row.getIsPinned()
@@ -774,7 +759,6 @@ function getColumnSizeStyle(col: TableColumn): string {
               <>
                 <tr
                   class:list={[classes.tr, trMetaClass]}
-                  style={trMetaStyle || undefined}
                   data-slot="tr"
                   data-row-id={row.id}
                   data-row-index={row.index}
@@ -797,10 +781,6 @@ function getColumnSizeStyle(col: TableColumn): string {
                       typeof col.meta?.class?.td === "function"
                         ? col.meta.class.td(row)
                         : col.meta?.class?.td || ""
-                    const metaTdStyle =
-                      typeof col.meta?.style?.td === "function"
-                        ? col.meta.style.td(row)
-                        : col.meta?.style?.td || ""
                     const colSpanVal =
                       typeof col.meta?.colspan?.td === "function"
                         ? col.meta.colspan.td(row)
@@ -810,17 +790,14 @@ function getColumnSizeStyle(col: TableColumn): string {
                         ? col.meta.rowspan.td(row)
                         : col.meta?.rowspan?.td
 
-                    const pinStyle_ = getPinStyle(colId)
-                    const combinedTdStyle = [pinStyle_, metaTdStyle].filter(Boolean).join("")
-
                     return (
                       <td
                         class:list={[
                           classes.td,
                           pinned ? "sticky bg-default z-10" : "",
+                          getPinClass(colId),
                           metaTdClass
                         ]}
-                        style={combinedTdStyle || undefined}
                         colspan={colSpanVal}
                         rowspan={rowSpanVal}
                         data-slot="td"
@@ -927,10 +904,6 @@ function getColumnSizeStyle(col: TableColumn): string {
                             typeof col.meta?.class?.td === "function"
                               ? col.meta.class.td(subRow)
                               : col.meta?.class?.td || ""
-                          const metaTdStyle =
-                            typeof col.meta?.style?.td === "function"
-                              ? col.meta.style.td(subRow)
-                              : col.meta?.style?.td || ""
                           const colSpanVal =
                             typeof col.meta?.colspan?.td === "function"
                               ? col.meta.colspan.td(subRow)
@@ -940,18 +913,15 @@ function getColumnSizeStyle(col: TableColumn): string {
                               ? col.meta.rowspan.td(subRow)
                               : col.meta?.rowspan?.td
 
-                          const sizeStyle = getColumnSizeStyle(col)
-                          const pinStyle_ = getPinStyle(colId)
-                          const combinedTdStyle = [sizeStyle, pinStyle_, metaTdStyle].filter(Boolean).join("")
-
                           return (
                             <td
                               class:list={[
                                 classes.td,
                                 pinned ? "sticky bg-default z-10" : "",
+                                getPinClass(colId),
+                                getColumnSizeClasses(col),
                                 metaTdClass
                               ]}
-                              style={combinedTdStyle || undefined}
                               colspan={colSpanVal}
                               rowspan={rowSpanVal}
                               data-slot="td"

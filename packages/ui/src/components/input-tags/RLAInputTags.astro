@@ -2,12 +2,9 @@
 import type { InputTagsProps, TagItem } from "./input-tags"
 import { inputTagsTheme } from "./input-tags.theme"
 
-
-
 const {
   items,
   displayLimit = 4,
-  estimatedTagWidth = 80,
   showInput = false,
   name,
   placeholder = "Add tag…",
@@ -16,109 +13,39 @@ const {
 
 const classes = inputTagsTheme(Astro.props)
 
-// ─── Responsive CSS Item Counter ────────────────────────────────────────────
-//
-// Each tag is a flat DOM sibling. Container queries hide tags from the right
-// as the container shrinks and set --hidden-items. CSS counters combine it
-// with the server-side --base-hidden to render "+N more" — no resize observer.
-//
-// Unlike AvatarGroup (fixed-size items), tags have variable widths. We use
-// `estimatedTagWidth` as the per-tag width approximation for breakpoints.
-// Users can tune this prop for label-length mismatches.
-// ─────────────────────────────────────────────────────────────────────────────
-
-const uid = Math.random().toString(36).substring(2, 9)
-const cName = `rla-it-${uid}`
-
-// Normalize items to TagItem objects
 const normalizedItems: TagItem[] = (items ?? []).map(item =>
   typeof item === "string" ? { label: item, value: item } : item
 )
 
-const renderedItems   = normalizedItems.slice(0, displayLimit)
-const baseHiddenCount = Math.max(0, normalizedItems.length - displayLimit)
-const needsOverflow   = normalizedItems.length >= displayLimit
-
-// Gap between tags in px (gap-1.5 = 6px)
-const tagGapPx  = 6
-// Width of the "+N more" chip
-const morePx    = 56
-
-// Generate per-instance container-query CSS
-// Same cascade-based approach as AvatarGroup:
-//   each breakpoint hides ONE new nth-child, smaller containers match more rules.
-let instanceCss = ""
-if (needsOverflow && renderedItems.length > 1) {
-  const maxBreaks = renderedItems.length - 1 // keep at least the first tag
-  for (let i = 0; i < maxBreaks; i++) {
-    const hiddenItems  = i + 1
-    const visibleCount = renderedItems.length - hiddenItems
-    // Min container width for visibleCount tags + more chip + gaps
-    const maxWidth     = visibleCount * estimatedTagWidth + (visibleCount) * tagGapPx + morePx + tagGapPx
-    const hideNthChild = renderedItems.length - i // counting from the end
-
-    instanceCss += `\n@container ${cName} (max-width: ${maxWidth}px) {`
-    instanceCss += `\n  [data-it="${uid}"] { --hidden-items: ${hiddenItems}; }`
-    instanceCss += `\n  [data-it="${uid}"] > .rla-it-tag.hidable:nth-child(${hideNthChild}) { display: none; }`
-    if (baseHiddenCount === 0) {
-      instanceCss += `\n  [data-it="${uid}"] > .rla-it-more-hidden { display: inline-flex; }`
-    }
-    instanceCss += `\n}`
-  }
-}
+const renderedItems = normalizedItems.slice(0, displayLimit)
+const hiddenCount = normalizedItems.length - displayLimit
 ---
 
 {normalizedItems.length > 0 ? (
-  <div
-    class="rla-it-host"
-    style={`container-type: inline-size; container-name: ${cName};`}
-    {...rest}
-  >
-    <div
-      class:list={[classes.root, "rla-it-list"]}
-      data-slot="root"
-      data-it={uid}
-      style={`--base-hidden: ${baseHiddenCount}; --hidden-items: 0;`}
-    >
-      {renderedItems.map((item, idx) => (
-        <span
-          class:list={[
-            classes.tag,
-            "rla-it-tag",
-            needsOverflow && idx > 0 && "hidable"
-          ]}
-          data-slot="tag"
-        >
-          <span class={classes.tagLabel}>{item.label}</span>
-          {name && <input type="hidden" name={name} value={item.value ?? item.label} />}
-        </span>
-      ))}
+  <div class={classes.root} data-slot="root" {...rest}>
+    {renderedItems.map((item) => (
+      <span class={classes.tag} data-slot="tag">
+        <span class={classes.tagLabel}>{item.label}</span>
+        {name && <input type="hidden" name={name} value={item.value ?? item.label} />}
+      </span>
+    ))}
 
-      {needsOverflow && (
-        <span
-          class:list={[
-            classes.more,
-            "rla-it-more",
-            baseHiddenCount === 0 && "rla-it-more-hidden"
-          ]}
-          aria-hidden="true"
-          data-slot="more"
-        >
-          +<span class="rla-it-count" /> more
-        </span>
-      )}
+    {hiddenCount > 0 && (
+      <span class={classes.more} aria-hidden="true" data-slot="more">
+        +{hiddenCount} more
+      </span>
+    )}
 
-      {showInput && (
-        <input
-          type="text"
-          name={name ? `${name}__input` : undefined}
-          placeholder={placeholder}
-          class:list={[classes.input]}
-          data-slot="input"
-          autocomplete="off"
-        />
-      )}
-    </div>
+    {showInput && (
+      <input
+        type="text"
+        name={name ? `${name}__input` : undefined}
+        placeholder={placeholder}
+        class={classes.input}
+        data-slot="input"
+        autocomplete="off"
+      />
+    )}
   </div>
 ) : (
   <div class={classes.root} data-slot="root" {...rest}>
@@ -128,47 +55,10 @@ if (needsOverflow && renderedItems.length > 1) {
         type="text"
         name={name ? `${name}__input` : undefined}
         placeholder={placeholder}
-        class:list={[classes.input]}
+        class={classes.input}
         data-slot="input"
         autocomplete="off"
       />
     )}
   </div>
 )}
-
-<!-- Per-instance CSS scoped via unique data-it attribute -->
-<style is:inline set:html={instanceCss} />
-
-<style>
-  .rla-it-host {
-    display: block;
-    width: 100%;
-  }
-
-  .rla-it-tag {
-    display: inline-flex;
-    flex-shrink: 0;
-  }
-
-  /* "+more" chip — flex, visible by default when base-hidden > 0 */
-  .rla-it-more {
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: 0.125rem;
-  }
-
-  /* Hidden by default when base-hidden is 0 (revealed by container queries) */
-  .rla-it-more-hidden {
-    display: none;
-  }
-
-  /*
-   * CSS Counter — sums --base-hidden (render-time) + --hidden-items (CSS queries).
-   * Zero JS. The browser does the arithmetic via counter-reset: calc().
-   */
-  .rla-it-count::after {
-    counter-reset: rla-it-cnt calc(var(--base-hidden, 0) + var(--hidden-items, 0));
-    content: counter(rla-it-cnt);
-  }
-</style>

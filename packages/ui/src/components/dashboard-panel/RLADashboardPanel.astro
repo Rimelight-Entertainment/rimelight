@@ -14,7 +14,7 @@ const classes = dashboardPanelTheme({
   size: false
 });
 ---
-<div class={classes.root} data-slot="root" style="flex: 1 1 0%; min-width: 0;" {...rest}>
+<div class:list={[classes.root, "flex-1 min-w-0"]} data-slot="root" {...rest}>
   <slot name="header" />
 
   <div data-slot="body" class={classes.body}>

@@ -45,15 +45,15 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
 
   const step = () => props.step ?? 1
   const length = () => props.length ?? 5
-  const itemSize = () => {
+  const itemSizeClass = () => {
     const map: Record<string, string> = {
-      xs: "0.75rem",
-      sm: "1rem",
-      md: "1.25rem",
-      lg: "1.5rem",
-      xl: "1.75rem"
+      xs: "size-3",
+      sm: "size-4",
+      md: "size-5",
+      lg: "size-6",
+      xl: "size-7"
     }
-    return map[props.size ?? "md"] ?? "1.25rem"
+    return map[props.size ?? "md"] || "size-5"
   }
 
   const [internalValue, setInternalValue] = createSignal<number>(
@@ -75,10 +75,11 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
 
   const items = createMemo(() => Array.from({ length: length() }, (_, idx) => idx + 1))
 
-  const getWidthForVal = (val: number, itemIndex: number) => {
-    if (val >= itemIndex) return "100%"
-    if (val <= itemIndex - 1) return "0%"
-    return `${(val - (itemIndex - 1)) * 100}%`
+  const getWidthClass = (val: number, itemIndex: number) => {
+    if (val >= itemIndex) return "w-full"
+    if (val <= itemIndex - 1) return "w-0"
+    const pct = Math.round((val - (itemIndex - 1)) * 100)
+    return pct === 75 ? "w-3/4" : pct === 50 ? "w-1/2" : pct === 25 ? "w-1/4" : `w-[${pct}%]`
   }
 
   const getValueFromEvent = (e: MouseEvent, el: HTMLElement, index: number) => {
@@ -89,8 +90,9 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
   }
 
   const handleMouseMove = (e: MouseEvent, el: HTMLElement, index: number) => {
-    if (props.disabled || props.readonly) return
-    if (props.hoverable) setHoverValue(getValueFromEvent(e, el, index))
+    if (!hoverable()) return
+    const val = getValueFromEvent(e, el, index)
+    setHoverValue(val)
   }
 
   const handleMouseLeave = () => {
@@ -98,31 +100,36 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
   }
 
   const handleClick = (e: MouseEvent, el: HTMLElement, index: number) => {
-    if (props.disabled || props.readonly) return
     const val = getValueFromEvent(e, el, index)
-    let finalVal = val
-    if (props.clearable && value() === val) finalVal = 0
-    if (props.value === undefined && props.modelValue === undefined) setInternalValue(finalVal)
-    props.onValueChange?.(finalVal)
+    let next = val
+    if (clearable() && value() === val) {
+      next = 0
+    }
+    setInternalValue(next)
+    props.onValueChange?.(next)
+    setHoverValue(null)
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (props.disabled || props.readonly) return
-    let newVal = value()
+    let next = value()
     if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-      newVal = Math.min(value() + step(), length())
+      next = Math.min(value() + step(), length())
+      e.preventDefault()
     } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-      newVal = Math.max(value() - step(), 0)
+      next = Math.max(value() - step(), 0)
+      e.preventDefault()
     } else if (e.key === "Home") {
-      newVal = 0
+      next = 0
+      e.preventDefault()
     } else if (e.key === "End") {
-      newVal = length()
-    } else {
-      return
+      next = length()
+      e.preventDefault()
     }
-    e.preventDefault()
-    if (props.value === undefined && props.modelValue === undefined) setInternalValue(newVal)
-    props.onValueChange?.(newVal)
+    if (next !== value()) {
+      setInternalValue(next)
+      props.onValueChange?.(next)
+    }
   }
 
   return (
@@ -158,10 +165,9 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
       <For each={items()}>
         {(i) => (
           <div
-            class={`input-rating-item ${resolvedClasses().item}`}
+            class={`input-rating-item ${resolvedClasses().item} ${itemSizeClass()}`}
             data-slot="item"
             data-index={i}
-            style={{ "--item-size": itemSize(), "width": itemSize(), "height": itemSize() }}
             onMouseMove={(e) => handleMouseMove(e, e.currentTarget, i)}
             onMouseLeave={handleMouseLeave}
             onClick={(e) => handleClick(e, e.currentTarget, i)}
@@ -176,10 +182,9 @@ const RLSInputRating: Component<RLSInputRatingProps> = (allProps) => {
             </div>
 
             <div
-              class={`rating-item-indicator ${resolvedClasses().indicator}`}
+              class={`rating-item-indicator ${resolvedClasses().indicator} ${getWidthClass(display(), i)}`}
               data-slot="indicator"
               data-state={display() >= i - 0.99 ? "active" : "inactive"}
-              style={{ width: getWidthForVal(display(), i) }}
             >
               <RLSIcon
                 name={props.icon || "star"}

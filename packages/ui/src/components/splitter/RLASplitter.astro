@@ -18,7 +18,6 @@ const total = defaultSizes.reduce((s, v) => s + v, 0)
 const sizes = defaultSizes.map(s => (s / (total || 100)) * 100)
 
 const panelCount = sizes.length
-const id = `splitter-${Math.random().toString(36).substring(2, 9)}`
 
 const panelContents: string[] = []
 await Promise.all(
@@ -32,7 +31,7 @@ await Promise.all(
 
 <rla-splitter {...rest}>
   <div
-    class:list={[classes.root, id]}
+    class:list={[classes.root]}
     data-slot="root"
     data-resizable
     data-direction={direction}
@@ -40,7 +39,7 @@ await Promise.all(
     {sizes.map((_size, i) => (
       <>
         <div
-          class={classes.panel}
+          class:list={[classes.panel, direction === "horizontal" ? `w-[${sizes[i]}%]` : `h-[${sizes[i]}%]`]}
           data-slot="panel"
           data-resizable-panel={i}
         >
@@ -216,15 +215,3 @@ await Promise.all(
     customElements.define('rla-splitter', RLASplitter);
   }
 </script>
-
-<style is:inline set:html={`
-  .${id}[data-direction="horizontal"] > [data-resizable-panel="0"] { width: ${sizes[0] ?? 50}%; }
-  .${id}[data-direction="horizontal"] > [data-resizable-panel="1"] { width: ${sizes[1] ?? 50}%; }
-  .${id}[data-direction="horizontal"] > [data-resizable-panel="2"] { width: ${sizes[2] ?? 0}%; }
-  .${id}[data-direction="horizontal"] > [data-resizable-panel="3"] { width: ${sizes[3] ?? 0}%; }
-
-  .${id}[data-direction="vertical"] > [data-resizable-panel="0"] { height: ${sizes[0] ?? 50}%; }
-  .${id}[data-direction="vertical"] > [data-resizable-panel="1"] { height: ${sizes[1] ?? 50}%; }
-  .${id}[data-direction="vertical"] > [data-resizable-panel="2"] { height: ${sizes[2] ?? 0}%; }
-  .${id}[data-direction="vertical"] > [data-resizable-panel="3"] { height: ${sizes[3] ?? 0}%; }
-`} />

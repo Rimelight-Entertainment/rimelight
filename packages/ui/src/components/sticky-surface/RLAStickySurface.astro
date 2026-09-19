@@ -14,54 +14,36 @@ const {
 
 
 const classes = stickySurfaceTheme(Astro.props)
-const topOffset = `${offsetTop}px`
-const id = `sticky-${Math.random().toString(36).substring(2, 9)}`
+const topClass = offsetTop === 0 ? "top-0" : `top-[${offsetTop}px]`
+const zClass = `z-[${zIndex}]`
 ---
 <div
-  class:list={[classes.root, id, stuckShadow && "rla-sticky-shadow"]}
+  class:list={[classes.root, topClass, zClass, "rla-sticky-surface", stuckShadow && "rla-sticky-shadow"]}
   data-slot="root"
   {...rest}
 >
   <slot />
 </div>
 
-<style is:inline set:html={`
-  .${id} {
-    top: ${topOffset} !important;
-    z-index: ${zIndex} !important;
-    /*
-     * CSS scroll-state(stuck: top) — Chrome 133+
-     *
-     * Declare this element as a scroll-state container so it can query
-     * its own stuck state. When position: sticky causes it to be pinned
-     * at the top, the browser marks it as "stuck: top".
-     */
+<style>
+  .rla-sticky-surface {
     container-type: scroll-state;
-    container-name: rla-sticky-${id};
+    container-name: rla-sticky;
   }
-`} />
 
-<!--
-  The stuck shadow is applied via a nested CSS @container scroll-state rule.
-  This is progressive enhancement — browsers that don't support scroll-state()
-  silently ignore it and the surface just has no shadow (which is fine).
--->
-{stuckShadow && (
-  <style is:inline set:html={`
-    @container rla-sticky-${id} scroll-state(stuck: top) {
-      .${id} {
-        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.10), 0 1px 4px 0 rgba(0, 0, 0, 0.06);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  @container rla-sticky scroll-state(stuck: top) {
+    .rla-sticky-shadow {
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.10), 0 1px 4px 0 rgba(0, 0, 0, 0.06);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @container rla-sticky scroll-state(stuck: top) {
+      .rla-sticky-shadow {
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.40), 0 1px 4px 0 rgba(0, 0, 0, 0.20);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       }
     }
-
-    @media (prefers-color-scheme: dark) {
-      @container rla-sticky-${id} scroll-state(stuck: top) {
-        .${id} {
-          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.40), 0 1px 4px 0 rgba(0, 0, 0, 0.20);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-      }
-    }
-  `} />
-)}
+  }
+</style>

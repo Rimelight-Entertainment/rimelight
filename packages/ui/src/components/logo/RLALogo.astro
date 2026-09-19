@@ -59,7 +59,6 @@ const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
   aria-label={alt || variant}
   data-slot="root"
   data-theme={theme}
-  style={theme ? `color-scheme: ${theme};` : undefined}
   {...rest}
 >
   {logoSrc ? (
@@ -68,7 +67,6 @@ const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
     ) : hasAutoMode ? (
       <span
         class="rla-logo-image size-full flex items-center justify-center shrink-0"
-        style={`--rla-logo-light: url('${lightSrc}'); --rla-logo-dark: url('${darkSrc}');`}
       >
         <img
           src={lightSrc}
@@ -134,20 +132,6 @@ const hasAutoMode = darkSrc && lightSrc && darkSrc !== lightSrc && !mode;
     }
     :global(:root:not([data-theme="light"])) :global([data-theme="light"]) .rla-logo-dark {
       display: none !important;
-    }
-  }
-
-  @supports (background-image: light-dark(none, none)) {
-    .rla-logo-image {
-      background-image: light-dark(var(--rla-logo-light), var(--rla-logo-dark));
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-    .rla-logo-image > .rla-logo-light,
-    .rla-logo-image > .rla-logo-dark {
-      opacity: 0 !important;
-      visibility: hidden !important;
     }
   }
 </style>

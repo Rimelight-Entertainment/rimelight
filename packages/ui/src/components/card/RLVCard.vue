@@ -32,9 +32,8 @@ const Tag = computed(() => (props.href ? "a" : "div"))
     :is="Tag"
     v-bind="attrs"
     :href="href"
-    :class="resolvedClasses.root"
+    :class="[resolvedClasses.root, href && 'no-underline']"
     data-slot="card-root"
-    :style="href ? { textDecoration: 'none' } : undefined"
   >
     <slot name="media">
       <div v-if="mediaSrc" :class="resolvedClasses.media" data-slot="media">

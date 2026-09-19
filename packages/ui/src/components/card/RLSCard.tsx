@@ -100,9 +100,8 @@ const RLSCard: Component<RLSCardProps> = (allProps) => {
     return (
       <a
         href={props.href}
-        class={resolvedClasses().root}
+        class={`${resolvedClasses().root} no-underline`}
         data-slot="card-root"
-        style={{ "text-decoration": "none" }}
         {...rest}
       >
         {content()}

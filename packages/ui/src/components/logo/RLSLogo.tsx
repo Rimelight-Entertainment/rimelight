@@ -81,7 +81,6 @@ const RLSLogo: Component<RLSLogoProps> = (allProps) => {
       aria-label={props.alt || variant()}
       data-slot="root"
       data-theme={props.theme}
-      style={props.theme ? { "color-scheme": props.theme } : undefined}
       {...rest}
     >
       <Show when={logoInfo().logoSrc} fallback={props.children}>
@@ -96,10 +95,6 @@ const RLSLogo: Component<RLSLogoProps> = (allProps) => {
             fallback={
               <span
                 class="rla-logo-image size-full flex items-center justify-center shrink-0"
-                style={{
-                  "--rla-logo-light": `url('${logoInfo().lightSrc}')`,
-                  "--rla-logo-dark": `url('${logoInfo().darkSrc}')`
-                }}
               >
                 <img
                   src={logoInfo().lightSrc || ""}

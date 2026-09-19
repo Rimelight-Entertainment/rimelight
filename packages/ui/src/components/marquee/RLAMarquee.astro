@@ -10,23 +10,16 @@ const {
 
 const classes = marqueeTheme(Astro.props)
 
-const duration = `${speed}s`
-const id = `marquee-${Math.random().toString(36).substring(2, 9)}`
+const durationClass = `duration-[${speed}s]`
 ---
 <div class={classes.root} data-slot="marquee-root" {...rest}>
-  <div class:list={[classes.track, id]} data-slot="track">
+  <div class:list={[classes.track, durationClass]} data-slot="track">
     <slot />
   </div>
-  <div class:list={[classes.track, id]} data-slot="track" aria-hidden="true">
+  <div class:list={[classes.track, durationClass]} data-slot="track" aria-hidden="true">
     <slot />
   </div>
 </div>
-
-<style is:inline set:html={`
-  .${id} {
-    animation-duration: ${duration} !important;
-  }
-`} />
 
 <style>
   .animate-marquee,

@@ -13,18 +13,17 @@ const {
 
 const classes = scrollAreaTheme(Astro.props)
 
-const heightStyle = height
-  ? `height:${typeof height === "number" ? `${height}px` : height}`
-  : undefined
+const heightClass = height
+  ? (typeof height === "number" ? `h-[${height}px]` : `h-[${height}]`)
+  : ""
 ---
 
 <div
-  class={classes.root}
+  class:list={[classes.root, heightClass]}
   data-slot="root"
   data-scroll-area
   data-orientation={orientation}
   data-hide-delay={scrollHideDelay}
-  style={heightStyle}
   {...rest}
 >
   {/* Scrollable viewport */}

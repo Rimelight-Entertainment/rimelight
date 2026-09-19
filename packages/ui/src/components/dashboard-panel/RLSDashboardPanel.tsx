@@ -53,9 +53,8 @@ const RLSDashboardPanel: Component<RLSDashboardPanelProps> = (allProps) => {
   return (
     <>
       <div
-        class={resolvedClasses().root}
+        class={`${resolvedClasses().root} flex-1 min-w-0`}
         data-slot="root"
-        style={{ "flex": "1 1 0%", "min-width": "0" }}
         {...rest}
       >
         {headerContent()}

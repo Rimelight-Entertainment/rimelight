@@ -4,7 +4,7 @@ export const progressTheme = defineTheme("progress", {
   slots: ["root", "indicator"],
   base: {
     root: "relative w-full overflow-hidden rounded-full bg-muted shadow-inner",
-    indicator: "h-full w-full flex-1 transition-all duration-300 ease-in-out bg-[var(--rl-bg)]"
+    indicator: "h-full rounded-full transition-all duration-300 ease-in-out bg-[var(--rl-bg)]"
   },
   variants: {
     color: "auto",
