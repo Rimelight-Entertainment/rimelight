@@ -50,8 +50,6 @@ const ogImageUrl = ogImageSrc
 <!doctype html>
 <html lang={getHtmlLang()}>
   <head>
-
-    <SecurityHead />
     <SEOHead
       title={title}
       description={description}
@@ -65,6 +63,7 @@ const ogImageUrl = ogImageSrc
       languageAlternates={languageAlternates}
       ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}
     />
+    <SecurityHead />
     <UIHead />
     <Font cssVariable="--font-sans" preload={true} />
     <Font cssVariable="--font-serif" preload={true} />

@@ -18,8 +18,8 @@ const { title, description, favicon } = Astro.props as BlankLayoutProps;
 <!doctype html>
 <html lang="en">
   <head>
-    <SecurityHead />
     <SEOHead title={title} description={description} config={siteConfig} favicon={favicon} />
+    <SecurityHead />
     <UIHead />
     <Font cssVariable="--font-sans" preload={true} />
     <Font cssVariable="--font-serif" preload={true} />

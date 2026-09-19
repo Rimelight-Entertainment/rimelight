@@ -16,8 +16,8 @@ const { title, description } = Astro.props as OgLayoutProps;
 <!doctype html>
 <html lang="en">
   <head>
-    <SecurityHead />
     <SEOHead title={title} description={description} config={siteConfig} noindex={true} />
+    <SecurityHead />
     <UIHead />
     <Font cssVariable="--font-sans" preload={true} />
     <Font cssVariable="--font-serif" preload={true} />
