@@ -67,7 +67,6 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@astrojs/solid-js": "7.0.2",
-    "@astrojs/ts-plugin": "1.10.12",
     "@astrojs/vue": "7.0.3",
     "@rimelight/config": "workspace:*",
     "@vitejs/plugin-vue": "6.0.9",
