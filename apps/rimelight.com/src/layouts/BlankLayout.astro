@@ -21,9 +21,9 @@ const { title, description, favicon } = Astro.props as BlankLayoutProps;
     <SEOHead title={title} description={description} config={siteConfig} favicon={favicon} />
     <SecurityHead />
     <UIHead />
-    <Font cssVariable="--font-sans" preload={true} />
-    <Font cssVariable="--font-serif" preload={true} />
-    <Font cssVariable="--font-mono" preload={true} />
+    <Font cssVariable="--font-sans" />
+    <Font cssVariable="--font-serif" />
+    <Font cssVariable="--font-mono" />
     <slot name="head" />
   </head>
   <body>
