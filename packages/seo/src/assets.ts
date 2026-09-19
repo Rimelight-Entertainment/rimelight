@@ -1,5 +1,3 @@
-import sharp from "sharp"
-
 export interface GeneratePngOptions {
   width: number
   height: number
@@ -19,52 +17,110 @@ export interface GenerateOgCardOptions {
   logoBuffer?: Buffer | Uint8Array | string | null
 }
 
+function toDataUrl(source: Buffer | Uint8Array | string): string {
+  if (typeof source === "string") {
+    if (source.startsWith("data:") || source.startsWith("http:") || source.startsWith("https:")) {
+      return source
+    }
+    const trimmed = source.trim()
+    if (trimmed.startsWith("<svg")) {
+      return `data:image/svg+xml;base64,${Buffer.from(trimmed).toString("base64")}`
+    }
+    return source
+  }
+  const buf = Buffer.from(source)
+  const isSvg = buf.subarray(0, 100).toString("utf8").includes("<svg")
+  const mime = isSvg ? "image/svg+xml" : "image/png"
+  return `data:${mime};base64,${buf.toString("base64")}`
+}
+
 /**
  * Generate a PNG buffer resized to specific dimensions from an SVG or image buffer.
  */
 export async function generatePng(
   source: Buffer | Uint8Array | string,
-  options: { width: number; height: number }
+  options: { width: number; height: number; background?: string }
 ): Promise<Buffer> {
-  return sharp(source)
-    .resize(options.width, options.height, {
-      fit: "contain",
-      background: { r: 0, g: 0, b: 0, alpha: 0 }
-    })
-    .png()
-    .toBuffer()
+  const { render } = await import("takumi-js")
+  const src = toDataUrl(source)
+
+  const vnode = {
+    type: "div",
+    props: {
+      style: {
+        display: "flex",
+        width: `${options.width}px`,
+        height: `${options.height}px`,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: options.background || "transparent"
+      },
+      children: {
+        type: "img",
+        props: {
+          src,
+          style: {
+            width: "100%",
+            height: "100%",
+            objectFit: "contain"
+          }
+        }
+      }
+    }
+  }
+
+  const png = await render(vnode, {
+    width: options.width,
+    height: options.height
+  })
+
+  return Buffer.from(png)
 }
 
 /**
- * Generate a maskable PWA PNG icon with safe-zone padding and solid background. The standard
- * recommendation is to place the master icon in the inner 80% safe zone.
+ * Generate a maskable PWA PNG icon with safe-zone padding and solid background. Standard
+ * recommendation is to place the master icon in the inner ~70-80% safe zone.
  */
 export async function generateMaskablePng(
   source: Buffer | Uint8Array | string,
   options: GenerateMaskableOptions = {}
 ): Promise<Buffer> {
   const { size = 512, background = "#ffffff", paddingRatio = 0.15 } = options
-  const innerSize = Math.round(size * (1 - paddingRatio * 2))
-  const pad = Math.floor((size - innerSize) / 2)
+  const { render } = await import("takumi-js")
+  const src = toDataUrl(source)
+  const innerPercent = `${Math.round((1 - paddingRatio * 2) * 100)}%`
 
-  const innerPng = await sharp(source)
-    .resize(innerSize, innerSize, {
-      fit: "contain",
-      background: { r: 0, g: 0, b: 0, alpha: 0 }
-    })
-    .png()
-    .toBuffer()
+  const vnode = {
+    type: "div",
+    props: {
+      style: {
+        display: "flex",
+        width: `${size}px`,
+        height: `${size}px`,
+        backgroundColor: background,
+        alignItems: "center",
+        justifyContent: "center"
+      },
+      children: {
+        type: "img",
+        props: {
+          src,
+          style: {
+            width: innerPercent,
+            height: innerPercent,
+            objectFit: "contain"
+          }
+        }
+      }
+    }
+  }
 
-  return sharp(innerPng)
-    .extend({
-      top: pad,
-      bottom: size - innerSize - pad,
-      left: pad,
-      right: size - innerSize - pad,
-      background
-    })
-    .png()
-    .toBuffer()
+  const png = await render(vnode, {
+    width: size,
+    height: size
+  })
+
+  return Buffer.from(png)
 }
 
 /**
@@ -103,35 +159,45 @@ export async function generateIco(
  */
 export async function generateOgCard(options: GenerateOgCardOptions = {}): Promise<Buffer> {
   const { width = 1200, height = 630, background = "#0a0a0a", logoBuffer } = options
+  const { render } = await import("takumi-js")
 
+  const bgStyle =
+    background.startsWith("linear-gradient") || background.startsWith("radial-gradient")
+      ? { background }
+      : { backgroundColor: background }
+
+  let children: any = null
   if (logoBuffer) {
+    const src = toDataUrl(logoBuffer)
     const logoSize = Math.min(Math.round(height * 0.45), 280)
-    const logoPng = await generatePng(logoBuffer, { width: logoSize, height: logoSize })
-    const topPad = Math.floor((height - logoSize) / 2)
-    const bottomPad = height - logoSize - topPad
-    const leftPad = Math.floor((width - logoSize) / 2)
-    const rightPad = width - logoSize - leftPad
-
-    return sharp(logoPng)
-      .extend({
-        top: topPad,
-        bottom: bottomPad,
-        left: leftPad,
-        right: rightPad,
-        background
-      })
-      .png()
-      .toBuffer()
+    children = {
+      type: "img",
+      props: {
+        src,
+        style: {
+          width: `${logoSize}px`,
+          height: `${logoSize}px`,
+          objectFit: "contain"
+        }
+      }
+    }
   }
 
-  return sharp({
-    create: {
-      width,
-      height,
-      channels: 4,
-      background
+  const vnode = {
+    type: "div",
+    props: {
+      style: {
+        display: "flex",
+        width: `${width}px`,
+        height: `${height}px`,
+        alignItems: "center",
+        justifyContent: "center",
+        ...bgStyle
+      },
+      ...(children ? { children } : {})
     }
-  })
-    .png()
-    .toBuffer()
+  }
+
+  const png = await render(vnode, { width, height })
+  return Buffer.from(png)
 }

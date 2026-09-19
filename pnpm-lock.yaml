@@ -337,9 +337,6 @@ importers:
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
-      takumi-js:
-        specifier: 2.14.0
-        version: 2.14.0(csstype@3.2.3)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -413,9 +410,6 @@ importers:
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
-      takumi-js:
-        specifier: 2.14.0
-        version: 2.14.0(csstype@3.2.3)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -600,7 +594,7 @@ importers:
   packages/seo:
     dependencies:
       takumi-js:
-        specifier: '>=2.0.0'
+        specifier: ^2.14.0
         version: 2.14.0(csstype@3.2.3)
     devDependencies:
       '@rimelight/config':
@@ -609,9 +603,6 @@ importers:
       astro:
         specifier: 7.3.3
         version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
-      sharp:
-        specifier: '>=0.35.4'
-        version: 0.35.4(@types/node@26.6.1)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
