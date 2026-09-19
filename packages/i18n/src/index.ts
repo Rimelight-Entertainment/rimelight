@@ -10,6 +10,9 @@ import {
   useI18n as baseUseI18n,
   useI18nAsync as baseUseI18nAsync,
   t as baseT,
+  tRaw as baseTRaw,
+  tArray as baseTArray,
+  getRawTranslation,
   currentLocale,
   useFormat,
   clearCache,
@@ -55,21 +58,37 @@ export {
   defaultLocale,
   prefixDefaultLocale,
   i18n,
-  rimelightI18n
+  rimelightI18n,
+  baseTRaw as tRaw,
+  baseTArray as tArray,
+  getRawTranslation
 }
 export type { RimelightI18nOptions, RimelightI18nPlugins }
 export type { TranslationKey, CustomTranslations, NestedTranslationKeys }
 
+export interface TFunction {
+  <K extends string = TranslationKey>(key: K | TranslationKey, params?: Record<string, any>): string
+  raw: <T = unknown>(key: string, fallback?: T) => T
+  array: <T = string>(key: string, fallback?: T[]) => T[]
+}
+
 /**
  * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")`).
- * When augmented via CustomTranslations, keys are strictly type-checked and autocompleted.
+ * When augmented via CustomTranslations, keys are strictly type-checked and autocompleted. Also
+ * provides `t.raw()` and `t.array()` methods to retrieve structured data or string arrays.
  */
-export function t<K extends string = TranslationKey>(
-  key: K | TranslationKey,
-  params?: Record<string, any>
-): string {
-  return baseT(key, params)
-}
+export const t: TFunction = Object.assign(
+  function <K extends string = TranslationKey>(
+    key: K | TranslationKey,
+    params?: Record<string, any>
+  ): string {
+    return baseT(key, params)
+  },
+  {
+    raw: baseTRaw,
+    array: baseTArray
+  }
+)
 
 export { baseUseI18n as useI18n, baseUseI18nAsync as useI18nAsync }
 

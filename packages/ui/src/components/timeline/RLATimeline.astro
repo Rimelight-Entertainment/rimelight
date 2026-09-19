@@ -62,7 +62,7 @@ function getSlotName(item: TimelineItem, base: string) {
   {...rest}
 >
   {items && items.length > 0 ? (
-    items.map((item, index) => {
+    items.map(async (item, index) => {
       const state = getItemState(item, index)
       const isLast = index === items.length - 1
 
@@ -72,6 +72,7 @@ function getSlotName(item: TimelineItem, base: string) {
       const itemTitleSlot = getSlotName(item, "title")
       const itemDescriptionSlot = getSlotName(item, "description")
 
+      const hasDefaultSlot = Astro.slots.has("default")
       const hasCustomIndicator = Astro.slots.has(itemIndicatorSlot) || (item.slot && Astro.slots.has("indicator"))
       const hasCustomWrapper = Astro.slots.has(itemWrapperSlot) || (item.slot && Astro.slots.has("wrapper"))
       const hasCustomDate = Astro.slots.has(itemDateSlot) || (item.slot && Astro.slots.has("date"))
@@ -98,9 +99,12 @@ function getSlotName(item: TimelineItem, base: string) {
               ui={{ icon: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted", fallback: "text-highlighted group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted" }}
             >
               {hasCustomIndicator ? (
-                <slot name={itemIndicatorSlot}>
-                  <slot name="indicator" />
-                </slot>
+                <Fragment
+                  set:html={await Astro.slots.render(
+                    Astro.slots.has(itemIndicatorSlot) ? itemIndicatorSlot : "indicator",
+                    [item, index]
+                  )}
+                />
               ) : item.icon ? (
                 <RLAIcon name={item.icon} class="text-inherit" />
               ) : null}
@@ -120,9 +124,12 @@ function getSlotName(item: TimelineItem, base: string) {
             class:list={[classes.wrapper, item.ui?.wrapper]}
           >
             {hasCustomWrapper ? (
-              <slot name={itemWrapperSlot}>
-                <slot name="wrapper" />
-              </slot>
+              <Fragment
+                set:html={await Astro.slots.render(
+                  Astro.slots.has(itemWrapperSlot) ? itemWrapperSlot : "wrapper",
+                  [item, index]
+                )}
+              />
             ) : (
               <>
                 {(item.date || hasCustomDate) && (
@@ -130,11 +137,16 @@ function getSlotName(item: TimelineItem, base: string) {
                     data-slot="date"
                     class:list={[classes.date, item.ui?.date]}
                   >
-                    <slot name={itemDateSlot}>
-                      <slot name="date">
-                        {item.date}
-                      </slot>
-                    </slot>
+                    {hasCustomDate ? (
+                      <Fragment
+                        set:html={await Astro.slots.render(
+                          Astro.slots.has(itemDateSlot) ? itemDateSlot : "date",
+                          [item, index]
+                        )}
+                      />
+                    ) : (
+                      item.date
+                    )}
                   </div>
                 )}
 
@@ -143,24 +155,38 @@ function getSlotName(item: TimelineItem, base: string) {
                     data-slot="title"
                     class:list={[classes.title, item.ui?.title]}
                   >
-                    <slot name={itemTitleSlot}>
-                      <slot name="title">
-                        {item.title}
-                      </slot>
-                    </slot>
+                    {hasCustomTitle ? (
+                      <Fragment
+                        set:html={await Astro.slots.render(
+                          Astro.slots.has(itemTitleSlot) ? itemTitleSlot : "title",
+                          [item, index]
+                        )}
+                      />
+                    ) : (
+                      item.title
+                    )}
                   </div>
                 )}
 
-                {(item.description || hasCustomDescription) && (
+                {(item.description || hasCustomDescription || hasDefaultSlot) && (
                   <div
                     data-slot="description"
                     class:list={[classes.description, item.ui?.description]}
                   >
-                    <slot name={itemDescriptionSlot}>
-                      <slot name="description">
-                        {item.description}
-                      </slot>
-                    </slot>
+                    {hasDefaultSlot ? (
+                      <Fragment
+                        set:html={await Astro.slots.render("default", [item, index])}
+                      />
+                    ) : hasCustomDescription ? (
+                      <Fragment
+                        set:html={await Astro.slots.render(
+                          Astro.slots.has(itemDescriptionSlot) ? itemDescriptionSlot : "description",
+                          [item, index]
+                        )}
+                      />
+                    ) : (
+                      item.description
+                    )}
                   </div>
                 )}
               </>

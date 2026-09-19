@@ -6,9 +6,14 @@ import RLSAvatar from "../avatar/RLSAvatar"
 import RLSIcon from "../icon/RLSIcon"
 
 export interface RLSTimelineProps extends TimelineProps {
-  children?: JSX.Element
-  indicator?: (ctx: { item: TimelineItem; index: number }) => JSX.Element
-  wrapper?: (ctx: { item: TimelineItem; index: number }) => JSX.Element
+  children?:
+    | JSX.Element
+    | ((ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element)
+  indicator?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
+  wrapper?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
+  date?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
+  title?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
+  description?: (ctx: { item: TimelineItem; index: number } & TimelineItem) => JSX.Element
 }
 
 const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
@@ -26,7 +31,10 @@ const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
     "class",
     "children",
     "indicator",
-    "wrapper"
+    "wrapper",
+    "date",
+    "title",
+    "description"
   ])
 
   const items = (): TimelineItem[] => props.items ?? []
@@ -66,6 +74,19 @@ const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
       class: props.class
     })
   )
+
+  const renderSlot = (
+    slotFn: any,
+    item: TimelineItem,
+    index: number,
+    fallback?: () => JSX.Element
+  ) => {
+    if (typeof slotFn === "function") {
+      const ctx = { ...item, item, index }
+      return slotFn(ctx)
+    }
+    return fallback ? fallback() : null
+  }
 
   return (
     <Dynamic
@@ -107,7 +128,7 @@ const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
                     }}
                   >
                     {props.indicator ? (
-                      props.indicator({ item, index: index() })
+                      renderSlot(props.indicator, item, index())
                     ) : item.icon ? (
                       <RLSIcon name={item.icon} class="text-inherit" />
                     ) : null}
@@ -127,31 +148,35 @@ const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
                   class={`${resolvedClasses().wrapper}  ${item.ui?.wrapper || ""}`}
                 >
                   {props.wrapper ? (
-                    props.wrapper({ item, index: index() })
+                    renderSlot(props.wrapper, item, index())
                   ) : (
                     <>
-                      {item.date ? (
+                      {item.date || props.date ? (
                         <div
                           data-slot="date"
                           class={`${resolvedClasses().date}  ${item.ui?.date || ""}`}
                         >
-                          {item.date}
+                          {renderSlot(props.date, item, index(), () => item.date)}
                         </div>
                       ) : null}
-                      {item.title ? (
+                      {item.title || props.title ? (
                         <div
                           data-slot="title"
                           class={`${resolvedClasses().title}  ${item.ui?.title || ""}`}
                         >
-                          {item.title}
+                          {renderSlot(props.title, item, index(), () => item.title)}
                         </div>
                       ) : null}
-                      {item.description ? (
+                      {item.description ||
+                      props.description ||
+                      typeof props.children === "function" ? (
                         <div
                           data-slot="description"
                           class={`${resolvedClasses().description}  ${item.ui?.description || ""}`}
                         >
-                          {item.description}
+                          {typeof props.children === "function"
+                            ? renderSlot(props.children, item, index(), () => item.description)
+                            : renderSlot(props.description, item, index(), () => item.description)}
                         </div>
                       ) : null}
                     </>
@@ -161,7 +186,7 @@ const RLSTimeline: Component<RLSTimelineProps> = (allProps) => {
             )
           }}
         </For>
-      ) : props.children ? (
+      ) : typeof props.children !== "function" ? (
         props.children
       ) : null}
     </Dynamic>

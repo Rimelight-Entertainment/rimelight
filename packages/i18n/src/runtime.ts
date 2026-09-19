@@ -51,6 +51,20 @@ function wrapLoader(loader: TranslationLoader): TranslationLoader {
   }
 }
 
+interface StoreWithGet {
+  get: () => unknown
+}
+
+function isStoreWithGet(obj: unknown): obj is StoreWithGet {
+  if (typeof obj !== "object" || obj === null) return false
+  const getFn = Reflect.get(obj, "get")
+  return typeof getFn === "function"
+}
+
+function isObjectRecord(obj: unknown): obj is Record<string, any> {
+  return typeof obj === "object" && obj !== null
+}
+
 export interface InitializeI18nOptions {
   /**
    * The default locale code (e.g. 'en').
@@ -83,12 +97,12 @@ export function initializeI18n(options: InitializeI18nOptions): void {
     for (const [locale, components] of Object.entries(translations)) {
       formattedCache[locale] = {}
       for (const [compName, compBody] of Object.entries(components)) {
-        let bodyObj: Record<string, string> = {}
-        if (isStringRecord(compBody)) {
+        let bodyObj: Record<string, any> = {}
+        if (isObjectRecord(compBody)) {
           bodyObj = compBody
         } else if (isStoreWithGet(compBody)) {
           const res: unknown = compBody.get()
-          if (isStringRecord(res)) {
+          if (isObjectRecord(res)) {
             bodyObj = res
           }
         }
@@ -135,24 +149,42 @@ export function useFormat(): ReturnType<FormatterInstance["get"]> {
  * atom or object. Checks exact locale code (e.g. 'zh-CN'), base language code (e.g. 'zh'), and
  * default locale fallback.
  */
-interface StoreWithGet {
-  get: () => unknown
-}
 
-function isStoreWithGet(obj: unknown): obj is StoreWithGet {
-  if (typeof obj !== "object" || obj === null) return false
-  const getFn = Reflect.get(obj, "get")
-  return typeof getFn === "function"
-}
+function resolvePath(obj: unknown, path: string): unknown {
+  if (obj == null || typeof obj !== "object") return undefined
+  if (Object.prototype.hasOwnProperty.call(obj, path)) {
+    return (obj as any)[path]
+  }
 
-function isStringRecord(obj: unknown): obj is Record<string, string> {
-  return typeof obj === "object" && obj !== null
+  const segments = path.split(".")
+  let current: any = obj
+
+  for (let i = 0; i < segments.length; i++) {
+    if (current == null || typeof current !== "object") {
+      return undefined
+    }
+    const seg = segments[i]!
+    if (
+      Object.prototype.hasOwnProperty.call(current, seg) ||
+      (Array.isArray(current) && seg in current)
+    ) {
+      current = current[seg]
+    } else {
+      const remainingKey = segments.slice(i).join(".")
+      if (Object.prototype.hasOwnProperty.call(current, remainingKey)) {
+        return current[remainingKey]
+      }
+      return undefined
+    }
+  }
+
+  return current
 }
 
 function getCachedComponent(
   locale: string,
   componentName: string
-): Record<string, string> | undefined {
+): Record<string, any> | undefined {
   const normalizedLocale = locale.toLowerCase()
   const baseLanguage = normalizedLocale.split("-")[0] ?? normalizedLocale
 
@@ -162,8 +194,8 @@ function getCachedComponent(
     const rawComp: unknown = rawTranslationsDict[code]?.[componentName]
     if (isStoreWithGet(rawComp)) {
       const res: unknown = rawComp.get()
-      if (isStringRecord(res)) return res
-    } else if (isStringRecord(rawComp)) {
+      if (isObjectRecord(res)) return res
+    } else if (isObjectRecord(rawComp)) {
       return rawComp
     }
   }
@@ -173,8 +205,8 @@ function getCachedComponent(
     const rawComp: unknown = i18nInstance.cache[code]?.[componentName]
     if (isStoreWithGet(rawComp)) {
       const res: unknown = rawComp.get()
-      if (isStringRecord(res)) return res
-    } else if (isStringRecord(rawComp)) {
+      if (isObjectRecord(res)) return res
+    } else if (isObjectRecord(rawComp)) {
       return rawComp
     }
   }
@@ -183,11 +215,58 @@ function getCachedComponent(
 }
 
 /**
+ * Safely retrieves the raw translation entry (string, array, or object) for a given dot-notation
+ * key.
+ */
+export function getRawTranslation(key: string): unknown {
+  const dotIndex = key.indexOf(".")
+  const activeLocale = currentLocale.get() || baseLocaleDefault
+
+  if (dotIndex === -1) {
+    return getCachedComponent(activeLocale, key) ?? getCachedComponent(baseLocaleDefault, key)
+  }
+
+  const componentName = key.slice(0, dotIndex)
+  const keyName = key.slice(dotIndex + 1)
+
+  const componentDict =
+    getCachedComponent(activeLocale, componentName) ??
+    getCachedComponent(baseLocaleDefault, componentName)
+
+  if (!componentDict) return undefined
+
+  return resolvePath(componentDict, keyName)
+}
+
+/**
+ * Returns raw translation data (such as arrays or nested objects) typed as T.
+ */
+export function tRaw<T = unknown>(key: string, fallback?: T): T {
+  const val = getRawTranslation(key)
+  if (val !== undefined) {
+    return val as T
+  }
+  return fallback as T
+}
+
+/**
+ * Returns an array of translations (e.g. lists of strings or structured objects). Falls back to an
+ * empty array or the provided fallback if not found or not an array.
+ */
+export function tArray<T = string>(key: string, fallback: T[] = []): T[] {
+  const val = getRawTranslation(key)
+  if (Array.isArray(val)) {
+    return val as T[]
+  }
+  return fallback
+}
+
+/**
  * Returns the translated strings for a component in the current locale. Falls back to defaultLocale
  * loaded translations or `baseTranslations` if provided.
  */
 export interface ComponentMessages {
-  [key: string]: string
+  [key: string]: any
 }
 
 export function useI18n(componentName: string): ComponentMessages
@@ -198,9 +277,7 @@ export function useI18n<Body extends Translations>(
 export function useI18n(componentName: string, baseTranslations?: Translations): ComponentMessages {
   const i18n = getI18nInstance()
   const activeLocale = currentLocale.get() || baseLocaleDefault
-  const fallbackDict: Record<string, string> = isStringRecord(baseTranslations)
-    ? baseTranslations
-    : {}
+  const fallbackDict: Record<string, any> = isObjectRecord(baseTranslations) ? baseTranslations : {}
   const baseDict =
     getCachedComponent(activeLocale, componentName) ??
     getCachedComponent(baseLocaleDefault, componentName) ??
@@ -210,7 +287,7 @@ export function useI18n(componentName: string, baseTranslations?: Translations):
   const targetObj = store.get()
 
   return new Proxy(targetObj, {
-    get(target: Record<string, string>, prop: string | symbol): string {
+    get(target: Record<string, any>, prop: string | symbol): any {
       if (typeof prop === "symbol" || prop in Object.prototype) {
         const val: unknown = Reflect.get(target, prop)
         return typeof val === "string" ? val : ""
@@ -237,8 +314,8 @@ export async function useI18nAsync(
   const activeLocale = currentLocale.get() || baseLocaleDefault
   const cachedActive = getCachedComponent(activeLocale, componentName)
   const cachedDefault = getCachedComponent(baseLocaleDefault, componentName)
-  let baseDict: Record<string, string> = cachedActive ?? cachedDefault ?? {}
-  if (!cachedActive && !cachedDefault && isStringRecord(baseTranslations)) {
+  let baseDict: Record<string, any> = cachedActive ?? cachedDefault ?? {}
+  if (!cachedActive && !cachedDefault && isObjectRecord(baseTranslations)) {
     baseDict = baseTranslations
   }
 
@@ -250,7 +327,8 @@ export async function useI18nAsync(
 }
 
 /**
- * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")`).
+ * Translates a single string key using dot-notation (e.g. `t("page_home.section_hero_title")` or
+ * nested/array paths like `t("page_resume.experiences.0.role")`).
  */
 export function t(key: string, params?: Record<string, any>): string {
   const dotIndex = key.indexOf(".")
@@ -266,14 +344,15 @@ export function t(key: string, params?: Record<string, any>): string {
     getCachedComponent(baseLocaleDefault, componentName) ??
     {}
 
-  let value = componentDict[keyName] ?? key
+  let value = resolvePath(componentDict, keyName) ?? key
 
   // Pluralization support if count parameter is provided and translation value is a plural object
   if (
     params &&
     typeof params["count"] === "number" &&
     typeof value === "object" &&
-    value !== null
+    value !== null &&
+    !Array.isArray(value)
   ) {
     const pluralCategory = getPluralCategory(params["count"], activeLocale)
     value =
@@ -290,8 +369,17 @@ export function t(key: string, params?: Record<string, any>): string {
     return value.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`))
   }
 
-  return typeof value === "string" ? value : String(value)
+  if (typeof value === "string") {
+    return value
+  }
+  if (value !== undefined && value !== null && typeof value === "object") {
+    return JSON.stringify(value)
+  }
+  return value != null ? `${value as string | number | boolean}` : ""
 }
+
+t.raw = tRaw
+t.array = tArray
 
 /**
  * Returns the plural category (e.g. 'one', 'few', 'many', 'other') for a given number and locale
