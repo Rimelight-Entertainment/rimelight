@@ -5,10 +5,9 @@ import assetsDelete from "./delete"
 import assetsMove from "./move"
 
 const api = new Hono()
-
-api.route("/", assetsGet)
-api.route("/", assetsPut)
-api.route("/", assetsDelete)
-api.route("/", assetsMove)
+  .route("/", assetsGet)
+  .route("/", assetsPut)
+  .route("/", assetsDelete)
+  .route("/", assetsMove)
 
 export default api

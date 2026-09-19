@@ -2,9 +2,6 @@ import { Hono } from "hono"
 import versionList from "./list"
 import versionActions from "./actions"
 
-const api = new Hono()
-
-api.route("/", versionList)
-api.route("/", versionActions)
+const api = new Hono().route("/", versionList).route("/", versionActions)
 
 export default api

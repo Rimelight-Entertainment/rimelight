@@ -10,16 +10,15 @@ import docsRoutes from "./routes/docs"
 import cmsRoutes from "./routes/cms"
 
 const api = new Hono()
+  .route("/auth", authRoutes)
+  .route("/search", searchRoutes)
+  .route("/github", changelogRoutes)
+  .route("/assets", assetsRoutes)
+  .route("/pages", pagesRoutes)
+  .route("/pages/versions", versionRoutes)
+  .route("/dev/email/preview", emailPreviewRoutes)
+  .route("/docs", docsRoutes)
+  .route("/cms", cmsRoutes)
 
-api.route("/auth", authRoutes)
-api.route("/search", searchRoutes)
-
-api.route("/github", changelogRoutes)
-api.route("/assets", assetsRoutes)
-api.route("/pages", pagesRoutes)
-api.route("/pages/versions", versionRoutes)
-api.route("/dev/email/preview", emailPreviewRoutes)
-api.route("/docs", docsRoutes)
-api.route("/cms", cmsRoutes)
-
+export type ApiType = typeof api
 export default api

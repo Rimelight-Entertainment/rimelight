@@ -1,8 +1,6 @@
 import { Hono } from "hono"
 
-const api = new Hono()
-
-api.get("/changelog", async (c) => {
+const api = new Hono().get("/changelog", async (c) => {
   const component = c.req.query("component")
   if (!component) {
     return c.json({ error: "Component name is required" }, 400)
