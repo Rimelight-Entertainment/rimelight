@@ -1,6 +1,6 @@
 # RFC: Zero-Dependency Architecture & Native Handlers for Rimelight Packages
 
-- **Status**: **Draft**
+- **Status**: **In Progress (Partially Implemented)**
 - **Author(s)**: Rimelight Team
 - **Created**: 2026-09-19
 - **Last Updated**: 2026-09-19
@@ -10,7 +10,9 @@
 
 ## 1. Summary
 
-Following the recent successful transition of `@rimelight/i18n` into a 100% dependency-less library, this RFC proposes extending this philosophy across the entire `@rimelight/*` package suite. By taking advantage of modern JavaScript standards, standard Web APIs (such as Web Crypto API and Pointer/Drag APIs), and modern Node.js built-ins (`node:util.parseArgs`, `node:util.styleText`, `node:readline/promises`, `node:child_process`), we can systematically remove unnecessary external runtime dependencies, reduce supply-chain vulnerability surfaces, eliminate framework conflicts, and drastically shrink install and execution footprints.
+Following the transition of `@rimelight/i18n` into a 100% dependency-less library, this RFC proposes extending this philosophy across the entire `@rimelight/*` package suite. By taking advantage of modern JavaScript standards, standard Web APIs (such as Web Crypto API and Pointer/Drag APIs), and modern Node.js built-ins (`node:util.parseArgs`, `node:util.styleText`, `node:readline/promises`, `node:child_process`), we can systematically remove unnecessary external runtime dependencies, reduce supply-chain vulnerability surfaces, eliminate framework conflicts, and drastically shrink install and execution footprints.
+
+> **Implementation Progress**: This RFC is **partially completed**. `@rimelight/cli` and `@rimelight/auth` have been fully converted to **0 runtime dependencies**. Migrations for `@rimelight/seo` (optional peer dependency strategy) and `@rimelight/cms` (native reactive drag & drop) remain queued.
 
 ---
 
@@ -189,16 +191,16 @@ Implement an internal `createBlockDragDrop` handler utilizing HTML5 Drag and Dro
 
 ## 4. Package Audit Overview
 
-| Package               | Current Deps                                                | Proposed Target Deps  | Key Strategy                                       |
-| :-------------------- | :---------------------------------------------------------- | :-------------------- | :------------------------------------------------- |
-| `@rimelight/i18n`     | **0**                                                       | **0**                 | _Already complete (reference benchmark)_           |
-| `@rimelight/cli`      | 4 (`@clack/prompts`, `cross-spawn`, `mri`, `picocolors`)    | **0**                 | `node:util`, `node:readline`, `node:child_process` |
-| `@rimelight/auth`     | 2 (`drizzle-orm`, `jose`)                                   | **0**                 | Drop unused `drizzle-orm`, native `crypto.subtle`  |
-| `@rimelight/seo`      | 1 (`takumi-js`)                                             | **0** (mandatory)     | Move `takumi-js` to optional `peerDependencies`    |
-| `@rimelight/cms`      | 6 (`@rimelight/*`, `drizzle-orm`, `solid-js`, `sortablejs`) | 5 (Drop `sortablejs`) | Custom SolidJS reactive drag/drop handler          |
-| `@rimelight/security` | 3 (`@rimelight/*` workspace only)                           | 0 external            | Pure standard Request/Response handlers            |
-| `@rimelight/config`   | **0**                                                       | **0**                 | Standard configurations                            |
-| `@rimelight/ui`       | 2 (`unocss`, `@unocss/vite`)                                | 2                     | Styling engine                                     |
+| Package               | Initial Deps                                                | Current / Target Deps | Status      | Key Strategy                                       |
+| :-------------------- | :---------------------------------------------------------- | :-------------------- | :---------- | :------------------------------------------------- |
+| `@rimelight/i18n`     | **0**                                                       | **0**                 | **Done**    | Reference benchmark (pure Web/Node APIs)           |
+| `@rimelight/cli`      | 4 (`@clack/prompts`, `cross-spawn`, `mri`, `picocolors`)    | **0**                 | **Done**    | `node:util`, `node:readline`, `node:child_process` |
+| `@rimelight/auth`     | 2 (`drizzle-orm`, `jose`)                                   | **0**                 | **Done**    | Dropped `drizzle-orm`, isomorphic `crypto.subtle`  |
+| `@rimelight/config`   | **0**                                                       | **0**                 | **Done**    | Standard configurations                            |
+| `@rimelight/security` | 3 (`@rimelight/*` workspace only)                           | 0 external            | **Done**    | Pure standard Request/Response handlers            |
+| `@rimelight/seo`      | 1 (`takumi-js`)                                             | **0** (mandatory)     | **Pending** | Move `takumi-js` to optional `peerDependencies`    |
+| `@rimelight/cms`      | 6 (`@rimelight/*`, `drizzle-orm`, `solid-js`, `sortablejs`) | 5 (Drop `sortablejs`) | **Pending** | Custom SolidJS reactive drag/drop handler          |
+| `@rimelight/ui`       | 2 (`unocss`, `@unocss/vite`)                                | 2                     | Stable      | Styling engine                                     |
 
 ---
 
@@ -218,14 +220,14 @@ Implement an internal `createBlockDragDrop` handler utilizing HTML5 Drag and Dro
 
 ## 7. Adoption & Migration Strategy
 
-- **Phase 1 (Immediate / Non-breaking)**:
-  - Remove unused `drizzle-orm` from `@rimelight/auth`.
+- **Phase 1 (`@rimelight/cli` & `@rimelight/auth`) — COMPLETED**:
+  - Refactored `packages/cli` to use `node:util.parseArgs`, `node:util.styleText`, `node:child_process.spawnSync`, and internal interactive prompter (`packages/cli/src/prompts.js`).
+  - Removed unused `drizzle-orm` from `packages/auth`.
+  - Implemented zero-dependency Web Crypto JWT & JWKS verification engine in `packages/auth/src/jwt.ts` (`createSessionToken`, `verifySessionToken`, `verifyJwtRs256`).
+  - Verified all unit test suites and `vp check` / `vp pack` builds pass.
+- **Phase 2 (`@rimelight/seo`) — PENDING**:
   - Move `takumi-js` to optional peer dependency in `@rimelight/seo`.
-- **Phase 2 (`@rimelight/cli`)**:
-  - Refactor `packages/cli` to use `node:util.parseArgs`, `node:util.styleText`, `node:child_process`, and native interactive prompts.
-  - Verify all CLI commands (`create`, `compare`, `update`) and test suites pass.
-- **Phase 3 (`@rimelight/auth` & `@rimelight/cms`)**:
-  - Implement native Web Crypto JWT helper in `@rimelight/auth`.
+- **Phase 3 (`@rimelight/cms`) — PENDING**:
   - Implement SolidJS reactive drag/drop handler in `@rimelight/cms` and remove `sortablejs`.
 
 ---

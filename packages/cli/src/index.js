@@ -1,11 +1,24 @@
 import path from "node:path"
 import fs from "node:fs/promises"
 import { existsSync, readdirSync } from "node:fs"
-import * as prompts from "@clack/prompts"
-import pc from "picocolors"
-import spawn from "cross-spawn"
+import { spawnSync } from "node:child_process"
+import * as prompts from "./prompts.js"
+import { pc } from "./prompts.js"
 
-const starterPath = path.resolve(import.meta.dirname, "../../starter")
+function runCommand(cmd, args, options = {}) {
+  return spawnSync(cmd, args, {
+    ...options,
+    shell: process.platform === "win32"
+  })
+}
+
+const candidateStarterPaths = [
+  path.resolve(import.meta.dirname, "../../../apps/starter.rimelight.com"),
+  path.resolve(import.meta.dirname, "../../starter"),
+  path.resolve(import.meta.dirname, "../starter")
+]
+export const starterPath =
+  candidateStarterPaths.find((p) => existsSync(p)) || candidateStarterPaths[0]
 
 // Helper to parse JSON with comments (JSONC)
 export function parseJsonc(content) {
@@ -242,7 +255,7 @@ export async function runCreate(options) {
     if (initGit) {
       const gitSpinner = prompts.spinner()
       gitSpinner.start("Initializing Git repository...")
-      const gitInit = spawn.sync("git", ["init"], { cwd: resolvedTargetDir })
+      const gitInit = runCommand("git", ["init"], { cwd: resolvedTargetDir })
       if (gitInit.status === 0) {
         gitSpinner.stop(pc.green("✔ Git repository initialized!"))
       } else {
@@ -255,7 +268,7 @@ export async function runCreate(options) {
       const installSpinner = prompts.spinner()
       installSpinner.start(`Installing dependencies with ${packageManager}...`)
 
-      const install = spawn.sync(packageManager, ["install"], {
+      const install = runCommand(packageManager, ["install"], {
         cwd: resolvedTargetDir,
         stdio: "ignore"
       })
@@ -323,7 +336,7 @@ export async function runCreate(options) {
 
     if (initGit) {
       console.log("Initializing Git repository...")
-      const gitInit = spawn.sync("git", ["init"], { cwd: resolvedTargetDir })
+      const gitInit = runCommand("git", ["init"], { cwd: resolvedTargetDir })
       if (gitInit.status === 0) {
         console.log(pc.green("✔ Git repository initialized!"))
       } else {
@@ -333,15 +346,10 @@ export async function runCreate(options) {
 
     if (installDeps) {
       console.log(`Installing dependencies using ${packageManager}...`)
-      const install = spawn.crossSpawn
-        ? spawn.crossSpawn(packageManager, ["install"], {
-            cwd: resolvedTargetDir,
-            stdio: "ignore"
-          })
-        : spawn.sync(packageManager, ["install"], {
-            cwd: resolvedTargetDir,
-            stdio: "ignore"
-          })
+      const install = runCommand(packageManager, ["install"], {
+        cwd: resolvedTargetDir,
+        stdio: "ignore"
+      })
       if (install.status === 0) {
         console.log(pc.green("✔ Dependencies successfully installed!"))
       } else {
@@ -1288,7 +1296,7 @@ export async function runUpdate(options) {
     if (runInstall) {
       const runVpInstall = prompts.spinner()
       runVpInstall.start("Running vp install...")
-      const vpInstall = spawn.sync("vp", ["install"], { cwd: targetDir, stdio: "ignore" })
+      const vpInstall = runCommand("vp", ["install"], { cwd: targetDir, stdio: "ignore" })
       if (vpInstall.status === 0) {
         runVpInstall.stop(pc.green("✔ vp install completed successfully!"))
       } else {

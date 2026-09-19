@@ -31,12 +31,7 @@
     "create": "node ./bin/rimelight.js create",
     "check": "vp check --fix"
   },
-  "dependencies": {
-    "@clack/prompts": "1.8.1",
-    "cross-spawn": "7.0.6",
-    "mri": "1.2.0",
-    "picocolors": "1.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@rimelight/config": "workspace:*",
     "@types/node": "26.6.1",

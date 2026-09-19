@@ -1,28 +1,29 @@
 #!/usr/bin/env node
 
-import mri from "mri"
+import { parseArgs } from "node:util"
 import { runCreate } from "../src/index.js"
 
 async function main() {
-  const args = process.argv.slice(2)
-  const parsed = mri(args, {
-    alias: {
-      h: "help",
-      v: "version",
-      g: "git",
-      i: "install",
-      d: "domain"
+  const { values, positionals } = parseArgs({
+    args: process.argv.slice(2),
+    options: {
+      "domain": { type: "string", short: "d" },
+      "git": { type: "boolean", short: "g" },
+      "install": { type: "boolean", short: "i" },
+      "package-manager": { type: "string" },
+      "help": { type: "boolean", short: "h" },
+      "version": { type: "boolean", short: "v" }
     },
-    boolean: ["help", "version", "git", "install"],
-    string: ["package-manager", "domain"]
+    allowPositionals: true,
+    strict: false
   })
 
-  if (parsed.version) {
+  if (values.version) {
     console.log("rimelight v0.1.0")
     process.exit(0)
   }
 
-  if (parsed.help) {
+  if (values.help) {
     console.log(`
 Rimelight CLI - Manage and scaffold premium Rimelight projects.
 
@@ -47,24 +48,24 @@ Options:
     process.exit(0)
   }
 
-  const command = parsed._[0]
+  const command = positionals[0]
 
   if (command === "compare") {
-    const targetDir = parsed._[1] || "."
+    const targetDir = positionals[1] || "."
     const { runCompare } = await import("../src/index.js")
     await runCompare({ targetDir })
   } else if (command === "update") {
-    const targetDir = parsed._[1] || "."
+    const targetDir = positionals[1] || "."
     const { runUpdate } = await import("../src/index.js")
     await runUpdate({ targetDir })
   } else if (!command || command === "create") {
-    const projectName = command === "create" ? parsed._[1] : parsed._[0]
+    const projectName = command === "create" ? positionals[1] : positionals[0]
     await runCreate({
       projectName,
-      domain: parsed.domain,
-      git: parsed.git,
-      install: parsed.install,
-      packageManager: parsed["package-manager"]
+      domain: values.domain,
+      git: values.git,
+      install: values.install,
+      packageManager: values["package-manager"]
     })
   } else {
     console.error(`Unknown command: ${command}. Use "rimelight --help" to see all options.`)

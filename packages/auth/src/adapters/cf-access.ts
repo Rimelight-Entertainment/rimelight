@@ -1,5 +1,5 @@
 import type { AuthAdapter, UserSessionContext } from "../types"
-import { createRemoteJWKSet, jwtVerify } from "jose"
+import { verifyJwtRs256 } from "../jwt"
 
 export interface CfAccessAdapterOptions {
   aud?: string | undefined
@@ -20,13 +20,10 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
     loginUrl
   } = options
 
-  let jwks: ReturnType<typeof createRemoteJWKSet> | null = null
-  if (teamDomain && verifyJwt) {
-    const certsUrl = new URL(
-      `https://${teamDomain.replace(/^https?:\/\//, "")}/cdn-cgi/access/certs`
-    )
-    jwks = createRemoteJWKSet(certsUrl)
-  }
+  const certsUrl =
+    teamDomain && verifyJwt
+      ? `https://${teamDomain.replace(/^https?:\/\//, "").replace(/\/$/, "")}/cdn-cgi/access/certs`
+      : null
 
   return {
     name: "cf-access",
@@ -43,15 +40,19 @@ export function cfAccessAuth(options: CfAccessAdapterOptions = {}): AuthAdapter 
       let name: string | undefined
       let customClaims: Record<string, any> = {}
 
-      if (jwtAssertion && jwks) {
+      if (jwtAssertion && certsUrl) {
         try {
-          const verifyOpts: { audience?: string | string[]; issuer?: string } = {}
-          if (aud) verifyOpts.audience = aud
-          if (teamDomain) {
-            verifyOpts.issuer = `https://${teamDomain.replace(/^https?:\/\//, "")}`
-          }
+          const expectedIssuer = teamDomain
+            ? `https://${teamDomain.replace(/^https?:\/\//, "").replace(/\/$/, "")}`
+            : undefined
 
-          const { payload } = await jwtVerify(jwtAssertion, jwks, verifyOpts)
+          const payload = await verifyJwtRs256(jwtAssertion, certsUrl, {
+            audience: aud,
+            issuer: expectedIssuer
+          })
+          if (!payload) {
+            return null
+          }
           if (payload["email"] && typeof payload["email"] === "string") {
             email = payload["email"].toLowerCase().trim()
           }

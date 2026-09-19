@@ -1,7 +1,52 @@
 import type { AuthAdapter, UserSessionContext, UserType } from "../types"
-import { createRemoteJWKSet, jwtVerify, SignJWT, decodeJwt } from "jose"
+import {
+  decodeJwt,
+  createSessionToken as createSessionTokenJwt,
+  verifySessionToken as verifySessionTokenJwt,
+  verifyJwtRs256
+} from "../jwt"
 
 export { decodeJwt }
+
+export async function createSessionToken(
+  session: UserSessionContext,
+  secret: string,
+  expiresIn: string | number = "7d"
+): Promise<string> {
+  return createSessionTokenJwt(session, secret, expiresIn)
+}
+
+export async function verifySessionToken(
+  token: string,
+  secret: string
+): Promise<UserSessionContext | null> {
+  return verifySessionTokenJwt<UserSessionContext>(token, secret)
+}
+
+/**
+ * Verifies an Auth0 RS256 JWT Access Token or ID Token against Auth0 JWKS endpoint
+ */
+export async function verifyAuth0Jwt(
+  token: string,
+  options: {
+    domain: string
+    audience?: string | undefined
+    issuer?: string | undefined
+  }
+): Promise<Record<string, any> | null> {
+  try {
+    const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
+    const jwksUrl = `https://${cleanDomain}/.well-known/jwks.json`
+    const expectedIssuer = options.issuer || `https://${cleanDomain}/`
+
+    return await verifyJwtRs256(token, jwksUrl, {
+      issuer: expectedIssuer,
+      audience: options.audience
+    })
+  } catch {
+    return null
+  }
+}
 
 export interface Auth0AdapterOptions {
   domain: string
@@ -65,82 +110,6 @@ export interface Auth0RefreshTokenOptions {
   clientSecret?: string | undefined
   refreshToken: string
   scope?: string | undefined
-}
-
-// In-memory cache for remote JWKS sets to optimize edge performance
-const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>()
-
-function getOrCreateJwks(domain: string) {
-  const cleanDomain = domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-  if (!jwksCache.has(cleanDomain)) {
-    const jwksUrl = new URL(`https://${cleanDomain}/.well-known/jwks.json`)
-    jwksCache.set(cleanDomain, createRemoteJWKSet(jwksUrl))
-  }
-  return jwksCache.get(cleanDomain)!
-}
-
-/**
- * Verifies an Auth0 RS256 JWT Access Token or ID Token against Auth0 JWKS endpoint
- */
-export async function verifyAuth0Jwt(
-  token: string,
-  options: {
-    domain: string
-    audience?: string | undefined
-    issuer?: string | undefined
-  }
-): Promise<Record<string, any> | null> {
-  try {
-    const cleanDomain = options.domain.replace(/^https?:\/\//, "").replace(/\/$/, "")
-    const jwks = getOrCreateJwks(cleanDomain)
-    const expectedIssuer = options.issuer || `https://${cleanDomain}/`
-
-    const verifyOpts: { issuer?: string; audience?: string | string[] } = {
-      issuer: expectedIssuer
-    }
-    if (options.audience) {
-      verifyOpts.audience = options.audience
-    }
-
-    const { payload } = await jwtVerify(token, jwks, verifyOpts)
-    return payload
-  } catch {
-    return null
-  }
-}
-
-/**
- * Creates a signed compact session token (HS256) for local session cookie storage
- */
-export async function createSessionToken(
-  session: UserSessionContext,
-  secret: string,
-  expiresIn: string | number = "7d"
-): Promise<string> {
-  const encSecret = new TextEncoder().encode(secret)
-  return new SignJWT({ ...session })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime(expiresIn)
-    .sign(encSecret)
-}
-
-/**
- * Verifies a signed session token from a session cookie
- */
-export async function verifySessionToken(
-  token: string,
-  secret: string
-): Promise<UserSessionContext | null> {
-  try {
-    const encSecret = new TextEncoder().encode(secret)
-    const { payload } = await jwtVerify(token, encSecret, {
-      algorithms: ["HS256"]
-    })
-    return payload as unknown as UserSessionContext
-  } catch {
-    return null
-  }
 }
 
 /**

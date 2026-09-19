@@ -60,6 +60,10 @@
       "types": "./dist/client/index.d.mts",
       "import": "./dist/client/index.mjs"
     },
+    "./jwt": {
+      "types": "./dist/jwt.d.mts",
+      "import": "./dist/jwt.mjs"
+    },
     "./vite": {
       "types": "./dist/vite.d.mts",
       "import": "./dist/vite.mjs"
@@ -73,22 +77,15 @@
     "prepack": "pnpm run build",
     "check": "vp check --fix"
   },
-  "dependencies": {
-    "drizzle-orm": "0.45.2",
-    "jose": "6.2.12"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@rimelight/config": "workspace:*",
     "@types/node": "26.6.1"
   },
   "peerDependencies": {
-    "drizzle-orm": ">=0.30.0",
     "hono": ">=4.12.34"
   },
   "peerDependenciesMeta": {
-    "drizzle-orm": {
-      "optional": true
-    },
     "hono": {
       "optional": true
     }
