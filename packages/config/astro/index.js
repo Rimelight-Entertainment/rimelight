@@ -206,7 +206,11 @@ function rimelightIntegration(options, imageDomains, domain, site) {
 
         if (options.security) {
           const secMod = await import("@rimelight/security")
-          const { security: securityFn } = secMod
+          const secFn =
+            secMod.rimelightSecurity ||
+            secMod.default?.rimelightSecurity ||
+            secMod.default ||
+            secMod
           const secOpts = typeof options.security === "object" ? options.security : {}
           const defaultImgSrc = imageDomains.map((d) =>
             d.startsWith("http://") || d.startsWith("https://") ? d : `https://${d}`
@@ -215,8 +219,8 @@ function rimelightIntegration(options, imageDomains, domain, site) {
             ? Array.from(new Set([...defaultImgSrc, ...secOpts.imgSrc]))
             : defaultImgSrc
 
-          plugins.push(
-            securityFn({
+          integrations.push(
+            secFn({
               domain: secOpts.domain || domain,
               imgSrc,
               ...secOpts
