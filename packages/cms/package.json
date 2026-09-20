@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cms",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "private": false,
   "description": "Rimelight Entertainment's Content Management System Package",
   "homepage": "https://rimelight.com/docs",
@@ -99,7 +99,7 @@
     "astro": ">=7.0.0"
   },
   "engines": {
-    "node": ">=26.9.0"
+    "node": ">=26.8.2"
   },
-  "packageManager": "pnpm@12.4.2"
+  "packageManager": "pnpm@12.5.1"
 }

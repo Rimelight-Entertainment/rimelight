@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cli",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "private": false,
   "description": "Rimelight Entertainment's Command Line Interface",
   "homepage": "https://rimelight.com/docs",
@@ -37,7 +37,7 @@
     "vite-plus": "0.3.3"
   },
   "engines": {
-    "node": ">=26.9.0"
+    "node": ">=26.8.2"
   },
-  "packageManager": "pnpm@12.4.2"
+  "packageManager": "pnpm@12.5.1"
 }
