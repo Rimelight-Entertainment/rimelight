@@ -190,34 +190,81 @@ A key requirement is ensuring that making Solid and UnoCSS direct dependencies d
 
 ## 5. Drawbacks & Trade-offs
 
-1. **Direct Dependency Size in `node_modules`**:
+1. **Astro Framework Coupling Risk**:
+   `@rimelight/ui` was previously refactored from an Astro-specific integration into a **framework-agnostic Vite plugin** (`virtual:rimelight/ui`) with multi-framework component exports (`RLA*`, `RLV*`, `RLS*`). Bundling Astro-specific rendering integrations (`@astrojs/solid-js`) directly into `@rimelight/ui` re-couples the UI package to Astro, making it less ergonomic for non-Astro Vite apps (e.g. pure Vue, Solid SPA, Svelte, or Vite SSR).
+2. **Direct Dependency Size in `node_modules`**:
    `node_modules/@rimelight/ui` will contain `solid-js` and `@astrojs/solid-js`. In modern package managers (pnpm), content-addressable storage shares these bytes across all workspace apps with 0 disk penalty.
-2. **Pinned Framework Version**:
+3. **Pinned Framework Version**:
    All consuming apps inherit the Solid.js and UnoCSS versions specified by `@rimelight/ui`. In the Rimelight ecosystem, this is a deliberate benefit ensuring consistency across all web products.
 
 ---
 
-## 6. Alternatives Considered
+## 6. Architectural Models & Alternatives Considered
 
-### Option A: Status Quo (Optional Peer Dependencies)
+The central design dilemma is finding the right boundary for the **Astro $\leftrightarrow$ Solid $\leftrightarrow$ UI runtime glue** without violating package responsibilities:
 
-- **Downside**: Requires every single app and new site to manually add `solid-js`, `@astrojs/solid-js`, and `unocss` to `package.json`, creating maintenance friction and drift.
+```mermaid
+flowchart TD
+    subgraph "Design Spectrum"
+        M1["Model 1: Direct @rimelight/ui Integration<br/>(RFC Default Draft)"]
+        M2["Model 2: Bundle via @rimelight/config/astro"]
+        M3["Model 3: Subpath Export (@rimelight/ui/astro)"]
+        M4["Model 4: Dedicated @rimelight/astro Package"]
+        M5["Model 5: Peer Dependencies + CLI Scaffolder"]
+    end
+```
 
-### Option B: Bundle via `@rimelight/config` Alone
+### Model 1: Direct `@rimelight/ui` Integration (Current RFC Proposal)
 
-- **Downside**: Separates the UI framework configuration from the UI component library (`@rimelight/ui`), creating a split responsibility where `@rimelight/ui` components depend on setup performed by `@rimelight/config`.
+- **Design**: `@rimelight/ui` root exports both the Vite plugin and the Astro integration with `@astrojs/solid-js` as a direct dependency.
+- **Pros**: Simplest consumer DX — installing `@rimelight/ui` just works.
+- **Cons**: Re-couples the UI package to Astro, undoing the prior refactor toward generic Vite agnosticism.
+
+### Model 2: Bundle via `@rimelight/config/astro`
+
+- **Design**: Move `@astrojs/solid-js` and Solid runtime orchestration into `@rimelight/config/astro`, leaving `@rimelight/ui` 100% agnostic.
+- **Pros**: Leaves `@rimelight/ui` completely generic.
+- **Cons**: **Scope pollution for config package**. `@rimelight/config` is intended for lightweight configuration presets (TSConfig, Drizzle configs, Vite presets). Tying heavy UI rendering engines and framework runtimes to `@rimelight/config` violates its single-responsibility principle.
+
+### Model 3: Subpath Export (`@rimelight/ui/astro`)
+
+- **Design**: Root `@rimelight/ui` remains a 100% generic Vite plugin with zero Astro dependencies. A dedicated subpath export `@rimelight/ui/astro` provides the Astro integration for Astro consumers:
+  ```typescript
+  // astro.config.ts
+  import { defineConfig } from "astro/config"
+  import { rimelightUi } from "@rimelight/ui/astro"
+
+  export default defineConfig({
+    integrations: [rimelightUi()]
+  })
+  ```
+- **Pros**: Non-Astro consumers import `@rimelight/ui` with 0 Astro baggage; Astro consumers import `@rimelight/ui/astro` and get zero-config Solid/UnoCSS registration.
+- **Cons**: Astro apps still import from the UI package rather than a dedicated meta-framework integration.
+
+### Model 4: Dedicated Integration Package (`@rimelight/astro`)
+
+- **Design**: Establish clear boundary separation across three tiers:
+  1. `@rimelight/ui`: UI components & UnoCSS preset (pure Vite plugin).
+  2. `@rimelight/config`: Tooling presets (TSConfig, Drizzle, Vite-plus).
+  3. `@rimelight/astro`: First-class Astro integration suite bundling Cloudflare SSR, Solid renderer, SEO, CMS, and UI integration.
+- **Pros**: Cleanest separation of concerns in the monorepo; each package has a single, unambiguous purpose.
+- **Cons**: Adds one new package to maintain in the workspace.
+
+### Model 5: Peer Dependencies + CLI Scaffolding (`pnpm rimelight init`)
+
+- **Design**: Keep peer dependencies explicit, but eliminate manual copy-paste friction via a setup command in `@rimelight/cli`.
+- **Pros**: Absolute transparency, zero abstraction layer over Astro/Solid.
+- **Cons**: Downstream apps still have multi-line `package.json` dependency lists and potential version drift if not upgraded via CLI.
 
 ---
 
 ## 7. Adoption & Migration Strategy
 
-1. **Update `@rimelight/ui`**:
-   - Move `@astrojs/solid-js` and `solid-js` from `peerDependencies` to `dependencies`.
-   - Export `rimelightUi` Astro integration.
-2. **Update `@rimelight/config/astro`**:
-   - Invoke `rimelightUi()` when `options.ui` is present.
+1. **Finalize Architecture Model**: Align team on Model 3 (subpath export `@rimelight/ui/astro`) vs Model 4 (dedicated `@rimelight/astro` package).
+2. **Update Selected Integration Layer**:
+   - Provide zero-config Solid island registration and UnoCSS pipeline setup.
 3. **Clean Consumer `package.json` Files**:
-   - Remove `@astrojs/solid-js` and `solid-js` from consumer apps.
+   - Remove redundant `@astrojs/solid-js` and `solid-js` entries from downstream applications (`rimelight.com`, `idantity.me`, `queerkit.com`, etc.).
 
 ---
 
@@ -234,4 +281,6 @@ A key requirement is ensuring that making Solid and UnoCSS direct dependencies d
 
 ## 9. Unresolved Questions
 
-1. Should `@rimelight/ui` support optional custom JSX pragma configuration for consumers writing Solid `.tsx` alongside other frameworks, or should standard `solid-js` pragma remain the universal default? (Recommendation: Keep Solid as default).
+1. **Subpath export (`@rimelight/ui/astro`) vs dedicated package (`@rimelight/astro`)**: Which architectural boundary best fits the long-term roadmap?
+2. **Framework Agnosticism Priority**: Should `@rimelight/ui` remain strictly generic at its root entrypoint to preserve flexibility for Vue/Solid/Svelte-only standalone apps?
+3. **JSX Pragma Support**: Should the integration support optional custom JSX pragma configuration for consumers writing Solid `.tsx` alongside other frameworks, or should standard `solid-js` pragma remain the universal default? (Recommendation: Keep Solid as default).
