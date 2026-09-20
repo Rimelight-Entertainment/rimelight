@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test"
-import { buildSecurityTxt } from "./security.js"
+import { buildSecurityTxt } from "../src/security.js"
 
 describe("buildSecurityTxt", () => {
   it("generates RFC 9116 compliant security.txt with single contact and default expires", () => {

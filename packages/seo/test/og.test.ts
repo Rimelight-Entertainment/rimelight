@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test"
-import { defaultOgLayout, NOTO_SANS } from "./og"
+import { defaultOgLayout, NOTO_SANS } from "../src/og"
 
 describe("@rimelight/seo defaultOgLayout", () => {
   it("should construct default dark layout VNode with title and brand", () => {

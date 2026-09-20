@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test"
-import { buildRobotsTxt } from "./robots.js"
-import type { RobotsOptions } from "./types.js"
+import { buildRobotsTxt } from "../src/robots.js"
+import type { RobotsOptions } from "../src/types.js"
 
 describe("buildRobotsTxt", () => {
   it("generates basic robots.txt with sitemap", () => {

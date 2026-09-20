@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test"
-import { buildWebManifest } from "./manifest.js"
+import { buildWebManifest } from "../src/manifest.js"
 
 describe("buildWebManifest", () => {
   it("generates standard web manifest with sensible defaults", () => {
