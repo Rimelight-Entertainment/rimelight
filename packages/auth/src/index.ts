@@ -20,8 +20,8 @@ function getDefaultAuth(): AuthAdapter {
 }
 
 /**
- * Auto-detecting auth adapter for use in server-side route handlers and API endpoints.
- * Selects CF Access or Auth0 based on environment variables.
+ * Auto-detecting auth adapter for use in server-side route handlers and API endpoints. Selects CF
+ * Access or Auth0 based on environment variables.
  *
  * For Hono middleware, use `auth` from `@rimelight/auth/middleware` instead.
  */

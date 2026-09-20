@@ -32,9 +32,8 @@ function matchesPattern(
 }
 
 /**
- * Universal Authentication & Authorization middleware for web applications.
- * Automatically uses the default auth adapter (CF Access or Auth0 based on env) if `auth` is not
- * provided.
+ * Universal Authentication & Authorization middleware for web applications. Automatically uses the
+ * default auth adapter (CF Access or Auth0 based on env) if `auth` is not provided.
  *
  * @example
  *   import { auth } from "@rimelight/auth/middleware"
@@ -234,5 +233,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
   }
 }
 
-/** Canonical alias — preferred over `authMiddleware` */
+/**
+ * Canonical alias — preferred over `authMiddleware`
+ */
 export const auth = authMiddleware

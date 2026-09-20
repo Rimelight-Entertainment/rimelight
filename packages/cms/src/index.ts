@@ -28,14 +28,10 @@ export * from "./auth/permissions.ts"
 export * from "./auth/filter-blocks.ts"
 export * from "./auth/editor-guards.ts"
 export * from "./auth/filter-templates.ts"
-export {
-  cfAccessAuth,
-  auth0Auth,
-  mockAuth,
-  hasRole,
-  hasPermission,
-  evaluateAccess
-} from "@rimelight/auth"
+export { cfAccessAuth } from "@rimelight/auth/cf-access"
+export { auth0Auth } from "@rimelight/auth/auth0"
+export { mockAuth } from "@rimelight/auth/mock"
+export { hasRole, hasPermission, evaluateAccess } from "@rimelight/auth"
 export type {
   AuthAdapter as CmsAuthAdapter,
   AuthAdapter,

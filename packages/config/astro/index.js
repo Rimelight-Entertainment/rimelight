@@ -229,7 +229,7 @@ function rimelightIntegration(options, imageDomains, domain, site) {
         }
 
         if (options.auth) {
-          const authMod = await import("@rimelight/auth/vite")
+          const authMod = await import("@rimelight/auth/integration")
           const { auth: authFn } = authMod
           const authOpts =
             typeof options.auth === "object"
