@@ -1,6 +1,6 @@
 import { Hono } from "hono"
 import { cf } from "@astrojs/cloudflare/hono"
-import { security, devOnly, construction, ratelimit } from "@rimelight/security/middleware"
+import { security, devOnly, ratelimit, construction } from "@rimelight/security/middleware"
 import { authMiddleware } from "@rimelight/auth/middleware"
 import { auth } from "@rimelight/auth"
 import api from "#api"
@@ -13,7 +13,9 @@ const app = new Hono<{ Bindings: Env }>()
 // Middlewares
 app.use(cf())
 app.use(security())
+app.use(devOnly)
 app.use(ratelimit())
+app.use(construction())
 app.use(
   authMiddleware({
     auth,
@@ -31,8 +33,6 @@ app.use(
     }
   })
 )
-app.use(construction())
-app.use(devOnly)
 
 // Hono API Routing
 app.route("/api", api)
