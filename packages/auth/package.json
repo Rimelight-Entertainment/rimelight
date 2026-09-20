@@ -77,10 +77,8 @@
     "prepack": "pnpm run build",
     "check": "vp check --fix"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@rimelight/config": "workspace:*",
-    "@types/node": "26.6.1"
+    "@rimelight/config": "workspace:*"
   },
   "peerDependencies": {
     "hono": ">=4.12.34"

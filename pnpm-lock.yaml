@@ -328,9 +328,6 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@types/node':
-        specifier: 26.6.1
-        version: 26.6.1
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
@@ -395,9 +392,6 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@types/node':
-        specifier: 26.6.1
-        version: 26.6.1
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
@@ -417,18 +411,12 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      '@types/node':
-        specifier: 26.6.1
-        version: 26.6.1
 
   packages/cli:
     devDependencies:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      '@types/node':
-        specifier: 26.6.1
-        version: 26.6.1
       typescript:
         specifier: 6.0.3
         version: 6.0.3
