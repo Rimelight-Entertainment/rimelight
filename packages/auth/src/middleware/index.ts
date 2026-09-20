@@ -1,5 +1,4 @@
 import type { AuthMiddlewareOptions, RoleGuard, UserSessionContext } from "../types"
-import { isConstructionGuest } from "../plugins/construction-guest/index"
 
 const STATIC_ASSET_REGEX =
   /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico|json|webmanifest)$/i
@@ -18,7 +17,7 @@ function matchesPattern(
 }
 
 /**
- * Universal Authentication & Authorization middleware for Hono applications.
+ * Universal Authentication & Authorization middleware for web applications.
  *
  * @example
  *   import { authMiddleware } from "@rimelight/auth/middleware"
@@ -36,7 +35,6 @@ function matchesPattern(
 export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
   const {
     auth,
-    allowConstructionGuest = true,
     skipStaticAssets = true,
     ignoredRoutes = DEFAULT_IGNORED_ROUTES,
     protectedRoutes = DEFAULT_PROTECTED_ROUTES,
@@ -96,30 +94,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
         }
       }
 
-      // Check construction guest fallback if no session
-      let isGuest = false
-      if (!sessionCtx && allowConstructionGuest) {
-        try {
-          isGuest = await isConstructionGuest(c)
-        } catch {
-          isGuest = false
-        }
-      }
-
-      const user: UserSessionContext | null =
-        sessionCtx ??
-        (isGuest
-          ? {
-              userId: "construction-guest",
-              email: "guest",
-              name: "Guest",
-              roles: ["guest"],
-              permissions: [],
-              userType: "user" as const,
-              metadata: {}
-            }
-          : null)
-
+      const user: UserSessionContext | null = sessionCtx
       const session = sessionCtx
         ? {
             id: sessionCtx.userId,
@@ -127,14 +102,7 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
             roles: sessionCtx.roles,
             userType: sessionCtx.userType
           }
-        : isGuest
-          ? {
-              id: "construction-guest",
-              userId: "construction-guest",
-              roles: ["guest"],
-              userType: "user"
-            }
-          : null
+        : null
 
       if (typeof c?.set === "function") {
         c.set("user", user)
@@ -153,11 +121,6 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     // 5. Guest-only routes: redirect if already signed in
     const isGuestOnly = guestOnlyRoutes.some((route) => matchesPattern(pathname, route))
     if (isGuestOnly && session) {
-      return c.redirect(homeUrl)
-    }
-
-    // 6. Construction page: redirect if already signed in
-    if (pathname.includes("/construction") && session) {
       return c.redirect(homeUrl)
     }
 

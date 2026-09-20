@@ -296,8 +296,6 @@ export function construction(options: ConstructionOptions = {}) {
         const customAuth = await options.isAuthorized(c)
         if (customAuth) return true
       }
-      const session = c.get?.("session") || c.get?.("user") || c.locals?.session || c.locals?.user
-      if (session) return true
       return await isConstructionGuest(c, options)
     }
 

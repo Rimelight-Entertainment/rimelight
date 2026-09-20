@@ -173,7 +173,7 @@ export interface ConstructionOptions {
 
   /**
    * Custom authorization predicate. If returns true, request is allowed through. Defaults to
-   * checking `c.get("session") || await isConstructionGuest(c, options)`.
+   * checking `await isConstructionGuest(c, options)`.
    */
   isAuthorized?: (c: any) => boolean | Promise<boolean>
 

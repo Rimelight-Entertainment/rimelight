@@ -48,10 +48,6 @@
       "types": "./dist/plugins/reserved-usernames/index.d.mts",
       "import": "./dist/plugins/reserved-usernames/index.mjs"
     },
-    "./plugins/construction-guest": {
-      "types": "./dist/plugins/construction-guest/index.d.mts",
-      "import": "./dist/plugins/construction-guest/index.mjs"
-    },
     "./middleware": {
       "types": "./dist/middleware/index.d.mts",
       "import": "./dist/middleware/index.mjs"
@@ -79,14 +75,6 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"
-  },
-  "peerDependencies": {
-    "hono": ">=4.12.34"
-  },
-  "peerDependenciesMeta": {
-    "hono": {
-      "optional": true
-    }
   },
   "engines": {
     "node": ">=26.8.2"

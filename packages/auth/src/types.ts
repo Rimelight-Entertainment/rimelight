@@ -82,13 +82,6 @@ export interface AuthMiddlewareOptions {
     | ((c: any) => Promise<UserSessionContext | null>)
 
   /**
-   * Fall back to construction guest session if no user is signed in.
-   *
-   * @default true
-   */
-  allowConstructionGuest?: boolean
-
-  /**
    * Whether to automatically skip static asset paths.
    *
    * @default true
