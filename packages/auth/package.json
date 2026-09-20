@@ -60,7 +60,7 @@
       "types": "./dist/jwt.d.mts",
       "import": "./dist/jwt.mjs"
     },
-    "./vite": {
+    "./integration": {
       "types": "./dist/vite.d.mts",
       "import": "./dist/vite.mjs"
     }

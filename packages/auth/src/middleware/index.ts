@@ -1,4 +1,19 @@
 import type { AuthMiddlewareOptions, RoleGuard, UserSessionContext } from "../types"
+import type { AuthAdapter } from "../types"
+import { createCfAccessFromEnv } from "../adapters/cf-access"
+import { createAuth0FromEnv } from "../adapters/auth0"
+
+let _defaultAuth: AuthAdapter | null = null
+
+function getDefaultAuth(): AuthAdapter {
+  if (!_defaultAuth) {
+    const isAuth0 =
+      (typeof process !== "undefined" && Boolean(process.env?.["AUTH0_DOMAIN"])) ||
+      (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.["AUTH0_DOMAIN"]))
+    _defaultAuth = isAuth0 ? createAuth0FromEnv({ devFallback: true }) : createCfAccessFromEnv()
+  }
+  return _defaultAuth
+}
 
 const STATIC_ASSET_REGEX =
   /\.(css|js|map|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|ico|json|webmanifest)$/i
@@ -18,14 +33,14 @@ function matchesPattern(
 
 /**
  * Universal Authentication & Authorization middleware for web applications.
+ * Automatically uses the default auth adapter (CF Access or Auth0 based on env) if `auth` is not
+ * provided.
  *
  * @example
- *   import { authMiddleware } from "@rimelight/auth/middleware"
- *   import { auth } from "#auth/auth"
+ *   import { auth } from "@rimelight/auth/middleware"
  *
  *   app.use(
- *     authMiddleware({
- *       auth,
+ *     auth({
  *       roleGuards: {
  *         "/admin": ["admin", "owner"]
  *       }
@@ -34,7 +49,7 @@ function matchesPattern(
  */
 export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
   const {
-    auth,
+    auth = getDefaultAuth(),
     skipStaticAssets = true,
     ignoredRoutes = DEFAULT_IGNORED_ROUTES,
     protectedRoutes = DEFAULT_PROTECTED_ROUTES,
@@ -218,3 +233,6 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
     return await next()
   }
 }
+
+/** Canonical alias — preferred over `authMiddleware` */
+export const auth = authMiddleware

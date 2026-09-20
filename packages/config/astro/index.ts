@@ -332,7 +332,7 @@ function rimelightIntegration(
         }
 
         if (options.auth) {
-          const authMod = await import("@rimelight/auth/vite")
+          const authMod = await import("@rimelight/auth/integration")
           const { auth: authFn } = authMod as any
           const authOpts =
             typeof options.auth === "object"

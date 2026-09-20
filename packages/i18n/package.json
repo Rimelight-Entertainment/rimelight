@@ -27,11 +27,11 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
-    "./plugin": {
+    "./integration": {
       "types": "./dist/plugin.d.mts",
       "import": "./dist/plugin.mjs"
     },
-    "./hono": {
+    "./middleware": {
       "types": "./dist/hono.d.mts",
       "import": "./dist/hono.mjs"
     },
