@@ -11,19 +11,15 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
       "'self'",
       "data:",
       ...(domain ? [`https://cdn.${domain}`] : []),
-      "https://i3.ytimg.com",
-      "https://www.youtube.com",
-      "https://www.youtube-nocookie.com",
       ...(options.imgSrc || [])
     ])
   )
 
-  const allowTurnstile = options.turnstile !== false
+  const allowTurnstile = options.turnstile === true
 
   const connectSources = Array.from(
     new Set([
       "'self'",
-      "https://cloudflareinsights.com",
       ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
       ...(options.connectSrc || [])
     ])
@@ -31,35 +27,25 @@ export function buildCspHeader(options: SecurityOptions = {}, nonce?: string): s
 
   const frameSources = Array.from(
     new Set([
-      "https://www.youtube.com",
-      "https://www.youtube-nocookie.com",
+      "'self'",
       ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
       ...(options.frameSrc || [])
     ])
   )
 
+  const useStrictDynamic = nonce && options.strictDynamic !== false
+
   const scriptSources = Array.from(
     new Set([
       "'self'",
       ...(nonce ? [`'nonce-${nonce}'`] : []),
-      "https://static.cloudflareinsights.com",
-      "https://betterlytics.io/analytics.js",
-      ...(allowTurnstile ? ["https://challenges.cloudflare.com"] : []),
+      ...(useStrictDynamic ? ["'strict-dynamic'", "https:"] : []),
       "'inline-speculation-rules'",
-      // Astro ClientRouter (View Transitions inline script sha)
-      "'sha256-ZuMSxilKU+4KIM8LWna4lqBEKzd6WaiAjz6gamhm7zM='",
       ...(options.scriptResources || [])
     ])
   )
 
-  const styleSources = Array.from(
-    new Set([
-      "'self'",
-      // Astro ClientRouter (View Transitions inline style sha)
-      "'sha256-SKuaOGnks7NAUq37nvw1PfGEE0lOAs5ERbiYRbGFIbw='",
-      ...(options.styleResources || [])
-    ])
-  )
+  const styleSources = Array.from(new Set(["'self'", ...(options.styleResources || [])]))
 
   const defaultDirectives: Record<string, string[]> = {
     "default-src": ["'none'"],

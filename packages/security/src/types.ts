@@ -3,48 +3,48 @@ export interface SecurityOptions {
    * The base domain name for this project (e.g. "idantity.me") used to autoconfigure standard
    * allowed domains and img-src CDN targets.
    */
-  domain?: string
+  domain?: string | undefined
 
   /**
    * Additional Allowed Domains for origin checking or cross-domain rules
    */
-  allowedDomains?: string[]
+  allowedDomains?: string[] | undefined
 
   /**
    * Additional sources to allow for img-src directive
    */
-  imgSrc?: string[]
+  imgSrc?: string[] | undefined
 
   /**
    * Additional sources to allow for connect-src directive
    */
-  connectSrc?: string[]
+  connectSrc?: string[] | undefined
 
   /**
    * Additional sources to allow for frame-src directive
    */
-  frameSrc?: string[]
+  frameSrc?: string[] | undefined
 
   /**
    * Additional script resources / origins (e.g. "https://betterlytics.io")
    */
-  scriptResources?: string[]
+  scriptResources?: string[] | undefined
 
   /**
    * Additional style resources / origins
    */
-  styleResources?: string[]
+  styleResources?: string[] | undefined
 
   /**
    * Enables Cloudflare Turnstile CSP allowances (challenges.cloudflare.com in script-src,
-   * frame-src, connect-src). Defaults to true.
+   * frame-src, connect-src).
    */
-  turnstile?: boolean
+  turnstile?: boolean | undefined
 
   /**
    * Enables the 'require-trusted-types-for' directive
    */
-  trustedTypes?: boolean
+  trustedTypes?: boolean | undefined
 
   /**
    * Cross-Origin-Embedder-Policy header value. Allowed values: "require-corp", "credentialless",
@@ -56,6 +56,7 @@ export interface SecurityOptions {
     | "unsafe-none"
     | (string & {})
     | false
+    | undefined
 
   /**
    * Cross-Origin-Opener-Policy header value. Allowed values: "same-origin",
@@ -69,23 +70,47 @@ export interface SecurityOptions {
     | "unsafe-none"
     | (string & {})
     | false
+    | undefined
 
   /**
    * Cross-Origin-Resource-Policy header value. Allowed values: "same-origin", "same-site",
    * "cross-origin" or false to disable. Defaults to "same-origin".
    */
-  crossOriginResourcePolicy?: "same-origin" | "same-site" | "cross-origin" | (string & {}) | false
+  crossOriginResourcePolicy?:
+    | "same-origin"
+    | "same-site"
+    | "cross-origin"
+    | (string & {})
+    | false
+    | undefined
 
   /**
    * Granular CSP directive overrides. Values are arrays of directive tokens, e.g.: {
    * "frame-ancestors": ["'self'"] }
    */
-  directives?: Record<string, string[] | string | boolean>
+  directives?: Record<string, string[] | string | boolean> | undefined
+
+  /**
+   * Enables 'strict-dynamic' in script-src when a request nonce is present. Defaults to true.
+   */
+  strictDynamic?: boolean | undefined
+
+  /**
+   * Enforces TLS 1.2+ minimum at the edge when request.cf metadata is present. Defaults to true.
+   */
+  enforceTls?: boolean | undefined
+
+  /**
+   * Headers to strip from the outgoing response (e.g. Server, X-Powered-By). Set to false to
+   * disable stripping. Defaults to ["x-powered-by", "server", "x-aspnet-version",
+   * "public-key-pins"].
+   */
+  stripHeaders?: string[] | false | undefined
 
   /**
    * Custom headers to set on every response or overrides
    */
-  headers?: Record<string, string>
+  headers?: Record<string, string> | undefined
 }
 
 export interface ConstructionOptions {

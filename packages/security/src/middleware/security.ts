@@ -39,6 +39,16 @@ function applySecurityHeaders(
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
   headers.set("X-Content-Type-Options", "nosniff")
   headers.set("X-Frame-Options", "DENY")
+  headers.set("X-XSS-Protection", "0")
+
+  // Strip signature and fingerprinting headers
+  const blockedHeaders =
+    options.stripHeaders === false
+      ? []
+      : options.stripHeaders || ["x-powered-by", "server", "x-aspnet-version", "public-key-pins"]
+  for (const header of blockedHeaders) {
+    headers.delete(header)
+  }
 
   if (options.crossOriginResourcePolicy !== false) {
     headers.set(
@@ -131,6 +141,9 @@ export function security(options: SecurityOptions = {}) {
       ...defaultPluginConfig.directives,
       ...options.directives
     },
+    strictDynamic: options.strictDynamic ?? defaultPluginConfig.strictDynamic ?? true,
+    enforceTls: options.enforceTls ?? defaultPluginConfig.enforceTls ?? true,
+    stripHeaders: options.stripHeaders ?? defaultPluginConfig.stripHeaders,
     headers: {
       ...defaultPluginConfig.headers,
       ...options.headers
@@ -138,10 +151,27 @@ export function security(options: SecurityOptions = {}) {
   }
 
   return async (c: any, next: any): Promise<Response | void> => {
-    const isProd = import.meta.env?.PROD ?? process.env["NODE_ENV"] === "production"
-    const isDev = import.meta.env?.DEV ?? process.env["NODE_ENV"] === "development"
+    const isTest = import.meta.env?.MODE === "test" || process.env["NODE_ENV"] === "test"
+    const isProd =
+      import.meta.env?.PROD === true || process.env["NODE_ENV"] === "production" || isTest
+    const isDev =
+      (import.meta.env?.DEV === true || process.env["NODE_ENV"] === "development") &&
+      !isTest &&
+      !isProd
 
     const req = c.req?.raw || c.request || c.req
+    const cf = req?.cf || c.req?.cf || c.env?.cf
+    const tlsVersion = cf?.tlsVersion
+
+    if (
+      mergedOptions.enforceTls &&
+      tlsVersion &&
+      tlsVersion !== "TLSv1.2" &&
+      tlsVersion !== "TLSv1.3"
+    ) {
+      return new Response("TLS 1.2 or higher is required.", { status: 400 })
+    }
+
     const proto = req?.headers?.get("x-forwarded-proto")
     if (isProd && proto === "http" && req?.url) {
       const httpsUrl = req.url.replace(/^http:/, "https:")
@@ -203,8 +233,9 @@ export function security(options: SecurityOptions = {}) {
       return c.res
     }
 
-    // Generate dynamic per-request nonce
-    const nonce = crypto.randomUUID().replace(/-/g, "")
+    // Generate dynamic per-request 128-bit Base64 nonce (W3C CSP & Cloudflare edge parser standard)
+    const nonceBytes = crypto.getRandomValues(new Uint8Array(16))
+    const nonce = btoa(String.fromCharCode(...nonceBytes))
 
     // Use HTMLRewriter when available (Cloudflare Workers / Edge runtime)
     if (typeof HTMLRewriter !== "undefined") {

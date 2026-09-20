@@ -129,22 +129,18 @@ describe("Turnstile Module", () => {
   })
 
   describe("CSP integration", () => {
-    it("includes Cloudflare challenges domain in connect-src, frame-src, and script-src by default", () => {
-      const csp = buildCspHeader()
-      expect(csp).toContain(
-        "script-src 'self' https://static.cloudflareinsights.com https://betterlytics.io/analytics.js https://challenges.cloudflare.com"
-      )
-      expect(csp).toContain(
-        "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com"
-      )
-      expect(csp).toContain(
-        "connect-src 'self' https://cloudflareinsights.com https://challenges.cloudflare.com"
-      )
+    it("includes Cloudflare challenges domain in connect-src and frame-src when turnstile is true", () => {
+      const csp = buildCspHeader({ turnstile: true })
+      expect(csp).toContain("frame-src 'self' https://challenges.cloudflare.com")
+      expect(csp).toContain("connect-src 'self' https://challenges.cloudflare.com")
     })
 
-    it("omits Cloudflare challenges domain when turnstile is false", () => {
-      const csp = buildCspHeader({ turnstile: false })
-      expect(csp).not.toContain("https://challenges.cloudflare.com")
+    it("omits Cloudflare challenges domain by default or when turnstile is false", () => {
+      const cspDefault = buildCspHeader()
+      expect(cspDefault).not.toContain("https://challenges.cloudflare.com")
+
+      const cspFalse = buildCspHeader({ turnstile: false })
+      expect(cspFalse).not.toContain("https://challenges.cloudflare.com")
     })
   })
 })
