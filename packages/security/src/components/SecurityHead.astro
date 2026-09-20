@@ -25,90 +25,17 @@
   })();
 </script>
 
-<!-- CSP Nonce Patching -->
+<!-- CSP Nonce & View Transitions Listener -->
 <script>
   (function() {
     const w = window as any;
-    const doc = document as any;
-    const elemProto = Element.prototype as any;
 
     if (!w.initialCspNonce) {
-      w.initialCspNonce = document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
-                          Array.from(document.querySelectorAll('script')).find(function(s: any) { return s.nonce; })?.nonce ||
-                          document.querySelector('script[nonce]')?.getAttribute('nonce') ||
-                          document.querySelector('style[nonce]')?.getAttribute('nonce');
-    }
-
-    var orig = doc.createElement;
-    doc.createElement = function(tag: string, opts?: ElementCreationOptions) {
-      var el = orig.call(document, tag, opts);
-      var lowTag = tag.toLowerCase();
-      if (lowTag === 'script' || lowTag === 'style') {
-        var nonce = w.initialCspNonce;
-        if (nonce) {
-          el.setAttribute('nonce', nonce);
-          el.nonce = nonce;
-        }
-      }
-      return el;
-    };
-
-    var origAppend = elemProto.appendChild;
-    elemProto.appendChild = function(child: any) {
-      if (child && (child.tagName === 'SCRIPT' || child.tagName === 'STYLE')) {
-        var nonce = w.initialCspNonce;
-        if (nonce && !child.getAttribute('nonce')) {
-          child.setAttribute('nonce', nonce);
-          child.nonce = nonce;
-        }
-      }
-      return origAppend.apply(this, [child]);
-    };
-
-    var origInsert = elemProto.insertBefore;
-    elemProto.insertBefore = function(newChild: any, refChild: any) {
-      if (newChild && (newChild.tagName === 'SCRIPT' || newChild.tagName === 'STYLE')) {
-        var nonce = w.initialCspNonce;
-        if (nonce && !newChild.getAttribute('nonce')) {
-          newChild.setAttribute('nonce', nonce);
-          newChild.nonce = nonce;
-        }
-      }
-      return origInsert.apply(this, [newChild, refChild]);
-    };
-
-    var origAppendMethod = elemProto.append;
-    if (origAppendMethod) {
-      elemProto.append = function(...nodes: (string | Node)[]) {
-        for (var i = 0; i < nodes.length; i++) {
-          var arg = nodes[i] as any;
-          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
-            var nonce = w.initialCspNonce;
-            if (nonce && !arg.getAttribute('nonce')) {
-              arg.setAttribute('nonce', nonce);
-              arg.nonce = nonce;
-            }
-          }
-        }
-        return origAppendMethod.apply(this, nodes);
-      };
-    }
-
-    var origPrependMethod = elemProto.prepend;
-    if (origPrependMethod) {
-      elemProto.prepend = function(...nodes: (string | Node)[]) {
-        for (var i = 0; i < nodes.length; i++) {
-          var arg = nodes[i] as any;
-          if (arg && (arg.tagName === 'SCRIPT' || arg.tagName === 'STYLE')) {
-            var nonce = w.initialCspNonce;
-            if (nonce && !arg.getAttribute('nonce')) {
-              arg.setAttribute('nonce', nonce);
-              arg.nonce = nonce;
-            }
-          }
-        }
-        return origPrependMethod.apply(this, nodes);
-      };
+      w.initialCspNonce =
+        document.querySelector('meta[name="csp-nonce"]')?.getAttribute('content') ||
+        Array.from(document.querySelectorAll('script')).find(function(s: any) { return s.nonce; })?.nonce ||
+        document.querySelector('script[nonce]')?.getAttribute('nonce') ||
+        document.querySelector('style[nonce]')?.getAttribute('nonce');
     }
 
     document.addEventListener('astro:before-swap', function(e: any) {
