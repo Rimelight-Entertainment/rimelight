@@ -111,6 +111,11 @@ export interface SecurityOptions {
    * Custom headers to set on every response or overrides
    */
   headers?: Record<string, string> | undefined
+
+  /**
+   * SRI manifest mapping URLs or chunk paths to integrity hashes (e.g. from Vite plugin).
+   */
+  manifest?: Record<string, string> | undefined
 }
 
 export interface ConstructionOptions {

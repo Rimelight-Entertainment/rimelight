@@ -19,8 +19,6 @@ export interface SecurityPluginOptions extends SecurityOptions {
   resources?: string[]
 }
 
-const DEFAULT_RESOURCES = ["https://betterlytics.io/analytics.js"]
-
 function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string {
   const hash = createHash("sha384")
     .update(buffer as any)
@@ -36,7 +34,7 @@ function hashContent(buffer: Buffer | ArrayBuffer | Uint8Array | string): string
  */
 export function security(options: SecurityPluginOptions = {}): RimelightSecurityPlugin {
   const sriManifest: Record<string, string> = {}
-  const externalUrls = Array.from(new Set([...DEFAULT_RESOURCES, ...(options.resources || [])]))
+  const externalUrls = Array.from(new Set(options.resources || []))
 
   const sriVirtualId = "virtual:sri-manifest"
   const resolvedSriVirtualId = "\0" + sriVirtualId

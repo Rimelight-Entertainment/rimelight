@@ -1,4 +1,3 @@
-import { getCookie, setCookie } from "hono/cookie"
 import type { ConstructionOptions } from "../types"
 
 export const CONSTRUCTION_GUEST_COOKIE = "rimelight-construction-guest"
@@ -54,6 +53,22 @@ const decodeBase64Url = (value: string): Uint8Array => {
   return Uint8Array.from(atob(padded), (char) => char.charCodeAt(0))
 }
 
+const timingSafeEqual = async (a: string, b: string): Promise<boolean> => {
+  const enc = new TextEncoder()
+  const aHash = await crypto.subtle.digest("SHA-256", enc.encode(a))
+  const bHash = await crypto.subtle.digest("SHA-256", enc.encode(b))
+  const aBuf = new Uint8Array(aHash)
+  const bBuf = new Uint8Array(bHash)
+  if ((crypto.subtle as any).timingSafeEqual) {
+    return (crypto.subtle as any).timingSafeEqual(aBuf, bBuf)
+  }
+  let diff = 0
+  for (let i = 0; i < aBuf.length; i++) {
+    diff |= aBuf[i]! ^ bBuf[i]!
+  }
+  return diff === 0
+}
+
 const signHmac = async (payload: string, secret: string) => {
   const key = await crypto.subtle.importKey(
     "raw",
@@ -97,10 +112,13 @@ const getContextHelpers = (c: any) => {
   }
 
   const getCookieValue = (name: string): string | undefined => {
-    try {
-      const fromHono = getCookie(c, name)
-      if (fromHono) return fromHono
-    } catch {}
+    if (typeof c.req?.header === "function") {
+      const headerVal = c.req.header("cookie")
+      if (headerVal) {
+        const match = headerVal.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
+        if (match) return decodeURIComponent(match[1])
+      }
+    }
 
     if (c.cookies?.get) {
       const val = c.cookies.get(name)
@@ -112,7 +130,33 @@ const getContextHelpers = (c: any) => {
     return match ? decodeURIComponent(match[1]) : undefined
   }
 
-  return { path, method, search, redirect, json, getCookieValue }
+  const setCookieValue = (name: string, value: string, maxAge?: number) => {
+    const parts = [`${name}=${value}`, "Path=/", "HttpOnly", "Secure", "SameSite=Lax"]
+    if (typeof maxAge === "number") {
+      parts.push(`Max-Age=${maxAge}`)
+    }
+    const headerStr = parts.join("; ")
+
+    if (typeof c.header === "function") {
+      c.header("Set-Cookie", headerStr, { append: true })
+    }
+
+    if (c.cookies?.set) {
+      c.cookies.set(name, value, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        ...(typeof maxAge === "number" ? { maxAge } : {})
+      })
+    }
+
+    if (c.res?.headers?.append) {
+      c.res.headers.append("Set-Cookie", headerStr)
+    }
+  }
+
+  return { path, method, search, redirect, json, getCookieValue, setCookieValue }
 }
 
 /**
@@ -157,7 +201,12 @@ export const signInConstructionGuest = async (
   options?: ConstructionOptions
 ): Promise<boolean> => {
   const expectedPassphrase = getPassphrase(c, options)
-  if (!expectedPassphrase || !passphrase || passphrase !== expectedPassphrase) {
+  if (!expectedPassphrase || !passphrase) {
+    return false
+  }
+
+  const isMatch = await timingSafeEqual(passphrase, expectedPassphrase)
+  if (!isMatch) {
     return false
   }
 
@@ -174,25 +223,8 @@ export const signInConstructionGuest = async (
     "." +
     encodeBase64Url(new Uint8Array(signature))
 
-  try {
-    setCookie(c, cookieName, cookieValue, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Lax",
-      path: "/",
-      ...(rememberMe ? { maxAge } : {})
-    })
-  } catch {
-    if (c.cookies?.set) {
-      c.cookies.set(cookieName, cookieValue, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        path: "/",
-        ...(rememberMe ? { maxAge } : {})
-      })
-    }
-  }
+  const helpers = getContextHelpers(c)
+  helpers.setCookieValue(cookieName, cookieValue, rememberMe ? maxAge : undefined)
 
   return true
 }

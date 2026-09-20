@@ -172,4 +172,72 @@ describe("Security Middleware Headers", () => {
     // 16 bytes base64 is 24 characters
     expect(nonceVal?.length).toBe(24)
   })
+
+  it("supports explicit SRI manifest in middleware options", async () => {
+    const customManifest = {
+      "/app.js": "sha384-abc123custom",
+      "/styles.css": "sha384-xyz789custom"
+    }
+    const middleware = security({ manifest: customManifest })
+    const req = new Request("https://rimelight.com/api/test")
+    const res = new Response('{"ok":true}', {
+      headers: { "content-type": "application/json" }
+    })
+    const ctx = { req: { raw: req }, res }
+
+    await middleware(ctx, async () => {})
+    expect(ctx.res).toBeDefined()
+  })
+
+  it("transforms HTML via HTMLRewriter when available", async () => {
+    const customManifest = {
+      "/main.js": "sha384-customMainHash"
+    }
+
+    // Mock HTMLRewriter
+    const handlers: Record<string, (el: any) => void> = {}
+    class MockHTMLRewriter {
+      on(selector: string, handler: { element: (el: any) => void }) {
+        handlers[selector] = handler.element
+        return this
+      }
+      transform(res: Response) {
+        return res
+      }
+    }
+
+    ;(globalThis as any).HTMLRewriter = MockHTMLRewriter
+
+    const middleware = security({ manifest: customManifest })
+    const req = new Request("https://rimelight.com/")
+    const res = new Response(
+      '<html><head></head><body><script src="/main.js"></script></body></html>',
+      {
+        headers: { "content-type": "text/html" }
+      }
+    )
+    const ctx = { req: { raw: req }, res }
+
+    await middleware(ctx, async () => {})
+
+    // Verify selector handlers were registered
+    expect(handlers["script[src]"]).toBeDefined()
+    expect(handlers['link[rel="stylesheet"][href]']).toBeDefined()
+    expect(handlers["script"]).toBeDefined()
+    expect(handlers["head"]).toBeDefined()
+
+    // Test element handler logic
+    const mockEl = {
+      attrs: { src: "/main.js" } as Record<string, string>,
+      getAttribute: (name: string) => mockEl.attrs[name],
+      setAttribute: (name: string, val: string) => {
+        mockEl.attrs[name] = val
+      }
+    }
+    handlers["script[src]"]?.(mockEl)
+    expect(mockEl.attrs["integrity"]).toBe("sha384-customMainHash")
+    expect(mockEl.attrs["crossorigin"]).toBe("anonymous")
+
+    delete (globalThis as any).HTMLRewriter
+  })
 })

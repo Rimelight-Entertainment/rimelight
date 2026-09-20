@@ -99,4 +99,72 @@ describe("@rimelight/security construction middleware", () => {
     await middleware(ctx, next)
     expect(ctx.getJson()).toEqual({ data: { error: "Invalid credentials" }, status: 401 })
   })
+
+  it("should support zero-dep cookie extraction from Astro c.cookies and Hono c.req.header", async () => {
+    const middleware = construction()
+    let setCookieVal: any = null
+
+    // Sign in to generate valid cookie
+    const honoCtx = {
+      req: {
+        path: "/api/construction-guest",
+        method: "POST",
+        json: async () => ({ passphrase })
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      header: (name: string, value: string) => {
+        if (name === "Set-Cookie") setCookieVal = value
+      },
+      json: (data: any, status = 200) => ({ data, status })
+    }
+
+    await middleware(honoCtx, vi.fn())
+    expect(setCookieVal).toContain(CONSTRUCTION_GUEST_COOKIE)
+
+    // Extract cookie value
+    const match = setCookieVal.match(new RegExp(`${CONSTRUCTION_GUEST_COOKIE}=([^;]+)`))
+    const token = match[1]
+
+    // 1. Verify access with Astro c.cookies.get
+    const astroCtx = {
+      req: { path: "/protected" },
+      cookies: {
+        get: (name: string) => (name === CONSTRUCTION_GUEST_COOKIE ? { value: token } : undefined)
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      redirect: vi.fn()
+    }
+    const nextAstro = vi.fn()
+    await middleware(astroCtx, nextAstro)
+    expect(nextAstro).toHaveBeenCalled()
+
+    // 2. Verify access with Hono c.req.header("cookie")
+    const honoReqCtx = {
+      req: {
+        path: "/protected",
+        header: (name: string) =>
+          name === "cookie" ? `${CONSTRUCTION_GUEST_COOKIE}=${token}` : undefined
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      redirect: vi.fn()
+    }
+    const nextHono = vi.fn()
+    await middleware(honoReqCtx, nextHono)
+    expect(nextHono).toHaveBeenCalled()
+  })
+
+  it("should timing-safely reject mismatched passphrase lengths without errors", async () => {
+    const middleware = construction()
+    const testCases = ["", "a", "secret-passphrase", "secret-passphrase-9999", "wrong!"]
+
+    for (const testPass of testCases) {
+      const ctx = createMockContext({
+        path: "/api/construction-guest",
+        method: "POST",
+        body: { passphrase: testPass }
+      })
+      await middleware(ctx, vi.fn())
+      expect(ctx.getJson()).toEqual({ data: { error: "Invalid credentials" }, status: 401 })
+    }
+  })
 })

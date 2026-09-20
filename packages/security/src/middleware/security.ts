@@ -237,7 +237,9 @@ export function security(options: SecurityOptions = {}) {
     const nonceBytes = crypto.getRandomValues(new Uint8Array(16))
     const nonce = btoa(String.fromCharCode(...nonceBytes))
 
-    // Use HTMLRewriter when available (Cloudflare Workers / Edge runtime)
+    // Use HTMLRewriter when available (Cloudflare Workers / Pages / Edge runtime)
+    const activeManifest = { ...manifest, ...mergedOptions.manifest }
+
     if (typeof HTMLRewriter !== "undefined") {
       let rewriter = new HTMLRewriter()
 
@@ -245,8 +247,8 @@ export function security(options: SecurityOptions = {}) {
         .on("script[src]", {
           element(el: any) {
             const src = el.getAttribute("src")
-            if (src && manifest[src]) {
-              el.setAttribute("integrity", manifest[src])
+            if (src && activeManifest[src]) {
+              el.setAttribute("integrity", activeManifest[src])
               el.setAttribute("crossorigin", "anonymous")
             }
           }
@@ -254,8 +256,8 @@ export function security(options: SecurityOptions = {}) {
         .on('link[rel="stylesheet"][href]', {
           element(el: any) {
             const href = el.getAttribute("href")
-            if (href && manifest[href]) {
-              el.setAttribute("integrity", manifest[href])
+            if (href && activeManifest[href]) {
+              el.setAttribute("integrity", activeManifest[href])
               el.setAttribute("crossorigin", "anonymous")
             }
           }
@@ -275,43 +277,7 @@ export function security(options: SecurityOptions = {}) {
       return c.res
     }
 
-    // Fallback path (Node / standard streams)
-    let modifiedHtml = await response.text()
-
-    modifiedHtml = modifiedHtml.replace(
-      /(<head(?:\s[^>]*)?>)/i,
-      `$1<meta name="csp-nonce" content="${nonce}">`
-    )
-
-    modifiedHtml = modifiedHtml.replace(
-      /<script(\s[^>]*)?>/gi,
-      (_match, attrs = "") => `<script${attrs} nonce="${nonce}">`
-    )
-
-    for (const [url, hash] of Object.entries(manifest)) {
-      if (!hash) continue
-      const scriptRegex = new RegExp(`(<script[^>]+src=["']${url}["'][^>]*)(/?>)`, "g")
-      const linkRegex = new RegExp(`(<link[^>]+href=["']${url}["'][^>]*)(/?>)`, "g")
-      modifiedHtml = modifiedHtml.replace(
-        scriptRegex,
-        `$1 integrity="${hash}" crossorigin="anonymous"$2`
-      )
-      modifiedHtml = modifiedHtml.replace(
-        linkRegex,
-        `$1 integrity="${hash}" crossorigin="anonymous"$2`
-      )
-    }
-
-    c.res = applySecurityHeaders(
-      new Response(modifiedHtml, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers
-      }),
-      mergedOptions,
-      origin,
-      nonce
-    )
+    c.res = applySecurityHeaders(response, mergedOptions, origin, nonce)
     return c.res
   }
 }

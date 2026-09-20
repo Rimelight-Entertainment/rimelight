@@ -63,17 +63,10 @@
     "@astrojs/check": "0.9.10",
     "@rimelight/config": "workspace:*",
     "astro": "7.3.3",
-    "hono": "4.13.8",
     "typescript": "6.0.3"
   },
   "peerDependencies": {
-    "astro": ">=7.0.0",
-    "hono": ">=4.13.7"
-  },
-  "peerDependenciesMeta": {
-    "hono": {
-      "optional": true
-    }
+    "astro": ">=7.0.0"
   },
   "engines": {
     "node": ">=26.9.0"
