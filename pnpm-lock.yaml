@@ -510,26 +510,10 @@ importers:
         version: 6.0.3
 
   packages/security:
-    dependencies:
-      '@rimelight/i18n':
-        specifier: workspace:*
-        version: link:../i18n
-      '@rimelight/seo':
-        specifier: workspace:*
-        version: link:../seo
-      '@rimelight/ui':
-        specifier: workspace:*
-        version: link:../ui
     devDependencies:
-      '@astrojs/check':
-        specifier: 0.9.10
-        version: 0.9.10(prettier@3.9.6)(typescript@6.0.3)
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      astro:
-        specifier: 7.3.3
-        version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.2)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
       typescript:
         specifier: 6.0.3
         version: 6.0.3

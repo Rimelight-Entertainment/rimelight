@@ -1,4 +1,3 @@
-import type { AstroIntegration } from "astro"
 import type { SecurityOptions, ConstructionOptions } from "./types"
 import { security } from "./vite"
 
@@ -8,32 +7,30 @@ export interface RimelightSecurityOptions extends SecurityOptions {
    */
   construction?: ConstructionOptions & {
     /**
-     * Whether to automatically inject the construction page route. Defaults to true.
-     */
-    injectRoute?: boolean
-    /**
-     * Pattern to inject for the construction route. Defaults to "/[locale]/construction" or
-     * "/construction".
+     * Optional custom route pattern. Defaults to "/[locale]/construction".
      */
     routePattern?: string
+    /**
+     * Optional custom page entrypoint to inject.
+     */
+    entrypoint?: string
   }
 }
 
 /**
- * Astro Integration for Rimelight Security. Integrates Vite security plugins (CSP, SRI) and
- * automatically injects the construction mode page route.
+ * Astro Integration for Rimelight Security. Integrates Vite security plugins (CSP, SRI).
  */
-export function rimelightSecurity(options: RimelightSecurityOptions = {}): AstroIntegration {
+export function rimelightSecurity(options: RimelightSecurityOptions = {}): any {
   return {
     name: "@rimelight/security",
     hooks: {
-      "astro:config:setup": ({ injectRoute, updateConfig }) => {
-        // 1. Inject Construction Page Route by default (unless explicitly disabled)
-        if (options.construction?.injectRoute !== false) {
+      "astro:config:setup": ({ injectRoute, updateConfig }: any) => {
+        // 1. Inject custom construction route if an entrypoint is provided
+        if (options.construction?.entrypoint) {
           const pattern = options.construction?.routePattern || "/[locale]/construction"
           injectRoute({
             pattern,
-            entrypoint: "@rimelight/security/pages/construction.astro"
+            entrypoint: options.construction.entrypoint
           })
         }
 

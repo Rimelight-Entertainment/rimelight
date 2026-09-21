@@ -167,4 +167,71 @@ describe("@rimelight/security construction middleware", () => {
       expect(ctx.getJson()).toEqual({ data: { error: "Invalid credentials" }, status: 401 })
     }
   })
+
+  it("should handle native form POST submissions and redirect on success", async () => {
+    const middleware = construction()
+    const formData = new FormData()
+    formData.append("passphrase", passphrase)
+    formData.append("redirect", "/en/dashboard")
+    formData.append("rememberMe", "true")
+
+    let redirectedTo: string | null = null
+    const formCtx = {
+      req: {
+        path: "/api/construction-guest",
+        method: "POST",
+        header: (name: string) =>
+          name.toLowerCase() === "content-type" ? "application/x-www-form-urlencoded" : undefined,
+        formData: async () => formData
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      redirect: (target: string) => {
+        redirectedTo = target
+        return { status: 303, headers: { Location: target } }
+      }
+    }
+
+    await middleware(formCtx, vi.fn())
+    expect(redirectedTo).toBe("/en/dashboard")
+  })
+
+  it("should handle native form POST submissions and redirect with error on failure", async () => {
+    const middleware = construction()
+    const formData = new FormData()
+    formData.append("passphrase", "wrong-passphrase")
+    formData.append("redirect", "/en/dashboard")
+
+    let redirectedTo: string | null = null
+    const formCtx = {
+      req: {
+        path: "/api/construction-guest",
+        method: "POST",
+        header: (name: string) =>
+          name.toLowerCase() === "content-type" ? "application/x-www-form-urlencoded" : undefined,
+        formData: async () => formData
+      },
+      env: { CONSTRUCTION_MODE: "true", CONSTRUCTION_PASSPHRASE: passphrase },
+      redirect: (target: string) => {
+        redirectedTo = target
+        return { status: 303, headers: { Location: target } }
+      }
+    }
+
+    await middleware(formCtx, vi.fn())
+    expect(redirectedTo).toContain("/en/construction?error=invalid&redirect=")
+  })
+
+  it("should serve standalone fallback HTML when renderFallback is enabled", async () => {
+    const middleware = construction({ renderFallback: true })
+    const ctx = createMockContext({ path: "/protected-page", mode: "true" })
+    const next = vi.fn()
+
+    const res = (await middleware(ctx, next)) as Response
+    expect(next).not.toHaveBeenCalled()
+    expect(res).toBeInstanceOf(Response)
+    expect(res.status).toBe(503)
+    const text = await res.text()
+    expect(text).toContain("Under Construction")
+    expect(text).toContain('action="/api/construction-guest"')
+  })
 })

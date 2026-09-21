@@ -1,5 +1,5 @@
 ---
-import SecurityHead from "@rimelight/security/components/SecurityHead.astro";
+import { createSecurityHead } from "@rimelight/security";
 import SEOHead from "@rimelight/seo/components/SEOHead.astro";
 import UIHead from "@rimelight/ui/components/head/UIHead.astro";
 import { siteConfig } from "virtual:rimelight/seo";
@@ -17,7 +17,7 @@ const { title, description } = Astro.props as OgLayoutProps;
 <html lang="en">
   <head>
     <SEOHead title={title} description={description} config={siteConfig} noindex={true} />
-    <SecurityHead />
+    <Fragment set:html={createSecurityHead().html} />
     <UIHead />
     <Font cssVariable="--font-sans" preload={true} />
     <Font cssVariable="--font-serif" preload={true} />

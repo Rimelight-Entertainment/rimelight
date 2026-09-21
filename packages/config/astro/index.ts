@@ -309,11 +309,7 @@ function rimelightIntegration(
 
         if (options.security) {
           const secMod = await import("@rimelight/security")
-          const secFn =
-            (secMod as any).rimelightSecurity ||
-            (secMod as any).default?.rimelightSecurity ||
-            (secMod as any).default ||
-            secMod
+          const secFn = (secMod as any).security || (secMod as any).default?.security
           const secOpts = typeof options.security === "object" ? options.security : {}
           const defaultImgSrc = imageDomains.map((d: string) =>
             d.startsWith("http://") || d.startsWith("https://") ? d : `https://${d}`
@@ -322,13 +318,24 @@ function rimelightIntegration(
             ? Array.from(new Set([...defaultImgSrc, ...secOpts.imgSrc]))
             : defaultImgSrc
 
-          integrations.push(
-            secFn({
-              domain: secOpts.domain || domain,
-              imgSrc,
-              ...secOpts
-            })
-          )
+          if (secFn) {
+            plugins.push(
+              secFn({
+                domain: secOpts.domain || domain,
+                imgSrc,
+                ...secOpts
+              })
+            )
+          } else {
+            const intFn = (secMod as any).rimelightSecurity || (secMod as any).default
+            integrations.push(
+              intFn({
+                domain: secOpts.domain || domain,
+                imgSrc,
+                ...secOpts
+              })
+            )
+          }
         }
 
         if (options.auth) {

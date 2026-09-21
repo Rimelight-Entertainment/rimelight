@@ -1,4 +1,5 @@
 import type { ConstructionOptions } from "../types"
+import { getConstructionFallbackHtml } from "../construction/fallback"
 
 export const CONSTRUCTION_GUEST_COOKIE = "rimelight-construction-guest"
 
@@ -259,19 +260,64 @@ export function construction(options: ConstructionOptions = {}) {
     // 1. Auto-handle API guest authentication endpoint
     if (apiPath && path === apiPath && method === "POST") {
       try {
-        let body: any = {}
-        if (typeof c.req?.json === "function") {
-          body = await c.req.json().catch(() => ({}))
-        } else if (c.request) {
-          body = await c.request.json().catch(() => ({}))
+        const contentType = (
+          (typeof c.req?.header === "function" ? c.req.header("content-type") : undefined) ??
+          c.req?.headers?.get?.("content-type") ??
+          c.request?.headers?.get?.("content-type") ??
+          ""
+        ).toLowerCase()
+
+        let passphrase = ""
+        let rememberMe = true
+        let redirectUrl = "/"
+        const isFormPost =
+          contentType.includes("application/x-www-form-urlencoded") ||
+          contentType.includes("multipart/form-data")
+
+        if (isFormPost) {
+          let formData: FormData | undefined
+          if (typeof c.req?.parseBody === "function") {
+            const body = await c.req.parseBody().catch(() => ({}))
+            passphrase = (body["passphrase"] as string) ?? ""
+            rememberMe = body["rememberMe"] !== "false" && body["rememberMe"] !== false
+            redirectUrl = (body["redirect"] as string) ?? "/"
+          } else if (typeof c.req?.formData === "function") {
+            formData = await c.req.formData().catch(() => undefined)
+          } else if (c.request && typeof c.request.formData === "function") {
+            formData = await c.request.formData().catch(() => undefined)
+          }
+
+          if (formData) {
+            const passVal = formData.get("passphrase")
+            passphrase = typeof passVal === "string" ? passVal : ""
+            const rememberVal = formData.get("rememberMe")
+            rememberMe = rememberVal !== "false" && rememberVal !== null
+            const redirVal = formData.get("redirect")
+            redirectUrl = typeof redirVal === "string" ? redirVal : "/"
+          }
+        } else {
+          let body: any = {}
+          if (typeof c.req?.json === "function") {
+            body = await c.req.json().catch(() => ({}))
+          } else if (c.request && typeof c.request.json === "function") {
+            body = await c.request.json().catch(() => ({}))
+          }
+          passphrase = body?.passphrase ?? ""
+          rememberMe = body?.rememberMe ?? true
+          redirectUrl = body?.redirect ?? "/"
         }
 
-        const signedIn = await signInConstructionGuest(
-          c,
-          body?.passphrase ?? "",
-          body?.rememberMe ?? true,
-          options
-        )
+        const signedIn = await signInConstructionGuest(c, passphrase, rememberMe, options)
+
+        if (isFormPost) {
+          if (!signedIn) {
+            const locale = resolveLocale(redirectUrl, options)
+            const fallbackPath = options.constructionPath ?? `/${locale}/construction`
+            const errorTarget = `${fallbackPath}?error=invalid&redirect=${encodeURIComponent(redirectUrl)}`
+            return redirect(errorTarget)
+          }
+          return redirect(redirectUrl)
+        }
 
         if (!signedIn) {
           return json({ error: "Invalid credentials" }, 401)
@@ -334,7 +380,7 @@ export function construction(options: ConstructionOptions = {}) {
       return next()
     }
 
-    // 6. Redirect unauthorized users to construction page
+    // 6. Redirect unauthorized users to construction page or serve fallback HTML
     const redirectTo = encodeURIComponent(path + search)
     const targetUrl = `/${locale}${constructionPath}?redirect=${redirectTo}`
 
@@ -343,6 +389,25 @@ export function construction(options: ConstructionOptions = {}) {
         locale,
         path,
         redirectUrl: targetUrl
+      })
+    }
+
+    if (options.renderFallback) {
+      const error = search.includes("error=invalid") ? "invalid" : undefined
+      const redirectTarget = new URLSearchParams(search).get("redirect") || path || `/${locale}`
+      const fallbackOpts = {
+        redirect: redirectTarget,
+        endpoint: typeof apiPath === "string" ? apiPath : "/api/construction-guest",
+        ...(error ? { error } : {})
+      }
+      const html = getConstructionFallbackHtml(fallbackOpts)
+      return new Response(html, {
+        status: 503,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+          "Retry-After": "3600"
+        }
       })
     }
 

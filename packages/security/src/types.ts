@@ -167,6 +167,12 @@ export interface ConstructionOptions {
   apiPath?: string | false
 
   /**
+   * If true, serves a built-in zero-dependency fallback HTML maintenance page (with HTTP 503)
+   * instead of redirecting when unauthorized. Defaults to false (redirects to constructionPath).
+   */
+  renderFallback?: boolean
+
+  /**
    * Additional routes / prefixes to whitelist and skip gating.
    */
   whitelist?: (string | RegExp)[] | ((path: string) => boolean)
@@ -241,3 +247,6 @@ export interface RateLimitOptions {
    */
   onRateLimited?: (c: any, retryAfter: number) => Response | Promise<Response>
 }
+
+export type { HeadTag, HeadResult, SecurityHeadOptions } from "./head"
+export type { ConstructionFallbackOptions } from "./construction/fallback"

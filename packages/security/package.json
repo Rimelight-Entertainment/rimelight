@@ -29,6 +29,10 @@
       "types": "./dist/middleware/index.d.mts",
       "import": "./dist/middleware/index.mjs"
     },
+    "./construction": {
+      "types": "./dist/construction/index.d.mts",
+      "import": "./dist/construction/index.mjs"
+    },
     "./config": {
       "types": "./dist/config/index.d.mts",
       "import": "./dist/config/index.mjs"
@@ -41,9 +45,10 @@
       "types": "./dist/turnstile.d.mts",
       "import": "./dist/turnstile.mjs"
     },
-    "./components/*": "./src/components/*",
-    "./layouts/*": "./src/layouts/*",
-    "./pages/*": "./src/pages/*",
+    "./head": {
+      "types": "./dist/head.d.mts",
+      "import": "./dist/head.mjs"
+    },
     "./*": "./src/*"
   },
   "publishConfig": {
@@ -52,21 +57,11 @@
   "scripts": {
     "build": "vp pack",
     "prepack": "pnpm run build",
-    "check": "vp check --fix && astro check"
-  },
-  "dependencies": {
-    "@rimelight/i18n": "workspace:*",
-    "@rimelight/seo": "workspace:*",
-    "@rimelight/ui": "workspace:*"
+    "check": "vp check --fix"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.10",
     "@rimelight/config": "workspace:*",
-    "astro": "7.3.3",
     "typescript": "6.0.3"
-  },
-  "peerDependencies": {
-    "astro": ">=7.0.0"
   },
   "engines": {
     "node": ">=26.8.2"

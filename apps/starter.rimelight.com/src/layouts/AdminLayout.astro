@@ -1,5 +1,5 @@
 ---
-import SecurityHead from "@rimelight/security/components/SecurityHead.astro";
+import { createSecurityHead } from "@rimelight/security";
 import SEOHead from "@rimelight/seo/components/SEOHead.astro";
 import UIHead from "@rimelight/ui/components/head/UIHead.astro";
 import AppHeader from '#components/app/AppHeader.astro';
@@ -56,7 +56,7 @@ const hasConsent = Astro.cookies.has("cookie-consent");
       languageAlternates={languageAlternates}
       ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}
     />
-    <SecurityHead />
+    <Fragment set:html={createSecurityHead().html} />
     <UIHead />
     <Font cssVariable="--font-sans" preload={true} />
     <Font cssVariable="--font-serif" preload={true} />
@@ -159,7 +159,6 @@ const hasConsent = Astro.cookies.has("cookie-consent");
 		overflow: hidden;
 		transform: translate(0);
 	}
-}
 
 html, body {
 	margin: 0;
