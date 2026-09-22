@@ -1,5 +1,5 @@
 ---
-import UIHead from "@rimelight/ui/components/head/UIHead.astro";
+import { createUiHead } from "@rimelight/ui";
 import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
 import RLAToaster from "@rimelight/ui/components/toaster/RLAToaster.astro";
 import "../../client/styles/cms-editor.css";
@@ -10,6 +10,7 @@ interface Props {
 }
 
 const { title = "Rimelight CMS", description = "Content Management System" } = Astro.props;
+const ui = createUiHead();
 ---
 
 <!doctype html>
@@ -19,7 +20,7 @@ const { title = "Rimelight CMS", description = "Content Management System" } = A
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <UIHead />
+    <Fragment set:html={ui.html} />
     <slot name="head" />
   </head>
   <body class="isolate bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground">

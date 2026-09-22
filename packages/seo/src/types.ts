@@ -229,6 +229,14 @@ export interface HeadProps {
    */
   canonical?: string
   /**
+   * Current page URL
+   */
+  url?: string
+  /**
+   * CSP Nonce for generated inline <script> tags
+   */
+  nonce?: string
+  /**
    * Language alternates for i18n
    */
   languageAlternates?: Array<{ hreflang: string; href: string }>

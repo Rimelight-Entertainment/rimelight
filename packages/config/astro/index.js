@@ -176,7 +176,7 @@ function rimelightIntegration(options, imageDomains, domain, site) {
           const seoFn =
             seoMod.rimelightSeo || seoMod.default?.rimelightSeo || seoMod.default || seoMod
           const seoOpts = typeof options.seo === "object" ? options.seo : {}
-          integrations.push(
+          plugins.push(
             seoFn({
               id: domain,
               url: site || (domain ? `https://${domain}` : undefined),

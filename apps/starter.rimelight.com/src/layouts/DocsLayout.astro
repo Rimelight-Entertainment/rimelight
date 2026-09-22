@@ -13,7 +13,6 @@ import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import type { ResolvedSidebarItem } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { TableOfContentsConfig } from "@rimelight/cms";
-import AgentDirective from "@rimelight/seo/components/AgentDirective.astro";
 import { getLocale } from "@rimelight/i18n";
 
 function normalizeBadge(badge: any) {
@@ -140,7 +139,10 @@ const getVersionHomeUrl = (v: string) => {
 ---
 
 <AppLayout title={title} description={description}>
-  <AgentDirective markdownUrl={`${currentPath.replace(/\/$/, '')}.md`} llmsUrl="/llms.txt" />
+  <aside class="sr-only" data-ai-agent-directive>
+    This page is available in Markdown format. Markdown is recommended for AI and agentic consumption.
+    See <a href={`${currentPath.replace(/\/$/, '')}.md`}>{`${currentPath.replace(/\/$/, '')}.md`}</a> for this page, or <a href="/llms.txt">/llms.txt</a> for the full documentation and content index.
+  </aside>
 
   {/*
     ── Sticky mobile bars ─────────────────────────────────────────────────────

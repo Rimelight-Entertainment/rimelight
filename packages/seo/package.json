@@ -25,6 +25,18 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
+    "./plugin": {
+      "types": "./dist/plugin.d.mts",
+      "import": "./dist/plugin.mjs"
+    },
+    "./head": {
+      "types": "./dist/head.d.mts",
+      "import": "./dist/head.mjs"
+    },
+    "./sanitize": {
+      "types": "./dist/sanitize.d.mts",
+      "import": "./dist/sanitize.mjs"
+    },
     "./types": {
       "types": "./dist/types.d.mts",
       "import": "./dist/types.mjs"
@@ -36,10 +48,6 @@
     "./robots": {
       "types": "./dist/robots.d.mts",
       "import": "./dist/robots.mjs"
-    },
-    "./integration": {
-      "types": "./dist/integration.d.mts",
-      "import": "./dist/integration.mjs"
     },
     "./rss": {
       "types": "./dist/rss.d.mts",
@@ -58,15 +66,17 @@
       "import": "./dist/catalog.mjs"
     },
     "./og": {
-      "types": "./dist/og.d.mts",
-      "import": "./dist/og.mjs"
+      "types": "./dist/og/index.d.mts",
+      "import": "./dist/og/index.mjs"
     },
     "./assets": {
       "types": "./dist/assets.d.mts",
       "import": "./dist/assets.mjs"
     },
-    "./components/*": "./src/components/*",
-    "./routes/*": "./src/routes/*",
+    "./astro": {
+      "types": "./dist/astro.d.mts",
+      "import": "./dist/astro.mjs"
+    },
     "./*": "./src/*"
   },
   "publishConfig": {
@@ -75,7 +85,7 @@
   "scripts": {
     "build": "vp pack",
     "prepack": "pnpm run build",
-    "check": "vp check --fix && astro check"
+    "check": "vp check --fix"
   },
   "dependencies": {
     "@takumi-rs/helpers": "^2.14.0",
@@ -83,11 +93,7 @@
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",
-    "astro": "7.3.3",
     "typescript": "6.0.3"
-  },
-  "peerDependencies": {
-    "astro": ">=7.0.0"
   },
   "engines": {
     "node": ">=26.8.2"

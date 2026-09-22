@@ -1,7 +1,7 @@
 ---
 import { createSecurityHead } from "@rimelight/security";
-import SEOHead from "@rimelight/seo/components/SEOHead.astro";
-import UIHead from "@rimelight/ui/components/head/UIHead.astro";
+import { createSeoHead } from "@rimelight/seo";
+import { createUiHead } from "@rimelight/ui";
 import AppHeader from '#components/app/AppHeader.astro';
 import RLABanner from "@rimelight/ui/components/banner/RLABanner.astro";
 import RLAMain from "@rimelight/ui/components/main/RLAMain.astro";
@@ -39,25 +39,31 @@ const localeMap: Record<string, string> = {
 const ogLocale = localeMap[activeLocale] || 'en_US';
 
 const hasConsent = Astro.cookies.has("cookie-consent");
+
+const seo = createSeoHead({
+  title,
+  description,
+  config: siteConfig,
+  ogLocale,
+  rssFeed: { href: '/rss.xml', title: siteConfig.name },
+  noindex,
+  is404,
+  robots,
+  languageAlternates,
+  ogImage: ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined,
+  url: Astro.url.href,
+  canonical: Astro.url.href
+});
+const security = createSecurityHead();
+const ui = createUiHead();
 ---
 
 <!doctype html>
 <html lang={activeLocale}>
   <head>
-    <SEOHead
-      title={title}
-      description={description}
-      config={siteConfig}
-      ogLocale={ogLocale}
-      rssFeed={{ href: '/rss.xml', title: siteConfig.name }}
-      noindex={noindex}
-      is404={is404}
-      robots={robots}
-      languageAlternates={languageAlternates}
-      ogImage={ogImageSrc ? { src: ogImageSrc, alt: ogImageAlt || '' } : undefined}
-    />
-    <Fragment set:html={createSecurityHead().html} />
-    <UIHead />
+    <Fragment set:html={seo.html} />
+    <Fragment set:html={security.html} />
+    <Fragment set:html={ui.html} />
     <Font cssVariable="--font-sans" preload={true} />
     <Font cssVariable="--font-serif" preload={true} />
     <Font cssVariable="--font-mono" preload={true} />

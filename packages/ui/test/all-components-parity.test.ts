@@ -8,9 +8,9 @@ const componentFolders = fs
   .filter((d) => d.isDirectory())
   .map((d) => d.name)
 
-describe("@rimelight/ui Multi-Framework Component Parity (149 Components)", () => {
-  it("discovers all 149 component folders in @rimelight/ui", () => {
-    expect(componentFolders.length).toBe(149)
+describe("@rimelight/ui Multi-Framework Component Parity (148 Components)", () => {
+  it("discovers all 148 component folders in @rimelight/ui", () => {
+    expect(componentFolders.length).toBe(148)
   })
 
   describe.each(componentFolders)("Component [%s]", (folder) => {

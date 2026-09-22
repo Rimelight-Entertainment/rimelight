@@ -36,8 +36,26 @@ export type {
   ApiCatalog,
   ApiCatalogOptions,
   ApiCatalogRouteOptions,
-  AssetRouteOptions
+  AssetRouteOptions,
+  RimelightSeoOptions,
+  OgRouteOptions
 } from "./types.js"
+
+export {
+  createSeoHead,
+  createHead,
+  defineSeoConfig,
+  renderTagsToHtml,
+  mergeHeadTags,
+  type HeadTag,
+  type HeadResult
+} from "./head.js"
+
+export {
+  escapeHtml,
+  serializeJsonLd,
+  sanitizeUrl
+} from "./sanitize.js"
 
 export {
   buildSitemapUrls,
@@ -66,10 +84,23 @@ export { buildWebManifest } from "./manifest.js"
 export { buildApiCatalog } from "./catalog.js"
 export { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
 export { generatePng, generateMaskablePng, generateIco, generateOgCard } from "./assets.js"
-export type { OgFontConfig, OgLayoutOptions, OgRenderConfig } from "./og.js"
-export type { OgRouteOptions } from "./types.js"
 
-import { rimelightSeo } from "./integration.js"
-export type { RimelightSeoOptions } from "./integration.js"
+export {
+  NOTO_SANS,
+  defaultOgLayout,
+  loadOgFonts,
+  renderOgResponse,
+  renderDefaultOg,
+  type OgFontConfig,
+  type OgLayoutOptions,
+  type OgRenderConfig
+} from "./og.js"
+
+export {
+  handleOgRequest,
+  createHonoOgHandler
+} from "./og/index.js"
+
+import { rimelightSeo } from "./plugin.js"
 export { rimelightSeo }
 export default rimelightSeo

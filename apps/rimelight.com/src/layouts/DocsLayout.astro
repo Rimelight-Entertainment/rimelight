@@ -9,7 +9,6 @@ import { getDocsSidebar, getSurroundItems } from "@rimelight/cms";
 import docsConfig from "#config/docs.config";
 import type { DocsConfig, TableOfContentsConfig } from "@rimelight/cms";
 import { t, getLocale } from "@rimelight/i18n";
-import AgentDirective from "@rimelight/seo/components/AgentDirective.astro";
 
 interface Props {
   title: string;
@@ -91,7 +90,10 @@ const tocHeadings = hasToc
 ---
 
 <AppLayout title={t(title) || title} description={description} favicon={favicon}>
-  <AgentDirective markdownUrl={`${currentPath.replace(/\/$/, '')}.md`} llmsUrl="/llms.txt" />
+  <aside class="sr-only" data-ai-agent-directive>
+    This page is available in Markdown format. Markdown is recommended for AI and agentic consumption.
+    See <a href={`${currentPath.replace(/\/$/, '')}.md`}>{`${currentPath.replace(/\/$/, '')}.md`}</a> for this page, or <a href="/llms.txt">/llms.txt</a> for the full documentation and content index.
+  </aside>
 
   {/*
     ── Sticky mobile bars ─────────────────────────────────────────────────────

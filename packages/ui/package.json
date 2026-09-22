@@ -49,6 +49,10 @@
       "types": "./dist/icons.d.mts",
       "import": "./dist/icons.mjs"
     },
+    "./head": {
+      "types": "./dist/head.d.mts",
+      "import": "./dist/head.mjs"
+    },
     "./*": "./src/*"
   },
   "publishConfig": {
