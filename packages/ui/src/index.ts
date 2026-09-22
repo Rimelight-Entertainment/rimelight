@@ -23,7 +23,7 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins =
       pipeline: unocss.content?.pipeline !== false && {
         ...unocss.content?.pipeline,
         include: [
-          /\.(vue|svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
+          /\.(svelte|[jt]sx?|mdx?|astro|html)($|\?)/,
           /[\\/](@rimelight\/(ui|cms)|packages\/(ui|cms))[\\/]/,
           ...[unocss.content?.pipeline?.include]
             .flat()

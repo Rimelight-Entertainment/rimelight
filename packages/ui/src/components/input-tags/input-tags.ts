@@ -35,7 +35,7 @@ export interface InputTagsProps {
   estimatedTagWidth?: number
   /**
    * When true, renders a text input after the tags for entering new values. Tag addition/removal is
-   * handled natively via form submission; for client-side interactivity use the Vue variant or a
+   * handled natively via form submission; for client-side interactivity use the Solid variant or a
    * custom slot.
    *
    * @default false

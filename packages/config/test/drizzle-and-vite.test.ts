@@ -25,13 +25,12 @@ describe("@rimelight/config drizzle and vite-plus helpers", () => {
   })
 
   describe("rimelightConfig", () => {
-    it("should return base configuration for lint, formatting, test, and tasks", () => {
+    it("should return base configuration for lint, formatting, and test", () => {
       const config = rimelightConfig()
       expect(config.fmt?.semi).toBe(false)
       expect(config.fmt?.trailingComma).toBe("none")
       expect(config.lint?.options?.typeCheck).toBe(true)
       expect(config.test?.environment).toBe("node")
-      expect((config.run?.tasks?.["test"] as any)?.command).toBe("vp test")
     })
   })
 

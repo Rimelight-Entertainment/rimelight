@@ -129,7 +129,7 @@ export function findVirtualExternals(baseDir = "src") {
       const fullPath = path.join(currentDir, file.name)
       if (file.isDirectory()) {
         walk(fullPath)
-      } else if (file.isFile() && /\.(ts|tsx|js|jsx|astro|vue)$/.test(file.name)) {
+      } else if (file.isFile() && /\.(ts|tsx|js|jsx|astro)$/.test(file.name)) {
         const content = fs.readFileSync(fullPath, "utf8")
         const regex = /["']((?:virtual|cloudflare):[^"']+)["']/g
         let match

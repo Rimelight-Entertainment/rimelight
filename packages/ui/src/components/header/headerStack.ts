@@ -28,7 +28,7 @@ declare global {
 }
 
 /**
- * Initializes and returns a global vanilla JS header stack manager. This ensures Vue and Astro
+ * Initializes and returns a global vanilla JS header stack manager. This ensures Astro and Solid
  * components share the exact same layer state and can dynamically push each other up/down when
  * hiding on scroll.
  */

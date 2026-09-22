@@ -14,10 +14,11 @@ describe("@rimelight/config - Config Validation and Merging", () => {
     expect(Array.isArray(config.integrations)).toBe(true)
   })
 
-  it("produces valid Vite+ base configuration with expected run tasks", () => {
+  it("produces valid Vite+ base configuration", () => {
     const base = rimelightConfig()
     expect(base).toBeDefined()
-    expect(base.run).toBeDefined()
-    expect(typeof base.run?.tasks).toBe("object")
+    expect(base.lint?.options?.typeCheck).toBe(true)
+    expect(base.fmt?.semi).toBe(false)
+    expect(base.test?.environment).toBe("node")
   })
 })

@@ -51,7 +51,9 @@ describe("RLSButton Solid Component Rendering", () => {
 
     it("renders square=true", () => {
       const solid = renderSolid(RLSButton, { square: true, leadingIcon: "i-lucide-check" })
-      expect(solid).toContain("p-0")
+      expect(solid).toContain("p-2")
+      expect(solid).not.toContain("px-")
+      expect(solid).not.toContain("py-")
     })
 
     it("renders loading=true", () => {

@@ -32,7 +32,7 @@ This document outlines the implementation plan for migrating authentication infr
 - [ ] Deployment platform (Vercel, Netlify, static hosting, etc.)
 - [ ] Environment variable management approach
 - [ ] Any existing middleware or auth guards
-- [ ] Frontend framework used within Astro (React, Vue, Svelte, vanilla)
+- [ ] Frontend framework used within Astro (React, Solid, Svelte, vanilla)
 - [ ] Serverless functions vs. SSR configuration
 
 ### Investigation Requirements (Phase 1)

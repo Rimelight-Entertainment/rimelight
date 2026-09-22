@@ -93,8 +93,8 @@ function parseComponentTag(html: string): { tag: string; props: Record<string, a
     return { tag, props }
   }
 
-  // First, try to find a known component tag (RLA*/RLV*/RLS*) — prioritize these over generic HTML wrappers
-  const componentMatch = trimmed.match(/<(RLA\w+|RLV\w+|RLS\w+)([\s\S]*?)(\/?)>/)
+  // First, try to find a known component tag (RLA*/RLS*) — prioritize these over generic HTML wrappers
+  const componentMatch = trimmed.match(/<(RLA\w+|RLS\w+)([\s\S]*?)(\/?)>/)
   if (componentMatch) return parseTag(componentMatch[0]!)
 
   // Fall back to matching the first tag (could be a div wrapper, etc.)
