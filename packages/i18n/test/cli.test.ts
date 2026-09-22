@@ -1,10 +1,18 @@
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
-import { describe, expect, it } from "vite-plus/test"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 import { runCli } from "../src/cli"
 
 describe("rimelight-i18n CLI", () => {
+  beforeEach(() => {
+    vi.spyOn(console, "log").mockImplementation(() => {})
+    vi.spyOn(console, "error").mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
   it("shows help text and exits code 0 when passed --help or -h", async () => {
     const exitCodeHelp = await runCli(["--help"])
     expect(exitCodeHelp).toBe(0)

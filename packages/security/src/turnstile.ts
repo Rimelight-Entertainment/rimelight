@@ -110,9 +110,7 @@ export async function verifyTurnstile(
   const secretKey = getTurnstileSecretKey(options)
   if (!secretKey) {
     if (failOpen) {
-      console.log(
-        "[Turnstile] Keys missing or not configured. Skipping verification (Failing Open for local dev)."
-      )
+      console.log("[Turnstile] Keys missing or not configured. Failing open.")
       return { success: true }
     }
     return { success: false, error: "Turnstile secret key is not configured." }
@@ -160,7 +158,7 @@ export async function verifyTurnstile(
 
     return { success: false, error: msg, errorCodes: codes }
   } catch (err: any) {
-    console.error("[Turnstile Exception]", err)
+    console.error(`[Turnstile Exception] ${err?.message || "Unknown error"}`)
     if (failOpen) {
       return { success: true }
     }
