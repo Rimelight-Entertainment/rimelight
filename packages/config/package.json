@@ -54,7 +54,7 @@
   "devDependencies": {
     "@astrojs/cloudflare": "14.3.2",
     "astro": "7.3.3",
-    "drizzle-kit": "0.31.10"
+    "drizzle-kit": "0.31.11"
   },
   "peerDependencies": {
     "@astrojs/cloudflare": ">=14.0.0",

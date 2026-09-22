@@ -304,8 +304,8 @@ importers:
         specifier: 7.3.3
         version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.2)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
       drizzle-orm:
-        specifier: 0.45.2
-        version: 0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5)
+        specifier: 0.45.3
+        version: 0.45.3(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5)
       hono:
         specifier: 4.13.8
         version: 4.13.8
@@ -323,14 +323,14 @@ importers:
         specifier: 1.2.14
         version: 1.2.14
       '@iconify-json/lucide':
-        specifier: 1.2.134
-        version: 1.2.134
+        specifier: 1.2.135
+        version: 1.2.135
       '@rimelight/config':
         specifier: workspace:*
         version: link:../../packages/config
       drizzle-kit:
-        specifier: 0.31.10
-        version: 0.31.10
+        specifier: 0.31.11
+        version: 0.31.11
 
   apps/starter.rimelight.com:
     dependencies:
@@ -362,8 +362,8 @@ importers:
         specifier: 7.3.3
         version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.2)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
       drizzle-orm:
-        specifier: 0.45.2
-        version: 0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5)
+        specifier: 0.45.3
+        version: 0.45.3(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5)
       hono:
         specifier: 4.13.8
         version: 4.13.8
@@ -381,14 +381,14 @@ importers:
         specifier: 1.2.14
         version: 1.2.14
       '@iconify-json/lucide':
-        specifier: 1.2.134
-        version: 1.2.134
+        specifier: 1.2.135
+        version: 1.2.135
       '@rimelight/config':
         specifier: workspace:*
         version: link:../../packages/config
       drizzle-kit:
-        specifier: 0.31.10
-        version: 0.31.10
+        specifier: 0.31.11
+        version: 0.31.11
 
   packages/auth:
     devDependencies:
@@ -414,8 +414,8 @@ importers:
         specifier: workspace:*
         version: link:../ui
       drizzle-orm:
-        specifier: 0.45.2
-        version: 0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5)
+        specifier: 0.45.3
+        version: 0.45.3(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5)
       solid-js:
         specifier: 1.9.15
         version: 1.9.15
@@ -470,8 +470,8 @@ importers:
         specifier: 7.3.3
         version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.2)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
       drizzle-kit:
-        specifier: 0.31.10
-        version: 0.31.10
+        specifier: 0.31.11
+        version: 0.31.11
 
   packages/i18n:
     devDependencies:
@@ -1245,8 +1245,8 @@ packages:
   '@iconify-json/logos@1.2.14':
     resolution: {integrity: sha512-O36DicXkgAMT6NAsH7MTWlOql8NktHz9fBCItTjz6L/9gyRXw4vQj6qTeVgww5UZWiVugUV1MhVFA/g9HWIkBw==}
 
-  '@iconify-json/lucide@1.2.134':
-    resolution: {integrity: sha512-MXzwT7H8Ii/aGN6NLtMbMLDaxLYsOxCKEdW0F5h3MemNUaUBqAxr9nz0mPlXzozd/piQyrdSiUyk0t5b5ErADg==}
+  '@iconify-json/lucide@1.2.135':
+    resolution: {integrity: sha512-M2RbCJMe/ZwRzGBxNGbqP3kEQ74iJjQyJsw5FgVQw+Kp8eJPQF1S19fiGJChG4yYLg73c8Z/fMnm07GTXUxmQA==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -3083,12 +3083,12 @@ packages:
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
 
-  drizzle-kit@0.31.10:
-    resolution: {integrity: sha512-7OZcmQUrdGI+DUNNsKBn1aW8qSoKuTH7d0mYgSP8bAzdFzKoovxEFnoGQp2dVs82EOJeYycqRtciopszwUf8bw==}
+  drizzle-kit@0.31.11:
+    resolution: {integrity: sha512-YCYqxTLIB2OCqf6w9/Vef13baBVbwQIPcbT4Y56AfO6B9ajZhDhD8Jkveg/hJvT/iuMloKD/IYYkyMMNhr7Kqg==}
     hasBin: true
 
-  drizzle-orm@0.45.2:
-    resolution: {integrity: sha512-kY0BSaTNYWnoDMVoyY8uxmyHjpJW1geOmBMdSSicKo9CIIWkSxMIj2rkeSR51b8KAPB7m+qysjuHme5nKP+E5Q==}
+  drizzle-orm@0.45.3:
+    resolution: {integrity: sha512-CAloER21cDdcgZ1OmjrZX82EeRNsdP+y0onX/eyoYDaYzki/adrAa91lzM5jWh7zZPK4qUbw/6LGv9J+A+uizA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -3096,6 +3096,7 @@ packages:
       '@libsql/client': '>=0.10.0'
       '@libsql/client-wasm': '>=0.10.0'
       '@neondatabase/serverless': '>=0.10.0'
+      '@netlify/db': '>=0.4.0'
       '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1.13'
@@ -3131,6 +3132,8 @@ packages:
       '@libsql/client-wasm':
         optional: true
       '@neondatabase/serverless':
+        optional: true
+      '@netlify/db':
         optional: true
       '@op-engineering/op-sqlite':
         optional: true
@@ -5117,7 +5120,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/lucide@1.2.134':
+  '@iconify-json/lucide@1.2.135':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -6583,14 +6586,14 @@ snapshots:
       domelementtype: 2.3.0
       domhandler: 5.0.3
 
-  drizzle-kit@0.31.10:
+  drizzle-kit@0.31.11:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
       esbuild: 0.25.12
       tsx: 4.23.11
 
-  drizzle-orm@0.45.2(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5):
+  drizzle-orm@0.45.3(@libsql/client@0.17.4)(@neondatabase/serverless@1.1.0)(kysely@0.29.4)(postgres@3.4.5):
     optionalDependencies:
       '@libsql/client': 0.17.4
       '@neondatabase/serverless': 1.1.0
