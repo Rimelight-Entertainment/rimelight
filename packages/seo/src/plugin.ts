@@ -44,8 +44,8 @@ export function isContained(rootDir: string, requestedPath: string): boolean {
 }
 
 /**
- * Single Consolidated Vite Plugin orchestrating SEO virtual modules,
- * dev-server asset middleware, and production static asset generation.
+ * Single Consolidated Vite Plugin orchestrating SEO virtual modules, dev-server asset middleware,
+ * and production static asset generation.
  */
 export function rimelightSeo(options: RimelightSeoOptions = {}): RimelightSeoPlugin {
   let rootDir = process.cwd()
@@ -55,12 +55,14 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): RimelightSeoPlu
   // 2. Fields in options.site
   // 3. Package defaults
   const siteOpt = options.site || {}
+  const authorHandle = options.authorHandle || siteOpt.seo?.authorHandle
+  const ogImage = options.ogImage || siteOpt.ogImage
   const normalizedSiteConfig: SiteConfig = {
     id: options.id || siteOpt.id || "rimelight",
     name: options.name || siteOpt.name || "Rimelight",
     description: options.description || siteOpt.description || "",
     url: options.url || siteOpt.url || "https://rimelight.com",
-    ogImage: options.ogImage || siteOpt.ogImage || undefined,
+    ...(ogImage !== undefined && { ogImage }),
     author: options.author || siteOpt.author || options.name || siteOpt.name || "Rimelight",
     email: options.email || siteOpt.email || "support@rimelight.com",
     branding: {
@@ -71,14 +73,12 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): RimelightSeoPlu
           options.name ||
           siteOpt.name ||
           "Logo",
-        ...(siteOpt.branding?.logo || {}),
-        ...(options.branding?.logo || {})
+        ...siteOpt.branding?.logo,
+        ...options.branding?.logo
       },
       colors: {
         themeColor:
-          options.branding?.colors?.themeColor ||
-          siteOpt.branding?.colors?.themeColor ||
-          "#ffffff",
+          options.branding?.colors?.themeColor || siteOpt.branding?.colors?.themeColor || "#ffffff",
         backgroundColor:
           options.branding?.colors?.backgroundColor ||
           siteOpt.branding?.colors?.backgroundColor ||
@@ -88,14 +88,14 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): RimelightSeoPlu
       ...options.branding
     },
     seo: {
+      ...siteOpt.seo,
       titleTemplate:
         options.titleTemplate ||
         siteOpt.seo?.titleTemplate ||
         (options.name ? `%s | ${options.name}` : "%s | Rimelight"),
       maxDescriptionLength:
         options.maxDescriptionLength || siteOpt.seo?.maxDescriptionLength || 160,
-      authorHandle: options.authorHandle || siteOpt.seo?.authorHandle || undefined,
-      ...siteOpt.seo
+      ...(authorHandle !== undefined && { authorHandle })
     },
     ...(siteOpt.openGraph || options.openGraph
       ? { openGraph: { ...siteOpt.openGraph, ...options.openGraph } }
@@ -120,7 +120,8 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): RimelightSeoPlu
   const assetOpts = typeof options.assets === "object" ? options.assets : {}
   let masterIconBuffer: Buffer | null = null
   let isSvg = false
-  const bgColor = assetOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor || "#ffffff"
+  const bgColor =
+    assetOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor || "#ffffff"
 
   return {
     name: "rimelight:seo",
@@ -247,8 +248,8 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
       return null
     },
 
-    configureServer(server: ViteDevServer) {
-      server.middlewares.use(async (req, res, next) => {
+    configureServer(server: any) {
+      server.middlewares.use(async (req: any, res: any, next: any) => {
         const rawUrl = req.url?.split("?")[0] || ""
 
         // robots.txt
@@ -272,16 +273,19 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
           let urls: any[] = sitemapOpts.urls || []
           if (urls.length === 0) {
             const entries = options.entries ? await options.entries() : []
-            const locCfg = sitemapOpts.locales || (
-              typeof options.locales === "object" && "site" in options.locales
+            const locCfg =
+              sitemapOpts.locales ||
+              (typeof options.locales === "object" && "site" in options.locales
                 ? options.locales
                 : {
                     site: siteUrl,
-                    locales: typeof options.locales === "object" && !("site" in options.locales) ? options.locales : { en: "en" },
+                    locales:
+                      typeof options.locales === "object" && !("site" in options.locales)
+                        ? options.locales
+                        : { en: "en" },
                     defaultLocale: "en",
                     prefixDefaultLocale: false
-                  }
-            )
+                  })
             if (entries.length > 0 && locCfg) {
               urls = buildSitemapUrls(entries, locCfg as any)
             } else {
@@ -310,13 +314,14 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
         // rss.xml
         if (rawUrl === "/rss.xml" && options.rss !== false) {
           const rssOpts = typeof options.rss === "object" ? options.rss : {}
-          const items = typeof rssOpts.items === "function" ? await rssOpts.items() : (rssOpts.items || [])
+          const items =
+            typeof rssOpts.items === "function" ? await rssOpts.items() : rssOpts.items || []
           const rssXml = buildRssXml({
+            ...rssOpts,
             title: rssOpts.title || normalizedSiteConfig.name,
             description: rssOpts.description || normalizedSiteConfig.description,
             site: rssOpts.site || normalizedSiteConfig.url,
-            items,
-            ...rssOpts
+            items
           })
           res.setHeader("Content-Type", "application/xml; charset=utf-8")
           res.setHeader("Cache-Control", "no-cache")
@@ -328,10 +333,12 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
         if (rawUrl === "/llms.txt" && options.llms !== false) {
           const llmsOpts = typeof options.llms === "object" ? options.llms : {}
           const llmsTxt = buildLlmsTxt({
+            ...llmsOpts,
+            site: llmsOpts.site || normalizedSiteConfig.url,
             title: llmsOpts.title || normalizedSiteConfig.name,
-            summary: llmsOpts.summary || normalizedSiteConfig.description,
-            sections: llmsOpts.sections || [],
-            ...llmsOpts
+            description: llmsOpts.description || normalizedSiteConfig.description,
+            pages: llmsOpts.pages || [],
+            sections: llmsOpts.sections || []
           })
           res.setHeader("Content-Type", "text/plain; charset=utf-8")
           res.setHeader("Cache-Control", "no-cache")
@@ -343,10 +350,11 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
         if (rawUrl === "/llms-full.txt" && options.llmsFull !== false) {
           const llmsFullOpts = typeof options.llmsFull === "object" ? options.llmsFull : {}
           const llmsFullTxt = buildLlmsFullTxt({
+            ...llmsFullOpts,
+            site: llmsFullOpts.site || normalizedSiteConfig.url,
             title: llmsFullOpts.title || normalizedSiteConfig.name,
-            summary: llmsFullOpts.summary || normalizedSiteConfig.description,
-            pages: llmsFullOpts.pages || [],
-            ...llmsFullOpts
+            description: llmsFullOpts.description || normalizedSiteConfig.description,
+            pages: llmsFullOpts.pages || []
           })
           res.setHeader("Content-Type", "text/plain; charset=utf-8")
           res.setHeader("Cache-Control", "no-cache")
@@ -390,12 +398,18 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
             shortName: manOpts.shortName || normalizedSiteConfig.name,
             description: manOpts.description || normalizedSiteConfig.description,
             startUrl: manOpts.startUrl || "/",
-            backgroundColor: manOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor,
+            backgroundColor:
+              manOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor,
             themeColor: manOpts.themeColor || normalizedSiteConfig.branding.colors.themeColor,
             icons: manOpts.icons || [
               { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
               { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
-              { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
+              {
+                src: "/icon-maskable-512.png",
+                sizes: "512x512",
+                type: "image/png",
+                purpose: "maskable"
+              }
             ],
             ...manOpts
           })
@@ -485,16 +499,19 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
         let urls: any[] = sitemapOpts.urls || []
         if (urls.length === 0) {
           const entries = options.entries ? await options.entries() : []
-          const locCfg = sitemapOpts.locales || (
-            typeof options.locales === "object" && "site" in options.locales
+          const locCfg =
+            sitemapOpts.locales ||
+            (typeof options.locales === "object" && "site" in options.locales
               ? options.locales
               : {
                   site: siteUrl,
-                  locales: typeof options.locales === "object" && !("site" in options.locales) ? options.locales : { en: "en" },
+                  locales:
+                    typeof options.locales === "object" && !("site" in options.locales)
+                      ? options.locales
+                      : { en: "en" },
                   defaultLocale: "en",
                   prefixDefaultLocale: false
-                }
-          )
+                })
           if (entries.length > 0 && locCfg) {
             urls = buildSitemapUrls(entries, locCfg as any)
           } else {
@@ -504,22 +521,21 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
         const sitemapXml = buildSitemapXml(urls)
         this.emitFile({ type: "asset", fileName: "sitemap.xml", source: sitemapXml })
 
-        const sitemapIndexXml = buildSitemapIndexXml([
-          `${siteUrl.replace(/\/$/, "")}/sitemap.xml`
-        ])
+        const sitemapIndexXml = buildSitemapIndexXml([`${siteUrl.replace(/\/$/, "")}/sitemap.xml`])
         this.emitFile({ type: "asset", fileName: "sitemap-index.xml", source: sitemapIndexXml })
       }
 
       if (options.rss !== false && typeof options.rss === "object") {
         const rssOpts = options.rss
-        const items = typeof rssOpts.items === "function" ? await rssOpts.items() : (rssOpts.items || [])
+        const items =
+          typeof rssOpts.items === "function" ? await rssOpts.items() : rssOpts.items || []
         if (items.length > 0) {
           const rssXml = buildRssXml({
+            ...rssOpts,
             title: rssOpts.title || normalizedSiteConfig.name,
             description: rssOpts.description || normalizedSiteConfig.description,
             site: rssOpts.site || normalizedSiteConfig.url,
-            items,
-            ...rssOpts
+            items
           })
           this.emitFile({ type: "asset", fileName: "rss.xml", source: rssXml })
         }
@@ -528,10 +544,12 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
       if (options.llms !== false && typeof options.llms === "object") {
         const llmsOpts = options.llms
         const llmsTxt = buildLlmsTxt({
+          ...llmsOpts,
+          site: llmsOpts.site || normalizedSiteConfig.url,
           title: llmsOpts.title || normalizedSiteConfig.name,
-          summary: llmsOpts.summary || normalizedSiteConfig.description,
-          sections: llmsOpts.sections || [],
-          ...llmsOpts
+          description: llmsOpts.description || normalizedSiteConfig.description,
+          pages: llmsOpts.pages || [],
+          sections: llmsOpts.sections || []
         })
         this.emitFile({ type: "asset", fileName: "llms.txt", source: llmsTxt })
       }
@@ -539,10 +557,11 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
       if (options.llmsFull !== false && typeof options.llmsFull === "object") {
         const llmsFullOpts = options.llmsFull
         const llmsFullTxt = buildLlmsFullTxt({
+          ...llmsFullOpts,
+          site: llmsFullOpts.site || normalizedSiteConfig.url,
           title: llmsFullOpts.title || normalizedSiteConfig.name,
-          summary: llmsFullOpts.summary || normalizedSiteConfig.description,
-          pages: llmsFullOpts.pages || [],
-          ...llmsFullOpts
+          description: llmsFullOpts.description || normalizedSiteConfig.description,
+          pages: llmsFullOpts.pages || []
         })
         this.emitFile({ type: "asset", fileName: "llms-full.txt", source: llmsFullTxt })
       }
@@ -578,12 +597,18 @@ export const backgroundColor = ${JSON.stringify(bgColor)};`
           shortName: manOpts.shortName || normalizedSiteConfig.name,
           description: manOpts.description || normalizedSiteConfig.description,
           startUrl: manOpts.startUrl || "/",
-          backgroundColor: manOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor,
+          backgroundColor:
+            manOpts.backgroundColor || normalizedSiteConfig.branding.colors.backgroundColor,
           themeColor: manOpts.themeColor || normalizedSiteConfig.branding.colors.themeColor,
           icons: manOpts.icons || [
             { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
             { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
-            { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
+            {
+              src: "/icon-maskable-512.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "maskable"
+            }
           ],
           ...manOpts
         })

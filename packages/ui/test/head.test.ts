@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vite-plus/test"
 import { createUiHead } from "../src/head.js"
+import type { HeadTag } from "../src/head.js"
 
 describe("createUiHead", () => {
   it("generates theme flash script and header stack script by default", () => {
@@ -14,8 +15,11 @@ describe("createUiHead", () => {
   it("attaches nonce when provided", () => {
     const result = createUiHead({ nonce: "test-nonce" })
     expect(result.html).toContain('nonce="test-nonce"')
-    expect(result.tags[0]?.props?.nonce).toBe("test-nonce")
-    expect(result.tags[1]?.props?.nonce).toBe("test-nonce")
+    const scripts = result.tags.filter(
+      (t): t is Extract<HeadTag, { tag: "script" }> => t.tag === "script"
+    )
+    expect(scripts[0]?.props?.nonce).toBe("test-nonce")
+    expect(scripts[1]?.props?.nonce).toBe("test-nonce")
   })
 
   it("honors boolean flags to disable specific scripts", () => {

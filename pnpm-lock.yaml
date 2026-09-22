@@ -331,12 +331,6 @@ importers:
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-      vite-plus:
-        specifier: 0.3.3
-        version: 0.3.3(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(typescript@6.0.3)(yaml@2.9.0)
 
   apps/starter.rimelight.com:
     dependencies:
@@ -395,12 +389,6 @@ importers:
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-      vite-plus:
-        specifier: 0.3.3
-        version: 0.3.3(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(typescript@6.0.3)(yaml@2.9.0)
 
   packages/auth:
     devDependencies:
@@ -413,12 +401,6 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-      vite-plus:
-        specifier: 0.3.3
-        version: 0.3.3(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(typescript@6.0.3)(yaml@2.9.0)
 
   packages/cms:
     dependencies:
@@ -453,9 +435,6 @@ importers:
       astro:
         specifier: 7.3.3
         version: 7.3.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.6.2)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0)
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
       unocss:
         specifier: 66.10.5
         version: 66.10.5(cac@7.0.0)(rolldown@1.2.3)(rollup@4.63.4)(srvx@1.0.3)(vite@8.2.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))
@@ -493,30 +472,18 @@ importers:
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-      vite-plus:
-        specifier: 0.3.3
-        version: 0.3.3(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(typescript@6.0.3)(yaml@2.9.0)
 
   packages/i18n:
     devDependencies:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
 
   packages/security:
     devDependencies:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
 
   packages/seo:
     dependencies:
@@ -530,9 +497,6 @@ importers:
       '@rimelight/config':
         specifier: workspace:*
         version: link:../config
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
 
   packages/ui:
     dependencies:
@@ -564,9 +528,6 @@ importers:
       solid-js:
         specifier: 1.9.15
         version: 1.9.15
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
       vite-plugin-solid:
         specifier: 2.11.14
         version: 2.11.14(solid-js@1.9.15)(supports-color@10.2.2)(vite@8.2.2(@types/node@26.6.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.11)(yaml@2.9.0))

@@ -1,4 +1,10 @@
-import { NOTO_SANS, defaultOgLayout, loadOgFonts, type OgFontConfig, type OgLayoutOptions } from "../og.js"
+import {
+  NOTO_SANS,
+  defaultOgLayout,
+  loadOgFonts,
+  type OgFontConfig,
+  type OgLayoutOptions
+} from "../og.js"
 import type { OgRouteOptions } from "../types.js"
 
 export interface OgHandlerOptions extends OgRouteOptions {
@@ -7,9 +13,8 @@ export interface OgHandlerOptions extends OgRouteOptions {
 }
 
 /**
- * Generic Web Request handler for dynamic Open Graph image generation.
- * Enforces strict input bounding (title <= 200 chars, description <= 300 chars)
- * and aggressive CDN cache headers.
+ * Generic Web Request handler for dynamic Open Graph image generation. Enforces strict input
+ * bounding (title <= 200 chars, description <= 300 chars) and aggressive CDN cache headers.
  */
 export async function handleOgRequest(
   request: Request,
@@ -25,7 +30,8 @@ export async function handleOgRequest(
     const isDocs = params.get("isDocs") === "true" || url.pathname.includes("docs")
 
     const brand = params.get("brand") || options.brand || "Rimelight"
-    const background = (params.get("bg") as any) ||
+    const background =
+      (params.get("bg") as any) ||
       (isDocs ? options.docsBackground || "gradient" : options.defaultBackground || "dark")
     const preview = params.get("preview") === "true"
 
@@ -35,11 +41,11 @@ export async function handleOgRequest(
 
     const layoutOptions: OgLayoutOptions = {
       title,
-      description,
       brand,
-      badge,
       background,
-      preview
+      preview,
+      ...(description !== undefined && { description }),
+      ...(badge !== undefined && { badge })
     }
 
     const font = options.font || NOTO_SANS

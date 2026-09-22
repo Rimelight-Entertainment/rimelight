@@ -41,10 +41,4 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins =
   }
 ]
 
-export {
-  createUiHead,
-  type UiHeadOptions,
-  type HeadResult,
-  type HeadTag
-} from "./head.js"
-
+export { createUiHead, type UiHeadOptions, type HeadResult, type HeadTag } from "./head.js"

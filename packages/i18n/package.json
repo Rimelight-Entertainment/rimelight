@@ -61,8 +61,7 @@
     "check": "vp check --fix"
   },
   "devDependencies": {
-    "@rimelight/config": "workspace:*",
-    "typescript": "6.0.3"
+    "@rimelight/config": "workspace:*"
   },
   "engines": {
     "node": ">=26.8.2"

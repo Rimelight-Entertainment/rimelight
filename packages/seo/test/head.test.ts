@@ -1,17 +1,11 @@
 import { describe, it, expect } from "vite-plus/test"
-import {
-  createSeoHead,
-  createHead,
-  defineSeoConfig,
-  renderTagsToHtml,
-  mergeHeadTags
-} from "../src/head.js"
+import { createSeoHead, createHead, defineSeoConfig } from "../src/head.js"
 import { escapeHtml, serializeJsonLd, sanitizeUrl } from "../src/sanitize.js"
 
 describe("sanitize helpers", () => {
   describe("escapeHtml", () => {
     it("escapes special HTML characters", () => {
-      expect(escapeHtml('<script>alert("XSS & \'attack\'")</script>')).toBe(
+      expect(escapeHtml("<script>alert(\"XSS & 'attack'\")</script>")).toBe(
         "&lt;script&gt;alert(&quot;XSS &amp; &#039;attack&#039;&quot;)&lt;/script&gt;"
       )
     })
@@ -63,7 +57,9 @@ describe("createSeoHead", () => {
     })
 
     expect(result.html).toContain("<title>Pricing Plans | Rimelight</title>")
-    expect(result.html).toContain('<meta name="description" content="Transparent pricing for all teams." />')
+    expect(result.html).toContain(
+      '<meta name="description" content="Transparent pricing for all teams." />'
+    )
     expect(result.html).toContain('<link rel="canonical" href="https://rimelight.com/pricing/" />')
     expect(result.html).toContain('<link rel="sitemap" href="/sitemap.xml" />')
     expect(result.tags.length).toBeGreaterThan(5)
@@ -97,7 +93,7 @@ describe("createSeoHead", () => {
     const result = createSeoHead({
       title: "Nonce Test",
       nonce: "secret-nonce-12345",
-      breadcrumbs: [{ name: "Home", item: "https://rimelight.com" }]
+      breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }]
     })
 
     expect(result.html).toContain('<script type="application/ld+json" nonce="secret-nonce-12345">')
@@ -112,14 +108,14 @@ describe("createSeoHead", () => {
       title: "Base Page",
       description: "Base description",
       canonical: "https://rimelight.com/base",
-      breadcrumbs: [{ name: "Home", item: "https://rimelight.com" }]
+      breadcrumbs: [{ name: "Home", url: "https://rimelight.com" }]
     })
 
     const child = base.extend({
       title: "Child Page",
       description: "Child description",
       canonical: "https://rimelight.com/child",
-      breadcrumbs: [{ name: "Child", item: "https://rimelight.com/child" }]
+      breadcrumbs: [{ name: "Child", url: "https://rimelight.com/child" }]
     })
 
     expect(child.html).toContain("<title>Child Page | Rimelight</title>")

@@ -2,8 +2,7 @@ import type { SiteConfig } from "./types.js"
 
 /**
  * Build a canonical URL from a page URL and site base. - Strips trailing slash unless the path has
- * query params (where trailing slash is removed too). - Returns undefined-safe: pass Astro.url and
- * Astro.site directly.
+ * query params (where trailing slash is removed too). - Returns undefined-safe.
  */
 export function buildCanonicalUrl(url: string | URL, base: string | URL): string {
   const resolved = new URL(url, base)
@@ -13,28 +12,31 @@ export function buildCanonicalUrl(url: string | URL, base: string | URL): string
 }
 
 /**
- * Deep merge two metadata or configuration objects.
+ * Deep merge two or more metadata or configuration objects. Later objects win; `undefined` values
+ * do not overwrite earlier ones.
  */
 export function deepMerge<T extends Record<string, any>>(
   base: T,
-  override?: Record<string, any>
+  ...overrides: (Record<string, any> | undefined)[]
 ): T {
-  if (!override) return { ...base }
-  const result: Record<string, any> = { ...base }
-  for (const key of Object.keys(override)) {
-    const baseVal = base[key]
-    const overrideVal = override[key]
-    if (
-      baseVal &&
-      overrideVal &&
-      typeof baseVal === "object" &&
-      typeof overrideVal === "object" &&
-      !Array.isArray(baseVal) &&
-      !Array.isArray(overrideVal)
-    ) {
-      result[key] = deepMerge(baseVal, overrideVal)
-    } else if (overrideVal !== undefined) {
-      result[key] = overrideVal
+  let result: Record<string, any> = { ...base }
+  for (const override of overrides) {
+    if (!override) continue
+    for (const key of Object.keys(override)) {
+      const baseVal = result[key]
+      const overrideVal = override[key]
+      if (
+        baseVal &&
+        overrideVal &&
+        typeof baseVal === "object" &&
+        typeof overrideVal === "object" &&
+        !Array.isArray(baseVal) &&
+        !Array.isArray(overrideVal)
+      ) {
+        result[key] = deepMerge(baseVal, overrideVal)
+      } else if (overrideVal !== undefined) {
+        result[key] = overrideVal
+      }
     }
   }
   return result as T

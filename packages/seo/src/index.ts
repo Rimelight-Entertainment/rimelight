@@ -51,11 +51,7 @@ export {
   type HeadResult
 } from "./head.js"
 
-export {
-  escapeHtml,
-  serializeJsonLd,
-  sanitizeUrl
-} from "./sanitize.js"
+export { escapeHtml, serializeJsonLd, sanitizeUrl } from "./sanitize.js"
 
 export {
   buildSitemapUrls,
@@ -96,10 +92,7 @@ export {
   type OgRenderConfig
 } from "./og.js"
 
-export {
-  handleOgRequest,
-  createHonoOgHandler
-} from "./og/index.js"
+export { handleOgRequest, createHonoOgHandler } from "./og/index.js"
 
 import { rimelightSeo } from "./plugin.js"
 export { rimelightSeo }

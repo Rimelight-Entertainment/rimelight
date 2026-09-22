@@ -1,9 +1,4 @@
-import type {
-  HeadProps,
-  OpenGraphMeta,
-  SiteConfig,
-  TwitterMeta
-} from "./types.js"
+import type { HeadProps, OpenGraphMeta, SiteConfig, TwitterMeta } from "./types.js"
 import {
   buildCanonicalUrl,
   buildDefaultOgImageUrl,
@@ -17,9 +12,8 @@ import { buildArticleSchema, buildBreadcrumbSchema } from "./schema.js"
 import { escapeHtml, sanitizeUrl, serializeJsonLd } from "./sanitize.js"
 
 /**
- * Discriminated union of all supported head tag shapes.
- * Typed per-tag so JSX consumers get autocomplete and safety on .tags without
- * needing to fall back to raw .html.
+ * Discriminated union of all supported head tag shapes. Typed per-tag so JSX consumers get
+ * autocomplete and safety on .tags without needing to fall back to raw .html.
  */
 export type HeadTag =
   | { tag: "title"; children: string; props?: never }
@@ -29,7 +23,7 @@ export type HeadTag =
         | { name: string; content: string; [k: string]: string | undefined }
         | { property: string; content: string; [k: string]: string | undefined }
         | { charset: string; [k: string]: string | undefined }
-        | { "http-equiv": string; content: string; [k: string]: string | undefined }
+        | { "http-equiv": string; "content": string; [k: string]: string | undefined }
         | Record<string, string | undefined>
       children?: never
     }
@@ -51,9 +45,9 @@ export type HeadTag =
 
 export interface HeadResult {
   /**
-   * Sanitized raw HTML ready for direct insertion into <head>.
-   * Attribute values are escapeHtml()-encoded; JSON-LD content is serializeJsonLd()-encoded;
-   * URLs are sanitizeUrl()-encoded. Safe for set:html / dangerouslySetInnerHTML.
+   * Sanitized raw HTML ready for direct insertion into <head>. Attribute values are
+   * escapeHtml()-encoded; JSON-LD content is serializeJsonLd()-encoded; URLs are
+   * sanitizeUrl()-encoded. Safe for set:html / dangerouslySetInnerHTML.
    */
   readonly html: string
 
@@ -63,8 +57,8 @@ export interface HeadResult {
   readonly tags: HeadTag[]
 
   /**
-   * Return a new HeadResult with the given props merged on top of this one.
-   * Deduplication is last-wins per identity key.
+   * Return a new HeadResult with the given props merged on top of this one. Deduplication is
+   * last-wins per identity key.
    */
   extend(overrides: HeadProps): HeadResult
 }
@@ -80,13 +74,13 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
       lines.push(`<title>${escapeHtml(t.children)}</title>`)
     } else if (t.tag === "meta") {
       const attrs = Object.entries(t.props || {})
-        .filter(([_, v]) => v !== undefined && v !== null)
+        .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
         .join(" ")
       lines.push(`<meta ${attrs} />`)
     } else if (t.tag === "link") {
       const attrs = Object.entries(t.props || {})
-        .filter(([_, v]) => v !== undefined && v !== null)
+        .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => {
           if (k === "href") {
             return `${k}="${escapeHtml(sanitizeUrl(String(v)))}"`
@@ -97,14 +91,14 @@ export function renderTagsToHtml(tags: HeadTag[]): string {
       lines.push(`<link ${attrs} />`)
     } else if (t.tag === "script") {
       const attrs = Object.entries(t.props || {})
-        .filter(([_, v]) => v !== undefined && v !== null)
+        .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
         .join(" ")
       const attrStr = attrs ? ` ${attrs}` : ""
       lines.push(`<script${attrStr}>${t.children}</script>`)
     } else if (t.tag === "style") {
       const attrs = Object.entries(t.props || {})
-        .filter(([_, v]) => v !== undefined && v !== null)
+        .filter(([, v]) => v !== undefined && v !== null)
         .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`)
         .join(" ")
       const attrStr = attrs ? ` ${attrs}` : ""
@@ -234,11 +228,7 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     nonce
   } = props
 
-  const config: SiteConfig = deepMerge(
-    DEFAULT_SITE_CONFIG,
-    baseConfig || {},
-    propsConfig || {}
-  )
+  const config: SiteConfig = deepMerge(DEFAULT_SITE_CONFIG, baseConfig || {}, propsConfig || {})
 
   const siteName = config.name || "Rimelight"
   const siteDescription = config.description || ""
@@ -460,9 +450,9 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
       tags.push({
         tag: "link",
         props: {
-          rel: "alternate",
+          "rel": "alternate",
           "data-version": alt.version,
-          href: sanitizeUrl(alt.href)
+          "href": sanitizeUrl(alt.href)
         }
       })
     }
@@ -520,7 +510,10 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
   // Twitter
   tags.push({
     tag: "meta",
-    props: { property: "twitter:card", content: String(resolvedTwitter.card || "summary_large_image") }
+    props: {
+      property: "twitter:card",
+      content: String(resolvedTwitter.card || "summary_large_image")
+    }
   })
   tags.push({
     tag: "meta",
@@ -530,7 +523,10 @@ function generateTags(props: HeadProps, baseConfig?: Partial<SiteConfig>): HeadT
     tag: "meta",
     props: {
       property: "twitter:title",
-      content: String(resolvedTwitter.title || resolvedOpenGraph.title || title || siteName).slice(0, 200)
+      content: String(resolvedTwitter.title || resolvedOpenGraph.title || title || siteName).slice(
+        0,
+        200
+      )
     }
   })
   if (resolvedTwitter.description) {
@@ -672,8 +668,8 @@ export function createSeoHead(
 export const createHead = createSeoHead
 
 /**
- * Factory that returns a pre-configured createSeoHead bound to a custom SiteConfig.
- * Ideal for multi-tenant apps, edge workers, and contexts outside Vite virtual modules.
+ * Factory that returns a pre-configured createSeoHead bound to a custom SiteConfig. Ideal for
+ * multi-tenant apps, edge workers, and contexts outside Vite virtual modules.
  */
 export function defineSeoConfig(siteConfig: Partial<SiteConfig>) {
   return function configuredCreateSeoHead(props: HeadProps = {}): HeadResult {

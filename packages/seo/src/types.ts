@@ -114,9 +114,9 @@ export interface TwitterMeta {
 }
 
 /**
- * Site identity and SEO defaults shared across all Rimelight Astro sites. The UI-specific overrides
- * (component themes, shortcuts, etc.) live in UIConfig (packages/ui) and are passed directly to the
- * ui() integration.
+ * Site identity and SEO defaults shared across all Rimelight applications. The UI-specific
+ * overrides (component themes, shortcuts, etc.) live in UIConfig (packages/ui) and are passed
+ * directly to the ui() integration.
  */
 export interface SiteConfig {
   id: string
@@ -188,7 +188,7 @@ export interface RSSFeed {
 }
 
 /**
- * Props for the RLAHead Astro component. Defined here so consumers can construct head props without
+ * Props for rendering the site's <head>. Defined here so consumers can construct head props without
  * importing @rimelight/ui.
  */
 export interface HeadProps {
@@ -252,10 +252,6 @@ export interface HeadProps {
    * Site configuration for defaults
    */
   config?: SiteConfig
-  /**
-   * Whether to enable View Transitions (ClientRouter)
-   */
-  transitions?: boolean
   /**
    * Meta charset
    */

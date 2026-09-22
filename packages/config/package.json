@@ -48,9 +48,7 @@
   "devDependencies": {
     "@astrojs/cloudflare": "14.3.2",
     "astro": "7.3.3",
-    "drizzle-kit": "0.31.10",
-    "typescript": "6.0.3",
-    "vite-plus": "0.3.3"
+    "drizzle-kit": "0.31.10"
   },
   "peerDependencies": {
     "@astrojs/cloudflare": ">=14.0.0",

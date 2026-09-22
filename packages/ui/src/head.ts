@@ -6,7 +6,7 @@ export type HeadTag =
         | { name: string; content: string }
         | { property: string; content: string }
         | { charset: string }
-        | { "http-equiv": string; content: string }
+        | { "http-equiv": string; "content": string }
         | Record<string, string | undefined>
       children?: never
     }

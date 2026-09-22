@@ -55,10 +55,6 @@ declare module "@rimelight/cms" {
   export const renderCorpusMarkdown: (db: any, options: any) => Promise<string>
 }
 
-declare module "astro:content" {
-  export const getCollection: (collection: string) => Promise<any[]>
-}
-
 declare module "virtual:rimelight-seo/assets" {
   export const masterIconBuffer: Buffer | null
   export const isSvg: boolean
