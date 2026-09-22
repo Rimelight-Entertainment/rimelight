@@ -39,7 +39,7 @@ export interface OgLayoutOptions {
    */
   description?: string
   /**
-   * Branding shown top-left. Pass a plain string (site name) or a pre-built takumi-js VNode for a
+   * Branding shown top-left. Pass a plain string (site name) or a pre-built Takumi VNode for a
    * custom logo treatment.
    */
   brand?: string | object
@@ -129,7 +129,7 @@ export async function loadOgFonts(
 // ---------------------------------------------------------------------------
 
 /**
- * Builds a takumi-js-compatible VNode for the default Rimelight OG layout.
+ * Builds a Takumi-compatible VNode for the default Rimelight OG layout.
  *
  * Consumers that need a fully custom look should build their own VNode and call
  * `renderOgResponse()` directly -- this function is just the house style.
@@ -359,8 +359,8 @@ export function defaultOgLayout(options: OgLayoutOptions, font: OgFontConfig = N
 // ---------------------------------------------------------------------------
 
 /**
- * Renders any takumi-js VNode to a PNG `Response` with standard OG headers. Use this when you
- * supply your own layout entirely.
+ * Renders any Takumi VNode to a PNG `Response` with standard OG headers. Use this when you supply
+ * your own layout entirely.
  *
  * @example
  *   const vnode = myBrandedLayout({ title, description })
@@ -373,10 +373,10 @@ export async function renderOgResponse(
   const { font = NOTO_SANS, width = 1200, height = 630 } = config
 
   try {
-    const { render } = await import("takumi-js")
+    const { renderTakumi } = await import("./takumi.js")
     const { regular, bold } = await loadOgFonts(font)
 
-    const pngBuffer = await render(vnode, {
+    const pngBuffer = await renderTakumi(vnode, {
       width,
       height,
       fonts: [

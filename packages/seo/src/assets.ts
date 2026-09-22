@@ -41,7 +41,7 @@ export async function generatePng(
   source: Buffer | Uint8Array | string,
   options: { width: number; height: number; background?: string }
 ): Promise<Buffer> {
-  const { render } = await import("takumi-js")
+  const { renderTakumi } = await import("./takumi.js")
   const src = toDataUrl(source)
 
   const vnode = {
@@ -69,7 +69,7 @@ export async function generatePng(
     }
   }
 
-  const png = await render(vnode, {
+  const png = await renderTakumi(vnode, {
     width: options.width,
     height: options.height
   })
@@ -86,7 +86,7 @@ export async function generateMaskablePng(
   options: GenerateMaskableOptions = {}
 ): Promise<Buffer> {
   const { size = 512, background = "#ffffff", paddingRatio = 0.15 } = options
-  const { render } = await import("takumi-js")
+  const { renderTakumi } = await import("./takumi.js")
   const src = toDataUrl(source)
   const innerPercent = `${Math.round((1 - paddingRatio * 2) * 100)}%`
 
@@ -115,7 +115,7 @@ export async function generateMaskablePng(
     }
   }
 
-  const png = await render(vnode, {
+  const png = await renderTakumi(vnode, {
     width: size,
     height: size
   })
@@ -159,7 +159,7 @@ export async function generateIco(
  */
 export async function generateOgCard(options: GenerateOgCardOptions = {}): Promise<Buffer> {
   const { width = 1200, height = 630, background = "#0a0a0a", logoBuffer } = options
-  const { render } = await import("takumi-js")
+  const { renderTakumi } = await import("./takumi.js")
 
   const bgStyle =
     background.startsWith("linear-gradient") || background.startsWith("radial-gradient")
@@ -198,6 +198,6 @@ export async function generateOgCard(options: GenerateOgCardOptions = {}): Promi
     }
   }
 
-  const png = await render(vnode, { width, height })
+  const png = await renderTakumi(vnode, { width, height })
   return Buffer.from(png)
 }

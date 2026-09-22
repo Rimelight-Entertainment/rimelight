@@ -17,7 +17,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" run build"
+    "build": "pnpm -r --workspace-concurrency=1 --filter \"./apps/*\" run build",
+    "prepare": "vp config"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",

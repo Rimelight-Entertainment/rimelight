@@ -78,7 +78,8 @@
     "check": "vp check --fix && astro check"
   },
   "dependencies": {
-    "takumi-js": "^2.14.0"
+    "@takumi-rs/helpers": "^2.14.0",
+    "@takumi-rs/wasm": "^2.14.0"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*",

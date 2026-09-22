@@ -27,7 +27,6 @@
     ]
   },
   "scripts": {
-    "prepare": "vp config",
     "generate-types": "wrangler types",
     "astro": "astro",
     "dev": "astro dev",
