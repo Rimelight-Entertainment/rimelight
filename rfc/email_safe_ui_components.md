@@ -49,7 +49,7 @@ packages/ui/src/components/email/
   RLEmailImage.astro
 ```
 
-The `RL` prefix distinguishes email components from the existing `RLA`, `RLV`, and `RLS` framework components while keeping the package naming convention consistent.
+The `RL` prefix distinguishes email components from the existing `RLA` and `RLS` framework components while keeping the package naming convention consistent.
 
 ## 6. Example API
 

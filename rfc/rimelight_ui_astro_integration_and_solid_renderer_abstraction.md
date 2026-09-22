@@ -191,7 +191,7 @@ A key requirement is ensuring that making Solid and UnoCSS direct dependencies d
 ## 5. Drawbacks & Trade-offs
 
 1. **Astro Framework Coupling Risk**:
-   `@rimelight/ui` was previously refactored from an Astro-specific integration into a **framework-agnostic Vite plugin** (`virtual:rimelight/ui`) with multi-framework component exports (`RLA*`, `RLV*`, `RLS*`). Bundling Astro-specific rendering integrations (`@astrojs/solid-js`) directly into `@rimelight/ui` re-couples the UI package to Astro, making it less ergonomic for non-Astro Vite apps (e.g. pure Vue, Solid SPA, Svelte, or Vite SSR).
+   `@rimelight/ui` was previously refactored from an Astro-specific integration into a **framework-agnostic Vite plugin** (`virtual:rimelight/ui`) with multi-framework component exports (`RLA*`, `RLS*`). Bundling Astro-specific rendering integrations (`@astrojs/solid-js`) directly into `@rimelight/ui` re-couples the UI package to Astro, making it less ergonomic for non-Astro Vite apps (e.g. Solid SPA, Svelte, or Vite SSR).
 2. **Direct Dependency Size in `node_modules`**:
    `node_modules/@rimelight/ui` will contain `solid-js` and `@astrojs/solid-js`. In modern package managers (pnpm), content-addressable storage shares these bytes across all workspace apps with 0 disk penalty.
 3. **Pinned Framework Version**:
@@ -282,5 +282,5 @@ flowchart TD
 ## 9. Unresolved Questions
 
 1. **Subpath export (`@rimelight/ui/astro`) vs dedicated package (`@rimelight/astro`)**: Which architectural boundary best fits the long-term roadmap?
-2. **Framework Agnosticism Priority**: Should `@rimelight/ui` remain strictly generic at its root entrypoint to preserve flexibility for Vue/Solid/Svelte-only standalone apps?
+2. **Framework Agnosticism Priority**: Should `@rimelight/ui` remain strictly generic at its root entrypoint to preserve flexibility for Solid/Svelte-only standalone apps?
 3. **JSX Pragma Support**: Should the integration support optional custom JSX pragma configuration for consumers writing Solid `.tsx` alongside other frameworks, or should standard `solid-js` pragma remain the universal default? (Recommendation: Keep Solid as default).
