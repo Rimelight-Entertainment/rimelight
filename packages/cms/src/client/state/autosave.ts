@@ -45,6 +45,11 @@ export class AutosaveController {
       clearTimeout(this.timer)
     }
 
+    if (typeof window === "undefined") {
+      void this.save(content)
+      return
+    }
+
     this.timer = window.setTimeout(() => {
       void this.save(content)
     }, this.debounceMs)
@@ -84,9 +89,9 @@ export class AutosaveController {
   }
 
   private saveToLocalStorage(content: any): void {
-    if (typeof localStorage === "undefined" || !this.pageId) return
+    if (typeof window === "undefined" || !this.pageId) return
     try {
-      localStorage.setItem(`cms_draft_backup_${this.pageId}`, JSON.stringify(content))
+      window.localStorage.setItem(`cms_draft_backup_${this.pageId}`, JSON.stringify(content))
     } catch (e) {
       console.warn("Failed to write draft backup to localStorage", e)
     }

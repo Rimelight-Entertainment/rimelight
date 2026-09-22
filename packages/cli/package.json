@@ -16,20 +16,35 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight.git"
   },
   "bin": {
-    "rimelight": "./bin/rimelight.js"
+    "rimelight": "./dist/cli.mjs"
   },
   "files": [
-    "bin",
-    "src"
+    "dist"
   ],
   "type": "module",
-  "main": "./src/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./prompts": {
+      "types": "./dist/prompts.d.mts",
+      "import": "./dist/prompts.mjs"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.mts",
+      "import": "./dist/cli.mjs"
+    }
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "create": "node ./bin/rimelight.js create",
-    "check": "vp check --fix"
+    "build": "vp pack",
+    "prepack": "pnpm run build",
+    "create": "node ./dist/cli.mjs create",
+    "check": "vp check --fix",
+    "test": "vp test"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"

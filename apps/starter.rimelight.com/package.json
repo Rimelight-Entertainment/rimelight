@@ -30,7 +30,7 @@
     "generate-types": "wrangler types",
     "astro": "astro",
     "dev": "astro dev",
-    "prebuild": "pnpm -r --parallel --filter \"@rimelight/*\" --filter \"!@rimelight/config\" run --if-present build",
+    "prebuild": "pnpm -r --parallel --filter \"@rimelight/*\" run --if-present build",
     "build": "astro build",
     "preview": "astro build && wrangler dev",
     "profile": "astro build && wrangler check startup",

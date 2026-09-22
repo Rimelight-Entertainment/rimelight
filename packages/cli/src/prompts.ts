@@ -4,7 +4,19 @@ import { styleText } from "node:util"
 
 // --- Terminal Styling (Node 22+ styleText with graceful fallback) ---
 
-export const pc = {
+export type TextStyleFormat = "bold" | "dim" | "red" | "green" | "yellow" | "magenta" | "cyan"
+
+const ANSI_CODES: Record<TextStyleFormat, [string, string]> = {
+  bold: ["\x1b[1m", "\x1b[22m"],
+  dim: ["\x1b[2m", "\x1b[22m"],
+  red: ["\x1b[31m", "\x1b[39m"],
+  green: ["\x1b[32m", "\x1b[39m"],
+  yellow: ["\x1b[33m", "\x1b[39m"],
+  magenta: ["\x1b[35m", "\x1b[39m"],
+  cyan: ["\x1b[36m", "\x1b[39m"]
+}
+
+export const pc: Record<TextStyleFormat, (text: unknown) => string> = {
   magenta: (text) => styleTextSafe("magenta", text),
   bold: (text) => styleTextSafe("bold", text),
   green: (text) => styleTextSafe("green", text),
@@ -14,30 +26,21 @@ export const pc = {
   dim: (text) => styleTextSafe("dim", text)
 }
 
-function styleTextSafe(format, text) {
+function styleTextSafe(format: TextStyleFormat, text: unknown): string {
   if (typeof styleText === "function") {
     try {
       return styleText(format, String(text))
     } catch {
-      // fallback to raw ANSI if format is unsupported
+      // fallback to raw ANSI if the format is unsupported
     }
   }
-  const codes = {
-    bold: ["\x1b[1m", "\x1b[22m"],
-    dim: ["\x1b[2m", "\x1b[22m"],
-    red: ["\x1b[31m", "\x1b[39m"],
-    green: ["\x1b[32m", "\x1b[39m"],
-    yellow: ["\x1b[33m", "\x1b[39m"],
-    magenta: ["\x1b[35m", "\x1b[39m"],
-    cyan: ["\x1b[36m", "\x1b[39m"]
-  }
-  const [open, close] = codes[format] || ["", ""]
-  return `${open}${text}${close}`
+  const [open, close] = ANSI_CODES[format] || ["", ""]
+  return `${open}${String(text)}${close}`
 }
 
 // --- Cancellation Symbol & Global Terminal Cleanup ---
 
-const CANCEL_SYMBOL = Symbol("rimelight:cancel")
+export const CANCEL_SYMBOL = Symbol("rimelight:cancel")
 
 if (typeof process !== "undefined" && typeof process.on === "function") {
   process.on("exit", () => {
@@ -47,27 +50,58 @@ if (typeof process !== "undefined" && typeof process.on === "function") {
   })
 }
 
-export function isCancel(value) {
+export function isCancel(value: unknown): boolean {
   return value === CANCEL_SYMBOL
 }
 
-export function intro(title) {
+export function intro(title: string): void {
   console.log(`\n${title}\n`)
 }
 
-export function outro(message) {
+export function outro(message: string): void {
   console.log(`\n${message}\n`)
 }
 
-export function cancel(message) {
+export function cancel(message: string): void {
   console.log(`\n${pc.red(message)}\n`)
 }
 
 // --- Interactive Prompts ---
 
-export async function text(options) {
+export interface TextOptions {
+  message: string
+  placeholder?: string
+  validate?: (value: string) => string | undefined | void
+  defaultValue?: string
+}
+
+export interface ConfirmOptions {
+  message: string
+  initialValue?: boolean
+}
+
+export interface SelectOption<TValue = string> {
+  value: TValue
+  label: string
+  hint?: string
+}
+
+export interface SelectOptions<TValue = string> {
+  message: string
+  options: SelectOption<TValue>[]
+  initialValue?: TValue
+}
+
+export interface MultiselectOptions<TValue = string> {
+  message: string
+  options: SelectOption<TValue>[]
+  initialValues?: TValue[]
+  required?: boolean
+}
+
+export async function text(options: TextOptions): Promise<string | symbol> {
   const { message, placeholder, validate, defaultValue = "" } = options
-  const isTTY = process.stdin.isTTY && process.stdout.isTTY
+  const isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY)
 
   if (!isTTY) {
     return defaultValue
@@ -101,9 +135,9 @@ export async function text(options) {
   }
 }
 
-export async function confirm(options) {
+export async function confirm(options: ConfirmOptions): Promise<boolean | symbol> {
   const { message, initialValue = true } = options
-  const isTTY = process.stdin.isTTY && process.stdout.isTTY
+  const isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY)
 
   if (!isTTY) {
     return initialValue
@@ -130,9 +164,11 @@ export async function confirm(options) {
   }
 }
 
-export async function select(options) {
+export async function select<TValue = string>(
+  options: SelectOptions<TValue>
+): Promise<TValue | symbol | undefined> {
   const { message, options: choices, initialValue } = options
-  const isTTY = process.stdin.isTTY && process.stdout.isTTY
+  const isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY)
 
   if (!isTTY || choices.length === 0) {
     return initialValue ?? choices[0]?.value
@@ -143,7 +179,7 @@ export async function select(options) {
     choices.findIndex((c) => c.value === initialValue)
   )
 
-  return new Promise((resolve) => {
+  return new Promise<TValue | symbol | undefined>((resolve) => {
     const { stdin, stdout } = process
     let cleaned = false
 
@@ -181,7 +217,7 @@ export async function select(options) {
       cleanup()
     }
 
-    const onKeyPress = (_, key) => {
+    const onKeyPress = (_: string, key?: readline.Key) => {
       if (key) {
         if (key.name === "c" && key.ctrl) {
           cleanup()
@@ -200,7 +236,7 @@ export async function select(options) {
         }
         if (key.name === "return" || key.name === "enter") {
           cleanup()
-          resolve(choices[selectedIndex]?.value)
+          resolve(choices[selectedIndex]!.value)
           return
         }
         if (key.name === "escape") {
@@ -221,18 +257,20 @@ export async function select(options) {
   })
 }
 
-export async function multiselect(options) {
+export async function multiselect<TValue = string>(
+  options: MultiselectOptions<TValue>
+): Promise<TValue[] | symbol> {
   const { message, options: choices, initialValues = [], required = false } = options
-  const isTTY = process.stdin.isTTY && process.stdout.isTTY
+  const isTTY = Boolean(process.stdin.isTTY && process.stdout.isTTY)
 
   if (!isTTY || choices.length === 0) {
     return initialValues.length > 0 ? initialValues : choices.map((c) => c.value)
   }
 
   let selectedIndex = 0
-  const selectedSet = new Set(initialValues)
+  const selectedSet = new Set<TValue>(initialValues)
 
-  return new Promise((resolve) => {
+  return new Promise<TValue[] | symbol>((resolve) => {
     const { stdin, stdout } = process
     let cleaned = false
 
@@ -275,7 +313,7 @@ export async function multiselect(options) {
       cleanup()
     }
 
-    const onKeyPress = (_, key) => {
+    const onKeyPress = (_: string, key?: readline.Key) => {
       if (key) {
         if (key.name === "c" && key.ctrl) {
           cleanup()
@@ -293,7 +331,7 @@ export async function multiselect(options) {
           return
         }
         if (key.name === "space") {
-          const val = choices[selectedIndex]?.value
+          const val = choices[selectedIndex]!.value
           if (selectedSet.has(val)) {
             selectedSet.delete(val)
           } else {
@@ -331,12 +369,18 @@ export async function multiselect(options) {
 
 // --- Terminal Spinner ---
 
-export function spinner() {
+export interface Spinner {
+  start: (msg?: string) => void
+  message: (msg?: string) => void
+  stop: (finalMessage?: string) => void
+}
+
+export function spinner(): Spinner {
   const frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
   let frameIndex = 0
-  let intervalId = null
+  let intervalId: ReturnType<typeof setInterval> | null = null
   let currentMessage = ""
-  const isTTY = process.stdout.isTTY
+  const isTTY = Boolean(process.stdout.isTTY)
 
   const onProcessExit = () => {
     if (isTTY) {

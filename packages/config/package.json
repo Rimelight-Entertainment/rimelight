@@ -19,9 +19,7 @@
     "astro.d.ts",
     "tsconfig",
     "vite-plus",
-    "astro",
-    "drizzle",
-    "src"
+    "dist"
   ],
   "type": "module",
   "exports": {
@@ -34,16 +32,24 @@
       "default": "./vite-plus/base.js"
     },
     "./astro": {
-      "types": "./astro/index.ts",
-      "default": "./astro/index.js"
+      "types": "./dist/astro/index.d.mts",
+      "import": "./dist/astro/index.mjs",
+      "default": "./dist/astro/index.mjs"
     },
     "./drizzle": {
-      "types": "./drizzle/index.ts",
-      "default": "./drizzle/index.js"
+      "types": "./dist/drizzle/index.d.mts",
+      "import": "./dist/drizzle/index.mjs",
+      "default": "./dist/drizzle/index.mjs"
     }
   },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "prepack": "pnpm run build",
+    "check": "vp check --fix",
+    "test": "vp test"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "14.3.2",

@@ -81,7 +81,8 @@
   "scripts": {
     "build": "vp pack",
     "prepack": "pnpm run build",
-    "check": "vp check --fix"
+    "check": "vp check --fix",
+    "test": "vp test"
   },
   "dependencies": {
     "@takumi-rs/helpers": "^2.14.0",

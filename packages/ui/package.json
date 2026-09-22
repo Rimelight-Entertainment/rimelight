@@ -62,7 +62,8 @@
     "build": "vp pack",
     "prepack": "pnpm run build",
     "astro": "astro",
-    "check": "vp check --fix && astro check"
+    "check": "vp check --fix && astro check",
+    "test": "vp test"
   },
   "dependencies": {
     "@unocss/vite": "66.10.5",

@@ -2,10 +2,11 @@ import path from "node:path"
 import fs from "node:fs/promises"
 import { existsSync, readdirSync } from "node:fs"
 import { spawnSync } from "node:child_process"
-import * as prompts from "./prompts.js"
-import { pc } from "./prompts.js"
+import type { SpawnSyncOptions } from "node:child_process"
+import * as prompts from "./prompts"
+import { pc } from "./prompts"
 
-function runCommand(cmd, args, options = {}) {
+function runCommand(cmd: string, args: string[], options: SpawnSyncOptions = {}) {
   return spawnSync(cmd, args, {
     ...options,
     shell: process.platform === "win32"
@@ -17,18 +18,18 @@ const candidateStarterPaths = [
   path.resolve(import.meta.dirname, "../../starter"),
   path.resolve(import.meta.dirname, "../starter")
 ]
-export const starterPath =
-  candidateStarterPaths.find((p) => existsSync(p)) || candidateStarterPaths[0]
+export const starterPath: string =
+  candidateStarterPaths.find((p) => existsSync(p)) || candidateStarterPaths[0]!
 
 // Helper to parse JSON with comments (JSONC)
-export function parseJsonc(content) {
+export function parseJsonc(content: string): any {
   let stripped = content.replace(/(?:^|\s)\/\*[\s\S]*?\*\//g, "")
   stripped = stripped.replace(/(^|[^\\:])\/\/.*$/gm, "$1")
   return JSON.parse(stripped)
 }
 
 // Helper to copy directory recursively
-async function copyDir(src, dest) {
+async function copyDir(src: string, dest: string): Promise<void> {
   await fs.mkdir(dest, { recursive: true })
   const entries = await fs.readdir(src, { withFileTypes: true })
 
@@ -57,7 +58,11 @@ async function copyDir(src, dest) {
 }
 
 // Helper to update astro.config.ts and wrangler.jsonc with the chosen domain
-export async function updateDomainConfigs(resolvedTargetDir, domain, displayProjectName) {
+export async function updateDomainConfigs(
+  resolvedTargetDir: string,
+  domain: string,
+  displayProjectName: string
+): Promise<void> {
   // Update astro.config.ts
   const astroConfigPath = path.join(resolvedTargetDir, "astro.config.ts")
   if (existsSync(astroConfigPath) && domain) {
@@ -90,14 +95,22 @@ export async function updateDomainConfigs(resolvedTargetDir, domain, displayProj
   }
 }
 
-export async function runCreate(options) {
-  const isInteractive = process.stdout.isTTY && !process.env.CI
+export interface CreateOptions {
+  projectName?: string | undefined
+  domain?: string | undefined
+  git?: boolean | undefined
+  install?: boolean | undefined
+  packageManager?: string | undefined
+}
+
+export async function runCreate(options: CreateOptions): Promise<void> {
+  const isInteractive = Boolean(process.stdout.isTTY && !process.env["CI"])
 
   if (isInteractive) {
     prompts.intro(pc.magenta(pc.bold("◇ Welcome to Rimelight!")))
 
     // 1. Prompt for project name/directory
-    let targetDir = options.projectName
+    let targetDir: string = options.projectName || ""
     if (!targetDir) {
       const response = await prompts.text({
         message: "Where should we create your new project?",
@@ -115,14 +128,14 @@ export async function runCreate(options) {
         prompts.cancel("Scaffolding cancelled.")
         process.exit(0)
       }
-      targetDir = response
+      targetDir = response as string
     }
 
     const resolvedTargetDir = path.resolve(targetDir)
     const displayProjectName = path.basename(resolvedTargetDir)
 
     // Prompt for website domain (optionally)
-    let domain = options.domain
+    let domain: string | undefined = options.domain
     if (domain === undefined) {
       const response = await prompts.text({
         message: "What is the website domain for this project? (Optional)",
@@ -141,7 +154,7 @@ export async function runCreate(options) {
         prompts.cancel("Scaffolding cancelled.")
         process.exit(0)
       }
-      domain = response ? response.trim() : ""
+      domain = response ? (response as string).trim() : ""
     }
 
     // Check if directory exists and is not empty
@@ -173,7 +186,7 @@ export async function runCreate(options) {
     }
 
     // 2. Prompt for package manager
-    let packageManager = options.packageManager
+    let packageManager: string = options.packageManager || ""
     if (!packageManager) {
       const response = await prompts.select({
         message: "Which package manager do you want to use?",
@@ -190,11 +203,11 @@ export async function runCreate(options) {
         prompts.cancel("Scaffolding cancelled.")
         process.exit(0)
       }
-      packageManager = response
+      packageManager = response as string
     }
 
     // 3. Prompt for Git initialization
-    let initGit = options.git
+    let initGit: boolean | symbol | undefined = options.git
     if (initGit === undefined) {
       const response = await prompts.confirm({
         message: "Initialize a new Git repository?",
@@ -209,7 +222,7 @@ export async function runCreate(options) {
     }
 
     // 4. Prompt for dependency installation
-    let installDeps = options.install
+    let installDeps: boolean | symbol | undefined = options.install
     if (installDeps === undefined) {
       const response = await prompts.confirm({
         message: `Install dependencies automatically using ${packageManager}?`,
@@ -368,7 +381,7 @@ export async function runCreate(options) {
 }
 
 // Helper to get nested properties in an object
-export function getNested(obj, propPath) {
+export function getNested(obj: any, propPath: string): any {
   const parts = propPath.split(".")
   let current = obj
   for (const part of parts) {
@@ -379,27 +392,27 @@ export function getNested(obj, propPath) {
 }
 
 // Helper to set nested properties in an object
-export function setNested(obj, propPath, value) {
+export function setNested(obj: any, propPath: string, value: any): void {
   const parts = propPath.split(".")
   let current = obj
   for (let i = 0; i < parts.length - 1; i++) {
-    const part = parts[i]
+    const part = parts[i]!
     if (current[part] === undefined || current[part] === null) {
       current[part] = {}
     }
     current = current[part]
   }
-  current[parts[parts.length - 1]] = value
+  current[parts[parts.length - 1]!] = value
 }
 
 // Generic index finder for arrays containing primitives or objects
-export function findArrayItemIndex(arr, item) {
+export function findArrayItemIndex(arr: any[], item: any): number {
   const itemStr = JSON.stringify(item)
   return arr.findIndex((x) => JSON.stringify(x) === itemStr)
 }
 
 // Inject an item at the exact index matched semantically against the starter array order
-export function injectIntoArray(targetArr, starterArr, value) {
+export function injectIntoArray<T>(targetArr: T[], starterArr: T[], value: T): T[] {
   const sIdx = findArrayItemIndex(starterArr, value)
   if (sIdx === -1) {
     targetArr.push(value)
@@ -438,10 +451,14 @@ export function injectIntoArray(targetArr, starterArr, value) {
   return targetArr
 }
 
-const cleanLine = (l) => l.trim().replace(/\s+/g, "")
+const cleanLine = (l: string) => l.trim().replace(/\s+/g, "")
 
 // Inject a missing line cleanly at its semantic index inside targetLines based on starterLines order
-export function injectIntoLines(targetLines, starterLines, value) {
+export function injectIntoLines(
+  targetLines: string[],
+  starterLines: string[],
+  value: string
+): string[] {
   const valueClean = cleanLine(value)
 
   const sIdx = starterLines.findIndex((x) => cleanLine(x) === valueClean)
@@ -454,7 +471,7 @@ export function injectIntoLines(targetLines, starterLines, value) {
   // Look for preceding neighbor in starterLines that exists in targetLines
   for (let i = sIdx - 1; i >= 0; i--) {
     const precedingVal = starterLines[i]
-    const precedingValClean = cleanLine(precedingVal)
+    const precedingValClean = cleanLine(precedingVal!)
     if (!precedingValClean) continue
     const tIdx = targetLines.findIndex((x) => cleanLine(x) === precedingValClean)
     if (tIdx !== -1) {
@@ -468,7 +485,7 @@ export function injectIntoLines(targetLines, starterLines, value) {
     // Look for succeeding neighbor in starterLines that exists in targetLines
     for (let i = sIdx + 1; i < starterLines.length; i++) {
       const succeedingVal = starterLines[i]
-      const succeedingValClean = cleanLine(succeedingVal)
+      const succeedingValClean = cleanLine(succeedingVal!)
       if (!succeedingValClean) continue
       const tIdx = targetLines.findIndex((x) => cleanLine(x) === succeedingValClean)
       if (tIdx !== -1) {
@@ -487,8 +504,11 @@ export function injectIntoLines(targetLines, starterLines, value) {
 }
 
 // Reorder target object keys to cleanly match starter template order, preserving custom keys
-export function reorderKeys(targetObj, starterObj) {
-  const ordered = {}
+export function reorderKeys(
+  targetObj: Record<string, any>,
+  starterObj: Record<string, any>
+): Record<string, any> {
+  const ordered: Record<string, any> = {}
   for (const key of Object.keys(starterObj)) {
     if (targetObj[key] !== undefined) {
       if (
@@ -513,7 +533,7 @@ export function reorderKeys(targetObj, starterObj) {
 }
 
 // Resolve domains in injected lines specifically for astro.config.ts
-export function resolveDomainInLine(line, targetContent) {
+export function resolveDomainInLine(line: string, targetContent: string): string {
   const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/)
   const targetDomain = siteMatch ? siteMatch[1] : ""
   if (targetDomain) {
@@ -524,14 +544,26 @@ export function resolveDomainInLine(line, targetContent) {
   return line
 }
 
+export interface ConfigDiff {
+  type: string
+  path: string
+  value?: any
+  currentValue?: any
+  message: string
+}
+
 // Helper to structurally diff JSON/JSONC
-export function getStructuredJsonDiffs(starterContent, targetContent, file) {
+export function getStructuredJsonDiffs(
+  starterContent: string,
+  targetContent: string,
+  file: string
+): ConfigDiff[] {
   const starterObj = parseJsonc(starterContent)
   const targetObj = parseJsonc(targetContent)
 
-  const diffs = []
+  const diffs: ConfigDiff[] = []
 
-  const diffKeys = (sObj, tObj, prefix = "") => {
+  const diffKeys = (sObj: any, tObj: any, prefix = ""): void => {
     // Check if key insertion order differs for semantic standardizing
     const sKeys = Object.keys(sObj)
     const tKeys = Object.keys(tObj).filter((k) => sKeys.includes(k))
@@ -624,14 +656,25 @@ export function getStructuredJsonDiffs(starterContent, targetContent, file) {
   return diffs
 }
 
-const cleanLines = (c) =>
+const cleanLines = (c: string): string[] =>
   c
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean)
 
+export interface LineDiff {
+  type: string
+  line: string
+  message: string
+}
+
 // Helper to diff files line-by-line
-export function getStructuredLineDiffs(starterContent, targetContent, file, targetDir) {
+export function getStructuredLineDiffs(
+  starterContent: string,
+  targetContent: string,
+  file: string,
+  targetDir: string
+): LineDiff[] {
   let normalizedTarget = targetContent
   let normalizedStarter = starterContent
 
@@ -643,7 +686,7 @@ export function getStructuredLineDiffs(starterContent, targetContent, file, targ
 
     const siteMatch = targetContent.match(/site:\s*["']https?:\/\/([^"']+)["']/)
     if (siteMatch) {
-      const domain = siteMatch[1]
+      const domain = siteMatch[1]!
       normalizedTarget = normalizedTarget
         .replace(new RegExp(domain, "g"), "example.com")
         .replace(/starter-dot-rimelight-dot-com/g, "example-dot-com")
@@ -656,7 +699,7 @@ export function getStructuredLineDiffs(starterContent, targetContent, file, targ
   const starterLines = cleanLines(normalizedStarter)
   const targetLines = cleanLines(normalizedTarget)
 
-  const diffs = []
+  const diffs: LineDiff[] = []
   for (const line of starterLines) {
     if (/^[{}[\],()]+$/.test(line)) continue // ignore structural syntax-only lines
     const normalizedLine = line.replace(/\s+/g, "")
@@ -673,7 +716,12 @@ export function getStructuredLineDiffs(starterContent, targetContent, file, targ
 }
 
 // Helper to dynamically calculate line-level differences between config files
-export function getDiffLines(starterContent, targetContent, file, targetDir) {
+export function getDiffLines(
+  starterContent: string,
+  targetContent: string,
+  file: string,
+  targetDir: string
+): string[] {
   // Parse JSONC config structurally (tsconfig, wrangler, knip, lunaria, etc.)
   if (file.endsWith(".json") || file.endsWith(".jsonc")) {
     try {
@@ -688,7 +736,15 @@ export function getDiffLines(starterContent, targetContent, file, targetDir) {
   return diffs.map((d) => d.message)
 }
 
-export async function runCompare(options) {
+interface CompareFileData {
+  file: string
+  exists: boolean
+  starterContent?: string | undefined
+  targetContent?: string | undefined
+  error?: unknown
+}
+
+export async function runCompare(options: { targetDir: string }): Promise<void> {
   const targetDir = path.resolve(options.targetDir)
   const displayProjectName = path.basename(targetDir)
 
@@ -718,7 +774,7 @@ export async function runCompare(options) {
   let totalDiffs = 0
 
   const filesData = await Promise.all(
-    files.map(async (file) => {
+    files.map(async (file): Promise<CompareFileData> => {
       const starterFilePath = path.join(starterPath, file)
       const targetFilePath = path.join(targetDir, file)
 
@@ -739,7 +795,7 @@ export async function runCompare(options) {
   )
 
   for (const data of filesData) {
-    const { file, exists, starterContent, targetContent, error } = data
+    const { file, exists, error } = data
 
     if (!exists) {
       console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("MISSING")}`)
@@ -748,17 +804,22 @@ export async function runCompare(options) {
     }
 
     if (error) {
-      console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("ERROR")} (${error.message})`)
+      console.log(
+        `${pc.red("✖")} ${pc.bold(file)}: ${pc.red("ERROR")} (${(error as Error).message})`
+      )
       totalDiffs++
       continue
     }
+
+    const starterContent = data.starterContent!
+    const targetContent = data.targetContent!
 
     if (file === "package.json") {
       try {
         const starterPkg = JSON.parse(starterContent)
         const targetPkg = JSON.parse(targetContent)
 
-        const pkgDiffs = []
+        const pkgDiffs: string[] = []
 
         // Engines Node
         if (starterPkg.engines?.node !== targetPkg.engines?.node) {
@@ -775,7 +836,7 @@ export async function runCompare(options) {
         }
 
         // Scripts
-        for (const [key, val] of Object.entries(starterPkg.scripts || {})) {
+        for (const [key, val] of Object.entries(starterPkg.scripts || {}) as Array<[string, any]>) {
           if (!targetPkg.scripts?.[key]) {
             pkgDiffs.push(`missing script "${key}":\n    └─ Reference: "${val}"`)
           } else if (targetPkg.scripts[key] !== val) {
@@ -786,7 +847,9 @@ export async function runCompare(options) {
         }
 
         // Dependencies (matching only)
-        for (const [key, val] of Object.entries(starterPkg.dependencies || {})) {
+        for (const [key, val] of Object.entries(starterPkg.dependencies || {}) as Array<
+          [string, any]
+        >) {
           if (!targetPkg.dependencies?.[key]) {
             pkgDiffs.push(`missing dependency "${key}":\n    └─ Reference: "${val}"`)
           } else if (targetPkg.dependencies[key] !== val) {
@@ -797,7 +860,9 @@ export async function runCompare(options) {
         }
 
         // devDependencies (matching only)
-        for (const [key, val] of Object.entries(starterPkg.devDependencies || {})) {
+        for (const [key, val] of Object.entries(starterPkg.devDependencies || {}) as Array<
+          [string, any]
+        >) {
           if (!targetPkg.devDependencies?.[key]) {
             pkgDiffs.push(`missing devDependency "${key}":\n    └─ Reference: "${val}"`)
           } else if (targetPkg.devDependencies[key] !== val) {
@@ -817,7 +882,9 @@ export async function runCompare(options) {
           console.log(`${pc.green("✔")} ${pc.bold(file)}: ${pc.green("UP TO DATE")}`)
         }
       } catch (err) {
-        console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("INVALID JSON")} (${err.message})`)
+        console.log(
+          `${pc.red("✖")} ${pc.bold(file)}: ${pc.red("INVALID JSON")} (${(err as Error).message})`
+        )
         totalDiffs++
       }
     } else {
@@ -847,11 +914,11 @@ export async function runCompare(options) {
   }
 }
 
-export async function runUpdate(options) {
+export async function runUpdate(options: { targetDir: string }): Promise<void> {
   const targetDir = path.resolve(options.targetDir)
   const displayProjectName = path.basename(targetDir)
 
-  const isInteractive = process.stdout.isTTY && !process.env.CI
+  const isInteractive = Boolean(process.stdout.isTTY && !process.env["CI"])
 
   prompts.intro(pc.magenta(pc.bold(`◇ Rimelight Update: ${displayProjectName}`)))
   console.log(`Standardizing project configs against starter template...\n`)
@@ -875,7 +942,7 @@ export async function runUpdate(options) {
     "wrangler.jsonc"
   ]
 
-  const pendingWrites = [] // Accumulate in-memory changes: { filePath, content, actionDescription }
+  const pendingWrites: Array<{ filePath: string; content: string; actionDescription: string }> = [] // Accumulate in-memory changes: { filePath, content, actionDescription }
 
   try {
     // Pre-read config files
@@ -909,8 +976,12 @@ export async function runUpdate(options) {
     const targetPkg = JSON.parse(targetPkgContent)
 
     // Helper functions to update diffs recursively instead of using loop with await
-    const handleJsonDiff = async (currentTargetContent, starterContent, file) => {
-      let diffs = []
+    const handleJsonDiff = async (
+      currentTargetContent: string,
+      starterContent: string,
+      file: string
+    ): Promise<string> => {
+      let diffs: ConfigDiff[] = []
       try {
         diffs = getStructuredJsonDiffs(starterContent, currentTargetContent, file)
       } catch {
@@ -924,7 +995,7 @@ export async function runUpdate(options) {
         console.log(`  └─ ${pc.dim(diff.message)}`)
       }
 
-      let selectedDiffMessages = []
+      let selectedDiffMessages: string[] = []
       if (isInteractive) {
         const selection = await prompts.multiselect({
           message: `Select keys to update in ${file} (Select none to finish):`,
@@ -939,7 +1010,7 @@ export async function runUpdate(options) {
           prompts.cancel("Update cancelled.")
           process.exit(0)
         }
-        selectedDiffMessages = selection
+        selectedDiffMessages = selection as string[]
       } else {
         // Apply all in non-interactive mode
         selectedDiffMessages = diffs.map((d) => d.message)
@@ -983,7 +1054,11 @@ export async function runUpdate(options) {
       return handleJsonDiff(nextContent, starterContent, file)
     }
 
-    const handleLineDiff = async (currentTargetContent, starterContent, file) => {
+    const handleLineDiff = async (
+      currentTargetContent: string,
+      starterContent: string,
+      file: string
+    ): Promise<string> => {
       const diffs = getStructuredLineDiffs(starterContent, currentTargetContent, file, targetDir)
       if (diffs.length === 0) return currentTargetContent
 
@@ -992,7 +1067,7 @@ export async function runUpdate(options) {
         console.log(`  └─ ${pc.dim(diff.message)}`)
       }
 
-      let selectedLines = []
+      let selectedLines: string[] = []
       if (isInteractive) {
         const selection = await prompts.multiselect({
           message: `Select entries to add to ${file} (Select none to finish):`,
@@ -1007,7 +1082,7 @@ export async function runUpdate(options) {
           prompts.cancel("Update cancelled.")
           process.exit(0)
         }
-        selectedLines = selection
+        selectedLines = selection as string[]
       } else {
         selectedLines = diffs.map((d) => d.line)
       }
@@ -1037,16 +1112,16 @@ export async function runUpdate(options) {
     }
 
     // 1. Process standard configuration files recursively to avoid loops with await
-    const processFiles = async (index) => {
+    const processFiles = async (index: number): Promise<void> => {
       if (index >= files.length) return
-      const file = files[index]
+      const file = files[index] as string
       const targetFilePath = path.join(targetDir, file)
 
       if (starterExists[index]) {
         if (!targetExists[index]) {
           // File is missing entirely
           console.log(`${pc.red("✖")} ${pc.bold(file)}: ${pc.red("MISSING")}`)
-          let shouldCreate = true
+          let shouldCreate: boolean | symbol = true
           if (isInteractive) {
             shouldCreate = await prompts.confirm({
               message: `Create missing file "${file}" from starter template?`,
@@ -1060,7 +1135,7 @@ export async function runUpdate(options) {
           if (shouldCreate) {
             pendingWrites.push({
               filePath: targetFilePath,
-              content: preReadStarter[index],
+              content: preReadStarter[index]!,
               actionDescription: `Create missing file "${file}"`
             })
             console.log(pc.green(`✔ Scheduled creation of "${file}".`))
@@ -1071,8 +1146,8 @@ export async function runUpdate(options) {
           return
         }
 
-        const starterContent = preReadStarter[index]
-        const targetContent = preReadTarget[index]
+        const starterContent = preReadStarter[index]!
+        const targetContent = preReadTarget[index]!
 
         // Parse/Diff dynamically based on file type
         if (file.endsWith(".json") || file.endsWith(".jsonc")) {
@@ -1112,7 +1187,7 @@ export async function runUpdate(options) {
 
     // 2. Standardize package.json preserving custom dependencies
     if (targetPkgExists) {
-      const pkgOptions = []
+      const pkgOptions: Array<{ value: any; label: string }> = []
 
       // Engines Node
       if (starterPkg.engines?.node !== targetPkg.engines?.node) {
@@ -1132,7 +1207,7 @@ export async function runUpdate(options) {
 
       // Scripts
       targetPkg.scripts = targetPkg.scripts || {}
-      for (const [key, val] of Object.entries(starterPkg.scripts || {})) {
+      for (const [key, val] of Object.entries(starterPkg.scripts || {}) as Array<[string, any]>) {
         if (targetPkg.scripts[key] !== val) {
           const isMissing = !targetPkg.scripts[key]
           pkgOptions.push({
@@ -1146,7 +1221,9 @@ export async function runUpdate(options) {
 
       // Dependencies
       targetPkg.dependencies = targetPkg.dependencies || {}
-      for (const [key, val] of Object.entries(starterPkg.dependencies || {})) {
+      for (const [key, val] of Object.entries(starterPkg.dependencies || {}) as Array<
+        [string, any]
+      >) {
         if (targetPkg.dependencies[key] !== val) {
           const isMissing = !targetPkg.dependencies[key]
           pkgOptions.push({
@@ -1160,7 +1237,9 @@ export async function runUpdate(options) {
 
       // devDependencies
       targetPkg.devDependencies = targetPkg.devDependencies || {}
-      for (const [key, val] of Object.entries(starterPkg.devDependencies || {})) {
+      for (const [key, val] of Object.entries(starterPkg.devDependencies || {}) as Array<
+        [string, any]
+      >) {
         if (targetPkg.devDependencies[key] !== val) {
           const isMissing = !targetPkg.devDependencies[key]
           pkgOptions.push({
@@ -1175,7 +1254,7 @@ export async function runUpdate(options) {
       if (pkgOptions.length > 0) {
         console.log(`${pc.yellow("⚠")} ${pc.bold("package.json")}: ${pc.yellow("DIFFERING")}`)
 
-        let selectedOpts = pkgOptions.map((o) => o.value)
+        let selectedOpts = pkgOptions.map((o) => o.value) as any[]
         if (isInteractive) {
           const selection = await prompts.multiselect({
             message: "Select updates to apply to package.json:",
@@ -1187,7 +1266,7 @@ export async function runUpdate(options) {
             prompts.cancel("Update cancelled.")
             process.exit(0)
           }
-          selectedOpts = selection
+          selectedOpts = selection as any[]
         }
 
         if (selectedOpts.length > 0) {
@@ -1205,7 +1284,7 @@ export async function runUpdate(options) {
 
           if (pkgModified) {
             // Consistent scripts ordering
-            const orderedScripts = {}
+            const orderedScripts: Record<string, any> = {}
             const allScriptKeys = new Set([
               ...Object.keys(starterPkg.scripts || {}),
               ...Object.keys(targetPkg.scripts || {})
@@ -1255,7 +1334,7 @@ export async function runUpdate(options) {
       }
       console.log("")
 
-      let confirmApply = true
+      let confirmApply: boolean | symbol = true
       if (isInteractive) {
         confirmApply = await prompts.confirm({
           message: `Apply all ${pendingWrites.length} scheduled changes to disk? (Files will not be modified if cancelled)`,
@@ -1282,7 +1361,7 @@ export async function runUpdate(options) {
 
     prompts.outro(pc.green("✔ Standardization process complete!"))
 
-    let runInstall = true
+    let runInstall: boolean | symbol = true
     if (isInteractive) {
       runInstall = await prompts.confirm({
         message: "Run 'vp install' now?",
@@ -1306,7 +1385,7 @@ export async function runUpdate(options) {
       }
     }
   } catch (error) {
-    prompts.cancel(pc.red(`✖ Update failed: ${error.message}`))
+    prompts.cancel(pc.red(`✖ Update failed: ${(error as Error).message}`))
     console.error(error)
     process.exit(1)
   }

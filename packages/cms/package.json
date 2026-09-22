@@ -77,7 +77,8 @@
   "scripts": {
     "build": "vp pack",
     "prepack": "pnpm run build",
-    "check": "vp check --fix && astro check"
+    "check": "vp check --fix && astro check",
+    "test": "vp test"
   },
   "dependencies": {
     "@rimelight/auth": "workspace:*",

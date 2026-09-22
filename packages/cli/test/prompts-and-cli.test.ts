@@ -13,7 +13,7 @@ import {
   confirm,
   select,
   multiselect
-} from "../src/prompts.js"
+} from "../src/prompts"
 import {
   parseJsonc,
   injectIntoArray,
@@ -22,7 +22,7 @@ import {
   getNested,
   setNested,
   runCreate
-} from "../src/index.js"
+} from "../src/index"
 
 describe("@rimelight/cli - Zero-Dependency Terminal Prompter & Engine", () => {
   describe("Terminal Styling and ANSI Helpers", () => {

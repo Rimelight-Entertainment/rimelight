@@ -59,13 +59,6 @@ export function rimelightConfig() {
     },
     test: {
       environment: "node"
-    },
-    run: {
-      tasks: {
-        test: {
-          command: "vp test"
-        }
-      }
     }
   }
 }

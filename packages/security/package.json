@@ -57,7 +57,8 @@
   "scripts": {
     "build": "vp pack",
     "prepack": "pnpm run build",
-    "check": "vp check --fix"
+    "check": "vp check --fix",
+    "test": "vp test"
   },
   "devDependencies": {
     "@rimelight/config": "workspace:*"

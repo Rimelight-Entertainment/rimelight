@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { parseArgs } from "node:util"
-import { runCreate } from "../src/index.js"
+import { runCreate, runCompare, runUpdate } from "./index"
 
-async function main() {
+async function main(): Promise<void> {
   const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
     options: {
@@ -52,20 +52,18 @@ Options:
 
   if (command === "compare") {
     const targetDir = positionals[1] || "."
-    const { runCompare } = await import("../src/index.js")
     await runCompare({ targetDir })
   } else if (command === "update") {
     const targetDir = positionals[1] || "."
-    const { runUpdate } = await import("../src/index.js")
     await runUpdate({ targetDir })
   } else if (!command || command === "create") {
     const projectName = command === "create" ? positionals[1] : positionals[0]
     await runCreate({
       projectName,
-      domain: values.domain,
-      git: values.git,
-      install: values.install,
-      packageManager: values["package-manager"]
+      domain: values.domain as string | undefined,
+      git: values.git as boolean | undefined,
+      install: values.install as boolean | undefined,
+      packageManager: values["package-manager"] as string | undefined
     })
   } else {
     console.error(`Unknown command: ${command}. Use "rimelight --help" to see all options.`)

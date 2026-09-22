@@ -100,7 +100,8 @@ export const authMiddleware = (options: AuthMiddlewareOptions = {}) => {
           if (typeof auth === "function") {
             sessionCtx = await auth(c)
           } else if (typeof auth.getSession === "function") {
-            const req = c.req?.raw || c.req
+            const req =
+              c.req?.raw instanceof Request ? c.req.raw : new Request(c.req?.url || rawUrl)
             sessionCtx = await auth.getSession(req)
           }
         } catch (err) {

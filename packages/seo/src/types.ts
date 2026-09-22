@@ -195,107 +195,107 @@ export interface HeadProps {
   /**
    * Page title
    */
-  title?: string
+  title?: string | undefined
   /**
    * Page description
    */
-  description?: string
+  description?: string | undefined
   /**
    * Open Graph image with alt text
    */
-  ogImage?: OGImage
+  ogImage?: OGImage | undefined
   /**
    * Open Graph type (e.g., "website", "article")
    */
-  ogType?: string
+  ogType?: string | undefined
   /**
    * Open Graph locale (defaults to "en_US")
    */
-  ogLocale?: string
+  ogLocale?: string | undefined
   /**
    * Whether to prevent indexing
    */
-  noindex?: boolean
+  noindex?: boolean | undefined
   /**
    * Whether this is a 404 page
    */
-  is404?: boolean
+  is404?: boolean | undefined
   /**
    * Robots metadata (overrides noindex/is404 logic if provided)
    */
-  robots?: string
+  robots?: string | undefined
   /**
    * Canonical URL
    */
-  canonical?: string
+  canonical?: string | undefined
   /**
    * Current page URL
    */
-  url?: string
+  url?: string | undefined
   /**
    * CSP Nonce for generated inline <script> tags
    */
-  nonce?: string
+  nonce?: string | undefined
   /**
    * Language alternates for i18n
    */
-  languageAlternates?: Array<{ hreflang: string; href: string }>
+  languageAlternates?: Array<{ hreflang: string; href: string }> | undefined
   /**
    * Custom favicon SVG or image path (overrides config.branding.favicon)
    */
-  favicon?: string
+  favicon?: string | undefined
   /**
    * Custom Apple Touch Icon path or CDN URL (overrides config.branding.appleTouchIcon)
    */
-  appleTouchIcon?: string
+  appleTouchIcon?: string | undefined
   /**
    * Site configuration for defaults
    */
-  config?: SiteConfig
+  config?: SiteConfig | undefined
   /**
    * Meta charset
    */
-  charset?: string
+  charset?: string | undefined
   /**
    * Meta viewport
    */
-  viewport?: string
+  viewport?: string | undefined
   /**
    * RSS feed configuration
    */
-  rssFeed?: RSSFeed
+  rssFeed?: RSSFeed | undefined
   /**
    * Article or BlogPosting JSON-LD configuration
    */
-  articleSchema?: import("./schema.js").ArticleSchemaOptions
+  articleSchema?: import("./schema.js").ArticleSchemaOptions | undefined
   /**
    * Breadcrumb list for JSON-LD structured data
    */
-  breadcrumbs?: import("./schema.js").BreadcrumbItem[]
+  breadcrumbs?: import("./schema.js").BreadcrumbItem[] | undefined
   /**
    * URL for this page's raw Markdown alternate twin
    */
-  markdownUrl?: string
+  markdownUrl?: string | undefined
   /**
    * Version alternates for multi-version documentation
    */
-  versionAlternates?: Array<{ version: string; href: string }>
+  versionAlternates?: Array<{ version: string; href: string }> | undefined
   /**
    * Whether the title should bypass site title template
    */
-  absolute?: boolean
+  absolute?: boolean | undefined
   /**
    * Twitter card type
    */
-  twitterCard?: "summary" | "summary_large_image" | "player" | "app"
+  twitterCard?: "summary" | "summary_large_image" | "player" | "app" | undefined
   /**
    * Open Graph metadata overrides
    */
-  openGraph?: OpenGraphMeta
+  openGraph?: OpenGraphMeta | undefined
   /**
    * Twitter metadata overrides
    */
-  twitter?: TwitterMeta
+  twitter?: TwitterMeta | undefined
 }
 
 export interface RssItem {

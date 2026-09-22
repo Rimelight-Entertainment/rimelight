@@ -60,13 +60,6 @@ export function rimelightConfig(): UserConfig {
     },
     test: {
       environment: "node"
-    },
-    run: {
-      tasks: {
-        test: {
-          command: "vp test"
-        }
-      }
     }
   }
 }
