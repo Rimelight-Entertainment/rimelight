@@ -264,11 +264,6 @@ for (const block of dbBlocks) {
               <pre class="m-0 text-sm font-mono text-muted"><code>{block.props.codeExamples.astro}</code></pre>
             </Fragment>
           )}
-          {block.props.codeExamples?.vue && (
-            <Fragment slot="code-vue">
-              <pre class="m-0 text-sm font-mono text-muted"><code>{block.props.codeExamples.vue}</code></pre>
-            </Fragment>
-          )}
           {block.props.codeExamples?.solid && (
             <Fragment slot="code-solid">
               <pre class="m-0 text-sm font-mono text-muted"><code>{block.props.codeExamples.solid}</code></pre>

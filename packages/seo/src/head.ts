@@ -1,4 +1,5 @@
 import type { HeadProps, OpenGraphMeta, SiteConfig, TwitterMeta } from "./types.js"
+export type { HeadProps } from "./types.js"
 import {
   buildCanonicalUrl,
   buildDefaultOgImageUrl,

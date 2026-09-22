@@ -15,7 +15,6 @@ export type {
   RssFeedOptions,
   RssOptions,
   RssCollectionConfig,
-  HeadProps,
   OpenGraphMeta,
   TwitterMeta,
   LlmsPage,
@@ -40,16 +39,6 @@ export type {
   RimelightSeoOptions,
   OgRouteOptions
 } from "./types.js"
-
-export {
-  createSeoHead,
-  createHead,
-  defineSeoConfig,
-  renderTagsToHtml,
-  mergeHeadTags,
-  type HeadTag,
-  type HeadResult
-} from "./head.js"
 
 export { escapeHtml, serializeJsonLd, sanitizeUrl } from "./sanitize.js"
 

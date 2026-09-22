@@ -21,7 +21,7 @@ const api = new Hono().get("/changelog", async (c) => {
   }
 
   const paths = [
-    `packages/ui/src/components/${component}/RLV${pascalName}.vue`,
+    `packages/ui/src/components/${component}/RLS${pascalName}.tsx`,
     `packages/ui/src/components/${component}/RLA${pascalName}.astro`,
     `packages/ui/src/components/${component}/${component}.theme.ts`
   ]

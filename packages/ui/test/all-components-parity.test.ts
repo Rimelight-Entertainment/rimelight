@@ -22,7 +22,6 @@ describe("@rimelight/ui Multi-Framework Component Parity (148 Components)", () =
       (f) => f.startsWith("RLS") && (f.endsWith(".tsx") || f.endsWith(".ts"))
     )
     const themeFile = files.find((f) => f.endsWith(".theme.ts"))
-    const vueFile = files.find((f) => f.startsWith("RLV") && f.endsWith(".vue"))
 
     it("maintains dual Astro and Solid component implementations", () => {
       expect(astroFile, `Missing RLA*.astro in ${folder}`).toBeDefined()
@@ -86,15 +85,6 @@ describe("@rimelight/ui Multi-Framework Component Parity (148 Components)", () =
           `Solid component ${solidFile} must bind classes or forward attributes`
         ).toBe(true)
       })
-
-      if (vueFile) {
-        const vueContent = fs.readFileSync(path.join(dirPath, vueFile), "utf-8")
-
-        it("verifies Vue implementation matches component contract", () => {
-          expect(vueContent).toContain("<template>")
-          expect(vueContent).toContain("<script")
-        })
-      }
     }
   })
 })

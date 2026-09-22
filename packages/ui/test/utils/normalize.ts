@@ -1,12 +1,8 @@
 import { renderToString as renderSolidToString } from "solid-js/web"
-import { renderToString as renderVueToString } from "vue/server-renderer"
 import { createComponent } from "solid-js"
-import { h, type Component, type VNode } from "vue"
-import { expect } from "vite-plus/test"
 
 /**
- * Strips framework-specific SSR hydration markers and normalizes HTML for cross-framework
- * assertions.
+ * Strips framework-specific SSR hydration markers and normalizes HTML for testing assertions.
  */
 export function cleanHtml(html: string): string {
   return (
@@ -14,9 +10,6 @@ export function cleanHtml(html: string): string {
       // Solid hydration markers
       .replace(/<!--[\s\S]*?-->/g, "")
       .replace(/\sdata-hk="[^"]*"/g, "")
-      // Vue hydration markers / SSR attributes
-      .replace(/\sdata-v-[a-z0-9]+(=["'][^"']*["'])?/gi, "")
-      .replace(/\sdata-server-rendered="[^"]*"/g, "")
       // Unescape HTML entities in classes/attributes
       .replace(/&amp;/g, "&")
       .replace(/&quot;/g, '"')
@@ -100,58 +93,4 @@ export function renderSolid(
       })
     )
   )
-}
-
-/**
- * Helper to render a Vue component to normalized HTML.
- */
-export async function renderVue(
-  component: Component,
-  props: Record<string, any> = {},
-  children?: any
-): Promise<string> {
-  const defaultSlot =
-    typeof children === "string" || typeof children === "number"
-      ? () => children
-      : children
-        ? typeof children === "function"
-          ? children
-          : () => children
-        : undefined
-
-  const vnode: VNode = defaultSlot
-    ? h(component, props, { default: defaultSlot })
-    : h(component, props)
-  return cleanHtml(await renderVueToString(vnode))
-}
-
-/**
- * Asserts full DOM tag, attributes, and CSS classes parity between Solid and Vue rendered output.
- */
-export function assertFrameworkParity(solidHtml: string, vueHtml: string) {
-  const solidParsed = parseHtmlElement(solidHtml)
-  const vueParsed = parseHtmlElement(vueHtml)
-
-  // 1. Tag name must match
-  expect(solidParsed.tag, "Root HTML tag must match").toBe(vueParsed.tag)
-
-  // 2. data-slot must match
-  expect(solidParsed.attributes["data-slot"], "data-slot attribute must match").toBe(
-    vueParsed.attributes["data-slot"]
-  )
-
-  // 3. Classes must be identical (order-independent)
-  expect(solidParsed.classes, "Resolved CSS utility classes must match").toEqual(vueParsed.classes)
-
-  // 4. Other key attributes (type, href, aria-*, disabled, etc.)
-  for (const [key, val] of Object.entries(solidParsed.attributes)) {
-    if (
-      key.startsWith("data-theme") ||
-      key.startsWith("aria-") ||
-      key === "href" ||
-      key === "type"
-    ) {
-      expect(vueParsed.attributes[key], `Attribute ${key} must match`).toBe(val)
-    }
-  }
 }

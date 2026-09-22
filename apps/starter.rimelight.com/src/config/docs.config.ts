@@ -36,7 +36,7 @@ const config: DocsConfig = {
       items: [
         { label: "Overview", href: "/{locale}/docs/components" },
         { label: "Astro Components", href: "/{locale}/docs/astro" },
-        { label: "Vue Components", href: "/{locale}/docs/vue" },
+        { label: "Solid Components", href: "/{locale}/docs/solid" },
         { label: "Integrations", href: "/{locale}/docs/integrations" }
       ]
     },

@@ -1,12 +1,10 @@
 import { defineConfig } from "vite-plus"
 import { rimelightPackConfig } from "@rimelight/config/vite-plus/base"
-import vue from "@vitejs/plugin-vue"
 import solid from "vite-plugin-solid"
 
 export default defineConfig(
   rimelightPackConfig({
     plugins: [
-      vue(),
       solid({
         solid: {
           generate: "ssr"
@@ -23,6 +21,7 @@ export default defineConfig(
     },
     entry: [
       "src/index.ts",
+      "src/head.ts",
       "src/preset.ts",
       "src/resolver.ts",
       "src/shortcuts.ts",

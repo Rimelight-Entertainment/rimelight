@@ -202,13 +202,12 @@ export interface FileTreeBlockProps {
 export interface ComponentShowcaseBlockProps {
   componentName: string
   componentPath: string
-  framework: "astro" | "vue" | "solid"
+  framework: "astro" | "solid"
   defaultProps: Record<string, any>
   propsConfig: Record<string, string[]>
   togglingPattern: "icon" | "select-option" | "tab-segmented" | "pill-toggle"
   codeExamples: {
     astro?: string
-    vue?: string
     solid?: string
   }
   playgroundUrl: string | undefined
@@ -229,7 +228,7 @@ export interface ApiDocumentationBlockProps {
 
 export interface LivePreviewBlockProps {
   componentCode: string
-  framework: "astro" | "vue" | "solid"
+  framework: "astro" | "solid"
   height?: string
   width?: string
   editable?: boolean

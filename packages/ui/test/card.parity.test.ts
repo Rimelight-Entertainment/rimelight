@@ -9,62 +9,50 @@ vi.mock("virtual:rimelight/ui", () => ({
 }))
 
 import RLSCard from "../src/components/card/RLSCard"
-import RLVCard from "../src/components/card/RLVCard.vue"
-import { renderSolid, renderVue, assertFrameworkParity } from "./utils/normalize"
+import { renderSolid } from "./utils/normalize"
 
-describe("RLCard Cross-Framework Parity", () => {
+describe("RLSCard Solid Component Rendering", () => {
   const variants = ["solid", "outline", "soft", "subtle"] as const
 
-  it("matches default card structure and classes", async () => {
+  it("renders default card structure and classes correctly", () => {
     const solid = renderSolid(
       RLSCard,
       { title: "Card Title", description: "Card Description" },
       "Card Body"
     )
-    const vue = await renderVue(
-      RLVCard,
-      { title: "Card Title", description: "Card Description" },
-      "Card Body"
-    )
 
-    assertFrameworkParity(solid, vue)
     expect(solid).toContain("Card Title")
-    expect(vue).toContain("Card Title")
+    expect(solid).toContain("Card Description")
+    expect(solid).toContain("Card Body")
+    expect(solid).toContain("data-slot=")
   })
 
-  it("matches interactive link card structure", async () => {
+  it("renders interactive link card structure correctly", () => {
     const solid = renderSolid(RLSCard, { href: "/details", title: "Link Card" })
-    const vue = await renderVue(RLVCard, { href: "/details", title: "Link Card" })
-
-    assertFrameworkParity(solid, vue)
     expect(solid).toContain("<a")
-    expect(vue).toContain("<a")
+    expect(solid).toContain('href="/details"')
+    expect(solid).toContain("Link Card")
   })
 
   describe("variants permutations", () => {
     for (const variant of variants) {
-      it(`matches parity for variant=${variant}`, async () => {
+      it(`renders correctly for variant=${variant}`, () => {
         const props = { variant, title: "Title", description: "Desc" }
         const solid = renderSolid(RLSCard, props, "Content")
-        const vue = await renderVue(RLVCard, props, "Content")
-
-        assertFrameworkParity(solid, vue)
+        expect(solid).toContain("Title")
+        expect(solid).toContain("Content")
       })
     }
   })
 
-  it("matches overlay card variant", async () => {
+  it("renders overlay card variant correctly", () => {
     const solid = renderSolid(RLSCard, {
       overlay: true,
       title: "Overlay Title",
       mediaSrc: "/test.jpg"
     })
-    const vue = await renderVue(RLVCard, {
-      overlay: true,
-      title: "Overlay Title",
-      mediaSrc: "/test.jpg"
-    })
 
-    assertFrameworkParity(solid, vue)
+    expect(solid).toContain("Overlay Title")
+    expect(solid).toContain("/test.jpg")
   })
 })

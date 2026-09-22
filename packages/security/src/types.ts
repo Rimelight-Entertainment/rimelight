@@ -248,5 +248,4 @@ export interface RateLimitOptions {
   onRateLimited?: (c: any, retryAfter: number) => Response | Promise<Response>
 }
 
-export type { HeadTag, HeadResult, SecurityHeadOptions } from "./head"
 export type { ConstructionFallbackOptions } from "./construction/fallback"

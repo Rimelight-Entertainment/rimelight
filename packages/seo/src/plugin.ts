@@ -176,7 +176,7 @@ export function rimelightSeo(options: RimelightSeoOptions = {}): RimelightSeoPlu
 
     load(id) {
       if (id === RESOLVED_VIRTUAL_SEO || id === "\0virtual:rimelight-seo/site-config") {
-        return `import { createSeoHead, defineSeoConfig } from "@rimelight/seo";
+        return `import { createSeoHead, defineSeoConfig } from "@rimelight/seo/head";
 
 export const siteConfig = ${JSON.stringify(normalizedSiteConfig)};
 export const SEO_LOCALES = ${JSON.stringify(seoLocales)};

@@ -11,11 +11,11 @@
 [![pkg.pr.new](https://pkg.pr.new/badge/Rimelight-Entertainment/rimelight)](https://pkg.pr.new/~/Rimelight-Entertainment/rimelight) &nbsp;
 
 Rimelight UI is a comprehensive component library for [Astro](https://astro.build) websites used and maintained by [Rimelight Entertainment](https://rimelight.com).
-It offers a suite of accessible and highly performant components as [Astro Components](https://docs.astro.build/basics/astro-components/) and [Vue Components](https://vuejs.org), and is available as a free and open source project for any to use.
+It offers a suite of accessible and highly performant components as [Astro Components](https://docs.astro.build/basics/astro-components/) and [Solid Components](https://www.solidjs.com), and is available as a free and open source project for any to use.
 
 ## Features
 
-- **Multiple Frameworks**: Astro, Vue, and more with a unified usage pattern - use what suits your project best.
+- **Dual Framework Support**: Astro and Solid with a unified usage pattern - use what suits your project best.
 - **Intuitive**: Simple APIs, comprehensive documentation, and convenient integrations.
 - **Accessible**: All components are WAI-ARIA compliant and include keyboard navigation, focus management, and
   screen reader support.
@@ -88,17 +88,15 @@ import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 <RLAButton label="Click Me" />
 ```
 
-### Vue Components
+### Solid Components
 
-```vue
-<!-- component.vue -->
-<script setup lang="ts">
-import RLVButton from "@rimelight/ui/components/button/RLVButton.vue"
-</script>
+```tsx
+// component.tsx
+import RLSButton from "@rimelight/ui/components/button/RLSButton"
 
-<template>
-  <RLVButton label="Click Me" />
-</template>
+export default function MyButton() {
+  return <RLSButton label="Click Me" />
+}
 ```
 
 For mixed usage please refer to the [Astro documentation on using front-end frameworks](https://docs.astro.build/en/guides/framework-components/).
@@ -112,12 +110,12 @@ For mixed usage please refer to the [Astro documentation on using front-end fram
 
 <details>
   <summary><b>Can I use Rimelight UI without Astro?</b></summary>
-    For the time being, no. The component library itself is Astro-based (the <code>.astro</code> components require Astro's compiler), but its configuration and styling pipeline are distributed as a plain Vite plugin, so any Vite-powered project can consume the Vue/Solid components, themes, and design tokens.
+    For the time being, no. The component library itself is Astro-based (the <code>.astro</code> components require Astro's compiler), but its configuration and styling pipeline are distributed as a plain Vite plugin, so any Vite-powered project can consume the Solid components, themes, and design tokens.
 </details>
 
 <details>
   <summary><b>Are other front-end frameworks supported?</b></summary>
-     For the time being, no. The library currently only offers Astro and Vue components, but in theory could support other front-end frameworks, and we welcome community contributions to expand this.
+     For the time being, no. The library currently offers Astro and Solid components, but in theory could support other front-end frameworks, and we welcome community contributions to expand this.
 </details>
 
 <details>
@@ -126,7 +124,7 @@ For mixed usage please refer to the [Astro documentation on using front-end fram
 </details>
 
 <details>
-  <summary><b>Is Rimelight UI accessible?</b></summary> 
+  <summary><b>Is Rimelight UI accessible?</b></summary>
     Yes. All components provide automatic ARIA attributes, keyboard navigation, focus management, and screen reader support out of the box.
 </details>
 

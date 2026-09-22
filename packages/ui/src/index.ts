@@ -40,5 +40,3 @@ export const ui = ({ unocss = {}, ...cfg }: UIConfig = {}): RimelightUIPlugins =
       id === `\0${ID}` ? `import "virtual:uno.css";\nexport default ${JSON.stringify(cfg)};` : null
   }
 ]
-
-export { createUiHead, type UiHeadOptions, type HeadResult, type HeadTag } from "./head.js"
