@@ -11,6 +11,8 @@ This document serves as a standardized checklist for onboarding and configuring 
   - [ ] Configure DNS records (A/AAAA/CNAME) pointing to the hosting provider / Cloudflare Pages / origin.
   - [ ] Ensure SSL/TLS encryption mode is set to **Full (strict)**.
   - [ ] Enable Automatic HTTPS Rewrites and Always Use HTTPS.
+  - [ ] Enable **DNSSEC** (zone > DNS > Settings). This signs the zone records so resolvers can cryptographically verify them, protecting against DNS spoofing/cache poisoning. There is essentially no downside for the typical single-provider setup.
+    - **Leave "Multi-signer DNSSEC" and "Multi-provider DNS" off** unless the zone is intentionally served by a second authoritative DNS provider in parallel with Cloudflare. Those options coordinate shared keys/DS records across providers and are incompatible with Cloudflare Registrar's auto-managed DNSSEC — the dashboard requires you to disable DNSSEC before either can be enabled. If you only use Cloudflare for DNS, you don't need them.
 
 - [ ] **AI & Agent Accessibility (Markdown for Agents)**
   - [ ] In Cloudflare Dashboard, navigate to the domain zone.

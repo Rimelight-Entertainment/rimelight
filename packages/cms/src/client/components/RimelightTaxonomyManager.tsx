@@ -4,6 +4,7 @@ import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
 import RLSModal from "@rimelight/ui/components/modal/RLSModal.tsx"
 import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
+import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
 
 export interface TaxonomyTermRecord {
   id: string
@@ -352,14 +353,18 @@ export const RimelightTaxonomyManager: Component<RimelightTaxonomyManagerProps> 
 
           <div class="flex flex-col gap-1">
             <span class="text-xs font-semibold text-muted">Description</span>
-            <textarea
+            <RLSTextarea
               value={termForm().description}
               onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>
                 setTermForm({ ...termForm(), description: e.currentTarget.value })
               }
-              rows={3}
+              autoGrow
               placeholder="Optional description of this taxonomy term..."
-              class="w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+              ui={{
+                root: () => "",
+                textarea: () =>
+                  "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]"
+              }}
             />
           </div>
         </div>

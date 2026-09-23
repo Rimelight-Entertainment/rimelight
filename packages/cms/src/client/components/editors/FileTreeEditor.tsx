@@ -15,17 +15,9 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
       { name: "package.json", isDir: false }
     ]
 
-  const autoResize = () => {
-    if (jsonTextarea) {
-      jsonTextarea.style.height = "auto"
-      jsonTextarea.style.height = `${jsonTextarea.scrollHeight + 2}px`
-    }
-  }
-
   onMount(() => {
     if (jsonTextarea) {
       jsonTextarea.value = JSON.stringify(tree(), null, 2)
-      autoResize()
     }
   })
 
@@ -54,8 +46,8 @@ export const FileTreeEditor: Component<FileTreeEditorProps> = (componentProps) =
       <textarea
         ref={(el) => (jsonTextarea = el)}
         class="w-full bg-neutral-950/80 border border-default rounded-lg p-2.5 text-xs text-amber-400 font-mono resize-none outline-none focus:border-primary min-h-[100px] leading-relaxed"
+        style="field-sizing: content"
         spellcheck={false}
-        onInput={autoResize}
         onBlur={(e) => saveJson(e.currentTarget.value)}
       />
     </div>

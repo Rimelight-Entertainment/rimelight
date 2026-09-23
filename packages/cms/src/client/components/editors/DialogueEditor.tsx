@@ -45,7 +45,7 @@ export const DialogueEditor: Component<DialogueEditorProps> = (componentProps) =
         value={componentProps.props["line"] || ""}
         onBlur={(e) => saveProps(undefined, undefined, e.currentTarget.value)}
         placeholder="Dialogue line..."
-        rows={2}
+        autoGrow
       />
     </div>
   )

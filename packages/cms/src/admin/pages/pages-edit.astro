@@ -3,6 +3,7 @@ import ParentLayout from "virtual:rimelight-cms/parent-layout";
 import RLAButton from "@rimelight/ui/components/button/RLAButton.astro";
 import RLABadge from "@rimelight/ui/components/badge/RLABadge.astro";
 import RLAIcon from "@rimelight/ui/components/icon/RLAIcon.astro";
+import RLATextarea from "@rimelight/ui/components/textarea/RLATextarea.astro";
 import RLADropdownMenu from "@rimelight/ui/components/dropdown-menu/RLADropdownMenu.astro";
 import RLAModal from "@rimelight/ui/components/modal/RLAModal.astro";
 import { db } from "virtual:rimelight-cms/db";
@@ -251,12 +252,17 @@ const isPublished = !!page.publishedVersionId;
               placeholder="Page Title"
               class="w-full text-4xl font-bold bg-transparent border-0 focus:ring-0 focus:outline-none p-0 text-highlighted"
             />
-            <textarea
+            <RLATextarea
               id="page-desc-input"
-              rows="2"
+              value={descVal}
               placeholder="Add a description..."
-              class="w-full text-lg text-dimmed bg-transparent border-0 focus:ring-0 focus:outline-none p-0 resize-none mt-1"
-            >{descVal}</textarea>
+              autoGrow
+              ui={{
+                root: () => "",
+                textarea: () =>
+                  "w-full text-lg text-dimmed bg-transparent border-0 focus:ring-0 focus:outline-none p-0 resize-none mt-1 min-h-[56px]"
+              }}
+            />
           </div>
 
           <!-- 24-Column Grid: Properties (8) + Content (16) -->

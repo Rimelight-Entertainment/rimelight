@@ -27,13 +27,6 @@ const LANGUAGES = [
 export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
   let codeTextarea: HTMLTextAreaElement | undefined
 
-  const autoResize = () => {
-    if (codeTextarea) {
-      codeTextarea.style.height = "auto"
-      codeTextarea.style.height = `${codeTextarea.scrollHeight + 2}px`
-    }
-  }
-
   const saveProps = (lang?: string, code?: string, caption?: string) => {
     componentProps.onPropsChange({
       ...componentProps.props,
@@ -46,7 +39,6 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
   onMount(() => {
     if (codeTextarea) {
       codeTextarea.value = componentProps.props["code"] || ""
-      autoResize()
     }
   })
 
@@ -70,9 +62,9 @@ export const CodeEditor: Component<CodeEditorProps> = (componentProps) => {
           ref={(el) => (codeTextarea = el)}
           data-field="code"
           class="w-full bg-neutral-950/80 border border-default rounded-lg px-3 py-2 text-sm text-green-400 font-mono resize-none outline-none focus:border-primary min-h-[120px] leading-relaxed"
+          style="field-sizing: content"
           placeholder="// Write code here..."
           spellcheck={false}
-          onInput={autoResize}
           onBlur={() => saveProps()}
           onKeyDown={(e) => {
             if (e.key === "Tab" && codeTextarea) {

@@ -3,6 +3,7 @@ import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
 import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
 import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
+import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
 
 export interface TaxonomyRecord {
   id: string
@@ -354,14 +355,18 @@ export const RimelightTaxonomyMasterDetail: Component<RimelightTaxonomyMasterDet
             {/* Description */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Description</label>
-              <textarea
+              <RLSTextarea
                 value={form().description}
                 onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>
                   setForm((prev) => ({ ...prev, description: e.currentTarget.value }))
                 }
-                rows={3}
+                autoGrow
                 placeholder="Optional description..."
-                class="w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                ui={{
+                  root: () => "",
+                  textarea: () =>
+                    "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]"
+                }}
               />
             </div>
 

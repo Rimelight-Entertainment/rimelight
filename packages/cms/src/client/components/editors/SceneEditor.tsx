@@ -152,7 +152,7 @@ export const SceneEditor: Component<SceneEditorProps> = (componentProps) => {
           value={componentProps.props["description"] || ""}
           onBlur={(e) => saveProps({ description: e.currentTarget.value })}
           placeholder="Action lines..."
-          rows={3}
+          autoGrow
         />
       </div>
 

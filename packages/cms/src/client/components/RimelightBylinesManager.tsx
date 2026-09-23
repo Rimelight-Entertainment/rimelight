@@ -3,6 +3,7 @@ import RLSInput from "@rimelight/ui/components/input/RLSInput.tsx"
 import RLSButton from "@rimelight/ui/components/button/RLSButton.tsx"
 import RLSBadge from "@rimelight/ui/components/badge/RLSBadge.tsx"
 import RLSIcon from "@rimelight/ui/components/icon/RLSIcon.tsx"
+import RLSTextarea from "@rimelight/ui/components/textarea/RLSTextarea.tsx"
 
 export interface BylineEntity {
   id: string
@@ -344,14 +345,18 @@ export const RimelightBylinesManager: Component = () => {
             {/* Bio */}
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-neutral-700">Bio</label>
-              <textarea
+              <RLSTextarea
                 value={form().bio}
                 onInput={(e: InputEvent & { currentTarget: HTMLTextAreaElement }) =>
                   setForm((prev) => ({ ...prev, bio: e.currentTarget.value }))
                 }
-                rows={3}
+                autoGrow
                 placeholder="Short author bio..."
-                class="w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                ui={{
+                  root: () => "",
+                  textarea: () =>
+                    "w-full text-sm py-2 px-3 rounded-lg border border-default bg-background text-highlighted focus:outline-none focus:ring-1 focus:ring-primary resize-none min-h-[80px]"
+                }}
               />
             </div>
 

@@ -110,7 +110,7 @@ export const ScriptEditor: Component<ScriptEditorProps> = (componentProps) => {
           value={componentProps.props["synopsis"] || ""}
           onInput={(e) => saveProps({ synopsis: e.currentTarget.value })}
           placeholder="Synopsis..."
-          rows={2}
+          autoGrow
         />
       </div>
 
