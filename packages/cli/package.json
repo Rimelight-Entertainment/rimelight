@@ -1,6 +1,6 @@
 {
   "name": "@rimelight/cli",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "private": false,
   "description": "Rimelight Entertainment's Command Line Interface",
   "homepage": "https://rimelight.com/docs",
