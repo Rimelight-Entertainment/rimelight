@@ -114,11 +114,7 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
                   <div class={resolvedClasses().container} data-slot="container">
                     <button
                       type="button"
-                      class={`${resolvedClasses().trigger}  ${
-                        isActive || isCompleted
-                          ? "!bg-primary-600 !border-primary-600 !text-white"
-                          : ""
-                      }`}
+                      class={resolvedClasses().trigger}
                       data-slot="trigger"
                       disabled={isItemDisabled}
                       data-step-trigger={index()}
@@ -131,9 +127,7 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
                           <RLIcon
                             name={item.icon}
                             size="sm"
-                            class={`${resolvedClasses().icon}  ${
-                              isActive || isCompleted ? "!text-white" : "text-neutral-400"
-                            }`}
+                            class={resolvedClasses().icon}
                             data-slot="icon"
                           />
                         ) : (
@@ -167,8 +161,8 @@ const RLStepper: Component<RLStepperProps> = (allProps) => {
 
                 {index() < items().length - 1 ? (
                   <div
-                    class={`${resolvedClasses().separator}  flex-1 h-0.5 mx-2 self-start mt-4 transition-colors ${
-                      index() < currentIndex() ? "bg-primary-600" : "bg-neutral-200"
+                    class={`${resolvedClasses().separator} ${
+                      index() < currentIndex() ? "bg-primary" : "bg-muted"
                     }`}
                     data-slot="separator"
                     data-separator-index={index()}

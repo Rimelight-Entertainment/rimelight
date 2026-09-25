@@ -15,16 +15,16 @@ export const toastTheme = defineTheme("toast", {
     variant: {
       default: { root: "bg-default border-default" },
       error: {
-        root: "error group border-error-500/20 bg-error-500/10 text-error-700 dark:text-error-400"
+        root: "error group rl-color-error border-[var(--rl-border)]/20 bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
       },
       success: {
-        root: "border-success-500/20 bg-success-500/10 text-success-700 dark:text-success-400"
+        root: "rl-color-success border-[var(--rl-border)]/20 bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
       },
       warning: {
-        root: "border-warning-500/20 bg-warning-500/10 text-warning-700 dark:text-warning-400"
+        root: "rl-color-warning border-[var(--rl-border)]/20 bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
       },
       info: {
-        root: "border-info-500/20 bg-info-500/10 text-info-700 dark:text-info-400"
+        root: "rl-color-info border-[var(--rl-border)]/20 bg-[var(--rl-bg)]/10 text-[var(--rl-text)]"
       }
     }
   },

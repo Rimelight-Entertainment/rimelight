@@ -6,7 +6,7 @@ export const popoverTheme = defineTheme("popover", {
     root: "relative inline-block",
     trigger: "",
     content: [
-      "absolute z-50 w-72 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 text-neutral-900 dark:text-neutral-100 shadow-xl outline-none"
+      "absolute z-50 w-72 rounded-xl border border-default bg-elevated p-4 text-highlighted shadow-xl outline-none"
     ]
   },
   variants: {

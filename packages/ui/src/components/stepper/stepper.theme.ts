@@ -21,14 +21,14 @@ export const stepperTheme = defineTheme("stepper", {
     item: "group flex-1 flex flex-col items-center text-center relative",
     container: "flex items-center justify-center relative w-full",
     trigger:
-      "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-primary-600 group-data-[state=completed]:border-primary-600 group-data-[state=completed]:!text-white group-data-[state=active]:bg-primary-600 group-data-[state=active]:border-primary-600 group-data-[state=active]:!text-white text-neutral-400 bg-neutral-100 border border-neutral-300 transition-all cursor-pointer z-10",
+      "rounded-full font-medium text-center align-middle flex items-center justify-center font-semibold group-data-[state=completed]:bg-primary group-data-[state=completed]:border-primary group-data-[state=completed]:!text-white group-data-[state=active]:bg-primary group-data-[state=active]:border-primary group-data-[state=active]:!text-white text-muted bg-muted border border-default transition-all cursor-pointer z-10",
     indicator: "flex items-center justify-center size-full text-current",
     icon: "shrink-0 size-4 text-current transition-colors",
     separator: "flex-1 h-0.5 mx-2 self-start mt-4 transition-colors rounded-full",
     wrapper: "mt-2 text-center",
     title:
-      "text-xs font-semibold group-data-[state=active]:font-bold group-data-[state=active]:text-primary-600 group-data-[state=completed]:text-primary-600 text-neutral-400 transition-colors",
-    description: "text-neutral-500 text-wrap text-xs",
+      "text-xs font-semibold group-data-[state=active]:font-bold group-data-[state=active]:text-primary group-data-[state=completed]:text-primary text-muted transition-colors",
+    description: "text-dimmed text-wrap text-xs",
     content: "size-full"
   },
   variants: {
@@ -123,9 +123,9 @@ export const stepperTheme = defineTheme("stepper", {
       },
       neutral: {
         trigger:
-          "group-data-[state=completed]:bg-neutral-950 group-data-[state=completed]:border-neutral-950 group-data-[state=active]:bg-neutral-950 group-data-[state=active]:border-neutral-950",
-        icon: "group-data-[state=completed]:text-neutral-50 group-data-[state=active]:text-neutral-50",
-        separator: "group-data-[state=completed]:bg-neutral-950"
+          "group-data-[state=completed]:bg-inverted group-data-[state=completed]:border-inverted group-data-[state=active]:bg-inverted group-data-[state=active]:border-inverted",
+        icon: "group-data-[state=completed]:text-inverted group-data-[state=active]:text-inverted",
+        separator: "group-data-[state=completed]:bg-inverted"
       }
     }
   },

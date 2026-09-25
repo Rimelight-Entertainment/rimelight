@@ -34,7 +34,7 @@ export const dropdownMenuTheme = defineTheme("dropdown-menu", {
     itemTrailingKbds:
       "hidden lg:inline-flex items-center gap-0.5 text-[10px] font-mono opacity-70 bg-muted px-1 rounded border border-default",
     shortcut: "ml-auto text-xs tracking-widest text-muted",
-    separator: "-mx-1 my-1 h-px bg-neutral-200",
+    separator: "-mx-1 my-1 h-px border-t border-default",
     label: "px-2 py-1.5 text-xs font-semibold tracking-wider text-muted uppercase",
     arrow: "absolute -top-1.5 left-4 size-3 rotate-45 border-l border-t border-default bg-elevated"
   },

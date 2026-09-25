@@ -8,7 +8,8 @@ export const scrollAreaTheme = defineTheme("scroll-area", {
       "h-full w-full rounded-[inherit] overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
     scrollbar:
       "absolute flex user-select-none touch-action-none p-0.5 bg-transparent transition-colors duration-150 ease-out hover:bg-muted/10",
-    thumb: "relative flex-1 rounded-full bg-neutral-200 transition-colors hover:bg-muted/45"
+    thumb:
+      "relative flex-1 rounded-full bg-muted border border-default/50 transition-colors hover:bg-accented"
   },
   variants: {
     orientation: {

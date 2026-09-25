@@ -6,7 +6,7 @@ export const tooltipTheme = defineTheme("tooltip", {
     root: "relative inline-block group/tooltip",
     trigger: "",
     content: [
-      "absolute z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-neutral-50 shadow-md animate-in fade-in-0 zoom-in-95",
+      "absolute z-50 overflow-hidden rounded-md bg-inverted px-3 py-1.5 text-xs text-inverted shadow-md animate-in fade-in-0 zoom-in-95",
       "transition-all duration-150 invisible opacity-0 scale-95 origin-center pointer-events-none",
       "group-hover/tooltip:visible group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100"
     ]

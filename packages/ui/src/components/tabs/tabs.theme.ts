@@ -28,7 +28,7 @@ export const tabsTheme = defineTheme("tabs", {
   variants: {
     variant: {
       pill: {
-        list: "bg-muted/60 dark:bg-muted/40 rounded-lg p-1",
+        list: "bg-muted/60 rounded-lg p-1",
         trigger: "grow rounded-md data-[state=active]:text-highlighted z-10",
         indicator: "bg-default rounded-md shadow-xs top-1 bottom-1 h-[calc(100%-8px)]"
       },

@@ -167,8 +167,7 @@ describe("@rimelight/ui preset intent shortcuts", () => {
       "text-muted bg-elevated border-accented ring-dimmed bg-inverted text-muted/50"
     )
     expect(css).toContain("var(--rl-neutral-600)")
-    expect(css).toContain("var(--rl-neutral-100)")
-    expect(css).toContain("var(--rl-neutral-300)")
+    expect(css).toContain("var(--rl-neutral-200)")
     expect(css).toContain("var(--rl-neutral-400)")
     expect(css).toContain("var(--rl-neutral-950)")
     expect(css).toContain("var(--rl-neutral-50)")

@@ -31,13 +31,13 @@ const SHADES = {
 
 const SHADE_ENTRIES = Object.entries(SHADES)
 
-const INTENTS: Record<string, Record<string, string>> = {
-  default: { text: "700", bg: "50", border: "200", ring: "300" },
+export const INTENTS: Record<string, Record<string, string>> = {
+  default: { text: "800", bg: "50", border: "200", ring: "300" },
   muted: { text: "600", bg: "100", border: "200", ring: "300" },
-  elevated: { text: "800", bg: "100", border: "200", ring: "400" },
-  accented: { text: "900", bg: "200", border: "300", ring: "500" },
-  dimmed: { text: "500", bg: "50", border: "300", ring: "400" },
-  toned: { text: "800", bg: "700", border: "600", ring: "900" },
+  elevated: { text: "800", bg: "200", border: "300", ring: "400" },
+  accented: { text: "900", bg: "300", border: "400", ring: "500" },
+  dimmed: { text: "500", bg: "100", border: "200", ring: "400" },
+  toned: { text: "800", bg: "200", border: "300", ring: "600" },
   highlighted: { text: "950", bg: "200", border: "800", ring: "950" },
   inverted: { text: "50", bg: "950", border: "800", ring: "700" }
 }
@@ -106,7 +106,7 @@ export default function rimelightUiPreset({ colors, icons, presets = {} }: UICon
     ].filter(Boolean) as Preset[],
     shortcuts: [
       [
-        /^(text|bg|ring|border)-([a-z]+)(?:\/(\d+))?$/,
+        /^(text|bg|ring|border)-([a-z-]+)(?:\/(\d+))?$/,
         ([, p, n, o]) => {
           const s = INTENTS[n!]?.[p!]
           if (!s) return
