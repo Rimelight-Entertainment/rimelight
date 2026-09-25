@@ -1,0 +1,12 @@
+---
+import AppLayout from "#layouts/AppLayout.astro"
+import ColorTestingMatrix from "../../../components/ColorTestingMatrix.tsx"
+
+export const prerender = false
+---
+
+<AppLayout title="Dev Colors" description="Rimelight UI color testing matrix">
+  <main class="container mx-auto px-4 py-8">
+    <ColorTestingMatrix client:load />
+  </main>
+</AppLayout>
